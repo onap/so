@@ -52,6 +52,22 @@ public class ServiceDecompositionTest {
         configResource.setResourceId("configResourceId");
     }
 
+
+    @Test
+    public void serviceDecompositionWithGroupandVnfc() throws IOException {
+        String sericeStr = new String(Files.readAllBytes(Paths.get(RESOURCE_PATH + "ServiceWithGroupandVnfc.json")));
+        ServiceDecomposition serviceDecomposition = new ServiceDecomposition(sericeStr);
+
+        assertEquals(1, serviceDecomposition.getVnfResources().size());
+        assertEquals(1, serviceDecomposition.getVnfResources().get(0).getGroups().size());
+        assertEquals(1, serviceDecomposition.getVnfResources().get(0).getGroups().get(0).getVnfcs().size());
+
+        VnfcResource vnfcResource = serviceDecomposition.getVnfResources().get(0).getGroups().get(0).getVnfcs().get(0);
+
+        assertEquals("xfs", vnfcResource.getModelInfo().getModelName());
+        assertEquals("22", vnfcResource.getModelInfo().getModelUuid());
+    }
+
     @Test
     public void serviceDecompositionTest() throws JsonProcessingException, IOException {
         // covering methods not covered by openpojo test
