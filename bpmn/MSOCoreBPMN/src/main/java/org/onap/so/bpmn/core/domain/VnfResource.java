@@ -51,6 +51,10 @@ public class VnfResource extends Resource {
      */
     @JsonProperty("vfModules")
     private List<ModuleResource> vfModules;
+
+    @JsonProperty("groups")
+    private List<GroupResource> groups;
+
     private String vnfHostname;
     private String vnfType;
     private String nfFunction;
@@ -149,6 +153,14 @@ public class VnfResource extends Resource {
 
     public void setResourceInput(String resourceInput) {
         this.resourceInput = resourceInput;
+    }
+
+    public List<GroupResource> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(List<GroupResource> groups) {
+        this.groups = groups;
     }
 
     /**
