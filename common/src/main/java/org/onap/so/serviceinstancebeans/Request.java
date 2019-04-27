@@ -20,7 +20,9 @@
 
 package org.onap.so.serviceinstancebeans;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -38,6 +40,7 @@ public class Request {
     protected InstanceReferences instanceReferences;
     protected RequestStatus requestStatus;
     protected List<RequestProcessingData> requestProcessingData;
+    protected List<CloudRequestData> cloudRequestData = new ArrayList<>();
 
 
     public String getRequestId() {
@@ -112,12 +115,22 @@ public class Request {
         this.requestProcessingData = requestProcessingData;
     }
 
+
+    public List<CloudRequestData> getCloudRequestData() {
+        return cloudRequestData;
+    }
+
+    public void setCloudRequestData(List<CloudRequestData> cloudRequestData) {
+        this.cloudRequestData = cloudRequestData;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("requestId", requestId).append("startTime", startTime)
                 .append("finishTime", finishTime).append("requestScope", requestScope)
                 .append("requestType", requestType).append("requestDetails", requestDetails)
                 .append("instanceReferences", instanceReferences).append("requestStatus", requestStatus)
-                .append("requestProcessingData", requestProcessingData).toString();
+                .append("requestProcessingData", requestProcessingData).append("cloudRequestData", cloudRequestData)
+                .toString();
     }
 }

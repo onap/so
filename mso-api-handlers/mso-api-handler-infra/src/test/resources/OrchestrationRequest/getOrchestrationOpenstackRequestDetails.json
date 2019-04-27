@@ -1,0 +1,62 @@
+{
+  "clientRequestId": "00032ab7-3fb3-42e5-965d-8ea592502016",
+  "action": "deleteInstance",
+  "requestStatus": "COMPLETE",
+  "statusMessage": "Vf Module has been deleted successfully.",
+  "progress": 100,
+  "startTime": "2016-12-22T13:29:54.000+0000",
+  "endTime": "2016-12-22T13:30:28.000+0000",
+  "source": "VID",
+  "vnfId": "b92f60c8-8de3-46c1-8dc1-e4390ac2b005",
+  "vnfName": null,
+  "vnfType": null,
+  "serviceType": null,
+  "aicNodeClli": null,
+  "tenantId": "6accefef3cb442ff9e644d589fb04107",
+  "provStatus": null,
+  "vnfParams": null,
+  "vnfOutputs": null,
+  "requestBody": "{\"modelInfo\":{\"modelType\":\"vfModule\",\"modelName\":\"test::base::module-0\"},\"requestInfo\":{\"source\":\"VID\"},\"cloudConfiguration\":{\"tenantId\":\"6accefef3cb442ff9e644d589fb04107\",\"lcpCloudRegionId\":\"n6\"}}",
+  "responseBody": null,
+  "lastModifiedBy": "BPMN",
+  "modifyTime": "2016-12-22T13:30:28.000+0000",
+  "requestType": null,
+  "volumeGroupId": null,
+  "volumeGroupName": null,
+  "vfModuleId": "c7d527b1-7a91-49fd-b97d-1c8c0f4a7992",
+  "vfModuleName": null,
+  "vfModuleModelName": "test::base::module-0",
+  "aaiServiceId": null,
+  "aicCloudRegion": "n6",
+  "callBackUrl": null,
+  "correlator": null,
+  "serviceInstanceId": "e3b5744d-2ad1-4cdd-8390-c999a38829bc",
+  "serviceInstanceName": null,
+  "requestScope": "vfModule",
+  "requestAction": "deleteInstance",
+  "networkId": null,
+  "networkName": null,
+  "networkType": null,
+  "requestorId": null,
+  "configurationId": null,
+  "configurationName": null,
+  "operationalEnvId": null,
+  "operationalEnvName": null,
+  "cloudApiRequests":[
+  {
+  	"id": 1,
+  	"cloudIdentifier": "heatstackName/123123",
+  	"requestBody":"{\r\n  \"test\": \"00032ab7-3fb3-42e5-965d-8ea592502016\",\r\n  \"test2\": \"deleteInstance\",\r\n  \"test3\": \"COMPLETE\",\r\n  \"test4\": \"Vf Module has been deleted successfully.\",\r\n  \"test5\": 100\r\n}",
+    "created": "2016-12-22T13:29:54.000+0000"
+  }
+  ],
+  "requestURI": "00032ab7-3fb3-42e5-965d-8ea592502017",
+  "_links": {
+    "self": {
+      "href": "http://localhost:8087/infraActiveRequests/00032ab7-3fb3-42e5-965d-8ea592502017"
+    },
+    "infraActiveRequests": {
+      "href": "http://localhost:8087/infraActiveRequests/00032ab7-3fb3-42e5-965d-8ea592502017"
+    }
+  }
+}
