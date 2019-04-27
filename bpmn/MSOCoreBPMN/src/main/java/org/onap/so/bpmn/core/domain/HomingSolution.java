@@ -21,7 +21,6 @@
 package org.onap.so.bpmn.core.domain;
 
 import java.io.Serializable;
-import java.util.List;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
