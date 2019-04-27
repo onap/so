@@ -124,7 +124,7 @@ public class NotificationDataImpl implements INotificationData {
 
     @Override
     public List<IResourceInstance> getResources() {
-        List<IResourceInstance> ret = new ArrayList<IResourceInstance>();
+        List<IResourceInstance> ret = new ArrayList<>();
         if (resources != null) {
             ret.addAll(resources);
         }
@@ -145,7 +145,7 @@ public class NotificationDataImpl implements INotificationData {
 
     @Override
     public List<IArtifactInfo> getServiceArtifacts() {
-        List<IArtifactInfo> temp = new ArrayList<IArtifactInfo>();
+        List<IArtifactInfo> temp = new ArrayList<>();
         if (serviceArtifacts != null) {
             temp.addAll(serviceArtifacts);
         }

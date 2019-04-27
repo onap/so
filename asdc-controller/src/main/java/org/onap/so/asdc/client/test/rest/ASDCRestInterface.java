@@ -103,10 +103,10 @@ public class ASDCRestInterface {
             distributionClientEmulator = new DistributionClientEmulator("resource-examples/");
             statusData = JsonStatusData.instantiateNotifFromJsonFile("resource-examples/");
 
-            ASDCController asdcController = new ASDCController("asdc-controller1", distributionClientEmulator);
-            asdcController.initASDC();
+            ASDCController controller = new ASDCController("asdc-controller1", distributionClientEmulator);
+            controller.initASDC();
             toscaInstaller.installTheComponentStatus(statusData);
-            asdcController.closeASDC();
+            controller.closeASDC();
         } catch (Exception e) {
             logger.info("Error caught " + e.getMessage());
             logger.error("{} {} {} {} {} {}", MessageEnum.ASDC_GENERAL_EXCEPTION.toString(),

@@ -47,7 +47,7 @@ public class ASDCElementInfo {
      * <li>{@link ASDCElementTypeEnum#VNF_RESOURCE}</li>
      * <ul>
      */
-    public static enum ASDCElementTypeEnum {
+    public enum ASDCElementTypeEnum {
         /**
          * The type VNF_RESOURCE. Represents a VNF_RESOURCE element.
          */
