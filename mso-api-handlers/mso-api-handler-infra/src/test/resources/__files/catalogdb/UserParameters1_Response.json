@@ -1,0 +1,13 @@
+{
+	"name": "operations_timeout",
+	"payloadLocation": "userParams",
+	"label": "Operations Timeout",
+	"type": "text",
+	"description": null,
+	"isRequried": true,
+	"maxLength": 50,
+	"allowableChars": "someRegEx",
+	"created": null,
+	"activitySpecUserParameters": null,
+	"id": null
+}

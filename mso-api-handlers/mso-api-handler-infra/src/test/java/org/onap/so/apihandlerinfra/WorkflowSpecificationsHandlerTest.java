@@ -87,6 +87,66 @@ public class WorkflowSpecificationsHandlerTest extends BaseTest {
                         .withBody(getWiremockResponseForCatalogdb("WorkflowActivitySpecSequence_Response.json"))
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
+        wireMockServer.stubFor(get(urlMatching("/workflowActivitySpecSequence/1/activitySpec"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(getWiremockResponseForCatalogdb("ActivitySpecSequence1_Response.json"))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        wireMockServer.stubFor(get(urlMatching("/workflowActivitySpecSequence/2/activitySpec"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(getWiremockResponseForCatalogdb("ActivitySpecSequence2_Response.json"))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        wireMockServer.stubFor(get(urlMatching("/workflowActivitySpecSequence/3/activitySpec"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(getWiremockResponseForCatalogdb("ActivitySpecSequence3_Response.json"))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        wireMockServer.stubFor(get(urlMatching("/activitySpec/1/activitySpecUserParameters"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(getWiremockResponseForCatalogdb("ActivitySpecUserParameters1_Response.json"))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        wireMockServer.stubFor(get(urlMatching("/activitySpec/2/activitySpecUserParameters"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(getWiremockResponseForCatalogdb("ActivitySpecUserParameters2_Response.json"))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        wireMockServer.stubFor(get(urlMatching("/activitySpec/3/activitySpecUserParameters"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(getWiremockResponseForCatalogdb("ActivitySpecUserParameters3_Response.json"))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        wireMockServer.stubFor(get(urlMatching("/activitySpecUserParameters/1/userParameters"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(getWiremockResponseForCatalogdb("UserParameters1_Response.json"))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        wireMockServer.stubFor(get(urlMatching("/activitySpecUserParameters/2/userParameters"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(getWiremockResponseForCatalogdb("UserParameters2_Response.json"))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        wireMockServer.stubFor(get(urlMatching("/activitySpecUserParameters/3/userParameters"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(getWiremockResponseForCatalogdb("UserParameters3_Response.json"))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        wireMockServer.stubFor(get(urlMatching("/activitySpecUserParameters/4/userParameters"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(getWiremockResponseForCatalogdb("UserParameters4_Response.json"))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        wireMockServer.stubFor(get(urlMatching("/activitySpecUserParameters/5/userParameters"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(getWiremockResponseForCatalogdb("UserParameters5_Response.json"))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        wireMockServer.stubFor(get(urlMatching("/activitySpecUserParameters/6/userParameters"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(getWiremockResponseForCatalogdb("UserParameters6_Response.json"))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(basePath))
                 .queryParam("vnfModelVersionId", "b5fa707a-f55a-11e7-a796-005056856d52");
 

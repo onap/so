@@ -1,20 +1,12 @@
 package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -23,9 +15,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.openpojo.business.annotation.BusinessKey;
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
-import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 @Entity
 @Table(name = "ACTIVITY_SPEC_PARAMETERS")
@@ -56,28 +45,14 @@ public class ActivitySpecParameters implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "activitySpecParameters")
-    private List<ActivitySpecActivitySpecParameters> activitySpecActivitySpecParameters;
-
     @PrePersist
     protected void onCreate() {
         this.created = new Date();
     }
 
-    @LinkedResource
-    public List<ActivitySpecActivitySpecParameters> getActivitySpecActivitySpecParameters() {
-        return activitySpecActivitySpecParameters;
-    }
-
-    public void setActivitySpecActivitySpecParameters(
-            List<ActivitySpecActivitySpecParameters> activitySpecActivitySpecParameters) {
-        this.activitySpecActivitySpecParameters = activitySpecActivitySpecParameters;
-    }
-
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("name", name).append("direction", direction)
-                .append("activitySpecActivitySpecParameters", activitySpecActivitySpecParameters).toString();
+        return new ToStringBuilder(this).append("name", name).append("direction", direction).toString();
     }
 
     @Override

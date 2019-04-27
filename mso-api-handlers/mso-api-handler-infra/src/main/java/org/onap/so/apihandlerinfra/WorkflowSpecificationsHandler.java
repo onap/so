@@ -50,6 +50,8 @@ import org.onap.so.db.catalog.beans.WorkflowActivitySpecSequence;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -69,6 +71,7 @@ public class WorkflowSpecificationsHandler {
     @Autowired
     private CatalogDbClient catalogDbClient;
 
+    private static Logger logger = LoggerFactory.getLogger(WorkflowSpecificationsHandler.class);
     private static final String ARTIFACT_TYPE_WORKFLOW = "workflow";
 
     @Path("/{version:[vV]1}/workflows")
@@ -153,6 +156,7 @@ public class WorkflowSpecificationsHandler {
                 if (activitySpec != null) {
                     ActivitySequence activitySequence = new ActivitySequence();
                     activitySequence.setName(activitySpec.getName());
+                    logger.debug("Adding activity: " + activitySpec.getName());
                     activitySequence.setDescription(activitySpec.getDescription());
                     activitySequences.add(activitySequence);
                 }

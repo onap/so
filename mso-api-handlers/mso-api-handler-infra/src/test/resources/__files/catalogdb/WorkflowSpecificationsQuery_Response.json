@@ -1,468 +1,475 @@
 {
 	"_embedded": {
-	"workflows" :[
-  {
-    "artifactUUID": "ab6478e4-ea33-3346-ac12-ab121484a333",
-    "artifactName": "inPlaceSoftwareUpdate-1_0.bpmn",
-    "name": "inPlaceSoftwareUpdate",
-    "operationName": "inPlaceSoftwareUpdate",
-    "version": 1,
-    "description": "xyz xyz",
-    "body": null,
-    "resourceTarget": "vnf",
-    "source": "sdc",
-    "timeoutMinutes": null,
-    "artifactChecksum": null,
-    "created": null,
-    "vnfResourceWorkflow": null,
-    "workflowActivitySpecSequence": [
-      {
-        "activitySpecId": null,
-        "workflowId": null,
-        "activitySpec": {
-          "name": "VNFQuiesceTrafficActivity",
-          "description": "Activity to QuiesceTraffic on VNF",
-          "version": null,
-          "created": null,
-          "workflowActivitySpecSequence": null,
-          "activitySpecActivitySpecCategories": null,
-          "activitySpecUserParameters": [
-            {
-              "activitySpecId": null,
-              "userParametersId": null,
-              "activitySpec": null,
-              "userParameters": {
-                "name": "operations_timeout",
-                "payloadLocation": "userParams",
-                "label": "Operations Timeout",
-                "type": "text",
-                "description": null,
-                "isRequried": true,
-                "maxLength": 50,
-                "allowableChars": "someRegEx",
-                "created": null,
-                "activitySpecUserParameters": null,
-                "id": null
-              },
-              "id": null
-            },
-            {
-              "activitySpecId": null,
-              "userParametersId": null,
-              "activitySpec": null,
-              "userParameters": {
-                "name": "existing_software_version",
-                "payloadLocation": "userParams",
-                "label": "Existing Software Version",
-                "type": "text",
-                "description": null,
-                "isRequried": true,
-                "maxLength": 50,
-                "allowableChars": "someRegEx",
-                "created": null,
-                "activitySpecUserParameters": null,
-                "id": null
-              },
-              "id": null
-            },
-            {
-              "activitySpecId": null,
-              "userParametersId": null,
-              "activitySpec": null,
-              "userParameters": {
-                "name": "cloudOwner",
-                "payloadLocation": "cloudConfiguration",
-                "label": "Cloud Owner",
-                "type": "text",
-                "description": null,
-                "isRequried": true,
-                "maxLength": 7,
-                "allowableChars": "someRegEx",
-                "created": null,
-                "activitySpecUserParameters": null,
-                "id": null
-              },
-              "id": null
-            },
-            {
-              "activitySpecId": null,
-              "userParametersId": null,
-              "activitySpec": null,
-              "userParameters": {
-                "name": "tenantId",
-                "payloadLocation": "cloudConfiguration",
-                "label": "Tenant/Project ID",
-                "type": "text",
-                "description": null,
-                "isRequried": true,
-                "maxLength": 36,
-                "allowableChars": "someRegEx",
-                "created": null,
-                "activitySpecUserParameters": null,
-                "id": null
-              },
-              "id": null
-            },
-            {
-              "activitySpecId": null,
-              "userParametersId": null,
-              "activitySpec": null,
-              "userParameters": {
-                "name": "new_software_version",
-                "payloadLocation": "userParams",
-                "label": "New Software Version",
-                "type": "text",
-                "description": null,
-                "isRequried": true,
-                "maxLength": 50,
-                "allowableChars": "someRegEx",
-                "created": null,
-                "activitySpecUserParameters": null,
-                "id": null
-              },
-              "id": null
-            },
-            {
-              "activitySpecId": null,
-              "userParametersId": null,
-              "activitySpec": null,
-              "userParameters": {
-                "name": "lcpCloudRegionId",
-                "payloadLocation": "cloudConfiguration",
-                "label": "Cloud Region ID",
-                "type": "text",
-                "description": null,
-                "isRequried": true,
-                "maxLength": 7,
-                "allowableChars": "someRegEx",
-                "created": null,
-                "activitySpecUserParameters": null,
-                "id": null
-              },
-              "id": null
-            }
-          ],
-          "activitySpecActivitySpecParameters": null,
-          "id": null
-        },
-        "workflow": null,
-        "id": null,
-        "_links": {
-    "self": {
-      "href": "http://localhost:8090/workflow/search/findWorkflowByModelUUID[?]vnfResourceModelUUID=b5fa707a-f55a-11e7-a796-005056856d52"
-    },    
-    "workflowActivitySpecSequence": {
-      "href": "http://localhost:8090/workflow/b5fa707a-f55a-11e7-a796-005056856d52/workflowActivitySpecSequence"
-    }
-  
-  }
-        
-      },
-      {
-        "activitySpecId": null,
-        "workflowId": null,
-        "activitySpec": {
-          "name": "VNFHealthCheckActivity",
-          "description": "Activity to HealthCheck VNF",
-          "version": null,
-          "created": null,
-          "workflowActivitySpecSequence": null,
-          "activitySpecActivitySpecCategories": null,
-          "activitySpecUserParameters": [
-            {
-              "activitySpecId": null,
-              "userParametersId": null,
-              "activitySpec": null,
-              "userParameters": {
-                "name": "operations_timeout",
-                "payloadLocation": "userParams",
-                "label": "Operations Timeout",
-                "type": "text",
-                "description": null,
-                "isRequried": true,
-                "maxLength": 50,
-                "allowableChars": "someRegEx",
-                "created": null,
-                "activitySpecUserParameters": null,
-                "id": null
-              },
-              "id": null
-            },
-            {
-              "activitySpecId": null,
-              "userParametersId": null,
-              "activitySpec": null,
-              "userParameters": {
-                "name": "existing_software_version",
-                "payloadLocation": "userParams",
-                "label": "Existing Software Version",
-                "type": "text",
-                "description": null,
-                "isRequried": true,
-                "maxLength": 50,
-                "allowableChars": "someRegEx",
-                "created": null,
-                "activitySpecUserParameters": null,
-                "id": null
-              },
-              "id": null
-            },
-            {
-              "activitySpecId": null,
-              "userParametersId": null,
-              "activitySpec": null,
-              "userParameters": {
-                "name": "cloudOwner",
-                "payloadLocation": "cloudConfiguration",
-                "label": "Cloud Owner",
-                "type": "text",
-                "description": null,
-                "isRequried": true,
-                "maxLength": 7,
-                "allowableChars": "someRegEx",
-                "created": null,
-                "activitySpecUserParameters": null,
-                "id": null
-              },
-              "id": null
-            },
-            {
-              "activitySpecId": null,
-              "userParametersId": null,
-              "activitySpec": null,
-              "userParameters": {
-                "name": "tenantId",
-                "payloadLocation": "cloudConfiguration",
-                "label": "Tenant/Project ID",
-                "type": "text",
-                "description": null,
-                "isRequried": true,
-                "maxLength": 36,
-                "allowableChars": "someRegEx",
-                "created": null,
-                "activitySpecUserParameters": null,
-                "id": null
-              },
-              "id": null
-            },
-            {
-              "activitySpecId": null,
-              "userParametersId": null,
-              "activitySpec": null,
-              "userParameters": {
-                "name": "new_software_version",
-                "payloadLocation": "userParams",
-                "label": "New Software Version",
-                "type": "text",
-                "description": null,
-                "isRequried": true,
-                "maxLength": 50,
-                "allowableChars": "someRegEx",
-                "created": null,
-                "activitySpecUserParameters": null,
-                "id": null
-              },
-              "id": null
-            },
-            {
-              "activitySpecId": null,
-              "userParametersId": null,
-              "activitySpec": null,
-              "userParameters": {
-                "name": "lcpCloudRegionId",
-                "payloadLocation": "cloudConfiguration",
-                "label": "Cloud Region ID",
-                "type": "text",
-                "description": null,
-                "isRequried": true,
-                "maxLength": 7,
-                "allowableChars": "someRegEx",
-                "created": null,
-                "activitySpecUserParameters": null,
-                "id": null
-              },
-              "id": null
-            }
-          ],
-          "activitySpecActivitySpecParameters": null,
-          "id": null
-        },
-        "workflow": null,
-        "id": null,
-        "_links": {
-    "self": {
-      "href": "http://localhost:8090/workflow/search/findWorkflowByModelUUID?vnfResourceModelUUID=b5fa707a-f55a-11e7-a796-005056856d52"
-    },    
-    "workflowActivitySpecSequence": {
-      "href": "http://localhost:8090/workflow/b5fa707a-f55a-11e7-a796-005056856d52/workflowActivitySpecSequence"
-    }
-  
-  }
-      },
-      {
-        "activitySpecId": null,
-        "workflowId": null,
-        "activitySpec": {
-          "name": "FlowCompleteActivity",
-          "description": "Activity to Complete the BPMN Flow",
-          "version": null,
-          "created": null,
-          "workflowActivitySpecSequence": null,
-          "activitySpecActivitySpecCategories": null,
-          "activitySpecUserParameters": [
-            {
-              "activitySpecId": null,
-              "userParametersId": null,
-              "activitySpec": null,
-              "userParameters": {
-                "name": "operations_timeout",
-                "payloadLocation": "userParams",
-                "label": "Operations Timeout",
-                "type": "text",
-                "description": null,
-                "isRequried": true,
-                "maxLength": 50,
-                "allowableChars": "someRegEx",
-                "created": null,
-                "activitySpecUserParameters": null,
-                "id": null
-              },
-              "id": null
-            },
-            {
-              "activitySpecId": null,
-              "userParametersId": null,
-              "activitySpec": null,
-              "userParameters": {
-                "name": "existing_software_version",
-                "payloadLocation": "userParams",
-                "label": "Existing Software Version",
-                "type": "text",
-                "description": null,
-                "isRequried": true,
-                "maxLength": 50,
-                "allowableChars": "someRegEx",
-                "created": null,
-                "activitySpecUserParameters": null,
-                "id": null
-              },
-              "id": null
-            },
-            {
-              "activitySpecId": null,
-              "userParametersId": null,
-              "activitySpec": null,
-              "userParameters": {
-                "name": "cloudOwner",
-                "payloadLocation": "cloudConfiguration",
-                "label": "Cloud Owner",
-                "type": "text",
-                "description": null,
-                "isRequried": true,
-                "maxLength": 7,
-                "allowableChars": "someRegEx",
-                "created": null,
-                "activitySpecUserParameters": null,
-                "id": null
-              },
-              "id": null
-            },
-            {
-              "activitySpecId": null,
-              "userParametersId": null,
-              "activitySpec": null,
-              "userParameters": {
-                "name": "tenantId",
-                "payloadLocation": "cloudConfiguration",
-                "label": "Tenant/Project ID",
-                "type": "text",
-                "description": null,
-                "isRequried": true,
-                "maxLength": 36,
-                "allowableChars": "someRegEx",
-                "created": null,
-                "activitySpecUserParameters": null,
-                "id": null
-              },
-              "id": null
-            },
-            {
-              "activitySpecId": null,
-              "userParametersId": null,
-              "activitySpec": null,
-              "userParameters": {
-                "name": "new_software_version",
-                "payloadLocation": "userParams",
-                "label": "New Software Version",
-                "type": "text",
-                "description": null,
-                "isRequried": true,
-                "maxLength": 50,
-                "allowableChars": "someRegEx",
-                "created": null,
-                "activitySpecUserParameters": null,
-                "id": null
-              },
-              "id": null
-            },
-            {
-              "activitySpecId": null,
-              "userParametersId": null,
-              "activitySpec": null,
-              "userParameters": {
-                "name": "lcpCloudRegionId",
-                "payloadLocation": "cloudConfiguration",
-                "label": "Cloud Region ID",
-                "type": "text",
-                "description": null,
-                "isRequried": true,
-                "maxLength": 7,
-                "allowableChars": "someRegEx",
-                "created": null,
-                "activitySpecUserParameters": null,
-                "id": null
-              },
-              "id": null
-            }
-          ],
-          "activitySpecActivitySpecParameters": null,
-          "id": null
-        },
-        "workflow": null,
-        "id": null,
-        "_links": {
-    "self": {
-      "href": "http://localhost:8090/workflow/search/findWorkflowByModelUUID?vnfResourceModelUUID=b5fa707a-f55a-11e7-a796-005056856d52"
-    },    
-    "workflowActivitySpecSequence": {
-      "href": "http://localhost:8090/workflow/b5fa707a-f55a-11e7-a796-005056856d52/workflowActivitySpecSequence"
-    }
-  
-  }
-      }
-    ],
-    "id": null,
- 
-  "_links": {
-    "self": {
-      "href": "http://localhost:8090/workflow/search/findWorkflowByModelUUID?vnfResourceModelUUID=b5fa707a-f55a-11e7-a796-005056856d52"
-    },    
-    "workflowActivitySpecSequence": {
-      "href": "http://localhost:8090/workflow/1/workflowActivitySpecSequence"
-    }
-    
-   }
-  
-  }
-]
-},
-"_links": {
-    "self": {
-      "href": "http://localhost:8090/workflow/search/findWorkflowByModelUUID?vnfResourceModelUUID=b5fa707a-f55a-11e7-a796-005056856d52"
-    },    
-    "workflowActivitySpecSequence": {
-      "href": "http://localhost:8090/workflow/b5fa707a-f55a-11e7-a796-005056856d52/workflowActivitySpecSequence"
-    }
-  
-  }
+		"workflows": [
+			{
+				"artifactUUID": "ab6478e4-ea33-3346-ac12-ab121484a333",
+				"artifactName": "inPlaceSoftwareUpdate-1_0.bpmn",
+				"name": "inPlaceSoftwareUpdate",
+				"operationName": "inPlaceSoftwareUpdate",
+				"version": 1,
+				"description": "xyz xyz",
+				"body": null,
+				"resourceTarget": "vnf",
+				"source": "sdc",
+				"timeoutMinutes": null,
+				"artifactChecksum": null,
+				"created": null,
+				"vnfResourceWorkflow": null,
+				"workflowActivitySpecSequence": [
+					{
+						"activitySpecId": null,
+						"workflowId": null,
+						"activitySpec": {
+							"name": "VNFQuiesceTrafficActivity",
+							"description": "Activity to QuiesceTraffic on VNF",
+							"version": null,
+							"created": null,
+							"workflowActivitySpecSequence": null,
+							"activitySpecActivitySpecCategories": null,
+							"activitySpecUserParameters": [
+								{
+									"activitySpecId": null,
+									"userParametersId": null,
+									"activitySpec": null,
+									"userParameters": {
+										"name": "operations_timeout",
+										"payloadLocation": "userParams",
+										"label": "Operations Timeout",
+										"type": "text",
+										"description": null,
+										"isRequried": true,
+										"maxLength": 50,
+										"allowableChars": "someRegEx",
+										"created": null,
+										"activitySpecUserParameters": null,
+										"id": null
+									},
+									"id": null
+								},
+								{
+									"activitySpecId": null,
+									"userParametersId": null,
+									"activitySpec": null,
+									"userParameters": {
+										"name": "existing_software_version",
+										"payloadLocation": "userParams",
+										"label": "Existing Software Version",
+										"type": "text",
+										"description": null,
+										"isRequried": true,
+										"maxLength": 50,
+										"allowableChars": "someRegEx",
+										"created": null,
+										"activitySpecUserParameters": null,
+										"id": null
+									},
+									"id": null
+								},
+								{
+									"activitySpecId": null,
+									"userParametersId": null,
+									"activitySpec": null,
+									"userParameters": {
+										"name": "cloudOwner",
+										"payloadLocation": "cloudConfiguration",
+										"label": "Cloud Owner",
+										"type": "text",
+										"description": null,
+										"isRequried": true,
+										"maxLength": 7,
+										"allowableChars": "someRegEx",
+										"created": null,
+										"activitySpecUserParameters": null,
+										"id": null
+									},
+									"id": null
+								},
+								{
+									"activitySpecId": null,
+									"userParametersId": null,
+									"activitySpec": null,
+									"userParameters": {
+										"name": "tenantId",
+										"payloadLocation": "cloudConfiguration",
+										"label": "Tenant/Project ID",
+										"type": "text",
+										"description": null,
+										"isRequried": true,
+										"maxLength": 36,
+										"allowableChars": "someRegEx",
+										"created": null,
+										"activitySpecUserParameters": null,
+										"id": null
+									},
+									"id": null
+								},
+								{
+									"activitySpecId": null,
+									"userParametersId": null,
+									"activitySpec": null,
+									"userParameters": {
+										"name": "new_software_version",
+										"payloadLocation": "userParams",
+										"label": "New Software Version",
+										"type": "text",
+										"description": null,
+										"isRequried": true,
+										"maxLength": 50,
+										"allowableChars": "someRegEx",
+										"created": null,
+										"activitySpecUserParameters": null,
+										"id": null
+									},
+									"id": null
+								},
+								{
+									"activitySpecId": null,
+									"userParametersId": null,
+									"activitySpec": null,
+									"userParameters": {
+										"name": "lcpCloudRegionId",
+										"payloadLocation": "cloudConfiguration",
+										"label": "Cloud Region ID",
+										"type": "text",
+										"description": null,
+										"isRequried": true,
+										"maxLength": 7,
+										"allowableChars": "someRegEx",
+										"created": null,
+										"activitySpecUserParameters": null,
+										"id": null
+									},
+									"id": null
+								}
+							],
+							"activitySpecActivitySpecParameters": null,
+							"id": null
+						},
+						"workflow": null,
+						"id": null,
+						"_links": {
+							"self": {
+								"href": "http://localhost:8090/workflow/search/findWorkflowByModelUUID[?]vnfResourceModelUUID=b5fa707a-f55a-11e7-a796-005056856d52"
+							},
+							"workflowActivitySpecSequence": {
+								"href": "http://localhost:8090/workflow/b5fa707a-f55a-11e7-a796-005056856d52/workflowActivitySpecSequence"
+							},
+							"activitySpec": {
+								"href": "http://localhost:8090/workflow/b5fa707a-f55a-11e7-a796-005056856d52/activitySpec"
+							}
+						}
+					},
+					{
+						"activitySpecId": null,
+						"workflowId": null,
+						"activitySpec": {
+							"name": "VNFHealthCheckActivity",
+							"description": "Activity to HealthCheck VNF",
+							"version": null,
+							"created": null,
+							"workflowActivitySpecSequence": null,
+							"activitySpecActivitySpecCategories": null,
+							"activitySpecUserParameters": [
+								{
+									"activitySpecId": null,
+									"userParametersId": null,
+									"activitySpec": null,
+									"userParameters": {
+										"name": "operations_timeout",
+										"payloadLocation": "userParams",
+										"label": "Operations Timeout",
+										"type": "text",
+										"description": null,
+										"isRequried": true,
+										"maxLength": 50,
+										"allowableChars": "someRegEx",
+										"created": null,
+										"activitySpecUserParameters": null,
+										"id": null
+									},
+									"id": null
+								},
+								{
+									"activitySpecId": null,
+									"userParametersId": null,
+									"activitySpec": null,
+									"userParameters": {
+										"name": "existing_software_version",
+										"payloadLocation": "userParams",
+										"label": "Existing Software Version",
+										"type": "text",
+										"description": null,
+										"isRequried": true,
+										"maxLength": 50,
+										"allowableChars": "someRegEx",
+										"created": null,
+										"activitySpecUserParameters": null,
+										"id": null
+									},
+									"id": null
+								},
+								{
+									"activitySpecId": null,
+									"userParametersId": null,
+									"activitySpec": null,
+									"userParameters": {
+										"name": "cloudOwner",
+										"payloadLocation": "cloudConfiguration",
+										"label": "Cloud Owner",
+										"type": "text",
+										"description": null,
+										"isRequried": true,
+										"maxLength": 7,
+										"allowableChars": "someRegEx",
+										"created": null,
+										"activitySpecUserParameters": null,
+										"id": null
+									},
+									"id": null
+								},
+								{
+									"activitySpecId": null,
+									"userParametersId": null,
+									"activitySpec": null,
+									"userParameters": {
+										"name": "tenantId",
+										"payloadLocation": "cloudConfiguration",
+										"label": "Tenant/Project ID",
+										"type": "text",
+										"description": null,
+										"isRequried": true,
+										"maxLength": 36,
+										"allowableChars": "someRegEx",
+										"created": null,
+										"activitySpecUserParameters": null,
+										"id": null
+									},
+									"id": null
+								},
+								{
+									"activitySpecId": null,
+									"userParametersId": null,
+									"activitySpec": null,
+									"userParameters": {
+										"name": "new_software_version",
+										"payloadLocation": "userParams",
+										"label": "New Software Version",
+										"type": "text",
+										"description": null,
+										"isRequried": true,
+										"maxLength": 50,
+										"allowableChars": "someRegEx",
+										"created": null,
+										"activitySpecUserParameters": null,
+										"id": null
+									},
+									"id": null
+								},
+								{
+									"activitySpecId": null,
+									"userParametersId": null,
+									"activitySpec": null,
+									"userParameters": {
+										"name": "lcpCloudRegionId",
+										"payloadLocation": "cloudConfiguration",
+										"label": "Cloud Region ID",
+										"type": "text",
+										"description": null,
+										"isRequried": true,
+										"maxLength": 7,
+										"allowableChars": "someRegEx",
+										"created": null,
+										"activitySpecUserParameters": null,
+										"id": null
+									},
+									"id": null
+								}
+							],
+							"activitySpecActivitySpecParameters": null,
+							"id": null
+						},
+						"workflow": null,
+						"id": null,
+						"_links": {
+							"self": {
+								"href": "http://localhost:8090/workflow/search/findWorkflowByModelUUID?vnfResourceModelUUID=b5fa707a-f55a-11e7-a796-005056856d52"
+							},
+							"workflowActivitySpecSequence": {
+								"href": "http://localhost:8090/workflow/b5fa707a-f55a-11e7-a796-005056856d52/workflowActivitySpecSequence"
+							},
+							"activitySpec": {
+								"href": "http://localhost:8090/workflow/b5fa707a-f55a-11e7-a796-005056856d52/activitySpec"
+							}
+						}
+					},
+					{
+						"activitySpecId": null,
+						"workflowId": null,
+						"activitySpec": {
+							"name": "FlowCompleteActivity",
+							"description": "Activity to Complete the BPMN Flow",
+							"version": null,
+							"created": null,
+							"workflowActivitySpecSequence": null,
+							"activitySpecActivitySpecCategories": null,
+							"activitySpecUserParameters": [
+								{
+									"activitySpecId": null,
+									"userParametersId": null,
+									"activitySpec": null,
+									"userParameters": {
+										"name": "operations_timeout",
+										"payloadLocation": "userParams",
+										"label": "Operations Timeout",
+										"type": "text",
+										"description": null,
+										"isRequried": true,
+										"maxLength": 50,
+										"allowableChars": "someRegEx",
+										"created": null,
+										"activitySpecUserParameters": null,
+										"id": null
+									},
+									"id": null
+								},
+								{
+									"activitySpecId": null,
+									"userParametersId": null,
+									"activitySpec": null,
+									"userParameters": {
+										"name": "existing_software_version",
+										"payloadLocation": "userParams",
+										"label": "Existing Software Version",
+										"type": "text",
+										"description": null,
+										"isRequried": true,
+										"maxLength": 50,
+										"allowableChars": "someRegEx",
+										"created": null,
+										"activitySpecUserParameters": null,
+										"id": null
+									},
+									"id": null
+								},
+								{
+									"activitySpecId": null,
+									"userParametersId": null,
+									"activitySpec": null,
+									"userParameters": {
+										"name": "cloudOwner",
+										"payloadLocation": "cloudConfiguration",
+										"label": "Cloud Owner",
+										"type": "text",
+										"description": null,
+										"isRequried": true,
+										"maxLength": 7,
+										"allowableChars": "someRegEx",
+										"created": null,
+										"activitySpecUserParameters": null,
+										"id": null
+									},
+									"id": null
+								},
+								{
+									"activitySpecId": null,
+									"userParametersId": null,
+									"activitySpec": null,
+									"userParameters": {
+										"name": "tenantId",
+										"payloadLocation": "cloudConfiguration",
+										"label": "Tenant/Project ID",
+										"type": "text",
+										"description": null,
+										"isRequried": true,
+										"maxLength": 36,
+										"allowableChars": "someRegEx",
+										"created": null,
+										"activitySpecUserParameters": null,
+										"id": null
+									},
+									"id": null
+								},
+								{
+									"activitySpecId": null,
+									"userParametersId": null,
+									"activitySpec": null,
+									"userParameters": {
+										"name": "new_software_version",
+										"payloadLocation": "userParams",
+										"label": "New Software Version",
+										"type": "text",
+										"description": null,
+										"isRequried": true,
+										"maxLength": 50,
+										"allowableChars": "someRegEx",
+										"created": null,
+										"activitySpecUserParameters": null,
+										"id": null
+									},
+									"id": null
+								},
+								{
+									"activitySpecId": null,
+									"userParametersId": null,
+									"activitySpec": null,
+									"userParameters": {
+										"name": "lcpCloudRegionId",
+										"payloadLocation": "cloudConfiguration",
+										"label": "Cloud Region ID",
+										"type": "text",
+										"description": null,
+										"isRequried": true,
+										"maxLength": 7,
+										"allowableChars": "someRegEx",
+										"created": null,
+										"activitySpecUserParameters": null,
+										"id": null
+									},
+									"id": null
+								}
+							],
+							"activitySpecActivitySpecParameters": null,
+							"id": null
+						},
+						"workflow": null,
+						"id": null,
+						"_links": {
+							"self": {
+								"href": "http://localhost:8090/workflow/search/findWorkflowByModelUUID?vnfResourceModelUUID=b5fa707a-f55a-11e7-a796-005056856d52"
+							},
+							"workflowActivitySpecSequence": {
+								"href": "http://localhost:8090/workflow/b5fa707a-f55a-11e7-a796-005056856d52/workflowActivitySpecSequence"
+							},
+							"activitySpec": {
+								"href": "http://localhost:8090/workflow/b5fa707a-f55a-11e7-a796-005056856d52/activitySpec"
+							}
+						}
+					}
+				],
+				"id": null,
+				"_links": {
+					"self": {
+						"href": "http://localhost:8090/workflow/search/findWorkflowByModelUUID?vnfResourceModelUUID=b5fa707a-f55a-11e7-a796-005056856d52"
+					},
+					"workflowActivitySpecSequence": {
+						"href": "http://localhost:8090/workflow/1/workflowActivitySpecSequence"
+					},
+					"activitySpec": {
+						"href": "http://localhost:8090/workflow/b5fa707a-f55a-11e7-a796-005056856d52/activitySpec"
+					}
+				}
+			}
+		]
+	},
+	"_links": {
+		"self": {
+			"href": "http://localhost:8090/workflow/search/findWorkflowByModelUUID?vnfResourceModelUUID=b5fa707a-f55a-11e7-a796-005056856d52"
+		},
+		"workflowActivitySpecSequence": {
+			"href": "http://localhost:8090/workflow/b5fa707a-f55a-11e7-a796-005056856d52/workflowActivitySpecSequence"
+		},
+		"activitySpec": {
+			"href": "http://localhost:8090/workflow/b5fa707a-f55a-11e7-a796-005056856d52/activitySpec"
+		}
+	}
 }
