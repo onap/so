@@ -17,57 +17,17 @@
  * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
-package org.onap.svnfm.simulator.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+package org.onap.svnfm.simulator.repository;
+
+import org.onap.svnfm.simulator.model.VnfOperation;
+import org.springframework.data.repository.CrudRepository;
 
 /**
  * 
  * @author Lathishbabu Ganesan (lathishbabu.ganesan@est.tech)
  * @author Ronan Kenny (ronan.kenny@est.tech)
  */
-@Entity
-@Table(name = "VNF_JOB")
-public class VnfJob {
-    @Id
-    @Column(name = "jobId", nullable = false)
-    private String jobId;
-    private String vnfInstanceId;
-    private String vnfId;
-    private String status;
+public interface VnfOperationRepository extends CrudRepository<VnfOperation, String> {
 
-    public String getJobId() {
-        return jobId;
-    }
-
-    public void setJobId(final String jobId) {
-        this.jobId = jobId;
-    }
-
-    public String getVnfInstanceId() {
-        return vnfInstanceId;
-    }
-
-    public void setVnfInstanceId(final String vnfInstanceId) {
-        this.vnfInstanceId = vnfInstanceId;
-    }
-
-    public String getVnfId() {
-        return vnfId;
-    }
-
-    public void setVnfId(final String vnfId) {
-        this.vnfId = vnfId;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(final String status) {
-        this.status = status;
-    }
 }

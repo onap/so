@@ -1,0 +1,59 @@
+# Copyright © 2019 Nordix Foundation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+spring:
+ h2:
+  console:
+  enabled: true
+  path: console
+ datasource:
+  url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE
+  username: admin
+  password: admin
+ http:
+  converters:
+   preferred-json-mapper: gson
+ security:
+  usercredentials:
+   - username: vnfm
+     password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
+     role: BPEL-Client
+   
+server:
+  port: 9093
+  tomcat:
+    max-threads: 50
+
+vnfds:
+  vnfdlist:
+  -  vnfdid: 1
+     vnfclist:
+     - vnfcid: VNFC1
+       resourceTemplateId: vnfd1_vnfc1
+       vduId: vnfd1_vduForVnfc1
+       type: COMPUTE
+     - vnfcid: VNFC2
+       resourceTemplateId: vnfd1_vnfc2
+       vduId: vnfd1_vduForVnfc2
+       type: COMPUTE
+  -  vnfdid: 2
+     vnfclist:
+     - vnfcid: VNFC3
+       resourceTemplateId: vnfd2_vnfc3
+       vduId: vnfd2_vduForVnfc3
+       type: COMPUTE
+     - vnfcid: VNFC4
+       resourceTemplateId: vnfd2_vnfc4
+       vduId: vnfd2_vduForVnfc4
+       type: COMPUTE
