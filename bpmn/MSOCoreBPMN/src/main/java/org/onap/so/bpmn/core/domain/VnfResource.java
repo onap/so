@@ -55,6 +55,9 @@ public class VnfResource extends Resource {
     @JsonProperty("groups")
     private List<GroupResource> groups;
 
+    @JsonProperty("group-order")
+    private String groupOrder;
+
     private String vnfHostname;
     private String vnfType;
     private String nfFunction;
@@ -161,6 +164,14 @@ public class VnfResource extends Resource {
 
     public void setGroups(List<GroupResource> groups) {
         this.groups = groups;
+    }
+
+    public String getGroupOrder() {
+        return groupOrder;
+    }
+
+    public void setGroupOrder(String groupOrder) {
+        this.groupOrder = groupOrder;
     }
 
     /**

@@ -245,7 +245,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
      */
     @JsonIgnore
     public List<Resource> getServiceResources() {
-        ArrayList serviceResources = new ArrayList();
+        ArrayList<Resource> serviceResources = new ArrayList();
         if (this.getAllottedResources() != null) {
             serviceResources.addAll(this.getAllottedResources());
         }

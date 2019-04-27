@@ -23,6 +23,7 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 import org.onap.so.bpmn.common.scripts.CatalogDbUtilsFactory
+import org.onap.so.bpmn.core.domain.GroupResource
 import org.onap.so.bpmn.infrastructure.properties.BPMNProperties
 import org.apache.commons.lang3.StringUtils
 import org.apache.http.HttpResponse
@@ -117,6 +118,22 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
                     if (StringUtils.containsIgnoreCase(resource.getModelInfo().getModelName(), resourceType)) {
                         sequencedResourceList.add(resource)
 
+                        // if resource type is vnfResource then check for groups also
+                        // Did not use continue because if same model type is used twice
+                        // then we would like to add it twice for processing
+                        // e.g.  S{ V1{G1, G2, G1}} --> S{ V1{G1, G1, G2}}
+                        if (resource instanceof VnfResource) {
+                            if (resource.getGroups() != null) {
+                                String[] grpSequence = resource.getGroupOrder().split(",")
+                                for (String grpType in grpSequence) {
+                                    for (GroupResource gResource in resource.getGroups()) {
+                                        if (StringUtils.containsIgnoreCase(gResource.getModelInfo().getModelName(), grpType)) {
+                                            sequencedResourceList.add(gResource)
+                                        }
+                                    }
+                                }
+                            }
+                        }
                         if (resource instanceof NetworkResource) {
                             networkResourceList.add(resource)
                         }
@@ -126,7 +143,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         } else {
 
             //define sequenced resource list, we deploy vf first and then network and then ar
-            //this is defaule sequence
+            //this is default sequence
             List<VnfResource> vnfResourceList = new ArrayList<VnfResource>()
             List<AllottedResource> arResourceList = new ArrayList<AllottedResource>()
 
