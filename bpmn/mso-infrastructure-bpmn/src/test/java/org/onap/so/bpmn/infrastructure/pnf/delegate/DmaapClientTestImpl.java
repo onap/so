@@ -20,7 +20,9 @@
 
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
+import java.util.HashMap;
 import java.util.Objects;
+import java.util.Optional;
 import org.onap.so.bpmn.infrastructure.pnf.dmaap.DmaapClient;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
@@ -33,7 +35,8 @@ public class DmaapClientTestImpl implements DmaapClient {
     private Runnable informConsumer;
 
     @Override
-    public void registerForUpdate(String pnfCorrelationId, Runnable informConsumer) {
+    public void registerForUpdate(String pnfCorrelationId, Runnable informConsumer,
+            Optional<HashMap<String, String>> updateInfo) {
         this.pnfCorrelationId = pnfCorrelationId;
         this.informConsumer = informConsumer;
     }

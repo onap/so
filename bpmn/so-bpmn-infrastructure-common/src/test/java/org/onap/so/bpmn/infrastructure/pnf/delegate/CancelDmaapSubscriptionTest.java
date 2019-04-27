@@ -42,7 +42,7 @@ public class CancelDmaapSubscriptionTest {
                 .thenReturn(TEST_PNF_CORRELATION_ID);
         when(delegateExecution.getProcessBusinessKey()).thenReturn("testBusinessKey");
         dmaapClientTest.registerForUpdate("testPnfCorrelationId", () -> {
-        });
+        }, null);
         // when
         delegate.execute(delegateExecution);
         // then
