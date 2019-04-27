@@ -22,6 +22,7 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import org.onap.so.bpmn.common.resource.InstanceResourceList
 import org.onap.so.bpmn.common.scripts.CatalogDbUtilsFactory
 import org.onap.so.bpmn.core.domain.GroupResource
 import org.onap.so.bpmn.infrastructure.properties.BPMNProperties
@@ -86,6 +87,16 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
             logger.info(msg)
         }
         logger.trace("Exit preProcessRequest ")
+    }
+
+    // this method will convert resource list to instance_resource_list
+    void prepareInstanceResourceList(DelegateExecution execution) {
+
+        String uuiRequest = execution.getVariable("uuiRequest")
+        List<Resource> sequencedResourceList = execution.getVariable("sequencedResourceList")
+        List<Resource> instanceResourceList = InstanceResourceList.getInstanceResourceList(sequencedResourceList, uuiRequest)
+
+        execution.setVariable("instanceResourceList", instanceResourceList)
     }
 
     public void sequenceResoure(DelegateExecution execution) {
