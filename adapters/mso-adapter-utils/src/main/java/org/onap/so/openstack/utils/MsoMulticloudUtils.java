@@ -340,7 +340,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
                     workloadStack = JSON_MAPPER.treeToValue(node.at("/stacks/0"), Stack.class);
                 } else {
                     workloadStack = new Stack();
-                    workloadStack.setStackStatus(HeatStatus.NOTFOUND.toString());
+                    workloadStack.setStackStatus("NOT_FOUND");
                 }
             } catch (Exception e) {
                 logger.debug("Multicloud Get Exception mapping /stack/0: {} ", node.toString(), e);
