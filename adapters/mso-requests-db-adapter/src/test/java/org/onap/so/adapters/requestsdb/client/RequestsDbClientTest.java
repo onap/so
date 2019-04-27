@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.adapters.requestsdb.RequestsAdapterBase;
 import org.onap.so.adapters.requestsdb.application.MSORequestDBApplication;
+import org.onap.so.db.request.beans.CloudApiRequests;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.beans.OperationStatus;
 import org.onap.so.db.request.beans.OperationalEnvDistributionStatus;
@@ -41,9 +42,9 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertFalse;
 
@@ -87,6 +88,14 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
         infraActiveRequests.setRequestAction("someaction");
         infraActiveRequests
                 .setRequestUrl("http://localhost:8080/onap/so/infra/serviceInstantiation/v7/serviceInstances");
+        List<CloudApiRequests> cloudApiRequests = new ArrayList<>();
+        CloudApiRequests cloudRequest = new CloudApiRequests();
+        cloudRequest.setCloudIdentifier("heatstackanme/id");
+        cloudRequest.setId(1);
+        cloudRequest.setRequestBody("requestBody");
+        cloudRequest.setRequestId(infraActiveRequests.getRequestId());
+        cloudApiRequests.add(cloudRequest);
+        infraActiveRequests.setCloudApiRequests(cloudApiRequests);
         requestsDbClient.save(infraActiveRequests);
     }
 
@@ -96,7 +105,8 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
 
 
     private void verifyInfraActiveRequests(InfraActiveRequests infraActiveRequestsResponse) {
-        assertThat(infraActiveRequestsResponse, sameBeanAs(infraActiveRequests).ignoring("modifyTime").ignoring("log"));
+        assertThat(infraActiveRequestsResponse, sameBeanAs(infraActiveRequests).ignoring("modifyTime").ignoring("log")
+                .ignoring("cloudApiRequests.created").ignoring("cloudApiRequests.id"));
     }
 
     @Test
@@ -112,7 +122,6 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
         InfraActiveRequests infraActiveRequestsResponse = iarr.get(0);
         verifyInfraActiveRequests(infraActiveRequestsResponse);
     }
-
 
     @Test
     public void checkVnfIdStatusTest() {
@@ -182,7 +191,7 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
     public void getInfraActiveRequestbyRequestIdWhereRequestUrlNullTest() {
         // requestUrl setup to null and save
         infraActiveRequests.setRequestUrl(null);
-        requestsDbClient.save(infraActiveRequests);
+        requestsDbClient.updateInfraActiveRequests(infraActiveRequests);
         InfraActiveRequests infraActiveRequestsResponse =
                 requestsDbClient.getInfraActiveRequestbyRequestId(infraActiveRequests.getRequestId());
         verifyInfraActiveRequests(infraActiveRequestsResponse);

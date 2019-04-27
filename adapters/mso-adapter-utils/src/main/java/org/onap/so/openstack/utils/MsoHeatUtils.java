@@ -23,6 +23,7 @@
 
 package org.onap.so.openstack.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.woorea.openstack.base.client.OpenStackConnectException;
@@ -47,6 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.adapters.vdu.CloudInfo;
 import org.onap.so.adapters.vdu.PluginAction;
 import org.onap.so.adapters.vdu.VduArtifact;
@@ -67,6 +69,9 @@ import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.HeatTemplate;
 import org.onap.so.db.catalog.beans.HeatTemplateParam;
 import org.onap.so.db.catalog.beans.ServerType;
+import org.onap.so.db.request.beans.CloudApiRequests;
+import org.onap.so.db.request.beans.InfraActiveRequests;
+import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.openstack.beans.HeatStatus;
@@ -82,6 +87,7 @@ import org.onap.so.openstack.mappers.StackInfoMapper;
 import org.onap.so.utils.CryptoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
@@ -120,6 +126,9 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
 
     @Autowired
     private KeystoneV3Authentication keystoneV3Authentication;
+
+    @Autowired
+    RequestsDbClient requestDBClient;
 
     private static final Logger logger = LoggerFactory.getLogger(MsoHeatUtils.class);
 
@@ -241,6 +250,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
         Stack heatStack = null;
         try {
             OpenStackRequest<Stack> request = heatClient.getStacks().create(stack);
+            saveStackRequest(request, MDC.get(ONAPLogConstants.MDCs.REQUEST_ID), stackName);
             CloudIdentity cloudIdentity = cloudSite.getIdentityService();
             request.header("X-Auth-User", cloudIdentity.getMsoId());
             request.header("X-Auth-Key", CryptoUtils.decryptCloudConfigPassword(cloudIdentity.getMsoPass()));
@@ -274,6 +284,22 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
             logger.debug(heatStack.getStackStatus());
         }
         return new StackInfoMapper(heatStack).map();
+    }
+
+    private void saveStackRequest(OpenStackRequest<Stack> request, String requestId, String stackName) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            InfraActiveRequests foundRequest = requestDBClient.getInfraActiveRequestbyRequestId(requestId);
+            String stackRequest = mapper.writeValueAsString(request.entity());
+            CloudApiRequests cloudReq = new CloudApiRequests();
+            cloudReq.setCloudIdentifier(stackName);
+            cloudReq.setRequestBody(stackRequest);
+            cloudReq.setRequestId(requestId);
+            foundRequest.getCloudApiRequests().add(cloudReq);
+            requestDBClient.updateInfraActiveRequests(foundRequest);
+        } catch (Exception e) {
+            logger.error("Error updating in flight request with Openstack Create Request", e);
+        }
     }
 
     private Stack pollStackForCompletion(String cloudSiteId, String tenantId, String stackName, int timeoutMinutes,

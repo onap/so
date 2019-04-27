@@ -23,10 +23,15 @@ package org.onap.so.db.request.beans;
 import java.net.URI;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
@@ -34,6 +39,7 @@ import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.onap.so.requestsdb.TimestampXMLAdapter;
+import uk.co.blackpepper.bowman.annotation.LinkedResource;
 import uk.co.blackpepper.bowman.annotation.ResourceId;
 
 @MappedSuperclass
@@ -146,6 +152,10 @@ public abstract class InfraRequests implements java.io.Serializable {
     private String instanceGroupName;
     @Column(name = "REQUEST_URL", length = 500)
     private String requestUrl;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "SO_REQUEST_ID", referencedColumnName = "REQUEST_ID")
+    private List<CloudApiRequests> cloudApiRequests;
 
     @ResourceId
     public URI getRequestURI() {
@@ -456,6 +466,15 @@ public abstract class InfraRequests implements java.io.Serializable {
 
     public String getRequestAction() {
         return requestAction;
+    }
+
+    @LinkedResource
+    public List<CloudApiRequests> getCloudApiRequests() {
+        return cloudApiRequests;
+    }
+
+    public void setCloudApiRequests(List<CloudApiRequests> cloudApiRequests) {
+        this.cloudApiRequests = cloudApiRequests;
     }
 
     public void setRequestAction(String requestAction) {
