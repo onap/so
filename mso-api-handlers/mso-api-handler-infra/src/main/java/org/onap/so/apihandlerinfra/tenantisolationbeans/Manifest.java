@@ -34,7 +34,7 @@ public class Manifest implements Serializable {
 
     private static final long serialVersionUID = -3460949513229380541L;
     @JsonProperty("serviceModelList")
-    private List<ServiceModelList> serviceModelList = new ArrayList<ServiceModelList>();
+    private List<ServiceModelList> serviceModelList = new ArrayList<>();
 
     public List<ServiceModelList> getServiceModelList() {
         return serviceModelList;
