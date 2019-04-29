@@ -20,16 +20,12 @@
 
 package org.onap.svnfm.simulator.repository;
 
-import java.util.List;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.CreateVnfRequest;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201.InstantiationStateEnum;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201InstantiatedVnfInfo;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201VimConnectionInfo;
 import org.onap.svnfm.simulator.constants.Constant;
 import org.onap.svnfm.simulator.services.SvnfmService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
@@ -49,15 +45,7 @@ public class VnfmCacheRepository {
         return svnfmService.createVnf(createVnfRequest, id);
     }
 
-    @CachePut(value = Constant.IN_LINE_RESPONSE_201_CACHE, key = "#id")
-    public InlineResponse201 updateVnf(final InlineResponse201InstantiatedVnfInfo instantiatedVnfInfo, final String id,
-            final List<InlineResponse201VimConnectionInfo> vimConnectionInfo) {
-        final InlineResponse201 vnf = getVnf(id);
-        vnf.setInstantiatedVnfInfo(instantiatedVnfInfo);
-        vnf.setInstantiationState(InstantiationStateEnum.INSTANTIATED);
-        vnf.setVimConnectionInfo(vimConnectionInfo);
-        return vnf;
-    }
+
 
     public InlineResponse201 getVnf(final String id) {
         return svnfmService.getVnf(id);
@@ -67,8 +55,6 @@ public class VnfmCacheRepository {
      * @param vnfId
      * @return
      */
-    public InlineResponse201 deleteVnf(final String vnfId) {
-        // TODO
-        return null;
-    }
+    @CacheEvict(value = Constant.IN_LINE_RESPONSE_201_CACHE, key = "#id")
+    public void deleteVnf(final String id) {}
 }

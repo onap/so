@@ -21,6 +21,7 @@
 package org.onap.svnfm.simulator.services;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,6 +29,9 @@ import org.modelmapper.ModelMapper;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.CreateVnfRequest;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201.InstantiationStateEnum;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201InstantiatedVnfInfo;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201VimConnectionInfo;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InstantiateVnfRequest;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRequest;
 import org.onap.svnfm.simulator.config.ApplicationConfig;
@@ -38,13 +42,13 @@ import org.onap.svnfm.simulator.model.Vnfds;
 import org.onap.svnfm.simulator.notifications.VnfInstantiationNotification;
 import org.onap.svnfm.simulator.notifications.VnfmAdapterCreationNotification;
 import org.onap.svnfm.simulator.repository.VnfOperationRepository;
-import org.onap.svnfm.simulator.repository.VnfmCacheRepository;
 import org.onap.svnfm.simulator.repository.VnfmRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.support.SimpleValueWrapper;
 import org.springframework.stereotype.Service;
 
@@ -58,9 +62,6 @@ public class SvnfmService {
 
     @Autowired
     VnfmRepository vnfmRepository;
-
-    @Autowired
-    VnfmCacheRepository vnfRepository;
 
     @Autowired
     VnfOperationRepository vnfOperationRepository;
@@ -104,6 +105,17 @@ public class SvnfmService {
         return inlineResponse201;
     }
 
+    @CachePut(value = Constant.IN_LINE_RESPONSE_201_CACHE, key = "#id")
+    public InlineResponse201 updateVnf(final InstantiationStateEnum instantiationState,
+            final InlineResponse201InstantiatedVnfInfo instantiatedVnfInfo, final String id,
+            final List<InlineResponse201VimConnectionInfo> vimConnectionInfo) {
+        final InlineResponse201 vnf = getVnf(id);
+        vnf.setInstantiatedVnfInfo(instantiatedVnfInfo);
+        vnf.setInstantiationState(instantiationState);
+        vnf.setVimConnectionInfo(vimConnectionInfo);
+        return vnf;
+    }
+
     /**
      *
      * @param vnfId
@@ -114,8 +126,8 @@ public class SvnfmService {
     public String instantiateVnf(final String vnfId, final InstantiateVnfRequest instantiateVNFRequest) {
         final VnfOperation vnfOperation = buildVnfOperation(InlineResponse200.OperationEnum.INSTANTIATE, vnfId);
         vnfOperationRepository.save(vnfOperation);
-        executor.submit(new OperationProgressor(vnfOperation, vnfRepository, vnfOperationRepository, applicationConfig,
-                vnfds, subscriptionService));
+        executor.submit(new InstantiateOperationProgressor(vnfOperation, this, vnfOperationRepository,
+                applicationConfig, vnfds, subscriptionService));
         return vnfOperation.getId();
     }
 
@@ -173,9 +185,12 @@ public class SvnfmService {
      * @param vnfId
      * @return
      */
-    public Object terminateVnf(final String vnfId) {
-        // TODO
-        return null;
+    public String terminateVnf(final String vnfId) {
+        final VnfOperation vnfOperation = buildVnfOperation(InlineResponse200.OperationEnum.TERMINATE, vnfId);
+        vnfOperationRepository.save(vnfOperation);
+        executor.submit(new TerminateOperationProgressor(vnfOperation, this, vnfOperationRepository, applicationConfig,
+                vnfds, subscriptionService));
+        return vnfOperation.getId();
     }
 
     public void registerSubscription(final LccnSubscriptionRequest subscription) {

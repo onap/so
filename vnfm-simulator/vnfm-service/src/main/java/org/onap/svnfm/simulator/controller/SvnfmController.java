@@ -119,9 +119,12 @@ public class SvnfmController {
      */
     @DeleteMapping(value = "/vnf_instances/{vnfInstanceId}")
     @ResponseStatus(code = HttpStatus.OK)
-    public InlineResponse201 deleteVnf(@PathVariable("vnfInstanceId") final String vnfId) {
+    public ResponseEntity<Void> deleteVnf(@PathVariable("vnfInstanceId") final String vnfId) {
         LOGGER.info("Start deleting Vnf------");
-        return vnfmCacheRepository.deleteVnf(vnfId);
+        vnfmCacheRepository.deleteVnf(vnfId);
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
+        return new ResponseEntity<>(headers, HttpStatus.NO_CONTENT);
     }
 
     /**
@@ -132,10 +135,11 @@ public class SvnfmController {
      */
     @PostMapping(value = "/vnf_instances/{vnfInstanceId}/terminate")
     public ResponseEntity<Object> terminateVnf(@PathVariable("vnfInstanceId") final String vnfId) {
-        LOGGER.info("Start terminateVNFRequest");
+        LOGGER.info("Start terminateVNFRequest {}", vnfId);
         final HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", MediaType.APPLICATION_JSON);
-        return new ResponseEntity<>(svnfmService.terminateVnf(vnfId), headers, HttpStatus.ACCEPTED);
+        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
+        headers.add(HttpHeaders.LOCATION, svnfmService.terminateVnf(vnfId));
+        return new ResponseEntity<>(headers, HttpStatus.ACCEPTED);
     }
 
 
