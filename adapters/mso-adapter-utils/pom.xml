@@ -147,5 +147,10 @@
       <artifactId>cxf-rt-transports-http</artifactId>
       <version>${cxf.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.onap.so</groupId>
+      <artifactId>mso-requests-db</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 </project>

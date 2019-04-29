@@ -35,12 +35,14 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.http.HttpStatus;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandler.common.ResponseBuilder;
@@ -53,6 +55,7 @@ import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.exceptions.ValidationException;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
+import org.onap.so.serviceinstancebeans.CloudRequestData;
 import org.onap.so.serviceinstancebeans.GetOrchestrationListResponse;
 import org.onap.so.serviceinstancebeans.GetOrchestrationResponse;
 import org.onap.so.serviceinstancebeans.InstanceReferences;
@@ -65,6 +68,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -92,7 +97,9 @@ public class OrchestrationRequests {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response getOrchestrationRequest(@PathParam("requestId") String requestId,
-            @PathParam("version") String version) throws ApiException {
+            @PathParam("version") String version, @QueryParam("includeCloudRequest") boolean includeCloudRequest)
+            throws ApiException {
+
 
         String apiVersion = version.substring(1);
         GetOrchestrationResponse orchestrationResponse = new GetOrchestrationResponse();
@@ -135,7 +142,7 @@ public class OrchestrationRequests {
             throw validateException;
         }
 
-        Request request = mapInfraActiveRequestToRequest(infraActiveRequest);
+        Request request = mapInfraActiveRequestToRequest(infraActiveRequest, includeCloudRequest);
         if (!requestProcessingData.isEmpty()) {
             request.setRequestProcessingData(mapRequestProcessingData(requestProcessingData));
         }
@@ -150,8 +157,8 @@ public class OrchestrationRequests {
     @ApiOperation(value = "Find Orchestrated Requests for a URI Information", response = Response.class)
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response getOrchestrationRequest(@Context UriInfo ui, @PathParam("version") String version)
-            throws ApiException {
+    public Response getOrchestrationRequest(@Context UriInfo ui, @PathParam("version") String version,
+            @QueryParam("includeCloudRequest") boolean includeCloudRequest) throws ApiException {
 
         long startTime = System.currentTimeMillis();
 
@@ -188,7 +195,7 @@ public class OrchestrationRequests {
             List<RequestProcessingData> requestProcessingData =
                     requestsDbClient.getRequestProcessingDataBySoRequestId(infraActive.getRequestId());
             RequestList requestList = new RequestList();
-            Request request = mapInfraActiveRequestToRequest(infraActive);
+            Request request = mapInfraActiveRequestToRequest(infraActive, includeCloudRequest);
             if (!requestProcessingData.isEmpty()) {
                 request.setRequestProcessingData(mapRequestProcessingData(requestProcessingData));
             }
@@ -286,8 +293,8 @@ public class OrchestrationRequests {
         return Response.status(HttpStatus.SC_NO_CONTENT).entity("").build();
     }
 
-    private Request mapInfraActiveRequestToRequest(InfraActiveRequests iar) throws ApiException {
-
+    private Request mapInfraActiveRequestToRequest(InfraActiveRequests iar, boolean includeCloudRequest)
+            throws ApiException {
         String requestBody = iar.getRequestBody();
         Request request = new Request();
 
@@ -328,8 +335,6 @@ public class OrchestrationRequests {
             ir.setInstanceGroupId(iar.getInstanceGroupId());
         if (iar.getInstanceGroupName() != null)
             ir.setInstanceGroupName(iar.getInstanceGroupName());
-
-
 
         request.setInstanceReferences(ir);
 
@@ -410,8 +415,19 @@ public class OrchestrationRequests {
             status.setPercentProgress(iar.getProgress().intValue());
         }
 
-        request.setRequestStatus(status);
+        if (iar.getCloudApiRequests() != null && !iar.getCloudApiRequests().isEmpty() && includeCloudRequest) {
+            iar.getCloudApiRequests().stream().forEach(cloudRequest -> {
+                try {
+                    request.getCloudRequestData()
+                            .add(new CloudRequestData(mapper.readValue(cloudRequest.getRequestBody(), Object.class),
+                                    cloudRequest.getCloudIdentifier()));
+                } catch (Exception e) {
+                    logger.error("Error reading Cloud Request", e);
+                }
+            });
+        }
 
+        request.setRequestStatus(status);
         return request;
     }
 

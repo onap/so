@@ -48,6 +48,7 @@ import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.exceptions.ValidationException;
+import org.onap.so.serviceinstancebeans.CloudRequestData;
 import org.onap.so.serviceinstancebeans.GetOrchestrationListResponse;
 import org.onap.so.serviceinstancebeans.GetOrchestrationResponse;
 import org.onap.so.serviceinstancebeans.Request;
@@ -64,6 +65,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class OrchestrationRequestsTest extends BaseTest {
@@ -149,13 +151,24 @@ public class OrchestrationRequestsTest extends BaseTest {
     }
 
     @Test
-    public void testGetOrchestrationRequestRequestDetails() throws Exception {
-        setupTestGetOrchestrationRequestRequestDetails("00032ab7-3fb3-42e5-965d-8ea592502017", "COMPLETED");
+    public void testGetOrchestrationRequestWithOpenstackDetails() throws Exception {
+        setupTestGetOrchestrationRequestOpenstackDetails("00032ab7-3fb3-42e5-965d-8ea592502017", "COMPLETED");
         // Test request with modelInfo request body
         GetOrchestrationResponse testResponse = new GetOrchestrationResponse();
 
         Request request = ORCHESTRATION_LIST.getRequestList().get(0).getRequest();
+        List<CloudRequestData> cloudRequestData = new ArrayList<>();
+        CloudRequestData cloudData = new CloudRequestData();
+        cloudData.setCloudIdentifier("heatstackName/123123");
+        ObjectMapper mapper = new ObjectMapper();
+        Object reqData = mapper.readValue(
+                "{\r\n  \"test\": \"00032ab7-3fb3-42e5-965d-8ea592502016\",\r\n  \"test2\": \"deleteInstance\",\r\n  \"test3\": \"COMPLETE\",\r\n  \"test4\": \"Vf Module has been deleted successfully.\",\r\n  \"test5\": 100\r\n}",
+                Object.class);
+        cloudData.setCloudRequest(reqData);
+        cloudRequestData.add(cloudData);
+        request.setCloudRequestData(cloudRequestData);
         testResponse.setRequest(request);
+
         String testRequestId = request.getRequestId();
 
         HttpHeaders headers = new HttpHeaders();
@@ -163,15 +176,17 @@ public class OrchestrationRequestsTest extends BaseTest {
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
         HttpEntity<Request> entity = new HttpEntity<Request>(null, headers);
 
-        UriComponentsBuilder builder = UriComponentsBuilder
-                .fromHttpUrl(createURLWithPort("/onap/so/infra/orchestrationRequests/v7/" + testRequestId));
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(
+                "/onap/so/infra/orchestrationRequests/v7/" + testRequestId + "?includeCloudRequest=true"));
 
         ResponseEntity<GetOrchestrationResponse> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, GetOrchestrationResponse.class);
-
+        System.out.println("Response :" + response.getBody().toString());
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+
         assertThat(response.getBody(), sameBeanAs(testResponse).ignoring("request.startTime")
                 .ignoring("request.finishTime").ignoring("request.requestStatus.timeStamp"));
+
         assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
         assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
         assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
@@ -323,70 +338,7 @@ public class OrchestrationRequestsTest extends BaseTest {
         // properly called to update.
     }
 
-    @Ignore // What is this testing?
-    @Test
-    public void testGetOrchestrationRequestRequestDetailsWhiteSpace() throws Exception {
-        InfraActiveRequests requests = new InfraActiveRequests();
-        requests.setAction("create");
-        requests.setRequestBody("  ");
-        requests.setRequestId("requestId");
-        requests.setRequestScope("service");
-        requests.setRequestType("createInstance");
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(requests);
 
-        requestsDbClient.save(requests);
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Accept", MediaType.APPLICATION_JSON);
-        headers.set("Content-Type", MediaType.APPLICATION_JSON);
-        HttpEntity<Request> entity = new HttpEntity<Request>(null, headers);
-
-        UriComponentsBuilder builder = UriComponentsBuilder
-                .fromHttpUrl(createURLWithPort("/onap/so/infra/orchestrationRequests/v7/requestId"));
-
-        ResponseEntity<GetOrchestrationResponse> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, GetOrchestrationResponse.class);
-
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-        assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
-        assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
-        assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
-        assertEquals("7.0.0", response.getHeaders().get("X-LatestVersion").get(0));
-        assertEquals("requestId", response.getHeaders().get("X-TransactionID").get(0));
-    }
-
-    @Ignore // What is this testing?
-    @Test
-    public void testGetOrchestrationRequestRequestDetailsAlaCarte() throws IOException {
-        InfraActiveRequests requests = new InfraActiveRequests();
-
-        String requestJSON = new String(
-                Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/AlaCarteRequest.json")));
-
-        requests.setAction("create");
-        requests.setRequestBody(requestJSON);
-        requests.setRequestId("requestId");
-        requests.setRequestScope("service");
-        requests.setRequestType("createInstance");
-        // iar.save(requests);
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Accept", MediaType.APPLICATION_JSON);
-        headers.set("Content-Type", MediaType.APPLICATION_JSON);
-        HttpEntity<Request> entity = new HttpEntity<Request>(null, headers);
-
-        UriComponentsBuilder builder = UriComponentsBuilder
-                .fromHttpUrl(createURLWithPort("/onap/so/infra/orchestrationRequests/v7/requestId"));
-
-        ResponseEntity<GetOrchestrationResponse> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, GetOrchestrationResponse.class);
-
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-        assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
-        assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
-        assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
-        assertEquals("7.0.0", response.getHeaders().get("X-LatestVersion").get(0));
-        assertEquals("requestId", response.getHeaders().get("X-TransactionID").get(0));
-    }
 
     @Test
     public void mapRequestProcessingDataTest() throws JsonParseException, JsonMappingException, IOException {
@@ -461,6 +413,15 @@ public class OrchestrationRequestsTest extends BaseTest {
                 .withStatus(HttpStatus.SC_OK)));
     }
 
+
+    private void setupTestGetOrchestrationRequestOpenstackDetails(String requestId, String status) throws Exception {
+        wireMockServer.stubFor(get(urlPathEqualTo(getTestUrl(requestId))).willReturn(aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                .withBody(new String(Files.readAllBytes(Paths
+                        .get("src/test/resources/OrchestrationRequest/getOrchestrationOpenstackRequestDetails.json"))))
+                .withStatus(HttpStatus.SC_OK)));
+    }
+
     private void setupTestUnlockOrchestrationRequest(String requestId, String status) {
         wireMockServer.stubFor(get(urlPathEqualTo(getTestUrl(requestId)))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -473,7 +434,6 @@ public class OrchestrationRequestsTest extends BaseTest {
     private void setupTestUnlockOrchestrationRequest_invalid_Json() {
         wireMockServer.stubFor(get(urlPathEqualTo(getTestUrl(INVALID_REQUEST_ID))).willReturn(aResponse()
                 .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).withStatus(HttpStatus.SC_NOT_FOUND)));
-
     }
 
     private void setupTestUnlockOrchestrationRequest_Valid_Status(String requestID, String status) {

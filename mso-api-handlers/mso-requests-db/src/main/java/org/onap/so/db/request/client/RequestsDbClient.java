@@ -72,10 +72,10 @@ public class RequestsDbClient {
     private static final String SERVICE_MODEL_VERSION_ID = "SERVICE_MODEL_VERSION_ID";
 
 
-    @Value("${mso.adapters.requestDb.endpoint}")
+    @Value("${mso.adapters.requestDb.endpoint:#{null}}")
     protected String endpoint;
 
-    @Value("${mso.adapters.requestDb.auth}")
+    @Value("${mso.adapters.requestDb.auth:#{null}}")
     private String msoAdaptersAuth;
 
     private String getOrchestrationFilterURI = "/infraActiveRequests/getOrchestrationFiltersFromInfraActive/";
