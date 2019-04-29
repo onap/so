@@ -2,9 +2,7 @@ package org.onap.svnfm.simulator.services;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import javax.ws.rs.core.MediaType;
 import org.apache.commons.codec.binary.Base64;
@@ -12,12 +10,9 @@ import org.modelmapper.ModelMapper;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.ApiResponse;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model.GrantRequest;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model.GrantsAddResources;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model.GrantsAddResources.TypeEnum;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model.GrantsLinks;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model.GrantsLinksVnfLcmOpOcc;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model.InlineResponse201;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model.InlineResponse201AddResources;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model.InlineResponse201VimConnections;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.ApiClient;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.ApiException;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.api.DefaultApi;
@@ -31,38 +26,32 @@ import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.VnfLcmOperatio
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.VnfLcmOperationOccurrenceNotification.OperationEnum;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.VnfLcmOperationOccurrenceNotification.OperationStateEnum;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201InstantiatedVnfInfo;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201InstantiatedVnfInfoResourceHandle;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201InstantiatedVnfInfoVnfcResourceInfo;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201VimConnectionInfo;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsAuthenticationParamsBasic;
 import org.onap.svnfm.simulator.config.ApplicationConfig;
 import org.onap.svnfm.simulator.model.VnfOperation;
 import org.onap.svnfm.simulator.model.Vnfds;
-import org.onap.svnfm.simulator.model.Vnfds.Vnfc;
-import org.onap.svnfm.simulator.model.Vnfds.Vnfd;
 import org.onap.svnfm.simulator.repository.VnfOperationRepository;
-import org.onap.svnfm.simulator.repository.VnfmCacheRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class OperationProgressor implements Runnable {
+public abstract class OperationProgressor implements Runnable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OperationProgressor.class);
-    private final VnfOperation operation;
-    private final VnfmCacheRepository vnfRepository;
+    protected final VnfOperation operation;
+    protected final SvnfmService svnfmService;
     private final VnfOperationRepository vnfOperationRepository;
     private final ApplicationConfig applicationConfig;
-    private final Vnfds vnfds;
+    protected final Vnfds vnfds;
     private final SubscriptionService subscriptionService;
     private final DefaultApi notificationClient;
     private final org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.api.DefaultApi grantClient;
 
-    public OperationProgressor(final VnfOperation operation, final VnfmCacheRepository vnfRepository,
+    public OperationProgressor(final VnfOperation operation, final SvnfmService svnfmService,
             final VnfOperationRepository vnfOperationRepository, final ApplicationConfig applicationConfig,
             final Vnfds vnfds, final SubscriptionService subscriptionService) {
         this.operation = operation;
-        this.vnfRepository = vnfRepository;
+        this.svnfmService = svnfmService;
         this.vnfOperationRepository = vnfOperationRepository;
         this.applicationConfig = applicationConfig;
         this.vnfds = vnfds;
@@ -96,15 +85,15 @@ public class OperationProgressor implements Runnable {
 
             final GrantRequest grantRequest = buildGrantRequest();
             final InlineResponse201 grantResponse = sendGrantRequest(grantRequest);
-            final InlineResponse201InstantiatedVnfInfo instantiatedVnfInfo = createInstantiatedVnfInfo(grantResponse);
-            vnfRepository.updateVnf(instantiatedVnfInfo, operation.getVnfInstanceId(),
-                    getVimConnections(grantResponse));
+            final List<InlineResponse201InstantiatedVnfInfoVnfcResourceInfo> vnfcs = handleGrantResponse(grantResponse);
+
+            svnfmService.getVnf(operation.getVnfInstanceId()).getInstantiatedVnfInfo();
 
             sleep(10000);
             setState(InlineResponse200.OperationStateEnum.COMPLETED);
             final VnfLcmOperationOccurrenceNotification notificationOfCompleted =
                     buildNotification(NotificationStatusEnum.RESULT, OperationStateEnum.COMPLETED);
-            notificationOfCompleted.setAffectedVnfcs(getVnfcs(instantiatedVnfInfo.getVnfcResourceInfo()));
+            notificationOfCompleted.setAffectedVnfcs(getVnfcs(vnfcs));
 
             sendNotification(notificationOfCompleted);
         } catch (final Exception exception) {
@@ -136,6 +125,7 @@ public class OperationProgressor implements Runnable {
         notification.setOperationState(operationState);
         notification.setOperation(OperationEnum.fromValue(operation.getOperation().toString()));
         notification.setVnfInstanceId(operation.getVnfInstanceId());
+        notification.setVnfLcmOpOccId(operation.getId());
 
         final LcnVnfLcmOperationOccurrenceNotificationLinks links = new LcnVnfLcmOperationOccurrenceNotificationLinks();
         final LcnVnfLcmOperationOccurrenceNotificationLinksVnfInstance vnfInstanceLink =
@@ -157,14 +147,16 @@ public class OperationProgressor implements Runnable {
     private List<LcnVnfLcmOperationOccurrenceNotificationAffectedVnfcs> getVnfcs(
             final List<InlineResponse201InstantiatedVnfInfoVnfcResourceInfo> instantiatedVnfcs) {
         final List<LcnVnfLcmOperationOccurrenceNotificationAffectedVnfcs> vnfcs = new ArrayList<>();
-        for (final InlineResponse201InstantiatedVnfInfoVnfcResourceInfo instantiatedVnfc : instantiatedVnfcs) {
-            LOGGER.info("VNFC TO BE CONVERTED: {}", instantiatedVnfc);
-            final ModelMapper mapper = new ModelMapper();
-            final LcnVnfLcmOperationOccurrenceNotificationAffectedVnfcs vnfc =
-                    mapper.map(instantiatedVnfc, LcnVnfLcmOperationOccurrenceNotificationAffectedVnfcs.class);
-            LOGGER.info("VNFC FROM CONVERSION: {}", vnfc);
-            vnfc.setChangeType(ChangeTypeEnum.ADDED);
-            vnfcs.add(vnfc);
+        if (instantiatedVnfcs != null) {
+            for (final InlineResponse201InstantiatedVnfInfoVnfcResourceInfo instantiatedVnfc : instantiatedVnfcs) {
+                LOGGER.info("VNFC TO BE CONVERTED: {}", instantiatedVnfc);
+                final ModelMapper mapper = new ModelMapper();
+                final LcnVnfLcmOperationOccurrenceNotificationAffectedVnfcs vnfc =
+                        mapper.map(instantiatedVnfc, LcnVnfLcmOperationOccurrenceNotificationAffectedVnfcs.class);
+                LOGGER.info("VNFC FROM CONVERSION: {}", vnfc);
+                vnfc.setChangeType(getVnfcChangeType());
+                vnfcs.add(vnfc);
+            }
         }
         return vnfcs;
     }
@@ -189,9 +181,10 @@ public class OperationProgressor implements Runnable {
     public GrantRequest buildGrantRequest() {
         final GrantRequest grantRequest = new GrantRequest();
         grantRequest.setVnfInstanceId(operation.getVnfInstanceId());
-        final String vnfdId = vnfRepository.getVnf(operation.getVnfInstanceId()).getVnfdId();
+        final String vnfdId = svnfmService.getVnf(operation.getVnfInstanceId()).getVnfdId();
         grantRequest.setVnfdId(vnfdId);
         grantRequest.setAddResources(getAddResources(vnfdId));
+        grantRequest.setRemoveResources(getRemoveResources(vnfdId));
         grantRequest.setVnfLcmOpOccId(operation.getId());
         grantRequest
                 .setOperation(org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model.GrantRequest.OperationEnum
@@ -209,24 +202,14 @@ public class OperationProgressor implements Runnable {
         return grantRequest;
     }
 
-    private List<GrantsAddResources> getAddResources(final String vnfdId) {
-        final List<GrantsAddResources> resources = new ArrayList<>();
+    protected abstract List<GrantsAddResources> getAddResources(final String vnfdId);
 
-        for (final Vnfd vnfd : vnfds.getVnfdList()) {
-            if (vnfd.getVnfdId().equals(vnfdId)) {
-                for (final Vnfc vnfc : vnfd.getVnfcList()) {
-                    final GrantsAddResources addResource = new GrantsAddResources();
-                    vnfc.setGrantResourceId(UUID.randomUUID().toString());
-                    addResource.setId(vnfc.getGrantResourceId());
-                    addResource.setType(TypeEnum.fromValue(vnfc.getType()));
-                    addResource.setResourceTemplateId(vnfc.getResourceTemplateId());
-                    addResource.setVduId(vnfc.getVduId());
-                    resources.add(addResource);
-                }
-            }
-        }
-        return resources;
-    }
+    protected abstract List<GrantsAddResources> getRemoveResources(final String vnfdId);
+
+    protected abstract List<InlineResponse201InstantiatedVnfInfoVnfcResourceInfo> handleGrantResponse(
+            InlineResponse201 grantResponse);
+
+    protected abstract ChangeTypeEnum getVnfcChangeType();
 
     private InlineResponse201 sendGrantRequest(final GrantRequest grantRequest) {
         LOGGER.info("Sending grant request: {}", grantRequest);
@@ -239,46 +222,6 @@ public class OperationProgressor implements Runnable {
             LOGGER.error("Error sending notification: " + grantRequest, exception);
             return null;
         }
-    }
-
-    private InlineResponse201InstantiatedVnfInfo createInstantiatedVnfInfo(final InlineResponse201 grantResponse) {
-        final InlineResponse201InstantiatedVnfInfo instantiatedVnfInfo = new InlineResponse201InstantiatedVnfInfo();
-
-        final Map<String, String> mapOfGrantResourceIdToVimConnectionId = new HashMap<>();
-        for (final InlineResponse201AddResources addResource : grantResponse.getAddResources()) {
-            mapOfGrantResourceIdToVimConnectionId.put(addResource.getResourceDefinitionId(),
-                    addResource.getVimConnectionId());
-        }
-
-        for (final Vnfd vnfd : vnfds.getVnfdList()) {
-            if (vnfd.getVnfdId().equals(vnfRepository.getVnf(operation.getVnfInstanceId()).getVnfdId())) {
-                for (final Vnfc vnfc : vnfd.getVnfcList()) {
-                    final InlineResponse201InstantiatedVnfInfoVnfcResourceInfo vnfcResourceInfoItem =
-                            new InlineResponse201InstantiatedVnfInfoVnfcResourceInfo();
-                    vnfcResourceInfoItem.setId(vnfc.getVnfcId());
-                    vnfcResourceInfoItem.setVduId(vnfc.getVduId());
-                    final InlineResponse201InstantiatedVnfInfoResourceHandle computeResource =
-                            new InlineResponse201InstantiatedVnfInfoResourceHandle();
-                    computeResource.setResourceId(UUID.randomUUID().toString());
-                    computeResource
-                            .setVimConnectionId(mapOfGrantResourceIdToVimConnectionId.get(vnfc.getGrantResourceId()));
-                    computeResource.setVimLevelResourceType("OS::Nova::Server");
-                    vnfcResourceInfoItem.setComputeResource(computeResource);
-                    instantiatedVnfInfo.addVnfcResourceInfoItem(vnfcResourceInfoItem);
-                }
-            }
-        }
-
-        return instantiatedVnfInfo;
-    }
-
-    private List<InlineResponse201VimConnectionInfo> getVimConnections(final InlineResponse201 grantResponse) {
-        final List<InlineResponse201VimConnectionInfo> vimConnectionInfo = new ArrayList<>();
-        for (final InlineResponse201VimConnections vimConnection : grantResponse.getVimConnections()) {
-            final ModelMapper modelMapper = new ModelMapper();
-            vimConnectionInfo.add(modelMapper.map(vimConnection, InlineResponse201VimConnectionInfo.class));
-        }
-        return vimConnectionInfo;
     }
 
     private String getVnfLink() {

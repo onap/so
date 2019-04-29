@@ -21,6 +21,8 @@
 package org.onap.svnfm.simulator.services;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.commons.beanutils.BeanUtils;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.CreateVnfRequest;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
@@ -74,9 +76,15 @@ public class VnfmHelper {
         inlineResponse201.setVnfdVersion(Constant.VNFD_VERSION);
         inlineResponse201.setVnfSoftwareVersion(Constant.VNF_SOFTWARE_VERSION);
         inlineResponse201.setInstantiationState(InstantiationStateEnum.NOT_INSTANTIATED);
-        inlineResponse201.setVnfConfigurableProperties(Constant.VNF_CONFIG_PROPERTIES);
+        inlineResponse201.setVnfConfigurableProperties(getConfigProperties());
         addAdditionalPRopertyInlineResponse201(inlineResponse201);
         return inlineResponse201;
+    }
+
+    private Map<String, String> getConfigProperties() {
+        final Map<String, String> configProperties = new HashMap<>();
+        configProperties.put("ipAddress", "10.11.12.13");
+        return configProperties;
     }
 
     private void addAdditionalPRopertyInlineResponse201(final InlineResponse201 inlineResponse201) {
