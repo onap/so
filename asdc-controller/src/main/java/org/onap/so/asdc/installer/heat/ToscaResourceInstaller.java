@@ -121,6 +121,7 @@ import org.onap.so.db.catalog.data.repository.PnfResourceRepository;
 import org.onap.so.db.catalog.data.repository.ServiceProxyResourceCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.ServiceRepository;
 import org.onap.so.db.catalog.data.repository.TempNetworkHeatTemplateRepository;
+import org.onap.so.db.catalog.data.repository.ToscaCsarRepository;
 import org.onap.so.db.catalog.data.repository.VFModuleCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.VFModuleRepository;
 import org.onap.so.db.catalog.data.repository.VnfResourceRepository;
@@ -242,6 +243,9 @@ public class ToscaResourceInstaller {
     protected ExternalServiceToInternalServiceRepository externalServiceToInternalServiceRepository;
 
     @Autowired
+    protected ToscaCsarRepository toscaCsarRepo;
+
+    @Autowired
     protected PnfResourceRepository pnfResourceRepository;
 
     @Autowired
@@ -251,6 +255,31 @@ public class ToscaResourceInstaller {
     protected WorkflowResource workflowResource;
 
     protected static final Logger logger = LoggerFactory.getLogger(ToscaResourceInstaller.class);
+
+    public boolean isCsarAlreadyDeployed(ToscaResourceStructure toscaResourceStructure)
+            throws ArtifactInstallerException {
+        boolean deployed = false;
+        if (toscaResourceStructure == null) {
+            return deployed;
+        }
+
+        IArtifactInfo inputToscaCsar = toscaResourceStructure.getToscaArtifact();
+        String checkSum = inputToscaCsar.getArtifactChecksum();
+        String artifactUuid = inputToscaCsar.getArtifactUUID();
+
+        Optional<ToscaCsar> toscaCsarObj = toscaCsarRepo.findById(artifactUuid);
+        if (toscaCsarObj.isPresent()) {
+            ToscaCsar toscaCsar = toscaCsarObj.get();
+            if (!toscaCsar.getArtifactChecksum().equalsIgnoreCase(checkSum)) {
+                String errorMessage =
+                        String.format("Csar with UUID: %s already exists.Their checksums don't match", artifactUuid);
+                throw new ArtifactInstallerException(errorMessage);
+            } else if (toscaCsar.getArtifactChecksum().equalsIgnoreCase(checkSum)) {
+                deployed = true;
+            }
+        }
+        return deployed;
+    }
 
     public boolean isResourceAlreadyDeployed(ResourceStructure vfResourceStruct, boolean serviceDeployed)
             throws ArtifactInstallerException {

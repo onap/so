@@ -62,7 +62,9 @@ import org.onap.so.asdc.installer.heat.ToscaResourceInstaller;
 import org.onap.so.asdc.tenantIsolation.DistributionStatus;
 import org.onap.so.asdc.tenantIsolation.WatchdogDistribution;
 import org.onap.so.asdc.util.ASDCNotificationLogging;
+import org.onap.so.db.request.beans.WatchdogComponentDistributionStatus;
 import org.onap.so.db.request.beans.WatchdogDistributionStatus;
+import org.onap.so.db.request.data.repository.WatchdogComponentDistributionStatusRepository;
 import org.onap.so.db.request.data.repository.WatchdogDistributionStatusRepository;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
@@ -92,6 +94,9 @@ public class ASDCController {
     private WatchdogDistributionStatusRepository wdsRepo;
 
     @Autowired
+    protected WatchdogComponentDistributionStatusRepository watchdogCDStatusRepository;
+
+    @Autowired
     private ASDCConfiguration asdcConfig;
 
     @Autowired
@@ -103,6 +108,8 @@ public class ASDCController {
     private IDistributionClient distributionClient;
 
     private static final String UUID_PARAM = "(UUID:";
+
+    protected static final String MSO = "SO";
 
     @Autowired
     private WatchdogDistribution wd;
@@ -268,6 +275,52 @@ public class ASDCController {
         }
     }
 
+    protected void notifyErrorToAsdc(INotificationData iNotif, ToscaResourceStructure toscaResourceStructure,
+            DistributionStatusEnum deployStatus, VfResourceStructure resourceStructure, String errorMessage) {
+        // do csar lever first
+        this.sendCsarDeployNotification(iNotif, resourceStructure, toscaResourceStructure, deployStatus, errorMessage);
+        // at resource level
+        for (IResourceInstance resource : iNotif.getResources()) {
+            resourceStructure = new VfResourceStructure(iNotif, resource);
+            errorMessage = String.format("Resource with UUID: %s already exists", resource.getResourceUUID());
+            this.sendCsarDeployNotification(iNotif, resourceStructure, toscaResourceStructure, deployStatus,
+                    errorMessage);
+        }
+    }
+
+    protected boolean isCsarAlreadyDeployed(INotificationData iNotif, ToscaResourceStructure toscaResourceStructure) {
+        VfResourceStructure resourceStructure = null;
+        String errorMessage = "";
+        boolean csarAlreadyDeployed = false;
+        DistributionStatusEnum deployStatus = DistributionStatusEnum.DEPLOY_OK;
+        WatchdogComponentDistributionStatus wdStatus =
+                new WatchdogComponentDistributionStatus(iNotif.getDistributionID(), MSO);
+        try {
+            csarAlreadyDeployed = toscaInstaller.isCsarAlreadyDeployed(toscaResourceStructure);
+            if (csarAlreadyDeployed) {
+                deployStatus = DistributionStatusEnum.ALREADY_DEPLOYED;
+                resourceStructure = new VfResourceStructure(iNotif, null);
+                errorMessage = String.format("Csar with UUID: %s already exists",
+                        toscaResourceStructure.getToscaArtifact().getArtifactUUID());
+                wdStatus.setComponentDistributionStatus(DistributionStatusEnum.COMPONENT_DONE_OK.name());
+                watchdogCDStatusRepository.saveAndFlush(wdStatus);
+                logger.error(errorMessage);
+            }
+        } catch (ArtifactInstallerException e) {
+            deployStatus = DistributionStatusEnum.DEPLOY_ERROR;
+            resourceStructure = new VfResourceStructure(iNotif, null);
+            errorMessage = e.getMessage();
+            wdStatus.setComponentDistributionStatus(DistributionStatusEnum.COMPONENT_DONE_ERROR.name());
+            watchdogCDStatusRepository.saveAndFlush(wdStatus);
+            logger.warn("Tosca Checksums don't match, Tosca validation check failed", e);
+        }
+
+        if (deployStatus != DistributionStatusEnum.DEPLOY_OK) {
+            notifyErrorToAsdc(iNotif, toscaResourceStructure, deployStatus, resourceStructure, errorMessage);
+        }
+
+        return csarAlreadyDeployed;
+    }
 
     protected IDistributionClientDownloadResult downloadTheArtifact(IArtifactInfo artifact, String distributionId)
             throws ASDCDownloadException {
@@ -376,23 +429,14 @@ public class ASDCController {
     }
 
     protected void sendCsarDeployNotification(INotificationData iNotif, ResourceStructure resourceStructure,
-            ToscaResourceStructure toscaResourceStructure, boolean deploySuccessful, String errorReason) {
+            ToscaResourceStructure toscaResourceStructure, DistributionStatusEnum statusEnum, String errorReason) {
 
         IArtifactInfo csarArtifact = toscaResourceStructure.getToscaArtifact();
 
-        if (deploySuccessful) {
+        this.sendASDCNotification(NotificationType.DEPLOY, csarArtifact.getArtifactURL(), asdcConfig.getConsumerID(),
+                resourceStructure.getNotification().getDistributionID(), statusEnum, errorReason,
+                System.currentTimeMillis());
 
-            this.sendASDCNotification(NotificationType.DEPLOY, csarArtifact.getArtifactURL(),
-                    asdcConfig.getConsumerID(), resourceStructure.getNotification().getDistributionID(),
-                    DistributionStatusEnum.DEPLOY_OK, errorReason, System.currentTimeMillis());
-
-        } else {
-
-            this.sendASDCNotification(NotificationType.DEPLOY, csarArtifact.getArtifactURL(),
-                    asdcConfig.getConsumerID(), resourceStructure.getNotification().getDistributionID(),
-                    DistributionStatusEnum.DEPLOY_ERROR, errorReason, System.currentTimeMillis());
-
-        }
     }
 
     protected void deployResourceStructure(ResourceStructure resourceStructure,
@@ -657,7 +701,7 @@ public class ASDCController {
         String msoConfigPath = getMsoConfigPath();
         boolean hasVFResource = false;
         ToscaResourceStructure toscaResourceStructure = new ToscaResourceStructure(msoConfigPath);
-        boolean deploySuccessful = true;
+        DistributionStatusEnum deployStatus = DistributionStatusEnum.DEPLOY_OK;
         String errorMessage = null;
         boolean serviceDeployed = false;
 
@@ -667,16 +711,21 @@ public class ASDCController {
             String filePath =
                     msoConfigPath + "/ASDC/" + iArtifact.getArtifactVersion() + "/" + iArtifact.getArtifactName();
             File csarFile = new File(filePath);
-            String csarFilePath = csarFile.getAbsolutePath();
+
+
+            if (isCsarAlreadyDeployed(iNotif, toscaResourceStructure)) {
+                return;
+            }
 
             for (IResourceInstance resource : iNotif.getResources()) {
 
                 String resourceType = resource.getResourceType();
-                String category = resource.getCategory();
+
 
                 logger.info("Processing Resource Type: {}, Model UUID: {}", resourceType, resource.getResourceUUID());
 
-                if ("VF".equals(resourceType)) {
+                if ("VF".equals(resourceType) && resource.getArtifacts() != null
+                        && !resource.getArtifacts().isEmpty()) {
                     resourceStructure = new VfResourceStructure(iNotif, resource);
                 } else if ("PNF".equals(resourceType)) {
                     resourceStructure = new PnfResourceStructure(iNotif, resource);
@@ -694,7 +743,8 @@ public class ASDCController {
                         logger.debug("Processing Resource Type: " + resourceType + " and Model UUID: "
                                 + resourceStructure.getResourceInstance().getResourceUUID());
 
-                        if ("VF".equals(resourceType)) {
+                        if ("VF".equals(resourceType) && resource.getArtifacts() != null
+                                && !resource.getArtifacts().isEmpty()) {
                             hasVFResource = true;
                             for (IArtifactInfo artifact : resource.getArtifacts()) {
                                 IDistributionClientDownloadResult resultArtifact =
@@ -730,7 +780,7 @@ public class ASDCController {
                     }
 
                 } catch (ArtifactInstallerException e) {
-                    deploySuccessful = false;
+                    deployStatus = DistributionStatusEnum.DEPLOY_ERROR;
                     errorMessage = e.getMessage();
                     logger.error("Exception occurred", e);
                 }
@@ -743,12 +793,12 @@ public class ASDCController {
                     try {
                         this.deployResourceStructure(resourceStructure, toscaResourceStructure);
                     } catch (ArtifactInstallerException e) {
-                        deploySuccessful = false;
+                        deployStatus = DistributionStatusEnum.DEPLOY_ERROR;
                         errorMessage = e.getMessage();
                         logger.error("Exception occurred", e);
                     }
                 }
-                this.sendCsarDeployNotification(iNotif, resourceStructure, toscaResourceStructure, deploySuccessful,
+                this.sendCsarDeployNotification(iNotif, resourceStructure, toscaResourceStructure, deployStatus,
                         errorMessage);
             }
 
