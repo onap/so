@@ -133,7 +133,7 @@ public class VnfmServiceProviderImpl implements VnfmServiceProvider {
     public void deleteVnf(final String vnfSelfLink) {
         logger.debug("Sending delete request to : " + vnfSelfLink);
         final ResponseEntity<Void> response = httpServiceProvider.deleteHttpRequest(vnfSelfLink, Void.class);
-        if (response.getStatusCode() != HttpStatus.OK) {
+        if (response.getStatusCode() != HttpStatus.NO_CONTENT) {
             throw new VnfmRequestFailureException(
                     "Delete request to " + vnfSelfLink + " return status code: " + response.getStatusCode());
         }
