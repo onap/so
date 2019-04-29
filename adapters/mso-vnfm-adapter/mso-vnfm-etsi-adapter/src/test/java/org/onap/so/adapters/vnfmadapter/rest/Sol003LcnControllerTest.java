@@ -49,6 +49,8 @@ import org.mockito.hamcrest.MockitoHamcrest;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.GenericVnfs;
 import org.onap.aai.domain.yang.Relationship;
+import org.onap.aai.domain.yang.RelationshipData;
+import org.onap.aai.domain.yang.RelationshipList;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.so.adapters.vnfmadapter.VnfmAdapterApplication;
 import org.onap.so.adapters.vnfmadapter.extclients.aai.AaiHelper;
@@ -221,7 +223,7 @@ public class Sol003LcnControllerTest {
                 .andRespond(withSuccess(gson.toJson(vnfInstance), MediaType.APPLICATION_JSON));
 
         mockRestServer.expect(requestTo(new URI("http://vnfm:8080/vnfs/myTestVnfIdOnVnfm")))
-                .andRespond(withStatus(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON));
+                .andRespond(withStatus(HttpStatus.NO_CONTENT).contentType(MediaType.APPLICATION_JSON));
 
         final GenericVnf genericVnf = createGenericVnf("vnfmType1");
         genericVnf.setSelflink("http://vnfm:8080/vnfs/myTestVnfIdOnVnfm");
@@ -229,6 +231,7 @@ public class Sol003LcnControllerTest {
         listOfGenericVnfs.add(genericVnf);
         final GenericVnfs genericVnfs = new GenericVnfs();
         genericVnfs.getGenericVnf().addAll(listOfGenericVnfs);
+        addRelationshipFromGenericVnfToVserver(genericVnf, "myVnfc1");
 
         doReturn(Optional.of(genericVnfs)).when(aaiResourcesClient).get(eq(GenericVnfs.class),
                 MockitoHamcrest.argThat(new AaiResourceUriMatcher(
@@ -318,6 +321,31 @@ public class Sol003LcnControllerTest {
         genericVnf.setVnfId("myTestVnfId");
         genericVnf.setNfType(type);
         return genericVnf;
+    }
+
+    private void addRelationshipFromGenericVnfToVserver(final GenericVnf genericVnf, final String vserverId) {
+        final Relationship relationshipToVserver = new Relationship();
+        relationshipToVserver.setRelatedTo("vserver");
+        final RelationshipData relationshipData1 = new RelationshipData();
+        relationshipData1.setRelationshipKey("vserver.vserver-id");
+        relationshipData1.setRelationshipValue(vserverId);
+        relationshipToVserver.getRelationshipData().add(relationshipData1);
+        final RelationshipData relationshipData2 = new RelationshipData();
+        relationshipData2.setRelationshipKey("cloud-region.cloud-owner");
+        relationshipData2.setRelationshipValue(CLOUD_OWNER);
+        relationshipToVserver.getRelationshipData().add(relationshipData2);
+        final RelationshipData relationshipData3 = new RelationshipData();
+        relationshipData3.setRelationshipKey("cloud-region.cloud-region-id");
+        relationshipData3.setRelationshipValue(REGION);
+        relationshipToVserver.getRelationshipData().add(relationshipData3);
+        final RelationshipData relationshipData4 = new RelationshipData();
+        relationshipData4.setRelationshipKey("tenant.tenant-id");
+        relationshipData4.setRelationshipValue(TENANT_ID);
+        relationshipToVserver.getRelationshipData().add(relationshipData4);
+
+        final RelationshipList relationshipList = new RelationshipList();
+        relationshipList.getRelationship().add(relationshipToVserver);
+        genericVnf.setRelationshipList(relationshipList);
     }
 
     private class AaiResourceUriMatcher extends BaseMatcher<AAIResourceUri> {

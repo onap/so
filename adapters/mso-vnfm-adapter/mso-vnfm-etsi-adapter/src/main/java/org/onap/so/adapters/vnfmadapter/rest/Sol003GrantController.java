@@ -97,7 +97,7 @@ public class Sol003GrantController {
         if (grantRequest.getOperation().equals(GrantRequest.OperationEnum.INSTANTIATE)) {
             grantResponse.addResources(getResources(grantRequest.getAddResources(), vimConnectionId));
         } else if (grantRequest.getOperation().equals(GrantRequest.OperationEnum.TERMINATE)) {
-            grantResponse.addResources(getResources(grantRequest.getRemoveResources(), vimConnectionId));
+            grantResponse.removeResources(getResources(grantRequest.getRemoveResources(), vimConnectionId));
         }
         return grantResponse;
     }

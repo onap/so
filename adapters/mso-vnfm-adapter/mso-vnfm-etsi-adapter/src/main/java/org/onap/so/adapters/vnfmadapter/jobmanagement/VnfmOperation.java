@@ -94,4 +94,11 @@ public class VnfmOperation {
         NOTIFICATION_PROCESSING_FAILED;
     }
 
+    @Override
+    public String toString() {
+        return "VnfmOperation [vnfmId=" + vnfmId + ", operationId=" + operationId + ", notificationStatus="
+                + notificationStatus + "]";
+    }
+
+
 }
