@@ -22,6 +22,7 @@ package org.onap.so.adapters.vnfmadapter.extclients.aai;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.aai.domain.yang.EsrSystemInfoList;
@@ -110,7 +111,7 @@ public class AaiHelper {
      */
     public String getIdOfAssignedVnfm(final GenericVnf vnf) {
         final Relationship relationship = getRelationship(vnf, "esr-vnfm");
-        return getRelationshipKey(relationship, "esr-vnfm.vnfm-id");
+        return getRelationshipData(relationship, "esr-vnfm.vnfm-id");
     }
 
     /**
@@ -121,9 +122,9 @@ public class AaiHelper {
      */
     public Tenant getAssignedTenant(final GenericVnf vnf) {
         final Relationship relationship = getRelationship(vnf, "tenant");
-        final String cloudOwner = getRelationshipKey(relationship, "cloud-region.cloud-owner");
-        final String cloudRegion = getRelationshipKey(relationship, "cloud-region.cloud-region-id");
-        final String tenantId = getRelationshipKey(relationship, "tenant.tenant-id");
+        final String cloudOwner = getRelationshipData(relationship, "cloud-region.cloud-owner");
+        final String cloudRegion = getRelationshipData(relationship, "cloud-region.cloud-region-id");
+        final String tenantId = getRelationshipData(relationship, "tenant.tenant-id");
         if (cloudOwner == null || cloudRegion == null || tenantId == null) {
             throw new TenantNotFoundException("No matching Tenant found in AAI. VNFID: " + vnf.getVnfId());
         } else {
@@ -141,12 +142,45 @@ public class AaiHelper {
         return null;
     }
 
-    private String getRelationshipKey(final Relationship relationship, final String relationshipKey) {
+    /**
+     * Get the value of the relationship data with the given key in the given relationship.
+     *
+     * @param relationship the relationship
+     * @param relationshipDataKey the key for the relationship data
+     * @return the value of the relationship data for the given key
+     */
+    public String getRelationshipData(final Relationship relationship, final String relationshipDataKey) {
         if (relationship != null) {
             for (final RelationshipData relationshipData : relationship.getRelationshipData()) {
-                if (relationshipData.getRelationshipKey().equals(relationshipKey)) {
+                if (relationshipData.getRelationshipKey().equals(relationshipDataKey)) {
                     return relationshipData.getRelationshipValue();
                 }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Delete from the given VNF the relationship matching the given criteria.
+     *
+     * @param vnf the VNF
+     * @param relationshipRelatedToValue the related-to value for the relationship
+     * @param dataKey the relationship data key to match on
+     * @param dataValue the value the relationship data with the given key must match
+     * @return the deleted relationship or <code>null</code> if none found matching the given criteria
+     */
+    public Relationship deleteRelationshipWithDataValue(final GenericVnf vnf, final String relationshipRelatedToValue,
+            final String dataKey, final String dataValue) {
+        final Iterator<Relationship> relationships =
+                vnf.getRelationshipList() == null ? Collections.<Relationship>emptyList().iterator()
+                        : vnf.getRelationshipList().getRelationship().iterator();
+
+        while (relationships.hasNext()) {
+            final Relationship relationship = relationships.next();
+            if (relationship.getRelatedTo().equals(relationshipRelatedToValue)
+                    && dataValue.equals(getRelationshipData(relationship, dataKey))) {
+                relationships.remove();
+                return relationship;
             }
         }
         return null;

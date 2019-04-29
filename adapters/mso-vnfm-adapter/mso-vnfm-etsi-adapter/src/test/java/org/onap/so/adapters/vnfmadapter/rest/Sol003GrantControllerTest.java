@@ -22,6 +22,7 @@ package org.onap.so.adapters.vnfmadapter.rest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
@@ -102,6 +103,7 @@ public class Sol003GrantControllerTest {
         final ResponseEntity<InlineResponse201> response = controller.grantsPost(grantRequest);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertEquals(1, response.getBody().getAddResources().size());
+        assertNull(response.getBody().getRemoveResources());
 
         assertEquals(vimConnectionId, response.getBody().getAddResources().get(0).getVimConnectionId());
         assertEquals("myTestVnfIdOnVnfm", response.getBody().getVnfInstanceId());
@@ -128,8 +130,9 @@ public class Sol003GrantControllerTest {
         final ResponseEntity<InlineResponse201> response = controller.grantsPost(grantRequest);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(1, response.getBody().getAddResources().size());
-        assertEquals(vimConnectionId, response.getBody().getAddResources().get(0).getVimConnectionId());
+        assertNull(response.getBody().getAddResources());
+        assertEquals(1, response.getBody().getRemoveResources().size());
+        assertEquals(vimConnectionId, response.getBody().getRemoveResources().get(0).getVimConnectionId());
         assertEquals("myTestVnfIdOnVnfm", response.getBody().getVnfInstanceId());
         assertEquals("123456", response.getBody().getVnfLcmOpOccId());
 

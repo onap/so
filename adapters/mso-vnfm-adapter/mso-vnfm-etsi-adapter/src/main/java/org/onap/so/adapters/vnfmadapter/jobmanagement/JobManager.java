@@ -20,8 +20,11 @@
 
 package org.onap.so.adapters.vnfmadapter.jobmanagement;
 
+import static org.slf4j.LoggerFactory.getLogger;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
+import java.util.Map;
+import java.util.UUID;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.VnfmServiceProvider;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.JobNotFoundException;
@@ -32,9 +35,6 @@ import org.onap.vnfmadapter.v1.model.QueryJobResponse;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import java.util.Map;
-import java.util.UUID;
-import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * Manages jobs enabling the status of jobs to be queried. A job is associated with an operation on a VNFM.
@@ -123,12 +123,15 @@ public class JobManager {
 
     public void notificationProcessedForOperation(final String operationId,
             final boolean notificationProcessingWasSuccessful) {
+        logger.debug("Notification processed for operation ID {} success?: {}", operationId,
+                notificationProcessingWasSuccessful);
         final java.util.Optional<VnfmOperation> relatedOperation = mapOfJobIdToVnfmOperation.values().stream()
                 .filter(operation -> operation.getOperationId().equals(operationId)).findFirst();
         if (relatedOperation.isPresent()) {
             relatedOperation.get().setNotificationProcessed(notificationProcessingWasSuccessful);
+        } else {
+            logger.debug("No operation found for operation ID " + operationId);
         }
-        logger.debug("No operation found for operation ID " + operationId);
     }
 
 }
