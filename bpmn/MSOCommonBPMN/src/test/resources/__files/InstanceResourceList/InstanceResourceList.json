@@ -1,0 +1,175 @@
+{
+  "service":{
+    "name":"SiteService",
+    "description":"SiteService",
+    "serviceInvariantUuid":"5c13f3fb-2744-4635-9f1f-c59c92dc8f70",
+    "serviceUuid":"3a76b1f5-fb0d-4b6b-82d5-0e8a4ebc3838",
+    "globalSubscriberId":"test_custormer",
+    "serviceType":"example-service-type",
+    "parameters":{
+      "locationConstraints":[
+
+      ],
+      "resources":[
+        {
+          "resourceIndex":"1",
+          "resourceName":"sdwanvpnresource",
+          "resourceInvariantUuid":"0c0e1cbe-6e01-4f9e-8c45-a9700ebc14df",
+          "resourceUuid":"4ad2d390-5c51-45f5-9710-b467a4ec7a73",
+          "resourceCustomizationUuid":"66590e07-0777-415c-af44-36347cf3ddd3",
+          "parameters":{
+            "locationConstraints":[
+
+            ],
+            "resources":[
+
+            ],
+            "requestInputs":{
+
+            }
+          }
+        },
+        {
+          "resourceIndex":"1",
+          "resourceName":"sdwansiteresource",
+          "resourceInvariantUuid":"97a3e552-08c4-4697-aeeb-d8d3e09ce58e",
+          "resourceUuid":"63d8e1af-32dc-4c71-891d-e3f7b6a976d2",
+          "resourceCustomizationUuid":"205456e7-3dc0-40c4-8cb0-28e6c1877042",
+          "parameters":{
+            "locationConstraints":[
+
+            ],
+            "resources":[
+
+            ],
+            "requestInputs":{
+
+            }
+          }
+        },
+        {
+          "resourceIndex":"2",
+          "resourceName":"sdwansiteresource",
+          "resourceInvariantUuid":"97a3e552-08c4-4697-aeeb-d8d3e09ce58e",
+          "resourceUuid":"63d8e1af-32dc-4c71-891d-e3f7b6a976d2",
+          "resourceCustomizationUuid":"205456e7-3dc0-40c4-8cb0-28e6c1877042",
+          "parameters":{
+            "locationConstraints":[
+
+            ],
+            "resources":[
+
+            ],
+            "requestInputs":{
+
+            }
+          }
+        }
+      ],
+      "requestInputs":{
+        "sdwanvpnresource_list":[
+          {
+            "sdwanvpn_topology":"hub_spoke",
+            "sdwanvpn_name":"defaultvpn",
+            "sdwansitelan_list":[
+              {
+                "role":"Hub",
+                "portType":"GE",
+                "portSwitch":"layer3-port",
+                "vlanId":"",
+                "ipAddress":"192.168.10.1",
+                "deviceName":"vCPE",
+                "portNumer":"0/0/1"
+              },
+              {
+                "role":"Hub",
+                "portType":"GE",
+                "portSwitch":"layer2-port",
+                "vlanId":"55",
+                "ipAddress":"192.168.11.1",
+                "deviceName":"CPE_Beijing",
+                "portNumer":"0/0/1"
+              }
+            ]
+          }
+        ],
+        "sdwansiteresource_list":[
+          {
+            "sdwansite_emails":"chenchuanyu@huawei.com",
+            "sdwansite_address":"Huawei Public Cloud",
+            "sdwansite_description":"DC Site",
+            "sdwansite_role":"dsvpn_hub",
+            "sdwansite_postcode":"20000",
+            "sdwansite_type":"single_gateway",
+            "sdwansite_latitude":"",
+            "sdwansite_controlPoint":"",
+            "sdwansite_longitude":"",
+            "sdwansitewan_list":[
+              {
+                "providerIpAddress":"",
+                "portType":"GE",
+                "inputBandwidth":"1000",
+                "ipAddress":"",
+                "name":"10000",
+                "transportNetworkName":"internet",
+                "outputBandwidth":"10000",
+                "deviceName":"vCPE",
+                "portNumber":"0/0/0",
+                "ipMode":"DHCP",
+                "publicIP":"119.3.7.113"
+              }
+            ],
+            "sdwandevice_list":[
+              {
+                "esn":"XXXXXXX",
+                "vendor":"Huawei",
+                "name":"vCPE",
+                "type":"AR1000V",
+                "version":"1.0",
+                "class":"VNF",
+                "systemIp":"20.20.20.1"
+              }
+            ]
+          },
+          {
+            "sdwansite_emails":"chenchuanyu@huawei.com",
+            "sdwansite_address":"Huawei Public Cloud",
+            "sdwansite_description":"DC Site",
+            "sdwansite_role":"dsvpn_hub",
+            "sdwansite_postcode":"20000",
+            "sdwansite_type":"single_gateway",
+            "sdwansite_latitude":"",
+            "sdwansite_controlPoint":"",
+            "sdwansite_longitude":"",
+            "sdwansitewan_list":[
+              {
+                "providerIpAddress":"",
+                "portType":"GE",
+                "inputBandwidth":"1000",
+                "ipAddress":"172.18.1.2/24",
+                "name":"10000",
+                "transportNetworkName":"internet",
+                "outputBandwidth":"10000",
+                "deviceName":"CPE_Beijing",
+                "portNumber":"0/0/0",
+                "ipMode":"Static",
+                "publicIP":""
+              }
+            ],
+            "sdwandevice_list":[
+              {
+                "esn":"XXXXXXX",
+                "vendor":"Huawei",
+                "name":"CPE_Beijing",
+                "type":"AR161",
+                "version":"1.0",
+                "class":"PNF",
+                "systemIp":"20.20.20.2"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
