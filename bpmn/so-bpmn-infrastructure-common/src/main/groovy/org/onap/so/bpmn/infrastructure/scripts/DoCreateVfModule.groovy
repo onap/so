@@ -270,11 +270,11 @@ public class DoCreateVfModule extends VfModuleBase {
 				Map<String,String> vfModuleInputParams = execution.getVariable("vfModuleInputParams")
 				if (oofDirectives != null && vfModuleInputParams != null) {
 					vfModuleInputParams.put("oof_directives", oofDirectives)
-					vfModuleInputParams.put("sdnc_directives", "{}")
+					//vfModuleInputParams.put("sdnc_directives", "{}")
 					logger.debug("OofDirectives are: " + oofDirectives)
 				} else if (vfModuleInputParams != null) {
 					vfModuleInputParams.put("oof_directives", "{}")
-					vfModuleInputParams.put("sdnc_directives", "{}")
+					//vfModuleInputParams.put("sdnc_directives", "{}")
 				}
 				if (vfModuleInputParams != null) {
 					execution.setVariable("DCVFM_vnfParamsMap", vfModuleInputParams)

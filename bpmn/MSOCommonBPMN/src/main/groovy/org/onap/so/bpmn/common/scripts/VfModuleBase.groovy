@@ -459,14 +459,18 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 				paramsMap.put("${key}_names", "${values}")
 			}
 		}
-	//SDNC Response Params
+	//SDNC Response Params - also build sdnc_directives
 		String sdncResponseParams = ""
+        String sdncDirectives = "{}"
 		List<String> sdncResponseParamsToSkip = ["vnf_id", "vf_module_id", "vnf_name", "vf_module_name"]
 		String vnfParamsChildNodes = utils.getChildNodes(data, "vnf-parameters")
 		if(vnfParamsChildNodes == null || vnfParamsChildNodes.length() < 1){
 			// No SDNC params
 		}else{
 			NodeList paramsList = responseXml.getElementsByTagNameNS("*", "vnf-parameters")
+		    StringBuilder sdncDirectivesBuilder = new StringBuilder()
+            sdncDirectivesBuilder.append("{ \"attributes\": [")
+            int pcnt = 0
 			for (int z = 0; z < paramsList.getLength(); z++) {
 				Node node = paramsList.item(z)
 				Element eElement = (Element) node
@@ -474,18 +478,43 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 				if (!sdncResponseParamsToSkip.contains(vnfParameterName)) {
 					String vnfParameterValue = utils.getElementText(eElement, "vnf-parameter-value")
 					paramsMap.put("${vnfParameterName}", "${vnfParameterValue}")
+                    if (pcnt > 0) {
+                        sdncDirectivesBuilder.append(",")
+                    }
+                    pcnt++
+                    sdncDirectivesBuilder.append("{\"attribute_name\":\"${vnfParameterName}\",")
+                    sdncDirectivesBuilder.append("\"attribute_value\":\"${vnfParameterValue}\"}")
 				}
 			}
+            if (pcnt > 0) {
+               sdncDirectives = sdncDirectivesBuilder.append("]}")
+            }
 		}
+        paramsMap.put("sdnc_directives", "${sdncDirectives}")
 		
 		// Parameters received from the request should overwrite any parameters received from SDNC
+        // Also build the user_directives paramter
+        String userDirectives = "{}"
 		if (vnfParamsMap != null) {
+		    StringBuilder userDirectivesBuilder = new StringBuilder()
+            userDirectivesBuilder.append("{ \"attributes\": [")
+            int pcnt = 0
 			for (Map.Entry<String, String> entry : vnfParamsMap.entrySet()) {
 				String vnfKey = entry.getKey()
 				String vnfValue = entry.getValue()
 				paramsMap.put("$vnfKey", "$vnfValue")
+                if (pcnt > 0) {
+                    userDirectivesBuilder.append(",")
+                }
+                pcnt++
+                userDirectivesBuilder.append("{\"attribute_name\":\"${vnfKey}\",")
+                userDirectivesBuilder.append("\"attribute_value\":\"${vnfValue}\"}")
 			}
+            if (pcnt > 0) {
+               userDirectives = userDirectivesBuilder.append("]}")
+            }
 		}
+        paramsMap.put("user_directives", "${userDirectives}")
 		
 		StringBuilder sbParams = new StringBuilder()
 		def vfModuleParams = ""
@@ -542,6 +571,13 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 					paramsMap.put("environment_context","${environmentContext}")		
 					paramsMap.put("workload_context", "${workloadContext}")			
 					
+
+                    // build the sdnc_directives parameter
+                    String sdncDirectives = "{}"
+                    StringBuilder sdncDirectivesBuilder = new StringBuilder()
+                    sdncDirectivesBuilder.append("{ \"attributes\": [")
+                    int directivecnt = 0
+
 					//Get SDNC Response Data for VNF
 					
 					String vnfData = utils.getNodeXml(vnfSdncGetResponse, "response-data")
@@ -567,6 +603,12 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 							String aZoneValue = utils.getElementText(eElement, "availability-zone")
 							aZonePosition = z.toString()
 							paramsMap.put("availability_zone_${aZonePosition}", "${aZoneValue}")
+                            if (directivecnt > 0) {
+                                sdncDirectivesBuild.append(",")
+                            }
+                            directivecnt++
+                            sdncDirectivesBuilder.append("{\"attribute_name\":\"availability_zone_${aZonePosition}\",")
+                            sdncDirectivesBuilder.append("\"attribute_value\":\"${aZoneValue}\"}")
 						}
 					}
 		
@@ -629,6 +671,21 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 							paramsMap.put("${vnfNetworkKey}_subnet_id", "${vnfNetworkSubNetIdValue}")
 							paramsMap.put("${vnfNetworkKey}_v6_subnet_id", "${vnfNetworkV6SubNetIdValue}")
 							paramsMap.put("${vnfNetworkKey}_net_fqdn", "${vnfNetworkNetFqdnValue}")
+
+                            if (directivecnt > 0) {
+                                sdncDirectivesBuild.append(",")
+                            }
+                            directivecnt = directivecnt + 5
+                            sdncDirectivesBuilder.append("{\"attribute_name\":\"${vnfNetworkKey}_net_id\",")
+                            sdncDirectivesBuilder.append("\"attribute_value\":\"${vnfNetworkNeutronIdValue}\"},")
+                            sdncDirectivesBuilder.append("{\"attribute_name\":\"${vnfNetworkKey}_net_name\",")
+                            sdncDirectivesBuilder.append("\"attribute_value\":\"${vnfNetworkNetNameValue}\"},")
+                            sdncDirectivesBuilder.append("{\"attribute_name\":\"${vnfNetworkKey}_subnet_id\",")
+                            sdncDirectivesBuilder.append("\"attribute_value\":\"${vnfNetworkSubNetIdValue}\"},")
+                            sdncDirectivesBuilder.append("{\"attribute_name\":\"${vnfNetworkKey}_v6_subnet_id\",")
+                            sdncDirectivesBuilder.append("\"attribute_value\":\"${vnfNetworkV6SubNetIdValue}\"},")
+                            sdncDirectivesBuilder.append("{\"attribute_name\":\"${vnfNetworkKey}_net_fqdn\",")
+                            sdncDirectivesBuilder.append("\"attribute_value\":\"${vnfNetworkNetFqdnValue}\"}")
 							
 							NodeList sriovVlanFilterList = eElement.getElementsByTagNameNS("*","sriov-vlan-filter-list")
 							StringBuffer sriovFilterBuf = new StringBuffer()
@@ -648,6 +705,12 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 							}
 							if (!values.isEmpty()) {
 									paramsMap.put("${vnfNetworkKey}_ATT_VF_VLAN_FILTER", "${values}")
+                                    if (directivecnt > 0) {
+                                        sdncDirectivesBuild.append(",")
+                                    }
+                                    directivecnt++
+                                    sdncDirectivesBuilder.append("{\"attribute_name\":\"${vnfNetworkKey}_ATT_VF_VLAN_FILTER\",")
+                                    sdncDirectivesBuilder.append("\"attribute_value\":\"${values}\"}")
 								}
 							}
 					}
@@ -690,6 +753,12 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 									}
 									position = i.toString()
 									paramsMap.put("${key}_name_${position}", "${value}")
+                                    if (directivecnt > 0) {
+                                        sdncDirectivesBuild.append(",")
+                                    }
+                                    directivecnt++
+                                    sdncDirectivesBuilder.append("{\"attribute_name\":\"${key}_name_${position}\",")
+                                    sdncDirectivesBuilder.append("\"attribute_value\":\"${values}\"}")
 								}
 							}
 							for(int n = 0; n < vmNetworksList.getLength(); n++){
@@ -712,11 +781,23 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 									floatingIPKeyValue = utils.getElementText(eElementNetworkKey, "floating-ip")
 									if(!floatingIPKeyValue.isEmpty()){
 										paramsMap.put("$floatingIPKey", "$floatingIPKeyValue")
+                                        if (directivecnt > 0) {
+                                            sdncDirectivesBuild.append(",")
+                                        }
+                                        directivecnt++
+                                        sdncDirectivesBuilder.append("{\"attribute_name\":\"${floatingIPKey}\",")
+                                        sdncDirectivesBuilder.append("\"attribute_value\":\"${floatingIPKeyValue}\"}")
 									}
 									floatingIPV6Key = key + '_' + networkKey + '_floating_v6_ip'
 									floatingIPV6KeyValue = utils.getElementText(eElementNetworkKey, "floating-ip-v6")
 									if(!floatingIPV6KeyValue.isEmpty()){
 										paramsMap.put("$floatingIPV6Key", "$floatingIPV6KeyValue")
+                                        if (directivecnt > 0) {
+                                            sdncDirectivesBuild.append(",")
+                                        }
+                                        directivecnt++
+                                        sdncDirectivesBuilder.append("{\"attribute_name\":\"${floatingIPV6Key}\",")
+                                        sdncDirectivesBuilder.append("\"attribute_value\":\"${floatingIPV6KeyValue}\"}")
 									}
 									NodeList networkIpsList = eElementNetworkKey.getElementsByTagNameNS("*","network-ips")
 									for(int a = 0; a < networkIpsList.getLength(); a++){
@@ -732,10 +813,22 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 											}
 											networkPosition = a.toString()
 											paramsMap.put("${key}_${networkKey}_ip_${networkPosition}", "${ipAddressValue}")
+                                            if (directivecnt > 0) {
+                                                sdncDirectivesBuild.append(",")
+                                            }
+                                            directivecnt++
+                                            sdncDirectivesBuilder.append("{\"attribute_name\":\"${key}_${networkKey}_ip_${networkPosition}\",")
+                                            sdncDirectivesBuilder.append("\"attribute_value\":\"${ipAddressValue}\"}")
 										}
 									}
 									
 									paramsMap.put("${key}_${networkKey}_ips", "${ipAddressValues}")
+                                    if (directivecnt > 0) {
+                                        sdncDirectivesBuild.append(",")
+                                    }
+                                    directivecnt++
+                                    sdncDirectivesBuilder.append("{\"attribute_name\":\"${key}_${networkKey}_ips\",")
+                                    sdncDirectivesBuilder.append("\"attribute_value\":\"${ipAddressValues}\"}")
 									
 									NodeList interfaceRoutePrefixesList = eElementNetworkKey.getElementsByTagNameNS("*","interface-route-prefixes")
 									String interfaceRoutePrefixValues = sb3.append("[")
@@ -759,6 +852,12 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 									interfaceRoutePrefixValues = sb3.append("]")
 									if (interfaceRoutePrefixesList.getLength() > 0) {
 										paramsMap.put("${key}_${networkKey}_route_prefixes", "${interfaceRoutePrefixValues}")
+                                        if (directivecnt > 0) {
+                                            sdncDirectivesBuild.append(",")
+                                        }
+                                        directivecnt++
+                                        sdncDirectivesBuilder.append("{\"attribute_name\":\"${key}_${networkKey}_route_prefixes\",")
+                                        sdncDirectivesBuilder.append("\"attribute_value\":\"${interfaceRoutePrefixValues}\"}")
 									}
 									
 									NodeList networkIpsV6List = eElementNetworkKey.getElementsByTagNameNS("*","network-ips-v6")
@@ -775,12 +874,30 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 											}
 											networkPosition = a.toString()
 											paramsMap.put("${key}_${networkKey}_v6_ip_${networkPosition}", "${ipV6AddressValue}")
+                                            if (directivecnt > 0) {
+                                                sdncDirectivesBuild.append(",")
+                                            }
+                                            directivecnt++
+                                            sdncDirectivesBuilder.append("{\"attribute_name\":\"${key}_${networkKey}_v6_ip_${networkPosition}\",")
+                                            sdncDirectivesBuilder.append("\"attribute_value\":\"${ipV6AddressValue}\"}")
 										}
 									}
 									paramsMap.put("${key}_${networkKey}_v6_ips", "${ipV6AddressValues}")
+                                    if (directivecnt > 0) {
+                                        sdncDirectivesBuild.append(",")
+                                    }
+                                    directivecnt++
+                                    sdncDirectivesBuilder.append("{\"attribute_name\":\"${key}_${networkKey}_v6_ips\",")
+                                    sdncDirectivesBuilder.append("\"attribute_value\":\"${ipV6AddressValues}\"}")
 								}
 							}
 							paramsMap.put("${key}_names", "${values}")
+                            if (directivecnt > 0) {
+                                sdncDirectivesBuild.append(",")
+                            }
+                            directivecnt++
+                            sdncDirectivesBuilder.append("{\"attribute_name\":\"${key}_names\",")
+                            sdncDirectivesBuilder.append("\"attribute_value\":\"${values}\"}")
 						}
 					}
 				//SDNC Response Params
@@ -798,6 +915,12 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 							if (!sdncResponseParamsToSkip.contains(vnfParameterName)) {
 								String vnfParameterValue = utils.getElementText(eElement, "value")
 								paramsMap.put("${vnfParameterName}", "${vnfParameterValue}")
+                                if (directivecnt > 0) {
+                                    sdncDirectivesBuild.append(",")
+                                }
+                                directivecnt++
+                                sdncDirectivesBuilder.append("{\"attribute_name\":\"${vnfParameterName}\",")
+                                sdncDirectivesBuilder.append("\"attribute_value\":\"${vnfParameterValue}\"}")
 							}
 						}
 					}
@@ -814,18 +937,43 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 							if (!sdncResponseParamsToSkip.contains(vnfParameterName)) {
 								String vnfParameterValue = utils.getElementText(eElement, "value")
 								paramsMap.put("${vnfParameterName}", "${vnfParameterValue}")
+                                if (directivecnt > 0) {
+                                    sdncDirectivesBuild.append(",")
+                                }
+                                directivecnt++
+                                sdncDirectivesBuilder.append("{\"attribute_name\":\"${vnfParameterName}\",")
+                                sdncDirectivesBuilder.append("\"attribute_value\":\"${vnfParameterValue}\"}")
 							}
 						}
 					}
+
+                    if (directivecnt > 0) {
+                       sdncDirectives = sdncDirectivesBuilder.append("]}")
+                    }
+                    paramsMap.put("sdnc_directives", "${sdncDirectives}")
 					
 				// Parameters received from the request should overwrite any parameters received from SDNC
+                String userDirectives = "{}"
 				if (vnfParamsMap != null) {
+                    StringBuilder userDirectivesBuilder = new StringBuilder()
+                    userDirectivesBuilder.append("{ \"attributes\": [")
+                    int pcnt = 0
 					for (Map.Entry<String, String> entry : vnfParamsMap.entrySet()) {
 						String vnfKey = entry.getKey()
 						String vnfValue = entry.getValue()
 						paramsMap.put("$vnfKey", "$vnfValue")
+                        if (pcnt > 0) {
+                            userDirectivesBuilder.append(",")
+                        }
+                        pcnt++
+                        userDirectivesBuilder.append("{\"attribute_name\":\"${vnfKey}\",")
+                        userDirectivesBuilder.append("\"attribute_value\":\"${vnfValue}\"}")
 					}
+                    if (pcnt > 0) {
+                       userDirectives = userDirectivesBuilder.append("]}")
+                    }
 				}
+                paramsMap.put("user_directives", "${userDirectives}")
 				
 				StringBuilder sbParams = new StringBuilder()
 				def vfModuleParams = ""
