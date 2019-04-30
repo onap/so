@@ -94,6 +94,29 @@
     },
     {
       "key": {
+        "uuid": "5f302e05_5ff052bc",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 3987
+      },
+      "writtenOn": "2019-04-30T11:02:07Z",
+      "side": 1,
+      "message": "I do not understand, why DMaaP Client is writing data to the AAI at this point, and more than that, the Service Instance data (and not really a PNF object - which is managed here).\nThis looks like a quick fix, and not a future proof implementation.\n\nGenerally, the DMaaP Client shall be used here to receive the PNFReady notifcation, and forward it to Camunda BPMN engine only. We shall not apply any processing more complex, than a schema check here.\n\nAs PNFReady might contain in the future additionalFields, which would be specific to the domain (different for BBS, different for 5G, different for ...), it makes sense to process those fields in a dedicated BPMN BB or BPMN task, instead of plugging the domain specific functionality to a module, which is expected to transfer the notifications to Camunda.\n\nThus, I would propose to refactor this functionality in the direction of a dedicated SO BB, or a SO task, while keeping the DMaaP Client functionality generic for all use-cases.",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 44
+      },
+      "revId": "73b63fce2c7ba9aaeca0e54a1a9f027dca5e13bd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c5269e6c_d790d0f0",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClient.java",
         "patchSetId": 2
