@@ -158,7 +158,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
                     sdncDirectives = (String) stackInputs.get(key);
                 }
                 if (key == USER_DIRECTIVES) {
-                    sdncDirectives = (String) stackInputs.get(key);
+                    userDirectives = (String) stackInputs.get(key);
                 }
                 if (key == TEMPLATE_TYPE) {
                     templateType = (String) stackInputs.get(key);
