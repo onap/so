@@ -35,6 +35,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.hibernate.StaleObjectStateException;
 import org.hibernate.exception.ConstraintViolationException;
@@ -48,14 +50,7 @@ import org.onap.sdc.tosca.parser.elements.queries.EntityQuery;
 import org.onap.sdc.tosca.parser.elements.queries.TopologyTemplateQuery;
 import org.onap.sdc.tosca.parser.enums.SdcTypes;
 import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
-import org.onap.sdc.toscaparser.api.CapabilityAssignment;
-import org.onap.sdc.toscaparser.api.CapabilityAssignments;
-import org.onap.sdc.toscaparser.api.Group;
-import org.onap.sdc.toscaparser.api.NodeTemplate;
-import org.onap.sdc.toscaparser.api.Policy;
-import org.onap.sdc.toscaparser.api.Property;
-import org.onap.sdc.toscaparser.api.RequirementAssignment;
-import org.onap.sdc.toscaparser.api.RequirementAssignments;
+import org.onap.sdc.toscaparser.api.*;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.onap.sdc.toscaparser.api.functions.GetInput;
 import org.onap.sdc.toscaparser.api.parameters.Input;
@@ -528,27 +523,35 @@ public class ToscaResourceInstaller {
         logger.debug(" resourceSeq for service uuid(" + service.getModelUUID() + ") : " + resourceSeqStr);
     }
 
-    private static String getValue(Object value, List<Input> servInputs) {
-        String output = null;
+
+    // this of temporary solution
+    private static String getValue(Object value, List<Input> inputs) {
+        String outInput;
+        String defaultValue = null;
         if (value instanceof Map) {
-            // currently this logic handles only one level of nesting.
-            return ((LinkedHashMap) value).values().toArray()[0].toString();
+            outInput = ((LinkedHashMap) value).values().toArray()[0].toString();
         } else if (value instanceof GetInput) {
             String inputName = ((GetInput) value).getInputName();
-
-            for (Input input : servInputs) {
-                if (input.getName().equals(inputName)) {
-                    // keep both input name and default value
-                    // if service input does not supplies value the use default value
-                    String defaultValue = input.getDefault() != null ? (String) input.getDefault().toString() : "";
-                    output = inputName + "|" + defaultValue;// return default value
-                }
+            Optional<Input> inputOptional =
+                    inputs.stream().filter(input -> input.getName().equals(inputName)).findFirst();
+            if (inputOptional.isPresent()) {
+                Input input = inputOptional.get();
+                defaultValue = input.getDefault() != null ? input.getDefault().toString() : "";
             }
-
+            String valueStr = value.toString();
+            String regex = "(?<=\\[).*?(?=\\])";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(valueStr);
+            if (matcher.find()) {
+                valueStr = matcher.group();
+            } else {
+                valueStr = inputName;
+            }
+            outInput = valueStr + "|" + defaultValue;
         } else {
-            output = value != null ? value.toString() : "";
+            outInput = value != null ? value.toString() : "";
         }
-        return output; // return property value
+        return outInput;
     }
 
     String getResourceInput(ToscaResourceStructure toscaResourceStructure, String resourceCustomizationUuid)
@@ -1791,13 +1794,16 @@ public class ToscaResourceInstaller {
         vfcInstanceGroupCustom.setFunction(toscaResourceStructure.getSdcCsarHelper()
                 .getNodeTemplatePropertyLeafValue(vnfcNodeTemplate, getInputName));
         vfcInstanceGroupCustom.setInstanceGroup(vfcInstanceGroup);
-        createVFCInstanceGroupMembers(vfcInstanceGroupCustom, group);
+
+        ArrayList<Input> inputs = vnfcNodeTemplate.getSubMappingToscaTemplate().getInputs();
+        createVFCInstanceGroupMembers(vfcInstanceGroupCustom, group, inputs);
 
         return vfcInstanceGroupCustom;
 
     }
 
-    private void createVFCInstanceGroupMembers(VnfcInstanceGroupCustomization vfcInstanceGroupCustom, Group group) {
+    private void createVFCInstanceGroupMembers(VnfcInstanceGroupCustomization vfcInstanceGroupCustom, Group group,
+            List<Input> inputList) {
         List<NodeTemplate> members = group.getMemberNodes();
         if (!CollectionUtils.isEmpty(members)) {
             for (NodeTemplate vfcTemplate : members) {
@@ -1815,11 +1821,31 @@ public class ToscaResourceInstaller {
                 vnfcCustomization.setToscaNodeType(testNull(vfcTemplate.getType()));
                 vnfcCustomization
                         .setDescription(testNull(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION)));
-
-                // @After vfcInstanceGroupCustom merged
-                // vfcInstanceGroupCustom.getVnfcCustomizations().add(vnfcCustomization);
+                vnfcCustomization.setResourceInput(getVnfcResourceInput(vfcTemplate, inputList));
+                vfcInstanceGroupCustom.getVnfcCustomizations().add(vnfcCustomization);
             }
         }
+    }
+
+    public String getVnfcResourceInput(NodeTemplate vfcTemplate, List<Input> inputList) {
+        Map<String, String> resouceRequest = new HashMap<>();
+        LinkedHashMap<String, Property> vfcTemplateProperties = vfcTemplate.getProperties();
+        for (String key : vfcTemplateProperties.keySet()) {
+            Property property = vfcTemplateProperties.get(key);
+            String resourceValue = getValue(property.getValue(), inputList);
+            resouceRequest.put(key, resourceValue);
+        }
+
+        String jsonStr = null;
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            jsonStr = objectMapper.writeValueAsString(resouceRequest);
+            jsonStr = jsonStr.replace("\"", "\\\"");
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        return jsonStr;
     }
 
     protected VfModuleCustomization createVFModuleResource(Group group, NodeTemplate vfTemplate,
