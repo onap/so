@@ -1,0 +1,349 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a1e74cc_502d8b19",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreateAndActivatePnfResourceTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2019-04-30T09:28:22Z",
+      "side": 1,
+      "message": "Avoid inlined jsons - they are very unreadable. Can be moved to separate file. Model name is the same in all test so it can be just inlined there.",
+      "range": {
+        "startLine": 103,
+        "startChar": 0,
+        "endLine": 122,
+        "endChar": 22
+      },
+      "revId": "73b63fce2c7ba9aaeca0e54a1a9f027dca5e13bd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "37311f67_0bff572e",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/InformDmaapClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2019-04-30T09:28:22Z",
+      "side": 1,
+      "message": "Why is this stored in map if there are always the same values stored there? Why not just use object with those three fields? You could even add checks to ensure these values are not null there and avoid nullcheking later.",
+      "range": {
+        "startLine": 59,
+        "startChar": 0,
+        "endLine": 68,
+        "endChar": 19
+      },
+      "revId": "73b63fce2c7ba9aaeca0e54a1a9f027dca5e13bd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "51b96f94_bf7890ad",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/DmaapClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2019-04-30T09:28:22Z",
+      "side": 1,
+      "message": "Optional shouldn\u0027t be a parameter to function - that means there are two different things this function does depending on parameters. There should be two different functions in this case.\n\nAlso why would you care if it\u0027s HashMap, but not some other Map implementation?\n\nAlso - what\u0027s \"updateInfo\"? Name and type of this parameter tells me nothing about what should be there.",
+      "range": {
+        "startLine": 29,
+        "startChar": 12,
+        "endLine": 29,
+        "endChar": 56
+      },
+      "revId": "73b63fce2c7ba9aaeca0e54a1a9f027dca5e13bd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bbe624db_d84db1c3",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2019-04-30T09:28:22Z",
+      "side": 1,
+      "message": "Wildcard imports aren\u0027t allowed by codestyle.",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 18
+      },
+      "revId": "73b63fce2c7ba9aaeca0e54a1a9f027dca5e13bd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c5269e6c_d790d0f0",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2019-04-30T09:28:22Z",
+      "side": 1,
+      "message": "Why is updateInfoMap a list? Name is suggesting it should be a map.\n\nAlso value of updateInfoMap reference is never updated - there is no reason for it to be volatile.",
+      "range": {
+        "startLine": 58,
+        "startChar": 4,
+        "endLine": 58,
+        "endChar": 63
+      },
+      "revId": "73b63fce2c7ba9aaeca0e54a1a9f027dca5e13bd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fe04b532_69e75e24",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2019-04-30T09:28:22Z",
+      "side": 1,
+      "message": "Why is this an optional when every time this method is used there is a value? This function will even throw an exception when empty optional is passed (see my next comment)",
+      "range": {
+        "startLine": 76,
+        "startChar": 12,
+        "endLine": 76,
+        "endChar": 56
+      },
+      "revId": "73b63fce2c7ba9aaeca0e54a1a9f027dca5e13bd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cca49686_dbf53269",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2019-04-30T09:28:22Z",
+      "side": 1,
+      "message": "get() will throw exception if there is no value",
+      "range": {
+        "startLine": 78,
+        "startChar": 38,
+        "endLine": 78,
+        "endChar": 55
+      },
+      "revId": "73b63fce2c7ba9aaeca0e54a1a9f027dca5e13bd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c5c68b1e_fb7907bd",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2019-04-30T09:28:22Z",
+      "side": 1,
+      "message": "map will never be null",
+      "range": {
+        "startLine": 79,
+        "startChar": 12,
+        "endLine": 79,
+        "endChar": 23
+      },
+      "revId": "73b63fce2c7ba9aaeca0e54a1a9f027dca5e13bd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8d89e314_f99c470e",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2019-04-30T09:28:22Z",
+      "side": 1,
+      "message": "Why not just use thread-safe container?",
+      "range": {
+        "startLine": 80,
+        "startChar": 12,
+        "endLine": 80,
+        "endChar": 24
+      },
+      "revId": "73b63fce2c7ba9aaeca0e54a1a9f027dca5e13bd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bad6ca0f_00889a89",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2019-04-30T09:28:22Z",
+      "side": 1,
+      "message": "Remove in ArrayList works in linear time.",
+      "range": {
+        "startLine": 101,
+        "startChar": 16,
+        "endLine": 101,
+        "endChar": 40
+      },
+      "revId": "73b63fce2c7ba9aaeca0e54a1a9f027dca5e13bd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "06b664c9_e31e308b",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2019-04-30T09:28:22Z",
+      "side": 1,
+      "message": "Why do you iterate through list every time instead of using a map with \"pnfCorrelationId\" key?",
+      "range": {
+        "startLine": 95,
+        "startChar": 0,
+        "endLine": 103,
+        "endChar": 9
+      },
+      "revId": "73b63fce2c7ba9aaeca0e54a1a9f027dca5e13bd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b52b98bf_2c6a0aee",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2019-04-30T09:28:22Z",
+      "side": 1,
+      "message": "Why is dmaap client sending anything to AAI? It shouldn\u0027t care about it at all - all it\u0027s doing is connecting to DMAAP, This is violation of single responsibility principle.",
+      "range": {
+        "startLine": 193,
+        "startChar": 0,
+        "endLine": 196,
+        "endChar": 41
+      },
+      "revId": "73b63fce2c7ba9aaeca0e54a1a9f027dca5e13bd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "eb4d5d46_7c603972",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2019-04-30T09:28:22Z",
+      "side": 1,
+      "message": "This is very defensive programming - almost all of the code is checking for nulls. This makes code unreadable.\n\nAlso there is no log or thrown exception when searching for correct values fails.",
+      "range": {
+        "startLine": 169,
+        "startChar": 0,
+        "endLine": 197,
+        "endChar": 9
+      },
+      "revId": "73b63fce2c7ba9aaeca0e54a1a9f027dca5e13bd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "70626c61_bd761753",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CancelDmaapSubscriptionTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2019-04-30T09:28:22Z",
+      "side": 1,
+      "message": "Why are you passing null to Optional parameter? The reason for using Optionals is to avoid nulls.",
+      "range": {
+        "startLine": 45,
+        "startChar": 9,
+        "endLine": 45,
+        "endChar": 15
+      },
+      "revId": "73b63fce2c7ba9aaeca0e54a1a9f027dca5e13bd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ee60d655_41e94625",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/InformDmaapClientTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2019-04-30T09:28:22Z",
+      "side": 1,
+      "message": "Why is this json inlined? It makes it very unreadable. It should be in seperate file.",
+      "range": {
+        "startLine": 81,
+        "startChar": 0,
+        "endLine": 100,
+        "endChar": 22
+      },
+      "revId": "73b63fce2c7ba9aaeca0e54a1a9f027dca5e13bd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
