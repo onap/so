@@ -19,116 +19,111 @@
  */
 package org.onap.so.bpmn.common.resource;
 
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.onap.so.bpmn.core.domain.GroupResource;
 import org.onap.so.bpmn.core.domain.Resource;
 import org.onap.so.bpmn.core.domain.ResourceType;
+import org.onap.so.bpmn.core.domain.VnfResource;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class InstanceResourceList {
 
-    private static List<Map<String, List<GroupResource>>> convertUUIReqTOStd(final String uuiRequest,
+    private static Map<String, List<List<GroupResource>>> convertUUIReqTOStd(final JsonObject reqInputJsonObj,
             List<Resource> seqResourceList) {
 
-        List<Map<String, List<GroupResource>>> normalizedList = new ArrayList<>();
+        Map<String, List<List<GroupResource>>> normalizedRequest = new HashMap<>();
+        for (Resource r : seqResourceList) {
 
-        Gson gson = new Gson();
-        JsonObject servJsonObject = gson.fromJson(uuiRequest, JsonObject.class);
+            if (r.getResourceType() == ResourceType.VNF) {
+                String pk = getPrimaryKey(r);
 
-        JsonObject reqInputJsonObj = servJsonObject.getAsJsonObject("service").getAsJsonObject("parameters")
-                .getAsJsonObject("requestInputs");
+                JsonElement vfNode = reqInputJsonObj.get(pk);
 
-        // iterate all node in requestInputs
-        Iterator<Map.Entry<String, JsonElement>> iterator = reqInputJsonObj.entrySet().iterator();
+                // if the service property is type of array then it
+                // means it is a VF resource
+                if (vfNode instanceof JsonArray) {
+                    normalizedRequest.put(pk, new ArrayList<>());
+                }
 
-        while (iterator.hasNext()) { // iterate all <vf>_list
-            Map.Entry<String, JsonElement> entry = iterator.next();
+            } else if (r.getResourceType() == ResourceType.GROUP) {
+                String sk = getPrimaryKey(r);
 
-            // truncate "_list" from key and keep only the <VF_NAME>
-            String key = entry.getKey().substring(0, entry.getKey().indexOf("_list"));
+                for (String pk : normalizedRequest.keySet()) {
+                    JsonArray vfs = reqInputJsonObj.getAsJsonArray(pk);
 
-            // all the element represent VF will contain "<VF_NAME>_list".
-            if (key.contains("_list")) {
-                // this will return list of vf of same type
-                // e.g. vf_list [{vf1}, {vf2}]
-                Iterator<JsonElement> vfsIterator = entry.getValue().getAsJsonArray().iterator();
+                    for (int i = 0; i < vfs.size(); i++) {
 
-                while (vfsIterator.hasNext()) { // iterate all [] inside vf_list
-                    JsonObject vfObject = vfsIterator.next().getAsJsonObject();
-                    List<GroupResource> tmpGrpsHolder = new ArrayList<>();
+                        JsonElement vfcsNode = vfs.get(i).getAsJsonObject().get(sk);
+                        if (vfcsNode instanceof JsonArray) {
 
-                    // iterate vfObject to get groups(vfc)
-                    // currently each vfc represented by one group.
-                    Iterator<Map.Entry<String, JsonElement>> vfIterator = vfObject.entrySet().iterator();
-                    while (vfIterator.hasNext()) { // iterate all property inside a VF
-                        Map.Entry<String, JsonElement> vfEntry = vfIterator.next();
+                            List<GroupResource> groupResources = normalizedRequest.get(pk).get(i);
 
-                        // property name for vfc input will always carry "<VFC_NAME>_list"
-                        if (vfEntry.getKey().contains("_list")) {
-                            // truncate "_list" from key and keep only the <VFC_NAME>
-                            String vfcName = vfEntry.getKey().substring(0, vfEntry.getKey().indexOf("_list"));
-                            GroupResource grpRes = getGroupResource(vfcName, seqResourceList);
-                            // A <vfc>_list can contain more than one vfc of same type
-                            Iterator<JsonElement> vfcsIterator = vfEntry.getValue().getAsJsonArray().iterator();
+                            if (groupResources == null) {
+                                groupResources = new ArrayList<>();
+                                normalizedRequest.get(pk).add(i, groupResources);
+                            }
 
-                            while (vfcsIterator.hasNext()) { // iterate all the vfcs inside <vfc>_list
-                                tmpGrpsHolder.add(grpRes);
+                            for (int j = 0; j < ((JsonArray) vfcsNode).size(); j++) {
+                                groupResources.add((GroupResource) r);
                             }
                         }
                     }
-                    List<GroupResource> seqGrpResourceList = seqGrpResource(tmpGrpsHolder, seqResourceList);
-                    HashMap<String, List<GroupResource>> entryNormList = new HashMap<>();
-                    entryNormList.put(key, seqGrpResourceList);
-                    normalizedList.add(entryNormList);
                 }
             }
         }
-
-        return normalizedList;
+        return normalizedRequest;
     }
 
-    private static List<GroupResource> seqGrpResource(List<GroupResource> grpResources, List<Resource> resourceList) {
-        List<GroupResource> seqGrpResList = new ArrayList<>();
-        for (Resource r : resourceList) {
-            if (r.getResourceType() != ResourceType.GROUP) {
-                continue;
-            }
-            for (GroupResource g : grpResources) {
-                if (r.getModelInfo().getModelName().equalsIgnoreCase(g.getModelInfo().getModelName())) {
-                    seqGrpResList.add(g);
-                }
-            }
+    // this method returns key from resource input
+    // e.g. {\"sdwansite_emails\" : \"[sdwansiteresource_list(PK), INDEX, sdwansite_emails]|default\",
+    // ....}
+    // it will return sdwansiteresource_list
+    private static String getPrimaryKey(Resource resource) {
+        String pk = "";
+
+        String resourceInput = "";
+        if (resource instanceof VnfResource) {
+            resourceInput = ((VnfResource) resource).getResourceInput();
+        } else if (resource instanceof GroupResource) {
+            resourceInput = ((GroupResource) resource).getVnfcs().get(0).getResourceInput();
         }
-        return seqGrpResList;
+
+        Gson gson = new Gson();
+        Type type = new TypeToken<Map<String, String>>() {}.getType();
+        Map<String, String> map = gson.fromJson(resourceInput, type);
+
+        Optional<String> pkOpt = map.values().stream().filter(e -> e.contains("[")).map(e -> e.replace("[", ""))
+                .map(e -> e.split(",")[0]).findFirst();
+
+        return pkOpt.isPresent() ? pkOpt.get() : "";
     }
 
-    private static GroupResource getGroupResource(String vfcName, List<Resource> seqRessourceList) {
-        for (Resource r : seqRessourceList) {
-            if (r.getResourceType() == ResourceType.GROUP) {
-                // Currently only once vnfc is added to group
-                return ((GroupResource) r).getVnfcs().get(0).getModelInfo().getModelName().contains(vfcName)
-                        ? (GroupResource) r
-                        : null;
-            }
-        }
-        return null;
-    }
-
-    private static List<Resource> convertToInstanceResourceList(List<Map<String, List<GroupResource>>> normalizedReq,
+    private static List<Resource> convertToInstanceResourceList(Map<String, List<List<GroupResource>>> normalizedReq,
             List<Resource> seqResourceList) {
         List<Resource> flatResourceList = new ArrayList<>();
         for (Resource r : seqResourceList) {
             if (r.getResourceType() == ResourceType.VNF) {
-                for (Map<String, List<GroupResource>> entry : normalizedReq) {
-                    if (r.getModelInfo().getModelName().equalsIgnoreCase(entry.keySet().iterator().next())) {
-                        flatResourceList.add(r);
-                        flatResourceList.addAll(entry.get(entry.keySet().iterator().next()));
+                String primaryKey = getPrimaryKey(r);
+                for (String pk : normalizedReq.keySet()) {
+
+                    if (primaryKey.equalsIgnoreCase(pk)) {
+
+                        List<List<GroupResource>> vfs = normalizedReq.get(pk);
+
+                        vfs.stream().forEach(e -> {
+                            flatResourceList.add(r);
+                            flatResourceList.addAll(e);
+                        });
                     }
                 }
             }
@@ -139,22 +134,13 @@ public class InstanceResourceList {
     public static List<Resource> getInstanceResourceList(final List<Resource> seqResourceList,
             final String uuiRequest) {
 
-        // this will convert UUI request to normalized form
-        List<Map<String, List<GroupResource>>> normalizedReq = convertUUIReqTOStd(uuiRequest, seqResourceList);
+        Gson gson = new Gson();
+        JsonObject servJsonObject = gson.fromJson(uuiRequest, JsonObject.class);
+        JsonObject reqInputJsonObj = servJsonObject.getAsJsonObject("service").getAsJsonObject("parameters")
+                .getAsJsonObject("requestInputs");
 
-        // now UUI json req is normalized to
-        // [
-        // { VFB1 : [GrpA1, GrA2, GrB1]},
-        // { VFB2 : [GrpA1, GrB1]},
-        // { VFA1 : [GrpC1]}
-        // ]
-        // now sequence according to VF order (Group is already sequenced).
-        // After sequence it will look like :
-        // [
-        // { VFA1 : [GrpA1, GrA2, GrB1]},
-        // { VFA2 : [GrpA1, GrB1]},
-        // { VFB1 : [GrpC1]}
-        // ]
-        return convertToInstanceResourceList(normalizedReq, seqResourceList);
+        // this will convert UUI request to normalized form
+        Map<String, List<List<GroupResource>>> normalizedRequest = convertUUIReqTOStd(reqInputJsonObj, seqResourceList);
+        return convertToInstanceResourceList(normalizedRequest, seqResourceList);
     }
 }

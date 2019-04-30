@@ -19,10 +19,12 @@
  */
 package org.onap.so.bpmn.core.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import java.util.UUID;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class GroupResource extends Resource {
     private static final long serialVersionUID = 1L;
 
