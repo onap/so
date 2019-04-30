@@ -19,13 +19,27 @@
  */
 package org.onap.so.bpmn.core.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.UUID;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class VnfcResource extends Resource {
     private static final long serialVersionUID = 1L;
+
+    @JsonProperty("resource-input")
+    private String resourceInput;
 
     public VnfcResource() {
         resourceType = ResourceType.VNFC;
         setResourceId(UUID.randomUUID().toString());
+    }
+
+    public String getResourceInput() {
+        return resourceInput;
+    }
+
+    public void setResourceInput(String resourceInput) {
+        this.resourceInput = resourceInput;
     }
 }
