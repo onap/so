@@ -24,12 +24,14 @@ import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 import org.hibernate.exception.LockAcquisitionException;
@@ -39,6 +41,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.onap.sdc.api.notification.IArtifactInfo;
 import org.onap.sdc.api.notification.IResourceInstance;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.impl.SdcCsarHelperImpl;
@@ -58,15 +61,17 @@ import org.onap.so.db.catalog.beans.ConfigurationResource;
 import org.onap.so.db.catalog.beans.ConfigurationResourceCustomization;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ServiceProxyResourceCustomization;
+import org.onap.so.db.catalog.beans.ToscaCsar;
 import org.onap.so.db.catalog.data.repository.AllottedResourceCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.AllottedResourceRepository;
 import org.onap.so.db.catalog.data.repository.ConfigurationResourceCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.ServiceRepository;
+import org.onap.so.db.catalog.data.repository.ToscaCsarRepository;
 import org.onap.so.db.request.beans.WatchdogComponentDistributionStatus;
 import org.onap.so.db.request.data.repository.WatchdogComponentDistributionStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
-
+import java.util.Optional;
 
 public class ToscaResourceInstallerTest extends BaseTest {
     @Autowired
@@ -114,6 +119,37 @@ public class ToscaResourceInstallerTest extends BaseTest {
 
         notificationData = new NotificationDataImpl();
         statusData = new JsonStatusData();
+    }
+
+    @Test
+    public void isCsarAlreadyDeployedTest() throws ArtifactInstallerException {
+        IArtifactInfo inputCsar = mock(IArtifactInfo.class);
+        String artifactUuid = "0122c05e-e13a-4c63-b5d2-475ccf13aa74";
+        String checkSum = "MGUzNjJjMzk3OTBkYzExYzQ0MDg2ZDc2M2E2ZjZiZmY=";
+
+        doReturn(checkSum).when(inputCsar).getArtifactChecksum();
+        doReturn(artifactUuid).when(inputCsar).getArtifactUUID();
+
+        doReturn(inputCsar).when(toscaResourceStructure).getToscaArtifact();
+
+        ToscaCsar toscaCsar = mock(ToscaCsar.class);
+
+        Optional<ToscaCsar> returnValue = Optional.of(toscaCsar);
+
+        ToscaCsarRepository toscaCsarRepo = spy(ToscaCsarRepository.class);
+
+
+        doReturn(artifactUuid).when(toscaCsar).getArtifactUUID();
+        doReturn(checkSum).when(toscaCsar).getArtifactChecksum();
+        doReturn(returnValue).when(toscaCsarRepo).findById(artifactUuid);
+
+        ReflectionTestUtils.setField(toscaInstaller, "toscaCsarRepo", toscaCsarRepo);
+
+        boolean isCsarDeployed = toscaInstaller.isCsarAlreadyDeployed(toscaResourceStructure);
+        assertTrue(isCsarDeployed);
+        verify(toscaCsarRepo, times(1)).findById(artifactUuid);
+        verify(toscaResourceStructure, times(1)).getToscaArtifact();
+        verify(toscaCsar, times(2)).getArtifactChecksum();
     }
 
     @Test
