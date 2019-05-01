@@ -41,9 +41,6 @@ public class ActivitySpecCategories implements Serializable {
     @Column(name = "NAME")
     private String name;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "activitySpecCategories")
-    private List<ActivitySpecActivitySpecCategories> activitySpecActivitySpecCategories;
-
     public Integer getID() {
         return ID;
     }
@@ -56,20 +53,9 @@ public class ActivitySpecCategories implements Serializable {
         this.name = name;
     }
 
-    @LinkedResource
-    public List<ActivitySpecActivitySpecCategories> getActivitySpecActivitySpecCategories() {
-        return activitySpecActivitySpecCategories;
-    }
-
-    public void setActivitySpecActivitySpecCategories(
-            List<ActivitySpecActivitySpecCategories> activitySpecActivitySpecCategories) {
-        this.activitySpecActivitySpecCategories = activitySpecActivitySpecCategories;
-    }
-
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("name", name)
-                .append("activitySpecActivitySpecCategories", activitySpecActivitySpecCategories).toString();
+        return new ToStringBuilder(this).append("name", name).toString();
     }
 
     @Override

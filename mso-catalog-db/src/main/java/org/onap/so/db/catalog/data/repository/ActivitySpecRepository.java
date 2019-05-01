@@ -25,7 +25,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "activitySpec", path = "activitySpec")
-public interface ActivitySpecRepository extends JpaRepository<ActivitySpec, String> {
+public interface ActivitySpecRepository extends JpaRepository<ActivitySpec, Integer> {
 
     ActivitySpec findByName(String name);
 
