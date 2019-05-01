@@ -2271,7 +2271,7 @@ public class ToscaResourceInstaller {
             // setting resource input for vnf customization
             vnfResourceCustomization.setResourceInput(
                     getResourceInput(toscaResourceStructure, vnfResourceCustomization.getModelCustomizationUUID()));
-            vnfResource.getVnfResourceCustomizations().add(vnfResourceCustomization);
+            service.getVnfCustomizations().add(vnfResourceCustomization);
 
         }
         return vnfResourceCustomization;

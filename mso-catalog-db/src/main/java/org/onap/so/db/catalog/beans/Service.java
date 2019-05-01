@@ -25,11 +25,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -93,6 +91,9 @@ public class Service implements Serializable {
     @Column(name = "RESOURCE_ORDER")
     private String resourceOrder;
 
+    @Column(name = "OVERALL_DISTRIBUTION_STATUS")
+    private String distrobutionStatus;
+
     @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "network_resource_customization_to_service",
             joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"),
@@ -134,6 +135,7 @@ public class Service implements Serializable {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "TOSCA_CSAR_ARTIFACT_UUID")
     private ToscaCsar csar;
+
 
     @Override
     public String toString() {
@@ -367,4 +369,14 @@ public class Service implements Serializable {
     public void setResourceOrder(String resourceOrder) {
         this.resourceOrder = resourceOrder;
     }
+
+
+    public String getDistrobutionStatus() {
+        return distrobutionStatus;
+    }
+
+    public void setDistrobutionStatus(String distrobutionStatus) {
+        this.distrobutionStatus = distrobutionStatus;
+    }
+
 }

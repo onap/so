@@ -83,6 +83,8 @@ mso:
   
 
 spring:
+  jersey:
+    type: filter
   datasource:
     jdbcUrl: jdbc:mariadb://localhost:3307/catalogdb
     username: root
@@ -97,11 +99,10 @@ spring:
       naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
       enable-lazy-load-no-trans: true
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
-  jersey:
-    type: filter
+
   security:
     usercredentials:
-    -  
+    -
       username: test
       password: '$2a$12$Zi3AuYcZoZO/gBQyUtST2.F5N6HqcTtaNci2Et.ufsQhski56srIu'
       role: InfraPortal-Client

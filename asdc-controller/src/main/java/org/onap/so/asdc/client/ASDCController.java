@@ -599,6 +599,8 @@ public class ASDCController {
                 }
             }
 
+            wd.updateCatalogDBStatus(iNotif.getServiceInvariantUUID(), overallStatus);
+
             if (isDeploySuccess && watchdogError == null) {
                 sendFinalDistributionStatus(iNotif.getDistributionID(), DistributionStatusEnum.DISTRIBUTION_COMPLETE_OK,
                         null);
@@ -612,7 +614,6 @@ public class ASDCController {
                 wds.setDistributionIdStatus(DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR.toString());
                 wdsRepo.save(wds);
             }
-
 
         } catch (ObjectOptimisticLockingFailureException e) {
 

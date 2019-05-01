@@ -1,0 +1,11 @@
+
+UPDATE catalogdb.service serv SET OVERALL_DISTRIBUTION_STATUS =(
+SELECT wds.DISTRIBUTION_ID_STATUS 
+FROM requestdb.watchdog_distributionid_status wds
+INNER JOIN requestdb.watchdog_service_mod_ver_id_lookup wdlook
+ON wds.DISTRIBUTION_ID = wdlook.DISTRIBUTION_ID
+WHERE wdlook.SERVICE_MODEL_VERSION_ID = serv.MODEL_UUID
+ORDER BY wdlook.MODIFY_TIME DESC LIMIT 1);
+
+UPDATE catalogdb.service SET OVERALL_DISTRIBUTION_STATUS = 'DISTRIBUTION_COMPLETE_OK'
+WHERE service.OVERALL_DISTRIBUTION_STATUS = NULL;

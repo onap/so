@@ -30,6 +30,8 @@ import java.util.List;
 public interface ServiceRepository extends JpaRepository<Service, String> {
     List<Service> findByModelName(String modelName);
 
+    List<Service> findByModelNameAndDistrobutionStatus(String modelName, String distrobutionStatus);
+
     Service findOneByModelName(String modelName);
 
     /**

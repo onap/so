@@ -279,6 +279,7 @@ public class CatalogDbAdapterRest {
             @QueryParam("serviceModelUuid") String modelUUID,
             @QueryParam("serviceModelInvariantUuid") String modelInvariantUUID,
             @QueryParam("serviceModelVersion") String modelVersion) {
+
         QueryServiceMacroHolder qryResp;
         int respStatus = HttpStatus.SC_OK;
         String uuid = "";

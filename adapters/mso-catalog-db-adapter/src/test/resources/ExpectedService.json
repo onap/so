@@ -1,0 +1,52 @@
+{
+  "modelName": "modelName",
+  "description": "description",
+  "modelVersionId": "modelUUID",
+  "modelInvariantId": "modelInvariantUUID",
+  "modelVersion": "modelVersion",
+  "serviceType": "serviceType",
+  "serviceRole": "serviceRole",
+  "environmentContext": "environmentContext",
+  "category": "category",
+  "distrobutionStatus": "distrobutionStatus",
+  "vnf": [
+    {
+      "modelName": "modelName",
+      "modelVersionId": "modelUUID",
+      "modelInvariantId": "modelInvariantUUID",
+      "modelVersion": "modelVersion",
+      "modelCustomizationId": "modelCustomizationUUID",
+      "modelInstanceName": "modelInstanceName",
+      "minInstances": 1,
+      "maxInstances": 3,
+      "availabilityZoneMaxCount": 11,
+      "toscaNodeType": "toscaNodeType",
+      "nfFunction": "nfFunction",
+      "nfRole": "nfRole",
+      "nfNamingCode": "nfNamingCode",
+      "multiStageDesign": "multiStageDesign",
+      "orchestrationMode": "orchestrationMode",
+      "cloudVersionMin": "cloudVersionMin",
+      "cloudVersionMax": "cloudVersionMax",
+      "category": "category",
+      "subCategory": "subCategory",
+      "vfModule": [
+        {
+          "modelVersionId": "modelUUID",
+          "modelInvariantId": "modelInvariantUUID",
+          "modelName": "modelName",
+          "modelVersion": "modelVersion",
+          "description": "description",
+          "isBase": false,
+          "modelCustomizationId": "modelCustomizationUUID",
+          "label": "label",
+          "minInstances": 1,
+          "maxInstances": 3,
+          "initialCount": "1",
+          "availabilityZoneCount": 10,
+          "isVolumeGroup": false
+        }
+      ]
+    }
+  ]
+}

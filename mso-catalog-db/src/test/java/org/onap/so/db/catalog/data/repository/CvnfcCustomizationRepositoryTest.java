@@ -74,7 +74,6 @@ public class CvnfcCustomizationRepositoryTest extends BaseTest {
 
         List<VnfResourceCustomization> vnfResourceCustomizations = new ArrayList<>();
         vnfResourceCustomizations.add(vnfResourceCustomization);
-        vnfResource.setVnfResourceCustomizations(vnfResourceCustomizations);
         vnfResourceCustomization.setVnfResources(vnfResource);
 
 
@@ -123,7 +122,6 @@ public class CvnfcCustomizationRepositoryTest extends BaseTest {
 
         List<VnfResourceCustomization> vnfResourceCustomizations = new ArrayList<>();
         vnfResourceCustomizations.add(vnfResourceCustomization);
-        vnfResource.setVnfResourceCustomizations(vnfResourceCustomizations);
         vnfResourceCustomization.setVnfResources(vnfResource);
 
 
@@ -177,7 +175,6 @@ public class CvnfcCustomizationRepositoryTest extends BaseTest {
 
         List<VnfResourceCustomization> vnfResourceCustomizations = new ArrayList();
         vnfResourceCustomizations.add(vnfResourceCustomization);
-        vnfResource.setVnfResourceCustomizations(vnfResourceCustomizations);
         vnfResourceCustomization.setVnfResources(vnfResource);
 
 

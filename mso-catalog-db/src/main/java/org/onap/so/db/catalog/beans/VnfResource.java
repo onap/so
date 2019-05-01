@@ -38,9 +38,9 @@ import javax.persistence.TemporalType;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import com.openpojo.business.annotation.BusinessKey;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
+import com.openpojo.business.annotation.BusinessKey;
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 @Entity
@@ -93,9 +93,6 @@ public class VnfResource implements Serializable {
     @JoinColumn(name = "HEAT_TEMPLATE_ARTIFACT_UUID")
     private HeatTemplate heatTemplates;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "vnfResources")
-    private List<VnfResourceCustomization> vnfResourceCustomizations;
-
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "vnfResource")
     private List<VnfResourceWorkflow> vnfResourceWorkflow;
 
@@ -111,8 +108,7 @@ public class VnfResource implements Serializable {
                 .append("toscaNodeType", toscaNodeType).append("description", description)
                 .append("orchestrationMode", orchestrationMode).append("aicVersionMin", aicVersionMin)
                 .append("aicVersionMax", aicVersionMax).append("created", created)
-                .append("heatTemplates", heatTemplates).append("vnfResourceCustomizations", vnfResourceCustomizations)
-                .append("vnfResourceWorkflow", vnfResourceWorkflow).toString();
+                .append("heatTemplates", heatTemplates).append("vnfResourceWorkflow", vnfResourceWorkflow).toString();
     }
 
     @Override
@@ -227,17 +223,6 @@ public class VnfResource implements Serializable {
 
     public void setToscaNodeType(String toscaNodeType) {
         this.toscaNodeType = toscaNodeType;
-    }
-
-    @LinkedResource
-    public List<VnfResourceCustomization> getVnfResourceCustomizations() {
-        if (vnfResourceCustomizations == null)
-            vnfResourceCustomizations = new ArrayList<>();
-        return vnfResourceCustomizations;
-    }
-
-    public void setVnfResourceCustomizations(List<VnfResourceCustomization> vnfResourceCustomizations) {
-        this.vnfResourceCustomizations = vnfResourceCustomizations;
     }
 
     @LinkedResource

@@ -289,7 +289,6 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         Assert.assertNotNull(vnfResource.getModelInvariantId());
         Assert.assertNotNull(vnfResource.getModelVersion());
         Assert.assertNotNull(vnfResource.getHeatTemplates());
-        Assert.assertNotNull(vnfResource.getVnfResourceCustomizations());
         Assert.assertEquals("vSAMP10a", vnfResource.getModelName());
     }
 

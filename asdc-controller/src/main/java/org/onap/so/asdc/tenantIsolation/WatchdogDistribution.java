@@ -30,6 +30,7 @@ import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.graphinventory.entities.uri.Depth;
+import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.data.repository.ServiceRepository;
 import org.onap.so.db.request.beans.WatchdogComponentDistributionStatus;
 import org.onap.so.db.request.beans.WatchdogDistributionStatus;
@@ -140,7 +141,6 @@ public class WatchdogDistribution {
                     logger.debug("Updating overall DistributionStatus to: {} for distributionId: ", status,
                             distributionId);
 
-                    watchdogDistributionStatus.setDistributionIdStatus(status);
                     watchdogDistributionStatusRepository.save(watchdogDistributionStatus);
                 } else {
                     logger.debug("Components Size Didn't match with the WatchdogComponentDistributionStatus results.");
@@ -181,6 +181,8 @@ public class WatchdogDistribution {
                 throw new Exception(error);
             }
 
+
+
             AAIResourceUri aaiUri = AAIUriFactory.createResourceUri(AAIObjectType.MODEL_VER, serviceModelInvariantUUID,
                     serviceModelVersionId);
             aaiUri.depth(Depth.ZERO); // Do not return relationships if any
@@ -195,6 +197,16 @@ public class WatchdogDistribution {
             logger.debug("Exception occurred on executePatchAAI : {}", e.getMessage());
             logger.error("Exception occurred", e);
             throw new Exception(e);
+        }
+    }
+
+    public void updateCatalogDBStatus(String serviceModelVersionId, String status) {
+        try {
+            Service foundService = serviceRepo.findOneByModelUUID(serviceModelVersionId);
+            foundService.setDistrobutionStatus(status);
+            serviceRepo.save(foundService);
+        } catch (Exception e) {
+            logger.error("Error updating CatalogDBStatus", e);
         }
     }
 
