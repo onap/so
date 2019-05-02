@@ -184,7 +184,7 @@ public class DoCompareModelofE2EServiceInstance extends AbstractServiceTaskProce
 			rmodel.setResourceCustomizationUuid(resourceCustomizationUuid)
 			addedResourceList.add(rmodel)
 
-			Map<String, Object> resourceParameters = ResourceRequestBuilder.buildResouceRequest(serviceModelUuid, resourceCustomizationUuid, null)
+			Map<String, Object> resourceParameters = ResourceRequestBuilder.buildResouceRequest(serviceModelUuid, resourceCustomizationUuid, null, null)
 			requestInputs.addAll(resourceParameters.keySet())
 		}
 
