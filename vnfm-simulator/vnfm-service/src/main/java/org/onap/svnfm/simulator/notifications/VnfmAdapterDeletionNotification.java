@@ -22,6 +22,9 @@
 
 package org.onap.svnfm.simulator.notifications;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * 
  * @author Lathishbabu Ganesan (lathishbabu.ganesan@est.tech)
@@ -29,15 +32,17 @@ package org.onap.svnfm.simulator.notifications;
  */
 public class VnfmAdapterDeletionNotification implements Runnable {
 
+    private static final Logger logger = LoggerFactory.getLogger(VnfmAdapterDeletionNotification.class);
+
     @Override
     public void run() {
         try {
             Thread.sleep(10000);
         } catch (final InterruptedException e) {
-            e.printStackTrace();
+            logger.error("Error occured while simulating deletion ", e);
             Thread.currentThread().interrupt();
         }
-        System.out.println("Call to VNFM Adapter-Delete");
+        logger.info("Call to VNFM Adapter-Delete");
     }
 
 }

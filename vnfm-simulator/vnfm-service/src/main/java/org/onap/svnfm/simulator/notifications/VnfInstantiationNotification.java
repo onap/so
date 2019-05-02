@@ -22,7 +22,8 @@
 
 package org.onap.svnfm.simulator.notifications;
 
-import org.onap.svnfm.simulator.services.SvnfmService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -31,16 +32,16 @@ import org.onap.svnfm.simulator.services.SvnfmService;
  */
 public class VnfInstantiationNotification implements Runnable {
 
-    SvnfmService svnfmService = new SvnfmService();
+    private static final Logger logger = LoggerFactory.getLogger(VnfInstantiationNotification.class);
 
     @Override
     public void run() {
         try {
             Thread.sleep(10000);
         } catch (final InterruptedException e) {
-            e.printStackTrace();
+            logger.error("Error occured while simulating instantiation ", e);
             Thread.currentThread().interrupt();
         }
-        System.out.println("Instantiation process finished");
+        logger.info("Instantiation process finished");
     }
 }
