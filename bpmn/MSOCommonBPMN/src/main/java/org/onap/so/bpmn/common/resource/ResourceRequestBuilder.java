@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -86,15 +86,15 @@ public class ResourceRequestBuilder {
      * "requestInputs":{K,V} } <br>
      *
      * @param execution Execution context
-     * 
+     *
      * @param serviceUuid The service template uuid
-     * 
+     *
      * @param resourceCustomizationUuid The resource customization uuid
-     * 
+     *
      * @param serviceParameters the service parameters passed from the API
-     * 
+     *
      * @return the resource instantiate parameters
-     * 
+     *
      * @since ONAP Beijing Release
      */
     @SuppressWarnings("unchecked")
@@ -177,21 +177,22 @@ public class ResourceRequestBuilder {
         return new HashMap();
     }
 
-    private static Map<String, String> getResourceInputStr(List<Map<String, Object>> resources, String resCustomizationUuid) {
+    private static Map<String, String> getResourceInputStr(List<Map<String, Object>> resources,
+            String resCustomizationUuid) {
 
         Map<String, String> resourceInputMap = new HashMap<>(2);
         for (Map<String, Object> resource : resources) {
             Map<String, String> modelInfo = (Map<String, String>) resource.get("modelInfo");
 
             if (modelInfo.get("modelCustomizationUuid").equalsIgnoreCase(resCustomizationUuid)) {
-                resourceInputMap.put("resourceInput",(String) resource.get("resourceInput"));
+                resourceInputMap.put("resourceInput", (String) resource.get("resourceInput"));
                 String nodeType = ResourceLevel.FIRST.toString();
                 if (((String) resource.get("toscaNodeType")).contains(".vf.")) {
                     nodeType = ResourceLevel.FIRST.toString();
                 } else if (((String) resource.get("toscaNodeType")).contains(".vfc.")) {
                     nodeType = ResourceLevel.SECOND.toString();
                 }
-                resourceInputMap.put("nodeType",nodeType);
+                resourceInputMap.put("nodeType", nodeType);
                 return resourceInputMap;
             }
         }
@@ -200,10 +201,9 @@ public class ResourceRequestBuilder {
 
     // this method combines resource input with service input
     private static Map<String, Object> getResourceInput(String resourceInputStr, Map<String, Object> serviceInputs,
-        ResourceLevel resourceLevel, Map<String, Object> currentVFData) {
+            ResourceLevel resourceLevel, Map<String, Object> currentVFData) {
         Gson gson = new Gson();
-        Type type = new TypeToken<Map<String, String>>() {
-        }.getType();
+        Type type = new TypeToken<Map<String, String>>() {}.getType();
         Map<String, Object> resourceInput = gson.fromJson(resourceInputStr, type);
         JsonParser parser = new JsonParser();
 
@@ -223,8 +223,8 @@ public class ResourceRequestBuilder {
             final String lastSecondLevelKey = secondLevelKey = (String) currentVFData.get("currentSecondLevelKey");
 
             if (null != currentVFData.get("lastNodeTypeProcessed")) {
-                ResourceLevel lastResourceLevel = ResourceLevel
-                    .valueOf(currentVFData.get("lastNodeTypeProcessed").toString());
+                ResourceLevel lastResourceLevel =
+                        ResourceLevel.valueOf(currentVFData.get("lastNodeTypeProcessed").toString());
                 switch (resourceLevel) {
                     case FIRST:
                         // if it is next request for same group then increment first level index
@@ -233,7 +233,7 @@ public class ResourceRequestBuilder {
                                 boolean isSameLevelRequest = resourceInput.values().stream().anyMatch(item -> {
                                     JsonElement tree = parser.parse(((String) item).split("\\|")[0]);
                                     return tree.isJsonArray() && tree.getAsJsonArray().get(0).getAsString()
-                                        .equalsIgnoreCase(lastFirstLevelKey);
+                                            .equalsIgnoreCase(lastFirstLevelKey);
                                 });
                                 if (isSameLevelRequest) {
                                     firstLevelIndex++;
@@ -257,7 +257,7 @@ public class ResourceRequestBuilder {
                                 boolean isSameLevelRequest = resourceInput.values().stream().anyMatch(item -> {
                                     JsonElement tree = parser.parse(((String) item).split("\\|")[0]);
                                     return tree.isJsonArray() && tree.getAsJsonArray().get(0).getAsString()
-                                        .equalsIgnoreCase(lastSecondLevelKey);
+                                            .equalsIgnoreCase(lastSecondLevelKey);
                                 });
                                 if (isSameLevelRequest) {
                                     secondLevelIndex++;

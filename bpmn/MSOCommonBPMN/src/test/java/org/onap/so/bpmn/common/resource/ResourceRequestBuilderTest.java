@@ -29,7 +29,6 @@ import java.util.Map;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.onap.so.bpmn.mock.FileUtil;
-
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
@@ -50,8 +49,7 @@ public class ResourceRequestBuilderTest extends BaseTest {
 
             try {
                 String serviceInputRequest = FileUtil.readResourceFile("__files/UUI-SO-REQ.json");
-                this.userInputMap = mapper.readValue(serviceInputRequest, new TypeReference<Map<String, Object>>() {
-                });
+                this.userInputMap = mapper.readValue(serviceInputRequest, new TypeReference<Map<String, Object>>() {});
             } catch (Exception e) {
                 Assert.fail(e.getMessage());
             }
@@ -428,47 +426,48 @@ public class ResourceRequestBuilderTest extends BaseTest {
 
 
         wireMockServer.stubFor(get(urlEqualTo(
-            "/ecomp/mso/catalog/v2/serviceResources?serviceModelUuid=c3954379-4efe-431c-8258-f84905b158e5"))
-            .willReturn(ok(this.serviceInput)));
+                "/ecomp/mso/catalog/v2/serviceResources?serviceModelUuid=c3954379-4efe-431c-8258-f84905b158e5"))
+                        .willReturn(ok(this.serviceInput)));
 
         // when(UrnPropertiesReader.getVariable(anyString())).thenReturn("http://localhost:8080");
 
         // VF level request
         Map<String, Object> currentVFData = new HashMap<>();
-        Map<String, Object> stringObjectMap = ResourceRequestBuilder.buildResouceRequest(
-            "c3954379-4efe-431c-8258-f84905b158e5", "a00404d5-d7eb-4c46-b6b6-9cf2d087e545", this.userInputMap, currentVFData);
+        Map<String, Object> stringObjectMap =
+                ResourceRequestBuilder.buildResouceRequest("c3954379-4efe-431c-8258-f84905b158e5",
+                        "a00404d5-d7eb-4c46-b6b6-9cf2d087e545", this.userInputMap, currentVFData);
         assertEquals("b", stringObjectMap.get("a"));
         assertEquals("hub_spoke", stringObjectMap.get("topology"));
         assertEquals("defaultvpn", stringObjectMap.get("name"));
-        assertTrue(((String)stringObjectMap.get("sitelist")).contains("["));
+        assertTrue(((String) stringObjectMap.get("sitelist")).contains("["));
 
         // vfc level request
-        stringObjectMap = ResourceRequestBuilder.buildResouceRequest(
-            "c3954379-4efe-431c-8258-f84905b158e5", "e776449e-2b10-45c5-9217-2775c88ca1a0", this.userInputMap, currentVFData);
+        stringObjectMap = ResourceRequestBuilder.buildResouceRequest("c3954379-4efe-431c-8258-f84905b158e5",
+                "e776449e-2b10-45c5-9217-2775c88ca1a0", this.userInputMap, currentVFData);
         assertEquals("", stringObjectMap.get("a"));
         assertEquals("layer3-port", stringObjectMap.get("portswitch"));
         assertEquals("192.168.10.1", stringObjectMap.get("ipAddress"));
         assertEquals("vCPE", stringObjectMap.get("deviceName"));
 
         // vfc level request
-        stringObjectMap = ResourceRequestBuilder.buildResouceRequest(
-            "c3954379-4efe-431c-8258-f84905b158e5", "e776449e-2b10-45c5-9217-2775c88ca1a1", this.userInputMap, currentVFData);
+        stringObjectMap = ResourceRequestBuilder.buildResouceRequest("c3954379-4efe-431c-8258-f84905b158e5",
+                "e776449e-2b10-45c5-9217-2775c88ca1a1", this.userInputMap, currentVFData);
         assertEquals("", stringObjectMap.get("a"));
         assertEquals("layer2-port", stringObjectMap.get("portswitch"));
         assertEquals("192.168.11.1", stringObjectMap.get("ipAddress"));
         assertEquals("CPE_Beijing", stringObjectMap.get("deviceName"));
 
         // VF level request
-        stringObjectMap = ResourceRequestBuilder.buildResouceRequest(
-            "c3954379-4efe-431c-8258-f84905b158e5", "e776449e-2b10-45c5-9217-2775c88ca1c1", this.userInputMap, currentVFData);
+        stringObjectMap = ResourceRequestBuilder.buildResouceRequest("c3954379-4efe-431c-8258-f84905b158e5",
+                "e776449e-2b10-45c5-9217-2775c88ca1c1", this.userInputMap, currentVFData);
         assertEquals("Huawei Private Cloud", stringObjectMap.get("address"));
         assertEquals("dsvpn_hub1", stringObjectMap.get("role"));
-        assertTrue(((String)stringObjectMap.get("wanlist")).contains("["));
-        assertTrue(((String)stringObjectMap.get("devlist")).contains("["));
+        assertTrue(((String) stringObjectMap.get("wanlist")).contains("["));
+        assertTrue(((String) stringObjectMap.get("devlist")).contains("["));
 
         // VFC request
-        stringObjectMap = ResourceRequestBuilder.buildResouceRequest(
-            "c3954379-4efe-431c-8258-f84905b158e5", "e776449e-2b10-45c5-9217-2775c88cb1a1", this.userInputMap, currentVFData);
+        stringObjectMap = ResourceRequestBuilder.buildResouceRequest("c3954379-4efe-431c-8258-f84905b158e5",
+                "e776449e-2b10-45c5-9217-2775c88cb1a1", this.userInputMap, currentVFData);
         assertEquals("Huawei Private Cloud", stringObjectMap.get("address"));
         assertEquals("20000", stringObjectMap.get("postcode"));
         assertEquals("single_gateway", stringObjectMap.get("type"));
@@ -478,13 +477,14 @@ public class ResourceRequestBuilderTest extends BaseTest {
 
 
         // VFC request again
-/*        stringObjectMap = ResourceRequestBuilder.buildResouceRequest(
-            "c3954379-4efe-431c-8258-f84905b158e5", "e776449e-2b10-45c5-9217-2775c88cb1f1", this.userInputMap, currentVFData);
-        assertEquals("Huawei Public Cloud", stringObjectMap.get("address"));
-        assertEquals("20001", stringObjectMap.get("postcode"));
-        assertEquals("multiple_gateway", stringObjectMap.get("type"));
-        assertEquals("CPE_Beijing", stringObjectMap.get("deviceName"));
-        assertEquals("20.20.20.2", stringObjectMap.get("systemip"));*/
+        /*
+         * stringObjectMap = ResourceRequestBuilder.buildResouceRequest( "c3954379-4efe-431c-8258-f84905b158e5",
+         * "e776449e-2b10-45c5-9217-2775c88cb1f1", this.userInputMap, currentVFData);
+         * assertEquals("Huawei Public Cloud", stringObjectMap.get("address")); assertEquals("20001",
+         * stringObjectMap.get("postcode")); assertEquals("multiple_gateway", stringObjectMap.get("type"));
+         * assertEquals("CPE_Beijing", stringObjectMap.get("deviceName")); assertEquals("20.20.20.2",
+         * stringObjectMap.get("systemip"));
+         */
 
 
     }
