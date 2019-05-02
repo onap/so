@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a31ad433_a90e0f32",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/common/resource/InstanceResourceList.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2019-05-02T10:51:51Z",
+      "side": 1,
+      "message": "ths hsould be assigned to a valid param for the group to be used later on.",
+      "revId": "dedb5ef69ba2f3c4376947561a1c35be9ea188c5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
