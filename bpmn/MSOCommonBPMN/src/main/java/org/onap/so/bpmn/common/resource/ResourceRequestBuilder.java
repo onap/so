@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,6 +22,9 @@
 
 package org.onap.so.bpmn.common.resource;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -31,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
+import org.apache.commons.lang.StringUtils;
 import org.camunda.bpm.engine.runtime.Execution;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.bpmn.core.json.JsonUtils;
@@ -82,20 +86,20 @@ public class ResourceRequestBuilder {
      * "requestInputs":{K,V} } <br>
      *
      * @param execution Execution context
-     * 
+     *
      * @param serviceUuid The service template uuid
-     * 
+     *
      * @param resourceCustomizationUuid The resource customization uuid
-     * 
+     *
      * @param serviceParameters the service parameters passed from the API
-     * 
+     *
      * @return the resource instantiate parameters
-     * 
+     *
      * @since ONAP Beijing Release
      */
     @SuppressWarnings("unchecked")
     public static String buildResourceRequestParameters(Execution execution, String serviceUuid,
-            String resourceCustomizationUuid, String serviceParameters) {
+            String resourceCustomizationUuid, String serviceParameters, Map<String, Object> currentVFData) {
         List<String> resourceList =
                 jsonUtil.StringArrayToList(execution, (String) JsonUtils.getJsonValue(serviceParameters, "resources"));
         // Get the right location str for resource. default is an empty array.
@@ -126,7 +130,7 @@ public class ResourceRequestBuilder {
         }
 
         Map<String, Object> resourceInputsFromServiceDeclaredLevel =
-                buildResouceRequest(serviceUuid, resourceCustomizationUuid, serviceInput);
+                buildResouceRequest(serviceUuid, resourceCustomizationUuid, serviceInput, currentVFData);
         resourceInputsFromUuiMap.putAll(resourceInputsFromServiceDeclaredLevel);
         String resourceInputsStr = getJsonString(resourceInputsFromUuiMap);
         String result = "{\n" + "\"locationConstraints\":" + locationConstraints + ",\n" + "\"requestInputs\":"
@@ -136,7 +140,7 @@ public class ResourceRequestBuilder {
 
     @SuppressWarnings("unchecked")
     public static Map<String, Object> buildResouceRequest(String serviceUuid, String resourceCustomizationUuid,
-            Map<String, Object> serviceInputs) {
+            Map<String, Object> serviceInputs, Map<String, Object> currentVFData) {
         try {
             Map<String, Object> serviceInstnace = getServiceInstnace(serviceUuid);
             // find match of customization uuid in vnf
@@ -144,24 +148,27 @@ public class ResourceRequestBuilder {
                     (Map<String, Map<String, Object>>) serviceInstnace.get("serviceResources");
 
             List<Map<String, Object>> serviceVnfCust = (List<Map<String, Object>>) serviceResources.get("serviceVnfs");
-            String resourceInputStr = getResourceInputStr(serviceVnfCust, resourceCustomizationUuid);
+            Map<String, String> resourceInputData = getResourceInputStr(serviceVnfCust, resourceCustomizationUuid);
 
             // find match in network resource
-            if (resourceInputStr == null) {
+            if (resourceInputData.size() == 0) {
                 List<Map<String, Object>> serviceNetworkCust =
                         (List<Map<String, Object>>) serviceResources.get("serviceNetworks");
-                resourceInputStr = getResourceInputStr(serviceNetworkCust, resourceCustomizationUuid);
+                resourceInputData = getResourceInputStr(serviceNetworkCust, resourceCustomizationUuid);
 
                 // find match in AR resource
-                if (resourceInputStr == null) {
+                if (resourceInputData == null) {
                     List<Map<String, Object>> serviceArCust =
                             (List<Map<String, Object>>) serviceResources.get("serviceAllottedResources");
-                    resourceInputStr = getResourceInputStr(serviceArCust, resourceCustomizationUuid);
+                    resourceInputData = getResourceInputStr(serviceArCust, resourceCustomizationUuid);
                 }
             }
 
+            String resourceInputStr = resourceInputData.get("resourceInput");
+            ResourceLevel resourceLevel = ResourceLevel.valueOf(resourceInputData.get("nodeType"));
+
             if (resourceInputStr != null && !resourceInputStr.isEmpty()) {
-                return getResourceInput(resourceInputStr, serviceInputs);
+                return getResourceInput(resourceInputStr, serviceInputs, resourceLevel, currentVFData);
             }
 
         } catch (Exception e) {
@@ -170,45 +177,218 @@ public class ResourceRequestBuilder {
         return new HashMap();
     }
 
-    private static String getResourceInputStr(List<Map<String, Object>> resources, String resCustomizationUuid) {
+    private static Map<String, String> getResourceInputStr(List<Map<String, Object>> resources,
+            String resCustomizationUuid) {
 
+        Map<String, String> resourceInputMap = new HashMap<>(2);
         for (Map<String, Object> resource : resources) {
             Map<String, String> modelInfo = (Map<String, String>) resource.get("modelInfo");
 
             if (modelInfo.get("modelCustomizationUuid").equalsIgnoreCase(resCustomizationUuid)) {
-                return (String) resource.get("resourceInput");
+                resourceInputMap.put("resourceInput", (String) resource.get("resourceInput"));
+                String nodeType = ResourceLevel.FIRST.toString();
+                if (((String) resource.get("toscaNodeType")).contains(".vf.")) {
+                    nodeType = ResourceLevel.FIRST.toString();
+                } else if (((String) resource.get("toscaNodeType")).contains(".vfc.")) {
+                    nodeType = ResourceLevel.SECOND.toString();
+                }
+                resourceInputMap.put("nodeType", nodeType);
+                return resourceInputMap;
             }
         }
         return null;
     }
 
     // this method combines resource input with service input
-    private static Map<String, Object> getResourceInput(String resourceInputStr, Map<String, Object> serviceInputs) {
+    private static Map<String, Object> getResourceInput(String resourceInputStr, Map<String, Object> serviceInputs,
+            ResourceLevel resourceLevel, Map<String, Object> currentVFData) {
         Gson gson = new Gson();
         Type type = new TypeToken<Map<String, String>>() {}.getType();
         Map<String, Object> resourceInput = gson.fromJson(resourceInputStr, type);
+        JsonParser parser = new JsonParser();
+
+        Map<String, Object> uuiServiceInput = serviceInputs;
+
+        int firstLevelIndex = 0;
+        int secondLevelIndex = 0;
+        String firstLevelKey = null;
+        String secondLevelKey = null;
+        boolean levelKeyNameUpdated = false;
+        int indexToPick = 0;
+
+        if (null != currentVFData) {
+            firstLevelIndex = getIntValue(currentVFData.get("currentFirstLevelIndex"), 0);
+            secondLevelIndex = getIntValue(currentVFData.get("currentSecondLevelIndex"), 0);
+            final String lastFirstLevelKey = firstLevelKey = (String) currentVFData.get("currentFirstLevelKey");
+            final String lastSecondLevelKey = secondLevelKey = (String) currentVFData.get("currentSecondLevelKey");
+
+            if (null != currentVFData.get("lastNodeTypeProcessed")) {
+                ResourceLevel lastResourceLevel =
+                        ResourceLevel.valueOf(currentVFData.get("lastNodeTypeProcessed").toString());
+                switch (resourceLevel) {
+                    case FIRST:
+                        // if it is next request for same group then increment first level index
+                        switch (lastResourceLevel) {
+                            case FIRST:
+                                boolean isSameLevelRequest = resourceInput.values().stream().anyMatch(item -> {
+                                    JsonElement tree = parser.parse(((String) item).split("\\|")[0]);
+                                    return tree.isJsonArray() && tree.getAsJsonArray().get(0).getAsString()
+                                            .equalsIgnoreCase(lastFirstLevelKey);
+                                });
+                                if (isSameLevelRequest) {
+                                    firstLevelIndex++;
+                                }
+                                break;
+                            case SECOND:
+                                firstLevelIndex = 0;
+                                secondLevelKey = null;
+                                break;
+
+                        }
+                        indexToPick = firstLevelIndex;
+                        break;
+                    case SECOND:
+                        // if it is next request for same group then increment second level index
+                        switch (lastResourceLevel) {
+                            case FIRST:
+                                secondLevelIndex = 0;
+                                break;
+                            case SECOND:
+                                boolean isSameLevelRequest = resourceInput.values().stream().anyMatch(item -> {
+                                    JsonElement tree = parser.parse(((String) item).split("\\|")[0]);
+                                    return tree.isJsonArray() && tree.getAsJsonArray().get(0).getAsString()
+                                            .equalsIgnoreCase(lastSecondLevelKey);
+                                });
+                                if (isSameLevelRequest) {
+                                    secondLevelIndex++;
+                                }
+                                break;
+                        }
+                        // get actual parent object to search for second level objects
+                        if (null != lastFirstLevelKey) {
+                            Object currentObject = serviceInputs.get(lastFirstLevelKey);
+                            if ((null != currentObject) && (currentObject instanceof List)) {
+                                List currentFirstLevelList = (List) currentObject;
+                                if (currentFirstLevelList.size() > firstLevelIndex) {
+                                    uuiServiceInput = (Map<String, Object>) currentFirstLevelList.get(firstLevelIndex);
+                                }
+
+                            }
+                        }
+                        indexToPick = secondLevelIndex;
+                        break;
+
+                }
+            }
+
+
+        }
 
         // replace value if key is available in service input
         for (String key : resourceInput.keySet()) {
             String value = (String) resourceInput.get(key);
 
             if (value.contains("|")) {
+
+                // check which level
+
                 // node it type of getinput
                 String[] split = value.split("\\|");
                 String tmpKey = split[0];
-                if (serviceInputs.containsKey(tmpKey)) {
-                    value = (String) serviceInputs.get(tmpKey);
+
+                JsonElement jsonTree = parser.parse(tmpKey);
+
+                // check if it is a list type
+                if (jsonTree.isJsonArray()) {
+                    JsonArray jsonArray = jsonTree.getAsJsonArray();
+                    boolean matchFound = false;
+                    if (jsonArray.size() == 3) {
+                        String keyName = jsonArray.get(0).getAsString();
+                        String keyType = jsonArray.get(2).getAsString();
+                        if (!levelKeyNameUpdated) {
+                            switch (resourceLevel) {
+                                case FIRST:
+                                    firstLevelKey = keyName;
+                                    break;
+                                case SECOND:
+                                    secondLevelKey = keyName;
+                                    break;
+                            }
+                            levelKeyNameUpdated = true;
+                        }
+
+                        if (uuiServiceInput.containsKey(keyName)) {
+                            Object vfcLevelObject = uuiServiceInput.get(keyName);
+                            // it will be always list
+                            if (vfcLevelObject instanceof List) {
+                                List vfcObject = (List) vfcLevelObject;
+                                if (vfcObject.size() > indexToPick) {
+                                    Map<String, Object> vfMap = (Map<String, Object>) vfcObject.get(indexToPick);
+                                    if (vfMap.containsKey(keyType)) {
+                                        if (vfMap.get(keyType) instanceof String) {
+                                            value = (String) vfMap.get(keyType);
+                                        } else {
+                                            value = getJsonString(vfMap.get(keyType));
+                                        }
+                                        matchFound = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (!matchFound) {
+                        if (split.length == 1) { // means value is empty e.g. "a":"key1|"
+                            value = "";
+                        } else {
+                            value = split[1];
+                        }
+                    }
+
                 } else {
-                    if (split.length == 1) { // means value is empty e.g. "a":"key1|"
-                        value = "";
+
+                    // if not a list type
+                    if (uuiServiceInput.containsKey(tmpKey)) {
+                        value = (String) uuiServiceInput.get(tmpKey);
                     } else {
-                        value = split[1];
+                        if (split.length == 1) { // means value is empty e.g. "a":"key1|"
+                            value = "";
+                        } else {
+                            value = split[1];
+                        }
                     }
                 }
+
             }
             resourceInput.put(key, value);
         }
+        // store current processed details into map
+        if (null != currentVFData) {
+            currentVFData.put("currentFirstLevelKey", firstLevelKey);
+            currentVFData.put("currentFirstLevelIndex", firstLevelIndex);
+            currentVFData.put("currentSecondLevelKey", secondLevelKey);
+            currentVFData.put("currentSecondLevelIndex", secondLevelIndex);
+            currentVFData.put("lastNodeTypeProcessed", resourceLevel.toString());
+        }
+
         return resourceInput;
+    }
+
+    private static int getIntValue(Object inputObj, int defaultValue) {
+        if (null != inputObj) {
+            if (inputObj instanceof Integer) {
+                return ((Integer) inputObj).intValue();
+            }
+            if (StringUtils.isNotEmpty(inputObj.toString())) {
+                try {
+                    int val = Integer.parseInt(inputObj.toString());
+                    return val;
+                } catch (NumberFormatException e) {
+                    logger.warn("Unable to parse to int", e.getMessage());
+                }
+            }
+        }
+        return defaultValue;
     }
 
     public static Map<String, Object> getServiceInstnace(String uuid) throws Exception {

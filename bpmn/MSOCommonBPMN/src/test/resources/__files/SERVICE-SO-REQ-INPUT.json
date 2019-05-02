@@ -1,0 +1,206 @@
+{
+  "serviceResources": {
+    "modelInfo": {
+      "modelName": "demoVFWCL",
+      "modelUuid": "c3954379-4efe-431c-8258-f84905b158e5",
+      "modelInvariantUuid": "0cbff61e-3b0a-4eed-97ce-b1b4faa03493",
+      "modelVersion": "1.0"
+    },
+    "serviceType": "",
+    "serviceRole": "",
+    "environmentContext": null,
+    "resourceOrder": "res1,res2",
+    "workloadContext": "Production",
+    "serviceVnfs": [
+
+      {
+        "modelInfo": {
+          "modelName": "15968a6e-2fe5-41bf-a481",
+          "modelUuid": "808abda3-2023-4105-92d2-e62644b61d53",
+          "modelInvariantUuid": "6e4ffc7c-497e-4a77-970d-af966e642d31",
+          "modelVersion": "1.0",
+          "modelCustomizationUuid": "a00404d5-d7eb-4c46-b6b6-9cf2d087e545",
+          "modelInstanceName": "15968a6e-2fe5-41bf-a481 0"
+        },
+        "toscaNodeType": "org.openecomp.resource.vf.15968a6e2fe541bfA481",
+        "nfFunction": null,
+        "resourceInput": "{\"a\":\"b\",\"topology\":\"[sdwanvpnresource_list,INDEX,sdwanvpn_topology]|default_topo\",\"name\":\"[sdwanvpnresource_list,INDEX,sdwanvpn_name]|default_name\",\"sitelist\":\"[sdwanvpnresource_list,INDEX,sdwansitelan_list]|default_sitelist\"}",
+        "nfType": null,
+        "nfRole": null,
+        "nfNamingCode": null,
+        "multiStageDesign": "false",
+        "vfModules": [{
+          "modelInfo": {
+            "modelName": "15968a6e2fe541bfA481..base_vfw..module-0",
+            "modelUuid": "ec7fadde-1e5a-42f7-8255-cb19e475ff45",
+            "modelInvariantUuid": "61ab8b64-a014-4cf3-8a5a-b5ef388f8819",
+            "modelVersion": "1",
+            "modelCustomizationUuid": "123aff6b-854f-4026-ae1e-cc74a3924576"
+          },
+          "isBase": true,
+          "vfModuleLabel": "base_vfw",
+          "initialCount": 1,
+          "hasVolumeGroup": true
+        }]
+      },
+
+      {
+        "modelInfo": {
+          "modelName": "f971106a-248f-4202-9d1f",
+          "modelUuid": "4fbc08a4-35ed-4a59-9e47-79975e4add7e",
+          "modelInvariantUuid": "c669799e-adf1-46ae-8c70-48b326fe89f3",
+          "modelVersion": "1.0",
+          "modelCustomizationUuid": "e776449e-2b10-45c5-9217-2775c88ca1a0",
+          "modelInstanceName": "f971106a-248f-4202-9d1f 0"
+        },
+        "toscaNodeType": "org.openecomp.resource.vfc.F971106a248f42029d1f",
+        "nfFunction": null,
+        "nfType": null,
+        "nfRole": null,
+        "resourceInput": "{\"a\":\"b|\",\"portswitch\":\"[sdwansitelan_list,INDEX,portSwitch]|default_portswitch\",\"ipAddress\":\"[sdwansitelan_list,INDEX,ipAddress]|default_ipAddress\",\"deviceName\":\"[sdwansitelan_list,INDEX,deviceName]|default_deviceName\"}",
+        "nfNamingCode": null,
+        "multiStageDesign": "false",
+        "vfModules": [{
+          "modelInfo": {
+            "modelName": "F971106a248f42029d1f..base_vpkg..module-0",
+            "modelUuid": "47d5273a-7456-4786-9035-b3911944cc35",
+            "modelInvariantUuid": "0ea3e57e-ac7a-425a-928b-b4aee8806c15",
+            "modelVersion": "1",
+            "modelCustomizationUuid": "9ed9fef6-d3f8-4433-9807-7e23393a16bc"
+          },
+          "isBase": true,
+          "vfModuleLabel": "base_vpkg",
+          "initialCount": 1,
+          "hasVolumeGroup": true
+        }]
+      },
+
+      {
+        "modelInfo": {
+          "modelName": "f971106a-248f-4202-9d1e",
+          "modelUuid": "4fbc08a4-35ed-4a59-9e47-79975e4add7d",
+          "modelInvariantUuid": "c669799e-adf1-46ae-8c70-48b326fe89f2",
+          "modelVersion": "1.0",
+          "modelCustomizationUuid": "e776449e-2b10-45c5-9217-2775c88ca1a1",
+          "modelInstanceName": "f971106a-248f-4202-9d1e 0"
+        },
+        "toscaNodeType": "org.openecomp.resource.vfc.F971106a248f42029d1f",
+        "nfFunction": null,
+        "nfType": null,
+        "nfRole": null,
+        "resourceInput": "{\"a\":\"b|\",\"portswitch\":\"[sdwansitelan_list,INDEX,portSwitch]|default_portswitch\",\"ipAddress\":\"[sdwansitelan_list,INDEX,ipAddress]|default_ipAddress\",\"deviceName\":\"[sdwansitelan_list,INDEX,deviceName]|default_deviceName\"}",
+        "nfNamingCode": null,
+        "multiStageDesign": "false",
+        "vfModules": [{
+          "modelInfo": {
+            "modelName": "F971106a248f42029d1f..base_vpkg..module-0",
+            "modelUuid": "47d5273a-7456-4786-9035-b3911944cc35",
+            "modelInvariantUuid": "0ea3e57e-ac7a-425a-928b-b4aee8806c15",
+            "modelVersion": "1",
+            "modelCustomizationUuid": "9ed9fef6-d3f8-4433-9807-7e23393a16bc"
+          },
+          "isBase": true,
+          "vfModuleLabel": "base_vpkg",
+          "initialCount": 1,
+          "hasVolumeGroup": true
+        }]
+      },
+
+      {
+        "modelInfo": {
+          "modelName": "f971106a-248f-4202-9d2e",
+          "modelUuid": "4fbc08a4-35ed-4a59-9e47-79975e4add8d",
+          "modelInvariantUuid": "c669799e-adf1-46ae-8c70-48b326fe89c2",
+          "modelVersion": "1.0",
+          "modelCustomizationUuid": "e776449e-2b10-45c5-9217-2775c88ca1c1",
+          "modelInstanceName": "f971106a-248f-4202-9d2e 0"
+        },
+        "toscaNodeType": "org.openecomp.resource.vf.F971106a248f42029d1f",
+        "nfFunction": null,
+        "nfType": null,
+        "nfRole": null,
+        "resourceInput": "{\"address\":\"[sdwansiteresource_list,INDEX,sdwansite_address]|default_address\",\"role\":\"[sdwansiteresource_list,INDEX,sdwansite_role]|default_role\",\"wanlist\":\"[sdwansiteresource_list,INDEX,sdwansitewan_list]|default_wanlist\",\"devlist\":\"[sdwansiteresource_list,INDEX,sdwandevice_list]|default_devlist\"}",
+        "nfNamingCode": null,
+        "multiStageDesign": "false",
+        "vfModules": [{
+          "modelInfo": {
+            "modelName": "F971106a248f42029d1f..base_vpkg..module-0",
+            "modelUuid": "47d5273a-7456-4786-9035-b3911944cc35",
+            "modelInvariantUuid": "0ea3e57e-ac7a-425a-928b-b4aee8806c15",
+            "modelVersion": "1",
+            "modelCustomizationUuid": "9ed9fef6-d3f8-4433-9807-7e23393a16bc"
+          },
+          "isBase": true,
+          "vfModuleLabel": "base_vpkg",
+          "initialCount": 1,
+          "hasVolumeGroup": true
+        }]
+      },
+
+      {
+        "modelInfo": {
+          "modelName": "f971106a-248f-4202-9d3e",
+          "modelUuid": "4fbc08a4-35ed-4a59-9e47-79975e4add9d",
+          "modelInvariantUuid": "c669799e-adf1-46ae-8c70-48b326fe89f3",
+          "modelVersion": "1.0",
+          "modelCustomizationUuid": "e776449e-2b10-45c5-9217-2775c88cb1a1",
+          "modelInstanceName": "f971106a-248f-4202-9d3e 0"
+        },
+        "toscaNodeType": "org.openecomp.resource.vfc.F971106a248f42029d1f",
+        "nfFunction": null,
+        "nfType": null,
+        "nfRole": null,
+        "resourceInput": "{\"address\":\"sdwansite_address|default_address\", \"postcode\":\"sdwansite_postcode|default_postcode\",\"type\":\"sdwansite_type|default_role\",\"deviceName\":\"[sdwansitewan_list,INDEX,deviceName]|default_deviceName\",\"systemip\":\"[sdwandevice_list,INDEX,systemIp]|default_systemip\", \"systemipv6\":\"[sdwandevice_list,INDEX,systemIpv6]|default_ipv6\"}",
+        "nfNamingCode": null,
+        "multiStageDesign": "false",
+        "vfModules": [{
+          "modelInfo": {
+            "modelName": "F971106a248f42029d1f..base_vpkg..module-0",
+            "modelUuid": "47d5273a-7456-4786-9035-b3911944cc35",
+            "modelInvariantUuid": "0ea3e57e-ac7a-425a-928b-b4aee8806c15",
+            "modelVersion": "1",
+            "modelCustomizationUuid": "9ed9fef6-d3f8-4433-9807-7e23393a16bc"
+          },
+          "isBase": true,
+          "vfModuleLabel": "base_vpkg",
+          "initialCount": 1,
+          "hasVolumeGroup": true
+          }]
+        },
+
+          {
+            "modelInfo": {
+              "modelName": "f971106a-248f-4202-9d5e",
+              "modelUuid": "4fbc08a4-35ed-4a59-9e47-79975e4add3d",
+              "modelInvariantUuid": "c669799e-adf1-46ae-8c70-48b326fe8393",
+              "modelVersion": "1.0",
+              "modelCustomizationUuid": "e776449e-2b10-45c5-9217-2775c88cb1f1",
+              "modelInstanceName": "f971106a-248f-4202-9d5e 0"
+            },
+            "toscaNodeType": "org.openecomp.resource.vfc.F971106a248f42029d3f",
+            "nfFunction": null,
+            "nfType": null,
+            "nfRole": null,
+            "resourceInput": "{\"address\":\"sdwansite_address|default_address\", \"postcode\":\"sdwansite_postcode|default_postcode\",\"type\":\"sdwansite_type|default_role\",\"deviceName\":\"[sdwansitewan_list,INDEX,deviceName]|default_deviceName\",\"systemip\":\"[sdwandevice_list,INDEX,systemIp]|default_systemip\"}",
+            "nfNamingCode": null,
+            "multiStageDesign": "false",
+            "vfModules": [{
+              "modelInfo": {
+                "modelName": "F971106a248f42029d1f..base_vpkg..module-0",
+                "modelUuid": "47d5273a-7456-4786-9035-b3911944cc35",
+                "modelInvariantUuid": "0ea3e57e-ac7a-425a-928b-b4aee8806c15",
+                "modelVersion": "1",
+                "modelCustomizationUuid": "9ed9fef6-d3f8-4433-9807-7e23393a16bc"
+              },
+              "isBase": true,
+              "vfModuleLabel": "base_vpkg",
+              "initialCount": 1,
+              "hasVolumeGroup": true
+            }]
+      }
+
+    ],
+    "serviceNetworks": [],
+    "serviceAllottedResources": []
+  }
+}

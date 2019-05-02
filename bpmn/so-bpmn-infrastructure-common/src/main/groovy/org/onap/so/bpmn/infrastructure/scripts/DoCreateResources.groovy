@@ -260,11 +260,16 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         //set the requestInputs from tempalte  To Be Done
         String serviceModelUuid = jsonUtil.getJsonValue(incomingRequest,"service.serviceUuid")
         String serviceParameters = jsonUtil.getJsonValue(incomingRequest, "service.parameters")
-        String resourceParameters = ResourceRequestBuilder.buildResourceRequestParameters(execution, serviceModelUuid, resourceCustomizationUuid, serviceParameters)
+        Map<String, Object> currentVFData = (Map) execution.getVariable("currentVFData");
+        if (null == currentVFData) {
+            currentVFData = new HashMap<>();
+        }
+        String resourceParameters = ResourceRequestBuilder.buildResourceRequestParameters(execution, serviceModelUuid, resourceCustomizationUuid, serviceParameters, currentVFData)
         resourceInput.setResourceParameters(resourceParameters)
         resourceInput.setRequestsInputs(incomingRequest)
         execution.setVariable("resourceInput", resourceInput.toString())
         execution.setVariable("resourceModelUUID", resourceInput.getResourceModelInfo().getModelUuid())
+        execution.setVariable("currentVFData",currentVFData);
         logger.trace("COMPLETED prepareResourceRecipeRequest Process ")
     }
 
