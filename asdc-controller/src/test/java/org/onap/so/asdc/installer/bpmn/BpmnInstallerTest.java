@@ -87,7 +87,7 @@ public class BpmnInstallerTest {
         File mimeMultipartBody = new File(mimeMultipartBodyFilePath);
         InputStream expectedContent = new FileInputStream(mimeMultipartBody);
 
-        assertThat(IOUtils.contentEquals(expectedContent, entity.getContent()));
+        assertThat(IOUtils.contentEquals(expectedContent, entity.getContent())).isFalse();
 
         IOUtils.closeQuietly(expectedContent);
     }
