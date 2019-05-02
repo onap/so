@@ -109,6 +109,8 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin {
     private static final String DELETE_DEPLOYMENT = "DeleteDeployment";
     private static final String TERMINATED = "terminated";
     private static final String CANCELLED = "cancelled";
+    private static final String UNINSTALL = "uninstall";
+    private static final String UPLOAD_BLUEPRINT = "UPLOAD_BLUEPRINT";
 
     // Fetch cloud configuration each time (may be cached in CloudConfig class)
     @Autowired
@@ -181,11 +183,11 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin {
         Map<String, Object> expandedInputs = new HashMap<>(inputs);
 
         String platform = cloudSite.get().getPlatform();
-        if (platform == null || platform.equals("") || platform.equalsIgnoreCase("OPENSTACK")) {
+        if (platform == null || platform.isEmpty() || ("OPENSTACK").equalsIgnoreCase(platform)) {
             // Create the Cloudify OpenstackConfig with the credentials
             OpenstackConfig openstackConfig = getOpenstackConfig(cloudSite.get(), tenantId);
             expandedInputs.put("openstack_config", openstackConfig);
-        } else if (platform.equalsIgnoreCase("AZURE")) {
+        } else if (("AZURE").equalsIgnoreCase(platform)) {
             // Create Cloudify AzureConfig with the credentials
             AzureConfig azureConfig = getAzureConfig(cloudSite.get(), tenantId);
             expandedInputs.put("azure_config", azureConfig);
@@ -265,7 +267,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin {
 
                     try {
                         // Run the uninstall to undo the install
-                        Execution uninstallWorkflow = executeWorkflow(cloudify, deploymentId, "uninstall", null,
+                        Execution uninstallWorkflow = executeWorkflow(cloudify, deploymentId, UNINSTALL, null,
                                 pollForCompletion, deletePollTimeout, deletePollInterval);
 
                         if (uninstallWorkflow.getStatus().equals(TERMINATED)) {
@@ -306,7 +308,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin {
                 try {
                     // Run the uninstall to undo the install.
                     // Always try to run it, as it should be idempotent
-                    executeWorkflow(cloudify, deploymentId, "uninstall", null, pollForCompletion, deletePollTimeout,
+                    executeWorkflow(cloudify, deploymentId, UNINSTALL, null, pollForCompletion, deletePollTimeout,
                             deletePollInterval);
 
                     // Delete the deployment itself
@@ -402,7 +404,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin {
             GetExecution queryExecution = cloudify.executions().byId(executionId);
             command = "query";
 
-            while (!timedOut && !(status.equals(TERMINATED) || status.equals("failed") || status.equals(CANCELLED))) {
+            while (!timedOut && !(status.equals(TERMINATED) || ("failed").equals(status) || status.equals(CANCELLED))) {
                 // workflow is still running; check for timeout
                 if (pollTimeout <= 0) {
                     logger.debug("workflow {} timed out on deployment {}", execution.getWorkflowId(),
@@ -425,7 +427,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin {
                 // Success!
                 logger.debug("Workflow '{}' completed successfully on deployment '{}'", workflowId, deploymentId);
                 return execution;
-            } else if (status.equals("failed")) {
+            } else if (("failed").equals(status)) {
                 // Workflow failed. Log it and return the execution object (don't throw exception here)
                 logger.error("{} Cloudify workflow failure: {} {} Execute Workflow: Failed: {}",
                         MessageEnum.RA_CREATE_STACK_ERR, execution.getError(),
@@ -665,7 +667,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin {
 
         try {
             uninstallWorkflow =
-                    executeWorkflow(cloudify, deploymentId, "uninstall", null, true, pollTimeout, deletePollInterval);
+                    executeWorkflow(cloudify, deploymentId, UNINSTALL, null, true, pollTimeout, deletePollInterval);
 
             if (uninstallWorkflow.getStatus().equals(TERMINATED)) {
                 // Successful uninstall.
@@ -812,7 +814,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin {
 
         try {
             // Put the root directory
-            String rootDir = blueprintId + ((blueprintId.endsWith("/") ? "" : "/"));
+            String rootDir = blueprintId + (blueprintId.endsWith("/") ? "" : "/");
             zipOut.putNextEntry(new ZipEntry(rootDir));
             zipOut.closeEntry();
 
@@ -836,13 +838,13 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin {
             Blueprint blueprint = uploadRequest.execute();
             logger.debug("Successfully uploaded blueprint {}", blueprint.getId());
         } catch (CloudifyResponseException | CloudifyConnectException e) {
-            throw cloudifyExceptionToMsoException(e, "UPLOAD_BLUEPRINT");
+            throw cloudifyExceptionToMsoException(e, UPLOAD_BLUEPRINT);
         } catch (RuntimeException e) {
             // Catch-all
-            throw runtimeExceptionToMsoException(e, "UPLOAD_BLUEPRINT");
+            throw runtimeExceptionToMsoException(e, UPLOAD_BLUEPRINT);
         } catch (IOException e) {
             // for try-with-resources
-            throw ioExceptionToMsoException(e, "UPLOAD_BLUEPRINT");
+            throw ioExceptionToMsoException(e, UPLOAD_BLUEPRINT);
         }
 
         return true;
@@ -960,14 +962,14 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin {
         String type = templateParam.getParamType();
         logger.debug("Parameter: {} is of type {}", templateParam.getParamName(), type);
 
-        if (type.equalsIgnoreCase("number")) {
+        if (("number").equalsIgnoreCase(type)) {
             try {
                 return Integer.valueOf(inputValue.toString());
             } catch (Exception e) {
                 logger.debug("Unable to convert {} to an integer!", inputValue);
                 return null;
             }
-        } else if (type.equalsIgnoreCase("json")) {
+        } else if (("json").equalsIgnoreCase(type)) {
             try {
                 if (inputValue instanceof String) {
                     return JSON_MAPPER.readTree(inputValue.toString());
@@ -978,7 +980,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin {
                 logger.debug("Unable to convert {} to a JsonNode!", inputValue);
                 return null;
             }
-        } else if (type.equalsIgnoreCase("boolean")) {
+        } else if (("boolean").equalsIgnoreCase(type)) {
             return new Boolean(inputValue.toString());
         }
 
