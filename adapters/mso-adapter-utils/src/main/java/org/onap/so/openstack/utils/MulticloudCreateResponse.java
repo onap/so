@@ -22,13 +22,16 @@ package org.onap.so.openstack.utils;
 
 import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"template_type", "workload_id", "template_response"})
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonPropertyOrder({"template_type", "workload_id", "template_response", "workload_status_reason", "workload_status"})
 public class MulticloudCreateResponse implements Serializable {
     private final static long serialVersionUID = -5215028275577848311L;
 
@@ -37,12 +40,16 @@ public class MulticloudCreateResponse implements Serializable {
     @JsonProperty("workload_id")
     private String workloadId;
     @JsonProperty("template_response")
-    private MulticloudCreateStackResponse templateResponse;
+    private JsonNode templateResponse;
+    @JsonProperty("workload_status_reason")
+    private JsonNode workloadStatusReason;
+    @JsonProperty("workload_status")
+    private String workloadStatus;
 
     @JsonCreator
     public MulticloudCreateResponse(@JsonProperty("template_type") String templateType,
             @JsonProperty("workload_id") String workloadId,
-            @JsonProperty("template_response") MulticloudCreateStackResponse templateResponse) {
+            @JsonProperty("template_response") JsonNode templateResponse) {
         this.templateType = templateType;
         this.workloadId = workloadId;
         this.templateResponse = templateResponse;
@@ -69,18 +76,41 @@ public class MulticloudCreateResponse implements Serializable {
     }
 
     @JsonProperty("template_response")
-    public void setTemplateResponse(MulticloudCreateStackResponse templateResponse) {
+    public void setTemplateResponse(JsonNode templateResponse) {
         this.templateResponse = templateResponse;
     }
 
     @JsonProperty("template_response")
-    public MulticloudCreateStackResponse getTemplateResponse() {
+    public JsonNode getTemplateResponse() {
         return templateResponse;
     }
+
+    @JsonProperty("workload_status_reason")
+    public void setWorkloadStatusReason(JsonNode workloadStatusReason) {
+        this.workloadStatusReason = workloadStatusReason;
+    }
+
+    @JsonProperty("workload_status_reason")
+    public JsonNode getWorkloadStatusReason() {
+        return workloadStatusReason;
+    }
+
+    @JsonProperty("workload_status")
+    public String getWorkloadSstatus() {
+        return workloadStatus;
+    }
+
+    @JsonProperty("workload_status")
+    public void setWorkloadStatus(String workloadStatus) {
+        this.workloadStatus = workloadStatus;
+    }
+
 
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("templateType", templateType).append("workloadId", workloadId)
-                .append("templateResponse", templateResponse).toString();
+                .append("templateResponse", templateResponse)
+                .append("workload_status_reason", workloadStatusReason.toString())
+                .append("workload_status", workloadStatus).toString();
     }
 }

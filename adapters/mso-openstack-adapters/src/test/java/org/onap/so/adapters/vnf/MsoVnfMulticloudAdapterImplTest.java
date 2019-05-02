@@ -55,8 +55,6 @@ public class MsoVnfMulticloudAdapterImplTest extends BaseRestTestUtils {
     @Autowired
     private CloudConfig cloudConfig;
 
-    private static final String CREATE_STACK_RESPONSE = "{\"template_type\": \"TEST-template\", \"workload_id\": "
-            + "\"workload-id\", \"template_response\": {\"stack\": {\"id\": \"TEST-stack\", \"links\": []}}}";
     private static final String UPDATE_STACK_RESPONSE =
             "{\"template_type\": \"heat\", \"workload_id\": " + "\"workload-id\"}";
     private static final String GET_CREATE_STACK_RESPONSE = "{\"template_type\": \"heat\", \"workload_id\": "
@@ -107,6 +105,51 @@ public class MsoVnfMulticloudAdapterImplTest extends BaseRestTestUtils {
         wireMockServer.stubFor(post(urlPathEqualTo(MULTICLOUD_CREATE_PATH)).inScenario("CREATE")
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                         .withBodyFile("MulticloudResponse_Stack_Create.json").withStatus(HttpStatus.SC_CREATED))
+                .willSetStateTo("CREATING"));
+
+        wireMockServer.stubFor(post(urlPathEqualTo(MULTICLOUD_UPDATE_PATH))
+                .inScenario("CREATE").willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody(UPDATE_STACK_RESPONSE).withStatus(HttpStatus.SC_ACCEPTED))
+                .willSetStateTo("UPDATING"));
+
+        try {
+            instance.createVfModule("MTN13", "CloudOwner", "123", "vf", "v1", "genericVnfId", "vfname", "vfModuleId",
+                    "create", null, "234", "9b339a61-69ca-465f-86b8-1c72c582b8e8", stackInputs, true, true, true,
+                    msoRequest, new Holder<>(), new Holder<>(), new Holder<>());
+        } catch (VnfException e) {
+            fail("createVfModule success expected, failed with exception: " + e.toString());
+        }
+        wireMockServer.resetScenarios();
+    }
+
+    @Test
+    public void createVfModule2() throws Exception {
+
+        Map<String, Object> stackInputs = new HashMap<>();
+        stackInputs.put("oof_directives", "{}");
+        stackInputs.put("sdnc_directives", "{}");
+        stackInputs.put("user_directives", "{}");
+        stackInputs.put("generic_vnf_id", "genVNFID");
+        stackInputs.put("vf_module_id", "vfMODULEID");
+
+        MsoRequest msoRequest = new MsoRequest();
+        msoRequest.setRequestId("12345");
+        msoRequest.setServiceInstanceId("12345");
+
+        wireMockServer.stubFor(get(urlPathEqualTo(MULTICLOUD_GET_PATH_BY_NAME)).willReturn(
+                aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_NOT_FOUND)));
+
+        wireMockServer.stubFor(get(urlPathEqualTo(MULTICLOUD_GET_PATH_BY_ID)).inScenario("CREATE")
+                .whenScenarioStateIs("CREATING").willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody(GET_CREATE_STACK_RESPONSE).withStatus(HttpStatus.SC_OK)));
+
+        wireMockServer.stubFor(get(urlPathEqualTo(MULTICLOUD_GET_PATH_BY_ID)).inScenario("CREATE")
+                .whenScenarioStateIs("UPDATING").willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody(GET_UPDATE_STACK_RESPONSE).withStatus(HttpStatus.SC_OK)));
+
+        wireMockServer.stubFor(post(urlPathEqualTo(MULTICLOUD_CREATE_PATH)).inScenario("CREATE")
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBodyFile("MulticloudResponse_Stack_Create2.json").withStatus(HttpStatus.SC_CREATED))
                 .willSetStateTo("CREATING"));
 
         wireMockServer.stubFor(post(urlPathEqualTo(MULTICLOUD_UPDATE_PATH))

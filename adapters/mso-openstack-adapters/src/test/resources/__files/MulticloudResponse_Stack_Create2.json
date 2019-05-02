@@ -1,0 +1,15 @@
+{
+  "template_type": "HEAT",
+  "workload_id": "workload-id",
+  "workload_status_reason":
+    {
+        "id": "workload-id",
+        "links": [
+          {
+            "href": "http://localhost:1234/v1/id12345678/stacks/workload-id/abcdef00-1234-abcd-5678-ef9123456789",
+            "rel": "self"
+          }
+        ]
+    },
+  "workload_status": "CREATE_IN_PROGRESS"
+}
