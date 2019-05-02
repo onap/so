@@ -140,7 +140,9 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
                     registerClientResponse(idList.get(0), EntityUtils.toString(response.getEntity(), "UTF-8"));
                 }
 
-                idList.forEach(this::informAboutPnfReadyIfPnfCorrelationIdFound);
+                if (idList != null) {
+                    idList.forEach(this::informAboutPnfReadyIfPnfCorrelationIdFound);
+                }
             } catch (IOException e) {
                 logger.error("Exception caught during sending rest request to dmaap for listening event topic", e);
             } finally {
