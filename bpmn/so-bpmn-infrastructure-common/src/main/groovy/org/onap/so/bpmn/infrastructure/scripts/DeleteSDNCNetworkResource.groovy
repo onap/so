@@ -174,7 +174,7 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
             String serviceInstanceId = execution.getVariable(Prefix + "serviceInstanceId")
             String source = execution.getVariable("source")
             String sdnc_service_id = execution.getVariable(Prefix + "sdncServiceId")
-            ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(resourceInput, ResourceInput.class)
+            ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(execution.getVariable(Prefix + "resourceInput"), ResourceInput.class)
             String serviceType = resourceInputObj.getServiceType()
             String serviceModelInvariantUuid = resourceInputObj.getServiceModelInfo().getModelInvariantUuid()
             String serviceModelUuid = resourceInputObj.getServiceModelInfo().getModelUuid()
