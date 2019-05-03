@@ -265,7 +265,8 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
 	
 	        String recipeURL = BPMNProperties.getProperty("bpelURL", "http://mso:8080") + recipeUri
 	
-	        HttpResponse resp = BpmnRestClient.post(recipeURL, requestId, recipeTimeout, action, serviceInstanceId, serviceType, resourceInput.toString(), recipeParamXsd)
+	        BpmnRestClient bpmnRestClient = new BpmnRestClient()
+		HttpResponse resp = bpmnRestClient.post(recipeURL, requestId, recipeTimeout, action, serviceInstanceId, serviceType, resourceInput.toString(), recipeParamXsd)
 	        logger.debug(" ======== END executeResourceDelete Process ======== ")
 		}catch(BpmnError b){
 			 logger.error("Rethrowing MSOWorkflowException")
