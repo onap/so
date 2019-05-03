@@ -91,7 +91,7 @@ public class ResourceRequestBuilderTest extends BaseTest {
                                 + "\t\t\"toscaNodeType\"            : \"org.openecomp.resource.vf.15968a6e2fe541bfA481\",\n"
                                 + "\t\t\"nfFunction\"           \t: null,\n"
                                 + "\"resourceInput\":\"{\\\"a\\\":\\\"b\\\"}\","
-                                + "\t\t\"nfType\"              \t\t: null,\n"
+                                + "\t\t\"resourceType\"              \t\t: \"VNF\",\n"
                                 + "\t\t\"nfRole\"              \t\t: null,\n"
                                 + "\t\t\"nfNamingCode\"         \t: null,\n"
                                 + "\t\t\"multiStageDesign\"         : \"false\",\n" + "\t\t\t\"vfModules\": [\n"
@@ -114,7 +114,7 @@ public class ResourceRequestBuilderTest extends BaseTest {
                                 + "\t\t\t\"modelInstanceName\"      : \"f971106a-248f-4202-9d1f 0\"\n" + "\t\t\t},\n"
                                 + "\t\t\"toscaNodeType\"            : \"org.openecomp.resource.vf.F971106a248f42029d1f\",\n"
                                 + "\t\t\"nfFunction\"           \t: null,\n"
-                                + "\t\t\"nfType\"              \t\t: null,\n"
+                                + "\t\t\"resourceType\"              \t\t: \"VNF\",\n"
                                 + "\t\t\"nfRole\"              \t\t: null,\n"
                                 + "\"resourceInput\":\"{\\\"a\\\":\\\"key|default_value\\\"}\","
                                 + "\t\t\"nfNamingCode\"         \t: null,\n"
@@ -185,7 +185,7 @@ public class ResourceRequestBuilderTest extends BaseTest {
                                 + "\t\t\t\"modelInstanceName\"      : \"f971106a-248f-4202-9d1f 0\"\n" + "\t\t\t},\n"
                                 + "\t\t\"toscaNodeType\"            : \"org.openecomp.resource.vf.F971106a248f42029d1f\",\n"
                                 + "\t\t\"nfFunction\"           \t: null,\n"
-                                + "\t\t\"nfType\"              \t\t: null,\n"
+                                + "\t\t\"resourceType\"              \t\t: \"VNF\",\n"
                                 + "\t\t\"nfRole\"              \t\t: null,\n"
                                 + "\"resourceInput\":\"{\\\"a\\\":\\\"key|default_value\\\"}\","
                                 + "\t\t\"nfNamingCode\"         \t: null,\n"
@@ -256,7 +256,7 @@ public class ResourceRequestBuilderTest extends BaseTest {
                                 + "\t\t\t\"modelInstanceName\"      : \"f971106a-248f-4202-9d1f 0\"\n" + "\t\t\t},\n"
                                 + "\t\t\"toscaNodeType\"            : \"org.openecomp.resource.vf.F971106a248f42029d1f\",\n"
                                 + "\t\t\"nfFunction\"           \t: null,\n"
-                                + "\t\t\"nfType\"              \t\t: null,\n"
+                                + "\t\t\"resourceType\"              \t\t: \"VNF\",\n"
                                 + "\t\t\"nfRole\"              \t\t: null,\n"
                                 + "\"resourceInput\":\"{\\\"a\\\":\\\"value\\\"}\","
                                 + "\t\t\"nfNamingCode\"         \t: null,\n"
@@ -397,7 +397,7 @@ public class ResourceRequestBuilderTest extends BaseTest {
                                 + "\t\t\"toscaNodeType\"            : \"org.openecomp.resource.vf.15968a6e2fe541bfA481\",\n"
                                 + "\t\t\"nfFunction\"           \t: null,\n"
                                 + "\"resourceInput\":\"{\\\"a\\\":\\\"key1|\\\"}\","
-                                + "\t\t\"nfType\"              \t\t: null,\n"
+                                + "\t\t\"resourceType\"              \t\t: \"VNF\",\n"
                                 + "\t\t\"nfRole\"              \t\t: null,\n"
                                 + "\t\t\"nfNamingCode\"         \t: null,\n"
                                 + "\t\t\"multiStageDesign\"         : \"false\",\n" + "\t\t\t\"vfModules\": [\n"
@@ -472,19 +472,45 @@ public class ResourceRequestBuilderTest extends BaseTest {
         assertEquals("20000", stringObjectMap.get("postcode"));
         assertEquals("single_gateway", stringObjectMap.get("type"));
         assertEquals("vCPE", stringObjectMap.get("deviceName"));
-        assertEquals("20.20.20.1", stringObjectMap.get("systemip"));
-        assertEquals("default_ipv6", stringObjectMap.get("systemipv6"));
-
+        assertEquals("DHCP", stringObjectMap.get("ipMode"));
 
         // VFC request again
-        /*
-         * stringObjectMap = ResourceRequestBuilder.buildResouceRequest( "c3954379-4efe-431c-8258-f84905b158e5",
-         * "e776449e-2b10-45c5-9217-2775c88cb1f1", this.userInputMap, currentVFData);
-         * assertEquals("Huawei Public Cloud", stringObjectMap.get("address")); assertEquals("20001",
-         * stringObjectMap.get("postcode")); assertEquals("multiple_gateway", stringObjectMap.get("type"));
-         * assertEquals("CPE_Beijing", stringObjectMap.get("deviceName")); assertEquals("20.20.20.2",
-         * stringObjectMap.get("systemip"));
-         */
+        stringObjectMap = ResourceRequestBuilder.buildResouceRequest("c3954379-4efe-431c-8258-f84905b158e5",
+                "e776449e-2b10-45c5-9217-2775c88cb1f1", this.userInputMap, currentVFData);
+        assertEquals("Huawei Private Cloud", stringObjectMap.get("address"));
+        assertEquals("20000", stringObjectMap.get("postcode"));
+        assertEquals("single_gateway", stringObjectMap.get("type"));
+        assertEquals("20.20.20.1", stringObjectMap.get("systemip"));
+        assertEquals("default_ipv6", stringObjectMap.get("systemipv6"));
+        assertEquals("VNF", stringObjectMap.get("devclass"));
+
+        // VF level request
+        stringObjectMap = ResourceRequestBuilder.buildResouceRequest("c3954379-4efe-431c-8258-f84905b158e5",
+                "e776449e-2b10-45c5-9217-2775c88ca1c3", this.userInputMap, currentVFData);
+        assertEquals("Huawei Public Cloud", stringObjectMap.get("address"));
+        assertEquals("dsvpn_hub", stringObjectMap.get("role"));
+        assertTrue(((String) stringObjectMap.get("wanlist")).contains("["));
+        assertTrue(((String) stringObjectMap.get("devlist")).contains("["));
+
+        // VFC request
+        stringObjectMap = ResourceRequestBuilder.buildResouceRequest("c3954379-4efe-431c-8258-f84905b158e5",
+                "e776449e-2b10-45c5-9217-2775c88cb1a4", this.userInputMap, currentVFData);
+        assertEquals("Huawei Public Cloud", stringObjectMap.get("address"));
+        assertEquals("20001", stringObjectMap.get("postcode"));
+        assertEquals("multiple_gateway", stringObjectMap.get("type"));
+        assertEquals("CPE_Beijing", stringObjectMap.get("deviceName"));
+        assertEquals("Static", stringObjectMap.get("ipMode"));
+
+        // VFC request again
+        stringObjectMap = ResourceRequestBuilder.buildResouceRequest("c3954379-4efe-431c-8258-f84905b158e5",
+                "e776449e-2b10-45c5-9217-2775c88cb1f5", this.userInputMap, currentVFData);
+        assertEquals("Huawei Public Cloud", stringObjectMap.get("address"));
+        assertEquals("20001", stringObjectMap.get("postcode"));
+        assertEquals("multiple_gateway", stringObjectMap.get("type"));
+        assertEquals("20.20.20.2", stringObjectMap.get("systemip"));
+        assertEquals("default_ipv6", stringObjectMap.get("systemipv6"));
+        assertEquals("PNF", stringObjectMap.get("devclass"));
+
 
 
     }
