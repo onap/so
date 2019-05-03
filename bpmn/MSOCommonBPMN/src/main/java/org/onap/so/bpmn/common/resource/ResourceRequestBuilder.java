@@ -228,22 +228,18 @@ public class ResourceRequestBuilder {
                 switch (resourceLevel) {
                     case FIRST:
                         // if it is next request for same group then increment first level index
-                        switch (lastResourceLevel) {
-                            case FIRST:
-                                boolean isSameLevelRequest = resourceInput.values().stream().anyMatch(item -> {
-                                    JsonElement tree = parser.parse(((String) item).split("\\|")[0]);
-                                    return tree.isJsonArray() && tree.getAsJsonArray().get(0).getAsString()
-                                            .equalsIgnoreCase(lastFirstLevelKey);
-                                });
-                                if (isSameLevelRequest) {
-                                    firstLevelIndex++;
-                                }
-                                break;
-                            case SECOND:
-                                firstLevelIndex = 0;
-                                secondLevelKey = null;
-                                break;
-
+                        boolean isSameLevelRequest = resourceInput.values().stream().anyMatch(item -> {
+                            JsonElement tree = parser.parse(((String) item).split("\\|")[0]);
+                            return tree.isJsonArray()
+                                    && tree.getAsJsonArray().get(0).getAsString().equalsIgnoreCase(lastFirstLevelKey);
+                        });
+                        if (isSameLevelRequest) {
+                            firstLevelIndex++;
+                        } else {
+                            firstLevelIndex = 0;
+                        }
+                        if (lastResourceLevel == ResourceLevel.SECOND) {
+                            secondLevelKey = null;
                         }
                         indexToPick = firstLevelIndex;
                         break;
@@ -254,12 +250,12 @@ public class ResourceRequestBuilder {
                                 secondLevelIndex = 0;
                                 break;
                             case SECOND:
-                                boolean isSameLevelRequest = resourceInput.values().stream().anyMatch(item -> {
+                                boolean isSameSecondLevelRequest = resourceInput.values().stream().anyMatch(item -> {
                                     JsonElement tree = parser.parse(((String) item).split("\\|")[0]);
                                     return tree.isJsonArray() && tree.getAsJsonArray().get(0).getAsString()
                                             .equalsIgnoreCase(lastSecondLevelKey);
                                 });
-                                if (isSameLevelRequest) {
+                                if (isSameSecondLevelRequest) {
                                     secondLevelIndex++;
                                 }
                                 break;
