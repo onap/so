@@ -175,7 +175,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
             //this is defaule sequence
             List<VnfResource> vnfResourceList = new ArrayList<VnfResource>()
             List<AllottedResource> arResourceList = new ArrayList<AllottedResource>()
-            for (Resource rc : delResourceList) {
+            for (Resource rc : delResourceList.reverse()) {
                 if (rc instanceof VnfResource) {
                     vnfResourceList.add(rc)
                 } else if (rc instanceof NetworkResource) {
