@@ -7,7 +7,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -48,6 +48,7 @@ public class CreateInventoryTask {
     protected void executeExternalTask(ExternalTask externalTask, ExternalTaskService externalTaskService) {
         setupMDC(externalTask);
         boolean success = true;
+        boolean inventoryException = false;
         String auditInventoryString = externalTask.getVariable("auditInventoryResult");
         AAIObjectAuditList auditInventory = null;
         try {
@@ -61,6 +62,10 @@ public class CreateInventoryTask {
                 logger.info("Executing External Task Create Inventory, Retry Number: {} \n {}", auditInventory,
                         externalTask.getRetries());
                 createInventory.createInventory(auditInventory);
+            } catch (InventoryException e) {
+                logger.error("Error during inventory of stack", e);
+                success = false;
+                inventoryException = true;
             } catch (Exception e) {
                 logger.error("Error during inventory of stack", e);
                 success = false;
@@ -68,6 +73,9 @@ public class CreateInventoryTask {
             if (success) {
                 externalTaskService.complete(externalTask);
                 logger.debug("The External Task Id: {}  Successful", externalTask.getId());
+            } else if (inventoryException) {
+                logger.debug("The External Task Id: {}  Failed, Retry not needed", externalTask.getId());
+                externalTaskService.handleBpmnError(externalTask, "AAIInventoryFailure");
             } else {
                 if (externalTask.getRetries() == null) {
                     logger.debug("The External Task Id: {}  Failed, Setting Retries to Default Start Value: {}",

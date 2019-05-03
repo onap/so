@@ -108,6 +108,8 @@ import org.onap.so.db.catalog.data.repository.ConfigurationResourceCustomization
 import org.onap.so.db.catalog.data.repository.ConfigurationResourceRepository;
 import org.onap.so.db.catalog.data.repository.CvnfcCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.ExternalServiceToInternalServiceRepository;
+import org.onap.so.db.catalog.data.repository.HeatEnvironmentRepository;
+import org.onap.so.db.catalog.data.repository.HeatFilesRepository;
 import org.onap.so.db.catalog.data.repository.HeatTemplateRepository;
 import org.onap.so.db.catalog.data.repository.InstanceGroupRepository;
 import org.onap.so.db.catalog.data.repository.NetworkResourceCustomizationRepository;
@@ -117,6 +119,7 @@ import org.onap.so.db.catalog.data.repository.PnfResourceRepository;
 import org.onap.so.db.catalog.data.repository.ServiceProxyResourceCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.ServiceRepository;
 import org.onap.so.db.catalog.data.repository.TempNetworkHeatTemplateRepository;
+import org.onap.so.db.catalog.data.repository.ToscaCsarRepository;
 import org.onap.so.db.catalog.data.repository.VFModuleCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.VFModuleRepository;
 import org.onap.so.db.catalog.data.repository.VnfResourceRepository;
@@ -223,6 +226,12 @@ public class ToscaResourceInstaller {
     protected HeatTemplateRepository heatRepo;
 
     @Autowired
+    protected HeatEnvironmentRepository heatEnvRepo;
+
+    @Autowired
+    protected HeatFilesRepository heatFilesRepo;
+
+    @Autowired
     protected NetworkResourceCustomizationRepository networkCustomizationRepo;
 
     @Autowired
@@ -239,6 +248,9 @@ public class ToscaResourceInstaller {
     protected ExternalServiceToInternalServiceRepository externalServiceToInternalServiceRepository;
 
     @Autowired
+    protected ToscaCsarRepository toscaCsarRepo;
+
+    @Autowired
     protected PnfResourceRepository pnfResourceRepository;
 
     @Autowired
@@ -248,6 +260,31 @@ public class ToscaResourceInstaller {
     protected WorkflowResource workflowResource;
 
     protected static final Logger logger = LoggerFactory.getLogger(ToscaResourceInstaller.class);
+
+    public boolean isCsarAlreadyDeployed(ToscaResourceStructure toscaResourceStructure)
+            throws ArtifactInstallerException {
+        boolean deployed = false;
+        if (toscaResourceStructure == null) {
+            return deployed;
+        }
+
+        IArtifactInfo inputToscaCsar = toscaResourceStructure.getToscaArtifact();
+        String checkSum = inputToscaCsar.getArtifactChecksum();
+        String artifactUuid = inputToscaCsar.getArtifactUUID();
+
+        Optional<ToscaCsar> toscaCsarObj = toscaCsarRepo.findById(artifactUuid);
+        if (toscaCsarObj.isPresent()) {
+            ToscaCsar toscaCsar = toscaCsarObj.get();
+            if (!toscaCsar.getArtifactChecksum().equalsIgnoreCase(checkSum)) {
+                String errorMessage =
+                        String.format("Csar with UUID: %s already exists.Their checksums don't match", artifactUuid);
+                throw new ArtifactInstallerException(errorMessage);
+            } else if (toscaCsar.getArtifactChecksum().equalsIgnoreCase(checkSum)) {
+                deployed = true;
+            }
+        }
+        return deployed;
+    }
 
     public boolean isResourceAlreadyDeployed(ResourceStructure vfResourceStruct, boolean serviceDeployed)
             throws ArtifactInstallerException {
@@ -1199,77 +1236,95 @@ public class ToscaResourceInstaller {
 
     protected void createHeatTemplateFromArtifact(VfResourceStructure vfResourceStructure,
             ToscaResourceStructure toscaResourceStruct, VfModuleArtifact vfModuleArtifact) {
-        HeatTemplate heatTemplate = new HeatTemplate();
-        List<String> typeList = new ArrayList<>();
-        typeList.add(ASDCConfiguration.HEAT_NESTED);
-        typeList.add(ASDCConfiguration.HEAT_ARTIFACT);
 
-        heatTemplate.setTemplateBody(
-                verifyTheFilePrefixInArtifacts(vfModuleArtifact.getResult(), vfResourceStructure, typeList));
-        heatTemplate.setTemplateName(vfModuleArtifact.getArtifactInfo().getArtifactName());
+        HeatTemplate existingHeatTemplate =
+                heatRepo.findByArtifactUuid(vfModuleArtifact.getArtifactInfo().getArtifactUUID());
 
-        if (vfModuleArtifact.getArtifactInfo().getArtifactTimeout() != null) {
-            heatTemplate.setTimeoutMinutes(vfModuleArtifact.getArtifactInfo().getArtifactTimeout());
-        } else {
-            heatTemplate.setTimeoutMinutes(240);
+        if (existingHeatTemplate == null) {
+            HeatTemplate heatTemplate = new HeatTemplate();
+            List<String> typeList = new ArrayList<>();
+            typeList.add(ASDCConfiguration.HEAT_NESTED);
+            typeList.add(ASDCConfiguration.HEAT_ARTIFACT);
+
+            heatTemplate.setTemplateBody(
+                    verifyTheFilePrefixInArtifacts(vfModuleArtifact.getResult(), vfResourceStructure, typeList));
+            heatTemplate.setTemplateName(vfModuleArtifact.getArtifactInfo().getArtifactName());
+
+            if (vfModuleArtifact.getArtifactInfo().getArtifactTimeout() != null) {
+                heatTemplate.setTimeoutMinutes(vfModuleArtifact.getArtifactInfo().getArtifactTimeout());
+            } else {
+                heatTemplate.setTimeoutMinutes(240);
+            }
+
+            heatTemplate.setDescription(vfModuleArtifact.getArtifactInfo().getArtifactDescription());
+            heatTemplate.setVersion(BigDecimalVersion
+                    .castAndCheckNotificationVersionToString(vfModuleArtifact.getArtifactInfo().getArtifactVersion()));
+            heatTemplate.setArtifactUuid(vfModuleArtifact.getArtifactInfo().getArtifactUUID());
+
+            if (vfModuleArtifact.getArtifactInfo().getArtifactChecksum() != null) {
+                heatTemplate.setArtifactChecksum(vfModuleArtifact.getArtifactInfo().getArtifactChecksum());
+            } else {
+                heatTemplate.setArtifactChecksum(MANUAL_RECORD);
+            }
+
+            Set<HeatTemplateParam> heatParam = extractHeatTemplateParameters(vfModuleArtifact.getResult(),
+                    vfModuleArtifact.getArtifactInfo().getArtifactUUID());
+            heatTemplate.setParameters(heatParam);
+            vfModuleArtifact.setHeatTemplate(heatTemplate);
         }
-
-        heatTemplate.setDescription(vfModuleArtifact.getArtifactInfo().getArtifactDescription());
-        heatTemplate.setVersion(BigDecimalVersion
-                .castAndCheckNotificationVersionToString(vfModuleArtifact.getArtifactInfo().getArtifactVersion()));
-        heatTemplate.setArtifactUuid(vfModuleArtifact.getArtifactInfo().getArtifactUUID());
-
-        if (vfModuleArtifact.getArtifactInfo().getArtifactChecksum() != null) {
-            heatTemplate.setArtifactChecksum(vfModuleArtifact.getArtifactInfo().getArtifactChecksum());
-        } else {
-            heatTemplate.setArtifactChecksum(MANUAL_RECORD);
-        }
-
-        Set<HeatTemplateParam> heatParam = extractHeatTemplateParameters(vfModuleArtifact.getResult(),
-                vfModuleArtifact.getArtifactInfo().getArtifactUUID());
-        heatTemplate.setParameters(heatParam);
-        vfModuleArtifact.setHeatTemplate(heatTemplate);
     }
 
     protected void createHeatEnvFromArtifact(VfResourceStructure vfResourceStructure,
             VfModuleArtifact vfModuleArtifact) {
-        HeatEnvironment heatEnvironment = new HeatEnvironment();
-        heatEnvironment.setName(vfModuleArtifact.getArtifactInfo().getArtifactName());
-        List<String> typeList = new ArrayList<>();
-        typeList.add(ASDCConfiguration.HEAT);
-        typeList.add(ASDCConfiguration.HEAT_VOL);
-        heatEnvironment.setEnvironment(
-                verifyTheFilePrefixInArtifacts(vfModuleArtifact.getResult(), vfResourceStructure, typeList));
-        heatEnvironment.setDescription(vfModuleArtifact.getArtifactInfo().getArtifactDescription());
-        heatEnvironment.setVersion(BigDecimalVersion
-                .castAndCheckNotificationVersionToString(vfModuleArtifact.getArtifactInfo().getArtifactVersion()));
-        heatEnvironment.setArtifactUuid(vfModuleArtifact.getArtifactInfo().getArtifactUUID());
 
-        if (vfModuleArtifact.getArtifactInfo().getArtifactChecksum() != null) {
-            heatEnvironment.setArtifactChecksum(vfModuleArtifact.getArtifactInfo().getArtifactChecksum());
-        } else {
-            heatEnvironment.setArtifactChecksum(MANUAL_RECORD);
+        HeatEnvironment existingHeatEnvironment =
+                heatEnvRepo.findByArtifactUuid(vfModuleArtifact.getArtifactInfo().getArtifactUUID());
+
+        if (existingHeatEnvironment == null) {
+            HeatEnvironment heatEnvironment = new HeatEnvironment();
+            heatEnvironment.setName(vfModuleArtifact.getArtifactInfo().getArtifactName());
+            List<String> typeList = new ArrayList<>();
+            typeList.add(ASDCConfiguration.HEAT);
+            typeList.add(ASDCConfiguration.HEAT_VOL);
+            heatEnvironment.setEnvironment(
+                    verifyTheFilePrefixInArtifacts(vfModuleArtifact.getResult(), vfResourceStructure, typeList));
+            heatEnvironment.setDescription(vfModuleArtifact.getArtifactInfo().getArtifactDescription());
+            heatEnvironment.setVersion(BigDecimalVersion
+                    .castAndCheckNotificationVersionToString(vfModuleArtifact.getArtifactInfo().getArtifactVersion()));
+            heatEnvironment.setArtifactUuid(vfModuleArtifact.getArtifactInfo().getArtifactUUID());
+
+            if (vfModuleArtifact.getArtifactInfo().getArtifactChecksum() != null) {
+                heatEnvironment.setArtifactChecksum(vfModuleArtifact.getArtifactInfo().getArtifactChecksum());
+            } else {
+                heatEnvironment.setArtifactChecksum(MANUAL_RECORD);
+            }
+            vfModuleArtifact.setHeatEnvironment(heatEnvironment);
         }
-        vfModuleArtifact.setHeatEnvironment(heatEnvironment);
     }
 
     protected void createHeatFileFromArtifact(VfResourceStructure vfResourceStructure,
             VfModuleArtifact vfModuleArtifact, ToscaResourceStructure toscaResourceStruct) {
 
-        HeatFiles heatFile = new HeatFiles();
-        heatFile.setAsdcUuid(vfModuleArtifact.getArtifactInfo().getArtifactUUID());
-        heatFile.setDescription(vfModuleArtifact.getArtifactInfo().getArtifactDescription());
-        heatFile.setFileBody(vfModuleArtifact.getResult());
-        heatFile.setFileName(vfModuleArtifact.getArtifactInfo().getArtifactName());
-        heatFile.setVersion(BigDecimalVersion
-                .castAndCheckNotificationVersionToString(vfModuleArtifact.getArtifactInfo().getArtifactVersion()));
-        toscaResourceStruct.setHeatFilesUUID(vfModuleArtifact.getArtifactInfo().getArtifactUUID());
-        if (vfModuleArtifact.getArtifactInfo().getArtifactChecksum() != null) {
-            heatFile.setArtifactChecksum(vfModuleArtifact.getArtifactInfo().getArtifactChecksum());
-        } else {
-            heatFile.setArtifactChecksum(MANUAL_RECORD);
+        HeatFiles existingHeatFiles =
+                heatFilesRepo.findByArtifactUuid(vfModuleArtifact.getArtifactInfo().getArtifactUUID());
+
+        if (existingHeatFiles == null) {
+            HeatFiles heatFile = new HeatFiles();
+            heatFile.setAsdcUuid(vfModuleArtifact.getArtifactInfo().getArtifactUUID());
+            heatFile.setDescription(vfModuleArtifact.getArtifactInfo().getArtifactDescription());
+            heatFile.setFileBody(vfModuleArtifact.getResult());
+            heatFile.setFileName(vfModuleArtifact.getArtifactInfo().getArtifactName());
+            heatFile.setVersion(BigDecimalVersion
+                    .castAndCheckNotificationVersionToString(vfModuleArtifact.getArtifactInfo().getArtifactVersion()));
+            toscaResourceStruct.setHeatFilesUUID(vfModuleArtifact.getArtifactInfo().getArtifactUUID());
+            if (vfModuleArtifact.getArtifactInfo().getArtifactChecksum() != null) {
+                heatFile.setArtifactChecksum(vfModuleArtifact.getArtifactInfo().getArtifactChecksum());
+            } else {
+                heatFile.setArtifactChecksum(MANUAL_RECORD);
+            }
+            vfModuleArtifact.setHeatFiles(heatFile);
+
         }
-        vfModuleArtifact.setHeatFiles(heatFile);
     }
 
     protected Service createService(ToscaResourceStructure toscaResourceStructure,
@@ -2263,10 +2318,12 @@ public class ToscaResourceInstaller {
             vfModuleCustomization.setVolumeHeatEnv(volVfModuleArtifact.getHeatEnvironment());
             vfModuleArtifact.incrementDeployedInDB();
         } else if (vfModuleArtifact.getArtifactInfo().getArtifactType().equals(ASDCConfiguration.HEAT_ENV)) {
-            if (vfModuleArtifact.getHeatEnvironment().getName().contains("volume")) {
-                vfModuleCustomization.setVolumeHeatEnv(vfModuleArtifact.getHeatEnvironment());
-            } else {
-                vfModuleCustomization.setHeatEnvironment(vfModuleArtifact.getHeatEnvironment());
+            if (vfModuleArtifact.getHeatEnvironment() != null) {
+                if (vfModuleArtifact.getHeatEnvironment().getName().contains("volume")) {
+                    vfModuleCustomization.setVolumeHeatEnv(vfModuleArtifact.getHeatEnvironment());
+                } else {
+                    vfModuleCustomization.setHeatEnvironment(vfModuleArtifact.getHeatEnvironment());
+                }
             }
             vfModuleArtifact.incrementDeployedInDB();
         } else if (vfModuleArtifact.getArtifactInfo().getArtifactType().equals(ASDCConfiguration.HEAT_ARTIFACT)) {

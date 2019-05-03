@@ -95,5 +95,6 @@ public class StackInfoMapper {
         heatStatusMap.put("UPDATE_IN_PROGRESS", HeatStatus.UPDATING);
         heatStatusMap.put("UPDATE_FAILED", HeatStatus.FAILED);
         heatStatusMap.put("UPDATE_COMPLETE", HeatStatus.UPDATED);
+        heatStatusMap.put("NOT_FOUND", HeatStatus.NOTFOUND);
     }
 }
