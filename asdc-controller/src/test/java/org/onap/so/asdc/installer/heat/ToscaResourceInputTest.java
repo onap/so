@@ -33,10 +33,7 @@ import org.onap.sdc.toscaparser.api.parameters.Input;
 import org.onap.so.asdc.client.exceptions.ArtifactInstallerException;
 import org.onap.so.asdc.installer.ToscaResourceStructure;
 import org.onap.so.db.catalog.beans.Service;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.*;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
@@ -59,6 +56,23 @@ public class ToscaResourceInputTest {
 
     @Mock
     Input input;
+
+    @Test
+    public void getListResourceInput() {
+        ToscaResourceInstaller toscaResourceInstaller = new ToscaResourceInstaller();
+        LinkedHashMap<String, Property> hashMap = new LinkedHashMap<>();
+        hashMap.put("key1", property);
+        when(nodeTemplate.getProperties()).thenReturn(hashMap);
+        when(property.getValue()).thenReturn(getInput);
+        when(getInput.getInputName()).thenReturn("nameKey");
+        when(input.getName()).thenReturn("nameKey");
+        when(input.getDefault()).thenReturn("defaultValue");
+        when(getInput.toString()).thenReturn("getinput:[sites,INDEX,role]");
+        List<Input> inputs = new ArrayList<>();
+        inputs.add(input);
+        String resourceInput = toscaResourceInstaller.getVnfcResourceInput(nodeTemplate, inputs);
+        assertEquals("{\\\"key1\\\":\\\"sites,INDEX,role|defaultValue\\\"}", resourceInput);
+    }
 
     @Test
     public void processResourceSequenceTest() {

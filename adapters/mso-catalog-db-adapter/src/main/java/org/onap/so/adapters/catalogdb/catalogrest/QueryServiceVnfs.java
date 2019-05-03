@@ -49,6 +49,7 @@ public class QueryServiceVnfs extends CatalogQuery {
             + "\t\"nfFunction\"           	: <NF_FUNCTION>,\n" + "\t\"nfType\"              		: <NF_TYPE>,\n"
             + "\t\"nfRole\"              		: <NF_ROLE>,\n" + "\t\"nfNamingCode\"         	: <NF_NAMING_CODE>,\n"
             + "\t\"multiStageDesign\"         : <MULTI_STEP_DESIGN>,\n"
+            + "\t\"vnfcInstGroupOrder\"       : <VNFC_INSTANCE_GROUP_ORDER>,\n"
             + "\t\"resourceInput\"            : <RESOURCE_INPUT>,\n" + "<_VFMODULES_>,\n" + "<_GROUPS_>\n" + "\t}";
 
     public QueryServiceVnfs() {
@@ -118,6 +119,7 @@ public class QueryServiceVnfs extends CatalogQuery {
             put(valueMap, "NF_TYPE", o.getNfType());
             put(valueMap, "NF_ROLE", o.getNfRole());
             put(valueMap, "NF_NAMING_CODE", o.getNfNamingCode());
+            put(valueMap, "VNFC_INSTANCE_GROUP_ORDER", o.getVnfcInstanceGroupOrder());
             put(valueMap, "MULTI_STEP_DESIGN", o.getMultiStageDesign());
             put(valueMap, "RESOURCE_INPUT", o.getResourceInput());
 
