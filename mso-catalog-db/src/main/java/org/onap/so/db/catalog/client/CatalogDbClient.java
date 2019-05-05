@@ -145,6 +145,7 @@ public class CatalogDbClient {
     private static final String CLOUD_VERSION = "cloudVersion";
     private static final String HOMING_INSTANCE = "/homingInstance";
     private static final String ARTIFACT_UUID = "artifactUUID";
+    private static final String SOURCE = "source";
 
     private static final String TARGET_ENTITY = "SO:CatalogDB";
     private static final String ASTERISK = "*";
@@ -191,6 +192,7 @@ public class CatalogDbClient {
     private String findPnfResourceCustomizationByModelUuid = "/findPnfResourceCustomizationByModelUuid";
     private String findWorkflowByArtifactUUID = "/findByArtifactUUID";
     private String findWorkflowByModelUUID = "/findWorkflowByModelUUID";
+    private String findWorkflowBySource = "/findBySource";
     private String findVnfResourceCustomizationByModelUuid = "/findVnfResourceCustomizationByModelUuid";
 
     private String serviceURI;
@@ -333,6 +335,7 @@ public class CatalogDbClient {
 
         findWorkflowByArtifactUUID = endpoint + WORKFLOW + SEARCH + findWorkflowByArtifactUUID;
         findWorkflowByModelUUID = endpoint + WORKFLOW + SEARCH + findWorkflowByModelUUID;
+        findWorkflowBySource = endpoint + WORKFLOW + SEARCH + findWorkflowBySource;
 
         findVnfResourceCustomizationByModelUuid =
                 endpoint + VNF_RESOURCE_CUSTOMIZATION + SEARCH + findVnfResourceCustomizationByModelUuid;
@@ -888,5 +891,10 @@ public class CatalogDbClient {
     public List<Workflow> findWorkflowByModelUUID(String vnfResourceModelUUID) {
         return this.getMultipleResources(workflowClient, getUri(UriBuilder.fromUri(findWorkflowByModelUUID)
                 .queryParam(VNF_RESOURCE_MODEL_UUID, vnfResourceModelUUID).build().toString()));
+    }
+
+    public List<Workflow> findWorkflowBySource(String source) {
+        return this.getMultipleResources(workflowClient,
+                getUri(UriBuilder.fromUri(findWorkflowBySource).queryParam(SOURCE, source).build().toString()));
     }
 }

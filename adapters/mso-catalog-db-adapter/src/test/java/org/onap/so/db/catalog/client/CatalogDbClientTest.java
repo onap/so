@@ -673,4 +673,19 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         Assert.assertNull(workflow);
     }
 
+    @Test
+    public void getWorkflowBySource_validSource_expectedOutput() {
+        List<Workflow> workflows = client.findWorkflowBySource("sdc");
+        assertTrue(workflows != null);
+        assertTrue(workflows.size() != 0);
+
+        assertEquals("testingWorkflow", workflows.get(0).getArtifactName());
+    }
+
+    @Test
+    public void getWorkflowBySource_invalidSource_nullOutput() {
+        List<Workflow> workflow = client.findWorkflowBySource("abc");
+        Assert.assertNull(workflow);
+    }
+
 }

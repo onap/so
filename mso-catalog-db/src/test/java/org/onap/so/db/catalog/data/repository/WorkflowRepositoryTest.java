@@ -44,4 +44,14 @@ public class WorkflowRepositoryTest extends BaseTest {
         Assert.assertTrue("testingWorkflow".equals(workflows.get(0).getArtifactName()));
     }
 
+    @Test
+    public void findBySourceTest() throws Exception {
+        List<Workflow> workflows = workflowRepository.findBySource("sdc");
+
+        Assert.assertTrue(workflows != null);
+        Assert.assertTrue(workflows.size() != 0);
+
+        Assert.assertTrue("testingWorkflow".equals(workflows.get(0).getArtifactName()));
+    }
+
 }
