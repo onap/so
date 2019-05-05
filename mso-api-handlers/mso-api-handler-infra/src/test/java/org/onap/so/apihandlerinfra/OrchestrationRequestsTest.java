@@ -42,7 +42,6 @@ import java.util.Map;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.db.request.beans.InfraActiveRequests;
@@ -65,7 +64,6 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class OrchestrationRequestsTest extends BaseTest {
@@ -168,7 +166,6 @@ public class OrchestrationRequestsTest extends BaseTest {
         cloudRequestData.add(cloudData);
         request.setCloudRequestData(cloudRequestData);
         testResponse.setRequest(request);
-
         String testRequestId = request.getRequestId();
 
         HttpHeaders headers = new HttpHeaders();
@@ -186,7 +183,6 @@ public class OrchestrationRequestsTest extends BaseTest {
 
         assertThat(response.getBody(), sameBeanAs(testResponse).ignoring("request.startTime")
                 .ignoring("request.finishTime").ignoring("request.requestStatus.timeStamp"));
-
         assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
         assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
         assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
@@ -334,11 +330,10 @@ public class OrchestrationRequestsTest extends BaseTest {
                 "/onap/so/infra/orchestrationRequests/v7/" + "5ffbabd6-b793-4377-a1ab-082670fbc7ac" + "/unlock"));
 
         response = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, String.class);
-        // Cannot assert anything further here, already have a wiremock in place which ensures that the post was
+        // Cannot assert anything further here, already have a wiremock in place
+        // which ensures that the post was
         // properly called to update.
     }
-
-
 
     @Test
     public void mapRequestProcessingDataTest() throws JsonParseException, JsonMappingException, IOException {
@@ -413,7 +408,6 @@ public class OrchestrationRequestsTest extends BaseTest {
                 .withStatus(HttpStatus.SC_OK)));
     }
 
-
     private void setupTestGetOrchestrationRequestOpenstackDetails(String requestId, String status) throws Exception {
         wireMockServer.stubFor(get(urlPathEqualTo(getTestUrl(requestId))).willReturn(aResponse()
                 .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -426,14 +420,12 @@ public class OrchestrationRequestsTest extends BaseTest {
         wireMockServer.stubFor(get(urlPathEqualTo(getTestUrl(requestId)))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(String.format(getResponseTemplate, requestId, status)).withStatus(HttpStatus.SC_OK)));
-
     }
-
-
 
     private void setupTestUnlockOrchestrationRequest_invalid_Json() {
         wireMockServer.stubFor(get(urlPathEqualTo(getTestUrl(INVALID_REQUEST_ID))).willReturn(aResponse()
                 .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).withStatus(HttpStatus.SC_NOT_FOUND)));
+
     }
 
     private void setupTestUnlockOrchestrationRequest_Valid_Status(String requestID, String status) {

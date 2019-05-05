@@ -24,8 +24,8 @@ import javax.annotation.PostConstruct;
 import javax.ws.rs.ApplicationPath;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletProperties;
-import org.onap.so.apihandler.filters.RequestUriFilter;
 import org.onap.so.apihandler.filters.RequestIdFilter;
+import org.onap.so.apihandler.filters.RequestUriFilter;
 import org.onap.so.apihandlerinfra.exceptions.ApiExceptionMapper;
 import org.onap.so.apihandlerinfra.tenantisolation.CloudOrchestration;
 import org.onap.so.apihandlerinfra.tenantisolation.CloudResourcesOrchestration;
@@ -40,8 +40,6 @@ import io.swagger.jaxrs.listing.SwaggerSerializers;
 @Configuration
 @ApplicationPath("/")
 public class JerseyConfiguration extends ResourceConfig {
-
-
 
     @PostConstruct
     public void setUp() {
@@ -64,6 +62,7 @@ public class JerseyConfiguration extends ResourceConfig {
         register(E2EServiceInstances.class);
         register(WorkflowSpecificationsHandler.class);
         register(InstanceManagement.class);
+        register(ResumeOrchestrationRequest.class);
         // this registration seems to be needed to get predictable
         // execution behavior for the above JSON Exception Mappers
         register(com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider.class);

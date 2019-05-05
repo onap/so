@@ -10,4 +10,5 @@ public class MdcConstants {
     public static final String SERVICE_NAME = "ServiceName";
     public static final String STATUSCODE = "StatusCode";
     public static final String ENDTIME = "EndTimestamp";
+    public static final String ORIGINAL_PARTNER_NAME = "OriginalPartnerName";
 }

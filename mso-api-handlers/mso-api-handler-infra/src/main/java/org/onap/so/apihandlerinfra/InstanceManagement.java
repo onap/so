@@ -115,8 +115,7 @@ public class InstanceManagement {
 
         String requestUri = requestHandlerUtils.getRequestUri(requestContext, uriPrefix);
 
-        sir = requestHandlerUtils.convertJsonToServiceInstanceRequest(requestJSON, action, startTime, sir, msoRequest,
-                requestId, requestUri);
+        sir = requestHandlerUtils.convertJsonToServiceInstanceRequest(requestJSON, action, requestId, requestUri);
         String requestScope = requestHandlerUtils.deriveRequestScope(action, sir, requestUri);
         InfraActiveRequests currentActiveReq =
                 msoRequest.createRequestObject(sir, action, requestId, Status.IN_PROGRESS, requestJSON, requestScope);
@@ -149,16 +148,15 @@ public class InstanceManagement {
         InfraActiveRequests dup = null;
         boolean inProgress = false;
 
-        dup = requestHandlerUtils.duplicateCheck(action, instanceIdMap, startTime, msoRequest, null, requestScope,
-                currentActiveReq);
+        dup = requestHandlerUtils.duplicateCheck(action, instanceIdMap, null, requestScope, currentActiveReq);
 
         if (dup != null) {
             inProgress = requestHandlerUtils.camundaHistoryCheck(dup, currentActiveReq);
         }
 
         if (dup != null && inProgress) {
-            requestHandlerUtils.buildErrorOnDuplicateRecord(currentActiveReq, action, instanceIdMap, startTime,
-                    msoRequest, null, requestScope, dup);
+            requestHandlerUtils.buildErrorOnDuplicateRecord(currentActiveReq, action, instanceIdMap, null, requestScope,
+                    dup);
         }
         ServiceInstancesResponse serviceResponse = new ServiceInstancesResponse();
 

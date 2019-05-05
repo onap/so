@@ -20,7 +20,6 @@
 
 package org.onap.so.logging.jaxrs.filter;
 
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -40,7 +39,9 @@ import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 import javax.ws.rs.ext.Providers;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
+import org.onap.so.logger.HttpHeadersConstants;
 import org.onap.so.logger.LogConstants;
+import org.onap.so.logger.MdcConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -76,8 +77,10 @@ public class JaxRsFilterLogging implements ContainerRequestFilter, ContainerResp
             mdcSetup.setClientIPAddress(httpServletRequest);
             mdcSetup.setInstanceUUID();
             mdcSetup.setEntryTimeStamp();
+            MDC.put(HttpHeadersConstants.REQUESTOR_ID, headers.getFirst("X-RequestorID"));
             MDC.put(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE, ONAPLogConstants.ResponseStatus.INPROGRESS.toString());
             MDC.put(LogConstants.URI_BASE, containerRequest.getUriInfo().getBaseUri().toString());
+            MDC.put(MdcConstants.ORIGINAL_PARTNER_NAME, MDC.get(ONAPLogConstants.MDCs.PARTNER_NAME));
             logger.info(ONAPLogConstants.Markers.ENTRY, "Entering");
         } catch (Exception e) {
             logger.warn("Error in incoming JAX-RS Inteceptor", e);
@@ -127,7 +130,6 @@ public class JaxRsFilterLogging implements ContainerRequestFilter, ContainerResp
         return message;
     }
 
-
     private void setRequestId(MultivaluedMap<String, String> headers) {
         String requestId = headers.getFirst(ONAPLogConstants.Headers.REQUEST_ID);
         if (requestId == null || requestId.isEmpty())
@@ -167,7 +169,5 @@ public class JaxRsFilterLogging implements ContainerRequestFilter, ContainerResp
         MDC.remove(ONAPLogConstants.MDCs.PARTNER_NAME);
         MDC.remove(ONAPLogConstants.MDCs.TARGET_SERVICE_NAME);
     }
-
-
 
 }
