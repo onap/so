@@ -1180,6 +1180,8 @@ public class ToscaResourceInstaller {
                     vfModuleArtifact.getArtifactInfo().getArtifactUUID());
             heatTemplate.setParameters(heatParam);
             vfModuleArtifact.setHeatTemplate(heatTemplate);
+        } else {
+            vfModuleArtifact.setHeatTemplate(existingHeatTemplate);
         }
     }
 
@@ -1208,6 +1210,8 @@ public class ToscaResourceInstaller {
                 heatEnvironment.setArtifactChecksum(MANUAL_RECORD);
             }
             vfModuleArtifact.setHeatEnvironment(heatEnvironment);
+        } else {
+            vfModuleArtifact.setHeatEnvironment(existingHeatEnvironment);
         }
     }
 
@@ -1232,7 +1236,8 @@ public class ToscaResourceInstaller {
                 heatFile.setArtifactChecksum(MANUAL_RECORD);
             }
             vfModuleArtifact.setHeatFiles(heatFile);
-
+        } else {
+            vfModuleArtifact.setHeatFiles(existingHeatFiles);
         }
     }
 
