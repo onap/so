@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3faab6e7_be78cc1d",
+        "filename": "cloudify-client/src/main/java/org/onap/so/cloudify/v3/client/Util.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2019-05-06T11:45:35Z",
+      "side": 1,
+      "message": "Please add the header info\n\nplease include test cases for validation",
+      "revId": "89df390a7ef4567431473b890607d747f1c7c86f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
