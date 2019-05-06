@@ -1,0 +1,13 @@
+{
+   "requestDetails":{
+      "requestInfo":{
+         "source":"VID",
+         "requestorId":"xxxxxx",
+         "instanceName":"testService",
+         "productFamilyId":"test"
+      },
+      "requestParameters":{
+         "aLaCarte":"false"
+      }
+   }
+}

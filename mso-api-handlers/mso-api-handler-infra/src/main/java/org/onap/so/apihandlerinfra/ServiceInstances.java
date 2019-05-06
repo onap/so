@@ -765,8 +765,7 @@ public class ServiceInstances {
         ServiceInstancesRequest sir = null;
         String apiVersion = version.substring(1);
 
-        sir = requestHandlerUtils.convertJsonToServiceInstanceRequest(requestJSON, action, startTime, sir, msoRequest,
-                requestId, requestUri);
+        sir = requestHandlerUtils.convertJsonToServiceInstanceRequest(requestJSON, action, requestId, requestUri);
         String requestScope = requestHandlerUtils.deriveRequestScope(action, sir, requestUri);
         InfraActiveRequests currentActiveReq =
                 msoRequest.createRequestObject(sir, action, requestId, Status.IN_PROGRESS, requestJSON, requestScope);
@@ -797,16 +796,15 @@ public class ServiceInstances {
         InfraActiveRequests dup = null;
         boolean inProgress = false;
 
-        dup = requestHandlerUtils.duplicateCheck(action, instanceIdMap, startTime, msoRequest, instanceName,
-                requestScope, currentActiveReq);
+        dup = requestHandlerUtils.duplicateCheck(action, instanceIdMap, instanceName, requestScope, currentActiveReq);
 
         if (dup != null) {
             inProgress = requestHandlerUtils.camundaHistoryCheck(dup, currentActiveReq);
         }
 
         if (dup != null && inProgress) {
-            requestHandlerUtils.buildErrorOnDuplicateRecord(currentActiveReq, action, instanceIdMap, startTime,
-                    msoRequest, instanceName, requestScope, dup);
+            requestHandlerUtils.buildErrorOnDuplicateRecord(currentActiveReq, action, instanceIdMap, instanceName,
+                    requestScope, dup);
         }
         ServiceInstancesResponse serviceResponse = new ServiceInstancesResponse();
 
@@ -968,8 +966,8 @@ public class ServiceInstances {
             throw validateException;
         }
 
-        InfraActiveRequests dup = requestHandlerUtils.duplicateCheck(action, instanceIdMap, startTime, msoRequest, null,
-                requestScope, currentActiveReq);
+        InfraActiveRequests dup =
+                requestHandlerUtils.duplicateCheck(action, instanceIdMap, null, requestScope, currentActiveReq);
         boolean inProgress = false;
 
         if (dup != null) {
@@ -977,8 +975,8 @@ public class ServiceInstances {
         }
 
         if (dup != null && inProgress) {
-            requestHandlerUtils.buildErrorOnDuplicateRecord(currentActiveReq, action, instanceIdMap, startTime,
-                    msoRequest, null, requestScope, dup);
+            requestHandlerUtils.buildErrorOnDuplicateRecord(currentActiveReq, action, instanceIdMap, null, requestScope,
+                    dup);
         }
 
         ServiceInstancesResponse serviceResponse = new ServiceInstancesResponse();
@@ -1011,7 +1009,7 @@ public class ServiceInstances {
                 recipeLookupResult.getOrchestrationURI(), requestScope);
     }
 
-    private String getPnfCorrelationId(ServiceInstancesRequest sir) {
+    protected String getPnfCorrelationId(ServiceInstancesRequest sir) {
         return Optional.of(sir).map(ServiceInstancesRequest::getRequestDetails)
                 .map(RequestDetails::getRequestParameters).map(parameters -> parameters.getUserParamValue("pnfId"))
                 .orElse("");
@@ -1103,8 +1101,8 @@ public class ServiceInstances {
         return recipeLookupResult;
     }
 
-    private RecipeLookupResult getServiceURI(ServiceInstancesRequest servInstReq, Actions action, boolean alaCarteFlag)
-            throws IOException {
+    protected RecipeLookupResult getServiceURI(ServiceInstancesRequest servInstReq, Actions action,
+            boolean alaCarteFlag) throws IOException {
         // SERVICE REQUEST
         // Construct the default service name
         // TODO need to make this a configurable property
@@ -1598,8 +1596,7 @@ public class ServiceInstances {
         long startTime = System.currentTimeMillis();
         ServiceInstancesRequest sir = null;
 
-        sir = requestHandlerUtils.convertJsonToServiceInstanceRequest(requestJSON, action, startTime, sir, msoRequest,
-                requestId, requestUri);
+        sir = requestHandlerUtils.convertJsonToServiceInstanceRequest(requestJSON, action, requestId, requestUri);
         String requestScope = requestHandlerUtils.deriveRequestScope(action, sir, requestUri);
         InfraActiveRequests currentActiveReq =
                 msoRequest.createRequestObject(sir, action, requestId, Status.IN_PROGRESS, requestJSON, requestScope);
@@ -1613,16 +1610,15 @@ public class ServiceInstances {
 
         InfraActiveRequests dup = null;
 
-        dup = requestHandlerUtils.duplicateCheck(action, instanceIdMap, startTime, msoRequest, instanceName,
-                requestScope, currentActiveReq);
+        dup = requestHandlerUtils.duplicateCheck(action, instanceIdMap, instanceName, requestScope, currentActiveReq);
 
         if (dup != null) {
             inProgress = requestHandlerUtils.camundaHistoryCheck(dup, currentActiveReq);
         }
 
         if (instanceIdMap != null && dup != null && inProgress) {
-            requestHandlerUtils.buildErrorOnDuplicateRecord(currentActiveReq, action, instanceIdMap, startTime,
-                    msoRequest, instanceName, requestScope, dup);
+            requestHandlerUtils.buildErrorOnDuplicateRecord(currentActiveReq, action, instanceIdMap, instanceName,
+                    requestScope, dup);
         }
 
         ServiceInstancesResponse serviceResponse = new ServiceInstancesResponse();

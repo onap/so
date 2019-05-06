@@ -24,8 +24,20 @@
 package org.onap.so.apihandlerinfra;
 
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.onap.so.logger.HttpHeadersConstants.REQUESTOR_ID;
+import java.io.IOException;
+import java.net.URL;
+import java.security.GeneralSecurityException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import javax.xml.bind.DatatypeConverter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -76,20 +88,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.xml.bind.DatatypeConverter;
-import static org.onap.so.logger.HttpHeadersConstants.REQUESTOR_ID;
-import java.io.IOException;
-import java.net.URL;
-import java.security.GeneralSecurityException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class RequestHandlerUtils {
@@ -293,9 +293,8 @@ public class RequestHandlerUtils {
         return requestUri;
     }
 
-    public InfraActiveRequests duplicateCheck(Actions action, HashMap<String, String> instanceIdMap, long startTime,
-            MsoRequest msoRequest, String instanceName, String requestScope, InfraActiveRequests currentActiveReq)
-            throws ApiException {
+    public InfraActiveRequests duplicateCheck(Actions action, HashMap<String, String> instanceIdMap,
+            String instanceName, String requestScope, InfraActiveRequests currentActiveReq) throws ApiException {
         InfraActiveRequests dup = null;
         try {
             if (!(instanceName == null && requestScope.equals("service") && (action == Action.createInstance
@@ -369,8 +368,7 @@ public class RequestHandlerUtils {
     }
 
     public ServiceInstancesRequest convertJsonToServiceInstanceRequest(String requestJSON, Actions action,
-            long startTime, ServiceInstancesRequest sir, MsoRequest msoRequest, String requestId, String requestUri)
-            throws ApiException {
+            String requestId, String requestUri) throws ApiException {
         try {
             ObjectMapper mapper = new ObjectMapper();
             return mapper.readValue(requestJSON, ServiceInstancesRequest.class);
@@ -415,8 +413,8 @@ public class RequestHandlerUtils {
     }
 
     public void buildErrorOnDuplicateRecord(InfraActiveRequests currentActiveReq, Actions action,
-            HashMap<String, String> instanceIdMap, long startTime, MsoRequest msoRequest, String instanceName,
-            String requestScope, InfraActiveRequests dup) throws ApiException {
+            HashMap<String, String> instanceIdMap, String instanceName, String requestScope, InfraActiveRequests dup)
+            throws ApiException {
 
         String instance = null;
         if (instanceName != null) {
@@ -620,6 +618,29 @@ public class RequestHandlerUtils {
             requestScope = ModelType.service.name();
         }
         return requestScope;
+    }
+
+    protected InfraActiveRequests createNewRecordCopyFromInfraActiveRequest(InfraActiveRequests infraActiveRequest,
+            String requestId, Timestamp startTimeStamp, String source, String requestUri, String requestorId) {
+        InfraActiveRequests request = new InfraActiveRequests();
+        request.setRequestId(requestId);
+        request.setStartTime(startTimeStamp);
+        request.setSource(source);
+        request.setRequestUrl(requestUri);
+        request.setProgress(new Long(5));
+        request.setRequestorId(requestorId);
+        request.setRequestStatus(Status.IN_PROGRESS.toString());
+        request.setLastModifiedBy(Constants.MODIFIED_BY_APIHANDLER);
+        if (infraActiveRequest != null) {
+            request.setTenantId(infraActiveRequest.getTenantId());
+            request.setRequestBody(infraActiveRequest.getRequestBody());
+            request.setAicCloudRegion(infraActiveRequest.getAicCloudRegion());
+            request.setRequestScope(infraActiveRequest.getRequestScope());
+            request.setServiceInstanceId(infraActiveRequest.getServiceInstanceId());
+            request.setServiceInstanceName(infraActiveRequest.getServiceInstanceName());
+            request.setRequestAction(infraActiveRequest.getRequestAction());
+        }
+        return request;
     }
 
 }

@@ -42,7 +42,6 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.http.HttpStatus;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandler.common.ResponseBuilder;
@@ -68,8 +67,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -80,7 +77,6 @@ import io.swagger.annotations.ApiOperation;
 public class OrchestrationRequests {
 
     private static Logger logger = LoggerFactory.getLogger(OrchestrationRequests.class);
-
 
     @Autowired
     private RequestsDbClient requestsDbClient;
@@ -100,10 +96,8 @@ public class OrchestrationRequests {
             @PathParam("version") String version, @QueryParam("includeCloudRequest") boolean includeCloudRequest)
             throws ApiException {
 
-
         String apiVersion = version.substring(1);
         GetOrchestrationResponse orchestrationResponse = new GetOrchestrationResponse();
-
 
         InfraActiveRequests infraActiveRequest = null;
         List<org.onap.so.db.request.beans.RequestProcessingData> requestProcessingData = null;
@@ -116,13 +110,10 @@ public class OrchestrationRequests {
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.AvailabilityError).build();
 
-
-
             ValidateException validateException =
                     new ValidateException.Builder("Exception while communciate with Request DB - Infra Request Lookup",
                             HttpStatus.SC_NOT_FOUND, ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB).cause(e)
                                     .errorInfo(errorLoggerInfo).build();
-
 
             throw validateException;
 
@@ -132,7 +123,6 @@ public class OrchestrationRequests {
 
             ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR,
                     ErrorCode.BusinessProcesssError).build();
-
 
             ValidateException validateException =
                     new ValidateException.Builder("Orchestration RequestId " + requestId + " is not found in DB",
@@ -207,7 +197,6 @@ public class OrchestrationRequests {
         return builder.buildResponse(HttpStatus.SC_OK, null, orchestrationList, apiVersion);
     }
 
-
     @POST
     @Path("/{version: [vV][4-7]}/{requestId}/unlock")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -258,7 +247,6 @@ public class OrchestrationRequests {
             ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND,
                     ErrorCode.BusinessProcesssError).build();
 
-
             ValidateException validateException =
                     new ValidateException.Builder("Null response from RequestDB when searching by RequestId",
                             HttpStatus.SC_NOT_FOUND, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo)
@@ -279,7 +267,6 @@ public class OrchestrationRequests {
                 ErrorLoggerInfo errorLoggerInfo =
                         new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, ErrorCode.DataError)
                                 .build();
-
 
                 ValidateException validateException = new ValidateException.Builder(
                         "Orchestration RequestId " + requestId + " has a status of " + status
@@ -306,7 +293,6 @@ public class OrchestrationRequests {
         String rollbackStatusMessage = iar.getRollbackStatusMessage();
         String flowStatusMessage = iar.getFlowStatus();
         String retryStatusMessage = iar.getRetryStatusMessage();
-
 
         InstanceReferences ir = new InstanceReferences();
         if (iar.getNetworkId() != null)
@@ -405,7 +391,6 @@ public class OrchestrationRequests {
             String timeStamp = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(iar.getModifyTime()) + " GMT";
             status.setTimeStamp(timeStamp);
         }
-
 
         if (iar.getRequestStatus() != null) {
             status.setRequestState(iar.getRequestStatus());
