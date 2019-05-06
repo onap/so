@@ -151,7 +151,7 @@ public class ResourceRequestBuilder {
             Map<String, String> resourceInputData = getResourceInputStr(serviceVnfCust, resourceCustomizationUuid);
 
             // find match in network resource
-            if (resourceInputData.size() == 0) {
+            if (resourceInputData != null && resourceInputData.isEmpty()) {
                 List<Map<String, Object>> serviceNetworkCust =
                         (List<Map<String, Object>>) serviceResources.get("serviceNetworks");
                 resourceInputData = getResourceInputStr(serviceNetworkCust, resourceCustomizationUuid);
@@ -164,15 +164,19 @@ public class ResourceRequestBuilder {
                 }
             }
 
-            String resourceInputStr = resourceInputData.get("resourceInput");
-            ResourceLevel resourceLevel = ResourceLevel.valueOf(resourceInputData.get("nodeType"));
+            String resourceInputStr = null;
+            ResourceLevel resourceLevel = null;
+            if (resourceInputData != null) {
+                resourceInputStr = resourceInputData.get("resourceInput");
+                resourceLevel = ResourceLevel.valueOf(resourceInputData.get("nodeType"));
+            }
 
-            if (resourceInputStr != null && !resourceInputStr.isEmpty()) {
+            if (resourceInputStr != null && !resourceInputStr.isEmpty() && resourceLevel != null) {
                 return getResourceInput(resourceInputStr, serviceInputs, resourceLevel, currentVFData);
             }
 
         } catch (Exception e) {
-            logger.error("not able to retrieve service instance");
+            logger.error("not able to retrieve service instance", e);
         }
         return new HashMap();
     }
