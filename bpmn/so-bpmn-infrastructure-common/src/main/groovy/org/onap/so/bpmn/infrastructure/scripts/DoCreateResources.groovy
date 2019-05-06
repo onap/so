@@ -209,11 +209,11 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
     public void getCurrentResoure(DelegateExecution execution){
         logger.trace("Start getCurrentResoure Process ")
         def currentIndex = execution.getVariable("currentResourceIndex")
-        List<Resource> sequencedResourceList = execution.getVariable("sequencedResourceList")
-        Resource currentResource = sequencedResourceList.get(currentIndex)
+        List<Resource> instanceResourceList = execution.getVariable("instanceResourceList")
+        Resource currentResource = instanceResourceList.get(currentIndex)
         execution.setVariable("resourceType", currentResource.getModelInfo().getModelName())
-        logger.info("Now we deal with resouce:" + currentResource.getModelInfo().getModelName())
-        logger.trace("COMPLETED getCurrentResoure Process ")
+        logger.info("Now we deal with resource:" + currentResource.getModelInfo().getModelName())
+        logger.trace("COMPLETED getCurrentResource Process ")
     }
 
     public void parseNextResource(DelegateExecution execution){
@@ -221,8 +221,8 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         def currentIndex = execution.getVariable("currentResourceIndex")
         def nextIndex =  currentIndex + 1
         execution.setVariable("currentResourceIndex", nextIndex)
-        List<String> sequencedResourceList = execution.getVariable("sequencedResourceList")
-        if(nextIndex >= sequencedResourceList.size()){
+        List<Resource> instanceResourceList = execution.getVariable("instanceResourceList")
+        if(nextIndex >= instanceResourceList.size()){
             execution.setVariable("allResourceFinished", "true")
         }else{
             execution.setVariable("allResourceFinished", "false")
@@ -249,7 +249,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         resourceInput.setOperationId(operationId)
         resourceInput.setOperationType(operationType);
         def currentIndex = execution.getVariable("currentResourceIndex")
-        List<Resource> sequencedResourceList = execution.getVariable("sequencedResourceList")
+        List<Resource> sequencedResourceList = execution.getVariable("instanceResourceList")
         Resource currentResource = sequencedResourceList.get(currentIndex)
         resourceInput.setResourceModelInfo(currentResource.getModelInfo());
         ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
