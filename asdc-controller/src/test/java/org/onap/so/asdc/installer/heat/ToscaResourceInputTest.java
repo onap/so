@@ -62,16 +62,20 @@ public class ToscaResourceInputTest {
         ToscaResourceInstaller toscaResourceInstaller = new ToscaResourceInstaller();
         LinkedHashMap<String, Property> hashMap = new LinkedHashMap<>();
         hashMap.put("key1", property);
+        Map<String, Object> map = new HashMap<>();
+        map.put("customizationUUID", "69df3303-d2b3-47a1-9d04-41604d3a95fd");
+        Metadata metadata = new Metadata(map);
         when(nodeTemplate.getProperties()).thenReturn(hashMap);
         when(property.getValue()).thenReturn(getInput);
         when(getInput.getInputName()).thenReturn("nameKey");
         when(input.getName()).thenReturn("nameKey");
         when(input.getDefault()).thenReturn("defaultValue");
         when(getInput.toString()).thenReturn("getinput:[sites,INDEX,role]");
+        when(nodeTemplate.getMetaData()).thenReturn(metadata);
         List<Input> inputs = new ArrayList<>();
         inputs.add(input);
         String resourceInput = toscaResourceInstaller.getVnfcResourceInput(nodeTemplate, inputs);
-        assertEquals("{\\\"key1\\\":\\\"sites,INDEX,role|defaultValue\\\"}", resourceInput);
+        assertEquals("{\\\"key1\\\":\\\"[sites,INDEX,role]|defaultValue\\\"}", resourceInput);
     }
 
     @Test

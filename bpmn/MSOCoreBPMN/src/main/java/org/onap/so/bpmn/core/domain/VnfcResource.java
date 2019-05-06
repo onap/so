@@ -27,7 +27,7 @@ import java.util.UUID;
 public class VnfcResource extends Resource {
     private static final long serialVersionUID = 1L;
 
-    @JsonProperty("resource-input")
+    @JsonProperty("resourceInput")
     private String resourceInput;
 
     public VnfcResource() {

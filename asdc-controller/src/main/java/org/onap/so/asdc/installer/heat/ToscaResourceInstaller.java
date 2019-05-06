@@ -575,15 +575,11 @@ public class ToscaResourceInstaller {
                 Input input = inputOptional.get();
                 defaultValue = input.getDefault() != null ? input.getDefault().toString() : "";
             }
-            String valueStr = value.toString();
-            String regex = "(?<=\\[).*?(?=\\])";
+            // Gets a value between [ and ]
+            String regex = "\\[.*?\\]";
             Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(valueStr);
-            if (matcher.find()) {
-                valueStr = matcher.group();
-            } else {
-                valueStr = inputName;
-            }
+            Matcher matcher = pattern.matcher(value.toString());
+            String valueStr = matcher.find() ? matcher.group() : inputName;
             outInput = valueStr + "|" + defaultValue;
         } else {
             outInput = value != null ? value.toString() : "";
@@ -1891,11 +1887,16 @@ public class ToscaResourceInstaller {
             resouceRequest.put(key, resourceValue);
         }
 
+        String resourceCustomizationUuid =
+                vfcTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
+
         String jsonStr = null;
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             jsonStr = objectMapper.writeValueAsString(resouceRequest);
             jsonStr = jsonStr.replace("\"", "\\\"");
+            logger.debug("vfcResource request for resource customization id (" + resourceCustomizationUuid + ") : "
+                    + jsonStr);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
