@@ -16,8 +16,8 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <antlr.version>4.7.1</antlr.version>
     <java.version>1.8</java.version>
-    <sdc.tosca.version>1.5.0</sdc.tosca.version>
-    <jtosca.version>1.5.0</jtosca.version>
+    <sdc.tosca.version>1.5.1</sdc.tosca.version>
+    <jtosca.version>1.5.1</jtosca.version>
   </properties>
 
   <build>
