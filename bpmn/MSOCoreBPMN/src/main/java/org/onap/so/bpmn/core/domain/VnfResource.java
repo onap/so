@@ -55,7 +55,7 @@ public class VnfResource extends Resource {
     @JsonProperty("groups")
     private List<GroupResource> groups;
 
-    @JsonProperty("group-order")
+    @JsonProperty("vnfcInstGroupOrder")
     private String groupOrder;
 
     private String vnfHostname;

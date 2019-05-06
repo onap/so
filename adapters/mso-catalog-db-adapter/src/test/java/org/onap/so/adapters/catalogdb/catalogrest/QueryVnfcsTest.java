@@ -50,6 +50,7 @@ public class QueryVnfcsTest {
         c1.setModelInvariantUUID("inv1");
         c1.setModelVersion("v1");
         c1.setModelCustomizationUUID("cust1");
+        c1.setResourceInput("resourceInput1");
 
         VnfcCustomization c2 = new VnfcCustomization();
         c2.setModelName("model2");
@@ -57,6 +58,7 @@ public class QueryVnfcsTest {
         c2.setModelInvariantUUID("inv2");
         c2.setModelVersion("v2");
         c2.setModelCustomizationUUID("cust2");
+        c2.setResourceInput("resourceInput2");
 
         customizations.add(c1);
         customizations.add(c2);

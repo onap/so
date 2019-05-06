@@ -35,7 +35,8 @@ public class QueryVnfcs extends CatalogQuery {
                     + "\t\t\t\"modelUuid\"              : <MODEL_UUID>,\n"
                     + "\t\t\t\"modelInvariantUuid\"     : <MODEL_INVARIANT_ID>,\n"
                     + "\t\t\t\"modelVersion\"           : <MODEL_VERSION>,\n"
-                    + "\t\t\t\"modelCustomizationUuid\" : <MODEL_CUSTOMIZATION_UUID>\n" + "\t\t}" + "\t}";
+                    + "\t\t\t\"modelCustomizationUuid\" : <MODEL_CUSTOMIZATION_UUID>\n" + "\t\t},\n"
+                    + "\t\t\"resourceInput\"            : <RESOURCE_INPUT>\n" + "\t}";
 
     public QueryVnfcs() {
         super();
@@ -104,6 +105,7 @@ public class QueryVnfcs extends CatalogQuery {
             put(valueMap, "MODEL_INVARIANT_ID", o.getModelInvariantUUID());
             put(valueMap, "MODEL_VERSION", o.getModelVersion());
             put(valueMap, "MODEL_CUSTOMIZATION_UUID", o.getModelCustomizationUUID());
+            put(valueMap, "RESOURCE_INPUT", o.getResourceInput());
 
             sb.append(sep).append(this.setTemplate(TEMPLATE, valueMap));
             sep = ",\n";
