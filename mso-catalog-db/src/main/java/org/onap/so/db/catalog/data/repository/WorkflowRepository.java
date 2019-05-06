@@ -31,6 +31,8 @@ public interface WorkflowRepository extends JpaRepository<Workflow, Integer> {
 
     Workflow findByArtifactUUID(String artifactUUID);
 
+    List<Workflow> findBySource(String source);
+
     /**
      * Used to fetch the @{link Workflow} by the Model UUID.
      *
