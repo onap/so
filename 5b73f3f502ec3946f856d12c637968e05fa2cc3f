@@ -16,6 +16,24 @@
       "revId": "5b73f3f502ec3946f856d12c637968e05fa2cc3f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cbe07cb4_25bd3d98",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/common/resource/ResourceRequestBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 5094
+      },
+      "writtenOn": "2019-05-06T09:29:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "355ba0f0_70a9ea80",
+      "revId": "5b73f3f502ec3946f856d12c637968e05fa2cc3f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
