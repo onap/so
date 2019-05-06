@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "355ba0f0_70a9ea80",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/common/resource/ResourceRequestBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2019-05-06T09:18:05Z",
+      "side": 1,
+      "message": "\u003d\u003d0 , change to isEmpty() check",
+      "revId": "5b73f3f502ec3946f856d12c637968e05fa2cc3f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
