@@ -16,6 +16,24 @@
       "revId": "903b90822a32edab8416afce97323f472a49fde3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cdd8d03c_8a5f0c98",
+        "filename": "asdc-controller/src/test/java/org/onap/so/asdc/installer/bpmn/BpmnInstallerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 2493
+      },
+      "writtenOn": "2019-05-07T05:04:14Z",
+      "side": 1,
+      "message": "Added isFalse() as following comparison is returning false\nIOUtils.contentEquals(expectedContent, entity.getContent())\n\nNot sure why it returns false. \n\nIf it is expected to return true then need to check buildMimeMultipart functionality.",
+      "parentUuid": "ba14beea_c63aa3d5",
+      "revId": "903b90822a32edab8416afce97323f472a49fde3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
