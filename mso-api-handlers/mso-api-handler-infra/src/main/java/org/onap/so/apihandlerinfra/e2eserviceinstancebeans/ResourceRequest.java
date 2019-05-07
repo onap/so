@@ -39,6 +39,9 @@ public class ResourceRequest {
     @JsonProperty("resourceCustomizationUuid")
     private String resourceCustomizationUuid;
 
+    @JsonProperty("resourceIndex")
+    private String resourceIndex;
+
     @JsonProperty("parameters")
     private E2EParameters parameters;
 
@@ -97,5 +100,13 @@ public class ResourceRequest {
 
     public void setParameters(E2EParameters parameters) {
         this.parameters = parameters;
+    }
+
+    public String getResourceIndex() {
+        return resourceIndex;
+    }
+
+    public void setResourceIndex(String resourceIndex) {
+        this.resourceIndex = resourceIndex;
     }
 }
