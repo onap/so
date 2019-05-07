@@ -151,13 +151,13 @@ public class ResourceRequestBuilder {
             Map<String, String> resourceInputData = getResourceInputStr(serviceVnfCust, resourceCustomizationUuid);
 
             // find match in network resource
-            if (resourceInputData != null && resourceInputData.isEmpty()) {
+            if (resourceInputData.isEmpty()) {
                 List<Map<String, Object>> serviceNetworkCust =
                         (List<Map<String, Object>>) serviceResources.get("serviceNetworks");
                 resourceInputData = getResourceInputStr(serviceNetworkCust, resourceCustomizationUuid);
 
                 // find match in AR resource
-                if (resourceInputData == null) {
+                if (resourceInputData.isEmpty()) {
                     List<Map<String, Object>> serviceArCust =
                             (List<Map<String, Object>>) serviceResources.get("serviceAllottedResources");
                     resourceInputData = getResourceInputStr(serviceArCust, resourceCustomizationUuid);
@@ -166,7 +166,7 @@ public class ResourceRequestBuilder {
 
             String resourceInputStr = null;
             ResourceLevel resourceLevel = null;
-            if (resourceInputData != null) {
+            if (!resourceInputData.isEmpty()) {
                 resourceInputStr = resourceInputData.get("resourceInput");
                 resourceLevel = ResourceLevel.valueOf(resourceInputData.get("nodeType"));
             }
@@ -200,7 +200,7 @@ public class ResourceRequestBuilder {
                 return resourceInputMap;
             }
         }
-        return null;
+        return new HashMap<>();
     }
 
     // this method combines resource input with service input
