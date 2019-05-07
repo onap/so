@@ -25,6 +25,29 @@
     },
     {
       "key": {
+        "uuid": "b443b461_a4639ad6",
+        "filename": "bpmn/MSOCoreBPMN/src/main/java/org/onap/so/bpmn/core/domain/VnfResource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-05-07T06:03:29Z",
+      "side": 1,
+      "message": "i would suggest vnfc-instance-grp-order",
+      "range": {
+        "startLine": 58,
+        "startChar": 19,
+        "endLine": 58,
+        "endChar": 37
+      },
+      "revId": "e4f6df686b2e9111af4614e2ddabe8b72f6d2319",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fd080582_d1e68828",
         "filename": "bpmn/MSOCoreBPMN/src/main/java/org/onap/so/bpmn/core/domain/VnfcResource.java",
         "patchSetId": 1
