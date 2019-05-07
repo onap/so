@@ -22,7 +22,6 @@
 
 package org.onap.so.asdc.client;
 
-
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -40,10 +39,10 @@ import org.springframework.stereotype.Component;
 public class ASDCConfiguration implements IConfiguration {
 
     // SHell command to obtain the same encryption, 128 bits key, key must be HEX
-    // echo -n "This is a test string" | openssl aes-128-ecb -e -K 546573746F736973546573746F736973 -nosalt | xxd
+    // echo -n "This is a test string" | openssl aes-128-ecb -e -K 546573746F736973546573746F736973
+    // -nosalt | xxd
 
     private static Logger logger = LoggerFactory.getLogger(ASDCConfiguration.class);
-
 
     private String asdcControllerName;
 
@@ -58,8 +57,8 @@ public class ASDCConfiguration implements IConfiguration {
     public static final String WORKFLOW = "WORKFLOW";
     public static final String VF_MODULES_METADATA = "VF_MODULES_METADATA";
 
-    private static final String[] SUPPORTED_ARTIFACT_TYPES =
-            {HEAT, HEAT_ARTIFACT, HEAT_ENV, HEAT_NESTED, HEAT_NET, HEAT_VOL, OTHER, TOSCA_CSAR, VF_MODULES_METADATA};
+    private static final String[] SUPPORTED_ARTIFACT_TYPES = {HEAT, HEAT_ARTIFACT, HEAT_ENV,
+            HEAT_NESTED, HEAT_NET, HEAT_VOL, OTHER, TOSCA_CSAR, VF_MODULES_METADATA};
 
     public static final List<String> SUPPORTED_ARTIFACT_TYPES_LIST =
             Collections.unmodifiableList(Arrays.asList(SUPPORTED_ARTIFACT_TYPES));
@@ -73,14 +72,14 @@ public class ASDCConfiguration implements IConfiguration {
     @Value("${mso.asdc-connections.asdc-controller1.messageBusAddress}")
     private String[] messageBusAddress;
 
-
     public void setAsdcControllerName(String asdcControllerName) {
         this.asdcControllerName = asdcControllerName;
     }
 
     @Override
     public java.lang.Boolean isUseHttpsWithDmaap() {
-        return getBooleanPropertyWithDefault("mso.asdc-connections.asdc-controller1.useHttpsWithDmaap", true);
+        return getBooleanPropertyWithDefault(
+                "mso.asdc-connections.asdc-controller1.useHttpsWithDmaap", true);
     }
 
     @Override
@@ -96,13 +95,11 @@ public class ASDCConfiguration implements IConfiguration {
             return Collections.emptyList();
         }
 
-
     }
 
     public String getAsdcControllerName() {
         return asdcControllerName;
     }
-
 
     @Override
     public String getConsumerGroup() {
@@ -171,6 +168,7 @@ public class ASDCConfiguration implements IConfiguration {
             try {
                 return Boolean.valueOf(config);
             } catch (Exception e) {
+                logger.debug("Exception while getting boolean property with default property", e);
                 return defaultValue;
             }
         }
@@ -193,7 +191,8 @@ public class ASDCConfiguration implements IConfiguration {
 
     @Override
     public List<String> getRelevantArtifactTypes() {
-        // DO not return the Static List SUPPORTED_ARTIFACT_TYPES_LIST because the ASDC Client will try to modify it !!!
+        // DO not return the Static List SUPPORTED_ARTIFACT_TYPES_LIST because the ASDC Client will
+        // try to modify it !!!
         return Arrays.asList(SUPPORTED_ARTIFACT_TYPES);
     }
 
@@ -214,7 +213,8 @@ public class ASDCConfiguration implements IConfiguration {
 
     @Override
     public boolean activateServerTLSAuth() {
-        return getBooleanPropertyWithDefault("mso.asdc-connections.asdc-controller1.activateServerTLSAuth", true);
+        return getBooleanPropertyWithDefault(
+                "mso.asdc-connections.asdc-controller1.activateServerTLSAuth", true);
     }
 
     @Override
@@ -228,12 +228,13 @@ public class ASDCConfiguration implements IConfiguration {
     }
 
     /**
-     * The flag allows the client to receive metadata for all resources of the service regardless of the artifacts
-     * associated to them. Setting the flag to false will preserve legacy behavior.
+     * The flag allows the client to receive metadata for all resources of the service regardless of
+     * the artifacts associated to them. Setting the flag to false will preserve legacy behavior.
      */
     @Override
     public boolean isFilterInEmptyResources() {
-        return getBooleanPropertyWithDefault("mso.asdc-connections.asdc-controller1.isFilterInEmptyResources", true);
+        return getBooleanPropertyWithDefault(
+                "mso.asdc-connections.asdc-controller1.isFilterInEmptyResources", true);
     }
 
 }

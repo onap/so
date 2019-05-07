@@ -20,6 +20,7 @@
 
 package org.onap.so.asdc.activity;
 
+import java.net.URL;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.http.HttpStatus;
@@ -34,7 +35,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.net.URL;
 
 @Component
 public class ActivitySpecsActions {
@@ -58,7 +58,8 @@ public class ActivitySpecsActions {
             mapper.setSerializationInclusion(Include.NON_NULL);
             String payload = mapper.writer().writeValueAsString(activitySpec);
 
-            String urlString = UriBuilder.fromUri(hostname).path(ACTIVITY_SPEC_URI).build().toString();
+            String urlString =
+                    UriBuilder.fromUri(hostname).path(ACTIVITY_SPEC_URI).build().toString();
             URL url = new URL(urlString);
 
             HttpClient httpClient = httpClientFactory.newJsonClient(url, TargetEntity.SDC);
@@ -68,7 +69,8 @@ public class ActivitySpecsActions {
 
             int statusCode = response.getStatus();
             if (statusCode != HttpStatus.SC_OK) {
-                logger.warn("{} {} {}", "Error creating activity spec", activitySpec.getName(), statusCode);
+                logger.warn("{} {} {}", "Error creating activity spec", activitySpec.getName(),
+                        statusCode);
             } else {
                 if (response.getEntity() != null) {
                     ActivitySpecCreateResponse activitySpecCreateResponse =
@@ -76,14 +78,16 @@ public class ActivitySpecsActions {
                     if (activitySpecCreateResponse != null) {
                         activitySpecId = activitySpecCreateResponse.getId();
                     } else {
-                        logger.warn("{} {}", "Unable to read activity spec", activitySpec.getName());
+                        logger.warn("{} {}", "Unable to read activity spec",
+                                activitySpec.getName());
                     }
                 } else {
-                    logger.warn("{} {}", "No activity spec response returned", activitySpec.getName());
+                    logger.warn("{} {}", "No activity spec response returned",
+                            activitySpec.getName());
                 }
             }
         } catch (Exception e) {
-            logger.warn("{} {}", "Exception creating activitySpec", e.getMessage());
+            logger.warn("Exception creating activitySpec", e);
         }
 
         return activitySpecId;
@@ -115,7 +119,7 @@ public class ActivitySpecsActions {
             }
 
         } catch (Exception e) {
-            logger.warn("{} {}", "Exception certifying activitySpec", e.getMessage());
+            logger.warn("Exception certifying activitySpec", e);
         }
 
         return certificationResult;
