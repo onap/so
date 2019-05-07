@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "c07d6bf6_598bec8e",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/common/resource/ResourceRequestBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-05-07T05:48:10Z",
+      "side": 1,
+      "message": "Enhancement could be added to this method to avoid null return this will result to remove null checks from this portion of code.",
+      "range": {
+        "startLine": 151,
+        "startChar": 52,
+        "endLine": 151,
+        "endChar": 115
+      },
+      "revId": "5b73f3f502ec3946f856d12c637968e05fa2cc3f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "355ba0f0_70a9ea80",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/common/resource/ResourceRequestBuilder.java",
         "patchSetId": 1
