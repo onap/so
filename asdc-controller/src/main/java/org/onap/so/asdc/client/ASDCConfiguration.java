@@ -22,7 +22,6 @@
 
 package org.onap.so.asdc.client;
 
-
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -40,10 +39,10 @@ import org.springframework.stereotype.Component;
 public class ASDCConfiguration implements IConfiguration {
 
     // SHell command to obtain the same encryption, 128 bits key, key must be HEX
-    // echo -n "This is a test string" | openssl aes-128-ecb -e -K 546573746F736973546573746F736973 -nosalt | xxd
+    // echo -n "This is a test string" | openssl aes-128-ecb -e -K 546573746F736973546573746F736973
+    // -nosalt | xxd
 
     private static Logger logger = LoggerFactory.getLogger(ASDCConfiguration.class);
-
 
     private String asdcControllerName;
 
@@ -73,7 +72,6 @@ public class ASDCConfiguration implements IConfiguration {
     @Value("${mso.asdc-connections.asdc-controller1.messageBusAddress}")
     private String[] messageBusAddress;
 
-
     public void setAsdcControllerName(String asdcControllerName) {
         this.asdcControllerName = asdcControllerName;
     }
@@ -96,13 +94,11 @@ public class ASDCConfiguration implements IConfiguration {
             return Collections.emptyList();
         }
 
-
     }
 
     public String getAsdcControllerName() {
         return asdcControllerName;
     }
-
 
     @Override
     public String getConsumerGroup() {
@@ -171,6 +167,7 @@ public class ASDCConfiguration implements IConfiguration {
             try {
                 return Boolean.valueOf(config);
             } catch (Exception e) {
+                logger.debug("Exception while getting boolean property with default property", e);
                 return defaultValue;
             }
         }
@@ -193,7 +190,8 @@ public class ASDCConfiguration implements IConfiguration {
 
     @Override
     public List<String> getRelevantArtifactTypes() {
-        // DO not return the Static List SUPPORTED_ARTIFACT_TYPES_LIST because the ASDC Client will try to modify it !!!
+        // DO not return the Static List SUPPORTED_ARTIFACT_TYPES_LIST because the ASDC Client will
+        // try to modify it !!!
         return Arrays.asList(SUPPORTED_ARTIFACT_TYPES);
     }
 
