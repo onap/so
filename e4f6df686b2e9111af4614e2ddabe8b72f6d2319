@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9ab96f8b_312b0534",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/java/org/onap/so/adapters/catalogdb/catalogrest/QueryVnfcs.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-05-07T06:00:52Z",
+      "side": 1,
+      "message": "It should come out of modelinfo",
+      "range": {
+        "startLine": 39,
+        "startChar": 22,
+        "endLine": 39,
+        "endChar": 86
+      },
+      "revId": "e4f6df686b2e9111af4614e2ddabe8b72f6d2319",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fd080582_d1e68828",
+        "filename": "bpmn/MSOCoreBPMN/src/main/java/org/onap/so/bpmn/core/domain/VnfcResource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-05-07T06:00:52Z",
+      "side": 1,
+      "message": "I think json keys should not be in camel case",
+      "range": {
+        "startLine": 30,
+        "startChar": 19,
+        "endLine": 30,
+        "endChar": 32
+      },
+      "revId": "e4f6df686b2e9111af4614e2ddabe8b72f6d2319",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
