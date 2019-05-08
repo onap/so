@@ -20,7 +20,7 @@ SPDX-License-Identifier: Apache-2.0
 @authors: ronan.kenny@ericsson.com, waqas.ikram@ericsson.com
 */
 
-export interface VarInstance {
+export interface VariableInstance {
   name: string;
   value: string;
   type: string;

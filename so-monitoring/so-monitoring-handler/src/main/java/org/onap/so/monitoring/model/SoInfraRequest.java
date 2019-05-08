@@ -28,7 +28,7 @@ public class SoInfraRequest {
 
     private final String requestId;
     private final String serviceInstanceId;
-    private final String serviceIstanceName;
+    private final String serviceInstanceName;
     private final String networkId;
     private final String requestStatus;
     private final String serviceType;
@@ -38,7 +38,7 @@ public class SoInfraRequest {
     public SoInfraRequest(final SoInfraRequestBuilder requestBuilder) {
         this.requestId = requestBuilder.getRequestId();
         this.serviceInstanceId = requestBuilder.getServiceInstanceId();
-        this.serviceIstanceName = requestBuilder.getServiceIstanceName();
+        this.serviceInstanceName = requestBuilder.getServiceInstanceName();
         this.networkId = requestBuilder.getNetworkId();
         this.requestStatus = requestBuilder.getRequestStatus();
         this.serviceType = requestBuilder.getServiceType();
@@ -61,10 +61,10 @@ public class SoInfraRequest {
     }
 
     /**
-     * @return the serviceIstanceName
+     * @return the serviceInstanceName
      */
-    public String getServiceIstanceName() {
-        return serviceIstanceName;
+    public String getServiceInstanceName() {
+        return serviceInstanceName;
     }
 
     /**
@@ -111,7 +111,7 @@ public class SoInfraRequest {
         result = prime * result + ((requestId == null) ? 0 : requestId.hashCode());
         result = prime * result + ((requestStatus == null) ? 0 : requestStatus.hashCode());
         result = prime * result + ((serviceInstanceId == null) ? 0 : serviceInstanceId.hashCode());
-        result = prime * result + ((serviceIstanceName == null) ? 0 : serviceIstanceName.hashCode());
+        result = prime * result + ((serviceInstanceName == null) ? 0 : serviceInstanceName.hashCode());
         result = prime * result + ((serviceType == null) ? 0 : serviceType.hashCode());
         result = prime * result + ((startTime == null) ? 0 : startTime.hashCode());
         return result;
@@ -122,7 +122,7 @@ public class SoInfraRequest {
         if (obj instanceof SoInfraRequest) {
             final SoInfraRequest other = (SoInfraRequest) obj;
             return isEqual(requestId, other.requestId) && isEqual(serviceInstanceId, other.serviceInstanceId)
-                    && isEqual(serviceIstanceName, other.serviceIstanceName) && isEqual(networkId, other.networkId)
+                    && isEqual(serviceInstanceName, other.serviceInstanceName) && isEqual(networkId, other.networkId)
                     && isEqual(requestStatus, other.requestStatus) && isEqual(serviceType, other.serviceType)
                     && isEqual(startTime, other.startTime) && isEqual(endTime, other.endTime);
         }
