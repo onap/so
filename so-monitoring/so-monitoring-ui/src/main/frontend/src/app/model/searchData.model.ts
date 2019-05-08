@@ -24,27 +24,29 @@ SPDX-License-Identifier: Apache-2.0
 
 import { Observable, throwError, of } from 'rxjs';
 import { SearchRequest } from "./SearchRequest.model";
+import { Input } from "@angular/core";
+
 export class SearchData {
 
-  public selectedValueSII = "EQ";
-  public selectedValueRI = "EQ";
-  public selectedValueSN = "EQ";
-  public selectedValueSTATUS = "ALL";
+  @Input() selectedValueSII = "EQ";
+  @Input() selectedValueRI = "EQ";
+  @Input() selectedValueSN = "EQ";
+  @Input() selectedValueSTATUS = "ALL";
 
   private now = Date.now();
   // Minus 1 hour from current time for start date
-  public startDate = new Date(this.now - (1 * 60 * 60 * 1000));
-  public selectedStartHour = this.getNumberAsString(this.startDate.getHours());
-  public selectedStartMinute = this.getNumberAsString(this.startDate.getMinutes());
+  @Input() startDate = new Date(this.now - (1 * 60 * 60 * 1000));
+  @Input() selectedStartHour = this.getNumberAsString(this.startDate.getHours());
+  @Input() selectedStartMinute = this.getNumberAsString(this.startDate.getMinutes());
 
-  public endDate = new Date(this.now);
-  public selectedEndHour = this.getNumberAsString(this.endDate.getHours());
-  public selectedEndMinute = this.getNumberAsString(this.endDate.getMinutes());
+  @Input() endDate = new Date(this.now);
+  @Input() selectedEndHour = this.getNumberAsString(this.endDate.getHours());
+  @Input() selectedEndMinute = this.getNumberAsString(this.endDate.getMinutes());
 
 
-  public serviceInstanceId: string;
-  public requestId: string;
-  public serviceInstanceName: string;
+  @Input() serviceInstanceId: string;
+  @Input() requestId: string;
+  @Input() serviceInstanceName: string;
 
   private startTimeInMilliseconds: number;
   private endTimeInMilliseconds: number;
