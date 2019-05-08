@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7854a7d0_c540fa33",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/resources/application.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-05-08T10:03:56Z",
+      "side": 1,
+      "message": "replace with name",
+      "range": {
+        "startLine": 9,
+        "startChar": 20,
+        "endLine": 9,
+        "endChar": 28
+      },
+      "revId": "88cb16a66b2699486748dc9a9f6374d699842f83",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4d2443b8_211055ff",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/resources/application.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-05-08T10:03:56Z",
+      "side": 1,
+      "message": "replace with name",
+      "range": {
+        "startLine": 64,
+        "startChar": 23,
+        "endLine": 64,
+        "endChar": 32
+      },
+      "revId": "88cb16a66b2699486748dc9a9f6374d699842f83",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
