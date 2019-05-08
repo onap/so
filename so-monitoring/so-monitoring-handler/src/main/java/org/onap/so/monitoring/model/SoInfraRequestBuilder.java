@@ -28,7 +28,7 @@ public class SoInfraRequestBuilder {
 
     private String requestId;
     private String serviceInstanceId;
-    private String serviceIstanceName;
+    private String serviceInstanceName;
     private String networkId;
     private String requestStatus;
     private String serviceType;
@@ -45,8 +45,8 @@ public class SoInfraRequestBuilder {
         return this;
     }
 
-    public SoInfraRequestBuilder setServiceIstanceName(final String serviceIstanceName) {
-        this.serviceIstanceName = serviceIstanceName;
+    public SoInfraRequestBuilder setserviceInstanceName(final String serviceInstanceName) {
+        this.serviceInstanceName = serviceInstanceName;
         return this;
     }
 
@@ -105,10 +105,10 @@ public class SoInfraRequestBuilder {
     }
 
     /**
-     * @return the serviceIstanceName
+     * @return the serviceInstanceName
      */
-    public String getServiceIstanceName() {
-        return serviceIstanceName;
+    public String getserviceInstanceName() {
+        return serviceInstanceName;
     }
 
     /**

@@ -73,7 +73,7 @@ public class DatabaseServiceProviderImpl implements DatabaseServiceProvider {
                             .setServiceInstanceId(activeRequests.getServiceInstanceId())
                             .setNetworkId(activeRequests.getNetworkId()).setEndTime(activeRequests.getEndTime())
                             .setRequestStatus(activeRequests.getRequestStatus())
-                            .setServiceIstanceName(activeRequests.getServiceInstanceName())
+                            .setserviceInstanceName(activeRequests.getServiceInstanceName())
                             .setServiceType(activeRequests.getServiceType()).setStartTime(activeRequests.getStartTime())
                             .build();
             result.add(soInfraRequest);

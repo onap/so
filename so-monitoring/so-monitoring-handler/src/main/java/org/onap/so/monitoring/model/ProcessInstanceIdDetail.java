@@ -34,7 +34,7 @@ public class ProcessInstanceIdDetail {
     }
 
     /**
-     * @return the processInstancId
+     * @return the processInstanceId
      */
     public String getProcessInstanceId() {
         return processInstanceId;

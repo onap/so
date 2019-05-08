@@ -20,9 +20,13 @@ SPDX-License-Identifier: Apache-2.0
 @authors: ronan.kenny@ericsson.com, waqas.ikram@ericsson.com
 */
 
-export interface ProcessInstanceDetail {
-  processInstanceId: string;
-  processDefinitionId: string;
-  processDefinitionName: string;
-  superProcessInstanceId: string;
+export interface BpmnInfraRequest {
+  requestId: string;
+  serviceInstanceId: string;
+  serviceInstanceName: string;
+  networkId: string;
+  requestStatus: string;
+  serviceType: string;
+  startTime: string;
+  endTime: string;
 }
