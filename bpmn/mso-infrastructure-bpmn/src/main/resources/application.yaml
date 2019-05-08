@@ -1,10 +1,156 @@
 server: 
-  port: 8080  
+  port: 9080
   tomcat:
     max-threads: 50
+aai:
+  auth: 2630606608347B7124C244AB0FE34F6F
+  dme2:
+    timeout: '30000'
+  endpoint: http://127.0.0.1:18008
+  workflowAaiDistributionDelay: PT30S
+  pnfEntryNotificationTimeout: P14D
+appc:
+  client:
+    topic:
+      read:
+        name: APPC-LCM-WRITE
+        timeout: 360000
+      write: APPC-LCM-READ
+      sdnc:
+        read:
+          name: SDNC-LCM-WRITE
+        write: SDNC-LCM-READ
+    response:
+      timeout: 360000
+    key: VIlbtVl6YLhNUrtU
+    secret: 64AG2hF4pYeG2pq7CT6XwUOT
+    service: ueb
+    poolMembers: ueb1.simpledemo.onap.org:3904,ueb2.simpledemo.onap.org:3904
+pnf:
+  dmaap:
+    host: message-router
+    port: 3904
+    protocol: http
+    uriPathPrefix: events
+    topicName: pnfReady
+    consumerGroup: consumerGroup
+    consumerId: consumerId
+    topicListenerDelayInSeconds: 5
 mso:
+  msoKey: 07a7159d3bf51a0e53be7a8f89699be7
+  adapters:
+    completemsoprocess:
+      endpoint:  http://127.0.0.1:8081/CompleteMsoProcess
+    requestDb:
+      endpoint: http://request-db-adapter:8083
+      auth: Basic YnBlbDpwYXNzd29yZDEk
+    db:
+      auth: A3745B5DBE165EFCF101D85A6FC81C211AB8BF604F8861B6C413D5DC90F8F30E0139DE44B8A342F4EF70AF
+      password: wLg4sjrAFUS8rfVfdvTXeQ==
+      endpoint: http://127.0.0.1:8083/services/RequestsDbAdapter
+      spring:
+        endpoint: http://127.0.0.1:8083
+    network:
+      endpoint: http://127.0.0.1:8087/services/NetworkAdapter
+      rest:
+        endpoint: http://127.0.0.1:8087/services/rest/v1/networks
+    openecomp:
+      db:
+        endpoint: http://127.0.0.1:8083/services/RequestsDbAdapter
+    po:
+      auth: 33293332AEC4930F655D8E2E8BB08937
+      password: B8EBDE0311F0AF355CF3F2FD505A8CAD
+    sdnc:
+      endpoint: http://127.0.0.1:8086/adapters/SDNCAdapter
+      rest:
+        endpoint: http://127.0.0.1:8086/adapters/rest/v1/sdnc
+      timeout: PT60M
+    tenant:
+      endpoint: http://127.0.0.1:8087/services/TenantAdapter
+    vnf:
+      endpoint: http://127.0.0.1:8087/services/VnfAdapter
+      rest:
+        endpoint: http://127.0.0.1:8087/services/rest/v1/vnfs
+    volume-groups:
+      rest:
+        endpoint: http://127.0.0.1:8087/services/rest/v1/volume-groups
+    vnf-async:
+      endpoint: http://127.0.0.1:8087/services/VnfAdapterAsync
+  catalog:
+    db:
+      endpoint: http://127.0.0.1:8082/ecomp/mso/catalog
+      spring:
+        endpoint: http://127.0.0.1:8082
+  db:
+    auth: Basic YnBlbDpwYXNzd29yZDEk
   infra:
     auditInventory: true
+  async:
+    core-pool-size: 50
+    max-pool-size: 50
+    queue-capacity: 500
+  workflow:
+    CreateGenericVNFV1:
+      aai:
+        volume-group:
+          uri: /aai/v6/cloud-infrastructure/volume-groups/volume-group
+    default:
+      aai:
+        version: '14'
+        cloud-region:
+          version: '14'
+        generic-vnf:
+          version: '14'
+        v14:
+          customer:
+            uri: /aai/v14/business/customers/customer
+          generic-query:
+            uri: /aai/v14/search/generic-query
+          generic-vnf:
+            uri: /aai/v14/network/generic-vnfs/generic-vnf
+          l3-network:
+            uri: /aai/v14/network/l3-networks/l3-network
+          network-policy:
+            uri: /aai/v14/network/network-policies/network-policy
+          nodes-query:
+            uri: /aai/v14/search/nodes-query
+          route-table-reference:
+            uri: /aai/v14/network/route-table-references/route-table-reference
+          tenant:
+            uri: /aai/v14/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/RegionOne/tenants/tenant
+          vce:
+            uri: /aai/v14/network/vces/vce
+          vpn-binding:
+            uri: /aai/v14/network/vpn-bindings/vpn-binding
+          sp-partner:
+            uri: /aai/v14/business/sp-partners/sp-partner
+          device:
+            uri: /aai/v14/network/devices/device
+    deleteCinderVolumeV1:
+      aai:
+        volume-group:
+          uri: /aai/v6/cloud-infrastructure/volume-groups/volume-group
+    global:
+      default:
+        aai:
+          namespace: http://org.onap.aai.inventory/
+          version: 14
+    message:
+      endpoint: http://127.0.0.1:8081/mso/WorkflowMessage
+    notification:
+      name: GenericNotificationServiceATT
+    sdncadapter:
+      callback: http://127.0.0.1:8081/mso/SDNCAdapterCallbackService
+    vnfadapter:
+      create:
+        callback: http://127.0.0.1:8087/mso/vnfAdapterNotify
+      delete:
+        callback: http://127.0.0.1:8087/mso/vnfAdapterNotify
+      query:
+        callback: http://127.0.0.1:8087/mso/vnfAdapterNotify
+      rollback:
+        callback: http://127.0.0.1:8087/mso/vnfAdapterNotif
+
 spring: 
   datasource:
      driver-class-name: org.mariadb.jdbc.Driver 
@@ -16,6 +162,32 @@ spring:
       enabled: false
   jersey:
     application-path: /sobpmnengine
+  security:
+    usercredentials:
+    -
+      username: apihBpmn
+      password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
+      role: BPMN-Client
+    -
+      username: sdncaBpmn
+      password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
+      role: BPMN-Client
+    -
+      username: poBpmn
+      password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
+      role: BPMN-Client
+    -
+      username: wmaBpmn
+      password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
+      role: BPMN-Client
+    -
+      username: sniro
+      password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
+      role: SNIRO-Client
+    -
+      username: mso_admin
+      password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
+      role: ACTUATOR
 camunda:
   bpm:
     application:
