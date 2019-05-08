@@ -6,6 +6,22 @@ server:
       max-threads: 50
 
 mso:
+  adapters:
+    requestDb:
+      endpoint: http://127.0.0.1:8083
+      auth: Basic YnBlbDpwYXNzd29yZDEk
+  camundaURL: http://127.0.0.1:9080
+  catalog:
+    db:
+      spring:
+        endpoint: "http://127.0.0.1:8082"
+  db:
+    auth: Basic YnBlbDpwYXNzd29yZDEk
+  msoKey: 07a7159d3bf51a0e53be7a8f89699be7
+  async:
+    core-pool-size: 50
+    max-pool-size: 50
+    queue-capacity: 500
   infra:
     auditInventory: true
     default:
@@ -16,6 +32,17 @@ mso:
       macro:
         default:
           testApi: GR_API
+  sdc:
+    client:
+      auth: F3473596C526938329DF877495B494DC374D1C4198ED3AD305EA3ADCBBDA1862
+    activate:
+      instanceid: test
+      userid: cs0008
+    endpoint: http://c1.vm1.mso.simpledemo.onap.org:28090
+  tenant:
+    isolation:
+      retry:
+        count: 3
   avpn:
     bpel:
       uri: /mso/async/services/AVPNWorkflowActionBB
@@ -42,7 +69,32 @@ spring:
         enable-lazy-load-no-trans: true
   jersey:
     type: filter
-                       
+  security:
+    usercredentials:
+    -
+      username: sitecontrol
+      password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
+      role: SiteControl-Client
+    -
+      username: gui
+      password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
+      role: GUI-Client
+    -
+      username: infraportal
+      password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
+      role: InfraPortal-Client
+    -
+      username: InfraPortalClient
+      password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
+      role: InfraPortal-Client
+    -
+      username: bpel
+      password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
+      role: BPEL-Client
+    -
+      username: mso_admin
+      password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
+      role: ACTUATOR
 request:
   datasource:
     jdbcUrl: jdbc:mariadb://${DB_HOST}:${DB_PORT}/requestdb
