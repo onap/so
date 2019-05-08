@@ -35,7 +35,7 @@ const routes: Routes = [
     // Route to page to show individual process based on ID
     path: 'details/:id',
     component: DetailsComponent
-  },
+  }
 ];
 
 @NgModule({

@@ -20,7 +20,7 @@ SPDX-License-Identifier: Apache-2.0
 @authors: ronan.kenny@ericsson.com, waqas.ikram@ericsson.com
 */
 
-export interface ACTINST {
+export interface ActivityInstance {
   activityId: string;
   activityName: string;
   activityType: string;
