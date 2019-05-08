@@ -38,7 +38,7 @@ import { environment } from '../../environments/environment.prod';
 import { Observable, of, throwError } from 'rxjs';
 import { SearchRequest } from '../model/SearchRequest.model';
 import { DataService } from '../data.service'; // may be able to remove
-import { Process } from '../model/process.model';
+import { BpmnInfraRequest } from '../model/bpmnInfraRequest.model';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ProcessInstanceId } from '../model/processInstanceId.model';
@@ -64,7 +64,7 @@ describe('HomeComponent', () => {
   let fixture: ComponentFixture<HomeComponent>;
 
   beforeEach(() => {
-    spyDataService = jasmine.createSpyObj('DataService', ['retrieveInstance', 'getProcessInstanceId']);
+    spyDataService = jasmine.createSpyObj('DataService', ['getBpmnInfraRequest', 'getProcessInstanceId']);
 
     TestBed.configureTestingModule({
       providers: [
@@ -102,7 +102,7 @@ describe('HomeComponent', () => {
   it('should should navigate to a process if response status is OK', async(() => {
       spyDataService.getProcessInstanceId.and.returnValue(of(<HttpResponse<ProcessInstanceId>>{body: {processInstanceId: '114e9ae4-4a32-11e9-8646-d663bd873d93'}, status: 200}));
       spyOn(router, 'navigate');
-      component.getProcessIsntanceId('e8a75940-4a32-11e9-8646-d663bd873d93');
+      component.getProcessInstanceId('e8a75940-4a32-11e9-8646-d663bd873d93');
 
       fixture.whenStable().then(() => {
         expect(router.navigate).toHaveBeenCalledWith(['/details/114e9ae4-4a32-11e9-8646-d663bd873d93']);
@@ -111,7 +111,7 @@ describe('HomeComponent', () => {
 
   it('should handle error if no process instance id found', () => {
     spyDataService.getProcessInstanceId.and.returnValue(of(<HttpResponse<ProcessInstanceId>>{body: {processInstanceId: 'getProcessInstanceId error not found'}, status: 404}));
-    component.getProcessIsntanceId('e8a75940-4a32-11e9-8646-d663bd873d93');
+    component.getProcessInstanceId('e8a75940-4a32-11e9-8646-d663bd873d93');
   });
 
   it('should handle error when searchData.getSearchRequest returns an error', () => {
@@ -121,17 +121,17 @@ describe('HomeComponent', () => {
       component.makeCall();
   });
 
-  it('should handle error when dataService.retrieveInstance returns an error', () => {
+  it('should handle error when dataService.getBpmnInfraRequest returns an error', () => {
       spyOn(component.searchData, 'getSearchRequest').and.returnValue(of(getSearchRequest("965d3c92-44e0-11e9-b210-d663bd873d93", "85a7c354-44e0-11e9-b210-d663bd873d93", undefined, undefined, undefined, undefined, undefined, undefined, "ALL")));
-      spyDataService.retrieveInstance.and.callFake(() => {
-        return throwError(new Error('retrieveInstance error'));
+      spyDataService.getBpmnInfraRequest.and.callFake(() => {
+        return throwError(new Error('getBpmnInfraRequest error'));
       });
       component.makeCall();
   });
 
   it('should calculate statistics correctly', async(() => {
     let requestStatusTypes: string[] = ["COMPLETE", "IN_PROGRESS", "FAILED", "PENDING", "UNLOCKED"];
-    let processArr: Process[] = [];
+    let processArr: BpmnInfraRequest[] = [];
 
     // create 5 processes, one of each requestStatusType, with default time.
     requestStatusTypes.forEach((status) => {
@@ -142,7 +142,7 @@ describe('HomeComponent', () => {
 
       // search request has default filter.
       spyOn(component.searchData, 'getSearchRequest').and.returnValue(of(getSearchRequest(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, "ALL")));
-      spyDataService.retrieveInstance.and.returnValue(of(processArr));
+      spyDataService.getBpmnInfraRequest.and.returnValue(of(processArr));
       component.makeCall();
 
       fixture.whenStable().then(() => {
@@ -172,7 +172,7 @@ describe('HomeComponent', () => {
       return new SearchRequest({ serviceInstanceId: [selectedValueSII, serviceInstanceIdVal], requestId: [selectedValueRI, requestIdVal], serviceInstanceName: [selectedValueSN, serviceInstanceNameVal] }, startTimeInMilliseconds, endTimeInMilliseconds);
   }
 
-  function getProcess(requestIdVal: string, serviceInstanceIdVal: string, serviceIstanceNameVal: string, networkIdVal: string, requestStatusVal: string, serviceTypeVal: string, startTimeVal = "1", endTimeVal = "2"): Process {
-    return <Process>{ requestId: requestIdVal, serviceInstanceId: serviceInstanceIdVal, serviceIstanceName: serviceIstanceNameVal, networkId: networkIdVal, requestStatus: requestStatusVal, serviceType: serviceTypeVal, startTime: startTimeVal, endTime: endTimeVal };
+  function getProcess(requestIdVal: string, serviceInstanceIdVal: string, serviceIstanceNameVal: string, networkIdVal: string, requestStatusVal: string, serviceTypeVal: string, startTimeVal = "1", endTimeVal = "2"): BpmnInfraRequest {
+    return <BpmnInfraRequest>{ requestId: requestIdVal, serviceInstanceId: serviceInstanceIdVal, serviceInstanceName: serviceIstanceNameVal, networkId: networkIdVal, requestStatus: requestStatusVal, serviceType: serviceTypeVal, startTime: startTimeVal, endTime: endTimeVal };
   }
 });

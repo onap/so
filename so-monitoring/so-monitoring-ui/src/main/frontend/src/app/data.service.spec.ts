@@ -49,10 +49,10 @@ describe('DataService', () => {
       expect(service).toBeTruthy();
     })));
 
-  // Test retrieveInstance function making POST call
-  it('test retrieveInstance POST request', async(inject([HttpTestingController, DataService, ToastrNotificationService],
+  // Test getBpmnInfraRequest function making POST call
+  it('test getBpmnInfraRequest POST request', async(inject([HttpTestingController, DataService, ToastrNotificationService],
     (httpClient: HttpTestingController, service: DataService, toastr: ToastrNotificationService) => {
-      service.retrieveInstance({}, 1, 2).subscribe(data => { });
+      service.getBpmnInfraRequest({}, 1, 2).subscribe(data => { });
       var url = environment.soMonitoringBackendURL + 'v1/search?from=1&to=2';
       const mockReq = httpClient.expectOne(url);
       expect(mockReq.request.method).toEqual('POST');
