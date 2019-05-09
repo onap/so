@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "78626747_f539abee",
+        "filename": "so-monitoring/so-monitoring-handler/src/main/java/org/onap/so/monitoring/model/SoInfraRequest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-05-09T14:52:34Z",
+      "side": 1,
+      "message": "method name should be in camel case change it to getServiceInstanceName",
+      "range": {
+        "startLine": 66,
+        "startChar": 18,
+        "endLine": 66,
+        "endChar": 40
+      },
+      "revId": "991c9cad33f2c92674fd830df5b7a5b2e05c0be6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "222e42bd_263dba1d",
+        "filename": "so-monitoring/so-monitoring-handler/src/main/java/org/onap/so/monitoring/model/SoInfraRequestBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-05-09T14:52:34Z",
+      "side": 1,
+      "message": "same here Change it to setServiceInstanceName",
+      "range": {
+        "startLine": 48,
+        "startChar": 33,
+        "endLine": 48,
+        "endChar": 55
+      },
+      "revId": "991c9cad33f2c92674fd830df5b7a5b2e05c0be6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
