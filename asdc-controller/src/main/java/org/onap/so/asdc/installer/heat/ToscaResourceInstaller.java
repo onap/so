@@ -1898,7 +1898,8 @@ public class ToscaResourceInstaller {
             logger.debug("vfcResource request for resource customization id (" + resourceCustomizationUuid + ") : "
                     + jsonStr);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            logger.debug("Json Exception: {}", e.getMessage());
+            logger.error("Exception occurred", e);
         }
 
         return jsonStr;
