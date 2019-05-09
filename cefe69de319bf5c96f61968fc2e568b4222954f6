@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3fca1540_0bfe838a",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/client/ASDCConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-05-09T12:30:01Z",
+      "side": 1,
+      "message": "This sounds like it should be a warning? not a debug",
+      "revId": "cefe69de319bf5c96f61968fc2e568b4222954f6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
