@@ -134,7 +134,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
                         // then we would like to add it twice for processing
                         // e.g.  S{ V1{G1, G2, G1}} --> S{ V1{G1, G1, G2}}
                         if (resource instanceof VnfResource) {
-                            if (resource.getGroups() != null) {
+                            if (resource.getGroupOrder() != null && !StringUtils.isEmpty(resource.getGroupOrder())) {
                                 String[] grpSequence = resource.getGroupOrder().split(",")
                                 for (String grpType in grpSequence) {
                                     for (GroupResource gResource in resource.getGroups()) {
