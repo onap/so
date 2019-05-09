@@ -649,7 +649,7 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
     @Test
     public void getWorkflowByArtifactUUID_validUuid_expectedOutput() {
         Workflow workflow = client.findWorkflowByArtifactUUID("5b0c4322-643d-4c9f-b184-4516049e99b1");
-        assertEquals("artifactName", "testingWorkflow", workflow.getArtifactName());
+        assertEquals("artifactName", "testingWorkflow.bpmn", workflow.getArtifactName());
     }
 
     @Test
@@ -664,7 +664,7 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         assertTrue(workflows != null);
         assertTrue(workflows.size() != 0);
 
-        assertEquals("testingWorkflow", workflows.get(0).getArtifactName());
+        assertEquals("testingWorkflow.bpmn", workflows.get(0).getArtifactName());
     }
 
     @Test
@@ -679,7 +679,7 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         assertTrue(workflows != null);
         assertTrue(workflows.size() != 0);
 
-        assertEquals("testingWorkflow", workflows.get(0).getArtifactName());
+        assertEquals("testingWorkflow.bpmn", workflows.get(0).getArtifactName());
     }
 
     @Test

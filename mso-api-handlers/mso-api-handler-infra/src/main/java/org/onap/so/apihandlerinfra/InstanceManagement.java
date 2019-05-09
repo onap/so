@@ -255,7 +255,7 @@ public class InstanceManagement {
         if (workflow == null) {
             return null;
         } else {
-            String workflowName = workflow.getArtifactName();
+            String workflowName = workflow.getName();
             recipeUri = "/mso/async/services/" + workflowName;
         }
         return new RecipeLookupResult(recipeUri, 180);

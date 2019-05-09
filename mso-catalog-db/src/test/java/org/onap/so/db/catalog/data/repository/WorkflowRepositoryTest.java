@@ -31,7 +31,7 @@ public class WorkflowRepositoryTest extends BaseTest {
     public void findByArtifactUuid_ValidUuid_ExpectedOutput() throws Exception {
         Workflow workflow = workflowRepository.findByArtifactUUID("5b0c4322-643d-4c9f-b184-4516049e99b1");
 
-        assertEquals("artifactName", "testingWorkflow", workflow.getArtifactName());
+        assertEquals("artifactName", "testingWorkflow.bpmn", workflow.getArtifactName());
     }
 
     @Test
@@ -41,7 +41,7 @@ public class WorkflowRepositoryTest extends BaseTest {
         Assert.assertTrue(workflows != null);
         Assert.assertTrue(workflows.size() != 0);
 
-        Assert.assertTrue("testingWorkflow".equals(workflows.get(0).getArtifactName()));
+        Assert.assertTrue("testingWorkflow.bpmn".equals(workflows.get(0).getArtifactName()));
     }
 
     @Test
@@ -51,7 +51,7 @@ public class WorkflowRepositoryTest extends BaseTest {
         Assert.assertTrue(workflows != null);
         Assert.assertTrue(workflows.size() != 0);
 
-        Assert.assertTrue("testingWorkflow".equals(workflows.get(0).getArtifactName()));
+        Assert.assertTrue("testingWorkflow.bpmn".equals(workflows.get(0).getArtifactName()));
     }
 
 }
