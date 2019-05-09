@@ -26,7 +26,7 @@ insert into vnf_resource(orchestration_mode, description, creation_timestamp, mo
 ('HEAT', '1607 vSAMP10a - inherent network', '2017-04-14 21:46:28', 'ff2ae348-214a-11e7-93ae-92361f002671', '', '', '2fff5b20-214b-11e7-93ae-92361f002671', '1.0', 'vSAMP10a', 'VF', null);
 
 insert into workflow(artifact_uuid, artifact_name, name, operation_name, version, description, body, resource_target, source) values
-('5b0c4322-643d-4c9f-b184-4516049e99b1', 'testingWorkflow', 'testingWorkflow', 'create', 1, 'Test Workflow', null, 'vnf', 'sdc');
+('5b0c4322-643d-4c9f-b184-4516049e99b1', 'testingWorkflow.bpmn', 'testingWorkflow', 'create', 1, 'Test Workflow', null, 'vnf', 'sdc');
 
 insert into vnf_resource_to_workflow(vnf_resource_model_uuid, workflow_id) values
 ('ff2ae348-214a-11e7-93ae-92361f002671', '1');
