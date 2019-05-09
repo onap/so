@@ -22,6 +22,8 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
 import org.onap.so.bpmn.common.resource.InstanceResourceList
 import org.onap.so.bpmn.common.scripts.CatalogDbUtilsFactory
 import org.onap.so.bpmn.core.domain.GroupResource
@@ -46,6 +48,7 @@ import org.onap.so.bpmn.common.resource.ResourceRequestBuilder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import java.lang.reflect.Type
 
 
 /**
@@ -212,8 +215,10 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         List<Resource> instanceResourceList = execution.getVariable("instanceResourceList")
         Resource currentResource = instanceResourceList.get(currentIndex)
         execution.setVariable("resourceType", currentResource.getModelInfo().getModelName())
-        logger.info("Now we deal with resource:" + currentResource.getModelInfo().getModelName())
-        logger.trace("COMPLETED getCurrentResource Process ")
+
+
+        logger.info("Now we deal with resouce:" + currentResource.getModelInfo().getModelName())
+        logger.trace("COMPLETED getCurrentResoure Process ")
     }
 
     public void parseNextResource(DelegateExecution execution){
@@ -254,6 +259,18 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         resourceInput.setResourceModelInfo(currentResource.getModelInfo());
         ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
         resourceInput.setServiceModelInfo(serviceDecomposition.getModelInfo());
+        /*
+        * Set the VF information as well to the resource input, since sdnc need the immediate upper level information
+        * during resource creation: Begin
+        **/
+        execution.setVariable("currentResourceType",currentResource.getModelInfo().getModelType());
+        resourceInput.setVfModelInfo(execution.getVariable("vfModelInfo"));
+        /*
+        * Set the VF information as well to the resource input, since sdnc need the immediate upper level information
+        * during resource creation: End
+        **/
+
+
         def String resourceCustomizationUuid = currentResource.getModelInfo().getModelCustomizationUuid();
 
         String incomingRequest = execution.getVariable("uuiRequest")
@@ -295,6 +312,26 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
 
                 BpmnRestClient bpmnRestClient = new BpmnRestClient()
                 HttpResponse resp = bpmnRestClient.post(recipeURL, requestId, recipeTimeOut, requestAction, serviceInstanceId, serviceType, resourceInput, recipeParamXsd)
+                /*
+                * Isaac added to parse the reponse of the service call and pick the vnf-id when the resource created is
+                * a vnf. The vnf id needs to be passed to sdnc while creating the vnfc/group: Begin
+                **/
+
+                def currentIndex = execution.getVariable("currentResourceIndex");
+                List<Resource> instanceResourceList = execution.getVariable("instanceResourceList");
+                Resource currentResource = instanceResourceList.get(currentIndex);
+                if(currentResource.getModelInfo().getModelType().equalsIgnoreCase(ResourceType.VNF))
+                {
+                    String response = EntityUtils.toString(resp.getEntity());
+                    Gson gson = new Gson();
+                    Type type = new TypeToken<Map<String, String>>() {}.getType();
+                    Map<String, Object> map = gson.fromJson(response, type);
+                    execution.setVariable("vnf-id",map.get("vnf-id"));
+                }
+                /*
+                * Isaac added to parse the reponse of the service call and pick the vnf-id when the resource created is
+                * a vnf: Begin
+                **/
             } else {
                 String exceptionMessage = "Resource receipe is not found for resource modeluuid: " + resourceModelUUID
                 logger.trace(exceptionMessage)

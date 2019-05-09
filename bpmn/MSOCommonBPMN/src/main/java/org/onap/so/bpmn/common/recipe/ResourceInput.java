@@ -84,6 +84,19 @@ public class ResourceInput {
     @JsonProperty("operationType")
     private String operationType;
 
+    @JsonProperty("vfModelInfo")
+    private ModelInfo vfModelInfo;
+
+
+    public ModelInfo getVfModelInfo() {
+        return vfModelInfo;
+    }
+
+    public void setVfModelInfo(ModelInfo vfModelInfo) {
+        this.vfModelInfo = vfModelInfo;
+    }
+
+
     /**
      * @return Returns the requestsInputs.
      */
