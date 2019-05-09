@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "19d7a17a_83d87b1b",
+        "filename": "so-monitoring/so-monitoring-ui/src/main/frontend/src/app/model/bpmnInfraRequest.model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-05-09T08:54:36Z",
+      "side": 1,
+      "message": "rename the variable in backend code as well otherwise it will not work\n\nso/so-monitoring/so-monitoring-handler/src/main/java/org/onap/so/monitoring/model/SoInfraRequest.java",
+      "range": {
+        "startLine": 26,
+        "startChar": 2,
+        "endLine": 26,
+        "endChar": 21
+      },
+      "revId": "be284b04e53541701dac2194480929b23421091d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9734132d_6dc92e3f",
+        "filename": "so-monitoring/so-monitoring-ui/src/main/frontend/src/app/model/processInstance.model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-05-09T08:54:36Z",
+      "side": 1,
+      "message": "same here rename in backend code as well\n\nso/so-monitoring/so-monitoring-handler/src/main/java/org/onap/so/monitoring/model/ProcessInstanceDetail.java",
+      "range": {
+        "startLine": 24,
+        "startChar": 2,
+        "endLine": 24,
+        "endChar": 19
+      },
+      "revId": "be284b04e53541701dac2194480929b23421091d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "47ef7c7c_66cb7b05",
+        "filename": "so-monitoring/so-monitoring-ui/src/main/frontend/src/app/model/searchData.model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-05-09T08:54:36Z",
+      "side": 1,
+      "message": "Make sure you test these thoroughly",
+      "range": {
+        "startLine": 42,
+        "startChar": 2,
+        "endLine": 42,
+        "endChar": 10
+      },
+      "revId": "be284b04e53541701dac2194480929b23421091d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
