@@ -81,11 +81,6 @@
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_0qfmmgt" sourceRef="Audit_Inventory" targetRef="auditSuccessfulCheck" />
     <bpmn:sequenceFlow id="SequenceFlow_14bu4ys" sourceRef="ExclusiveGateway_1yvh16a" targetRef="aaiThrow" />
-    <bpmn:parallelGateway id="ExclusiveGateway_1yvh16a">
-      <bpmn:incoming>SequenceFlow_02lpx87</bpmn:incoming>
-      <bpmn:incoming>SequenceFlow_1ut7n32</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_14bu4ys</bpmn:outgoing>
-    </bpmn:parallelGateway>
     <bpmn:sequenceFlow id="SequenceFlow_1mgunf3" name="No" sourceRef="ExclusiveGateway_1h2ystu" targetRef="ExclusiveGateway_1pydilb" />
     <bpmn:serviceTask id="Check_Audit" name="Check Audit Variable" camunda:expression="${AuditTasks.isAuditNeeded(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_1v3jgqe</bpmn:incoming>
@@ -150,6 +145,11 @@
       <bpmn:incoming>SequenceFlow_1gdyk9j</bpmn:incoming>
       <bpmn:errorEventDefinition errorRef="Error_0jjnve8" />
     </bpmn:endEvent>
+    <bpmn:inclusiveGateway id="ExclusiveGateway_1yvh16a">
+      <bpmn:incoming>SequenceFlow_02lpx87</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1ut7n32</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_14bu4ys</bpmn:outgoing>
+    </bpmn:inclusiveGateway>
   </bpmn:process>
   <bpmn:error id="Error_0jjnve8" name="Error_3k24na6" errorCode="AAIInventoryFailure" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -312,12 +312,6 @@
           <dc:Bounds x="980" y="262" width="90" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ParallelGateway_02fjfb8_di" bpmnElement="ExclusiveGateway_1yvh16a">
-        <dc:Bounds x="900" y="259" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="879" y="312" width="90" height="13" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1mgunf3_di" bpmnElement="SequenceFlow_1mgunf3">
         <di:waypoint xsi:type="dc:Point" x="492" y="224" />
         <di:waypoint xsi:type="dc:Point" x="492" y="257" />
@@ -363,7 +357,7 @@
         <di:waypoint xsi:type="dc:Point" x="925" y="199" />
         <di:waypoint xsi:type="dc:Point" x="925" y="259" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="864" y="178" width="90" height="13" />
+          <dc:Bounds x="864" y="177.5" width="90" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ExclusiveGateway_1olwkdn_di" bpmnElement="ExclusiveGateway_1h2ystu" isMarkerVisible="true">
@@ -454,6 +448,12 @@
         <dc:Bounds x="787" y="20" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="805" y="59.13043478260869" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="InclusiveGateway_0cjvlht_di" bpmnElement="ExclusiveGateway_1yvh16a">
+        <dc:Bounds x="900" y="259" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="879" y="312" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
