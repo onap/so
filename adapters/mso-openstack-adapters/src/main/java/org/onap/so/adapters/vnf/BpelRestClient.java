@@ -204,7 +204,6 @@ public class BpelRestClient {
      * @return true if the post succeeded, false if all retries failed
      */
     public boolean bpelPost(final String toBpelStr, final String bpelUrl, final boolean isxml) {
-        debug("Sending response to BPEL: " + toBpelStr);
         int totalretries = 0;
         int retryint = retryInterval;
         while (true) {
