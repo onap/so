@@ -79,20 +79,12 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         client.wiremockPort = String.valueOf(port);
     }
 
-    @Test
-    public void testGetRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep() {
-        RainyDayHandlerStatus rainyDayHandlerStatus =
-                client.getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(
-                        "AssignServiceInstanceBB", "*", "*", "*", "*");
-        Assert.assertEquals("Rollback", rainyDayHandlerStatus.getPolicy());
-    }
 
     @Test
-    public void testGetRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStepRecordNotFound() {
-        RainyDayHandlerStatus rainyDayHandlerStatus =
-                client.getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(
-                        UUID.randomUUID().toString(), "*", "*", "*", "*");
-        Assert.assertNull(rainyDayHandlerStatus);
+    public void testGetRainyDayHandler_Regex() {
+        RainyDayHandlerStatus rainyDayHandlerStatus = client.getRainyDayHandlerStatus("AssignServiceInstanceBB", "*",
+                "*", "*", "*", "The Flavor ID (nd.c6r16d20) could not be found.");
+        Assert.assertEquals("Rollback", rainyDayHandlerStatus.getPolicy());
     }
 
     @Test

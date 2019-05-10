@@ -1,45 +1,46 @@
 <configuration>
-	
-	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-		<encoder>
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
       <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{1024} - %msg%n</pattern>
     </encoder>
-	</appender>
+  </appender>
 
-	<appender name="test"
-		class="org.onap.so.adapters.catalogdb.catalogrest.TestAppender" />
+  <appender name="test" class="org.onap.so.adapters.catalogdb.catalogrest.TestAppender" />
 
-	<logger name="com.att.ecomp.audit" level="info" additivity="false">
-		<appender-ref ref="STDOUT" />
-	</logger>
+  <logger name="com.att.ecomp.audit" level="info" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
 
-	<logger name="com.att.eelf.metrics" level="info" additivity="false">
-		<appender-ref ref="STDOUT" />
-	</logger>
+  <logger name="com.att.eelf.metrics" level="info" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
 
-	<logger name="com.att.eelf.error" level="WARN" additivity="false">
-		<appender-ref ref="STDOUT" />
-	</logger>
+  <logger name="com.att.eelf.error" level="WARN" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
 
-	<logger name="org.onap" level="${so.log.level:-DEBUG}" additivity="false">
-		<appender-ref ref="STDOUT" />
-		<appender-ref ref="test" />
-	</logger>
-	
-	<logger name="org.flywaydb" level="DEBUG" additivity="false">
-        <appender-ref ref="STDOUT" />
-    </logger>
-	
+  <logger name="org.onap" level="${so.log.level:-DEBUG}" additivity="false">
+    <appender-ref ref="STDOUT" />
+    <appender-ref ref="test" />
+  </logger>
 
-	<logger name="ch.vorburger" level="WARN" additivity="false">
-		<appender-ref ref="STDOUT" />
-	</logger>
-	
+  <logger name="org.flywaydb" level="DEBUG" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
+  <logger name="org.hibernate" level="DEBUG" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
 
-	<root level="WARN">
-		<appender-ref ref="STDOUT" />
-		<appender-ref ref="test" />
-	</root>
+  <logger name="ch.vorburger" level="WARN" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
+
+
+  <root level="WARN">
+    <appender-ref ref="STDOUT" />
+    <appender-ref ref="test" />
+  </root>
 
 
 </configuration>

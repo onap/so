@@ -82,7 +82,6 @@ public class ExecuteBuildingBlockRainyDay {
             boolean aLaCarte = (boolean) execution.getVariable("aLaCarte");
             boolean suppressRollback = (boolean) execution.getVariable("suppressRollback");
             String handlingCode = "";
-
             WorkflowException workflowException = (WorkflowException) execution.getVariable("WorkflowException");
             try {
                 // Extract error data to be returned to WorkflowAction
@@ -97,6 +96,9 @@ public class ExecuteBuildingBlockRainyDay {
                 try {
                     serviceType = gBBInput.getCustomer().getServiceSubscription().getServiceInstances().get(0)
                             .getModelInfoServiceInstance().getServiceType();
+                    if (serviceType == null || serviceType.isEmpty()) {
+                        serviceType = ASTERISK;
+                    }
                 } catch (Exception ex) {
                     // keep default serviceType value
                 }
@@ -118,6 +120,7 @@ public class ExecuteBuildingBlockRainyDay {
                 } catch (Exception ex) {
                     // keep default errorCode value
                 }
+
                 try {
                     errorCode = "" + (String) execution.getVariable("WorkflowExceptionCode");
                 } catch (Exception ex) {
@@ -131,29 +134,19 @@ public class ExecuteBuildingBlockRainyDay {
                     // keep default workStep value
                 }
 
-                RainyDayHandlerStatus rainyDayHandlerStatus;
-                rainyDayHandlerStatus = catalogDbClient
-                        .getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(bbName,
-                                serviceType, vnfType, errorCode, workStep);
-                if (rainyDayHandlerStatus == null) {
-                    rainyDayHandlerStatus = catalogDbClient
-                            .getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(bbName,
-                                    ASTERISK, ASTERISK, errorCode, ASTERISK);
+                String errorMessage = ASTERISK;
+                try {
+                    errorMessage = workflowException.getErrorMessage();
+                } catch (Exception ex) {
+                    // keep default workStep value
                 }
 
+                RainyDayHandlerStatus rainyDayHandlerStatus;
+                rainyDayHandlerStatus = catalogDbClient.getRainyDayHandlerStatus(bbName, serviceType, vnfType,
+                        errorCode, workStep, errorMessage);
+
                 if (rainyDayHandlerStatus == null) {
-                    rainyDayHandlerStatus = catalogDbClient
-                            .getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(bbName,
-                                    ASTERISK, ASTERISK, ASTERISK, ASTERISK);
-                    if (rainyDayHandlerStatus == null) {
-                        handlingCode = "Abort";
-                    } else {
-                        if (primaryPolicy) {
-                            handlingCode = rainyDayHandlerStatus.getPolicy();
-                        } else {
-                            handlingCode = rainyDayHandlerStatus.getSecondaryPolicy();
-                        }
-                    }
+                    handlingCode = "Abort";
                 } else {
                     if (primaryPolicy) {
                         handlingCode = rainyDayHandlerStatus.getPolicy();

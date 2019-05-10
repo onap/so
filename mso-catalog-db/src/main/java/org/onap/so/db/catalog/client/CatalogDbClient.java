@@ -84,7 +84,6 @@ public class CatalogDbClient {
 
     private static final String CLOUD_SITE = "/cloudSite";
     private static final String CLOUDIFY_MANAGER = "/cloudifyManager";
-    private static final String CVNFC_CUSTOMZIATION = "/cvnfcCustomization";
     private static final String RAINY_DAY_HANDLER_MACRO = "/rainy_day_handler_macro";
     private static final String NORTHBOUND_REQUEST_REF_LOOKUP = "/northbound_request_ref_lookup";
     private static final String NETWORK_RESOURCE_CUSTOMIZATION = "/networkResourceCustomization";
@@ -124,7 +123,6 @@ public class CatalogDbClient {
     private static final String MODEL_NAME = "modelName";
     private static final String MODEL_VERSION = "modelVersion";
     private static final String MODEL_INVARIANT_UUID = "modelInvariantUUID";
-    private static final String MODEL_INSTANCE_NAME = "modelInstanceName";
     private static final String VNF_RESOURCE_MODEL_UUID = "vnfResourceModelUUID";
     private static final String NF_ROLE = "nfRole";
     private static final String VF_MODULE_MODEL_UUID = "vfModuleModelUUID";
@@ -137,6 +135,7 @@ public class CatalogDbClient {
     private static final String IS_ALACARTE = "isALaCarte";
     private static final String CLOUD_OWNER = "cloudOwner";
     private static final String FLOW_NAME = "flowName";
+    private static final String ERROR_MESSAGE = "errorMessage";
     private static final String SERVICE_TYPE = "serviceType";
     private static final String VNF_TYPE = "vnfType";
     private static final String ERROR_CODE = "errorCode";
@@ -184,8 +183,8 @@ public class CatalogDbClient {
             "/findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwner";
     private String findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwnerAndServiceType =
             "/findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwnerAndServiceType";
-    private String findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep =
-            "/findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep";
+
+    private static final String findRainyDayHandler = "/findRainyDayHandler";
     private String findByClliAndCloudVersion = "/findByClliAndCloudVersion";
     private String findServiceByServiceInstanceId = "/findServiceByServiceInstanceId";
     private String findPnfResourceCustomizationByModelUuid = "/findPnfResourceCustomizationByModelUuid";
@@ -196,10 +195,8 @@ public class CatalogDbClient {
     private String serviceURI;
     private String vfModuleURI;
     private String vnfResourceURI;
-    private String vfModuleCustomizationURI;
     private String networkCollectionResourceCustomizationURI;
     private String networkResourceCustomizationURI;
-    private String vnfResourceCustomizationURI;
     private String collectionNetworkResourceCustomizationURI;
     private String instanceGroupURI;
     private String cloudifyManagerURI;
@@ -257,8 +254,6 @@ public class CatalogDbClient {
     private final Client<HomingInstance> homingInstanceClient;
 
     private final Client<CloudifyManager> cloudifyManagerClient;
-
-    private final Client<CvnfcCustomization> cvnfcCustomizationClient;
 
     private final Client<ControllerSelectionReference> controllerSelectionReferenceClient;
 
@@ -324,8 +319,6 @@ public class CatalogDbClient {
         findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwnerAndServiceType =
                 endpoint + NORTHBOUND_REQUEST_REF_LOOKUP + SEARCH
                         + findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwnerAndServiceType;
-        findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep = endpoint + RAINY_DAY_HANDLER_MACRO + SEARCH
-                + findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep;
         findByClliAndCloudVersion = endpoint + CLOUD_SITE + SEARCH + findByClliAndCloudVersion;
 
         findPnfResourceCustomizationByModelUuid =
@@ -340,12 +333,9 @@ public class CatalogDbClient {
         serviceURI = endpoint + SERVICE + URI_SEPARATOR;
         vfModuleURI = endpoint + VFMODULE + URI_SEPARATOR;
         vnfResourceURI = endpoint + VNF_RESOURCE + URI_SEPARATOR;
-        vfModuleCustomizationURI = endpoint + VFMODULE_CUSTOMIZATION + URI_SEPARATOR;
         networkCollectionResourceCustomizationURI =
                 endpoint + NETWORK_COLLECTION_RESOURCE_CUSTOMIZATION + URI_SEPARATOR;
         networkResourceCustomizationURI = endpoint + NETWORK_RESOURCE_CUSTOMIZATION + URI_SEPARATOR;
-        cvnfcResourceCustomizationURI = endpoint + CVNFC_CUSTOMZIATION + URI_SEPARATOR;
-        vnfResourceCustomizationURI = endpoint + VNF_RESOURCE_CUSTOMIZATION + URI_SEPARATOR;
         collectionNetworkResourceCustomizationURI =
                 endpoint + COLLECTION_NETWORK_RESOURCE_CUSTOMIZATION + URI_SEPARATOR;
         instanceGroupURI = endpoint + INSTANCE_GROUP + URI_SEPARATOR;
@@ -400,7 +390,6 @@ public class CatalogDbClient {
         homingInstanceClient = clientFactory.create(HomingInstance.class);
         cloudifyManagerClient = clientFactory.create(CloudifyManager.class);
         serviceRecipeClient = clientFactory.create(ServiceRecipe.class);
-        cvnfcCustomizationClient = clientFactory.create(CvnfcCustomization.class);
         controllerSelectionReferenceClient = clientFactory.create(ControllerSelectionReference.class);
         externalServiceToInternalServiceClient = clientFactory.create(ExternalServiceToInternalService.class);
         pnfResourceClient = clientFactory.create(PnfResource.class);
@@ -450,7 +439,6 @@ public class CatalogDbClient {
         homingInstanceClient = clientFactory.create(HomingInstance.class);
         cloudifyManagerClient = clientFactory.create(CloudifyManager.class);
         serviceRecipeClient = clientFactory.create(ServiceRecipe.class);
-        cvnfcCustomizationClient = clientFactory.create(CvnfcCustomization.class);
         controllerSelectionReferenceClient = clientFactory.create(ControllerSelectionReference.class);
         externalServiceToInternalServiceClient = clientFactory.create(ExternalServiceToInternalService.class);
         pnfResourceClient = clientFactory.create(PnfResource.class);
@@ -645,13 +633,16 @@ public class CatalogDbClient {
                         .queryParam(SERVICE_TYPE, serviceType).build().toString()));
     }
 
-    public RainyDayHandlerStatus getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(
-            String flowName, String serviceType, String vnfType, String errorCode, String workStep) {
+    public RainyDayHandlerStatus getRainyDayHandlerStatus(String flowName, String serviceType, String vnfType,
+            String errorCode, String workStep, String errorMessage) {
+        logger.debug(
+                "Get Rainy Day Status - Flow Name {}, Service Type: {} , vnfType {} , errorCode {}, workStep {}, errorMessage {}",
+                flowName, serviceType, vnfType, errorCode, workStep, errorMessage);
         return this.getSingleResource(rainyDayHandlerStatusClient,
-                getUri(UriBuilder.fromUri(findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep)
+                getUri(UriBuilder.fromUri(endpoint + RAINY_DAY_HANDLER_MACRO + SEARCH + findRainyDayHandler)
                         .queryParam(FLOW_NAME, flowName).queryParam(SERVICE_TYPE, serviceType)
                         .queryParam(VNF_TYPE, vnfType).queryParam(ERROR_CODE, errorCode).queryParam(WORK_STEP, workStep)
-                        .build().toString()));
+                        .queryParam(ERROR_MESSAGE, errorMessage).build().toString()));
     }
 
     public ServiceRecipe getFirstByServiceModelUUIDAndAction(String modelUUID, String action) {
