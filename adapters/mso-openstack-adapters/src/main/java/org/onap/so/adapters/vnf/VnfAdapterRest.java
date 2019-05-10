@@ -379,7 +379,7 @@ public class VnfAdapterRest {
                 BpelRestClient bpelClient = bpelRestClientProvider.get();
                 bpelClient.bpelPost(getResponse(), req.getNotificationUrl(), sendxml);
             }
-            logger.debug("CreateVfModuleTask exit: code=" + getStatusCode() + RESP + getResponse());
+            logger.debug("CreateVfModuleTask exit: code=" + getStatusCode());
         }
     }
 
