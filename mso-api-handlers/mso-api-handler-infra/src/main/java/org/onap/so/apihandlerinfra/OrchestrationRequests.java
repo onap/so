@@ -63,6 +63,7 @@ import org.onap.so.serviceinstancebeans.RequestDetails;
 import org.onap.so.serviceinstancebeans.RequestList;
 import org.onap.so.serviceinstancebeans.RequestStatus;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
+import org.onap.so.utils.UUIDChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,6 +102,15 @@ public class OrchestrationRequests {
 
         InfraActiveRequests infraActiveRequest = null;
         List<org.onap.so.db.request.beans.RequestProcessingData> requestProcessingData = null;
+
+        if (!UUIDChecker.isValidUUID(requestId)) {
+
+            ErrorLoggerInfo errorLoggerInfo =
+                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_VALIDATION_ERROR, ErrorCode.SchemaError)
+                            .errorSource(Constants.MODIFIED_BY_APIHANDLER).build();
+            throw new ValidateException.Builder("Request Id " + requestId + " is not a valid UUID",
+                    HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo).build();
+        }
         try {
             infraActiveRequest = requestsDbClient.getInfraActiveRequestbyRequestId(requestId);
             requestProcessingData = requestsDbClient.getRequestProcessingDataBySoRequestId(requestId);
