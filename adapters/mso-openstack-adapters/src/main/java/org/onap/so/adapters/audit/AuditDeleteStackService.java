@@ -77,7 +77,7 @@ public class AuditDeleteStackService extends AbstractAuditService {
                         UNABLE_TO_FIND_ALL_V_SERVERS_AND_L_INTERACES_IN_A_AI, getRetrySequence().length, 10000);
             } else if (externalTask.getRetries() != null && externalTask.getRetries() - 1 == 0) {
                 logger.debug("The External Task Id: {}  Failed, All Retries Exhausted", externalTask.getId());
-                externalTaskService.complete(externalTask);
+                externalTaskService.complete(externalTask, variables);
             } else {
                 logger.debug("The External Task Id: {}  Failed, Decrementing Retries: {} , Retry Delay: ",
                         externalTask.getId(), externalTask.getRetries() - 1,
