@@ -63,6 +63,10 @@ public class RainyDayHandlerStatus implements Serializable {
     private String errorCode;
 
     @BusinessKey
+    @Column(name = "REG_EX_ERROR_MESSAGE")
+    private String errorMessage;
+
+    @BusinessKey
     @Column(name = "WORK_STEP")
     private String workStep;
 
@@ -77,8 +81,8 @@ public class RainyDayHandlerStatus implements Serializable {
     public String toString() {
         return new ToStringBuilder(this).append("id", id).append("flowName", flowName)
                 .append("serviceType", serviceType).append("vnfType", vnfType).append("errorCode", errorCode)
-                .append("workStep", workStep).append("policy", policy).append("secondaryPolicy", secondaryPolicy)
-                .toString();
+                .append("errorMessage", errorMessage).append("workStep", workStep).append("policy", policy)
+                .append("secondaryPolicy", secondaryPolicy).toString();
     }
 
     @Override
@@ -161,4 +165,14 @@ public class RainyDayHandlerStatus implements Serializable {
     public void setSecondaryPolicy(String secondaryPolicy) {
         this.secondaryPolicy = secondaryPolicy;
     }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
+
 }
