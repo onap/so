@@ -22,10 +22,21 @@ package org.onap.so.client.exception;
 
 public class BadResponseException extends Exception {
 
+    String responseCode;
+
     public BadResponseException() {}
 
     public BadResponseException(String message) {
         super(message);
+    }
+
+    public BadResponseException(String message, String responseCode) {
+        super(message);
+        this.responseCode = responseCode;
+    }
+
+    public String getResponseCode() {
+        return responseCode;
     }
 
 }
