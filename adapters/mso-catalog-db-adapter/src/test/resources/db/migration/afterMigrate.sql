@@ -183,7 +183,10 @@ VALUES      ( '9bcce658-9b37-11e8-98d0-529269fb1459',
               'toscaNodeType',
               'testVnfcCustomizationDescription',
               '2018-07-17 14:05:08');
-              
+
+INSERT INTO `rainy_day_handler_macro` (`FLOW_NAME`,`SERVICE_TYPE`,`VNF_TYPE`,`ERROR_CODE`,`WORK_STEP`,`POLICY`,`SECONDARY_POLICY`,`REG_EX_ERROR_MESSAGE`) 
+VALUES ('AssignServiceInstanceBB','*','*','*','*','Rollback','Rollback','The Flavor ID.*could not be found.');
+
 INSERT INTO `cvnfc_customization`
             (`id`,
              `model_customization_uuid`,
