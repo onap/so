@@ -119,7 +119,7 @@ public class OrchestrationRequestsTest extends BaseTest {
         assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
         assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
         assertEquals("7.0.0", response.getHeaders().get("X-LatestVersion").get(0));
-        assertEquals("00032ab7-na18-42e5-965d-8ea592502018", response.getHeaders().get("X-TransactionID").get(0));
+        assertEquals("00032ab7-1a18-42e5-965d-8ea592502018", response.getHeaders().get("X-TransactionID").get(0));
         assertNotNull(response.getBody().getRequest().getFinishTime());
     }
 
@@ -201,6 +201,29 @@ public class OrchestrationRequestsTest extends BaseTest {
 
         ResponseEntity<GetOrchestrationListResponse> response = restTemplate.exchange(builder.toUriString(),
                 HttpMethod.GET, entity, GetOrchestrationListResponse.class);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
+    }
+
+    @Test
+    public void testGetOrchestrationRequestInvalidRequestID() throws Exception {
+        setupTestGetOrchestrationRequest();
+        // TEST INVALID REQUESTID
+        GetOrchestrationResponse testResponse = new GetOrchestrationResponse();
+
+        Request request = ORCHESTRATION_LIST.getRequestList().get(1).getRequest();
+        testResponse.setRequest(request);
+        String testRequestId = "00032ab7-pfb3-42e5-965d-8ea592502016";
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Accept", MediaType.APPLICATION_JSON);
+        headers.set("Content-Type", MediaType.APPLICATION_JSON);
+        HttpEntity<Request> entity = new HttpEntity<Request>(null, headers);
+
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort("/onap/so/infra/orchestrationRequests/v7/" + testRequestId));
+
+        ResponseEntity<GetOrchestrationResponse> response =
+                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, GetOrchestrationResponse.class);
+
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
     }
 
@@ -370,14 +393,14 @@ public class OrchestrationRequestsTest extends BaseTest {
 
     public void setupTestGetOrchestrationRequest() throws Exception {
         // For testGetOrchestrationRequest
-        wireMockServer.stubFor(any(urlPathEqualTo("/infraActiveRequests/00032ab7-na18-42e5-965d-8ea592502018"))
+        wireMockServer.stubFor(any(urlPathEqualTo("/infraActiveRequests/00032ab7-1a18-42e5-965d-8ea592502018"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(new String(Files.readAllBytes(
                                 Paths.get("src/test/resources/OrchestrationRequest/getOrchestrationRequest.json"))))
                         .withStatus(HttpStatus.SC_OK)));
         wireMockServer
                 .stubFor(get(urlPathEqualTo("/requestProcessingData/search/findBySoRequestIdOrderByGroupingIdDesc/"))
-                        .withQueryParam("SO_REQUEST_ID", equalTo("00032ab7-na18-42e5-965d-8ea592502018"))
+                        .withQueryParam("SO_REQUEST_ID", equalTo("00032ab7-1a18-42e5-965d-8ea592502018"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(new String(Files.readAllBytes(Paths
                                         .get("src/test/resources/OrchestrationRequest/getRequestProcessingData.json"))))
@@ -386,14 +409,14 @@ public class OrchestrationRequestsTest extends BaseTest {
 
     public void setupTestGetOrchestrationRequestInstanceGroup() throws Exception {
         // For testGetOrchestrationRequest
-        wireMockServer.stubFor(any(urlPathEqualTo("/infraActiveRequests/00032ab7-na18-42e5-965d-8ea592502018"))
+        wireMockServer.stubFor(any(urlPathEqualTo("/infraActiveRequests/00032ab7-1a18-42e5-965d-8ea592502018"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(new String(Files.readAllBytes(Paths.get(
                                 "src/test/resources/OrchestrationRequest/getOrchestrationRequestInstanceGroup.json"))))
                         .withStatus(HttpStatus.SC_OK)));
         wireMockServer
                 .stubFor(get(urlPathEqualTo("/requestProcessingData/search/findBySoRequestIdOrderByGroupingIdDesc/"))
-                        .withQueryParam("SO_REQUEST_ID", equalTo("00032ab7-na18-42e5-965d-8ea592502018"))
+                        .withQueryParam("SO_REQUEST_ID", equalTo("00032ab7-1a18-42e5-965d-8ea592502018"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(new String(Files.readAllBytes(Paths
                                         .get("src/test/resources/OrchestrationRequest/getRequestProcessingData.json"))))
