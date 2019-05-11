@@ -956,31 +956,31 @@ public class ToscaResourceInstaller {
 
         logger.debug("VF Category is : " + vfCustomizationCategory);
 
-        if (vfResourceStructure.getVfModuleStructure() != null
-                && !vfResourceStructure.getVfModuleStructure().isEmpty()) {
 
-            String vfCustomizationUUID = toscaResourceStruct.getSdcCsarHelper().getMetadataPropertyValue(metadata,
-                    SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
-            logger.debug("VFCustomizationUUID=" + vfCustomizationUUID);
+        String vfCustomizationUUID = toscaResourceStruct.getSdcCsarHelper().getMetadataPropertyValue(metadata,
+                SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
+        logger.debug("VFCustomizationUUID=" + vfCustomizationUUID);
 
-            IResourceInstance vfNotificationResource = vfResourceStructure.getResourceInstance();
+        IResourceInstance vfNotificationResource = vfResourceStructure.getResourceInstance();
 
-            // Make sure the VF ResourceCustomizationUUID from the notification and tosca customizations match before
-            // comparing their VF Modules UUID's
-            logger.debug("Checking if Notification VF ResourceCustomizationUUID: "
-                    + vfNotificationResource.getResourceCustomizationUUID() + " matches Tosca VF Customization UUID: "
-                    + vfCustomizationUUID);
+        // Make sure the VF ResourceCustomizationUUID from the notification and tosca customizations match before
+        // comparing their VF Modules UUID's
+        logger.debug("Checking if Notification VF ResourceCustomizationUUID: "
+                + vfNotificationResource.getResourceCustomizationUUID() + " matches Tosca VF Customization UUID: "
+                + vfCustomizationUUID);
 
-            if (vfCustomizationUUID.equals(vfNotificationResource.getResourceCustomizationUUID())) {
+        if (vfCustomizationUUID.equals(vfNotificationResource.getResourceCustomizationUUID())) {
 
-                logger.debug("vfCustomizationUUID: " + vfCustomizationUUID
-                        + " matches vfNotificationResource CustomizationUUID");
+            logger.debug("vfCustomizationUUID: " + vfCustomizationUUID
+                    + " matches vfNotificationResource CustomizationUUID");
 
-                VnfResourceCustomization vnfResource = createVnfResource(nodeTemplate, toscaResourceStruct, service);
+            VnfResourceCustomization vnfResource = createVnfResource(nodeTemplate, toscaResourceStruct, service);
 
-                Set<CvnfcCustomization> existingCvnfcSet = new HashSet<CvnfcCustomization>();
-                Set<VnfcCustomization> existingVnfcSet = new HashSet<VnfcCustomization>();
+            Set<CvnfcCustomization> existingCvnfcSet = new HashSet<CvnfcCustomization>();
+            Set<VnfcCustomization> existingVnfcSet = new HashSet<VnfcCustomization>();
 
+            if (vfResourceStructure.getVfModuleStructure() != null
+                    && !vfResourceStructure.getVfModuleStructure().isEmpty()) {
                 for (VfModuleStructure vfModuleStructure : vfResourceStructure.getVfModuleStructure()) {
 
                     logger.debug("vfModuleStructure:" + vfModuleStructure.toString());
@@ -1008,34 +1008,35 @@ public class ToscaResourceInstaller {
                                         + vfMetadata.getVfModuleModelCustomizationUUID());
 
                 }
-
-
-                // Check for VNFC Instance Group info and add it if there is
-                List<Group> groupList =
-                        toscaResourceStruct.getSdcCsarHelper().getGroupsOfOriginOfNodeTemplateByToscaGroupType(
-                                nodeTemplate, "org.openecomp.groups.VfcInstanceGroup");
-
-                for (Group group : groupList) {
-                    VnfcInstanceGroupCustomization vnfcInstanceGroupCustomization =
-                            createVNFCInstanceGroup(nodeTemplate, group, vnfResource, toscaResourceStruct);
-                    vnfcInstanceGroupCustomizationRepo.saveAndFlush(vnfcInstanceGroupCustomization);
-                }
-
-                List<String> seqResult = processVNFCGroupSequence(toscaResourceStruct, groupList);
-                if (!CollectionUtils.isEmpty(seqResult)) {
-                    String resultStr = seqResult.stream().collect(Collectors.joining(","));
-                    vnfResource.setVnfcInstanceGroupOrder(resultStr);
-                    logger.debug(
-                            "vnfcGroupOrder result for service uuid(" + service.getModelUUID() + ") : " + resultStr);
-                }
-                // add this vnfResource with existing vnfResource for this service
-                addVnfCustomization(service, vnfResource);
-            } else {
-                logger.debug("Notification VF ResourceCustomizationUUID: "
-                        + vfNotificationResource.getResourceCustomizationUUID() + " doesn't match "
-                        + "Tosca VF Customization UUID: " + vfCustomizationUUID);
             }
+
+
+            // Check for VNFC Instance Group info and add it if there is
+            List<Group> groupList =
+                    toscaResourceStruct.getSdcCsarHelper().getGroupsOfOriginOfNodeTemplateByToscaGroupType(
+                            nodeTemplate, "org.openecomp.groups.VfcInstanceGroup");
+
+            for (Group group : groupList) {
+                VnfcInstanceGroupCustomization vnfcInstanceGroupCustomization =
+                        createVNFCInstanceGroup(nodeTemplate, group, vnfResource, toscaResourceStruct);
+                vnfcInstanceGroupCustomizationRepo.saveAndFlush(vnfcInstanceGroupCustomization);
+            }
+
+            List<String> seqResult = processVNFCGroupSequence(toscaResourceStruct, groupList);
+            if (!CollectionUtils.isEmpty(seqResult)) {
+                String resultStr = seqResult.stream().collect(Collectors.joining(","));
+                vnfResource.setVnfcInstanceGroupOrder(resultStr);
+                logger.debug(
+                        "vnfcGroupOrder result for service uuid(" + service.getModelUUID() + ") : " + resultStr);
+            }
+            // add this vnfResource with existing vnfResource for this service
+            addVnfCustomization(service, vnfResource);
+        } else {
+            logger.debug("Notification VF ResourceCustomizationUUID: "
+                    + vfNotificationResource.getResourceCustomizationUUID() + " doesn't match "
+                    + "Tosca VF Customization UUID: " + vfCustomizationUUID);
         }
+
     }
 
     private List<String> processVNFCGroupSequence(ToscaResourceStructure toscaResourceStructure,
@@ -1873,7 +1874,13 @@ public class ToscaResourceInstaller {
                 vnfcCustomization
                         .setDescription(testNull(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION)));
                 vnfcCustomization.setResourceInput(getVnfcResourceInput(vfcTemplate, inputList));
-                vfcInstanceGroupCustom.getVnfcCustomizations().add(vnfcCustomization);
+                List<VnfcCustomization> vnfcCustomizations = vfcInstanceGroupCustom.getVnfcCustomizations();
+
+                if (vnfcCustomizations == null) {
+                    vnfcCustomizations = new ArrayList<>();
+                    vfcInstanceGroupCustom.setVnfcCustomizations(vnfcCustomizations);
+                }
+                vnfcCustomizations.add(vnfcCustomization);
             }
         }
     }
@@ -2651,8 +2658,10 @@ public class ToscaResourceInstaller {
         if (services.size() > 0) {
             // service exist in db
             Service existingService = services.get(0);
-            List<VnfResourceCustomization> vnfCustomizations = existingService.getVnfCustomizations();
-            vnfCustomizations.forEach(e -> service.getVnfCustomizations().add(e));
+            List<VnfResourceCustomization> existingVnfCustomizations = existingService.getVnfCustomizations();
+            if (existingService != null) {
+                service.getVnfCustomizations().addAll(existingVnfCustomizations);
+            }
         }
         service.getVnfCustomizations().add(vnfResourceCustomization);
     }
