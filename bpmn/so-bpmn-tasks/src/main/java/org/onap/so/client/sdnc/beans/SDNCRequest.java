@@ -21,7 +21,6 @@
 package org.onap.so.client.sdnc.beans;
 
 import java.io.Serializable;
-import java.time.Duration;
 import java.util.UUID;
 import org.onap.so.client.sdnc.endpoint.SDNCTopology;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -35,8 +34,8 @@ public class SDNCRequest implements Serializable {
     private static final long serialVersionUID = 4679678988657593282L;
     private String timeOut = "PT1H";
     private SDNCTopology topology;
-    private String CorrelationValue = UUID.randomUUID().toString();
-    private String CorrelationName = "SDNCCallback";
+    private String correlationValue = UUID.randomUUID().toString();
+    private String correlationName = "SDNCCallback";
     private Object SDNCPayload;
 
 
@@ -57,19 +56,19 @@ public class SDNCRequest implements Serializable {
     }
 
     public String getCorrelationValue() {
-        return CorrelationValue;
+        return correlationValue;
     }
 
     public void setCorrelationValue(String correlationValue) {
-        CorrelationValue = correlationValue;
+        this.correlationValue = correlationValue;
     }
 
     public String getCorrelationName() {
-        return CorrelationName;
+        return correlationName;
     }
 
     public void setCorrelationName(String correlationName) {
-        CorrelationName = correlationName;
+        this.correlationName = correlationName;
     }
 
     public Object getSDNCPayload() {
@@ -86,13 +85,13 @@ public class SDNCRequest implements Serializable {
             return false;
         }
         SDNCRequest castOther = (SDNCRequest) other;
-        return new EqualsBuilder().append(CorrelationValue, castOther.CorrelationValue)
-                .append(CorrelationName, castOther.CorrelationName).isEquals();
+        return new EqualsBuilder().append(correlationValue, castOther.correlationValue)
+                .append(correlationName, castOther.correlationName).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(CorrelationValue).append(CorrelationName).toHashCode();
+        return new HashCodeBuilder().append(correlationValue).append(correlationName).toHashCode();
     }
 
 }

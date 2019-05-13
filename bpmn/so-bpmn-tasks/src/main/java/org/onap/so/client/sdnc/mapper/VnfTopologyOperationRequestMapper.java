@@ -126,7 +126,7 @@ public class VnfTopologyOperationRequestMapper {
         }
         List<InstanceGroup> instanceGroups = vnf.getInstanceGroups();
         List<GenericResourceApiVnfrequestinputVnfrequestinputVnfNetworkInstanceGroupIds> networkInstanceGroupIdList =
-                new ArrayList<GenericResourceApiVnfrequestinputVnfrequestinputVnfNetworkInstanceGroupIds>();
+                new ArrayList<>();
 
         for (InstanceGroup instanceGroup : instanceGroups) {
             if (ModelInfoInstanceGroup.TYPE_L3_NETWORK
