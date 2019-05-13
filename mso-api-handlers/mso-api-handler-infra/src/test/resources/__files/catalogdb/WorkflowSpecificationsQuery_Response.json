@@ -458,6 +458,35 @@
 						"href": "http://localhost:8090/workflow/b5fa707a-f55a-11e7-a796-005056856d52/activitySpec"
 					}
 				}
+			},
+			{
+				"artifactUUID": "da6478e4-ea33-3346-ac12-ab121284a333",
+				"artifactName": "VnfInPlaceUpdate.bpmn",
+				"name": "VnfInPlaceUpdate",
+				"operationName": "inPlaceSoftwareUpdate",
+				"version": 1,
+				"description": "native workflow",
+				"body": null,
+				"resourceTarget": "vnf",
+				"source": "native",
+				"timeoutMinutes": null,
+				"artifactChecksum": null,
+				"created": null,
+				"vnfResourceWorkflow": null,
+				"workflowActivitySpecSequence": [],
+				"id": null,
+				"workflow": null,
+				"_links": {
+					"self": {
+						"href": "http://localhost:8090/workflow/search/findWorkflowByModelUUID?vnfResourceModelUUID=b5fa707a-f55a-11e7-a796-005056856d52"
+					},
+					"workflowActivitySpecSequence": {
+						"href": "http://localhost:8090/workflow/b5fa707a-f55a-11e7-a796-005056856d52/workflowActivitySpecSequence"
+					},
+					"activitySpec": {
+						"href": "http://localhost:8090/workflows/b5fa707a-f55a-11e7-a796-005056856d52/activitySpec"
+					}
+				}
 			}
 		]
 	},
