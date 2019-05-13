@@ -108,6 +108,22 @@
           }      
         ]
       }
+    },
+    {
+      "workflowSpecification": {
+        
+         "artifactInfo": {
+          "artifactType": "workflow",
+          "artifactUuid": "da6478e4-ea33-3346-ac12-ab121284a333",
+          "artifactName": "VnfInPlaceUpdate.bpmn",
+          "artifactVersion": "1.0",
+          "artifactDescription": "native workflow",
+          "workflowName": "VnfInPlaceUpdate",
+          "operationName": "inPlaceSoftwareUpdate",
+          "workflowSource": "native",
+          "workflowResourceTarget": "vnf"
+        }
+      }
     }
   ]
 }
