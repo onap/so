@@ -73,6 +73,7 @@ public class WorkflowSpecificationsHandler {
 
     private static Logger logger = LoggerFactory.getLogger(WorkflowSpecificationsHandler.class);
     private static final String ARTIFACT_TYPE_WORKFLOW = "workflow";
+    private static final String NATIVE_WORKFLOW = "native";
 
     @Path("/{version:[vV]1}/workflows")
     @GET
@@ -88,6 +89,12 @@ public class WorkflowSpecificationsHandler {
         mapper1.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         List<Workflow> workflows = catalogDbClient.findWorkflowByModelUUID(vnfModelVersionId);
+
+        List<Workflow> nativeWorkflows = catalogDbClient.findWorkflowBySource(NATIVE_WORKFLOW);
+        if (nativeWorkflows != null && nativeWorkflows.size() != 0) {
+            workflows.addAll(nativeWorkflows);
+        }
+
         WorkflowSpecifications workflowSpecifications = mapWorkflowsToWorkflowSpecifications(workflows);
 
         String jsonResponse = null;
