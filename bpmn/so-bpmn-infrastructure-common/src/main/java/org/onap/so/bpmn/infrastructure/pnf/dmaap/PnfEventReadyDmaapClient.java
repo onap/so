@@ -135,7 +135,8 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
                 HttpResponse response = httpClient.execute(getRequest);
                 List<String> idList = getPnfCorrelationIdListFromResponse(response);
 
-                if (idList != null && idList.size() > 0) {
+                // idList is never null
+                if (!idList.isEmpty()) {
                     // send only body of response
                     registerClientResponse(idList.get(0), EntityUtils.toString(response.getEntity(), "UTF-8"));
                 }

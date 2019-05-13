@@ -107,6 +107,8 @@ public abstract class OperationProgressor implements Runnable {
             Thread.sleep(milliSeconds);
         } catch (final InterruptedException e) {
             operation.setOperationState(InlineResponse200.OperationStateEnum.FAILED);
+            // Restore interrupted state
+            Thread.currentThread().interrupt();
         }
     }
 
