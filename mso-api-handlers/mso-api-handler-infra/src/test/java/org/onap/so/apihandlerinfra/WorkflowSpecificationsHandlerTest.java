@@ -297,6 +297,17 @@ public class WorkflowSpecificationsHandlerTest extends BaseTest {
         workflow.setWorkflowActivitySpecSequence(workflowActivitySpecSequences);
         workflows.add(workflow);
 
+        Workflow workflowNative = new Workflow();
+        workflowNative.setArtifactUUID("da6478e4-ea33-3346-ac12-ab121284a333");
+        workflowNative.setArtifactName("VnfInPlaceUpdate.bpmn");
+        workflowNative.setVersion(1.0);
+        workflowNative.setDescription("native workflow");
+        workflowNative.setName("VnfInPlaceUpdate");
+        workflowNative.setOperationName("inPlaceSoftwareUpdate");
+        workflowNative.setSource("native");
+        workflowNative.setResourceTarget("vnf");
+        workflows.add(workflowNative);
+
         WorkflowSpecifications workflowSpecifications =
                 workflowSpecificationsHandler.mapWorkflowsToWorkflowSpecifications(workflows);
         ObjectMapper mapper = new ObjectMapper();
