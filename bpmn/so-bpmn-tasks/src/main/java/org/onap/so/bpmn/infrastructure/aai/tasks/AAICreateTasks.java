@@ -195,7 +195,7 @@ public class AAICreateTasks {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
-            execution.setVariable("callHoming", Boolean.TRUE.equals(vnf.isCallHoming()));
+            execution.setVariable("homing", Boolean.TRUE.equals(vnf.isCallHoming()));
             aaiVnfResources.createVnfandConnectServiceInstance(vnf, serviceInstance);
         } catch (Exception ex) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
