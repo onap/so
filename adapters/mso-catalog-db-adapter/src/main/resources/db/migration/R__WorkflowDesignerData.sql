@@ -148,6 +148,9 @@ VALUES
 ('existing_software_version','userParams','Existing Software Version','text','',1,50,''),
 ('tenantId','cloudConfiguration','Tenant/Project ID','text','',1,36,''),
 ('new_software_version','userParams','New Software Version','text','',1,50,''),
+('book_name','userParams','Name of Commands Book Set','text','',1,50,''),
+('node_list','userParams','List of Nodes','text','',1,200,''),
+('file_parameter_content','userParams','Configuration File Content','text','',1,50000,''),
 ('lcpCloudRegionId','cloudConfiguration','Cloud Region ID','text','',1,7,'');
 
 INSERT INTO `activity_spec_to_user_parameters`(`ACTIVITY_SPEC_ID`,`USER_PARAMETERS_ID`)
@@ -166,6 +169,18 @@ VALUES
 (select ID from user_parameters where NAME='tenantId')),
 ((select ID from activity_spec where NAME='VNFQuiesceTrafficActivity' and VERSION=1.0),
 (select ID from user_parameters where NAME='operations_timeout')),
+((select ID from activity_spec where NAME='DistributeTrafficActivity' and VERSION=1.0),
+(select ID from user_parameters where NAME='book_name')),
+((select ID from activity_spec where NAME='DistributeTrafficActivity' and VERSION=1.0),
+(select ID from user_parameters where NAME='node_list')),
+((select ID from activity_spec where NAME='DistributeTrafficActivity' and VERSION=1.0),
+(select ID from user_parameters where NAME='file_parameter_content')),
+((select ID from activity_spec where NAME='DistributeTrafficCheckActivity' and VERSION=1.0),
+(select ID from user_parameters where NAME='book_name')),
+((select ID from activity_spec where NAME='DistributeTrafficCheckActivity' and VERSION=1.0),
+(select ID from user_parameters where NAME='node_list')),
+((select ID from activity_spec where NAME='DistributeTrafficCheckActivity' and VERSION=1.0),
+(select ID from user_parameters where NAME='file_parameter_content')),
 ((select ID from activity_spec where NAME='VNFUpgradeBackupActivity' and VERSION=1.0),
 (select ID from user_parameters where NAME='existing_software_version')),
 ((select ID from activity_spec where NAME='VNFUpgradeBackupActivity' and VERSION=1.0),
