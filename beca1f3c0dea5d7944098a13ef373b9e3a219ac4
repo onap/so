@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e3d2cbb6_aaed32c5",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/installer/heat/ToscaResourceInstaller.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1330,
+      "author": {
+        "id": 4277
+      },
+      "writtenOn": "2019-05-14T18:08:16Z",
+      "side": 1,
+      "message": "I don\u0027t think this is necessary. We have recently implemented a feature where if tosca csar already exists, SDC is notified with ALREADY_DEPLOYED status \u0026 the current notification will not be processed any further. \nIn this case, it will always be a new service and I don\u0027t see the need for fetching a service from the database to verify if the service already exists.\nJeff can weigh-in.",
+      "revId": "beca1f3c0dea5d7944098a13ef373b9e3a219ac4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b33a157a_bbd33cf6",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/installer/heat/ToscaResourceInstaller.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1444,
+      "author": {
+        "id": 4277
+      },
+      "writtenOn": "2019-05-14T18:08:16Z",
+      "side": 1,
+      "message": "See my comments for create service service. The same logic is applicable here for tosca csar.",
+      "revId": "beca1f3c0dea5d7944098a13ef373b9e3a219ac4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f880dc9f_574bbcf2",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/installer/heat/ToscaResourceInstaller.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 2675,
+      "author": {
+        "id": 4277
+      },
+      "writtenOn": "2019-05-14T18:08:16Z",
+      "side": 1,
+      "message": "This block of code earlier caused hibernate persistence failures with our current unit tests. \nA brief write-up on what is being accomplished here would help to understand the need for this change.",
+      "revId": "beca1f3c0dea5d7944098a13ef373b9e3a219ac4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
