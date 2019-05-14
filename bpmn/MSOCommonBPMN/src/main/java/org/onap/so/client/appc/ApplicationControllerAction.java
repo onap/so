@@ -68,6 +68,12 @@ public class ApplicationControllerAction {
                 case QuiesceTraffic:
                     appCStatus = quiesceTrafficAction(msoRequestId, vnfId, payload, vnfName, controllerType);
                     break;
+                case DistributeTraffic:
+                    appCStatus = distributeTrafficAction(msoRequestId, vnfId, payload, vnfName, controllerType);
+                    break;
+                case DistributeTrafficCheck:
+                    appCStatus = distributeTrafficCheckAction(msoRequestId, vnfId, payload, vnfName, controllerType);
+                    break;
                 case HealthCheck:
                     appCStatus = healthCheckAction(msoRequestId, vnfId, vnfName, vnfHostIpAddress, controllerType);
                     break;
@@ -91,8 +97,6 @@ public class ApplicationControllerAction {
                     break;
                 case ConfigModify:
                 case ConfigScaleOut:
-                case DistributeTraffic:
-                case DistributeTrafficCheck:
                     appCStatus = payloadAction(action, msoRequestId, vnfId, payload, controllerType);
                     break;
                 case UpgradePreCheck:
@@ -156,6 +160,28 @@ public class ApplicationControllerAction {
         }
         payload = PayloadClient.upgradeFormat(payload, vnfName);
         return client.vnfCommand(action, msoRequestId, vnfId, Optional.empty(), payload, controllerType);
+    }
+
+    private Status distributeTrafficAction(String msoRequestId, String vnfId, Optional<String> payload,
+                                 String vnfName, String controllerType)
+            throws JsonProcessingException, IllegalArgumentException, ApplicationControllerOrchestratorException {
+        if (!(payload.isPresent())) {
+            throw new IllegalArgumentException("Payload is not present for " + Action.DistributeTraffic.toString());
+        }
+        payload = PayloadClient.distributeTrafficFormat(payload, vnfName);
+        return client.vnfCommand(Action.DistributeTraffic, msoRequestId, vnfId, Optional.empty(), payload,
+                controllerType);
+    }
+
+    private Status distributeTrafficCheckAction(String msoRequestId, String vnfId, Optional<String> payload,
+                                           String vnfName, String controllerType)
+            throws JsonProcessingException, IllegalArgumentException, ApplicationControllerOrchestratorException {
+        if (!(payload.isPresent())) {
+            throw new IllegalArgumentException("Payload is not present for " + Action.DistributeTrafficCheck.toString());
+        }
+        payload = PayloadClient.distributeTrafficCheckFormat(payload, vnfName);
+        return client.vnfCommand(Action.DistributeTrafficCheck, msoRequestId, vnfId, Optional.empty(), payload,
+                controllerType);
     }
 
     private Status resumeTrafficAction(String msoRequestId, String vnfId, String vnfName, String controllerType)
