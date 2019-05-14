@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a1e37f46_2997c4ce",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/client/ASDCController.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 748,
+      "author": {
+        "id": 333
+      },
+      "writtenOn": "2019-05-14T11:00:54Z",
+      "side": 1,
+      "message": "In my opinion the logic here is faulty. Once this variable is set to true, it remains `true` for all remaining service resources to be processed. In case the next resource of VF type is an allotted resource or a resource with no artifacts, that resource will not be deployed.",
+      "range": {
+        "startLine": 748,
+        "startChar": 28,
+        "endLine": 748,
+        "endChar": 49
+      },
+      "revId": "47ace9d3fa552b3c19c8894d039841fe7ce91958",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
