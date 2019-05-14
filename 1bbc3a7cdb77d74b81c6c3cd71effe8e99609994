@@ -16,6 +16,24 @@
       "revId": "1bbc3a7cdb77d74b81c6c3cd71effe8e99609994",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "89c5687a_68f381a4",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/installer/heat/ToscaResourceInstaller.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 960,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-05-14T09:53:31Z",
+      "side": 0,
+      "message": "The scenario is, a VFResource has no VFModule but it has Groups. If we have this check then we are not able to create Vnf resource and group entry.\n\ne.g.\nserivce --has--\u003e VF --has group but no module--\u003e Group --\u003e has vnfc",
+      "parentUuid": "b1b2bd95_5307bc6a",
+      "revId": "1bbc3a7cdb77d74b81c6c3cd71effe8e99609994",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
