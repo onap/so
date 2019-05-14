@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "aabba1a5_cb9c1b3e",
+        "filename": "bpmn/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2019-05-14T23:58:29Z",
+      "side": 1,
+      "message": "87719 used 1.5.1. Now, 1.5.2-SNAPSHOT. I assume it is the latest one.",
+      "range": {
+        "startLine": 27,
+        "startChar": 4,
+        "endLine": 27,
+        "endChar": 69
+      },
+      "revId": "f9c309fb9e789225ccd6b02ec9ab4777bbd4021c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
