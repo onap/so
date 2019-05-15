@@ -398,10 +398,12 @@ public class BBInputSetupMapperLayerTest {
 
     @Test
     public void testMapAAIL3NetworkIntoL3Network() throws IOException {
-        L3Network expected = mapper.readValue(new File(RESOURCE_PATH + "l3NetworkExpected.json"), L3Network.class);
+        L3Network expected =
+                mapper.readValue(new File(RESOURCE_PATH + "l3NetworkExpectedWithSubnet.json"), L3Network.class);
 
-        org.onap.aai.domain.yang.L3Network aaiL3Network = mapper.readValue(
-                new File(RESOURCE_PATH + "aaiL3NetworkInput.json"), org.onap.aai.domain.yang.L3Network.class);
+        org.onap.aai.domain.yang.L3Network aaiL3Network =
+                mapper.readValue(new File(RESOURCE_PATH + "aaiL3NetworkInputWithSubnets.json"),
+                        org.onap.aai.domain.yang.L3Network.class);
 
         L3Network actual = bbInputSetupMapperLayer.mapAAIL3Network(aaiL3Network);
 

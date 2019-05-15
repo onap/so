@@ -1,0 +1,56 @@
+{
+	"network-id": "networkId",
+	"cascaded": null,
+	"cloud-params": {
+		
+	},
+	"network-name": "networkName",
+	"is-bound-to-vpn": true,
+	"service-id": "serviceId",
+	"network-role-instance": 1234,
+	"orchestration-status": "ASSIGNED",
+	"heat-stack-id": "heatStackId",
+	"contrail-network-fqdn": "contrailNetworkFqdn",
+	"widget-model-id": "widgetModelId",
+	"widget-model-version": "widgetModelVersion",
+	"physical-network-name": "physicalNetworkName",
+	"is-provider-network": true,
+	"is-shared-network": true,
+	"is-external-network": true,
+	"self-link": "selflink",
+	"operational-status": "operationalStatus",
+	"subnets": [
+		{
+			"subnet-id": "subnetId",
+			"subnet-name": "subnetName",
+			"neutron-subnet-id": "neutronSubnetId",
+			"gateway-address": "10.80.12.1",
+			"network-start-address": "10.80.12.0",
+			"cidr-mask": "23",
+			"ip-version": "4",
+			"dhcp-enabled": true,
+			"dhcp-start": "10.80.12.3",
+			"dhcp-end": "10.80.13.254",
+			"subnet-role": "s1",
+			"ip-assignment-direction": "true",
+			"host-routes": [
+				{
+					"host-route-id": "91324351-01bf-43f8-a302-8c873451b4f1",
+					"route-prefix": "10.0.0.0/16",
+					"next-hop": "10.80.12.1"
+				}
+			]
+		}
+	],
+	"ctag-assignments": [
+		{
+			"vlan-id-inner": 1234
+		}
+	],
+	"segmentation-assignments": [
+		{
+			"segmentation-id": "segmentationId"
+		}
+	],
+	"model-info-network": null
+}

@@ -1,0 +1,73 @@
+{
+	"networkId": "networkId",
+	"networkName": "networkName",
+	"networkType": null,
+	"networkRole": null,
+	"networkTechnology": null,
+	"neutronNetworkId": null,
+	"isBoundToVpn": true,
+	"serviceId": "serviceId",
+	"networkRoleInstance": 1234,
+	"resourceVersion": null,
+	"orchestrationStatus": "Assigned",
+	"heatStackId": "heatStackId",
+	"msoCatalogKey": null,
+	"contrailNetworkFqdn": "contrailNetworkFqdn",
+	"modelInvariantId": null,
+	"modelVersionId": null,
+	"personaModelVersion": null,
+	"modelCustomizationId": null,
+	"widgetModelId": "widgetModelId",
+	"widgetModelVersion": "widgetModelVersion",
+	"physicalNetworkName": "physicalNetworkName",
+	"isProviderNetwork": true,
+	"isSharedNetwork": true,
+	"isExternalNetwork": true,
+	"selflink": "selflink",
+	"operationalStatus": "operationalStatus",
+	"subnets": {
+		"subnet": [
+			{
+				"subnetId": "subnetId",
+				"subnetName": "subnetName",
+				"neutronSubnetId": "neutronSubnetId",
+				"gatewayAddress": "10.80.12.1",
+				"networkStartAddress": "10.80.12.0",
+				"cidrMask": "23",
+				"ipVersion": "4",
+				"orchestrationStatus": "Active",
+				"dhcpEnabled": true,
+				"dhcpStart": "10.80.12.3",
+				"dhcpEnd": "10.80.13.254",
+				"subnetRole": "s1",
+				"ipAssignmentDirection": "true",
+				"resourceVersion": "1557499815393",
+				"hostRoutes": {
+					"hostRoute": [
+						{
+							"hostRouteId": "91324351-01bf-43f8-a302-8c873451b4f1",
+							"routePrefix": "10.0.0.0/16",
+							"nextHop": "10.80.12.1",
+							"resourceVersion": "1557499777501"
+						}
+					]
+				}
+			}
+		]
+	},
+	"ctagAssignments": {
+		"ctagAssignment": [
+			{
+				"vlanIdInner": 1234
+			}
+		]
+	},
+	"segmentationAssignments": {
+		"segmentationAssignment": [
+			{
+				"segmentationId": "segmentationId"
+			}
+		]
+	},
+	"relationshipList": null
+}

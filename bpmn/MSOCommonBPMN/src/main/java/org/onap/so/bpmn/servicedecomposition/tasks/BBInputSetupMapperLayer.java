@@ -40,6 +40,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.Entitlement;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Evc;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ForwarderEvc;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.HostRoute;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.LagInterface;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.LineOfBusiness;
@@ -131,7 +132,21 @@ public class BBInputSetupMapperLayer {
     }
 
     protected Subnet mapAAISubnet(org.onap.aai.domain.yang.Subnet aaiSubnet) {
-        return modelMapper.map(aaiSubnet, Subnet.class);
+        Subnet subnet = modelMapper.map(aaiSubnet, Subnet.class);
+        mapAllHostRoutesIntoSubnet(aaiSubnet, subnet);
+        return subnet;
+    }
+
+    protected void mapAllHostRoutesIntoSubnet(org.onap.aai.domain.yang.Subnet aaiSubnet, Subnet subnet) {
+        if (aaiSubnet.getHostRoutes() != null) {
+            for (org.onap.aai.domain.yang.HostRoute aaiHostRoute : aaiSubnet.getHostRoutes().getHostRoute()) {
+                subnet.getHostRoutes().add(mapAAIHostRoute(aaiHostRoute));
+            }
+        }
+    }
+
+    protected HostRoute mapAAIHostRoute(org.onap.aai.domain.yang.HostRoute aaiHostRoute) {
+        return modelMapper.map(aaiHostRoute, HostRoute.class);
     }
 
     protected License mapAAILicense(org.onap.aai.domain.yang.License aaiLicense) {
