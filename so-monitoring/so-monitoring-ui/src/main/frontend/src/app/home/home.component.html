@@ -128,15 +128,15 @@ SPDX-License-Identifier: Apache-2.0
         <mat-table [dataSource]="processData" matSort>
           <ng-container matColumnDef="requestId">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Request Id </mat-header-cell>
-            <mat-cell *matCellDef="let process"><a routerLink="" (click)="getProcessIsntanceId(process.requestId)">{{ process.requestId }}</a></mat-cell>
+            <mat-cell *matCellDef="let process"><a routerLink="" (click)="getProcessInstanceId(process.requestId)">{{ process.requestId }}</a></mat-cell>
           </ng-container>
           <ng-container matColumnDef="serviceInstanceId">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Instance Id </mat-header-cell>
             <mat-cell *matCellDef="let process"> {{ process.serviceInstanceId }} </mat-cell>
           </ng-container>
-          <ng-container matColumnDef="serviceIstanceName">
+          <ng-container matColumnDef="serviceInstanceName">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Instance Name </mat-header-cell>
-            <mat-cell *matCellDef="let process"> {{ process.serviceIstanceName }} </mat-cell>
+            <mat-cell *matCellDef="let process"> {{ process.serviceInstanceName }} </mat-cell>
           </ng-container>
           <ng-container matColumnDef="networkId">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Network Id </mat-header-cell>

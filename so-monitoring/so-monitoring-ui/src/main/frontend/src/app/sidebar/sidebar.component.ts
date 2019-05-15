@@ -29,12 +29,11 @@ import { Router, NavigationEnd } from '@angular/router';
   styleUrls: ['./sidebar.component.scss']
 })
 
-export class SidebarComponent implements OnInit {
+export class SidebarComponent {
 
   currentUrl: string;
 
   constructor(private router: Router) {
     router.events.subscribe((_: NavigationEnd) => this.currentUrl = _.url);
   }
-  ngOnInit() { }
 }

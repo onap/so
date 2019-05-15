@@ -35,10 +35,10 @@ import { APP_BASE_HREF } from '@angular/common';
 import { ToastrNotificationService } from '../toastr-notification-service.service';
 import { DataService } from '../data.service';
 import { Observable, of, throwError } from 'rxjs';
-import { ACTINST } from '../model/activityInstance.model';
-import { PDI } from '../model/processDefinition.model';
-import { PII } from '../model/processInstance.model';
-import { VarInstance } from '../model/variableInstance.model';
+import { ActivityInstance } from '../model/activityInstance.model';
+import { ProcessDefinitionDetail } from '../model/processDefinition.model';
+import { ProcessInstanceDetail } from '../model/processInstance.model';
+import { VariableInstance } from '../model/variableInstance.model';
 import { ActivatedRoute } from '@angular/router';
 import { Params } from '@angular/router';
 
@@ -49,7 +49,7 @@ class StubbedToastrNotificationService extends ToastrNotificationService {
   error() {}
 }
 
-const startActivity: ACTINST = {
+const startActivity: ActivityInstance = {
   activityId: "StartEvent_1",
   processInstanceId: "processInstanceId-val-1234",
   calledProcessInstanceId: "",
@@ -60,7 +60,7 @@ const startActivity: ACTINST = {
   startTime: ""
 };
 
-const subProcessActivity: ACTINST = {
+const subProcessActivity: ActivityInstance = {
   activityId: "CallActivity_14h26ae",
   processInstanceId: "processInstanceId-val-1234",
   calledProcessInstanceId: "1234",
@@ -71,7 +71,7 @@ const subProcessActivity: ACTINST = {
   startTime: ""
 };
 
-const processDefinition: PDI = {
+const processDefinition: ProcessDefinitionDetail = {
   processDefinitionId: "processDefinitionId-val-1234",
   processDefinitionXml: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
     "<bpmn:definitions xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:camunda=\"http://camunda.org/schema/1.0/bpmn\" id=\"Definitions_01lwydo\" targetNamespace=\"http://bpmn.io/schema/bpmn\" exporter=\"Camunda Modeler\" exporterVersion=\"2.2.4\">" +
@@ -113,25 +113,25 @@ const processDefinition: PDI = {
     "</bpmn:definitions>"
 };
 
-const emptyProcessDefinition: PDI = {
+const emptyProcessDefinition: ProcessDefinitionDetail = {
   processDefinitionId: "processDefinitionId-val",
   processDefinitionXml: ""
 };
 
-const processInstance: PII = {
-  processInstancId: "processInstanceId-val-1234",
+const processInstance: ProcessInstanceDetail = {
+  processInstanceId: "processInstanceId-val-1234",
   processDefinitionId: "1",
   processDefinitionName: "test",
   superProcessInstanceId: "1"
 };
 
-const varInstanceObj: VarInstance = {
+const varInstanceObj: VariableInstance = {
   name: 'ABC',
   type: 'Object',
   value: '{value: 1234}'
 };
 
-const varInstanceStr: VarInstance = {
+const varInstanceStr: VariableInstance = {
   name: 'NameStr',
   type: 'String',
   value: 'valOfStr'

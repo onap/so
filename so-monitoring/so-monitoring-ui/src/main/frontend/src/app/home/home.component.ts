@@ -23,7 +23,7 @@ SPDX-License-Identifier: Apache-2.0
 import { Component, OnInit, ViewChild, ElementRef, Input, ViewEncapsulation } from '@angular/core';
 import { DataService } from '../data.service';
 import { ActivatedRoute, Router } from "@angular/router";
-import { Process } from '../model/process.model';
+import { BpmnInfraRequest } from '../model/bpmnInfraRequest.model';
 import { ProcessInstanceId } from '../model/processInstanceId.model';
 import { ToastrNotificationService } from '../toastr-notification-service.service';
 import { MatSelectModule } from '@angular/material/select';
@@ -42,7 +42,7 @@ import { Constants } from './home.constant';
   encapsulation: ViewEncapsulation.None
 })
 
-export class HomeComponent implements OnInit {
+export class HomeComponent {
 
   totalVal = 0;
   completeVal = 0;
@@ -65,7 +65,7 @@ export class HomeComponent implements OnInit {
 
   searchData: SearchData;
   startingDate: Date;
-  processData: MatTableDataSource<Process>;
+  processData: MatTableDataSource<BpmnInfraRequest>;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -81,11 +81,11 @@ export class HomeComponent implements OnInit {
 
     var search = this.searchData.getSearchRequest().subscribe((result: SearchRequest) => {
 
-      this.data.retrieveInstance(result.getFilters(), result.getStartTimeInMilliseconds(), result.getEndTimeInMilliseconds())
-        .subscribe((data: Process[]) => {
+      this.data.getBpmnInfraRequest(result.getFilters(), result.getStartTimeInMilliseconds(), result.getEndTimeInMilliseconds())
+        .subscribe((data: BpmnInfraRequest[]) => {
           this.spinner.hide();
-          var processData: Process[] = data;
-          this.processData = new MatTableDataSource<Process>(processData);
+          var processData: BpmnInfraRequest[] = data;
+          this.processData = new MatTableDataSource<BpmnInfraRequest>(processData);
           this.processData.sort = this.sort;
           this.processData.paginator = this.paginator;
           this.processData.paginator.firstPage();
@@ -122,7 +122,7 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  getProcessIsntanceId(requestId: string) {
+  getProcessInstanceId(requestId: string) {
     this.spinner.show();
 
     var response = this.data.getProcessInstanceId(requestId).subscribe((data) => {
@@ -137,6 +137,4 @@ export class HomeComponent implements OnInit {
       }
     });
   }
-
-  ngOnInit() { }
 }
