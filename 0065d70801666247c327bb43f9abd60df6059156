@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3c29f3ac_391cd3e9",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/installer/heat/ToscaResourceInstaller.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 960,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-05-15T11:41:59Z",
+      "side": 0,
+      "message": "@ramesh, at the same time we have VF without VFModule, so I think this check should be moved as similar to casablanca branch.",
+      "range": {
+        "startLine": 959,
+        "startChar": 12,
+        "endLine": 960,
+        "endChar": 72
+      },
+      "revId": "0065d70801666247c327bb43f9abd60df6059156",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
