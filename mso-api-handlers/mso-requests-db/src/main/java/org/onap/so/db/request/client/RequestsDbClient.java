@@ -67,6 +67,8 @@ public class RequestsDbClient {
     private static final String SERVICE_ID = "SERVICE_ID";
     private static final String OPERATION_ID = "OPERATION_ID";
     private static final String SO_REQUEST_ID = "SO_REQUEST_ID";
+    private static final String NAME = "NAME";
+    private static final String GROUPING_ID = "GROUPING_ID";
     private static final String REQUEST_ID = "REQUEST_ID";
     private static final String OPERATIONAL_ENVIRONMENT_ID = "OPERATIONAL_ENV_ID";
     private static final String SERVICE_MODEL_VERSION_ID = "SERVICE_MODEL_VERSION_ID";
@@ -104,7 +106,10 @@ public class RequestsDbClient {
 
     private String requestProcessingDataURI = "/requestProcessingData";
 
-    private final String findBySoRequestIdOrderByGroupingIdDesc =
+    private static final String findBySoRequestIdAndGroupIdAndName =
+            "/requestProcessingData/search/findOneBySoRequestIdAndGroupingIdAndName";
+
+    private static final String findBySoRequestIdOrderByGroupingIdDesc =
             "/requestProcessingData/search/findBySoRequestIdOrderByGroupingIdDesc";
 
 
@@ -337,6 +342,14 @@ public class RequestsDbClient {
         return this
                 .getRequestProcessingData(getUri(UriBuilder.fromUri(endpoint + findBySoRequestIdOrderByGroupingIdDesc)
                         .queryParam(SO_REQUEST_ID, soRequestId).build().toString()));
+    }
+
+    public RequestProcessingData getRequestProcessingDataBySoRequestIdAndNameAndGrouping(String soRequestId,
+            String name, String groupingId) {
+        return getClientFactory().create(RequestProcessingData.class)
+                .get(getUri(UriBuilder.fromUri(endpoint + findBySoRequestIdAndGroupIdAndName)
+                        .queryParam(SO_REQUEST_ID, soRequestId).queryParam(NAME, name)
+                        .queryParam(GROUPING_ID, groupingId).build().toString()));
     }
 
     private List<RequestProcessingData> getRequestProcessingData(URI uri) {

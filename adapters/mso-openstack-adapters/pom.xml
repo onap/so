@@ -147,13 +147,22 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>original</id>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
 
 
     <pluginManagement>
       <plugins>
-        <!--This plugin's configuration is used to store Eclipse m2e settings
-					only. It has no influence on the Maven build itself. -->
+        <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build 
+          itself. -->
         <plugin>
           <groupId>org.eclipse.m2e</groupId>
           <artifactId>lifecycle-mapping</artifactId>
@@ -164,14 +173,14 @@
                 <pluginExecution>
                   <pluginExecutionFilter>
                     <groupId>
-											org.jvnet.jax-ws-commons
-										</groupId>
+                      org.jvnet.jax-ws-commons
+                    </groupId>
                     <artifactId>
-											jaxws-maven-plugin
-										</artifactId>
+                      jaxws-maven-plugin
+                    </artifactId>
                     <versionRange>
-											[2.3,)
-										</versionRange>
+                      [2.3,)
+                    </versionRange>
                     <goals>
                       <goal>wsgen</goal>
                     </goals>
@@ -217,11 +226,6 @@
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-service-description-swagger</artifactId>
       <version>${cxf.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.webjars</groupId>
-      <artifactId>swagger-ui</artifactId>
-      <version>3.5.0</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>

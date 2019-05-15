@@ -1,11 +1,11 @@
 {
 	"createTenantResponse": {
-		"cloudSiteId": "MTN13",
+		"cloudSiteId": "mtn13",
 		"tenantId": "tenantId",
 		"tenantCreated": true,
 		"tenantRollback": {
 			"tenantId": "tenantId",
-			"cloudId": "MTN13",
+			"cloudId": "mtn13",
 			"tenantCreated": true,
 			"msoRequest": {
 				"requestId": "62265093-277d-4388-9ba6-449838ade586",

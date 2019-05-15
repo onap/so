@@ -24,11 +24,6 @@
 package org.onap.so.adapters.network;
 
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +42,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.ws.Holder;
 import org.apache.http.HttpStatus;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.adapters.network.exceptions.NetworkException;
 import org.onap.so.adapters.nwrest.ContrailNetwork;
 import org.onap.so.adapters.nwrest.CreateNetworkError;
@@ -74,9 +70,15 @@ import org.onap.so.openstack.beans.RouteTarget;
 import org.onap.so.openstack.exceptions.MsoExceptionCategory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 @Path("/v1/networks")
 @Api(value = "/v1/networks", description = "root of network adapters restful web service")
@@ -160,6 +162,11 @@ public class NetworkAdapterRest {
 
         @Override
         public void run() {
+            try {
+                MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, req.getMsoRequest().getRequestId());
+            } catch (Exception e) {
+                logger.error("Error adding RequestId to MDC", e);
+            }
             logger.debug("CreateNetworkTask start");
             try {
                 // Synchronous Web Service Outputs
@@ -317,6 +324,11 @@ public class NetworkAdapterRest {
 
         @Override
         public void run() {
+            try {
+                MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, req.getMsoRequest().getRequestId());
+            } catch (Exception e) {
+                logger.error("Error adding RequestId to MDC", e);
+            }
             logger.debug("DeleteNetworkTask start");
             try {
                 Holder<Boolean> networkDeleted = new Holder<>();
@@ -462,6 +474,11 @@ public class NetworkAdapterRest {
 
         @Override
         public void run() {
+            try {
+                MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, req.getNetworkRollback().getMsoRequest().getRequestId());
+            } catch (Exception e) {
+                logger.error("Error adding RequestId to MDC", e);
+            }
             logger.debug("RollbackNetworkTask start");
             try {
                 NetworkRollback nwr = req.getNetworkRollback();
@@ -550,6 +567,11 @@ public class NetworkAdapterRest {
 
         @Override
         public void run() {
+            try {
+                MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, req.getMsoRequest().getRequestId());
+            } catch (Exception e) {
+                logger.error("Error adding RequestId to MDC", e);
+            }
             logger.debug("UpdateNetworkTask start");
             try {
                 Holder<Map<String, String>> subnetIdMap = new Holder<>();

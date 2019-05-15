@@ -24,24 +24,23 @@
 package org.onap.so.openstack.utils;
 
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.woorea.openstack.base.client.OpenStackBaseException;
-import com.woorea.openstack.base.client.OpenStackConnectException;
-import com.woorea.openstack.base.client.OpenStackRequest;
-import com.woorea.openstack.base.client.OpenStackResponseException;
-import com.woorea.openstack.heat.model.CreateStackParam;
-import com.woorea.openstack.heat.model.Explanation;
-import com.woorea.openstack.keystone.model.Error;
-import com.woorea.openstack.quantum.model.NeutronError;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.onap.so.cloud.CloudConfig;
+import org.onap.so.cloud.authentication.AuthenticationMethodFactory;
+import org.onap.so.cloud.authentication.KeystoneAuthHolder;
+import org.onap.so.cloud.authentication.KeystoneV3Authentication;
+import org.onap.so.cloud.authentication.ServiceEndpointNotFoundException;
 import org.onap.so.config.beans.PoConfig;
+import org.onap.so.db.catalog.beans.CloudIdentity;
+import org.onap.so.db.catalog.beans.CloudSite;
+import org.onap.so.db.catalog.beans.ServerType;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.openstack.exceptions.MsoAdapterException;
+import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.exceptions.MsoExceptionCategory;
 import org.onap.so.openstack.exceptions.MsoIOException;
@@ -50,15 +49,48 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.woorea.openstack.base.client.OpenStackBaseException;
+import com.woorea.openstack.base.client.OpenStackConnectException;
+import com.woorea.openstack.base.client.OpenStackRequest;
+import com.woorea.openstack.base.client.OpenStackResponseException;
+import com.woorea.openstack.heat.model.CreateStackParam;
+import com.woorea.openstack.heat.model.Explanation;
+import com.woorea.openstack.keystone.Keystone;
+import com.woorea.openstack.keystone.model.Access;
+import com.woorea.openstack.keystone.model.Authentication;
+import com.woorea.openstack.keystone.model.Error;
+import com.woorea.openstack.keystone.utils.KeystoneUtils;
+import com.woorea.openstack.quantum.model.NeutronError;
 
 @Component("CommonUtils")
 public class MsoCommonUtils {
 
     private static Logger logger = LoggerFactory.getLogger(MsoCommonUtils.class);
 
+    /** The Constant TOKEN_AUTH. */
+    protected static final String TOKEN_AUTH = "TokenAuth";
+
+    /** The cloud config. */
+    @Autowired
+    protected CloudConfig cloudConfig;
+
+    /** The authentication method factory. */
+    @Autowired
+    protected AuthenticationMethodFactory authenticationMethodFactory;
+
+    /** The tenant utils factory. */
+    @Autowired
+    protected MsoTenantUtilsFactory tenantUtilsFactory;
+
+    /** The keystone V 3 authentication. */
+    @Autowired
+    protected KeystoneV3Authentication keystoneV3Authentication;
 
     @Autowired
-    private PoConfig poConfig;
+    protected PoConfig poConfig;
+
     /*
      * Method to execute an Openstack command and track its execution time. For the metrics log, a category of
      * "Openstack" is used along with a sub-category that identifies the specific call (using the real
@@ -401,4 +433,79 @@ public class MsoCommonUtils {
         return stack;
     }
 
+
+    /**
+     * Gets the Nova client
+     *
+     * @param cloudSite the cloud site
+     * @param tenantId the tenant id
+     * @return the Neutron client
+     * @throws MsoException the mso exception
+     */
+    protected KeystoneAuthHolder getKeystoneAuthHolder(String cloudSiteId, String tenantId, String serviceName)
+            throws MsoException {
+        CloudSite cloudSite =
+                cloudConfig.getCloudSite(cloudSiteId).orElseThrow(() -> new MsoCloudSiteNotFound(cloudSiteId));
+        String cloudId = cloudSite.getId();
+        String region = cloudSite.getRegionId();
+        CloudIdentity cloudIdentity = cloudSite.getIdentityService();
+        MsoTenantUtils tenantUtils =
+                tenantUtilsFactory.getTenantUtilsByServerType(cloudIdentity.getIdentityServerType());
+        String keystoneUrl = tenantUtils.getKeystoneUrl(cloudId, cloudIdentity);
+        try {
+            if (ServerType.KEYSTONE.equals(cloudIdentity.getIdentityServerType())) {
+                Access access = getKeystone(tenantId, cloudIdentity, keystoneUrl);
+                try {
+                    KeystoneAuthHolder keystoneAuthV2 = new KeystoneAuthHolder();
+                    keystoneAuthV2.setServiceUrl(
+                            KeystoneUtils.findEndpointURL(access.getServiceCatalog(), serviceName, region, "public"));
+                    keystoneAuthV2.setId(access.getToken().getId());
+                    return keystoneAuthV2;
+                } catch (RuntimeException e) {
+                    String error = "Openstack did not match an orchestration service for: region=" + region + ",cloud="
+                            + cloudIdentity.getIdentityUrl();
+                    throw new MsoAdapterException(error, e);
+                }
+            } else if (ServerType.KEYSTONE_V3.equals(cloudIdentity.getIdentityServerType())) {
+                try {
+                    return keystoneV3Authentication.getToken(cloudSite, tenantId, serviceName);
+                } catch (ServiceEndpointNotFoundException e) {
+                    String error = "cloud did not match an orchestration service for: region=" + region + ",cloud="
+                            + cloudIdentity.getIdentityUrl();
+                    throw new MsoAdapterException(error, e);
+                }
+            } else {
+                throw new MsoAdapterException("Unknown Keystone Server Type");
+            }
+        } catch (OpenStackResponseException e) {
+            if (e.getStatus() == 401) {
+                String error = "Authentication Failure: tenant=" + tenantId + ",cloud=" + cloudIdentity.getId();
+                throw new MsoAdapterException(error);
+            } else {
+                throw keystoneErrorToMsoException(e, TOKEN_AUTH);
+            }
+        } catch (OpenStackConnectException e) {
+            MsoIOException me = new MsoIOException(e.getMessage(), e);
+            me.addContext(TOKEN_AUTH);
+            throw me;
+        } catch (RuntimeException e) {
+            throw runtimeExceptionToMsoException(e, TOKEN_AUTH);
+        }
+    }
+
+    /**
+     * @param tenantId
+     * @param cloudIdentity
+     * @param keystoneUrl
+     * @return
+     */
+    protected Access getKeystone(String tenantId, CloudIdentity cloudIdentity, String keystoneUrl) {
+        Keystone keystoneTenantClient = new Keystone(keystoneUrl);
+        Access access = null;
+        Authentication credentials = authenticationMethodFactory.getAuthenticationFor(cloudIdentity);
+        OpenStackRequest<Access> request =
+                keystoneTenantClient.tokens().authenticate(credentials).withTenantId(tenantId);
+        access = executeAndRecordOpenstackRequest(request);
+        return access;
+    }
 }

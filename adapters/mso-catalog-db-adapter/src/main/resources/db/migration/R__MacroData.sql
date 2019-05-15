@@ -777,3 +777,6 @@ INSERT INTO rainy_day_handler_macro (FLOW_NAME, SERVICE_TYPE, VNF_TYPE, ERROR_CO
 VALUES
 ('GenericVnfHealthCheckBB', '*', '*', '*', "*" , 'Retry'),
 ('ConfigurationScaleOutBB', '*', '*', '*', "*" , 'Retry');
+
+
+UPDATE rainy_day_handler_macro SET reg_ex_error_message = '*' WHERE reg_ex_error_message IS null;

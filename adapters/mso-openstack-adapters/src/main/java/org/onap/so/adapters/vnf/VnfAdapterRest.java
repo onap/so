@@ -41,6 +41,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.ws.Holder;
 import org.apache.http.HttpStatus;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
 import org.onap.so.adapters.vnfrest.CreateVfModuleRequest;
 import org.onap.so.adapters.vnfrest.CreateVfModuleResponse;
@@ -61,6 +62,7 @@ import org.onap.so.openstack.beans.VnfStatus;
 import org.onap.so.openstack.exceptions.MsoExceptionCategory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,19 +88,10 @@ public class VnfAdapterRest {
 
     @Autowired
     private MsoVnfAdapterImpl vnfAdapter;
-    // TODO Logging, SkipAAI, CREATED flags, Integrate with BPEL, Auth,
 
     @Autowired
     private Provider<BpelRestClient> bpelRestClientProvider;
 
-
-    /*
-     * URL:http://localhost:8080/vnfs/rest/v1/vnfs/<aaivnfid>/vf-modules/<aaimodid> REQUEST: {"deleteVfModuleRequest":
-     * {"cloudSiteId": "DAN", "tenantId": "214b428a1f554c02935e66330f6a5409", "vnfId": "somevnfid", "vfModuleId":
-     * "somemodid", "vfModuleStackId": "4e567676-e266-4594-a3a6-131c8a2baf73", "messageId": "ra.1", "notificationUrl":
-     * "http://localhost:8089/vnfmock", "skipAAI": true, "msoRequest": { "requestId": "ra1", "serviceInstanceId": "sa1"
-     * }} }
-     */
     @DELETE
     @Path("{aaiVnfId}/vf-modules/{aaiVfModuleId}")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -176,11 +169,14 @@ public class VnfAdapterRest {
         @Override
         public void run() {
             try {
+                try {
+                    MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, req.getMsoRequest().getRequestId());
+                } catch (Exception e) {
+                    logger.error("Error adding RequestId to MDC", e);
+                }
                 String cloudsite = req.getCloudSiteId();
                 Holder<Map<String, String>> outputs = new Holder<>();
                 if (cloudsite != null && !cloudsite.equals(TESTING_KEYWORD)) {
-                    // vnfAdapter.deleteVnf (req.getCloudSiteId(), req.getTenantId(), req.getVfModuleStackId(),
-                    // req.getMsoRequest());
                     vnfAdapter.deleteVfModule(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
                             req.getVfModuleStackId(), req.getMsoRequest(), outputs);
                 }
@@ -200,13 +196,7 @@ public class VnfAdapterRest {
         }
     }
 
-    /*
-     * URL:http://localhost:8080/vnfs/rest/v1/vnfs/<aaiVnfId>/vf-modules/<aaiVfModuleId>?cloudSiteId=DAN&tenantId=
-     * vfModule?&skipAAI=TRUE&msoRequest.requestId=ra1&msoRequest.serviceInstanceId=si1&vfModuleName=T2N2S1 RESP:
-     * {"queryVfModuleResponse": { "vfModuleId": "AvfmodId", "vfModuleOutputs": {"entry": { "key":
-     * "server_private_ip_1", "value": "10.100.1.25" }}, "vfModuleStackId":
-     * "RaaVnf1/abfa8a6d-feb1-40af-aea3-109403b1cf6b", "vnfId": "AvnfID", "vnfStatus": "ACTIVE" }}
-     */
+
     @GET
     @Path("{aaiVnfId}/vf-modules/{aaiVfModuleId}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -340,6 +330,11 @@ public class VnfAdapterRest {
         public void run() {
             logger.debug("CreateVfModuleTask start");
             try {
+                try {
+                    MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, req.getMsoRequest().getRequestId());
+                } catch (Exception e) {
+                    logger.error("Error adding RequestId to MDC", e);
+                }
                 // Synchronous Web Service Outputs
                 Holder<String> vfModuleStackId = new Holder<>();
                 Holder<Map<String, String>> outputs = new Holder<>();
@@ -449,9 +444,11 @@ public class VnfAdapterRest {
         @Override
         public void run() {
             try {
-                // MsoVnfAdapter vnfAdapter = new MsoVnfAdapterImpl (msoPropertiesFactory, cloudConfigFactory);
-
-                // Synchronous Web Service Outputs
+                try {
+                    MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, req.getMsoRequest().getRequestId());
+                } catch (Exception e) {
+                    logger.error("Error adding RequestId to MDC", e);
+                }
                 Holder<String> vfModuleStackId = new Holder<>();
                 Holder<Map<String, String>> outputs = new Holder<>();
                 Holder<VnfRollback> vnfRollback = new Holder<>();
@@ -481,13 +478,7 @@ public class VnfAdapterRest {
         }
     }
 
-    /*
-     * URL:http://localhost:8080/vnfs/rest/v1/vnfs/<aaivnfid>/vf-modules/<aaimodid>/rollback REQUEST:
-     * {"deleteVfModuleRequest": {"cloudSiteId": "DAN", "tenantId": "214b428a1f554c02935e66330f6a5409", "vnfId":
-     * "somevnfid", "vfModuleId": "somemodid", "vfModuleStackId": "4e567676-e266-4594-a3a6-131c8a2baf73", "messageId":
-     * "ra.1", "notificationUrl": "http://localhost:8089/vnfmock", "skipAAI": true, "msoRequest": { "requestId": "ra1",
-     * "serviceInstanceId": "sa1" }} }
-     */
+
     @DELETE
     @Path("{aaiVnfId}/vf-modules/{aaiVfModuleId}/rollback")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -557,6 +548,11 @@ public class VnfAdapterRest {
         @Override
         public void run() {
             try {
+                try {
+                    MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, req.getVfModuleRollback().getMsoRequest().getRequestId());
+                } catch (Exception e) {
+                    logger.error("Error adding RequestId to MDC", e);
+                }
                 VfModuleRollback vmr = req.getVfModuleRollback();
                 VnfRollback vrb = new VnfRollback(vmr.getVfModuleStackId(), vmr.getTenantId(), vmr.getCloudOwner(),
                         vmr.getCloudSiteId(), true, true, vmr.getMsoRequest(), null, null, null, null);

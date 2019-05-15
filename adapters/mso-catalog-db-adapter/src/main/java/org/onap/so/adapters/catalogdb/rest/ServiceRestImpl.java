@@ -28,16 +28,18 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import org.onap.so.db.catalog.data.repository.ServiceRepository;
 import org.onap.so.rest.catalog.beans.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Strings;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
-@Path("/v1/")
+@Api(value = "/v1/services", tags = "model")
+@Path("/v1/services")
 @Component
 public class ServiceRestImpl {
 
@@ -48,7 +50,7 @@ public class ServiceRestImpl {
     private ServiceMapper serviceMapper;
 
     @GET
-    @Path("/services/{modelUUID}")
+    @Path("/{modelUUID}")
     @Produces({MediaType.APPLICATION_JSON})
     @Transactional(readOnly = true)
     public Service findService(@PathParam("modelUUID") String modelUUID, @QueryParam("depth") int depth) {
@@ -57,12 +59,15 @@ public class ServiceRestImpl {
     }
 
     @GET
-    @Path("/services")
-    @ApiOperation(value = "Find Service Models", response = Service.class, responseContainer = "List")
+    @ApiOperation(value = "Find Service Models", response = Service.class, responseContainer = "List",
+            notes = "If no query parameters are sent an empty list will be returned")
     @Produces({MediaType.APPLICATION_JSON})
     @Transactional(readOnly = true)
-    public List<Service> queryServices(@QueryParam("modelName") String modelName,
-            @QueryParam("distributionStatus") String distributionStatus, @QueryParam("depth") int depth) {
+    public List<Service> queryServices(
+            @ApiParam(value = "modelName", required = false) @QueryParam("modelName") String modelName,
+            @ApiParam(value = "distributionStatus",
+                    required = false) @QueryParam("distributionStatus") String distributionStatus,
+            @ApiParam(value = "depth", required = false) @QueryParam("depth") int depth) {
         List<Service> services = new ArrayList<>();
         List<org.onap.so.db.catalog.beans.Service> serviceFromDB = new ArrayList<>();
         if (!Strings.isNullOrEmpty(modelName) && !Strings.isNullOrEmpty(distributionStatus)) {

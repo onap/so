@@ -23,26 +23,9 @@
 
 package org.onap.so.openstack.utils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.woorea.openstack.base.client.OpenStackConnectException;
-import com.woorea.openstack.base.client.OpenStackRequest;
-import com.woorea.openstack.base.client.OpenStackResponseException;
-import com.woorea.openstack.heat.Heat;
-import com.woorea.openstack.heat.model.CreateStackParam;
-import com.woorea.openstack.heat.model.Resources;
-import com.woorea.openstack.heat.model.Stack;
-import com.woorea.openstack.heat.model.Stack.Output;
-import com.woorea.openstack.heat.model.Stacks;
-import com.woorea.openstack.keystone.Keystone;
-import com.woorea.openstack.keystone.model.Access;
-import com.woorea.openstack.keystone.model.Authentication;
-import com.woorea.openstack.keystone.utils.KeystoneUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,6 +75,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.woorea.openstack.base.client.OpenStackConnectException;
+import com.woorea.openstack.base.client.OpenStackRequest;
+import com.woorea.openstack.base.client.OpenStackResponseException;
+import com.woorea.openstack.heat.Heat;
+import com.woorea.openstack.heat.model.CreateStackParam;
+import com.woorea.openstack.heat.model.Events;
+import com.woorea.openstack.heat.model.Resources;
+import com.woorea.openstack.heat.model.Stack;
+import com.woorea.openstack.heat.model.Stack.Output;
+import com.woorea.openstack.heat.model.Stacks;
+import com.woorea.openstack.keystone.Keystone;
+import com.woorea.openstack.keystone.model.Access;
+import com.woorea.openstack.keystone.model.Authentication;
+import com.woorea.openstack.keystone.utils.KeystoneUtils;
 
 @Primary
 @Component
@@ -129,6 +128,9 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
 
     @Autowired
     RequestsDbClient requestDBClient;
+
+    @Autowired
+    StackStatusHandler statusHandler;
 
     private static final Logger logger = LoggerFactory.getLogger(MsoHeatUtils.class);
 
@@ -317,6 +319,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
         while (true) {
             try {
                 heatStack = queryHeatStack(heatClient, canonicalName);
+                statusHandler.updateStackStatus(heatStack, MDC.get(ONAPLogConstants.MDCs.REQUEST_ID));
                 logger.debug("{} ({})", heatStack.getStackStatus(), canonicalName);
                 try {
                     logger.debug("Current stack {}", this.getOutputsAsStringBuilder(heatStack).toString());
@@ -358,6 +361,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
                         while (!deleted) {
                             try {
                                 heatStack = queryHeatStack(heatClient, canonicalName);
+                                statusHandler.updateStackStatus(heatStack, MDC.get(ONAPLogConstants.MDCs.REQUEST_ID));
                                 if (heatStack != null) {
                                     logger.debug(heatStack.getStackStatus());
                                     if ("DELETE_IN_PROGRESS".equals(heatStack.getStackStatus())) {
@@ -579,24 +583,15 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
      */
     public StackInfo deleteStack(String tenantId, String cloudOwner, String cloudSiteId, String stackName,
             boolean pollForCompletion) throws MsoException {
-        // Obtain the cloud site information where we will create the stack
         CloudSite cloudSite =
                 cloudConfig.getCloudSite(cloudSiteId).orElseThrow(() -> new MsoCloudSiteNotFound(cloudSiteId));
-        logger.debug(FOUND, cloudSite.toString());
-
-        // Get a Heat client. They are cached between calls (keyed by tenantId:cloudId)
         Heat heatClient = null;
         try {
             heatClient = getHeatClient(cloudSite, tenantId);
-            if (heatClient != null) {
-                logger.debug(FOUND, heatClient.toString());
-            }
         } catch (MsoTenantNotFound e) {
-            // Tenant doesn't exist, so stack doesn't either
             logger.debug("Tenant with id " + tenantId + "not found.", e);
             return new StackInfo(stackName, HeatStatus.NOTFOUND);
         } catch (MsoException me) {
-            // Got an Openstack error. Propagate it
             logger.error("{} {} Openstack Exception on Token request: ", MessageEnum.RA_CONNECTION_EXCEPTION,
                     ErrorCode.AvailabilityError.getValue(), me);
             me.addContext(DELETE_STACK);
@@ -610,8 +605,6 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
             return new StackInfo(stackName, HeatStatus.NOTFOUND);
         }
 
-        // Delete the stack.
-
         // Use canonical name "<stack name>/<stack-id>" to delete.
         // Otherwise, deletion by name returns a 302 redirect.
         // NOTE: This is specific to the v1 Orchestration API.
@@ -624,7 +617,6 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
             } else {
                 logger.debug("Heat Client is NULL");
             }
-
             executeAndRecordOpenstackRequest(request);
         } catch (OpenStackResponseException e) {
             if (e.getStatus() == 404) {
@@ -645,15 +637,13 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
         // Requery the stack for current status.
         // It will probably still exist with "DELETE_IN_PROGRESS" status.
         heatStack = queryHeatStack(heatClient, canonicalName);
-
+        statusHandler.updateStackStatus(heatStack, MDC.get(ONAPLogConstants.MDCs.REQUEST_ID));
         if (pollForCompletion) {
-            // Set a timeout on polling
-
             int pollInterval = Integer
                     .parseInt(this.environment.getProperty(deletePollIntervalProp, "" + DELETE_POLL_INTERVAL_DEFAULT));
             int pollTimeout = Integer
                     .parseInt(this.environment.getProperty(deletePollTimeoutProp, "" + DELETE_POLL_INTERVAL_DEFAULT));
-
+            statusHandler.updateStackStatus(heatStack, MDC.get(ONAPLogConstants.MDCs.REQUEST_ID));
             // When querying by canonical name, Openstack returns DELETE_COMPLETE status
             // instead of "404" (which would result from query by stack name).
             while (heatStack != null && !"DELETE_COMPLETE".equals(heatStack.getStackStatus())) {
@@ -698,11 +688,9 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
             // The stack is gone when this point is reached
             return new StackInfo(stackName, HeatStatus.NOTFOUND);
         }
-
         // Return the current status (if not polling, the delete may still be in progress)
         StackInfo stackInfo = new StackInfoMapper(heatStack).map();
         stackInfo.setName(stackName);
-
         return stackInfo;
     }
 
@@ -841,7 +829,6 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
         logger.debug("keystoneUrl={}", keystoneUrl);
         String heatUrl = null;
         String tokenId = null;
-
         try {
             if (ServerType.KEYSTONE.equals(cloudIdentity.getIdentityServerType())) {
                 Keystone keystoneTenantClient = new Keystone(keystoneUrl);
@@ -855,19 +842,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
                 access = executeAndRecordOpenstackRequest(request);
 
                 try {
-                    // Isolate trying to printout the region IDs
-                    try {
-                        logger.debug("access={}", access.toString());
-                        for (Access.Service service : access.getServiceCatalog()) {
-                            List<Access.Service.Endpoint> endpoints = service.getEndpoints();
-                            for (Access.Service.Endpoint endpoint : endpoints) {
-                                logger.debug("AIC returned region={}", endpoint.getRegion());
-                            }
-                        }
-                    } catch (Exception e) {
-                        logger.debug("Encountered an error trying to printout Access object returned from AIC. {}",
-                                e.getMessage(), e);
-                    }
+                    logger.debug("access={}", access.toString());
                     heatUrl = KeystoneUtils.findEndpointURL(access.getServiceCatalog(), "orchestration", region,
                             "public");
                     logger.debug("heatUrl={}, region={}", heatUrl, region);
@@ -878,12 +853,10 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
                     throw new MsoAdapterException(error, e);
                 }
                 tokenId = access.getToken().getId();
-
             } else if (ServerType.KEYSTONE_V3.equals(cloudIdentity.getIdentityServerType())) {
                 try {
                     KeystoneAuthHolder holder = keystoneV3Authentication.getToken(cloudSite, tenantId, "orchestration");
                     tokenId = holder.getId();
-
                     heatUrl = holder.getServiceUrl();
                 } catch (ServiceEndpointNotFoundException e) {
                     // This comes back for not found (probably an incorrect region ID)
@@ -933,7 +906,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
      *
      * @throws MsoOpenstackException Thrown if the Openstack API call returns an exception
      */
-    protected Stack queryHeatStack(Heat heatClient, String stackName) throws MsoException {
+    public Stack queryHeatStack(Heat heatClient, String stackName) throws MsoException {
         if (stackName == null) {
             return null;
         }
@@ -1364,77 +1337,6 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
         return keystoneUrl;
     }
 
-    /*
-     * Create a string suitable for being dumped to a debug log that creates a pseudo-JSON request dumping what's being
-     * sent to Openstack API in the create or update request
-     */
-
-    private String printStackRequest(String tenantId, Map<String, Object> heatFiles,
-            Map<String, Object> nestedTemplates, String environment, Map<String, Object> inputs, String vfModuleName,
-            String template, int timeoutMinutes, boolean backout, String cloudSiteId) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("CREATE STACK REQUEST (formatted for readability)\n");
-        sb.append("tenant=" + tenantId + ", cloud=" + cloudSiteId);
-        sb.append("{\n");
-        sb.append("  \"stack_name\": \"" + vfModuleName + "\",\n");
-        sb.append("  \"disable_rollback\": " + backout + ",\n");
-        sb.append("  \"timeout_mins\": " + timeoutMinutes + ",\n");
-        sb.append("  \"template\": {\n");
-        sb.append(template);
-        sb.append("  },\n");
-        sb.append("  \"environment\": {\n");
-        if (environment == null)
-            sb.append("<none>");
-        else
-            sb.append(environment);
-        sb.append("  },\n");
-        sb.append("  \"files\": {\n");
-        int filesCounter = 0;
-        if (heatFiles != null) {
-            for (String key : heatFiles.keySet()) {
-                filesCounter++;
-                if (filesCounter > 1) {
-                    sb.append(",\n");
-                }
-                sb.append("    \"" + key + "\": {\n");
-                sb.append(heatFiles.get(key).toString() + "\n    }");
-            }
-        }
-        if (nestedTemplates != null) {
-            for (String key : nestedTemplates.keySet()) {
-                filesCounter++;
-                if (filesCounter > 1) {
-                    sb.append(",\n");
-                }
-                sb.append("    \"" + key + "\": {\n");
-                sb.append(nestedTemplates.get(key).toString() + "\n    }");
-            }
-        }
-        sb.append("\n  },\n");
-        sb.append("  \"parameters\": {\n");
-        int paramCounter = 0;
-        for (String name : inputs.keySet()) {
-            paramCounter++;
-            if (paramCounter > 1) {
-                sb.append(",\n");
-            }
-            Object o = inputs.get(name);
-            if (o instanceof java.lang.String) {
-                sb.append("    \"" + name + "\": \"" + inputs.get(name).toString() + "\"");
-            } else if (o instanceof Integer) {
-                sb.append("    \"" + name + "\": " + inputs.get(name).toString());
-            } else if (o instanceof ArrayList) {
-                sb.append("    \"" + name + "\": " + inputs.get(name).toString());
-            } else if (o instanceof Boolean) {
-                sb.append("    \"" + name + "\": " + inputs.get(name).toString());
-            } else {
-                sb.append("    \"" + name + "\": " + "\"(there was an issue trying to dump this value...)\"");
-            }
-        }
-        sb.append("\n  }\n}\n");
-
-        return sb.toString();
-    }
 
     /*******************************************************************************
      *
@@ -1610,6 +1512,32 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
         Heat heatClient = getHeatClient(cloudSite, tenantId);
         OpenStackRequest<Resources> request =
                 heatClient.getResources().listResources(stackName).queryParam("nested_depth", nestedDepth);
+        return executeAndRecordOpenstackRequest(request);
+    }
+
+    public Events queryStackEvents(String cloudSiteId, String tenantId, String stackName, String stackId,
+            int nestedDepth) throws MsoException {
+        CloudSite cloudSite =
+                cloudConfig.getCloudSite(cloudSiteId).orElseThrow(() -> new MsoCloudSiteNotFound(cloudSiteId));
+        Heat heatClient = getHeatClient(cloudSite, tenantId);
+        OpenStackRequest<Events> request =
+                heatClient.getEvents().listEvents(stackName, stackId).queryParam("nested_depth", nestedDepth);
+        return executeAndRecordOpenstackRequest(request);
+    }
+
+    public Stacks queryStacks(String cloudSiteId, String tenantId, int limit, String marker)
+            throws MsoCloudSiteNotFound, HeatClientException {
+        CloudSite cloudSite =
+                cloudConfig.getCloudSite(cloudSiteId).orElseThrow(() -> new MsoCloudSiteNotFound(cloudSiteId));
+        Heat heatClient;
+        try {
+            heatClient = getHeatClient(cloudSite, tenantId);
+        } catch (MsoException e) {
+            logger.error("Error Creating Heat Client", e);
+            throw new HeatClientException("Error Creating Heat Client", e);
+        }
+        OpenStackRequest<Stacks> request =
+                heatClient.getStacks().list().queryParam("limit", limit).queryParam("marker", marker);
         return executeAndRecordOpenstackRequest(request);
     }
 

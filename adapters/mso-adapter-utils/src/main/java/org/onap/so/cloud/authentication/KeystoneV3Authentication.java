@@ -85,7 +85,7 @@ public class KeystoneV3Authentication {
         KeystoneAuthHolder result = new KeystoneAuthHolder();
         result.setId(id);
         result.setexpiration(token.getExpiresAt());
-        result.setHeatUrl(findEndpointURL(token.getCatalog(), type, region, "public"));
+        result.setServiceUrl(findEndpointURL(token.getCatalog(), type, region, "public"));
         return result;
     }
 

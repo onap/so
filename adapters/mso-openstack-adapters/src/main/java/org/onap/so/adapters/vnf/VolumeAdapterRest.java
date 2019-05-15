@@ -25,11 +25,6 @@
 package org.onap.so.adapters.vnf;
 
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Provider;
@@ -47,6 +42,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.ws.Holder;
 import org.apache.http.HttpStatus;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
 import org.onap.so.adapters.vnfrest.CreateVolumeGroupRequest;
 import org.onap.so.adapters.vnfrest.CreateVolumeGroupResponse;
@@ -67,8 +63,14 @@ import org.onap.so.openstack.beans.VnfStatus;
 import org.onap.so.openstack.exceptions.MsoExceptionCategory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 /**
  * This class services calls to the REST interface for VNF Volumes (http://host:port/vnfs/rest/v1/volume-groups) Both
@@ -155,6 +157,11 @@ public class VolumeAdapterRest {
 
         @Override
         public void run() {
+            try {
+                MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, req.getMsoRequest().getRequestId());
+            } catch (Exception e) {
+                logger.error("Error adding RequestId to MDC", e);
+            }
             logger.debug("CreateVFModule VolumesTask start");
             try {
                 // Synchronous Web Service Outputs
@@ -302,6 +309,11 @@ public class VolumeAdapterRest {
 
         @Override
         public void run() {
+            try {
+                MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, req.getMsoRequest().getRequestId());
+            } catch (Exception e) {
+                logger.error("Error adding RequestId to MDC", e);
+            }
             logger.debug("DeleteVNFVolumesTask start");
             try {
                 if (!req.getCloudSiteId().equals(TESTING_KEYWORD)) {
@@ -394,6 +406,11 @@ public class VolumeAdapterRest {
 
         @Override
         public void run() {
+            try {
+                MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, req.getVolumeGroupRollback().getMsoRequest().getRequestId());
+            } catch (Exception e) {
+                logger.error("Error adding RequestId to MDC", e);
+            }
             logger.debug("DeleteVNFVolumesTask start");
             try {
                 VolumeGroupRollback vgr = req.getVolumeGroupRollback();
@@ -487,6 +504,11 @@ public class VolumeAdapterRest {
         public void run() {
             logger.debug("UpdateVNFVolumesTask start");
             try {
+                try {
+                    MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, req.getMsoRequest().getRequestId());
+                } catch (Exception e) {
+                    logger.error("Error adding RequestId to MDC", e);
+                }
                 Holder<Map<String, String>> outputs = new Holder<>();
                 Holder<VnfRollback> vnfRollback = new Holder<>();
                 String completeVnfVfModuleType = req.getVnfType() + "::" + req.getVfModuleType();
