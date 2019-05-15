@@ -65,7 +65,7 @@ public class KeystoneAuthHolderTest {
 
     @Test
     public void testGetServiceUrl() {
-        keystoneAuthHolder.setHeatUrl("testURL");
+        keystoneAuthHolder.setServiceUrl("testURL");
         assertEquals("testURL", keystoneAuthHolder.getServiceUrl());
     }
 

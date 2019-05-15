@@ -36,12 +36,10 @@ import java.util.Map;
 import java.util.Set;
 import javax.xml.ws.Holder;
 import org.apache.http.HttpStatus;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.MockitoAnnotations;
 import org.onap.so.adapters.vnf.exceptions.VnfAlreadyExists;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
 import org.onap.so.adapters.vnf.exceptions.VnfNotFound;
@@ -58,7 +56,6 @@ import org.onap.so.openstack.beans.VnfRollback;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.utils.MsoHeatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.github.tomakehurst.wiremock.client.WireMock;
 
 
 public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
@@ -92,7 +89,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
         Map<String, Object> map = new HashMap<>();
         map.put("key1", "value1");
-        instance.createVfModule("MTN13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "",
+        instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "",
                 "VFMOD", "volumeGroupHeatStackId|1", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
                 Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(),
                 new Holder<Map<String, String>>(), new Holder<VnfRollback>());
@@ -514,7 +511,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
         vfModuleCustomization.getVfModule().getModuleHeatTemplate().setParameters(new HashSet<>());
         Map<String, Object> map = new HashMap<>();
         map.put("key1", "value1");
-        instance.updateVfModule("MTN13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
+        instance.updateVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
                 "volumeGroupHeatStackId", "baseVfHeatStackId", "vfModuleStackId",
                 "b4ea86b4-253f-11e7-93ae-92361f002671", map, msoRequest, new Holder<Map<String, String>>(),
                 new Holder<VnfRollback>());

@@ -40,6 +40,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.ws.Holder;
 import org.apache.http.HttpStatus;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
 import org.onap.so.adapters.vnfrest.CreateVfModuleRequest;
 import org.onap.so.adapters.vnfrest.CreateVfModuleResponse;
@@ -60,6 +61,7 @@ import org.onap.so.openstack.beans.VnfStatus;
 import org.onap.so.openstack.exceptions.MsoExceptionCategory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import io.swagger.annotations.Api;
@@ -132,6 +134,7 @@ public class VnfAdapterRestV2 {
             // This is an asynchronous request
             try {
                 Thread t1 = new Thread(task);
+                MDC.getCopyOfContextMap();
                 t1.start();
             } catch (Exception e) {
                 // problem handling delete, send generic failure as sync resp to caller
@@ -178,6 +181,11 @@ public class VnfAdapterRestV2 {
         @Override
         public void run() {
             try {
+                try {
+                    MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, req.getMsoRequest().getRequestId());
+                } catch (Exception e) {
+                    logger.error("Error adding RequestId to MDC", e);
+                }
                 String cloudsite = req.getCloudSiteId();
                 Holder<Map<String, String>> outputs = new Holder<>();
                 if (cloudsite != null && !cloudsite.equals(TESTING_KEYWORD)) {
@@ -201,6 +209,7 @@ public class VnfAdapterRestV2 {
                 bpelClient.bpelPost(getResponse(), req.getNotificationUrl(), sendxml);
             }
             logger.debug("Delete vfModule exit: code=" + getStatusCode() + RESP + getResponse());
+            MDC.clear();
         }
     }
 
@@ -353,6 +362,11 @@ public class VnfAdapterRestV2 {
         public void run() {
             logger.debug("CreateVfModuleTask start");
             try {
+                try {
+                    MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, req.getMsoRequest().getRequestId());
+                } catch (Exception e) {
+                    logger.error("Error adding RequestId to MDC", e);
+                }
                 // Synchronous Web Service Outputs
                 Holder<String> vfModuleStackId = new Holder<>();
                 Holder<Map<String, String>> outputs = new Holder<>();
@@ -467,8 +481,11 @@ public class VnfAdapterRestV2 {
         @Override
         public void run() {
             try {
-                // MsoVnfAdapter vnfAdapter = new MsoVnfAdapterImpl (msoPropertiesFactory, cloudConfigFactory);
-
+                try {
+                    MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, req.getMsoRequest().getRequestId());
+                } catch (Exception e) {
+                    logger.error("Error adding RequestId to MDC", e);
+                }
                 // Synchronous Web Service Outputs
                 Holder<String> vfModuleStackId = new Holder<>();
                 Holder<Map<String, String>> outputs = new Holder<>();
@@ -577,6 +594,11 @@ public class VnfAdapterRestV2 {
         @Override
         public void run() {
             try {
+                try {
+                    MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, req.getVfModuleRollback().getMsoRequest().getRequestId());
+                } catch (Exception e) {
+                    logger.error("Error adding RequestId to MDC", e);
+                }
                 VfModuleRollback vmr = req.getVfModuleRollback();
                 VnfRollback vrb = new VnfRollback(vmr.getVfModuleStackId(), vmr.getTenantId(), vmr.getCloudOwner(),
                         vmr.getCloudSiteId(), true, vmr.isVfModuleCreated(), vmr.getMsoRequest(), null, null, null,

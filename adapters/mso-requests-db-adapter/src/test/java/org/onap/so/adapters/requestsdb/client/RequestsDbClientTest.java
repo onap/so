@@ -20,6 +20,17 @@
 
 package org.onap.so.adapters.requestsdb.client;
 
+import static com.shazam.shazamcrest.MatcherAssert.assertThat;
+import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,21 +43,10 @@ import org.onap.so.db.request.beans.OperationalEnvDistributionStatus;
 import org.onap.so.db.request.beans.OperationalEnvServiceModelStatus;
 import org.onap.so.db.request.beans.RequestProcessingData;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-import java.util.List;
-import java.util.UUID;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.ArrayList;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertFalse;
 
 public class RequestsDbClientTest extends RequestsAdapterBase {
 
@@ -232,6 +232,7 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
         assertEquals(2, requestProcessingDataList.size());
     }
 
+
     @Test
     public void findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestIdTest() {
         OperationalEnvServiceModelStatus operationalEnvServiceModelStatus =
@@ -267,5 +268,14 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
         assertEquals("111", operationalEnvDistributionStatus.getDistributionId());
         assertEquals("ERROR", operationalEnvDistributionStatus.getDistributionIdErrorReason());
         assertEquals("00032ab7-3fb3-42e5-965d-8ea592502017", operationalEnvDistributionStatus.getRequestId());
+    }
+
+    @Test
+    public void getRequestProcessingDataBySoRequestIdAndName() {
+        RequestProcessingData requestProcessingData = requestsDbClient
+                .getRequestProcessingDataBySoRequestIdAndNameAndGrouping("00032ab7-na18-42e5-965d-8ea592502018",
+                        "requestAction", "7d2e8c07-4d10-456d-bddc-37abf38ca714");
+        assertNotNull(requestProcessingData);
+
     }
 }

@@ -30,7 +30,6 @@ import java.io.IOException;
 import javax.ws.rs.core.MediaType;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.adapters.openstack.MsoOpenstackAdaptersApplication;
 import org.onap.so.cloud.CloudConfig;
@@ -39,7 +38,6 @@ import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.ServerType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -70,7 +68,6 @@ public abstract class BaseRestTestUtils {
     CloudConfig cloudConfig;
 
     @Autowired
-    @Qualifier("JettisonStyle")
     protected TestRestTemplate restTemplate;
 
     protected HttpHeaders headers = new HttpHeaders();
@@ -118,9 +115,10 @@ public abstract class BaseRestTestUtils {
         wireMockServer.resetAll();
         mapper = new ObjectMapper();
         CloudIdentity identity = new CloudIdentity();
-        identity.setId("MTN13");
+        identity.setId("DEFAULT");
         identity.setMsoId("m93945");
-        identity.setMsoPass("93937EA01B94A10A49279D4572B48369");
+        identity.setMsoPass(
+                "89C9F27833AC49FE4164F3608CADE7BCF40357977607A7E4B899F9A046C0071C75F7347A47308EF9FB6620214264B1");
         identity.setAdminTenant("admin");
         identity.setMemberRole("admin");
         identity.setTenantMetadata(new Boolean(true));
@@ -137,29 +135,14 @@ public abstract class BaseRestTestUtils {
         identity.setIdentityServerType(ServerType.KEYSTONE);
         cloudSite.setIdentityService(identity);
 
-        wireMockServer.stubFor(get(urlPathEqualTo("/cloudSite/MTN13"))
-                .willReturn(aResponse().withBody(getBody(mapper.writeValueAsString(cloudSite), wireMockPort, ""))
-                        .withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withStatus(HttpStatus.SC_OK)));
         wireMockServer.stubFor(get(urlPathEqualTo("/cloudSite/DEFAULT"))
                 .willReturn(aResponse().withBody(getBody(mapper.writeValueAsString(cloudSite), wireMockPort, ""))
                         .withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withStatus(HttpStatus.SC_OK)));
-        wireMockServer.stubFor(get(urlPathEqualTo("/cloudIdentity/MTN13"))
-                .willReturn(aResponse().withBody(getBody(mapper.writeValueAsString(identity), wireMockPort, ""))
-                        .withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withStatus(HttpStatus.SC_OK)));
-        cloudConfig.getCloudSite("MTN13").get().getIdentityService()
-                .setIdentityUrl("http://localhost:" + wireMockPort + cloudEndpoint);
     }
 
     protected static String getBody(String body, int port, String urlPath) throws IOException {
         return body.replaceAll("port", "http://localhost:" + port + urlPath);
-    }
-
-    @Test
-    public void testNothing() {
-
     }
 
 }
