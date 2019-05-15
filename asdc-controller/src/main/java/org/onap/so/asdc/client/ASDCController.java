@@ -724,8 +724,8 @@ public class ASDCController {
 
                 logger.info("Processing Resource Type: {}, Model UUID: {}", resourceType, resource.getResourceUUID());
 
-                if ("VF".equals(resourceType) && resource.getArtifacts() != null
-                        && !resource.getArtifacts().isEmpty()) {
+                if ("VF".equals(resourceType)) {
+
                     resourceStructure = new VfResourceStructure(iNotif, resource);
                 } else if ("PNF".equals(resourceType)) {
                     resourceStructure = new PnfResourceStructure(iNotif, resource);
