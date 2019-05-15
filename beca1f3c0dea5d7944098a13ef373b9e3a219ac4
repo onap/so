@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a7e023b0_7246de76",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/installer/heat/ToscaResourceInstaller.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1330,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-05-15T11:39:22Z",
+      "side": 1,
+      "message": "If i don\u0027t add this change it results in \"a different object with the same identifier value was already associated with the session\" to fix this issue i modified it. \n\nPlease let me know if you see this is correct fix for it.",
+      "parentUuid": "e3d2cbb6_aaed32c5",
+      "revId": "beca1f3c0dea5d7944098a13ef373b9e3a219ac4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b33a157a_bbd33cf6",
         "filename": "asdc-controller/src/main/java/org/onap/so/asdc/installer/heat/ToscaResourceInstaller.java",
         "patchSetId": 6
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "291bdabc_06230c87",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/installer/heat/ToscaResourceInstaller.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1444,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-05-15T11:39:22Z",
+      "side": 1,
+      "message": "same as previous comment.",
+      "parentUuid": "b33a157a_bbd33cf6",
+      "revId": "beca1f3c0dea5d7944098a13ef373b9e3a219ac4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f880dc9f_574bbcf2",
         "filename": "asdc-controller/src/main/java/org/onap/so/asdc/installer/heat/ToscaResourceInstaller.java",
         "patchSetId": 6
@@ -47,6 +83,24 @@
       "writtenOn": "2019-05-14T18:08:16Z",
       "side": 1,
       "message": "This block of code earlier caused hibernate persistence failures with our current unit tests. \nA brief write-up on what is being accomplished here would help to understand the need for this change.",
+      "revId": "beca1f3c0dea5d7944098a13ef373b9e3a219ac4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a0b96428_d4391a9e",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/installer/heat/ToscaResourceInstaller.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 2675,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-05-15T11:39:22Z",
+      "side": 1,
+      "message": "Here I would like to save the vnf-customization with existing list of vnf-customization because what i observed that if i directly attach vnf-customiztion to service then it overwrites the existing vnf-customization in service.\n\nplease let me know if you see any issue. When I tested it with my csar file i observed it works correctly.",
+      "parentUuid": "f880dc9f_574bbcf2",
       "revId": "beca1f3c0dea5d7944098a13ef373b9e3a219ac4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
