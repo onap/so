@@ -27,14 +27,21 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+
 import javax.transaction.Transactional;
 import javax.ws.rs.core.Response;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -45,11 +52,15 @@ import org.onap.so.asdc.client.test.emulators.DistributionClientEmulator;
 import org.onap.so.asdc.client.test.emulators.NotificationDataImpl;
 import org.onap.so.db.catalog.beans.AllottedResource;
 import org.onap.so.db.catalog.beans.AllottedResourceCustomization;
+import org.onap.so.db.catalog.beans.NetworkResource;
+import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.Service;
+import org.onap.so.db.catalog.beans.ToscaCsar;
 import org.onap.so.db.catalog.beans.Workflow;
 import org.onap.so.db.catalog.data.repository.AllottedResourceRepository;
 import org.onap.so.db.catalog.data.repository.NetworkResourceRepository;
 import org.onap.so.db.catalog.data.repository.ServiceRepository;
+import org.onap.so.db.catalog.data.repository.ToscaCsarRepository;
 import org.onap.so.db.catalog.data.repository.WorkflowRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -58,6 +69,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ASDCRestInterfaceTest extends BaseTest {
@@ -73,6 +85,9 @@ public class ASDCRestInterfaceTest extends BaseTest {
 
     @Autowired
     private WorkflowRepository workflowRepo;
+    
+    @Autowired
+    private ToscaCsarRepository toscaCsarRepo;
 
     @Autowired
     private ASDCRestInterface asdcRestInterface;
@@ -242,6 +257,41 @@ public class ASDCRestInterfaceTest extends BaseTest {
         Response response = asdcRestInterface.invokeASDCStatusData(request);
         assertNull(response);
 
+    }
+
+
+    @Test
+    public void test_Vcpe_Infra_Distribution() throws Exception {
+        wireMockServer.stubFor(post(urlPathMatching("/aai/.*"))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")));
+
+        wireMockServer.stubFor(post(urlPathMatching("/v1.0/activity-spec"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withStatus(org.springframework.http.HttpStatus.ACCEPTED.value())));
+
+        String resourceLocation = "src/test/resources/resource-examples/vcpe-infra/";
+
+        ObjectMapper mapper = new ObjectMapper();
+        NotificationDataImpl request = mapper.readValue(new File(resourceLocation + "demovcpeinfra-notification.json"),
+                NotificationDataImpl.class);
+        headers.add("resource-location", resourceLocation);
+        HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("test/treatNotification/v1"),
+                HttpMethod.POST, entity, String.class);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        
+        Optional<ToscaCsar> toscaCsar = toscaCsarRepo.findById("144606d8-a505-4ba0-90a9-6d1c6219fc6b");        
+        assertTrue(toscaCsar.isPresent());
+        assertEquals("service-Demovcpeinfra-csar.csar", toscaCsar.get().getName());
+        
+        Optional<Service> service = serviceRepo.findById("8a77cbbb-9850-40bb-a42f-7aec8e3e6ab7");
+        assertTrue(service.isPresent());
+        assertEquals("demoVCPEInfra", service.get().getModelName());
+        
+        Optional<NetworkResource> networkResource = networkRepo.findById("89789b26-a46b-4cee-aed0-d46e21f93a5e");
+        assertTrue(networkResource.isPresent());     
+        assertEquals("Generic NeutronNet", networkResource.get().getModelName());
     }
 
     protected String createURLWithPort(String uri) {
