@@ -152,6 +152,7 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
             logger.debug( msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
+        logger.info(" ***** Exit preProcessRequest *****")
     }
 
     /**
@@ -174,6 +175,8 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
             String serviceInstanceId = execution.getVariable(Prefix + "serviceInstanceId")
             String source = execution.getVariable("source")
             String sdnc_service_id = execution.getVariable(Prefix + "sdncServiceId")
+            String resourceInput = execution.getVariable(Prefix + "resourceInput")
+            logger.info("The resourceInput is: " + resourceInput)
             ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(resourceInput, ResourceInput.class)
             String serviceType = resourceInputObj.getServiceType()
             String serviceModelInvariantUuid = resourceInputObj.getServiceModelInfo().getModelInvariantUuid()
@@ -373,6 +376,8 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
     }
 
     public void prepareUpdateBeforeDeleteSDNCResource(DelegateExecution execution) {
+        logger.debug( " *** prepareUpdateBeforeDeleteSDNCResource *** ")
+        String resourceInput = execution.getVariable(Prefix + "resourceInput");
         ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(resourceInput, ResourceInput.class)
         String operType = resourceInputObj.getOperationType()
         String resourceCustomizationUuid = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
@@ -402,10 +407,13 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
                 </soapenv:Envelope>""";
 
         setProgressUpdateVariables(execution, body)
+        logger.debug(" ***** Exit prepareUpdateBeforeDeleteSDNCResource *****")
 
     }
 
     public void prepareUpdateAfterDeleteSDNCResource(DelegateExecution execution) {
+        logger.debug( " *** prepareUpdateAfterDeleteSDNCResource *** ")
+        String resourceInput = execution.getVariable(Prefix + "resourceInput");
         ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(resourceInput, ResourceInput.class)
         String operType = resourceInputObj.getOperationType()
         String resourceCustomizationUuid = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
@@ -435,15 +443,16 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
                 </soapenv:Envelope>""";
 
         setProgressUpdateVariables(execution, body)
+        logger.debug(" ***** Exit prepareUpdateAfterDeleteSDNCResource *****")
     }
 
     public void postDeleteSDNCCall(DelegateExecution execution){
-        logger.info(" ***** Started prepareSDNCRequest *****")
+        logger.info(" ***** Started postDeleteSDNCCall *****")
         String responseCode = execution.getVariable(Prefix + "sdncDeleteReturnCode")
         String responseObj = execution.getVariable(Prefix + "SuccessIndicator")
 
         logger.info("response from sdnc, response code :" + responseCode + "  response object :" + responseObj)
-        logger.info(" ***** Exit prepareSDNCRequest *****")
+        logger.info(" ***** Exit postDeleteSDNCCall *****")
     }
 
     public void sendSyncResponse (DelegateExecution execution) {

@@ -102,7 +102,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
             }
 
-            String sdncCallbackUrl = UrnPropertiesReader.getVariable('URN_mso_workflow_sdncadapter_callback', execution)
+            String sdncCallbackUrl = UrnPropertiesReader.getVariable('mso.workflow.sdncadapter.callback', execution)
             if (isBlank(sdncCallbackUrl)) {
                 msg = "URN_mso_workflow_sdncadapter_callback is null"
                 logger.error(msg)
@@ -263,9 +263,10 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
 	   		resourceInput.setServiceModelInfo(serviceDecomposition.getModelInfo());
 	        resourceInput.setServiceType(serviceType)
 	
-	        String recipeURL = BPMNProperties.getProperty("bpelURL", "http://mso:8080") + recipeUri
-	
-	        HttpResponse resp = BpmnRestClient.post(recipeURL, requestId, recipeTimeout, action, serviceInstanceId, serviceType, resourceInput.toString(), recipeParamXsd)
+	        String recipeURL = BPMNProperties.getProperty("bpelURL", "http://so-bpmn-infra.onap:8081") + recipeUri
+
+            BpmnRestClient bpmnRestClient = new BpmnRestClient()
+	        HttpResponse resp = bpmnRestClient.post(recipeURL, requestId, recipeTimeout, action, serviceInstanceId, serviceType, resourceInput.toString(), recipeParamXsd)
 	        logger.debug(" ======== END executeResourceDelete Process ======== ")
 		}catch(BpmnError b){
 			 logger.error("Rethrowing MSOWorkflowException")
