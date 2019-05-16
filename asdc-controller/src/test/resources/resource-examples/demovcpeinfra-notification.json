@@ -1,0 +1,111 @@
+{
+	"distributionID": "e61f72f2-eee9-4c46-bf76-ae24414c6396",
+	"serviceName": "demoVCPEInfra",
+	"serviceVersion": "1.0",
+	"serviceUUID": "8a77cbbb-9850-40bb-a42f-7aec8e3e6ab7",
+	"serviceDescription": "catalog service description",
+	"serviceInvariantUUID": "21c102b6-c3e6-49ca-8021-83c105a191fa",
+	"resources": [{
+			"resourceInstanceName": "CPE_PUBLIC",
+			"resourceName": "Generic NeutronNet",
+			"resourceVersion": "1.0",
+			"resoucreType": "VL",
+			"resourceUUID": "67bf9c77-aa78-4fab-99f4-3939a6d42348",
+			"resourceInvariantUUID": "8917e73c-88cf-42ed-8b33-6ea8ad080285",
+			"resourceCustomizationUUID": "4b3bd88b-6351-4564-b1de-e01021cdb79b",
+			"category": "Generic",
+			"subcategory": "Network Elements",
+			"artifacts": []
+		}, {
+			"resourceInstanceName": "vCPE_infra bf35304f-e92f 0",
+			"resourceName": "vCPE_infra bf35304f-e92f",
+			"resourceVersion": "1.0",
+			"resoucreType": "VF",
+			"resourceUUID": "9a91c854-86fb-4072-8d4d-94dc0e96a311",
+			"resourceInvariantUUID": "dcd9cb6c-1634-4424-86e6-b03baed3e10a",
+			"resourceCustomizationUUID": "01564fe7-0541-4d92-badc-464cc35f83ba",
+			"category": "Generic",
+			"subcategory": "Abstract",
+			"artifacts": [{
+					"artifactName": "vf-license-model.xml",
+					"artifactType": "VF_LICENSE",
+					"artifactURL": "vf-license-model.xml",
+					"artifactChecksum": "ODc4YjdjY2M5MDE1NDcxN2JhYTA2MjdiNGUxODE2MTM=",
+					"artifactDescription": "VF license file",
+					"artifactTimeout": 120,
+					"artifactUUID": "7fbbb913-0309-4a8b-8596-a1faf84886e8",
+					"artifactVersion": "1"
+				}, {
+					"artifactName": "vcpe_infrabf35304fe92f0_modules.json",
+					"artifactType": "VF_MODULES_METADATA",
+					"artifactURL": "vcpe_infrabf35304fe92f0_modules.json",
+					"artifactChecksum": "OGQ2MTI5YjZjYTFlYzUyOTYyOTY4YWZkYTQxYzViYzg=",
+					"artifactDescription": "Auto-generated VF Modules information artifact",
+					"artifactTimeout": 120,
+					"artifactUUID": "518b313a-4484-4cfd-92f0-0b23e2a415fd",
+					"artifactVersion": "1"
+				}, {
+					"artifactName": "base_vcpe_infra.yaml",
+					"artifactType": "HEAT",
+					"artifactURL": "base_vcpe_infra.yaml",
+					"artifactChecksum": "ZGEyNDgwNmEzZDk3ODU3ZDg3YTg1MDc0NmU1ZTMwYmI=",
+					"artifactDescription": "created from csar",
+					"artifactTimeout": 120,
+					"artifactUUID": "183353d4-2b50-4dc1-aecc-f2818f666b70",
+					"artifactVersion": "2"
+				}, {
+					"artifactName": "vendor-license-model.xml",
+					"artifactType": "VENDOR_LICENSE",
+					"artifactURL": "vendor-license-model.xml",
+					"artifactChecksum": "OTJhOTQyNTczZGRiYTJlM2M0MDQxZTdlMTE3NDE5YTQ=",
+					"artifactDescription": " Vendor license file",
+					"artifactTimeout": 120,
+					"artifactUUID": "7f4577e5-9f89-4c8e-985e-500e58425276",
+					"artifactVersion": "1"
+				}, {
+					"artifactName": "base_vcpe_infra.env",
+					"artifactType": "HEAT_ENV",
+					"artifactURL": "base_vcpe_infra.env",
+					"artifactChecksum": "ZmQxYTM1Yjg0ODJmN2I0OWE4OWMxN2NjOGEwMTM5NTY=",
+					"artifactDescription": "Auto-generated HEAT Environment deployment artifact",
+					"artifactTimeout": 120,
+					"artifactUUID": "1e9e20c7-6801-4a6c-a270-c8f5cec034c0",
+					"artifactVersion": "2",
+					"generatedFromUUID": "183353d4-2b50-4dc1-aecc-f2818f666b70"
+				}
+			]
+		}, {
+			"resourceInstanceName": "CPE_SIGNAL",
+			"resourceName": "Generic NeutronNet",
+			"resourceVersion": "1.0",
+			"resoucreType": "VL",
+			"resourceUUID": "67bf9c77-aa78-4fab-99f4-3939a6d42348",
+			"resourceInvariantUUID": "8917e73c-88cf-42ed-8b33-6ea8ad080285",
+			"resourceCustomizationUUID": "803e0da3-6c40-4a4f-918b-7f3484de61ff",
+			"category": "Generic",
+			"subcategory": "Network Elements",
+			"artifacts": []
+		}
+	],
+	"serviceArtifacts": [{
+			"artifactName": "service-Demovcpeinfra-template.yml",
+			"artifactType": "TOSCA_TEMPLATE",
+			"artifactURL": "service-Demovcpeinfra-template.yml",
+			"artifactChecksum": "ZDY3ZGY4ZTM4ZDA3ZjY4M2Y2MDgxNzI0MDE3NjkzODM=",
+			"artifactDescription": "TOSCA representation of the asset",
+			"artifactTimeout": 0,
+			"artifactUUID": "a4180154-1279-47d5-acbc-392e87d3fc7f",
+			"artifactVersion": "1"
+		}, {
+			"artifactName": "service-Demovcpeinfra-csar.csar",
+			"artifactType": "TOSCA_CSAR",
+			"artifactURL": "service-Demovcpeinfra-csar.csar",
+			"artifactChecksum": "NjlhMDk2YzNlNTI5OTg3MzE2ZmUzYjI5MTY2M2Y5YmU=",
+			"artifactDescription": "TOSCA definition package of the asset",
+			"artifactTimeout": 0,
+			"artifactUUID": "144606d8-a505-4ba0-90a9-6d1c6219fc6b",
+			"artifactVersion": "1"
+		}
+	],
+	"workloadContext": "Production"
+}

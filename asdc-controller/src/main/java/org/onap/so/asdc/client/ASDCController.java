@@ -784,24 +784,24 @@ public class ASDCController {
                     errorMessage = e.getMessage();
                     logger.error("Exception occurred", e);
                 }
-
-                if (!hasVFResource) {
-
-                    logger.debug("No resources found for Service: " + iNotif.getServiceUUID());
-
-                    logger.debug("Preparing to deploy Service: {}", iNotif.getServiceUUID());
-                    try {
-                        this.deployResourceStructure(resourceStructure, toscaResourceStructure);
-                    } catch (ArtifactInstallerException e) {
-                        deployStatus = DistributionStatusEnum.DEPLOY_ERROR;
-                        errorMessage = e.getMessage();
-                        logger.error("Exception occurred", e);
-                    }
-                }
-                this.sendCsarDeployNotification(iNotif, resourceStructure, toscaResourceStructure, deployStatus,
-                        errorMessage);
             }
 
+            if (!hasVFResource) {
+
+                logger.debug("No resources found for Service: " + iNotif.getServiceUUID());
+
+                logger.debug("Preparing to deploy Service: {}", iNotif.getServiceUUID());
+                try {
+                    this.deployResourceStructure(resourceStructure, toscaResourceStructure);
+                } catch (ArtifactInstallerException e) {
+                    deployStatus = DistributionStatusEnum.DEPLOY_ERROR;
+                    errorMessage = e.getMessage();
+                    logger.error("Exception occurred", e);
+                }
+            }
+
+            this.sendCsarDeployNotification(iNotif, resourceStructure, toscaResourceStructure, deployStatus,
+                    errorMessage);
 
         } catch (ASDCDownloadException | UnsupportedEncodingException e) {
             logger.error("{} {} {} {} {} {}", MessageEnum.ASDC_GENERAL_EXCEPTION_ARG.toString(),
