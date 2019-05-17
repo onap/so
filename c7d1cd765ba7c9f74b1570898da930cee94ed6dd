@@ -16,6 +16,24 @@
       "revId": "c7d1cd765ba7c9f74b1570898da930cee94ed6dd",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ba19947_389442d4",
+        "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/client/CatalogDbClient.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 619,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-05-17T12:38:33Z",
+      "side": 1,
+      "message": "Hi Steve,\nThe method I changed assumes to choose NorthBoundRequest object by: ACTION, REQUEST_SCOPE, IS_ALACARTE and CLOUD_OWNER. \nBut to this query there is additional condition: where serviceType\u003d\"*\". \n\nSo the first question is why serviceType is taking into account here?. There is another method that takes serviceType additionally, and it is named getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwnerAndServiceType. \n\nSecondly, why asterix \"*\"? I can not see any place in the code that would set this field as \"*\". \nI think that maybe somebody thought that \"*\" means \"any\" here, but it does not work that way in sql.\n\nplease respond Steve",
+      "parentUuid": "981df065_ba430066",
+      "revId": "c7d1cd765ba7c9f74b1570898da930cee94ed6dd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
