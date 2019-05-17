@@ -98,8 +98,6 @@ public class InstanceResourceList {
     // ....}
     // it will return sdwansiteresource_list
     private static String getPrimaryKey(Resource resource) {
-        String pk = "";
-
         String resourceInput = "";
         if (resource instanceof VnfResource) {
             resourceInput = ((VnfResource) resource).getResourceInput();
@@ -111,10 +109,16 @@ public class InstanceResourceList {
         Type type = new TypeToken<Map<String, String>>() {}.getType();
         Map<String, String> map = gson.fromJson(resourceInput, type);
 
-        Optional<String> pkOpt = map.values().stream().filter(e -> e.contains("[")).map(e -> e.replace("[", ""))
-                .map(e -> e.split(",")[0]).findFirst();
+        if (map != null) {
+            Optional<String> pkOpt = map.values().stream().filter(e -> e.contains("[")).map(e -> e.replace("[", ""))
+                    .map(e -> e.split(",")[0]).findFirst();
 
-        return pkOpt.isPresent() ? pkOpt.get() : "";
+            return pkOpt.isPresent() ? pkOpt.get() : "";
+        } else {
+            // TODO: handle the case if VNF resource is not list
+            // e.g. { resourceInput
+            return "";
+        }
     }
 
     private static List<Resource> convertToInstanceResourceList(Map<String, List<List<GroupResource>>> normalizedReq,
