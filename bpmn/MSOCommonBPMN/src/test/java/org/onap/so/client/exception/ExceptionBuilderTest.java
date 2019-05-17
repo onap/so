@@ -22,6 +22,7 @@ package org.onap.so.client.exception;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import org.camunda.bpm.engine.delegate.BpmnError;
@@ -131,7 +132,7 @@ public class ExceptionBuilderTest extends BaseTest {
     public void processAuditExceptionTest() {
         try {
             Mockito.doReturn(extractPojosForBB).when(exceptionBuilder).getExtractPojosForBB();
-            exceptionBuilder.processAuditException((DelegateExecutionImpl) execution);
+            exceptionBuilder.processAuditException((DelegateExecutionImpl) execution, false);
         } catch (BpmnError bpmnException) {
             assertEquals("AAIInventoryFailure", bpmnException.getErrorCode());
             WorkflowException we = execution.getVariable("WorkflowException");
@@ -139,6 +140,21 @@ public class ExceptionBuilderTest extends BaseTest {
             assertEquals(
                     "create VF-Module testVfModuleId1 failed due to incomplete A&AI vserver inventory population after stack testStackName was successfully created in cloud region testLcpCloudRegionId. MSO Audit indicates that AIC RO did not create vserver testVServerId in AAI. Recommendation - Wait for nightly RO Audit to run and fix the data issue and resume vf-module creation in VID. If problem persists then report problem to AIC/RO Ops.",
                     we.getErrorMessage());
+        }
+    }
+
+    @Test
+    public void processAuditExceptionContinueTest() {
+        try {
+            Mockito.doReturn(extractPojosForBB).when(exceptionBuilder).getExtractPojosForBB();
+            exceptionBuilder.processAuditException((DelegateExecutionImpl) execution, true);
+            String sm = execution.getVariable("StatusMessage");
+            assertNotNull(sm);
+            assertEquals(
+                    "create VF-Module testVfModuleId1 failed due to incomplete A&AI vserver inventory population after stack testStackName was successfully created in cloud region testLcpCloudRegionId. MSO Audit indicates that AIC RO did not create vserver testVServerId in AAI. Recommendation - Wait for nightly RO Audit to run and fix the data issue and resume vf-module creation in VID. If problem persists then report problem to AIC/RO Ops.",
+                    sm);
+        } catch (BpmnError bpmnException) {
+            fail();
         }
     }
 

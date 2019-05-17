@@ -69,7 +69,7 @@
       </bpmn:endEvent>
       <bpmn:sequenceFlow id="SequenceFlow_19gbhlj" sourceRef="catchInventoryException" targetRef="processAuditException" />
       <bpmn:sequenceFlow id="SequenceFlow_0l4jzc5" sourceRef="processAuditException" targetRef="EndEvent_067jv1n" />
-      <bpmn:serviceTask id="processAuditException" name="Proccess Error" camunda:expression="${ExceptionBuilder.processAuditException(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:serviceTask id="processAuditException" name="Proccess Error" camunda:expression="${ExceptionBuilder.processAuditException(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)), false)}">
         <bpmn:incoming>SequenceFlow_19gbhlj</bpmn:incoming>
         <bpmn:outgoing>SequenceFlow_0l4jzc5</bpmn:outgoing>
       </bpmn:serviceTask>
