@@ -22,9 +22,14 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+
+import com.google.common.reflect.TypeToken
+import com.google.gson.Gson
+import org.apache.http.util.EntityUtils
 import org.onap.so.bpmn.common.resource.InstanceResourceList
 import org.onap.so.bpmn.common.scripts.CatalogDbUtilsFactory
 import org.onap.so.bpmn.core.domain.GroupResource
+import org.onap.so.bpmn.core.domain.ResourceType
 import org.onap.so.bpmn.infrastructure.properties.BPMNProperties
 import org.apache.commons.lang3.StringUtils
 import org.apache.http.HttpResponse
@@ -46,6 +51,7 @@ import org.onap.so.bpmn.common.resource.ResourceRequestBuilder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import java.lang.reflect.Type
 
 
 /**
@@ -254,6 +260,25 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         resourceInput.setResourceModelInfo(currentResource.getModelInfo())
         resourceInput.getResourceModelInfo().setModelType(currentResource.getResourceType().toString())
         ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
+
+        if (currentResource.getResourceType() == ResourceType.VNF) {
+            execution.setVariable("vfModelInfo", currentResource.getModelInfo())
+        }
+
+        /*
+        * Set the VF information as well to the resource input, since sdnc need the immediate upper level information
+        * during resource creation: Begin
+        **/
+        String currentResourceType = currentResource.getResourceType();
+        execution.setVariable("currentResourceType",currentResource.getResourceType());
+        resourceInput.setVfModelInfo(execution.getVariable("vfModelInfo"));
+        resourceInput.setVnfId(execution.getVariable("vnf-id"))
+        /*
+        * Set the VF information as well to the resource input, since sdnc need the immediate upper level information
+        * during resource creation: End
+        **/
+
+
         resourceInput.setServiceModelInfo(serviceDecomposition.getModelInfo())
 
         String incomingRequest = execution.getVariable("uuiRequest")
@@ -273,6 +298,8 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
     }
 
     public void executeResourceRecipe(DelegateExecution execution){
+
+
         logger.trace("Start executeResourceRecipe Process ")
 
         try {
@@ -288,12 +315,38 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
             JSONObject resourceRecipe = catalogDbUtils.getResourceRecipe(execution, resourceModelUUID, requestAction)
 
             if (resourceRecipe != null) {
-                String recipeURL = BPMNProperties.getProperty("bpelURL", "http://so-bpmn-infra.onap:8081") + resourceRecipe.getString("orchestrationUri")
+                String recipeURL = BPMNProperties.getProperty("bpelURL", "http://127.0.0.1:9080") + resourceRecipe.getString("orchestrationUri")
                 int recipeTimeOut = resourceRecipe.getInt("recipeTimeout")
                 String recipeParamXsd = resourceRecipe.get("paramXSD")
 
                 BpmnRestClient bpmnRestClient = new BpmnRestClient()
                 HttpResponse resp = bpmnRestClient.post(recipeURL, requestId, recipeTimeOut, requestAction, serviceInstanceId, serviceType, resourceInput, recipeParamXsd)
+
+                /*
+                * Isaac added to parse the reponse of the service call and pick the vnf-id when the resource created is
+                * a vnf. The vnf id needs to be passed to sdnc while creating the vnfc/group: Begin
+                **/
+
+                def currentIndex = execution.getVariable("currentResourceIndex")
+                List<Resource> instanceResourceList = execution.getVariable("instanceResourceList")
+                Resource currentResource = instanceResourceList.get(currentIndex)
+                if(ResourceType.VNF == currentResource.getResourceType())
+                {
+                    if (resp.getStatusLine().getStatusCode() > 199 && resp.getStatusLine().getStatusCode() < 300) {
+                        String responseString = EntityUtils.toString(resp.getEntity(), "UTF-8")
+                        if (responseString != null) {
+                            Gson gson = new Gson()
+                            Type type = new TypeToken<Map<String, String>>() {}.getType()
+                            Map<String, Object> map = gson.fromJson(responseString, type)
+                            Map<String, String> map1 = gson.fromJson(map.get("response"), type)
+                            execution.setVariable("vnf-id",map1.get("vnf-id"))
+                        }
+                    }
+                }
+                /*
+                * Isaac added to parse the reponse of the service call and pick the vnf-id when the resource created is
+                * a vnf: Begin
+                **/
             } else {
                 String exceptionMessage = "Resource receipe is not found for resource modeluuid: " + resourceModelUUID
                 logger.trace(exceptionMessage)
