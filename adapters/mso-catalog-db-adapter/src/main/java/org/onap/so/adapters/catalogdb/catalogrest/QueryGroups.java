@@ -77,9 +77,9 @@ public class QueryGroups extends CatalogQuery {
 
             if (instanceGroup != null) {
                 put(valueMap, "MODEL_NAME", instanceGroup.getModelName());
-                put(valueMap, "MODEL_UUID", instanceGroup.getModelInvariantUUID());
+                put(valueMap, "MODEL_UUID", instanceGroup.getModelUUID());
                 put(valueMap, "MODEL_INVARIANT_ID", instanceGroup.getModelInvariantUUID());
-                put(valueMap, "MODEL_VERSION", instanceGroup.getModelUUID());
+                put(valueMap, "MODEL_VERSION", instanceGroup.getModelVersion());
             }
 
             String subItem = new QueryVnfcs(vnfcCustomizationNull ? null : o.getVnfcCustomizations()).JSON2(true, true);
