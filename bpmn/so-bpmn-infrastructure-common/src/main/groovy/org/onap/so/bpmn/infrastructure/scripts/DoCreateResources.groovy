@@ -254,17 +254,17 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         resourceInput.setResourceModelInfo(currentResource.getModelInfo());
         ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
         resourceInput.setServiceModelInfo(serviceDecomposition.getModelInfo());
-        def String resourceCustomizationUuid = currentResource.getModelInfo().getModelCustomizationUuid();
+        //def String resourceCustomizationUuid = currentResource.getModelInfo().getModelCustomizationUuid();
 
         String incomingRequest = execution.getVariable("uuiRequest")
         //set the requestInputs from tempalte  To Be Done
-        String serviceModelUuid = jsonUtil.getJsonValue(incomingRequest,"service.serviceUuid")
-        String serviceParameters = jsonUtil.getJsonValue(incomingRequest, "service.parameters")
+        //String serviceModelUuid = jsonUtil.getJsonValue(incomingRequest,"service.serviceUuid")
+        String uuiServiceParameters = jsonUtil.getJsonValue(incomingRequest, "service.parameters")
         Map<String, Object> currentVFData = (Map) execution.getVariable("currentVFData");
         if (null == currentVFData) {
             currentVFData = new HashMap<>();
         }
-        String resourceParameters = ResourceRequestBuilder.buildResourceRequestParameters(execution, serviceModelUuid, resourceCustomizationUuid, serviceParameters, currentVFData)
+        String resourceParameters = ResourceRequestBuilder.buildResourceRequestParameters(execution, currentResource, uuiServiceParameters, currentVFData)
         resourceInput.setResourceParameters(resourceParameters)
         resourceInput.setRequestsInputs(incomingRequest)
         execution.setVariable("resourceInput", resourceInput.toString())
