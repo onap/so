@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "981df065_ba430066",
+        "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/client/CatalogDbClient.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 619,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-05-17T12:12:34Z",
+      "side": 1,
+      "message": "This appears to modify behavior, without much explanation",
+      "revId": "c7d1cd765ba7c9f74b1570898da930cee94ed6dd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
