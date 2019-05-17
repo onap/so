@@ -39,7 +39,7 @@ import java.util.Optional;
 public class InstanceResourceList {
 
     private static Map<String, List<List<GroupResource>>> convertUUIReqTOStd(final JsonObject reqInputJsonObj,
-            List<Resource> seqResourceList) {
+                                                                             List<Resource> seqResourceList) {
 
         Map<String, List<List<GroupResource>>> normalizedRequest = new HashMap<>();
         for (Resource r : seqResourceList) {
@@ -98,8 +98,6 @@ public class InstanceResourceList {
     // ....}
     // it will return sdwansiteresource_list
     private static String getPrimaryKey(Resource resource) {
-        String pk = "";
-
         String resourceInput = "";
         if (resource instanceof VnfResource) {
             resourceInput = ((VnfResource) resource).getResourceInput();
@@ -111,14 +109,20 @@ public class InstanceResourceList {
         Type type = new TypeToken<Map<String, String>>() {}.getType();
         Map<String, String> map = gson.fromJson(resourceInput, type);
 
-        Optional<String> pkOpt = map.values().stream().filter(e -> e.contains("[")).map(e -> e.replace("[", ""))
-                .map(e -> e.split(",")[0]).findFirst();
+        if (map != null) {
+            Optional<String> pkOpt = map.values().stream().filter(e -> e.contains("[")).map(e -> e.replace("[", ""))
+                    .map(e -> e.split(",")[0]).findFirst();
 
-        return pkOpt.isPresent() ? pkOpt.get() : "";
+            return pkOpt.isPresent() ? pkOpt.get() : "";
+        } else {
+            // TODO: handle the case if VNF resource is not list
+            // e.g. { resourceInput
+            return "";
+        }
     }
 
     private static List<Resource> convertToInstanceResourceList(Map<String, List<List<GroupResource>>> normalizedReq,
-            List<Resource> seqResourceList) {
+                                                                List<Resource> seqResourceList) {
         List<Resource> flatResourceList = new ArrayList<>();
         for (Resource r : seqResourceList) {
             if (r.getResourceType() == ResourceType.VNF) {
@@ -141,7 +145,7 @@ public class InstanceResourceList {
     }
 
     public static List<Resource> getInstanceResourceList(final List<Resource> seqResourceList,
-            final String uuiRequest) {
+                                                         final String uuiRequest) {
 
         Gson gson = new Gson();
         JsonObject servJsonObject = gson.fromJson(uuiRequest, JsonObject.class);

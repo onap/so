@@ -22,6 +22,7 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import com.google.gson.Gson
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
@@ -87,6 +88,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             //Deal with recipeParams
             String recipeParamsFromWf = execution.getVariable("recipeParamXsd")
             String resourceName = resourceInputObj.getResourceInstanceName()
+            execution.setVariable("currentResourceType",resourceInputObj.getResourceModelInfo().getModelType());
             //For sdnc requestAction default is "createNetworkInstance"
             String operationType = "Network"
             if(!StringUtils.isBlank(recipeParamsFromRequest)){
@@ -411,11 +413,26 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
              * Also in the old version the was framed based on the model name attribute. Which is changed to model type
              * in the new implementation
              */
-            String modelType = execution.getVariable("currentResource");
-            //TyperesourceInputObj.getResourceModelInfo().getModelType();
+            String vnfmodelInvariantUuid = ""
+            String vnfmodelCustomizationUuid = ""
+            String vnfmodelUuid = ""
+            String vnfmodelVersion = ""
+            String vnfmodelName = ""
+            String modelType = execution.getVariable("currentResourceType");
+            if(modelType.equalsIgnoreCase(ResourceType.GROUP.toString()))
+            {
+                String vnfid = execution.getVariable("currentVnfId");
+                Map vfModelInfoMap = new Gson().fromJson(json, Map.class);
+                vnfmodelInvariantUuid = vfModelInfoMap.get("vnfmodelInvariantUuid");
+                vnfmodelCustomizationUuid = vfModelInfoMap.get("vnfmodelCustomizationUuid");
+                vnfmodelUuid = vfModelInfoMap.get("vnfmodelUuid");
+                vnfmodelVersion = vfModelInfoMap.get("vnfmodelVersion");
+                vnfmodelName = vfModelInfoMap.get("vnfmodelName");
+            }
+
 
             switch (modelType) {
-                case ResourceType.VNF :
+                case ResourceType.VNF.toString() :
                     sdncTopologyCreateRequest = """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
                                                               xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1"
                                                               xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
@@ -474,14 +491,14 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                     break
 
                 case ResourceType.GROUP :
-                    sdncTopologyCreateRequest = """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
+                                        sdncTopologyCreateRequest = """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
                                                               xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1"
                                                               xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
                                  <sdncadapter:RequestHeader>
                                     <sdncadapter:RequestId>${msoUtils.xmlEscape(hdrRequestId)}</sdncadapter:RequestId>
                                     <sdncadapter:SvcInstanceId>${msoUtils.xmlEscape(serviceInstanceId)}</sdncadapter:SvcInstanceId>
                                     <sdncadapter:SvcAction>${msoUtils.xmlEscape(sdnc_svcAction)}</sdncadapter:SvcAction>
-                                    <sdncadapter:SvcOperation>connection-attachment-topology-operation</sdncadapter:SvcOperation>
+                                    <sdncadapter:SvcOperation>network-topology-operation</sdncadapter:SvcOperation>
                                     <sdncadapter:CallbackUrl>sdncCallback</sdncadapter:CallbackUrl>
                                     <sdncadapter:MsoAction>generic-resource</sdncadapter:MsoAction>
                                  </sdncadapter:RequestHeader>
@@ -507,19 +524,22 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                                         <global-customer-id>${msoUtils.xmlEscape(globalCustomerId)}</global-customer-id>
                                         <subscriber-name>${msoUtils.xmlEscape(globalCustomerId)}</subscriber-name>
                                      </service-information>
-                                     <allotted-resource-information>
-                                        <!-- TODO: to be filled as per the request input -->
-                                        <allotted-resource-id></allotted-resource-id>
-                                        <allotted-resource-type></allotted-resource-type>
-                                        <parent-service-instance-id>$parentServiceInstanceId</parent-service-instance-id>
-                                        <onap-model-information>
-                                             <model-invariant-uuid>${msoUtils.xmlEscape(modelInvariantUuid)}</model-invariant-uuid>
-                                             <model-customization-uuid>${msoUtils.xmlEscape(modelCustomizationUuid)}</model-customization-uuid>
-                                             <model-uuid>${msoUtils.xmlEscape(modelUuid)}</model-uuid>
-                                             <model-version>${msoUtils.xmlEscape(modelVersion)}</model-version>
-                                             <model-name>${msoUtils.xmlEscape(modelName)}</model-name>
-                                        </onap-model-information>
-                                     </allotted-resource-information>
+                                     <vnf-information>
+                                             <model-invariant-uuid>${msoUtils.xmlEscape(vnfmodelInvariantUuid)}</model-invariant-uuid>
+                                             <model-customization-uuid>${msoUtils.xmlEscape(vnfmodelCustomizationUuid)}</model-customization-uuid>
+                                             <model-uuid>${msoUtils.xmlEscape(vnfmodelUuid)}</model-uuid>
+                                             <model-version>${msoUtils.xmlEscape(vnfmodelVersion)}</model-version>
+                                             <model-name>${msoUtils.xmlEscape(vnfmodelName)}</model-name>
+                                     </vnf-information>
+                                     <vnf-request-input>
+                                         <vnf-input-parameters>
+                                           $netowrkInputParameters
+                                         </vnf-input-parameters>
+                                         <request-version></request-version>
+                                         <vnf-name></vnf-name>
+                                         <vnf-networks>
+                                        </vnf-networks>
+                                      </vnf-request-input>
                                      <connection-attachment-request-input>
                                        $netowrkInputParameters
                                      </connection-attachment-request-input>
@@ -579,14 +599,17 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                 }
 
 
+            /**
+             * Isaac added for new model support End.
+             * When a new resource creation request reaches SO, the parent resources information needs to be provided
+             * while creating the child resource. The code is modified to handle this.
+             *
+             * Also in the old version the was framed based on the model name attribute. Which is changed to model type
+             * in the new implementation
+             */
 
-/**
-* Isaac added for new model support End.
-*/
-
-
-            //switch (modelName) {
-            //    case ~/[\w\s\W]*deviceVF[\w\s\W]*/ :
+            /**switch (modelName) {
+            //    case ~/[\w\s\W]*deviceVF[\w\s\W]*/
             //    case ~/[\w\s\W]*SiteWANVF[\w\s\W]*/ :
             //    case ~/[\w\s\W]*SiteVF[\w\s\W]*/:
             /*        sdncTopologyCreateRequest = """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
@@ -644,9 +667,11 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                                       </vnf-request-input>
                                 </sdncadapterworkflow:SDNCRequestData>
                              </aetgt:SDNCAdapterWorkflowRequest>""".trim()
+
+
                     break
-                */
-                //case ~/[\w\s\W]*sdwanvpnattachment[\w\s\W]*/ :
+
+                //case ~/[\w\s\W]*sdwanvpnattachment[\w\s\W]*/
                 //case ~/[\w\s\W]*sotnvpnattachment[\w\s\W]*/ :
                 /*    sdncTopologyCreateRequest = """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
                                                               xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1"
@@ -680,7 +705,26 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                                         <service-instance-id>${msoUtils.xmlEscape(serviceInstanceId)}</service-instance-id>
                                         <global-customer-id>${msoUtils.xmlEscape(globalCustomerId)}</global-customer-id>
                                         <subscriber-name>${msoUtils.xmlEscape(globalCustomerId)}</subscriber-name>
-                                     </service-information>
+                                     </service-information><vnf-information>
+                                        <vnf-id></vnf-id>
+                                        <vnf-type></vnf-type>
+                                        <onap-model-information>
+                                             <model-invariant-uuid>${msoUtils.xmlEscape(modelInvariantUuid)}</model-invariant-uuid>
+                                             <model-customization-uuid>${msoUtils.xmlEscape(modelCustomizationUuid)}</model-customization-uuid>
+                                             <model-uuid>${msoUtils.xmlEscape(modelUuid)}</model-uuid>
+                                             <model-version>${msoUtils.xmlEscape(modelVersion)}</model-version>
+                                             <model-name>${msoUtils.xmlEscape(modelName)}</model-name>
+                                        </onap-model-information>
+                                     </vnf-information>
+                                     <vnf-request-input>
+                                         <vnf-input-parameters>
+                                           $netowrkInputParameters
+                                         </vnf-input-parameters>
+                                         <request-version></request-version>
+                                         <vnf-name></vnf-name>
+                                         <vnf-networks>
+                                        </vnf-networks>
+                                      </vnf-request-input>
                                      <allotted-resource-information>
                                         <!-- TODO: to be filled as per the request input -->
                                         <allotted-resource-id></allotted-resource-id>
@@ -699,10 +743,10 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                                      </connection-attachment-request-input>
                                 </sdncadapterworkflow:SDNCRequestData>
                              </aetgt:SDNCAdapterWorkflowRequest>""".trim()
-                    break */
+                    break
 
                 // for SDWANConnectivity and SOTNConnectivity:
-               /* default:
+                default:
                     sdncTopologyCreateRequest = """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
                                                               xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1"
                                                               xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
@@ -749,8 +793,8 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                                      </network-request-input>
                                 </sdncadapterworkflow:SDNCRequestData>
                              </aetgt:SDNCAdapterWorkflowRequest>""".trim()
-            }   */
-
+            }
+            */
 
             String sndcTopologyCreateRequesAsString = utils.formatXml(sdncTopologyCreateRequest)
             execution.setVariable("sdncAdapterWorkflowRequest", sndcTopologyCreateRequesAsString)
@@ -844,7 +888,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
         def isActivateRequried = execution.getVariable("isActivateRequired")
         if (StringUtils.equalsIgnoreCase(isActivateRequried, "true")) {
             def instnaceId = getInstnaceId(execution)
-            execution.setVariable("networkInstanceId", instnaceId)
+            execution.setVariable("parentInstanceId", instnaceId)
         }
 
         logger.info("response from sdnc, response code :" + responseCode + "  response object :" + responseObj)
@@ -858,24 +902,38 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
         String modelName = resourceInputObj.getResourceModelInfo().getModelName()
         def val = ""
 
-        switch (modelName) {
-            case ~/[\w\s\W]*deviceVF[\w\s\W]*/ :
-            case ~/[\w\s\W]*SiteWANVF[\w\s\W]*/ :
-            case ~/[\w\s\W]*Site[\w\s\W]*/:
-                val = response."response-data"."RequestData"."output"."vnf-response-information"."instance-id"
-                break
 
-            case ~/[\w\s\W]*sdwanvpnattachment[\w\s\W]*/ :
-            case ~/[\w\s\W]*sotnvpnattachment[\w\s\W]*/:
-                val = response."response-data"."RequestData"."output"."connection-attachment-response-information"."instance-id"
-                break
+        //switch (modelName) {
+        //    case ~/[\w\s\W]*deviceVF[\w\s\W]*/ :
+        //    case ~/[\w\s\W]*SiteWANVF[\w\s\W]*/ :
+        //    case ~/[\w\s\W]*Site[\w\s\W]*/:
+        //        val = response."response-data"."RequestData"."output"."vnf-response-information"."instance-id"
+        //          break
+
+        //    case ~/[\w\s\W]*sdwanvpnattachment[\w\s\W]*/ :
+        //   case ~/[\w\s\W]*sotnvpnattachment[\w\s\W]*/:
+        //        val = response."response-data"."RequestData"."output"."connection-attachment-response-information"."instance-id"
+        //        break
 
             // for SDWANConnectivity and SOTNConnectivity and default:
+        //    default:
+        //        val = response."response-data"."RequestData"."output"."network-response-information"."instance-id"
+        //        break
+        //}
+
+
+        String modelType = execution.getVariable("currentResourceType");
+        switch (modelType) {
+            case ResourceType.VNF.toString():
+                val = response."response-data"."RequestData"."output"."vnf-response-information"."instance-id"
+                break
+            case ResourceType.GROUP.toString():
+                val = response."response-data"."RequestData"."output"."vf-module-response-information"."instance-id"
+                break
             default:
                 val = response."response-data"."RequestData"."output"."network-response-information"."instance-id"
                 break
         }
-
         return val.toString()
     }
 
@@ -885,7 +943,8 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
         try {
             String operationStatus = "finished"
             // RESTResponse for main flow
-            String resourceOperationResp = """{"operationStatus":"${operationStatus}"}""".trim()
+            String vnfid=execution.getVariable("parentInstanceId");
+            String resourceOperationResp = """{"operationStatus":"${operationStatus}",vnf-id:"${vnfid}}""".trim()
             logger.debug(" sendSyncResponse to APIH:" + "\n" + resourceOperationResp)
             sendWorkflowResponse(execution, 202, resourceOperationResp)
             execution.setVariable("sentSyncResponse", true)

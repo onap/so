@@ -33,6 +33,7 @@ import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
+import org.onap.so.bpmn.core.domain.ResourceType
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.slf4j.Logger
@@ -67,7 +68,7 @@ public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             //Get ResourceInput Object
             ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(resourceInput, ResourceInput.class)
             execution.setVariable(Prefix + "resourceInput", resourceInputObj.toString())
-
+            execution.setVariable("currentResourceType",resourceInputObj.getResourceModelInfo().getModelType());
             //Deal with recipeParams
             String recipeParamsFromWf = execution.getVariable("recipeParamXsd")
             String resourceName = resourceInputObj.getResourceInstanceName()
@@ -224,11 +225,9 @@ public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             String netowrkInputParameters = XML.toString(new JSONObject(customizeResourceParam(networkInputParametersJson)))
             // 1. prepare assign topology via SDNC Adapter SUBFLOW call
             String sdncTopologyActivateRequest = ""
-
-            switch (modelName) {
-                case ~/[\w\s\W]*deviceVF[\w\s\W]*/ :
-                case ~/[\w\s\W]*SiteWANVF[\w\s\W]*/ :
-                case ~/[\w\s\W]*SiteVF[\w\s\W]*/:
+            String modelType = execution.getVariable("currentResourceType");
+            switch (modelType) {
+                case ResourceType.VNF.toString() :
                     sdncTopologyActivateRequest = """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
                                                               xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1"
                                                               xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
@@ -286,8 +285,7 @@ public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                              </aetgt:SDNCAdapterWorkflowRequest>""".trim()
                     break
 
-                case ~/[\w\s\W]*sdwanvpnattachment[\w\s\W]*/ :
-                case ~/[\w\s\W]*sotnvpnattachment[\w\s\W]*/:
+                case ResourceType.GROUP.toString() :
                     sdncTopologyActivateRequest =
                             """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
                                                               xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1" 

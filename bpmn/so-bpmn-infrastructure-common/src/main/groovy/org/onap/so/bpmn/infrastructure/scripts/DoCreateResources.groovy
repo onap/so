@@ -23,10 +23,12 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
+import com.google.gson.Gson
+import org.apache.http.util.EntityUtils;
 import org.onap.so.bpmn.common.resource.InstanceResourceList
 import org.onap.so.bpmn.common.scripts.CatalogDbUtilsFactory
 import org.onap.so.bpmn.core.domain.GroupResource
+import org.onap.so.bpmn.core.domain.ResourceType
 import org.onap.so.bpmn.infrastructure.properties.BPMNProperties
 import org.apache.commons.lang3.StringUtils
 import org.apache.http.HttpResponse
@@ -264,7 +266,8 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         * Set the VF information as well to the resource input, since sdnc need the immediate upper level information
         * during resource creation: Begin
         **/
-        execution.setVariable("currentResourceType",currentResource.getModelInfo().getModelType());
+        String currentResourceType = currentResource.getResourceType();
+        execution.setVariable("currentResourceType",currentResource.getResourceType());
         resourceInput.setVfModelInfo(execution.getVariable("vfModelInfo"));
         /*
         * Set the VF information as well to the resource input, since sdnc need the immediate upper level information
@@ -294,6 +297,8 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
     }
 
     public void executeResourceRecipe(DelegateExecution execution){
+
+
         logger.trace("Start executeResourceRecipe Process ")
 
         try {
@@ -309,7 +314,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
             JSONObject resourceRecipe = catalogDbUtils.getResourceRecipe(execution, resourceModelUUID, requestAction)
 
             if (resourceRecipe != null) {
-                String recipeURL = BPMNProperties.getProperty("bpelURL", "http://so-bpmn-infra.onap:8081") + resourceRecipe.getString("orchestrationUri")
+                String recipeURL = BPMNProperties.getProperty("bpelURL", "http://127.0.0.1:9080") + resourceRecipe.getString("orchestrationUri")
                 int recipeTimeOut = resourceRecipe.getInt("recipeTimeout")
                 String recipeParamXsd = resourceRecipe.get("paramXSD")
 
@@ -323,13 +328,17 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
                 def currentIndex = execution.getVariable("currentResourceIndex");
                 List<Resource> instanceResourceList = execution.getVariable("instanceResourceList");
                 Resource currentResource = instanceResourceList.get(currentIndex);
-                if(currentResource.getModelInfo().getModelType().equalsIgnoreCase(ResourceType.VNF))
+                if(ResourceType.VNF == currentResource.getResourceType())
                 {
-                    String response = EntityUtils.toString(resp.getEntity());
-                    Gson gson = new Gson();
-                    Type type = new TypeToken<Map<String, String>>() {}.getType();
-                    Map<String, Object> map = gson.fromJson(response, type);
-                    execution.setVariable("vnf-id",map.get("vnf-id"));
+                    if (resp.getStatusLine().getStatusCode() == 200) {
+                        String responseString = EntityUtils.toString(resp.getEntity(), "UTF-8");
+                        if (responseString != null) {
+                            Gson gson = new Gson();
+                            Type type = new TypeToken<Map<String, String>>() {}.getType();
+                            Map<String, Object> map = gson.fromJson(response, type);
+                            execution.setVariable("vnf-id",map.get("vnf-id"));
+                        }
+                    }
                 }
                 /*
                 * Isaac added to parse the reponse of the service call and pick the vnf-id when the resource created is
