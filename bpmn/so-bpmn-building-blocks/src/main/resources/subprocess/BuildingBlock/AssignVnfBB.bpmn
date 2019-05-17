@@ -24,7 +24,7 @@
     <bpmn:sequenceFlow id="SequenceFlow_1nle8kc" sourceRef="Task_createInstanceGroups" targetRef="ExclusiveGateway_02tchpp" />
     <bpmn:sequenceFlow id="SequenceFlow_11jum90" name="no" sourceRef="ExclusiveGateway_02tchpp" targetRef="ExclusiveGateway_1blf52g" />
     <bpmn:sequenceFlow id="SequenceFlow_1uiok7v" name="yes" sourceRef="ExclusiveGateway_02tchpp" targetRef="Task_callHoming">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${execution.getVariable("homing")}]]></bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${execution.getVariable("homing") == true}]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_0v8d14a" sourceRef="Task_callHoming" targetRef="ExclusiveGateway_1blf52g" />
     <bpmn:callActivity id="Task_callHoming" name="Call Homing" calledElement="HomingBB">
