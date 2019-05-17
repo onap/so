@@ -21,6 +21,8 @@ INSERT INTO temp_network_heat_template_lookup(NETWORK_RESOURCE_MODEL_NAME, HEAT_
 ('TENANT_OAM_NETWORK', 'ff874603-4222-11e7-9252-005056850d2e', '3.0', NULL);
 INSERT INTO temp_network_heat_template_lookup(NETWORK_RESOURCE_MODEL_NAME, HEAT_TEMPLATE_ARTIFACT_UUID, AIC_VERSION_MIN, AIC_VERSION_MAX) VALUES
 ('SRIOV_PROVIDER_NETWORK', 'ff874603-4222-11e7-9252-005056850d2e', '3.0', NULL);
+INSERT INTO temp_network_heat_template_lookup(NETWORK_RESOURCE_MODEL_NAME, HEAT_TEMPLATE_ARTIFACT_UUID, AIC_VERSION_MIN, AIC_VERSION_MAX) VALUES
+('Generic NeutronNet', 'ff874603-4222-11e7-9252-005056850d2e', '3.0', NULL);
 
 insert into vnf_resource(orchestration_mode, description, creation_timestamp, model_uuid, aic_version_min, aic_version_max, model_invariant_uuid, model_version, model_name, tosca_node_type, heat_template_artifact_uuid) values
 ('HEAT', '1607 vSAMP10a - inherent network', '2017-04-14 21:46:28', 'ff2ae348-214a-11e7-93ae-92361f002671', '', '', '2fff5b20-214b-11e7-93ae-92361f002671', '1.0', 'vSAMP10a', 'VF', null);
