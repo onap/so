@@ -48,6 +48,7 @@ import org.onap.so.adapters.catalogdb.catalogrest.QueryServiceVnfs;
 import org.onap.so.adapters.catalogdb.catalogrest.QueryVfModule;
 import org.onap.so.db.catalog.beans.AllottedResource;
 import org.onap.so.db.catalog.beans.AllottedResourceCustomization;
+import org.onap.so.db.catalog.beans.InstanceGroup;
 import org.onap.so.db.catalog.beans.NetworkResource;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.Recipe;
@@ -55,11 +56,13 @@ import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ToscaCsar;
 import org.onap.so.db.catalog.beans.VfModule;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
+import org.onap.so.db.catalog.beans.VnfRecipe;
 import org.onap.so.db.catalog.beans.VnfResource;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.data.repository.AllottedResourceCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.AllottedResourceRepository;
 import org.onap.so.db.catalog.data.repository.ArRecipeRepository;
+import org.onap.so.db.catalog.data.repository.InstanceGroupRepository;
 import org.onap.so.db.catalog.data.repository.NetworkRecipeRepository;
 import org.onap.so.db.catalog.data.repository.NetworkResourceCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.NetworkResourceRepository;
@@ -119,6 +122,9 @@ public class CatalogDbAdapterRest {
 
     @Autowired
     private AllottedResourceRepository arResourceRepo;
+
+    @Autowired
+    private InstanceGroupRepository instanceGroupRepository;
 
     private static final String NO_MATCHING_PARAMETERS = "no matching parameters";
 
@@ -536,6 +542,16 @@ public class CatalogDbAdapterRest {
                                 arResource.getModelVersion());
                     }
                 }
+
+                if (null == recipe) {
+                    InstanceGroup grpResource = instanceGroupRepository.findByModelUUID(rmUuid);
+                    if (grpResource != null) {
+                        recipe = vnfRecipeRepo.findFirstVnfRecipeByNfRoleAndActionAndVersionStr(
+                                grpResource.getModelName(), action, grpResource.getModelVersion());
+                    }
+
+                }
+
                 if (recipe != null) {
                     QueryResourceRecipe resourceRecipe = new QueryResourceRecipe(recipe);
                     entity = resourceRecipe.JSON2(false, false);
