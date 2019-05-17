@@ -90,7 +90,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
     }
 
     // this method will convert resource list to instance_resource_list
-    void prepareInstanceResourceList(DelegateExecution execution) {
+    public void prepareInstanceResourceList(DelegateExecution execution) {
 
         String uuiRequest = execution.getVariable("uuiRequest")
         List<Resource> sequencedResourceList = execution.getVariable("sequencedResourceList")
@@ -251,10 +251,11 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         def currentIndex = execution.getVariable("currentResourceIndex")
         List<Resource> sequencedResourceList = execution.getVariable("instanceResourceList")
         Resource currentResource = sequencedResourceList.get(currentIndex)
-        resourceInput.setResourceModelInfo(currentResource.getModelInfo());
+        resourceInput.setResourceModelInfo(currentResource.getModelInfo())
+        resourceInput.getResourceModelInfo().setModelType(currentResource.getResourceType().toString())
         ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
-        resourceInput.setServiceModelInfo(serviceDecomposition.getModelInfo());
-        def String resourceCustomizationUuid = currentResource.getModelInfo().getModelCustomizationUuid();
+        resourceInput.setServiceModelInfo(serviceDecomposition.getModelInfo())
+        def String resourceCustomizationUuid = currentResource.getModelInfo().getModelCustomizationUuid()
 
         String incomingRequest = execution.getVariable("uuiRequest")
         //set the requestInputs from tempalte  To Be Done
