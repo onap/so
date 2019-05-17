@@ -50,23 +50,32 @@ public class AuditStackService {
     private AuditDeleteStackService auditDeleteStack;
 
     @PostConstruct
-    public void auditAddAAIInventory() {
-        String auth = "";
-        try {
-            auth = CryptoUtils.decrypt(env.getRequiredProperty("mso.auth"), env.getRequiredProperty("mso.msoKey"));
-        } catch (IllegalStateException | GeneralSecurityException e) {
-            logger.error("Error Decrypting Password", e);
+    public void auditAddAAIInventory() throws Exception {
+        for (int i = 0; i < getMaxClients(); i++) {
+            ExternalTaskClient client = createExternalTaskClient();
+            client.subscribe("InventoryAddAudit").lockDuration(60000).handler(auditCreateStack::executeExternalTask)
+                    .open();
         }
-        ClientRequestInterceptor interceptor =
-                new BasicAuthProvider(env.getRequiredProperty("mso.config.cadi.aafId"), auth);
-        ExternalTaskClient client = ExternalTaskClient.create()
-                .baseUrl(env.getRequiredProperty("mso.workflow.endpoint")).maxTasks(1).addInterceptor(interceptor)
-                .asyncResponseTimeout(120000).backoffStrategy(new ExponentialBackoffStrategy(0, 0, 0)).build();
-        client.subscribe("InventoryAddAudit").lockDuration(60000).handler(auditCreateStack::executeExternalTask).open();
     }
 
     @PostConstruct
-    public void auditDeleteAAIInventory() {
+    public void auditDeleteAAIInventory() throws Exception {
+        for (int i = 0; i < getMaxClients(); i++) {
+            ExternalTaskClient client = createExternalTaskClient();
+            client.subscribe("InventoryDeleteAudit").lockDuration(60000).handler(auditDeleteStack::executeExternalTask)
+                    .open();
+        }
+    }
+
+    protected ExternalTaskClient createExternalTaskClient() throws Exception {
+        ClientRequestInterceptor interceptor = createClientRequestInterceptor();
+        ExternalTaskClient client = ExternalTaskClient.create()
+                .baseUrl(env.getRequiredProperty("mso.workflow.endpoint")).maxTasks(1).addInterceptor(interceptor)
+                .asyncResponseTimeout(120000).backoffStrategy(new ExponentialBackoffStrategy(10000, 2, 120000)).build();
+        return client;
+    }
+
+    protected ClientRequestInterceptor createClientRequestInterceptor() {
         String auth = "";
         try {
             auth = CryptoUtils.decrypt(env.getRequiredProperty("mso.auth"), env.getRequiredProperty("mso.msoKey"));
@@ -75,11 +84,12 @@ public class AuditStackService {
         }
         ClientRequestInterceptor interceptor =
                 new BasicAuthProvider(env.getRequiredProperty("mso.config.cadi.aafId"), auth);
-        ExternalTaskClient client = ExternalTaskClient.create()
-                .baseUrl(env.getRequiredProperty("mso.workflow.endpoint")).maxTasks(1).addInterceptor(interceptor)
-                .asyncResponseTimeout(120000).backoffStrategy(new ExponentialBackoffStrategy(0, 0, 0)).build();
-        client.subscribe("InventoryDeleteAudit").lockDuration(60000).handler(auditDeleteStack::executeExternalTask)
-                .open();
+        return interceptor;
     }
+
+    protected int getMaxClients() {
+        return Integer.parseInt(env.getProperty("workflow.topics.maxClients", "10"));
+    }
+
 
 }
