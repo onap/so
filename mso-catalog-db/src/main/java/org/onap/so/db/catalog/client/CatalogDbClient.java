@@ -144,9 +144,7 @@ public class CatalogDbClient {
     private static final String CLOUD_VERSION = "cloudVersion";
     private static final String HOMING_INSTANCE = "/homingInstance";
     private static final String ARTIFACT_UUID = "artifactUUID";
-
     private static final String TARGET_ENTITY = "SO:CatalogDB";
-    private static final String ASTERISK = "*";
 
     private String findExternalToInternalServiceByServiceName = "/findByServiceName";
     private String findServiceByModelName = "/findOneByModelName";
@@ -186,7 +184,6 @@ public class CatalogDbClient {
 
     private static final String findRainyDayHandler = "/findRainyDayHandler";
     private String findByClliAndCloudVersion = "/findByClliAndCloudVersion";
-    private String findServiceByServiceInstanceId = "/findServiceByServiceInstanceId";
     private String findPnfResourceCustomizationByModelUuid = "/findPnfResourceCustomizationByModelUuid";
     private String findWorkflowByArtifactUUID = "/findByArtifactUUID";
     private String findWorkflowByModelUUID = "/findWorkflowByModelUUID";
@@ -202,7 +199,6 @@ public class CatalogDbClient {
     private String cloudifyManagerURI;
     private String cloudSiteURI;
     private String homingInstanceURI;
-    private String cvnfcResourceCustomizationURI;
     private String pnfResourceURI;
     private String pnfResourceCustomizationURI;
     private String workflowURI;
@@ -620,8 +616,7 @@ public class CatalogDbClient {
         return this.getSingleResource(northBoundRequestClient,
                 getUri(UriBuilder.fromUri(findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwnerAndServiceType)
                         .queryParam(ACTION, requestAction).queryParam(REQUEST_SCOPE, resourceName)
-                        .queryParam(IS_ALACARTE, aLaCarte).queryParam(CLOUD_OWNER, cloudOwner)
-                        .queryParam(SERVICE_TYPE, ASTERISK).build().toString()));
+                        .queryParam(IS_ALACARTE, aLaCarte).queryParam(CLOUD_OWNER, cloudOwner).build().toString()));
     }
 
     public NorthBoundRequest getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwnerAndServiceType(
