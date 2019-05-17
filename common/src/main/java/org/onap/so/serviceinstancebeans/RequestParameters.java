@@ -20,11 +20,11 @@
 
 package org.onap.so.serviceinstancebeans;
 
-import java.beans.Transient;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -52,8 +52,20 @@ public class RequestParameters implements Serializable {
     private Boolean cascadeDelete;
     @JsonProperty("testApi")
     private String testApi; // usePreload would always be true for Update
+    @JsonProperty("retainAssignments")
+    private Boolean retainAssignments; // usePreload would always be true for Update
     @JsonProperty("rebuildVolumeGroups")
     private Boolean rebuildVolumeGroups;
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("subscriptionServiceType", subscriptionServiceType)
+                .append("userParams", userParams).append("aLaCarte", aLaCarte).append("payload", payload)
+                .append("usePreload", usePreload).append("autoBuildVfModules", autoBuildVfModules)
+                .append("cascadeDelete", cascadeDelete).append("testApi", testApi)
+                .append("retainAssignments", retainAssignments).append("rebuildVolumeGroups", rebuildVolumeGroups)
+                .toString();
+    }
 
     public String getSubscriptionServiceType() {
         return subscriptionServiceType;
@@ -150,11 +162,13 @@ public class RequestParameters implements Serializable {
         this.rebuildVolumeGroups = rebuildVolumeGroups;
     }
 
-    @Override
-    public String toString() {
-        return "RequestParameters [subscriptionServiceType=" + subscriptionServiceType + ", userParams=" + userParams
-                + ", aLaCarte=" + aLaCarte + ", testApi= " + testApi + ", autoBuildVfModules=" + autoBuildVfModules
-                + ", usePreload=" + usePreload + ", rebuildVolumeGroups=" + rebuildVolumeGroups + ", payload=" + payload
-                + "]";
+    public Boolean getRetainAssignments() {
+        return retainAssignments;
     }
+
+    public void setRetainAssignments(Boolean retainAssignments) {
+        this.retainAssignments = retainAssignments;
+    }
+
+
 }

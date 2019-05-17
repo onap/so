@@ -23,12 +23,24 @@
 
 package org.onap.so.apihandlerinfra;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import javax.transaction.Transactional;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.onap.so.apihandler.common.CommonConstants;
@@ -74,24 +86,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-import javax.transaction.Transactional;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 @Component
 @Path("/onap/so/infra/serviceInstantiation")
@@ -766,6 +766,7 @@ public class ServiceInstances {
         String apiVersion = version.substring(1);
 
         sir = requestHandlerUtils.convertJsonToServiceInstanceRequest(requestJSON, action, requestId, requestUri);
+        action = handleReplaceInstance(action, sir);
         String requestScope = requestHandlerUtils.deriveRequestScope(action, sir, requestUri);
         InfraActiveRequests currentActiveReq =
                 msoRequest.createRequestObject(sir, action, requestId, Status.IN_PROGRESS, requestJSON, requestScope);
@@ -937,6 +938,20 @@ public class ServiceInstances {
         }
         return requestHandlerUtils.postBPELRequest(currentActiveReq, requestClientParameter,
                 recipeLookupResult.getOrchestrationURI(), requestScope);
+    }
+
+    /**
+     * @param action
+     * @param sir
+     * @return
+     */
+    protected Actions handleReplaceInstance(Actions action, ServiceInstancesRequest sir) {
+        if (action != null && action.equals(Action.replaceInstance)
+                && sir.getRequestDetails().getRequestParameters().getRetainAssignments() != null
+                && sir.getRequestDetails().getRequestParameters().getRetainAssignments()) {
+            action = Action.replaceInstanceRetainAssignments;
+        }
+        return action;
     }
 
     public Response deleteInstanceGroups(Actions action, HashMap<String, String> instanceIdMap, String version,
