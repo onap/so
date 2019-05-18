@@ -28,6 +28,10 @@ import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONArray
 import org.json.JSONObject
+import org.onap.aai.domain.yang.RelatedToProperty
+import org.onap.aai.domain.yang.Relationship
+import org.onap.aai.domain.yang.RelationshipData
+import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
@@ -38,6 +42,11 @@ import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.AAIResourcesClient
+import org.onap.so.client.aai.entities.AAIResultWrapper
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.onap.so.utils.TargetEntity
@@ -46,6 +55,7 @@ import org.w3c.dom.Document
 import org.w3c.dom.Node
 import org.xml.sax.InputSource
 
+import javax.ws.rs.NotFoundException
 import javax.ws.rs.core.Response
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
@@ -113,7 +123,7 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
             }
 
-            String sdncCallbackUrl = UrnPropertiesReader.getVariable('URN_mso_workflow_sdncadapter_callback', execution)
+            String sdncCallbackUrl = UrnPropertiesReader.getVariable('mso.workflow.sdncadapter.callback', execution)
             if (isBlank(sdncCallbackUrl)) {
                 msg = "URN_mso_workflow_sdncadapter_callback is null"
                 logger.info(msg)
@@ -161,80 +171,60 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
         String msg = ""
 
         try {
-            String serviceInstanceId = execution.getVariable("serviceInstanceId")
-            boolean foundInAAI = execution.getVariable("GENGS_FoundIndicator")
-            String serviceType = ""
 
-            if(foundInAAI){
-                logger.debug("Found Service-instance in AAI")
+            String serviceInstanceId = execution.getVariable('serviceInstanceId')
+            String globalSubscriberId = execution.getVariable('globalSubscriberId')
+            String serviceType = execution.getVariable('serviceType')
 
-                String siData = execution.getVariable("GENGS_service")
-                logger.debug("SI Data")
-                if (isBlank(siData))
-                {
-                    msg = "Could not retrive ServiceInstance data from AAI to delete id:" + serviceInstanceId
-                    logger.error(msg)
-                    exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
-                }
-                else
-                {
-                    InputSource source = new InputSource(new StringReader(siData));
-                    DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-                    DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
-                    Document serviceXml = docBuilder.parse(source)
-                    serviceXml.getDocumentElement().normalize()
-                    // get model invariant id
-                    // Get Template uuid and version
-                    if (utils.nodeExists(siData, "model-invariant-id") && utils.nodeExists(siData, "model-version-id") ) {
-                        logger.debug("SI Data model-invariant-id and model-version-id exist")
-                        def modelInvariantId  = serviceXml.getElementsByTagName("model-invariant-id").item(0).getTextContent()
-                        def modelVersionId  = serviceXml.getElementsByTagName("model-version-id").item(0).getTextContent()
 
-                        // Set Original Template info
-                        execution.setVariable("model-invariant-id-original", modelInvariantId)
-                        execution.setVariable("model-version-id-original", modelVersionId)
-                    }
+            AAIResourcesClient resourceClient = new AAIResourcesClient()
+            AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId, serviceType, serviceInstanceId)
 
-                    logger.debug("SI Data" + siData)
-                    //Confirm there are no related service instances (vnf/network or volume)
-                    if (utils.nodeExists(siData, "relationship-list")) {
-                        logger.debug("SI Data relationship-list exists")
-                        JSONArray jArray = new JSONArray()
-
-                        XmlParser xmlParser = new XmlParser()
-                        Node root = xmlParser.parseText(siData)
-                        def relation_list = utils.getChildNode(root, 'relationship-list')
-                        def relationships = utils.getIdenticalChildren(relation_list, 'relationship')
-
-                        for (def relation: relationships) {
-                        	def jObj = getRelationShipData(relation, isDebugEnabled)
-                        	jArray.put(jObj)
-                        }
-
-                        execution.setVariable("serviceRelationShip", jArray.toString())
-                        execution.setVariable("serviceRelationShip", jArray.toString())
-                    }
-                }
-            }else{
-                boolean succInAAI = execution.getVariable("GENGS_SuccessIndicator")
-                if(!succInAAI){
-                    logger.debug("Error getting Service-instance from AAI :" + serviceInstanceId)
-                    WorkflowException workflowException = execution.getVariable("WorkflowException")
-                    if(workflowException != null){
-                        logger.error("workflowException: " + workflowException)
-                        exceptionUtil.buildAndThrowWorkflowException(execution, workflowException.getErrorCode(), workflowException.getErrorMessage())
-                    }
-                    else {
-                        msg = "Failure in postProcessAAIGET GENGS_SuccessIndicator:" + succInAAI
-                        logger.error(msg)
-                        exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
-                    }
-                }
-
-                logger.debug("Service-instance NOT found in AAI. Silent Success")
+            if (!resourceClient.exists(serviceInstanceUri)) {
+                exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service Instance was not found in aai")
             }
-        }catch (BpmnError e) {
+
+            AAIResultWrapper wrapper = resourceClient.get(serviceInstanceUri, NotFoundException.class)
+
+            Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
+
+            // found in AAI
+            if (si.isPresent() && StringUtils.isNotEmpty(si.get().getServiceInstanceName())) {
+                logger.debug("Found Service-instance in AAI")
+                execution.setVariable("serviceInstanceName", si.get().getServiceInstanceName())
+                // get model invariant id
+                // Get Template uuid and version
+                if ((null != si.get().getModelInvariantId()) && (null != si.get().getModelVersionId())) {
+                    logger.debug("SI Data model-invariant-id and model-version-id exist")
+
+                    // Set Original Template info
+                    execution.setVariable("model-invariant-id-original", si.get().getModelInvariantId())
+                    execution.setVariable("model-version-id-original", si.get().getModelVersionId())
+                }
+
+                if ((null != si.get().getRelationshipList()) && (null != si.get().getRelationshipList().getRelationship())) {
+                    logger.debug("SI Data relationship-list exists")
+                    List<Relationship> relationshipList = si.get().getRelationshipList().getRelationship()
+                    JSONArray jArray = new JSONArray()
+                    for (Relationship relationship : relationshipList) {
+                        def jObj = getRelationShipData(relationship)
+                        jArray.put(jObj)
+                    }
+
+                    execution.setVariable("serviceRelationShip", jArray.toString())
+                }
+
+            } else {
+
+                msg = "Service-instance: " + serviceInstanceId + " NOT found in AAI."
+                logger.error(msg)
+                exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
+            }
+        } catch (BpmnError e) {
             throw e
+        } catch (NotFoundException e) {
+            logger.debug("Service Instance does not exist AAI")
+            exceptionUtil.buildAndThrowWorkflowException(execution, 404, "Service Instance was not found in aai")
         } catch (Exception ex) {
             msg = "Exception in DoDeleteE2EServiceInstance.postProcessAAIGET. " + ex.getMessage()
             logger.debug(msg)
@@ -243,50 +233,50 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
         logger.debug(" *** Exit postProcessAAIGET *** ")
     }
 
-	private JSONObject getRelationShipData(node, isDebugEnabled){
-		JSONObject jObj = new JSONObject()
+    private JSONObject getRelationShipData(Relationship relationship) {
+        JSONObject jObj = new JSONObject()
 
-		def relation  = utils.nodeToString(node)
-		def rt  = utils.getNodeText(relation, "related-to")
 
-		def rl  = utils.getNodeText(relation, "related-link")
-		logger.debug("ServiceInstance Related NS/Configuration :" + rl)
+        def rt = relationship.getRelatedTo()
 
-		def rl_datas = utils.getIdenticalChildren(node, "relationship-data")
-		for(def rl_data : rl_datas) {
-			def eKey =  utils.getChildNodeText(rl_data, "relationship-key")
-			def eValue = utils.getChildNodeText(rl_data, "relationship-value")
+        def rl = relationship.getRelatedLink()
+        logger.debug("ServiceInstance Related NS/Configuration :" + rl)
 
-			if ((rt == "service-instance" && eKey.equals("service-instance.service-instance-id"))
-			//for overlay/underlay
-			|| (rt == "configuration" && eKey.equals("configuration.configuration-id")
-			)){
-				jObj.put("resourceInstanceId", eValue)
-			}
-			// for sp-partner and others
-			else if(eKey.endsWith("-id")){
-				jObj.put("resourceInstanceId", eValue)
-				String resourceName = rt + eValue;
-				jObj.put("resourceType", resourceName)
-			}
+        List<RelationshipData> rl_datas = relationship.getRelationshipData()
+        for (RelationshipData rl_data : rl_datas) {
+            def eKey = rl_data.getRelationshipKey()
+            def eValue = rl_data.getRelationshipValue()
 
-			jObj.put("resourceLinkUrl", rl)
-		}
+            if ((rt.equals("service-instance") && eKey.equals("service-instance.service-instance-id"))
+                    //for overlay/underlay
+                    || (rt.equals("configuration") && eKey.equals("configuration.configuration-id")
+            )) {
+                jObj.put("resourceInstanceId", eValue)
+            }
+            // for sp-partner and others
+            else if (eKey.endsWith("-id")) {
+                jObj.put("resourceInstanceId", eValue)
+                String resourceName = rt + eValue;
+                jObj.put("resourceType", resourceName)
+            }
 
-		def rl_props = utils.getIdenticalChildren(node, "related-to-property")
-		for(def rl_prop : rl_props) {
-			def eKey =  utils.getChildNodeText(rl_prop, "property-key")
-			def eValue = utils.getChildNodeText(rl_prop, "property-value")
-			if((rt == "service-instance" && eKey.equals("service-instance.service-instance-name"))
-			//for overlay/underlay
-			|| (rt == "configuration" && eKey.equals("configuration.configuration-type"))){
-				jObj.put("resourceType", eValue)
-			}
-		}
+            jObj.put("resourceLinkUrl", rl)
+        }
 
-		logger.debug("Relationship related to Resource:" + jObj.toString())
-		return jObj
-	}
+        List<RelatedToProperty> rl_props = relationship.getRelatedToProperty()
+        for (RelatedToProperty rl_prop : rl_props) {
+            def eKey = rl_prop.getPropertyKey()
+            def eValue = rl_prop.getPropertyValue()
+            if ((rt.equals("service-instance") && eKey.equals("service-instance.service-instance-name"))
+                    //for overlay/underlay
+                    || (rt.equals("configuration") && eKey.equals("configuration.configuration-type"))) {
+                jObj.put("resourceType", eValue)
+            }
+        }
+
+        logger.debug("Relationship related to Resource:" + jObj.toString())
+        return jObj
+    }
 
    public void getCurrentNS(DelegateExecution execution){
        logger.info( "======== Start getCurrentNS Process ======== ")
@@ -392,7 +382,7 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
 	}
 
     public void postDecomposeService(DelegateExecution execution) {
-        logger.debug(" ***** Inside processDecomposition() of  delete generic e2e service flow ***** ")
+        logger.debug(" ***** Inside postDecomposeService() of  delete generic e2e service flow ***** ")
         try {
             ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
 
@@ -439,7 +429,7 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
 
             // only delete real existing resources
             execution.setVariable("deleteResourceList", deleteRealResourceList)
-            
+
             boolean isDeleteResourceListValid = false
             if(deleteRealResourceList.size() > 0) {
                 isDeleteResourceListValid = true
@@ -452,7 +442,7 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
             logger.error(exceptionMessage)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
         }
-        logger.debug( " ***** exit processDecomposition() of  delete generic e2e service flow ***** ")
+        logger.debug( " ***** exit postDecomposeService() of  delete generic e2e service flow ***** ")
     }
 
     public void preInitResourcesOperStatus(DelegateExecution execution){
@@ -506,7 +496,7 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
         }
         logger.debug("======== COMPLETED preInitResourcesOperStatus Process ======== ")
     }
-    
+
     public void prepareUpdateServiceOperationStatus(DelegateExecution execution){
         logger.debug(" ======== STARTED prepareUpdateServiceOperationStatus Process ======== ")
         try{
@@ -517,7 +507,7 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
             String progress = execution.getVariable("progress")
             String reason = ""
             String operationContent = execution.getVariable("operationContent")
-            
+
             serviceId = UriUtils.encode(serviceId,"UTF-8")
 
             def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)
@@ -559,5 +549,6 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
      public void postConfigRequest(execution){
          //to do
      }
+
 
 }
