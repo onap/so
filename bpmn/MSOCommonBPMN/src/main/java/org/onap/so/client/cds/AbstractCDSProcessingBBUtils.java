@@ -34,6 +34,7 @@ import org.onap.ccsdk.cds.controllerblueprints.processing.api.ExecutionServiceOu
 import org.onap.so.client.PreconditionFailedException;
 import org.onap.so.client.RestPropertiesLoader;
 import org.onap.so.client.cds.beans.AbstractCDSPropertiesBean;
+import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +58,11 @@ public class AbstractCDSProcessingBBUtils implements CDSProcessingListener {
     private static final String SUCCESS = "Success";
     private static final String FAILED = "Failed";
     private static final String PROCESSING = "Processing";
+
+    /**
+     * indicate exception thrown.
+     */
+    private static final String EXCEPTION = "Exception";
 
     private final AtomicReference<String> cdsResponse = new AtomicReference<>();
 
@@ -132,7 +138,15 @@ public class AbstractCDSProcessingBBUtils implements CDSProcessingListener {
             }
 
             if (cdsResponse != null) {
-                execution.setVariable("CDSStatus", cdsResponse.get());
+                String cdsResponseStatus = cdsResponse.get();
+                execution.setVariable("CDSStatus", cdsResponseStatus);
+
+                /**
+                 * throw CDS failed exception.
+                 */
+                if (cdsResponseStatus != SUCCESS) {
+                    throw new BadResponseException("CDS call failed with status: " + cdsResponseStatus);
+                }
             }
 
         } catch (Exception ex) {
@@ -177,6 +191,7 @@ public class AbstractCDSProcessingBBUtils implements CDSProcessingListener {
     public void onError(Throwable t) {
         Status status = Status.fromThrowable(t);
         logger.error("Failed processing blueprint {}", status, t);
+        cdsResponse.set(EXCEPTION);
     }
 
 }

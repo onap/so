@@ -59,12 +59,15 @@ public class InformDmaapClient implements JavaDelegate {
     private HashMap<String, String> createUpdateInfo(DelegateExecution execution) {
         HashMap<String, String> map = new HashMap();
 
-        ResourceInput resourceInputObj = ResourceRequestBuilder
+        if (execution.hasVariable("resourceInput") && execution.getVariable("resourceInput") != null) {
 
-                .getJsonObject((String) execution.getVariable("resourceInput"), ResourceInput.class);
-        map.put("globalSubscriberID", resourceInputObj.getGlobalSubscriberId());
-        map.put("serviceType", resourceInputObj.getServiceType());
-        map.put("serviceInstanceId", resourceInputObj.getServiceInstanceId());
+            ResourceInput resourceInputObj = ResourceRequestBuilder
+                    .getJsonObject((String) execution.getVariable("resourceInput"), ResourceInput.class);
+            map.put("globalSubscriberID", resourceInputObj.getGlobalSubscriberId());
+            map.put("serviceType", resourceInputObj.getServiceType());
+            map.put("serviceInstanceId", resourceInputObj.getServiceInstanceId());
+        }
+
         return map;
     }
 

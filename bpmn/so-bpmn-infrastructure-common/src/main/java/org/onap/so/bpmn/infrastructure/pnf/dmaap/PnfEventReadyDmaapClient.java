@@ -93,11 +93,13 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
         Runnable runnable = runnable = pnfCorrelationIdToThreadMap.remove(pnfCorrelationId);
         synchronized (updateInfoMap) {
             for (int i = updateInfoMap.size() - 1; i >= 0; i--) {
-                if (!updateInfoMap.get(i).containsKey("pnfCorrelationId"))
+                if (!updateInfoMap.get(i).containsKey("pnfCorrelationId")) {
                     continue;
+                }
                 String id = updateInfoMap.get(i).get("pnfCorrelationId");
-                if (id != pnfCorrelationId)
+                if (id != pnfCorrelationId) {
                     continue;
+                }
                 updateInfoMap.remove(i);
             }
         }
@@ -133,29 +135,36 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
             try {
                 logger.debug("dmaap listener starts listening pnf ready dmaap topic");
                 HttpResponse response = httpClient.execute(getRequest);
-                List<String> idList = getPnfCorrelationIdListFromResponse(response);
+
+                /**
+                 * Make sure reading the http response once to avoid stream closed exception.
+                 */
+                int statusCode = response.getStatusLine().getStatusCode();
+                String entity = EntityUtils.toString(response.getEntity(), "UTF-8");
+                List<String> idList = getPnfCorrelationIdListFromResponse(statusCode, entity);
 
                 // idList is never null
                 if (!idList.isEmpty()) {
                     // send only body of response
-                    registerClientResponse(idList.get(0), EntityUtils.toString(response.getEntity(), "UTF-8"));
+                    registerClientResponse(idList.get(0), entity);
                 }
 
                 if (idList != null) {
                     idList.forEach(this::informAboutPnfReadyIfPnfCorrelationIdFound);
                 }
             } catch (IOException e) {
+                e.printStackTrace();
                 logger.error("Exception caught during sending rest request to dmaap for listening event topic", e);
             } finally {
                 getRequest.reset();
             }
         }
 
-        private List<String> getPnfCorrelationIdListFromResponse(HttpResponse response) throws IOException {
-            if (response.getStatusLine().getStatusCode() == 200) {
-                String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
-                if (responseString != null) {
-                    return JsonUtilForPnfCorrelationId.parseJsonToGelAllPnfCorrelationId(responseString);
+        private List<String> getPnfCorrelationIdListFromResponse(final int statusCode, final String entity)
+                throws IOException {
+            if (statusCode == 200) {
+                if (entity != null) {
+                    return JsonUtilForPnfCorrelationId.parseJsonToGelAllPnfCorrelationId(entity);
                 }
             }
             return Collections.emptyList();
@@ -176,23 +185,29 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
             String serId = null;
             synchronized (updateInfoMap) {
                 for (HashMap<String, String> map : updateInfoMap) {
-                    if (!map.containsKey("pnfCorrelationId"))
+                    if (!map.containsKey("pnfCorrelationId")) {
                         continue;
-                    if (pnfCorrelationId != map.get("pnfCorrelationId"))
+                    }
+                    if (pnfCorrelationId != map.get("pnfCorrelationId")) {
                         continue;
-                    if (!map.containsKey("globalSubscriberID"))
+                    }
+                    if (!map.containsKey("globalSubscriberID")) {
                         continue;
-                    if (!map.containsKey("serviceType"))
+                    }
+                    if (!map.containsKey("serviceType")) {
                         continue;
-                    if (!map.containsKey("serviceInstanceId"))
+                    }
+                    if (!map.containsKey("serviceInstanceId")) {
                         continue;
+                    }
                     customerId = map.get("pnfCorrelationId");
                     serviceType = map.get("serviceType");
                     serId = map.get("serviceInstanceId");
                 }
             }
-            if (customerId == null || serviceType == null || serId == null)
+            if (customerId == null || serviceType == null || serId == null) {
                 return;
+            }
             AAIResourcesClient client = new AAIResourcesClient();
             AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE_METADATA, customerId,
                     serviceType, serId);
