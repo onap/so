@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -227,11 +227,16 @@ public class WorkflowActionBBTasks {
             final String action = (String) execution.getVariable(G_ACTION);
             final boolean aLaCarte = (boolean) execution.getVariable(G_ALACARTE);
             final String resourceName = (String) execution.getVariable("resourceName");
+            String statusMessage = (String) execution.getVariable("StatusMessage");
             String macroAction = "";
-            if (aLaCarte) {
-                macroAction = "ALaCarte-" + resourceName + "-" + action + " request was executed correctly.";
+            if (statusMessage == null) {
+                if (aLaCarte) {
+                    macroAction = "ALaCarte-" + resourceName + "-" + action + " request was executed correctly.";
+                } else {
+                    macroAction = "Macro-" + resourceName + "-" + action + " request was executed correctly.";
+                }
             } else {
-                macroAction = "Macro-" + resourceName + "-" + action + " request was executed correctly.";
+                macroAction = statusMessage;
             }
             execution.setVariable("finalStatusMessage", macroAction);
             Timestamp endTime = new Timestamp(System.currentTimeMillis());

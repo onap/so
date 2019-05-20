@@ -37,6 +37,7 @@ public class DeleteVfModuleBBTest extends BaseBPMNTest {
     @Before
     public void before() {
         variables.put("auditInventoryNeeded", true);
+        variables.put("auditIsSuccessful", true);
     }
 
     @Test
