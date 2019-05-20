@@ -20,6 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
+import java.sql.Timestamp;
 import java.util.Optional;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -53,6 +54,10 @@ public class WorkflowActionBBFailure {
                 errorMsg = "Failed to determine error message";
             }
             request.setStatusMessage(errorMsg);
+            request.setProgress(Long.valueOf(100));
+            request.setRequestStatus("FAILED");
+            request.setLastModifiedBy("CamundaBPMN");
+            request.setEndTime(new Timestamp(System.currentTimeMillis()));
             requestDbclient.updateInfraActiveRequests(request);
         } catch (Exception e) {
             logger.error(
@@ -113,6 +118,7 @@ public class WorkflowActionBBFailure {
             request.setProgress(Long.valueOf(100));
             request.setRequestStatus("FAILED");
             request.setLastModifiedBy("CamundaBPMN");
+            request.setEndTime(new Timestamp(System.currentTimeMillis()));
             requestDbclient.updateInfraActiveRequests(request);
         } catch (Exception e) {
             workflowAction.buildAndThrowException(execution, "Error Updating Request Database", e);

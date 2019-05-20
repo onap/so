@@ -152,7 +152,7 @@ public class ExceptionBuilder {
                 .getProcessDefinition(execution.getProcessDefinitionId()).getKey();
     }
 
-    public void processAuditException(DelegateExecutionImpl execution) {
+    public void processAuditException(DelegateExecutionImpl execution, boolean flowShouldContinue) {
         logger.info("Building a WorkflowException for Subflow");
 
         StringBuilder errorMessage = new StringBuilder();
@@ -203,11 +203,15 @@ public class ExceptionBuilder {
         errorMessage.append(
                 "Recommendation - Wait for nightly RO Audit to run and fix the data issue and resume vf-module creation in VID. If problem persists then report problem to AIC/RO Ops.");
 
-        WorkflowException exception = new WorkflowException(processKey, 400, errorMessage.toString());
-        execution.setVariable("WorkflowException", exception);
-        execution.setVariable("WorkflowExceptionErrorMessage", errorMessage);
-        logger.info("Outgoing WorkflowException is {}", exception);
-        logger.info("Throwing MSOWorkflowException");
-        throw new BpmnError("AAIInventoryFailure");
+        if (flowShouldContinue) {
+            execution.setVariable("StatusMessage", errorMessage.toString());
+        } else {
+            WorkflowException exception = new WorkflowException(processKey, 400, errorMessage.toString());
+            execution.setVariable("WorkflowException", exception);
+            execution.setVariable("WorkflowExceptionErrorMessage", errorMessage.toString());
+            logger.info("Outgoing WorkflowException is {}", exception);
+            logger.info("Throwing MSOWorkflowException");
+            throw new BpmnError("AAIInventoryFailure");
+        }
     }
 }

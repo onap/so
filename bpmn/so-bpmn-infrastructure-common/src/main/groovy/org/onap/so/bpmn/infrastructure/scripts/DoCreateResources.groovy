@@ -90,7 +90,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
     }
 
     // this method will convert resource list to instance_resource_list
-    void prepareInstanceResourceList(DelegateExecution execution) {
+    public void prepareInstanceResourceList(DelegateExecution execution) {
 
         String uuiRequest = execution.getVariable("uuiRequest")
         List<Resource> sequencedResourceList = execution.getVariable("sequencedResourceList")
@@ -134,7 +134,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
                         // then we would like to add it twice for processing
                         // e.g.  S{ V1{G1, G2, G1}} --> S{ V1{G1, G1, G2}}
                         if (resource instanceof VnfResource) {
-                            if (resource.getGroups() != null) {
+                            if (resource.getGroupOrder() != null && !StringUtils.isEmpty(resource.getGroupOrder())) {
                                 String[] grpSequence = resource.getGroupOrder().split(",")
                                 for (String grpType in grpSequence) {
                                     for (GroupResource gResource in resource.getGroups()) {
@@ -251,20 +251,19 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         def currentIndex = execution.getVariable("currentResourceIndex")
         List<Resource> sequencedResourceList = execution.getVariable("instanceResourceList")
         Resource currentResource = sequencedResourceList.get(currentIndex)
-        resourceInput.setResourceModelInfo(currentResource.getModelInfo());
+        resourceInput.setResourceModelInfo(currentResource.getModelInfo())
+        resourceInput.getResourceModelInfo().setModelType(currentResource.getResourceType().toString())
         ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
-        resourceInput.setServiceModelInfo(serviceDecomposition.getModelInfo());
-        def String resourceCustomizationUuid = currentResource.getModelInfo().getModelCustomizationUuid();
+        resourceInput.setServiceModelInfo(serviceDecomposition.getModelInfo())
 
         String incomingRequest = execution.getVariable("uuiRequest")
         //set the requestInputs from tempalte  To Be Done
-        String serviceModelUuid = jsonUtil.getJsonValue(incomingRequest,"service.serviceUuid")
-        String serviceParameters = jsonUtil.getJsonValue(incomingRequest, "service.parameters")
+        String uuiServiceParameters = jsonUtil.getJsonValue(incomingRequest, "service.parameters")
         Map<String, Object> currentVFData = (Map) execution.getVariable("currentVFData");
         if (null == currentVFData) {
             currentVFData = new HashMap<>();
         }
-        String resourceParameters = ResourceRequestBuilder.buildResourceRequestParameters(execution, serviceModelUuid, resourceCustomizationUuid, serviceParameters, currentVFData)
+        String resourceParameters = ResourceRequestBuilder.buildResourceRequestParameters(execution, currentResource, uuiServiceParameters, currentVFData)
         resourceInput.setResourceParameters(resourceParameters)
         resourceInput.setRequestsInputs(incomingRequest)
         execution.setVariable("resourceInput", resourceInput.toString())
