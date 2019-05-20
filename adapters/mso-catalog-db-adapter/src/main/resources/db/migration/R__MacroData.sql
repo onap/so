@@ -597,27 +597,27 @@ WHERE TARGET_ACTION = 'CHANGEMODEL';
 INSERT INTO building_block_detail(BUILDING_BLOCK_NAME, RESOURCE_TYPE, TARGET_ACTION)
 VALUES
 ('UnassignVfModuleBB', 'VF_MODULE', 'UNASSIGN'),
-('SniroHoming', 'CUSTOM', 'CUSTOM'),
-('DeactivateAndUnassignVpnBondingLinksBB', 'CUSTOM', 'CUSTOM'),
-('DeactivateNetworkCollectionBB', 'CUSTOM', 'CUSTOM'),
-('AAICheckVnfInMaintBB', 'CUSTOM', 'CUSTOM'),
-('AAISetVnfInMaintBB', 'CUSTOM', 'CUSTOM'),
-('AAIUnsetVnfInMaintBB', 'CUSTOM', 'CUSTOM'),
-('SDNOVnfHealthCheckBB', 'CUSTOM', 'CUSTOM'),
-('VNF-Macro-Replace', 'CUSTOM', 'CUSTOM'),
-('HomingBB', 'CUSTOM', 'CUSTOM');
+('SniroHoming', 'NO_VALIDATE', 'CUSTOM'),
+('DeactivateAndUnassignVpnBondingLinksBB', 'NO_VALIDATE', 'CUSTOM'),
+('DeactivateNetworkCollectionBB', 'NO_VALIDATE', 'CUSTOM'),
+('AAICheckVnfInMaintBB', 'NO_VALIDATE', 'CUSTOM'),
+('AAISetVnfInMaintBB', 'NO_VALIDATE', 'CUSTOM'),
+('AAIUnsetVnfInMaintBB', 'NO_VALIDATE', 'CUSTOM'),
+('SDNOVnfHealthCheckBB', 'NO_VALIDATE', 'CUSTOM'),
+('VNF-Macro-Replace', 'NO_VALIDATE', 'CUSTOM'),
+('HomingBB', 'NO_VALIDATE', 'CUSTOM');
 
 INSERT INTO orchestration_status_state_transition_directive(RESOURCE_TYPE, ORCHESTRATION_STATUS, TARGET_ACTION, FLOW_DIRECTIVE)
 VALUES
-('CUSTOM', 'ACTIVE', 'CUSTOM', 'CONTINUE'),
-('CUSTOM', 'ASSIGNED', 'CUSTOM', 'CONTINUE'),
-('CUSTOM', 'CREATED', 'CUSTOM', 'CONTINUE'),
-('CUSTOM', 'INVENTORIED', 'CUSTOM', 'CONTINUE'),
-('CUSTOM', 'PENDING', 'CUSTOM', 'CONTINUE'),
-('CUSTOM', 'PENDING_ACTIVATION', 'CUSTOM', 'CONTINUE'),
-('CUSTOM', 'PENDING_CREATE', 'CUSTOM', 'CONTINUE'),
-('CUSTOM', 'PENDING_DELETE', 'CUSTOM', 'CONTINUE'),
-('CUSTOM', 'PRECREATED', 'CUSTOM', 'CONTINUE');
+('NO_VALIDATE', 'ACTIVE', 'CUSTOM', 'CONTINUE'),
+('NO_VALIDATE', 'ASSIGNED', 'CUSTOM', 'CONTINUE'),
+('NO_VALIDATE', 'CREATED', 'CUSTOM', 'CONTINUE'),
+('NO_VALIDATE', 'INVENTORIED', 'CUSTOM', 'CONTINUE'),
+('NO_VALIDATE', 'PENDING', 'CUSTOM', 'CONTINUE'),
+('NO_VALIDATE', 'PENDING_ACTIVATION', 'CUSTOM', 'CONTINUE'),
+('NO_VALIDATE', 'PENDING_CREATE', 'CUSTOM', 'CONTINUE'),
+('NO_VALIDATE', 'PENDING_DELETE', 'CUSTOM', 'CONTINUE'),
+('NO_VALIDATE', 'PRECREATED', 'CUSTOM', 'CONTINUE');
 
 INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, IS_ALACARTE, MIN_API_VERSION, MAX_API_VERSION, IS_TOPLEVELFLOW, CLOUD_OWNER) VALUES
 ('VFModule-DeactivateAndCloudDelete', 'deactivateAndCloudDelete', 'VfModule', true, '7','7', true, 'CloudOwner');
@@ -777,3 +777,31 @@ INSERT INTO rainy_day_handler_macro (FLOW_NAME, SERVICE_TYPE, VNF_TYPE, ERROR_CO
 VALUES
 ('GenericVnfHealthCheckBB', '*', '*', '*', "*" , 'Retry'),
 ('ConfigurationScaleOutBB', '*', '*', '*', "*" , 'Retry');
+
+INSERT INTO building_block_detail(BUILDING_BLOCK_NAME, RESOURCE_TYPE, TARGET_ACTION)  
+VALUES
+('VNFSetInMaintFlagActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFCheckPserversLockedFlagActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFCheckInMaintFlagActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFCheckClosedLoopDisabledFlagActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFSetClosedLoopDisabledFlagActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFUnsetClosedLoopDisabledFlagActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFLockActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFUnlockActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFStopActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFStartActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFSnapShotActivity', 'NO_VALIDATE', 'CUSTOM'),
+('FlowCompleteActivity', 'NO_VALIDATE', 'CUSTOM'),
+('PauseForManualTaskActivity', 'NO_VALIDATE', 'CUSTOM'),
+('DistributeTrafficActivity', 'NO_VALIDATE', 'CUSTOM'),
+('DistributeTrafficCheckActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFHealthCheckActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFQuiesceTrafficActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFResumeTrafficActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFUnsetInMaintFlagActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFUpgradeBackupActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFUpgradePostCheckActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFUpgradePreCheckActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFUpgradeSoftwareActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VnfInPlaceSoftwareUpdate', 'NO_VALIDATE', 'CUSTOM');
+
