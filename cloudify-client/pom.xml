@@ -10,8 +10,8 @@
   <groupId>org.onap.so</groupId>
   <artifactId>cloudify-client</artifactId>
   <packaging>jar</packaging>
-  <name>Cloudify Rest Client</name>
-  <description>Java client for Cloudify REST interface</description>
+  <name>Cloudify Java Client</name>
+  <description>Java client for the Cloudify Manager Rest API</description>
 
   <build>
     <finalName>${project.artifactId}-${project.version}</finalName>
