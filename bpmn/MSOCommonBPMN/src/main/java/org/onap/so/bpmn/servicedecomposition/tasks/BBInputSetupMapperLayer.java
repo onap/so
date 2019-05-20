@@ -378,7 +378,12 @@ public class BBInputSetupMapperLayer {
 
     protected OrchestrationContext mapOrchestrationContext(RequestDetails requestDetails) {
         OrchestrationContext context = new OrchestrationContext();
-        context.setIsRollbackEnabled(!(requestDetails.getRequestInfo().getSuppressRollback()));
+        if (requestDetails.getRequestInfo() != null) {
+        	context.setIsRollbackEnabled(!(requestDetails.getRequestInfo().getSuppressRollback()));
+        }
+        else {
+        	context.setIsRollbackEnabled(false);
+        }
         return context;
     }
 

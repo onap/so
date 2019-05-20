@@ -1,0 +1,29 @@
+{
+	"requestParameters": {
+		"subscriptionServiceType": "subscriptionServiceType",
+		"userParams": [
+		{
+			"name" : "mns_vfw_protected_route_prefixes",
+			"value" : [ {
+				"interface_route_table_routes_route" : "1.1.1.1/32"
+        		}, {
+          		"interface_route_table_routes_route" : "0::1/128"
+        	} ]
+        },
+        {
+        	"name": "name1",
+			"value": "value1"
+      	},      	
+		{
+			"ignore": "false",
+			"skip":	 "ignore"
+		}]		
+	},
+	"configurationParameters": [ 
+         { 
+            "availability-zone":"$.vnf-topology.vnf-resource-assignments.availability-zones.availability-zone[0]", 
+            "xtz-123":"$.vnf-topology.vnf-resource-assignments.availability-zones.availability-zone[0]" 
+         } 
+     ]
+}
+
