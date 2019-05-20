@@ -57,8 +57,13 @@ public class ExtractPojosForBB {
             GenericVnf vnf;
             switch (key) {
                 case SERVICE_INSTANCE_ID:
-                    result = lookupObjectInList(gBBInput.getCustomer().getServiceSubscription().getServiceInstances(),
-                            value);
+                    if (gBBInput.getCustomer().getServiceSubscription() == null
+                            && gBBInput.getServiceInstance() != null) {
+                        result = Optional.of((T) gBBInput.getServiceInstance());
+                    } else {
+                        result = lookupObjectInList(
+                                gBBInput.getCustomer().getServiceSubscription().getServiceInstances(), value);
+                    }
                     break;
                 case GENERIC_VNF_ID:
                     serviceInstance = extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
