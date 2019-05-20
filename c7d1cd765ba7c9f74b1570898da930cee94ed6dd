@@ -34,6 +34,24 @@
       "revId": "c7d1cd765ba7c9f74b1570898da930cee94ed6dd",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a108a50f_907512f4",
+        "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/client/CatalogDbClient.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 619,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-05-20T18:06:36Z",
+      "side": 1,
+      "message": "We are currently just using * to mean a wild card, I understand it will not do that in sql.  I am fine with refactoring this later, the least impacting fix would be to simply mark the columns with the wild card.  Service Type will allow us to control the flow for different service types.",
+      "parentUuid": "5ba19947_389442d4",
+      "revId": "c7d1cd765ba7c9f74b1570898da930cee94ed6dd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
