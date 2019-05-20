@@ -88,6 +88,18 @@ public class ResourceInput {
     private ModelInfo vfModelInfo;
 
 
+    @JsonProperty("vnf-Id")
+    private String vnfId;
+
+    public String getVnfId() {
+        return vnfId;
+    }
+
+    public void setVnfId(String vnfId) {
+        this.vnfId = vnfId;
+    }
+
+
     public ModelInfo getVfModelInfo() {
         return vfModelInfo;
     }

@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,12 +22,14 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import com.google.common.reflect.TypeToken;
+
+import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
-import org.apache.http.util.EntityUtils;
+import org.apache.http.util.EntityUtils
 import org.onap.so.bpmn.common.resource.InstanceResourceList
 import org.onap.so.bpmn.common.scripts.CatalogDbUtilsFactory
 import org.onap.so.bpmn.core.domain.GroupResource
+import org.onap.so.bpmn.core.domain.ModelInfo
 import org.onap.so.bpmn.core.domain.ResourceType
 import org.onap.so.bpmn.infrastructure.properties.BPMNProperties
 import org.apache.commons.lang3.StringUtils
@@ -55,7 +57,7 @@ import java.lang.reflect.Type
 
 /**
  * This groovy class supports the <class>DoCreateResources.bpmn</class> process.
- * 
+ *
  * Inputs:
  * @param - msoRequestId
  * @param - globalSubscriberId - O
@@ -63,7 +65,7 @@ import java.lang.reflect.Type
  * @param - serviceInstanceId
  * @param - serviceInstanceName - O
  * @param - serviceInputParams (should contain aic_zone for serviceTypes TRANSPORT,ATM)
- * @param - sdncVersion 
+ * @param - sdncVersion
  *
  * @param - addResourceList
  *
@@ -106,7 +108,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
 
     public void sequenceResoure(DelegateExecution execution) {
         logger.trace("Start sequenceResoure Process ")
-        
+
         String incomingRequest = execution.getVariable("uuiRequest")
         String serviceModelUuid = jsonUtil.getJsonValue(incomingRequest,"service.serviceUuid")
 
@@ -119,10 +121,10 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         String serviceDecompose = execution.getVariable("serviceDecomposition")
         String serviceModelName = jsonUtil.getJsonValue(serviceDecompose, "serviceResources.modelInfo.modelName")
 
-        // get Sequence from properties        
+        // get Sequence from properties
         def resourceSequence = BPMNProperties.getResourceSequenceProp(serviceModelName)
 
-        // get Sequence from csar(model)  
+        // get Sequence from csar(model)
         if(resourceSequence == null) {
             resourceSequence = ResourceRequestBuilder.getResourceSequence(serviceModelUuid)
             logger.info("Get Sequence from csar : " + resourceSequence)
@@ -139,7 +141,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
                         // then we would like to add it twice for processing
                         // e.g.  S{ V1{G1, G2, G1}} --> S{ V1{G1, G1, G2}}
                         if (resource instanceof VnfResource) {
-                            if (resource.getGroups() != null) {
+                            if (resource.getGroupOrder() != null && !StringUtils.isEmpty(resource.getGroupOrder())) {
                                 String[] grpSequence = resource.getGroupOrder().split(",")
                                 for (String grpType in grpSequence) {
                                     for (GroupResource gResource in resource.getGroups()) {
@@ -217,10 +219,8 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         List<Resource> instanceResourceList = execution.getVariable("instanceResourceList")
         Resource currentResource = instanceResourceList.get(currentIndex)
         execution.setVariable("resourceType", currentResource.getModelInfo().getModelName())
-
-
-        logger.info("Now we deal with resouce:" + currentResource.getModelInfo().getModelName())
-        logger.trace("COMPLETED getCurrentResoure Process ")
+        logger.info("Now we deal with resource:" + currentResource.getModelInfo().getModelName())
+        logger.trace("COMPLETED getCurrentResource Process ")
     }
 
     public void parseNextResource(DelegateExecution execution){
@@ -262,43 +262,41 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         resourceInput.getResourceModelInfo().setModelType(currentResource.getResourceType().toString())
         ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
 
-        /*
-        * Set the VF information as well to the resource input, since sdnc need the immediate upper level information
-        * during resource creation: Begin
-        **/
-        String currentResourceType = currentResource.getResourceType();
-        execution.setVariable("currentResourceType",currentResource.getResourceType());
-        resourceInput.setVfModelInfo(execution.getVariable("vfModelInfo"));
-        /*
-        * Set the VF information as well to the resource input, since sdnc need the immediate upper level information
-        * during resource creation: End
-        **/
+        if (currentResource.getResourceType() == ResourceType.VNF) {
+            execution.setVariable("vfModelInfo", currentResource.getModelInfo())
+        }
+
+        resourceInput.setVfModelInfo(execution.getVariable("vfModelInfo") as ModelInfo)
+        String vnfId = execution.getVariable("vnf-id")
+        if (vnfId != null) {
+            resourceInput.setVnfId(vnfId)
+        }
 
 
         resourceInput.setServiceModelInfo(serviceDecomposition.getModelInfo())
-        def String resourceCustomizationUuid = currentResource.getModelInfo().getModelCustomizationUuid()
-
 
         String incomingRequest = execution.getVariable("uuiRequest")
-        //set the requestInputs from tempalte  To Be Done
-        String serviceModelUuid = jsonUtil.getJsonValue(incomingRequest,"service.serviceUuid")
-        String serviceParameters = jsonUtil.getJsonValue(incomingRequest, "service.parameters")
-        Map<String, Object> currentVFData = (Map) execution.getVariable("currentVFData");
+        //set the requestInputs from template  To Be Done
+        String uuiServiceParameters = jsonUtil.getJsonValue(incomingRequest, "service.parameters")
+
+        // current vfdata holds information for preparing input for resource
+        // e.g. it will hold
+        // { top_level_list_name, second_level_list_name, top_index, second_index, last processed node}
+        Map<String, Object> currentVFData = (Map) execution.getVariable("currentVFData")
+
         if (null == currentVFData) {
-            currentVFData = new HashMap<>();
+            currentVFData = new HashMap<>()
         }
-        String resourceParameters = ResourceRequestBuilder.buildResourceRequestParameters(execution, serviceModelUuid, resourceCustomizationUuid, serviceParameters, currentVFData)
+        String resourceParameters = ResourceRequestBuilder.buildResourceRequestParameters(execution, currentResource, uuiServiceParameters, currentVFData)
         resourceInput.setResourceParameters(resourceParameters)
         resourceInput.setRequestsInputs(incomingRequest)
         execution.setVariable("resourceInput", resourceInput.toString())
         execution.setVariable("resourceModelUUID", resourceInput.getResourceModelInfo().getModelUuid())
-        execution.setVariable("currentVFData",currentVFData);
+        execution.setVariable("currentVFData",currentVFData)
         logger.trace("COMPLETED prepareResourceRecipeRequest Process ")
     }
 
     public void executeResourceRecipe(DelegateExecution execution){
-
-
         logger.trace("Start executeResourceRecipe Process ")
 
         try {
@@ -320,30 +318,22 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
 
                 BpmnRestClient bpmnRestClient = new BpmnRestClient()
                 HttpResponse resp = bpmnRestClient.post(recipeURL, requestId, recipeTimeOut, requestAction, serviceInstanceId, serviceType, resourceInput, recipeParamXsd)
-                /*
-                * Isaac added to parse the reponse of the service call and pick the vnf-id when the resource created is
-                * a vnf. The vnf id needs to be passed to sdnc while creating the vnfc/group: Begin
-                **/
 
-                def currentIndex = execution.getVariable("currentResourceIndex");
-                List<Resource> instanceResourceList = execution.getVariable("instanceResourceList");
-                Resource currentResource = instanceResourceList.get(currentIndex);
-                if(ResourceType.VNF == currentResource.getResourceType())
-                {
-                    if (resp.getStatusLine().getStatusCode() == 200) {
-                        String responseString = EntityUtils.toString(resp.getEntity(), "UTF-8");
+                def currentIndex = execution.getVariable("currentResourceIndex")
+                List<Resource> instanceResourceList = execution.getVariable("instanceResourceList") as List<Resource>
+                Resource currentResource = instanceResourceList.get(currentIndex)
+                if(ResourceType.VNF == currentResource.getResourceType()) {
+                    if (resp.getStatusLine().getStatusCode() > 199 && resp.getStatusLine().getStatusCode() < 300) {
+                        String responseString = EntityUtils.toString(resp.getEntity(), "UTF-8")
                         if (responseString != null) {
-                            Gson gson = new Gson();
-                            Type type = new TypeToken<Map<String, String>>() {}.getType();
-                            Map<String, Object> map = gson.fromJson(response, type);
-                            execution.setVariable("vnf-id",map.get("vnf-id"));
+                            Gson gson = new Gson()
+                            Type type = new TypeToken<Map<String, String>>() {}.getType()
+                            Map<String, Object> map = gson.fromJson(responseString, type)
+                            Map<String, String> map1 = gson.fromJson(map.get("response"), type)
+                            execution.setVariable("vnf-id",map1.get("vnf-id"))
                         }
                     }
                 }
-                /*
-                * Isaac added to parse the reponse of the service call and pick the vnf-id when the resource created is
-                * a vnf: Begin
-                **/
             } else {
                 String exceptionMessage = "Resource receipe is not found for resource modeluuid: " + resourceModelUUID
                 logger.trace(exceptionMessage)
