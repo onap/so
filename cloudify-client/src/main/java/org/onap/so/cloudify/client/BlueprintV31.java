@@ -36,8 +36,7 @@ public class BlueprintV31 {
     }
 
     /**
-     * @param created_at
-     *            the created_at to set
+     * @param created_at the created_at to set
      */
     public void setCreated_at(Date created_at) {
         this.created_at = created_at;
@@ -51,8 +50,7 @@ public class BlueprintV31 {
     }
 
     /**
-     * @param description
-     *            the description to set
+     * @param description the description to set
      */
     public void setDescription(String description) {
         this.description = description;
@@ -66,8 +64,7 @@ public class BlueprintV31 {
     }
 
     /**
-     * @param id
-     *            the id to set
+     * @param id the id to set
      */
     public void setId(String id) {
         this.id = id;
@@ -81,8 +78,7 @@ public class BlueprintV31 {
     }
 
     /**
-     * @param main_file_name
-     *            the main_file_name to set
+     * @param main_file_name the main_file_name to set
      */
     public void setMain_file_name(String main_file_name) {
         this.main_file_name = main_file_name;
@@ -96,8 +92,7 @@ public class BlueprintV31 {
     }
 
     /**
-     * @param updated_at
-     *            the updated_at to set
+     * @param updated_at the updated_at to set
      */
     public void setUpdated_at(Date updated_at) {
         this.updated_at = updated_at;

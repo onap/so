@@ -22,7 +22,6 @@ package org.onap.so.cloudify.client;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import static org.mockito.Mockito.*;
-
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpMethod;
@@ -30,7 +29,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpEntity;
 import org.springframework.web.client.RestTemplate;
-
 import org.onap.so.cloudify.client.APIV31.Visibility;
 import org.onap.so.cloudify.client.APIV31Impl.BlueprintListV31;
 

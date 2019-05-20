@@ -41,8 +41,7 @@ public class DeploymentV31 {
     }
 
     /**
-     * @param blueprint_id
-     *            the blueprint_id to set
+     * @param blueprint_id the blueprint_id to set
      */
     public void setBlueprint_id(String blueprint_id) {
         this.blueprint_id = blueprint_id;
@@ -56,8 +55,7 @@ public class DeploymentV31 {
     }
 
     /**
-     * @param created_at
-     *            the created_at to set
+     * @param created_at the created_at to set
      */
     public void setCreated_at(Date created_at) {
         this.created_at = created_at;
@@ -71,8 +69,7 @@ public class DeploymentV31 {
     }
 
     /**
-     * @param updated_at
-     *            the updated_at to set
+     * @param updated_at the updated_at to set
      */
     public void setUpdated_at(Date updated_at) {
         this.updated_at = updated_at;
@@ -86,8 +83,7 @@ public class DeploymentV31 {
     }
 
     /**
-     * @param created_by
-     *            the created_by to set
+     * @param created_by the created_by to set
      */
     public void setCreated_by(String created_by) {
         this.created_by = created_by;
@@ -101,8 +97,7 @@ public class DeploymentV31 {
     }
 
     /**
-     * @param description
-     *            the description to set
+     * @param description the description to set
      */
     public void setDescription(String description) {
         this.description = description;
@@ -116,8 +111,7 @@ public class DeploymentV31 {
     }
 
     /**
-     * @param id
-     *            the id to set
+     * @param id the id to set
      */
     public void setId(String id) {
         this.id = id;
@@ -131,8 +125,7 @@ public class DeploymentV31 {
     }
 
     /**
-     * @param outputs
-     *            the outputs to set
+     * @param outputs the outputs to set
      */
     public void setOutputs(Map<String, Object> outputs) {
         this.outputs = outputs;
@@ -146,8 +139,7 @@ public class DeploymentV31 {
     }
 
     /**
-     * @param capabilities
-     *            the capabilities to set
+     * @param capabilities the capabilities to set
      */
     public void setCapabilities(Map<String, Object> capabilities) {
         this.capabilities = capabilities;
@@ -161,8 +153,7 @@ public class DeploymentV31 {
     }
 
     /**
-     * @param tenant_name
-     *            the tenant_name to set
+     * @param tenant_name the tenant_name to set
      */
     public void setTenant_name(String tenant_name) {
         this.tenant_name = tenant_name;
