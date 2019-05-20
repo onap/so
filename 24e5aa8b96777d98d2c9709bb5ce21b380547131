@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2232ea04_68539543",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/common/recipe/ResourceInput.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-05-20T12:54:07Z",
+      "side": 1,
+      "message": "please move this method down",
+      "range": {
+        "startLine": 90,
+        "startChar": 0,
+        "endLine": 96,
+        "endChar": 5
+      },
+      "revId": "24e5aa8b96777d98d2c9709bb5ce21b380547131",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
