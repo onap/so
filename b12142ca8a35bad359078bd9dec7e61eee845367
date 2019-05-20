@@ -2,6 +2,121 @@
   "comments": [
     {
       "key": {
+        "uuid": "1bbfebeb_ec938c0c",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/common/recipe/ResourceInput.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-05-20T12:54:07Z",
+      "side": 1,
+      "message": "please move to method section.",
+      "range": {
+        "startLine": 90,
+        "startChar": 0,
+        "endLine": 96,
+        "endChar": 5
+      },
+      "revId": "b12142ca8a35bad359078bd9dec7e61eee845367",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6cd5895f_2857d673",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/ActivateSDNCNetworkResource.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-05-20T12:54:07Z",
+      "side": 1,
+      "message": "this can be removed ..and we can use resourceInputObj",
+      "range": {
+        "startLine": 71,
+        "startChar": 12,
+        "endLine": 71,
+        "endChar": 111
+      },
+      "revId": "b12142ca8a35bad359078bd9dec7e61eee845367",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "df9867c5_5c5b977d",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/ActivateSDNCNetworkResource.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-05-20T12:54:07Z",
+      "side": 1,
+      "message": "read from resourceInputObj.modelInfo.modeltype",
+      "range": {
+        "startLine": 196,
+        "startChar": 12,
+        "endLine": 196,
+        "endChar": 75
+      },
+      "revId": "b12142ca8a35bad359078bd9dec7e61eee845367",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8bbb465e_8ac56443",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/ActivateSDNCNetworkResource.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-05-20T12:54:07Z",
+      "side": 1,
+      "message": "use string",
+      "range": {
+        "startLine": 198,
+        "startChar": 21,
+        "endLine": 198,
+        "endChar": 48
+      },
+      "revId": "b12142ca8a35bad359078bd9dec7e61eee845367",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "db99ea07_34441f5c",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/CreateSDNCNetworkResource.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-05-20T12:54:07Z",
+      "side": 1,
+      "message": "same as activate",
+      "range": {
+        "startLine": 92,
+        "startChar": 12,
+        "endLine": 92,
+        "endChar": 112
+      },
+      "revId": "b12142ca8a35bad359078bd9dec7e61eee845367",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0c81fc5e_98ba726a",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/CreateSDNCNetworkResource.groovy",
         "patchSetId": 4
@@ -18,6 +133,144 @@
         "startChar": 12,
         "endLine": 357,
         "endChar": 76
+      },
+      "revId": "b12142ca8a35bad359078bd9dec7e61eee845367",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7ab3e2fe_d90a5b5d",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/CreateSDNCNetworkResource.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 371,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-05-20T12:54:07Z",
+      "side": 1,
+      "message": "replace with string",
+      "range": {
+        "startLine": 371,
+        "startChar": 21,
+        "endLine": 371,
+        "endChar": 48
+      },
+      "revId": "b12142ca8a35bad359078bd9dec7e61eee845367",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e812eaa8_b906e259",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/CreateSDNCNetworkResource.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 852,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-05-20T12:54:07Z",
+      "side": 1,
+      "message": "use inputresourceObj",
+      "range": {
+        "startLine": 852,
+        "startChar": 27,
+        "endLine": 852,
+        "endChar": 72
+      },
+      "revId": "b12142ca8a35bad359078bd9dec7e61eee845367",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "26daf92c_dc46a55d",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/CreateSDNCNetworkResource.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 873,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-05-20T12:54:07Z",
+      "side": 1,
+      "message": "should we change its name to resourceInstaanceId",
+      "range": {
+        "startLine": 873,
+        "startChar": 48,
+        "endLine": 873,
+        "endChar": 65
+      },
+      "revId": "b12142ca8a35bad359078bd9dec7e61eee845367",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7b81ee1c_fdcac8ad",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoCreateResources.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-05-20T12:54:07Z",
+      "side": 1,
+      "message": "please use // for comment and only before code.",
+      "range": {
+        "startLine": 268,
+        "startChar": 1,
+        "endLine": 271,
+        "endChar": 11
+      },
+      "revId": "b12142ca8a35bad359078bd9dec7e61eee845367",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4532fef0_5425e6af",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoCreateResources.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-05-20T12:54:07Z",
+      "side": 1,
+      "message": "not required",
+      "range": {
+        "startLine": 273,
+        "startChar": 8,
+        "endLine": 273,
+        "endChar": 87
+      },
+      "revId": "b12142ca8a35bad359078bd9dec7e61eee845367",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d208cc4b_c273cf50",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoCreateResources.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 318,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-05-20T12:54:07Z",
+      "side": 1,
+      "message": "this should be discarded",
+      "range": {
+        "startLine": 318,
+        "startChar": 0,
+        "endLine": 318,
+        "endChar": 144
       },
       "revId": "b12142ca8a35bad359078bd9dec7e61eee845367",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
