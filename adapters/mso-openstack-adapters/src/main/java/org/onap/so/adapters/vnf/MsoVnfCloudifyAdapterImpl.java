@@ -174,10 +174,6 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
             Holder<Map<String, String>> outputs) throws VnfException {
         logger.debug("Querying VNF {} in {}", vnfName, cloudSiteId + "/" + tenantId);
 
-        // Will capture execution time for metrics
-        long startTime = System.currentTimeMillis();
-        long subStartTime = System.currentTimeMillis();
-
         DeploymentInfo deployment = null;
 
         try {
@@ -213,7 +209,6 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
 
             logger.debug("VNF {} not found", vnfName);
         }
-        return;
     }
 
 
@@ -239,7 +234,6 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
      */
     @Override
     public void rollbackVnf(VnfRollback rollback) throws VnfException {
-        long startTime = System.currentTimeMillis();
         // rollback may be null (e.g. if stack already existed when Create was called)
         if (rollback == null) {
             logger.info("{} {} {}", MessageEnum.RA_ROLLBACK_NULL.toString(), OPENSTACK, "rollbackVnf");
@@ -265,7 +259,6 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
         // The possible outcomes of deleteStack are a StackInfo object with status
         // of NOTFOUND (on success) or FAILED (on error). Also, MsoOpenstackException
         // could be thrown.
-        long subStartTime = System.currentTimeMillis();
         try {
             // KLUDGE - Cloudify requires Tenant Name for Openstack. We have the ID.
             // Go directly to Keystone until APIs could be updated to supply the name.
@@ -288,7 +281,6 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
             logger.debug(error);
             throw new VnfException(me);
         }
-        return;
     }
 
 
@@ -316,7 +308,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
     }
 
     private Map<String, String> copyStringOutputs(Map<String, Object> stackOutputs) {
-        Map<String, String> stringOutputs = new HashMap<String, String>();
+        Map<String, String> stringOutputs = new HashMap<>();
         for (String key : stackOutputs.keySet()) {
             if (stackOutputs.get(key) instanceof String) {
                 stringOutputs.put(key, (String) stackOutputs.get(key));
@@ -325,28 +317,28 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                     String str = "" + stackOutputs.get(key);
                     stringOutputs.put(key, str);
                 } catch (Exception e) {
-                    logger.debug("Unable to add " + key + " to outputs");
+                    logger.error("Unable to add " + key + " to outputs", e);
                 }
             } else if (stackOutputs.get(key) instanceof JsonNode) {
                 try {
                     String str = this.convertNode((JsonNode) stackOutputs.get(key));
                     stringOutputs.put(key, str);
                 } catch (Exception e) {
-                    logger.debug("Unable to add " + key + " to outputs - exception converting JsonNode");
+                    logger.error("Unable to add " + key + " to outputs - exception converting JsonNode", e);
                 }
             } else if (stackOutputs.get(key) instanceof java.util.LinkedHashMap) {
                 try {
                     String str = JSON_MAPPER.writeValueAsString(stackOutputs.get(key));
                     stringOutputs.put(key, str);
                 } catch (Exception e) {
-                    logger.debug("Unable to add " + key + " to outputs - exception converting LinkedHashMap");
+                    logger.error("Unable to add " + key + " to outputs - exception converting LinkedHashMap", e);
                 }
             } else {
                 try {
                     String str = stackOutputs.get(key).toString();
                     stringOutputs.put(key, str);
                 } catch (Exception e) {
-                    logger.debug("Unable to add " + key + " to outputs - unable to call .toString() " + e.getMessage());
+                    logger.error("Unable to add " + key + " to outputs - unable to call .toString() ", e);
                 }
             }
         }
@@ -373,7 +365,6 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
             }
         }
         logger.debug(sb.toString());
-        return;
     }
 
     private void sendMapToDebug(Map<String, Object> inputs) {
@@ -389,7 +380,6 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
             }
         }
         logger.debug(sb.toString());
-        return;
     }
 
     private String convertNode(final JsonNode node) {
@@ -398,9 +388,9 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
             final String json = JSON_MAPPER.writeValueAsString(obj);
             return json;
         } catch (JsonParseException jpe) {
-            logger.debug("Error converting json to string " + jpe.getMessage());
+            logger.error("Error converting json to string ", jpe);
         } catch (Exception e) {
-            logger.debug("Error converting json to string " + e.getMessage());
+            logger.error("Error converting json to string ", e);
         }
         return "[Error converting json to string]";
     }
@@ -409,7 +399,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
         if (objectMap == null) {
             return null;
         }
-        Map<String, String> stringMap = new HashMap<String, String>();
+        Map<String, String> stringMap = new HashMap<>();
         for (String key : objectMap.keySet()) {
             if (!stringMap.containsKey(key)) {
                 Object obj = objectMap.get(key);
@@ -422,7 +412,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                         String str = this.convertNode((JsonNode) obj);
                         stringMap.put(key, str);
                     } catch (Exception e) {
-                        logger.debug("DANGER WILL ROBINSON: unable to convert value for JsonNode " + key);
+                        logger.error("DANGER WILL ROBINSON: unable to convert value for JsonNode " + key, e);
                         // okay in this instance - only string values (fqdn) are expected to be needed
                     }
                 } else if (obj instanceof java.util.LinkedHashMap) {
@@ -431,22 +421,21 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                         String str = JSON_MAPPER.writeValueAsString(obj);
                         stringMap.put(key, str);
                     } catch (Exception e) {
-                        logger.debug("DANGER WILL ROBINSON: unable to convert value for LinkedHashMap " + key);
+                        logger.error("DANGER WILL ROBINSON: unable to convert value for LinkedHashMap " + key, e);
                     }
                 } else if (obj instanceof Integer) {
                     try {
                         String str = "" + obj;
                         stringMap.put(key, str);
                     } catch (Exception e) {
-                        logger.debug("DANGER WILL ROBINSON: unable to convert value for Integer " + key);
+                        logger.error("DANGER WILL ROBINSON: unable to convert value for Integer " + key, e);
                     }
                 } else {
                     try {
                         String str = obj.toString();
                         stringMap.put(key, str);
                     } catch (Exception e) {
-                        logger.debug(
-                                "DANGER WILL ROBINSON: unable to convert value " + key + " (" + e.getMessage() + ")");
+                        logger.error("DANGER WILL ROBINSON: unable to convert value " + key, e);
                     }
                 }
             }
@@ -502,8 +491,6 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
             String volumeGroupId, String baseVfModuleId, String modelCustomizationUuid, Map<String, Object> inputs,
             Boolean failIfExists, Boolean backout, Boolean enableBridge, MsoRequest msoRequest, Holder<String> vnfId,
             Holder<Map<String, String>> outputs, Holder<VnfRollback> rollback) throws VnfException {
-        // Will capture execution time for metrics
-        long startTime = System.currentTimeMillis();
 
         // Require a model customization ID. Every VF Module definition must have one.
         if (modelCustomizationUuid == null || modelCustomizationUuid.isEmpty()) {
@@ -585,7 +572,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
             vnfResource = vfmc.getVfModule().getVnfResources();
         } catch (Exception e) {
 
-            logger.debug("unhandled exception in create VF - [Query]" + e.getMessage());
+            logger.error("unhandled exception in create VF - [Query]", e);
             throw new VnfException("Exception during create VF " + e.getMessage());
         }
 
@@ -620,7 +607,6 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
 
         // First, look up to see if the VF already exists.
 
-        long subStartTime1 = System.currentTimeMillis();
         try {
             cloudifyDeployment = cloudifyUtils.queryDeployment(cloudSiteId, tenantId, vfModuleName);
         } catch (MsoException me) {
@@ -714,7 +700,6 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
 
         // If a Volume Group was provided, query its outputs for inclusion in Module input parameters
         if (volumeGroupId != null) {
-            long subStartTime2 = System.currentTimeMillis();
             DeploymentInfo volumeDeployment = null;
             try {
                 volumeDeployment = cloudifyUtils.queryDeployment(cloudSiteId, tenantId, volumeGroupId);
@@ -763,7 +748,6 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
             }
 
             if (baseVfModuleId != null) {
-                long subStartTime2 = System.currentTimeMillis();
                 DeploymentInfo baseDeployment = null;
                 try {
                     baseDeployment = cloudifyUtils.queryDeployment(cloudSiteId, tenantId, baseVfModuleId);
@@ -839,21 +823,21 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
 
         try {
             // All variables converted to their native object types
-            HashMap<String, Object> goldenInputs = new HashMap<String, Object>();
-            List<String> extraInputs = new ArrayList<String>();
+            HashMap<String, Object> goldenInputs = new HashMap<>();
+            List<String> extraInputs = new ArrayList<>();
 
             // NOTE: SKIP THIS FOR CLOUDIFY for now. Just use what was passed in.
             // This whole section needs to be rewritten.
             Boolean skipInputChecks = false;
 
             if (skipInputChecks) {
-                goldenInputs = new HashMap<String, Object>();
+                goldenInputs = new HashMap<>();
                 for (String key : inputs.keySet()) {
                     goldenInputs.put(key, inputs.get(key));
                 }
             } else {
                 // Build maps for the parameters (including aliases) to simplify checks
-                HashMap<String, HeatTemplateParam> params = new HashMap<String, HeatTemplateParam>();
+                HashMap<String, HeatTemplateParam> params = new HashMap<>();
 
                 Set<HeatTemplateParam> paramSet = heatTemplate.getParameters();
                 logger.debug("paramSet has {} entries", paramSet.size());
@@ -1036,7 +1020,6 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
 
             // Ignore MsoTenantNotFound and MsoStackAlreadyExists exceptions
             // because we already checked for those.
-            long createDeploymentStarttime = System.currentTimeMillis();
             try {
                 // KLUDGE - Cloudify requires Tenant Name for Openstack. We have the ID.
                 // Go directly to Keystone until APIs could be updated to supply the name.
@@ -1070,11 +1053,11 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                 // npe.addContext ("CreateVNF");
                 throw new VnfException("NullPointerException during cloudify.createAndInstallDeployment");
             } catch (Exception e) {
-                logger.debug("unhandled exception at cloudify.createAndInstallDeployment");
+                logger.error("unhandled exception at cloudify.createAndInstallDeployment", e);
                 throw new VnfException("Exception during cloudify.createAndInstallDeployment! " + e.getMessage());
             }
         } catch (Exception e) {
-            logger.debug("unhandled exception in create VF");
+            logger.error("unhandled exception in create VF", e);
             throw new VnfException("Exception during create VF " + e.getMessage());
 
         }
@@ -1088,15 +1071,13 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
 
         rollback.value = vfRollback;
 
-        logger.debug("VF Module successfully created", vfModuleName);
-        return;
+        logger.debug("VF Module successfully created {}", vfModuleName);
+
     }
 
     public void deleteVfModule(String cloudSiteId, String cloudOwner, String tenantId, String vnfName,
             MsoRequest msoRequest, Holder<Map<String, String>> outputs) throws VnfException {
         logger.debug("Deleting VF " + vnfName + " in " + cloudOwner + "/" + cloudSiteId + "/" + tenantId);
-        // Will capture execution time for metrics
-        long startTime = System.currentTimeMillis();
 
         // 1702 capture the output parameters on a delete
         // so we'll need to query first
@@ -1121,7 +1102,6 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
         // The possible outcomes of deleteStack are a StackInfo object with status
         // of NOTFOUND (on success) or FAILED (on error). Also, MsoOpenstackException
         // could be thrown.
-        long subStartTime = System.currentTimeMillis();
         try {
             cloudifyUtils.uninstallAndDeleteDeployment(cloudSiteId, tenantId, vnfName, 5);
         } catch (MsoException me) {
