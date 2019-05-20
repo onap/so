@@ -7,6 +7,8 @@ DELETE FROM activity_spec;
 DELETE FROM activity_spec_categories;
 DELETE FROM activity_spec_parameters;
 DELETE FROM user_parameters;
+DELETE FROM building_block_detail;
+
 
 INSERT INTO activity_spec (NAME, DESCRIPTION, VERSION) 
 VALUES 
@@ -182,3 +184,31 @@ VALUES
 (select ID from user_parameters where NAME='existing_software_version')),
 ((select ID from activity_spec where NAME='VNFUpgradeSoftwareActivity' and VERSION=1.0),
 (select ID from user_parameters where NAME='new_software_version'));
+
+INSERT INTO building_block_detail(BUILDING_BLOCK_NAME, RESOURCE_TYPE, TARGET_ACTION)  
+VALUES 
+('VNFSetInMaintFlagActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFCheckPserversLockedFlagActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFCheckInMaintFlagActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFCheckClosedLoopDisabledFlagActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFSetClosedLoopDisabledFlagActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFUnsetClosedLoopDisabledFlagActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFLockActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFUnlockActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFStopActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFStartActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFSnapShotActivity', 'NO_VALIDATE', 'CUSTOM'),
+('FlowCompleteActivity', 'NO_VALIDATE', 'CUSTOM'),
+('PauseForManualTaskActivity', 'NO_VALIDATE', 'CUSTOM'),
+('DistributeTrafficActivity', 'NO_VALIDATE', 'CUSTOM'),
+('DistributeTrafficCheckActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFHealthCheckActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFQuiesceTrafficActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFResumeTrafficActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFUnsetInMaintFlagActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFUpgradeBackupActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFUpgradePostCheckActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFUpgradePreCheckActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFUpgradeSoftwareActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VnfInPlaceSoftwareUpdate', 'NO_VALIDATE', 'CUSTOM');
+
