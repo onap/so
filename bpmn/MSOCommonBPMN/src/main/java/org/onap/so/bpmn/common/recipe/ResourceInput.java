@@ -84,6 +84,29 @@ public class ResourceInput {
     @JsonProperty("operationType")
     private String operationType;
 
+    @JsonProperty("vfModelInfo")
+    private ModelInfo vfModelInfo;
+
+    @JsonProperty("vnf-Id")
+    private String vnfId;
+
+    public String getVnfId() {
+        return vnfId;
+    }
+
+    public void setVnfId(String vnfId) {
+        this.vnfId = vnfId;
+    }
+
+
+    public ModelInfo getVfModelInfo() {
+        return vfModelInfo;
+    }
+
+    public void setVfModelInfo(ModelInfo vfModelInfo) {
+        this.vfModelInfo = vfModelInfo;
+    }
+
     /**
      * @return Returns the requestsInputs.
      */
