@@ -330,7 +330,8 @@ public class APIV31Impl implements APIV31 {
         }
 
         /**
-         * @param items the items to set
+         * @param items
+         *            the items to set
          */
         public void setItems(List<BlueprintV31> items) {
             this.items = items;
@@ -349,7 +350,8 @@ public class APIV31Impl implements APIV31 {
         }
 
         /**
-         * @param items the items to set
+         * @param items
+         *            the items to set
          */
         public void setItems(List<DeploymentV31> items) {
             this.items = items;
@@ -367,7 +369,8 @@ public class APIV31Impl implements APIV31 {
         }
 
         /**
-         * @param items the items to set
+         * @param items
+         *            the items to set
          */
         public void setItems(List<ExecutionV31> items) {
             this.items = items;
@@ -391,7 +394,8 @@ public class APIV31Impl implements APIV31 {
         }
 
         /**
-         * @param workflow_id the workflow_id to set
+         * @param workflow_id
+         *            the workflow_id to set
          */
         public void setWorkflow_id(String workflow_id) {
             this.workflow_id = workflow_id;
@@ -405,7 +409,8 @@ public class APIV31Impl implements APIV31 {
         }
 
         /**
-         * @param deployment_id the deployment_id to set
+         * @param deployment_id
+         *            the deployment_id to set
          */
         public void setDeployment_id(String deployment_id) {
             this.deployment_id = deployment_id;
@@ -419,7 +424,8 @@ public class APIV31Impl implements APIV31 {
         }
 
         /**
-         * @param allow_custom_parameters the allow_custom_parameters to set
+         * @param allow_custom_parameters
+         *            the allow_custom_parameters to set
          */
         public void setAllow_custom_parameters(Boolean allow_custom_parameters) {
             this.allow_custom_parameters = allow_custom_parameters;
@@ -433,7 +439,8 @@ public class APIV31Impl implements APIV31 {
         }
 
         /**
-         * @param parameters the parameters to set
+         * @param parameters
+         *            the parameters to set
          */
         public void setParameters(Map<String, String> parameters) {
             this.parameters = parameters;
@@ -447,7 +454,8 @@ public class APIV31Impl implements APIV31 {
         }
 
         /**
-         * @param force the force to set
+         * @param force
+         *            the force to set
          */
         public void setForce(Boolean force) {
             this.force = force;
@@ -461,7 +469,8 @@ public class APIV31Impl implements APIV31 {
         }
 
         /**
-         * @param queue the queue to set
+         * @param queue
+         *            the queue to set
          */
         public void setQueue(Boolean queue) {
             this.queue = queue;
@@ -475,7 +484,8 @@ public class APIV31Impl implements APIV31 {
         }
 
         /**
-         * @param schedule the schedule to set
+         * @param schedule
+         *            the schedule to set
          */
         public void setSchedule(Calendar schedule) {
             this.schedule = schedule;
@@ -497,7 +507,8 @@ public class APIV31Impl implements APIV31 {
         }
 
         /**
-         * @param blueprint_id the blueprint_id to set
+         * @param blueprint_id
+         *            the blueprint_id to set
          */
         public void setBlueprint_id(String blueprint_id) {
             this.blueprint_id = blueprint_id;
@@ -511,7 +522,8 @@ public class APIV31Impl implements APIV31 {
         }
 
         /**
-         * @param inputs the inputs to set
+         * @param inputs
+         *            the inputs to set
          */
         public void setInputs(Map<String, String> inputs) {
             this.inputs = inputs;
@@ -525,7 +537,8 @@ public class APIV31Impl implements APIV31 {
         }
 
         /**
-         * @param private_resource the private_resource to set
+         * @param private_resource
+         *            the private_resource to set
          */
         public void setPrivate_resource(Boolean private_resource) {
             this.private_resource = private_resource;
@@ -539,7 +552,8 @@ public class APIV31Impl implements APIV31 {
         }
 
         /**
-         * @param skip_plugins_validation the skip_plugins_validation to set
+         * @param skip_plugins_validation
+         *            the skip_plugins_validation to set
          */
         public void setSkip_plugins_validation(boolean skip_plugins_validation) {
             this.skip_plugins_validation = skip_plugins_validation;
@@ -553,7 +567,8 @@ public class APIV31Impl implements APIV31 {
         }
 
         /**
-         * @param visibility the visibility to set
+         * @param visibility
+         *            the visibility to set
          */
         public void setVisibility(String visibility) {
             this.visibility = visibility;

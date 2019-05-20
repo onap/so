@@ -44,7 +44,8 @@ public class ExecutionV31 {
     }
 
     /**
-     * @param id the id to set
+     * @param id
+     *            the id to set
      */
     public void setId(String id) {
         this.id = id;
@@ -58,7 +59,8 @@ public class ExecutionV31 {
     }
 
     /**
-     * @param blueprint_id the blueprint_id to set
+     * @param blueprint_id
+     *            the blueprint_id to set
      */
     public void setBlueprint_id(String blueprint_id) {
         this.blueprint_id = blueprint_id;
@@ -72,7 +74,8 @@ public class ExecutionV31 {
     }
 
     /**
-     * @param created_at the created_at to set
+     * @param created_at
+     *            the created_at to set
      */
     public void setCreated_at(Date created_at) {
         this.created_at = created_at;
@@ -86,7 +89,8 @@ public class ExecutionV31 {
     }
 
     /**
-     * @param ended_at the ended_at to set
+     * @param ended_at
+     *            the ended_at to set
      */
     public void setEnded_at(Date ended_at) {
         this.ended_at = ended_at;
@@ -100,7 +104,8 @@ public class ExecutionV31 {
     }
 
     /**
-     * @param created_by the created_by to set
+     * @param created_by
+     *            the created_by to set
      */
     public void setCreated_by(String created_by) {
         this.created_by = created_by;
@@ -114,7 +119,8 @@ public class ExecutionV31 {
     }
 
     /**
-     * @param deployment_id the deployment_id to set
+     * @param deployment_id
+     *            the deployment_id to set
      */
     public void setDeployment_id(String deployment_id) {
         this.deployment_id = deployment_id;
@@ -128,7 +134,8 @@ public class ExecutionV31 {
     }
 
     /**
-     * @param error the error to set
+     * @param error
+     *            the error to set
      */
     public void setError(String error) {
         this.error = error;
@@ -142,7 +149,8 @@ public class ExecutionV31 {
     }
 
     /**
-     * @param is_system_workflow the is_system_workflow to set
+     * @param is_system_workflow
+     *            the is_system_workflow to set
      */
     public void setIs_system_workflow(boolean is_system_workflow) {
         this.is_system_workflow = is_system_workflow;
@@ -156,7 +164,8 @@ public class ExecutionV31 {
     }
 
     /**
-     * @param status the status to set
+     * @param status
+     *            the status to set
      */
     public void setStatus(String status) {
         this.status = status;
@@ -170,7 +179,8 @@ public class ExecutionV31 {
     }
 
     /**
-     * @param tenant_name the tenant_name to set
+     * @param tenant_name
+     *            the tenant_name to set
      */
     public void setTenant_name(String tenant_name) {
         this.tenant_name = tenant_name;
@@ -184,7 +194,8 @@ public class ExecutionV31 {
     }
 
     /**
-     * @param workflow_id the workflow_id to set
+     * @param workflow_id
+     *            the workflow_id to set
      */
     public void setWorkflow_id(String workflow_id) {
         this.workflow_id = workflow_id;
@@ -198,7 +209,8 @@ public class ExecutionV31 {
     }
 
     /**
-     * @param started_at the started_at to set
+     * @param started_at
+     *            the started_at to set
      */
     public void setStarted_at(Date started_at) {
         this.started_at = started_at;
@@ -212,7 +224,8 @@ public class ExecutionV31 {
     }
 
     /**
-     * @param scheduled_for the scheduled_for to set
+     * @param scheduled_for
+     *            the scheduled_for to set
      */
     public void setScheduled_for(Date scheduled_for) {
         this.scheduled_for = scheduled_for;
