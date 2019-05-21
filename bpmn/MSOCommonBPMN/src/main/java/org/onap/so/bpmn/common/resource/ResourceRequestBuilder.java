@@ -92,7 +92,7 @@ public class ResourceRequestBuilder {
      *
      * @param execution Execution context
      *
-     * @param currentResource The current Service Resource Object
+     * @param resource The current Service Resource Object
      *
      * @param uuiServiceParameters the service parameters passed from the API
      *
@@ -103,19 +103,17 @@ public class ResourceRequestBuilder {
      * @since ONAP Beijing Release
      */
     @SuppressWarnings("unchecked")
-    public static String buildResourceRequestParameters(Execution execution, Resource currentResource,
+    public static String buildResourceRequestParameters(Execution execution, Resource resource,
             String uuiServiceParameters, Map<String, Object> currentVFData) {
         List<String> resourceList = jsonUtil.StringArrayToList(execution,
                 (String) JsonUtils.getJsonValue(uuiServiceParameters, "resources"));
         // Get the right location str for resource. default is an empty array.
         String locationConstraints = "[]";
-        String resourceInputsFromUui = "";
-        if (currentResource.getResourceType() == ResourceType.VNF) {
-            for (String resource : resourceList) {
-                String resCusUuid = (String) JsonUtils.getJsonValue(resource, "resourceCustomizationUuid");
-                if ((null != resCusUuid)
-                        && resCusUuid.equals(currentResource.getModelInfo().getModelCustomizationUuid())) {
-                    String resourceParameters = JsonUtils.getJsonValue(resource, "parameters");
+        if (resource.getResourceType() == ResourceType.VNF) {
+            for (String eachResource : resourceList) {
+                String resCusUuid = (String) JsonUtils.getJsonValue(eachResource, "resourceCustomizationUuid");
+                if ((null != resCusUuid) && resCusUuid.equals(resource.getModelInfo().getModelCustomizationUuid())) {
+                    String resourceParameters = JsonUtils.getJsonValue(eachResource, "parameters");
                     locationConstraints = JsonUtils.getJsonValue(resourceParameters, "locationConstraints");
                 }
             }
@@ -130,25 +128,9 @@ public class ResourceRequestBuilder {
         if (uuiRequestInputs == null) {
             uuiRequestInputs = new HashMap();
         }
-        String resourceInputStr = null;
-        ResourceLevel resourceLevel = null;
-        switch (currentResource.getResourceType()) {
-            case VNF:
-                resourceInputStr = ((VnfResource) currentResource).getResourceInput();
-                resourceLevel = ResourceLevel.FIRST;
-                break;
-            case GROUP:
-                resourceInputStr = ((GroupResource) currentResource).getVnfcs().get(0).getResourceInput();
-                resourceLevel = ResourceLevel.SECOND;
-                break;
-        }
 
-        Map<String, Object> resourceInputsAfterMerge = new HashMap<>();
-
-        if (StringUtils.isNotEmpty(resourceInputStr) && (null != resourceLevel)) {
-            resourceInputsAfterMerge =
-                    getResourceInput(resourceInputStr, uuiRequestInputs, resourceLevel, currentVFData);
-        }
+        Map<String, Object> resourceInputsAfterMerge =
+                ResourceRequestBuilder.buildResouceRequest(resource, uuiRequestInputs, currentVFData);
 
         String resourceInputsStr = getJsonString(resourceInputsAfterMerge);
         String result = "{\n" + "\"locationConstraints\":" + locationConstraints + ",\n" + "\"requestInputs\":"
@@ -157,68 +139,32 @@ public class ResourceRequestBuilder {
     }
 
     @SuppressWarnings("unchecked")
-    public static Map<String, Object> buildResouceRequest(String serviceUuid, String resourceCustomizationUuid,
-            Map<String, Object> serviceInputs, Map<String, Object> currentVFData) {
+    public static Map<String, Object> buildResouceRequest(Resource resource, Map<String, Object> uuiRequestInputs,
+            Map<String, Object> currentVFData) {
         try {
-            Map<String, Object> serviceInstnace = getServiceInstnace(serviceUuid);
-            // find match of customization uuid in vnf
-            Map<String, Map<String, Object>> serviceResources =
-                    (Map<String, Map<String, Object>>) serviceInstnace.get("serviceResources");
-
-            List<Map<String, Object>> serviceVnfCust = (List<Map<String, Object>>) serviceResources.get("serviceVnfs");
-            Map<String, String> resourceInputData = getResourceInputStr(serviceVnfCust, resourceCustomizationUuid);
-
-            // find match in network resource
-            if (resourceInputData.isEmpty()) {
-                List<Map<String, Object>> serviceNetworkCust =
-                        (List<Map<String, Object>>) serviceResources.get("serviceNetworks");
-                resourceInputData = getResourceInputStr(serviceNetworkCust, resourceCustomizationUuid);
-
-                // find match in AR resource
-                if (resourceInputData.isEmpty()) {
-                    List<Map<String, Object>> serviceArCust =
-                            (List<Map<String, Object>>) serviceResources.get("serviceAllottedResources");
-                    resourceInputData = getResourceInputStr(serviceArCust, resourceCustomizationUuid);
-                }
-            }
-
             String resourceInputStr = null;
-            ResourceLevel resourceLevel = null;
-            if (!resourceInputData.isEmpty()) {
-                resourceInputStr = resourceInputData.get("resourceInput");
-                resourceLevel = ResourceLevel.valueOf(resourceInputData.get("nodeType"));
+            // Resource Level is considered as first level by default
+            ResourceLevel resourceLevel = ResourceLevel.FIRST;
+            switch (resource.getResourceType()) {
+                case VNF:
+                    resourceInputStr = ((VnfResource) resource).getResourceInput();
+                    resourceLevel = ResourceLevel.FIRST;
+                    break;
+                case GROUP:
+                    resourceInputStr = ((GroupResource) resource).getVnfcs().get(0).getResourceInput();
+                    resourceLevel = ResourceLevel.SECOND;
+                    break;
             }
 
-            if (resourceInputStr != null && !resourceInputStr.isEmpty() && resourceLevel != null) {
-                return getResourceInput(resourceInputStr, serviceInputs, resourceLevel, currentVFData);
+            Map<String, Object> resourceInputsAfterMerge = new HashMap<>();
+            if (StringUtils.isNotEmpty(resourceInputStr)) {
+                return getResourceInput(resourceInputStr, uuiRequestInputs, resourceLevel, currentVFData);
             }
 
         } catch (Exception e) {
-            logger.error("not able to retrieve service instance", e);
+            logger.error("not able to retrieve service resource input ", e);
         }
         return new HashMap();
-    }
-
-    private static Map<String, String> getResourceInputStr(List<Map<String, Object>> resources,
-            String resCustomizationUuid) {
-
-        Map<String, String> resourceInputMap = new HashMap<>(2);
-        for (Map<String, Object> resource : resources) {
-            Map<String, String> modelInfo = (Map<String, String>) resource.get("modelInfo");
-
-            if (modelInfo.get("modelCustomizationUuid").equalsIgnoreCase(resCustomizationUuid)) {
-                resourceInputMap.put("resourceInput", (String) resource.get("resourceInput"));
-                String nodeType = ResourceLevel.FIRST.toString();
-                if (((String) resource.get("resourceType")).equalsIgnoreCase("VNF")) {
-                    nodeType = ResourceLevel.FIRST.toString();
-                } else if (((String) resource.get("resourceType")).equals("GROUP")) {
-                    nodeType = ResourceLevel.SECOND.toString();
-                }
-                resourceInputMap.put("nodeType", nodeType);
-                return resourceInputMap;
-            }
-        }
-        return new HashMap<>();
     }
 
     // this method combines resource input with service input
@@ -338,7 +284,7 @@ public class ResourceRequestBuilder {
                                 levelKeyNameUpdated = true;
                             }
 
-                            if (uuiServiceInput.containsKey(keyName)) {
+                            if ((null != uuiServiceInput) && (uuiServiceInput.containsKey(keyName))) {
                                 Object vfcLevelObject = uuiServiceInput.get(keyName);
                                 // it will be always list
                                 if (vfcLevelObject instanceof List) {
@@ -369,7 +315,7 @@ public class ResourceRequestBuilder {
                     } else {
 
                         // if not a list type
-                        if (uuiServiceInput.containsKey(tmpKey)) {
+                        if ((null != uuiServiceInput) && (uuiServiceInput.containsKey(tmpKey))) {
                             value = (String) uuiServiceInput.get(tmpKey);
                         } else {
                             if (split.length == 1) { // means value is empty e.g. "a":"key1|"
