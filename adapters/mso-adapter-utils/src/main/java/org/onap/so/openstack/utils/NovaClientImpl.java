@@ -183,4 +183,25 @@ public class NovaClientImpl extends MsoCommonUtils {
         }
     }
 
+    /**
+     * Deletes a keypair inside openstack
+     *
+     * 
+     * @param cloudSiteId the cloud site id
+     * @param tenantId the tenant id
+     * @param keyPairName name of the keypair to be deleted
+     * @throws MsoCloudSiteNotFound the mso cloud site not found
+     * @throws NeutronClientException if the client cannot be built this is thrown
+     */
+    public void deleteKeyPair(String cloudSiteId, String tenantId, String keyPairName)
+            throws MsoCloudSiteNotFound, NovaClientException {
+        try {
+            Nova novaClient = getNovaClient(cloudSiteId, tenantId);
+            OpenStackRequest<Void> request = novaClient.keyPairs().delete(keyPairName);
+            executeAndRecordOpenstackRequest(request);
+        } catch (MsoException e) {
+            logger.error("Error building Nova Client", e);
+            throw new NovaClientException("Error building Nova Client", e);
+        }
+    }
 }

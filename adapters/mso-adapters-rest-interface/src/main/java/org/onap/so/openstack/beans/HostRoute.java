@@ -20,16 +20,16 @@
 
 package org.onap.so.openstack.beans;
 
-
-
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {"prefix", "nextHop"})
-public class HostRoute {
+public class HostRoute implements Serializable {
 
+    private static final long serialVersionUID = 2468793257174064133L;
     private String prefix;
     private String nextHop;
 

@@ -4,7 +4,7 @@
           <cloudSiteId>mtn13</cloudSiteId>
           <tenantId>bef254252c5d44e6bcec65c180180ab5</tenantId>
           <networkType>CONTRAIL30_GNDIRECT</networkType>
-          <networkName>dvspg-VCE_VPE-mtjnj40avbc</networkName>
+          <networkName>DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001</networkName>
           <physicalNetworkName>dvs-mtjnj-01</physicalNetworkName>
           <vlans>3014</vlans>
           <failIfExists>false</failIfExists>

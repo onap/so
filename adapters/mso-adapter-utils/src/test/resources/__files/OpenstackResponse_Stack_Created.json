@@ -2,7 +2,7 @@
 	"stack": {
 		"description": null,
 		"links": null,
-		"stack_status_reason": null,
+		"stack_status_reason": "Stack Created",
 		"stack_name": "stackname",
 		"updated_time": null,
 		"creation_time": null,

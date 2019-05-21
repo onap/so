@@ -29,25 +29,15 @@
     </appender>
 
 
-  <logger name="com.att.eelf.audit" level="INFO" additivity="false">
-    <appender-ref ref="STDOUT" />
-  </logger>
-  
-  <logger name="com.att.eelf.metrics" level="INFO" additivity="false">
-        <appender-ref ref="STDOUT" />
-  </logger>
 
-  <logger name="com.att.eelf.error" level="WARN" additivity="false">
+  <logger name="com.woorea.openstack" level="${so.log.level:-DEBUG}" additivity="false">
     <appender-ref ref="STDOUT" />
   </logger> 
   
  <logger name="org.onap" level="${so.log.level:-DEBUG}" additivity="false">
     <appender-ref ref="STDOUT" />
   </logger>
-  
-   <logger name="org.onap" level="${so.log.level:-DEBUG}" additivity="false">
-    <appender-ref ref="STDOUT" />
-  </logger> 
+
 
   <root level="WARN">
     <appender-ref ref="STDOUT" />
