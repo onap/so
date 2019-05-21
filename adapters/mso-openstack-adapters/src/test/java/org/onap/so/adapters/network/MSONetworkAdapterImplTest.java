@@ -20,18 +20,6 @@
 
 package org.onap.so.adapters.network;
 
-import org.apache.http.HttpStatus;
-import org.junit.Test;
-import org.onap.so.adapters.vnf.BaseRestTestUtils;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.util.UriComponentsBuilder;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import static org.junit.Assert.assertEquals;
 import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackDeleteNeutronNetwork;
 import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackDeleteStack_200;
@@ -52,6 +40,18 @@ import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackPutStack;
 import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackResponseAccess;
 import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenstackGet;
 import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenstackPost;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import org.apache.http.HttpStatus;
+import org.junit.Test;
+import org.onap.so.adapters.vnf.BaseRestTestUtils;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.util.UriComponentsBuilder;
 
 public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 
@@ -147,7 +147,7 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
         mockOpenStackPostStack_200(wireMockServer, "OpenstackResponse_Stack.json");
 
         mockOpenStackGetStackCreated_200(wireMockServer, "OpenstackResponse_Stack_Created.json",
-                "dvspg-VCE_VPE-mtjnj40avbc/stackId");
+                "DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/stackId");
 
         String uri = "/services/NetworkAdapter";
         headers.set("X-ECOMP-RequestID", "123456789456127");

@@ -3,7 +3,7 @@
 		"description": null,
 		"links": null,
 		"stackStatusReason": null,
-		"stackName": null,
+		"stackName": "stackName",
 		"updatedTime": null,
 		"creationTime": null,
 		"stack_status": "DELETE_COMPLETE",

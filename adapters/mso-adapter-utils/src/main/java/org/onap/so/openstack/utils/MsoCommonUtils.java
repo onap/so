@@ -127,8 +127,8 @@ public class MsoCommonUtils {
                                 retryCount--;
                                 retry = true;
                                 logger.debug(
-                                        "OpenStackResponseException ResponseCode: {} request:{} Retry indicated. Attempts remaining:{}",
-                                        code, requestType, retryCount);
+                                        "OpenStackResponseException ResponseCode: {} Retry indicated. Attempts remaining:{}",
+                                        code, retryCount);
                                 break;
                             }
                         } catch (NumberFormatException e1) {
@@ -152,7 +152,7 @@ public class MsoCommonUtils {
                 // Connection to Openstack failed
                 if (retryCount > 0) {
                     retryCount--;
-                    logger.debug(" request: {} Retry indicated. Attempts remaining:{}", requestType, retryCount);
+                    logger.debug("Retry indicated. Attempts remaining:{}", retryCount);
                     try {
                         Thread.sleep(retryDelay * 1000L);
                     } catch (InterruptedException e1) {
@@ -223,40 +223,29 @@ public class MsoCommonUtils {
             try {
                 // Failed Heat calls return an Explanation entity body.
                 Explanation explanation = re.getResponse().getErrorEntity(Explanation.class);
-                logger.error("{} {} Exception - Openstack Error on {} : {}", MessageEnum.RA_CONNECTION_EXCEPTION,
-                        ErrorCode.DataError.getValue(), context, explanation.toString());
+                logger.error("Exception - Openstack Error on {} : {}", context, explanation);
                 String fullError = explanation.getExplanation() + ", error.type=" + explanation.getError().getType()
                         + ", error.message=" + explanation.getError().getMessage();
-                logger.debug(fullError);
-                me = new MsoOpenstackException(explanation.getCode(), explanation.getTitle(),
-                        // explanation.getExplanation ());
-                        fullError);
+                logger.error(fullError);
+                me = new MsoOpenstackException(explanation.getCode(), explanation.getTitle(), fullError);
             } catch (Exception e2) {
                 // Couldn't parse the body as an "Explanation". Report the original HTTP error.
                 logger.error("{} {} Exception - HTTP Error on {}: {}, ", MessageEnum.RA_CONNECTION_EXCEPTION,
                         ErrorCode.DataError.getValue(), context, re.getStatus(), e.getMessage(), e2);
-                me = new MsoOpenstackException(re.getStatus(), re.getMessage(), "");
+                me = new MsoOpenstackException(re.getStatus(), re.getMessage(), re.getMessage());
             }
 
             // Add the context of the error
             me.addContext(context);
 
-            // Generate an alarm for 5XX and higher errors.
-            if (re.getStatus() >= 500) {
-
-            }
         } else if (e instanceof OpenStackConnectException) {
             OpenStackConnectException ce = (OpenStackConnectException) e;
-
             me = new MsoIOException(ce.getMessage());
             me.addContext(context);
-
             // Generate an alarm for all connection errors.
-
             logger.error("{} {} Openstack Heat connection error on {}: ", MessageEnum.RA_CONNECTION_EXCEPTION,
                     ErrorCode.DataError.getValue(), context, e);
         }
-
         return me;
     }
 
@@ -435,7 +424,7 @@ public class MsoCommonUtils {
 
 
     /**
-     * Gets the Nova client
+     * Gets the Keystone Authorization
      *
      * @param cloudSite the cloud site
      * @param tenantId the tenant id

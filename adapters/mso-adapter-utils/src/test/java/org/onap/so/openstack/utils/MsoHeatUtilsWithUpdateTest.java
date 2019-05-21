@@ -22,10 +22,8 @@ package org.onap.so.openstack.utils;
 
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -98,7 +96,7 @@ public class MsoHeatUtilsWithUpdateTest extends TestDataSetup {
         expectedStackInfo.setCanonicalName("stackName/id");
 
         doReturn(Optional.of(cloudSite)).when(cloudConfig).getCloudSite(isA(String.class));
-        doReturn(heatClient).when(heatUtils).getHeatClient(isA(CloudSite.class), isA(String.class));
+        doReturn(heatClient).when(heatUtils).getHeatClient(isA(String.class), isA(String.class));
         doReturn(null).when(heatUtils).executeAndRecordOpenstackRequest(isA(OpenStackRequest.class));
         doReturn("0").when(environment).getProperty(isA(String.class), isA(String.class));
         doReturn(updateStack).when(heatUtils).queryHeatStack(isA(Heat.class), isA(String.class));
@@ -123,7 +121,7 @@ public class MsoHeatUtilsWithUpdateTest extends TestDataSetup {
         expectedStackInfo.setCanonicalName("stackName/id");
 
         doReturn(Optional.of(cloudSite)).when(cloudConfig).getCloudSite(isA(String.class));
-        doReturn(heatClient).when(heatUtils).getHeatClient(isA(CloudSite.class), isA(String.class));
+        doReturn(heatClient).when(heatUtils).getHeatClient(isA(String.class), isA(String.class));
 
         doReturn(null).when(heatUtils).executeAndRecordOpenstackRequest(isA(OpenStackRequest.class));
         doReturn("0").when(environment).getProperty(isA(String.class), isA(String.class));
@@ -150,7 +148,7 @@ public class MsoHeatUtilsWithUpdateTest extends TestDataSetup {
         expectedStackInfo.setCanonicalName("stackName/id");
 
         doReturn(Optional.of(cloudSite)).when(cloudConfig).getCloudSite(isA(String.class));
-        doReturn(heatClient).when(heatUtils).getHeatClient(isA(CloudSite.class), isA(String.class));
+        doReturn(heatClient).when(heatUtils).getHeatClient(isA(String.class), isA(String.class));
         doReturn(null).when(heatUtils).executeAndRecordOpenstackRequest(isA(OpenStackRequest.class));
         doReturn("0").when(environment).getProperty(isA(String.class), isA(String.class));
         doReturn(updateStack).when(heatUtils).queryHeatStack(isA(Heat.class), isA(String.class));

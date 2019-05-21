@@ -64,9 +64,9 @@ import org.onap.so.db.catalog.data.repository.VFModuleCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.VnfResourceRepository;
 import org.onap.so.db.catalog.utils.MavenLikeVersioning;
 import org.onap.so.entity.MsoRequest;
-import org.onap.so.logger.ErrorCode;
 import org.onap.so.heatbridge.HeatBridgeApi;
 import org.onap.so.heatbridge.HeatBridgeImpl;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.openstack.beans.HeatStatus;
 import org.onap.so.openstack.beans.StackInfo;
@@ -79,10 +79,6 @@ import org.onap.so.openstack.exceptions.MsoHeatNotFoundException;
 import org.onap.so.openstack.utils.MsoHeatEnvironmentEntry;
 import org.onap.so.openstack.utils.MsoHeatUtils;
 import org.onap.so.openstack.utils.MsoHeatUtilsWithUpdate;
-import org.openstack4j.model.compute.Flavor;
-import org.openstack4j.model.compute.Image;
-import org.openstack4j.model.compute.Server;
-import org.openstack4j.model.heat.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,6 +88,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.openstack4j.model.compute.Flavor;
+import org.openstack4j.model.compute.Image;
+import org.openstack4j.model.compute.Server;
+import org.openstack4j.model.heat.Resource;
 
 @WebService(serviceName = "VnfAdapter", endpointInterface = "org.onap.so.adapters.vnf.MsoVnfAdapter",
         targetNamespace = "http://org.onap.so/vnf")
@@ -107,6 +107,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(MsoVnfAdapterImpl.class);
 
+
     private static final String VNF_ADAPTER_SERVICE_NAME = "MSO-BPMN:MSO-VnfAdapter.";
     private static final String CHECK_REQD_PARAMS = "org.onap.so.adapters.vnf.checkRequiredParameters";
     private static final String ADD_GET_FILES_ON_VOLUME_REQ = "org.onap.so.adapters.vnf.addGetFilesOnVolumeReq";
@@ -115,6 +116,8 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     private static final String FAIL_REQUESTS_ON_VALET_FAILURE =
             "org.onap.so.adapters.vnf.fail_requests_on_valet_failure";
     private static final String OPENSTACK = "OpenStack";
+
+
 
     @Autowired
     private VFModuleCustomizationRepository vfModuleCustomRepo;
@@ -606,7 +609,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             requestTypeString = requestTypeString.substring(1);
         }
 
-        // 1607 - let's parse out the request type we're being sent
+        // let's parse out the request type we're being sent
         boolean isBaseRequest = false;
         boolean isVolumeRequest = false;
         if (requestTypeString.startsWith("VOLUME")) {
@@ -615,8 +618,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
         logger.debug("requestTypeString = " + requestTypeString + ", nestedStackId = " + nestedStackId
                 + ", nestedBaseStackId = " + nestedBaseStackId);
-        // Will capture execution time for metrics
-        long startTime = System.currentTimeMillis();
 
         // Build a default rollback object (no actions performed)
         VnfRollback vfRollback = new VnfRollback();
@@ -636,7 +637,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         }
 
         StackInfo heatStack = null;
-        long subStartTime1 = System.currentTimeMillis();
         try {
             heatStack = heat.queryStack(cloudSiteId, cloudOwner, tenantId, vfModuleName);
         } catch (MsoException me) {
@@ -651,7 +651,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             me.addContext("CreateVFModule");
             throw new VnfException(me);
         }
-        // New with 1607 - more precise handling/messaging if the stack already exists
+        // more precise handling/messaging if the stack already exists
         if (heatStack != null && heatStack.getStatus() != HeatStatus.NOTFOUND) {
             // INIT, CREATED, NOTFOUND, FAILED, BUILDING, DELETING, UNKNOWN, UPDATING, UPDATED
             HeatStatus status = heatStack.getStatus();
@@ -716,7 +716,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
         // handle a nestedStackId if sent- this one would be for the volume - so applies to both Vf and Vnf
         StackInfo nestedHeatStack = null;
-        long subStartTime2 = System.currentTimeMillis();
+
         Map<String, Object> nestedVolumeOutputs = null;
         if (nestedStackId != null) {
             try {
@@ -751,7 +751,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
         // handle a nestedBaseStackId if sent- this is the stack ID of the base. Should be null for VNF requests
         StackInfo nestedBaseHeatStack = null;
-        long subStartTime3 = System.currentTimeMillis();
         Map<String, Object> baseStackOutputs = null;
         if (nestedBaseStackId != null) {
             try {
@@ -785,25 +784,19 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             }
         }
 
-        // Ready to deploy the new VNF
-
-
-
         try {
             // Retrieve the VF
             VfModule vf = null;
             VnfResource vnfResource = null;
             VfModuleCustomization vfmc = null;
-            logger.debug("version: {}", vfVersion);
             if (useMCUuid) {
-                // 1707 - db refactoring
                 vfmc = vfModuleCustomRepo.findFirstByModelCustomizationUUIDOrderByCreatedDesc(mcu);
                 if (vfmc != null)
                     vf = vfmc.getVfModule();
                 else
                     vf = null;
 
-                // 1702 - this will be the new way going forward. We find the vf by mcu - otherwise, code is the same.
+                // this will be the new way going forward. We find the vf by mcu - otherwise, code is the same.
                 if (vf == null) {
                     logger.debug("Unable to find vfModuleCust with modelCustomizationUuid={}", mcu);
                     String error =
@@ -846,7 +839,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             }
             // By here - we have either a vf or vnfResource
 
-            // 1607 - Add version check
+            // Add version check
             // First - see if it's in the VnfResource record
             // if we have a vf Module - then we have to query to get the VnfResource record.
             if (!oldWay && vf.getVnfResources() != null) {
@@ -894,7 +887,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                             equalToMax = aicV.isTheSameVersion(maxVersionVnf);
                         } catch (Exception e) {
                             logger.debug(
-                                    "An exception occurred while trying to test AIC Version {} - will default to not check",
+                                    "An exception occurred while trying to test Cloud Version {} - will default to not check",
                                     e.getMessage(), e);
                             doNotTest = true;
                         }
@@ -917,20 +910,13 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                                 throw new VnfException(error, MsoExceptionCategory.USERDATA);
                             }
                         } else {
-                            logger.debug("bypassing testing AIC version...");
+                            logger.debug("bypassing testing Cloud version...");
                         }
                     } // let this error out downstream to avoid introducing uncertainty at this stage
                 } else {
                     logger.debug("cloudConfig is NULL - cannot check cloud site version");
                 }
-            } else {
-                logger.debug(
-                        "AIC Version not set in VNF_Resource - this is expected thru 1607 - do not error here - not checked"
-                                + ".");
             }
-            // End Version check 1607
-
-
 
             // By the time we get here - heatTemplateId and heatEnvtId should be populated (or null)
             HeatTemplate heatTemplate = null;
@@ -994,7 +980,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 nestedTemplatesChecked = null;
             }
 
-            // 1510 - Also add the files: for any get_files associated with this vnf_resource_id
+            // Also add the files: for any get_files associated with this vnf_resource_id
             // *if* there are any
             List<HeatFiles> heatFiles = null;
 
@@ -1015,11 +1001,9 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
             if (!isVolumeRequest || addGetFilesOnVolumeReq) {
                 if (oldWay) {
-                    logger.debug(
-                            "In MsoVnfAdapterImpl createVfModule, this should not happen - old way is gamma only - no heat "
-                                    + "files!");
+                    logger.debug("In MsoVnfAdapterImpl createVfModule, this should not happen, no heat files!");
                 } else {
-                    // 1607 - now use VF_MODULE_TO_HEAT_FILES table
+                    // now use VF_MODULE_TO_HEAT_FILES table
                     logger.debug(
                             "In MsoVnfAdapterImpl createVfModule, about to call db.getHeatFilesForVfModule avec vfModuleId="
                                     + vf.getModelUUID());
@@ -1046,9 +1030,9 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             String missingParams = null;
             List<String> paramList = new ArrayList<>();
 
-            // New for 1510 - consult the PARAM_ALIAS field to see if we've been
+            // consult the PARAM_ALIAS field to see if we've been
             // supplied an alias. Only check if we don't find it initially.
-            // Also new in 1510 - don't flag missing parameters if there's an environment - because they might be there.
+            // don't flag missing parameters if there's an environment - because they might be there.
             // And also new - add parameter to turn off checking all together if we find we're blocking orders we
             // shouldn't
             boolean checkRequiredParameters = true;
@@ -1063,7 +1047,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 // No problem - default is true
                 logger.debug("An exception occured trying to get property {}", MsoVnfAdapterImpl.CHECK_REQD_PARAMS, e);
             }
-            // 1604 - Add enhanced environment & parameter checking
             // Part 1: parse envt entries to see if reqd parameter is there (before used a simple grep
             // Part 2: only submit to openstack the parameters in the envt that are in the heat template
             // Note this also removes any comments
@@ -1071,7 +1054,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             if (heatEnvironment != null && heatEnvironment.getEnvironment() != null
                     && heatEnvironment.getEnvironment().contains("parameters:")) {
 
-                logger.debug("Enhanced environment checking enabled - 1604");
                 StringBuilder sb = new StringBuilder(heatEnvironment.getEnvironment());
 
                 mhee = new MsoHeatEnvironmentEntry(sb);
@@ -1089,10 +1071,9 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             } else {
                 logger.debug("NO ENVIRONMENT for this entry");
             }
-            // New with 1707 - all variables converted to their native object types
+            // all variables converted to their native object types
             Map<String, Object> goldenInputs = null;
 
-            logger.debug("Now handle the inputs....first convert");
             ArrayList<String> parameterNames = new ArrayList<>();
             HashMap<String, String> aliasToParam = new HashMap<>();
             StringBuilder sb = new StringBuilder("\nTemplate Parameters:\n");
@@ -1193,31 +1174,21 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             // Have the tenant. Now deploy the stack itself
             // Ignore MsoTenantNotFound and MsoStackAlreadyExists exceptions
             // because we already checked for those.
-            long createStackStarttime = System.currentTimeMillis();
             try {
-                // heatStack = heat.createStack(cloudSiteId, tenantId, vnfName, template, inputs, true,
-                // heatTemplate.getTimeoutMinutes());
                 if (backout == null) {
                     backout = true;
                 }
                 if (heat != null) {
-                    logger.debug("heat is not null!!");
 
                     heatStack = heat.createStack(cloudSiteId, cloudOwner, tenantId, vfModuleName, null, template,
                             goldenInputs, true, heatTemplate.getTimeoutMinutes(), newEnvironmentString,
                             nestedTemplatesChecked, heatFilesObjects, backout.booleanValue());
                 } else {
-                    logger.debug("heat is null!");
                     throw new MsoHeatNotFoundException();
                 }
             } catch (MsoException me) {
                 me.addContext("CreateVFModule");
-                String error = "Create VF Module " + vfModuleType + " in " + cloudOwner + "/" + cloudSiteId + "/"
-                        + tenantId + ": " + me;
-                logger.error("{} {} {} {} {} {} {} {}", MessageEnum.RA_CREATE_VNF_ERR.toString(), vfModuleType,
-                        cloudOwner, cloudSiteId, tenantId, OPENSTACK, ErrorCode.DataError.getValue(),
-                        "MsoException - createStack", me);
-                logger.debug(error);
+                logger.error("Error creating Stack", me);
                 if (isValetEnabled && sendResponseToValet) {
                     logger.debug("valet is enabled, the orchestration failed - now sending rollback to valet");
                     try {
@@ -1231,17 +1202,10 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 }
                 throw new VnfException(me);
             } catch (NullPointerException npe) {
-                String error = "Create VFModule " + vfModuleType + " in " + cloudOwner + "/" + cloudSiteId + "/"
-                        + tenantId + ": " + npe;
-                logger.error("{} {} {} {} {} {} {} {}", MessageEnum.RA_CREATE_VNF_ERR.toString(), vfModuleType,
-                        cloudOwner, cloudSiteId, tenantId, OPENSTACK, ErrorCode.DataError.getValue(),
-                        "NullPointerException - createStack", npe);
-                logger.debug(error);
-                logger.debug("NULL POINTER EXCEPTION at heat.createStack");
-                // npe.addContext ("CreateVNF");
+                logger.error("Error creating Stack", npe);
                 throw new VnfException("NullPointerException during heat.createStack");
             } catch (Exception e) {
-                logger.debug("unhandled exception at heat.createStack", e);
+                logger.error("Error creating Stack", e);
                 throw new VnfException("Exception during heat.createStack! " + e.getMessage());
             }
             // Reach this point if createStack is successful.
@@ -1899,8 +1863,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             } else {
                 logger.debug("found missing parameters - but checkRequiredParameters is false - will not block");
             }
-        } else {
-            logger.debug("No missing parameters found - ok to proceed");
         }
 
         // Just submit the envt entry as received from the database

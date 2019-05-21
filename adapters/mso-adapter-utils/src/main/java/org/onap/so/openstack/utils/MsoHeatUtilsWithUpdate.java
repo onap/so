@@ -24,25 +24,14 @@
 package org.onap.so.openstack.utils;
 
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.woorea.openstack.base.client.OpenStackBaseException;
-import com.woorea.openstack.base.client.OpenStackRequest;
-import com.woorea.openstack.heat.Heat;
-import com.woorea.openstack.heat.model.Stack;
-import com.woorea.openstack.heat.model.Stack.Output;
-import com.woorea.openstack.heat.model.UpdateStackParam;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.openstack.beans.StackInfo;
-import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.exceptions.MsoOpenstackException;
 import org.onap.so.openstack.exceptions.MsoStackNotFound;
@@ -52,6 +41,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.woorea.openstack.base.client.OpenStackBaseException;
+import com.woorea.openstack.base.client.OpenStackRequest;
+import com.woorea.openstack.heat.Heat;
+import com.woorea.openstack.heat.model.Stack;
+import com.woorea.openstack.heat.model.Stack.Output;
+import com.woorea.openstack.heat.model.UpdateStackParam;
 
 @Component
 public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
@@ -138,12 +136,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
             haveHeatFiles = false;
         }
 
-        // Obtain the cloud site information where we will create the stack
-        CloudSite cloudSite =
-                cloudConfig.getCloudSite(cloudSiteId).orElseThrow(() -> new MsoCloudSiteNotFound(cloudSiteId));
-        // Get a Heat client. They are cached between calls (keyed by tenantId:cloudId)
-        // This could throw MsoTenantNotFound or MsoOpenstackException (both propagated)
-        Heat heatClient = getHeatClient(cloudSite, tenantId);
+        Heat heatClient = getHeatClient(cloudSiteId, tenantId);
 
         // Perform a query first to get the current status
         Stack heatStack = queryHeatStack(heatClient, stackName);
