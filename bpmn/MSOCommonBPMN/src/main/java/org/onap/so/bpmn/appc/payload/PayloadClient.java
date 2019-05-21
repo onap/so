@@ -24,11 +24,14 @@ import java.util.Optional;
 import org.onap.so.bpmn.appc.payload.beans.ConfigurationParametersHealthCheck;
 import org.onap.so.bpmn.appc.payload.beans.ConfigurationParametersQuiesce;
 import org.onap.so.bpmn.appc.payload.beans.ConfigurationParametersResumeTraffic;
+import org.onap.so.bpmn.appc.payload.beans.ConfigurationParametersDistributeTraffic;
 import org.onap.so.bpmn.appc.payload.beans.ConfigurationParametersUpgrade;
 import org.onap.so.bpmn.appc.payload.beans.HealthCheckAction;
 import org.onap.so.bpmn.appc.payload.beans.QuiesceTrafficAction;
 import org.onap.so.bpmn.appc.payload.beans.RequestParametersHealthCheck;
 import org.onap.so.bpmn.appc.payload.beans.ResumeTrafficAction;
+import org.onap.so.bpmn.appc.payload.beans.DistributeTrafficAction;
+import org.onap.so.bpmn.appc.payload.beans.DistributeTrafficCheckAction;
 import org.onap.so.bpmn.appc.payload.beans.SnapshotAction;
 import org.onap.so.bpmn.appc.payload.beans.StartStopAction;
 import org.onap.so.bpmn.appc.payload.beans.UpgradeAction;
@@ -51,6 +54,38 @@ public class PayloadClient {
         String newSoftware = JsonUtils.getJsonValue(payloadString, "new_software_version");
         configParams.setExistingSoftwareVersion(existingSoftware);
         configParams.setNewSoftwareVersion(newSoftware);
+        configParams.setVnfName(vnfName);
+        payloadResult.setConfigurationParameters(configParams);
+        return Optional.of(mapper.writeValueAsString(payloadResult));
+    }
+
+    public static Optional<String> distributeTrafficFormat(Optional<String> payload, String vnfName)
+            throws JsonProcessingException {
+        DistributeTrafficAction payloadResult = new DistributeTrafficAction();
+        ConfigurationParametersDistributeTraffic configParams = new ConfigurationParametersDistributeTraffic();
+        String payloadString = payload.isPresent() ? payload.get() : "";
+        String bookName = JsonUtils.getJsonValue(payloadString, "book_name");
+        String nodeList = JsonUtils.getJsonValue(payloadString, "node_list");
+        String fileParameterContent = JsonUtils.getJsonValue(payloadString, "file_parameter_content");
+        configParams.setBookName(bookName);
+        configParams.setNodeList(nodeList);
+        configParams.setFileParameterContent(fileParameterContent);
+        configParams.setVnfName(vnfName);
+        payloadResult.setConfigurationParameters(configParams);
+        return Optional.of(mapper.writeValueAsString(payloadResult));
+    }
+
+    public static Optional<String> distributeTrafficCheckFormat(Optional<String> payload, String vnfName)
+            throws JsonProcessingException {
+        DistributeTrafficCheckAction payloadResult = new DistributeTrafficCheckAction();
+        ConfigurationParametersDistributeTraffic configParams = new ConfigurationParametersDistributeTraffic();
+        String payloadString = payload.isPresent() ? payload.get() : "";
+        String bookName = JsonUtils.getJsonValue(payloadString, "book_name");
+        String nodeList = JsonUtils.getJsonValue(payloadString, "node_list");
+        String fileParameterContent = JsonUtils.getJsonValue(payloadString, "file_parameter_content");
+        configParams.setBookName(bookName);
+        configParams.setNodeList(nodeList);
+        configParams.setFileParameterContent(fileParameterContent);
         configParams.setVnfName(vnfName);
         payloadResult.setConfigurationParameters(configParams);
         return Optional.of(mapper.writeValueAsString(payloadResult));
