@@ -23,19 +23,6 @@
 package org.onap.so.openstack.utils;
 
 
-import com.woorea.openstack.base.client.OpenStackBaseException;
-import com.woorea.openstack.base.client.OpenStackConnectException;
-import com.woorea.openstack.base.client.OpenStackRequest;
-import com.woorea.openstack.base.client.OpenStackResponseException;
-import com.woorea.openstack.keystone.Keystone;
-import com.woorea.openstack.keystone.model.Access;
-import com.woorea.openstack.keystone.model.Authentication;
-import com.woorea.openstack.keystone.model.Metadata;
-import com.woorea.openstack.keystone.model.Role;
-import com.woorea.openstack.keystone.model.Roles;
-import com.woorea.openstack.keystone.model.Tenant;
-import com.woorea.openstack.keystone.model.User;
-import com.woorea.openstack.keystone.utils.KeystoneUtils;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -54,6 +41,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import com.woorea.openstack.base.client.OpenStackBaseException;
+import com.woorea.openstack.base.client.OpenStackConnectException;
+import com.woorea.openstack.base.client.OpenStackRequest;
+import com.woorea.openstack.base.client.OpenStackResponseException;
+import com.woorea.openstack.keystone.Keystone;
+import com.woorea.openstack.keystone.model.Access;
+import com.woorea.openstack.keystone.model.Authentication;
+import com.woorea.openstack.keystone.model.Metadata;
+import com.woorea.openstack.keystone.model.Role;
+import com.woorea.openstack.keystone.model.Roles;
+import com.woorea.openstack.keystone.model.Tenant;
+import com.woorea.openstack.keystone.model.User;
+import com.woorea.openstack.keystone.utils.KeystoneUtils;
 
 @Component
 public class MsoKeystoneUtils extends MsoTenantUtils {
@@ -414,7 +414,6 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
         // Get the Identity service URL. Throws runtime exception if not found per region.
         String adminUrl = null;
         try {
-            // TODO: FOR TESTING!!!!
             adminUrl = KeystoneUtils.findEndpointURL(access.getServiceCatalog(), "identity", region, "public");
             adminUrl = adminUrl.replaceFirst("5000", "35357");
         } catch (RuntimeException e) {

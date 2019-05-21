@@ -2,16 +2,14 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2018 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
- * Modifications Copyright (c) 2019 Samsung
+ * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,214 +20,446 @@
 
 package org.onap.so.openstack.utils;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.junit.Assert.assertNotNull;
+
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import org.apache.http.HttpStatus;
-import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.onap.so.BaseTest;
-import org.onap.so.StubOpenStack;
-import org.onap.so.adapters.vdu.CloudInfo;
-import org.onap.so.adapters.vdu.PluginAction;
-import org.onap.so.adapters.vdu.VduArtifact;
-import org.onap.so.adapters.vdu.VduArtifact.ArtifactType;
-import org.onap.so.adapters.vdu.VduInstance;
-import org.onap.so.adapters.vdu.VduModelInfo;
-import org.onap.so.adapters.vdu.VduStateType;
-import org.onap.so.adapters.vdu.VduStatus;
-import org.onap.so.db.catalog.beans.CloudIdentity;
-import org.onap.so.db.catalog.beans.CloudSite;
-import org.onap.so.openstack.beans.StackInfo;
-import org.onap.so.openstack.exceptions.MsoAdapterException;
+import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.openstack.exceptions.MsoException;
-import org.onap.so.openstack.exceptions.MsoIOException;
 import org.onap.so.openstack.exceptions.MsoOpenstackException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.onap.so.openstack.exceptions.MsoStackAlreadyExists;
+import org.springframework.core.env.Environment;
+import com.woorea.openstack.base.client.OpenStackResponseException;
 import com.woorea.openstack.heat.Heat;
+import com.woorea.openstack.heat.StackResource;
+import com.woorea.openstack.heat.StackResource.CreateStack;
+import com.woorea.openstack.heat.StackResource.DeleteStack;
 import com.woorea.openstack.heat.model.CreateStackParam;
+import com.woorea.openstack.heat.model.Resource;
+import com.woorea.openstack.heat.model.Resources;
+import com.woorea.openstack.heat.model.Stack;
 
-public class MsoHeatUtilsTest extends BaseTest {
+@RunWith(MockitoJUnitRunner.class)
+public class MsoHeatUtilsTest extends MsoHeatUtils {
 
-    @Autowired
+    @Rule
+    public ExpectedException exceptionRule = ExpectedException.none();
+
+    @Spy
+    @InjectMocks
     private MsoHeatUtils heatUtils;
 
-    @Test
-    public void instantiateVduTest() throws MsoException, IOException {
-        VduInstance expected = new VduInstance();
-        expected.setVduInstanceId("name/da886914-efb2-4917-b335-c8381528d90b");
-        expected.setVduInstanceName("name");
-        VduStatus status = new VduStatus();
-        status.setState(VduStateType.INSTANTIATED);
-        status.setLastAction((new PluginAction("create", "complete", null)));
-        expected.setStatus(status);
+    @Mock
+    private Heat heatClient;
 
-        CloudInfo cloudInfo = new CloudInfo();
-        cloudInfo.setCloudSiteId("MTN13");
-        cloudInfo.setTenantId("tenantId");
-        VduModelInfo vduModel = new VduModelInfo();
-        vduModel.setModelCustomizationUUID("blueprintId");
-        vduModel.setTimeoutMinutes(1);
-        VduArtifact artifact = new VduArtifact();
-        artifact.setName("name");
-        artifact.setType(ArtifactType.MAIN_TEMPLATE);
-        byte[] content = new byte[1];
-        artifact.setContent(content);
-        List<VduArtifact> artifacts = new ArrayList<>();
-        artifacts.add(artifact);
-        vduModel.setArtifacts(artifacts);
-        Map<String, byte[]> blueprintFiles = new HashMap<>();
-        blueprintFiles.put(artifact.getName(), artifact.getContent());
-        String instanceName = "instanceName";
-        Map<String, Object> inputs = new HashMap<>();
-        boolean rollbackOnFailure = true;
+    @Mock
+    private StackStatusHandler stackStatusHandler;
 
-        StubOpenStack.mockOpenStackResponseAccess(wireMockServer, wireMockPort);
-        StubOpenStack.mockOpenStackPostStack_200(wireMockServer, "OpenstackResponse_Stack_Created.json");
+    @Mock
+    private Environment env;
 
-        wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/instanceName/stackId"))
-                .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBodyFile("OpenstackResponse_StackId.json").withStatus(HttpStatus.SC_OK)));
+    @Mock
+    private StackResource stackResource;
 
-        VduInstance actual = heatUtils.instantiateVdu(cloudInfo, instanceName, inputs, vduModel, rollbackOnFailure);
+    @Mock
+    private NovaClientImpl novaClient;
 
-        assertThat(actual, sameBeanAs(expected));
-    }
+    @Mock
+    private DeleteStack mockDeleteStack;
 
+    @Mock
+    private Resources mockResources;
 
-    @Test
-    public void queryVduTest() throws Exception {
-        VduInstance expected = new VduInstance();
-        expected.setVduInstanceId("name/da886914-efb2-4917-b335-c8381528d90b");
-        expected.setVduInstanceName("name");
-        VduStatus status = new VduStatus();
-        status.setState(VduStateType.INSTANTIATED);
-        status.setLastAction((new PluginAction("create", "complete", null)));
-        expected.setStatus(status);
+    @Mock
+    private CreateStack mockCreateStack;
 
-        CloudInfo cloudInfo = new CloudInfo();
-        cloudInfo.setCloudSiteId("mtn13");
-        cloudInfo.setTenantId("tenantId");
-        String instanceId = "instanceId";
+    private String cloudSiteId = "cloudSiteId";
+    private String tenantId = "tenantId";
 
-        StubOpenStack.mockOpenStackResponseAccess(wireMockServer, wireMockPort);
-        StubOpenStack.mockOpenStackPostStack_200(wireMockServer, "OpenstackResponse_Stack_Created.json");
-
-        wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/instanceId"))
-                .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBodyFile("OpenstackResponse_StackId.json").withStatus(HttpStatus.SC_OK)));
-
-        VduInstance actual = heatUtils.queryVdu(cloudInfo, instanceId);
-
-        assertThat(actual, sameBeanAs(expected));
+    @Before
+    public void setup() {
+        doReturn("15").when(env).getProperty("org.onap.so.adapters.po.pollInterval", "15");
+        doReturn("1").when(env).getProperty("org.onap.so.adapters.po.pollMultiplier", "60");
     }
 
     @Test
-    public void deleteVduTest() throws Exception {
-        VduInstance expected = new VduInstance();
-        expected.setVduInstanceId("instanceId");
-        expected.setVduInstanceName("instanceId");
-        VduStatus status = new VduStatus();
-        status.setState(VduStateType.DELETED);
-        expected.setStatus(status);
+    public final void pollStackForStatus_Create_Complete_Test() throws MsoException, IOException {
+        Stack stack = new Stack();
+        stack.setId("id");
+        stack.setStackName("stackName");
+        stack.setStackStatus("CREATE_IN_PROGRESS");
+        stack.setStackStatusReason("Stack Finished");
 
-        CloudInfo cloudInfo = new CloudInfo();
-        cloudInfo.setCloudSiteId("mtn13");
-        cloudInfo.setTenantId("tenantId");
-        String instanceId = "instanceId";
+        Stack latestStack = new Stack();
+        latestStack.setId("id");
+        latestStack.setStackName("stackName");
+        latestStack.setStackStatus("CREATE_COMPLETE");
+        latestStack.setStackStatusReason("Stack Finished");
+        doNothing().when(stackStatusHandler).updateStackStatus(stack);
+        doReturn(latestStack).when(heatUtils).queryHeatStack(isA(Heat.class), eq("stackName/id"));
+        doReturn(heatClient).when(heatUtils).getHeatClient(cloudSiteId, tenantId);
+        Stack actual = heatUtils.pollStackForStatus(1, stack, "CREATE_IN_PROGRESS", cloudSiteId, tenantId);
+        Mockito.verify(stackStatusHandler, times(1)).updateStackStatus(stack);
+        Mockito.verify(heatUtils, times(1)).queryHeatStack(isA(Heat.class), eq("stackName/id"));
+        assertEquals(true, actual != null);
+    }
 
-        int timeoutInMinutes = 1;
 
-        StubOpenStack.mockOpenStackResponseAccess(wireMockServer, wireMockPort);
-        wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/instanceId"))
-                .willReturn(aResponse().withBodyFile("OpenstackResponse_StackId.json").withStatus(HttpStatus.SC_OK)));
-        StubOpenStack.mockOpenStackDelete(wireMockServer, "name/da886914-efb2-4917-b335-c8381528d90b");
-        wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/name/da886914-efb2-4917-b335-c8381528d90b"))
-                .willReturn(aResponse().withBodyFile("OpenstackResponse_Stack_DeleteComplete.json")
-                        .withStatus(HttpStatus.SC_OK)));
-
-        VduInstance actual = heatUtils.deleteVdu(cloudInfo, instanceId, timeoutInMinutes);
-
-        assertThat(actual, sameBeanAs(expected));
+    @Test
+    public final void pollStackForStatus_Polling_Exhausted_Test() throws MsoException, IOException {
+        Stack stack = new Stack();
+        stack.setId("id");
+        stack.setStackName("stackName");
+        stack.setStackStatus("CREATE_IN_PROGRESS");
+        stack.setStackStatusReason("Stack Finished");
+        doNothing().when(stackStatusHandler).updateStackStatus(stack);
+        doReturn(stack).when(heatUtils).queryHeatStack(isA(Heat.class), eq("stackName/id"));
+        doReturn(heatClient).when(heatUtils).getHeatClient(cloudSiteId, tenantId);
+        Stack actual = heatUtils.pollStackForStatus(1, stack, "CREATE_IN_PROGRESS", cloudSiteId, tenantId);
+        Mockito.verify(stackStatusHandler, times(1)).updateStackStatus(stack);
+        Mockito.verify(heatUtils, times(1)).queryHeatStack(isA(Heat.class), eq("stackName/id"));
+        assertEquals(true, actual != null);
     }
 
     @Test
-    public final void requestToStringBuilderTest() {
-        CreateStackParam param = new CreateStackParam();
-        param.setDisableRollback(false);
-        param.setEnvironment("environment");
-        param.setFiles(new HashMap<String, Object>());
-        param.setParameters(new HashMap<>());
-        param.setStackName("stackName");
-        param.setTemplate("template");
-        param.setTemplateUrl("http://templateUrl");
-        param.setTimeoutMinutes(1);
+    public final void postProcessStackCreate_CREATE_IN_PROGRESS_Test() throws MsoException, IOException {
+        Stack stack = new Stack();
+        stack.setId("id");
+        stack.setStackName("stackName");
+        stack.setStackStatus("CREATE_IN_PROGRESS");
+        stack.setStackStatusReason("Stack Finished");
+        CreateStackParam createStackParam = new CreateStackParam();
+        createStackParam.setStackName("stackName");
 
-        StringBuilder stringBuilder = heatUtils.requestToStringBuilder(param);
-
-        Assert.assertTrue(stringBuilder.toString().contains("StackName:"));
+        exceptionRule.expect(StackCreationException.class);
+        exceptionRule.expectMessage("Stack rollback suppressed, stack not deleted");
+        heatUtils.postProcessStackCreate(stack, false, 120, false, cloudSiteId, tenantId, createStackParam);
     }
 
     @Test
-    public final void copyBaseOutputsToInputsTest() {
-        Map<String, Object> inputs = new HashMap<>();
-        inputs.put("str1", "str");
-        Map<String, Object> otherStackOutputs = new HashMap<>();
-        otherStackOutputs.put("str", "str");
-        List<String> paramNames = new ArrayList<>();
-        Map<String, String> aliases = new HashMap<>();
-        aliases.put("str", "str");
-        heatUtils.copyBaseOutputsToInputs(inputs, otherStackOutputs, null, aliases);
-        Assert.assertEquals("str", otherStackOutputs.get("str"));
+    public final void postProcessStackCreate_Backout_True_Test() throws MsoException, IOException {
+        Stack stack = new Stack();
+        stack.setId("id");
+        stack.setStackName("stackName");
+        stack.setStackStatus("CREATE_IN_PROGRESS");
+        stack.setStackStatusReason("Stack Finished");
+
+        Stack deletedStack = new Stack();
+        deletedStack.setId("id");
+        deletedStack.setStackName("stackName");
+        deletedStack.setStackStatus("DELETE_COMPLETE");
+        deletedStack.setStackStatusReason("Stack Deleted");
+
+        CreateStackParam createStackParam = new CreateStackParam();
+        createStackParam.setStackName("stackName");
+        doReturn(deletedStack).when(heatUtils).handleUnknownCreateStackFailure(stack, 120, cloudSiteId, tenantId);
+        exceptionRule.expect(StackCreationException.class);
+        exceptionRule.expectMessage(
+                "Stack Creation Failed Openstack Status: CREATE_IN_PROGRESS Status Reason: Stack Finished , Rollback of Stack Creation completed with status: DELETE_COMPLETE Status Reason: Stack Deleted");
+        heatUtils.postProcessStackCreate(stack, true, 120, false, cloudSiteId, tenantId, createStackParam);
+        Mockito.verify(heatUtils, times(1)).handleUnknownCreateStackFailure(stack, 120, cloudSiteId, tenantId);
     }
 
     @Test
-    public final void getHeatClientSuccessTest() throws MsoException, IOException {
-        CloudSite cloudSite = getCloudSite(getCloudIdentity());
-        StubOpenStack.mockOpenStackResponseAccess(wireMockServer, wireMockPort);
-        Heat heatClient = heatUtils.getHeatClient(cloudSite, "TEST-tenant");
-        assertNotNull(heatClient);
-    }
+    public final void postProcessStackCreate_Keypair_True_Test() throws MsoException, IOException {
+        Stack stack = new Stack();
+        stack.setId("id");
+        stack.setStackName("stackName");
+        stack.setStackStatus("CREATE_IN_PROGRESS");
+        stack.setStackStatusReason(
+                "Resource CREATE failed: Conflict: resources.my_keypair: Key pair 'hst3bbfnm0011vm001' already exists. (HTTP 409) (Request-ID: req-941b0af6-63ae-4d6a-afbc-90b728bacf82");
 
-    @Test(expected = MsoOpenstackException.class)
-    public final void getHeatClientOpenStackResponseException404Test() throws MsoException, IOException {
-        CloudSite cloudSite = getCloudSite(getCloudIdentity());
-        // mo mocks setup will cause 404 response from wiremock
-        heatUtils.getHeatClient(cloudSite, "TEST-tenant");
-    }
+        Stack createdStack = new Stack();
+        createdStack.setId("id");
+        createdStack.setStackName("stackName");
+        createdStack.setStackStatus("CREATE_COMPLETE");
+        createdStack.setStackStatusReason("Stack Created");
 
-    @Test(expected = MsoAdapterException.class)
-    public final void getHeatClientOpenStackResponseException401Test() throws MsoException, IOException {
-        CloudSite cloudSite = getCloudSite(getCloudIdentity());
-        StubOpenStack.mockOpenStackResponseUnauthorized(wireMockServer, wireMockPort);
-        heatUtils.getHeatClient(cloudSite, "TEST-tenant");
-    }
-
-    @Test(expected = MsoIOException.class)
-    public final void getHeatClientOpenStackConnectExceptionTest() throws MsoException, IOException {
-        CloudIdentity identity = getCloudIdentity();
-        identity.setIdentityUrl("http://unreachable");
-        CloudSite cloudSite = getCloudSite(identity);
-        // mo mocks setup will cause 404 response from wiremock
-        heatUtils.getHeatClient(cloudSite, "TEST-tenant");
+        CreateStackParam createStackParam = new CreateStackParam();
+        createStackParam.setStackName("stackName");
+        doReturn(createdStack).when(heatUtils).handleKeyPairConflict(cloudSiteId, tenantId, createStackParam, 120, true,
+                stack);
+        heatUtils.postProcessStackCreate(stack, true, 120, true, cloudSiteId, tenantId, createStackParam);
+        Mockito.verify(heatUtils, times(1)).handleKeyPairConflict(cloudSiteId, tenantId, createStackParam, 120, true,
+                stack);
     }
 
     @Test
-    public final void createStackSuccessTest() throws MsoException, IOException {
-        CloudSite cloudSite = getCloudSite(getCloudIdentity());
-        StubOpenStack.mockOpenStackResponseAccess(wireMockServer, wireMockPort);
-        StubOpenStack.mockOpenStackPostStack_200(wireMockServer, "OpenstackResponse_Stack_Created.json");
-        StubOpenStack.mockOpenStackGet(wireMockServer, "TEST-stack/stackId");
-        StackInfo stackInfo = heatUtils.createStack(cloudSite.getId(), "CloudOwner", "tenantId", "TEST-stack", null,
-                "TEST-heat", new HashMap<>(), false, 1, "TEST-env", new HashMap<>(), new HashMap<>(), false);
-        assertNotNull(stackInfo);
+    public final void handleUnknownCreateStackFailure_Test() throws MsoException, IOException {
+
+        Stack stack = new Stack();
+        stack.setId("id");
+        stack.setStackName("stackName");
+        stack.setStackStatus("CREATE_FAILED");
+        stack.setStackStatusReason(
+                "Resource CREATE failed: Conflict: resources.my_keypair: Key pair 'hst3bbfnm0011vm001' already exists. (HTTP 409) (Request-ID: req-941b0af6-63ae-4d6a-afbc-90b728bacf82");
+
+        Stack deletedStack = new Stack();
+        deletedStack.setId("id");
+        deletedStack.setStackName("stackName");
+        deletedStack.setStackStatus("DELETE_COMPLETE");
+        deletedStack.setStackStatusReason("Stack Deleted");
+
+        CreateStackParam createStackParam = new CreateStackParam();
+        createStackParam.setStackName("stackName");
+        doReturn(heatClient).when(heatUtils).getHeatClient(cloudSiteId, tenantId);
+        doNothing().when(heatUtils).postProcessStackDelete(deletedStack);
+        doReturn(null).when(heatUtils).executeAndRecordOpenstackRequest(mockDeleteStack);
+        doReturn(stackResource).when(heatClient).getStacks();
+        doReturn(mockDeleteStack).when(stackResource).deleteByName("stackName/id");
+        doReturn(deletedStack).when(heatUtils).pollStackForStatus(120, stack, "DELETE_IN_PROGRESS", cloudSiteId,
+                tenantId);
+
+        heatUtils.handleUnknownCreateStackFailure(stack, 120, cloudSiteId, tenantId);
+        Mockito.verify(heatUtils, times(1)).executeAndRecordOpenstackRequest(mockDeleteStack);
+        Mockito.verify(heatUtils, times(1)).pollStackForStatus(120, stack, "DELETE_IN_PROGRESS", cloudSiteId, tenantId);
+        Mockito.verify(heatUtils, times(1)).postProcessStackDelete(deletedStack);
     }
+
+
+    @Test
+    public final void handleUnknownCreateStackFailure_Null_Stack_Test() throws MsoException, IOException {
+        Stack stack = null;
+        exceptionRule.expect(StackCreationException.class);
+        exceptionRule.expectMessage("Cannot Find Stack Name or Id");
+        heatUtils.handleUnknownCreateStackFailure(stack, 120, cloudSiteId, tenantId);
+    }
+
+    @Test
+    public final void postProcessStackDelete_Stack_Test() throws MsoException, IOException {
+        Stack deletedStack = new Stack();
+        deletedStack.setId("id");
+        deletedStack.setStackName("stackName");
+        deletedStack.setStackStatus("DELETE_FAILED");
+        deletedStack.setStackStatusReason("Stack DID NOT DELETE");
+        exceptionRule.expect(StackRollbackException.class);
+        exceptionRule.expectMessage(
+                "Stack Deletion completed with status: DELETE_FAILED Status Reason: Stack DID NOT DELETE");
+        heatUtils.postProcessStackDelete(deletedStack);
+    }
+
+    @Test
+    public final void postProcessStackDelete__Null_Stack_Test() throws MsoException, IOException {
+        Stack stack = null;
+        exceptionRule.expect(StackRollbackException.class);
+        exceptionRule.expectMessage("Cannot Find Stack Name or Id");
+        heatUtils.postProcessStackDelete(stack);
+    }
+
+    @Test
+    public final void isKeyPairFailure_Test() throws MsoException, IOException {
+        boolean actual = heatUtils.isKeyPairFailure(
+                "Exception during create VF 0 : Stack error (CREATE_FAILED): Resource CREATE failed: Conflict: resources.bfnm_my_keypair: Key pair 'hst3bbfnm0011vm001' already exists. (HTTP 409) (Request-ID:req-941b0af6-63ae-4d6a-afbc-90b728bacf82) - stack successfully deleted'rolledBack='true'");
+        assertEquals(true, actual);
+    }
+
+    @Test
+    public final void handleKeyPairConflict_Test() throws MsoException, IOException, NovaClientException {
+        Stack stack = new Stack();
+        stack.setId("id");
+        stack.setStackName("stackName");
+        stack.setStackStatus("CREATE_FAILED");
+        stack.setStackStatusReason(
+                "Resource CREATE failed: Conflict: resources.my_keypair: Key pair 'hst3bbfnm0011vm001' already exists. (HTTP 409) (Request-ID: req-941b0af6-63ae-4d6a-afbc-90b728bacf82");
+
+        Stack createdStack = new Stack();
+        createdStack.setId("id");
+        createdStack.setStackName("stackName");
+        createdStack.setStackStatus("CREATE_COMPLETE");
+        createdStack.setStackStatusReason("Stack Created");
+
+
+
+        List<Resource> resources = new ArrayList<>();
+        Resource resource = new Resource();
+        resource.setName("KeypairName");
+        resource.setPhysicalResourceId("KeypairName");
+        resource.setType("OS::Nova::KeyPair");
+        resources.add(resource);
+
+        CreateStackParam createStackParam = new CreateStackParam();
+        createStackParam.setStackName("stackName");
+
+        doReturn(resources).when(mockResources).getList();
+        doReturn(mockResources).when(heatUtils).queryStackResources(cloudSiteId, tenantId, "stackName", 2);
+        doNothing().when(novaClient).deleteKeyPair(cloudSiteId, tenantId, "KeypairName");
+        doReturn(null).when(heatUtils).handleUnknownCreateStackFailure(stack, 120, cloudSiteId, tenantId);
+        doReturn(createdStack).when(heatUtils).createStack(createStackParam, cloudSiteId, tenantId);
+        doReturn(createdStack).when(heatUtils).processCreateStack(cloudSiteId, tenantId, 120, true, createdStack,
+                createStackParam, false);
+
+        heatUtils.handleKeyPairConflict(cloudSiteId, tenantId, createStackParam, 120, true, stack);
+        Mockito.verify(heatUtils, times(1)).queryStackResources(cloudSiteId, tenantId, "stackName", 2);
+        Mockito.verify(novaClient, times(1)).deleteKeyPair(cloudSiteId, tenantId, "KeypairName");
+        Mockito.verify(heatUtils, times(1)).handleUnknownCreateStackFailure(stack, 120, cloudSiteId, tenantId);
+        Mockito.verify(heatUtils, times(1)).createStack(createStackParam, cloudSiteId, tenantId);
+        Mockito.verify(heatUtils, times(1)).processCreateStack(cloudSiteId, tenantId, 120, true, createdStack,
+                createStackParam, false);
+    }
+
+    @Test
+    public final void processCreateStack_Test() throws MsoException, IOException, NovaClientException {
+        Stack stack = new Stack();
+        stack.setId("id");
+        stack.setStackName("stackName");
+        stack.setStackStatus("CREATE_FAILED");
+        stack.setStackStatusReason(
+                "Resource CREATE failed: Conflict: resources.my_keypair: Key pair 'hst3bbfnm0011vm001' already exists. (HTTP 409) (Request-ID: req-941b0af6-63ae-4d6a-afbc-90b728bacf82");
+
+        Stack createdStack = new Stack();
+        createdStack.setId("id");
+        createdStack.setStackName("stackName");
+        createdStack.setStackStatus("CREATE_COMPLETE");
+        createdStack.setStackStatusReason("Stack Created");
+
+
+        CreateStackParam createStackParam = new CreateStackParam();
+        createStackParam.setStackName("stackName");
+
+        doReturn(createdStack).when(heatUtils).pollStackForStatus(120, stack, "CREATE_IN_PROGRESS", cloudSiteId,
+                tenantId);
+        doReturn(createdStack).when(heatUtils).postProcessStackCreate(createdStack, true, 120, true, cloudSiteId,
+                tenantId, createStackParam);
+
+        heatUtils.processCreateStack(cloudSiteId, tenantId, 120, true, stack, createStackParam, true);
+        Mockito.verify(heatUtils, times(1)).pollStackForStatus(120, stack, "CREATE_IN_PROGRESS", cloudSiteId, tenantId);
+        Mockito.verify(heatUtils, times(1)).postProcessStackCreate(createdStack, true, 120, true, cloudSiteId, tenantId,
+                createStackParam);
+    }
+
+    @Test
+    public final void processCreateStack_Exception_Backout_Test()
+            throws MsoException, IOException, NovaClientException {
+        Stack stack = new Stack();
+        stack.setId("id");
+        stack.setStackName("stackName");
+        stack.setStackStatus("CREATE_FAILED");
+        stack.setStackStatusReason(
+                "Resource CREATE failed: Conflict: resources.my_keypair: Key pair 'hst3bbfnm0011vm001' already exists. (HTTP 409) (Request-ID: req-941b0af6-63ae-4d6a-afbc-90b728bacf82");
+
+        Stack deletedStack = new Stack();
+        deletedStack.setId("id");
+        deletedStack.setStackName("stackName");
+        deletedStack.setStackStatus("DELETE_COMPLETE");
+        deletedStack.setStackStatusReason("Stack Deleted");
+
+        CreateStackParam createStackParam = new CreateStackParam();
+        createStackParam.setStackName("stackName");
+
+        doThrow(new StackCreationException("Error")).when(heatUtils).pollStackForStatus(120, stack,
+                "CREATE_IN_PROGRESS", cloudSiteId, tenantId);
+        doReturn(deletedStack).when(heatUtils).handleUnknownCreateStackFailure(stack, 120, cloudSiteId, tenantId);
+        exceptionRule.expect(MsoException.class);
+        exceptionRule.expectMessage("Error");
+        heatUtils.processCreateStack(cloudSiteId, tenantId, 120, true, stack, createStackParam, true);
+        Mockito.verify(heatUtils, times(1)).pollStackForStatus(120, stack, "CREATE_IN_PROGRESS", cloudSiteId, tenantId);
+        Mockito.verify(heatUtils, times(1)).handleUnknownCreateStackFailure(stack, 120, cloudSiteId, tenantId);
+    }
+
+
+    @Test
+    public final void createStack_Test() throws MsoException, IOException, NovaClientException {
+        CreateStackParam createStackParam = new CreateStackParam();
+        createStackParam.setStackName("stackName");
+
+        doReturn(heatClient).when(heatUtils).getHeatClient(cloudSiteId, tenantId);
+        doReturn(stackResource).when(heatClient).getStacks();
+        doReturn(mockCreateStack).when(stackResource).create(createStackParam);
+
+        doReturn(null).when(heatUtils).executeAndRecordOpenstackRequest(mockCreateStack);
+
+        heatUtils.createStack(createStackParam, cloudSiteId, tenantId);
+        Mockito.verify(stackResource, times(1)).create(createStackParam);
+        Mockito.verify(heatUtils, times(1)).saveStackRequest(eq(mockCreateStack), isNull(), eq("stackName"));
+        Mockito.verify(heatClient, times(1)).getStacks();
+        Mockito.verify(stackResource, times(1)).create(createStackParam);
+    }
+
+    @Test
+    public final void createStack_Error_Test() throws MsoException, IOException, NovaClientException {
+        CreateStackParam createStackParam = new CreateStackParam();
+        createStackParam.setStackName("stackName");
+
+        doReturn(heatClient).when(heatUtils).getHeatClient(cloudSiteId, tenantId);
+        doReturn(stackResource).when(heatClient).getStacks();
+        doReturn(mockCreateStack).when(stackResource).create(createStackParam);
+
+        doThrow(new OpenStackResponseException("Unknown Error", 500)).when(heatUtils)
+                .executeAndRecordOpenstackRequest(mockCreateStack);
+        exceptionRule.expect(MsoOpenstackException.class);
+        exceptionRule.expectMessage("Unknown Error");
+        heatUtils.createStack(createStackParam, cloudSiteId, tenantId);
+        Mockito.verify(stackResource, times(1)).create(createStackParam);
+        Mockito.verify(heatUtils, times(1)).saveStackRequest(eq(mockCreateStack), isNull(), eq("stackName"));
+        Mockito.verify(heatClient, times(1)).getStacks();
+        Mockito.verify(stackResource, times(1)).create(createStackParam);
+    }
+
+    @Test
+    public final void createStack_Error_404_Test() throws MsoException, IOException, NovaClientException {
+        CreateStackParam createStackParam = new CreateStackParam();
+        createStackParam.setStackName("stackName");
+
+        doReturn(heatClient).when(heatUtils).getHeatClient(cloudSiteId, tenantId);
+        doReturn(stackResource).when(heatClient).getStacks();
+        doReturn(mockCreateStack).when(stackResource).create(createStackParam);
+
+        doThrow(new OpenStackResponseException("Not Found", 409)).when(heatUtils)
+                .executeAndRecordOpenstackRequest(mockCreateStack);
+        exceptionRule.expect(MsoStackAlreadyExists.class);
+        exceptionRule.expectMessage("Stack stackName already exists in Tenant tenantId in Cloud cloudSiteId");
+        heatUtils.createStack(createStackParam, cloudSiteId, tenantId);
+        Mockito.verify(stackResource, times(1)).create(createStackParam);
+        Mockito.verify(heatUtils, times(1)).saveStackRequest(eq(mockCreateStack), isNull(), eq("stackName"));
+        Mockito.verify(heatClient, times(1)).getStacks();
+        Mockito.verify(stackResource, times(1)).create(createStackParam);
+    }
+
+    @Test
+    public final void processCreateStack_Exception_No_Backout_Test()
+            throws MsoException, IOException, NovaClientException {
+        Stack stack = new Stack();
+        stack.setId("id");
+        stack.setStackName("stackName");
+        stack.setStackStatus("CREATE_FAILED");
+        stack.setStackStatusReason(
+                "Resource CREATE failed: Conflict: resources.my_keypair: Key pair 'hst3bbfnm0011vm001' already exists. (HTTP 409) (Request-ID: req-941b0af6-63ae-4d6a-afbc-90b728bacf82");
+
+        Stack deletedStack = new Stack();
+        deletedStack.setId("id");
+        deletedStack.setStackName("stackName");
+        deletedStack.setStackStatus("DELETE_COMPLETE");
+        deletedStack.setStackStatusReason("Stack Deleted");
+
+        CreateStackParam createStackParam = new CreateStackParam();
+        createStackParam.setStackName("stackName");
+
+        doThrow(new StackCreationException("Error")).when(heatUtils).pollStackForStatus(120, stack,
+                "CREATE_IN_PROGRESS", cloudSiteId, tenantId);
+
+        exceptionRule.expect(MsoException.class);
+        exceptionRule.expectMessage("Error");
+        heatUtils.processCreateStack(cloudSiteId, tenantId, 120, false, stack, createStackParam, true);
+        Mockito.verify(heatUtils, times(1)).pollStackForStatus(120, stack, "CREATE_IN_PROGRESS", cloudSiteId, tenantId);
+        Mockito.verify(heatUtils, times(0)).handleUnknownCreateStackFailure(stack, 120, cloudSiteId, tenantId);
+    }
+
 }

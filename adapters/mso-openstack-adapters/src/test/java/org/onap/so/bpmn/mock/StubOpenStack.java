@@ -134,8 +134,8 @@ public class StubOpenStack {
     }
 
     public static void mockOpenStackGetStackCreatedAppC_200(WireMockServer wireMockServer) {
-        wireMockServer.stubFor(
-                get(urlPathEqualTo("/mockPublicUrl/stacks/APP-C-24595-T-IST-04AShared_untrusted_vDBE_net_3/stackId"))
+        wireMockServer.stubFor(get(
+                urlPathEqualTo("/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/stackId"))
                         .willReturn(aResponse().withHeader("Content-Type", "application/json")
                                 .withBodyFile("OpenstackResponse_Stack_Created.json").withStatus(HttpStatus.SC_OK)));
     }
@@ -147,8 +147,8 @@ public class StubOpenStack {
     }
 
     public static void mockOpenStackGetStackCreatedVUSP_200(WireMockServer wireMockServer) {
-        wireMockServer.stubFor(
-                get(urlPathEqualTo("/mockPublicUrl/stacks/vUSP-23804-T-01-dpa2b_EVUSP-CORE-VIF-TSIG0_net_0/stackId"))
+        wireMockServer.stubFor(get(
+                urlPathEqualTo("/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/stackId"))
                         .willReturn(aResponse().withHeader("Content-Type", "application/json")
                                 .withBodyFile("OpenstackResponse_Stack_Created.json").withStatus(HttpStatus.SC_OK)));
     }

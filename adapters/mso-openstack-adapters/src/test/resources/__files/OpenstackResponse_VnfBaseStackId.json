@@ -7,6 +7,7 @@
     			"rel" : "self"
 			}
 		],
-		"stack_name": "vnfBaseStack"
+		"stack_name": "vnfBaseStack",
+		"stack_status": "CREATE_COMPLETE"
 	}
 }
