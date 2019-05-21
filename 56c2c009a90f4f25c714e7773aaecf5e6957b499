@@ -22,6 +22,30 @@
       "revId": "56c2c009a90f4f25c714e7773aaecf5e6957b499",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "561cea70_63004157",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/ActivateSDNCNetworkResource.bpmn",
+        "patchSetId": 6
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 4885
+      },
+      "writtenOn": "2019-05-21T04:57:59Z",
+      "side": 0,
+      "message": "Code changes are done for removing async response. So this file is required to be merged.",
+      "parentUuid": "c2df4334_f6a03819",
+      "range": {
+        "startLine": 56,
+        "startChar": 0,
+        "endLine": 64,
+        "endChar": 98
+      },
+      "revId": "56c2c009a90f4f25c714e7773aaecf5e6957b499",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
