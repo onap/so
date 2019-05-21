@@ -102,7 +102,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
             }
 
-            String sdncCallbackUrl = UrnPropertiesReader.getVariable('URN_mso_workflow_sdncadapter_callback', execution)
+            String sdncCallbackUrl = UrnPropertiesReader.getVariable('mso.workflow.sdncadapter.callback', execution)
             if (isBlank(sdncCallbackUrl)) {
                 msg = "URN_mso_workflow_sdncadapter_callback is null"
                 logger.error(msg)
@@ -235,45 +235,47 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
      */
     public void executeResourceDelete(DelegateExecution execution) {
         logger.debug("======== Start executeResourceDelete Process ======== ")
-		try {
-	        String requestId = execution.getVariable("msoRequestId")
-	        String serviceInstanceId = execution.getVariable("serviceInstanceId")
-	        String serviceType = execution.getVariable("serviceType")
-	
-	        String resourceInstanceId = execution.getVariable("resourceInstanceId")
-	
-	        Resource currentResource = execution.getVariable("currentResource")
-	        String action = "deleteInstance"
-	        JSONObject resourceRecipe = catalogDbUtils.getResourceRecipe(execution, currentResource.getModelInfo().getModelUuid(), action)
-	        String recipeUri = resourceRecipe.getString("orchestrationUri")
-	        int recipeTimeout = resourceRecipe.getInt("recipeTimeout")
-	        String recipeParamXsd = resourceRecipe.get("paramXSD")
-	
-	
-	        ResourceInput resourceInput = new ResourceInput();
-	        resourceInput.setServiceInstanceId(serviceInstanceId)
-	        resourceInput.setResourceInstanceName(currentResource.getResourceInstanceName())
-	        resourceInput.setResourceInstancenUuid(currentResource.getResourceId())
-	        resourceInput.setOperationId(execution.getVariable("operationId"))
-	        resourceInput.setOperationType(execution.getVariable("operationType"))
-	        String globalSubscriberId = execution.getVariable("globalSubscriberId") 
-	        resourceInput.setGlobalSubscriberId(globalSubscriberId)
-	        resourceInput.setResourceModelInfo(currentResource.getModelInfo());
-	   	    ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
-	   		resourceInput.setServiceModelInfo(serviceDecomposition.getModelInfo());
-	        resourceInput.setServiceType(serviceType)
-	
-	        String recipeURL = BPMNProperties.getProperty("bpelURL", "http://mso:8080") + recipeUri
-	
-	        HttpResponse resp = BpmnRestClient.post(recipeURL, requestId, recipeTimeout, action, serviceInstanceId, serviceType, resourceInput.toString(), recipeParamXsd)
-	        logger.debug(" ======== END executeResourceDelete Process ======== ")
-		}catch(BpmnError b){
-			 logger.error("Rethrowing MSOWorkflowException")
-			 throw b
-		 }catch(Exception e){
-			 logger.error("Error occured within DoDeleteResourcesV1 executeResourceDelete method: " + e)
-			 exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured during DoDeleteResourcesV1 executeResourceDelete Catalog")
-		 }
+        try {
+            String requestId = execution.getVariable("msoRequestId")
+            String serviceInstanceId = execution.getVariable("serviceInstanceId")
+            String serviceType = execution.getVariable("serviceType")
+
+            String resourceInstanceId = execution.getVariable("resourceInstanceId")
+
+            Resource currentResource = execution.getVariable("currentResource")
+            String action = "deleteInstance"
+            JSONObject resourceRecipe = catalogDbUtils.getResourceRecipe(execution, currentResource.getModelInfo().getModelUuid(), action)
+            String recipeUri = resourceRecipe.getString("orchestrationUri")
+            int recipeTimeout = resourceRecipe.getInt("recipeTimeout")
+            String recipeParamXsd = resourceRecipe.get("paramXSD")
+
+
+            ResourceInput resourceInput = new ResourceInput();
+            resourceInput.setServiceInstanceId(serviceInstanceId)
+            resourceInput.setResourceInstanceName(currentResource.getResourceInstanceName())
+            resourceInput.setResourceInstancenUuid(currentResource.getResourceId())
+            resourceInput.setOperationId(execution.getVariable("operationId"))
+            resourceInput.setOperationType(execution.getVariable("operationType"))
+            String globalSubscriberId = execution.getVariable("globalSubscriberId")
+            resourceInput.setGlobalSubscriberId(globalSubscriberId)
+            resourceInput.setResourceModelInfo(currentResource.getModelInfo());
+            ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
+            resourceInput.setServiceModelInfo(serviceDecomposition.getModelInfo());
+            resourceInput.setServiceType(serviceType)
+
+            String recipeURL = BPMNProperties.getProperty("bpelURL", "http://mso:8080") + recipeUri
+
+            BpmnRestClient bpmnRestClient = new BpmnRestClient()
+
+            HttpResponse resp = bpmnRestClient.post(recipeURL, requestId, recipeTimeout, action, serviceInstanceId, serviceType, resourceInput.toString(), recipeParamXsd)
+            logger.debug(" ======== END executeResourceDelete Process ======== ")
+        } catch (BpmnError b) {
+            logger.error("Rethrowing MSOWorkflowException")
+            throw b
+        } catch (Exception e) {
+            logger.error("Error occured within DoDeleteResourcesV1 executeResourceDelete method: " + e)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured during DoDeleteResourcesV1 executeResourceDelete Catalog")
+        }
     }
 
 
