@@ -31,8 +31,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -50,9 +56,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.client.aai.AAIClient;
+import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.defaultproperties.DefaultAAIPropertiesImpl;
+import org.onap.so.client.graphinventory.entities.uri.Depth;
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryPayloadException;
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryUriComputationException;
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryUriNotFoundException;
@@ -104,8 +112,9 @@ public class ServiceInstanceUriTest {
                         .when(spy).getObjectById(any(Object.class));
 
         final URI result = spy.build();
-        final URI expected = UriBuilder.fromPath(
-                "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3")
+        final URI expected = UriBuilder
+                .fromPath(
+                        "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3")
                 .build();
         assertEquals("result is equal", expected, result);
 
@@ -122,8 +131,9 @@ public class ServiceInstanceUriTest {
                         .when(spy).getObjectById(any(Object.class));
 
         final URI result = spy.resourceVersion("1234").build();
-        final URI expected = UriBuilder.fromUri(
-                "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3?resource-version=1234")
+        final URI expected = UriBuilder
+                .fromUri(
+                        "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3?resource-version=1234")
                 .build();
         assertEquals("result is equal", expected, result);
 
@@ -140,8 +150,9 @@ public class ServiceInstanceUriTest {
                         .when(spy).getObjectById(any(Object.class));
 
         final URI result = spy.build();
-        final URI expected = UriBuilder.fromUri(
-                "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3%20space")
+        final URI expected = UriBuilder
+                .fromUri(
+                        "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3%20space")
                 .build();
         assertEquals("result is equal", expected, result);
 
@@ -170,8 +181,9 @@ public class ServiceInstanceUriTest {
         doReturn(uri).when(spy).getObjectById(any(Object.class));
         doReturn(Optional.of(uri)).when(spy).getCachedValue();
         final URI result = spy.resourceVersion("1234").clone().build();
-        final URI expected = UriBuilder.fromUri(
-                "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3?resource-version=1234")
+        final URI expected = UriBuilder
+                .fromUri(
+                        "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3?resource-version=1234")
                 .build();
         assertEquals("result is equal", expected, result);
     }
@@ -181,8 +193,9 @@ public class ServiceInstanceUriTest {
 
         ServiceInstanceUri instance = new ServiceInstanceUri("key1", "key2", "key3");
         final URI result = instance.build();
-        final URI expected = UriBuilder.fromPath(
-                "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3")
+        final URI expected = UriBuilder
+                .fromPath(
+                        "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3")
                 .build();
         assertEquals("result is equal", expected, result);
 
@@ -226,5 +239,43 @@ public class ServiceInstanceUriTest {
                         aResponse().withStatus(404).withHeader("Content-Type", "application/json").withBodyFile("")));
         exception.expect(NotFoundException.class);
         spy.build();
+    }
+
+    @Test
+    public void serializeTest() throws IOException, ClassNotFoundException, GraphInventoryUriNotFoundException,
+            GraphInventoryPayloadException {
+        ServiceInstanceUri instance = new ServiceInstanceUri("key3");
+        final String content = new String(
+                Files.readAllBytes(Paths.get(AAI_JSON_FILE_LOCATION + "service-instance-pathed-query.json")));
+
+        ServiceInstanceUri spy = spy(instance);
+        AAIResourcesClient mockResourcesClient = mock(AAIResourcesClient.class);
+        AAIResultWrapper wrapper = mock(AAIResultWrapper.class);
+        when(mockResourcesClient.get(ArgumentMatchers.<AAIResourceUri>any(AAIResourceUri.class),
+                ArgumentMatchers.<Class<NotFoundException>>any())).thenReturn(wrapper);
+        when(wrapper.getJson()).thenReturn(content);
+        when(spy.getResourcesClient()).thenReturn(mockResourcesClient);
+        spy.build();
+        instance = spy.clone();
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(bos);
+        objectOutputStream.writeObject(instance);
+        objectOutputStream.flush();
+        objectOutputStream.close();
+
+        ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+
+        ObjectInputStream objectInputStream = new ObjectInputStream(bis);
+        ServiceInstanceUri e2 = (ServiceInstanceUri) objectInputStream.readObject();
+        objectInputStream.close();
+
+        ServiceInstanceUri spy2 = spy(e2);
+
+        assertEquals(spy2.build().toString(), instance.build().toString());
+
+        // use the cached value do not call out to external system
+        verify(spy2, times(0)).getResourcesClient();
+
     }
 }
