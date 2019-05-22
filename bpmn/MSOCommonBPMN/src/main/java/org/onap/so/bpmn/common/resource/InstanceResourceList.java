@@ -42,12 +42,14 @@ public class InstanceResourceList {
             List<Resource> seqResourceList) {
 
         Map<String, List<List<GroupResource>>> normalizedRequest = new HashMap<>();
+        Resource lastVfProcessed = null;
         for (Resource r : seqResourceList) {
 
             if (r.getResourceType() == ResourceType.VNF) {
                 String pk = getPrimaryKey(r);
 
                 JsonElement vfNode = reqInputJsonObj.get(pk);
+                lastVfProcessed = r;
 
                 // if the service property is type of array then it
                 // means it is a VF resource
@@ -67,27 +69,36 @@ public class InstanceResourceList {
             } else if (r.getResourceType() == ResourceType.GROUP) {
                 String sk = getPrimaryKey(r);
 
-                for (String pk : normalizedRequest.keySet()) {
-                    JsonArray vfs = reqInputJsonObj.getAsJsonArray(pk);
+                // if sk is empty that means it is not list type
+                if (sk.isEmpty()) {
+                    List<List<GroupResource>> vfList = normalizedRequest.get(getPrimaryKey(lastVfProcessed));
+                    for (List<GroupResource> grpList: vfList) {
+                        grpList.add((GroupResource) r);
+                    }
+                    continue;
+                }
 
-                    for (int i = 0; i < vfs.size(); i++) {
+                String pk = getPrimaryKey(lastVfProcessed);
+                JsonArray vfs = reqInputJsonObj.getAsJsonArray(pk);
 
-                        JsonElement vfcsNode = vfs.get(i).getAsJsonObject().get(sk);
-                        if (vfcsNode instanceof JsonArray) {
+                for (int i = 0; i < vfs.size(); i++) {
 
-                            List<GroupResource> groupResources = normalizedRequest.get(pk).get(i);
+                    JsonElement vfcsNode = vfs.get(i).getAsJsonObject().get(sk);
+                    if (vfcsNode instanceof JsonArray) {
 
-                            if (groupResources == null) {
-                                groupResources = new ArrayList<>();
-                                normalizedRequest.get(pk).add(i, groupResources);
-                            }
+                        List<GroupResource> groupResources = normalizedRequest.get(pk).get(i);
 
-                            for (int j = 0; j < ((JsonArray) vfcsNode).size(); j++) {
-                                groupResources.add((GroupResource) r);
-                            }
+                        if (groupResources == null) {
+                            groupResources = new ArrayList<>();
+                            normalizedRequest.get(pk).add(i, groupResources);
+                        }
+
+                        for (int j = 0; j < ((JsonArray) vfcsNode).size(); j++) {
+                            groupResources.add((GroupResource) r);
                         }
                     }
                 }
+
             }
         }
         return normalizedRequest;
