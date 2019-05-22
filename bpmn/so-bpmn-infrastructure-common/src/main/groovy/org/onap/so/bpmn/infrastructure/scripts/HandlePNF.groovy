@@ -23,7 +23,7 @@ package org.onap.so.bpmn.infrastructure.scripts
 import org.apache.commons.lang3.StringUtils
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
-import org.onap.so.bpmn.common.scripts.CatalogDbUtils
+//import org.onap.so.bpmn.common.scripts.CatalogDbUtils
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames
@@ -35,11 +35,11 @@ public class HandlePNF extends AbstractServiceTaskProcessor{
 
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     JsonUtils jsonUtil = new JsonUtils()
-    CatalogDbUtils cutils = new CatalogDbUtils()
+    //CatalogDbUtils cutils = new CatalogDbUtils()
 
     @Override
     void preProcessRequest(DelegateExecution execution) {
-        msoLogger.debug("Start preProcess for HandlePNF")
+        logger.debug("Start preProcess for HandlePNF")
 
         // set correlation ID
         def resourceInput = execution.getVariable("resourceInput")
@@ -47,38 +47,38 @@ public class HandlePNF extends AbstractServiceTaskProcessor{
         String correlationId = jsonUtil.getJsonValue(serInput, "service.parameters.requestInputs.ont_ont_pnf_name")
         if (!StringUtils.isEmpty(correlationId)) {
             execution.setVariable(ExecutionVariableNames.CORRELATION_ID, correlationId)
-            msoLogger.debug("Found correlation id : " + correlationId)
+            logger.debug("Found correlation id : " + correlationId)
         } else {
-            msoLogger.error("== correlation id is empty ==")
+            logger.error("== correlation id is empty ==")
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "correlation id is not provided")
         }
 
         // next task will set the uuid
-        msoLogger.debug("exit preProcess for HandlePNF")
+        logger.debug("exit preProcess for HandlePNF")
     }
 
     void postProcessRequest(DelegateExecution execution) {
-        msoLogger.debug("start postProcess for HandlePNF")
+        logger.debug("start postProcess for HandlePNF")
 
-        msoLogger.debug("exit postProcess for HandlePNF")
+        logger.debug("exit postProcess for HandlePNF")
     }
 
     public void sendSyncResponse (DelegateExecution execution) {
-        msoLogger.debug(" *** sendSyncResponse *** ")
+        logger.debug(" *** sendSyncResponse *** ")
 
         try {
             String operationStatus = "finished"
             // RESTResponse for main flow
             String resourceOperationResp = """{"operationStatus":"${operationStatus}"}""".trim()
-            msoLogger.debug(" sendSyncResponse to APIH:" + "\n" + resourceOperationResp)
+            logger.debug(" sendSyncResponse to APIH:" + "\n" + resourceOperationResp)
             sendWorkflowResponse(execution, 202, resourceOperationResp)
             execution.setVariable("sentSyncResponse", true)
 
         } catch (Exception ex) {
             String msg = "Exception in sendSyncResponse:" + ex.getMessage()
-            msoLogger.debug(msg)
+            logger.debug(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
-        msoLogger.debug(" ***** Exit sendSyncResponse *****")
+        logger.debug(" ***** Exit sendSyncResponse *****")
     }
 }
