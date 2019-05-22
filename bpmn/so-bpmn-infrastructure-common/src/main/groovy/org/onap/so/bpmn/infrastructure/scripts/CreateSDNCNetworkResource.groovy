@@ -102,7 +102,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             }
 
             String sdnc_svcAction = "create"
-            String sdnc_requestAction = UrnPropertiesReader.getVariable("resource-config." + resourceInputObj.resourceModelInfo.getModelName() +".operation-type")
+            String sdnc_requestAction = sdnc_svcAction.capitalize() + UrnPropertiesReader.getVariable("resource-config." + resourceInputObj.resourceModelInfo.getModelName() +".operation-type") + "Instance"
             String isActivateRequired = UrnPropertiesReader.getVariable("resource-config." + resourceInputObj.resourceModelInfo.getModelName() +".activation-required")
             execution.setVariable("isActivateRequired", isActivateRequired)
 
@@ -352,7 +352,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             String vnfmodelName = ""
             String modelType = resourceInputObj.getResourceModelInfo().getModelType()
             if(modelType.equalsIgnoreCase(ResourceType.GROUP.toString())) {
-                vnfid = resourceInputObj.getVnfId();
+                vnfid = resourceInputObj.getVnfId()
                 ModelInfo vfModelInfo = resourceInputObj.getVfModelInfo()
                 vnfmodelInvariantUuid = vfModelInfo.getModelInvariantUuid()
                 vnfmodelCustomizationUuid = vfModelInfo.getModelCustomizationUuid()
@@ -427,7 +427,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                                     <sdncadapter:RequestId>${msoUtils.xmlEscape(hdrRequestId)}</sdncadapter:RequestId>
                                     <sdncadapter:SvcInstanceId>${msoUtils.xmlEscape(serviceInstanceId)}</sdncadapter:SvcInstanceId>
                                     <sdncadapter:SvcAction>${msoUtils.xmlEscape(sdnc_svcAction)}</sdncadapter:SvcAction>
-                                    <sdncadapter:SvcOperation>network-topology-operation</sdncadapter:SvcOperation>
+                                    <sdncadapter:SvcOperation>vf-module-topology-operation</sdncadapter:SvcOperation>
                                     <sdncadapter:CallbackUrl>sdncCallback</sdncadapter:CallbackUrl>
                                     <sdncadapter:MsoAction>generic-resource</sdncadapter:MsoAction>
                                  </sdncadapter:RequestHeader>
@@ -454,24 +454,30 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                                         <subscriber-name>${msoUtils.xmlEscape(globalCustomerId)}</subscriber-name>
                                      </service-information>
                                      <vnf-information>
+                                        <onap-model-information>
                                              <model-invariant-uuid>${msoUtils.xmlEscape(vnfmodelInvariantUuid)}</model-invariant-uuid>
                                              <model-customization-uuid>${msoUtils.xmlEscape(vnfmodelCustomizationUuid)}</model-customization-uuid>
                                              <model-uuid>${msoUtils.xmlEscape(vnfmodelUuid)}</model-uuid>
                                              <model-version>${msoUtils.xmlEscape(vnfmodelVersion)}</model-version>
                                              <model-name>${msoUtils.xmlEscape(vnfmodelName)}</model-name>
+                                        </onap-model-information>
+                                        <vnf-id>${msoUtils.xmlEscape(vnfid)}</vnf-id>
                                      </vnf-information>
-                                     <vnf-request-input>
-                                         <vnf-input-parameters>
+                                     <vf-module-information>
+                                        <from-preload>false</from-preload>
+                                        <onap-model-information>
+                                            <model-invariant-uuid>${msoUtils.xmlEscape(modelInvariantUuid)}</model-invariant-uuid>
+                                             <model-customization-uuid>${msoUtils.xmlEscape(modelCustomizationUuid)}</model-customization-uuid>
+                                             <model-uuid>${msoUtils.xmlEscape(modelUuid)}</model-uuid>
+                                             <model-version>${msoUtils.xmlEscape(modelVersion)}</model-version>
+                                             <model-name>${msoUtils.xmlEscape(modelName)}</model-name>
+                                        </onap-model-information>
+                                     </vf-module-information>
+                                     <vf-module-request-input>
+                                         <vf-module-input-parameters>
                                            $netowrkInputParameters
-                                         </vnf-input-parameters>
-                                         <request-version></request-version>
-                                         <vnf-name></vnf-name>
-                                         <vnf-networks>
-                                        </vnf-networks>
-                                      </vnf-request-input>
-                                     <connection-attachment-request-input>
-                                       $netowrkInputParameters
-                                     </connection-attachment-request-input>
+                                         </vf-module-input-parameters>
+                                      </vf-module-request-input>
                                 </sdncadapterworkflow:SDNCRequestData>
                              </aetgt:SDNCAdapterWorkflowRequest>""".trim()
                     break
