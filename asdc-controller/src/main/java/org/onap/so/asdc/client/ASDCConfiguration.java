@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -57,9 +57,10 @@ public class ASDCConfiguration implements IConfiguration {
     public static final String TOSCA_CSAR = "TOSCA_CSAR";
     public static final String WORKFLOW = "WORKFLOW";
     public static final String VF_MODULES_METADATA = "VF_MODULES_METADATA";
+    public static final String CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT = "CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT";
 
-    private static final String[] SUPPORTED_ARTIFACT_TYPES =
-            {HEAT, HEAT_ARTIFACT, HEAT_ENV, HEAT_NESTED, HEAT_NET, HEAT_VOL, OTHER, TOSCA_CSAR, VF_MODULES_METADATA};
+    private static final String[] SUPPORTED_ARTIFACT_TYPES = {HEAT, HEAT_ARTIFACT, HEAT_ENV, HEAT_NESTED, HEAT_NET,
+            HEAT_VOL, OTHER, TOSCA_CSAR, VF_MODULES_METADATA, CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT};
 
     public static final List<String> SUPPORTED_ARTIFACT_TYPES_LIST =
             Collections.unmodifiableList(Arrays.asList(SUPPORTED_ARTIFACT_TYPES));
