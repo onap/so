@@ -16,6 +16,24 @@
       "revId": "9f8436711be3e048146b416fceee4022d2f6d8d3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "01f0ff96_25838cc1",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/HandlePNF.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1855
+      },
+      "writtenOn": "2019-05-22T19:06:53Z",
+      "side": 1,
+      "message": "I will remove",
+      "parentUuid": "be30ea30_f93c8529",
+      "revId": "9f8436711be3e048146b416fceee4022d2f6d8d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
