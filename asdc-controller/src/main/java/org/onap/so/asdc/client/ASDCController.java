@@ -702,7 +702,6 @@ public class ASDCController {
         // For each artifact, create a structure describing the VFModule in a ordered flat level
         ResourceStructure resourceStructure = null;
         String msoConfigPath = getMsoConfigPath();
-        boolean hasVFResource = false;
         ToscaResourceStructure toscaResourceStructure = new ToscaResourceStructure(msoConfigPath);
         DistributionStatusEnum deployStatus = DistributionStatusEnum.DEPLOY_OK;
         String errorMessage = null;
@@ -723,7 +722,7 @@ public class ASDCController {
             for (IResourceInstance resource : iNotif.getResources()) {
 
                 String resourceType = resource.getResourceType();
-
+                boolean hasVFResource = false;
 
                 logger.info("Processing Resource Type: {}, Model UUID: {}", resourceType, resource.getResourceUUID());
 
