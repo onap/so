@@ -45,6 +45,7 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.onap.so.asdc.client.ASDCConfiguration;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
@@ -62,6 +63,9 @@ public class BpmnInstaller {
 
     @Autowired
     private Environment env;
+
+    @Autowired
+    private ASDCConfiguration asdcConfig;
 
     public void installBpmn(String csarFilePath) {
         logger.info("Deploying BPMN files from {}", csarFilePath);
@@ -139,7 +143,7 @@ public class BpmnInstaller {
 
     protected HttpEntity buildMimeMultipart(String bpmnFileName, String version) throws Exception {
         FileInputStream bpmnFileStream = new FileInputStream(
-                Paths.get(System.getProperty("mso.config.path"), "ASDC", version, bpmnFileName).normalize().toString());
+                Paths.get(getMsoConfigPath(), "ASDC", version, bpmnFileName).normalize().toString());
 
         byte[] bytesToSend = IOUtils.toByteArray(bpmnFileStream);
         HttpEntity requestEntity =
@@ -192,5 +196,19 @@ public class BpmnInstaller {
         } catch (IOException e) {
             logger.error("Unable to open file.", e);
         }
+    }
+
+    private String getMsoConfigPath() {
+        String msoConfigPath = System.getProperty("mso.config.path");
+        if (msoConfigPath == null) {
+            logger.info("Unable to find the system property mso.config.path, use the default configuration");
+            msoConfigPath = asdcConfig.getPropertyOrNull("mso.config.defaultpath");
+        }
+        if (msoConfigPath == null) {
+            logger.info("Unable to find the property: {} from configuration.", "mso.config.defaultpath");
+            msoConfigPath = "";
+        }
+        logger.info("MSO config path is: {}", msoConfigPath);
+        return msoConfigPath;
     }
 }
