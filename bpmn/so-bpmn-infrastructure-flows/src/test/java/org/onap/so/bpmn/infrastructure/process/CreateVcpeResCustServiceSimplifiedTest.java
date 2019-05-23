@@ -33,10 +33,8 @@ import com.google.protobuf.Struct;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
-import org.camunda.bpm.engine.runtime.Execution;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onap.ccsdk.cds.controllerblueprints.common.api.ActionIdentifiers;
 import org.onap.ccsdk.cds.controllerblueprints.common.api.CommonHeader;
@@ -52,11 +50,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Basic Integration test for createVcpeResCustService_Simplified.bpmn workflow.
  */
-@Ignore
 public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
 
-    private static final long WORKFLOW_WAIT_TIME = 1000L;
     private Logger logger = LoggerFactory.getLogger(getClass());
+
+    private static final long WORKFLOW_WAIT_TIME = 1000L;
+    private static final int DMAAP_DELAY_TIME_MS = 2000;
 
     private static final String TEST_PROCESSINSTANCE_KEY = "CreateVcpeResCustService_simplified";
 
@@ -113,17 +112,9 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
 
         ProcessInstance pi =
                 runtimeService.startProcessInstanceByKey(TEST_PROCESSINSTANCE_KEY, testBusinessKey, variables);
-        assertThat(pi).isNotNull();
-
-        Thread.sleep(WORKFLOW_WAIT_TIME);
-
-        Execution execution = runtimeService.createExecutionQuery().processInstanceBusinessKey(testBusinessKey)
-                .messageEventSubscriptionName("WorkflowMessage").singleResult();
-
-        assertThat(execution).isNotNull();
 
         int waitCount = 10;
-        while (!pi.isEnded() && waitCount >= 0) {
+        while (!isProcessInstanceEnded() && waitCount >= 0) {
             Thread.sleep(WORKFLOW_WAIT_TIME);
             waitCount--;
         }
@@ -145,6 +136,11 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
         }
     }
 
+    private boolean isProcessInstanceEnded() {
+        return runtimeService.createProcessInstanceQuery().processDefinitionKey(TEST_PROCESSINSTANCE_KEY)
+                .singleResult() == null;
+    }
+
     private void checkConfigAssign(ExecutionServiceInput executionServiceInput) {
 
         logger.info("Checking the configAssign request");
@@ -154,26 +150,26 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
          * the fields of actionIdentifiers should match the one in the
          * response/createVcpeResCustServiceSimplifiedTest_catalogdb.json.
          */
-        assertThat(actionIdentifiers.getBlueprintName()).matches("test_configuration_restconf");
-        assertThat(actionIdentifiers.getBlueprintVersion()).matches("1.0.0");
-        assertThat(actionIdentifiers.getActionName()).matches("config-assign");
-        assertThat(actionIdentifiers.getMode()).matches("sync");
+        assertThat(actionIdentifiers.getBlueprintName()).isEqualTo("test_configuration_restconf");
+        assertThat(actionIdentifiers.getBlueprintVersion()).isEqualTo("1.0.0");
+        assertThat(actionIdentifiers.getActionName()).isEqualTo("config-assign");
+        assertThat(actionIdentifiers.getMode()).isEqualTo("sync");
 
         CommonHeader commonHeader = executionServiceInput.getCommonHeader();
-        assertThat(commonHeader.getOriginatorId()).matches("SO");
-        assertThat(commonHeader.getRequestId()).matches(msoRequestId);
+        assertThat(commonHeader.getOriginatorId()).isEqualTo("SO");
+        assertThat(commonHeader.getRequestId()).isEqualTo(msoRequestId);
 
         Struct payload = executionServiceInput.getPayload();
         Struct requeststruct = payload.getFieldsOrThrow("config-assign-request").getStructValue();
 
-        assertThat(requeststruct.getFieldsOrThrow("resolution-key").getStringValue()).matches("PNFDemo");
+        assertThat(requeststruct.getFieldsOrThrow("resolution-key").getStringValue()).isEqualTo("PNFDemo");
         Struct propertiesStruct = requeststruct.getFieldsOrThrow("config-assign-properties").getStructValue();
 
-        assertThat(propertiesStruct.getFieldsOrThrow("pnf-name").getStringValue()).matches("PNFDemo");
+        assertThat(propertiesStruct.getFieldsOrThrow("pnf-name").getStringValue()).isEqualTo("PNFDemo");
         assertThat(propertiesStruct.getFieldsOrThrow("service-model-uuid").getStringValue())
-                .matches("f2daaac6-5017-4e1e-96c8-6a27dfbe1421");
+                .isEqualTo("f2daaac6-5017-4e1e-96c8-6a27dfbe1421");
         assertThat(propertiesStruct.getFieldsOrThrow("pnf-customization-uuid").getStringValue())
-                .matches("68dc9a92-214c-11e7-93ae-92361f002680");
+                .isEqualTo("68dc9a92-214c-11e7-93ae-92361f002680");
     }
 
     private void checkConfigDeploy(ExecutionServiceInput executionServiceInput) {
@@ -185,32 +181,32 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
          * the fields of actionIdentifiers should match the one in the
          * response/createVcpeResCustServiceSimplifiedTest_catalogdb.json.
          */
-        assertThat(actionIdentifiers.getBlueprintName()).matches("test_configuration_restconf");
-        assertThat(actionIdentifiers.getBlueprintVersion()).matches("1.0.0");
-        assertThat(actionIdentifiers.getActionName()).matches("config-deploy");
-        assertThat(actionIdentifiers.getMode()).matches("async");
+        assertThat(actionIdentifiers.getBlueprintName()).isEqualTo("test_configuration_restconf");
+        assertThat(actionIdentifiers.getBlueprintVersion()).isEqualTo("1.0.0");
+        assertThat(actionIdentifiers.getActionName()).isEqualTo("config-deploy");
+        assertThat(actionIdentifiers.getMode()).isEqualTo("async");
 
         CommonHeader commonHeader = executionServiceInput.getCommonHeader();
-        assertThat(commonHeader.getOriginatorId()).matches("SO");
-        assertThat(commonHeader.getRequestId()).matches(msoRequestId);
+        assertThat(commonHeader.getOriginatorId()).isEqualTo("SO");
+        assertThat(commonHeader.getRequestId()).isEqualTo(msoRequestId);
 
         Struct payload = executionServiceInput.getPayload();
         Struct requeststruct = payload.getFieldsOrThrow("config-deploy-request").getStructValue();
 
-        assertThat(requeststruct.getFieldsOrThrow("resolution-key").getStringValue()).matches("PNFDemo");
+        assertThat(requeststruct.getFieldsOrThrow("resolution-key").getStringValue()).isEqualTo("PNFDemo");
         Struct propertiesStruct = requeststruct.getFieldsOrThrow("config-deploy-properties").getStructValue();
 
-        assertThat(propertiesStruct.getFieldsOrThrow("pnf-name").getStringValue()).matches("PNFDemo");
+        assertThat(propertiesStruct.getFieldsOrThrow("pnf-name").getStringValue()).isEqualTo("PNFDemo");
         assertThat(propertiesStruct.getFieldsOrThrow("service-model-uuid").getStringValue())
-                .matches("f2daaac6-5017-4e1e-96c8-6a27dfbe1421");
+                .isEqualTo("f2daaac6-5017-4e1e-96c8-6a27dfbe1421");
         assertThat(propertiesStruct.getFieldsOrThrow("pnf-customization-uuid").getStringValue())
-                .matches("68dc9a92-214c-11e7-93ae-92361f002680");
+                .isEqualTo("68dc9a92-214c-11e7-93ae-92361f002680");
 
         /**
          * IP addresses match the OAM ip addresses from AAI.
          */
-        assertThat(propertiesStruct.getFieldsOrThrow("pnf-ipv4-address").getStringValue()).matches("1.1.1.1");
-        assertThat(propertiesStruct.getFieldsOrThrow("pnf-ipv6-address").getStringValue()).matches("::/128");
+        assertThat(propertiesStruct.getFieldsOrThrow("pnf-ipv4-address").getStringValue()).isEqualTo("1.1.1.1");
+        assertThat(propertiesStruct.getFieldsOrThrow("pnf-ipv6-address").getStringValue()).isEqualTo("::/128");
     }
 
     /**
@@ -223,8 +219,8 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
         /**
          * Get the events from PNF topic
          */
-        wireMockServer
-                .stubFor(get(urlPathMatching("/events/pnfReady/consumerGroup.*")).willReturn(okJson(pnfResponse)));
+        wireMockServer.stubFor(get(urlPathMatching("/events/pnfReady/consumerGroup.*"))
+                .willReturn(okJson(pnfResponse).withFixedDelay(DMAAP_DELAY_TIME_MS)));
     }
 
     private void mockAai() {

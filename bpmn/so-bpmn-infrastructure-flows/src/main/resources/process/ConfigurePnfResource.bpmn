@@ -30,7 +30,7 @@
       <bpmn:incoming>SequenceFlow_17llfxw</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0p0aqtx</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:exclusiveGateway id="ExclusiveGateway_0vtv1wi">
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0vtv1wi" default="SequenceFlow_1w4p9f7">
       <bpmn:incoming>SequenceFlow_0p0aqtx</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1owbpsy</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_1w4p9f7</bpmn:outgoing>
@@ -49,7 +49,7 @@
       <bpmn:incoming>SequenceFlow_0jfgn7n</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_08voj55</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:exclusiveGateway id="ExclusiveGateway_01jwwmc">
+    <bpmn:exclusiveGateway id="ExclusiveGateway_01jwwmc" default="SequenceFlow_0d24h26">
       <bpmn:incoming>SequenceFlow_08voj55</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1n080up</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_0d24h26</bpmn:outgoing>
