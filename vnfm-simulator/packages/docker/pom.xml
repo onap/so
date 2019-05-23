@@ -16,6 +16,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
+		<!-- should below be org.onap.so.vnfm ? -->
 		<groupId>org.onap.svnfm</groupId>
 		<artifactId>packages</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
