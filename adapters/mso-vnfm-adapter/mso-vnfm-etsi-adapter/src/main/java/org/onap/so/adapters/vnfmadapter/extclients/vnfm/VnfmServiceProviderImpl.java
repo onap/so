@@ -54,7 +54,7 @@ public class VnfmServiceProviderImpl implements VnfmServiceProvider {
 
     @Override
     public Optional<InlineResponse201> getVnf(final String vnfSelfLink) {
-        return httpServiceProvider.get(vnfSelfLink, InlineResponse201.class);
+        return httpServiceProvider.get(vnfSelfLink.replaceAll("https", "http"), InlineResponse201.class);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class VnfmServiceProviderImpl implements VnfmServiceProvider {
             logger.error(errorMessage, exception);
             throw new VnfmRequestFailureException(errorMessage, exception);
         }
-        if (response.getStatusCode() != HttpStatus.OK) {
+        if (response.getStatusCode() != HttpStatus.CREATED) {
             final String errorMessage = "Subscription to VNFM " + vnfmId + " returned status code: "
                     + response.getStatusCode() + ", request: " + subscriptionRequest;
             logger.error(errorMessage);

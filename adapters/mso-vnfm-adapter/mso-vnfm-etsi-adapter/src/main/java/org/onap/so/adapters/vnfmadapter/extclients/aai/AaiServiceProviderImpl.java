@@ -58,8 +58,8 @@ public class AaiServiceProviderImpl implements AaiServiceProvider {
     @Override
     public GenericVnfs invokeQueryGenericVnf(final String selfLink) {
         return aaiClientProvider.getAaiClient()
-                .get(GenericVnfs.class,
-                        AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNFS).queryParam("selflink", selfLink))
+                .get(GenericVnfs.class, AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNFS)
+                        .queryParam("selflink", selfLink.replaceAll("https", "http")))
                 .orElseGet(() -> {
                     logger.debug("No vnf found in AAI with selflink: {}", selfLink);
                     return null;

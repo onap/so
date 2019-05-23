@@ -202,6 +202,9 @@ public class AaiHelper {
         logger.debug("VNFMs in ESR: " + vnfmsInEsr);
 
         for (final EsrVnfm vnfm : vnfmsInEsr.getEsrVnfm()) {
+            final EsrSystemInfoList systemInfolist =
+                    aaiServiceProvider.invokeGetVnfmEsrSystemInfoList(vnfm.getVnfmId());
+            vnfm.setEsrSystemInfoList(systemInfolist);
             if (vnfmHasMatchingEsrSystemInfoType(vnfm, vnf.getNfType())) {
                 return vnfm;
             }
@@ -212,7 +215,7 @@ public class AaiHelper {
     private boolean vnfmHasMatchingEsrSystemInfoType(final EsrVnfm vnfm, final String type) {
         logger.debug("Checking VNFM ID: " + vnfm + ": " + vnfm.getVnfmId());
 
-        final EsrSystemInfoList systemInfolist = aaiServiceProvider.invokeGetVnfmEsrSystemInfoList(vnfm.getVnfmId());
+        final EsrSystemInfoList systemInfolist = vnfm.getEsrSystemInfoList();
         if (systemInfolist != null) {
             for (final EsrSystemInfo esrSystemInfo : systemInfolist.getEsrSystemInfo()) {
                 if (esrSystemInfo.getType().equals(type)) {

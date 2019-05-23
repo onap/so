@@ -95,7 +95,7 @@ public class LifecycleManager {
 
         logger.info("Create response: {}", vnfmResponse);
 
-        genericVnf.setSelflink(vnfmResponse.getLinks().getSelf().getHref());
+        genericVnf.setSelflink(getSelfLink(vnfmResponse, vnfm));
         aaiServiceProvider.invokePutGenericVnf(genericVnf);
         final String vnfIdInVnfm = vnfmResponse.getId();
 
@@ -109,6 +109,15 @@ public class LifecycleManager {
         final CreateVnfResponse response = new CreateVnfResponse();
         response.setJobId(jobId);
         return response;
+    }
+
+    private String getSelfLink(final InlineResponse201 vnfmResponse, final EsrVnfm vnfm) {
+        if (vnfmResponse.getLinks() != null && vnfmResponse.getLinks().getSelf() != null
+                && vnfmResponse.getLinks().getSelf().getHref() != null) {
+            return vnfmResponse.getLinks().getSelf().getHref().replaceAll("https", "http");
+        }
+        return vnfm.getEsrSystemInfoList().getEsrSystemInfo().iterator().next().getServiceUrl() + "/vnf_instances/"
+                + vnfmResponse.getId();
     }
 
     private OamIpAddressSource extractOamIpAddressSource(final CreateVnfRequest request) {

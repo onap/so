@@ -89,6 +89,7 @@ public class SdcPackageProvider {
         try {
             final String vnfdLocation = getVnfdLocation(new ByteArrayInputStream(onapPackage));
             final String onapVnfdContent = getFileInZip(new ByteArrayInputStream(onapPackage), vnfdLocation).toString();
+            logger.debug("VNFD CONTENTS: " + onapVnfdContent);
             final JsonObject root = new Gson().toJsonTree(new Yaml().load(onapVnfdContent)).getAsJsonObject();
 
             final JsonObject topologyTemplates = child(root, "topology_template");

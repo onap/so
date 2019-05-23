@@ -52,7 +52,7 @@ public class VnfmUrlProvider {
      * @return the URL of the operation
      */
     public String getOperationUrl(final String vnfmId, final String operationId) {
-        final String url = UriComponentsBuilder.fromUri(getBaseUri(vnfmId)).pathSegment("/vnf_lcm_op_occs/")
+        final String url = UriComponentsBuilder.fromUri(getBaseUri(vnfmId)).pathSegment("vnf_lcm_op_occs")
                 .pathSegment(operationId).build().toString();
         logger.debug("getOperationUrl:" + url);
 
@@ -67,7 +67,7 @@ public class VnfmUrlProvider {
      */
     public String getSubscriptionsUrl(final String vnfmId) {
         final String url =
-                UriComponentsBuilder.fromUri(getBaseUri(vnfmId)).pathSegment("/subscriptions").build().toString();
+                UriComponentsBuilder.fromUri(getBaseUri(vnfmId)).pathSegment("subscriptions").build().toString();
         logger.debug("getSubscriptionUrl:" + url);
 
         return url;
@@ -75,7 +75,7 @@ public class VnfmUrlProvider {
 
     public String getCreationUrl(final String vnfmId) {
         final String url =
-                UriComponentsBuilder.fromUri(getBaseUri(vnfmId)).pathSegment("/vnf_instances").build().toString();
+                UriComponentsBuilder.fromUri(getBaseUri(vnfmId)).pathSegment("vnf_instances").build().toString();
         logger.debug("getCreationUrl:" + url);
 
         return url;
