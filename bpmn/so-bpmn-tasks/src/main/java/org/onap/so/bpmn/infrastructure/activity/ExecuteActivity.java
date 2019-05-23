@@ -31,6 +31,7 @@ import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.camunda.bpm.engine.runtime.ProcessInstanceWithVariables;
 import org.camunda.bpm.engine.variable.VariableMap;
 import org.onap.so.bpmn.core.WorkflowException;
+import org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionBBTasks;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
@@ -55,6 +56,7 @@ public class ExecuteActivity implements JavaDelegate {
     private static final String G_REQUEST_ID = "mso-request-id";
     private static final String VNF_ID = "vnfId";
     private static final String SERVICE_INSTANCE_ID = "serviceInstanceId";
+    private static final String WORKFLOW_SYNC_ACK_SENT = "workflowSyncAckSent";
 
     private static final String SERVICE_TASK_IMPLEMENTATION_ATTRIBUTE = "implementation";
     private static final String ACTIVITY_PREFIX = "activity:";
@@ -65,12 +67,19 @@ public class ExecuteActivity implements JavaDelegate {
     private RuntimeService runtimeService;
     @Autowired
     private ExceptionBuilder exceptionBuilder;
+    @Autowired
+    private WorkflowActionBBTasks workflowActionBBTasks;
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
         final String requestId = (String) execution.getVariable(G_REQUEST_ID);
 
         try {
+            Boolean workflowSyncAckSent = (Boolean) execution.getVariable(WORKFLOW_SYNC_ACK_SENT);
+            if (workflowSyncAckSent == null || workflowSyncAckSent == false) {
+                workflowActionBBTasks.sendSyncAck(execution);
+                execution.setVariable(WORKFLOW_SYNC_ACK_SENT, Boolean.TRUE);
+            }
             final String implementationString =
                     execution.getBpmnModelElementInstance().getAttributeValue(SERVICE_TASK_IMPLEMENTATION_ATTRIBUTE);
             logger.debug("activity implementation String: {}", implementationString);
