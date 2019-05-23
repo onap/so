@@ -335,7 +335,9 @@ public class BBInputSetupMapperLayer {
 
     public RequestContext mapRequestContext(RequestDetails requestDetails) {
         RequestContext context = new RequestContext();
-        modelMapper.map(requestDetails.getRequestInfo(), context);
+        if (null != requestDetails.getRequestInfo()) {
+            modelMapper.map(requestDetails.getRequestInfo(), context);
+        }
         org.onap.so.serviceinstancebeans.RequestParameters requestParameters = requestDetails.getRequestParameters();
         if (null != requestParameters) {
             context.setSubscriptionServiceType(requestParameters.getSubscriptionServiceType());
