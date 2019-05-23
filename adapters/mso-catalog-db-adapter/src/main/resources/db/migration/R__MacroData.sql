@@ -805,3 +805,4 @@ VALUES
 ('VNFUpgradeSoftwareActivity', 'NO_VALIDATE', 'CUSTOM'),
 ('VnfInPlaceSoftwareUpdate', 'NO_VALIDATE', 'CUSTOM');
 
+UPDATE northbound_request_ref_lookup SET SERVICE_TYPE = '*' WHERE SERVICE_TYPE = NULL;
