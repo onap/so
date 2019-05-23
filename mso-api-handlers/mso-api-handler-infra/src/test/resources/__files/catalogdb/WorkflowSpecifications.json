@@ -122,7 +122,8 @@
           "operationName": "inPlaceSoftwareUpdate",
           "workflowSource": "native",
           "workflowResourceTarget": "vnf"
-        }
+        },
+        "workflowInputParameters": []
       }
     }
   ]
