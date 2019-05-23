@@ -38,17 +38,26 @@ public class HandlePNF extends AbstractServiceTaskProcessor{
     @Override
     void preProcessRequest(DelegateExecution execution) {
         logger.debug("Start preProcess for HandlePNF")
-
         // set correlation ID
         def resourceInput = execution.getVariable("resourceInput")
         String serInput = jsonUtil.getJsonValue(resourceInput, "requestsInputs")
         String correlationId = jsonUtil.getJsonValue(serInput, "service.parameters.requestInputs.ont_ont_pnf_name")
         if (!StringUtils.isEmpty(correlationId)) {
-            execution.setVariable(ExecutionVariableNames.CORRELATION_ID, correlationId)
+            execution.setVariable(ExecutionVariableNames.PNF_CORRELATION_ID, correlationId)
             logger.debug("Found correlation id : " + correlationId)
         } else {
             logger.error("== correlation id is empty ==")
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "correlation id is not provided")
+        }
+
+        // set serviceInstanceId
+        String serviceInstanceID = jsonUtil.getJsonValue(resourceInput, ExecutionVariableNames.SERVICE_INSTANCE_ID)
+        if (!StringUtils.isEmpty(serviceInstanceID)) {
+            execution.setVariable(ExecutionVariableNames.SERVICE_INSTANCE_ID, serviceInstanceID)
+            logger.debug("found serviceInstanceID: "+serviceInstanceID)
+        } else {
+            logger.error("== serviceInstance ID is empty ==")
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "serviceInstance ID is not provided")
         }
 
         // next task will set the uuid
