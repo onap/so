@@ -44,12 +44,18 @@ public class HandlePNF extends AbstractServiceTaskProcessor{
         String serInput = jsonUtil.getJsonValue(resourceInput, "requestsInputs")
         String correlationId = jsonUtil.getJsonValue(serInput, "service.parameters.requestInputs.ont_ont_pnf_name")
         if (!StringUtils.isEmpty(correlationId)) {
-            execution.setVariable(ExecutionVariableNames.CORRELATION_ID, correlationId)
+            execution.setVariable(ExecutionVariableNames.PNF_CORRELATION_ID, correlationId)
             logger.debug("Found correlation id : " + correlationId)
         } else {
             logger.error("== correlation id is empty ==")
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "correlation id is not provided")
         }
+
+        // set serviceInstanceId as a temporary fix to satisfy PnfCheckInputs
+        String serviceInstanceId = "da7d07d9-b71c-4128-809d-2ec01c807169"
+        logger.debug("reverting to default service instance: "+serviceInstanceId)
+
+        execution.setVariable(ExecutionVariableNames.SERVICE_INSTANCE_ID, serviceInstanceId)
 
         // next task will set the uuid
         logger.debug("exit preProcess for HandlePNF")

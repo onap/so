@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.2">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.2.4">
   <bpmn:process id="HandlePNF" name="HandlePNF" isExecutable="true">
     <bpmn:startEvent id="createNS_StartEvent_pnf_disc" name="start PNF handling">
       <bpmn:outgoing>SequenceFlow_1c92ks3_activate</bpmn:outgoing>
@@ -21,8 +21,9 @@ handlePNF.preProcessRequest(execution)</bpmn:script>
     <bpmn:sequenceFlow id="SequenceFlow_1la8oih" sourceRef="PostProcessPNFDiscovery" targetRef="Task_1r8h7of" />
     <bpmn:callActivity id="Task_0657l04" name="invoke pnf handler" calledElement="CreateAndActivatePnfResource">
       <bpmn:extensionElements>
-        <camunda:in source="correlationId" target="correlationId" />
+        <camunda:in source="pnfCorrelationId" target="pnfCorrelationId" />
         <camunda:in source="pnfUuid" target="pnfUuid" />
+        <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1apj1fn</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0pujwl4</bpmn:outgoing>
