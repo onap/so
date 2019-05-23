@@ -55,7 +55,6 @@ public class WorkflowActionBBFailure {
             }
             request.setStatusMessage(errorMsg);
             request.setProgress(Long.valueOf(100));
-            request.setRequestStatus("FAILED");
             request.setLastModifiedBy("CamundaBPMN");
             request.setEndTime(new Timestamp(System.currentTimeMillis()));
             requestDbclient.updateInfraActiveRequests(request);
