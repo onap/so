@@ -36,9 +36,11 @@ import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.onap.so.db.catalog.beans.AuthenticationType
 import org.onap.so.db.catalog.beans.CloudIdentity
 import org.onap.so.db.catalog.beans.CloudSite
 import org.onap.so.db.catalog.beans.HomingInstance
+import org.onap.so.db.catalog.beans.ServerType
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.utils.TargetEntity
 
