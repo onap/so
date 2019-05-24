@@ -79,6 +79,9 @@ public class RestfulUtil {
     @Autowired
     private Environment env;
 
+    @Autowired
+    private HttpClient client;
+
     public String getMsbHost() {
         // MSB_IP will be set as ONAP_IP environment parameter in install flow.
         String msbIp = System.getenv().get(ONAP_IP);
@@ -110,8 +113,6 @@ public class RestfulUtil {
 
             RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(timeout).setConnectTimeout(timeout)
                     .setConnectionRequestTimeout(timeout).build();
-
-            HttpClient client = HttpClientBuilder.create().build();
 
             if ("POST".equalsIgnoreCase(methodType)) {
                 HttpPost httpPost = new HttpPost(msbUrl);
