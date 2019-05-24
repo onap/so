@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "e508da36_ab5aa2f1",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/HandlePNF.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-05-24T08:50:41Z",
+      "side": 1,
+      "message": "Temporary fix with hard coding in production code? This is bad idea.",
+      "range": {
+        "startLine": 54,
+        "startChar": 8,
+        "endLine": 55,
+        "endChar": 73
+      },
+      "revId": "ac204847723ced09bf53431e321cbe656f41b0b9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d66c74b3_5bf1f2d2",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/HandlePNF.groovy",
         "patchSetId": 1
