@@ -27,7 +27,7 @@ import org.hibernate.annotations.NotFoundAction;
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 @Entity
-@Table(name = "ACTIVITY_SPEC_CATEGORIES")
+@Table(name = "activity_spec_categories")
 public class ActivitySpecCategories implements Serializable {
 
     private static final long serialVersionUID = -6251150462067699643L;
