@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7c92dc08_3ebc220a",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/HandlePNF.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-05-27T06:15:18Z",
+      "side": 1,
+      "message": "What is the point of this comment? It is obvious that you set serviceInstanceId here, this comment tells nothing.",
+      "revId": "8b7e1f83aaa7dd698687bd40a23cf60da0ce9f68",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
