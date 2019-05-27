@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2019 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -36,8 +38,8 @@ public class MapAdapter extends XmlAdapter<MapEntry, Map<String, Object>> {
 
         MapEntry map = new MapEntry();
 
-        for (String key : v.keySet()) {
-            map.addEntry(key, v.get(key));
+        for (Map.Entry<String, Object> entry : v.entrySet()) {
+            map.addEntry(entry.getKey(), entry.getValue());
         }
 
         return map;
@@ -49,9 +51,9 @@ public class MapAdapter extends XmlAdapter<MapEntry, Map<String, Object>> {
             return null;
         }
 
-        Map<String, Object> map = new HashMap<>(v.entry.size());
+        Map<String, Object> map = new HashMap<>(v.getEntry().size());
 
-        for (MapElements entry : v.entry) {
+        for (MapElements entry : v.getEntry()) {
             if (entry.value instanceof Element) {
                 map.put(entry.key, ((Element) entry.value).getTextContent());
             } else {

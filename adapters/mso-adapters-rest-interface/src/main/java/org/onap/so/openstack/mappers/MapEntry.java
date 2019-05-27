@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2019 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,12 +27,23 @@ import java.util.List;
 
 public class MapEntry {
 
-    public List<MapElements> entry = new ArrayList<>();
+    private List<MapElements> entry = new ArrayList<>();
 
-    public MapEntry() {} // Required by JAXB
+    public MapEntry() {
+        // Required by JAXB
+    }
 
-    public void addEntry(String key, Object value) {
+    void addEntry(String key, Object value) {
         entry.add(new MapElements(key, value));
     }
 
+    public List<MapElements> getEntry() {
+        // Required by JAXB
+        return entry;
+    }
+
+    public void setEntry(List<MapElements> entry) {
+        // Required by JAXB
+        this.entry = entry;
+    }
 }

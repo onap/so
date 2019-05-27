@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2019 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,12 +26,13 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import org.junit.Test;
 import org.onap.so.adapters.vnfrest.CreateVfModuleRequest;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 public class JAXBMarshallingTest {
@@ -53,9 +56,13 @@ public class JAXBMarshallingTest {
 
         CreateVfModuleRequest request = new CreateVfModuleRequest();
         request.getVfModuleParams().put("test-null", null);
+        request.getVfModuleParams().put("vcpe_image_name", "ubuntu-16-04-cloud-amd64");
+        request.getVfModuleParams().put("test-empty", "");
         request.getVfModuleParams().put("test array", Arrays.asList("a", "b", "c"));
+        request.getVfModuleParams().put("test map", Collections.singletonMap("d", "e"));
+        request.getVfModuleParams().put("marshalling error", new ArrayList());
 
-        assertEquals("documents are equal",
+        assertEquals("documents should be equal",
                 new String(Files
                         .readAllBytes(Paths.get("src/test/resources/VfRequest-marshalled-with-complex-object.xml"))),
                 request.toXmlString());

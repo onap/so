@@ -4,11 +4,27 @@
     <backout>true</backout>
     <vfModuleParams>
         <entry>
+            <key>vcpe_image_name</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:string">ubuntu-16-04-cloud-amd64</value>
+        </entry>
+        <entry>
             <key>test array</key>
             <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:string">["a","b","c"]</value>
         </entry>
         <entry>
+            <key>test map</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:string">{"d":"e"}</value>
+        </entry>
+        <entry>
             <key>test-null</key>
+        </entry>
+        <entry>
+            <key>marshalling error</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:string">[]</value>
+        </entry>
+        <entry>
+            <key>test-empty</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:string"></value>
         </entry>
     </vfModuleParams>
     <msoRequest/>
