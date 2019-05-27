@@ -317,6 +317,7 @@ public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                                      </vnf-information>
                                      <vf-module-information>
                                         <from-preload>false</from-preload>
+                                        <vf-module-id>${msoUtils.xmlEscape(resourceInstanceId)}</vf-module-id>
                                         <onap-model-information>
                                             <model-invariant-uuid>${msoUtils.xmlEscape(modelInvariantUuid)}</model-invariant-uuid>
                                              <model-customization-uuid>${msoUtils.xmlEscape(modelCustomizationUuid)}</model-customization-uuid>
