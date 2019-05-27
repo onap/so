@@ -1,6 +1,5 @@
 package org.onap.so.adapters.catalogdb;
 
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -14,8 +13,4 @@ public class CatalogDbAdapterBaseTest {
 
     @LocalServerPort
     protected int port;
-
-
-    @Test
-    public void testNothing() {}
 }
