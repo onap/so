@@ -36,6 +36,7 @@ public class ExecutionVariableNames {
     public final static String SERVICE_INSTANCE_ID = "serviceInstanceId";
     public final static String MSO_REQUEST_ID = "msoRequestId";
     public final static String MODEL_UUID = "modelUuid";
+    public final static String IS_PNF = "is_pnf";
 
     public final static String SERVICE_MODEL_INFO = "serviceModelInfo";
 

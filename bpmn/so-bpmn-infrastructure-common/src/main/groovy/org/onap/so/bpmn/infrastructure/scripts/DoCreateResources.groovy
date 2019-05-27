@@ -23,6 +23,7 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 import org.onap.so.bpmn.common.scripts.CatalogDbUtilsFactory
+import org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames
 import org.onap.so.bpmn.infrastructure.properties.BPMNProperties
 import org.apache.commons.lang3.StringUtils
 import org.apache.http.HttpResponse
@@ -180,6 +181,26 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
 
     public void getCurrentResoure(DelegateExecution execution){
         logger.trace("Start getCurrentResoure Process ")
+
+        def resourceInput = execution.getVariable("resourceInput")
+        String isPNF = jsonUtil.getJsonValue(resourceInput, ExecutionVariableNames.IS_PNF)
+        if (!StringUtils.isEmpty(isPNF)) {
+            String value = isPNF.substring(isPNF.lastIndexOf('|'))
+            if(Boolean.parseBoolean(value)) {
+                boolean trueValue = value.toBoolean()
+                execution.setVariable(ExecutionVariableNames.IS_PNF, trueValue)
+                logger.debug("found IS_PNF value: "+trueValue)
+            }
+            else {
+                logger.error("== IS_PNF is incorrect ==")
+                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "Unable to parse IS_PNF value")
+            }
+
+        } else {
+            logger.error("== IS_PNF is empty ==")
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "IS_PNF value is not provided")
+        }
+
         def currentIndex = execution.getVariable("currentResourceIndex")
         List<Resource> sequencedResourceList = execution.getVariable("sequencedResourceList")
         Resource currentResource = sequencedResourceList.get(currentIndex)

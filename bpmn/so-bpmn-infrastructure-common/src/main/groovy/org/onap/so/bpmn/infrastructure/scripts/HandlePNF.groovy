@@ -26,6 +26,7 @@ import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames
+import org.onap.so.bpmn.infrastructure.pnf.dmaap.PNFWorkflowListener
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -49,7 +50,7 @@ public class HandlePNF extends AbstractServiceTaskProcessor{
             logger.error("== correlation id is empty ==")
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "correlation id is not provided")
         }
-        
+
         String serviceInstanceID = jsonUtil.getJsonValue(resourceInput, ExecutionVariableNames.SERVICE_INSTANCE_ID)
         if (!StringUtils.isEmpty(serviceInstanceID)) {
             execution.setVariable(ExecutionVariableNames.SERVICE_INSTANCE_ID, serviceInstanceID)
@@ -65,7 +66,11 @@ public class HandlePNF extends AbstractServiceTaskProcessor{
 
     void postProcessRequest(DelegateExecution execution) {
         logger.debug("start postProcess for HandlePNF")
-
+        def isPNF = execution.getVariable(ExecutionVariableNames.IS_PNF)
+        if(isPNF == true) {
+            def id = execution.getVariable(ExecutionVariableNames.PNF_CORRELATION_ID)
+            PNFWorkflowListener.getInstance().notifyWorkflowCompleteEvent(id)
+        }
         logger.debug("exit postProcess for HandlePNF")
     }
 
