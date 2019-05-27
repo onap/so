@@ -1,0 +1,234 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ad8b532f_451c168a",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/vnf/MsoVnfCloudifyAdapterImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 5100
+      },
+      "writtenOn": "2019-05-27T14:09:01Z",
+      "side": 1,
+      "message": "According to comment above - please consider changing this constructor to private (to lock out its use).",
+      "range": {
+        "startLine": 109,
+        "startChar": 4,
+        "endLine": 109,
+        "endChar": 10
+      },
+      "revId": "08ae1792c1ac3752fd739d9968b405555bb8fc0d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6672ac96_b7d44919",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/vnf/MsoVnfCloudifyAdapterImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 5100
+      },
+      "writtenOn": "2019-05-27T14:09:01Z",
+      "side": 1,
+      "message": "Pls consider adding debug log of same/similar message as comment.",
+      "range": {
+        "startLine": 183,
+        "startChar": 12,
+        "endLine": 183,
+        "endChar": 33
+      },
+      "revId": "08ae1792c1ac3752fd739d9968b405555bb8fc0d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "752ce298_87cc7048",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/vnf/MsoVnfCloudifyAdapterImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 312,
+      "author": {
+        "id": 5100
+      },
+      "writtenOn": "2019-05-27T14:09:01Z",
+      "side": 1,
+      "message": "See Sonar suggestion about changing this to EntrySet",
+      "range": {
+        "startLine": 312,
+        "startChar": 39,
+        "endLine": 312,
+        "endChar": 45
+      },
+      "revId": "08ae1792c1ac3752fd739d9968b405555bb8fc0d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "70d8e43a_36a03da6",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/vnf/MsoVnfCloudifyAdapterImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 357,
+      "author": {
+        "id": 5100
+      },
+      "writtenOn": "2019-05-27T14:09:01Z",
+      "side": 1,
+      "message": "See Sonar suggestion about changing this to EntrySet",
+      "range": {
+        "startLine": 357,
+        "startChar": 12,
+        "endLine": 357,
+        "endChar": 15
+      },
+      "revId": "08ae1792c1ac3752fd739d9968b405555bb8fc0d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f76e2002_63487de2",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/vnf/MsoVnfCloudifyAdapterImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 378,
+      "author": {
+        "id": 5100
+      },
+      "writtenOn": "2019-05-27T14:09:01Z",
+      "side": 1,
+      "message": "See Sonar suggestion about changing this to EntrySet",
+      "range": {
+        "startLine": 378,
+        "startChar": 12,
+        "endLine": 378,
+        "endChar": 15
+      },
+      "revId": "08ae1792c1ac3752fd739d9968b405555bb8fc0d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "93122002_38e3e7c8",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/vnf/MsoVnfCloudifyAdapterImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 403,
+      "author": {
+        "id": 5100
+      },
+      "writtenOn": "2019-05-27T14:09:01Z",
+      "side": 1,
+      "message": "See Sonar suggestion about changing this to EntrySet",
+      "range": {
+        "startLine": 403,
+        "startChar": 8,
+        "endLine": 403,
+        "endChar": 11
+      },
+      "revId": "08ae1792c1ac3752fd739d9968b405555bb8fc0d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7e21f03_4b8d3f19",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/vnf/MsoVnfCloudifyAdapterImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 835,
+      "author": {
+        "id": 5100
+      },
+      "writtenOn": "2019-05-27T14:09:01Z",
+      "side": 1,
+      "message": "See Sonar suggestion about changing this to EntrySet",
+      "range": {
+        "startLine": 835,
+        "startChar": 16,
+        "endLine": 835,
+        "endChar": 19
+      },
+      "revId": "08ae1792c1ac3752fd739d9968b405555bb8fc0d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "253ff93c_ec4aae4d",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/vnf/MsoVnfCloudifyAdapterImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 876,
+      "author": {
+        "id": 5100
+      },
+      "writtenOn": "2019-05-27T14:09:01Z",
+      "side": 1,
+      "message": "See Sonar suggestion about changing this to EntrySet",
+      "range": {
+        "startLine": 876,
+        "startChar": 20,
+        "endLine": 876,
+        "endChar": 23
+      },
+      "revId": "08ae1792c1ac3752fd739d9968b405555bb8fc0d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "be47abe7_2e06331c",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/vnf/MsoVnfCloudifyAdapterImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 931,
+      "author": {
+        "id": 5100
+      },
+      "writtenOn": "2019-05-27T14:09:01Z",
+      "side": 1,
+      "message": "Change to error to maintain consistency with other changes.",
+      "range": {
+        "startLine": 931,
+        "startChar": 27,
+        "endLine": 931,
+        "endChar": 32
+      },
+      "revId": "08ae1792c1ac3752fd739d9968b405555bb8fc0d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bc3f9026_dc20917e",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/vnf/MsoVnfCloudifyAdapterImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 979,
+      "author": {
+        "id": 5100
+      },
+      "writtenOn": "2019-05-27T14:09:01Z",
+      "side": 1,
+      "message": "Another opportunity to optimize with \u0027diamond operator\u0027.",
+      "range": {
+        "startLine": 979,
+        "startChar": 68,
+        "endLine": 979,
+        "endChar": 84
+      },
+      "revId": "08ae1792c1ac3752fd739d9968b405555bb8fc0d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
