@@ -30,6 +30,7 @@ import javax.xml.ws.Service;
 import javax.xml.ws.WebEndpoint;
 import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.WebServiceFeature;
+import com.google.common.base.Strings;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
@@ -59,19 +60,19 @@ public class SDNCAdapterService extends Service {
         try {
             wsdlUrl = Thread.currentThread().getContextClassLoader().getResource("main/resources/SDNCAdapter.wsdl");
         } catch (Exception e) {
-            logger.error("{} {} {} {}", MessageEnum.RA_WSDL_NOT_FOUND.toString(), SDNC_ADAPTER_WSDL,
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.RA_WSDL_NOT_FOUND.toString(), SDNC_ADAPTER_WSDL,
                     ErrorCode.DataError.getValue(), "Exception - WSDL not found", e);
         }
         if (wsdlUrl == null) {
-            logger.error("{} {} {} {}", MessageEnum.RA_WSDL_NOT_FOUND.toString(), SDNC_ADAPTER_WSDL,
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.RA_WSDL_NOT_FOUND.toString(), SDNC_ADAPTER_WSDL,
                     ErrorCode.DataError.getValue(), "WSDL not found");
         } else {
             try {
-                logger.info("{} {} {}", MessageEnum.RA_PRINT_URL.toString(), SDNC_ADAPTER_WSDL,
+                logger.info(Strings.repeat("{} ", 3), MessageEnum.RA_PRINT_URL.toString(), SDNC_ADAPTER_WSDL,
                         wsdlUrl.toURI().toString());
             } catch (Exception e) {
-                logger.error("{} {} {} {}", MessageEnum.RA_WSDL_URL_CONVENTION_EXC.toString(), SDNC_ADAPTER_WSDL,
-                        ErrorCode.DataError.getValue(), "Exception - print URL", e);
+                logger.error(Strings.repeat("{} ", 4), MessageEnum.RA_WSDL_URL_CONVENTION_EXC.toString(),
+                        SDNC_ADAPTER_WSDL, ErrorCode.DataError.getValue(), "Exception - print URL", e);
             }
         }
         WSDL_LOCATION = wsdlUrl;
