@@ -25,6 +25,7 @@ package org.onap.so.bpmn.common.recipe;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import javax.xml.bind.DatatypeConverter;
+import com.google.common.base.Strings;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -181,8 +182,8 @@ public class BpmnRestClient {
             jsonReq = recipeRequest.toString();
             logger.trace("request body is {}", jsonReq);
         } catch (Exception e) {
-            logger.error("{} {} {} {} {}", MessageEnum.APIH_WARP_REQUEST.toString(), "Camunda", "wrapVIDRequest",
-                    ErrorCode.BusinessProcesssError.getValue(), "Error in APIH Warp request", e);
+            logger.error(Strings.repeat("{} ", 5), MessageEnum.APIH_WARP_REQUEST.toString(), "Camunda",
+                    "wrapVIDRequest", ErrorCode.BusinessProcesssError.getValue(), "Error in APIH Warp request", e);
         }
         return jsonReq;
     }

@@ -22,6 +22,7 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import com.google.common.base.Strings
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
@@ -308,7 +309,7 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 
 
 	   }catch(Exception e){
-		   logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+		   logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 				   "Exception Occured Processing preProcessAddOnModule ", "BPMN",
 				   ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		   exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during preProcessAddOnModule Method:\n" + e.getMessage())
@@ -326,7 +327,7 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 		   execution.setVariable("addOnModulesDeployed", addOnModulesDeployed + 1)
 
 	   }catch(Exception e){
-		   logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+		   logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 				   "Exception Occured Processing postProcessAddOnModule ", "BPMN",
 				   ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		   exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during postProcessAddOnModule Method:\n" + e.getMessage())
@@ -356,7 +357,7 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 		   }
 
 	   }catch(Exception e){
-		   logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+		   logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 				   "Exception Occured Processing validateBaseModule ", "BPMN",
 				   ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		   exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during validateBaseModule Method:\n" + e.getMessage())
@@ -387,7 +388,7 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 		   rollbackData.put("VNFANDMODULES", "numOfCreatedAddOnModules", "${numOfCreatedAddOnModules}")
 		   execution.setVariable("rollbackData", rollbackData)
 	   }catch(Exception e){
-		   logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+		   logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 				   "Exception Occured Processing preProcessAddOnModule ", "BPMN",
 				   ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		   exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during preProcessAddOnModule Method:\n" + e.getMessage())

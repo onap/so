@@ -22,6 +22,7 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import com.google.common.base.Strings
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor;
@@ -306,7 +307,7 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 		String xmlHandlerRequest = utils.formatXml(falloutHandlerRequest)
 
 		execution.setVariable(prefix+'FalloutHandlerRequest', xmlHandlerRequest)
-		logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Overall Error Response " +
+		logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Overall Error Response " +
 				"going to FalloutHandler", "BPMN", ErrorCode.UnknownError.getValue(), "\n" + xmlHandlerRequest);
 	}
 

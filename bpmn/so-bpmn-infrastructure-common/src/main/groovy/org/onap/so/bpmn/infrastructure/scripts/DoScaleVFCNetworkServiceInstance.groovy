@@ -22,6 +22,7 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import com.google.common.base.Strings
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONArray
 import org.json.JSONObject;
@@ -182,7 +183,7 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
         try {
             Thread.sleep(5000)
         } catch (InterruptedException e) {
-            logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+            logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
                     "Time Delay exception" + e, "BPMN",
                     ErrorCode.UnknownError.getValue());
         }
@@ -216,7 +217,7 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
             logger.info("response code:"+ apiResponse.getStatus() +"\nresponse body:"+ apiResponse.readEntity(String.class))
             logger.trace("Completed Execute VF-C adapter Post Process ")
         }catch(Exception e){
-            logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Exception occured " +
+            logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Exception occured " +
                     "while executing VFC Post Call.", "BPMN", ErrorCode.UnknownError.getValue(), e);
             throw new BpmnError("MSOWorkflowException")
         }

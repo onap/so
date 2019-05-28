@@ -25,6 +25,7 @@ package org.onap.so.apihandlerinfra;
 
 import java.net.URI;
 import java.util.Collections;
+import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -112,7 +113,7 @@ public class GlobalHealthcheckHandler {
         try {
             // Generated RequestId
             String requestId = requestContext.getProperty("requestId").toString();
-            logger.info("{} {}", MessageEnum.APIH_GENERATED_REQUEST_ID.toString(), requestId);
+            logger.info(Strings.repeat("{} ", 2), MessageEnum.APIH_GENERATED_REQUEST_ID.toString(), requestId);
 
             // set APIH status, this is the main entry point
             rsp.setApih(HealthcheckStatus.UP.toString());

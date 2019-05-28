@@ -323,7 +323,7 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                 }
             } catch (WebApplicationException e) {
                 // Silently log that we failed to update the Pserver p-interface with PCI-ID
-                logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.GENERAL_EXCEPTION, pserverHostName,
+                logger.error(Strings.repeat("{} ", 9), MessageEnum.GENERAL_EXCEPTION, pserverHostName,
                         matchingPifName.get(), cloudOwner, tenantId, "OpenStack", "Heatbridge",
                         ErrorCode.DataError.getValue(), "Exception - Failed to add sriov-pf object to pserver", e);
             }
