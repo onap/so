@@ -152,12 +152,12 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                     execution.setVariable("isActivateRequired", "true")
                     break
 
-                case ~/[\w\s\W]*OLT[\w\s\W]*/ :
+                case ~/[\w\s\W]*AccessConnectivity[\w\s\W]*/ :
                     operationType = "AccessConnectivity"
                     execution.setVariable("isActivateRequired", "false")
                     break
 
-                case ~/[\w\s\W]*EdgeInternetProfile[\w\s\W]*/ :
+                case ~/[\w\s\W]*InternetProfile[\w\s\W]*/ :
                     operationType = "InternetProfile"
                     execution.setVariable("isActivateRequired", "false")
                     break
@@ -225,7 +225,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
         String serInput = jsonUtil.getJsonValue(resourceInputTmp, "requestsInputs")
 
         switch (modelName) {
-            case ~/[\w\s\W]*OLT[\w\s\W]*/ :
+            case ~/[\w\s\W]*AccessConnectivity[\w\s\W]*/ :
                 // get the required properties and update in resource input
 
                 def resourceInput = resourceInputObj.getResourceParameters()
@@ -252,7 +252,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                 msoLogger.debug("new resource Input :" + resourceInputObj.toString())
                 break
 
-            case ~/[\w\s\W]*EdgeInternetProfile[\w\s\W]*/ :
+            case ~/[\w\s\W]*InternetProfile[\w\s\W]*/ :
                 // get the required properties and update in resource input
                 def resourceInput = resourceInputObj.getResourceParameters()
                 String incomingRequest = resourceInputObj.getRequestsInputs()
