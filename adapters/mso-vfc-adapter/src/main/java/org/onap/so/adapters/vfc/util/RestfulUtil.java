@@ -27,6 +27,7 @@ package org.onap.so.adapters.vfc.util;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import javax.ws.rs.core.UriBuilder;
+import com.google.common.base.Strings;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -193,12 +194,12 @@ public class RestfulUtil {
     }
 
     private static void logError(String errMsg, Throwable t) {
-        logger.error("{} {} {} {}", MessageEnum.RA_NS_EXC.toString(), VFC_ADAPTER,
+        logger.error(Strings.repeat("{} ", 4), MessageEnum.RA_NS_EXC.toString(), VFC_ADAPTER,
                 ErrorCode.AvailabilityError.getValue(), errMsg, t);
     }
 
     private static void logError(String errMsg) {
-        logger.error("{} {} {} {}", MessageEnum.RA_NS_EXC.toString(), VFC_ADAPTER,
+        logger.error(Strings.repeat("{} ", 4), MessageEnum.RA_NS_EXC.toString(), VFC_ADAPTER,
                 ErrorCode.AvailabilityError.toString(), errMsg);
     }
 

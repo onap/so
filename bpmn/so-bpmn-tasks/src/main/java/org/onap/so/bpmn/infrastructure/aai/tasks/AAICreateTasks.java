@@ -29,6 +29,7 @@ import java.util.TreeSet;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import com.google.common.base.Strings;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
@@ -122,8 +123,8 @@ public class AAICreateTasks {
                 String errorMessage =
                         "Exception in creating ServiceSubscription. Customer not present for ServiceInstanceID: "
                                 + serviceInstance.getServiceInstanceId();
-                logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), errorMessage, "BPMN",
-                        ErrorCode.UnknownError.getValue(), errorMessage);
+                logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), errorMessage,
+                        "BPMN", ErrorCode.UnknownError.getValue(), errorMessage);
                 exceptionUtil.buildAndThrowWorkflowException(execution, 7000, errorMessage);
             }
             aaiSIResources.createServiceSubscription(customer);
@@ -169,15 +170,15 @@ public class AAICreateTasks {
                     if (owningEntityName == null || "".equals(owningEntityName)) {
                         String msg =
                                 "Exception in AAICreateOwningEntity. Can't create an owningEntity with no owningEntityName.";
-                        logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-                                ErrorCode.UnknownError.getValue(), msg);
+                        logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg,
+                                "BPMN", ErrorCode.UnknownError.getValue(), msg);
                         exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg);
                     } else {
                         if (aaiSIResources.existsOwningEntityName(owningEntityName)) {
                             String msg =
                                     "Exception in AAICreateOwningEntity. Can't create OwningEntity as name already exists in AAI associated with a different owning-entity-id (name must be unique)";
-                            logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg,
-                                    "BPMN", ErrorCode.UnknownError.getValue(), msg);
+                            logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                                    msg, "BPMN", ErrorCode.UnknownError.getValue(), msg);
                             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg);
                         } else {
                             aaiSIResources.createOwningEntityandConnectServiceInstance(owningEntity, serviceInstance);

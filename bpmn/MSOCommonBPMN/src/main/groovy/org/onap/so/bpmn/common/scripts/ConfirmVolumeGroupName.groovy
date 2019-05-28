@@ -130,7 +130,7 @@ public class ConfirmVolumeGroupName extends AbstractServiceTaskProcessor{
 
 	// generates a WorkflowException if the A&AI query returns a response code other than 200/404
 	public void handleAAIQueryFailure(DelegateExecution execution) {
-		logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+		logger.error(com.google.common.base.Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 				"Error occurred attempting to query AAI, Response Code " + execution.getVariable("CVGN_queryVolumeGroupResponseCode"),
 				"BPMN", ErrorCode.UnknownError.getValue(),
 				"ErrorResponse is:\n" + execution.getVariable("CVGN_queryVolumeGroupResponse"));
@@ -140,7 +140,7 @@ public class ConfirmVolumeGroupName extends AbstractServiceTaskProcessor{
 	public void handleVolumeGroupNameNoMatch(DelegateExecution execution) {
 		def errorNotAssociated = "Error occurred - volume group id ${execution.getVariable('CVGN_volumeGroupId')} " +
 				"is not associated with ${execution.getVariable('CVGN_volumeGroupName')}"
-		logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), errorNotAssociated, "BPMN",
+		logger.error(com.google.common.base.Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), errorNotAssociated, "BPMN",
 				ErrorCode.UnknownError.getValue());
 		exceptionUtil.buildAndThrowWorkflowException(execution, 1002, errorNotAssociated)
 	}

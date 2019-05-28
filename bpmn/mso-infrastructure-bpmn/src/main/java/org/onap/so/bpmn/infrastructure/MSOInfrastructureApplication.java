@@ -24,6 +24,7 @@ package org.onap.so.bpmn.infrastructure;
 
 import java.util.List;
 import java.util.concurrent.Executor;
+import com.google.common.base.Strings;
 import org.camunda.bpm.application.PostDeploy;
 import org.camunda.bpm.application.PreUndeploy;
 import org.camunda.bpm.application.ProcessApplicationInfo;
@@ -129,7 +130,7 @@ public class MSOInfrastructureApplication {
                     workflowName += BPMN_SUFFIX;
                 }
                 if (workflowBody != null) {
-                    logger.info("{} {}", "Deploying custom workflow", workflowName);
+                    logger.info(Strings.repeat("{} ", 2), "Deploying custom workflow", workflowName);
                     deploymentBuilder.addString(workflowName, workflowBody);
                 }
             }

@@ -22,6 +22,7 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import com.google.common.base.Strings
 import org.onap.so.bpmn.common.scripts.CatalogDbUtilsFactory
 import org.onap.so.logger.ErrorCode
 
@@ -168,7 +169,7 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 				String sdncCallbackUrl = UrnPropertiesReader.getVariable("mso.workflow.sdncadapter.callback",execution)
 				if (sdncCallbackUrl == null || sdncCallbackUrl.trim().isEmpty()) {
 					def msg = 'Required variable \'mso.workflow.sdncadapter.callback\' is missing'
-					logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+					logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 							ErrorCode.UnknownError.getValue());
 					
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
@@ -194,7 +195,7 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 			logger.debug("Rethrowing MSOWorkflowException")
 			throw b
 		}catch(Exception e){
-			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), " Error Occurred in " +
+			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), " Error Occurred in " +
 					"CreateVnfInfra PreProcessRequest method", "BPMN", ErrorCode.UnknownError.getValue(), "Exception is:\n" + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occurred in CreateVnfInfra PreProcessRequest")
 
@@ -220,7 +221,7 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 			execution.setVariable("CREVI_sentSyncResponse", true)
 
 		} catch (Exception ex) {
-			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), " Error Occurred in CreateVnfInfra SendSyncResponse Process", "BPMN",
+			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), " Error Occurred in CreateVnfInfra SendSyncResponse Process", "BPMN",
 				ErrorCode.UnknownError.getValue(), "Exception is:\n" + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in CreateVnfInfra SendSyncResponse Process")
 
@@ -246,7 +247,7 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 			logger.debug("Outgoing AssignSDNCRequest is: \n" + assignSDNCRequest)
 
 		}catch(Exception e){
-			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Exception Occurred Processing preProcessSDNCAssignRequest", "BPMN",
+			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Exception Occurred Processing preProcessSDNCAssignRequest", "BPMN",
 				ErrorCode.UnknownError.getValue(), "Exception is:\n" + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during prepareProvision Method:\n" + e.getMessage())
 		}
@@ -270,7 +271,7 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 			logger.debug("Outgoing CommitSDNCRequest is: \n" + activateSDNCRequest)
 
 		}catch(Exception e){
-			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Exception Occured " +
+			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Exception Occured " +
 					"Processing preProcessSDNCActivateRequest", "BPMN", ErrorCode.UnknownError.getValue(), "Exception is:\n" + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occured during  preProcessSDNCActivateRequest Method:\n" + e.getMessage())
 		}
@@ -461,7 +462,7 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 			logger.debug("obtained VNF list: " + vnfs)
 			
 			if (vnfs == null) {
-				logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "No matching " +
+				logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "No matching " +
 						"VNFs in Catalog DB for vnfModelCustomizationUuid=" + vnfModelCustomizationUuid, "BPMN", ErrorCode.UnknownError.getValue(), "");
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "No matching VNFs in Catalog DB for vnfModelCustomizationUuid=" + vnfModelCustomizationUuid)
 			}
@@ -470,7 +471,7 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 			JSONObject vnf = vnfs.get(0)
 			
 			if (vnf == null) {
-				logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "No matching VNF" +
+				logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "No matching VNF" +
 						" in Catalog DB for vnfModelCustomizationUuid=" + vnfModelCustomizationUuid, "BPMN", ErrorCode.UnknownError.getValue(), "");
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "No matching VNF in Catalog DB for vnfModelCustomizationUuid=" + vnfModelCustomizationUuid)
 			}			
@@ -543,7 +544,7 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 				aaiCR.createAAILineOfBusiness(lineOfBusiness, vnfId)
 			}catch(Exception ex){
 				String msg = "Exception in LineOfBusiness. " + ex.getMessage();
-				logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+				logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 						ErrorCode.UnknownError.getValue(), "Exception is:\n" + ex)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 			}

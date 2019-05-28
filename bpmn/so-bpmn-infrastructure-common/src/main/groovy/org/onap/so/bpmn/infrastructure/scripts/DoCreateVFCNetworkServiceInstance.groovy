@@ -22,6 +22,7 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import com.google.common.base.Strings
 import org.onap.so.client.HttpClientFactory
 import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
@@ -234,7 +235,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
             getAAIClient().connect(nsUri,relatedServiceUri)
             logger.info("NS relationship to Service added successfully")
         }catch(Exception e){
-            logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+            logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
                     "Exception occured while executing AAI Put Call", "BPMN",
                     ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
             throw new BpmnError("MSOWorkflowException")
