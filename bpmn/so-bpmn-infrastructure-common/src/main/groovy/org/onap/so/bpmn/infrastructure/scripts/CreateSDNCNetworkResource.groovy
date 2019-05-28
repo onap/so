@@ -234,7 +234,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                 String requestInputs = JsonUtils.getJsonValue(serviceParameters, "requestInputs")
                 String cvlan = "10"
                 String svlan = "100"
-                String accessId = "AC9.0234.0337"
+                String remoteId = "AC9.0234.0337"
                 String manufacturer = jsonUtil.getJsonValue(serInput,
                         "service.parameters.requestInputs.ont_ont_manufacturer")
                 String ontsn = jsonUtil.getJsonValue(serInput,
@@ -242,7 +242,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
 
                 String uResourceInput = jsonUtil.addJsonValue(resourceInput, "requestInputs.CVLAN", cvlan)
                 uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.SVLAN", svlan)
-                uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.accessID", accessId)
+                uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.remote_id", remoteId)
                 uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.manufacturer", manufacturer)
                 uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.ONTSN", ontsn)
 
@@ -264,14 +264,14 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                 String svlan = "1000"
                 String manufacturer = jsonUtil.getJsonValue(serInput,
                         "service.parameters.requestInputs.ont_ont_manufacturer")
-                String accessId = "AC9.0234.0337"
+                String remoteId = "AC9.0234.0337"
                 String ontsn = jsonUtil.getJsonValue(serInput,
                         "service.parameters.requestInputs.ont_ont_serial_num")
 
                 String uResourceInput = jsonUtil.addJsonValue(resourceInput, "requestInputs.c_vlan", cvlan)
                 uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.s_vlan", svlan)
                 uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.manufacturer", manufacturer)
-                uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.ip_access_id", accessId)
+                uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.ip_remote_id", remoteId)
                 uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.ont_sn", ontsn)
                 msoLogger.debug("old resource input:" + resourceInputObj.toString())
                 resourceInputObj.setResourceParameters(uResourceInput)
