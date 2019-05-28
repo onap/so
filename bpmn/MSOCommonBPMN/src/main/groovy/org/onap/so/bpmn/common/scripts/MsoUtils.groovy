@@ -22,6 +22,7 @@
 
 package org.onap.so.bpmn.common.scripts
 
+import com.google.common.base.Strings
 import org.onap.so.logger.ErrorCode
 
 import java.text.SimpleDateFormat
@@ -294,10 +295,10 @@ class MsoUtils {
 		if ("INFO"==logmode) {
 			logger.info(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), logtxt, "BPMN");
 		} else if ("WARN"==logmode) {
-			logger.warn ("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_WARNING.toString(), logtxt, "BPMN",
+			logger.warn (Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_WARNING.toString(), logtxt, "BPMN",
 					ErrorCode.UnknownError.getValue(), logtxt);
 		} else if ("ERROR"==logmode) {
-		    logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), logtxt, "BPMN",
+		    logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), logtxt, "BPMN",
 					ErrorCode.UnknownError.getValue(), logtxt);
 		} else {
 			logger.debug(logtxt);

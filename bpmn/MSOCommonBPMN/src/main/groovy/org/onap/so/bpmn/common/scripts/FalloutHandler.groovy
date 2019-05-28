@@ -22,6 +22,7 @@
 
 package org.onap.so.bpmn.common.scripts
 
+import com.google.common.base.Strings
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.logger.ErrorCode
 
@@ -97,7 +98,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 			execution.setVariable("FH_ResponseCode", "")
 
 		} catch (Exception e) {
-			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
 					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		//	exceptionUtil.buildWorkflowException(execution, 2000, "Internal Error - Occured in " + method)
@@ -210,7 +211,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 				execution.setVariable("FH_content_type", "text/xml")
 			}
 		} catch (Exception e) {
-			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
 					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		//	exceptionUtil.buildWorkflowException(execution, 2000, "Internal Error - Occured in" + method)
@@ -244,7 +245,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 			execution.setVariable("FH_updateRequestPayload", payload)
 			return execution.getVariable("FH_updateRequestPayload")
 		} catch (Exception e) {
-			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
 					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		//	exceptionUtil.buildWorkflowException(execution, 2000, "Internal Error - Occured in " + method)
@@ -275,7 +276,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 			logger.debug("updateRequestInfraPayload: " + payload)
 			return execution.getVariable("FH_updateRequestInfraPayload")
 		} catch (Exception e) {
-			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
 					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		//	exceptionUtil.buildWorkflowException(execution, 2000, "Internal Error - Occured in " + method)
@@ -306,7 +307,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 			logger.debug("updateRequestGammaPayload: " + payload)
 			return execution.getVariable("FH_updateRequestGammaPayload")
 		} catch (Exception e) {
-			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
 					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		//	exceptionUtil.buildWorkflowException(execution, 2000, "Internal Error - Occured in " + method)
@@ -335,7 +336,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 			logger.debug("updateResponseStatusPayload: " + payload)
 			return execution.getVariable("FH_updateResponseStatusPayload")
 		} catch (Exception e) {
-			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
 					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		//	exceptionUtil.buildWorkflowException(execution, 2000, "Internal Error - Occured in " + method)
@@ -355,7 +356,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 			def errorCode = responseCode == null ? 7000 : 7020
 		//	exceptionUtil.buildWorkflowException(execution, errorCode, errorMessage)
 		} catch (Exception e) {
-			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
 					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		//	exceptionUtil.buildWorkflowException(execution, 2000, "Internal Error - Occured in " + method)
@@ -390,7 +391,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 			logger.debug("FalloutHandlerResponse =\n" + falloutHandlerResponse)
 		} catch (Exception e) {
 			// Do NOT throw WorkflowException!
-			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
 					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		}

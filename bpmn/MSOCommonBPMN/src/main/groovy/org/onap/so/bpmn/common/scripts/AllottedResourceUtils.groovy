@@ -22,6 +22,7 @@
 
 package org.onap.so.bpmn.common.scripts
 
+import com.google.common.base.Strings
 import org.onap.so.client.aai.entities.AAIResultWrapper
 import org.onap.so.logger.ErrorCode
 
@@ -195,7 +196,7 @@ class AllottedResourceUtils {
 			AAIResourceUri uri = AAIUriFactory.createResourceFromExistingURI(AAIObjectType.ALLOTTED_RESOURCE, UriBuilder.fromPath(aaiARPath).build())
 			getAAIClient().update(uri,allottedResource)
 		}catch(Exception e){
-			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception in updateAR.", "BPMN", ErrorCode.UnknownError.getValue(), e.getMessage());
 			exceptionUtil.buildAndThrowWorkflowException(execution, 500, 'Internal Error in updateAROrchStatus.' + e.getMessage())
 		}

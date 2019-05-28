@@ -21,6 +21,7 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import com.google.common.base.Strings
 import org.onap.so.logger.ErrorCode
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.camunda.bpm.engine.delegate.DelegateExecution
@@ -87,7 +88,7 @@ public class RollbackVnf extends VnfCmBase {
 		}
 		catch(Exception e) {
 			String restFaultMessage = e.getMessage()
-			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Encountered - " + "\n" + restFaultMessage, "BPMN",
 					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			execution.setVariable("rollbackErrorCode", "1")

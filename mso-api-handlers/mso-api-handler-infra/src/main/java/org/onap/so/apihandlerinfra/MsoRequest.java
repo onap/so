@@ -42,6 +42,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import com.google.common.base.Strings;
 import org.onap.so.apihandler.common.ResponseBuilder;
 import org.onap.so.apihandlerinfra.tasksbeans.TasksRequest;
 import org.onap.so.apihandlerinfra.validation.MembersValidation;
@@ -151,7 +152,8 @@ public class MsoRequest {
             mapper.setSerializationInclusion(Include.NON_DEFAULT);
             requestErrorStr = mapper.writeValueAsString(re);
         } catch (Exception e) {
-            logger.error("{} {} {}", MessageEnum.APIH_VALIDATION_ERROR.toString(), ErrorCode.DataError.getValue(),
+            logger.error(Strings.repeat("{} ", 3), MessageEnum.APIH_VALIDATION_ERROR.toString(),
+                    ErrorCode.DataError.getValue(),
                     "Exception in buildServiceErrorResponse writing exceptionType to string ", e);
         }
 
@@ -396,8 +398,8 @@ public class MsoRequest {
             aq.setRequestStatus(status.toString());
             aq.setLastModifiedBy(Constants.MODIFIED_BY_APIHANDLER);
         } catch (Exception e) {
-            logger.error("{} {} {}", MessageEnum.APIH_DB_INSERT_EXC.toString(), ErrorCode.DataError.getValue(),
-                    "Exception when creation record request", e);
+            logger.error(Strings.repeat("{} ", 3), MessageEnum.APIH_DB_INSERT_EXC.toString(),
+                    ErrorCode.DataError.getValue(), "Exception when creation record request", e);
 
             if (!status.equals(Status.FAILED)) {
                 throw e;
@@ -437,8 +439,8 @@ public class MsoRequest {
             aq.setLastModifiedBy(Constants.MODIFIED_BY_APIHANDLER);
 
         } catch (Exception e) {
-            logger.error("{} {} {}", MessageEnum.APIH_DB_INSERT_EXC.toString(), ErrorCode.DataError.getValue(),
-                    "Exception when creation record request", e);
+            logger.error(Strings.repeat("{} ", 3), MessageEnum.APIH_DB_INSERT_EXC.toString(),
+                    ErrorCode.DataError.getValue(), "Exception when creation record request", e);
 
             if (!status.equals(Status.FAILED)) {
                 throw e;
@@ -465,7 +467,7 @@ public class MsoRequest {
             request.setRequestUrl(MDC.get(LogConstants.HTTP_URL));
             requestsDbClient.save(request);
         } catch (Exception e) {
-            logger.error("{} {} {} {}", MessageEnum.APIH_DB_UPDATE_EXC.toString(), e.getMessage(),
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.APIH_DB_UPDATE_EXC.toString(), e.getMessage(),
                     ErrorCode.DataError.getValue(), "Exception when updating record in DB");
             logger.debug("Exception: ", e);
         }
@@ -547,8 +549,8 @@ public class MsoRequest {
             return null;
 
         } catch (Exception e) {
-            logger.error("{} {} {}", MessageEnum.APIH_DOM2STR_ERROR.toString(), ErrorCode.DataError.getValue(),
-                    "Exception in domToStr", e);
+            logger.error(Strings.repeat("{} ", 3), MessageEnum.APIH_DOM2STR_ERROR.toString(),
+                    ErrorCode.DataError.getValue(), "Exception in domToStr", e);
         }
         return null;
     }
