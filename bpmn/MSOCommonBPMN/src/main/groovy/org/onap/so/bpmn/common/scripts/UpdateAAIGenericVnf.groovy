@@ -227,6 +227,8 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 
 			try {
 				getAAIClient().update(uri,payload)
+				execution.setVariable('UAAIGenVnf_updateGenericVnfResponseCode', 200)
+				execution.setVariable('UAAIGenVnf_updateGenericVnfResponse', "Success")
 			} catch (Exception ex) {
 				logger.debug('Exception occurred while executing AAI PATCH: {}', ex.getMessage(), ex)
 				execution.setVariable('UAAIGenVnf_updateGenericVnfResponseCode', 500)
