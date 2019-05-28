@@ -22,6 +22,7 @@
 
 package org.onap.so.bpmn.common.scripts
 
+import com.google.common.base.Strings
 import org.onap.so.logger.ErrorCode
 
 import static org.apache.commons.lang3.StringUtils.*
@@ -91,7 +92,7 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 			buildWorkflowException(execution, 5000, modifiedErrorMessage)
 
 			wfex = execution.getVariable("WorkflowException")
-			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Fault", "BPMN",
+			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Fault", "BPMN",
 					ErrorCode.UnknownError.getValue(), wfex.errorMessage);
 			return wfex
 		} else {
@@ -104,7 +105,7 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 
 				logger.debug("mappedErrorMessage " + mappedErrorMessage)
 				wfex = execution.getVariable("WorkflowException")
-				logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Fault", "BPMN",
+				logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Fault", "BPMN",
 						ErrorCode.UnknownError.getValue(), wfex.errorMessage);
 				return wfex
 			} catch(Exception ex) {

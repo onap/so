@@ -38,6 +38,8 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import com.google.common.base.Strings;
 import org.apache.http.HttpStatus;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandlerinfra.Constants;
@@ -125,7 +127,7 @@ public class CloudOrchestration {
 
     private Response cloudOrchestration(String requestJSON, Action action, HashMap<String, String> instanceIdMap,
             String version, String requestId) throws ApiException {
-        logger.info("{} {}", MessageEnum.APIH_GENERATED_REQUEST_ID.toString(), requestId);
+        logger.info(Strings.repeat("{} ", 2), MessageEnum.APIH_GENERATED_REQUEST_ID.toString(), requestId);
         long startTime = System.currentTimeMillis();
         CloudOrchestrationRequest cor = null;
         tenantIsolationRequest.setRequestId(requestId);

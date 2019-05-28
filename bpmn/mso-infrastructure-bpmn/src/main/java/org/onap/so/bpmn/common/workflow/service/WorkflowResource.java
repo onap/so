@@ -36,6 +36,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+
+import com.google.common.base.Strings;
 import org.camunda.bpm.engine.HistoryService;
 import org.camunda.bpm.engine.ProcessEngineException;
 import org.camunda.bpm.engine.ProcessEngineServices;
@@ -195,7 +197,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
             if (processInstance != null)
                 workflowResponse.setProcessInstanceID(processInstance.getId());
 
-            logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "BPMN",
+            logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "BPMN",
                     MDC.get(processKey), ErrorCode.UnknownError.getValue(), LOGMARKER + workflowResponse.getMessage()
                             + " for processKey: " + processKey + " with response: " + workflowResponse.getResponse());
 
@@ -581,7 +583,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
             response.setResponse("Failed to retrieve the variables," + ex.getMessage());
             response.setProcessInstanceID(processInstanceId);
 
-            logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "BPMN",
+            logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "BPMN",
                     MDC.get(processKey), ErrorCode.UnknownError.getValue(), LOGMARKER + response.getMessage()
                             + " for processKey: " + processKey + " with response: " + response.getResponse());
             logger.debug("Exception :", ex);

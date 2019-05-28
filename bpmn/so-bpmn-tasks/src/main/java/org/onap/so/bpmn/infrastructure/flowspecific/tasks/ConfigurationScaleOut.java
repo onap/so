@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import com.google.common.base.Strings;
 import org.onap.appc.client.lcm.model.Action;
 import org.onap.so.bpmn.appc.payload.beans.ConfigScaleOutPayload;
 import org.onap.so.bpmn.appc.payload.beans.RequestParametersConfigScaleOut;
@@ -152,7 +154,7 @@ public class ConfigurationScaleOut {
             appcMessage = appCClient.getErrorMessage();
 
         } catch (Exception e) {
-            logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(),
+            logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION.toString(),
                     "Caught exception in runAppcCommand in ConfigurationScaleOut", "BPMN",
                     ErrorCode.UnknownError.getValue(), "APPC Error", e);
             appcMessage = e.getMessage();

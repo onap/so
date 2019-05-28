@@ -31,6 +31,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import com.google.common.base.Strings;
 import org.onap.so.asdc.client.ASDCController;
 import org.onap.so.asdc.client.exceptions.ASDCControllerException;
 import org.onap.so.asdc.client.exceptions.ASDCParametersException;
@@ -104,11 +106,11 @@ public class ASDCRestInterface {
             toscaInstaller.installTheComponentStatus(statusData);
             controller.closeASDC();
 
-            logger.info("{} {} {} {}", MessageEnum.ASDC_ARTIFACT_DEPLOY_SUC.toString(), statusData.getDistributionID(),
+            logger.info(Strings.repeat("{} ", 4), MessageEnum.ASDC_ARTIFACT_DEPLOY_SUC.toString(), statusData.getDistributionID(),
                     "ASDC", "ASDC Updates Are Complete");
         } catch (Exception e) {
             logger.info("Error caught " + e.getMessage());
-            logger.error("{} {} {} {} {} {}", MessageEnum.ASDC_GENERAL_EXCEPTION.toString(),
+            logger.error(Strings.repeat("{} ", 6), MessageEnum.ASDC_GENERAL_EXCEPTION.toString(),
                     "Exception caught during ASDCRestInterface", "ASDC", "invokeASDCService",
                     ErrorCode.BusinessProcesssError.getValue(), "Exception in invokeASDCService", e);
         }

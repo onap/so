@@ -25,6 +25,8 @@
 package org.onap.so.adapters.sdnc.sdncrest;
 
 import javax.xml.bind.DatatypeConverter;
+
+import com.google.common.base.Strings;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -92,7 +94,7 @@ public class BPRestCallback {
     public boolean send(String url, String message) {
         logger.debug(getClass().getSimpleName() + ".send(" + "url=" + url + " message=" + message + ")");
 
-        logger.info("{} {} {}", MessageEnum.RA_CALLBACK_BPEL.toString(), message == null ? "[no content]" : message,
+        logger.info(Strings.repeat("{} ", 3), MessageEnum.RA_CALLBACK_BPEL.toString(), message == null ? "[no content]" : message,
                 CAMUNDA);
 
         HttpPost method = null;
@@ -123,7 +125,7 @@ public class BPRestCallback {
                 method.setHeader(ONAPLogConstants.Headers.INVOCATION_ID, MDC.get(ONAPLogConstants.MDCs.INVOCATION_ID));
                 method.setHeader(ONAPLogConstants.Headers.PARTNER_NAME, "SO-SDNCAdapter");
             } catch (Exception e) {
-                logger.error("{} {} {} {}", MessageEnum.RA_SET_CALLBACK_AUTH_EXC.toString(), CAMUNDA,
+                logger.error(Strings.repeat("{} ", 4), MessageEnum.RA_SET_CALLBACK_AUTH_EXC.toString(), CAMUNDA,
                         ErrorCode.BusinessProcesssError.getValue(), "Unable to set authorization in callback request",
                         e);
                 error = true;
@@ -141,14 +143,14 @@ public class BPRestCallback {
 
                 if (httpResponse.getStatusLine().getStatusCode() >= 300) {
                     String msg = "Received error response to callback request: " + httpResponse.getStatusLine();
-                    logger.error("{} {} {} {}", MessageEnum.RA_CALLBACK_BPEL_EXC.toString(), CAMUNDA,
+                    logger.error(Strings.repeat("{} ", 4), MessageEnum.RA_CALLBACK_BPEL_EXC.toString(), CAMUNDA,
                             ErrorCode.BusinessProcesssError.getValue(), msg);
 
                 }
             }
             return true;
         } catch (Exception e) {
-            logger.error("{} {} {} {}", MessageEnum.RA_CALLBACK_BPEL_EXC.toString(), CAMUNDA,
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.RA_CALLBACK_BPEL_EXC.toString(), CAMUNDA,
                     ErrorCode.BusinessProcesssError.getValue(), "Error sending callback request", e);
             return false;
         } finally {
@@ -168,7 +170,7 @@ public class BPRestCallback {
                     logger.debug("Exception:", e);
                 }
             }
-            logger.info("{} {}", MessageEnum.RA_CALLBACK_BPEL_COMPLETE.toString(), CAMUNDA);
+            logger.info(Strings.repeat("{} ", 2), MessageEnum.RA_CALLBACK_BPEL_COMPLETE.toString(), CAMUNDA);
         }
     }
 }

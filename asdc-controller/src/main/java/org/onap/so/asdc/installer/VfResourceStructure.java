@@ -29,6 +29,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import com.google.common.base.Strings;
 import org.onap.so.asdc.client.ASDCConfiguration;
 import org.onap.so.asdc.client.exceptions.ArtifactInstallerException;
 import org.onap.so.asdc.util.ASDCNotificationLogging;
@@ -133,7 +135,7 @@ public class VfResourceStructure extends ResourceStructure {
 
         // for vender tosca VNF there is no VFModule in VF
         if (vfModulesMetadataList == null) {
-            logger.info("{} {} {} {}", MessageEnum.ASDC_GENERAL_INFO.toString(), "There is no VF mudules in the VF.",
+            logger.info(Strings.repeat("{} ", 4), MessageEnum.ASDC_GENERAL_INFO.toString(), "There is no VF mudules in the VF.",
                     "ASDC", "createVfModuleStructures");
             return;
         }

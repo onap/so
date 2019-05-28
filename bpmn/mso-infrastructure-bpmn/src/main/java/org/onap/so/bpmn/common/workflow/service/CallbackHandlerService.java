@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.google.common.base.Strings;
 import org.camunda.bpm.engine.MismatchingMessageCorrelationException;
 import org.camunda.bpm.engine.OptimisticLockingException;
 import org.camunda.bpm.engine.RuntimeService;
@@ -207,7 +209,7 @@ public class CallbackHandlerService {
                                     + messageEventName + " with " + correlationVariable + " = '" + correlationValue
                                     + "'; last exception was:" + queryException;
                     logger.debug(msg);
-                    logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN",
+                    logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN",
                             ErrorCode.UnknownError.getValue(), msg, queryException);
                 }
 
@@ -245,7 +247,7 @@ public class CallbackHandlerService {
                 String msg = "Caught " + ole.getClass().getSimpleName() + " after receiving " + messageEventName
                         + " with " + correlationVariable + " = '" + correlationValue + "': " + ole;
                 logger.debug(msg);
-                logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN CORRELATION ERROR -",
+                logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN CORRELATION ERROR -",
                         ErrorCode.UnknownError.getValue(), msg, ole);
 
                 // Retry for OptimisticLocking Exceptions
@@ -279,7 +281,7 @@ public class CallbackHandlerService {
                         String strMsg = "Received exception, OptimisticLockingException retry failed, retryCount:"
                                 + retryCount + " | exception returned: " + olex;
                         logger.debug(strMsg);
-                        logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN",
+                        logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN",
                                 ErrorCode.UnknownError.getValue(), strMsg, olex);
                     } catch (Exception excep) {
                         retryCount = 0;
@@ -287,7 +289,7 @@ public class CallbackHandlerService {
                         String strMsg = "Received exception, OptimisticLockingException retry failed, retryCount:"
                                 + retryCount + " | exception returned: " + excep;
                         logger.debug(strMsg);
-                        logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN",
+                        logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN",
                                 ErrorCode.UnknownError.getValue(), strMsg, excep);
                     }
 
@@ -300,7 +302,7 @@ public class CallbackHandlerService {
                         + " after receiving " + messageEventName + " with " + correlationVariable + " = '"
                         + correlationValue + "': " + e;
                 logger.debug(msg);
-                logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN",
+                logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN",
                         ErrorCode.UnknownError.getValue(), msg, e);
             }
         } catch (Exception e) {
@@ -309,7 +311,7 @@ public class CallbackHandlerService {
             String msg = "Caught " + e.getClass().getSimpleName() + " after receiving " + messageEventName + " with "
                     + correlationVariable + " = '" + correlationValue + "': " + e;
             logger.debug(msg);
-            logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN CORRELATION ERROR -",
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN CORRELATION ERROR -",
                     ErrorCode.UnknownError.getValue(), msg, e);
         }
 
@@ -345,10 +347,10 @@ public class CallbackHandlerService {
      */
     protected void logCallbackError(String method, long startTime, String msg, Exception e) {
         if (e == null) {
-            logger.error("{} {} {} {}", MessageEnum.BPMN_CALLBACK_EXCEPTION.toString(), "BPMN",
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_CALLBACK_EXCEPTION.toString(), "BPMN",
                     ErrorCode.UnknownError.getValue(), msg);
         } else {
-            logger.error("{} {} {} {}", MessageEnum.BPMN_CALLBACK_EXCEPTION.toString(), "BPMN",
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_CALLBACK_EXCEPTION.toString(), "BPMN",
                     ErrorCode.UnknownError.getValue(), msg, e);
         }
     }

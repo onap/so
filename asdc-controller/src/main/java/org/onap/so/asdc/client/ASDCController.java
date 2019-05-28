@@ -36,6 +36,8 @@ import java.io.UnsupportedEncodingException;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+
+import com.google.common.base.Strings;
 import org.onap.sdc.api.IDistributionClient;
 import org.onap.sdc.api.consumer.IDistributionStatusMessage;
 import org.onap.sdc.api.consumer.IFinalDistrStatusMessage;
@@ -232,7 +234,7 @@ public class ASDCController {
         }
 
         this.changeControllerStatus(ASDCControllerStatus.IDLE);
-        logger.info("{} {} {}", MessageEnum.ASDC_INIT_ASDC_CLIENT_SUC.toString(), "ASDC", "changeControllerStatus");
+        logger.info(Strings.repeat("{} ", 3), MessageEnum.ASDC_INIT_ASDC_CLIENT_SUC.toString(), "ASDC", "changeControllerStatus");
     }
 
     /**
@@ -264,7 +266,7 @@ public class ASDCController {
 
 
         if (toscaInstaller.isResourceAlreadyDeployed(resource, serviceDeployed)) {
-            logger.info("{} {} {} {}", MessageEnum.ASDC_ARTIFACT_ALREADY_EXIST.toString(),
+            logger.info(Strings.repeat("{} ", 4), MessageEnum.ASDC_ARTIFACT_ALREADY_EXIST.toString(),
                     resource.getResourceInstance().getResourceInstanceName(),
                     resource.getResourceInstance().getResourceUUID(), resource.getResourceInstance().getResourceName());
 
@@ -334,7 +336,7 @@ public class ASDCController {
         try {
             downloadResult = distributionClient.download(artifact);
             if (null == downloadResult) {
-                logger.info("{} {}", MessageEnum.ASDC_ARTIFACT_NULL.toString(), artifact.getArtifactUUID());
+                logger.info(Strings.repeat("{} ", 2), MessageEnum.ASDC_ARTIFACT_NULL.toString(), artifact.getArtifactUUID());
                 return downloadResult;
             }
         } catch (RuntimeException e) {
@@ -346,11 +348,11 @@ public class ASDCController {
         }
 
         if (DistributionActionResultEnum.SUCCESS.equals(downloadResult.getDistributionActionResult())) {
-            logger.info("{} {} {} {}", MessageEnum.ASDC_ARTIFACT_DOWNLOAD_SUC.toString(), artifact.getArtifactURL(),
+            logger.info(Strings.repeat("{} ", 4), MessageEnum.ASDC_ARTIFACT_DOWNLOAD_SUC.toString(), artifact.getArtifactURL(),
                     artifact.getArtifactUUID(), String.valueOf(downloadResult.getArtifactPayload().length));
 
         } else {
-            logger.error("{} {} {} {} {} {} {}", MessageEnum.ASDC_ARTIFACT_DOWNLOAD_FAIL.toString(),
+            logger.error(Strings.repeat("{} ", 7), MessageEnum.ASDC_ARTIFACT_DOWNLOAD_FAIL.toString(),
                     artifact.getArtifactName(), artifact.getArtifactURL(), artifact.getArtifactUUID(),
                     downloadResult.getDistributionMessageResult(), ErrorCode.DataError.getValue(),
                     "ASDC artifact download fail");
@@ -391,12 +393,12 @@ public class ASDCController {
         byte[] payloadBytes = resultArtifact.getArtifactPayload();
 
         try (FileOutputStream outFile = new FileOutputStream(filePath)) {
-            logger.info("{} {} {} {}", MessageEnum.ASDC_RECEIVE_SERVICE_NOTIF.toString(), "***WRITE FILE ARTIFACT NAME",
+            logger.info(Strings.repeat("{} ", 4), MessageEnum.ASDC_RECEIVE_SERVICE_NOTIF.toString(), "***WRITE FILE ARTIFACT NAME",
                     "ASDC", artifact.getArtifactName());
             outFile.write(payloadBytes, 0, payloadBytes.length);
         } catch (Exception e) {
             logger.debug("Exception :", e);
-            logger.error("{} {} {} {} {} {} {}", MessageEnum.ASDC_ARTIFACT_DOWNLOAD_FAIL.toString(),
+            logger.error(Strings.repeat("{} ", 7), MessageEnum.ASDC_ARTIFACT_DOWNLOAD_FAIL.toString(),
                     artifact.getArtifactName(), artifact.getArtifactURL(), artifact.getArtifactUUID(),
                     resultArtifact.getDistributionMessageResult(), ErrorCode.DataError.getValue(),
                     "ASDC write to file failed");
@@ -444,7 +446,7 @@ public class ASDCController {
     protected void deployResourceStructure(ResourceStructure resourceStructure,
             ToscaResourceStructure toscaResourceStructure) throws ArtifactInstallerException {
 
-        logger.info("{} {} {} {}", MessageEnum.ASDC_START_DEPLOY_ARTIFACT.toString(),
+        logger.info(Strings.repeat("{} ", 4), MessageEnum.ASDC_START_DEPLOY_ARTIFACT.toString(),
                 resourceStructure.getResourceInstance().getResourceInstanceName(),
                 resourceStructure.getResourceInstance().getResourceUUID(), "ASDC");
         try {
@@ -452,7 +454,7 @@ public class ASDCController {
             toscaInstaller.installTheResource(toscaResourceStructure, resourceStructure);
 
         } catch (ArtifactInstallerException e) {
-            logger.info("{} {} {} {} {} {}", MessageEnum.ASDC_ARTIFACT_DOWNLOAD_FAIL.toString(),
+            logger.info(Strings.repeat("{} ", 6), MessageEnum.ASDC_ARTIFACT_DOWNLOAD_FAIL.toString(),
                     resourceStructure.getResourceInstance().getResourceName(),
                     resourceStructure.getResourceInstance().getResourceUUID(),
                     String.valueOf(resourceStructure.getNumberOfResources()), "ASDC", "deployResourceStructure");
@@ -461,7 +463,7 @@ public class ASDCController {
         }
 
         if (resourceStructure.isDeployedSuccessfully() || toscaResourceStructure.isDeployedSuccessfully()) {
-            logger.info("{} {} {} {} {} {}", MessageEnum.ASDC_ARTIFACT_DEPLOY_SUC.toString(),
+            logger.info(Strings.repeat("{} ", 6), MessageEnum.ASDC_ARTIFACT_DEPLOY_SUC.toString(),
                     resourceStructure.getResourceInstance().getResourceName(),
                     resourceStructure.getResourceInstance().getResourceUUID(),
                     String.valueOf(resourceStructure.getNumberOfResources()), "ASDC", "deployResourceStructure");
@@ -484,7 +486,7 @@ public class ASDCController {
         if (errorReason != null) {
             event = event + "(" + errorReason + ")";
         }
-        logger.info("{} {} {} {} {} {}", MessageEnum.ASDC_SEND_NOTIF_ASDC.toString(), notificationType.name(),
+        logger.info(Strings.repeat("{} ", 6), MessageEnum.ASDC_SEND_NOTIF_ASDC.toString(), notificationType.name(),
                 status.name(), artifactURL, "ASDC", "sendASDCNotification");
         logger.debug(event);
 
@@ -514,7 +516,7 @@ public class ASDCController {
                     break;
             }
         } catch (RuntimeException e) {
-            logger.warn("{} {} {} {} {}", MessageEnum.ASDC_SEND_NOTIF_ASDC_EXEC.toString(), "ASDC",
+            logger.warn(Strings.repeat("{} ", 5), MessageEnum.ASDC_SEND_NOTIF_ASDC_EXEC.toString(), "ASDC",
                     "sendASDCNotification", ErrorCode.SchemaError.getValue(), "RuntimeException - sendASDCNotification",
                     e);
         }
@@ -541,7 +543,7 @@ public class ASDCController {
 
         } catch (RuntimeException e) {
             logger.debug("Exception caught in sendFinalDistributionStatus {}", e.getMessage());
-            logger.warn("{} {} {} {} {}", MessageEnum.ASDC_SEND_NOTIF_ASDC_EXEC.toString(), "ASDC",
+            logger.warn(Strings.repeat("{} ", 5), MessageEnum.ASDC_SEND_NOTIF_ASDC_EXEC.toString(), "ASDC",
                     "sendASDCNotification", ErrorCode.SchemaError.getValue(), "RuntimeException - sendASDCNotification",
                     e);
         }
@@ -570,11 +572,11 @@ public class ASDCController {
         for (IResourceInstance resource : iNotif.getResources()) {
             noOfArtifacts += resource.getArtifacts().size();
         }
-        logger.info("{} {} {} {}", MessageEnum.ASDC_RECEIVE_CALLBACK_NOTIF.toString(), String.valueOf(noOfArtifacts),
+        logger.info(Strings.repeat("{} ", 4), MessageEnum.ASDC_RECEIVE_CALLBACK_NOTIF.toString(), String.valueOf(noOfArtifacts),
                 iNotif.getServiceUUID(), "ASDC");
         try {
             logger.debug(ASDCNotificationLogging.dumpASDCNotification(iNotif));
-            logger.info("{} {} {} {}", MessageEnum.ASDC_RECEIVE_SERVICE_NOTIF.toString(), iNotif.getServiceUUID(),
+            logger.info(Strings.repeat("{} ", 4), MessageEnum.ASDC_RECEIVE_SERVICE_NOTIF.toString(), iNotif.getServiceUUID(),
                     "ASDC", "treatNotification");
 
             this.changeControllerStatus(ASDCControllerStatus.BUSY);
@@ -665,7 +667,7 @@ public class ASDCController {
                     "OptimisticLockingFailure for DistributionId: {} Another process "
                             + "has already altered this distribution, so not going to process it on this site.",
                     iNotif.getDistributionID());
-            logger.error("{} {} {} {} {} {}", MessageEnum.ASDC_GENERAL_EXCEPTION_ARG.toString(),
+            logger.error(Strings.repeat("{} ", 5), MessageEnum.ASDC_GENERAL_EXCEPTION_ARG.toString(),
                     "Database concurrency exception: ", "ASDC", "treatNotification",
                     ErrorCode.BusinessProcesssError.getValue(), "RuntimeException in treatNotification", e);
 
@@ -807,7 +809,7 @@ public class ASDCController {
 
 
         } catch (ASDCDownloadException | UnsupportedEncodingException e) {
-            logger.error("{} {} {} {} {} {}", MessageEnum.ASDC_GENERAL_EXCEPTION_ARG.toString(),
+            logger.error(Strings.repeat("{} ", 6), MessageEnum.ASDC_GENERAL_EXCEPTION_ARG.toString(),
                     "Exception caught during Installation of artifact", "ASDC", "processResourceNotification",
                     ErrorCode.BusinessProcesssError.getValue(), "Exception in processResourceNotification", e);
         }
@@ -853,7 +855,7 @@ public class ASDCController {
 
 
                 } catch (Exception e) {
-                    logger.error("{} {} {} {} {} {}", MessageEnum.ASDC_GENERAL_EXCEPTION_ARG.toString(),
+                    logger.error(Strings.repeat("{} ", 6), MessageEnum.ASDC_GENERAL_EXCEPTION_ARG.toString(),
                             "Exception caught during processCsarServiceArtifacts", "ASDC",
                             "processCsarServiceArtifacts", ErrorCode.BusinessProcesssError.getValue(),
                             "Exception in processCsarServiceArtifacts", e);
@@ -874,7 +876,7 @@ public class ASDCController {
 
                 } catch (Exception e) {
                     logger.info("Whats the error {}", e.getMessage());
-                    logger.error("{} {} {} {} {} {}", MessageEnum.ASDC_GENERAL_EXCEPTION_ARG.toString(),
+                    logger.error(Strings.repeat("{} ", 6), MessageEnum.ASDC_GENERAL_EXCEPTION_ARG.toString(),
                             "Exception caught during processCsarServiceArtifacts", "ASDC",
                             "processCsarServiceArtifacts", ErrorCode.BusinessProcesssError.getValue(),
                             "Exception in processCsarServiceArtifacts", e);

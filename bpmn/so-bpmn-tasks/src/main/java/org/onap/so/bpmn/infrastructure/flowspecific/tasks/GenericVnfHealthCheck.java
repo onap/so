@@ -23,6 +23,8 @@ package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 
 import java.util.HashMap;
 import java.util.Optional;
+
+import com.google.common.base.Strings;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.onap.appc.client.lcm.model.Action;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
@@ -114,19 +116,19 @@ public class GenericVnfHealthCheck {
             appcCode = appCClient.getErrorCode();
             appcMessage = appCClient.getErrorMessage();
         } catch (BpmnError ex) {
-            logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
                     "Caught exception in GenericVnfHealthCheck", "BPMN", ErrorCode.UnknownError.getValue(), ex);
             appcMessage = ex.getMessage();
             exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(appcCode), appcMessage);
         } catch (Exception e) {
             if (e instanceof java.util.concurrent.TimeoutException) {
                 appcMessage = "Request to APPC timed out. ";
-                logger.error("{} {} {} {} {}", MessageEnum.RA_CONNECTION_EXCEPTION.toString(),
+                logger.error(Strings.repeat("{} ", 5), MessageEnum.RA_CONNECTION_EXCEPTION.toString(),
                         "Caught timedOut exception in runAppcCommand in GenericVnfHealthCheck", "BPMN",
                         ErrorCode.UnknownError.getValue(), "APPC Error", e);
                 throw e;
             } else {
-                logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(),
+                logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION.toString(),
                         "Caught exception in runAppcCommand in GenericVnfHealthCheck", "BPMN",
                         ErrorCode.UnknownError.getValue(), "APPC Error", e);
                 appcMessage = e.getMessage();

@@ -30,6 +30,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+
+import com.google.common.base.Strings;
 import org.apache.http.HttpStatus;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
@@ -57,7 +59,7 @@ public class NodeHealthcheckHandler {
     public Response nodeHealthcheck(@Context ContainerRequestContext requestContext) throws UnknownHostException {
         // Generated RequestId
         String requestId = requestContext.getProperty("requestId").toString();
-        logger.info("{} {}", MessageEnum.APIH_GENERATED_REQUEST_ID.toString(), requestId);
+        logger.info(Strings.repeat("{} ", 2), MessageEnum.APIH_GENERATED_REQUEST_ID.toString(), requestId);
         return HEALTH_CHECK_RESPONSE;
     }
 }

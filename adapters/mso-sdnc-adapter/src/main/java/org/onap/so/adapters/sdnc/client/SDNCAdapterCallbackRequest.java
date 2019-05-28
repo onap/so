@@ -31,6 +31,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import com.google.common.base.Strings;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
@@ -122,7 +124,7 @@ public class SDNCAdapterCallbackRequest {
             m.marshal(this, w);
             return w.toString();
         } catch (Exception e) {
-            logger.error("{} {} {}", MessageEnum.RA_MARSHING_ERROR.toString(), ErrorCode.DataError.getValue(),
+            logger.error(Strings.repeat("{} ", 3), MessageEnum.RA_MARSHING_ERROR.toString(), ErrorCode.DataError.getValue(),
                     "Exception - MARSHING_ERROR", e);
         }
         return "";

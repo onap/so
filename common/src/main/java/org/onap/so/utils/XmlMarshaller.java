@@ -32,6 +32,8 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
+
+import com.google.common.base.Strings;
 import org.onap.so.exceptions.MarshallerException;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
@@ -52,7 +54,7 @@ public class XmlMarshaller {
             Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
             jaxbMarshaller.marshal(object, stringWriter);
         } catch (JAXBException e) {
-            logger.error("{} {} {}", MessageEnum.GENERAL_EXCEPTION.toString(), ErrorCode.SchemaError.getValue(),
+            logger.error(Strings.repeat("{} ", 3), MessageEnum.GENERAL_EXCEPTION.toString(), ErrorCode.SchemaError.getValue(),
                     e.getMessage(), e);
             throw new MarshallerException(e.getMessage(), ErrorCode.SchemaError.getValue(), e);
         }
@@ -77,7 +79,7 @@ public class XmlMarshaller {
             SAXSource source = new SAXSource(xmlReader, inputSource);
             object = jaxbUnmarshaller.unmarshal(source, object.getClass()).getValue();
         } catch (Exception e) {
-            logger.error("{} {} {}", MessageEnum.GENERAL_EXCEPTION.toString(), ErrorCode.SchemaError.getValue(),
+            logger.error(Strings.repeat("{} ", 3), MessageEnum.GENERAL_EXCEPTION.toString(), ErrorCode.SchemaError.getValue(),
                     e.getMessage(), e);
             throw new MarshallerException(e.getMessage(), ErrorCode.SchemaError.getValue(), e);
         }

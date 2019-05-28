@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.google.common.base.Strings;
 import org.apache.http.HttpResponse;
 import org.onap.sdc.api.notification.IArtifactInfo;
 import org.onap.so.asdc.installer.VfResourceStructure;
@@ -88,7 +90,7 @@ public class WorkflowResource {
             logger.debug("Response entity: {}", response.getEntity().toString());
             if (response.getStatusLine().getStatusCode() != 200) {
                 logger.debug("Failed deploying BPMN {}", bpmnName);
-                logger.error("{} {} {} {} {} {}", MessageEnum.ASDC_ARTIFACT_NOT_DEPLOYED_DETAIL.toString(), bpmnName,
+                logger.error(Strings.repeat("{} ", 6), MessageEnum.ASDC_ARTIFACT_NOT_DEPLOYED_DETAIL.toString(), bpmnName,
                         bpmnName, Integer.toString(response.getStatusLine().getStatusCode()),
                         ErrorCode.DataError.getValue(), "ASDC BPMN deploy failed");
                 throw (new Exception("Error from Camunda on deploying the BPMN: " + bpmnName));
@@ -97,7 +99,7 @@ public class WorkflowResource {
             }
         } catch (Exception e) {
             logger.debug("Exception :", e);
-            logger.error("{} {} {} {} {}", MessageEnum.ASDC_ARTIFACT_NOT_DEPLOYED_DETAIL.toString(), bpmnName,
+            logger.error(Strings.repeat("{} ", 5), MessageEnum.ASDC_ARTIFACT_NOT_DEPLOYED_DETAIL.toString(), bpmnName,
                     e.getMessage(), ErrorCode.DataError.getValue(), "ASDC BPMN deploy failed");
             throw e;
         }

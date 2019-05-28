@@ -45,6 +45,8 @@ import javax.xml.ws.handler.MessageContext;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
+
+import com.google.common.base.Strings;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.utils.CryptoUtils;
 import org.onap.so.adapters.sdnc.SDNCAdapterRequest;
@@ -89,7 +91,7 @@ public class SDNCRestClient {
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
-            logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "SDNC",
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "SDNC",
                     ErrorCode.UnknownError.getValue(), "Exception processing request to SDNC", e);
 
             Thread.currentThread().interrupt();
@@ -176,7 +178,7 @@ public class SDNCRestClient {
             logger.info("{} :\n {} {}", MessageEnum.RA_RESPONSE_FROM_SDNC.name(), sdncResp.toString(), "SDNC");
             return (sdncResp);
         } catch (Exception e) {
-            logger.error("{} {} {} {}", MessageEnum.RA_EXCEPTION_COMMUNICATE_SDNC.toString(), "SDNC",
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.RA_EXCEPTION_COMMUNICATE_SDNC.toString(), "SDNC",
                     ErrorCode.BusinessProcesssError.getValue(), "Exception processing request to SDNC", e);
             // default
             sdncResp.setRespCode(HttpURLConnection.HTTP_INTERNAL_ERROR);
@@ -213,7 +215,7 @@ public class SDNCRestClient {
                                     eType = xpath.evaluate("error-type", error);
                                     sdncErrMsg = new StringBuilder(". SDNC Returned-[error-type:" + eType);
                                 } catch (Exception e3) {
-                                    logger.error("{} {} {} {} {} {}", MessageEnum.RA_EVALUATE_XPATH_ERROR.toString(),
+                                    logger.error(Strings.repeat("{} ", 6), MessageEnum.RA_EVALUATE_XPATH_ERROR.toString(),
                                             "error-type", error.toString(), "SDNC", ErrorCode.DataError.getValue(),
                                             EXCEPTION_MSG, e3);
                                 }
@@ -223,7 +225,7 @@ public class SDNCRestClient {
                                     eTag = xpath.evaluate("error-tag", error);
                                     sdncErrMsg.append(", error-tag:").append(eTag);
                                 } catch (Exception e3) {
-                                    logger.error("{} {} {} {} {} {}", MessageEnum.RA_EVALUATE_XPATH_ERROR.toString(),
+                                    logger.error(Strings.repeat("{} ", 6), MessageEnum.RA_EVALUATE_XPATH_ERROR.toString(),
                                             "error-tag", error.toString(), "SDNC", ErrorCode.DataError.getValue(),
                                             EXCEPTION_MSG, e3);
                                 }
@@ -233,18 +235,18 @@ public class SDNCRestClient {
                                     eMsg = xpath.evaluate("error-message", error);
                                     sdncErrMsg.append(", error-message:").append(eMsg).append("]");
                                 } catch (Exception e3) {
-                                    logger.error("{} {} {} {} {} {}", MessageEnum.RA_EVALUATE_XPATH_ERROR.toString(),
+                                    logger.error(Strings.repeat("{} ", 6), MessageEnum.RA_EVALUATE_XPATH_ERROR.toString(),
                                             "error-message", error.toString(), "SDNC", ErrorCode.DataError.getValue(),
                                             EXCEPTION_MSG, e3);
                                 }
                             }
                         } catch (Exception e2) {
-                            logger.error("{} {} {} {}", MessageEnum.RA_ANALYZE_ERROR_EXC.toString(), "SDNC",
+                            logger.error(Strings.repeat("{} ", 4), MessageEnum.RA_ANALYZE_ERROR_EXC.toString(), "SDNC",
                                     ErrorCode.DataError.getValue(), "Exception while analyse error", e2);
                         }
                     } // is != null
                 } catch (Exception e1) {
-                    logger.error("{} {} {} {}", MessageEnum.RA_ERROR_GET_RESPONSE_SDNC.toString(), "SDNC",
+                    logger.error(Strings.repeat("{} ", 4), MessageEnum.RA_ERROR_GET_RESPONSE_SDNC.toString(), "SDNC",
                             ErrorCode.BusinessProcesssError.getValue(), "Exception while get SDNC response", e1);
                 }
             } // con != null
@@ -256,7 +258,7 @@ public class SDNCRestClient {
 
             sdncResp.setRespMsg(respMsg);
 
-            logger.error("{} {} {} {}", MessageEnum.RA_EXCEPTION_COMMUNICATE_SDNC.toString(), "SDNC",
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.RA_EXCEPTION_COMMUNICATE_SDNC.toString(), "SDNC",
                     ErrorCode.AvailabilityError.getValue(), "Exception while communicate with SDNC", e);
 
             return sdncResp;
@@ -282,7 +284,7 @@ public class SDNCRestClient {
             try {
                 wsdlUrl = new URL(bpelUrl);
             } catch (MalformedURLException e1) {
-                logger.error("{} {} {} {}", MessageEnum.RA_INIT_CALLBACK_WSDL_ERR.toString(), CAMUNDA,
+                logger.error(Strings.repeat("{} ", 4), MessageEnum.RA_INIT_CALLBACK_WSDL_ERR.toString(), CAMUNDA,
                         ErrorCode.DataError.getValue(), "Exception initializing Callback wsdl", e1);
 
             }
@@ -310,7 +312,7 @@ public class SDNCRestClient {
                 reqCtx.put(MessageContext.HTTP_REQUEST_HEADERS, headers);
                 headers.put("Authorization", Collections.singletonList(basicAuth));
             } catch (Exception e2) {
-                logger.error("{} {} {} {}", MessageEnum.RA_SET_CALLBACK_AUTH_EXC.toString(), CAMUNDA,
+                logger.error(Strings.repeat("{} ", 4), MessageEnum.RA_SET_CALLBACK_AUTH_EXC.toString(), CAMUNDA,
                         ErrorCode.BusinessProcesssError.getValue(),
                         "Exception - Unable to set authorization in callback request", e2);
 

@@ -25,6 +25,8 @@ package org.onap.so.bpmn.infrastructure.activity;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+
+import com.google.common.base.Strings;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
@@ -135,7 +137,7 @@ public class ExecuteActivity implements JavaDelegate {
     }
 
     protected void buildAndThrowException(DelegateExecution execution, String msg, Exception ex) {
-        logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+        logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
                 ErrorCode.UnknownError.getValue(), msg, ex);
         execution.setVariable("ExecuteActivityErrorMessage", msg);
         exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, msg);

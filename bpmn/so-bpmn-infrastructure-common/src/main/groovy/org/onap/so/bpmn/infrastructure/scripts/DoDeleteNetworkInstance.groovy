@@ -22,6 +22,7 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import com.google.common.base.Strings
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.L3Network
@@ -465,7 +466,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 		} catch (Exception ex) {
 			// caught exception
 			String exceptionMessage = "Bpmn error encountered in DoDeleteNetworkInstance, sendRequestToVnfAdapter() - " + ex.getMessage()
-			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), exceptionMessage,
+			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), exceptionMessage,
 					"BPMN", ErrorCode.UnknownError.getValue(),
 					"Exception is:\n" + ex);
 			logger.debug(exceptionMessage)
@@ -517,7 +518,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 		} catch (Exception ex) {
 			// caught exception
 			String exceptionMessage = "Bpmn error encountered in DoDeleteNetworkInstance, prepareSDNCRequest() - " + ex.getMessage()
-			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), exceptionMessage,
+			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), exceptionMessage,
 					"BPMN", ErrorCode.UnknownError.getValue(),
 					"Exception is:\n" + ex);
 			logger.debug(exceptionMessage)
@@ -558,7 +559,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 		} catch (Exception ex) {
 			// caught exception
 			String exceptionMessage = "Bpmn error encountered in DoDeleteNetworkInstance, prepareSDNCRequest() - " + ex.getMessage()
-			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), exceptionMessage,
+			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), exceptionMessage,
 					"BPMN", ErrorCode.UnknownError.getValue(),
 					"Exception is:\n" + ex);
 			logger.debug(exceptionMessage)
@@ -998,7 +999,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 		} catch (Exception ex) {
 			// caught exception
 			String exceptionMessage = "Bpmn error encountered in DoDeleteNetworkInstance, prepareSDNCRollback() - " + ex.getMessage()
-			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), exceptionMessage,
+			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), exceptionMessage,
 					"BPMN", ErrorCode.UnknownError.getValue(),
 					"Exception is:\n" + ex);
 			logger.debug(exceptionMessage)
