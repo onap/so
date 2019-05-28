@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "022508a5_9272e818",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoCreateResources.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 5286
+      },
+      "writtenOn": "2019-05-28T04:58:39Z",
+      "side": 1,
+      "message": "Do we assume that resourceSequence could not be empty, if in case resourceSeqeunce empty and only one VNF then are we not going to consider groups inside that VNF? \nplease check this flow.\nthanks.",
+      "range": {
+        "startLine": 151,
+        "startChar": 16,
+        "endLine": 151,
+        "endChar": 48
+      },
+      "revId": "bb0a782bbec2ba9166804237b117ce0c70a1aa76",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
