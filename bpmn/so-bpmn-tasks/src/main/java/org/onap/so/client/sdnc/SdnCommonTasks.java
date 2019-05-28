@@ -25,6 +25,7 @@ package org.onap.so.client.sdnc;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import com.google.common.base.Strings;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.onap.so.client.exception.BadResponseException;
@@ -52,7 +53,7 @@ public class SdnCommonTasks {
     private static final String SDNC_CODE_NOT_0_OR_IN_200_299 = "Error from SDNC: %s";
     private static final String COULD_NOT_CONVERT_SDNC_POJO_TO_JSON =
             "ERROR: Could not convert SDNC pojo to json string.";
-    private static final String BRACKETS = "{} {} {} {} {}";
+    private static final String BRACKETS = Strings.repeat("{} ", 5);
 
     /***
      * 

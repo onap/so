@@ -22,6 +22,7 @@
 
 package org.onap.so.bpmn.common.scripts
 
+import com.google.common.base.Strings
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.VolumeGroup
@@ -105,7 +106,7 @@ class ConfirmVolumeGroupTenant extends AbstractServiceTaskProcessor{
 		}catch(BpmnError b){
 			throw b
 		}catch(Exception e){
-			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Occured Processing queryAAIForVolumeGroup.", "BPMN",
 					ErrorCode.UnknownError.getValue(), e.getMessage());
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error - Occured in preProcessRequest.")
@@ -127,7 +128,7 @@ class ConfirmVolumeGroupTenant extends AbstractServiceTaskProcessor{
 			logger.debug("Volume Heat Stack Id is: " + heatStackId)
 
 		}catch(Exception e){
-		logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+		logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 				"Exception Occured Processing assignVolumeHeatId.", "BPMN",
 				ErrorCode.UnknownError.getValue(), e);
 		exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error - Occured in assignVolumeHeatId.")
@@ -147,7 +148,7 @@ class ConfirmVolumeGroupTenant extends AbstractServiceTaskProcessor{
 
 			exceptionUtil.buildWorkflowException(execution, errorCode, errorMessage)
 		}catch(Exception e){
-			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Occured Processing assignWorkflowException.", "BPMN",
 					ErrorCode.UnknownError.getValue(), e);
 		}

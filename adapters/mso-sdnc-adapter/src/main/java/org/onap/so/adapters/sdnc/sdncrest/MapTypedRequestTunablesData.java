@@ -23,6 +23,7 @@
 
 package org.onap.so.adapters.sdnc.sdncrest;
 
+import com.google.common.base.Strings;
 import org.onap.so.adapters.sdnc.exception.SDNCAdapterException;
 import org.onap.so.adapters.sdnc.impl.Constants;
 import org.onap.so.logger.ErrorCode;
@@ -54,8 +55,8 @@ public class MapTypedRequestTunablesData {
 
         if ("".equals(value)) {
             error = MISSING_CONFIGURATION_ERROR_MSG + reqTunable.getKey();
-            logger.error("{} {} {} {} {}", MessageEnum.RA_SDNC_MISS_CONFIG_PARAM.toString(), reqTunable.getKey(),
-                    "SDNC", ErrorCode.DataError.getValue(), MISSING_CONFIG_PARAM_ERROR_MSG);
+            logger.error(Strings.repeat("{} ", 5), MessageEnum.RA_SDNC_MISS_CONFIG_PARAM.toString(),
+                    reqTunable.getKey(), "SDNC", ErrorCode.DataError.getValue(), MISSING_CONFIG_PARAM_ERROR_MSG);
 
             throw new SDNCAdapterException(error);
         }
@@ -64,8 +65,8 @@ public class MapTypedRequestTunablesData {
 
         if (parts.length != 5) {
             error = "Invalid configuration for: " + reqTunable.getKey();
-            logger.error("{} {} {} {} {} {}", MessageEnum.RA_SDNC_INVALID_CONFIG.toString(), reqTunable.getKey(), value,
-                    "SDNC", ErrorCode.DataError.getValue(), "Invalid config");
+            logger.error(Strings.repeat("{} ", 6), MessageEnum.RA_SDNC_INVALID_CONFIG.toString(), reqTunable.getKey(),
+                    value, "SDNC", ErrorCode.DataError.getValue(), "Invalid config");
             throw new SDNCAdapterException(error);
         }
 
@@ -80,7 +81,7 @@ public class MapTypedRequestTunablesData {
 
         if ("".equals(reqTunable.getSdncUrl())) {
             error = MISSING_CONFIGURATION_ERROR_MSG + urlPropKey;
-            logger.error("{} {} {} {} {}", MessageEnum.RA_SDNC_MISS_CONFIG_PARAM.toString(), urlPropKey, "SDNC",
+            logger.error(Strings.repeat("{} ", 5), MessageEnum.RA_SDNC_MISS_CONFIG_PARAM.toString(), urlPropKey, "SDNC",
                     ErrorCode.DataError.getValue(), MISSING_CONFIG_PARAM_ERROR_MSG);
 
             throw new SDNCAdapterException(error);
@@ -98,8 +99,8 @@ public class MapTypedRequestTunablesData {
 
         if ("".equals(reqTunable.getMyUrl())) {
             error = MISSING_CONFIGURATION_ERROR_MSG + Constants.MY_URL_PROP;
-            logger.error("{} {} {} {} {}", MessageEnum.RA_SDNC_MISS_CONFIG_PARAM.toString(), Constants.MY_URL_PROP,
-                    "SDNC", ErrorCode.DataError.getValue(), MISSING_CONFIG_PARAM_ERROR_MSG);
+            logger.error(Strings.repeat("{} ", 5), MessageEnum.RA_SDNC_MISS_CONFIG_PARAM.toString(),
+                    Constants.MY_URL_PROP, "SDNC", ErrorCode.DataError.getValue(), MISSING_CONFIG_PARAM_ERROR_MSG);
 
             throw new SDNCAdapterException(error);
         }

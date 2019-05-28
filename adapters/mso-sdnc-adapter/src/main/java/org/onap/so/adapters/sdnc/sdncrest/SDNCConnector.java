@@ -34,6 +34,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import com.google.common.base.Strings;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -159,7 +160,8 @@ public abstract class SDNCConnector {
 
             method = null;
 
-            logger.info("{} {} {}", MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), responseContent, "SDNC");
+            logger.info(Strings.repeat("{} ", 3), MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), responseContent,
+                    "SDNC");
             return createResponseFromContent(statusCode, statusMessage, responseContent, rt);
 
         } catch (SocketTimeoutException | ConnectTimeoutException e) {
@@ -192,12 +194,12 @@ public abstract class SDNCConnector {
     }
 
     protected void logError(String errMsg) {
-        logger.error("{} {} {} {}", MessageEnum.RA_EXCEPTION_COMMUNICATE_SDNC.toString(), "SDNC",
+        logger.error(Strings.repeat("{} ", 4), MessageEnum.RA_EXCEPTION_COMMUNICATE_SDNC.toString(), "SDNC",
                 ErrorCode.AvailabilityError.getValue(), errMsg);
     }
 
     protected void logError(String errMsg, Throwable t) {
-        logger.error("{} {} {} {}", MessageEnum.RA_EXCEPTION_COMMUNICATE_SDNC.toString(), "SDNC",
+        logger.error(Strings.repeat("{} ", 4), MessageEnum.RA_EXCEPTION_COMMUNICATE_SDNC.toString(), "SDNC",
                 ErrorCode.AvailabilityError.getValue(), errMsg, t);
     }
 
@@ -283,7 +285,7 @@ public abstract class SDNCConnector {
                     String errorType = xpath.evaluate("error-type", error);
                     info += "error-type:" + errorType;
                 } catch (XPathExpressionException e) {
-                    logger.error("{} {} {} {} {} {}", MessageEnum.RA_EVALUATE_XPATH_ERROR.toString(), "error-type",
+                    logger.error(Strings.repeat("{} ", 6), MessageEnum.RA_EVALUATE_XPATH_ERROR.toString(), "error-type",
                             error.toString(), "SDNC", ErrorCode.DataError.getValue(), XPATH_EXCEPTION, e);
                 }
 
@@ -294,7 +296,7 @@ public abstract class SDNCConnector {
                     }
                     info += "error-tag:" + errorTag;
                 } catch (XPathExpressionException e) {
-                    logger.error("{} {} {} {} {} {}", MessageEnum.RA_EVALUATE_XPATH_ERROR.toString(), "error-tag",
+                    logger.error(Strings.repeat("{} ", 6), MessageEnum.RA_EVALUATE_XPATH_ERROR.toString(), "error-tag",
                             error.toString(), "SDNC", ErrorCode.DataError.getValue(), XPATH_EXCEPTION, e);
                 }
 
@@ -305,8 +307,9 @@ public abstract class SDNCConnector {
                     }
                     info += "error-message:" + errorMessage;
                 } catch (Exception e) {
-                    logger.error("{} {} {} {} {} {}", MessageEnum.RA_EVALUATE_XPATH_ERROR.toString(), "error-message",
-                            error.toString(), "SDNC", ErrorCode.DataError.getValue(), XPATH_EXCEPTION, e);
+                    logger.error(Strings.repeat("{} ", 6), MessageEnum.RA_EVALUATE_XPATH_ERROR.toString(),
+                            "error-message", error.toString(), "SDNC", ErrorCode.DataError.getValue(), XPATH_EXCEPTION,
+                            e);
                 }
 
                 if (!info.isEmpty()) {
@@ -318,7 +321,7 @@ public abstract class SDNCConnector {
                 }
             }
         } catch (Exception e) {
-            logger.error("{} {} {} {}", MessageEnum.RA_ANALYZE_ERROR_EXC.toString(), "SDNC",
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.RA_ANALYZE_ERROR_EXC.toString(), "SDNC",
                     ErrorCode.DataError.getValue(), "Exception while analyzing errors", e);
         }
 

@@ -22,6 +22,7 @@ package org.onap.so.asdc.activity;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
+import com.google.common.base.Strings;
 import org.apache.http.HttpStatus;
 import org.apache.http.entity.ContentType;
 import org.onap.so.asdc.activity.beans.ActivitySpec;
@@ -68,7 +69,8 @@ public class ActivitySpecsActions {
 
             int statusCode = response.getStatus();
             if (statusCode != HttpStatus.SC_OK) {
-                logger.warn("{} {} {}", "Error creating activity spec", activitySpec.getName(), statusCode);
+                logger.warn(Strings.repeat("{} ", 3), "Error creating activity spec", activitySpec.getName(),
+                        statusCode);
             } else {
                 if (response.getEntity() != null) {
                     ActivitySpecCreateResponse activitySpecCreateResponse =
@@ -76,14 +78,14 @@ public class ActivitySpecsActions {
                     if (activitySpecCreateResponse != null) {
                         activitySpecId = activitySpecCreateResponse.getId();
                     } else {
-                        logger.warn("{} {}", "Unable to read activity spec", activitySpec.getName());
+                        logger.warn(Strings.repeat("{} ", 2), "Unable to read activity spec", activitySpec.getName());
                     }
                 } else {
-                    logger.warn("{} {}", "No activity spec response returned", activitySpec.getName());
+                    logger.warn(Strings.repeat("{} ", 2), "No activity spec response returned", activitySpec.getName());
                 }
             }
         } catch (Exception e) {
-            logger.warn("{} {}", "Exception creating activitySpec", e.getMessage());
+            logger.warn(Strings.repeat("{} ", 2), "Exception creating activitySpec", e.getMessage());
         }
 
         return activitySpecId;
@@ -109,13 +111,13 @@ public class ActivitySpecsActions {
             int statusCode = response.getStatus();
 
             if (statusCode != HttpStatus.SC_OK) {
-                logger.warn("{} {} {}", "Error certifying activity", activitySpecId, statusCode);
+                logger.warn(Strings.repeat("{} ", 3), "Error certifying activity", activitySpecId, statusCode);
             } else {
                 certificationResult = true;
             }
 
         } catch (Exception e) {
-            logger.warn("{} {}", "Exception certifying activitySpec", e.getMessage());
+            logger.warn(Strings.repeat("{} ", 2), "Exception certifying activitySpec", e.getMessage());
         }
 
         return certificationResult;

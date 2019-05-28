@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import com.google.common.base.Strings;
 import org.onap.so.db.request.beans.ArchivedInfraRequests;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.data.repository.ArchivedInfraRequestsRepository;
@@ -145,8 +146,8 @@ public class ArchiveInfraRequestsScheduler {
                 newArchivedReqs.add(archivedInfra);
                 oldInfraReqs.add(iar);
             } catch (Exception e) {
-                logger.error("{} {}", MessageEnum.RA_GENERAL_EXCEPTION.toString(), ErrorCode.UnknownError.getValue(),
-                        e);
+                logger.error(Strings.repeat("{} ", 2), MessageEnum.RA_GENERAL_EXCEPTION.toString(),
+                        ErrorCode.UnknownError.getValue(), e);
             }
         }
 

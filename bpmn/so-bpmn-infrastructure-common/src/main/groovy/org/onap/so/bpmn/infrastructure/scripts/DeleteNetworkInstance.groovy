@@ -22,6 +22,7 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import com.google.common.base.Strings
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
@@ -354,7 +355,7 @@ public class DeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 			logger.debug(falloutHandlerRequest)
 			execution.setVariable(Prefix + "FalloutHandlerRequest", falloutHandlerRequest)
-			logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Overall Error Response going to FalloutHandler: " + "\n" + falloutHandlerRequest, "BPMN",
 					ErrorCode.UnknownError.getValue())
 
@@ -377,7 +378,7 @@ public class DeleteNetworkInstance extends AbstractServiceTaskProcessor {
 						</aetgt:WorkflowException>
 					</aetgt:FalloutHandlerRequest>"""
 			execution.setVariable(Prefix + "FalloutHandlerRequest", falloutHandlerRequest)
-			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Overall Error Response going to FalloutHandler: " + "\n" + falloutHandlerRequest,"BPMN",
 					ErrorCode.UnknownError.getValue(), "Exception is:\n" + ex)
 		}

@@ -36,6 +36,7 @@ import javax.ws.rs.ext.Provider;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import com.google.common.base.Strings;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
@@ -134,8 +135,8 @@ public class ApiExceptionMapper implements ExceptionMapper<ApiException> {
         } catch (JsonProcessingException | JAXBException e) {
             String errorMsg =
                     "Exception in buildServiceErrorResponse writing exceptionType to string " + e.getMessage();
-            logger.error("{} {} {} {}", MessageEnum.GENERAL_EXCEPTION.toString(), "BuildServiceErrorResponse",
-                    ErrorCode.DataError.getValue(), errorMsg, e);
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.GENERAL_EXCEPTION.toString(),
+                    "BuildServiceErrorResponse", ErrorCode.DataError.getValue(), errorMsg, e);
             return errorMsg;
         }
 

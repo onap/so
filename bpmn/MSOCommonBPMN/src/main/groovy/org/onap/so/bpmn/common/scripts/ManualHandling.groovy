@@ -22,6 +22,7 @@
 
 package org.onap.so.bpmn.common.scripts
 
+import com.google.common.base.Strings
 import org.onap.so.logger.ErrorCode;
 
 import static org.apache.commons.lang3.StringUtils.*;
@@ -289,7 +290,7 @@ public class ManualHandling extends AbstractServiceTaskProcessor {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
 					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Internal Error - Occured in" + method)
@@ -341,11 +342,11 @@ public class ManualHandling extends AbstractServiceTaskProcessor {
 
 		} catch (BpmnError e) {
 			msg = "BPMN error in createAOTSTicket " + ex.getMessage()
-			logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+			logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 					ErrorCode.UnknownError.getValue());
 		} catch (Exception ex){
 			msg = "Exception in createAOTSTicket " + ex.getMessage()
-			logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+			logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 					ErrorCode.UnknownError.getValue());
 		}
 		logger.trace("Exit createAOTSTicket of ManualHandling ")
