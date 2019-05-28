@@ -175,7 +175,7 @@ public class WorkflowSpecificationsHandler {
     private List<WorkflowInputParameter> buildWorkflowInputParameters(Workflow workflow) {
         List<WorkflowActivitySpecSequence> workflowActivitySpecSequences = workflow.getWorkflowActivitySpecSequence();
         if (workflowActivitySpecSequences == null || workflowActivitySpecSequences.size() == 0) {
-            return null;
+            return new ArrayList<WorkflowInputParameter>();
         }
         Map<String, WorkflowInputParameter> workflowInputParameterMap = new HashMap<String, WorkflowInputParameter>();
         for (WorkflowActivitySpecSequence workflowActivitySpecSequence : workflowActivitySpecSequences) {
@@ -199,7 +199,7 @@ public class WorkflowSpecificationsHandler {
         }
 
         if (workflowInputParameterMap.size() == 0) {
-            return null;
+            return new ArrayList<WorkflowInputParameter>();
         }
         List<WorkflowInputParameter> workflowInputParameterList =
                 workflowInputParameterMap.values().stream().collect(Collectors.toList());
