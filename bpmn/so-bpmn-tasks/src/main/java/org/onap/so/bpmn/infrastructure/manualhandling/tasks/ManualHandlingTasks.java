@@ -2,6 +2,7 @@ package org.onap.so.bpmn.infrastructure.manualhandling.tasks;
 
 import java.util.Map;
 import java.util.HashMap;
+import com.google.common.base.Strings;
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateTask;
@@ -187,11 +188,11 @@ public class ManualHandlingTasks {
             ticket.createTicket();
         } catch (BpmnError e) {
             String msg = "BPMN error in createAOTSTicket " + e.getMessage();
-            logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN",
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN",
                     ErrorCode.UnknownError.getValue());
         } catch (Exception ex) {
             String msg = "Exception in createExternalTicket " + ex.getMessage();
-            logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN",
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN",
                     ErrorCode.UnknownError.getValue());
         }
 

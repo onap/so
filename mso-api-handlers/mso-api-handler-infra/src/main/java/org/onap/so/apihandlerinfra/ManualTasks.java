@@ -34,6 +34,7 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import com.google.common.base.Strings;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.onap.so.apihandler.common.ErrorNumbers;
@@ -91,7 +92,7 @@ public class ManualTasks {
             @PathParam("taskId") String taskId, @Context ContainerRequestContext requestContext) throws ApiException {
 
         String requestId = requestContext.getProperty("requestId").toString();
-        logger.info("{} {}", MessageEnum.APIH_GENERATED_REQUEST_ID.toString(), requestId);
+        logger.info(Strings.repeat("{} ", 2), MessageEnum.APIH_GENERATED_REQUEST_ID.toString(), requestId);
         long startTime = System.currentTimeMillis();
         logger.debug("requestId is: {}", requestId);
         TasksRequest taskRequest = null;

@@ -38,6 +38,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import com.google.common.base.Strings;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.json.JSONObject;
@@ -228,8 +229,8 @@ public class E2EServiceInstances {
             Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST,
                     MsoException.ServiceException, "Mapping of request to JSON object failed.  " + e.getMessage(),
                     ErrorNumbers.SVC_BAD_PARAMETER, null, version);
-            logger.error("{} {} {} {}", MessageEnum.APIH_REQUEST_VALIDATION_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
-                    ErrorCode.SchemaError.getValue(), requestJSON, e);
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.APIH_REQUEST_VALIDATION_ERROR.toString(),
+                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.SchemaError.getValue(), requestJSON, e);
             logger.debug(END_OF_THE_TRANSACTION + response.getEntity().toString());
 
             return response;
@@ -280,8 +281,8 @@ public class E2EServiceInstances {
             Response resp =
                     msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_GATEWAY, MsoException.ServiceException,
                             "bpelResponse is null", ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
-            logger.error("{} {} {} {}", MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
-                    ErrorCode.BusinessProcesssError.getValue(), "Null response from BPEL");
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(),
+                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.BusinessProcesssError.getValue(), "Null response from BPEL");
             logger.debug(END_OF_THE_TRANSACTION + resp.getEntity().toString());
             return resp;
         }
@@ -306,7 +307,7 @@ public class E2EServiceInstances {
         try {
             operationStatus = requestsDbClient.getOneByServiceIdAndOperationId(serviceId, operationId);
         } catch (Exception e) {
-            logger.error("{} {} {} {}", MessageEnum.APIH_DB_ACCESS_EXC.toString(), MSO_PROP_APIHANDLER_INFRA,
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.APIH_DB_ACCESS_EXC.toString(), MSO_PROP_APIHANDLER_INFRA,
                     ErrorCode.AvailabilityError.getValue(),
                     "Exception while communciate with Request DB - Infra Request Lookup", e);
             Response response =
@@ -321,8 +322,8 @@ public class E2EServiceInstances {
             Response resp = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NO_CONTENT,
                     MsoException.ServiceException, "E2E serviceId " + serviceId + " is not found in DB",
                     ErrorNumbers.SVC_DETAILED_SERVICE_ERROR, null, version);
-            logger.error("{} {} {} {}", MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
-                    ErrorCode.BusinessProcesssError.getValue(),
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(),
+                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.BusinessProcesssError.getValue(),
                     "Null response from RequestDB when searching by serviceId");
             logger.debug(END_OF_THE_TRANSACTION + resp.getEntity());
             return resp;
@@ -350,8 +351,8 @@ public class E2EServiceInstances {
             Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST,
                     MsoException.ServiceException, "Mapping of request to JSON object failed.  " + e.getMessage(),
                     ErrorNumbers.SVC_BAD_PARAMETER, null, version);
-            logger.error("{} {} {} {}", MessageEnum.APIH_REQUEST_VALIDATION_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
-                    ErrorCode.SchemaError.getValue(), requestJSON, e);
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.APIH_REQUEST_VALIDATION_ERROR.toString(),
+                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.SchemaError.getValue(), requestJSON, e);
             logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
             return response;
         }
@@ -375,8 +376,8 @@ public class E2EServiceInstances {
             return response;
         }
         if (recipeLookupResult == null) {
-            logger.error("{} {} {} {}", MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND.toString(), MSO_PROP_APIHANDLER_INFRA,
-                    ErrorCode.DataError.getValue(), "No recipe found in DB");
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND.toString(),
+                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.DataError.getValue(), "No recipe found in DB");
             Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND,
                     MsoException.ServiceException, "Recipe does not exist in catalog DB",
                     ErrorNumbers.SVC_GENERAL_SERVICE_ERROR, null, version);
@@ -414,8 +415,9 @@ public class E2EServiceInstances {
             Response resp = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_GATEWAY,
                     MsoException.ServiceException, "Failed calling bpmn " + e.getMessage(),
                     ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
-            logger.error("{} {} {} {}", MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
-                    ErrorCode.AvailabilityError.getValue(), "Exception while communicate with BPMN engine");
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(),
+                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.AvailabilityError.getValue(),
+                    "Exception while communicate with BPMN engine");
             logger.debug("End of the transaction, the final response is: " + resp.getEntity());
             return resp;
         }
@@ -424,8 +426,8 @@ public class E2EServiceInstances {
             Response resp =
                     msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_GATEWAY, MsoException.ServiceException,
                             "bpelResponse is null", ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
-            logger.error("{} {} {} {}", MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
-                    ErrorCode.BusinessProcesssError.getValue(), "Null response from BPEL");
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(),
+                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.BusinessProcesssError.getValue(), "Null response from BPEL");
             logger.debug(END_OF_THE_TRANSACTION + resp.getEntity());
             return resp;
         }
@@ -455,8 +457,8 @@ public class E2EServiceInstances {
             Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST,
                     MsoException.ServiceException, "Mapping of request to JSON object failed.  " + e.getMessage(),
                     ErrorNumbers.SVC_BAD_PARAMETER, null, version);
-            logger.error("{} {} {} {}", MessageEnum.APIH_REQUEST_VALIDATION_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
-                    ErrorCode.SchemaError.getValue(), requestJSON, e);
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.APIH_REQUEST_VALIDATION_ERROR.toString(),
+                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.SchemaError.getValue(), requestJSON, e);
             logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
             return response;
         }
@@ -473,8 +475,8 @@ public class E2EServiceInstances {
             if (requestId != null) {
                 logger.debug("Logging failed message to the database");
             }
-            logger.error("{} {} {} {}", MessageEnum.APIH_REQUEST_VALIDATION_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
-                    ErrorCode.SchemaError.getValue(), requestJSON, e);
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.APIH_REQUEST_VALIDATION_ERROR.toString(),
+                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.SchemaError.getValue(), requestJSON, e);
             logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
             return response;
         }
@@ -483,7 +485,7 @@ public class E2EServiceInstances {
         try {
             recipeLookupResult = getServiceInstanceOrchestrationURI(e2eSir.getService().getServiceUuid(), action);
         } catch (Exception e) {
-            logger.error("{} {} {} {}", MessageEnum.APIH_DB_ACCESS_EXC.toString(), MSO_PROP_APIHANDLER_INFRA,
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.APIH_DB_ACCESS_EXC.toString(), MSO_PROP_APIHANDLER_INFRA,
                     ErrorCode.AvailabilityError.getValue(), "Exception while communciate with Catalog DB", e);
             Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND,
                     MsoException.ServiceException, "No communication to catalog DB " + e.getMessage(),
@@ -495,8 +497,8 @@ public class E2EServiceInstances {
         }
 
         if (recipeLookupResult == null) {
-            logger.error("{} {} {} {}", MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND.toString(), MSO_PROP_APIHANDLER_INFRA,
-                    ErrorCode.DataError.getValue(), "No recipe found in DB");
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND.toString(),
+                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.DataError.getValue(), "No recipe found in DB");
             Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND,
                     MsoException.ServiceException, "Recipe does not exist in catalog DB",
                     ErrorNumbers.SVC_GENERAL_SERVICE_ERROR, null, version);
@@ -530,8 +532,9 @@ public class E2EServiceInstances {
                     MsoException.ServiceException, "Failed calling bpmn " + e.getMessage(),
                     ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
 
-            logger.error("{} {} {} {}", MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
-                    ErrorCode.AvailabilityError.getValue(), "Exception while communicate with BPMN engine");
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(),
+                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.AvailabilityError.getValue(),
+                    "Exception while communicate with BPMN engine");
             logger.debug(END_OF_THE_TRANSACTION + getBPMNResp.getEntity());
 
             return getBPMNResp;
@@ -541,8 +544,8 @@ public class E2EServiceInstances {
             Response getBPMNResp =
                     msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_GATEWAY, MsoException.ServiceException,
                             "bpelResponse is null", ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
-            logger.error("{} {} {} {}", MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
-                    ErrorCode.BusinessProcesssError.getValue(), "Null response from BPEL");
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(),
+                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.BusinessProcesssError.getValue(), "Null response from BPEL");
             logger.debug(END_OF_THE_TRANSACTION + getBPMNResp.getEntity());
             return getBPMNResp;
         }
@@ -572,8 +575,8 @@ public class E2EServiceInstances {
             Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST,
                     MsoException.ServiceException, "Mapping of request to JSON object failed.  " + e.getMessage(),
                     ErrorNumbers.SVC_BAD_PARAMETER, null, version);
-            logger.error("{} {} {} {}", MessageEnum.APIH_REQUEST_VALIDATION_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
-                    ErrorCode.SchemaError.getValue(), requestJSON, e);
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.APIH_REQUEST_VALIDATION_ERROR.toString(),
+                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.SchemaError.getValue(), requestJSON, e);
             logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
             return response;
         }
@@ -590,8 +593,8 @@ public class E2EServiceInstances {
             if (requestId != null) {
                 logger.debug("Logging failed message to the database");
             }
-            logger.error("{} {} {} {}", MessageEnum.APIH_REQUEST_VALIDATION_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
-                    ErrorCode.SchemaError.getValue(), requestJSON, e);
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.APIH_REQUEST_VALIDATION_ERROR.toString(),
+                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.SchemaError.getValue(), requestJSON, e);
             logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
             return response;
         }
@@ -600,7 +603,7 @@ public class E2EServiceInstances {
         try {
             recipeLookupResult = getServiceInstanceOrchestrationURI(e2eSir.getService().getServiceUuid(), action);
         } catch (Exception e) {
-            logger.error("{} {} {} {}", MessageEnum.APIH_DB_ACCESS_EXC.toString(), MSO_PROP_APIHANDLER_INFRA,
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.APIH_DB_ACCESS_EXC.toString(), MSO_PROP_APIHANDLER_INFRA,
                     ErrorCode.AvailabilityError.getValue(), "Exception while communciate with Catalog DB", e);
             Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND,
                     MsoException.ServiceException, "No communication to catalog DB " + e.getMessage(),
@@ -610,8 +613,8 @@ public class E2EServiceInstances {
         }
 
         if (recipeLookupResult == null) {
-            logger.error("{} {} {} {}", MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND.toString(), MSO_PROP_APIHANDLER_INFRA,
-                    ErrorCode.DataError.getValue(), "No recipe found in DB");
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND.toString(),
+                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.DataError.getValue(), "No recipe found in DB");
             Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND,
                     MsoException.ServiceException, "Recipe does not exist in catalog DB",
                     ErrorNumbers.SVC_GENERAL_SERVICE_ERROR, null, version);
@@ -644,8 +647,9 @@ public class E2EServiceInstances {
                     MsoException.ServiceException, "Failed calling bpmn " + e.getMessage(),
                     ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
 
-            logger.error("{} {} {} {}", MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
-                    ErrorCode.AvailabilityError.getValue(), "Exception while communicate with BPMN engine");
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(),
+                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.AvailabilityError.getValue(),
+                    "Exception while communicate with BPMN engine");
             logger.debug(END_OF_THE_TRANSACTION + resp.getEntity());
             return resp;
         }
@@ -654,8 +658,8 @@ public class E2EServiceInstances {
             Response resp =
                     msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_GATEWAY, MsoException.ServiceException,
                             "bpelResponse is null", ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
-            logger.error("{} {} {} {}", MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
-                    ErrorCode.BusinessProcesssError.getValue(), "Null response from BPEL");
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(),
+                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.BusinessProcesssError.getValue(), "Null response from BPEL");
             logger.debug(END_OF_THE_TRANSACTION + resp.getEntity());
             return resp;
         }
@@ -684,8 +688,8 @@ public class E2EServiceInstances {
             Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST,
                     MsoException.ServiceException, "Mapping of request to JSON object failed.  " + e.getMessage(),
                     ErrorNumbers.SVC_BAD_PARAMETER, null, version);
-            logger.error("{} {} {} {}", MessageEnum.APIH_REQUEST_VALIDATION_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
-                    ErrorCode.SchemaError.getValue(), requestJSON, e);
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.APIH_REQUEST_VALIDATION_ERROR.toString(),
+                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.SchemaError.getValue(), requestJSON, e);
             logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
             return response;
         }
@@ -695,7 +699,7 @@ public class E2EServiceInstances {
             // TODO Get the service template model version uuid from AAI.
             recipeLookupResult = getServiceInstanceOrchestrationURI(null, action);
         } catch (Exception e) {
-            logger.error("{} {} {} {}", MessageEnum.APIH_DB_ACCESS_EXC.toString(), MSO_PROP_APIHANDLER_INFRA,
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.APIH_DB_ACCESS_EXC.toString(), MSO_PROP_APIHANDLER_INFRA,
                     ErrorCode.AvailabilityError.getValue(), "Exception while communciate with Catalog DB", e);
 
             Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND,
@@ -708,8 +712,8 @@ public class E2EServiceInstances {
             return response;
         }
         if (recipeLookupResult == null) {
-            logger.error("{} {} {} {}", MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND.toString(), MSO_PROP_APIHANDLER_INFRA,
-                    ErrorCode.DataError.getValue(), "No recipe found in DB");
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND.toString(),
+                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.DataError.getValue(), "No recipe found in DB");
 
             Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND,
                     MsoException.ServiceException, "Recipe does not exist in catalog DB",
@@ -747,8 +751,9 @@ public class E2EServiceInstances {
                     MsoException.ServiceException, "Failed calling bpmn " + e.getMessage(),
                     ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
 
-            logger.error("{} {} {} {}", MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
-                    ErrorCode.AvailabilityError.getValue(), "Exception while communicate with BPMN engine", e);
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(),
+                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.AvailabilityError.getValue(),
+                    "Exception while communicate with BPMN engine", e);
             logger.debug(END_OF_THE_TRANSACTION + resp.getEntity());
             return resp;
         }
@@ -757,8 +762,8 @@ public class E2EServiceInstances {
             Response resp =
                     msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_GATEWAY, MsoException.ServiceException,
                             "bpelResponse is null", ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
-            logger.error("{} {} {} {}", MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
-                    ErrorCode.BusinessProcesssError.getValue(), "Null response from BPEL");
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(),
+                    MSO_PROP_APIHANDLER_INFRA, ErrorCode.BusinessProcesssError.getValue(), "Null response from BPEL");
             logger.debug(END_OF_THE_TRANSACTION + resp.getEntity());
             return resp;
         }
@@ -790,8 +795,8 @@ public class E2EServiceInstances {
                 Response resp = msoRequest.buildServiceErrorResponse(bpelStatus, MsoException.ServiceException,
                         "Request Failed due to BPEL error with HTTP Status= %1 " + '\n' + camundaJSONResponseBody,
                         ErrorNumbers.SVC_DETAILED_SERVICE_ERROR, variables, version);
-                logger.error("{} {} {} {}", MessageEnum.APIH_BPEL_RESPONSE_ERROR.toString(), requestClient.getUrl(),
-                        ErrorCode.BusinessProcesssError.getValue(),
+                logger.error(Strings.repeat("{} ", 4), MessageEnum.APIH_BPEL_RESPONSE_ERROR.toString(),
+                        requestClient.getUrl(), ErrorCode.BusinessProcesssError.getValue(),
                         "Response from BPEL engine is failed with HTTP Status=" + bpelStatus);
                 logger.debug(END_OF_THE_TRANSACTION + resp.getEntity());
                 return resp;

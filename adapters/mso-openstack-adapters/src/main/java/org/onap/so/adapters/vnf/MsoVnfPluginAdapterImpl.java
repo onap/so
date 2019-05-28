@@ -42,6 +42,7 @@ import java.util.Optional;
 import java.util.Set;
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
+import com.google.common.base.Strings;
 import org.onap.so.adapters.vdu.CloudInfo;
 import org.onap.so.adapters.vdu.VduException;
 import org.onap.so.adapters.vdu.VduInstance;
@@ -203,7 +204,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             e.addContext("QueryVNF");
             String error = "Query VNF (VDU): " + vnfNameOrId + " in " + cloudOwner + "/" + cloudSiteId + "/" + tenantId
                     + ": " + e;
-            logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_QUERY_VNF_ERR.toString(), vnfNameOrId, cloudOwner,
+            logger.error(Strings.repeat("{} ", 9), MessageEnum.RA_QUERY_VNF_ERR.toString(), vnfNameOrId, cloudOwner,
                     cloudSiteId, tenantId, "VDU", "QueryVNF", ErrorCode.DataError.getValue(), "Exception - queryVDU",
                     e);
             logger.debug(error);
@@ -254,7 +255,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         long startTime = System.currentTimeMillis();
         // rollback may be null (e.g. if stack already existed when Create was called)
         if (rollback == null) {
-            logger.info("{} {} {}", MessageEnum.RA_ROLLBACK_NULL.toString(), "OpenStack", "rollbackVnf");
+            logger.info(Strings.repeat("{} ", 3), MessageEnum.RA_ROLLBACK_NULL.toString(), "OpenStack", "rollbackVnf");
             return;
         }
 
@@ -291,7 +292,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             ve.addContext("RollbackVFModule");
             String error = "Rollback VF Module: " + vfModuleId + " in " + cloudOwner + "/" + cloudSiteId + "/"
                     + tenantId + ": " + ve;
-            logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_DELETE_VNF_ERR.toString(), vfModuleId, cloudOwner,
+            logger.error(Strings.repeat("{} ", 9), MessageEnum.RA_DELETE_VNF_ERR.toString(), vfModuleId, cloudOwner,
                     cloudSiteId, tenantId, "VDU", "DeleteVdu", ErrorCode.DataError.getValue(), "Exception - DeleteVdu",
                     ve);
             logger.debug(error);
@@ -546,7 +547,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         if (modelCustomizationUuid == null || modelCustomizationUuid.isEmpty()) {
             logger.debug("Missing required input: modelCustomizationUuid");
             String error = "Create vfModule error: Missing required input: modelCustomizationUuid";
-            logger.error("{} {} {} {} {}", MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(),
+            logger.error(Strings.repeat("{} ", 5), MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(),
                     "VF Module ModelCustomizationUuid", "VDU", ErrorCode.DataError,
                     "Create VF Module: " + "Missing required input: modelCustomizationUuid");
             logger.debug(error);
@@ -610,7 +611,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                 String error = "Create vfModule error: Unable to find vfModuleCust with modelCustomizationUuid="
                         + modelCustomizationUuid;
                 logger.debug(error);
-                logger.error("{} {} {} {} {} {}", MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(),
+                logger.error(Strings.repeat("{} ", 6), MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(),
                         "VF Module ModelCustomizationUuid", modelCustomizationUuid, "CatalogDb", ErrorCode.DataError,
                         error);
                 throw new VnfException(error, MsoExceptionCategory.USERDATA);
@@ -649,7 +650,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                         "VNF Resource type: " + vnfResource.getModelName() + ", ModelUuid=" + vnfResource.getModelUUID()
                                 + " VersionMin=" + vnfMin + " VersionMax:" + vnfMax + " NOT supported on Cloud: "
                                 + cloudSiteId + " with AIC_Version:" + cloudSite.getCloudVersion();
-                logger.error("{} {} {} {} {}", MessageEnum.RA_CONFIG_EXC.toString(), error, "OpenStack",
+                logger.error(Strings.repeat("{} ", 5), MessageEnum.RA_CONFIG_EXC.toString(), error, "OpenStack",
                         ErrorCode.BusinessProcesssError.getValue(), "Exception - setVersion");
                 logger.debug(error);
                 throw new VnfException(error, MsoExceptionCategory.USERDATA);
@@ -671,9 +672,9 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             // Failed to query the VDU due to a plugin exception.
             String error = "Create VF Module: Query " + vfModuleName + " in " + cloudOwner + "/" + cloudSiteId + "/"
                     + tenantId + ": " + me;
-            logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_QUERY_VNF_ERR.toString(), vfModuleName,
-                    cloudOwner, cloudSiteId, tenantId, "VDU", "queryVdu", ErrorCode.DataError.getValue(),
-                    "Exception - queryVdu", me);
+            logger.error(Strings.repeat("{} ", 9), MessageEnum.RA_QUERY_VNF_ERR.toString(), vfModuleName, cloudOwner,
+                    cloudSiteId, tenantId, "VDU", "queryVdu", ErrorCode.DataError.getValue(), "Exception - queryVdu",
+                    me);
             logger.debug(error);
             // Convert to a generic VnfException
             me.addContext("CreateVFModule");
@@ -690,9 +691,9 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                     // fail - it exists
                     String error = "Create VF: Deployment " + vfModuleName + " already exists in " + cloudOwner + "/"
                             + cloudSiteId + "/" + tenantId;
-                    logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_VNF_ALREADY_EXIST.toString(),
-                            vfModuleName, cloudOwner, cloudSiteId, tenantId, "VDU", "queryVdu",
-                            ErrorCode.DataError.getValue(), "VF Module " + vfModuleName + " already exists");
+                    logger.error(Strings.repeat("{} ", 9), MessageEnum.RA_VNF_ALREADY_EXIST.toString(), vfModuleName,
+                            cloudOwner, cloudSiteId, tenantId, "VDU", "queryVdu", ErrorCode.DataError.getValue(),
+                            "VF Module " + vfModuleName + " already exists");
                     logger.debug(error);
                     throw new VnfAlreadyExists(vfModuleName, cloudSiteId, cloudOwner, tenantId,
                             vduInstance.getVduInstanceId());
@@ -712,7 +713,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                 String error = "Create VF: Deployment " + vfModuleName + " already exists and has status "
                         + status.toString() + " in " + cloudOwner + "/" + cloudSiteId + "/" + tenantId
                         + "; please wait for it to complete, or fix manually.";
-                logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_VNF_ALREADY_EXIST.toString(), vfModuleName,
+                logger.error(Strings.repeat("{} ", 9), MessageEnum.RA_VNF_ALREADY_EXIST.toString(), vfModuleName,
                         cloudOwner, cloudSiteId, tenantId, "VDU", "queryVdu", ErrorCode.DataError.getValue(),
                         "VF Module " + vfModuleName + " already exists");
                 logger.debug(error);
@@ -722,7 +723,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                 // fail - it exists and is in a FAILED state
                 String error = "Create VF: Deployment " + vfModuleName + " already exists and is in FAILED state in "
                         + cloudOwner + "/" + cloudSiteId + "/" + tenantId + "; requires manual intervention.";
-                logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_VNF_ALREADY_EXIST.toString(), vfModuleName,
+                logger.error(Strings.repeat("{} ", 9), MessageEnum.RA_VNF_ALREADY_EXIST.toString(), vfModuleName,
                         cloudOwner, cloudSiteId, tenantId, "VDU", "queryVdu", ErrorCode.DataError.getValue(),
                         "VF Module " + vfModuleName + " already exists and is in FAILED state");
                 logger.debug(error);
@@ -733,7 +734,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                 String error = "Create VF: Deployment " + vfModuleName + " already exists and has status "
                         + status.toString() + " in " + cloudOwner + "/" + cloudSiteId + "/" + tenantId
                         + "; requires manual intervention.";
-                logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_VNF_ALREADY_EXIST.toString(), vfModuleName,
+                logger.error(Strings.repeat("{} ", 9), MessageEnum.RA_VNF_ALREADY_EXIST.toString(), vfModuleName,
                         cloudOwner, cloudSiteId, tenantId, "VDU", "queryVdu", ErrorCode.DataError.getValue(),
                         "VF Module " + vfModuleName + " already exists and is in " + status.toString() + " state");
                 logger.debug(error);
@@ -744,7 +745,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                 String error = "Create VF: Deployment " + vfModuleName + " already exists with unexpected status "
                         + status.toString() + " in " + cloudOwner + "/" + cloudSiteId + "/" + tenantId
                         + "; requires manual intervention.";
-                logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_VNF_ALREADY_EXIST.toString(), vfModuleName,
+                logger.error(Strings.repeat("{} ", 9), MessageEnum.RA_VNF_ALREADY_EXIST.toString(), vfModuleName,
                         cloudOwner, cloudSiteId, tenantId, "VDU", "queryVdu", ErrorCode.DataError.getValue(),
                         "VF Module " + vfModuleName + " already exists and is in an unknown state");
                 logger.debug(error);
@@ -768,7 +769,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                 // Failed to query the Volume Group VDU due to a plugin exception.
                 String error = "Create VF Module: Query Volume Group " + volumeGroupId + " in " + cloudOwner + "/"
                         + cloudSiteId + "/" + tenantId + ": " + me;
-                logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_QUERY_VNF_ERR.toString(), volumeGroupId,
+                logger.error(Strings.repeat("{} ", 9), MessageEnum.RA_QUERY_VNF_ERR.toString(), volumeGroupId,
                         cloudOwner, cloudSiteId, tenantId, "VDU", "queryVdu(volume)", ErrorCode.DataError.getValue(),
                         "Exception - queryVdu(volume)", me);
                 logger.debug(error);
@@ -780,7 +781,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             if (volumeVdu == null || volumeVdu.getStatus().getState() == VduStateType.NOTFOUND) {
                 String error = "Create VFModule: Attached Volume Group DOES NOT EXIST " + volumeGroupId + " in "
                         + cloudOwner + "/" + cloudSiteId + "/" + tenantId + " USER ERROR";
-                logger.error("{} {} {} {} {} {} {} {} {} {}", MessageEnum.RA_QUERY_VNF_ERR.toString(), volumeGroupId,
+                logger.error(Strings.repeat("{} ", 10), MessageEnum.RA_QUERY_VNF_ERR.toString(), volumeGroupId,
                         cloudOwner, cloudSiteId, tenantId, error, "VDU", "queryVdu(volume)",
                         ErrorCode.BusinessProcesssError.getValue(),
                         "Create VFModule: Attached Volume Group " + "DOES NOT EXIST");
@@ -818,7 +819,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                     // Failed to query the Base VF Module due to a Vdu Plugin exception.
                     String error = "Create VF Module: Query Base " + baseVfModuleId + " in " + cloudOwner + "/"
                             + cloudSiteId + "/" + tenantId + ": " + me;
-                    logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_QUERY_VNF_ERR.toString(), baseVfModuleId,
+                    logger.error(Strings.repeat("{} ", 9), MessageEnum.RA_QUERY_VNF_ERR.toString(), baseVfModuleId,
                             cloudOwner, cloudSiteId, tenantId, "VDU", "queryVdu(Base)", ErrorCode.DataError.getValue(),
                             "Exception - queryVdu(Base)", me);
                     logger.debug(error);
@@ -830,8 +831,8 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                 if (baseVdu == null || baseVdu.getStatus().getState() == VduStateType.NOTFOUND) {
                     String error = "Create VFModule: Base Module DOES NOT EXIST " + baseVfModuleId + " in " + cloudOwner
                             + "/" + cloudSiteId + "/" + tenantId + " USER ERROR";
-                    logger.error("{} {} {} {} {} {} {} {} {} {}", MessageEnum.RA_QUERY_VNF_ERR.toString(),
-                            baseVfModuleId, cloudOwner, cloudSiteId, tenantId, error, "VDU", "queryVdu(Base)",
+                    logger.error(Strings.repeat("{} ", 10), MessageEnum.RA_QUERY_VNF_ERR.toString(), baseVfModuleId,
+                            cloudOwner, cloudSiteId, tenantId, error, "VDU", "queryVdu(Base)",
                             ErrorCode.BusinessProcesssError.getValue(), "Create VFModule: Base Module DOES NOT EXIST");
                     logger.debug(error);
                     throw new VnfException(error, MsoExceptionCategory.USERDATA);
@@ -863,7 +864,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         if (heatTemplate == null) {
             String error = "UpdateVF: No Heat Template ID defined in catalog database for " + vfModuleType
                     + ", reqType=" + requestType;
-            logger.error("{} {} {} {} {} {}", MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(), "Heat Template ID",
+            logger.error(Strings.repeat("{} ", 6), MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(), "Heat Template ID",
                     vfModuleType, "VNF", ErrorCode.DataError.getValue(), error);
             logger.debug(error);
             throw new VnfException(error, MsoExceptionCategory.INTERNAL);
@@ -873,7 +874,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 
         if (heatEnvironment == null) {
             String error = "Update VNF: undefined Heat Environment. VF=" + vfModuleType;
-            logger.error("{} {} {} {} {}", MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(), "Heat Environment ID",
+            logger.error(Strings.repeat("{} ", 5), MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(), "Heat Environment ID",
                     "OpenStack", ErrorCode.DataError.getValue(), error);
             throw new VnfException(error, MsoExceptionCategory.INTERNAL);
         } else {
@@ -1007,8 +1008,8 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                 if (checkRequiredParameters) {
                     // Problem - missing one or more required parameters
                     String error = "Create VFModule: Missing Required inputs: " + missingParams;
-                    logger.error("{} {} {} {} {}", MessageEnum.RA_MISSING_PARAM.toString(), missingParams, "VDU",
-                            ErrorCode.DataError.getValue(), "Create VFModule: Missing Required inputs");
+                    logger.error(Strings.repeat("{} ", 5), MessageEnum.RA_MISSING_PARAM.toString(), missingParams,
+                            "VDU", ErrorCode.DataError.getValue(), "Create VFModule: Missing Required inputs");
                     logger.debug(error);
                     throw new VnfException(error, MsoExceptionCategory.USERDATA);
                 } else {
@@ -1044,7 +1045,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             me.addContext("CreateVFModule");
             String error = "Create VF Module " + vfModuleType + " in " + cloudOwner + "/" + cloudSiteId + "/" + tenantId
                     + ": " + me;
-            logger.error("{} {} {} {} {} {} {} {}", MessageEnum.RA_CREATE_VNF_ERR.toString(), vfModuleType, cloudOwner,
+            logger.error(Strings.repeat("{} ", 8), MessageEnum.RA_CREATE_VNF_ERR.toString(), vfModuleType, cloudOwner,
                     cloudSiteId, tenantId, "VDU", ErrorCode.DataError.getValue(), "MsoException - instantiateVdu", me);
             logger.debug(error);
             // Convert to a generic VnfException
@@ -1052,7 +1053,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         } catch (NullPointerException npe) {
             String error = "Create VFModule " + vfModuleType + " in " + cloudOwner + "/" + cloudSiteId + "/" + tenantId
                     + ": " + npe;
-            logger.error("{} {} {} {} {} {} {} {}", MessageEnum.RA_CREATE_VNF_ERR.toString(), vfModuleType, cloudOwner,
+            logger.error(Strings.repeat("{} ", 8), MessageEnum.RA_CREATE_VNF_ERR.toString(), vfModuleType, cloudOwner,
                     cloudSiteId, tenantId, "VDU", ErrorCode.DataError.getValue(),
                     "NullPointerException - instantiateVdu", npe);
             logger.debug(error);
@@ -1103,7 +1104,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             e.addContext("QueryVFModule");
             String error = "Query VfModule (VDU): " + vfModuleId + " in " + cloudOwner + "/" + cloudSiteId + "/"
                     + tenantId + ": " + e;
-            logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_QUERY_VNF_ERR.toString(), vfModuleId, cloudOwner,
+            logger.error(Strings.repeat("{} ", 9), MessageEnum.RA_QUERY_VNF_ERR.toString(), vfModuleId, cloudOwner,
                     cloudSiteId, tenantId, "VDU", "QueryVFModule", ErrorCode.DataError.getValue(),
                     "Exception - queryVDU", e);
             logger.debug(error);
@@ -1129,7 +1130,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             // Convert to a generic VnfException
             String error =
                     "Delete VF: " + vfModuleId + " in " + cloudOwner + "/" + cloudSiteId + "/" + tenantId + ": " + me;
-            logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_DELETE_VNF_ERR.toString(), vfModuleId, cloudOwner,
+            logger.error(Strings.repeat("{} ", 9), MessageEnum.RA_DELETE_VNF_ERR.toString(), vfModuleId, cloudOwner,
                     cloudSiteId, tenantId, "VDU", "DeleteVdu", ErrorCode.DataError.getValue(),
                     "Exception - DeleteVdu: " + me.getMessage());
             logger.debug(error);

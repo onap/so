@@ -21,6 +21,7 @@
  */
 package org.onap.so.bpmn.vcpe.scripts
 
+import com.google.common.base.Strings
 import org.onap.so.logger.ErrorCode;
 
 import static org.apache.commons.lang3.StringUtils.*
@@ -420,7 +421,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
         } catch (BpmnError e) {
             throw e;
         } catch (Exception e) {
-            logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+            logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
                     'Caught exception in ' + method, "BPMN",
                     ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
             exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Internal Error - Occured in" + method)
@@ -847,7 +848,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
             // Adding this line temporarily until this flows error handling gets updated
             exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Caught a Java Lang Exception")
         } catch (BpmnError b) {
-            logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+            logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
                     "Rethrowing MSOWorkflowException", "BPMN",
                     ErrorCode.UnknownError.getValue());
             throw b

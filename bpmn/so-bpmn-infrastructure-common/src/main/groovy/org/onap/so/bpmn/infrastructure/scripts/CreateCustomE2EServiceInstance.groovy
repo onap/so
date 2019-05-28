@@ -23,6 +23,7 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import com.google.common.base.Strings
 import org.onap.so.logger.ErrorCode;
 
 import static org.apache.commons.lang3.StringUtils.*
@@ -325,7 +326,7 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
             logger.debug("CreateVfModuleInfra Outgoing updateServiceOperStatusRequest Request: " + payload)
 
         }catch(Exception e){
-			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Occured Processing prepareInitServiceOperationStatus.", "BPMN",
 					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
             execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during prepareInitServiceOperationStatus Method:\n" + e.getMessage())
