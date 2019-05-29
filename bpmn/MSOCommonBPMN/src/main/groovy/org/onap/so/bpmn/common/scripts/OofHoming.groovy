@@ -32,18 +32,20 @@ import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.domain.Subscriber
 import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.client.DefaultProperties
 import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.db.catalog.beans.AuthenticationType
 import org.onap.so.db.catalog.beans.CloudIdentity
 import org.onap.so.db.catalog.beans.CloudSite
 import org.onap.so.db.catalog.beans.HomingInstance
 import org.onap.so.db.catalog.beans.ServerType
-import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.utils.TargetEntity
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
+import javax.ws.rs.core.Response;
 import org.json.JSONArray
 import org.json.JSONObject
 import org.springframework.web.util.UriUtils
@@ -108,12 +110,12 @@ class OofHoming extends AbstractServiceTaskProcessor {
                 if (isBlank(subscriberInfo)) {
                     subscriber = new Subscriber("", "", "")
                 } else {
-                String subId = jsonUtil.getJsonValue(subscriberInfo, "globalSubscriberId")
-                String subName = jsonUtil.getJsonValue(subscriberInfo, "subscriberName")
-                String subCommonSiteId = ""
-                if (jsonUtil.jsonElementExist(subscriberInfo, "subscriberCommonSiteId")) {
-                    subCommonSiteId = jsonUtil.getJsonValue(subscriberInfo, "subscriberCommonSiteId")
-                }
+                    String subId = jsonUtil.getJsonValue(subscriberInfo, "globalSubscriberId")
+                    String subName = jsonUtil.getJsonValue(subscriberInfo, "subscriberName")
+                    String subCommonSiteId = ""
+                    if (jsonUtil.jsonElementExist(subscriberInfo, "subscriberCommonSiteId")) {
+                        subCommonSiteId = jsonUtil.getJsonValue(subscriberInfo, "subscriberCommonSiteId")
+                    }
                     subscriber = new Subscriber(subId, subName, subCommonSiteId)
                 }
 
@@ -159,18 +161,26 @@ class OofHoming extends AbstractServiceTaskProcessor {
                 execution.setVariable("oofRequest", oofRequest)
                 logger.debug( "OOF Request is: " + oofRequest)
 
-                String urlString = UrnPropertiesReader.getVariable("mso.oof.endpoint", execution)
-                logger.debug( "Posting to OOF Url: " + urlString)
+                String url = UrnPropertiesReader.getVariable("mso.oof.endpoint", execution)
+                logger.debug("Posting to OOF Url: " + url)
 
 
-				URL url = new URL(urlString);
-                HttpClient httpClient = new HttpClientFactory().newJsonClient(url, TargetEntity.SNIRO)
-                httpClient.addAdditionalHeader("Authorization", authHeader)
-				Response httpResponse = httpClient.post(oofRequest)
+                DefaultProperties config = new DefaultProperties(url)
+                HttpClientFactory httpClientFactory = new HttpClientFactory()
 
-				int responseCode = httpResponse.getStatus()
-				logger.debug("OOF sync response code is: " + responseCode)
+                HttpClient client = httpClientFactory.newJsonClient(url, TargetEntity.OOF)
+                client.addBasicAuthHeader(basicAuthValue, msokey)
+                Response response = client.httpPost(oofRequest)
 
+                int responseCode = response.getStatus()
+                logger.debug("OOF sync response code is: " + responseCode)
+                String syncResponse = response.getResponseBodyAsString()
+                execution.setVariable("syncResponse", syncResponse)
+                logger.debug("OOF sync response is: " + syncResponse)
+
+                if(responseCode != 202){
+                    exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Sync Response from OOF.")
+                }
 
                 logger.debug( "*** Completed Homing Call OOF ***")
             }
