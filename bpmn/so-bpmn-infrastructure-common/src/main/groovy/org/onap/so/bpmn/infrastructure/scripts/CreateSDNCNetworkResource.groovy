@@ -397,7 +397,6 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                                         <subscriber-name>${msoUtils.xmlEscape(globalCustomerId)}</subscriber-name>
                                      </service-information>
                                      <vnf-information>
-                                        <vnf-id>${msoUtils.xmlEscape(vnfid)}</vnf-id>
                                         <vnf-type></vnf-type>
                                         <onap-model-information>
                                              <model-invariant-uuid>${msoUtils.xmlEscape(modelInvariantUuid)}</model-invariant-uuid>
