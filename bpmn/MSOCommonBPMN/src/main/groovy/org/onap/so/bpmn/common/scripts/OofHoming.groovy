@@ -108,12 +108,12 @@ class OofHoming extends AbstractServiceTaskProcessor {
                 if (isBlank(subscriberInfo)) {
                     subscriber = new Subscriber("", "", "")
                 } else {
-                String subId = jsonUtil.getJsonValue(subscriberInfo, "globalSubscriberId")
-                String subName = jsonUtil.getJsonValue(subscriberInfo, "subscriberName")
-                String subCommonSiteId = ""
-                if (jsonUtil.jsonElementExist(subscriberInfo, "subscriberCommonSiteId")) {
-                    subCommonSiteId = jsonUtil.getJsonValue(subscriberInfo, "subscriberCommonSiteId")
-                }
+                    String subId = jsonUtil.getJsonValue(subscriberInfo, "globalSubscriberId")
+                    String subName = jsonUtil.getJsonValue(subscriberInfo, "subscriberName")
+                    String subCommonSiteId = ""
+                    if (jsonUtil.jsonElementExist(subscriberInfo, "subscriberCommonSiteId")) {
+                        subCommonSiteId = jsonUtil.getJsonValue(subscriberInfo, "subscriberCommonSiteId")
+                    }
                     subscriber = new Subscriber(subId, subName, subCommonSiteId)
                 }
 
@@ -159,18 +159,24 @@ class OofHoming extends AbstractServiceTaskProcessor {
                 execution.setVariable("oofRequest", oofRequest)
                 logger.debug( "OOF Request is: " + oofRequest)
 
-                String urlString = UrnPropertiesReader.getVariable("mso.oof.endpoint", execution)
-                logger.debug( "Posting to OOF Url: " + urlString)
+                String url = UrnPropertiesReader.getVariable("mso.oof.endpoint", execution)
+                logger.debug("Posting to OOF Url: " + url)
 
 
-				URL url = new URL(urlString);
-                HttpClient httpClient = new HttpClientFactory().newJsonClient(url, TargetEntity.SNIRO)
-                httpClient.addAdditionalHeader("Authorization", authHeader)
-				Response httpResponse = httpClient.post(oofRequest)
+                RESTConfig config = new RESTConfig(url)
+                RESTClient client = new RESTClient(config).addAuthorizationHeader(authHeader).
+                        addHeader("Content-Type", "application/json")
+                APIResponse response = client.httpPost(oofRequest)
 
-				int responseCode = httpResponse.getStatus()
-				logger.debug("OOF sync response code is: " + responseCode)
+                int responseCode = response.getStatusCode()
+                logger.debug("OOF sync response code is: " + responseCode)
+                String syncResponse = response.getResponseBodyAsString()
+                execution.setVariable("syncResponse", syncResponse)
+                logger.debug("OOF sync response is: " + syncResponse)
 
+                if(responseCode != 202){
+                    exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Sync Response from OOF.")
+                }
 
                 logger.debug( "*** Completed Homing Call OOF ***")
             }
