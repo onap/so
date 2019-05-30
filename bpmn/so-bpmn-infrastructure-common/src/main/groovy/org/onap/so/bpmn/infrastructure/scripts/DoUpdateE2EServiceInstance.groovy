@@ -20,6 +20,9 @@
  * ============LICENSE_END=========================================================
  */
 package org.onap.so.bpmn.infrastructure.scripts
+
+import org.onap.so.bpmn.core.domain.ServiceDecomposition
+import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 
@@ -313,6 +316,21 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		String serviceInstanceId = execution.getVariable("serviceInstanceId")
 		try {
 			org.onap.aai.domain.yang.ServiceInstance si = execution.getVariable("serviceInstanceData")
+
+			ServiceDecomposition serviceDecompositionTarget = execution.getVariable("serviceDecomposition_Target")
+			//ServiceDecomposition serviceDecompositionOriginal = execution.getVariable("serviceDecomposition_Original")
+
+			logger.debug("serviceDecomposition_Target: +"+serviceDecompositionTarget)
+			//logger.debug("serviceDecomposition_Target: +"+serviceDecompositionOriginal)
+
+			boolean allActive = true
+			for(VnfResource resource : serviceDecompositionTarget.vnfResources) {
+				if(resource.getOrchestrationStatus() != "Active"){
+					allActive = false
+				}
+			}
+			if(allActive)
+				si.setOrchestrationStatus("Active")
 
             AAIResourcesClient client = new AAIResourcesClient()
             AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
