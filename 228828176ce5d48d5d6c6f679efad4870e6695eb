@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f91168b0_34a10259",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/adapter/vnfm/tasks/MonitorVnfmCreateJobTask.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 3895
+      },
+      "writtenOn": "2019-05-30T13:06:26Z",
+      "side": 1,
+      "message": "Typo: Operation",
+      "range": {
+        "startLine": 65,
+        "startChar": 65,
+        "endLine": 65,
+        "endChar": 73
+      },
+      "revId": "228828176ce5d48d5d6c6f679efad4870e6695eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "38327c0c_381e19fc",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/adapter/vnfm/tasks/MonitorVnfmDeleteJobTask.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 3895
+      },
+      "writtenOn": "2019-05-30T13:06:26Z",
+      "side": 1,
+      "message": "Same as previous",
+      "range": {
+        "startLine": 66,
+        "startChar": 65,
+        "endLine": 66,
+        "endChar": 74
+      },
+      "revId": "228828176ce5d48d5d6c6f679efad4870e6695eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
