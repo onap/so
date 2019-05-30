@@ -20,6 +20,10 @@
 
 package org.onap.so.adapters.vnfmadapter.extclients.vnfm;
 
+import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
+import com.google.gson.Gson;
+import java.util.Iterator;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.JSON;
 import org.onap.so.configuration.rest.BasicHttpHeadersProvider;
 import org.onap.so.configuration.rest.HttpHeadersProvider;
 import org.onap.so.rest.service.HttpRestServiceProvider;
@@ -32,8 +36,6 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
-import java.util.Iterator;
-import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
 
 /**
  * Configures the HttpRestServiceProvider for REST call to a VNFM.
@@ -60,7 +62,8 @@ public class VnfmServiceProviderConfiguration {
                 iterator.remove();
             }
         }
-        restTemplate.getMessageConverters().add(new GsonHttpMessageConverter());
+        final Gson gson = new JSON().getGson();
+        restTemplate.getMessageConverters().add(new GsonHttpMessageConverter(gson));
     }
 
 }

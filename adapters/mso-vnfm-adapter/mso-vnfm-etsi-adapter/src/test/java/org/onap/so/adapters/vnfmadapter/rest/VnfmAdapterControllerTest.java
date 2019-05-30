@@ -52,6 +52,7 @@ import org.onap.aai.domain.yang.RelationshipData;
 import org.onap.aai.domain.yang.RelationshipList;
 import org.onap.so.adapters.vnfmadapter.VnfmAdapterApplication;
 import org.onap.so.adapters.vnfmadapter.extclients.SdcPackageProvider;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.JSON;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse2001;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
@@ -115,7 +116,7 @@ public class VnfmAdapterControllerTest {
 
     @Autowired
     VnfmAdapterController controller;
-    Gson gson = new Gson();
+    Gson gson = new JSON().getGson();
 
     @Before
     public void setUp() throws Exception {
