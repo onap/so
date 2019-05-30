@@ -29,7 +29,6 @@ import java.util.UUID;
 import javax.xml.bind.DatatypeConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
@@ -60,7 +59,7 @@ public class CamundaClient extends RequestClient {
 
     @Override
     public HttpResponse post(String camundaReqXML, String requestId, String requestTimeout, String schemaVersion,
-            String serviceInstanceId, String action) throws ClientProtocolException, IOException {
+            String serviceInstanceId, String action) throws IOException {
         HttpPost post = new HttpPost(url);
         logger.debug(CAMUNDA_URL_MESAGE + url);
         String jsonReq = wrapRequest(camundaReqXML, requestId, serviceInstanceId, requestTimeout, schemaVersion);
@@ -83,44 +82,18 @@ public class CamundaClient extends RequestClient {
     private void setupHeaders(HttpPost post) {
         post.addHeader(ONAPLogConstants.Headers.REQUEST_ID, MDC.get(ONAPLogConstants.MDCs.REQUEST_ID));
         post.addHeader(ONAPLogConstants.Headers.INVOCATION_ID, UUID.randomUUID().toString());
-
-        String encryptedCredentials = null;
-        if (props != null) {
-            encryptedCredentials = props.getProperty(CommonConstants.CAMUNDA_AUTH);
-            if (encryptedCredentials != null) {
-                String userCredentials = getEncryptedPropValue(encryptedCredentials, CommonConstants.DEFAULT_BPEL_AUTH,
-                        props.getProperty(CommonConstants.ENCRYPTION_KEY_PROP));
-                if (userCredentials != null) {
-                    post.addHeader(AUTHORIZATION,
-                            BASIC + new String(DatatypeConverter.printBase64Binary(userCredentials.getBytes())));
-                }
-            }
-        }
+        addAuthorizationHeader(post);
     }
 
     @Override
-    public HttpResponse post(String jsonReq) throws ClientProtocolException, IOException {
+    public HttpResponse post(String jsonReq) throws IOException {
         HttpPost post = new HttpPost(url);
         logger.debug(CAMUNDA_URL_MESAGE + url);
 
         StringEntity input = new StringEntity(jsonReq);
         input.setContentType(CommonConstants.CONTENT_TYPE_JSON);
         setupHeaders(post);
-
-        String encryptedCredentials = null;
-        if (props != null) {
-            encryptedCredentials = props.getProperty(CommonConstants.CAMUNDA_AUTH);
-            if (encryptedCredentials != null) {
-                String userCredentials = getEncryptedPropValue(encryptedCredentials, CommonConstants.DEFAULT_BPEL_AUTH,
-                        props.getProperty(CommonConstants.ENCRYPTION_KEY_PROP));
-                if (userCredentials != null) {
-                    post.addHeader(AUTHORIZATION,
-                            BASIC + new String(DatatypeConverter.printBase64Binary(userCredentials.getBytes())));
-                }
-            }
-        }
-
-
+        addAuthorizationHeader(post);
         post.setEntity(input);
         HttpResponse response = client.execute(post);
         logger.debug(CAMUNDA_RESPONSE, response);
@@ -128,7 +101,7 @@ public class CamundaClient extends RequestClient {
         return response;
     }
 
-    public HttpResponse post(RequestClientParameter parameterObject) throws ClientProtocolException, IOException {
+    public HttpResponse post(RequestClientParameter parameterObject) throws IOException {
         HttpPost post = new HttpPost(url);
         logger.debug(CAMUNDA_URL_MESAGE + url);
         String jsonReq = wrapVIDRequest(parameterObject.getRequestId(), parameterObject.isBaseVfModule(),
@@ -143,23 +116,8 @@ public class CamundaClient extends RequestClient {
 
         StringEntity input = new StringEntity(jsonReq);
         input.setContentType(CommonConstants.CONTENT_TYPE_JSON);
-
-
         setupHeaders(post);
-
-        String encryptedCredentials = null;
-        if (props != null) {
-            encryptedCredentials = props.getProperty(CommonConstants.CAMUNDA_AUTH);
-            if (encryptedCredentials != null) {
-                String userCredentials = getEncryptedPropValue(encryptedCredentials, CommonConstants.DEFAULT_BPEL_AUTH,
-                        props.getProperty(CommonConstants.ENCRYPTION_KEY_PROP));
-                if (userCredentials != null) {
-                    post.addHeader(AUTHORIZATION,
-                            BASIC + new String(DatatypeConverter.printBase64Binary(userCredentials.getBytes())));
-                }
-            }
-        }
-
+        addAuthorizationHeader(post);
         post.setEntity(input);
         HttpResponse response = client.execute(post);
         logger.debug(CAMUNDA_RESPONSE, response);
@@ -242,7 +200,6 @@ public class CamundaClient extends RequestClient {
             CamundaInput recipeParamsInput = new CamundaInput();
             CamundaInput instanceGroupIdInput = new CamundaInput();
 
-            // host.setValue(parseURL());
             requestIdInput.setValue(StringUtils.defaultString(requestId));
             isBaseVfModuleInput.setValue(isBaseVfModule);
             recipeTimeoutInput.setValue(recipeTimeout);
@@ -311,5 +268,20 @@ public class CamundaClient extends RequestClient {
             }
         }
         return host;
+    }
+
+    private void addAuthorizationHeader(HttpPost post) {
+        String encryptedCredentials;
+        if (props != null) {
+            encryptedCredentials = props.getProperty(CommonConstants.CAMUNDA_AUTH);
+            if (encryptedCredentials != null) {
+                String userCredentials = getEncryptedPropValue(encryptedCredentials, CommonConstants.DEFAULT_BPEL_AUTH,
+                        props.getProperty(CommonConstants.ENCRYPTION_KEY_PROP));
+                if (userCredentials != null) {
+                    post.addHeader(AUTHORIZATION,
+                            BASIC + new String(DatatypeConverter.printBase64Binary(userCredentials.getBytes())));
+                }
+            }
+        }
     }
 }
