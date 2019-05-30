@@ -4,6 +4,9 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,9 +23,7 @@
 
 package org.onap.so.apihandler.common;
 
-
-
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -34,7 +35,7 @@ public class RequestClientFactory {
     private Environment env;
 
     // based on URI, returns BPEL, CamundaTask or Camunda client
-    public RequestClient getRequestClient(String orchestrationURI) throws IllegalStateException {
+    public RequestClient getRequestClient(String orchestrationURI) {
         RequestClient retClient;
 
         String url;
@@ -45,7 +46,7 @@ public class RequestClientFactory {
             url = env.getProperty(CommonConstants.CAMUNDA_URL) + orchestrationURI;
             retClient = new CamundaClient();
         }
-        retClient.setClient(new DefaultHttpClient());
+        retClient.setClient(HttpClientBuilder.create().build());
         retClient.setProps(env);
         retClient.setUrl(url);
         return retClient;
