@@ -21,6 +21,7 @@
  */
 package org.onap.so.bpmn.common.recipe;
 
+import java.io.Serializable;
 import org.onap.so.bpmn.core.domain.ModelInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -43,7 +44,7 @@ import org.slf4j.LoggerFactory;
         "operationId", "serviceModelInfo", "resourceModelInfo", "resourceInstancenUuid", "resourceParameters",
         "operationType"})
 @JsonRootName("variables")
-public class ResourceInput {
+public class ResourceInput implements Serializable {
 
     private static Logger logger = LoggerFactory.getLogger(ResourceInput.class);
 
