@@ -93,6 +93,10 @@ public class JobManager {
 
         logger.debug("Job Id: " + jobId + ", operationId: " + operation.getId() + ", operation details: " + operation);
 
+        if (operation.getOperationState() == null) {
+            return response.operationStatusRetrievalStatus(OperationStatusRetrievalStatusEnum.WAITING_FOR_STATUS);
+        }
+
         response.setOperationStatusRetrievalStatus(OperationStatusRetrievalStatusEnum.STATUS_FOUND);
         response.setId(operation.getId());
         response.setOperation(OperationEnum.fromValue(operation.getOperation().getValue()));
