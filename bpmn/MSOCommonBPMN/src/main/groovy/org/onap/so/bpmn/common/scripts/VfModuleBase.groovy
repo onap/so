@@ -519,12 +519,14 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
                 String vnfKey = entry.getKey()
                 String vnfValue = entry.getValue()
                 paramsMap.put("$vnfKey", "$vnfValue")
-                if (pcnt > 0) {
-                    userDirectivesBuilder.append(",")
+                if (!"oof_directives".equals(vnfKey)) {
+                    if (pcnt > 0) {
+                        userDirectivesBuilder.append(",")
+                    }
+                    pcnt++
+                    userDirectivesBuilder.append("{\"attribute_name\":\"${vnfKey}\",")
+                    userDirectivesBuilder.append("\"attribute_value\":\"${vnfValue}\"}")
                 }
-                pcnt++
-                userDirectivesBuilder.append("{\"attribute_name\":\"${vnfKey}\",")
-                userDirectivesBuilder.append("\"attribute_value\":\"${vnfValue}\"}")
             }
             if (pcnt > 0) {
                 userDirectives = userDirectivesBuilder.append("]}").toString()
