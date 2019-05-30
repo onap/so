@@ -25,7 +25,6 @@ package org.onap.so.apihandler.common;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.onap.so.utils.CryptoUtils;
 import org.slf4j.Logger;
@@ -70,21 +69,12 @@ public abstract class RequestClient {
     public abstract HttpResponse post(String request, String requestId, String requestTimeout, String schemaVersion,
             String serviceInstanceId, String action) throws IOException;
 
-    public abstract HttpResponse post(String request) throws ClientProtocolException, IOException;
+    public abstract HttpResponse post(String request) throws IOException;
 
     public abstract HttpResponse post(RequestClientParameter parameterObject)
-            throws ClientProtocolException, IOException;
+            throws IOException;
 
     public abstract HttpResponse get() throws IOException;
-
-    protected String decryptPropValue(String prop, String defaultValue, String encryptionKey) {
-        try {
-            return CryptoUtils.decrypt(prop, encryptionKey);
-        } catch (GeneralSecurityException e) {
-            logger.debug("Security exception", e);
-        }
-        return defaultValue;
-    }
 
     protected String getEncryptedPropValue(String prop, String defaultValue, String encryptionKey) {
         try {
