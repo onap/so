@@ -232,24 +232,27 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                 String incomingRequest = resourceInputObj.getRequestsInputs()
                 String serviceParameters = JsonUtils.getJsonValue(incomingRequest, "service.parameters")
                 String requestInputs = JsonUtils.getJsonValue(serviceParameters, "requestInputs")
-                String cvlan = "10"
-                String svlan = "100"
-                String remoteId = "AC9.0234.0337"
+                String cvlan = jsonUtil.getJsonValue(serInput,
+                        "service.parameters.requestInputs.cvlan")
+                String svlan = jsonUtil.getJsonValue(serInput,
+                        "service.parameters.requestInputs.svlan")
+                String remoteId = jsonUtil.getJsonValue(serInput,
+                        "service.parameters.requestInputs.edgeinternetprofile_ip_remote_id")
                 String manufacturer = jsonUtil.getJsonValue(serInput,
                         "service.parameters.requestInputs.ont_ont_manufacturer")
                 String ontsn = jsonUtil.getJsonValue(serInput,
                         "service.parameters.requestInputs.ont_ont_serial_num")
 
-                String uResourceInput = jsonUtil.addJsonValue(resourceInput, "requestInputs.CVLAN", cvlan)
-                uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.SVLAN", svlan)
+                String uResourceInput = jsonUtil.addJsonValue(resourceInput, "requestInputs.c_vlan", cvlan)
+                uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.s_vlan", svlan)
                 uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.remote_id", remoteId)
                 uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.manufacturer", manufacturer)
                 uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.ONTSN", ontsn)
 
-                msoLogger.debug("old resource input:" + resourceInputObj.toString())
+                logger.debug("old resource input:" + resourceInputObj.toString())
                 resourceInputObj.setResourceParameters(uResourceInput)
                 execution.setVariable(Prefix + "resourceInput", resourceInputObj.toString())
-                msoLogger.debug("new resource Input :" + resourceInputObj.toString())
+                logger.debug("new resource Input :" + resourceInputObj.toString())
                 break
 
             case ~/[\w\s\W]*InternetProfile[\w\s\W]*/ :
@@ -260,23 +263,38 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                 String requestInputs = JsonUtils.getJsonValue(serviceParameters, "requestInputs")
                 JSONObject inputParameters = new JSONObject(requestInputs)
 
-                String cvlan = "100"
-                String svlan = "1000"
+                String cvlan = jsonUtil.getJsonValue(serInput,
+                        "service.parameters.requestInputs.cvlan")
+                String svlan = jsonUtil.getJsonValue(serInput,
+                        "service.parameters.requestInputs.svlan")
                 String manufacturer = jsonUtil.getJsonValue(serInput,
                         "service.parameters.requestInputs.ont_ont_manufacturer")
-                String remoteId = "AC9.0234.0337"
+                String remoteId = jsonUtil.getJsonValue(serInput,
+                        "service.parameters.requestInputs.edgeinternetprofile_ip_remote_id")
                 String ontsn = jsonUtil.getJsonValue(serInput,
                         "service.parameters.requestInputs.ont_ont_serial_num")
+                String serviceType = jsonUtil.getJsonValue(serInput,
+                        "service.parameters.requestInputs.edgeinternetprofile_ip_service_type")
+                String macAddr = jsonUtil.getJsonValue(serInput,
+                        "service.parameters.requestInputs.edgeinternetprofile_ip_rg_mac_addr")
+                String upStream = jsonUtil.getJsonValue(serInput,
+                        "service.parameters.requestInputs.edgeinternetprofile_ip_upstream_speed")
+                String downStream = jsonUtil.getJsonValue(serInput,
+                        "service.parameters.requestInputs.edgeinternetprofile_ip_downstream_speed")
 
                 String uResourceInput = jsonUtil.addJsonValue(resourceInput, "requestInputs.c_vlan", cvlan)
                 uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.s_vlan", svlan)
                 uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.manufacturer", manufacturer)
                 uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.ip_remote_id", remoteId)
                 uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.ont_sn", ontsn)
-                msoLogger.debug("old resource input:" + resourceInputObj.toString())
+                uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.ip_service_type", serviceType)
+                uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.ip_rg_mac_addr", macAddr)
+                uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.ip_upstream_speed", upStream)
+                uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.ip_downstream_speed", downStream)
+                logger.debug("old resource input:" + resourceInputObj.toString())
                 resourceInputObj.setResourceParameters(uResourceInput)
                 execution.setVariable(Prefix + "resourceInput", resourceInputObj.toString())
-                msoLogger.debug("new resource Input :" + resourceInputObj.toString())
+                logger.debug("new resource Input :" + resourceInputObj.toString())
                 break
 
 
@@ -308,13 +326,13 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                 def vpnName = StringUtils.containsIgnoreCase(modelName, "sotnvpnattachment") ? "sotnvpnattachmentvf_sotncondition_sotnVpnName" : "sdwanvpnattachmentvf_sdwancondition_sdwanVpnName"
                 String parentServiceName = jsonUtil.getJsonValueForKey(resourceInputObj.getRequestsInputs(), vpnName)
 
-				AAIResourcesClient client = new AAIResourcesClient()
-				AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.SERVICE_INSTANCE, customer, serviceType).queryParam("service-instance-name", parentServiceName)
-				ServiceInstances sis = client.get(uri).asBean(ServiceInstances.class).get()
-				ServiceInstance si = sis.getServiceInstance().get(0)
+                AAIResourcesClient client = new AAIResourcesClient()
+                AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.SERVICE_INSTANCE, customer, serviceType).queryParam("service-instance-name", parentServiceName)
+                ServiceInstances sis = client.get(uri).asBean(ServiceInstances.class).get()
+                ServiceInstance si = sis.getServiceInstance().get(0)
 
-				def parentServiceInstanceId = si.getServiceInstanceId()
-				execution.setVariable("parentServiceInstanceId", parentServiceInstanceId)
+                def parentServiceInstanceId = si.getServiceInstanceId()
+                execution.setVariable("parentServiceInstanceId", parentServiceInstanceId)
 
                 break
             default:
@@ -646,7 +664,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                 val = response."response-data"."RequestData"."output"."connection-attachment-response-information"."instance-id"
                 break
 
-            // for SDWANConnectivity and SOTNConnectivity and default:
+        // for SDWANConnectivity and SOTNConnectivity and default:
             default:
                 val = response."response-data"."RequestData"."output"."network-response-information"."instance-id"
                 break
