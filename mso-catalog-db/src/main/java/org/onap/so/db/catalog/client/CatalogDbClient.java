@@ -73,6 +73,7 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 import uk.co.blackpepper.bowman.Client;
 import uk.co.blackpepper.bowman.ClientFactory;
 import uk.co.blackpepper.bowman.Configuration;
@@ -639,10 +640,10 @@ public class CatalogDbClient {
                 "Get Rainy Day Status - Flow Name {}, Service Type: {} , vnfType {} , errorCode {}, workStep {}, errorMessage {}",
                 flowName, serviceType, vnfType, errorCode, workStep, errorMessage);
         return this.getSingleResource(rainyDayHandlerStatusClient,
-                getUri(UriBuilder.fromUri(endpoint + RAINY_DAY_HANDLER_MACRO + SEARCH + findRainyDayHandler)
+                UriComponentsBuilder.fromUriString(endpoint + RAINY_DAY_HANDLER_MACRO + SEARCH + findRainyDayHandler)
                         .queryParam(FLOW_NAME, flowName).queryParam(SERVICE_TYPE, serviceType)
                         .queryParam(VNF_TYPE, vnfType).queryParam(ERROR_CODE, errorCode).queryParam(WORK_STEP, workStep)
-                        .queryParam(ERROR_MESSAGE, errorMessage).build().toString()));
+                        .queryParam(ERROR_MESSAGE, errorMessage).build().encode().toUri());
     }
 
     public ServiceRecipe getFirstByServiceModelUUIDAndAction(String modelUUID, String action) {
@@ -879,5 +880,13 @@ public class CatalogDbClient {
     public List<Workflow> findWorkflowByModelUUID(String vnfResourceModelUUID) {
         return this.getMultipleResources(workflowClient, getUri(UriBuilder.fromUri(findWorkflowByModelUUID)
                 .queryParam(VNF_RESOURCE_MODEL_UUID, vnfResourceModelUUID).build().toString()));
+    }
+
+    public String getEndpoint() {
+        return endpoint;
+    }
+
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
     }
 }

@@ -77,13 +77,25 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
     @Before
     public void initialize() {
         client.wiremockPort = String.valueOf(port);
+        client.setEndpoint(getEndpoint(port));
     }
 
+    protected String getEndpoint(int port) {
+        return "http://localhost:" + port;
+    }
 
     @Test
     public void testGetRainyDayHandler_Regex() {
         RainyDayHandlerStatus rainyDayHandlerStatus = client.getRainyDayHandlerStatus("AssignServiceInstanceBB", "*",
                 "*", "*", "*", "The Flavor ID (nd.c6r16d20) could not be found.");
+        Assert.assertEquals("Rollback", rainyDayHandlerStatus.getPolicy());
+    }
+
+    @Test
+    public void testGetRainyDayHandler__Encoding_Regex() {
+        RainyDayHandlerStatus rainyDayHandlerStatus = client.getRainyDayHandlerStatus("AssignServiceInstanceBB", "*",
+                "*", "*", "*",
+                "resources.lba_0_dmz_vmi_0: Unknown id: Error: oper 1 url /fqname-to-id body {\"fq_name\": [\"zrdm6bvota05-dmz_sec_group\"], \"type\": \"security-group\"} response Name ['zrdm6bvota05-dmz_sec_group'] not found");
         Assert.assertEquals("Rollback", rainyDayHandlerStatus.getPolicy());
     }
 
