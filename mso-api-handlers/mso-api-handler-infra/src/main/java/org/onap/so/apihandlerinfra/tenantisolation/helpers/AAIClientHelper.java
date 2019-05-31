@@ -34,8 +34,6 @@ import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.graphinventory.entities.uri.Depth;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 
@@ -63,7 +61,7 @@ public class AAIClientHelper {
      * Update managing ECOMP Environment Info from A&AI
      * 
      * @param id = operationalEnvironmentId
-     * @param AAIOperationalEnvironment object
+     * @param aaiRequest object
      */
     public void updateAaiOperationalEnvironment(String id, OperationalEnvironment aaiRequest) {
 
@@ -75,7 +73,7 @@ public class AAIClientHelper {
 
 
     public void updateAaiOperationalEnvironment(String operationalEnvironmentId, Map<String, String> payload)
-            throws Exception {
+            throws AAIClientCallFailed {
         try {
             AAIResourceUri uri =
                     AAIUriFactory.createResourceUri(AAIObjectType.OPERATIONAL_ENVIRONMENT, operationalEnvironmentId);
@@ -90,7 +88,7 @@ public class AAIClientHelper {
     /**
      * Create an Operational Environment object in A&AI
      * 
-     * @param AAIOperationalEnvironment object
+     * @param operationalEnvironment object
      */
     public void createOperationalEnvironment(OperationalEnvironment operationalEnvironment) {
 
