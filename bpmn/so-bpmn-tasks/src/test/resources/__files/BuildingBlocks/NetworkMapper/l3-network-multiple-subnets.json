@@ -1,0 +1,53 @@
+{
+      "network-id" : "aNetworkId",
+      "cascaded" : false,
+      "cloud-params" : { },
+      "network-name" : "aNetworkName",
+      "neutron-network-id" : null,
+      "network-type" : "aNetworkType",
+      "network-technology" : "aNetworkTechnology",
+      "network-role" : "",
+      "is-bound-to-vpn" : false,
+      "service-id" : "aServiceId",
+      "network-role-instance" : 0,
+      "orchestration-status" : "ACTIVE",
+      "heat-stack-id" : null,
+      "contrail-network-fqdn" : null,
+      "network-policies" : [ ],
+      "contrail-network-route-table-references" : [ ],
+      "widget-model-id" : null,
+      "widget-model-version" : null,
+      "physical-network-name" : "pNetworkName",
+      "is-provider-network" : false,
+      "is-shared-network" : false,
+      "is-external-network" : false,
+      "self-link" : "/",
+      "operational-status" : null,
+      "subnets" : [ {
+        "subnet-id" : "subnetId1",
+        "subnet-name" : "aSubnetName1",
+        "neutron-subnet-id" : null,
+        "gateway-address" : "192.168.1.1",
+        "network-start-address" : "192.168.1.2",
+        "cidr-mask" : "10",
+        "ip-version" : "4",
+        "orchestration-status" : "ACTIVE",
+        "dhcp-enabled" : true,
+        "dhcp-start" : "192.168.1.2",
+        "dhcp-end" : "192.168.1.16",
+        "subnet-role" : "",
+        "ip-assignment-direction" : "true",
+        "subnet-sequence" : null,
+        "host-routes": [{
+			"host-route-id": "hrId1",
+			"route-prefix": "192.168.0.0/16",
+			"next-hop": "192.168.1.1",
+			"next-hop-type": null
+			}, {
+			"host-route-id": "hrId2",
+			"route-prefix": "192.168.1.5/16",
+			"next-hop": "192.168.1.1",
+			"next-hop-type": null
+			}]
+      }]
+}

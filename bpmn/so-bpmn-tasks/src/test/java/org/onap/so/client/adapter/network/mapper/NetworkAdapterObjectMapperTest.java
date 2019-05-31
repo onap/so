@@ -21,8 +21,7 @@ package org.onap.so.client.adapter.network.mapper;
 
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.isA;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
@@ -39,7 +38,6 @@ import org.onap.so.adapters.nwrest.ContrailNetwork;
 import org.onap.so.adapters.nwrest.CreateNetworkRequest;
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
 import org.onap.so.adapters.nwrest.DeleteNetworkRequest;
-import org.onap.so.adapters.nwrest.NetworkTechnology;
 import org.onap.so.adapters.nwrest.ProviderVlanNetwork;
 import org.onap.so.adapters.nwrest.RollbackNetworkRequest;
 import org.onap.so.adapters.nwrest.UpdateNetworkRequest;
@@ -384,5 +382,20 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup {
         // ignoring dynamic fields and networkParams that throws parsing exception on json file load
         assertThat(createNetworkRequest, sameBeanAs(expectedCreateNetworkRequest).ignoring("messageId")
                 .ignoring("msoRequest.requestId").ignoring("networkParams"));
+    }
+
+    @Test
+    public void buildOpenstackSubnetListMultipleHostRoutesTest() throws Exception {
+
+        ObjectMapper omapper = new ObjectMapper();
+        String l3NetworkJson =
+                new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "l3-network-multiple-subnets.json")));
+        L3Network l3Network = omapper.readValue(l3NetworkJson, L3Network.class);
+
+        List<org.onap.so.openstack.beans.Subnet> subnets =
+                SPY_networkAdapterObjectMapper.buildOpenstackSubnetList(l3Network);
+        assertEquals("192.168.0.0/16", subnets.get(0).getHostRoutes().get(0).getPrefix());
+        assertEquals("192.168.1.5/16", subnets.get(0).getHostRoutes().get(1).getPrefix());
+
     }
 }

@@ -34,7 +34,6 @@ import org.onap.so.adapters.nwrest.ContrailNetwork;
 import org.onap.so.adapters.nwrest.CreateNetworkRequest;
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
 import org.onap.so.adapters.nwrest.DeleteNetworkRequest;
-import org.onap.so.adapters.nwrest.NetworkTechnology;
 import org.onap.so.adapters.nwrest.ProviderVlanNetwork;
 import org.onap.so.adapters.nwrest.RollbackNetworkRequest;
 import org.onap.so.adapters.nwrest.UpdateNetworkRequest;
@@ -261,7 +260,7 @@ public class NetworkAdapterObjectMapper {
      * @param L3Network
      * @return List<org.onap.so.openstack.beans.Subnet>
      */
-    private List<Subnet> buildOpenstackSubnetList(L3Network l3Network) {
+    protected List<Subnet> buildOpenstackSubnetList(L3Network l3Network) {
 
         List<org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet> subnets = l3Network.getSubnets();
         List<org.onap.so.openstack.beans.Subnet> subnetList = new ArrayList<org.onap.so.openstack.beans.Subnet>();
@@ -292,9 +291,10 @@ public class NetworkAdapterObjectMapper {
                         .setCidr(subnet.getNetworkStartAddress().concat(FORWARD_SLASH).concat(subnet.getCidrMask()));
             List<org.onap.so.bpmn.servicedecomposition.bbobjects.HostRoute> hostRouteList = subnet.getHostRoutes();
             List<org.onap.so.openstack.beans.HostRoute> openstackHostRouteList = new ArrayList<>();
-            org.onap.so.openstack.beans.HostRoute openstackHostRoute = new org.onap.so.openstack.beans.HostRoute();
+            org.onap.so.openstack.beans.HostRoute openstackHostRoute = null;
             // TODO only 2 fields available on openstack object. Confirm it is sufficient or add as needed
             for (org.onap.so.bpmn.servicedecomposition.bbobjects.HostRoute hostRoute : hostRouteList) {
+                openstackHostRoute = new org.onap.so.openstack.beans.HostRoute();
                 openstackHostRoute.setNextHop(hostRoute.getNextHop());
                 openstackHostRoute.setPrefix(hostRoute.getRoutePrefix());
                 // add host route to the list
