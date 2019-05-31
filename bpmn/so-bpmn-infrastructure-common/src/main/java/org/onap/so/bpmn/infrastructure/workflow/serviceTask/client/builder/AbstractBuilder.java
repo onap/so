@@ -38,31 +38,23 @@ public abstract class AbstractBuilder<I, O> {
     public static final String RESOURCE_TYPE = "resourceType";
 
     public enum RequestAction {
-        CREATE_NETWORK_INSTANCE(0, "CreateNetworkInstance"), ACTIVATE_NETWORK_INSTANCE(1,
-                "ActivateNetworkInstance"), CREATE_SERVICE_INSTANCE(2,
-                        "CreateServiceInstance"), DELETE_SERVICE_INSTANCE(3,
-                                "DeleteServiceInstance"), DELETE_NETWORK_INSTANCE(4,
-                                        "DeleteNetworkInstance"), CREATE_VNF_INSTANCE(5,
-                                                "CreateVnfInstance"), ACTIVATE_VNF_INSTANCE(6,
-                                                        "ActivateVnfInstance"), DELETE_VNF_INSTANCE(7,
-                                                                "DeleteVnfInstance"), CREATE_VF_MODULE_INSTANCE(8,
-                                                                        "CreateVfModuleInstance"), ACTIVATE_VF_MODULE_INSTANCE(
-                                                                                9,
-                                                                                "ActivateVfModuleInstance"), DELETE_VF_MODULE_INSTANCE(
-                                                                                        10,
-                                                                                        "DeleteVfModuleInstance"), CREATE_CONTRAIL_ROUTE_INSTANCE(
-                                                                                                11,
-                                                                                                "CreateContrailRouteInstance"), DELETE_CONTRAIL_ROUTE_INSTANCE(
-                                                                                                        12,
-                                                                                                        "DeleteContrailRouteInstance"), CREATE_SECURITY_ZONE_INSTANCE(
-                                                                                                                13,
-                                                                                                                "CreateSecurityZoneInstance"), DELETE_SECURITY_ZONE_INSTANCE(
-                                                                                                                        14,
-                                                                                                                        "DeleteSecurityZoneInstance"), ACTIVATE_DCI_NETWORK_INSTANCE(
-                                                                                                                                15,
-                                                                                                                                "ActivateDCINetworkInstance"), DEACTIVATE_DCI_NETWORK_INSTANCE(
-                                                                                                                                        16,
-                                                                                                                                        "DeActivateDCINetworkInstance");
+        CREATE_NETWORK_INSTANCE(0, "CreateNetworkInstance"),
+        ACTIVATE_NETWORK_INSTANCE(1, "ActivateNetworkInstance"),
+        CREATE_SERVICE_INSTANCE(2, "CreateServiceInstance"),
+        DELETE_SERVICE_INSTANCE(3, "DeleteServiceInstance"),
+        DELETE_NETWORK_INSTANCE(4, "DeleteNetworkInstance"),
+        CREATE_VNF_INSTANCE(5, "CreateVnfInstance"),
+        ACTIVATE_VNF_INSTANCE(6, "ActivateVnfInstance"),
+        DELETE_VNF_INSTANCE(7, "DeleteVnfInstance"),
+        CREATE_VF_MODULE_INSTANCE(8, "CreateVfModuleInstance"),
+        ACTIVATE_VF_MODULE_INSTANCE(9, "ActivateVfModuleInstance"),
+        DELETE_VF_MODULE_INSTANCE(10, "DeleteVfModuleInstance"),
+        CREATE_CONTRAIL_ROUTE_INSTANCE(11, "CreateContrailRouteInstance"),
+        DELETE_CONTRAIL_ROUTE_INSTANCE(12, "DeleteContrailRouteInstance"),
+        CREATE_SECURITY_ZONE_INSTANCE(13, "CreateSecurityZoneInstance"),
+        DELETE_SECURITY_ZONE_INSTANCE(14, "DeleteSecurityZoneInstance"),
+        ACTIVATE_DCI_NETWORK_INSTANCE(15, "ActivateDCINetworkInstance"),
+        DEACTIVATE_DCI_NETWORK_INSTANCE(16, "DeActivateDCINetworkInstance");
 
         String name;
         int value;
@@ -82,9 +74,16 @@ public abstract class AbstractBuilder<I, O> {
     }
 
     public enum SvcAction {
-        RESERVE(0, "reserve"), ASSIGN(1, "assign"), ACTIVATE(2, "activate"), DELETE(3, "delete"), CHANGEASSIGN(4,
-                "changeassign"), CHANGEDELETE(5, "changedelete"), ROLLBACK(6,
-                        "rollback"), DEACTIVATE(7, "deactivate"), UNASSIGN(8, "unassign"), CREATE(9, "create");
+        RESERVE(0, "reserve"),
+        ASSIGN(1, "assign"),
+        ACTIVATE(2, "activate"),
+        DELETE(3, "delete"),
+        CHANGEASSIGN(4, "changeassign"),
+        CHANGEDELETE(5, "changedelete"),
+        ROLLBACK(6, "rollback"),
+        DEACTIVATE(7, "deactivate"),
+        UNASSIGN(8, "unassign"),
+        CREATE(9, "create");
 
         String name;
         int value;

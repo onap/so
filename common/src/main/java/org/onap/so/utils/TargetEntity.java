@@ -23,7 +23,20 @@ package org.onap.so.utils;
 import java.util.EnumSet;
 
 public enum TargetEntity {
-    OPENSTACK_ADAPTER, BPMN, GRM, AAI, DMAAP, POLICY, CATALOG_DB, REQUEST_DB, VNF_ADAPTER, SDNC_ADAPTER, SNIRO, SDC, EXTERNAL, MULTICLOUD;
+    OPENSTACK_ADAPTER,
+    BPMN,
+    GRM,
+    AAI,
+    DMAAP,
+    POLICY,
+    CATALOG_DB,
+    REQUEST_DB,
+    VNF_ADAPTER,
+    SDNC_ADAPTER,
+    SNIRO,
+    SDC,
+    EXTERNAL,
+    MULTICLOUD;
 
     private static final String PREFIX = "SO";
 
