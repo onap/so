@@ -338,6 +338,13 @@ public class RequestsDbClient {
         restTemplate.postForLocation(uri, entity);
     }
 
+    public void updateRequestProcessingData(RequestProcessingData requestProcessingData) {
+        HttpHeaders headers = getHttpHeaders();
+        URI uri = getUri(requestProcessingDataURI);
+        HttpEntity<RequestProcessingData> entity = new HttpEntity<>(requestProcessingData, headers);
+        restTemplate.put(uri, entity);
+    }
+
     public List<RequestProcessingData> getRequestProcessingDataBySoRequestId(String soRequestId) {
         return this
                 .getRequestProcessingData(getUri(UriBuilder.fromUri(endpoint + findBySoRequestIdOrderByGroupingIdDesc)

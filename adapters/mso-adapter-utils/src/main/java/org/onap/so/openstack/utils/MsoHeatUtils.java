@@ -350,7 +350,13 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
             cloudReq.setCloudIdentifier(stackName);
             cloudReq.setRequestBody(stackRequest);
             cloudReq.setRequestId(requestId);
-            foundRequest.getCloudApiRequests().add(cloudReq);
+            CloudApiRequests foundCloudReq = foundRequest.getCloudApiRequests().stream()
+                    .filter(cloudReqToFind -> stackName.equals(cloudReq.getCloudIdentifier())).findAny().orElse(null);
+            if (foundCloudReq != null) {
+                foundCloudReq.setRequestBody(stackRequest);
+            } else {
+                foundRequest.getCloudApiRequests().add(cloudReq);
+            }
             requestDBClient.updateInfraActiveRequests(foundRequest);
         } catch (Exception e) {
             logger.error("Error updating in flight request with Openstack Create Request", e);
