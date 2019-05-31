@@ -47,6 +47,8 @@ import org.onap.so.logger.HttpHeadersConstants;
 import org.onap.so.logger.LogConstants;
 import org.onap.so.logger.MdcConstants;
 import org.onap.so.logger.MessageEnum;
+import org.onap.so.serviceinstancebeans.ModelInfo;
+import org.onap.so.serviceinstancebeans.ModelType;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,6 +76,8 @@ public class ResumeOrchestrationRequest {
     @Autowired
     private RequestsDbClient requestsDbClient;
 
+    @Autowired
+    private MsoRequest msoRequest;
 
     @POST
     @Path("/{version:[vV][7]}/requests/{requestId}/resume")
@@ -128,23 +132,25 @@ public class ResumeOrchestrationRequest {
         String requestBody = infraActiveRequest.getRequestBody();
         Action action = Action.valueOf(infraActiveRequest.getRequestAction());
         String requestId = currentActiveRequest.getRequestId();
-        String serviceInstanceName = infraActiveRequest.getServiceInstanceName();
         String requestScope = infraActiveRequest.getRequestScope();
-        String serviceInstanceId = infraActiveRequest.getServiceInstanceId();
+        String instanceName = getInstanceName(infraActiveRequest, requestScope, currentActiveRequest);
+        HashMap<String, String> instanceIdMap = setInstanceIdMap(infraActiveRequest, requestScope);
 
-        checkForInProgressRequest(currentActiveRequest, serviceInstanceId, requestScope, serviceInstanceName, action);
+        checkForInProgressRequest(currentActiveRequest, instanceIdMap, requestScope, instanceName, action);
 
         ServiceInstancesRequest sir = null;
         sir = requestHandlerUtils.convertJsonToServiceInstanceRequest(requestBody, action, requestId, requestUri);
         Boolean aLaCarte = sir.getRequestDetails().getRequestParameters().getALaCarte();
-        if (aLaCarte == null) {
-            aLaCarte = false;
-        }
 
         String pnfCorrelationId = serviceInstances.getPnfCorrelationId(sir);
-        RecipeLookupResult recipeLookupResult = serviceRecipeLookup(currentActiveRequest, sir, action, aLaCarte);
+        RecipeLookupResult recipeLookupResult = serviceInstances.getServiceInstanceOrchestrationURI(sir, action,
+                msoRequest.getAlacarteFlag(sir), currentActiveRequest);
 
         requestDbSave(currentActiveRequest);
+
+        if (aLaCarte == null) {
+            aLaCarte = setALaCarteFlagIfNull(requestScope, action);
+        }
 
         RequestClientParameter requestClientParameter = setRequestClientParameter(recipeLookupResult, version,
                 infraActiveRequest, currentActiveRequest, pnfCorrelationId, aLaCarte, sir);
@@ -153,40 +159,60 @@ public class ResumeOrchestrationRequest {
                 recipeLookupResult.getOrchestrationURI(), requestScope);
     }
 
-    protected void checkForInProgressRequest(InfraActiveRequests currentActiveRequest, String serviceInstanceId,
-            String requestScope, String serviceInstanceName, Action action) throws ApiException {
-        boolean inProgress = false;
+    protected Boolean setALaCarteFlagIfNull(String requestScope, Action action) {
+        Boolean aLaCarteFlag;
+        if (!requestScope.equalsIgnoreCase(ModelType.service.name()) && action != Action.recreateInstance) {
+            aLaCarteFlag = true;
+        } else {
+            aLaCarteFlag = false;
+        }
+        return aLaCarteFlag;
+    }
+
+    protected HashMap<String, String> setInstanceIdMap(InfraActiveRequests infraActiveRequest, String requestScope) {
         HashMap<String, String> instanceIdMap = new HashMap<>();
-        instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-        InfraActiveRequests requestInProgress = requestHandlerUtils.duplicateCheck(action, instanceIdMap,
-                serviceInstanceName, requestScope, currentActiveRequest);
+        ModelType type;
+        try {
+            type = ModelType.valueOf(requestScope);
+            instanceIdMap.put(type.name() + "InstanceId", type.getId(infraActiveRequest));
+        } catch (IllegalArgumentException e) {
+            logger.error("requestScope \"{}\" does not match a ModelType enum.", requestScope);
+        }
+        return instanceIdMap;
+    }
+
+    protected String getInstanceName(InfraActiveRequests infraActiveRequest, String requestScope,
+            InfraActiveRequests currentActiveRequest) throws ValidateException, RequestDbFailureException {
+        ModelType type;
+        String instanceName = "";
+        try {
+            type = ModelType.valueOf(requestScope);
+            instanceName = type.getName(infraActiveRequest);
+        } catch (IllegalArgumentException e) {
+            logger.error("requestScope \"{}\" does not match a ModelType enum.", requestScope);
+            ValidateException validateException = new ValidateException.Builder(
+                    "requestScope: \"" + requestScope + "\" from request: " + infraActiveRequest.getRequestId()
+                            + " does not match a ModelType enum.",
+                    HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e).build();
+            requestHandlerUtils.updateStatus(currentActiveRequest, Status.FAILED, validateException.getMessage());
+            throw validateException;
+        }
+        return instanceName;
+    }
+
+    protected void checkForInProgressRequest(InfraActiveRequests currentActiveRequest,
+            HashMap<String, String> instanceIdMap, String requestScope, String instanceName, Action action)
+            throws ApiException {
+        boolean inProgress = false;
+        InfraActiveRequests requestInProgress = requestHandlerUtils.duplicateCheck(action, instanceIdMap, instanceName,
+                requestScope, currentActiveRequest);
         if (requestInProgress != null) {
             inProgress = requestHandlerUtils.camundaHistoryCheck(requestInProgress, currentActiveRequest);
         }
         if (inProgress) {
-            requestHandlerUtils.buildErrorOnDuplicateRecord(currentActiveRequest, action, instanceIdMap,
-                    serviceInstanceName, requestScope, requestInProgress);
+            requestHandlerUtils.buildErrorOnDuplicateRecord(currentActiveRequest, action, instanceIdMap, instanceName,
+                    requestScope, requestInProgress);
         }
-    }
-
-    protected RecipeLookupResult serviceRecipeLookup(InfraActiveRequests currentActiveRequest,
-            ServiceInstancesRequest sir, Action action, Boolean aLaCarte)
-            throws ValidateException, RequestDbFailureException {
-        RecipeLookupResult recipeLookupResult = null;
-        try {
-            recipeLookupResult = serviceInstances.getServiceURI(sir, action, aLaCarte);
-        } catch (IOException e) {
-            logger.error("IOException while performing service recipe lookup", e);
-            ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
-            ValidateException validateException =
-                    new ValidateException.Builder(e.getMessage(), HttpStatus.SC_BAD_REQUEST,
-                            ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
-            requestHandlerUtils.updateStatus(currentActiveRequest, Status.FAILED, validateException.getMessage());
-            throw validateException;
-        }
-        return recipeLookupResult;
     }
 
     protected void requestDbSave(InfraActiveRequests currentActiveRequest) throws RequestDbFailureException {
@@ -204,23 +230,37 @@ public class ResumeOrchestrationRequest {
 
     protected RequestClientParameter setRequestClientParameter(RecipeLookupResult recipeLookupResult, String version,
             InfraActiveRequests infraActiveRequest, InfraActiveRequests currentActiveRequest, String pnfCorrelationId,
-            Boolean aLaCarte, ServiceInstancesRequest sir) throws ValidateException {
+            Boolean aLaCarte, ServiceInstancesRequest sir) throws ApiException {
         RequestClientParameter requestClientParameter = null;
+        Action action = Action.valueOf(infraActiveRequest.getRequestAction());
+        ModelInfo modelInfo = sir.getRequestDetails().getModelInfo();
+
+        Boolean isBaseVfModule = false;
+        if (requestHandlerUtils.getModelType(action, modelInfo).equals(ModelType.vfModule)) {
+            isBaseVfModule = requestHandlerUtils.getIsBaseVfModule(modelInfo, action, infraActiveRequest.getVnfType(),
+                    msoRequest.getSDCServiceModelVersion(sir), currentActiveRequest);
+        }
+
         try {
-            requestClientParameter = new RequestClientParameter.Builder()
-                    .setRequestId(currentActiveRequest.getRequestId())
-                    .setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
-                    .setRequestAction(infraActiveRequest.getRequestAction())
-                    .setServiceInstanceId(infraActiveRequest.getServiceInstanceId())
-                    .setPnfCorrelationId(pnfCorrelationId).setVnfId(infraActiveRequest.getVnfId())
-                    .setVfModuleId(infraActiveRequest.getVfModuleId())
-                    .setVolumeGroupId(infraActiveRequest.getVolumeGroupId())
-                    .setNetworkId(infraActiveRequest.getNetworkId()).setServiceType(infraActiveRequest.getServiceType())
-                    .setVnfType(infraActiveRequest.getVnfType()).setNetworkType(infraActiveRequest.getNetworkType())
-                    .setRequestDetails(requestHandlerUtils.mapJSONtoMSOStyle(infraActiveRequest.getRequestBody(), sir,
-                            aLaCarte, Action.valueOf(infraActiveRequest.getRequestAction())))
-                    .setApiVersion(version).setALaCarte(aLaCarte).setRequestUri(currentActiveRequest.getRequestUrl())
-                    .setInstanceGroupId(infraActiveRequest.getInstanceGroupId()).build();
+            requestClientParameter =
+                    new RequestClientParameter.Builder().setRequestId(currentActiveRequest.getRequestId())
+                            .setBaseVfModule(isBaseVfModule).setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
+                            .setRequestAction(infraActiveRequest.getRequestAction())
+                            .setServiceInstanceId(infraActiveRequest.getServiceInstanceId())
+                            .setPnfCorrelationId(pnfCorrelationId).setVnfId(infraActiveRequest.getVnfId())
+                            .setVfModuleId(infraActiveRequest.getVfModuleId())
+                            .setVolumeGroupId(infraActiveRequest.getVolumeGroupId())
+                            .setNetworkId(infraActiveRequest.getNetworkId())
+                            .setServiceType(infraActiveRequest.getServiceType())
+                            .setVnfType(infraActiveRequest.getVnfType())
+                            .setVfModuleType(msoRequest.getVfModuleType(sir, infraActiveRequest.getRequestScope(),
+                                    action, Integer.parseInt(version)))
+                            .setNetworkType(infraActiveRequest.getNetworkType())
+                            .setRequestDetails(requestHandlerUtils
+                                    .mapJSONtoMSOStyle(infraActiveRequest.getRequestBody(), sir, aLaCarte, action))
+                            .setApiVersion(version).setALaCarte(aLaCarte)
+                            .setRequestUri(currentActiveRequest.getRequestUrl())
+                            .setInstanceGroupId(infraActiveRequest.getInstanceGroupId()).build();
         } catch (IOException e) {
             logger.error("IOException while generating requestClientParameter to send to BPMN", e);
             ErrorLoggerInfo errorLoggerInfo =

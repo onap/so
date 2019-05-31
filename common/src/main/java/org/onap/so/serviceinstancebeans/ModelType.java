@@ -20,18 +20,75 @@
 
 package org.onap.so.serviceinstancebeans;
 
+import java.lang.reflect.InvocationTargetException;
+import com.google.common.base.CaseFormat;
+
 /*
  * Enum for Model Type values returned by API Handler to BPMN
  */
 public enum ModelType {
-    service,
-    vnf,
-    vfModule,
-    volumeGroup,
-    network,
-    configuration,
-    connectionPoint,
-    pnf,
-    networkInstanceGroup,
-    instanceGroup
+    service("serviceInstance"),
+    vnf("vnf"),
+    vfModule("vfModule"),
+    volumeGroup("volumeGroup"),
+    network("network"),
+    configuration("configuration"),
+    connectionPoint("connectionPoint"),
+    pnf("pnf"),
+    networkInstanceGroup("networkInstanceGroup"),
+    instanceGroup("instanceGroup");
+
+    final String name;
+
+    private ModelType(String name) {
+        this.name = name;
+    }
+
+
+    public <T> T getId(Object obj) {
+        return this.get(obj, "Id");
+    }
+
+    public <T> T getName(Object obj) {
+        return this.get(obj, "Name");
+    }
+
+    public void setId(Object obj, Object value) {
+        this.set(obj, "Id", value);
+    }
+
+    public void setName(Object obj, Object value) {
+        this.set(obj, "Name", value);
+    }
+
+    protected <T> T get(Object obj, String field) {
+        T result = null;
+        if (obj != null) {
+            try {
+                result = (T) obj.getClass().getMethod(String.format("%s%s%s", "get",
+                        CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, this.name), field)).invoke(obj);
+            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                    | NoSuchMethodException | SecurityException e) {
+                // silent fail
+            }
+        }
+
+        return result;
+    }
+
+    protected void set(Object obj, String field, Object value) {
+        if (obj != null) {
+            try {
+                obj.getClass()
+                        .getMethod(
+                                String.format("%s%s%s", "set",
+                                        CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, this.name), field),
+                                value.getClass())
+                        .invoke(obj, value);
+            } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+                    | InvocationTargetException e) {
+                // silent fail
+            }
+        }
+    }
 }
