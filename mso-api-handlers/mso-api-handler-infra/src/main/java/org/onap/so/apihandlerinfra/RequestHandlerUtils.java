@@ -621,7 +621,8 @@ public class RequestHandlerUtils {
     }
 
     protected InfraActiveRequests createNewRecordCopyFromInfraActiveRequest(InfraActiveRequests infraActiveRequest,
-            String requestId, Timestamp startTimeStamp, String source, String requestUri, String requestorId) {
+            String requestId, Timestamp startTimeStamp, String source, String requestUri, String requestorId,
+            String originalRequestId) {
         InfraActiveRequests request = new InfraActiveRequests();
         request.setRequestId(requestId);
         request.setStartTime(startTimeStamp);
@@ -630,6 +631,7 @@ public class RequestHandlerUtils {
         request.setProgress(new Long(5));
         request.setRequestorId(requestorId);
         request.setRequestStatus(Status.IN_PROGRESS.toString());
+        request.setOriginalRequestId(originalRequestId);
         request.setLastModifiedBy(Constants.MODIFIED_BY_APIHANDLER);
         if (infraActiveRequest != null) {
             request.setTenantId(infraActiveRequest.getTenantId());

@@ -22,7 +22,6 @@ package org.onap.so.serviceinstancebeans;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -36,6 +35,7 @@ public class Request {
     protected String finishTime;
     protected String requestScope;
     protected String requestType;
+    protected String originalRequestId;
     protected RequestDetails requestDetails;
     protected InstanceReferences instanceReferences;
     protected RequestStatus requestStatus;
@@ -124,6 +124,14 @@ public class Request {
         this.cloudRequestData = cloudRequestData;
     }
 
+    public String getOriginalRequestId() {
+        return originalRequestId;
+    }
+
+    public void setOriginalRequestId(String originalRequestId) {
+        this.originalRequestId = originalRequestId;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("requestId", requestId).append("startTime", startTime)
@@ -131,6 +139,6 @@ public class Request {
                 .append("requestType", requestType).append("requestDetails", requestDetails)
                 .append("instanceReferences", instanceReferences).append("requestStatus", requestStatus)
                 .append("requestProcessingData", requestProcessingData).append("cloudRequestData", cloudRequestData)
-                .toString();
+                .append("originalRequestId", originalRequestId).toString();
     }
 }

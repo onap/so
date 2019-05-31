@@ -40,6 +40,7 @@ public class RequestHandlerUtilsUnitTest {
     private RequestHandlerUtils requestHandler;
 
     private static final String CURRENT_REQUEST_ID = "eca3a1b1-43ab-457e-ab1c-367263d148b4";
+    private static final String RESUMED_REQUEST_ID = "59c7247f-839f-4923-90c3-05faa3ab354d";
     private static final String SERVICE_INSTANCE_ID = "00032ab7-na18-42e5-965d-8ea592502018";
     private final Timestamp startTimeStamp = new Timestamp(System.currentTimeMillis());
     private String requestUri =
@@ -88,6 +89,7 @@ public class RequestHandlerUtilsUnitTest {
         currentActiveRequest.setRequestUrl(requestUri);
         currentActiveRequest.setRequestorId("xxxxxx");
         currentActiveRequest.setProgress(new Long(5));
+        currentActiveRequest.setOriginalRequestId(RESUMED_REQUEST_ID);
     }
 
     private void setCurrentActiveRequestNullInfraActive() throws IOException {
@@ -99,20 +101,21 @@ public class RequestHandlerUtilsUnitTest {
         currentActiveRequestIARNull.setRequestUrl(requestUri);
         currentActiveRequestIARNull.setRequestorId("xxxxxx");
         currentActiveRequestIARNull.setProgress(new Long(5));
+        currentActiveRequestIARNull.setOriginalRequestId(RESUMED_REQUEST_ID);
     }
 
 
     @Test
     public void createNewRecordCopyFromInfraActiveRequestTest() {
         InfraActiveRequests result = requestHandler.createNewRecordCopyFromInfraActiveRequest(infraActiveRequest,
-                CURRENT_REQUEST_ID, startTimeStamp, "VID", requestUri, "xxxxxx");
+                CURRENT_REQUEST_ID, startTimeStamp, "VID", requestUri, "xxxxxx", RESUMED_REQUEST_ID);
         assertThat(currentActiveRequest, sameBeanAs(result));
     }
 
     @Test
     public void createNewRecordCopyFromInfraActiveRequestNullIARTest() {
         InfraActiveRequests result = requestHandler.createNewRecordCopyFromInfraActiveRequest(null, CURRENT_REQUEST_ID,
-                startTimeStamp, "VID", requestUri, "xxxxxx");
+                startTimeStamp, "VID", requestUri, "xxxxxx", RESUMED_REQUEST_ID);
         assertThat(currentActiveRequestIARNull, sameBeanAs(result));
     }
 }

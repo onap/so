@@ -290,7 +290,7 @@ public class OrchestrationRequests {
         return Response.status(HttpStatus.SC_NO_CONTENT).entity("").build();
     }
 
-    private Request mapInfraActiveRequestToRequest(InfraActiveRequests iar, boolean includeCloudRequest)
+    protected Request mapInfraActiveRequestToRequest(InfraActiveRequests iar, boolean includeCloudRequest)
             throws ApiException {
         String requestBody = iar.getRequestBody();
         Request request = new Request();
@@ -303,6 +303,11 @@ public class OrchestrationRequests {
         String rollbackStatusMessage = iar.getRollbackStatusMessage();
         String flowStatusMessage = iar.getFlowStatus();
         String retryStatusMessage = iar.getRetryStatusMessage();
+
+        String originalRequestId = iar.getOriginalRequestId();
+        if (originalRequestId != null) {
+            request.setOriginalRequestId(originalRequestId);
+        }
 
         InstanceReferences ir = new InstanceReferences();
         if (iar.getNetworkId() != null)
