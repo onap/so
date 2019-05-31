@@ -22,9 +22,15 @@ package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
 public enum WorkflowType {
 
-    SERVICE("Service"), VNF("Vnf"), VFMODULE("VfModule"), VOLUMEGROUP("VolumeGroup"), NETWORK("Network"), VIRTUAL_LINK(
-            "VirtualLink"), NETWORKCOLLECTION(
-                    "NetworkCollection"), CONFIGURATION("Configuration"), INSTANCE_GROUP("InstanceGroup");
+    SERVICE("Service"),
+    VNF("Vnf"),
+    VFMODULE("VfModule"),
+    VOLUMEGROUP("VolumeGroup"),
+    NETWORK("Network"),
+    VIRTUAL_LINK("VirtualLink"),
+    NETWORKCOLLECTION("NetworkCollection"),
+    CONFIGURATION("Configuration"),
+    INSTANCE_GROUP("InstanceGroup");
 
     private final String type;
 

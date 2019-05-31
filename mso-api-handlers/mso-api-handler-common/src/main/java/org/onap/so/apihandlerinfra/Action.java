@@ -24,5 +24,27 @@ package org.onap.so.apihandlerinfra;
  * Enum for Status values returned by API Handler to Tail-F
  */
 public enum Action implements Actions {
-    createInstance, updateInstance, deleteInstance, configureInstance, replaceInstance, activateInstance, deactivateInstance, enablePort, disablePort, addRelationships, removeRelationships, inPlaceSoftwareUpdate, applyUpdatedConfig, completeTask, assignInstance, unassignInstance, compareModel, scaleInstance, deactivateAndCloudDelete, scaleOut, recreateInstance, addMembers, removeMembers
+    createInstance,
+    updateInstance,
+    deleteInstance,
+    configureInstance,
+    replaceInstance,
+    activateInstance,
+    deactivateInstance,
+    enablePort,
+    disablePort,
+    addRelationships,
+    removeRelationships,
+    inPlaceSoftwareUpdate,
+    applyUpdatedConfig,
+    completeTask,
+    assignInstance,
+    unassignInstance,
+    compareModel,
+    scaleInstance,
+    deactivateAndCloudDelete,
+    scaleOut,
+    recreateInstance,
+    addMembers,
+    removeMembers
 }

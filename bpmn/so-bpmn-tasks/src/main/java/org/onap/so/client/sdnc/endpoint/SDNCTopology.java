@@ -22,11 +22,14 @@ package org.onap.so.client.sdnc.endpoint;
 
 public enum SDNCTopology {
 
-    SERVICE("service-topology-operation"), VNF("vnf-topology-operation"), VFMODULE(
-            "vf-module-topology-operation"), CONTRAILROUTE("contrail-route-topology-operation"), PORTMIRROR(
-                    "port-mirror-topology-operation"), NETWORK("network-topology-operation"), SECURITYZONE(
-                            "security-zone-topology-operation"), CONFIGURATION(
-                                    "generic-configuration-topology-operation");
+    SERVICE("service-topology-operation"),
+    VNF("vnf-topology-operation"),
+    VFMODULE("vf-module-topology-operation"),
+    CONTRAILROUTE("contrail-route-topology-operation"),
+    PORTMIRROR("port-mirror-topology-operation"),
+    NETWORK("network-topology-operation"),
+    SECURITYZONE("security-zone-topology-operation"),
+    CONFIGURATION("generic-configuration-topology-operation");
 
     private final String topology;
 

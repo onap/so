@@ -22,5 +22,28 @@ package org.onap.so.apihandlerinfra;
 
 
 public enum Action implements Actions {
-    createInstance, updateInstance, deleteInstance, configureInstance, replaceInstance, replaceInstanceRetainAssignments, activateInstance, deactivateInstance, enablePort, disablePort, addRelationships, removeRelationships, inPlaceSoftwareUpdate, applyUpdatedConfig, completeTask, assignInstance, unassignInstance, compareModel, scaleInstance, deactivateAndCloudDelete, scaleOut, recreateInstance, addMembers, removeMembers
+    createInstance,
+    updateInstance,
+    deleteInstance,
+    configureInstance,
+    replaceInstance,
+    replaceInstanceRetainAssignments,
+    activateInstance,
+    deactivateInstance,
+    enablePort,
+    disablePort,
+    addRelationships,
+    removeRelationships,
+    inPlaceSoftwareUpdate,
+    applyUpdatedConfig,
+    completeTask,
+    assignInstance,
+    unassignInstance,
+    compareModel,
+    scaleInstance,
+    deactivateAndCloudDelete,
+    scaleOut,
+    recreateInstance,
+    addMembers,
+    removeMembers
 }

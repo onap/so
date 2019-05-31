@@ -23,22 +23,17 @@ package org.onap.so.client.sdnc.beans;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiSvcActionEnumeration;
 
 public enum SDNCSvcAction {
-    ACTIVATE("activate", GenericResourceApiSvcActionEnumeration.ACTIVATE), DELETE("delete",
-            GenericResourceApiSvcActionEnumeration.DELETE), ASSIGN("assign",
-                    GenericResourceApiSvcActionEnumeration.ASSIGN), ROLLBACK("rollback",
-                            GenericResourceApiSvcActionEnumeration.ROLLBACK), UNASSIGN("unassign",
-                                    GenericResourceApiSvcActionEnumeration.UNASSIGN), DEACTIVATE("deactivate",
-                                            GenericResourceApiSvcActionEnumeration.DEACTIVATE), CHANGE_DELETE(
-                                                    "changedelete",
-                                                    GenericResourceApiSvcActionEnumeration.CHANGEDELETE), CHANGE_ASSIGN(
-                                                            "changeassign",
-                                                            GenericResourceApiSvcActionEnumeration.CHANGEASSIGN), CREATE(
-                                                                    "create",
-                                                                    GenericResourceApiSvcActionEnumeration.CREATE), ENABLE(
-                                                                            "enable",
-                                                                            GenericResourceApiSvcActionEnumeration.ENABLE), DISABLE(
-                                                                                    "disable",
-                                                                                    GenericResourceApiSvcActionEnumeration.DISABLE);
+    ACTIVATE("activate", GenericResourceApiSvcActionEnumeration.ACTIVATE),
+    DELETE("delete", GenericResourceApiSvcActionEnumeration.DELETE),
+    ASSIGN("assign", GenericResourceApiSvcActionEnumeration.ASSIGN),
+    ROLLBACK("rollback", GenericResourceApiSvcActionEnumeration.ROLLBACK),
+    UNASSIGN("unassign", GenericResourceApiSvcActionEnumeration.UNASSIGN),
+    DEACTIVATE("deactivate", GenericResourceApiSvcActionEnumeration.DEACTIVATE),
+    CHANGE_DELETE("changedelete", GenericResourceApiSvcActionEnumeration.CHANGEDELETE),
+    CHANGE_ASSIGN("changeassign", GenericResourceApiSvcActionEnumeration.CHANGEASSIGN),
+    CREATE("create", GenericResourceApiSvcActionEnumeration.CREATE),
+    ENABLE("enable", GenericResourceApiSvcActionEnumeration.ENABLE),
+    DISABLE("disable", GenericResourceApiSvcActionEnumeration.DISABLE);
 
     private final String name;
 

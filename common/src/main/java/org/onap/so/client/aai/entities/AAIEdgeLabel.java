@@ -24,8 +24,9 @@ import org.onap.so.client.graphinventory.entities.GraphInventoryEdgeLabel;
 
 public enum AAIEdgeLabel implements GraphInventoryEdgeLabel {
 
-    BELONGS_TO("org.onap.relationships.inventory.BelongsTo"), USES(
-            "org.onap.relationships.inventory.Uses"), COMPOSED_OF("org.onap.relationships.inventory.ComposedOf");
+    BELONGS_TO("org.onap.relationships.inventory.BelongsTo"),
+    USES("org.onap.relationships.inventory.Uses"),
+    COMPOSED_OF("org.onap.relationships.inventory.ComposedOf");
 
     private final String label;
 

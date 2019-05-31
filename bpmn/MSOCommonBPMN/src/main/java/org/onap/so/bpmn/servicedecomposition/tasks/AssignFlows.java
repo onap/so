@@ -22,10 +22,14 @@ package org.onap.so.bpmn.servicedecomposition.tasks;
 
 public enum AssignFlows {
 
-    SERVICE_INSTANCE("AssignServiceInstanceBB"), VNF("AssignVnfBB"), VF_MODULE("AssignVfModuleBB"), NETWORK_A_LA_CARTE(
-            "AssignNetwork1802BB"), NETWORK_MACRO("AssignNetworkBB"), VOLUME_GROUP(
-                    "AssignVolumeGroupBB"), NETWORK_COLLECTION(
-                            "CreateNetworkCollectionBB"), FABRIC_CONFIGURATION("AssignFabricConfigurationBB");
+    SERVICE_INSTANCE("AssignServiceInstanceBB"),
+    VNF("AssignVnfBB"),
+    VF_MODULE("AssignVfModuleBB"),
+    NETWORK_A_LA_CARTE("AssignNetwork1802BB"),
+    NETWORK_MACRO("AssignNetworkBB"),
+    VOLUME_GROUP("AssignVolumeGroupBB"),
+    NETWORK_COLLECTION("CreateNetworkCollectionBB"),
+    FABRIC_CONFIGURATION("AssignFabricConfigurationBB");
 
     private final String flowName;
 
