@@ -59,7 +59,9 @@ public class CreateInventoryService {
         ExternalTaskClient client = ExternalTaskClient.create()
                 .baseUrl(env.getRequiredProperty("mso.workflow.endpoint")).maxTasks(1).addInterceptor(interceptor)
                 .asyncResponseTimeout(120000).backoffStrategy(new ExponentialBackoffStrategy(0, 0, 0)).build();
-        client.subscribe("InventoryCreate").lockDuration(60000).handler(createInventory::executeExternalTask).open();
+        client.subscribe("InventoryCreate")
+                .lockDuration(Long.parseLong(env.getProperty("mso.audit.lock-time", "60000")))
+                .handler(createInventory::executeExternalTask).open();
     }
 
 }

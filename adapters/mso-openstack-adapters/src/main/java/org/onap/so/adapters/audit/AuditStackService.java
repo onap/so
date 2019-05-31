@@ -53,8 +53,9 @@ public class AuditStackService {
     public void auditAddAAIInventory() throws Exception {
         for (int i = 0; i < getMaxClients(); i++) {
             ExternalTaskClient client = createExternalTaskClient();
-            client.subscribe("InventoryAddAudit").lockDuration(60000).handler(auditCreateStack::executeExternalTask)
-                    .open();
+            client.subscribe("InventoryAddAudit")
+                    .lockDuration(Long.parseLong(env.getProperty("mso.audit.lock-time", "60000")))
+                    .handler(auditCreateStack::executeExternalTask).open();
         }
     }
 
@@ -62,8 +63,9 @@ public class AuditStackService {
     public void auditDeleteAAIInventory() throws Exception {
         for (int i = 0; i < getMaxClients(); i++) {
             ExternalTaskClient client = createExternalTaskClient();
-            client.subscribe("InventoryDeleteAudit").lockDuration(60000).handler(auditDeleteStack::executeExternalTask)
-                    .open();
+            client.subscribe("InventoryDeleteAudit")
+                    .lockDuration(Long.parseLong(env.getProperty("mso.audit.lock-time", "60000")))
+                    .handler(auditDeleteStack::executeExternalTask).open();
         }
     }
 
