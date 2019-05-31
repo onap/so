@@ -814,63 +814,19 @@ public class ServiceInstances {
         referencesResponse.setRequestId(requestId);
 
         serviceResponse.setRequestReferences(referencesResponse);
-        Boolean isBaseVfModule = false;
-
         RecipeLookupResult recipeLookupResult =
                 getServiceInstanceOrchestrationURI(sir, action, alaCarteFlag, currentActiveReq);
         String serviceInstanceType = requestHandlerUtils.getServiceType(requestScope, sir, alaCarteFlag);
-        ModelType modelType;
+
         ModelInfo modelInfo = sir.getRequestDetails().getModelInfo();
-        if (action == Action.applyUpdatedConfig || action == Action.inPlaceSoftwareUpdate) {
-            modelType = ModelType.vnf;
-        } else if (action == Action.addMembers || action == Action.removeMembers) {
-            modelType = ModelType.instanceGroup;
-        } else {
-            modelType = modelInfo.getModelType();
-        }
+        ModelType modelType = requestHandlerUtils.getModelType(action, modelInfo);
+
+        Boolean isBaseVfModule = false;
 
         if (modelType.equals(ModelType.vfModule)) {
-
-
-            // Get VF Module-specific base module indicator
-            VfModule vfm = null;
-
-            String modelVersionId = modelInfo.getModelVersionId();
-
-            if (modelVersionId != null) {
-                vfm = catalogDbClient.getVfModuleByModelUUID(modelVersionId);
-            } else if (modelInfo.getModelInvariantId() != null && modelInfo.getModelVersion() != null) {
-                vfm = catalogDbClient.getVfModuleByModelInvariantUUIDAndModelVersion(modelInfo.getModelInvariantId(),
-                        modelInfo.getModelVersion());
-            }
-
-            if (vfm != null) {
-                if (vfm.getIsBase()) {
-                    isBaseVfModule = true;
-                }
-            } else if (action == Action.createInstance || action == Action.updateInstance) {
-                // There is no entry for this vfModuleType with this version, if specified, in VF_MODULE table in
-                // Catalog DB.
-                // This request cannot proceed
-
-                String serviceVersionText = "";
-                if (sdcServiceModelVersion != null && !sdcServiceModelVersion.isEmpty()) {
-                    serviceVersionText = " with version " + sdcServiceModelVersion;
-                }
-
-                String errorMessage = "VnfType " + vnfType + " and VF Module Model Name " + modelInfo.getModelName()
-                        + serviceVersionText + " not found in MSO Catalog DB";
-                ErrorLoggerInfo errorLoggerInfo =
-                        new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, ErrorCode.DataError)
-                                .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
-                VfModuleNotFoundException vfModuleException = new VfModuleNotFoundException.Builder(errorMessage,
-                        HttpStatus.SC_NOT_FOUND, ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo).build();
-                requestHandlerUtils.updateStatus(currentActiveReq, Status.FAILED, vfModuleException.getMessage());
-
-                throw vfModuleException;
-            }
+            isBaseVfModule = requestHandlerUtils.getIsBaseVfModule(modelInfo, action, vnfType, sdcServiceModelVersion,
+                    currentActiveReq);
         }
-
 
         serviceInstanceId = requestHandlerUtils.setServiceInstanceId(requestScope, sir);
         String vnfId = "";
@@ -1030,7 +986,7 @@ public class ServiceInstances {
                 .orElse("");
     }
 
-    private RecipeLookupResult getServiceInstanceOrchestrationURI(ServiceInstancesRequest sir, Actions action,
+    protected RecipeLookupResult getServiceInstanceOrchestrationURI(ServiceInstancesRequest sir, Actions action,
             boolean alaCarteFlag, InfraActiveRequests currentActiveReq) throws ApiException {
         RecipeLookupResult recipeLookupResult = null;
         // if the aLaCarte flag is set to TRUE, the API-H should choose the VID_DEFAULT recipe for the requested action

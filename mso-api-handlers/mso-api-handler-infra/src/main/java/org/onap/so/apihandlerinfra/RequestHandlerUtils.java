@@ -59,7 +59,9 @@ import org.onap.so.apihandlerinfra.exceptions.ContactCamundaException;
 import org.onap.so.apihandlerinfra.exceptions.DuplicateRequestException;
 import org.onap.so.apihandlerinfra.exceptions.RequestDbFailureException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
+import org.onap.so.apihandlerinfra.exceptions.VfModuleNotFoundException;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
+import org.onap.so.db.catalog.beans.VfModule;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
@@ -67,6 +69,7 @@ import org.onap.so.exceptions.ValidationException;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.LogConstants;
 import org.onap.so.logger.MessageEnum;
+import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.ModelType;
 import org.onap.so.serviceinstancebeans.RelatedInstance;
 import org.onap.so.serviceinstancebeans.RelatedInstanceList;
@@ -638,11 +641,70 @@ public class RequestHandlerUtils {
             request.setRequestBody(infraActiveRequest.getRequestBody());
             request.setAicCloudRegion(infraActiveRequest.getAicCloudRegion());
             request.setRequestScope(infraActiveRequest.getRequestScope());
-            request.setServiceInstanceId(infraActiveRequest.getServiceInstanceId());
-            request.setServiceInstanceName(infraActiveRequest.getServiceInstanceName());
             request.setRequestAction(infraActiveRequest.getRequestAction());
+            setInstanceIdAndName(infraActiveRequest, request);
         }
         return request;
+    }
+
+    protected void setInstanceIdAndName(InfraActiveRequests infraActiveRequest,
+            InfraActiveRequests currentActiveRequest) {
+        String requestScope = infraActiveRequest.getRequestScope();
+        try {
+            ModelType type = ModelType.valueOf(requestScope);
+            type.setName(currentActiveRequest, type.getName(infraActiveRequest));
+            type.setId(currentActiveRequest, type.getId(infraActiveRequest));
+        } catch (IllegalArgumentException e) {
+            logger.error(
+                    "requestScope \"{}\" does not match a ModelType enum. Unable to set instanceId and instanceName from the original request.",
+                    requestScope);
+        }
+    }
+
+    protected Boolean getIsBaseVfModule(ModelInfo modelInfo, Actions action, String vnfType,
+            String sdcServiceModelVersion, InfraActiveRequests currentActiveReq) throws ApiException {
+        // Get VF Module-specific base module indicator
+        VfModule vfm = null;
+        String modelVersionId = modelInfo.getModelVersionId();
+        Boolean isBaseVfModule = false;
+
+        if (modelVersionId != null) {
+            vfm = catalogDbClient.getVfModuleByModelUUID(modelVersionId);
+        } else if (modelInfo.getModelInvariantId() != null && modelInfo.getModelVersion() != null) {
+            vfm = catalogDbClient.getVfModuleByModelInvariantUUIDAndModelVersion(modelInfo.getModelInvariantId(),
+                    modelInfo.getModelVersion());
+        }
+
+        if (vfm != null) {
+            if (vfm.getIsBase()) {
+                isBaseVfModule = true;
+            }
+        } else if (action == Action.createInstance || action == Action.updateInstance) {
+            String serviceVersionText = "";
+            if (sdcServiceModelVersion != null && !sdcServiceModelVersion.isEmpty()) {
+                serviceVersionText = " with version " + sdcServiceModelVersion;
+            }
+            String errorMessage = "VnfType " + vnfType + " and VF Module Model Name " + modelInfo.getModelName()
+                    + serviceVersionText + " not found in MSO Catalog DB";
+            ErrorLoggerInfo errorLoggerInfo =
+                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, ErrorCode.DataError)
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+            VfModuleNotFoundException vfModuleException = new VfModuleNotFoundException.Builder(errorMessage,
+                    HttpStatus.SC_NOT_FOUND, ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo).build();
+            updateStatus(currentActiveReq, Status.FAILED, vfModuleException.getMessage());
+            throw vfModuleException;
+        }
+        return isBaseVfModule;
+    }
+
+    protected ModelType getModelType(Actions action, ModelInfo modelInfo) {
+        if (action == Action.applyUpdatedConfig || action == Action.inPlaceSoftwareUpdate) {
+            return ModelType.vnf;
+        } else if (action == Action.addMembers || action == Action.removeMembers) {
+            return ModelType.instanceGroup;
+        } else {
+            return modelInfo.getModelType();
+        }
     }
 
 }
