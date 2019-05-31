@@ -938,7 +938,8 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
             if (heatTemplate == null) {
                 String error = "UpdateVF: No Heat Template ID defined in catalog database for " + vfModuleType
-                        + ", reqType=" + requestTypeString;
+                        + ", modelCustomizationUuid=" + mcu + ", vfModuleUuid=" + vf.getModelUUID()
+                        + ", vnfResourceModelUuid=" + vnfResource.getModelUUID() + ", reqType=" + requestTypeString;
                 logger.error("{} {} {} {} {} {}", MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(), "Heat Template ID",
                         vfModuleType, OPENSTACK, ErrorCode.DataError.getValue(), error);
                 logger.debug(error);
@@ -952,7 +953,9 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 logger.debug("No environment parameter found for this Type " + vfModuleType);
             } else {
                 if (heatEnvironment == null) {
-                    String error = "Update VNF: undefined Heat Environment. VF=" + vfModuleType;
+                    String error = "Update VNF: undefined Heat Environment. VF=" + vfModuleType
+                            + ", modelCustomizationUuid=" + mcu + ", vfModuleUuid=" + vf.getModelUUID()
+                            + ", vnfResourceModelUuid=" + vnfResource.getModelUUID() + ", reqType=" + requestTypeString;
                     logger.error("{} {} {} {} {}", MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(), "Heat Environment ID",
                             OPENSTACK, ErrorCode.DataError.getValue(), error);
                     logger.debug(error);
@@ -1639,7 +1642,8 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
         if (heatTemplate == null) {
             String error = "UpdateVF: No Heat Template ID defined in catalog database for " + vfModuleType
-                    + ", reqType=" + requestTypeString;
+                    + ", modelCustomizationUuid=" + mcu + ", vfModuleUuid=" + vf.getModelUUID() + ", reqType="
+                    + requestTypeString;
             logger.error("{} {} {} {} {} {}", MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(), "Heat Template ID",
                     vfModuleType, OPENSTACK, ErrorCode.DataError.getValue(), error);
             throw new VnfException(error, MsoExceptionCategory.INTERNAL);
@@ -1648,7 +1652,8 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         }
 
         if (heatEnvironment == null) {
-            String error = "Update VNF: undefined Heat Environment. VF=" + vfModuleType;
+            String error = "Update VNF: undefined Heat Environment. VF=" + vfModuleType + ", modelCustomizationUuid="
+                    + mcu + ", vfModuleUuid=" + vf.getModelUUID() + ", reqType=" + requestTypeString;
             logger.error("{} {} {} {} {}", MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(), "Heat Environment ID",
                     OPENSTACK, ErrorCode.DataError.getValue(), error);
             throw new VnfException(error, MsoExceptionCategory.INTERNAL);

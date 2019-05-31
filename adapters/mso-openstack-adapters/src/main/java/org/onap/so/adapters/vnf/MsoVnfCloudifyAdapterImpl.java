@@ -818,6 +818,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
 
         if (heatTemplate == null) {
             String error = "UpdateVF: No Heat Template ID defined in catalog database for " + vfModuleType
+                    + ", modelCustomizationUuid=" + modelCustomizationUuid + ", vfModuleUuid=" + vf.getModelUUID()
                     + ", reqType=" + requestType;
             logger.error("{} {} {} {} {} {}", MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(), "Heat Template ID",
                     vfModuleType, OPENSTACK, ErrorCode.DataError.getValue(), error);
@@ -827,7 +828,8 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
         }
 
         if (heatEnvironment == null) {
-            String error = "Update VNF: undefined Heat Environment. VF=" + vfModuleType;
+            String error = "Update VNF: undefined Heat Environment. VF=" + vfModuleType + ", modelCustomizationUuid="
+                    + modelCustomizationUuid + ", vfModuleUuid=" + vf.getModelUUID() + ", reqType=" + requestType;
             logger.error("{} {} {} {} {}", MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(), "Heat Environment ID",
                     OPENSTACK, ErrorCode.DataError.getValue(), error);
             // Alarm on this error, configuration must be fixed
