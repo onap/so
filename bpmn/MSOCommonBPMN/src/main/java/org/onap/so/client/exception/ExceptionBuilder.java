@@ -153,65 +153,67 @@ public class ExceptionBuilder {
     }
 
     public void processAuditException(DelegateExecutionImpl execution, boolean flowShouldContinue) {
-        logger.info("Building a WorkflowException for Subflow");
+        logger.debug("Processing Audit Results");
+        String auditListString = (String) execution.getVariable("auditInventoryResult");
+        if (auditListString != null) {
+            StringBuilder errorMessage = new StringBuilder();
+            String processKey = getProcessKey(execution.getDelegateExecution());
+            try {
+                ExtractPojosForBB extractPojosForBB = getExtractPojosForBB();
+                VfModule module = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
+                String cloudRegionId = execution.getGeneralBuildingBlock().getCloudRegion().getLcpCloudRegionId();
 
-        StringBuilder errorMessage = new StringBuilder();
-        String processKey = getProcessKey(execution.getDelegateExecution());
-        try {
-            ExtractPojosForBB extractPojosForBB = getExtractPojosForBB();
-            VfModule module = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
-            String cloudRegionId = execution.getGeneralBuildingBlock().getCloudRegion().getLcpCloudRegionId();
+                GraphInventoryCommonObjectMapperProvider objectMapper = new GraphInventoryCommonObjectMapperProvider();
+                AAIObjectAuditList auditList =
+                        objectMapper.getMapper().readValue(auditListString, AAIObjectAuditList.class);
 
-            GraphInventoryCommonObjectMapperProvider objectMapper = new GraphInventoryCommonObjectMapperProvider();
-            String auditListString = (String) execution.getVariable("auditInventoryResult");
-            AAIObjectAuditList auditList =
-                    objectMapper.getMapper().readValue(auditListString, AAIObjectAuditList.class);
+                errorMessage = errorMessage.append(auditList.getAuditType() + " VF-Module " + module.getVfModuleId()
+                        + " failed due to incomplete AAI vserver inventory population after stack "
+                        + auditList.getHeatStackName() + " was successfully " + auditList.getAuditType()
+                        + "d in cloud region " + cloudRegionId + ". MSO Audit indicates that the following was not "
+                        + auditList.getAuditType() + "d in AAI: ");
 
-            errorMessage = errorMessage.append(auditList.getAuditType() + " VF-Module " + module.getVfModuleId()
-                    + " failed due to incomplete A&AI vserver inventory population after stack "
-                    + auditList.getHeatStackName() + " was successfully " + auditList.getAuditType()
-                    + "d in cloud region " + cloudRegionId + ". MSO Audit indicates that AIC RO did not "
-                    + auditList.getAuditType() + " ");
+                Stream<AAIObjectAudit> vServerLInterfaceAuditStream = auditList.getAuditList().stream()
+                        .filter(auditObject -> auditObject.getAaiObjectType().equals(AAIObjectType.VSERVER.typeName())
+                                || auditObject.getAaiObjectType().equals(AAIObjectType.L_INTERFACE.typeName()));
+                List<AAIObjectAudit> filteredAuditStream =
+                        vServerLInterfaceAuditStream.filter(a -> !a.isDoesObjectExist()).collect(Collectors.toList());
 
-            Stream<AAIObjectAudit> vServerLInterfaceAuditStream = auditList.getAuditList().stream()
-                    .filter(auditObject -> auditObject.getAaiObjectType().equals(AAIObjectType.VSERVER.typeName())
-                            || auditObject.getAaiObjectType().equals(AAIObjectType.L_INTERFACE.typeName()));
-            List<AAIObjectAudit> filteredAuditStream =
-                    vServerLInterfaceAuditStream.filter(a -> !a.isDoesObjectExist()).collect(Collectors.toList());
-
-            for (AAIObjectAudit object : filteredAuditStream) {
-                if (object.getAaiObjectType().equals(AAIObjectType.L_INTERFACE.typeName())) {
-                    LInterface li = objectMapper.getMapper().convertValue(object.getAaiObject(), LInterface.class);
-                    errorMessage = errorMessage
-                            .append(AAIObjectType.L_INTERFACE.typeName() + " " + li.getInterfaceId() + ", ");
-                } else {
-                    Vserver vs = objectMapper.getMapper().convertValue(object.getAaiObject(), Vserver.class);
-                    errorMessage =
-                            errorMessage.append(AAIObjectType.VSERVER.typeName() + " " + vs.getVserverId() + ", ");
+                for (AAIObjectAudit object : filteredAuditStream) {
+                    if (object.getAaiObjectType().equals(AAIObjectType.L_INTERFACE.typeName())) {
+                        LInterface li = objectMapper.getMapper().convertValue(object.getAaiObject(), LInterface.class);
+                        errorMessage = errorMessage
+                                .append(AAIObjectType.L_INTERFACE.typeName() + " " + li.getInterfaceId() + ", ");
+                    } else {
+                        Vserver vs = objectMapper.getMapper().convertValue(object.getAaiObject(), Vserver.class);
+                        errorMessage =
+                                errorMessage.append(AAIObjectType.VSERVER.typeName() + " " + vs.getVserverId() + ", ");
+                    }
                 }
+
+                if (errorMessage.length() > 0) {
+                    errorMessage.setLength(errorMessage.length() - 2);
+                    errorMessage = errorMessage.append(".");
+                }
+
+            } catch (IOException | BBObjectNotFoundException e) {
+                errorMessage = errorMessage.append("process objects in AAI. ");
             }
 
-            if (errorMessage.length() > 0) {
-                errorMessage.setLength(errorMessage.length() - 2);
-                errorMessage = errorMessage.append(" in AAI. ");
+            if (flowShouldContinue) {
+                execution.setVariable("StatusMessage", errorMessage.toString());
+            } else {
+                WorkflowException exception = new WorkflowException(processKey, 400, errorMessage.toString());
+                execution.setVariable("WorkflowException", exception);
+                execution.setVariable("WorkflowExceptionErrorMessage", errorMessage.toString());
+                logger.info("Outgoing WorkflowException is {}", exception);
+                logger.info("Throwing MSOWorkflowException");
+                throw new BpmnError("AAIInventoryFailure");
             }
 
-        } catch (IOException | BBObjectNotFoundException e) {
-            errorMessage = errorMessage.append("process objects in AAI. ");
-        }
-
-        errorMessage.append(
-                "Recommendation - Wait for nightly RO Audit to run and fix the data issue and resume vf-module creation in VID. If problem persists then report problem to AIC/RO Ops.");
-
-        if (flowShouldContinue) {
-            execution.setVariable("StatusMessage", errorMessage.toString());
         } else {
-            WorkflowException exception = new WorkflowException(processKey, 400, errorMessage.toString());
-            execution.setVariable("WorkflowException", exception);
-            execution.setVariable("WorkflowExceptionErrorMessage", errorMessage.toString());
-            logger.info("Outgoing WorkflowException is {}", exception);
-            logger.info("Throwing MSOWorkflowException");
-            throw new BpmnError("AAIInventoryFailure");
+            logger.debug("Unable to process audit results due to auditInventoryResult being null");
         }
     }
+
 }
