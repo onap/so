@@ -64,13 +64,13 @@ public class ConfigurationResourceCustomization implements Serializable {
     private String modelInstanceName;
 
     @Column(name = "CONFIGURATION_FUNCTION")
-    private String nfFunction;
+    private String function;
 
     @Column(name = "CONFIGURATION_TYPE")
-    private String nfType;
+    private String type;
 
     @Column(name = "CONFIGURATION_ROLE")
-    private String nfRole;
+    private String role;
 
     @Column(name = "CREATION_TIMESTAMP", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -120,28 +120,28 @@ public class ConfigurationResourceCustomization implements Serializable {
         this.modelInstanceName = modelInstanceName;
     }
 
-    public String getNfFunction() {
-        return nfFunction;
+    public String getFunction() {
+        return function;
     }
 
-    public void setNfFunction(String nfFunction) {
-        this.nfFunction = nfFunction;
+    public void setFunction(String function) {
+        this.function = function;
     }
 
-    public String getNfType() {
-        return nfType;
+    public String getType() {
+        return type;
     }
 
-    public void setNfType(String nfType) {
-        this.nfType = nfType;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public String getNfRole() {
-        return nfRole;
+    public String getRole() {
+        return role;
     }
 
-    public void setNfRole(String nfRole) {
-        this.nfRole = nfRole;
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public Date getCreated() {
@@ -186,8 +186,8 @@ public class ConfigurationResourceCustomization implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("id", id).append("modelCustomizationUUID", modelCustomizationUUID)
-                .append("modelInstanceName", modelInstanceName).append("nfFunction", nfFunction)
-                .append("nfType", nfType).append("nfRole", nfRole).append("created", created)
+                .append("modelInstanceName", modelInstanceName).append("function", function).append("type", type)
+                .append("role", role).append("created", created)
                 // .append("serviceProxyResourceCustomization", serviceProxyResourceCustomization)
                 .append("configResourceCustomization", configResourceCustomization)
                 .append("configurationResource", configurationResource).append("service", service).toString();

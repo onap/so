@@ -696,12 +696,12 @@ public class ToscaResourceInstaller {
                 .setModelCustomizationUUID(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
         configCustomizationResource.setModelInstanceName(nodeTemplate.getName());
 
-        configCustomizationResource.setNfFunction(toscaResourceStructure.getSdcCsarHelper()
-                .getNodeTemplatePropertyLeafValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFFUNCTION));
-        configCustomizationResource.setNfRole(toscaResourceStructure.getSdcCsarHelper()
-                .getNodeTemplatePropertyLeafValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFROLE));
-        configCustomizationResource.setNfType(toscaResourceStructure.getSdcCsarHelper()
-                .getNodeTemplatePropertyLeafValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFTYPE));
+        configCustomizationResource.setFunction(
+                toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(nodeTemplate, "function"));
+        configCustomizationResource.setRole(
+                toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(nodeTemplate, "role"));
+        configCustomizationResource.setType(
+                toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(nodeTemplate, "type"));
         configCustomizationResource
                 .setServiceProxyResourceCustomizationUUID(spResourceCustomization.getModelCustomizationUUID());
 
