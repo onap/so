@@ -22,6 +22,7 @@ package org.onap.so.db.request.beans;
 
 import java.net.URI;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -157,7 +158,7 @@ public abstract class InfraRequests implements java.io.Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "SO_REQUEST_ID", referencedColumnName = "REQUEST_ID")
-    private List<CloudApiRequests> cloudApiRequests;
+    private List<CloudApiRequests> cloudApiRequests = new ArrayList<>();
 
     @ResourceId
     public URI getRequestURI() {

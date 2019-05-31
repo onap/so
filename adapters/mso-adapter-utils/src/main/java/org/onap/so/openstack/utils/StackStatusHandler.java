@@ -36,9 +36,12 @@ public class StackStatusHandler {
                 requestProcessingData.setName(stack.getStackName());
                 requestProcessingData.setTag("StackInformation");
                 requestProcessingData.setSoRequestId(requestId);
+                requestProcessingData.setValue(stackStatus);
+                requestDBClient.saveRequestProcessingData(requestProcessingData);
+            } else {
+                requestProcessingData.setValue(stackStatus);
+                requestDBClient.updateRequestProcessingData(requestProcessingData);
             }
-            requestProcessingData.setValue(stackStatus);
-            requestDBClient.saveRequestProcessingData(requestProcessingData);
         } catch (Exception e) {
             logger.warn("Error adding stack status to request database", e);
         }
