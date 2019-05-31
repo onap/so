@@ -17,7 +17,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.openpojo.business.annotation.BusinessKey;
 
 @Entity
-@Table(name = "ACTIVITY_SPEC_PARAMETERS")
+@Table(name = "activity_spec_parameters")
 public class ActivitySpecParameters implements Serializable {
 
     private static final long serialVersionUID = 3627711377147710046L;
