@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6a68b826_361d22a2",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoUpdateE2EServiceInstance.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 320,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2019-05-31T06:35:09Z",
+      "side": 1,
+      "message": "have this fuction seperate from the normal update flow, this hould only be used for the orch status update.",
+      "revId": "8a2fbdea09c863ac6341e4d42421dc56cf14426f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
