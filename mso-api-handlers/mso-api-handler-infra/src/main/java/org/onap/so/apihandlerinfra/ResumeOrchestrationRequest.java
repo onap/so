@@ -106,7 +106,7 @@ public class ResumeOrchestrationRequest {
         }
 
         InfraActiveRequests currentActiveRequest = requestHandlerUtils.createNewRecordCopyFromInfraActiveRequest(
-                infraActiveRequest, currentRequestId, startTimeStamp, source, requestUri, requestorId);
+                infraActiveRequest, currentRequestId, startTimeStamp, source, requestUri, requestorId, requestId);
 
         if (infraActiveRequest == null) {
             logger.error("No infraActiveRequest record found for requestId: {} in requesteDb lookup", requestId);

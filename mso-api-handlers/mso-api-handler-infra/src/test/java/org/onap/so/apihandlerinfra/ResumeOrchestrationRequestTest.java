@@ -169,7 +169,7 @@ public class ResumeOrchestrationRequestTest {
         when(requestDbClient.getInfraActiveRequestbyRequestId(REQUEST_ID)).thenReturn(infraActiveRequest);
         doReturn(currentActiveRequest).when(requestHandler).createNewRecordCopyFromInfraActiveRequest(
                 any(InfraActiveRequests.class), nullable(String.class), any(Timestamp.class), nullable(String.class),
-                nullable(String.class), nullable(String.class));
+                nullable(String.class), nullable(String.class), anyString());
         doReturn(response).when(resumeReq).resumeRequest(any(InfraActiveRequests.class), any(InfraActiveRequests.class),
                 anyString(), nullable(String.class));
 

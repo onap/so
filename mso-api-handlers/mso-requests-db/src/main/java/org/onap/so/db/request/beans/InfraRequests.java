@@ -152,6 +152,8 @@ public abstract class InfraRequests implements java.io.Serializable {
     private String instanceGroupName;
     @Column(name = "REQUEST_URL", length = 500)
     private String requestUrl;
+    @Column(name = "ORIGINAL_REQUEST_ID", length = 45)
+    private String originalRequestId;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "SO_REQUEST_ID", referencedColumnName = "REQUEST_ID")
@@ -569,6 +571,14 @@ public abstract class InfraRequests implements java.io.Serializable {
         this.requestUrl = requestUrl;
     }
 
+    public String getOriginalRequestId() {
+        return this.originalRequestId;
+    }
+
+    public void setOriginalRequestId(String originalRequestId) {
+        this.originalRequestId = originalRequestId;
+    }
+
     @PrePersist
     protected void onCreate() {
         if (requestScope == null)
@@ -630,6 +640,7 @@ public abstract class InfraRequests implements java.io.Serializable {
                 .append("requestorId", getRequestorId()).append("configurationId", getConfigurationId())
                 .append("configurationName", getConfigurationName()).append("operationalEnvId", getOperationalEnvId())
                 .append("operationalEnvName", getOperationalEnvName()).append("instanceGroupId", getInstanceGroupId())
-                .append("instanceGroupName", getInstanceGroupName()).append("requestUrl", getRequestUrl()).toString();
+                .append("instanceGroupName", getInstanceGroupName()).append("requestUrl", getRequestUrl())
+                .append("originalRequestId", originalRequestId).toString();
     }
 }
