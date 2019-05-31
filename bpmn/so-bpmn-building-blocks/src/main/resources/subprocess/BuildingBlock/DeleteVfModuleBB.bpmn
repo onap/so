@@ -82,7 +82,7 @@
     <bpmn:sequenceFlow id="SequenceFlow_0qfmmgt" sourceRef="Audit_Inventory" targetRef="auditSuccessfulCheck" />
     <bpmn:sequenceFlow id="SequenceFlow_14bu4ys" sourceRef="ExclusiveGateway_1yvh16a" targetRef="aaiThrow" />
     <bpmn:sequenceFlow id="SequenceFlow_1mgunf3" name="No" sourceRef="ExclusiveGateway_1h2ystu" targetRef="ExclusiveGateway_1pydilb" />
-    <bpmn:serviceTask id="Check_Audit" name="Check Audit Variable" camunda:expression="${AuditTasks.isAuditNeeded(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn:serviceTask id="Check_Audit" name="Check Audit Variable" camunda:expression="${AuditTasks.isDeleteAuditNeeded(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_1v3jgqe</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1odt2wt</bpmn:outgoing>
     </bpmn:serviceTask>
