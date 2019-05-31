@@ -63,6 +63,8 @@ ssl-enable: false
 tomcat:
   max-threads: 50
 mso:
+  audit:
+    lock-time: 240000
   logPath: logs
   msb-ip: localhost
   msb-port: ${wiremock.server.port}
