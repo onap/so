@@ -60,6 +60,16 @@ public class AuditTasks {
         }
     }
 
+    public void isDeleteAuditNeeded(BuildingBlockExecution execution) {
+        try {
+            logger.debug("deleteAuditInventoryNeeded Value: {}", env.getProperty("mso.infra.deleteAuditInventory"));
+            execution.setVariable("auditInventoryNeeded",
+                    Boolean.parseBoolean(env.getProperty("mso.infra.deleteAuditInventory")));
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
     public void setupAuditVariable(BuildingBlockExecution execution) {
         try {
             execution.setVariable("auditInventory", createAuditInventory(execution));
