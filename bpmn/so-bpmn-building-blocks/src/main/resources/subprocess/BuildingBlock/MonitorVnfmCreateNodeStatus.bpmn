@@ -24,7 +24,7 @@
       <bpmn:endEvent id="EndEvent_0tei3i9">
         <bpmn:incoming>SequenceFlow_1rxbeqi</bpmn:incoming>
       </bpmn:endEvent>
-      <bpmn:serviceTask id="ServiceTask_0y71su8" name="&#10;Get node status &#10;" camunda:asyncAfter="true" camunda:expression="${MonitorVnfmNodeTask.getNodeStatus(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:serviceTask id="ServiceTask_0y71su8" name="&#10;Get node status &#10;" camunda:asyncAfter="true" camunda:expression="${MonitorInstantiateVnfmNodeTask.getNodeStatus(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
         <bpmn:incoming>SequenceFlow_1moaz0q</bpmn:incoming>
         <bpmn:incoming>SequenceFlow_09t51ao</bpmn:incoming>
         <bpmn:outgoing>SequenceFlow_0qvy3sn</bpmn:outgoing>
