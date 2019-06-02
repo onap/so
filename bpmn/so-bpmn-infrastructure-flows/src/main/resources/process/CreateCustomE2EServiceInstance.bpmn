@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.2">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.2.4">
   <bpmn:process id="CreateCustomE2EServiceInstance" name="CreateCustomE2EServiceInstance" isExecutable="true">
     <bpmn:startEvent id="StartEvent_00qj6ro" name="Create SI Start Flow">
       <bpmn:outgoing>SequenceFlow_0s2spoq</bpmn:outgoing>
@@ -44,6 +44,8 @@ ex.processJavaException(execution)</bpmn:script>
         <camunda:in source="uuiRequest" target="uuiRequest" />
         <camunda:in source="requestAction" target="operationType" />
         <camunda:in source="operationId" target="operationId" />
+        <camunda:out source="serviceDecomposition" target="serviceDecomposition" />
+        <camunda:out source="serviceInstanceData" target="serviceInstanceData" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_19eilro</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0klbpxx</bpmn:outgoing>
@@ -74,7 +76,7 @@ csi.prepareCompletionRequest(execution)</bpmn:script>
         <camunda:out source="CompleteMsoProcessResponse" target="CompleteMsoProcessResponse" />
         <camunda:out source="CMSO_ErrorResponse" target="CMSO_ErrorResponse" />
       </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_0je30si</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0kaz8ac</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0yayvrf</bpmn:outgoing>
     </bpmn:callActivity>
     <bpmn:subProcess id="SubProcess_0vaws86" name="Sub-process for FalloutHandler and Rollback" triggeredByEvent="true">
@@ -140,7 +142,7 @@ csi.sendSyncResponse(execution)</bpmn:script>
     <bpmn:sequenceFlow id="SequenceFlow_14zu6wr" name="yes" sourceRef="ExclusiveGateway_0aqn64l" targetRef="ScriptTask_0ttvn8r">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("WorkflowException") == null}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_0je30si" sourceRef="ScriptTask_0ttvn8r" targetRef="CallActivity_02fyxz0" />
+    <bpmn:sequenceFlow id="SequenceFlow_0je30si" sourceRef="ScriptTask_0ttvn8r" targetRef="Task_1bgdtc9" />
     <bpmn:sequenceFlow id="SequenceFlow_1fueo69" name="no" sourceRef="ExclusiveGateway_0aqn64l" targetRef="EndEvent_07uk5iy">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("WorkflowException") != null}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
@@ -175,6 +177,14 @@ csi.prepareInitServiceOperationStatus(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_081z8l2</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_081z8l2" sourceRef="Task_19mxcw3" targetRef="ScriptTask_0xupxj9" />
+    <bpmn:sequenceFlow id="SequenceFlow_0kaz8ac" sourceRef="Task_1bgdtc9" targetRef="CallActivity_02fyxz0" />
+    <bpmn:scriptTask id="Task_1bgdtc9" name="Update AAI Status" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0je30si</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0kaz8ac</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def csi = new CreateCustomE2EServiceInstance()
+csi.updateAAIOrchStatus(execution)</bpmn:script>
+    </bpmn:scriptTask>
   </bpmn:process>
   <bpmn:error id="Error_0nbdy47" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -192,9 +202,9 @@ csi.prepareInitServiceOperationStatus(execution)</bpmn:script>
         <dc:Bounds x="751" y="158" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_0bpd6c0_di" bpmnElement="EndEvent_0bpd6c0">
-        <dc:Bounds x="1258" y="286" width="36" height="36" />
+        <dc:Bounds x="1387" y="286" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1268" y="322" width="22" height="12" />
+          <dc:Bounds x="1398" y="322" width="20" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_1s09c7d_di" bpmnElement="ScriptTask_1s09c7d">
@@ -204,7 +214,7 @@ csi.prepareInitServiceOperationStatus(execution)</bpmn:script>
         <dc:Bounds x="1038" y="158" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="CallActivity_02fyxz0_di" bpmnElement="CallActivity_02fyxz0">
-        <dc:Bounds x="1226" y="158" width="100" height="80" />
+        <dc:Bounds x="1355" y="158" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="SubProcess_0vaws86_di" bpmnElement="SubProcess_0vaws86" isExpanded="true">
         <dc:Bounds x="348" y="370" width="679" height="194" />
@@ -246,8 +256,8 @@ csi.prepareInitServiceOperationStatus(execution)</bpmn:script>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0yayvrf_di" bpmnElement="SequenceFlow_0yayvrf">
-        <di:waypoint x="1276" y="238" />
-        <di:waypoint x="1276" y="286" />
+        <di:waypoint x="1405" y="238" />
+        <di:waypoint x="1405" y="286" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1246" y="262" width="0" height="12" />
         </bpmndi:BPMNLabel>
@@ -270,7 +280,7 @@ csi.prepareInitServiceOperationStatus(execution)</bpmn:script>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0je30si_di" bpmnElement="SequenceFlow_0je30si">
         <di:waypoint x="1138" y="198" />
-        <di:waypoint x="1226" y="198" />
+        <di:waypoint x="1189" y="198" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1137" y="183" width="0" height="12" />
         </bpmndi:BPMNLabel>
@@ -386,6 +396,13 @@ csi.prepareInitServiceOperationStatus(execution)</bpmn:script>
           <dc:Bounds x="533" y="177" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0kaz8ac_di" bpmnElement="SequenceFlow_0kaz8ac">
+        <di:waypoint x="1289" y="198" />
+        <di:waypoint x="1355" y="198" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0novdpr_di" bpmnElement="Task_1bgdtc9">
+        <dc:Bounds x="1189" y="158" width="100" height="80" />
+      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

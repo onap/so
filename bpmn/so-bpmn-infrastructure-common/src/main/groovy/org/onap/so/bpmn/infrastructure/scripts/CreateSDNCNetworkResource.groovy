@@ -243,12 +243,11 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                 String ontsn = jsonUtil.getJsonValue(serInput,
                         "service.parameters.requestInputs.ont_ont_serial_num")
 
-                String uResourceInput = jsonUtil.addJsonValue(resourceInput, "requestInputs.c_vlan", cvlan)
-                uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.s_vlan", svlan)
+                String uResourceInput = jsonUtil.addJsonValue(resourceInput, "requestInputs.CVLAN", cvlan)
+                uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.SVLAN", svlan)
                 uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.remote_id", remoteId)
                 uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.manufacturer", manufacturer)
                 uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.ONTSN", ontsn)
-
                 logger.debug("old resource input:" + resourceInputObj.toString())
                 resourceInputObj.setResourceParameters(uResourceInput)
                 execution.setVariable(Prefix + "resourceInput", resourceInputObj.toString())

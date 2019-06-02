@@ -23,6 +23,13 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import org.onap.aai.domain.yang.ServiceInstance
+import org.onap.so.bpmn.core.domain.ServiceDecomposition
+import org.onap.so.bpmn.core.domain.VnfResource
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.AAIResourcesClient
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.ErrorCode;
 
 import static org.apache.commons.lang3.StringUtils.*
@@ -331,6 +338,42 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
             execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during prepareInitServiceOperationStatus Method:\n" + e.getMessage())
         }
 		logger.trace("finished prepareInitServiceOperationStatus")
+	}
+
+	public void updateAAIOrchStatus (DelegateExecution execution){
+		logger.debug(" ***** start updateAAIOrchStatus ***** ")
+		String msg = ""
+		String serviceInstanceId = execution.getVariable("serviceInstanceId")
+		logger.debug("serviceInstanceId: "+serviceInstanceId)
+		ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
+
+		try {
+			ServiceInstance si = execution.getVariable("serviceInstanceData")
+			boolean allActive = true
+			for (VnfResource resource : serviceDecomposition.vnfResources) {
+				logger.debug("resource.modelInfo.getModelName: " + resource.modelInfo.getModelName() +" | resource.getOrchestrationStatus: "+resource.getOrchestrationStatus())
+				if (resource.getOrchestrationStatus() != "Active") {
+					allActive = false
+				}
+			}
+
+			if (allActive){
+				si.setOrchestrationStatus("Active")
+			}else {
+				si.setOrchestrationStatus("Pending")
+			}
+			AAIResourcesClient client = new AAIResourcesClient()
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
+			client.update(uri, si)
+		} catch (BpmnError e) {
+			throw e
+		} catch (Exception ex) {
+			msg = "Exception in org.onap.so.bpmn.common.scripts.CompleteMsoProcess.updateAAIOrchStatus " + ex.getMessage()
+			logger.info( msg)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+		}
+
+		logger.debug(" ***** end updateAAIOrchStatus ***** ")
 	}
 	
 }
