@@ -22,7 +22,12 @@
  */
 package org.onap.so.bpmn.infrastructure.scripts
 
+import org.apache.commons.lang3.tuple.ImmutablePair
+import org.onap.so.bpmn.common.resource.ResourceRequestBuilder
 import org.onap.so.bpmn.common.scripts.CatalogDbUtilsFactory
+import org.onap.so.bpmn.core.domain.GroupResource
+import org.onap.so.bpmn.core.domain.ModelInfo
+import org.onap.so.bpmn.core.domain.ResourceType
 
 import static org.apache.commons.lang3.StringUtils.isBlank
 
@@ -151,17 +156,61 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
         List<Resource> wanResources = new ArrayList<Resource>()
 
         // get delete resource list and order list
-        List<Resource> delResourceList = execution.getVariable("deleteResourceList")
+        List<ImmutablePair<Resource, List<Resource>>> delResourceList = execution.getVariable("deleteResourceList")
 
         ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
         String serviceModelName = serviceDecomposition.getModelInfo().getModelName();
-        
+        String serviceModelUuid = serviceDecomposition.getModelInfo().getModelUuid();
+
+        Map<String, Map<String, Object>> parentVNF = new HashMap<>()
+
+        // get Sequence from properties
         def resourceSequence = BPMNProperties.getResourceSequenceProp(serviceModelName)
+
+        // get Sequence from catalog db csar(model)
+        if(resourceSequence == null) {
+            resourceSequence = ResourceRequestBuilder.getResourceSequence(serviceModelUuid)
+            logger.info("Get Sequence from catalog db csar : " + resourceSequence)
+        }
 
         if(resourceSequence != null) {
             for (resourceType in resourceSequence.reverse()) {
-                for (resource in delResourceList) {
+
+                boolean vfFound = false
+
+                for (ImmutablePair resourceTuple : delResourceList) {
+                    Resource resource = resourceTuple.getKey()
+                    List<Resource> groupResources = resourceTuple.getValue()
+
                     if (StringUtils.containsIgnoreCase(resource.getModelInfo().getModelName(), resourceType)) {
+
+
+
+                        // if resource type is vnfResource then check for groups also
+                        // Did not use continue because if same model type is used twice
+                        // then we would like to add it twice for processing
+                        // e.g.  S{ V1{G1, G2, G1}} --> S{ {G2, G1, G1}V1}
+                        // we will add in reverse order for deletion
+                        if (resource instanceof VnfResource) {
+                            if (resource.getGroupOrder() != null && !StringUtils.isEmpty(resource.getGroupOrder())) {
+                                String[] grpSequence = resource.getGroupOrder().split(",")
+
+                                Map<String, Object> parentVNFData = new HashMap<>()
+                                parentVNFData.put("vfModelInfo", resource.getModelInfo())
+                                parentVNFData.put("vnf-id", resource.getResourceId())
+
+                                for (String grpType in grpSequence.reverse()) {
+                                    for (GroupResource gResource in groupResources) {
+                                        if (StringUtils.containsIgnoreCase(gResource.getModelInfo().getModelName(), grpType)) {
+                                            sequencedResourceList.add(gResource)
+                                            // Store parent VNF info for the group resource id
+                                            parentVNF.put(gResource.getResourceId(), parentVNFData)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                         sequencedResourceList.add(resource)
 
                         if (resource instanceof NetworkResource) {
@@ -173,11 +222,32 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
         }else {
             //define sequenced resource list, we deploy vf first and then network and then ar
             //this is defaule sequence
+            // While deleting we will delete in resource order group resource, ar, network, then VF.
             List<VnfResource> vnfResourceList = new ArrayList<VnfResource>()
             List<AllottedResource> arResourceList = new ArrayList<AllottedResource>()
-            for (Resource rc : delResourceList) {
+            for (ImmutablePair resourceTuple : delResourceList) {
+                Resource rc = resourceTuple.getKey()
+                List<Resource> groupResources = resourceTuple.getValue()
+
                 if (rc instanceof VnfResource) {
                     vnfResourceList.add(rc)
+                    if (rc.getGroupOrder() != null && !StringUtils.isEmpty(rc.getGroupOrder())) {
+                        String[] grpSequence = rc.getGroupOrder().split(",")
+
+                        Map<String, Object> parentVNFData = new HashMap<>()
+                        parentVNFData.put("vfModelInfo", rc.getModelInfo())
+                        parentVNFData.put("vnf-id", rc.getResourceId())
+
+                        for (String grpType in grpSequence.reverse()) {
+                            for (GroupResource gResource in groupResources) {
+                                if (StringUtils.containsIgnoreCase(gResource.getModelInfo().getModelName(), grpType)) {
+                                    sequencedResourceList.add(gResource)
+                                    // Store parent VNF info for the group resource id
+                                    parentVNF.put(gResource.getResourceId(), parentVNFData)
+                                }
+                            }
+                        }
+                    }
                 } else if (rc instanceof NetworkResource) {
                 	wanResources.add(rc)
                 } else if (rc instanceof AllottedResource) {
@@ -199,6 +269,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
         execution.setVariable("isContainsWanResource", isContainsWanResource)
         execution.setVariable("currentResourceIndex", 0)
         execution.setVariable("sequencedResourceList", sequencedResourceList)
+        execution.setVariable("parentVNF", parentVNF)
         logger.debug("resourceSequence: " + resourceSequence)
         logger.debug(" ======== END sequenceResource Process ======== ")
     }
@@ -262,6 +333,17 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
             ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
             resourceInput.setServiceModelInfo(serviceDecomposition.getModelInfo());
             resourceInput.setServiceType(serviceType)
+            resourceInput.getResourceModelInfo().setModelType(currentResource.getResourceType().toString())
+            if (currentResource.getResourceType() == ResourceType.GROUP) {
+                Map<String, Map<String, Object>> parentVNF = execution.getVariable("parentVNF")
+                if((null != parentVNF) && (null!=parentVNF.get(currentResource.getResourceId()))){
+                    Map<String, Object> parentVNFData = parentVNF.get(currentResource.getResourceId())
+                    ModelInfo parentVNFModel = parentVNFData.get("vfModelInfo")
+                    String parentResourceId = parentVNFData.get("vnf-id")
+                    resourceInput.setVfModelInfo(parentVNFModel)
+                    resourceInput.setVnfId(parentResourceId)
+                }
+            }
 
             String recipeURL = BPMNProperties.getProperty("bpelURL", "http://mso:8080") + recipeUri
 

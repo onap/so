@@ -21,9 +21,11 @@
  */
 package org.onap.so.bpmn.infrastructure.scripts
 
+
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.tuple.ImmutablePair
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONArray
@@ -36,8 +38,12 @@ import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
+import org.onap.so.bpmn.core.domain.GroupResource
 import org.onap.so.bpmn.core.domain.Resource
+import org.onap.so.bpmn.core.domain.ResourceType
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
+import org.onap.so.bpmn.core.domain.VnfResource
+import org.onap.so.bpmn.core.domain.VnfcResource
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
@@ -253,6 +259,62 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
         return jObj
     }
 
+    private Relationship getRelationShipFromNode(groovy.util.slurpersupport.Node relationshipNode) {
+        Relationship relationship = new Relationship()
+        def rtn = relationshipNode.childNodes()
+        List<RelationshipData> relationshipDatas = new ArrayList<>()
+        List<RelatedToProperty> relationshipProperties = new ArrayList<>()
+        while (rtn.hasNext()) {
+            groovy.util.slurpersupport.Node node = rtn.next()
+            def key = node.name()
+
+            if(key.equals("related-to")){
+                def rt = node.text()
+                relationship.setRelatedTo(rt)
+            } else if (key.equals("related-link")){
+                def rl = node.text()
+                relationship.setRelatedLink(rl)
+            } else if (key.equals("relationship-label")){
+                def label = node.text()
+                relationship.setRelationshipLabel(label)
+            } else if (key.equals("relationship-data")){
+                def rData = node.childNodes()
+                RelationshipData relationshipData = new RelationshipData()
+                while(rData.hasNext()){
+                    groovy.util.slurpersupport.Node datanode = rData.next()
+                    def dataKey = datanode.name()
+                    if(dataKey.equals("relationship-key")) {
+                        relationshipData.setRelationshipKey(datanode.text())
+                    } else if(dataKey.equals("relationship-value")) {
+                        relationshipData.setRelationshipValue(datanode.text())
+                    }
+                }
+                relationshipDatas.add(relationshipData)
+            } else if (key.equals("related-to-property")){
+                def rProperty = node.childNodes()
+                RelatedToProperty relationshipProperty = new RelatedToProperty()
+                while(rProperty.hasNext()){
+                    groovy.util.slurpersupport.Node propnode = rProperty.next()
+
+                    def dataKey = propnode.name()
+                    if(dataKey.equals("property-key")) {
+                        relationshipProperty.setPropertyKey(propnode.text())
+                    } else if(dataKey.equals("property-value")) {
+                        relationshipProperty.setPropertyValue(propnode.text())
+                    }
+
+                }
+                relationshipProperties.add(relationshipProperty)
+            }
+
+        }
+        relationship.getRelationshipData().addAll(relationshipDatas)
+        relationship.getRelatedToProperty().addAll(relationshipProperties)
+
+        logger.debug("Relationship related to Resource:" + relationship.toString())
+        return relationship
+    }
+
    public void getCurrentNS(DelegateExecution execution){
        logger.info( "======== Start getCurrentNS Process ======== ")
 
@@ -290,19 +352,31 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
         }
     }
 
-	private void generateRelatedResourceInfo(String response, JSONObject jObj){
+	private void generateRelatedResourceInfo(String response, JSONObject jObj, boolean processRelationship){
 
 		def xml = new XmlSlurper().parseText(response)
 		def rtn = xml.childNodes()
 		while (rtn.hasNext()) {
 			groovy.util.slurpersupport.Node node = rtn.next()
 			def key = node.name()
-			def value = node.text()
-			jObj.put(key, value)
+            if (key.equals("relationship-list") && processRelationship) {
+                def relns = node.childNodes()
+                JSONArray jArray = new JSONArray()
+                while (relns.hasNext()) {
+                    groovy.util.slurpersupport.Node relNode = relns.next()
+                    Relationship relationship = getRelationShipFromNode(relNode)
+                    def relationObj = getRelationShipData(relationship)
+                    jArray.put(relationObj)
+                }
+                jObj.put(key, jArray)
+            } else {
+                def value = node.text()
+                jObj.put(key, value)
+            }
 		}
 	}
 
-	private JSONObject getRelatedResourceInAAI (DelegateExecution execution, JSONObject jObj)
+	private JSONObject getRelatedResourceInAAI (DelegateExecution execution, JSONObject jObj, boolean processRelationship)
 	{
 		logger.debug(" ***** Started getRelatedResourceInAAI *****")
 
@@ -330,7 +404,7 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
 			execution.setVariable(Prefix + "SuccessIndicator", true)
 			execution.setVariable(Prefix + "FoundIndicator", true)
 
-			generateRelatedResourceInfo(aaiResponse, jObj)
+			generateRelatedResourceInfo(aaiResponse, jObj, processRelationship)
 
 			//get model-invariant-uuid and model-uuid
 			String modelInvariantId = ""
@@ -374,7 +448,7 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
                 relationShipList = jsonSlurper.parseText(serviceRelationShip)
             }
 
-            List<Resource> deleteRealResourceList = new ArrayList<Resource>()
+            List<ImmutablePair<Resource, List<Resource>>> deleteRealResourceList = new ArrayList<ImmutablePair<Resource, List<Resource>>>()
 
             //Set the real resource instance id to the decomosed resource list
             //reset the resource instance id , because in the decompose flow ,its a random one.
@@ -382,21 +456,27 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
             if (relationShipList != null) {
                 relationShipList.each {
 
-                    JSONObject obj = getRelatedResourceInAAI(execution, (JSONObject)it)
+                    JSONObject obj = getRelatedResourceInAAI(execution, (JSONObject)it, true)
 
                     for (Resource resource : deleteResourceList) {
 
-                        String modelName = resource.getModelInfo().getModelName()
+                        boolean matches = processMatchingResource(resource, obj)
+                        if((matches) && resource.getResourceType().equals(ResourceType.VNF))  {
+                            List<Resource> delGroupList = new ArrayList<Resource>()
+                            JSONArray vfRelationship = obj.getJSONArray("relationship-list")
+                            for (int idx = 0; idx < vfRelationship.length(); idx++) {
+                                JSONObject vfItem = vfRelationship.getJSONObject(idx)
+                                JSONObject groupObject = getRelatedResourceInAAI(execution, vfItem, false)
+                                List<GroupResource> groups = ((VnfResource)resource).getGroups()
+                                for (GroupResource group : groups){
+                                    if(processMatchingResource(group, groupObject)){
+                                        delGroupList.add(group)
+                                    }
+                                }
+                            }
+                            def delMap = new ImmutablePair(resource, delGroupList)
 
-                        String modelCustomizationUuid = resource.getModelInfo().getModelCustomizationUuid()
-                        if (StringUtils.containsIgnoreCase(obj.get("resourceType"), modelName)) {
-                            resource.setResourceId(obj.get("resourceInstanceId"))
-                            deleteRealResourceList.add(resource)
-                        }
-                        else if (modelCustomizationUuid.equals(obj.get("modelCustomizationId"))) {
-                            resource.setResourceId(obj.get("resourceInstanceId"))
-                            resource.setResourceInstanceName(obj.get("resourceType"))
-                            deleteRealResourceList.add(resource)
+                            deleteRealResourceList.add(delMap)
                         }
                     }
                 }
@@ -420,6 +500,24 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
         logger.debug(" ***** exit postDecomposeService() of  delete generic e2e service flow ***** ")
     }
 
+    private boolean processMatchingResource(Resource resource, JSONObject obj) {
+        boolean matches = false
+        String modelName = resource.getModelInfo().getModelName()
+
+        String modelCustomizationUuid = resource.getModelInfo().getModelCustomizationUuid()
+        if (StringUtils.containsIgnoreCase(obj.get("resourceType"), modelName)) {
+            resource.setResourceId(obj.get("resourceInstanceId"))
+            //deleteRealResourceList.add(resource)
+            matches = true;
+        } else if (modelCustomizationUuid.equals(obj.get("modelCustomizationId"))) {
+            resource.setResourceId(obj.get("resourceInstanceId"))
+            resource.setResourceInstanceName(obj.get("resourceType"))
+            //deleteRealResourceList.add(resource)
+            matches = true;
+        }
+        return matches
+    }
+
     public void preInitResourcesOperStatus(DelegateExecution execution){
         logger.debug(" ======== STARTED preInitResourcesOperStatus Process ======== ")
         try{
@@ -436,11 +534,12 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
             execution.setVariable("serviceInstanceId", serviceId)
             execution.setVariable("operationId", operationId)
             execution.setVariable("operationType", operationType)
-            List<Resource> deleteResourceList = execution.getVariable("deleteResourceList")
+            List<ImmutablePair<Resource, List<Resource>>> deleteResourceList = execution.getVariable("deleteResourceList")
 
             String serviceRelationShip = execution.getVariable("serviceRelationShip")
-            for(Resource resource : deleteResourceList){
-                    resourceTemplateUUIDs  = resourceTemplateUUIDs + resource.getModelInfo().getModelCustomizationUuid() + ":"
+            for (ImmutablePair rc : deleteResourceList) {
+                Resource resource = rc.getKey()
+                resourceTemplateUUIDs = resourceTemplateUUIDs + resource.getModelInfo().getModelCustomizationUuid() + ":"
             }
 
             def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)
