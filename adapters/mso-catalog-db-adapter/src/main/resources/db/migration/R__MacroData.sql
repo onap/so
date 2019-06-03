@@ -806,3 +806,8 @@ VALUES
 ('VnfInPlaceSoftwareUpdate', 'NO_VALIDATE', 'CUSTOM');
 
 UPDATE northbound_request_ref_lookup SET SERVICE_TYPE = '*' WHERE SERVICE_TYPE = NULL;
+
+INSERT INTO building_block_detail(BUILDING_BLOCK_NAME, RESOURCE_TYPE, TARGET_ACTION)
+VALUES
+('ConfigAssignVnfBB', 'NO_VALIDATE', 'CUSTOM'),
+('ConfigDeployVnfBB', 'NO_VALIDATE', 'CUSTOM');
