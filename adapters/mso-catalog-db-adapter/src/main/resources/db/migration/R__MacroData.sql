@@ -27,7 +27,7 @@ INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, I
 ('VFModule-Delete', 'deleteInstance', 'VfModule', true,true, '7','7', 'CloudOwner'),
 ('NetworkCollection-Macro-Create', 'createInstance', 'NetworkCollection', false,true, '7','7', 'CloudOwner'),
 ('NetworkCollection-Macro-Delete', 'deleteInstance', 'NetworkCollection', false,true, '7','7', 'CloudOwner'),
-('VFModule-ScaleOut', 'createInstance', 'VfModule', true, true, '7','7', 'CloudOwner');
+('VFModule-ScaleOut', 'scaleOut', 'VfModule', true, true, '7','7', 'CloudOwner');
 
 
 INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FLOW_VERSION, NB_REQ_REF_LOOKUP_ID) VALUES
@@ -234,8 +234,8 @@ VALUES
 ('DeleteNetworkBB', 'NETWORK', 'DELETE'),
 ('DeleteNetworkCollectionBB', 'NETWORK', 'DELETE'),
 
-('ConfigurationScaleOutBB', 'VF_MODULE', 'CREATE'),
-('GenericVnfHealthCheckBB', 'VF_MODULE', 'CREATE');
+('ConfigurationScaleOutBB', 'NO_VALIDATE', 'CUSTOM'),
+('GenericVnfHealthCheckBB', 'NO_VALIDATE', 'CUSTOM');
 
 INSERT INTO orchestration_status_state_transition_directive (resource_type, orchestration_status, target_action, flow_directive)
 VALUES
