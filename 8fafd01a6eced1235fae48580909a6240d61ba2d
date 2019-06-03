@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4eafb06e_29a9ae9b",
+        "filename": "INFO.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 481
+      },
+      "writtenOn": "2019-06-03T19:45:39Z",
+      "side": 1,
+      "message": "This might throw an error... can we change this to America/Los_Angeles",
+      "range": {
+        "startLine": 52,
+        "startChar": 17,
+        "endLine": 52,
+        "endChar": 36
+      },
+      "revId": "8fafd01a6eced1235fae48580909a6240d61ba2d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "97032ac5_6de5ef90",
+        "filename": "INFO.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 481
+      },
+      "writtenOn": "2019-06-03T19:45:39Z",
+      "side": 1,
+      "message": "This might throw an error... can we change this to America/Los_Angeles",
+      "range": {
+        "startLine": 67,
+        "startChar": 24,
+        "endLine": 67,
+        "endChar": 36
+      },
+      "revId": "8fafd01a6eced1235fae48580909a6240d61ba2d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
