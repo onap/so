@@ -780,3 +780,8 @@ VALUES
 
 
 UPDATE rainy_day_handler_macro SET reg_ex_error_message = '*' WHERE reg_ex_error_message IS null;
+
+INSERT INTO building_block_detail(BUILDING_BLOCK_NAME, RESOURCE_TYPE, TARGET_ACTION)
+VALUES
+('ConfigAssignVnfBB', 'NO_VALIDATE', 'CUSTOM'),
+('ConfigDeployVnfBB', 'NO_VALIDATE', 'CUSTOM');
