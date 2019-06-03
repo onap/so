@@ -20,6 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
@@ -68,7 +69,8 @@ public class ConfigAssignVnf {
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 
-            Map<String, Object> userParams = execution.getGeneralBuildingBlock().getRequestContext().getUserParams();
+            List<Map<String, Object>> userParams = execution.getGeneralBuildingBlock().getRequestContext()
+              .getRequestParameters().getUserParams();
 
             ConfigAssignPropertiesForVnf configAssignPropertiesForVnf = new ConfigAssignPropertiesForVnf();
             configAssignPropertiesForVnf.setServiceInstanceId(serviceInstance.getServiceInstanceId());
@@ -79,8 +81,10 @@ public class ConfigAssignVnf {
             configAssignPropertiesForVnf.setVnfId(vnf.getVnfId());
             configAssignPropertiesForVnf.setVnfName(vnf.getVnfName());
 
-            for (Map.Entry<String, Object> entry : userParams.entrySet()) {
-                configAssignPropertiesForVnf.setUserParam(entry.getKey(), entry.getValue());
+            for (Map<String, Object> params : userParams) {
+                for (Map.Entry<String, Object> entry : params.entrySet()) {
+                    configAssignPropertiesForVnf.setUserParam(entry.getKey(), entry.getValue());
+                }
             }
 
             ConfigAssignRequestVnf configAssignRequestVnf = new ConfigAssignRequestVnf();
