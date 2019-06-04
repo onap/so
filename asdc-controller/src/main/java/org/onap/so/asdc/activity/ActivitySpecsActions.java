@@ -86,7 +86,7 @@ public class ActivitySpecsActions {
                 }
             }
         } catch (Exception e) {
-            logger.warn(LoggingAnchor.TWO, "Exception creating activitySpec", e.getMessage());
+            logger.warn(LoggingAnchor.TWO, "Exception creating activitySpec", e);
         }
 
         return activitySpecId;
@@ -120,7 +120,7 @@ public class ActivitySpecsActions {
             }
 
         } catch (Exception e) {
-            logger.warn(LoggingAnchor.TWO, "Exception certifying activitySpec", e.getMessage());
+            logger.warn(LoggingAnchor.TWO, "Exception certifying activitySpec", e);
         }
 
         return certificationResult;
