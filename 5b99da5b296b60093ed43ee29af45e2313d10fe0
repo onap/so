@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "146c5985_85e86459",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowActionBBTasks.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-06-04T20:22:04Z",
+      "side": 1,
+      "message": "Why are we writing this to execution?",
+      "revId": "5b99da5b296b60093ed43ee29af45e2313d10fe0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
