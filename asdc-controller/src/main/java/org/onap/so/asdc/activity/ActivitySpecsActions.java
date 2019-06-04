@@ -85,7 +85,7 @@ public class ActivitySpecsActions {
                 }
             }
         } catch (Exception e) {
-            logger.warn(Strings.repeat("{} ", 2), "Exception creating activitySpec", e.getMessage());
+            logger.warn(Strings.repeat("{} ", 2), "Exception creating activitySpec", e);
         }
 
         return activitySpecId;
@@ -117,7 +117,7 @@ public class ActivitySpecsActions {
             }
 
         } catch (Exception e) {
-            logger.warn(Strings.repeat("{} ", 2), "Exception certifying activitySpec", e.getMessage());
+            logger.warn(Strings.repeat("{} ", 2), "Exception certifying activitySpec", e);
         }
 
         return certificationResult;
