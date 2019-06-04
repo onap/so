@@ -39,7 +39,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import com.google.common.base.Strings;
-import org.hibernate.StaleObjectStateException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.exception.LockAcquisitionException;
 import org.onap.sdc.api.notification.IArtifactInfo;
@@ -295,6 +294,7 @@ public class ToscaResourceInstaller {
             status = vfResourceStructure.isDeployedSuccessfully();
         } catch (RuntimeException e) {
             status = false;
+            logger.debug("Exception :", e);
         }
         try {
             Service existingService =
@@ -432,7 +432,6 @@ public class ToscaResourceInstaller {
 
             for (NodeTemplate nodeTemplate : vfNodeTemplatesList) {
                 Metadata metadata = nodeTemplate.getMetaData();
-                String serviceType = toscaResourceStruct.getCatalogService().getServiceType();
                 String vfCustomizationCategory = toscaResourceStruct.getSdcCsarHelper()
                         .getMetadataPropertyValue(metadata, SdcPropertyNames.PROPERTY_NAME_CATEGORY);
                 processVfModules(toscaResourceStruct, vfResourceStructure, service, nodeTemplate, metadata,
@@ -499,7 +498,7 @@ public class ToscaResourceInstaller {
     List<NodeTemplate> getRequirementList(List<NodeTemplate> resultList, List<NodeTemplate> nodeTemplates,
             ISdcCsarHelper iSdcCsarHelper) {
 
-        List<NodeTemplate> nodes = new ArrayList<NodeTemplate>();
+        List<NodeTemplate> nodes = new ArrayList<>();
         nodes.addAll(nodeTemplates);
 
         for (NodeTemplate nodeTemplate : nodeTemplates) {
@@ -530,12 +529,12 @@ public class ToscaResourceInstaller {
 
     // This method retrieve resource sequence from csar file
     void processResourceSequence(ToscaResourceStructure toscaResourceStructure, Service service) {
-        List<String> resouceSequence = new ArrayList<String>();
-        List<NodeTemplate> resultList = new ArrayList<NodeTemplate>();
+        List<String> resouceSequence = new ArrayList<>();
+        List<NodeTemplate> resultList = new ArrayList<>();
 
         ISdcCsarHelper iSdcCsarHelper = toscaResourceStructure.getSdcCsarHelper();
         List<NodeTemplate> nodeTemplates = iSdcCsarHelper.getServiceNodeTemplates();
-        List<NodeTemplate> nodes = new ArrayList<NodeTemplate>();
+        List<NodeTemplate> nodes = new ArrayList<>();
         nodes.addAll(nodeTemplates);
 
         for (NodeTemplate nodeTemplate : nodeTemplates) {
@@ -724,9 +723,8 @@ public class ToscaResourceInstaller {
         List<NodeTemplate> configurationNodeTemplatesList =
                 toscaResourceStruct.getSdcCsarHelper().getServiceNodeTemplateBySdcType(SdcTypes.CONFIGURATION);
 
-        List<ServiceProxyResourceCustomization> serviceProxyList = new ArrayList<ServiceProxyResourceCustomization>();
-        List<ConfigurationResourceCustomization> configurationResourceList =
-                new ArrayList<ConfigurationResourceCustomization>();
+        List<ServiceProxyResourceCustomization> serviceProxyList = new ArrayList<>();
+        List<ConfigurationResourceCustomization> configurationResourceList = new ArrayList<>();
 
         ServiceProxyResourceCustomization serviceProxy = null;
 
@@ -979,8 +977,8 @@ public class ToscaResourceInstaller {
 
                 VnfResourceCustomization vnfResource = createVnfResource(nodeTemplate, toscaResourceStruct, service);
 
-                Set<CvnfcCustomization> existingCvnfcSet = new HashSet<CvnfcCustomization>();
-                Set<VnfcCustomization> existingVnfcSet = new HashSet<VnfcCustomization>();
+                Set<CvnfcCustomization> existingCvnfcSet = new HashSet<>();
+                Set<VnfcCustomization> existingVnfcSet = new HashSet<>();
 
                 for (VfModuleStructure vfModuleStructure : vfResourceStructure.getVfModuleStructure()) {
 
@@ -1112,7 +1110,7 @@ public class ToscaResourceInstaller {
                 }
             }
 
-            if (tempGroupList.size() != 0 && tempGroupList.size() < groupList.size()) {
+            if (!tempGroupList.isEmpty() && tempGroupList.size() < groupList.size()) {
                 getVNFCGroupSequenceList(strSequence, tempGroupList, nodes, iSdcCsarHelper);
             }
         }
@@ -1649,7 +1647,7 @@ public class ToscaResourceInstaller {
         List<NetworkInstanceGroup> networkInstanceGroupList = new ArrayList<>();
 
         List<CollectionResourceInstanceGroupCustomization> collectionResourceInstanceGroupCustomizationList =
-                new ArrayList<CollectionResourceInstanceGroupCustomization>();
+                new ArrayList<>();
 
         for (Group group : groupList) {
 
@@ -1935,10 +1933,9 @@ public class ToscaResourceInstaller {
         // * Extract VFC's and CVFC's then add them to VFModule
         // ******************************************************************************************************************
 
-        Set<CvnfcConfigurationCustomization> cvnfcConfigurationCustomizations =
-                new HashSet<CvnfcConfigurationCustomization>();
-        Set<CvnfcCustomization> cvnfcCustomizations = new HashSet<CvnfcCustomization>();
-        Set<VnfcCustomization> vnfcCustomizations = new HashSet<VnfcCustomization>();
+        Set<CvnfcConfigurationCustomization> cvnfcConfigurationCustomizations = new HashSet<>();
+        Set<CvnfcCustomization> cvnfcCustomizations = new HashSet<>();
+        Set<VnfcCustomization> vnfcCustomizations = new HashSet<>();
 
         // Only set the CVNFC if this vfModule group is a member of it.
         List<NodeTemplate> groupMembers =
@@ -2254,14 +2251,14 @@ public class ToscaResourceInstaller {
 
         if (matchingObject.isPresent()) {
             List<HeatFiles> heatFilesList = new ArrayList<>();
-            List<HeatTemplate> volumeHeatChildTemplates = new ArrayList<HeatTemplate>();
-            List<HeatTemplate> heatChildTemplates = new ArrayList<HeatTemplate>();
+            List<HeatTemplate> volumeHeatChildTemplates = new ArrayList<>();
+            List<HeatTemplate> heatChildTemplates = new ArrayList<>();
             HeatTemplate parentHeatTemplate = new HeatTemplate();
             String parentArtifactType = null;
             Set<String> artifacts = new HashSet<>(matchingObject.get().getVfModuleMetadata().getArtifacts());
             for (VfModuleArtifact vfModuleArtifact : vfResourceStructure.getArtifactsMapByUUID().values()) {
 
-                List<HeatTemplate> childNestedHeatTemplates = new ArrayList<HeatTemplate>();
+                List<HeatTemplate> childNestedHeatTemplates = new ArrayList<>();
 
                 if (artifacts.contains(vfModuleArtifact.getArtifactInfo().getArtifactUUID())) {
                     checkVfModuleArtifactType(vfModule, vfModuleCustomization, heatFilesList, vfModuleArtifact,
@@ -2578,7 +2575,7 @@ public class ToscaResourceInstaller {
 
         if (object == null) {
             return null;
-        } else if (object.equals("NULL")) {
+        } else if ("NULL".equals(object)) {
             return null;
         } else if (object instanceof Integer) {
             return object.toString();
@@ -2650,7 +2647,7 @@ public class ToscaResourceInstaller {
     // existing customization available in db.
     private void addVnfCustomization(Service service, VnfResourceCustomization vnfResourceCustomization) {
         List<Service> services = serviceRepo.findByModelUUID(service.getModelUUID());
-        if (services.size() > 0) {
+        if (!services.isEmpty()) {
             // service exist in db
             Service existingService = services.get(0);
             List<VnfResourceCustomization> vnfCustomizations = existingService.getVnfCustomizations();
