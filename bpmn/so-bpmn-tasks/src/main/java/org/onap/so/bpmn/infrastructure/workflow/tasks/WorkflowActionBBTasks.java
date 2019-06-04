@@ -87,18 +87,22 @@ public class WorkflowActionBBTasks {
 
         if (ebb.getBuildingBlock().getBpmnFlowName().equals("ConfigAssignVnfBB")
                 || ebb.getBuildingBlock().getBpmnFlowName().equals("ConfigDeployVnfBB")) {
-            String serviceInstanceId = ebb.getWorkflowResourceIds().getServiceInstanceId();
             String vnfCustomizationUUID = ebb.getBuildingBlock().getKey();
 
-            List<VnfResourceCustomization> vnfResourceCustomizations =
-                    catalogDbClient.getVnfResourceCustomizationByModelUuid(serviceInstanceId);
+            List<VnfResourceCustomization> vnfResourceCustomizations = catalogDbClient
+                    .getVnfResourceCustomizationByModelUuid(ebb.getRequestDetails().getModelInfo().getModelUuid());
+
             if (vnfResourceCustomizations != null && vnfResourceCustomizations.size() >= 1) {
                 VnfResourceCustomization vrc = catalogDbClient.findVnfResourceCustomizationInList(vnfCustomizationUUID,
                         vnfResourceCustomizations);
+                String blueprintName = vrc.getBlueprintName();
+                String blueprintVersion = vrc.getBlueprintVersion();
                 boolean skipConfigVNF = vrc.isSkipPostInstConf();
                 if (skipConfigVNF) {
                     currentSequence++;
                     ebb = flowsToExecute.get(currentSequence);
+                    execution.setVariable("blueprintName", blueprintName);
+                    execution.setVariable("blueprintVersion", blueprintVersion);
                 }
             }
         }
