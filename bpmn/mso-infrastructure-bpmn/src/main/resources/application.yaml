@@ -4,7 +4,7 @@ server:
     max-threads: 50
 mso:
   infra:
-    auditInventory: true
+    auditInventory: false
 spring: 
   datasource:
      driver-class-name: org.mariadb.jdbc.Driver 

@@ -7,7 +7,7 @@ server:
 
 mso:
   infra:
-    auditInventory: true
+    auditInventory: false
     default:
       versions:
         apiMinorVersion: 0
