@@ -48,6 +48,8 @@ import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.request.beans.InfraActiveRequests;
+import org.onap.so.serviceinstancebeans.ModelInfo;
+import org.onap.so.serviceinstancebeans.RequestDetails;
 import org.springframework.core.env.Environment;
 
 public class WorkflowActionBBTasksTest extends BaseTaskTest {
@@ -95,14 +97,16 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         ExecuteBuildingBlock ebb = new ExecuteBuildingBlock();
 
         String vnfCustomizationUUID = "1234567";
-        String serviceInstanceId = "1234567";
+        String modelUuid = "1234567";
         BuildingBlock buildingBlock = new BuildingBlock();
         buildingBlock.setBpmnFlowName("ConfigAssignVnfBB");
         buildingBlock.setKey(vnfCustomizationUUID);
         ebb.setBuildingBlock(buildingBlock);
-        WorkflowResourceIds workflowResourceIds = new WorkflowResourceIds();
-        workflowResourceIds.setServiceInstanceId(serviceInstanceId);
-        ebb.setWorkflowResourceIds(workflowResourceIds);
+        RequestDetails rd = new RequestDetails(); 
+        ModelInfo mi = new ModelInfo();
+        mi.setModelUuid(modelUuid);
+        rd.setModelInfo(mi);
+        ebb.setRequestDetails(rd);
         flowsToExecute.add(ebb);
 
         List<VnfResourceCustomization> vnfResourceCustomizations = new ArrayList();
@@ -113,7 +117,7 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         GenericVnf genericVnf = new GenericVnf();
         genericVnf.setModelCustomizationId(vnfCustomizationUUID);
         doReturn(vnfResourceCustomizations).when(catalogDbClient)
-                .getVnfResourceCustomizationByModelUuid(serviceInstanceId);
+                .getVnfResourceCustomizationByModelUuid(modelUuid);
         doReturn(vrc).when(catalogDbClient).findVnfResourceCustomizationInList(vnfCustomizationUUID,
                 vnfResourceCustomizations);
 
@@ -138,14 +142,16 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock();
 
         String vnfCustomizationUUID = "1234567";
-        String serviceInstanceId = "1234567";
+        String modelUuid = "1234567";
         BuildingBlock buildingBlock = new BuildingBlock();
         buildingBlock.setBpmnFlowName("ConfigDeployVnfBB");
         buildingBlock.setKey(vnfCustomizationUUID);
         ebb.setBuildingBlock(buildingBlock);
-        WorkflowResourceIds workflowResourceIds = new WorkflowResourceIds();
-        workflowResourceIds.setServiceInstanceId(serviceInstanceId);
-        ebb.setWorkflowResourceIds(workflowResourceIds);
+        RequestDetails rd = new RequestDetails(); 
+        ModelInfo mi = new ModelInfo();
+        mi.setModelUuid(modelUuid);
+        rd.setModelInfo(mi);
+        ebb.setRequestDetails(rd);
         flowsToExecute.add(ebb);
 
         List<VnfResourceCustomization> vnfResourceCustomizations = new ArrayList();
@@ -156,7 +162,7 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         GenericVnf genericVnf = new GenericVnf();
         genericVnf.setModelCustomizationId(vnfCustomizationUUID);
         doReturn(vnfResourceCustomizations).when(catalogDbClient)
-                .getVnfResourceCustomizationByModelUuid(serviceInstanceId);
+                .getVnfResourceCustomizationByModelUuid(modelUuid);
         doReturn(vrc).when(catalogDbClient).findVnfResourceCustomizationInList(vnfCustomizationUUID,
                 vnfResourceCustomizations);
 
