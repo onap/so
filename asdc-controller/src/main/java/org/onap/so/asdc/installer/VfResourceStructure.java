@@ -25,7 +25,7 @@ package org.onap.so.asdc.installer;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -81,6 +81,7 @@ public class VfResourceStructure extends ResourceStructure {
         super(notificationdata, resourceinstance);
         this.resourceType = ResourceType.VF_RESOURCE;
         vfModulesStructureList = new LinkedList<>();
+        vfModulesMetadataList = new ArrayList<>();
     }
 
     public void addArtifactToStructure(IDistributionClient distributionClient, IArtifactInfo artifactinfo,
@@ -106,7 +107,7 @@ public class VfResourceStructure extends ResourceStructure {
     }
 
     protected void addArtifactByType(IArtifactInfo artifactinfo, IDistributionClientDownloadResult clientResult,
-            VfModuleArtifact vfModuleArtifact) throws UnsupportedEncodingException {
+            VfModuleArtifact vfModuleArtifact) {
 
         switch (artifactinfo.getArtifactType()) {
             case ASDCConfiguration.HEAT:
@@ -133,7 +134,7 @@ public class VfResourceStructure extends ResourceStructure {
     public void createVfModuleStructures() throws ArtifactInstallerException {
 
         // for vender tosca VNF there is no VFModule in VF
-        if (vfModulesMetadataList == null) {
+        if (vfModulesMetadataList.isEmpty()) {
             logger.info(Strings.repeat("{} ", 4), MessageEnum.ASDC_GENERAL_INFO.toString(),
                     "There is no VF mudules in the VF.", "ASDC", "createVfModuleStructures");
             return;
@@ -148,6 +149,7 @@ public class VfResourceStructure extends ResourceStructure {
         return vfModulesStructureList;
     }
 
+    @Override
     public Map<String, VfModuleArtifact> getArtifactsMapByUUID() {
         return artifactsMapByUUID;
     }
@@ -204,6 +206,6 @@ public class VfResourceStructure extends ResourceStructure {
         } catch (IOException e) {
             logger.debug("IOException : ", e);
         }
-        return null;
+        return new ArrayList<>();
     }
 }
