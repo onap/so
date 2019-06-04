@@ -43,6 +43,8 @@ public class ConfigDeployVnf {
     private static final String ORIGINATOR_ID = "SO";
     private static final String ACTION_NAME = "config-deploy";
     private static final String MODE = "async";
+    private static final String BLUEPRINT_NAME = "blueprintName";
+    private static final String BLUEPRINT_VERSION = "blueprintVersion";
 
     @Autowired
     private ExceptionBuilder exceptionUtil;
@@ -92,8 +94,10 @@ public class ConfigDeployVnf {
             configDeployRequestVnf.setResolutionKey(vnf.getVnfName());
             configDeployRequestVnf.setConfigDeployPropertiesForVnf(configDeployPropertiesForVnf);
 
-            String blueprintName = vnf.getBlueprintName();
-            String blueprintVersion = vnf.getBlueprintVersion();
+            String blueprintName = execution.getVariable(BLUEPRINT_NAME);
+            String blueprintVersion = execution.getVariable(BLUEPRINT_VERSION);
+            logger.info(" BlueprintName : " + blueprintName + " BlueprintVersion : " + blueprintVersion);
+
             AbstractCDSPropertiesBean abstractCDSPropertiesBean = new AbstractCDSPropertiesBean();
 
             abstractCDSPropertiesBean.setBlueprintName(blueprintName);

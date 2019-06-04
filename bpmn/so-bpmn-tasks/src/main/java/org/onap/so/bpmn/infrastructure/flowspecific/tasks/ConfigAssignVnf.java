@@ -50,7 +50,9 @@ public class ConfigAssignVnf {
     private static final String ORIGINATOR_ID = "SO";
     private static final String ACTION_NAME = "config-assign";
     private static final String MODE = "sync";
-
+    private static final String BLUEPRINT_NAME = "blueprintName";
+    private static final String BLUEPRINT_VERSION = "blueprintVersion";
+    
     @Autowired
     private ExceptionBuilder exceptionUtil;
     @Autowired
@@ -91,8 +93,9 @@ public class ConfigAssignVnf {
             configAssignRequestVnf.setResolutionKey(vnf.getVnfName());
             configAssignRequestVnf.setConfigAssignPropertiesForVnf(configAssignPropertiesForVnf);
 
-            String blueprintName = vnf.getBlueprintName();
-            String blueprintVersion = vnf.getBlueprintVersion();
+            String blueprintName = execution.getVariable(BLUEPRINT_NAME);
+            String blueprintVersion = execution.getVariable(BLUEPRINT_VERSION);
+            logger.info(" BlueprintName : " + blueprintName + " BlueprintVersion : " + blueprintVersion);
 
             AbstractCDSPropertiesBean abstractCDSPropertiesBean = new AbstractCDSPropertiesBean();
 
