@@ -7,27 +7,27 @@ DELETE FROM building_block_detail;
 DELETE FROM orchestration_status_state_transition_directive;
 
 
-INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, IS_ALACARTE,IS_TOPLEVELFLOW, MIN_API_VERSION, MAX_API_VERSION, CLOUD_OWNER) VALUES
-('Service-Create', 'createInstance', 'Service', true,true, '7','7', 'CloudOwner'),
-('Service-Delete', 'deleteInstance', 'Service', true,true, '7','7', 'CloudOwner'),
-('Service-Macro-Assign', 'assignInstance', 'Service', false,true, '7','7', 'CloudOwner'),
-('Service-Macro-Activate', 'activateInstance', 'Service', false,true, '7','7', 'CloudOwner'),
-('Service-Macro-Unassign', 'unassignInstance', 'Service', false,true, '7','7', 'CloudOwner'),
-('Service-Macro-Create', 'createInstance', 'Service', false,true, '7','7', 'CloudOwner'),
-('Service-Macro-Delete', 'deleteInstance', 'Service', false,true, '7','7', 'CloudOwner'),
-('Network-Create', 'createInstance', 'Network', true,true, '7','7', 'CloudOwner'),
-('Network-Delete', 'deleteInstance', 'Network', true,true, '7','7', 'CloudOwner'),
-('VNF-Macro-Recreate', 'recreateInstance', 'Vnf', false,true, '7','7', 'CloudOwner'),
-('VNF-Macro-Replace', 'replaceInstance', 'Vnf', false,true, '7','7', 'CloudOwner'),
-('VNF-Create', 'createInstance', 'Vnf', true,true, '7', '7', 'CloudOwner'),
-('VNF-Delete', 'deleteInstance', 'Vnf', true,true, '7', '7', 'CloudOwner'),
-('VolumeGroup-Create', 'createInstance', 'VolumeGroup', true,true, '7','7', 'CloudOwner'),
-('VolumeGroup-Delete', 'deleteInstance', 'VolumeGroup', true,true, '7','7', 'CloudOwner'),
-('VFModule-Create', 'createInstance', 'VfModule', true,true, '7','7', 'CloudOwner'),
-('VFModule-Delete', 'deleteInstance', 'VfModule', true,true, '7','7', 'CloudOwner'),
-('NetworkCollection-Macro-Create', 'createInstance', 'NetworkCollection', false,true, '7','7', 'CloudOwner'),
-('NetworkCollection-Macro-Delete', 'deleteInstance', 'NetworkCollection', false,true, '7','7', 'CloudOwner'),
-('VFModule-ScaleOut', 'scaleOut', 'VfModule', true, true, '7','7', 'CloudOwner');
+INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, IS_ALACARTE,IS_TOPLEVELFLOW, MIN_API_VERSION, MAX_API_VERSION, CLOUD_OWNER, SERVICE_TYPE) VALUES
+('Service-Create', 'createInstance', 'Service', true,true, '7','7', 'CloudOwner', '*'),
+('Service-Delete', 'deleteInstance', 'Service', true,true, '7','7', 'CloudOwner', '*'),
+('Service-Macro-Assign', 'assignInstance', 'Service', false,true, '7','7', 'CloudOwner', '*'),
+('Service-Macro-Activate', 'activateInstance', 'Service', false,true, '7','7', 'CloudOwner', '*'),
+('Service-Macro-Unassign', 'unassignInstance', 'Service', false,true, '7','7', 'CloudOwner', '*'),
+('Service-Macro-Create', 'createInstance', 'Service', false,true, '7','7', 'CloudOwner', '*'),
+('Service-Macro-Delete', 'deleteInstance', 'Service', false,true, '7','7', 'CloudOwner', '*'),
+('Network-Create', 'createInstance', 'Network', true,true, '7','7', 'CloudOwner', '*'),
+('Network-Delete', 'deleteInstance', 'Network', true,true, '7','7', 'CloudOwner', '*'),
+('VNF-Macro-Recreate', 'recreateInstance', 'Vnf', false,true, '7','7', 'CloudOwner', '*'),
+('VNF-Macro-Replace', 'replaceInstance', 'Vnf', false,true, '7','7', 'CloudOwner', '*'),
+('VNF-Create', 'createInstance', 'Vnf', true,true, '7', '7', 'CloudOwner', '*'),
+('VNF-Delete', 'deleteInstance', 'Vnf', true,true, '7', '7', 'CloudOwner', '*'),
+('VolumeGroup-Create', 'createInstance', 'VolumeGroup', true,true, '7','7', 'CloudOwner', '*'),
+('VolumeGroup-Delete', 'deleteInstance', 'VolumeGroup', true,true, '7','7', 'CloudOwner', '*'),
+('VFModule-Create', 'createInstance', 'VfModule', true,true, '7','7', 'CloudOwner', '*'),
+('VFModule-Delete', 'deleteInstance', 'VfModule', true,true, '7','7', 'CloudOwner', '*'),
+('NetworkCollection-Macro-Create', 'createInstance', 'NetworkCollection', false,true, '7','7', 'CloudOwner', '*'),
+('NetworkCollection-Macro-Delete', 'deleteInstance', 'NetworkCollection', false,true, '7','7', 'CloudOwner', '*'),
+('VFModule-ScaleOut', 'scaleOut', 'VfModule', true, true, '7','7', 'CloudOwner', '*');
 
 
 INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FLOW_VERSION, NB_REQ_REF_LOOKUP_ID) VALUES
@@ -619,15 +619,15 @@ VALUES
 ('NO_VALIDATE', 'PENDING_DELETE', 'CUSTOM', 'CONTINUE'),
 ('NO_VALIDATE', 'PRECREATED', 'CUSTOM', 'CONTINUE');
 
-INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, IS_ALACARTE, MIN_API_VERSION, MAX_API_VERSION, IS_TOPLEVELFLOW, CLOUD_OWNER) VALUES
-('VFModule-DeactivateAndCloudDelete', 'deactivateAndCloudDelete', 'VfModule', true, '7','7', true, 'CloudOwner');
+INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, IS_ALACARTE, MIN_API_VERSION, MAX_API_VERSION, IS_TOPLEVELFLOW, CLOUD_OWNER, SERVICE_TYPE) VALUES
+('VFModule-DeactivateAndCloudDelete', 'deactivateAndCloudDelete', 'VfModule', true, '7','7', true, 'CloudOwner', '*');
 
 INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FLOW_VERSION, NB_REQ_REF_LOOKUP_ID) VALUES
 ('VFModule-DeactivateAndCloudDelete', '1', 'DeactivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-DeactivateAndCloudDelete' and CLOUD_OWNER = 'CloudOwner')),
 ('VFModule-DeactivateAndCloudDelete', '2', 'DeleteVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-DeactivateAndCloudDelete' and CLOUD_OWNER = 'CloudOwner'));
 
-INSERT INTO northbound_request_ref_lookup (REQUEST_SCOPE, MACRO_ACTION, ACTION, IS_ALACARTE, MIN_API_VERSION, MAX_API_VERSION, IS_TOPLEVELFLOW, CLOUD_OWNER)
-values ( 'Service', 'Service-Macro-Deactivate', 'deactivateInstance', '0', '7', '7', '1', 'CloudOwner');
+INSERT INTO northbound_request_ref_lookup (REQUEST_SCOPE, MACRO_ACTION, ACTION, IS_ALACARTE, MIN_API_VERSION, MAX_API_VERSION, IS_TOPLEVELFLOW, CLOUD_OWNER, SERVICE_TYPE)
+values ( 'Service', 'Service-Macro-Deactivate', 'deactivateInstance', '0', '7', '7', '1', 'CloudOwner', '*');
 
 INSERT INTO orchestration_flow_reference (COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FLOW_VERSION, NB_REQ_REF_LOOKUP_ID)
 values ( 'Service-Macro-Deactivate', '1', 'DeactivateServiceInstanceBB', '1', (SELECT id FROM northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Deactivate' and CLOUD_OWNER = 'CloudOwner'));
@@ -639,8 +639,8 @@ UPDATE northbound_request_ref_lookup SET MIN_API_VERSION = 5 WHERE MACRO_ACTION 
 
 UPDATE northbound_request_ref_lookup SET MIN_API_VERSION = 5 WHERE MACRO_ACTION = 'Service-Macro-Deactivate';
 
-INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, IS_ALACARTE, MIN_API_VERSION, MAX_API_VERSION, IS_TOPLEVELFLOW, CLOUD_OWNER) VALUES
-('Network-Update', 'updateInstance', 'Network', true, '7','7','1', 'CloudOwner');
+INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, IS_ALACARTE, MIN_API_VERSION, MAX_API_VERSION, IS_TOPLEVELFLOW, CLOUD_OWNER, SERVICE_TYPE) VALUES
+('Network-Update', 'updateInstance', 'Network', true, '7','7','1', 'CloudOwner', '*');
 INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FLOW_VERSION, NB_REQ_REF_LOOKUP_ID) VALUES
 ('Network-Update', '1', 'UpdateNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Network-Update' and CLOUD_OWNER = 'CloudOwner'));
 
@@ -805,7 +805,7 @@ VALUES
 ('VNFUpgradeSoftwareActivity', 'NO_VALIDATE', 'CUSTOM'),
 ('VnfInPlaceSoftwareUpdate', 'NO_VALIDATE', 'CUSTOM');
 
-UPDATE northbound_request_ref_lookup SET SERVICE_TYPE = '*' WHERE SERVICE_TYPE = NULL;
+UPDATE northbound_request_ref_lookup SET SERVICE_TYPE = '*' WHERE SERVICE_TYPE IS NULL;
 
 INSERT INTO building_block_detail(BUILDING_BLOCK_NAME, RESOURCE_TYPE, TARGET_ACTION)
 VALUES
