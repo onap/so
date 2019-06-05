@@ -358,7 +358,7 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			}
 
 			if (allActive){
-				si.setOrchestrationStatus("Active")
+				si.setOrchestrationStatus("Assigned")
 			}else {
 				si.setOrchestrationStatus("Pending")
 			}
