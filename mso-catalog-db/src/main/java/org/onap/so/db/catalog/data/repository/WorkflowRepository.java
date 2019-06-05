@@ -24,13 +24,14 @@ import java.util.List;
 import org.onap.so.db.catalog.beans.Workflow;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "workflow", path = "workflow")
-public interface WorkflowRepository extends JpaRepository<Workflow, String> {
+public interface WorkflowRepository extends JpaRepository<Workflow, Integer> {
 
     Workflow findByArtifactUUID(String artifactUUID);
+
+    List<Workflow> findBySource(String source);
 
     /**
      * Used to fetch the @{link Workflow} by the Model UUID.

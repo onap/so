@@ -11,9 +11,9 @@ parameters:
     description: Name of the Neutron Network
     default: ONAP-NW1
   shared:
-  type: boolean
-  description: Shared amongst tenants
-  default: False
+    type: boolean
+    description: Shared amongst tenants
+    default: False
 outputs:
   network_id:
     description: Openstack network identifier

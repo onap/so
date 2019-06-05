@@ -81,6 +81,7 @@ import org.onap.so.db.catalog.beans.HeatEnvironment;
 import org.onap.so.db.catalog.beans.HeatFiles;
 import org.onap.so.db.catalog.beans.HeatTemplate;
 import org.onap.so.db.catalog.beans.HeatTemplateParam;
+import org.onap.so.db.catalog.beans.InstanceGroup;
 import org.onap.so.db.catalog.beans.InstanceGroupType;
 import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.NetworkInstanceGroup;
@@ -1156,6 +1157,7 @@ public class ToscaResourceInstaller {
                     break;
                 case ASDCConfiguration.HEAT_NET:
                 case ASDCConfiguration.OTHER:
+                case ASDCConfiguration.CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT:
                     logger.warn(Strings.repeat("{} ", 4), MessageEnum.ASDC_ARTIFACT_TYPE_NOT_SUPPORT.toString(),
                             vfModuleArtifact.getArtifactInfo().getArtifactType() + "(Artifact Name:"
                                     + vfModuleArtifact.getArtifactInfo().getArtifactName() + ")",
@@ -1266,6 +1268,8 @@ public class ToscaResourceInstaller {
                     vfModuleArtifact.getArtifactInfo().getArtifactUUID());
             heatTemplate.setParameters(heatParam);
             vfModuleArtifact.setHeatTemplate(heatTemplate);
+        } else {
+            vfModuleArtifact.setHeatTemplate(existingHeatTemplate);
         }
     }
 
@@ -1294,6 +1298,8 @@ public class ToscaResourceInstaller {
                 heatEnvironment.setArtifactChecksum(MANUAL_RECORD);
             }
             vfModuleArtifact.setHeatEnvironment(heatEnvironment);
+        } else {
+            vfModuleArtifact.setHeatEnvironment(existingHeatEnvironment);
         }
     }
 
@@ -1318,7 +1324,8 @@ public class ToscaResourceInstaller {
                 heatFile.setArtifactChecksum(MANUAL_RECORD);
             }
             vfModuleArtifact.setHeatFiles(heatFile);
-
+        } else {
+            vfModuleArtifact.setHeatFiles(existingHeatFiles);
         }
     }
 
@@ -1810,16 +1817,25 @@ public class ToscaResourceInstaller {
             VnfResourceCustomization vnfResourceCustomization, ToscaResourceStructure toscaResourceStructure) {
 
         Metadata instanceMetadata = group.getMetadata();
-        // Populate InstanceGroup
+
+        InstanceGroup existingInstanceGroup =
+                instanceGroupRepo.findByModelUUID(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
+
         VFCInstanceGroup vfcInstanceGroup = new VFCInstanceGroup();
 
-        vfcInstanceGroup.setModelName(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
-        vfcInstanceGroup.setModelInvariantUUID(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID));
-        vfcInstanceGroup.setModelUUID(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
-        vfcInstanceGroup.setModelVersion(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_VERSION));
-        vfcInstanceGroup.setToscaNodeType(group.getType());
-        vfcInstanceGroup.setRole("SUB-INTERFACE"); // Set Role
-        vfcInstanceGroup.setType(InstanceGroupType.VNFC); // Set type
+        if (existingInstanceGroup == null) {
+            // Populate InstanceGroup
+            vfcInstanceGroup.setModelName(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
+            vfcInstanceGroup
+                    .setModelInvariantUUID(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID));
+            vfcInstanceGroup.setModelUUID(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
+            vfcInstanceGroup.setModelVersion(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_VERSION));
+            vfcInstanceGroup.setToscaNodeType(group.getType());
+            vfcInstanceGroup.setRole("SUB-INTERFACE"); // Set Role
+            vfcInstanceGroup.setType(InstanceGroupType.VNFC); // Set type
+        } else {
+            vfcInstanceGroup = (VFCInstanceGroup) existingInstanceGroup;
+        }
 
         // Populate VNFCInstanceGroupCustomization
         VnfcInstanceGroupCustomization vfcInstanceGroupCustom = new VnfcInstanceGroupCustomization();

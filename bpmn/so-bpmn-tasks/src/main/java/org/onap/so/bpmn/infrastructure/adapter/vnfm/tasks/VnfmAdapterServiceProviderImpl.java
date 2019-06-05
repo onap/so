@@ -146,7 +146,7 @@ public class VnfmAdapterServiceProviderImpl implements VnfmAdapterServiceProvide
             return Optional.of(response.getBody());
         } catch (final RestProcessingException | InvalidRestRequestException httpInvocationException) {
             LOGGER.error("Unexpected error while processing job request", httpInvocationException);
-            return Optional.absent();
+            throw httpInvocationException;
         }
     }
 }

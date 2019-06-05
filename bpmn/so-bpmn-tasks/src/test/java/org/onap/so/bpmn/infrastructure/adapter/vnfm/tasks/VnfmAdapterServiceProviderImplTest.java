@@ -228,7 +228,7 @@ public class VnfmAdapterServiceProviderImplTest {
         assertFalse(actual.isPresent());
     }
 
-    @Test
+    @Test(expected = RestProcessingException.class)
     public void testGetInstantiateOperationJobStatus_Exception() {
 
         when(mockedHttpServiceProvider.getHttpResponse(eq(TestConstants.JOB_STATUS_EXPECTED_URL),
@@ -237,8 +237,7 @@ public class VnfmAdapterServiceProviderImplTest {
         final VnfmAdapterServiceProvider objUnderTest =
                 new VnfmAdapterServiceProviderImpl(getVnfmAdapterUrlProvider(), mockedHttpServiceProvider);
 
-        final Optional<QueryJobResponse> actual = objUnderTest.getInstantiateOperationJobStatus(DUMMY_JOB_ID);
-        assertFalse(actual.isPresent());
+        objUnderTest.getInstantiateOperationJobStatus(DUMMY_JOB_ID);
     }
 
     private QueryJobResponse getQueryJobResponse() {

@@ -1,0 +1,13 @@
+{
+	"name": "new_software_version",
+	"payloadLocation": "userParams",
+	"label": "New Software Version",
+	"type": "text",
+	"description": null,
+	"isRequried": true,
+	"maxLength": 50,
+	"allowableChars": "someRegEx",
+	"created": null,
+	"activitySpecUserParameters": null,
+	"id": null
+}

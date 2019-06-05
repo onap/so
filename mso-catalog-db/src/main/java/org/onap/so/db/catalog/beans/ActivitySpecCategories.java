@@ -17,7 +17,7 @@ import com.openpojo.business.annotation.BusinessKey;
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 @Entity
-@Table(name = "ACTIVITY_SPEC_CATEGORIES")
+@Table(name = "activity_spec_categories")
 public class ActivitySpecCategories implements Serializable {
 
     private static final long serialVersionUID = -6251150462067699643L;
@@ -31,9 +31,6 @@ public class ActivitySpecCategories implements Serializable {
     @Column(name = "NAME")
     private String name;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "activitySpecCategories")
-    private List<ActivitySpecActivitySpecCategories> activitySpecActivitySpecCategories;
-
     public Integer getID() {
         return ID;
     }
@@ -46,20 +43,9 @@ public class ActivitySpecCategories implements Serializable {
         this.name = name;
     }
 
-    @LinkedResource
-    public List<ActivitySpecActivitySpecCategories> getActivitySpecActivitySpecCategories() {
-        return activitySpecActivitySpecCategories;
-    }
-
-    public void setActivitySpecActivitySpecCategories(
-            List<ActivitySpecActivitySpecCategories> activitySpecActivitySpecCategories) {
-        this.activitySpecActivitySpecCategories = activitySpecActivitySpecCategories;
-    }
-
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("name", name)
-                .append("activitySpecActivitySpecCategories", activitySpecActivitySpecCategories).toString();
+        return new ToStringBuilder(this).append("name", name).toString();
     }
 
     @Override

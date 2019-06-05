@@ -1,0 +1,20 @@
+{
+	"name": "VNFHealthCheckActivity",
+	"description": "Activity to HealthCheck VNF",
+	"version": null,
+	"created": null,
+	"activitySpecActivitySpecCategories": null,
+	"activitySpecActivitySpecParameters": null,
+	"id": null,
+	"_links": {
+		"self": {
+			"href": "http://localhost:8090/activitySpec/2"
+		},
+		"activitySpec": {
+			"href": "http://localhost:8090/activitySpec/2"
+		},
+		"activitySpecUserParameters": {
+			"href": "http://localhost:8090/activitySpec/2/activitySpecUserParameters"
+		}
+	}
+}

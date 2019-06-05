@@ -1,0 +1,460 @@
+##########################################################################
+#
+#==================LICENSE_START==========================================
+# 
+#
+# Copyright 2017 AT&T Intellectual Property. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#        http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#==================LICENSE_END============================================
+#
+# ECOMP is a trademark and service mark of AT&T Intellectual Property.
+#
+##########################################################################
+
+heat_template_version: 2013-05-23
+
+description: Heat template to deploy vCPE Infrastructue emlements (vAAA, vDHCP, vDNS_DHCP, webServer)
+
+##############
+#            #
+# PARAMETERS #
+#            #
+##############
+
+parameters:
+  vcpe_image_name:
+    type: string
+    label: Image name or ID
+    description: Image to be used for compute instance
+  vcpe_flavor_name:
+    type: string
+    label: Flavor
+    description: Type of instance (flavor) to be used
+  public_net_id:
+    type: string
+    label: Public network name or ID
+    description: Public network that enables remote connection to VNF
+  onap_private_net_id:
+    type: string
+    label: ONAP management network name or ID
+    description: Private network that connects ONAP components and the VNF
+  onap_private_subnet_id:
+    type: string
+    label: ONAP management sub-network name or ID
+    description: Private sub-network that connects ONAP components and the VNF
+  onap_private_net_cidr:
+    type: string
+    label: ONAP private network CIDR
+    description: The CIDR of the protected private network
+  cpe_signal_net_id:
+    type: string
+    label: vAAA private network name or ID
+    description: Private network that connects vAAA with vDNSs
+  cpe_signal_subnet_id:
+    type: string
+    label: CPE Signal subnet
+    description: CPE Signal subnet
+  cpe_signal_net_cidr:
+    type: string
+    label: vAAA private network CIDR
+    description: The CIDR of the vAAA private network
+  cpe_public_net_id:
+    type: string
+    label: vCPE Public network (emulates internet) name or ID
+    description: Private network that connects vGW to emulated internet
+  cpe_public_subnet_id:
+    type: string
+    label: CPE Public subnet
+    description: CPE Public subnet
+  cpe_public_net_cidr:
+    type: string
+    label: vCPE public network CIDR
+    description: The CIDR of the vCPE public
+  vaaa_private_ip_0:
+    type: string
+    label: vAAA private IP address towards the CPE_SIGNAL private network
+    description: Private IP address that is assigned to the vAAA to communicate with the vCPE components
+  vaaa_private_ip_1:
+    type: string
+    label: vAAA private IP address towards the ONAP management network
+    description: Private IP address that is assigned to the vAAA to communicate with ONAP components
+  vdns_private_ip_0:
+    type: string
+    label: vDNS private IP address towards the CPE_PUBLIC private network
+    description: Private IP address that is assigned to the vDNS to communicate with the vCPE components
+  vdns_private_ip_1:
+    type: string
+    label: vDNS private IP address towards the ONAP management network
+    description: Private IP address that is assigned to the vDNS to communicate with ONAP components
+  vdhcp_private_ip_0:
+    type: string
+    label: vDHCP  private IP address towards the CPE_SIGNAL private network
+    description: Private IP address that is assigned to the vDHCP to communicate with the vCPE components
+  vdhcp_private_ip_1:
+    type: string
+    label: vDNS private IP address towards the ONAP management network
+    description: Private IP address that is assigned to the vDHCP to communicate with ONAP components
+  vweb_private_ip_0:
+    type: string
+    label: vWEB private IP address towards the CPE_PUBLIC private network
+    description: Private IP address that is assigned to the vWEB to communicate with the vGWs 
+  vweb_private_ip_1:
+    type: string
+    label: vWEB private IP address towards the ONAP management network
+    description: Private IP address that is assigned to the vWEB to communicate with ONAP components
+  vaaa_name_0:
+    type: string
+    label: vAAA name
+    description: Name of the vAAA
+  vdns_name_0:
+    type: string
+    label: vDNS name
+    description: Name of the vDNS
+  vdhcp_name_0:
+    type: string
+    label: vDHCP name
+    description: Name of the vDHCP
+  vweb_name_0:
+    type: string
+    label: vWEB name
+    description: Name of the vWEB 
+  vnf_id:
+    type: string
+    label: VNF ID
+    description: The VNF ID is provided by ONAP
+  vf_module_id:
+    type: string
+    label: vFirewall module ID
+    description: The vAAA Module ID is provided by ONAP
+  dcae_collector_ip:
+    type: string
+    label: DCAE collector IP address
+    description: IP address of the DCAE collector
+  dcae_collector_port:
+    type: string
+    label: DCAE collector port
+    description: Port of the DCAE collector
+  mr_ip_addr:
+    type: string
+    label: Message Router IP address
+    description: IP address of the Message Router that for vDHCP configuration 
+  mr_ip_port:
+    type: string
+    label: Message Router Port 
+    description: IP port of the Message Router that for vDHCP configuration 
+  key_name:
+    type: string
+    label: Key pair name
+    description: Public/Private key pair name
+  pub_key:
+    type: string
+    label: Public key
+    description: Public key to be installed on the compute instance
+  install_script_version:
+    type: string
+    label: Installation script version number
+    description: Version number of the scripts that install the vFW demo app
+  demo_artifacts_version:
+    type: string
+    label: Artifacts version used in demo vnfs
+    description: Artifacts (jar, tar.gz) version used in demo vnfs
+  nexus_artifact_repo:
+    type: string
+    description: Root URL for the Nexus repository for Maven artifacts.
+    default: "https://nexus.onap.org"
+  cloud_env:
+    type: string
+    label: Cloud environment
+    description: Cloud environment (e.g., openstack, rackspace)
+
+#############
+#           #
+# RESOURCES #
+#           #
+#############
+
+resources:
+
+  random-str:
+    type: OS::Heat::RandomString
+    properties:
+      length: 4
+
+  my_keypair:
+    type: OS::Nova::KeyPair
+    properties:
+      name:
+        str_replace:
+          template: base_rand
+          params:
+            base: { get_param: key_name }
+            rand: { get_resource: random-str }
+      public_key: { get_param: pub_key }
+      save_private_key: false
+
+
+  # Virtual AAA server Instantiation
+  vaaa_private_0_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: cpe_signal_net_id }
+      fixed_ips: [{"subnet": { get_param: cpe_signal_subnet_id }, "ip_address": { get_param: vaaa_private_ip_0 }}]
+
+  vaaa_private_1_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: onap_private_net_id }
+      fixed_ips: [{"subnet": { get_param: onap_private_subnet_id }, "ip_address": { get_param: vaaa_private_ip_1 }}]
+
+  vaaa_0:
+    type: OS::Nova::Server
+    properties:
+      image: { get_param: vcpe_image_name }
+      flavor: { get_param: vcpe_flavor_name }
+      name: { get_param: vaaa_name_0 }
+      key_name: { get_resource: my_keypair }
+      networks:
+        - network: { get_param: public_net_id }
+        - port: { get_resource: vaaa_private_0_port }
+        - port: { get_resource: vaaa_private_1_port }
+      metadata: {vnf_id: { get_param: vnf_id }, vf_module_id: { get_param: vf_module_id }}
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          params:
+            __dcae_collector_ip__: { get_param: dcae_collector_ip }
+            __dcae_collector_port__: { get_param: dcae_collector_port }
+            __cpe_signal_net_ipaddr__: { get_param: vaaa_private_ip_0 }
+            __oam_ipaddr__: { get_param: vaaa_private_ip_1 }
+            __oam_cidr__: { get_param: onap_private_net_cidr }
+            __cpe_signal_net_cidr__: { get_param: cpe_signal_net_cidr }
+            __demo_artifacts_version__ : { get_param: demo_artifacts_version }
+            __install_script_version__ : { get_param: install_script_version }
+            __cloud_env__ : { get_param: cloud_env }
+            __nexus_artifact_repo__: { get_param: nexus_artifact_repo }
+          template: |
+            #!/bin/bash
+
+            # Create configuration files
+            mkdir /opt/config
+            echo "__dcae_collector_ip__" > /opt/config/dcae_collector_ip.txt
+            echo "__dcae_collector_port__" > /opt/config/dcae_collector_port.txt
+            echo "__cpe_signal_net_ipaddr__" > /opt/config/cpe_signal_net_ipaddr.txt
+            echo "__oam_ipaddr__" > /opt/config/oam_ipaddr.txt
+            echo "__oam_cidr__" > /opt/config/oam_cidr.txt
+            echo "__cpe_signal_net_cidr__" > /opt/config/cpe_signal_net_cidr.txt
+            echo "__demo_artifacts_version__" > /opt/config/demo_artifacts_version.txt
+            echo "__install_script_version__" > /opt/config/install_script_version.txt
+            echo "__cloud_env__" > /opt/config/cloud_env.txt
+            echo "__nexus_artifact_repo__" > /opt/config/nexus_artifact_repo.txt
+
+            # Download and run install script
+            apt-get update
+            apt-get -y install unzip
+            if [[ "__install_script_version__" =~ "SNAPSHOT" ]]; then REPO=snapshots; else REPO=releases; fi
+            curl -k -L "__nexus_artifact_repo__/service/local/artifact/maven/redirect?r=${REPO}&g=org.onap.demo.vnf.vcpe&a=vcpe-scripts&e=zip&v=__install_script_version__" -o /opt/vcpe-scripts-__install_script_version__.zip
+            unzip -j /opt/vcpe-scripts-__install_script_version__.zip -d /opt v_aaa_install.sh
+            cd /opt
+            chmod +x v_aaa_install.sh
+            ./v_aaa_install.sh
+
+
+  # Virtual DNS Instantiation
+  vdns_private_0_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: cpe_public_net_id }
+      fixed_ips: [{"subnet": { get_param: cpe_public_subnet_id }, "ip_address": { get_param: vdns_private_ip_0 }}]
+
+  vdns_private_1_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: onap_private_net_id }
+      fixed_ips: [{"subnet": { get_param: onap_private_subnet_id }, "ip_address": { get_param: vdns_private_ip_1 }}]
+
+  vdns_0:
+    type: OS::Nova::Server
+    properties:
+      image: { get_param: vcpe_image_name }
+      flavor: { get_param: vcpe_flavor_name }
+      name: { get_param: vdns_name_0 }
+      key_name: { get_resource: my_keypair }
+      networks:
+        - network: { get_param: public_net_id }
+        - port: { get_resource: vdns_private_0_port }
+        - port: { get_resource: vdns_private_1_port }
+      metadata: {vnf_id: { get_param: vnf_id }, vf_module_id: { get_param: vf_module_id }}
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          params:
+            __oam_ipaddr__ : { get_param: vdns_private_ip_1 }
+            __cpe_public_net_ipaddr__: { get_param: vdns_private_ip_0 }
+            __oam_cidr__: { get_param: onap_private_net_cidr }
+            __cpe_public_net_cidr__: { get_param: cpe_public_net_cidr }
+            __demo_artifacts_version__ : { get_param: demo_artifacts_version }
+            __install_script_version__ : { get_param: install_script_version }
+            __cloud_env__ : { get_param: cloud_env }
+            __nexus_artifact_repo__: { get_param: nexus_artifact_repo }
+          template: |
+            #!/bin/bash
+
+            # Create configuration files
+            mkdir /opt/config
+            echo "__oam_ipaddr__" > /opt/config/oam_ipaddr.txt
+            echo "__cpe_public_net_ipaddr__" > /opt/config/cpe_public_net_ipaddr.txt
+            echo "__oam_cidr__" > /opt/config/oam_cidr.txt
+            echo "__cpe_public_net_cidr__" > /opt/config/cpe_public_net_cidr.txt
+            echo "__demo_artifacts_version__" > /opt/config/demo_artifacts_version.txt
+            echo "__install_script_version__" > /opt/config/install_script_version.txt
+            echo "__cloud_env__" > /opt/config/cloud_env.txt
+            echo "__nexus_artifact_repo__" > /opt/config/nexus_artifact_repo.txt
+
+            # Download and run install script
+            apt-get update
+            apt-get -y install unzip
+            if [[ "__install_script_version__" =~ "SNAPSHOT" ]]; then REPO=snapshots; else REPO=releases; fi
+            curl -k -L "__nexus_artifact_repo__/service/local/artifact/maven/redirect?r=${REPO}&g=org.onap.demo.vnf.vcpe&a=vcpe-scripts&e=zip&v=__install_script_version__" -o /opt/vcpe-scripts-__install_script_version__.zip
+            unzip -j /opt/vcpe-scripts-__install_script_version__.zip -d /opt v_dns_install.sh
+            cd /opt
+            chmod +x v_dns_install.sh
+            ./v_dns_install.sh
+
+
+  # Virtual DHCP Instantiation
+  vdhcp_private_0_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: cpe_signal_net_id }
+      fixed_ips: [{"subnet": { get_param: cpe_signal_subnet_id }, "ip_address": { get_param: vdhcp_private_ip_0 }}]
+
+  vdhcp_private_1_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: onap_private_net_id }
+      fixed_ips: [{"subnet": { get_param: onap_private_subnet_id }, "ip_address": { get_param: vdhcp_private_ip_1 }}]
+
+  vdhcp_0:
+    type: OS::Nova::Server
+    properties:
+      image: { get_param: vcpe_image_name }
+      flavor: { get_param: vcpe_flavor_name }
+      name: { get_param: vdhcp_name_0 }
+      key_name: { get_resource: my_keypair }
+      networks:
+        - network: { get_param: public_net_id }
+        - port: { get_resource: vdhcp_private_0_port }
+        - port: { get_resource: vdhcp_private_1_port }
+      metadata: {vnf_id: { get_param: vnf_id }, vf_module_id: { get_param: vf_module_id }}
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          params:
+            __oam_ipaddr__ : { get_param: vdhcp_private_ip_1 }
+            __cpe_signal_ipaddr__ : { get_param: vdhcp_private_ip_0 }
+            __oam_cidr__ : { get_param: onap_private_net_cidr }
+            __cpe_signal_net_cidr__ : { get_param: cpe_signal_net_cidr }
+            __mr_ip_addr__ : { get_param: mr_ip_addr }
+            __mr_ip_port__ : { get_param: mr_ip_port }
+            __demo_artifacts_version__ : { get_param: demo_artifacts_version }
+            __install_script_version__ : { get_param: install_script_version }
+            __cloud_env__ : { get_param: cloud_env }
+            __nexus_artifact_repo__: { get_param: nexus_artifact_repo }
+          template: |
+            #!/bin/bash
+
+            # Create configuration files
+            mkdir /opt/config
+            echo "__oam_ipaddr__" > /opt/config/oam_ipaddr.txt
+            echo "__cpe_signal_ipaddr__" > /opt/config/cpe_signal_ipaddr.txt
+            echo "__oam_cidr__" > /opt/config/oam_cidr.txt
+            echo "__cpe_signal_net_cidr__" > /opt/config/cpe_signal_net_cidr.txt
+            echo "__mr_ip_addr__" > /opt/config/mr_ip_addr.txt
+            echo "__mr_ip_port__" > /opt/config/mr_ip_port.txt
+            echo "__demo_artifacts_version__" > /opt/config/demo_artifacts_version.txt
+            echo "__install_script_version__" > /opt/config/install_script_version.txt
+            echo "__cloud_env__" > /opt/config/cloud_env.txt
+            echo "__nexus_artifact_repo__" > /opt/config/nexus_artifact_repo.txt
+
+            # Download and run install script
+            apt-get update
+            apt-get -y install unzip
+            if [[ "__install_script_version__" =~ "SNAPSHOT" ]]; then REPO=snapshots; else REPO=releases; fi
+            curl -k -L "__nexus_artifact_repo__/service/local/artifact/maven/redirect?r=${REPO}&g=org.onap.demo.vnf.vcpe&a=vcpe-scripts&e=zip&v=__install_script_version__" -o /opt/vcpe-scripts-__install_script_version__.zip
+            unzip -j /opt/vcpe-scripts-__install_script_version__.zip -d /opt v_dhcp_install.sh
+            cd /opt
+            chmod +x v_dhcp_install.sh
+            ./v_dhcp_install.sh
+
+  # vWEB instantiaion
+  vweb_private_0_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: cpe_public_net_id }
+      fixed_ips: [{"subnet": { get_param: cpe_public_subnet_id }, "ip_address": { get_param: vweb_private_ip_0 }}]
+
+  vweb_private_1_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: onap_private_net_id }
+      fixed_ips: [{"subnet": { get_param: onap_private_subnet_id }, "ip_address": { get_param: vweb_private_ip_1 }}]
+
+
+  vweb_0:
+    type: OS::Nova::Server
+    properties:
+      image: { get_param: vcpe_image_name }
+      flavor: { get_param: vcpe_flavor_name }
+      name: { get_param: vweb_name_0 }
+      key_name: { get_resource: my_keypair }
+      networks:
+        - network: { get_param: public_net_id }
+        - port: { get_resource: vweb_private_0_port }
+        - port: { get_resource: vweb_private_1_port }
+      metadata: {vnf_id: { get_param: vnf_id }, vf_module_id: { get_param: vf_module_id }}
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          params:
+            __oam_ipaddr__ : { get_param: vweb_private_ip_1 }
+            __cpe_public_ipaddr__: { get_param: vweb_private_ip_0 }
+            __oam_cidr__: { get_param: onap_private_net_cidr }
+            __cpe_public_net_cidr__: { get_param: cpe_public_net_cidr }
+            __demo_artifacts_version__ : { get_param: demo_artifacts_version }
+            __install_script_version__ : { get_param: install_script_version }
+            __cloud_env__ : { get_param: cloud_env }
+            __nexus_artifact_repo__: { get_param: nexus_artifact_repo }
+          template: |
+            #!/bin/bash
+
+            # Create configuration files
+            mkdir /opt/config
+            echo "__oam_ipaddr__" > /opt/config/oam_ipaddr.txt
+            echo "__cpe_public_ipaddr__" > /opt/config/cpe_public_ipaddr.txt
+            echo "__oam_cidr__" > /opt/config/oam_cidr.txt
+            echo "__cpe_public_net_cidr__" > /opt/config/cpe_public_net_cidr.txt
+            echo "__demo_artifacts_version__" > /opt/config/demo_artifacts_version.txt
+            echo "__install_script_version__" > /opt/config/install_script_version.txt
+            echo "__cloud_env__" > /opt/config/cloud_env.txt
+            echo "__nexus_artifact_repo__" > /opt/config/nexus_artifact_repo.txt
+
+            # Download and run install script
+            apt-get update
+            apt-get -y install unzip
+            if [[ "__install_script_version__" =~ "SNAPSHOT" ]]; then REPO=snapshots; else REPO=releases; fi
+            curl -k -L "__nexus_artifact_repo__/service/local/artifact/maven/redirect?r=${REPO}&g=org.onap.demo.vnf.vcpe&a=vcpe-scripts&e=zip&v=__install_script_version__" -o /opt/vcpe-scripts-__install_script_version__.zip
+            unzip -j /opt/vcpe-scripts-__install_script_version__.zip -d /opt v_web_install.sh
+            cd /opt
+            chmod +x v_web_install.sh
+            ./v_web_install.sh

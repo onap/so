@@ -44,7 +44,7 @@ import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 @Entity
 @IdClass(VnfResourceWorkflowId.class)
-@Table(name = "VNF_RESOURCE_TO_WORKFLOW")
+@Table(name = "vnf_resource_to_workflow")
 public class VnfResourceWorkflow implements Serializable {
 
     private static final long serialVersionUID = -1326433350241927676L;

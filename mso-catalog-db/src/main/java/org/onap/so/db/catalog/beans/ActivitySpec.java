@@ -21,7 +21,7 @@ import com.openpojo.business.annotation.BusinessKey;
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 @Entity
-@Table(name = "ACTIVITY_SPEC")
+@Table(name = "activity_spec")
 public class ActivitySpec implements Serializable {
 
     private static final long serialVersionUID = 6902290480087262973L;

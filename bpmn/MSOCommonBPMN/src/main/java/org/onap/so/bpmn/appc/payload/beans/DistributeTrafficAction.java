@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2018 Intel Corp. All rights reserved.
+ * Copyright (C) 2019 Orange Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,40 +18,27 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.openstack.utils;
+package org.onap.so.bpmn.appc.payload.beans;
 
-import java.io.Serializable;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"stack"})
-public class MulticloudCreateStackResponse implements Serializable {
-    private static final long serialVersionUID = -5215028275577848311L;
+@JsonPropertyOrder({"configuration-parameters"})
+public class DistributeTrafficAction {
 
-    @JsonProperty("stack")
-    private MulticloudCreateHeatResponse stack;
+    @JsonProperty("configuration-parameters")
+    private ConfigurationParametersDistributeTraffic configurationParameters;
 
-    @JsonCreator
-    public MulticloudCreateStackResponse(@JsonProperty("stack") MulticloudCreateHeatResponse stack) {
-        this.stack = stack;
+    @JsonProperty("configuration-parameters")
+    public ConfigurationParametersDistributeTraffic getConfigurationParameters() {
+        return configurationParameters;
     }
 
-    @JsonProperty("stack")
-    public MulticloudCreateHeatResponse getStack() {
-        return stack;
-    }
-
-    @JsonProperty("stack")
-    public void setStack(MulticloudCreateHeatResponse stack) {
-        this.stack = stack;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this).append("stack", stack).toString();
+    @JsonProperty("configuration-parameters")
+    public void setConfigurationParameters(ConfigurationParametersDistributeTraffic configurationParameters) {
+        this.configurationParameters = configurationParameters;
     }
 }
+

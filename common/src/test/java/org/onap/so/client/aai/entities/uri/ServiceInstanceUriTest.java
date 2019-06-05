@@ -31,8 +31,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -50,9 +56,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.client.aai.AAIClient;
+import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.defaultproperties.DefaultAAIPropertiesImpl;
+import org.onap.so.client.graphinventory.entities.uri.Depth;
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryPayloadException;
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryUriComputationException;
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryUriNotFoundException;
@@ -226,5 +234,43 @@ public class ServiceInstanceUriTest {
                         aResponse().withStatus(404).withHeader("Content-Type", "application/json").withBodyFile("")));
         exception.expect(NotFoundException.class);
         spy.build();
+    }
+
+    @Test
+    public void serializeTest() throws IOException, ClassNotFoundException, GraphInventoryUriNotFoundException,
+            GraphInventoryPayloadException {
+        ServiceInstanceUri instance = new ServiceInstanceUri("key3");
+        final String content = new String(
+                Files.readAllBytes(Paths.get(AAI_JSON_FILE_LOCATION + "service-instance-pathed-query.json")));
+
+        ServiceInstanceUri spy = spy(instance);
+        AAIResourcesClient mockResourcesClient = mock(AAIResourcesClient.class);
+        AAIResultWrapper wrapper = mock(AAIResultWrapper.class);
+        when(mockResourcesClient.get(ArgumentMatchers.<AAIResourceUri>any(AAIResourceUri.class),
+                ArgumentMatchers.<Class<NotFoundException>>any())).thenReturn(wrapper);
+        when(wrapper.getJson()).thenReturn(content);
+        when(spy.getResourcesClient()).thenReturn(mockResourcesClient);
+        spy.build();
+        instance = spy.clone();
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(bos);
+        objectOutputStream.writeObject(instance);
+        objectOutputStream.flush();
+        objectOutputStream.close();
+
+        ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+
+        ObjectInputStream objectInputStream = new ObjectInputStream(bis);
+        ServiceInstanceUri e2 = (ServiceInstanceUri) objectInputStream.readObject();
+        objectInputStream.close();
+
+        ServiceInstanceUri spy2 = spy(e2);
+
+        assertEquals(spy2.build().toString(), instance.build().toString());
+
+        // use the cached value do not call out to external system
+        verify(spy2, times(0)).getResourcesClient();
+
     }
 }

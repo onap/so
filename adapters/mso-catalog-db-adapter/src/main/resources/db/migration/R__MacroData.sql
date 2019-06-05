@@ -7,147 +7,147 @@ DELETE FROM building_block_detail;
 DELETE FROM orchestration_status_state_transition_directive;
 
 
-INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, IS_ALACARTE,IS_TOPLEVELFLOW, MIN_API_VERSION, MAX_API_VERSION, CLOUD_OWNER) VALUES
-('Service-Create', 'createInstance', 'Service', true,true, '7','7', 'cloudOwner'),
-('Service-Delete', 'deleteInstance', 'Service', true,true, '7','7', 'cloudOwner'),
-('Service-Macro-Assign', 'assignInstance', 'Service', false,true, '7','7', 'cloudOwner'),
-('Service-Macro-Activate', 'activateInstance', 'Service', false,true, '7','7', 'cloudOwner'),
-('Service-Macro-Unassign', 'unassignInstance', 'Service', false,true, '7','7', 'cloudOwner'),
-('Service-Macro-Create', 'createInstance', 'Service', false,true, '7','7', 'cloudOwner'),
-('Service-Macro-Delete', 'deleteInstance', 'Service', false,true, '7','7', 'cloudOwner'),
-('Network-Create', 'createInstance', 'Network', true,true, '7','7', 'cloudOwner'),
-('Network-Delete', 'deleteInstance', 'Network', true,true, '7','7', 'cloudOwner'),
-('VNF-Macro-Recreate', 'recreateInstance', 'Vnf', false,true, '7','7', 'cloudOwner'),
-('VNF-Macro-Replace', 'replaceInstance', 'Vnf', false,true, '7','7', 'cloudOwner'),
-('VNF-Create', 'createInstance', 'Vnf', true,true, '7', '7', 'cloudOwner'),
-('VNF-Delete', 'deleteInstance', 'Vnf', true,true, '7', '7', 'cloudOwner'),
-('VolumeGroup-Create', 'createInstance', 'VolumeGroup', true,true, '7','7', 'cloudOwner'),
-('VolumeGroup-Delete', 'deleteInstance', 'VolumeGroup', true,true, '7','7', 'cloudOwner'),
-('VFModule-Create', 'createInstance', 'VfModule', true,true, '7','7', 'cloudOwner'),
-('VFModule-Delete', 'deleteInstance', 'VfModule', true,true, '7','7', 'cloudOwner'),
-('NetworkCollection-Macro-Create', 'createInstance', 'NetworkCollection', false,true, '7','7', 'cloudOwner'),
-('NetworkCollection-Macro-Delete', 'deleteInstance', 'NetworkCollection', false,true, '7','7', 'cloudOwner'),
-('VFModule-ScaleOut', 'createInstance', 'VfModule', true, true, '7','7', 'cloudOwner');
+INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, IS_ALACARTE,IS_TOPLEVELFLOW, MIN_API_VERSION, MAX_API_VERSION, CLOUD_OWNER, SERVICE_TYPE) VALUES
+('Service-Create', 'createInstance', 'Service', true,true, '7','7', 'CloudOwner', '*'),
+('Service-Delete', 'deleteInstance', 'Service', true,true, '7','7', 'CloudOwner', '*'),
+('Service-Macro-Assign', 'assignInstance', 'Service', false,true, '7','7', 'CloudOwner', '*'),
+('Service-Macro-Activate', 'activateInstance', 'Service', false,true, '7','7', 'CloudOwner', '*'),
+('Service-Macro-Unassign', 'unassignInstance', 'Service', false,true, '7','7', 'CloudOwner', '*'),
+('Service-Macro-Create', 'createInstance', 'Service', false,true, '7','7', 'CloudOwner', '*'),
+('Service-Macro-Delete', 'deleteInstance', 'Service', false,true, '7','7', 'CloudOwner', '*'),
+('Network-Create', 'createInstance', 'Network', true,true, '7','7', 'CloudOwner', '*'),
+('Network-Delete', 'deleteInstance', 'Network', true,true, '7','7', 'CloudOwner', '*'),
+('VNF-Macro-Recreate', 'recreateInstance', 'Vnf', false,true, '7','7', 'CloudOwner', '*'),
+('VNF-Macro-Replace', 'replaceInstance', 'Vnf', false,true, '7','7', 'CloudOwner', '*'),
+('VNF-Create', 'createInstance', 'Vnf', true,true, '7', '7', 'CloudOwner', '*'),
+('VNF-Delete', 'deleteInstance', 'Vnf', true,true, '7', '7', 'CloudOwner', '*'),
+('VolumeGroup-Create', 'createInstance', 'VolumeGroup', true,true, '7','7', 'CloudOwner', '*'),
+('VolumeGroup-Delete', 'deleteInstance', 'VolumeGroup', true,true, '7','7', 'CloudOwner', '*'),
+('VFModule-Create', 'createInstance', 'VfModule', true,true, '7','7', 'CloudOwner', '*'),
+('VFModule-Delete', 'deleteInstance', 'VfModule', true,true, '7','7', 'CloudOwner', '*'),
+('NetworkCollection-Macro-Create', 'createInstance', 'NetworkCollection', false,true, '7','7', 'CloudOwner', '*'),
+('NetworkCollection-Macro-Delete', 'deleteInstance', 'NetworkCollection', false,true, '7','7', 'CloudOwner', '*'),
+('VFModule-ScaleOut', 'scaleOut', 'VfModule', true, true, '7','7', 'CloudOwner', '*');
 
 
 INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FLOW_VERSION, NB_REQ_REF_LOOKUP_ID) VALUES
-('Service-Create', '1', 'AssignServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Create' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Create', '2', 'ActivateServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Create' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Delete', '1', 'DeactivateServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Delete', '2', 'UnassignServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Assign', '1', 'AssignServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Assign' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Assign', '2', 'AssignNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Assign' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Assign', '3', 'AssignVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Assign' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Assign', '4', 'AssignVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Assign' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Assign', '5', 'AssignVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Assign' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Assign', '6', 'ConfigAssignVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Assign' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Activate', '1', 'CreateNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Activate' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Activate', '2', 'ActivateNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Activate' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Activate', '3', 'CreateVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Activate' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Activate', '4', 'ActivateVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Activate' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Activate', '5', 'CreateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Activate' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Activate', '6', 'ActivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Activate' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Activate', '7', 'ConfigDeployVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Activate' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Activate', '8', 'ActivateVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Activate' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Activate', '9', 'ActivateServiceInstance', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Activate' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Unassign', '1', 'UnassignVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Unassign' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Unassign', '2', 'UnassignVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Unassign' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Unassign', '3', 'UnassignVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Unassign' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Unassign', '4', 'UnassignNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Unassign' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Unassign', '5', 'UnassignServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Unassign' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Create', '1', 'AssignServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Create', '2', 'CreateNetworkCollectionBB',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Create', '3', 'AssignNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Create', '4', 'AssignVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Create', '5', 'AssignVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Create', '6', 'AssignVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Create', '7', 'ConfigAssignVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Create', '8', 'CreateNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Create', '9', 'ActivateNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Create', '10', 'CreateVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Create', '11', 'ActivateVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Create', '12', 'CreateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Create', '13', 'ActivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Create', '14', 'ConfigDeployVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Create', '15', 'ActivateVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Create', '16', 'ActivateNetworkCollectionBB',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Create', '17', 'ActivateServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Delete', '1', 'DeactivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Delete', '2', 'DeleteVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Delete', '3', 'DeactivateVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Delete', '4', 'DeleteVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Delete', '5', 'DeactivateVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Delete', '6', 'DeactivateNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Delete', '7', 'DeleteNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Delete', '8', 'DeactivateNetworkCollectionBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Delete', '9', 'DeleteNetworkCollectionBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Delete', '10', 'DeactivateServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Delete', '11', 'UnassignVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Delete', '12', 'UnassignVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Delete', '13', 'UnassignVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Delete', '14', 'UnassignNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('Service-Macro-Delete', '15', 'UnassignServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('Network-Create', '1', 'AssignNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Network-Create' and CLOUD_OWNER = 'cloudOwner')),
-('Network-Create', '2', 'CreateNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Network-Create' and CLOUD_OWNER = 'cloudOwner')),
-('Network-Create', '3', 'ActivateNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Network-Create' and CLOUD_OWNER = 'cloudOwner')),
-('Network-Delete', '1', 'DeactivateNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Network-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('Network-Delete', '2', 'DeleteNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Network-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('Network-Delete', '3', 'UnassignNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Network-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('VNF-Create', '1', 'AssignVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Create' and CLOUD_OWNER = 'cloudOwner')),
-('VNF-Create', '2', 'ActivateVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Create' and CLOUD_OWNER = 'cloudOwner')),
-('VNF-Delete', '1', 'DeactivateVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('VNF-Delete', '2', 'UnassignVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('VNF-Macro-Recreate', '1', 'AAICheckVnfInMaintBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Recreate' and CLOUD_OWNER = 'cloudOwner')),
-('VNF-Macro-Recreate', '2', 'AAISetVnfInMaintBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Recreate' and CLOUD_OWNER = 'cloudOwner')),
-('VNF-Macro-Recreate', '3', 'DeactivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Recreate' and CLOUD_OWNER = 'cloudOwner')),
-('VNF-Macro-Recreate', '4', 'DeleteVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Recreate' and CLOUD_OWNER = 'cloudOwner')),
-('VNF-Macro-Recreate', '5', 'DeactivateVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Recreate' and CLOUD_OWNER = 'cloudOwner')),
-('VNF-Macro-Recreate', '6', 'CreateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Recreate' and CLOUD_OWNER = 'cloudOwner')),
-('VNF-Macro-Recreate', '7', 'ActivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Recreate' and CLOUD_OWNER = 'cloudOwner')),
-('VNF-Macro-Recreate', '8', 'ActivateVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Recreate' and CLOUD_OWNER = 'cloudOwner')),
-('VNF-Macro-Recreate', '9', 'SDNOVnfHealthCheckBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Recreate' and CLOUD_OWNER = 'cloudOwner')),
-('VNF-Macro-Recreate', '10', 'AAIUnsetVnfInMaintBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Recreate' and CLOUD_OWNER = 'cloudOwner')),
-('VNF-Macro-Replace', '1', 'AAICheckVnfInMaintBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Replace' and CLOUD_OWNER = 'cloudOwner')),
-('VNF-Macro-Replace', '2', 'AAISetVnfInMaintBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Replace' and CLOUD_OWNER = 'cloudOwner')),
-('VNF-Macro-Replace', '5', 'DeactivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Replace' and CLOUD_OWNER = 'cloudOwner')),
-('VNF-Macro-Replace', '6', 'DeleteVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Replace' and CLOUD_OWNER = 'cloudOwner')),
-('VNF-Macro-Replace', '7', 'DeactivateVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Replace' and CLOUD_OWNER = 'cloudOwner')),
-('VNF-Macro-Replace', '8', 'ChangeModelVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Replace' and CLOUD_OWNER = 'cloudOwner')),
-('VNF-Macro-Replace', '9', 'CreateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Replace' and CLOUD_OWNER = 'cloudOwner')),
-('VNF-Macro-Replace', '10', 'ActivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Replace' and CLOUD_OWNER = 'cloudOwner')),
-('VNF-Macro-Replace', '13', 'ChangeModelVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Replace' and CLOUD_OWNER = 'cloudOwner')),
-('VNF-Macro-Replace', '14', 'ActivateVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Replace' and CLOUD_OWNER = 'cloudOwner')),
-('VNF-Macro-Replace', '15', 'ChangeModelServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Replace' and CLOUD_OWNER = 'cloudOwner')),
-('VNF-Macro-Replace', '16', 'SDNOVnfHealthCheckBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Replace' and CLOUD_OWNER = 'cloudOwner')),
-('VNF-Macro-Replace', '17', 'AAIUnsetVnfInMaintBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Replace' and CLOUD_OWNER = 'cloudOwner')),
-('VolumeGroup-Create', '1', 'AssignVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VolumeGroup-Create' and CLOUD_OWNER = 'cloudOwner')),
-('VolumeGroup-Create', '2', 'CreateVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VolumeGroup-Create' and CLOUD_OWNER = 'cloudOwner')),
-('VolumeGroup-Create', '3', 'ActivateVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VolumeGroup-Create' and CLOUD_OWNER = 'cloudOwner')),
-('VolumeGroup-Delete', '1', 'DeactivateVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VolumeGroup-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('VolumeGroup-Delete', '2', 'DeleteVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VolumeGroup-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('VolumeGroup-Delete', '3', 'UnassignVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VolumeGroup-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('VFModule-Create', '1', 'AssignVfModuleBB',  1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Create' and CLOUD_OWNER = 'cloudOwner')),
-('VFModule-Create', '2', 'CreateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Create' and CLOUD_OWNER = 'cloudOwner')),
-('VFModule-Create', '3', 'ActivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Create' and CLOUD_OWNER = 'cloudOwner')),
-('VFModule-Delete', '3', 'DeactivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('VFModule-Delete', '4', 'DeleteVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('VFModule-Delete', '5', 'UnassignVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('NetworkCollection-Macro-Create', '1', 'CreateNetworkCollectionBB',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'NetworkCollection-Macro-Create' and CLOUD_OWNER = 'cloudOwner')),
-('NetworkCollection-Macro-Create', '2', 'AssignNetworkBB',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'NetworkCollection-Macro-Create' and CLOUD_OWNER = 'cloudOwner')),
-('NetworkCollection-Macro-Create', '3', 'CreateNetworkBB',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'NetworkCollection-Macro-Create' and CLOUD_OWNER = 'cloudOwner')),
-('NetworkCollection-Macro-Create', '4', 'ActivateNetworkBB',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'NetworkCollection-Macro-Create' and CLOUD_OWNER = 'cloudOwner')),
-('NetworkCollection-Macro-Create', '5', 'ActivateNetworkCollectionBB',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'NetworkCollection-Macro-Create' and CLOUD_OWNER = 'cloudOwner')),
-('NetworkCollection-Macro-Delete', '1', 'DeactivateNetworkBB',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'NetworkCollection-Macro-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('NetworkCollection-Macro-Delete', '2', 'DeleteNetworkBB',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'NetworkCollection-Macro-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('NetworkCollection-Macro-Delete', '3', 'UnassignNetworkBB',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'NetworkCollection-Macro-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('NetworkCollection-Macro-Delete', '4', 'DeactivateNetworkCollectionBB',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'NetworkCollection-Macro-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('NetworkCollection-Macro-Delete', '5', 'DeleteNetworkCollectionBB',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'NetworkCollection-Macro-Delete' and CLOUD_OWNER = 'cloudOwner')),
-('VFModule-ScaleOut', '1', 'GenericVnfHealthCheckBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-ScaleOut' and CLOUD_OWNER = 'cloudOwner')),
-('VFModule-ScaleOut', '2', 'AssignVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-ScaleOut' and CLOUD_OWNER = 'cloudOwner')),
-('VFModule-ScaleOut', '3', 'CreateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-ScaleOut' and CLOUD_OWNER = 'cloudOwner')),
-('VFModule-ScaleOut', '4', 'ActivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-ScaleOut' and CLOUD_OWNER = 'cloudOwner')),
-('VFModule-ScaleOut', '5', 'ConfigurationScaleOutBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-ScaleOut' and CLOUD_OWNER = 'cloudOwner')),
-('VFModule-ScaleOut', '6', 'GenericVnfHealthCheckBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-ScaleOut' and CLOUD_OWNER = 'cloudOwner'));
+('Service-Create', '1', 'AssignServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Create' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Create', '2', 'ActivateServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Create' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Delete', '1', 'DeactivateServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Delete', '2', 'UnassignServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Assign', '1', 'AssignServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Assign' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Assign', '2', 'AssignNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Assign' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Assign', '3', 'AssignVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Assign' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Assign', '4', 'AssignVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Assign' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Assign', '5', 'AssignVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Assign' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Assign', '6', 'ConfigAssignVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Assign' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Activate', '1', 'CreateNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Activate' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Activate', '2', 'ActivateNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Activate' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Activate', '3', 'CreateVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Activate' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Activate', '4', 'ActivateVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Activate' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Activate', '5', 'CreateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Activate' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Activate', '6', 'ActivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Activate' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Activate', '7', 'ConfigDeployVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Activate' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Activate', '8', 'ActivateVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Activate' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Activate', '9', 'ActivateServiceInstance', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Activate' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Unassign', '1', 'UnassignVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Unassign' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Unassign', '2', 'UnassignVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Unassign' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Unassign', '3', 'UnassignVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Unassign' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Unassign', '4', 'UnassignNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Unassign' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Unassign', '5', 'UnassignServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Unassign' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Create', '1', 'AssignServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Create', '2', 'CreateNetworkCollectionBB',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Create', '3', 'AssignNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Create', '4', 'AssignVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Create', '5', 'AssignVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Create', '6', 'AssignVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Create', '7', 'ConfigAssignVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Create', '8', 'CreateNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Create', '9', 'ActivateNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Create', '10', 'CreateVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Create', '11', 'ActivateVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Create', '12', 'CreateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Create', '13', 'ActivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Create', '14', 'ConfigDeployVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Create', '15', 'ActivateVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Create', '16', 'ActivateNetworkCollectionBB',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Create', '17', 'ActivateServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Delete', '1', 'DeactivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Delete', '2', 'DeleteVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Delete', '3', 'DeactivateVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Delete', '4', 'DeleteVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Delete', '5', 'DeactivateVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Delete', '6', 'DeactivateNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Delete', '7', 'DeleteNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Delete', '8', 'DeactivateNetworkCollectionBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Delete', '9', 'DeleteNetworkCollectionBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Delete', '10', 'DeactivateServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Delete', '11', 'UnassignVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Delete', '12', 'UnassignVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Delete', '13', 'UnassignVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Delete', '14', 'UnassignNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('Service-Macro-Delete', '15', 'UnassignServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('Network-Create', '1', 'AssignNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Network-Create' and CLOUD_OWNER = 'CloudOwner')),
+('Network-Create', '2', 'CreateNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Network-Create' and CLOUD_OWNER = 'CloudOwner')),
+('Network-Create', '3', 'ActivateNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Network-Create' and CLOUD_OWNER = 'CloudOwner')),
+('Network-Delete', '1', 'DeactivateNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Network-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('Network-Delete', '2', 'DeleteNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Network-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('Network-Delete', '3', 'UnassignNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Network-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('VNF-Create', '1', 'AssignVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Create' and CLOUD_OWNER = 'CloudOwner')),
+('VNF-Create', '2', 'ActivateVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Create' and CLOUD_OWNER = 'CloudOwner')),
+('VNF-Delete', '1', 'DeactivateVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('VNF-Delete', '2', 'UnassignVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('VNF-Macro-Recreate', '1', 'AAICheckVnfInMaintBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Recreate' and CLOUD_OWNER = 'CloudOwner')),
+('VNF-Macro-Recreate', '2', 'AAISetVnfInMaintBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Recreate' and CLOUD_OWNER = 'CloudOwner')),
+('VNF-Macro-Recreate', '3', 'DeactivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Recreate' and CLOUD_OWNER = 'CloudOwner')),
+('VNF-Macro-Recreate', '4', 'DeleteVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Recreate' and CLOUD_OWNER = 'CloudOwner')),
+('VNF-Macro-Recreate', '5', 'DeactivateVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Recreate' and CLOUD_OWNER = 'CloudOwner')),
+('VNF-Macro-Recreate', '6', 'CreateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Recreate' and CLOUD_OWNER = 'CloudOwner')),
+('VNF-Macro-Recreate', '7', 'ActivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Recreate' and CLOUD_OWNER = 'CloudOwner')),
+('VNF-Macro-Recreate', '8', 'ActivateVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Recreate' and CLOUD_OWNER = 'CloudOwner')),
+('VNF-Macro-Recreate', '9', 'SDNOVnfHealthCheckBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Recreate' and CLOUD_OWNER = 'CloudOwner')),
+('VNF-Macro-Recreate', '10', 'AAIUnsetVnfInMaintBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Recreate' and CLOUD_OWNER = 'CloudOwner')),
+('VNF-Macro-Replace', '1', 'AAICheckVnfInMaintBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Replace' and CLOUD_OWNER = 'CloudOwner')),
+('VNF-Macro-Replace', '2', 'AAISetVnfInMaintBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Replace' and CLOUD_OWNER = 'CloudOwner')),
+('VNF-Macro-Replace', '5', 'DeactivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Replace' and CLOUD_OWNER = 'CloudOwner')),
+('VNF-Macro-Replace', '6', 'DeleteVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Replace' and CLOUD_OWNER = 'CloudOwner')),
+('VNF-Macro-Replace', '7', 'DeactivateVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Replace' and CLOUD_OWNER = 'CloudOwner')),
+('VNF-Macro-Replace', '8', 'ChangeModelVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Replace' and CLOUD_OWNER = 'CloudOwner')),
+('VNF-Macro-Replace', '9', 'CreateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Replace' and CLOUD_OWNER = 'CloudOwner')),
+('VNF-Macro-Replace', '10', 'ActivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Replace' and CLOUD_OWNER = 'CloudOwner')),
+('VNF-Macro-Replace', '13', 'ChangeModelVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Replace' and CLOUD_OWNER = 'CloudOwner')),
+('VNF-Macro-Replace', '14', 'ActivateVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Replace' and CLOUD_OWNER = 'CloudOwner')),
+('VNF-Macro-Replace', '15', 'ChangeModelServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Replace' and CLOUD_OWNER = 'CloudOwner')),
+('VNF-Macro-Replace', '16', 'SDNOVnfHealthCheckBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Replace' and CLOUD_OWNER = 'CloudOwner')),
+('VNF-Macro-Replace', '17', 'AAIUnsetVnfInMaintBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Macro-Replace' and CLOUD_OWNER = 'CloudOwner')),
+('VolumeGroup-Create', '1', 'AssignVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VolumeGroup-Create' and CLOUD_OWNER = 'CloudOwner')),
+('VolumeGroup-Create', '2', 'CreateVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VolumeGroup-Create' and CLOUD_OWNER = 'CloudOwner')),
+('VolumeGroup-Create', '3', 'ActivateVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VolumeGroup-Create' and CLOUD_OWNER = 'CloudOwner')),
+('VolumeGroup-Delete', '1', 'DeactivateVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VolumeGroup-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('VolumeGroup-Delete', '2', 'DeleteVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VolumeGroup-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('VolumeGroup-Delete', '3', 'UnassignVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VolumeGroup-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('VFModule-Create', '1', 'AssignVfModuleBB',  1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Create' and CLOUD_OWNER = 'CloudOwner')),
+('VFModule-Create', '2', 'CreateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Create' and CLOUD_OWNER = 'CloudOwner')),
+('VFModule-Create', '3', 'ActivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Create' and CLOUD_OWNER = 'CloudOwner')),
+('VFModule-Delete', '3', 'DeactivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('VFModule-Delete', '4', 'DeleteVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('VFModule-Delete', '5', 'UnassignVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('NetworkCollection-Macro-Create', '1', 'CreateNetworkCollectionBB',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'NetworkCollection-Macro-Create' and CLOUD_OWNER = 'CloudOwner')),
+('NetworkCollection-Macro-Create', '2', 'AssignNetworkBB',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'NetworkCollection-Macro-Create' and CLOUD_OWNER = 'CloudOwner')),
+('NetworkCollection-Macro-Create', '3', 'CreateNetworkBB',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'NetworkCollection-Macro-Create' and CLOUD_OWNER = 'CloudOwner')),
+('NetworkCollection-Macro-Create', '4', 'ActivateNetworkBB',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'NetworkCollection-Macro-Create' and CLOUD_OWNER = 'CloudOwner')),
+('NetworkCollection-Macro-Create', '5', 'ActivateNetworkCollectionBB',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'NetworkCollection-Macro-Create' and CLOUD_OWNER = 'CloudOwner')),
+('NetworkCollection-Macro-Delete', '1', 'DeactivateNetworkBB',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'NetworkCollection-Macro-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('NetworkCollection-Macro-Delete', '2', 'DeleteNetworkBB',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'NetworkCollection-Macro-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('NetworkCollection-Macro-Delete', '3', 'UnassignNetworkBB',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'NetworkCollection-Macro-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('NetworkCollection-Macro-Delete', '4', 'DeactivateNetworkCollectionBB',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'NetworkCollection-Macro-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('NetworkCollection-Macro-Delete', '5', 'DeleteNetworkCollectionBB',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'NetworkCollection-Macro-Delete' and CLOUD_OWNER = 'CloudOwner')),
+('VFModule-ScaleOut', '1', 'GenericVnfHealthCheckBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-ScaleOut' and CLOUD_OWNER = 'CloudOwner')),
+('VFModule-ScaleOut', '2', 'AssignVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-ScaleOut' and CLOUD_OWNER = 'CloudOwner')),
+('VFModule-ScaleOut', '3', 'CreateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-ScaleOut' and CLOUD_OWNER = 'CloudOwner')),
+('VFModule-ScaleOut', '4', 'ActivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-ScaleOut' and CLOUD_OWNER = 'CloudOwner')),
+('VFModule-ScaleOut', '5', 'ConfigurationScaleOutBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-ScaleOut' and CLOUD_OWNER = 'CloudOwner')),
+('VFModule-ScaleOut', '6', 'GenericVnfHealthCheckBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-ScaleOut' and CLOUD_OWNER = 'CloudOwner'));
 
 INSERT INTO rainy_day_handler_macro (FLOW_NAME, SERVICE_TYPE, VNF_TYPE, ERROR_CODE, WORK_STEP, POLICY)
 VALUES
@@ -234,8 +234,8 @@ VALUES
 ('DeleteNetworkBB', 'NETWORK', 'DELETE'),
 ('DeleteNetworkCollectionBB', 'NETWORK', 'DELETE'),
 
-('ConfigurationScaleOutBB', 'VF_MODULE', 'CREATE'),
-('GenericVnfHealthCheckBB', 'VF_MODULE', 'CREATE');
+('ConfigurationScaleOutBB', 'NO_VALIDATE', 'CUSTOM'),
+('GenericVnfHealthCheckBB', 'NO_VALIDATE', 'CUSTOM');
 
 INSERT INTO orchestration_status_state_transition_directive (resource_type, orchestration_status, target_action, flow_directive)
 VALUES
@@ -597,40 +597,40 @@ WHERE TARGET_ACTION = 'CHANGEMODEL';
 INSERT INTO building_block_detail(BUILDING_BLOCK_NAME, RESOURCE_TYPE, TARGET_ACTION)
 VALUES
 ('UnassignVfModuleBB', 'VF_MODULE', 'UNASSIGN'),
-('SniroHoming', 'CUSTOM', 'CUSTOM'),
-('DeactivateAndUnassignVpnBondingLinksBB', 'CUSTOM', 'CUSTOM'),
-('DeactivateNetworkCollectionBB', 'CUSTOM', 'CUSTOM'),
-('AAICheckVnfInMaintBB', 'CUSTOM', 'CUSTOM'),
-('AAISetVnfInMaintBB', 'CUSTOM', 'CUSTOM'),
-('AAIUnsetVnfInMaintBB', 'CUSTOM', 'CUSTOM'),
-('SDNOVnfHealthCheckBB', 'CUSTOM', 'CUSTOM'),
-('VNF-Macro-Replace', 'CUSTOM', 'CUSTOM'),
-('HomingBB', 'CUSTOM', 'CUSTOM');
+('SniroHoming', 'NO_VALIDATE', 'CUSTOM'),
+('DeactivateAndUnassignVpnBondingLinksBB', 'NO_VALIDATE', 'CUSTOM'),
+('DeactivateNetworkCollectionBB', 'NO_VALIDATE', 'CUSTOM'),
+('AAICheckVnfInMaintBB', 'NO_VALIDATE', 'CUSTOM'),
+('AAISetVnfInMaintBB', 'NO_VALIDATE', 'CUSTOM'),
+('AAIUnsetVnfInMaintBB', 'NO_VALIDATE', 'CUSTOM'),
+('SDNOVnfHealthCheckBB', 'NO_VALIDATE', 'CUSTOM'),
+('VNF-Macro-Replace', 'NO_VALIDATE', 'CUSTOM'),
+('HomingBB', 'NO_VALIDATE', 'CUSTOM');
 
 INSERT INTO orchestration_status_state_transition_directive(RESOURCE_TYPE, ORCHESTRATION_STATUS, TARGET_ACTION, FLOW_DIRECTIVE)
 VALUES
-('CUSTOM', 'ACTIVE', 'CUSTOM', 'CONTINUE'),
-('CUSTOM', 'ASSIGNED', 'CUSTOM', 'CONTINUE'),
-('CUSTOM', 'CREATED', 'CUSTOM', 'CONTINUE'),
-('CUSTOM', 'INVENTORIED', 'CUSTOM', 'CONTINUE'),
-('CUSTOM', 'PENDING', 'CUSTOM', 'CONTINUE'),
-('CUSTOM', 'PENDING_ACTIVATION', 'CUSTOM', 'CONTINUE'),
-('CUSTOM', 'PENDING_CREATE', 'CUSTOM', 'CONTINUE'),
-('CUSTOM', 'PENDING_DELETE', 'CUSTOM', 'CONTINUE'),
-('CUSTOM', 'PRECREATED', 'CUSTOM', 'CONTINUE');
+('NO_VALIDATE', 'ACTIVE', 'CUSTOM', 'CONTINUE'),
+('NO_VALIDATE', 'ASSIGNED', 'CUSTOM', 'CONTINUE'),
+('NO_VALIDATE', 'CREATED', 'CUSTOM', 'CONTINUE'),
+('NO_VALIDATE', 'INVENTORIED', 'CUSTOM', 'CONTINUE'),
+('NO_VALIDATE', 'PENDING', 'CUSTOM', 'CONTINUE'),
+('NO_VALIDATE', 'PENDING_ACTIVATION', 'CUSTOM', 'CONTINUE'),
+('NO_VALIDATE', 'PENDING_CREATE', 'CUSTOM', 'CONTINUE'),
+('NO_VALIDATE', 'PENDING_DELETE', 'CUSTOM', 'CONTINUE'),
+('NO_VALIDATE', 'PRECREATED', 'CUSTOM', 'CONTINUE');
 
-INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, IS_ALACARTE, MIN_API_VERSION, MAX_API_VERSION, IS_TOPLEVELFLOW, CLOUD_OWNER) VALUES
-('VFModule-DeactivateAndCloudDelete', 'deactivateAndCloudDelete', 'VfModule', true, '7','7', true, 'cloudOwner');
+INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, IS_ALACARTE, MIN_API_VERSION, MAX_API_VERSION, IS_TOPLEVELFLOW, CLOUD_OWNER, SERVICE_TYPE) VALUES
+('VFModule-DeactivateAndCloudDelete', 'deactivateAndCloudDelete', 'VfModule', true, '7','7', true, 'CloudOwner', '*');
 
 INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FLOW_VERSION, NB_REQ_REF_LOOKUP_ID) VALUES
-('VFModule-DeactivateAndCloudDelete', '1', 'DeactivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-DeactivateAndCloudDelete' and CLOUD_OWNER = 'cloudOwner')),
-('VFModule-DeactivateAndCloudDelete', '2', 'DeleteVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-DeactivateAndCloudDelete' and CLOUD_OWNER = 'cloudOwner'));
+('VFModule-DeactivateAndCloudDelete', '1', 'DeactivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-DeactivateAndCloudDelete' and CLOUD_OWNER = 'CloudOwner')),
+('VFModule-DeactivateAndCloudDelete', '2', 'DeleteVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-DeactivateAndCloudDelete' and CLOUD_OWNER = 'CloudOwner'));
 
-INSERT INTO northbound_request_ref_lookup (REQUEST_SCOPE, MACRO_ACTION, ACTION, IS_ALACARTE, MIN_API_VERSION, MAX_API_VERSION, IS_TOPLEVELFLOW, CLOUD_OWNER)
-values ( 'Service', 'Service-Macro-Deactivate', 'deactivateInstance', '0', '7', '7', '1', 'cloudOwner');
+INSERT INTO northbound_request_ref_lookup (REQUEST_SCOPE, MACRO_ACTION, ACTION, IS_ALACARTE, MIN_API_VERSION, MAX_API_VERSION, IS_TOPLEVELFLOW, CLOUD_OWNER, SERVICE_TYPE)
+values ( 'Service', 'Service-Macro-Deactivate', 'deactivateInstance', '0', '7', '7', '1', 'CloudOwner', '*');
 
 INSERT INTO orchestration_flow_reference (COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FLOW_VERSION, NB_REQ_REF_LOOKUP_ID)
-values ( 'Service-Macro-Deactivate', '1', 'DeactivateServiceInstanceBB', '1', (SELECT id FROM northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Deactivate' and CLOUD_OWNER = 'cloudOwner'));
+values ( 'Service-Macro-Deactivate', '1', 'DeactivateServiceInstanceBB', '1', (SELECT id FROM northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Deactivate' and CLOUD_OWNER = 'CloudOwner'));
 
 
 UPDATE northbound_request_ref_lookup SET MIN_API_VERSION = 5 WHERE MACRO_ACTION = 'Service-Macro-Create';
@@ -639,10 +639,10 @@ UPDATE northbound_request_ref_lookup SET MIN_API_VERSION = 5 WHERE MACRO_ACTION 
 
 UPDATE northbound_request_ref_lookup SET MIN_API_VERSION = 5 WHERE MACRO_ACTION = 'Service-Macro-Deactivate';
 
-INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, IS_ALACARTE, MIN_API_VERSION, MAX_API_VERSION, IS_TOPLEVELFLOW, CLOUD_OWNER) VALUES
-('Network-Update', 'updateInstance', 'Network', true, '7','7','1', 'cloudOwner');
+INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, IS_ALACARTE, MIN_API_VERSION, MAX_API_VERSION, IS_TOPLEVELFLOW, CLOUD_OWNER, SERVICE_TYPE) VALUES
+('Network-Update', 'updateInstance', 'Network', true, '7','7','1', 'CloudOwner', '*');
 INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FLOW_VERSION, NB_REQ_REF_LOOKUP_ID) VALUES
-('Network-Update', '1', 'UpdateNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Network-Update' and CLOUD_OWNER = 'cloudOwner'));
+('Network-Update', '1', 'UpdateNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Network-Update' and CLOUD_OWNER = 'CloudOwner'));
 
 INSERT INTO building_block_detail(BUILDING_BLOCK_NAME,RESOURCE_TYPE,TARGET_ACTION) VALUES
 ('UpdateNetworkBB','NETWORK','UPDATE');
@@ -778,10 +778,38 @@ VALUES
 ('GenericVnfHealthCheckBB', '*', '*', '*', "*" , 'Retry'),
 ('ConfigurationScaleOutBB', '*', '*', '*', "*" , 'Retry');
 
+INSERT INTO building_block_detail(BUILDING_BLOCK_NAME, RESOURCE_TYPE, TARGET_ACTION)  
+VALUES
+('VNFSetInMaintFlagActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFCheckPserversLockedFlagActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFCheckInMaintFlagActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFCheckClosedLoopDisabledFlagActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFSetClosedLoopDisabledFlagActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFUnsetClosedLoopDisabledFlagActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFLockActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFUnlockActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFStopActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFStartActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFSnapShotActivity', 'NO_VALIDATE', 'CUSTOM'),
+('FlowCompleteActivity', 'NO_VALIDATE', 'CUSTOM'),
+('PauseForManualTaskActivity', 'NO_VALIDATE', 'CUSTOM'),
+('DistributeTrafficActivity', 'NO_VALIDATE', 'CUSTOM'),
+('DistributeTrafficCheckActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFHealthCheckActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFQuiesceTrafficActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFResumeTrafficActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFUnsetInMaintFlagActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFUpgradeBackupActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFUpgradePostCheckActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFUpgradePreCheckActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFUpgradeSoftwareActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VnfInPlaceSoftwareUpdate', 'NO_VALIDATE', 'CUSTOM');
 
-UPDATE rainy_day_handler_macro SET reg_ex_error_message = '*' WHERE reg_ex_error_message IS null;
+UPDATE northbound_request_ref_lookup SET SERVICE_TYPE = '*' WHERE SERVICE_TYPE IS NULL;
 
 INSERT INTO building_block_detail(BUILDING_BLOCK_NAME, RESOURCE_TYPE, TARGET_ACTION)
 VALUES
 ('ConfigAssignVnfBB', 'NO_VALIDATE', 'CUSTOM'),
 ('ConfigDeployVnfBB', 'NO_VALIDATE', 'CUSTOM');
+
+UPDATE rainy_day_handler_macro SET reg_ex_error_message = '*' WHERE reg_ex_error_message IS null;

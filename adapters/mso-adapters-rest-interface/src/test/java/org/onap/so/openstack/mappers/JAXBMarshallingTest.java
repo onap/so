@@ -64,7 +64,8 @@ public class JAXBMarshallingTest {
 
         assertEquals("documents should be equal",
                 new String(Files
-                        .readAllBytes(Paths.get("src/test/resources/VfRequest-marshalled-with-complex-object.xml"))),
+                        .readAllBytes(Paths.get("src/test/resources/VfRequest-marshalled-with-complex-object.xml")))
+                                .replaceAll("\\R", "\n"),
                 request.toXmlString());
 
     }

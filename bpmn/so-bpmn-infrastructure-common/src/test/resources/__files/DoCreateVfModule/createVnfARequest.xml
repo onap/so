@@ -1,5 +1,6 @@
 <createVfModuleRequest>
     <cloudSiteId>RDM2WAGPLCP</cloudSiteId>
+    <cloudOwner>null</cloudOwner>
     <tenantId>fba1bd1e195a404cacb9ce17a9b2b421</tenantId>
     <vnfId>skask</vnfId>
     <vnfName>skask-test</vnfName>
@@ -47,6 +48,10 @@
             <value>null</value>
         </entry>
         <entry>
+            <key>user_directives</key>
+            <value>{ &quot;attributes&quot;: [{&quot;attribute_name&quot;:&quot;vrr_image_name&quot;,&quot;attribute_value&quot;:&quot;MDT17&quot;},{&quot;attribute_name&quot;:&quot;availability_zone_0&quot;,&quot;attribute_value&quot;:&quot;nova&quot;},{&quot;attribute_name&quot;:&quot;vrr_flavor_name&quot;,&quot;attribute_value&quot;:&quot;ns.c16r32d128.v1&quot;}]}</value>
+        </entry>
+        <entry>
             <key>vf_module_name</key>
             <value>PCRF::module-0-2</value>
         </entry>
@@ -69,6 +74,10 @@
         <entry>
             <key>ADIG_SRIOV_1_subnet_id</key>
             <value></value>
+        </entry>
+        <entry>
+            <key>vrr_flavor_name</key>
+            <value>ns.c16r32d128.v1</value>
         </entry>
         <entry>
             <key>ADIG_SRIOV_2_net_name</key>
@@ -103,6 +112,10 @@
             <value>null</value>
         </entry>
         <entry>
+            <key>sdnc_directives</key>
+            <value>{ &quot;attributes&quot;: [{&quot;attribute_name&quot;:&quot;vf_module_id&quot;,&quot;attribute_value&quot;:&quot;cb510af0-5b21-4bc7-86d9-323cb396ce32&quot;},{&quot;attribute_name&quot;:&quot;vrra_Internal-Network1_ips&quot;,&quot;attribute_value&quot;:&quot;null&quot;},{&quot;attribute_name&quot;:&quot;ADIG_SRIOV_2_subnet_id&quot;,&quot;attribute_value&quot;:&quot;&quot;},{&quot;attribute_name&quot;:&quot;vrra_ADIGOam.OAM_v6_ips&quot;,&quot;attribute_value&quot;:&quot;null&quot;},{&quot;attribute_name&quot;:&quot;vnf_name&quot;,&quot;attribute_value&quot;:&quot;skask-test&quot;},{&quot;attribute_name&quot;:&quot;ADIGOam.OAM_v6_subnet_id&quot;,&quot;attribute_value&quot;:&quot;&quot;},{&quot;attribute_name&quot;:&quot;workload_context&quot;,&quot;attribute_value&quot;:&quot;null&quot;},{&quot;attribute_name&quot;:&quot;vf_module_name&quot;,&quot;attribute_value&quot;:&quot;PCRF::module-0-2&quot;},{&quot;attribute_name&quot;:&quot;vnf_id&quot;,&quot;attribute_value&quot;:&quot;skask&quot;},{&quot;attribute_name&quot;:&quot;ADIG_SRIOV_2_v6_subnet_id&quot;,&quot;attribute_value&quot;:&quot;&quot;},{&quot;attribute_name&quot;:&quot;vrra_ADIG_SRIOV_1_ips&quot;,&quot;attribute_value&quot;:&quot;null&quot;},{&quot;attribute_name&quot;:&quot;ADIG_SRIOV_1_v6_subnet_id&quot;,&quot;attribute_value&quot;:&quot;&quot;},{&quot;attribute_name&quot;:&quot;ADIG_SRIOV_1_subnet_id&quot;,&quot;attribute_value&quot;:&quot;&quot;},{&quot;attribute_name&quot;:&quot;ADIG_SRIOV_2_net_name&quot;,&quot;attribute_value&quot;:&quot;ADIG_SRIOV_2&quot;},{&quot;attribute_name&quot;:&quot;ADIGOam.OAM_subnet_id&quot;,&quot;attribute_value&quot;:&quot;&quot;},{&quot;attribute_name&quot;:&quot;ADIGOam.OAM_net_id&quot;,&quot;attribute_value&quot;:&quot;491c7cef-a3f4-4990-883e-b0af397466d0&quot;},{&quot;attribute_name&quot;:&quot;environment_context&quot;,&quot;attribute_value&quot;:&quot;null&quot;},{&quot;attribute_name&quot;:&quot;ADIG_SRIOV_1_net_fqdn&quot;,&quot;attribute_value&quot;:&quot;&quot;},{&quot;attribute_name&quot;:&quot;ADIGOam.OAM_net_name&quot;,&quot;attribute_value&quot;:&quot;ADIGOAM.OAM&quot;},{&quot;attribute_name&quot;:&quot;vrra_name_0&quot;,&quot;attribute_value&quot;:&quot;frkdevRvrra24&quot;},{&quot;attribute_name&quot;:&quot;vrra_ADIG_SRIOV_2_ips&quot;,&quot;attribute_value&quot;:&quot;null&quot;},{&quot;attribute_name&quot;:&quot;ADIG_SRIOV_2_net_fqdn&quot;,&quot;attribute_value&quot;:&quot;&quot;},{&quot;attribute_name&quot;:&quot;vrra_Internal-Network2_ips&quot;,&quot;attribute_value&quot;:&quot;null&quot;},{&quot;attribute_name&quot;:&quot;ADIG_SRIOV_1_net_name&quot;,&quot;attribute_value&quot;:&quot;ADIG_SRIOV_1&quot;},{&quot;attribute_name&quot;:&quot;vrra_ADIG_SRIOV_1_v6_ips&quot;,&quot;attribute_value&quot;:&quot;null&quot;},{&quot;attribute_name&quot;:&quot;vrra_ADIGOam.OAM_ips&quot;,&quot;attribute_value&quot;:&quot;null&quot;},{&quot;attribute_name&quot;:&quot;vrra_Internal-Network1_v6_ips&quot;,&quot;attribute_value&quot;:&quot;null&quot;},{&quot;attribute_name&quot;:&quot;ADIGOam.OAM_net_fqdn&quot;,&quot;attribute_value&quot;:&quot;&quot;},{&quot;attribute_name&quot;:&quot;vrra_names&quot;,&quot;attribute_value&quot;:&quot;frkdevRvrra24&quot;},{&quot;attribute_name&quot;:&quot;ADIG_SRIOV_1_net_id&quot;,&quot;attribute_value&quot;:&quot;491c7cef-a3f4-4990-883e-b0af397466d0&quot;},{&quot;attribute_name&quot;:&quot;vrra_Internal-Network2_v6_ips&quot;,&quot;attribute_value&quot;:&quot;null&quot;},{&quot;attribute_name&quot;:&quot;vrra_ADIG_SRIOV_2_v6_ips&quot;,&quot;attribute_value&quot;:&quot;null&quot;},{&quot;attribute_name&quot;:&quot;ADIG_SRIOV_2_net_id&quot;,&quot;attribute_value&quot;:&quot;491c7cef-a3f4-4990-883e-b0af397466d0&quot;},{&quot;attribute_name&quot;:&quot;vf_module_index&quot;,&quot;attribute_value&quot;:&quot;index&quot;},{&quot;attribute_name&quot;:&quot;availability_zone_0&quot;,&quot;attribute_value&quot;:&quot;frkde-esx-az01&quot;}]}</value>
+        </entry>
+        <entry>
             <key>ADIG_SRIOV_2_net_fqdn</key>
             <value></value>
         </entry>
@@ -125,6 +138,10 @@
         <entry>
             <key>vrra_Internal-Network1_v6_ips</key>
             <value>null</value>
+        </entry>
+        <entry>
+            <key>vrr_image_name</key>
+            <value>MDT17</value>
         </entry>
         <entry>
             <key>ADIGOam.OAM_net_fqdn</key>
@@ -156,8 +173,9 @@
         </entry>
         <entry>
             <key>availability_zone_0</key>
-            <value>frkde-esx-az01</value>
+            <value>nova</value>
         </entry>
+
 
     </vfModuleParams>
     <msoRequest>

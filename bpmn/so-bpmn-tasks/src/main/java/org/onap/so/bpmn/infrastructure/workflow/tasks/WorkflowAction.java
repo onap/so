@@ -415,7 +415,7 @@ public class WorkflowAction {
 
     protected boolean isConfiguration(List<OrchestrationFlow> orchFlows) {
         for (OrchestrationFlow flow : orchFlows) {
-            if (flow.getFlowName().contains("Configuration")) {
+            if (flow.getFlowName().contains("Configuration") && !flow.getFlowName().equals("ConfigurationScaleOutBB")) {
                 return true;
             }
         }

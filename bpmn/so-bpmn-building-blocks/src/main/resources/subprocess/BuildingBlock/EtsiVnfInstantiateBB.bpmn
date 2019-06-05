@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_0x13ohc" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.2.4">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_0x13ohc" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.0.3">
   <bpmn:process id="EtsiVnfInstantiateBB" name="&#10;EtsiVnfInstantiateBB" isExecutable="true">
     <bpmn:serviceTask id="ServiceTask_02e82t2" name="Create &#10;CreateVnfRequest&#10;" camunda:expression="${VnfmAdapterCreateVnfTask.buildCreateVnfRequest(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_18fsqzd</bpmn:incoming>
@@ -25,16 +25,22 @@
     <bpmn:sequenceFlow id="SequenceFlow_0hp0ka1" sourceRef="ServiceTask_06ao4xu" targetRef="CallActivity_0fuqfru" />
     <bpmn:callActivity id="CallActivity_0fuqfru" name="Monitor Instantiation Job" calledElement="MonitorVnfmCreateJob">
       <bpmn:extensionElements>
-        <camunda:in source="SDNCRequest" target="SDNCRequest" />
-        <camunda:out source="SDNCResponse" target="SDNCResponse" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:in source="mso-request-id" target="mso-request-id" />
+        <camunda:in source="gBuildingBlockExecution" target="gBuildingBlockExecution" />
+        <camunda:out source="gBuildingBlockExecution" target="gBuildingBlockExecution" />
+        <camunda:in source="createVnfResponse" target="createVnfResponse" />
+        <camunda:out source="WorkflowExceptionErrorMessage" target="WorkflowExceptionErrorMessage" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0hp0ka1</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1owx4yu</bpmn:outgoing>
     </bpmn:callActivity>
     <bpmn:sequenceFlow id="SequenceFlow_1owx4yu" sourceRef="CallActivity_0fuqfru" targetRef="CallActivity_0agszsb" />
     <bpmn:callActivity id="CallActivity_0agszsb" name="Monitor Create Node Status" calledElement="MonitorVnfmCreateNodeStatus">
+      <bpmn:extensionElements>
+        <camunda:in source="gBuildingBlockExecution" target="gBuildingBlockExecution" />
+        <camunda:out source="gBuildingBlockExecution" target="gBuildingBlockExecution" />
+      </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1owx4yu</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0n57z81</bpmn:outgoing>
     </bpmn:callActivity>

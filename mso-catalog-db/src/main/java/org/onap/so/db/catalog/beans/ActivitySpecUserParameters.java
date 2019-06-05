@@ -28,7 +28,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -36,9 +35,9 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.openpojo.business.annotation.BusinessKey;
+import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 @Entity
-@IdClass(ActivitySpecUserParametersId.class)
 @Table(name = "activity_spec_to_user_parameters")
 public class ActivitySpecUserParameters implements Serializable {
 
@@ -50,12 +49,10 @@ public class ActivitySpecUserParameters implements Serializable {
     private Integer ID;
 
     @BusinessKey
-    @Id
     @Column(name = "ACTIVITY_SPEC_ID")
     private Integer activitySpecId;
 
     @BusinessKey
-    @Id
     @Column(name = "USER_PARAMETERS_ID")
     private Integer userParametersId;
 
@@ -108,6 +105,7 @@ public class ActivitySpecUserParameters implements Serializable {
         this.userParametersId = userParametersId;
     }
 
+    @LinkedResource
     public ActivitySpec getActivitySpec() {
         return activitySpec;
     }
@@ -116,6 +114,7 @@ public class ActivitySpecUserParameters implements Serializable {
         this.activitySpec = activitySpec;
     }
 
+    @LinkedResource
     public UserParameters getUserParameters() {
         return userParameters;
     }

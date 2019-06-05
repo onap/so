@@ -9,6 +9,8 @@
     "nfRole" : "nfRole",
     "nfNamingCode" : "nfNamingCode",
     "multiStageDesign" : "multiStageDesign",
+    "blueprintName" : "testBlueprintName",
+    "blueprintVersion" : "testBlueprintVersion",
     "vnfResources" : {
         "modelUUID" : "modelUUID",
         "modelInvariantUUID" : "modelInvariantUUID",

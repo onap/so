@@ -205,14 +205,22 @@ public class VnfAdapterVfModuleObjectMapper {
     private void buildDirectivesParamFromMap(Map<String, Object> paramsMap, String directive,
             Map<String, Object> srcMap) {
         StringBuilder directives = new StringBuilder();
-        if (srcMap.size() > 0) {
+        int no_directives_size = 0;
+        if (directives.equals(MsoMulticloudUtils.USER_DIRECTIVES)
+                && srcMap.containsKey(MsoMulticloudUtils.OOF_DIRECTIVES)) {
+            no_directives_size = 1;
+        }
+        if (srcMap.size() > no_directives_size) {
             directives.append("{ \"attributes\": [ ");
             int i = 0;
             for (String attributeName : srcMap.keySet()) {
-                directives.append(new AttributeNameValue(attributeName, srcMap.get(attributeName).toString()));
-                if (i < (srcMap.size() - 1))
-                    directives.append(", ");
-                i++;
+                if (!(MsoMulticloudUtils.USER_DIRECTIVES.equals(directives)
+                        && attributeName.equals(MsoMulticloudUtils.OOF_DIRECTIVES))) {
+                    directives.append(new AttributeNameValue(attributeName, srcMap.get(attributeName).toString()));
+                    if (i < (srcMap.size() - 1 + no_directives_size))
+                        directives.append(", ");
+                    i++;
+                }
             }
             directives.append("] }");
         } else {

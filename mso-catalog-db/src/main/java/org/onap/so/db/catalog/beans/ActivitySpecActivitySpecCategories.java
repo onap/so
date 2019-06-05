@@ -28,7 +28,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -36,9 +35,9 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.openpojo.business.annotation.BusinessKey;
+import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 @Entity
-@IdClass(ActivitySpecActivitySpecCategoriesId.class)
 @Table(name = "activity_spec_to_activity_spec_categories")
 public class ActivitySpecActivitySpecCategories implements Serializable {
 
@@ -116,6 +115,7 @@ public class ActivitySpecActivitySpecCategories implements Serializable {
         this.activitySpec = activitySpec;
     }
 
+    @LinkedResource
     public ActivitySpecCategories getActivitySpecCategories() {
         return activitySpecCategories;
     }

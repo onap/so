@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,6 +47,9 @@ import static org.mockito.Mockito.*
 class DoCreateVfModuleTest {
     def prefix = "DCVFM_"
 
+    @Rule
+    public WireMockRule wireMockRule = new WireMockRule(8090);
+
     @Captor
     static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
 
@@ -54,7 +57,7 @@ class DoCreateVfModuleTest {
     void init() throws IOException {
         MockitoAnnotations.initMocks(this);
     }
-  
+
     @Test
     void testQueryAAIVfModule() {
         ExecutionEntity mockExecution = setupMock()
@@ -90,7 +93,7 @@ class DoCreateVfModuleTest {
         Mockito.verify(mockExecution).setVariable("DCVFM_queryAAIVfModuleForStatusResponseCode", 200)
     }
 
-  
+
 
     @Test
     void testPreProcessVNFAdapterRequest() {
@@ -122,7 +125,7 @@ class DoCreateVfModuleTest {
         map.put("vrr_image_name", "MDT17");
         map.put("availability_zone_0", "nova");
         map.put("vrr_flavor_name", "ns.c16r32d128.v1");
-        when(mockExecution.getVariable("vnfParamsMap")).thenReturn(map)
+        when(mockExecution.getVariable(prefix + "vnfParamsMap")).thenReturn(map)
         when(mockExecution.getVariable("mso-request-id")).thenReturn("testRequestId-1503410089303")
         when(mockExecution.getVariable("mso.use.qualified.host")).thenReturn("true")
         when(mockExecution.getVariable("mso.workflow.message.endpoint")).thenReturn("http://localhost:28080/mso/WorkflowMesssage")
@@ -155,7 +158,7 @@ class DoCreateVfModuleTest {
         Mockito.verify(mockExecution).setVariable(prefix + "queryCloudRegionReturnCode", "200")
     }
 
-  
+
 
     @Test
     void testCreateNetworkPoliciesInAAI() {
@@ -181,7 +184,7 @@ class DoCreateVfModuleTest {
         Mockito.verify(mockExecution).setVariable(prefix + "aaiQqueryNetworkPolicyByFqdnReturnCode", 200)
     }
 
-   
+
 
     private static ExecutionEntity setupMock() {
         ProcessDefinition mockProcessDefinition = mock(ProcessDefinition.class)
