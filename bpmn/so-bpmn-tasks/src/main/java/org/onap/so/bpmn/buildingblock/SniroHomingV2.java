@@ -90,19 +90,17 @@ public class SniroHomingV2 {
     private SniroClient client;
     @Autowired
     private ExceptionBuilder exceptionUtil;
-    private static final String MODEL_NAME = "modelName";
     private static final String MODEL_INVARIANT_ID = "modelInvariantId";
     private static final String MODEL_VERSION_ID = "modelVersionId";
-    private static final String MODEL_VERSION = "modelVersion";
     private static final String SERVICE_RESOURCE_ID = "serviceResourceId";
-    private static final String RESOURCE_MODULE_NAME = "resourceModuleName";
-    private static final String RESOURCE_MODEL_INFO = "resourceModelInfo";
     private static final String IDENTIFIER_TYPE = "identifierType";
     private static final String SOLUTIONS = "solutions";
     private static final String RESOURCE_MISSING_DATA = "Resource does not contain: ";
     private static final String SERVICE_MISSING_DATA = "Service Instance does not contain: ";
     private static final String UNPROCESSABLE = "422";
     private static final int INTERNAL = 500;
+    private static final String EXCEPTION_OCCURRED = "Exception occurred";
+    private static final String VNF_HOST_NAME = "vnfHostName";
 
     /**
      * Generates the request payload then sends to sniro manager to perform homing and licensing for the provided
@@ -147,7 +145,7 @@ public class SniroHomingV2 {
             licenseInfo.setDemands(licenseDemands);
             request.setLicenseInformation(licenseInfo);
 
-            if (placementDemands.size() > 0 || licenseDemands.size() > 0) {
+            if (!placementDemands.isEmpty() || !licenseDemands.isEmpty()) {
                 client.postDemands(request);
             } else {
                 logger.debug(SERVICE_MISSING_DATA + "resources eligible for homing or licensing");
@@ -161,13 +159,13 @@ public class SniroHomingV2 {
 
             logger.trace("Completed Sniro Homing Call Sniro");
         } catch (BpmnError e) {
-            logger.error("Exception occurred", e);
+            logger.error(EXCEPTION_OCCURRED, e);
             exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(e.getErrorCode()), e.getMessage());
         } catch (BadResponseException e) {
-            logger.error("Exception occurred", e);
+            logger.error(EXCEPTION_OCCURRED, e);
             exceptionUtil.buildAndThrowWorkflowException(execution, 400, e.getMessage());
         } catch (Exception e) {
-            logger.error("Exception occurred", e);
+            logger.error(EXCEPTION_OCCURRED, e);
             exceptionUtil.buildAndThrowWorkflowException(execution, INTERNAL,
                     "Internal Error - occurred while preparing sniro request: " + e.getMessage());
         }
@@ -213,13 +211,13 @@ public class SniroHomingV2 {
 
             logger.trace("Completed Sniro Homing Process Solution");
         } catch (BpmnError e) {
-            logger.error("Exception occurred", e);
+            logger.error(EXCEPTION_OCCURRED, e);
             exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(e.getErrorCode()), e.getMessage());
         } catch (BadResponseException e) {
-            logger.error("Exception occurred", e);
+            logger.error(EXCEPTION_OCCURRED, e);
             exceptionUtil.buildAndThrowWorkflowException(execution, 400, e.getMessage());
         } catch (Exception e) {
-            logger.error("Exception occurred", e);
+            logger.error(EXCEPTION_OCCURRED, e);
             exceptionUtil.buildAndThrowWorkflowException(execution, INTERNAL,
                     "Internal Error - occurred while processing sniro asynchronous response: " + e.getMessage());
         }
@@ -230,7 +228,7 @@ public class SniroHomingV2 {
      *
      * @throws Exception
      */
-    private RequestInfo buildRequestInfo(String requestId, String timeout) throws Exception {
+    private RequestInfo buildRequestInfo(String requestId, String timeout) {
         logger.trace("Building request information");
         RequestInfo requestInfo = new RequestInfo();
         if (requestId != null) {
@@ -305,7 +303,7 @@ public class SniroHomingV2 {
      */
     private List<Demand> buildPlacementDemands(ServiceInstance serviceInstance) {
         logger.trace("Building placement information demands");
-        List<Demand> placementDemands = new ArrayList<Demand>();
+        List<Demand> placementDemands = new ArrayList<>();
 
         List<AllottedResource> allottedResourceList = serviceInstance.getAllottedResources();
         if (!allottedResourceList.isEmpty()) {
@@ -355,7 +353,7 @@ public class SniroHomingV2 {
      */
     private List<Demand> buildLicenseDemands(ServiceInstance serviceInstance) {
         logger.trace("Building license information");
-        List<Demand> licenseDemands = new ArrayList<Demand>();
+        List<Demand> licenseDemands = new ArrayList<>();
         List<GenericVnf> vnfList = serviceInstance.getVnfs();
         if (!vnfList.isEmpty()) {
             logger.debug("Adding vnfs to license demands list");
@@ -413,42 +411,33 @@ public class SniroHomingV2 {
         List<Candidate> required = candidates.getRequiredCandidates();
         List<Candidate> excluded = candidates.getExcludedCandidates();
         List<Candidate> existing = candidates.getExistingCandidates();
-        if (!required.isEmpty()) {
-            List<org.onap.so.client.sniro.beans.Candidate> cans =
-                    new ArrayList<org.onap.so.client.sniro.beans.Candidate>();
-            for (Candidate c : required) {
+
+        List<org.onap.so.client.sniro.beans.Candidate> candidateList = getCandidates(required);
+        if (!candidateList.isEmpty()) {
+            demand.setRequiredCandidates(candidateList);
+        }
+        candidateList = getCandidates(excluded);
+        if (!candidateList.isEmpty()) {
+            demand.setExcludedCandidates(candidateList);
+        }
+        candidateList = getCandidates(existing);
+        if (!candidateList.isEmpty()) {
+            demand.setExistingCandidates(candidateList);
+        }
+    }
+
+    private List<org.onap.so.client.sniro.beans.Candidate> getCandidates(List<Candidate> candidates) {
+        List<org.onap.so.client.sniro.beans.Candidate> candidateList = new ArrayList<>();
+        if (!candidates.isEmpty()) {
+            for (Candidate c : candidates) {
                 org.onap.so.client.sniro.beans.Candidate can = new org.onap.so.client.sniro.beans.Candidate();
                 can.setIdentifierType(c.getIdentifierType());
                 can.setIdentifiers(c.getIdentifiers());
                 can.setCloudOwner(c.getCloudOwner());
-                cans.add(can);
+                candidateList.add(can);
             }
-            demand.setRequiredCandidates(cans);
         }
-        if (!excluded.isEmpty()) {
-            List<org.onap.so.client.sniro.beans.Candidate> cans =
-                    new ArrayList<org.onap.so.client.sniro.beans.Candidate>();
-            for (Candidate c : excluded) {
-                org.onap.so.client.sniro.beans.Candidate can = new org.onap.so.client.sniro.beans.Candidate();
-                can.setIdentifierType(c.getIdentifierType());
-                can.setIdentifiers(c.getIdentifiers());
-                can.setCloudOwner(c.getCloudOwner());
-                cans.add(can);
-            }
-            demand.setExcludedCandidates(cans);
-        }
-        if (!existing.isEmpty()) {
-            List<org.onap.so.client.sniro.beans.Candidate> cans =
-                    new ArrayList<org.onap.so.client.sniro.beans.Candidate>();
-            for (Candidate c : existing) {
-                org.onap.so.client.sniro.beans.Candidate can = new org.onap.so.client.sniro.beans.Candidate();
-                can.setIdentifierType(c.getIdentifierType());
-                can.setIdentifiers(c.getIdentifiers());
-                can.setCloudOwner(c.getCloudOwner());
-                cans.add(can);
-            }
-            demand.setExistingCandidates(cans);
-        }
+        return candidateList;
     }
 
     /**
@@ -562,7 +551,7 @@ public class SniroHomingV2 {
             si.setServiceInstanceId(identifierValue);
             si.setOrchestrationStatus(OrchestrationStatus.CREATED);
             cloud.setLcpCloudRegionId(assignmentsMap.get("cloudRegionId"));
-            if (assignmentsMap.containsKey("vnfHostName") && !assignmentsMap.get("vnfHostName").isEmpty()) {
+            if (assignmentsMap.containsKey(VNF_HOST_NAME) && !assignmentsMap.get(VNF_HOST_NAME).isEmpty()) {
                 logger.debug("Resources has been homed to a vnf");
                 GenericVnf vnf = setVnf(assignmentsMap);
                 vnf.setCloudRegion(cloud);
@@ -612,7 +601,7 @@ public class SniroHomingV2 {
     private GenericVnf setVnf(Map<String, String> assignmentsMap) {
         GenericVnf vnf = new GenericVnf();
         vnf.setOrchestrationStatus(OrchestrationStatus.CREATED);
-        vnf.setVnfName(assignmentsMap.get("vnfHostName"));
+        vnf.setVnfName(assignmentsMap.get(VNF_HOST_NAME));
         vnf.setVnfId(assignmentsMap.get("vnfId"));
         return vnf;
     }
