@@ -21,7 +21,6 @@
 package org.onap.so.bpmn.common.validation;
 
 import java.util.Optional;
-import java.util.Set;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 
 public interface FlowValidator {
@@ -30,6 +29,7 @@ public interface FlowValidator {
      * Should this validator run for given bb
      * 
      * @return
+     * 
      */
     public boolean shouldRunFor(String bbName);
 

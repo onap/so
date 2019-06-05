@@ -41,7 +41,6 @@ import org.onap.so.bpmn.core.domain.GroupResource;
 import org.onap.so.bpmn.core.domain.Resource;
 import org.onap.so.bpmn.core.domain.ResourceType;
 import org.onap.so.bpmn.core.domain.VnfResource;
-import org.onap.so.bpmn.core.domain.VnfcResource;
 import org.onap.so.bpmn.core.json.JsonUtils;
 import org.onap.so.client.HttpClient;
 import org.onap.so.client.HttpClientFactory;
@@ -56,13 +55,15 @@ import org.slf4j.LoggerFactory;
 
 public class ResourceRequestBuilder {
 
-    private static String CUSTOMIZATION_UUID = "cuserviceResourcesstomizationUUID";
-
     private static String SERVICE_URL_SERVICE_INSTANCE = "/v2/serviceResources";
 
     private static Logger logger = LoggerFactory.getLogger(ResourceRequestBuilder.class);
 
     static JsonUtils jsonUtil = new JsonUtils();
+
+    private ResourceRequestBuilder() {
+        throw new IllegalStateException("Utility class");
+    }
 
     public static List<String> getResourceSequence(String serviceUuid) {
 
@@ -111,7 +112,7 @@ public class ResourceRequestBuilder {
         String locationConstraints = "[]";
         if (resource.getResourceType() == ResourceType.VNF) {
             for (String eachResource : resourceList) {
-                String resCusUuid = (String) JsonUtils.getJsonValue(eachResource, "resourceCustomizationUuid");
+                String resCusUuid = JsonUtils.getJsonValue(eachResource, "resourceCustomizationUuid");
                 if ((null != resCusUuid) && resCusUuid.equals(resource.getModelInfo().getModelCustomizationUuid())) {
                     String resourceParameters = JsonUtils.getJsonValue(eachResource, "parameters");
                     locationConstraints = JsonUtils.getJsonValue(resourceParameters, "locationConstraints");
@@ -156,7 +157,6 @@ public class ResourceRequestBuilder {
                     break;
             }
 
-            Map<String, Object> resourceInputsAfterMerge = new HashMap<>();
             if (StringUtils.isNotEmpty(resourceInputStr)) {
                 return getResourceInput(resourceInputStr, uuiRequestInputs, resourceLevel, currentVFData);
             }
