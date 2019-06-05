@@ -31,12 +31,15 @@ import org.onap.so.bpmn.core.domain.VnfResource;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 public class InstanceResourceList {
+
+    private InstanceResourceList() {
+        throw new IllegalStateException("Utility class");
+    }
 
     private static Map<String, List<List<GroupResource>>> convertUUIReqTOStd(final JsonObject reqInputJsonObj,
             List<Resource> seqResourceList) {

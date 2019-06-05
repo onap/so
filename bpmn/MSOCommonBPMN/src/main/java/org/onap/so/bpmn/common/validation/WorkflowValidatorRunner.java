@@ -20,23 +20,11 @@
 
 package org.onap.so.bpmn.common.validation;
 
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
-import javax.annotation.Priority;
-import org.camunda.bpm.engine.delegate.DelegateExecution;
-import org.javatuples.Pair;
-import org.onap.so.client.exception.ExceptionBuilder;
-import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 
