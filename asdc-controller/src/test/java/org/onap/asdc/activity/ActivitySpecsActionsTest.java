@@ -56,6 +56,44 @@ public class ActivitySpecsActionsTest extends BaseTest {
     }
 
     @Test
+    public void CreateActivitySpecReturnsCreated_Test() throws Exception {
+        String HOSTNAME = createURLWithPort("");
+
+        ActivitySpec activitySpec = new ActivitySpec();
+        activitySpec.setName("testActivitySpec");
+        activitySpec.setDescription("Test Activity Spec");
+        ActivitySpecCreateResponse activitySpecCreateResponse = new ActivitySpecCreateResponse();
+        activitySpecCreateResponse.setId("testActivityId");
+        ObjectMapper mapper = new ObjectMapper();
+        String body = mapper.writeValueAsString(activitySpecCreateResponse);
+        wireMockServer.stubFor(post(urlPathMatching("/v1.0/activity-spec"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withStatus(org.springframework.http.HttpStatus.CREATED.value()).withBody(body)));
+
+        String activitySpecId = activitySpecsActions.createActivitySpec(HOSTNAME, activitySpec);
+        assertEquals("testActivityId", activitySpecId);
+    }
+
+    @Test
+    public void CreateActivitySpecReturnsExists_Test() throws Exception {
+        String HOSTNAME = createURLWithPort("");
+
+        ActivitySpec activitySpec = new ActivitySpec();
+        activitySpec.setName("testActivitySpec");
+        activitySpec.setDescription("Test Activity Spec");
+        ActivitySpecCreateResponse activitySpecCreateResponse = new ActivitySpecCreateResponse();
+        activitySpecCreateResponse.setId("testActivityId");
+        ObjectMapper mapper = new ObjectMapper();
+        String body = mapper.writeValueAsString(activitySpecCreateResponse);
+        wireMockServer.stubFor(post(urlPathMatching("/v1.0/activity-spec"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withStatus(org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY.value()).withBody(body)));
+
+        String activitySpecId = activitySpecsActions.createActivitySpec(HOSTNAME, activitySpec);
+        assertEquals(null, activitySpecId);
+    }
+
+    @Test
     public void CertifyActivitySpec_Test() throws Exception {
         String HOSTNAME = createURLWithPort("");
 
@@ -68,6 +106,21 @@ public class ActivitySpecsActionsTest extends BaseTest {
 
         boolean certificationResult = activitySpecsActions.certifyActivitySpec(HOSTNAME, activitySpecId);
         assertTrue(certificationResult);
+    }
+
+    @Test
+    public void CertifyActivitySpecReturnsExists_Test() throws Exception {
+        String HOSTNAME = createURLWithPort("");
+
+        String activitySpecId = "testActivitySpec";
+        String urlPath = "/v1.0/activity-spec/testActivitySpec/versions/latest/actions";
+
+        wireMockServer.stubFor(
+                put(urlPathMatching(urlPath)).willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withStatus(org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY.value())));
+
+        boolean certificationResult = activitySpecsActions.certifyActivitySpec(HOSTNAME, activitySpecId);
+        assertFalse(certificationResult);
     }
 
     private String createURLWithPort(String uri) {

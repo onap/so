@@ -67,7 +67,9 @@ public class ActivitySpecsActions {
             Response response = httpClient.post(payload);
 
             int statusCode = response.getStatus();
-            if (statusCode != HttpStatus.SC_OK) {
+            if (statusCode == HttpStatus.SC_UNPROCESSABLE_ENTITY) {
+                logger.warn("{} {} {}", "ActivitySpec", activitySpec.getName(), "already exists in SDC");
+            } else if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_CREATED) {
                 logger.warn("{} {} {}", "Error creating activity spec", activitySpec.getName(), statusCode);
             } else {
                 if (response.getEntity() != null) {
@@ -108,7 +110,9 @@ public class ActivitySpecsActions {
 
             int statusCode = response.getStatus();
 
-            if (statusCode != HttpStatus.SC_OK) {
+            if (statusCode == HttpStatus.SC_UNPROCESSABLE_ENTITY) {
+                logger.warn("{} {} {}", "ActivitySpec with id", activitySpecId, "is already certified in SDC");
+            } else if (statusCode != HttpStatus.SC_OK) {
                 logger.warn("{} {} {}", "Error certifying activity", activitySpecId, statusCode);
             } else {
                 certificationResult = true;
