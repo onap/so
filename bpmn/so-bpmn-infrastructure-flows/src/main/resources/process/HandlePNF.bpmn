@@ -16,7 +16,7 @@ handlePNF.preProcessRequest(execution)</bpmn:script>
     <bpmn:endEvent id="EndEvent_0pigsdfk3" name="end PNF hadler">
       <bpmn:incoming>SequenceFlow_02fi1yn</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_1la8oih" sourceRef="PostProcessPNFDiscovery" targetRef="Task_1r8h7of" />
+    <bpmn:sequenceFlow id="SequenceFlow_1la8oih" sourceRef="PostProcessPNFDiscovery" targetRef="Task_1kxmpj3" />
     <bpmn:callActivity id="Task_0657l04" name="invoke pnf handler" calledElement="CreateAndActivatePnfResource">
       <bpmn:extensionElements>
         <camunda:in source="pnfCorrelationId" target="pnfCorrelationId" />
@@ -27,13 +27,6 @@ handlePNF.preProcessRequest(execution)</bpmn:script>
       <bpmn:incoming>SequenceFlow_1apj1fn</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0pujwl4</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:scriptTask id="PostProcessPNFDiscovery" name="Post Process Request" scriptFormat="groovy">
-      <bpmn:incoming>SequenceFlow_0pujwl4</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1la8oih</bpmn:outgoing>
-      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
-def handlePNF = new HandlePNF()
-handlePNF.postProcessRequest(execution)</bpmn:script>
-    </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_12q67gd" sourceRef="Task_13sx2bp_activate" targetRef="Task_0kv28gm" />
     <bpmn:sequenceFlow id="SequenceFlow_1apj1fn" sourceRef="Task_0kv28gm" targetRef="Task_0657l04" />
     <bpmn:serviceTask id="Task_0kv28gm" name="Generate PNF uuid" camunda:delegateExpression="${GeneratePnfUuidDelegate}">
@@ -42,12 +35,42 @@ handlePNF.postProcessRequest(execution)</bpmn:script>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_02fi1yn" sourceRef="Task_1r8h7of" targetRef="EndEvent_0pigsdfk3" />
     <bpmn:scriptTask id="Task_1r8h7of" name="Send Sync Response" scriptFormat="groovy">
-      <bpmn:incoming>SequenceFlow_1la8oih</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1ud44f8</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_02fi1yn</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def handlePNF = new HandlePNF()
 handlePNF.sendSyncResponse(execution)</bpmn:script>
     </bpmn:scriptTask>
+    <bpmn:scriptTask id="PostProcessPNFDiscovery" name="Post Process Request" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0pujwl4</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1la8oih</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def handlePNF = new HandlePNF()
+handlePNF.postProcessRequest(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1ud44f8" sourceRef="Task_1kxmpj3" targetRef="Task_1r8h7of" />
+    <bpmn:serviceTask id="Task_1kxmpj3" name="update progress update">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">${CVFMI_dbAdapterEndpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
+                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">${CVFMI_updateResOperStatusRequest}</camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:outputParameter name="CVFMI_dbResponseCode">${statusCode}</camunda:outputParameter>
+            <camunda:outputParameter name="CVFMI_dbResponse">${response}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1la8oih</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1ud44f8</bpmn:outgoing>
+    </bpmn:serviceTask>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="HandlePNF">
@@ -69,20 +92,17 @@ handlePNF.sendSyncResponse(execution)</bpmn:script>
         <di:waypoint x="156" y="324" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="EndEvent_0pigdk3_di" bpmnElement="EndEvent_0pigsdfk3">
-        <dc:Bounds x="543" y="306" width="36" height="36" />
+        <dc:Bounds x="626" y="306" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="524" y="349" width="78" height="14" />
+          <dc:Bounds x="607" y="349" width="78" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1la8oih_di" bpmnElement="SequenceFlow_1la8oih">
         <di:waypoint x="256" y="324" />
-        <di:waypoint x="353" y="324" />
+        <di:waypoint x="303" y="324" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="CallActivity_1sxp6qj_di" bpmnElement="Task_0657l04">
         <dc:Bounds x="-19" y="284" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ScriptTask_0qqb00i_di" bpmnElement="PostProcessPNFDiscovery">
-        <dc:Bounds x="156" y="284" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_12q67gd_di" bpmnElement="SequenceFlow_12q67gd">
         <di:waypoint x="-241" y="324" />
@@ -96,11 +116,21 @@ handlePNF.sendSyncResponse(execution)</bpmn:script>
         <dc:Bounds x="-176" y="284" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_02fi1yn_di" bpmnElement="SequenceFlow_02fi1yn">
-        <di:waypoint x="453" y="324" />
-        <di:waypoint x="543" y="324" />
+        <di:waypoint x="536" y="324" />
+        <di:waypoint x="626" y="324" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_1yqlrg7_di" bpmnElement="Task_1r8h7of">
-        <dc:Bounds x="353" y="284" width="100" height="80" />
+        <dc:Bounds x="436" y="284" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0qqb00i_di" bpmnElement="PostProcessPNFDiscovery">
+        <dc:Bounds x="156" y="284" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ud44f8_di" bpmnElement="SequenceFlow_1ud44f8">
+        <di:waypoint x="403" y="324" />
+        <di:waypoint x="436" y="324" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0fkkgnl_di" bpmnElement="Task_1kxmpj3">
+        <dc:Bounds x="303" y="284" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

@@ -22,8 +22,12 @@ package org.onap.so.bpmn.infrastructure.scripts
 
 import org.apache.commons.lang3.StringUtils
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.so.bpmn.common.recipe.ResourceInput
+import org.onap.so.bpmn.common.resource.ResourceRequestBuilder
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
+import org.onap.so.bpmn.common.scripts.MsoUtils
+import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames
 import org.slf4j.Logger
@@ -34,6 +38,8 @@ public class HandlePNF extends AbstractServiceTaskProcessor{
 
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     JsonUtils jsonUtil = new JsonUtils()
+    MsoUtils msoUtils = new MsoUtils()
+    String Prefix="CRESI_"
 
     @Override
     void preProcessRequest(DelegateExecution execution) {
@@ -65,7 +71,33 @@ public class HandlePNF extends AbstractServiceTaskProcessor{
 
     void postProcessRequest(DelegateExecution execution) {
         logger.debug("start postProcess for HandlePNF")
+        ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(execution.getVariable("resourceInput"), ResourceInput.class)
+        String operType = resourceInputObj.getOperationType()
+        String resourceCustomizationUuid = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
+        String serviceInstanceId = resourceInputObj.getServiceInstanceId()
+        String operationId = resourceInputObj.getOperationId()
+        String progress = "100"
+        String status = "finished"
+        String statusDescription = "SDCN resource creation and activation completed"
 
+        String body = """
+                <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                        xmlns:ns="http://org.onap.so/requestsdb">
+                        <soapenv:Header/>
+                <soapenv:Body>
+                    <ns:updateResourceOperationStatus>
+                               <operType>${msoUtils.xmlEscape(operType)}</operType>
+                               <operationId>${msoUtils.xmlEscape(operationId)}</operationId>
+                               <progress>${msoUtils.xmlEscape(progress)}</progress>
+                               <resourceTemplateUUID>${msoUtils.xmlEscape(resourceCustomizationUuid)}</resourceTemplateUUID>
+                               <serviceId>${msoUtils.xmlEscape(serviceInstanceId)}</serviceId>
+                               <status>${msoUtils.xmlEscape(status)}</status>
+                               <statusDescription>${msoUtils.xmlEscape(statusDescription)}</statusDescription>
+                    </ns:updateResourceOperationStatus>
+                </soapenv:Body>
+                </soapenv:Envelope>""";
+        logger.debug("body: "+body)
+        setProgressUpdateVariables(execution, body)
         logger.debug("exit postProcess for HandlePNF")
     }
 
@@ -86,5 +118,11 @@ public class HandlePNF extends AbstractServiceTaskProcessor{
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
         logger.debug(" ***** Exit sendSyncResponse *****")
+    }
+
+    private void setProgressUpdateVariables(DelegateExecution execution, String body) {
+        def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)
+        execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
+        execution.setVariable("CVFMI_updateResOperStatusRequest", body)
     }
 }
