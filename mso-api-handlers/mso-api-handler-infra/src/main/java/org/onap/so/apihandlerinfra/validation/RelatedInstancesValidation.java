@@ -119,12 +119,25 @@ public class RelatedInstancesValidation implements ValidationRule {
                     isRelatedServiceInstancePresent = true;
                 }
 
+                if (requestScope.equalsIgnoreCase(ModelType.service.name())) {
+                    if (empty(relatedInstance.getInstanceName())
+                            && ModelType.vpnBinding.equals(relatedInstanceModelInfo.getModelType())) {
+                        throw new ValidationException("instanceName in relatedInstance for vpnBinding modelType", true);
+                    }
+                    if (empty(relatedInstance.getInstanceName())
+                            && ModelType.network.equals(relatedInstanceModelInfo.getModelType())) {
+                        throw new ValidationException("instanceName in relatedInstance for network modelType", true);
+                    }
+                }
+
                 if (action != Action.deleteInstance
                         && !requestScope.equalsIgnoreCase(ModelType.instanceGroup.toString())) {
                     if (!(relatedInstanceModelInfo.getModelType().equals(ModelType.volumeGroup)
                             || relatedInstanceModelInfo.getModelType().equals(ModelType.connectionPoint)
                             || relatedInstanceModelInfo.getModelType().equals(ModelType.pnf)
-                            || relatedInstanceModelInfo.getModelType().equals(ModelType.networkInstanceGroup))) {
+                            || relatedInstanceModelInfo.getModelType().equals(ModelType.networkInstanceGroup)
+                            || relatedInstanceModelInfo.getModelType().equals(ModelType.network)
+                            || relatedInstanceModelInfo.getModelType().equals(ModelType.vpnBinding))) {
 
                         if (empty(relatedInstanceModelInfo.getModelInvariantId())) {
                             throw new ValidationException("modelInvariantId in relatedInstance");

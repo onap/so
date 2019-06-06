@@ -23,9 +23,11 @@ package org.onap.so.bpmn.infrastructure.namingservice.tasks;
 
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.exception.ExceptionBuilder;
+import org.onap.so.client.namingservice.NamingRequestObject;
 import org.onap.so.client.orchestration.NamingServiceResources;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -50,4 +52,16 @@ public class NamingServiceDeleteTasks {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
+
+    public void deleteServiceInstanceName(BuildingBlockExecution execution) throws Exception {
+        ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+        NamingRequestObject namingRequestObject = new NamingRequestObject();
+        namingRequestObject.setExternalKeyValue(serviceInstance.getServiceInstanceId());
+        try {
+            namingServiceResources.deleteServiceInstanceName(namingRequestObject);
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
 }

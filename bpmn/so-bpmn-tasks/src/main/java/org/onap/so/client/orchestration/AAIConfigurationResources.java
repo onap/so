@@ -79,7 +79,7 @@ public class AAIConfigurationResources {
 
     /**
      * A&AI call to disconnect configuration relation with service instance
-     * 
+     *
      * @param configurationId
      * @param serviceInstanceId
      */
@@ -211,7 +211,7 @@ public class AAIConfigurationResources {
 
     /**
      * Get Configuration from AAI using related Link
-     * 
+     *
      * @param relatedLink related link - URI
      * @return AAI Configuration object
      */
@@ -226,6 +226,15 @@ public class AAIConfigurationResources {
                 AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configuration.getConfigurationId());
         configuration.setOrchestrationStatus(orchestrationStatus);
         org.onap.aai.domain.yang.Configuration aaiConfiguration = aaiObjectMapper.mapConfiguration(configuration);
+        injectionHelper.getAaiClient().update(aaiResourceUri, aaiConfiguration);
+    }
+
+    public void updateConfigurationOrchestrationStatus(Configuration configuration,
+            OrchestrationStatus orchestrationStatus) {
+        AAIResourceUri aaiResourceUri =
+                AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configuration.getConfigurationId());
+        org.onap.aai.domain.yang.Configuration aaiConfiguration = new org.onap.aai.domain.yang.Configuration();
+        aaiConfiguration.setOrchestrationStatus(orchestrationStatus.name());
         injectionHelper.getAaiClient().update(aaiResourceUri, aaiConfiguration);
     }
 }

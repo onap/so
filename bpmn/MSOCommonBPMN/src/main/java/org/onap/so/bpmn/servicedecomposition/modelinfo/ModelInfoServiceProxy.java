@@ -22,11 +22,31 @@ package org.onap.so.bpmn.servicedecomposition.modelinfo;
 
 
 import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 public class ModelInfoServiceProxy extends ModelInfoMetadata implements Serializable {
 
     private static final long serialVersionUID = -6256897576261215926L;
 
+    @JsonProperty("tosca-node-type")
+    private String toscaNodeType;
+    @JsonProperty("description")
+    private String description;
 
+    public String getToscaNodeType() {
+        return toscaNodeType;
+    }
+
+    public void setToscaNodeType(String toscaNodeType) {
+        this.toscaNodeType = toscaNodeType;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

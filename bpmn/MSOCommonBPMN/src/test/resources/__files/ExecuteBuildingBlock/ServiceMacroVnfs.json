@@ -1,7 +1,7 @@
 {
 	"modelInfo": {
 		"modelType": "service",
-		"modelName": "MOW AVPN vMX BV vPE 1 Service",
+		"modelName": "Sample Service Model",
 		"modelVersionId": "3c40d244-808e-42ca-b09a-256d83d19d0a"
 	},
 	"instanceName": "vPE_Service",

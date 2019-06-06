@@ -42,7 +42,9 @@ import org.onap.namingservice.model.NameGenRequest;
 import org.onap.namingservice.model.NameGenResponse;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
 import org.onap.so.client.namingservice.NamingClient;
+import org.onap.so.client.namingservice.NamingRequestObject;
 import org.onap.so.client.namingservice.NamingRequestObjectBuilder;
+import org.onap.so.client.namingservice.NamingServiceConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -100,5 +102,25 @@ public class NamingServiceResourcesTest extends TestDataSetup {
 
     }
 
+    @Test
+    public void generateServiceInstanceNameTest() throws Exception {
 
+        NameGenRequest req = new NameGenRequest();
+        doReturn("generatedServiceInstanceName").when(MOCK_namingClient).postNameGenRequest(isA(NameGenRequest.class));
+        doReturn(req).when(MOCK_namingRequestObjectBuilder).nameGenRequestMapper(isA(List.class));
+
+        NamingRequestObject nrObject = new NamingRequestObject();
+        nrObject.setExternalKeyValue("testExternalKey");
+        nrObject.setNamingTypeValue(NamingServiceConstants.NAMING_TYPE_SERVICE);
+        nrObject.setResourceNameValue(NamingServiceConstants.RESOURCE_NAME_SERVICE_INSTANCE_NAME);
+        nrObject.setPolicyInstanceNameValue(execution.getVariable("policyInstanceName"));
+        nrObject.setServiceModelNameValue("testServiceInstanceModelName");
+        nrObject.setModelVersionValue("testServiceInstanceModelVersion");
+        nrObject.setZoneIdValue(execution.getVariable("zoneId"));
+
+        String generatedName = namingServiceResources.generateServiceInstanceName(nrObject);
+
+        verify(MOCK_namingClient, times(1)).postNameGenRequest(any(NameGenRequest.class));
+        assertEquals("generatedServiceInstanceName", generatedName);
+    }
 }

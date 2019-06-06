@@ -39,6 +39,10 @@ public class ModelInfoServiceInstance extends ModelInfoMetadata implements Seria
     private String environmentContext;
     @JsonProperty("workload-context")
     private String workloadContext;
+    @JsonProperty("naming-policy")
+    private String namingPolicy;
+    @JsonProperty("onap-generated-naming")
+    private Boolean onapGeneratedNaming;
 
 
     public String getDescription() {
@@ -87,5 +91,22 @@ public class ModelInfoServiceInstance extends ModelInfoMetadata implements Seria
 
     public void setWorkloadContext(String workloadContext) {
         this.workloadContext = workloadContext;
+    }
+
+
+    public String getNamingPolicy() {
+        return namingPolicy;
+    }
+
+    public void setNamingPolicy(String namingPolicy) {
+        this.namingPolicy = namingPolicy;
+    }
+
+    public Boolean getOnapGeneratedNaming() {
+        return onapGeneratedNaming;
+    }
+
+    public void setOnapGeneratedNaming(Boolean onapGeneratedNaming) {
+        this.onapGeneratedNaming = onapGeneratedNaming;
     }
 }

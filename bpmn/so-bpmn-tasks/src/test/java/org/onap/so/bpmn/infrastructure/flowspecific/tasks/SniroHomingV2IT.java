@@ -110,13 +110,13 @@ public class SniroHomingV2IT extends BaseIntegrationTest {
 
     public void beforeServiceProxy() {
         ServiceProxy sp = setServiceProxy("1", "infrastructure");
-        Candidate requiredCandidate = new Candidate();
-        requiredCandidate.setIdentifierType(CandidateType.CLOUD_REGION_ID);
+        Candidate filteringAttributes = new Candidate();
+        filteringAttributes.setIdentifierType(CandidateType.CLOUD_REGION_ID);
         List<String> c = new ArrayList<String>();
         c.add("testCloudRegionId");
-        requiredCandidate.setCloudOwner("att");
-        requiredCandidate.setIdentifiers(c);
-        sp.addRequiredCandidates(requiredCandidate);
+        filteringAttributes.setCloudOwner("att");
+        filteringAttributes.setIdentifiers(c);
+        sp.getFilteringAttributes().add(filteringAttributes);
         serviceInstance.getServiceProxies().add(sp);
     }
 

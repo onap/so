@@ -181,7 +181,6 @@ public class SniroHomingV2 {
         logger.trace("Started Sniro Homing Process Solution");
         try {
             // TODO improve handling multiple solutions but is dependent on sniro enhancing api + work with sniro
-            // conductor to improve "inventoryType" representation
             validateSolution(asyncResponse);
             ServiceInstance serviceInstance = execution.getGeneralBuildingBlock().getCustomer().getServiceSubscription()
                     .getServiceInstances().get(0);
@@ -404,7 +403,7 @@ public class SniroHomingV2 {
     }
 
     /**
-     * Adds required, excluded, and existing candidates to a demand
+     * Adds required, excluded, and existing candidates as well as filtering attributes to a demand
      *
      */
     private void addCandidates(SolutionCandidates candidates, Demand demand) {

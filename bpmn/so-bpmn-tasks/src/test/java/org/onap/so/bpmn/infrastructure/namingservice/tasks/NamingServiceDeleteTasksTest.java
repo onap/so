@@ -21,6 +21,7 @@
 package org.onap.so.bpmn.infrastructure.namingservice.tasks;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
@@ -32,14 +33,17 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.client.exception.BBObjectNotFoundException;
+import org.onap.so.client.namingservice.NamingRequestObject;
 
 public class NamingServiceDeleteTasksTest extends BaseTaskTest {
     @InjectMocks
     private NamingServiceDeleteTasks namingServiceDeleteTasks = new NamingServiceDeleteTasks();
 
     private InstanceGroup instanceGroup;
+    private ServiceInstance serviceInstance;
 
     @Before
     public void before() throws BBObjectNotFoundException {
@@ -66,6 +70,17 @@ public class NamingServiceDeleteTasksTest extends BaseTaskTest {
         doReturn("").when(namingServiceResources).deleteInstanceGroupName(instanceGroup);
         namingServiceDeleteTasks.deleteInstanceGroupName(execution);
         verify(namingServiceResources, times(1)).deleteInstanceGroupName(instanceGroup);
+    }
+
+    @Test
+    public void deleteServiceInstanceNameTest() throws Exception {
+        serviceInstance = setServiceInstance();
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID)))
+                .thenReturn(serviceInstance);
+        doNothing().when(namingRequestObject).setExternalKeyValue(serviceInstance.getServiceInstanceId());
+        doReturn("").when(namingServiceResources).deleteServiceInstanceName(namingRequestObject);
+        namingServiceDeleteTasks.deleteServiceInstanceName(execution);
+        verify(namingServiceResources, times(1)).deleteServiceInstanceName(any(NamingRequestObject.class));
     }
 
 }

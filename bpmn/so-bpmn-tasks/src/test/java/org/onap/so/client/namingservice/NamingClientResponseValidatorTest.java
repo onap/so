@@ -36,6 +36,7 @@ public class NamingClientResponseValidatorTest extends TestDataSetup {
 
     private NamingClientResponseValidator responseValidator = new NamingClientResponseValidator();
     private String instanceGroupName = "generatedInstanceGroupName";
+    private String serviceInstanceName = "generatedServiceInstanceName";
 
     @Test
     public void validateNameGenResponseSuccessTest() throws BadResponseException {
@@ -51,6 +52,22 @@ public class NamingClientResponseValidatorTest extends TestDataSetup {
         String actual = responseValidator.validateNameGenResponse(resp);
 
         assertEquals(actual, "generatedInstanceGroupName");
+    }
+
+    @Test
+    public void validateServiceInstanceNameGenResponseSuccessTest() throws BadResponseException {
+        NameGenResponse name = new NameGenResponse();
+        Respelement respElement = new Respelement();
+        respElement.setResourceName("Service-Instance-Name");
+        respElement.setResourceValue(serviceInstanceName);
+        List<Respelement> respList = new ArrayList<Respelement>();
+        respList.add(respElement);
+        name.setElements(respList);
+        ResponseEntity<NameGenResponse> resp = new ResponseEntity<>(name, null, HttpStatus.OK);
+
+        String actual = responseValidator.validateNameGenResponse(resp);
+
+        assertEquals(actual, "generatedServiceInstanceName");
     }
 
     @Test

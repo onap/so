@@ -703,8 +703,7 @@ public class ToscaResourceInstaller {
                 toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(nodeTemplate, "role"));
         configCustomizationResource.setType(
                 toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(nodeTemplate, "type"));
-        configCustomizationResource
-                .setServiceProxyResourceCustomizationUUID(spResourceCustomization.getModelCustomizationUUID());
+        configCustomizationResource.setServiceProxyResourceCustomization(spResourceCustomization);
 
         configCustomizationResource.setConfigurationResource(configResource);
         configCustomizationResource.setService(service);
@@ -1356,6 +1355,13 @@ public class ToscaResourceInstaller {
 
             service.setModelInvariantUUID(serviceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID));
             service.setCsar(toscaResourceStructure.getCatalogToscaCsar());
+            service.setNamingPolicy(serviceMetadata.getValue("namingPolicy"));
+            String generateNaming = serviceMetadata.getValue("ecompGeneratedNaming");
+            Boolean generateNamingValue = null;
+            if (generateNaming != null) {
+                generateNamingValue = "true".equalsIgnoreCase(generateNaming);
+            }
+            service.setOnapGeneratedNaming(generateNamingValue);
         }
 
 

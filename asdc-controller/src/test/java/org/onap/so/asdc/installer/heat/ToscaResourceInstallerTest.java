@@ -34,6 +34,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.hibernate.exception.LockAcquisitionException;
 import org.junit.Before;
 import org.junit.Rule;
@@ -42,6 +43,7 @@ import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.onap.sdc.api.notification.IArtifactInfo;
+import org.onap.sdc.api.notification.INotificationData;
 import org.onap.sdc.api.notification.IResourceInstance;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.impl.SdcCsarHelperImpl;
@@ -56,6 +58,7 @@ import org.onap.so.asdc.client.exceptions.ArtifactInstallerException;
 import org.onap.so.asdc.client.test.emulators.ArtifactInfoImpl;
 import org.onap.so.asdc.client.test.emulators.JsonStatusData;
 import org.onap.so.asdc.client.test.emulators.NotificationDataImpl;
+import org.onap.so.asdc.installer.ResourceStructure;
 import org.onap.so.asdc.installer.ToscaResourceStructure;
 import org.onap.so.db.catalog.beans.ConfigurationResource;
 import org.onap.so.db.catalog.beans.ConfigurationResourceCustomization;
@@ -340,7 +343,59 @@ public class ToscaResourceInstallerTest extends BaseTest {
         return actualWatchdogComponentDistributionStatus;
     }
 
+    @Test
+    public void createServiceTest() {
+        ToscaResourceStructure toscaResourceStructure = mock(ToscaResourceStructure.class);
+        ResourceStructure resourceStructure = mock(ResourceStructure.class);
+        Metadata metadata = mock(Metadata.class);
+        INotificationData notification = mock(INotificationData.class);
 
+        doReturn("e2899e5c-ae35-434c-bada-0fabb7c1b44d").when(toscaResourceStructure).getServiceVersion();
+        doReturn(metadata).when(toscaResourceStructure).getServiceMetadata();
+        doReturn("production").when(notification).getWorkloadContext();
+        doReturn(notification).when(resourceStructure).getNotification();
+
+        String serviceType = "test-type";
+        String serviceRole = "test-role";
+        String category = "Network L4+";
+        String description = "Customer Orderable service description";
+        String name = "Customer Orderable Service";
+        String uuid = "72db5868-4575-4804-b546-0b0d3c3b5ac6";
+        String invariantUUID = "6f30bbe3-4590-4185-a7e0-4f9610926c6f";
+        String namingPolicy = "naming Policy";
+        String ecompGeneratedNaming = "true";
+        String environmentContext = "General_Revenue-Bearing";
+
+        doReturn(serviceType).when(metadata).getValue("serviceType");
+        doReturn(serviceRole).when(metadata).getValue("serviceRole");
+
+        doReturn(category).when(metadata).getValue(SdcPropertyNames.PROPERTY_NAME_CATEGORY);
+        doReturn(description).when(metadata).getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION);
+
+        doReturn(name).when(metadata).getValue(SdcPropertyNames.PROPERTY_NAME_NAME);
+
+        doReturn(uuid).when(metadata).getValue(SdcPropertyNames.PROPERTY_NAME_UUID);
+
+        doReturn(environmentContext).when(metadata).getValue(metadata.getValue("environmentContext"));
+        doReturn(invariantUUID).when(metadata).getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID);
+        doReturn(namingPolicy).when(metadata).getValue("namingPolicy");
+        doReturn(ecompGeneratedNaming).when(metadata).getValue("ecompGeneratedNaming");
+
+        Service service = toscaInstaller.createService(toscaResourceStructure, resourceStructure);
+
+        assertNotNull(service);
+
+        verify(toscaResourceStructure, times(2)).getServiceVersion();
+        assertNotNull(service.getNamingPolicy());
+        assertEquals(serviceType, service.getServiceType());
+        assertEquals(serviceRole, service.getServiceRole());
+        assertEquals(category, service.getCategory());
+        assertEquals(description, service.getDescription());
+        assertEquals(uuid, service.getModelUUID());
+        assertEquals(invariantUUID, service.getModelInvariantUUID());
+        assertEquals(namingPolicy, service.getNamingPolicy());
+        assertTrue(service.getOnapGeneratedNaming());
+    }
 
     private void prepareConfigurationResource() {
         doReturn(metadata).when(nodeTemplate).getMetaData();
@@ -396,7 +451,7 @@ public class ToscaResourceInstallerTest extends BaseTest {
         assertNotNull(configurationResourceCustomization);
         assertNotNull(configurationResourceCustomization.getConfigurationResource());
         assertEquals(MockConstants.MODEL_CUSTOMIZATIONUUID,
-                configurationResourceCustomization.getServiceProxyResourceCustomizationUUID());
+                configurationResourceCustomization.getServiceProxyResourceCustomization().getModelCustomizationUUID());
     }
 
     @Test

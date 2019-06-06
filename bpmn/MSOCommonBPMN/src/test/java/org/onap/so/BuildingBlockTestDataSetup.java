@@ -247,6 +247,7 @@ public class BuildingBlockTestDataSetup {
         modelInfoConfiguration.setModelCustomizationId("testModelCustomizationId" + configurationCounter);
 
         configuration.setModelInfoConfiguration(modelInfoConfiguration);
+        configuration.setVpnBinding(buildVpnBinding());
 
         return configuration;
     }

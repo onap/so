@@ -83,6 +83,12 @@ public class MsoRequestTest extends BaseTest {
         return input;
     }
 
+    public String inputStreamVpnBonding(String JsonInput) throws IOException {
+        JsonInput = "src/test/resources/Validation" + JsonInput;
+        String input = new String(Files.readAllBytes(Paths.get(JsonInput)));
+        return input;
+    }
+
     // Tests for successful validation of incoming JSON requests through the parse method
     @Test
     @Parameters(method = "successParameters")
@@ -188,6 +194,8 @@ public class MsoRequestTest extends BaseTest {
                         instanceIdMapTest, Action.addRelationships, "5"},
                 {mapper.readValue(inputStream("/SuccessfulValidation/ServiceAssign.json"),
                         ServiceInstancesRequest.class), instanceIdMapTest, Action.assignInstance, "7"},
+                {mapper.readValue(inputStream("/RelatedInstances/ServiceInstanceVpnBondingService.json"),
+                        ServiceInstancesRequest.class), instanceIdMapTest, Action.createInstance, "7"},
                 {mapper.readValue(inputStream("/SuccessfulValidation/ServiceUnassign.json"),
                         ServiceInstancesRequest.class), instanceIdMapTest, Action.unassignInstance, "7"}});
     }
@@ -546,6 +554,22 @@ public class MsoRequestTest extends BaseTest {
                         mapper.readValue(inputStream("/RelatedInstances/v6AddRelationshipsInstanceName.json"),
                                 ServiceInstancesRequest.class),
                         instanceIdMapTest, Action.addRelationships, 6},
+                {"No valid modelType in relatedInstance is specified",
+                        mapper.readValue(inputStreamVpnBonding("/VpnBondingValidation/NoModelType.json"),
+                                ServiceInstancesRequest.class),
+                        instanceIdMapTest, Action.createInstance, 7},
+                {"No valid instanceId in relatedInstance is specified",
+                        mapper.readValue(inputStreamVpnBonding("/VpnBondingValidation/NoInstanceId.json"),
+                                ServiceInstancesRequest.class),
+                        instanceIdMapTest, Action.createInstance, 7},
+                {"No valid instanceName in relatedInstance for vpnBinding modelType is specified",
+                        mapper.readValue(inputStreamVpnBonding("/VpnBondingValidation/NoInstanceNameVpnBinding.json"),
+                                ServiceInstancesRequest.class),
+                        instanceIdMapTest, Action.createInstance, 7},
+                {"No valid instanceName in relatedInstance for network modelType is specified",
+                        mapper.readValue(inputStreamVpnBonding("/VpnBondingValidation/NoInstanceNameNetwork.json"),
+                                ServiceInstancesRequest.class),
+                        instanceIdMapTest, Action.createInstance, 7},
                 {"No valid modelCustomizationName or modelCustomizationId in relatedInstance of vnf is specified",
                         mapper.readValue(inputStream("/RelatedInstances/RelatedInstancesModelCustomizationId.json"),
                                 ServiceInstancesRequest.class),

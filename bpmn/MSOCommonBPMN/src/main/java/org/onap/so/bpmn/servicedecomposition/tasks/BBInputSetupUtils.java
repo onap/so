@@ -39,6 +39,7 @@ import org.onap.aai.domain.yang.ServiceSubscription;
 import org.onap.aai.domain.yang.VfModule;
 import org.onap.aai.domain.yang.VolumeGroup;
 import org.onap.aai.domain.yang.VolumeGroups;
+import org.onap.aai.domain.yang.VpnBinding;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.MultipleObjectsFoundException;
@@ -60,6 +61,9 @@ import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
+import org.onap.so.serviceinstancebeans.ModelType;
+import org.onap.so.serviceinstancebeans.RelatedInstance;
+import org.onap.so.serviceinstancebeans.RelatedInstanceList;
 import org.onap.so.serviceinstancebeans.RequestDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,6 +88,20 @@ public class BBInputSetupUtils {
 
     @Autowired
     protected InjectionHelper injectionHelper;
+
+    public RelatedInstance getRelatedInstanceByType(RequestDetails requestDetails, ModelType modelType) {
+        if (requestDetails.getRelatedInstanceList() != null) {
+            for (RelatedInstanceList relatedInstanceList : requestDetails.getRelatedInstanceList()) {
+                RelatedInstance relatedInstance = relatedInstanceList.getRelatedInstance();
+                if (relatedInstance != null && relatedInstance.getModelInfo() != null
+                        && relatedInstance.getModelInfo().getModelType() != null
+                        && relatedInstance.getModelInfo().getModelType().equals(modelType)) {
+                    return relatedInstance;
+                }
+            }
+        }
+        return null;
+    }
 
     public void updateInfraActiveRequestVnfId(InfraActiveRequests request, String vnfId) {
         if (request != null) {
@@ -334,6 +352,17 @@ public class BBInputSetupUtils {
                 });
     }
 
+    public VpnBinding getAAIVpnBinding(String vpnBindingId) {
+
+        return this.injectionHelper.getAaiClient()
+                .get(VpnBinding.class,
+                        AAIUriFactory.createResourceUri(AAIObjectType.VPN_BINDING, vpnBindingId).depth(Depth.ONE))
+                .orElseGet(() -> {
+                    logger.debug("No VpnBinding matched by id");
+                    return null;
+                });
+    }
+
     public VolumeGroup getAAIVolumeGroup(String cloudOwnerId, String cloudRegionId, String volumeGroupId) {
         return this.injectionHelper.getAaiClient()
                 .get(VolumeGroup.class, AAIUriFactory
@@ -462,5 +491,17 @@ public class BBInputSetupUtils {
             }
             return Optional.of(volumeGroup);
         }
+    }
+
+    public Optional<org.onap.aai.domain.yang.VpnBinding> getAICVpnBindingFromNetwork(
+            org.onap.aai.domain.yang.L3Network aaiLocalNetwork) {
+        AAIResultWrapper networkWrapper = new AAIResultWrapper(aaiLocalNetwork);
+        if (networkWrapper.getRelationships().isPresent()
+                && !networkWrapper.getRelationships().get().getRelatedUris(AAIObjectType.VPN_BINDING).isEmpty()) {
+            return getAAIResourceDepthOne(
+                    networkWrapper.getRelationships().get().getRelatedUris(AAIObjectType.VPN_BINDING).get(0))
+                            .asBean(org.onap.aai.domain.yang.VpnBinding.class);
+        }
+        return Optional.empty();
     }
 }
