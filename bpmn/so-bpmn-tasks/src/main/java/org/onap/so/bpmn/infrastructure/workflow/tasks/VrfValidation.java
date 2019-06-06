@@ -8,7 +8,6 @@ import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.db.catalog.beans.ConfigurationResourceCustomization;
-import org.onap.so.db.catalog.beans.ServiceProxyResourceCustomization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -54,11 +53,14 @@ public class VrfValidation {
         return null;
     }
 
-    protected void aaiVpnBindingValidation(org.onap.aai.domain.yang.VpnBinding aaiVpnBinding)
+    protected void aaiVpnBindingValidation(String relatedVpnId, org.onap.aai.domain.yang.VpnBinding aaiVpnBinding)
             throws VrfBondingServiceException {
-        if (aaiVpnBinding == null || !aaiVpnBinding.getVpnType().equalsIgnoreCase("SERVICE-INFRASTRUCTURE")) {
-            throw new VrfBondingServiceException("VpnBinding: " + aaiVpnBinding.getVpnId()
-                    + " does not have service type of BONDING and doesn not have service role of INFRASTRUCTURE-VPN");
+        if (aaiVpnBinding == null) {
+            throw new VrfBondingServiceException("The infrastructure vpn " + relatedVpnId + " does not exist in A&AI.");
+        } else if (aaiVpnBinding.getVpnType() != null
+                && !aaiVpnBinding.getVpnType().equalsIgnoreCase("SERVICE-INFRASTRUCTURE")) {
+            throw new VrfBondingServiceException(
+                    "VpnBinding: " + relatedVpnId + " does not have a vpn type of SERVICE-INFRASTRUCTURE.");
         }
     }
 
@@ -81,6 +83,13 @@ public class VrfValidation {
         } else if (aaiLocalNetwork.getAggregateRoutes().getAggregateRoute().size() > 2) {
             throw new VrfBondingServiceException(
                     "LocalNetwork: " + aaiLocalNetwork.getNetworkId() + " either has more than 2 aggregate routes");
+        }
+    }
+
+    protected void aaiNetworkValidation(String relatedNetworkid, org.onap.aai.domain.yang.L3Network aaiLocalNetwork)
+            throws VrfBondingServiceException {
+        if (aaiLocalNetwork == null) {
+            throw new VrfBondingServiceException("The local network " + relatedNetworkid + " does not exist in A&AI.");
         }
     }
 
