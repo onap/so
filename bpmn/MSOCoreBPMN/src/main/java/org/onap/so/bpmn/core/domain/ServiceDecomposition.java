@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,7 +26,6 @@ package org.onap.so.bpmn.core.domain;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -32,6 +33,8 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 import org.json.JSONObject;
 import org.onap.so.bpmn.core.json.DecomposeJsonUtil;
 import org.onap.so.bpmn.core.json.JsonDecomposingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 
@@ -41,10 +44,10 @@ import org.onap.so.bpmn.core.json.JsonDecomposingException;
  * resource's decompositon
  */
 @JsonRootName(value = "serviceResources")
-// @JsonTypeInfo(include=As.WRAPPER_OBJECT, use=Id.NAME)
 public class ServiceDecomposition extends JsonWrapper implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    private static final Logger logger = LoggerFactory.getLogger(ServiceDecomposition.class);
 
     @JsonProperty("modelInfo")
     private ModelInfo modelInfo;
@@ -315,8 +318,6 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
     public String getVnfResource(String resourceObjectId) {
 
         for (Resource resource : getServiceResources()) {
-            // resource.getModelInfo().getModelInvariantId();
-
             if ("extracted information".equals(resourceObjectId)) {
                 return resource.toJsonString();
             }
@@ -457,11 +458,11 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 
         boolean result = false;
         for (Resource resource : (Iterable<Resource>) resources) {
-            System.out.println("resource found");
+            logger.debug("resource found");
             if (resource.resourceType == newResource.resourceType) {
-                System.out.println("resource type matches");
+                logger.debug("resource type matches");
                 if (resource.getResourceId().equalsIgnoreCase(newResource.getResourceId())) {
-                    System.out.println("resource id matches");
+                    logger.debug("resource id matches");
                     // returns TRUE if replacement is a success
                     result = Collections.replaceAll(resources, resource, newResource);
                 }
@@ -491,14 +492,12 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
     public boolean deleteResource(Resource resource) {
         List serviceResourceList = getResourceList(resource);
         for (Resource item : (Iterable<Resource>) serviceResourceList) {
-            if (item.resourceType == resource.resourceType) {
-                if (item.getResourceId().equalsIgnoreCase(resource.getResourceId())) {
-                    // returns TRUE if replacement is a success
-                    return serviceResourceList.remove(resource);
-                }
+            if (item.resourceType == resource.resourceType
+                    && item.getResourceId().equalsIgnoreCase(resource.getResourceId())) {
+                // returns TRUE if replacement is a success
+                return serviceResourceList.remove(resource);
             }
         }
-
         return false;
     }
 
