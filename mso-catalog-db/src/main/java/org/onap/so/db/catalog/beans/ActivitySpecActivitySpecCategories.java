@@ -49,12 +49,10 @@ public class ActivitySpecActivitySpecCategories implements Serializable {
     private Integer ID;
 
     @BusinessKey
-    @Id
     @Column(name = "ACTIVITY_SPEC_ID")
     private Integer activitySpecId;
 
     @BusinessKey
-    @Id
     @Column(name = "ACTIVITY_SPEC_CATEGORIES_ID")
     private Integer activitySpecCategoriesId;
 
@@ -107,6 +105,7 @@ public class ActivitySpecActivitySpecCategories implements Serializable {
         this.activitySpecCategoriesId = activitySpecCategoriesId;
     }
 
+    @LinkedResource
     public ActivitySpec getActivitySpec() {
         return activitySpec;
     }

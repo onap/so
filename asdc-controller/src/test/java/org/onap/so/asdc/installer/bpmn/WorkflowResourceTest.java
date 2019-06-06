@@ -22,45 +22,27 @@
 
 package org.onap.so.asdc.installer.bpmn;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import javax.transaction.Transactional;
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.ProtocolVersion;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.message.BasicHttpResponse;
-import org.apache.http.message.BasicStatusLine;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.onap.sdc.api.notification.IArtifactInfo;
+import org.onap.so.asdc.BaseTest;
+import org.onap.so.db.catalog.beans.VnfResourceWorkflow;
+import org.onap.so.db.catalog.beans.Workflow;
+import org.onap.so.db.catalog.beans.WorkflowActivitySpecSequence;
+import org.onap.so.db.catalog.data.repository.WorkflowRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@Transactional
-public class WorkflowResourceTest {
+public class WorkflowResourceTest extends BaseTest {
 
-    private WorkflowResource workflowResource = new WorkflowResource();
+    @Autowired
+    private WorkflowResource workflowResource;
 
-    private static final String TEST_CSAR = "src/test/resources/resource-examples/WorkflowBpmn/service-CxSvc-csar.csar";
-    private Path tempDirectoryPath;
+    @Autowired
+    private WorkflowRepository workflowRepo;
 
     @Test
     public void getActivityNameList_Test() throws Exception {
@@ -104,6 +86,45 @@ public class WorkflowResourceTest {
     public void getWorkflowVersionNoSuffix_Test() {
         Double workflowVersion = workflowResource.getWorkflowVersionFromArtifactName("TestWF2-1_0");
         assertTrue(workflowVersion == 1.0);
+    }
+
+    @Transactional
+    @Test
+    public void installWorkflowResource_Test() throws Exception {
+        Workflow workflow = new Workflow();
+
+        workflow.setArtifactChecksum("12345");
+        workflow.setArtifactName("myTestWorkflow1");
+        workflow.setArtifactUUID("a5c59864-8407-4175-8060-de8ff95eab41");
+        workflow.setBody("my body");
+        workflow.setDescription("testing workflow");
+        workflow.setName("myTestWorkflow1");
+        workflow.setResourceTarget("vnf");
+        workflow.setSource("sdc");
+        workflow.setTimeoutMinutes(5000);
+        workflow.setOperationName("myTestWorkflow");
+        workflow.setVersion(1.0);
+
+        VnfResourceWorkflow vnfResourceWorkflow = new VnfResourceWorkflow();
+        vnfResourceWorkflow.setVnfResourceModelUUID("ff2ae348-214a-11e7-93ae-92361f002671");
+
+        vnfResourceWorkflow.setWorkflow(workflow);
+        List<VnfResourceWorkflow> vnfResourceWorkflows = new ArrayList<VnfResourceWorkflow>();
+        vnfResourceWorkflows.add(vnfResourceWorkflow);
+
+        workflow.setVnfResourceWorkflow(vnfResourceWorkflows);
+
+        WorkflowActivitySpecSequence wfss1 = new WorkflowActivitySpecSequence();
+        wfss1.setActivitySpecId(1);
+        wfss1.setWorkflow(workflow);
+        wfss1.setSeqNo(1);
+
+        List<WorkflowActivitySpecSequence> wfss = new ArrayList<WorkflowActivitySpecSequence>();
+        wfss.add(wfss1);
+        workflow.setWorkflowActivitySpecSequence(wfss);
+
+        workflowRepo.save(workflow);
+
     }
 
 }
