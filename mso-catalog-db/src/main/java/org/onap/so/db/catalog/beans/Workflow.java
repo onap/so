@@ -3,6 +3,7 @@ package org.onap.so.db.catalog.beans;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -69,10 +70,10 @@ public class Workflow implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "workflow")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "workflow")
     private List<VnfResourceWorkflow> vnfResourceWorkflow;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "workflow")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "workflow")
     private List<WorkflowActivitySpecSequence> workflowActivitySpecSequence;
 
     @PrePersist

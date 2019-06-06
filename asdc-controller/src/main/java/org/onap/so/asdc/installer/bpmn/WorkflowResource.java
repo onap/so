@@ -122,13 +122,14 @@ public class WorkflowResource {
 
         VnfResourceWorkflow vnfResourceWorkflow = new VnfResourceWorkflow();
         vnfResourceWorkflow.setVnfResourceModelUUID(vfResourceModelUuid);
+        vnfResourceWorkflow.setWorkflow(workflow);
         List<VnfResourceWorkflow> vnfResourceWorkflows = new ArrayList<VnfResourceWorkflow>();
         vnfResourceWorkflows.add(vnfResourceWorkflow);
 
         workflow.setVnfResourceWorkflow(vnfResourceWorkflows);
 
         List<String> activityNames = getActivityNameList(artifact.getResult());
-        List<WorkflowActivitySpecSequence> wfss = getWorkflowActivitySpecSequence(activityNames);
+        List<WorkflowActivitySpecSequence> wfss = getWorkflowActivitySpecSequence(activityNames, workflow);
         workflow.setWorkflowActivitySpecSequence(wfss);
 
         workflowRepo.save(workflow);
@@ -166,17 +167,21 @@ public class WorkflowResource {
         return activityNameList;
     }
 
-    protected List<WorkflowActivitySpecSequence> getWorkflowActivitySpecSequence(List<String> activityNames)
-            throws Exception {
+    protected List<WorkflowActivitySpecSequence> getWorkflowActivitySpecSequence(List<String> activityNames,
+            Workflow workflow) throws Exception {
         if (activityNames == null || activityNames.size() == 0) {
             return null;
         }
         List<WorkflowActivitySpecSequence> workflowActivitySpecs = new ArrayList<WorkflowActivitySpecSequence>();
+        int seqNo = 1;
         for (String activityName : activityNames) {
             ActivitySpec activitySpec = activityRepo.findByName(activityName);
             if (activitySpec != null) {
                 WorkflowActivitySpecSequence workflowActivitySpec = new WorkflowActivitySpecSequence();
                 workflowActivitySpec.setActivitySpec(activitySpec);
+                workflowActivitySpec.setWorkflow(workflow);
+                workflowActivitySpec.setSeqNo(seqNo);
+                seqNo++;
                 workflowActivitySpecs.add(workflowActivitySpec);
             }
         }
