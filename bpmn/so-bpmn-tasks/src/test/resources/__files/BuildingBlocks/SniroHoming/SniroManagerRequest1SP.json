@@ -32,7 +32,7 @@
         "modelVersion" : "testProxyModelVersion1",
         "modelInvariantId" : "testProxyModelInvariantUuid1"
       },
-      "requiredCandidates" : [ {
+      "filteringAttributes" : [ {
         "identifierType" : "cloudRegionId",
         "identifiers" : [ "testCloudRegionId" ],
         "cloudOwner" : "att"

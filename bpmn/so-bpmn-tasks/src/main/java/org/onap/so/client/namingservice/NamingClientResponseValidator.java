@@ -44,6 +44,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class NamingClientResponseValidator {
     private static final Logger logger = LoggerFactory.getLogger(NamingClientResponseValidator.class);
     private static final String INSTANCE_GROUP_NAME = "instance-group-name";
+    private static final String SERVICE_INSTANCE_NAME = "Service-Instance-Name";
     private static final String NO_RESPONSE_FROM_NAMING_SERVICE =
             "Error did not receive a response from Naming Service.";
     private static final String NULL_RESPONSE_FROM_NAMING_SERVICE =
@@ -78,6 +79,9 @@ public class NamingClientResponseValidator {
                     if (respElement != null) {
                         String resourceName = respElement.getResourceName();
                         if (INSTANCE_GROUP_NAME.equals(resourceName)) {
+                            generatedName = respElement.getResourceValue();
+                            break;
+                        } else if (SERVICE_INSTANCE_NAME.equals(resourceName)) {
                             generatedName = respElement.getResourceValue();
                             break;
                         }

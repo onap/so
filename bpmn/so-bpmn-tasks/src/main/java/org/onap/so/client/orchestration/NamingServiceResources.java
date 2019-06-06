@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
@@ -24,12 +24,14 @@ package org.onap.so.client.orchestration;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import org.onap.namingservice.model.Element;
 import org.onap.namingservice.model.Deleteelement;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
 import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.namingservice.NamingClient;
+import org.onap.so.client.namingservice.NamingRequestObject;
 import org.onap.so.client.namingservice.NamingRequestObjectBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,4 +65,25 @@ public class NamingServiceResources {
         return (namingClient
                 .deleteNameGenRequest(namingRequestObjectBuilder.nameGenDeleteRequestMapper(deleteElements)));
     }
+
+    public String generateServiceInstanceName(NamingRequestObject namingRequestObject)
+            throws BadResponseException, IOException {
+        HashMap<String, String> nsRequestObject = namingRequestObject.getNamingRequestObjectMap();
+        Element element = new Element();
+        nsRequestObject.forEach((k, v) -> element.put(k, v));
+        List<Element> elements = new ArrayList<Element>();
+        elements.add(element);
+        return (namingClient.postNameGenRequest(namingRequestObjectBuilder.nameGenRequestMapper(elements)));
+    }
+
+    public String deleteServiceInstanceName(NamingRequestObject namingRequestObject)
+            throws BadResponseException, IOException {
+        HashMap<String, String> nsRequestObject = namingRequestObject.getNamingRequestObjectMap();
+        Deleteelement delElement = new Deleteelement();
+        nsRequestObject.forEach((k, v) -> delElement.setExternalKey(v));
+        List<Deleteelement> delElements = new ArrayList<Deleteelement>();
+        delElements.add(delElement);
+        return (namingClient.deleteNameGenRequest(namingRequestObjectBuilder.nameGenDeleteRequestMapper(delElements)));
+    }
+
 }

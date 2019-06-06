@@ -36,6 +36,8 @@ public class SolutionCandidates implements Serializable {
     private List<Candidate> excludedCandidates = new ArrayList<Candidate>();
     @JsonProperty("existingCandidates")
     private List<Candidate> existingCandidates = new ArrayList<Candidate>();
+    @JsonProperty("filteringAttributes")
+    private List<Candidate> filteringAttributes = new ArrayList<Candidate>();
 
 
     public List<Candidate> getRequiredCandidates() {
@@ -58,6 +60,8 @@ public class SolutionCandidates implements Serializable {
         return existingCandidates;
     }
 
-
+    public List<Candidate> getFilteringAttributes() {
+        return filteringAttributes;
+    }
 
 }

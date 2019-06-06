@@ -49,6 +49,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.OwningEntity;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Platform;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Project;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.RouteTableReference;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.RouteTarget;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.SegmentationAssignment;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceSubscription;
@@ -57,6 +58,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.Tenant;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Vnfc;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.VpnBinding;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.License;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext;
@@ -68,6 +70,7 @@ import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoGenericVnf;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoInstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoNetwork;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceInstance;
+import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceProxy;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
 import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResource;
@@ -80,6 +83,7 @@ import org.onap.so.db.catalog.beans.InstanceGroupType;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.db.catalog.beans.Service;
+import org.onap.so.db.catalog.beans.ServiceProxyResourceCustomization;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
@@ -517,13 +521,18 @@ public class BBInputSetupMapperLayer {
     protected ModelInfoConfiguration mapCatalogConfigurationToConfiguration(
             ConfigurationResourceCustomization configurationResourceCustomization,
             CvnfcConfigurationCustomization cvnfcConfigurationCustomization) {
+
         ModelInfoConfiguration modelInfoConfiguration = new ModelInfoConfiguration();
         modelInfoConfiguration
                 .setModelVersionId(configurationResourceCustomization.getConfigurationResource().getModelUUID());
         modelInfoConfiguration.setModelCustomizationId(configurationResourceCustomization.getModelCustomizationUUID());
         modelInfoConfiguration.setModelInvariantId(
                 configurationResourceCustomization.getConfigurationResource().getModelInvariantUUID());
-        modelInfoConfiguration.setPolicyName(cvnfcConfigurationCustomization.getPolicyName());
+        modelInfoConfiguration.setConfigurationRole(configurationResourceCustomization.getRole());
+        modelInfoConfiguration.setConfigurationType(configurationResourceCustomization.getType());
+        if (cvnfcConfigurationCustomization != null) {
+            modelInfoConfiguration.setPolicyName(cvnfcConfigurationCustomization.getPolicyName());
+        }
         return modelInfoConfiguration;
     }
 
@@ -548,5 +557,30 @@ public class BBInputSetupMapperLayer {
 
     public Vnfc mapAAIVnfc(org.onap.aai.domain.yang.Vnfc vnfcAAI) {
         return modelMapper.map(vnfcAAI, Vnfc.class);
+    }
+
+    public VpnBinding mapAAIVpnBinding(org.onap.aai.domain.yang.VpnBinding aaiVpnBinding) {
+        VpnBinding vpnBinding = modelMapper.map(aaiVpnBinding, VpnBinding.class);
+        mapAllRouteTargetsToAAIVpnBinding(aaiVpnBinding, vpnBinding);
+        return vpnBinding;
+    }
+
+    protected void mapAllRouteTargetsToAAIVpnBinding(org.onap.aai.domain.yang.VpnBinding aaiVpnBinding,
+            VpnBinding vpnBinding) {
+        if (aaiVpnBinding.getRouteTargets() != null) {
+            for (org.onap.aai.domain.yang.RouteTarget aaiRouteTarget : aaiVpnBinding.getRouteTargets()
+                    .getRouteTarget()) {
+                vpnBinding.getRouteTargets().add(mapAAIRouteTarget(aaiRouteTarget));
+            }
+        }
+    }
+
+    public RouteTarget mapAAIRouteTarget(org.onap.aai.domain.yang.RouteTarget aaiRouteTarget) {
+        return modelMapper.map(aaiRouteTarget, RouteTarget.class);
+    }
+
+    protected ModelInfoServiceProxy mapServiceProxyCustomizationToServiceProxy(
+            ServiceProxyResourceCustomization serviceProxyCustomization) {
+        return modelMapper.map(serviceProxyCustomization, ModelInfoServiceProxy.class);
     }
 }

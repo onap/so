@@ -22,17 +22,24 @@ package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
 import java.util.List;
 import java.util.Optional;
+import org.onap.aai.domain.yang.VpnBinding;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
+import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.Relationships;
+import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class WorkflowActionExtractResourcesAAI {
     private static final Logger logger = LoggerFactory.getLogger(WorkflowActionExtractResourcesAAI.class);
+
+    @Autowired
+    protected BBInputSetupUtils bbInputSetupUtils;
 
     public Optional<Configuration> extractRelationshipsConfiguration(Relationships relationships) {
         List<AAIResultWrapper> configurations = relationships.getByType(AAIObjectType.CONFIGURATION);
@@ -40,6 +47,18 @@ public class WorkflowActionExtractResourcesAAI {
             Optional<Configuration> config = configWrapper.asBean(Configuration.class);
             if (config.isPresent()) {
                 return config;
+            }
+        }
+        return Optional.empty();
+    }
+
+    public Optional<VpnBinding> extractRelationshipsVpnBinding(Relationships relationships) {
+        List<AAIResourceUri> configurations = relationships.getRelatedUris(AAIObjectType.VPN_BINDING);
+        for (AAIResourceUri vpnBindingUri : configurations) {
+            AAIResultWrapper vpnBindingWrapper = bbInputSetupUtils.getAAIResourceDepthOne(vpnBindingUri);
+            Optional<VpnBinding> vpnBinding = vpnBindingWrapper.asBean(VpnBinding.class);
+            if (vpnBinding.isPresent()) {
+                return vpnBinding;
             }
         }
         return Optional.empty();

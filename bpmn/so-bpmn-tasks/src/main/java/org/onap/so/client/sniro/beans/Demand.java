@@ -40,6 +40,8 @@ public class Demand implements Serializable {
     private List<Candidate> excludedCandidates;
     @JsonProperty("existingCandidates")
     private List<Candidate> existingCandidates;
+    @JsonProperty("filteringAttributes")
+    private List<Candidate> filteringAttributes;
 
 
     public List<Candidate> getRequiredCandidates() {
@@ -88,6 +90,14 @@ public class Demand implements Serializable {
 
     public void setExistingCandidates(List<Candidate> existingCandidates) {
         this.existingCandidates = existingCandidates;
+    }
+
+    public List<Candidate> getFilteringAttributes() {
+        return filteringAttributes;
+    }
+
+    public void setFilteringAttributes(List<Candidate> filteringAttributes) {
+        this.filteringAttributes = filteringAttributes;
     }
 
 }

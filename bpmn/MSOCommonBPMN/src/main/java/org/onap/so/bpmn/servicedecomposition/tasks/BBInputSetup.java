@@ -47,11 +47,13 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.Platform;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Project;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.RouteTableReference;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceProxy;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceSubscription;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Tenant;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Vnfc;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.VpnBinding;
 import org.onap.so.bpmn.servicedecomposition.entities.ConfigurationResourceKeys;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
@@ -76,6 +78,7 @@ import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.db.catalog.beans.Service;
+import org.onap.so.db.catalog.beans.ServiceProxyResourceCustomization;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
@@ -342,7 +345,7 @@ public class BBInputSetup implements JavaDelegate {
                 ModelInfo configurationModelInfo = new ModelInfo();
                 configurationModelInfo.setModelCustomizationUuid(configurationKey);
                 populateConfiguration(configurationModelInfo, service, bbName, serviceInstance, lookupKeyMap,
-                        configurationId, instanceName, configurationResourceKeys);
+                        configurationId, instanceName, configurationResourceKeys, requestDetails);
             } else {
                 lookupKeyMap.put(ResourceKey.VF_MODULE_ID, resourceId);
                 this.populateVfModule(modelInfo, service, bbName, serviceInstance, lookupKeyMap, resourceId,
@@ -372,7 +375,7 @@ public class BBInputSetup implements JavaDelegate {
 
     protected void populateConfiguration(ModelInfo modelInfo, Service service, String bbName,
             ServiceInstance serviceInstance, Map<ResourceKey, String> lookupKeyMap, String resourceId,
-            String instanceName, ConfigurationResourceKeys configurationResourceKeys) {
+            String instanceName, ConfigurationResourceKeys configurationResourceKeys, RequestDetails requestDetails) {
         Configuration configuration = null;
         for (Configuration configurationTemp : serviceInstance.getConfigurations()) {
             if (lookupKeyMap.get(ResourceKey.CONFIGURATION_ID) != null && configurationTemp.getConfigurationId()
@@ -385,14 +388,20 @@ public class BBInputSetup implements JavaDelegate {
                 }
             }
         }
-        if (configuration == null && bbName.equalsIgnoreCase(AssignFlows.FABRIC_CONFIGURATION.toString())) {
+        if (configuration == null && (bbName.equalsIgnoreCase(AssignFlows.FABRIC_CONFIGURATION.toString())
+                || bbName.equalsIgnoreCase(AssignFlows.VRF_CONFIGURATION.toString()))) {
             configuration = this.createConfiguration(lookupKeyMap, instanceName, resourceId);
             serviceInstance.getConfigurations().add(configuration);
         }
-        if (configuration != null) {
+        if (configuration != null && bbName.contains("Fabric")) {
             Vnfc vnfc = getVnfcToConfiguration(configurationResourceKeys.getVnfcName());
             configuration.setVnfc(vnfc);
             this.mapCatalogConfiguration(configuration, modelInfo, service, configurationResourceKeys);
+        } else if (configuration != null && bbName.contains("Vrf")) {
+            configuration.setModelInfoConfiguration(mapperLayer.mapCatalogConfigurationToConfiguration(
+                    findConfigurationResourceCustomization(modelInfo, service), null));
+            configuration.setConfigurationType(configuration.getModelInfoConfiguration().getConfigurationType());
+            configuration.setConfigurationSubType(configuration.getModelInfoConfiguration().getConfigurationRole());
         }
     }
 
@@ -1115,13 +1124,65 @@ public class BBInputSetup implements JavaDelegate {
             ModelInfo configurationModelInfo = new ModelInfo();
             configurationModelInfo.setModelCustomizationUuid(key);
             this.populateConfiguration(configurationModelInfo, service, bbName, serviceInstance, lookupKeyMap,
-                    configurationId, null, executeBB.getConfigurationResourceKeys());
+                    configurationId, null, executeBB.getConfigurationResourceKeys(), executeBB.getRequestDetails());
         }
         if (executeBB.getWorkflowResourceIds() != null) {
             this.populateNetworkCollectionAndInstanceGroupAssign(service, bbName, serviceInstance,
                     executeBB.getWorkflowResourceIds().getNetworkCollectionId(), key);
         }
+        RelatedInstance relatedVpnBinding =
+                bbInputSetupUtils.getRelatedInstanceByType(executeBB.getRequestDetails(), ModelType.vpnBinding);
+        RelatedInstance relatedLocalNetwork =
+                bbInputSetupUtils.getRelatedInstanceByType(executeBB.getRequestDetails(), ModelType.network);
+        if (relatedVpnBinding != null && relatedLocalNetwork != null) {
+            org.onap.aai.domain.yang.VpnBinding aaiVpnBinding =
+                    bbInputSetupUtils.getAAIVpnBinding(relatedVpnBinding.getInstanceId());
+            org.onap.aai.domain.yang.L3Network aaiLocalNetwork =
+                    bbInputSetupUtils.getAAIL3Network(relatedLocalNetwork.getInstanceId());
+            VpnBinding vpnBinding = mapperLayer.mapAAIVpnBinding(aaiVpnBinding);
+            L3Network localNetwork = mapperLayer.mapAAIL3Network(aaiLocalNetwork);
+            Optional<org.onap.aai.domain.yang.VpnBinding> aaiAICVpnBindingOp =
+                    bbInputSetupUtils.getAICVpnBindingFromNetwork(aaiLocalNetwork);
+            if (aaiAICVpnBindingOp.isPresent()) {
+                localNetwork.getVpnBindings().add(mapperLayer.mapAAIVpnBinding(aaiAICVpnBindingOp.get()));
+            }
+            ServiceProxy serviceProxy = getServiceProxy(service);
+            gBB.getServiceInstance().getServiceProxies().add(serviceProxy);
+            gBB.getCustomer().getVpnBindings().add(vpnBinding);
+            lookupKeyMap.put(ResourceKey.VPN_ID, vpnBinding.getVpnId());
+            gBB.getServiceInstance().getNetworks().add(localNetwork);
+            lookupKeyMap.put(ResourceKey.NETWORK_ID, localNetwork.getNetworkId());
+        }
         return gBB;
+    }
+
+    protected ServiceProxy getServiceProxy(Service service) {
+        if (!service.getServiceProxyCustomizations().isEmpty()) {
+            ServiceProxyResourceCustomization serviceProxyCatalog = getServiceProxyResourceCustomization(service);
+            ServiceProxy serviceProxy = new ServiceProxy();
+            serviceProxy.setModelInfoServiceProxy(
+                    mapperLayer.mapServiceProxyCustomizationToServiceProxy(serviceProxyCatalog));
+            Service sourceService = serviceProxyCatalog.getSourceService();
+            ServiceInstance sourceServiceShell = new ServiceInstance();
+            sourceServiceShell
+                    .setModelInfoServiceInstance(mapperLayer.mapCatalogServiceIntoServiceInstance(sourceService));
+            serviceProxy.setServiceInstance(sourceServiceShell);
+            serviceProxy.setType(sourceService.getServiceType());
+            return serviceProxy;
+        } else {
+            return null;
+        }
+    }
+
+    protected ServiceProxyResourceCustomization getServiceProxyResourceCustomization(Service service) {
+        ServiceProxyResourceCustomization serviceProxyCatalog = null;
+        for (ServiceProxyResourceCustomization serviceProxyTemp : service.getServiceProxyCustomizations()) {
+            if (serviceProxyTemp.getSourceService() != null
+                    && serviceProxyTemp.getSourceService().getServiceType().equalsIgnoreCase("TRANSPORT")) {
+                serviceProxyCatalog = serviceProxyTemp;
+            }
+        }
+        return serviceProxyCatalog;
     }
 
     protected L3Network getVirtualLinkL3Network(Map<ResourceKey, String> lookupKeyMap, String bbName, String key,
@@ -1348,7 +1409,7 @@ public class BBInputSetup implements JavaDelegate {
                     findConfigurationResourceCustomization(configurationModelInfo, service);
             if (configurationCust != null) {
                 this.populateConfiguration(configurationModelInfo, service, bbName, serviceInstance, lookupKeyMap,
-                        configurationId, null, executeBB.getConfigurationResourceKeys());
+                        configurationId, null, executeBB.getConfigurationResourceKeys(), executeBB.getRequestDetails());
             } else {
                 logger.debug("Could not find a configuration customization with key: {}", key);
             }
