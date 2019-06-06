@@ -21,7 +21,6 @@
 package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
-import java.util.Date;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,13 +28,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -43,7 +38,6 @@ import com.openpojo.business.annotation.BusinessKey;
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 @Entity
-@IdClass(VnfResourceWorkflowId.class)
 @Table(name = "vnf_resource_to_workflow")
 public class VnfResourceWorkflow implements Serializable {
 
@@ -55,27 +49,20 @@ public class VnfResourceWorkflow implements Serializable {
     private Integer ID;
 
     @BusinessKey
-    @Id
     @Column(name = "VNF_RESOURCE_MODEL_UUID")
     private String vnfResourceModelUUID;
-
-    @BusinessKey
-    @Id
-    @Column(name = "WORKFLOW_ID")
-    private Integer workflowId;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "VNF_RESOURCE_MODEL_UUID", updatable = false, insertable = false)
     private VnfResource vnfResource;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "WORKFLOW_ID", updatable = false, insertable = false)
+    @JoinColumn(name = "WORKFLOW_ID")
     private Workflow workflow;
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("vnfResourceModelUUID", vnfResourceModelUUID)
-                .append("workflowId", workflowId).toString();
+        return new ToStringBuilder(this).append("vnfResourceModelUUID", vnfResourceModelUUID).toString();
     }
 
     @Override
@@ -84,13 +71,12 @@ public class VnfResourceWorkflow implements Serializable {
             return false;
         }
         VnfResourceWorkflow castOther = (VnfResourceWorkflow) other;
-        return new EqualsBuilder().append(vnfResourceModelUUID, castOther.vnfResourceModelUUID)
-                .append(workflowId, castOther.workflowId).isEquals();
+        return new EqualsBuilder().append(vnfResourceModelUUID, castOther.vnfResourceModelUUID).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(vnfResourceModelUUID).append(workflowId).toHashCode();
+        return new HashCodeBuilder().append(vnfResourceModelUUID).toHashCode();
     }
 
     public Integer getID() {
@@ -105,14 +91,7 @@ public class VnfResourceWorkflow implements Serializable {
         this.vnfResourceModelUUID = vnfResourceModelUUID;
     }
 
-    public Integer getWorkflowId() {
-        return workflowId;
-    }
-
-    public void setWorkflowId(Integer workflowId) {
-        this.workflowId = workflowId;
-    }
-
+    @LinkedResource
     public VnfResource getVnfResource() {
         return vnfResource;
     }
@@ -121,6 +100,7 @@ public class VnfResourceWorkflow implements Serializable {
         this.vnfResource = vnfResource;
     }
 
+    @LinkedResource
     public Workflow getWorkflow() {
         return workflow;
     }
