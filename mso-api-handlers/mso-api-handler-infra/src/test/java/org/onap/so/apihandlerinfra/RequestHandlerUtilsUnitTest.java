@@ -114,14 +114,14 @@ public class RequestHandlerUtilsUnitTest {
         currentActiveRequest.setSource("VID");
         currentActiveRequest.setStartTime(startTimeStamp);
         currentActiveRequest.setTenantId("tenant-id");
-        currentActiveRequest.setRequestBody(getRequestBody("/RequestBody.json"));
+        currentActiveRequest.setRequestBody(getRequestBody("/RequestBodyNewRequestorId.json"));
         currentActiveRequest.setAicCloudRegion("cloudRegion");
         currentActiveRequest.setRequestScope("service");
         currentActiveRequest.setRequestStatus(Status.IN_PROGRESS.toString());
         currentActiveRequest.setLastModifiedBy(Constants.MODIFIED_BY_APIHANDLER);
         currentActiveRequest.setRequestAction(Action.createInstance.toString());
         currentActiveRequest.setRequestUrl(requestUri);
-        currentActiveRequest.setRequestorId("xxxxxx");
+        currentActiveRequest.setRequestorId("yyyyyy");
         currentActiveRequest.setProgress(new Long(5));
         currentActiveRequest.setOriginalRequestId(RESUMED_REQUEST_ID);
     }
@@ -140,10 +140,12 @@ public class RequestHandlerUtilsUnitTest {
 
 
     @Test
-    public void createNewRecordCopyFromInfraActiveRequestTest() {
+    public void createNewRecordCopyFromInfraActiveRequestTest() throws IOException {
         doNothing().when(requestHandler).setInstanceIdAndName(infraActiveRequest, currentActiveRequest);
+        doReturn(getRequestBody("/RequestBodyNewRequestorId.json")).when(requestHandler)
+                .updateRequestorIdInRequestBody(infraActiveRequest, "yyyyyy");
         InfraActiveRequests result = requestHandler.createNewRecordCopyFromInfraActiveRequest(infraActiveRequest,
-                CURRENT_REQUEST_ID, startTimeStamp, "VID", requestUri, "xxxxxx", RESUMED_REQUEST_ID);
+                CURRENT_REQUEST_ID, startTimeStamp, "VID", requestUri, "yyyyyy", RESUMED_REQUEST_ID);
         assertThat(currentActiveRequest, sameBeanAs(result));
     }
 
@@ -394,6 +396,14 @@ public class RequestHandlerUtilsUnitTest {
 
         ModelType modelTypeResult = requestHandler.getModelType(Action.createInstance, modelInfo);
         assertEquals(modelTypeResult, modelTypeExpected);
+    }
+
+    @Test
+    public void updateRequestorIdInRequestBodyTest() throws IOException {
+        String newRequestorId = "yyyyyy";
+        String expected = getRequestBody("/RequestBodyNewRequestorId.json");
+        String result = requestHandler.updateRequestorIdInRequestBody(infraActiveRequest, newRequestorId);
+        assertEquals(expected, result);
     }
 
 }

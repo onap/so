@@ -52,6 +52,7 @@ import org.onap.so.apihandler.common.RequestClientFactory;
 import org.onap.so.apihandler.common.RequestClientParameter;
 import org.onap.so.apihandler.common.ResponseBuilder;
 import org.onap.so.apihandler.common.ResponseHandler;
+import org.onap.so.apihandlerinfra.TestApi;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.BPMNFailureException;
 import org.onap.so.apihandlerinfra.exceptions.ClientConnectionException;
@@ -638,7 +639,7 @@ public class RequestHandlerUtils {
         request.setLastModifiedBy(Constants.MODIFIED_BY_APIHANDLER);
         if (infraActiveRequest != null) {
             request.setTenantId(infraActiveRequest.getTenantId());
-            request.setRequestBody(infraActiveRequest.getRequestBody());
+            request.setRequestBody(updateRequestorIdInRequestBody(infraActiveRequest, requestorId));
             request.setAicCloudRegion(infraActiveRequest.getAicCloudRegion());
             request.setRequestScope(infraActiveRequest.getRequestScope());
             request.setRequestAction(infraActiveRequest.getRequestAction());
@@ -707,4 +708,10 @@ public class RequestHandlerUtils {
         }
     }
 
+    protected String updateRequestorIdInRequestBody(InfraActiveRequests infraActiveRequest, String newRequestorId) {
+        String requestBody = infraActiveRequest.getRequestBody();
+        return requestBody.replaceAll(
+                "(?s)(\"requestInfo\"\\s*?:\\s*?\\{.*?\"requestorId\"\\s*?:\\s*?\")(.*?)(\"[ ]*(?:,|\\R|\\}))",
+                "$1" + newRequestorId + "$3");
+    }
 }
