@@ -32,7 +32,6 @@ import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.camunda.bpm.engine.impl.bpmn.behavior.ClassDelegateActivityBehavior;
 import org.camunda.bpm.engine.impl.bpmn.parser.AbstractBpmnParseListener;
 import org.camunda.bpm.engine.impl.bpmn.parser.BpmnParseListener;
-import org.camunda.bpm.engine.impl.bpmn.parser.FieldDeclaration;
 import org.camunda.bpm.engine.impl.cfg.AbstractProcessEnginePlugin;
 import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.camunda.bpm.engine.impl.persistence.entity.ProcessDefinitionEntity;
@@ -57,6 +56,8 @@ import org.slf4j.LoggerFactory;
 @Component
 public class WorkflowExceptionPlugin extends AbstractProcessEnginePlugin {
     private static final Logger logger = LoggerFactory.getLogger(WorkflowExceptionPlugin.class);
+
+    private static final String WORKFLOW_EXCEPTION = "WorkflowException";
 
     @Override
     public void preInit(ProcessEngineConfigurationImpl processEngineConfiguration) {
@@ -131,7 +132,7 @@ public class WorkflowExceptionPlugin extends AbstractProcessEnginePlugin {
      */
     public static class WorkflowExceptionResetListener implements ExecutionListener {
         public void notify(DelegateExecution execution) throws Exception {
-            Object workflowException = execution.getVariable("WorkflowException");
+            Object workflowException = execution.getVariable(WORKFLOW_EXCEPTION);
 
             if (workflowException instanceof WorkflowException) {
                 int index = 1;
@@ -140,10 +141,10 @@ public class WorkflowExceptionPlugin extends AbstractProcessEnginePlugin {
                     saveName = "SavedWorkflowException" + (++index);
                 }
 
-                logger.debug("WorkflowExceptionResetTask is moving WorkflowException to " + saveName);
+                logger.debug("WorkflowExceptionResetTask is moving WorkflowException to {}", saveName);
 
                 execution.setVariable(saveName, workflowException);
-                execution.setVariable("WorkflowException", null);
+                execution.setVariable(WORKFLOW_EXCEPTION, null);
             }
         }
     }
@@ -153,7 +154,7 @@ public class WorkflowExceptionPlugin extends AbstractProcessEnginePlugin {
      */
     public static class WorkflowExceptionTriggerTask implements JavaDelegate {
         public void execute(DelegateExecution execution) throws Exception {
-            if (execution.getVariable("WorkflowException") instanceof WorkflowException) {
+            if (execution.getVariable(WORKFLOW_EXCEPTION) instanceof WorkflowException) {
                 logger.debug("WorkflowExceptionTriggerTask is generating a MSOWorkflowException event");
                 throw new BpmnError("MSOWorkflowException");
             }
