@@ -124,7 +124,7 @@ public class MSOInfrastructureApplication {
         logger.debug("Attempting to deploy custom workflows");
         try {
             List<Workflow> workflows = catalogDbClient.findWorkflowBySource(SDC_SOURCE);
-            if (workflows != null && workflows.size() != 0) {
+            if (workflows != null && !workflows.isEmpty()) {
                 for (Workflow workflow : workflows) {
                     String workflowName = workflow.getName();
                     String workflowBody = workflow.getBody();
