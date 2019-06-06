@@ -740,8 +740,8 @@ public class ToscaResourceInstaller {
                             toscaResourceStruct.getSdcCsarHelper().getRequirementsOf(configNode).getAll();
                     for (RequirementAssignment requirement : requirementsList) {
                         if (requirement.getNodeTemplateName().equals(spNode.getName())) {
-                            ConfigurationResourceCustomization configurationResource =
-                                    createConfiguration(configNode, toscaResourceStruct, serviceProxy, service);
+                            ConfigurationResourceCustomization configurationResource = createConfiguration(configNode,
+                                    toscaResourceStruct, serviceProxy, service, configurationResourceList);
 
                             Optional<ConfigurationResourceCustomization> matchingObject =
                                     configurationResourceList.stream()
@@ -1400,24 +1400,23 @@ public class ToscaResourceInstaller {
 
     protected ConfigurationResourceCustomization createConfiguration(NodeTemplate nodeTemplate,
             ToscaResourceStructure toscaResourceStructure, ServiceProxyResourceCustomization spResourceCustomization,
-            Service service) {
+            Service service, List<ConfigurationResourceCustomization> configurationResourceList) {
 
         ConfigurationResourceCustomization configCustomizationResource = getConfigurationResourceCustomization(
                 nodeTemplate, toscaResourceStructure, spResourceCustomization, service);
 
-        ConfigurationResource configResource = getConfigurationResource(nodeTemplate);
+        ConfigurationResource configResource = null;
 
-        Set<ConfigurationResourceCustomization> configResourceCustomizationSet = new HashSet<>();
+        ConfigurationResource existingConfigResource = findExistingConfiguration(service,
+                nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID), configurationResourceList);
+
+        if (existingConfigResource == null) {
+            configResource = getConfigurationResource(nodeTemplate);
+        } else {
+            configResource = existingConfigResource;
+        }
 
         configCustomizationResource.setConfigurationResource(configResource);
-
-        configResourceCustomizationSet.add(configCustomizationResource);
-
-        configResource.setConfigurationResourceCustomization(configResourceCustomizationSet);
-
-        toscaResourceStructure.setCatalogConfigurationResource(configResource);
-
-        toscaResourceStructure.setCatalogConfigurationResourceCustomization(configCustomizationResource);
 
         return configCustomizationResource;
     }
@@ -2150,6 +2149,19 @@ public class ToscaResourceInstaller {
         ConfigurationResource configResource = null;
         for (ConfigurationResourceCustomization configurationResourceCustom : service
                 .getConfigurationCustomizations()) {
+            if (configurationResourceCustom.getConfigurationResource() != null
+                    && configurationResourceCustom.getConfigurationResource().getModelUUID().equals(modelUUID)) {
+                configResource = configurationResourceCustom.getConfigurationResource();
+            }
+        }
+
+        return configResource;
+    }
+
+    protected ConfigurationResource findExistingConfiguration(Service service, String modelUUID,
+            List<ConfigurationResourceCustomization> configurationResourceList) {
+        ConfigurationResource configResource = null;
+        for (ConfigurationResourceCustomization configurationResourceCustom : configurationResourceList) {
             if (configurationResourceCustom.getConfigurationResource() != null
                     && configurationResourceCustom.getConfigurationResource().getModelUUID().equals(modelUUID)) {
                 configResource = configurationResourceCustom.getConfigurationResource();
