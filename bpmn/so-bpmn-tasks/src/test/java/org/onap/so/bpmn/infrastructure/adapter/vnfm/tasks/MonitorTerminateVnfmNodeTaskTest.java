@@ -20,16 +20,15 @@
 
 package org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks;
 
-import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.CREATE_VNF_NODE_STATUS;
-import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.DELETE_VNF_NODE_STATUS;
-import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.VNF_CREATED;
-import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.VNF_ASSIGNED;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.DELETE_VNF_NODE_STATUS;
+import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.VNF_ASSIGNED;
+import java.util.Optional;
 import java.util.UUID;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,13 +37,14 @@ import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
+import org.onap.so.client.orchestration.AAIVnfResources;
 
 /**
  * 
- * @author Lathishbabu Ganesan (lathishbabu.ganesan@est.tech)
+ * @author Waqas Ikram (waqas.ikram@est.tech)
  *
  */
-public class MonitorVnfmNodeJobTest extends BaseTaskTest {
+public class MonitorTerminateVnfmNodeTaskTest extends BaseTaskTest {
 
     private static final String VNF_ID = UUID.randomUUID().toString();
 
@@ -55,6 +55,9 @@ public class MonitorVnfmNodeJobTest extends BaseTaskTest {
     @Mock
     private VnfmAdapterServiceProvider mockedVnfmAdapterServiceProvider;
 
+    @Mock
+    private AAIVnfResources mockedAaiVnfResources;
+
     private final BuildingBlockExecution stubbedxecution = new StubbedBuildingBlockExecution();
 
     @Before
@@ -63,49 +66,48 @@ public class MonitorVnfmNodeJobTest extends BaseTaskTest {
     }
 
     @Test
-    public void testGetNodeStatusCreate() throws Exception {
-        GenericVnf vnf = getGenericVnf();
-        vnf.setOrchestrationStatus(VNF_CREATED);
-        when(extractPojosForBB.extractByKey(any(), eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(vnf);
-        objUnderTest.getNodeStatus(stubbedxecution);
-        assertTrue(stubbedxecution.getVariable(CREATE_VNF_NODE_STATUS));
-    }
-
-    @Test
     public void testGetNodeStatusDelete() throws Exception {
-        GenericVnf vnf = getGenericVnf();
-        vnf.setOrchestrationStatus(VNF_ASSIGNED);
+        final org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf vnf = getGenericVnf();
+        final GenericVnf aaiGenericVnf = getAAIGenericVnf();
+        aaiGenericVnf.setOrchestrationStatus(VNF_ASSIGNED);
+
         when(extractPojosForBB.extractByKey(any(), eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(vnf);
+        when(mockedAaiVnfResources.getGenericVnf(eq(VNF_ID))).thenReturn(Optional.of(aaiGenericVnf));
+
         objUnderTest.getNodeStatus(stubbedxecution);
         assertTrue(stubbedxecution.getVariable(DELETE_VNF_NODE_STATUS));
     }
 
     @Test
-    public void testGetNodeStatusException() throws Exception {
-        when(extractPojosForBB.extractByKey(any(), eq(ResourceKey.GENERIC_VNF_ID))).thenThrow(RuntimeException.class);
+    public void testGetNodeStatus_noGenericVnfFoundInAAI_throwException() throws Exception {
+        final org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf vnf = getGenericVnf();
+
+        when(extractPojosForBB.extractByKey(any(), eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(vnf);
+        when(mockedAaiVnfResources.getGenericVnf(eq(VNF_ID))).thenReturn(Optional.empty());
         objUnderTest.getNodeStatus(stubbedxecution);
-        assertNull(stubbedxecution.getVariable(CREATE_VNF_NODE_STATUS));
-        assertNull(stubbedxecution.getVariable(DELETE_VNF_NODE_STATUS));
         verify(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1220),
                 any(Exception.class));
+        assertNull(stubbedxecution.getVariable(DELETE_VNF_NODE_STATUS));
+
     }
 
-    @Test
-    public void testTimeOutLogFailue() throws Exception {
-        objUnderTest.timeOutLogFailue(stubbedxecution);
-        verify(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1221),
-                eq("Node operation time out"));
-    }
-
-    private GenericVnf getGenericVnf() {
+    private GenericVnf getAAIGenericVnf() {
         final GenericVnf genericVnf = new GenericVnf();
         genericVnf.setVnfId(VNF_ID);
         genericVnf.setVnfName(VNF_NAME);
         return genericVnf;
     }
 
-    private MonitorVnfmNodeTask getEtsiVnfMonitorNodeJobTask() {
-        return new MonitorVnfmNodeTask(extractPojosForBB, exceptionUtil);
+    private org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf getGenericVnf() {
+        final org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf genericVnf =
+                new org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf();
+        genericVnf.setVnfId(VNF_ID);
+        return genericVnf;
+
+    }
+
+    private MonitorTerminateVnfmNodeTask getEtsiVnfMonitorNodeJobTask() {
+        return new MonitorTerminateVnfmNodeTask(extractPojosForBB, exceptionUtil, mockedAaiVnfResources);
     }
 
 }

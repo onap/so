@@ -1,0 +1,13 @@
+{
+	"name": "lcpCloudRegionId",
+	"payloadLocation": "cloudConfiguration",
+	"label": "Cloud Region ID",
+	"type": "text",
+	"description": null,
+	"isRequried": true,
+	"maxLength": 7,
+	"allowableChars": "someRegEx",
+	"created": null,
+	"activitySpecUserParameters": null,
+	"id": null
+}

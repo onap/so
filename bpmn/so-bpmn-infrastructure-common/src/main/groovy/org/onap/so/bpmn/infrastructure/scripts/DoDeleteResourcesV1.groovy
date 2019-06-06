@@ -345,7 +345,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
                 }
             }
 
-            String recipeURL = BPMNProperties.getProperty("bpelURL", "http://mso:8080") + recipeUri
+            String recipeURL = BPMNProperties.getProperty("bpelURL", "http://so-bpmn-infra.onap:8081") + recipeUri
 
             BpmnRestClient bpmnRestClient = new BpmnRestClient()
 

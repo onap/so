@@ -92,8 +92,10 @@ public class ConfigDeployVnf {
             configDeployRequestVnf.setResolutionKey(vnf.getVnfName());
             configDeployRequestVnf.setConfigDeployPropertiesForVnf(configDeployPropertiesForVnf);
 
-            String blueprintName = vnf.getBlueprintName();
-            String blueprintVersion = vnf.getBlueprintVersion();
+            String blueprintName = vnf.getModelInfoGenericVnf().getBlueprintName();
+            String blueprintVersion = vnf.getModelInfoGenericVnf().getBlueprintVersion();
+            logger.debug(" BlueprintName : " + blueprintName + " BlueprintVersion : " + blueprintVersion);
+
             AbstractCDSPropertiesBean abstractCDSPropertiesBean = new AbstractCDSPropertiesBean();
 
             abstractCDSPropertiesBean.setBlueprintName(blueprintName);

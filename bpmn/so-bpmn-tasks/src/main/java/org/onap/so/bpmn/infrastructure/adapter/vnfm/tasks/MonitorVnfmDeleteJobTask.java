@@ -56,10 +56,18 @@ public class MonitorVnfmDeleteJobTask extends MonitorVnfmJobTask {
      * @param execution {@link org.onap.so.bpmn.common.DelegateExecutionImpl}
      */
     public void getCurrentOperationStatus(final BuildingBlockExecution execution) {
-        LOGGER.debug("Executing getCurrentOperationStatus  ...");
-        final DeleteVnfResponse deleteVnfResponse = execution.getVariable(Constants.DELETE_VNF_RESPONSE_PARAM_NAME);
-        execution.setVariable(OPERATION_STATUS_PARAM_NAME, getOperationStatus(execution, deleteVnfResponse.getJobId()));
-        LOGGER.debug("Finished executing getCurrentOperationStatus ...");
+        try {
+            LOGGER.debug("Executing getCurrentOperationStatus  ...");
+            final DeleteVnfResponse deleteVnfResponse = execution.getVariable(Constants.DELETE_VNF_RESPONSE_PARAM_NAME);
+            execution.setVariable(OPERATION_STATUS_PARAM_NAME,
+                    getOperationStatus(execution, deleteVnfResponse.getJobId()));
+            LOGGER.debug("Finished executing getCurrentOperationStatus ...");
+        } catch (final Exception exception) {
+            final String message = "Unable to invoke get current Operation status";
+            LOGGER.error(message);
+            exceptionUtil.buildAndThrowWorkflowException(execution, 1216, message);
+
+        }
     }
 
     /**

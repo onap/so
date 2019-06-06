@@ -290,7 +290,8 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 			AAIResourcesClient resourceClient = new AAIResourcesClient()
 			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
 
-			if(resourceClient.exists(uri)){
+			if(resourceClient.exists(uri)){				
+				execution.setVariable("GENGS_FoundIndicator", true)
 				execution.setVariable("GENGS_siResourceLink", uri.build().toString())
 				Map<String, String> keys = uri.getURIKeys()
 				String  globalSubscriberId = execution.getVariable("globalSubscriberId")

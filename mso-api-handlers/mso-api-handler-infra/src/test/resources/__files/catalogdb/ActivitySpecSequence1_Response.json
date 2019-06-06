@@ -1,0 +1,20 @@
+{
+	"name": "VNFQuiesceTrafficActivity",
+	"description": "Activity to QuiesceTraffic on VNF",
+	"version": null,
+	"created": null,
+	"activitySpecActivitySpecCategories": null,
+	"activitySpecActivitySpecParameters": null,
+	"id": null,
+	"_links": {
+		"self": {
+			"href": "http://localhost:8090/activitySpec/1"
+		},
+		"activitySpec": {
+			"href": "http://localhost:8090/activitySpec/1"
+		},
+		"activitySpecUserParameters": {
+			"href": "http://localhost:8090/activitySpec/1/activitySpecUserParameters"
+		}
+	}
+}

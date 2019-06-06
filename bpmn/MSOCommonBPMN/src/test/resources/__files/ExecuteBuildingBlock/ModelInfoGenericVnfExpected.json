@@ -17,5 +17,7 @@
     "model-version" : "modelVersion",
     "model-invariant-uuid" : "modelInvariantUUID",
     "model-name" : "modelName",
-    "model-uuid" : "modelUUID"
+    "model-uuid" : "modelUUID",
+    "blueprintName" : "testBlueprintName",
+    "blueprintVersion" : "testBlueprintVersion"
 }

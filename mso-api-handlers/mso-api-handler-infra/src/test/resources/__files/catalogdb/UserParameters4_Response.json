@@ -1,0 +1,13 @@
+{
+	"name": "tenantId",
+	"payloadLocation": "cloudConfiguration",
+	"label": "Tenant/Project ID",
+	"type": "text",
+	"description": null,
+	"isRequried": true,
+	"maxLength": 36,
+	"allowableChars": "someRegEx",
+	"created": null,
+	"activitySpecUserParameters": null,
+	"id": null
+}

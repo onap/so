@@ -1,0 +1,13 @@
+{
+	"name": "cloudOwner",
+	"payloadLocation": "cloudConfiguration",
+	"label": "Cloud Owner",
+	"type": "text",
+	"description": null,
+	"isRequried": true,
+	"maxLength": 7,
+	"allowableChars": "someRegEx",
+	"created": null,
+	"activitySpecUserParameters": null,
+	"id": null
+}

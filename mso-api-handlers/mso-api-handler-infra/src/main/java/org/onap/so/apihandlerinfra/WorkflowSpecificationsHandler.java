@@ -50,6 +50,8 @@ import org.onap.so.db.catalog.beans.WorkflowActivitySpecSequence;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -69,7 +71,9 @@ public class WorkflowSpecificationsHandler {
     @Autowired
     private CatalogDbClient catalogDbClient;
 
+    private static Logger logger = LoggerFactory.getLogger(WorkflowSpecificationsHandler.class);
     private static final String ARTIFACT_TYPE_WORKFLOW = "workflow";
+    private static final String NATIVE_WORKFLOW = "native";
 
     @Path("/{version:[vV]1}/workflows")
     @GET
@@ -85,6 +89,12 @@ public class WorkflowSpecificationsHandler {
         mapper1.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         List<Workflow> workflows = catalogDbClient.findWorkflowByModelUUID(vnfModelVersionId);
+
+        List<Workflow> nativeWorkflows = catalogDbClient.findWorkflowBySource(NATIVE_WORKFLOW);
+        if (nativeWorkflows != null && nativeWorkflows.size() != 0) {
+            workflows.addAll(nativeWorkflows);
+        }
+
         WorkflowSpecifications workflowSpecifications = mapWorkflowsToWorkflowSpecifications(workflows);
 
         String jsonResponse = null;
@@ -153,6 +163,7 @@ public class WorkflowSpecificationsHandler {
                 if (activitySpec != null) {
                     ActivitySequence activitySequence = new ActivitySequence();
                     activitySequence.setName(activitySpec.getName());
+                    logger.debug("Adding activity: " + activitySpec.getName());
                     activitySequence.setDescription(activitySpec.getDescription());
                     activitySequences.add(activitySequence);
                 }
@@ -164,7 +175,7 @@ public class WorkflowSpecificationsHandler {
     private List<WorkflowInputParameter> buildWorkflowInputParameters(Workflow workflow) {
         List<WorkflowActivitySpecSequence> workflowActivitySpecSequences = workflow.getWorkflowActivitySpecSequence();
         if (workflowActivitySpecSequences == null || workflowActivitySpecSequences.size() == 0) {
-            return null;
+            return new ArrayList<WorkflowInputParameter>();
         }
         Map<String, WorkflowInputParameter> workflowInputParameterMap = new HashMap<String, WorkflowInputParameter>();
         for (WorkflowActivitySpecSequence workflowActivitySpecSequence : workflowActivitySpecSequences) {
@@ -188,7 +199,7 @@ public class WorkflowSpecificationsHandler {
         }
 
         if (workflowInputParameterMap.size() == 0) {
-            return null;
+            return new ArrayList<WorkflowInputParameter>();
         }
         List<WorkflowInputParameter> workflowInputParameterList =
                 workflowInputParameterMap.values().stream().collect(Collectors.toList());

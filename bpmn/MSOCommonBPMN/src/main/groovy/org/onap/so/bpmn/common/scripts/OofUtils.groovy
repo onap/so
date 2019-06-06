@@ -25,6 +25,7 @@ package org.onap.so.bpmn.common.scripts
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
+import org.onap.so.bpmn.common.util.OofInfraUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.domain.HomingSolution
 import org.onap.so.bpmn.core.domain.ModelInfo
@@ -53,6 +54,7 @@ import org.slf4j.LoggerFactory
 
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
+import javax.ws.rs.core.UriBuilder
 import javax.xml.ws.http.HTTPException
 
 import static org.onap.so.bpmn.common.scripts.GenericUtils.*
@@ -62,6 +64,7 @@ class OofUtils {
 
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     JsonUtils jsonUtil = new JsonUtils()
+    OofInfraUtils oofInfraUtils = new OofInfraUtils()
 
     private AbstractServiceTaskProcessor utils
 
@@ -504,27 +507,8 @@ class OofUtils {
      *
      * @return void
      */
-    Void createCloudSiteCatalogDb(CloudSite cloudSite, DelegateExecution execution) {
-
-        String endpoint = UrnPropertiesReader.getVariable("mso.catalog.db.spring.endpoint", execution)
-        String auth = UrnPropertiesReader.getVariable("mso.db.auth", execution)
-        String uri = "/cloudSite"
-
-	    URL url = new URL(endpoint + uri)
-        HttpClient client = new HttpClientFactory().newJsonClient(url, TargetEntity.EXTERNAL)
-        client.addAdditionalHeader(HttpHeaders.AUTHORIZATION, auth)
-	    client.addAdditionalHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
-
-        Response response = client.post(request.getBody().toString())
-
-        int responseCode = response.getStatus()
-        logger.debug("CatalogDB response code is: " + responseCode)
-        String syncResponse = response.readEntity(String.class)
-        logger.debug("CatalogDB response is: " + syncResponse)
-
-        if(responseCode != 202){
-            exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Sync Response from CatalogDB.")
-        }
+    Void createCloudSite(CloudSite cloudSite, DelegateExecution execution) {
+        oofInfraUtils.createCloudSite(cloudSite, execution)
     }
 
     /**
@@ -537,11 +521,12 @@ class OofUtils {
     Void createHomingInstance(HomingInstance homingInstance, DelegateExecution execution) {
         oofInfraUtils.createHomingInstance(homingInstance, execution)
     }
-     String getMsbHost(DelegateExecution execution) {
-         String msbHost = UrnPropertiesReader.getVariable("mso.msb.host", execution, "msb-iag.onap")
 
-         Integer msbPort = UrnPropertiesReader.getVariable("mso.msb.port", execution, "80").toInteger()
+    String getMsbHost(DelegateExecution execution) {
+        String msbHost = UrnPropertiesReader.getVariable("mso.msb.host", execution, "msb-iag.onap")
 
-         return UriBuilder.fromPath("").host(msbHost).port(msbPort).scheme("http").build().toString()
+        Integer msbPort = UrnPropertiesReader.getVariable("mso.msb.port", execution, "80").toInteger()
+
+        return UriBuilder.fromPath("").host(msbHost).port(msbPort).scheme("http").build().toString()
     }
 }

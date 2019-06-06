@@ -227,4 +227,16 @@ public class ExtractPojosForBBTest extends BaseTest {
         gBBInput.setCustomer(customer);
         extractPojos.extractByKey(execution, ResourceKey.VPN_BONDING_LINK_ID);
     }
+
+    @Test
+    public void getServiceInstanceWithNoCustomer() throws BBObjectNotFoundException {
+        ServiceInstance serviceInstancePend = new ServiceInstance();
+        serviceInstancePend.setServiceInstanceId("abc");
+        lookupKeyMap.put(ResourceKey.SERVICE_INSTANCE_ID, serviceInstancePend.getServiceInstanceId());
+        Customer customer = new Customer();
+        gBBInput.setCustomer(customer);
+        gBBInput.setServiceInstance(serviceInstancePend);
+        ServiceInstance extractServPend = extractPojos.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+        assertEquals(extractServPend.getServiceInstanceId(), serviceInstancePend.getServiceInstanceId());
+    }
 }

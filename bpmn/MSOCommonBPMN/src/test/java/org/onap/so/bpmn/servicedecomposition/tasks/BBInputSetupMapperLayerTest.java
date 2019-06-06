@@ -573,6 +573,19 @@ public class BBInputSetupMapperLayerTest {
     }
 
     @Test
+    public void testMapOrchestrationContextNoRequestInfo() throws IOException {
+        OrchestrationContext expected = new OrchestrationContext();
+        expected.setIsRollbackEnabled(false);
+
+        RequestDetails requestDetails = mapper.readValue(
+                new File(RESOURCE_PATH + "RequestDetailsInput_mapReqContextNoRequestInfo.json"), RequestDetails.class);
+
+        OrchestrationContext actual = bbInputSetupMapperLayer.mapOrchestrationContext(requestDetails);
+
+        assertThat(actual, sameBeanAs(expected));
+    }
+
+    @Test
     public void testMapLocationContext() {
         CloudRegion expected = new CloudRegion();
         expected.setCloudOwner("test-owner-name");

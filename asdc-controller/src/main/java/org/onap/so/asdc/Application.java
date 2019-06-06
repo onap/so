@@ -22,6 +22,8 @@ package org.onap.so.asdc;
 
 import javax.annotation.PostConstruct;
 import org.onap.so.asdc.activity.DeployActivitySpecs;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -32,7 +34,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 @EnableJpaRepositories("org.onap.so.db.catalog.data.repository")
 public class Application {
-
+    private static final Logger logger = LoggerFactory.getLogger(Application.class);
     private static final String MSO_CONFIG_PATH = "mso.config.path";
     private static final String LOGS_DIR = "logs_dir";
 
@@ -55,6 +57,7 @@ public class Application {
         try {
             deployActivitySpecs.deployActivities();
         } catch (Exception e) {
+            logger.warn("{} {}", "Exception on deploying activitySpecs: ", e.getMessage());
         }
 
     }

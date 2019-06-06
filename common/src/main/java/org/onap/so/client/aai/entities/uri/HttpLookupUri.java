@@ -21,6 +21,8 @@
 package org.onap.so.client.aai.entities.uri;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.URI;
 import java.util.Map;
 import java.util.Optional;
@@ -42,7 +44,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public abstract class HttpLookupUri extends AAISimpleUri implements HttpAwareUri {
 
-    private Optional<String> cachedValue = Optional.empty();
+    private transient Optional<String> cachedValue = Optional.empty();
     private final AAIObjectType aaiType;
 
     protected HttpLookupUri(AAIObjectType type, Object... values) {
@@ -78,8 +80,7 @@ public abstract class HttpLookupUri extends AAISimpleUri implements HttpAwareUri
                 throw new GraphInventoryPayloadException("could not map payload: " + resultJson, e);
             }
         }
-        Optional<String> cachedValueOpt = this.getCachedValue();
-        return cachedValueOpt.isPresent() ? cachedValueOpt.get() : "";
+        return cachedValue.get();
     }
 
     protected Optional<String> extractRelatedLink(String jsonString) throws IOException {
@@ -137,6 +138,22 @@ public abstract class HttpLookupUri extends AAISimpleUri implements HttpAwareUri
 
     public AAIResourcesClient getResourcesClient() {
         return new AAIResourcesClient();
+    }
+
+    private void writeObject(ObjectOutputStream oos) throws IOException {
+
+        oos.writeUTF(this.cachedValue.orElse(""));
+    }
+
+    private void readObject(ObjectInputStream ois) throws IOException {
+
+        String value = ois.readUTF();
+        if ("".equals(value)) {
+            this.cachedValue = Optional.empty();
+        } else {
+            this.cachedValue = Optional.ofNullable(value);
+        }
+
     }
 
     @Override

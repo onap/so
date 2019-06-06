@@ -55,7 +55,26 @@ public class ModelInfoGenericVnf extends ModelInfoMetadata implements Serializab
     private String MultiStageDesign;
     @JsonProperty("created")
     private String Created;
+    @JsonProperty("blueprintName")
+    private String blueprintName;
+    @JsonProperty("blueprintVersion")
+    private String blueprintVersion;
 
+    public String getBlueprintName() {
+        return blueprintName;
+    }
+
+    public void setBlueprintName(String blueprintName) {
+        this.blueprintName = blueprintName;
+    }
+
+    public String getBlueprintVersion() {
+        return blueprintVersion;
+    }
+
+    public void setBlueprintVersion(String blueprintVersion) {
+        this.blueprintVersion = blueprintVersion;
+    }
 
     public String getToscaNodeType() {
         return ToscaNodeType;

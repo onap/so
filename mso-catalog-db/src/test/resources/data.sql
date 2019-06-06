@@ -266,18 +266,43 @@ VALUES
 ('DeleteVfModuleBB', 'VF_MODULE', 'DELETE'),
 ('DeleteNetworkBB', 'NETWORK', 'DELETE'),
 ('DeleteNetworkCollectionBB', 'NETWORK', 'DELETE'),
-('AssignAndActivateVpnBondingLinksBB', 'CUSTOM', 'CUSTOM'),
-('AvpnAssignServiceInstanceBB', 'CUSTOM', 'CUSTOM'),
-('CreateCustomerVpnBindingBB', 'CUSTOM', 'CUSTOM'),
-('SniroHoming', 'CUSTOM', 'CUSTOM'),
-('DeactivateAndUnassignVpnBondingLinksBB', 'CUSTOM', 'CUSTOM'),
-('DeactivateNetworkCollectionBB', 'CUSTOM', 'CUSTOM'),
-('AAICheckVnfInMaintBB', 'CUSTOM', 'CUSTOM'),
-('AAISetVnfInMaintBB', 'CUSTOM', 'CUSTOM'),
-('AAIUnsetVnfInMaintBB', 'CUSTOM', 'CUSTOM'),
-('SDNOVnfHealthCheckBB', 'CUSTOM', 'CUSTOM'),
-('VNF-Macro-Replace', 'CUSTOM', 'CUSTOM'),
-('HomingBB', 'CUSTOM', 'CUSTOM');
+('AssignAndActivateVpnBondingLinksBB', 'NO_VALIDATE', 'CUSTOM'),
+('AvpnAssignServiceInstanceBB', 'NO_VALIDATE', 'CUSTOM'),
+('CreateCustomerVpnBindingBB', 'NO_VALIDATE', 'CUSTOM'),
+('SniroHoming', 'NO_VALIDATE', 'CUSTOM'),
+('DeactivateAndUnassignVpnBondingLinksBB', 'NO_VALIDATE', 'CUSTOM'),
+('DeactivateNetworkCollectionBB', 'NO_VALIDATE', 'CUSTOM'),
+('AAICheckVnfInMaintBB', 'NO_VALIDATE', 'CUSTOM'),
+('AAISetVnfInMaintBB', 'NO_VALIDATE', 'CUSTOM'),
+('AAIUnsetVnfInMaintBB', 'NO_VALIDATE', 'CUSTOM'),
+('SDNOVnfHealthCheckBB', 'NO_VALIDATE', 'CUSTOM'),
+('VNF-Macro-Replace', 'NO_VALIDATE', 'CUSTOM'),
+('HomingBB', 'NO_VALIDATE', 'CUSTOM'),
+('VNFSetInMaintFlagActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFCheckPserversLockedFlagActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFCheckInMaintFlagActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFCheckClosedLoopDisabledFlagActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFSetClosedLoopDisabledFlagActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFUnsetClosedLoopDisabledFlagActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFLockActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFUnlockActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFStopActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFStartActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFSnapShotActivity', 'NO_VALIDATE', 'CUSTOM'),
+('FlowCompleteActivity', 'NO_VALIDATE', 'CUSTOM'),
+('PauseForManualTaskActivity', 'NO_VALIDATE', 'CUSTOM'),
+('DistributeTrafficActivity', 'NO_VALIDATE', 'CUSTOM'),
+('DistributeTrafficCheckActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFHealthCheckActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFQuiesceTrafficActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFResumeTrafficActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFUnsetInMaintFlagActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFUpgradeBackupActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFUpgradePostCheckActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFUpgradePreCheckActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VNFUpgradeSoftwareActivity', 'NO_VALIDATE', 'CUSTOM'),
+('VnfInPlaceSoftwareUpdate', 'NO_VALIDATE', 'CUSTOM');
+
 
 INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FLOW_VERSION, NB_REQ_REF_LOOKUP_ID) VALUES
 ('Service-Create', '1', 'AssignServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Create')),
@@ -644,15 +669,15 @@ VALUES
 ('VOLUME_GROUP', 'PENDING', 'DELETE', 'SILENT_SUCCESS'),
 ('VF_MODULE', 'PENDING', 'DELETE', 'FAIL'),
 ('NETWORK', 'PENDING', 'DELETE', 'FAIL'),
-('CUSTOM', 'ACTIVE', 'CUSTOM', 'CONTINUE'),
-('CUSTOM', 'ASSIGNED', 'CUSTOM', 'CONTINUE'),
-('CUSTOM', 'CREATED', 'CUSTOM', 'CONTINUE'),
-('CUSTOM', 'INVENTORIED', 'CUSTOM', 'CONTINUE'),
-('CUSTOM', 'PENDING', 'CUSTOM', 'CONTINUE'),
-('CUSTOM', 'PENDING_ACTIVATION', 'CUSTOM', 'CONTINUE'),
-('CUSTOM', 'PENDING_CREATE', 'CUSTOM', 'CONTINUE'),
-('CUSTOM', 'PENDING_DELETE', 'CUSTOM', 'CONTINUE'),
-('CUSTOM', 'PRECREATED', 'CUSTOM', 'CONTINUE');
+('NO_VALIDATE', 'ACTIVE', 'CUSTOM', 'CONTINUE'),
+('NO_VALIDATE', 'ASSIGNED', 'CUSTOM', 'CONTINUE'),
+('NO_VALIDATE', 'CREATED', 'CUSTOM', 'CONTINUE'),
+('NO_VALIDATE', 'INVENTORIED', 'CUSTOM', 'CONTINUE'),
+('NO_VALIDATE', 'PENDING', 'CUSTOM', 'CONTINUE'),
+('NO_VALIDATE', 'PENDING_ACTIVATION', 'CUSTOM', 'CONTINUE'),
+('NO_VALIDATE', 'PENDING_CREATE', 'CUSTOM', 'CONTINUE'),
+('NO_VALIDATE', 'PENDING_DELETE', 'CUSTOM', 'CONTINUE'),
+('NO_VALIDATE', 'PRECREATED', 'CUSTOM', 'CONTINUE');
 
 INSERT INTO `cloudify_managers` (`ID`, `CLOUDIFY_URL`, `USERNAME`, `PASSWORD`, `VERSION`, `LAST_UPDATED_BY`, `CREATION_TIMESTAMP`, `UPDATE_TIMESTAMP`) VALUES ('mtn13', 'http://localhost:28090/v2.0', 'm93945', '93937EA01B94A10A49279D4572B48369', NULL, 'MSO_USER', '2018-07-17 14:05:08', '2018-07-17 14:05:08');
 
@@ -742,7 +767,7 @@ insert into pnf_resource_customization_to_service(service_model_uuid, resource_m
 ('5df8b6de-2083-11e7-93ae-92361f002676', '68dc9a92-214c-11e7-93ae-92361f002680');
 
 insert into workflow(artifact_uuid, artifact_name, name, operation_name, version, description, body, resource_target, source) values
-('5b0c4322-643d-4c9f-b184-4516049e99b1', 'testingWorkflow', 'testingWorkflow', 'create', 1, 'Test Workflow', null, 'vnf', 'sdc');
+('5b0c4322-643d-4c9f-b184-4516049e99b1', 'testingWorkflow.bpmn', 'testingWorkflow', 'create', 1, 'Test Workflow', null, 'vnf', 'sdc');
 
 insert into vnf_resource_to_workflow(vnf_resource_model_uuid, workflow_id) values
 ('ff2ae348-214a-11e7-93ae-92361f002671', '1');

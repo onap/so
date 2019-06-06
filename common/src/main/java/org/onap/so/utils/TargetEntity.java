@@ -36,7 +36,8 @@ public enum TargetEntity {
     SNIRO,
     SDC,
     EXTERNAL,
-    MULTICLOUD;
+    MULTICLOUD,
+    OOF;
 
     private static final String PREFIX = "SO";
 

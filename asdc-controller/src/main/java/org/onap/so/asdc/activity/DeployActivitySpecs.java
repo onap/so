@@ -26,6 +26,7 @@ import com.google.common.base.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.onap.so.asdc.activity.beans.ActivitySpec;
 import org.onap.so.asdc.activity.beans.Input;
 import org.onap.so.asdc.activity.beans.Output;
@@ -53,14 +54,16 @@ public class DeployActivitySpecs {
 
     protected static final Logger logger = LoggerFactory.getLogger(DeployActivitySpecs.class);
 
-
+    @Transactional
     public void deployActivities() throws Exception {
         String hostname = env.getProperty(SDC_ENDPOINT);
+        logger.debug("{} {}", "SDC ActivitySpec endpoint: ", hostname);
         if (hostname == null || hostname.isEmpty()) {
             return;
         }
         List<org.onap.so.db.catalog.beans.ActivitySpec> activitySpecsFromCatalog = activitySpecRepository.findAll();
         for (org.onap.so.db.catalog.beans.ActivitySpec activitySpecFromCatalog : activitySpecsFromCatalog) {
+            logger.debug("{} {}", "Attempting to create activity ", activitySpecFromCatalog.getName());
             ActivitySpec activitySpec = mapActivitySpecFromCatalogToSdc(activitySpecFromCatalog);
             String activitySpecId = activitySpecsActions.createActivitySpec(hostname, activitySpec);
             if (activitySpecId != null) {

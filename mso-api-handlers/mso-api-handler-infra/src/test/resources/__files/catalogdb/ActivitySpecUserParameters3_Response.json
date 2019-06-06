@@ -1,0 +1,103 @@
+{
+	"_embedded": {
+		"activitySpecUserParameters": [
+			{
+				"activitySpecId": 1,
+				"userParametersId": 1,
+				"activitySpec": null,
+				"id": null,
+				"_links": {
+					"self": {
+						"href": "http://localhost:8090/activitySpecUserParameters/1"
+					},
+					"activitySpecUserParameters": {
+						"href": "http://localhost:8090/activitySpecUserParameters/1"
+					},
+					"userParameters": {
+						"href": "http://localhost:8090/activitySpecUserParameters/1/userParameters"
+					}
+				}
+			},
+			{
+				"activitySpecId": 1,
+				"userParametersId": 2,
+				"id": null,
+				"_links": {
+					"self": {
+						"href": "http://localhost:8090/activitySpecUserParameters/2"
+					},
+					"activitySpecUserParameters": {
+						"href": "http://localhost:8090/activitySpecUserParameters/2"
+					},
+					"userParameters": {
+						"href": "http://localhost:8090/activitySpecUserParameters/2/userParameters"
+					}
+				}
+			},
+			{
+				"activitySpecId": 1,
+				"userParametersId": 3,
+				"id": null,
+				"_links": {
+					"self": {
+						"href": "http://localhost:8090/activitySpecUserParameters/3"
+					},
+					"activitySpecUserParameters": {
+						"href": "http://localhost:8090/activitySpecUserParameters/3"
+					},
+					"userParameters": {
+						"href": "http://localhost:8090/activitySpecUserParameters/3/userParameters"
+					}
+				}
+			},
+			{
+				"activitySpecId": 1,
+				"userParametersId": 4,
+				"id": null,
+				"_links": {
+					"self": {
+						"href": "http://localhost:8090/activitySpecUserParameters/4"
+					},
+					"activitySpecUserParameters": {
+						"href": "http://localhost:8090/activitySpecUserParameters/4"
+					},
+					"userParameters": {
+						"href": "http://localhost:8090/activitySpecUserParameters/4/userParameters"
+					}
+				}
+			},
+			{
+				"activitySpecId": 1,
+				"userParametersId": 5,
+				"id": null,
+				"_links": {
+					"self": {
+						"href": "http://localhost:8090/activitySpecUserParameters/5"
+					},
+					"activitySpecUserParameters": {
+						"href": "http://localhost:8090/activitySpecUserParameters/5"
+					},
+					"userParameters": {
+						"href": "http://localhost:8090/activitySpecUserParameters/5/userParameters"
+					}
+				}
+			},
+			{
+				"activitySpecId": 1,
+				"userParametersId": 6,
+				"id": null,
+				"_links": {
+					"self": {
+						"href": "http://localhost:8090/activitySpecUserParameters/6"
+					},
+					"activitySpecUserParameters": {
+						"href": "http://localhost:8090/activitySpecUserParameters/6"
+					},
+					"userParameters": {
+						"href": "http://localhost:8090/activitySpecUserParameters/6/userParameters"
+					}
+				}
+			}
+		]
+	}
+}

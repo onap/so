@@ -352,5 +352,10 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
 
     public void postConfigRequest(DelegateExecution execution){
         //now do noting
+        ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
+        for (VnfResource resource : serviceDecomposition.vnfResources) {
+            resource.setOrchestrationStatus("Active")
+        }
+        execution.setVariable("serviceDecomposition", serviceDecomposition)
     }
 }
