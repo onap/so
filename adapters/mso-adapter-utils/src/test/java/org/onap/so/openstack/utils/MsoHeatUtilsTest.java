@@ -126,7 +126,7 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
         doReturn(latestStack).when(heatUtils).queryHeatStack(isA(Heat.class), eq("stackName/id"));
         doReturn(heatClient).when(heatUtils).getHeatClient(cloudSiteId, tenantId);
         Stack actual = heatUtils.pollStackForStatus(1, stack, "CREATE_IN_PROGRESS", cloudSiteId, tenantId);
-        Mockito.verify(stackStatusHandler, times(1)).updateStackStatus(stack);
+        Mockito.verify(stackStatusHandler, times(1)).updateStackStatus(latestStack);
         Mockito.verify(heatUtils, times(1)).queryHeatStack(isA(Heat.class), eq("stackName/id"));
         assertEquals(true, actual != null);
     }

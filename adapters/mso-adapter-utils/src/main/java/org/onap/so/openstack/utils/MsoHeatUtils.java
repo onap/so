@@ -326,7 +326,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
         Stack latestStack = null;
         while (true) {
             latestStack = queryHeatStack(heatClient, stack.getStackName() + "/" + stack.getId());
-            statusHandler.updateStackStatus(stack);
+            statusHandler.updateStackStatus(latestStack);
             logger.debug("Polling: {} ({})", latestStack.getStackStatus(), latestStack.getStackName());
             if (stackStatus.equals(latestStack.getStackStatus())) {
                 if (numberOfPollingAttempts <= 0) {
