@@ -300,7 +300,7 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
         List<Resource> resources = new ArrayList<>();
         Resource resource = new Resource();
         resource.setName("KeypairName");
-        resource.setPhysicalResourceId("KeypairName");
+        resource.setLogicalResourceId("KeypairName");
         resource.setType("OS::Nova::KeyPair");
         resources.add(resource);
 
