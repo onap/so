@@ -122,7 +122,7 @@ public class MSOInfrastructureApplication {
             return;
         }
         List<Workflow> workflows = workflowRepository.findAll();
-        if (workflows != null && workflows.size() != 0) {
+        if (workflows != null && !workflows.isEmpty()) {
             for (Workflow workflow : workflows) {
                 String workflowName = workflow.getName();
                 String workflowBody = workflow.getBody();
