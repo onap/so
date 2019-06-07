@@ -123,4 +123,16 @@ public class NamingServiceResourcesTest extends TestDataSetup {
         verify(MOCK_namingClient, times(1)).postNameGenRequest(any(NameGenRequest.class));
         assertEquals("generatedServiceInstanceName", generatedName);
     }
+
+    @Test
+    public void deleteServiceInstanceNameTest() throws Exception {
+        NameGenDeleteRequest req = new NameGenDeleteRequest();
+        doReturn(req).when(MOCK_namingRequestObjectBuilder).nameGenDeleteRequestMapper(isA(List.class));
+
+        NamingRequestObject nrObject = new NamingRequestObject();
+        nrObject.setExternalKeyValue("testExternalKey");
+        nrObject.setNamingTypeValue(NamingServiceConstants.NAMING_TYPE_SERVICE);
+        namingServiceResources.deleteServiceInstanceName(nrObject);
+        verify(MOCK_namingClient, times(1)).deleteNameGenRequest(any(NameGenDeleteRequest.class));
+    }
 }

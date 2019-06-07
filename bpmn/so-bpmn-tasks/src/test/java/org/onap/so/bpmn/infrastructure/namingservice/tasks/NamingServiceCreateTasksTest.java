@@ -106,7 +106,7 @@ public class NamingServiceCreateTasksTest extends BaseTaskTest {
         String generatedName = "generatedWanTransportServiceName";
         doReturn(generatedName).when(namingServiceResources).generateServiceInstanceName(any());
         NamingServiceCreateTasks spy = Mockito.spy(namingServiceCreateTasks);
-        doReturn("testZoneId").when(spy).getRelatedZoneId(any());
+
         spy.createWanTransportServiceName(execution);
         verify(namingServiceResources, times(1)).generateServiceInstanceName(any());
         assertEquals(generatedName, serviceInstance.getServiceInstanceName());
@@ -123,38 +123,5 @@ public class NamingServiceCreateTasksTest extends BaseTaskTest {
         namingServiceCreateTasks.createVpnBondingServiceName(execution);
         verify(namingServiceResources, times(1)).generateServiceInstanceName(any());
         assertEquals(generatedName, serviceInstance.getServiceInstanceName());
-    }
-
-    @Test
-    public void getRelatedZoneIdTest() throws Exception {
-
-        String zoneId = "zoneId";
-        Zone zone = new Zone();
-        zone.setZoneId(zoneId);
-
-        CloudRegion cloudRegion = new CloudRegion();
-        cloudRegion.setCloudOwner("testCloudOwner");
-        cloudRegion.setLcpCloudRegionId("testLcpCloudRegionId");
-        GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
-        gBBInput.setCloudRegion(cloudRegion);
-
-        AAIResultWrapper cloudRegionWrapper =
-                new AAIResultWrapper(new AAICommonObjectMapperProvider().getMapper().writeValueAsString(cloudRegion));
-
-        Relationships relationships = Mockito.mock(Relationships.class);
-        relationships.getAll().add(cloudRegionWrapper);
-        Optional<Relationships> relationshipsOp = Optional.of(relationships);
-
-        doReturn(cloudRegionWrapper).when(MOCK_bbInputSetupUtils).getAAIResourceDepthOne(any());
-
-        NamingServiceCreateTasks spy = Mockito.spy(namingServiceCreateTasks);
-
-        doReturn(relationshipsOp).when(spy).getRelationshipsFromWrapper(isA(AAIResultWrapper.class));
-        doReturn(zone).when(spy).getRelatedZone(any());
-        spy.setBbInputSetupUtils(MOCK_bbInputSetupUtils);
-
-        String returnedZoneId = spy.getRelatedZoneId(execution);
-
-        assertEquals(zoneId, returnedZoneId);
     }
 }

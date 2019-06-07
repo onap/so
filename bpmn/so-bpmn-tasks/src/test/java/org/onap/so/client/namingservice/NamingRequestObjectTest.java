@@ -35,7 +35,6 @@ public class NamingRequestObjectTest {
     private String resourceName = "resourceName";
     private String serviceModelName = "serviceModelName";
     private String modelVersion = "modelVersion";
-    private String zoneId = "zoneId";
 
     @Test
     public void namingRequestObjectTest() {
@@ -68,7 +67,6 @@ public class NamingRequestObjectTest {
         expected.put(NamingServiceConstants.NS_RESOURCE_NAME, resourceName);
         expected.put(NamingServiceConstants.NS_SERVICE_MODEL_NAME, serviceModelName);
         expected.put(NamingServiceConstants.NS_MODEL_VERSION, modelVersion);
-        expected.put(NamingServiceConstants.NS_ZONE_ID, zoneId);
 
         NamingRequestObject namingRequestObject = new NamingRequestObject();
         namingRequestObject.setExternalKeyValue(externalKey);
@@ -77,7 +75,6 @@ public class NamingRequestObjectTest {
         namingRequestObject.setResourceNameValue(resourceName);
         namingRequestObject.setModelVersionValue(modelVersion);
         namingRequestObject.setServiceModelNameValue(serviceModelName);
-        namingRequestObject.setZoneIdValue(zoneId);
 
         HashMap<String, String> actual = namingRequestObject.getNamingRequestObjectMap();
         assertThat(actual, sameBeanAs(expected));

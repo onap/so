@@ -20,7 +20,6 @@
 
 package org.onap.so.bpmn.infrastructure.namingservice.tasks;
 
-
 import java.util.List;
 import java.util.Optional;
 import org.onap.aai.domain.yang.Zone;
@@ -89,7 +88,6 @@ public class NamingServiceCreateTasks {
         namingRequestObject.setPolicyInstanceNameValue(serviceInstance.getModelInfoServiceInstance().getNamingPolicy());
         namingRequestObject.setServiceModelNameValue(serviceInstance.getModelInfoServiceInstance().getModelName());
         namingRequestObject.setModelVersionValue(serviceInstance.getModelInfoServiceInstance().getModelVersion());
-        namingRequestObject.setZoneIdValue(this.getRelatedZoneId(execution));
 
         String generatedWanTransportServiceName = "";
         try {
@@ -121,45 +119,5 @@ public class NamingServiceCreateTasks {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
         serviceInstance.setServiceInstanceName(generatedVpnBondingServiceName);
-    }
-
-    protected String getRelatedZoneId(BuildingBlockExecution execution) {
-        GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
-        String cloudRegionId = gBBInput.getCloudRegion().getLcpCloudRegionId();
-        String cloudOwner = gBBInput.getCloudRegion().getCloudOwner();
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, cloudOwner, cloudRegionId);
-        AAIResultWrapper vnfcResultsWrapper = bbInputSetupUtils.getAAIResourceDepthOne(uri);
-        Optional<Relationships> relationshipsOp = this.getRelationshipsFromWrapper(vnfcResultsWrapper);
-        Zone aaiZone = getRelatedZone(relationshipsOp);
-        if (aaiZone == null) {
-            String errMsg = "No relationships for Cloud Region in AAI to extract zone id";
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, errMsg);
-        }
-        return aaiZone.getZoneId();
-    }
-
-    protected Optional<Relationships> getRelationshipsFromWrapper(AAIResultWrapper wrapper) {
-        Optional<Relationships> relationshipsOp;
-        relationshipsOp = wrapper.getRelationships();
-        if (relationshipsOp.isPresent()) {
-            return relationshipsOp;
-        }
-        return Optional.empty();
-    }
-
-    protected org.onap.aai.domain.yang.Zone getRelatedZone(Optional<Relationships> relationshipsOp) {
-        Zone aaiZone = null;
-        if (relationshipsOp.isPresent()) {
-            Relationships relationships = relationshipsOp.get();
-            if (!relationships.getAll().isEmpty()) {
-                List<AAIResultWrapper> zones = relationships.getByType(AAIObjectType.ZONE);
-                AAIResultWrapper zoneWrapper = zones.get(0);
-                Optional<Zone> aaiZoneOp = zoneWrapper.asBean(Zone.class);
-                if (aaiZoneOp.isPresent()) {
-                    aaiZone = aaiZoneOp.get();
-                }
-            }
-        }
-        return aaiZone;
     }
 }
