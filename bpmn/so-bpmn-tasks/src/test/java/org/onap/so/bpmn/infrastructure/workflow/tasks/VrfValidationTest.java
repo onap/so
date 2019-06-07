@@ -96,7 +96,29 @@ public class VrfValidationTest extends BaseTaskTest {
         org.onap.aai.domain.yang.VpnBinding aaiVpnBinding = new org.onap.aai.domain.yang.VpnBinding();
         aaiVpnBinding.setVpnType("SERVICE-INFRASTRUCTURE");
         ExpectedException.none();
-        vrfValidation.aaiVpnBindingValidation(aaiVpnBinding);
+        vrfValidation.aaiVpnBindingValidation("test-vpn", aaiVpnBinding);
+    }
+
+    @Test
+    public void testAaiVpnBindingValidationVpnBindingIsNull() throws VrfBondingServiceException {
+        exceptionRule.expect(VrfBondingServiceException.class);
+        exceptionRule.expectMessage("The infrastructure vpn test-vpn does not exist in A&AI.");
+        vrfValidation.aaiVpnBindingValidation("test-vpn", null);
+    }
+
+    @Test
+    public void testAaiNetworkValidation() throws VrfBondingServiceException {
+        org.onap.aai.domain.yang.L3Network aaiLocalNetwork = new org.onap.aai.domain.yang.L3Network();
+        aaiLocalNetwork.setNetworkId("test-network");
+        ExpectedException.none();
+        vrfValidation.aaiNetworkValidation("test-network", aaiLocalNetwork);
+    }
+
+    @Test
+    public void testAaiNetworkValidationNetworkIsNull() throws VrfBondingServiceException {
+        exceptionRule.expect(VrfBondingServiceException.class);
+        exceptionRule.expectMessage("The local network test-network does not exist in A&AI.");
+        vrfValidation.aaiNetworkValidation("test-network", null);
     }
 
     @Test

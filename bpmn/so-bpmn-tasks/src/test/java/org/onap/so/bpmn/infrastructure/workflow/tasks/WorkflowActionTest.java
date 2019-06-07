@@ -1552,7 +1552,7 @@ public class WorkflowActionTest extends BaseTaskTest {
 
     @Ignore
     @Test
-    public void traverseCatalogDbServiceMultipleNetworkTest() throws IOException {
+    public void traverseCatalogDbServiceMultipleNetworkTest() throws IOException, VrfBondingServiceException {
         execution.setVariable("testProcessKey", "testProcessKeyValue");
         Service service = new Service();
         List<NetworkResourceCustomization> networkCustomizations = new ArrayList<>();

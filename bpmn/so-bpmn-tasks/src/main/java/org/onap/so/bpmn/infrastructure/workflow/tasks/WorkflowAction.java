@@ -368,7 +368,7 @@ public class WorkflowAction {
             execution.setVariable("isRollbackComplete", false);
 
         } catch (Exception ex) {
-            buildAndThrowException(execution, "Exception in create execution list " + ex.getMessage(), ex);
+            buildAndThrowException(execution, "Exception in create execution list. " + ex.getMessage(), ex);
         }
     }
 
@@ -623,7 +623,8 @@ public class WorkflowAction {
     }
 
     protected void traverseCatalogDbService(DelegateExecution execution, ServiceInstancesRequest sIRequest,
-            List<Resource> resourceCounter, List<Pair<WorkflowType, String>> aaiResourceIds) {
+            List<Resource> resourceCounter, List<Pair<WorkflowType, String>> aaiResourceIds)
+            throws JsonProcessingException, VrfBondingServiceException {
         String modelUUID = sIRequest.getRequestDetails().getModelInfo().getModelVersionId();
         org.onap.so.db.catalog.beans.Service service = catalogDbClient.getServiceByID(modelUUID);
         if (service == null) {
@@ -646,27 +647,24 @@ public class WorkflowAction {
     protected void traverseVrfConfiguration(DelegateExecution execution,
             List<Pair<WorkflowType, String>> aaiResourceIds, List<Resource> resourceCounter,
             org.onap.so.db.catalog.beans.Service service, RelatedInstance relatedVpnBinding,
-            RelatedInstance relatedLocalNetwork) {
-        try {
-            org.onap.aai.domain.yang.L3Network aaiLocalNetwork =
-                    bbInputSetupUtils.getAAIL3Network(relatedLocalNetwork.getInstanceId());
-            vrfValidation.vrfServiceValidation(service);
-            vrfValidation.vrfCatalogDbChecks(service);
-            vrfValidation
-                    .aaiVpnBindingValidation(bbInputSetupUtils.getAAIVpnBinding(relatedVpnBinding.getInstanceId()));
-            vrfValidation.aaiSubnetValidation(aaiLocalNetwork);
-            vrfValidation.aaiAggregateRouteValidation(aaiLocalNetwork);
-            vrfValidation.aaiRouteTargetValidation(aaiLocalNetwork);
-            String existingAAIVrfConfiguration = getExistingAAIVrfConfiguration(relatedVpnBinding, aaiLocalNetwork);
-            if (existingAAIVrfConfiguration != null) {
-                aaiResourceIds
-                        .add(new Pair<WorkflowType, String>(WorkflowType.CONFIGURATION, existingAAIVrfConfiguration));
-            }
-            resourceCounter.add(new Resource(WorkflowType.CONFIGURATION,
-                    service.getConfigurationCustomizations().get(0).getModelCustomizationUUID(), false));
-        } catch (VrfBondingServiceException | JsonProcessingException e) {
-            buildAndThrowException(execution, e.getMessage());
+            RelatedInstance relatedLocalNetwork) throws VrfBondingServiceException, JsonProcessingException {
+        org.onap.aai.domain.yang.L3Network aaiLocalNetwork =
+                bbInputSetupUtils.getAAIL3Network(relatedLocalNetwork.getInstanceId());
+        vrfValidation.vrfServiceValidation(service);
+        vrfValidation.vrfCatalogDbChecks(service);
+        vrfValidation.aaiVpnBindingValidation(relatedVpnBinding.getInstanceId(),
+                bbInputSetupUtils.getAAIVpnBinding(relatedVpnBinding.getInstanceId()));
+        vrfValidation.aaiNetworkValidation(relatedLocalNetwork.getInstanceId(), aaiLocalNetwork);
+        vrfValidation.aaiSubnetValidation(aaiLocalNetwork);
+        vrfValidation.aaiAggregateRouteValidation(aaiLocalNetwork);
+        vrfValidation.aaiRouteTargetValidation(aaiLocalNetwork);
+        String existingAAIVrfConfiguration = getExistingAAIVrfConfiguration(relatedVpnBinding, aaiLocalNetwork);
+        if (existingAAIVrfConfiguration != null) {
+            aaiResourceIds.add(new Pair<WorkflowType, String>(WorkflowType.CONFIGURATION, existingAAIVrfConfiguration));
         }
+        resourceCounter.add(new Resource(WorkflowType.CONFIGURATION,
+                service.getConfigurationCustomizations().get(0).getModelCustomizationUUID(), false));
+
     }
 
     protected String getExistingAAIVrfConfiguration(RelatedInstance relatedVpnBinding,
