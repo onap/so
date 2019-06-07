@@ -65,6 +65,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.Platform;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Project;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.RouteTableReference;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceProxy;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceSubscription;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Vnfc;
@@ -82,6 +83,7 @@ import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoGenericVnf;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoInstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoNetwork;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceInstance;
+import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceProxy;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
 import org.onap.so.client.aai.AAICommonObjectMapperProvider;
 import org.onap.so.client.aai.AAIObjectType;
@@ -94,14 +96,15 @@ import org.onap.so.db.catalog.beans.CollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
 import org.onap.so.db.catalog.beans.ConfigurationResource;
 import org.onap.so.db.catalog.beans.ConfigurationResourceCustomization;
+import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.InstanceGroupType;
 import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.db.catalog.beans.Service;
+import org.onap.so.db.catalog.beans.ServiceProxyResourceCustomization;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
-import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
@@ -1231,19 +1234,19 @@ public class BBInputSetupTest {
         configResourceKeys.setVnfcName(vnfcName);
         Vnfc vnfc = new Vnfc();
         vnfc.setVnfcName(vnfcName);
-
+        RequestDetails requestDetails = new RequestDetails();
         doNothing().when(SPY_bbInputSetup).mapCatalogConfiguration(configuration, modelInfo, service,
                 configResourceKeys);
         doReturn(vnfc).when(SPY_bbInputSetup).getVnfcToConfiguration(vnfcName);
         SPY_bbInputSetup.populateConfiguration(modelInfo, service, bbName, serviceInstance, lookupKeyMap, resourceId,
-                instanceName, configResourceKeys);
+                instanceName, configResourceKeys, requestDetails);
         verify(SPY_bbInputSetup, times(1)).mapCatalogConfiguration(configuration, modelInfo, service,
                 configResourceKeys);
 
         lookupKeyMap.put(ResourceKey.CONFIGURATION_ID, null);
 
         SPY_bbInputSetup.populateConfiguration(modelInfo, service, bbName, serviceInstance, lookupKeyMap, resourceId,
-                instanceName, configResourceKeys);
+                instanceName, configResourceKeys, requestDetails);
         verify(SPY_bbInputSetup, times(2)).mapCatalogConfiguration(configuration, modelInfo, service,
                 configResourceKeys);
 
@@ -1255,7 +1258,7 @@ public class BBInputSetupTest {
         doNothing().when(SPY_bbInputSetup).mapCatalogConfiguration(configuration2, modelInfo, service,
                 configResourceKeys);
         SPY_bbInputSetup.populateConfiguration(modelInfo, service, bbName, serviceInstance, lookupKeyMap, resourceId,
-                instanceName, configResourceKeys);
+                instanceName, configResourceKeys, requestDetails);
         verify(SPY_bbInputSetup, times(1)).mapCatalogConfiguration(configuration2, modelInfo, service,
                 configResourceKeys);
     }
@@ -1307,6 +1310,7 @@ public class BBInputSetupTest {
         configResourceKeys.setVnfcName(vnfcName);
         Vnfc vnfc = new Vnfc();
         vnfc.setVnfcName(vnfcName);
+        RequestDetails requestDetails = new RequestDetails();
 
         CvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization =
                 new CvnfcConfigurationCustomization();
@@ -1319,7 +1323,7 @@ public class BBInputSetupTest {
         doReturn(vnfc).when(SPY_bbInputSetup).getVnfcToConfiguration(vnfcName);
 
         SPY_bbInputSetup.populateConfiguration(modelInfo, service, bbName, serviceInstance, lookupKeyMap, resourceId,
-                instanceName, configResourceKeys);
+                instanceName, configResourceKeys, requestDetails);
         verify(SPY_bbInputSetup, times(1)).mapCatalogConfiguration(configuration, modelInfo, service,
                 configResourceKeys);
     }
@@ -1972,14 +1976,117 @@ public class BBInputSetupTest {
         configurationCustList.add(configurationCust);
         doNothing().when(SPY_bbInputSetup).populateConfiguration(isA(ModelInfo.class), isA(Service.class),
                 any(String.class), isA(ServiceInstance.class), any(), any(String.class), ArgumentMatchers.isNull(),
-                isA(ConfigurationResourceKeys.class));
+                isA(ConfigurationResourceKeys.class), isA(RequestDetails.class));
 
         executeBB.getBuildingBlock().setBpmnFlowName("AssignFabricConfigurationBB");
         executeBB.getBuildingBlock().setKey("72d9d1cd-f46d-447a-abdb-451d6fb05fa9");
         SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
         verify(SPY_bbInputSetup, times(1)).populateConfiguration(isA(ModelInfo.class), isA(Service.class),
                 any(String.class), isA(ServiceInstance.class), any(), any(String.class), ArgumentMatchers.isNull(),
-                isA(ConfigurationResourceKeys.class));
+                isA(ConfigurationResourceKeys.class), isA(RequestDetails.class));
+
+
+    }
+
+    @Test
+    public void testGBBMacroNoUserParamsVrfConfiguration() throws Exception {
+        GeneralBuildingBlock gBB = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
+                GeneralBuildingBlock.class);
+        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
+                ExecuteBuildingBlock.class);
+        RequestDetails requestDetails = mapper
+                .readValue(new File(RESOURCE_PATH + "RequestDetailsInput_serviceMacroVrf.json"), RequestDetails.class);
+        InfraActiveRequests request = Mockito.mock(InfraActiveRequests.class);
+        Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
+        lookupKeyMap.put(ResourceKey.SERVICE_INSTANCE_ID, "serviceInstanceId");
+        lookupKeyMap.put(ResourceKey.CONFIGURATION_ID, "configurationId");
+        String resourceId = "123";
+        String vnfType = "vnfType";
+        Service service = Mockito.mock(Service.class);
+        String requestAction = "createInstance";
+
+        ConfigurationResourceKeys configResourceKeys = new ConfigurationResourceKeys();
+        configResourceKeys.setCvnfcCustomizationUUID("cvnfcCustomizationUUID");
+        configResourceKeys.setVfModuleCustomizationUUID("vfModuleCustomizationUUID");
+        configResourceKeys.setVnfResourceCustomizationUUID("vnfResourceCustomizationUUID");
+        executeBB.setConfigurationResourceKeys(configResourceKeys);
+
+        executeBB.setRequestDetails(requestDetails);
+        doReturn(gBB).when(SPY_bbInputSetup).getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap,
+                requestAction, lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID));
+        doReturn(service).when(SPY_bbInputSetupUtils)
+                .getCatalogServiceByModelUUID(gBB.getServiceInstance().getModelInfoServiceInstance().getModelUuid());
+
+        RelatedInstance relatedVpnBinding = new RelatedInstance();
+        relatedVpnBinding.setInstanceId("vpnBindingInstanceId");
+        RelatedInstance relatedLocalNetwork = new RelatedInstance();
+        relatedLocalNetwork.setInstanceId("localNetworkInstanceId");
+        org.onap.aai.domain.yang.VpnBinding aaiVpnBinding = new org.onap.aai.domain.yang.VpnBinding();
+        aaiVpnBinding.setVpnId("vpnBindingId");
+        org.onap.aai.domain.yang.L3Network aaiLocalNetwork = new org.onap.aai.domain.yang.L3Network();
+        aaiLocalNetwork.setNetworkId("localNetworkId");
+        Optional<org.onap.aai.domain.yang.VpnBinding> aaiAICVpnBindingOp =
+                Optional.of(new org.onap.aai.domain.yang.VpnBinding());
+        aaiAICVpnBindingOp.get().setVpnId("AICVpnBindingId");
+        ServiceProxy proxy = new ServiceProxy();
+        proxy.setType("transport");
+        proxy.setServiceInstance(new ServiceInstance());
+        proxy.getServiceInstance().setModelInfoServiceInstance(new ModelInfoServiceInstance());
+        proxy.getServiceInstance().getModelInfoServiceInstance().setModelUuid("sourceServiceModelUUID");
+        doReturn(relatedVpnBinding).when(SPY_bbInputSetupUtils).getRelatedInstanceByType(requestDetails,
+                ModelType.vpnBinding);
+        doReturn(relatedLocalNetwork).when(SPY_bbInputSetupUtils).getRelatedInstanceByType(requestDetails,
+                ModelType.network);
+        doReturn(aaiVpnBinding).when(SPY_bbInputSetupUtils).getAAIVpnBinding(relatedVpnBinding.getInstanceId());
+        doReturn(aaiLocalNetwork).when(SPY_bbInputSetupUtils).getAAIL3Network(relatedLocalNetwork.getInstanceId());
+        doReturn(aaiAICVpnBindingOp).when(SPY_bbInputSetupUtils).getAICVpnBindingFromNetwork(aaiLocalNetwork);
+        doReturn(proxy).when(SPY_bbInputSetup).getServiceProxy(service);
+
+        Configuration configuration = new Configuration();
+        configuration.setConfigurationId("configurationId");
+        gBB.getServiceInstance().getConfigurations().add(configuration);
+        List<ConfigurationResourceCustomization> configurationCustList = new ArrayList<>();
+        ConfigurationResourceCustomization configurationCust = new ConfigurationResourceCustomization();
+        configurationCust.setModelCustomizationUUID("72d9d1cd-f46d-447a-abdb-451d6fb05fa9");
+        configurationCustList.add(configurationCust);
+        doNothing().when(SPY_bbInputSetup).populateConfiguration(isA(ModelInfo.class), isA(Service.class),
+                any(String.class), isA(ServiceInstance.class), any(), any(String.class), ArgumentMatchers.isNull(),
+                isA(ConfigurationResourceKeys.class), isA(RequestDetails.class));
+
+        executeBB.getBuildingBlock().setBpmnFlowName("AssignVrfConfigurationBB");
+        executeBB.getBuildingBlock().setKey("72d9d1cd-f46d-447a-abdb-451d6fb05fa9");
+        gBB = SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
+        verify(SPY_bbInputSetup, times(1)).populateConfiguration(isA(ModelInfo.class), isA(Service.class),
+                any(String.class), isA(ServiceInstance.class), any(), any(String.class), ArgumentMatchers.isNull(),
+                isA(ConfigurationResourceKeys.class), isA(RequestDetails.class));
+        assertEquals(gBB.getCustomer().getVpnBindings().get(0).getVpnId(), "vpnBindingId");
+        assertEquals(gBB.getServiceInstance().getNetworks().get(0).getNetworkId(), "localNetworkId");
+        assertEquals(gBB.getServiceInstance().getNetworks().get(0).getVpnBindings().get(0).getVpnId(),
+                "AICVpnBindingId");
+        assertEquals(gBB.getServiceInstance().getServiceProxies().get(0).getType(), "transport");
+    }
+
+    @Test
+    public void testGetServiceProxy() {
+        ServiceProxy expected = new ServiceProxy();
+        expected.setType("TRANSPORT");
+        expected.setModelInfoServiceProxy(new ModelInfoServiceProxy());
+        expected.getModelInfoServiceProxy().setModelCustomizationUuid("modelCustomizationUUID");
+        expected.setServiceInstance(new ServiceInstance());
+        expected.getServiceInstance().setModelInfoServiceInstance(new ModelInfoServiceInstance());
+        expected.getServiceInstance().getModelInfoServiceInstance().setModelUuid("modelUUID");
+        expected.getServiceInstance().getModelInfoServiceInstance().setServiceType("TRANSPORT");
+        Service service = new Service();
+        ServiceProxyResourceCustomization serviceProxyCatalog = new ServiceProxyResourceCustomization();
+        serviceProxyCatalog.setModelCustomizationUUID("modelCustomizationUUID");
+        Service sourceService = new Service();
+        sourceService.setModelUUID("modelUUID");
+        sourceService.setServiceType("TRANSPORT");
+        serviceProxyCatalog.setSourceService(sourceService);
+        service.setServiceProxyCustomizations(new ArrayList<ServiceProxyResourceCustomization>());
+        service.getServiceProxyCustomizations().add(serviceProxyCatalog);
+        ServiceProxy actual = SPY_bbInputSetup.getServiceProxy(service);
+        assertThat(actual, sameBeanAs(expected));
     }
 
     @Test

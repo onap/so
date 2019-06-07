@@ -72,6 +72,7 @@ import org.onap.aai.domain.yang.Vnfc;
 import org.onap.aai.domain.yang.VolumeGroup;
 import org.onap.aai.domain.yang.VpnBinding;
 import org.onap.aai.domain.yang.Vserver;
+import org.onap.aai.domain.yang.Zone;
 import org.onap.so.client.graphinventory.GraphInventoryObjectType;
 import org.onap.so.constants.Defaults;
 import org.reflections.Reflections;
@@ -186,7 +187,7 @@ public class AAIObjectType implements GraphInventoryObjectType, Serializable {
                     "/esr-vnfm/{vnfm-id}/esr-system-info-list", "vnfm-esr-system-info-list");
     public static final AAIObjectType CLOUD_ESR_SYSTEM_INFO_LIST = new AAIObjectType(
             AAIObjectType.CLOUD_REGION.uriTemplate(), "/esr-system-info-list", "cloud-esr-system-info-list");
-
+    public static final AAIObjectType ZONE = new AAIObjectType(AAINamespaceConstants.NETWORK, Zone.class);
 
     private final String uriTemplate;
     private final String parentUri;

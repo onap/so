@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -230,5 +230,14 @@ public class AAIConfigurationResourcesTest extends TestDataSetup {
         aaiConfigurationResources.updateOrchestrationStatusConfiguration(configuration, OrchestrationStatus.ACTIVE);
         verify(MOCK_aaiResourcesClient, times(1)).update(any(AAIResourceUri.class), ArgumentMatchers.isNull());
         assertEquals(OrchestrationStatus.ACTIVE, configuration.getOrchestrationStatus());
+    }
+
+    @Test
+    public void updateConfigurationOrchestrationStatusTest() throws Exception {
+        doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class),
+                isA(org.onap.aai.domain.yang.Configuration.class));
+        aaiConfigurationResources.updateConfigurationOrchestrationStatus(configuration, OrchestrationStatus.ACTIVE);
+        verify(MOCK_aaiResourcesClient, times(1)).update(any(AAIResourceUri.class),
+                any(org.onap.aai.domain.yang.Configuration.class));
     }
 }

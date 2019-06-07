@@ -35,6 +35,7 @@ import org.onap.so.client.aai.mapper.AAIObjectMapper;
 import org.onap.so.client.adapter.network.mapper.NetworkAdapterObjectMapper;
 import org.onap.so.client.appc.ApplicationControllerAction;
 import org.onap.so.client.exception.ExceptionBuilder;
+import org.onap.so.client.namingservice.NamingRequestObject;
 import org.onap.so.client.orchestration.AAICollectionResources;
 import org.onap.so.client.orchestration.AAIConfigurationResources;
 import org.onap.so.client.orchestration.AAIInstanceGroupResources;
@@ -150,4 +151,8 @@ public abstract class BaseTaskTest extends TestDataSetup {
 
     @Mock
     protected Environment env;
+
+    @Mock
+    protected NamingRequestObject namingRequestObject;
+
 }

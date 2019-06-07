@@ -81,6 +81,10 @@ public class ServiceInstance implements Serializable, ShallowCopy<ServiceInstanc
     @JsonProperty("service-proxies")
     private List<ServiceProxy> serviceProxies = new ArrayList<ServiceProxy>();
 
+    public void setServiceProxies(List<ServiceProxy> serviceProxies) {
+        this.serviceProxies = serviceProxies;
+    }
+
     public List<GenericVnf> getVnfs() {
         return vnfs;
     }

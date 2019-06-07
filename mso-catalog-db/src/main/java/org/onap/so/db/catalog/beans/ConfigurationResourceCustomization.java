@@ -76,8 +76,9 @@ public class ConfigurationResourceCustomization implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
 
-    @Column(name = "SERVICE_PROXY_CUSTOMIZATION_MODEL_CUSTOMIZATION_UUID")
-    private String serviceProxyResourceCustomizationUUID;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "SERVICE_PROXY_CUSTOMIZATION_MODEL_CUSTOMIZATION_UUID")
+    private ServiceProxyResourceCustomization serviceProxyResourceCustomization;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "CONFIGURATION_CUSTOMIZATION_MODEL_CUSTOMIZATION_ID")
@@ -148,12 +149,14 @@ public class ConfigurationResourceCustomization implements Serializable {
         return created;
     }
 
-    public String getServiceProxyResourceCustomizationUUID() {
-        return serviceProxyResourceCustomizationUUID;
+    @LinkedResource
+    public ServiceProxyResourceCustomization getServiceProxyResourceCustomization() {
+        return serviceProxyResourceCustomization;
     }
 
-    public void setServiceProxyResourceCustomizationUUID(String serviceProxyResourceCustomizationUUID) {
-        this.serviceProxyResourceCustomizationUUID = serviceProxyResourceCustomizationUUID;
+    public void setServiceProxyResourceCustomization(
+            ServiceProxyResourceCustomization serviceProxyResourceCustomization) {
+        this.serviceProxyResourceCustomization = serviceProxyResourceCustomization;
     }
 
 

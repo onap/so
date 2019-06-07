@@ -1,0 +1,42 @@
+{
+	"networkId": "0384d743-f69b-4cc8-9aa8-c3ae66662c44",
+	"networkName": "Dev_Bindings_1802_020118",
+	"networkType": "CONTRAIL30_BASIC",
+	"networkRole": "GN_EVPN_direct",
+	"networkTechnology": "contrail",
+	"neutronNetworkId": "1112b912-0e00-4d6d-9392-014e106399ee",
+	"isBoundToVpn": true,
+	"serviceId": "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb",
+	"networkRoleInstance": 0,
+	"resourceVersion": "1517496965485",
+	"orchestrationStatus": "Active",
+	"heatStackId": "Dev_Bindings_1802_020118/06c2445f-1ca1-4ad8-be08-454c4de443bb",
+	"contrailNetworkFqdn": "default-domain:ECOMP_MSO_DND:Dev_Bindings_1802_020118",
+	"physicalNetworkName": "tbd",
+	"isProviderNetwork": false,
+	"isSharedNetwork": true,
+	"isExternalNetwork": false,
+	"relationshipList": {
+		"relationship": [
+			{
+				"relatedTo": "vpn-binding",
+				"relatedLink": "/aai/v11/network/vpn-bindings/vpn-binding/9a7b327d9-287aa00-82c4b0-100001",
+				"relationshipData": [
+					{
+						"relationshipKey": "vpn-binding.vpn-id",
+						"relationshipValue": "9a7b327d9-287aa00-82c4b0-100001"
+					}
+				],
+				"relatedToProperty": [
+					{
+						"propertyKey": "vpn-binding.vpn-name",
+						"propertyValue": "MSO_VPN_TEST"
+					},
+					{
+						"propertyKey": "vpn-binding.vpn-type"
+					}
+				]
+			}
+		]
+	}
+}

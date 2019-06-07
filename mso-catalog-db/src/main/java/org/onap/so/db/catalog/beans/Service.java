@@ -136,6 +136,11 @@ public class Service implements Serializable {
     @JoinColumn(name = "TOSCA_CSAR_ARTIFACT_UUID")
     private ToscaCsar csar;
 
+    @Column(name = "NAMING_POLICY")
+    private String namingPolicy;
+
+    @Column(name = "ONAP_GENERATED_NAMING")
+    private Boolean onapGeneratedNaming;
 
     @Override
     public String toString() {
@@ -150,7 +155,7 @@ public class Service implements Serializable {
                 .append("serviceProxyCustomizations", serviceProxyCustomizations)
                 .append("configurationCustomizations", configurationCustomizations)
                 .append("pnfCustomizations", pnfCustomizations).append("recipes", recipes).append("csar", csar)
-                .toString();
+                .append("namingPolicy", namingPolicy).append("onapGeneratedNaming", onapGeneratedNaming).toString();
     }
 
     @PrePersist
@@ -370,13 +375,28 @@ public class Service implements Serializable {
         this.resourceOrder = resourceOrder;
     }
 
-
     public String getDistrobutionStatus() {
         return distrobutionStatus;
     }
 
     public void setDistrobutionStatus(String distrobutionStatus) {
         this.distrobutionStatus = distrobutionStatus;
+    }
+
+    public String getNamingPolicy() {
+        return namingPolicy;
+    }
+
+    public void setNamingPolicy(String namingPolicy) {
+        this.namingPolicy = namingPolicy;
+    }
+
+    public Boolean getOnapGeneratedNaming() {
+        return onapGeneratedNaming;
+    }
+
+    public void setOnapGeneratedNaming(Boolean onapGeneratedNaming) {
+        this.onapGeneratedNaming = onapGeneratedNaming;
     }
 
 }

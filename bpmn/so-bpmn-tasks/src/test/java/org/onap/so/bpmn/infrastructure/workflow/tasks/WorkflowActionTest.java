@@ -22,6 +22,7 @@
 
 package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
+import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.*;
@@ -45,6 +46,7 @@ import java.util.UUID;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;
+import org.javatuples.Pair;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -1584,7 +1586,8 @@ public class WorkflowActionTest extends BaseTaskTest {
         ServiceInstancesRequest sIRequest = mapper.readValue(bpmnRequest, ServiceInstancesRequest.class);
         List<Resource> resourceCounter = new ArrayList<>();
         thrown.expect(BpmnError.class);
-        workflowAction.traverseCatalogDbService(execution, sIRequest, resourceCounter);
+        List<Pair<WorkflowType, String>> aaiResourceIds = new ArrayList<>();
+        workflowAction.traverseCatalogDbService(execution, sIRequest, resourceCounter, aaiResourceIds);
     }
 
     @Test
@@ -1670,6 +1673,72 @@ public class WorkflowActionTest extends BaseTaskTest {
             fail("NullPointerException should not be thrown when 'resource' is null");
         }
         assertNotNull(result);
+    }
+
+    @Test
+    public void traverseAAIServiceTest() {
+        List<Resource> resourceCounter = new ArrayList<>();
+        String resourceId = "si0";
+        List<Pair<WorkflowType, String>> aaiResourceIds = new ArrayList<>();
+
+        ServiceInstance serviceInstanceAAI = new ServiceInstance();
+        serviceInstanceAAI.setServiceInstanceId(resourceId);
+
+        org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstance = setServiceInstance();
+        setGenericVnf();
+        setVfModule(true);
+        setVolumeGroup();
+        setL3Network();
+        setCollection();
+        setConfiguration();
+
+        Configuration config = new Configuration();
+        config.setConfigurationId("testConfigurationId2");
+        serviceInstance.getConfigurations().add(config);
+
+        Relationship relationship1 = new Relationship();
+        relationship1.setRelatedTo("vnfc");
+        RelationshipList relationshipList1 = new RelationshipList();
+        relationshipList1.getRelationship().add(relationship1);
+
+        Relationship relationship2 = new Relationship();
+        relationship2.setRelatedTo("vpn-binding");
+        RelationshipList relationshipList2 = new RelationshipList();
+        relationshipList2.getRelationship().add(relationship2);
+
+        org.onap.aai.domain.yang.Configuration aaiConfiguration1 = new org.onap.aai.domain.yang.Configuration();
+        aaiConfiguration1.setConfigurationId("testConfigurationId");
+        aaiConfiguration1.setRelationshipList(relationshipList1);
+
+        org.onap.aai.domain.yang.Configuration aaiConfiguration2 = new org.onap.aai.domain.yang.Configuration();
+        aaiConfiguration2.setConfigurationId("testConfigurationId2");
+        aaiConfiguration2.setRelationshipList(relationshipList1);
+
+        try {
+            doReturn(serviceInstanceAAI).when(bbSetupUtils).getAAIServiceInstanceById(resourceId);
+            doReturn(serviceInstance).when(bbInputSetup).getExistingServiceInstance(serviceInstanceAAI);
+            doReturn(Optional.of(aaiConfiguration1)).when(aaiConfigurationResources)
+                    .getConfiguration("testConfigurationId");
+            doReturn(Optional.of(aaiConfiguration2)).when(aaiConfigurationResources)
+                    .getConfiguration("testConfigurationId2");
+            workflowAction.traverseAAIService(execution, resourceCounter, resourceId, aaiResourceIds);
+            assertEquals(8, resourceCounter.size());
+            assertThat(aaiResourceIds, sameBeanAs(getExpectedResourceIds()));
+        } catch (Exception e) {
+            fail("Unexpected exception was thrown.");
+        }
+    }
+
+    private List<Pair<WorkflowType, String>> getExpectedResourceIds() {
+        List<Pair<WorkflowType, String>> resourceIds = new ArrayList<>();
+        resourceIds.add(new Pair<WorkflowType, String>(WorkflowType.VNF, "testVnfId1"));
+        resourceIds.add(new Pair<WorkflowType, String>(WorkflowType.VFMODULE, "testVfModuleId1"));
+        resourceIds.add(new Pair<WorkflowType, String>(WorkflowType.VOLUMEGROUP, "testVolumeGroupId1"));
+        resourceIds.add(new Pair<WorkflowType, String>(WorkflowType.NETWORK, "testNetworkId1"));
+        resourceIds.add(new Pair<WorkflowType, String>(WorkflowType.NETWORKCOLLECTION, "testId"));
+        resourceIds.add(new Pair<WorkflowType, String>(WorkflowType.CONFIGURATION, "testConfigurationId"));
+        resourceIds.add(new Pair<WorkflowType, String>(WorkflowType.CONFIGURATION, "testConfigurationId2"));
+        return resourceIds;
     }
 
     private List<OrchestrationFlow> createFlowList(String... flowNames) {

@@ -36,7 +36,8 @@ public enum ModelType {
     connectionPoint("connectionPoint"),
     pnf("pnf"),
     networkInstanceGroup("networkInstanceGroup"),
-    instanceGroup("instanceGroup");
+    instanceGroup("instanceGroup"),
+    vpnBinding("vpnBinding");
 
     final String name;
 

@@ -29,7 +29,8 @@ public enum AssignFlows {
     NETWORK_MACRO("AssignNetworkBB"),
     VOLUME_GROUP("AssignVolumeGroupBB"),
     NETWORK_COLLECTION("CreateNetworkCollectionBB"),
-    FABRIC_CONFIGURATION("AssignFabricConfigurationBB");
+    FABRIC_CONFIGURATION("AssignFabricConfigurationBB"),
+    VRF_CONFIGURATION("AssignVrfConfigurationBBV2");
 
     private final String flowName;
 

@@ -1,0 +1,56 @@
+{
+  "requestDetails": {
+    "modelInfo": {
+      "modelType": "service",
+      "modelInvariantId": "1710f6e8-1c29-4990-9aea-e943a2ec3d21",
+      "modelVersionId": "1710966e-097c-4d63-afda-e0d3bb7015fb",
+      "modelName": "Test",
+      "modelVersion": "1.0"
+    },
+    "cloudConfiguration": {
+      "cloudOwner": "test-mgr",
+      "lcpCloudRegionId": "abc1",
+      "tenantId": "19123c2924c648eb8e42a3c1f14b7682"
+    },
+    "owningEntity": {
+      "owningEntityId": "038d99af-0427-42c2-9d15-971b99b9b489",
+      "owningEntityName": "PACKET CORE"
+    },
+    "project": {
+      "projectName": "projectName"
+    },
+    "subscriberInfo": {
+      "globalSubscriberId": "TEST_123",
+      "subscriberName": "TEST_123"
+    },
+    "requestInfo": {
+      "productFamilyId": "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb",
+      "requestorId": "xxxxxx",
+      "source": "VID",
+      "suppressRollback": false
+    },
+    "relatedInstanceList": [
+      {
+        "relatedInstance": {
+          "instanceId": "ff305d54-75b4-431b-adb2-eb6b9e5ff000",
+          "modelInfo": {
+            "modelType": "vpnBinding"
+          }
+        }
+      },
+      {
+        "relatedInstance": {
+          "instanceId": "ff305d54-75b4-431b-adb2-eb6b9e5ff000",
+          "instanceName": "network-name",
+          "modelInfo": {
+            "modelType": "network"
+          }
+        }
+      }
+    ],
+    "requestParameters": {
+      "subscriptionServiceType": "dev-service-type",
+      "aLaCarte": false
+    }
+  }
+}

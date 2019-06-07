@@ -78,6 +78,9 @@ public class Configuration implements Serializable, ShallowCopy<Configuration> {
     @JsonProperty("l-interface")
     private LInterface lInterface;
 
+    @JsonProperty("vpn-binding")
+    private VpnBinding vpnBinding;
+
     public ModelInfoConfiguration getModelInfoConfiguration() {
         return modelInfoConfiguration;
     }
@@ -220,6 +223,14 @@ public class Configuration implements Serializable, ShallowCopy<Configuration> {
 
     public void setlInterface(LInterface lInterface) {
         this.lInterface = lInterface;
+    }
+
+    public VpnBinding getVpnBinding() {
+        return vpnBinding;
+    }
+
+    public void setVpnBinding(VpnBinding vpnBinding) {
+        this.vpnBinding = vpnBinding;
     }
 
     @Override

@@ -35,13 +35,13 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.javatuples.Pair;
-import org.slf4j.LoggerFactory;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.L3Network;
 import org.onap.aai.domain.yang.Relationship;
 import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aai.domain.yang.Vnfc;
 import org.onap.aai.domain.yang.VolumeGroup;
+import org.onap.aai.domain.yang.VpnBinding;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
@@ -61,9 +61,11 @@ import org.onap.so.client.orchestration.AAIConfigurationResources;
 import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
-import org.onap.so.db.catalog.beans.CvnfcCustomization;
-import org.onap.so.db.catalog.beans.VfModuleCustomization;
+import org.onap.so.db.catalog.beans.ConfigurationResourceCustomization;
 import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
+import org.onap.so.db.catalog.beans.CvnfcCustomization;
+import org.onap.so.db.catalog.beans.ServiceProxyResourceCustomization;
+import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.macro.NorthBoundRequest;
 import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
 import org.onap.so.db.catalog.client.CatalogDbClient;
@@ -78,9 +80,11 @@ import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 import org.onap.so.serviceinstancebeans.VfModules;
 import org.onap.so.serviceinstancebeans.Vnfs;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
@@ -117,6 +121,7 @@ public class WorkflowAction {
     private static final String FABRIC_CONFIGURATION = "FabricConfiguration";
     private static final String G_SERVICE_TYPE = "serviceType";
     private static final String SERVICE_TYPE_TRANSPORT = "TRANSPORT";
+    private static final String SERVICE_TYPE_BONDING = "BONDING";
     private static final Logger logger = LoggerFactory.getLogger(WorkflowAction.class);
 
     @Autowired
@@ -131,6 +136,8 @@ public class WorkflowAction {
     private AAIConfigurationResources aaiConfigurationResources;
     @Autowired
     private WorkflowActionExtractResourcesAAI workflowActionUtils;
+    @Autowired
+    private VrfValidation vrfValidation;
 
     @Autowired
     private Environment environment;
@@ -270,7 +277,7 @@ public class WorkflowAction {
                         foundRelated = traverseUserParamsService(execution, resourceCounter, sIRequest, requestAction);
                     }
                     if (!foundRelated) {
-                        traverseCatalogDbService(execution, sIRequest, resourceCounter);
+                        traverseCatalogDbService(execution, sIRequest, resourceCounter, aaiResourceIds);
                     }
                 } else if (resourceType == WorkflowType.SERVICE && (requestAction.equalsIgnoreCase("activateInstance")
                         || requestAction.equalsIgnoreCase("unassignInstance")
@@ -616,97 +623,181 @@ public class WorkflowAction {
     }
 
     protected void traverseCatalogDbService(DelegateExecution execution, ServiceInstancesRequest sIRequest,
-            List<Resource> resourceCounter) {
+            List<Resource> resourceCounter, List<Pair<WorkflowType, String>> aaiResourceIds) {
         String modelUUID = sIRequest.getRequestDetails().getModelInfo().getModelVersionId();
         org.onap.so.db.catalog.beans.Service service = catalogDbClient.getServiceByID(modelUUID);
         if (service == null) {
             buildAndThrowException(execution, "Could not find the service model in catalog db.");
         } else {
             resourceCounter.add(new Resource(WorkflowType.SERVICE, service.getModelUUID(), false));
-            if (service.getVnfCustomizations() == null || service.getVnfCustomizations().isEmpty()) {
-                List<CollectionResourceCustomization> customizations = service.getCollectionResourceCustomizations();
-                if (customizations.isEmpty()) {
-                    logger.debug("No Collections found. CollectionResourceCustomization list is empty.");
-                } else {
-                    CollectionResourceCustomization collectionResourceCustomization =
-                            findCatalogNetworkCollection(execution, service);
-                    if (collectionResourceCustomization != null) {
-                        resourceCounter.add(new Resource(WorkflowType.NETWORKCOLLECTION,
-                                collectionResourceCustomization.getModelCustomizationUUID(), false));
-                        logger.debug("Found a network collection");
-                        if (collectionResourceCustomization.getCollectionResource() != null) {
-                            if (collectionResourceCustomization.getCollectionResource().getInstanceGroup() != null) {
-                                String toscaNodeType = collectionResourceCustomization.getCollectionResource()
-                                        .getInstanceGroup().getToscaNodeType();
-                                if (toscaNodeType != null && toscaNodeType.contains("NetworkCollection")) {
-                                    int minNetworks = 0;
-                                    org.onap.so.db.catalog.beans.InstanceGroup instanceGroup =
-                                            collectionResourceCustomization.getCollectionResource().getInstanceGroup();
-                                    CollectionResourceInstanceGroupCustomization collectionInstCust = null;
-                                    if (!instanceGroup.getCollectionInstanceGroupCustomizations().isEmpty()) {
-                                        for (CollectionResourceInstanceGroupCustomization collectionInstanceGroupTemp : instanceGroup
-                                                .getCollectionInstanceGroupCustomizations()) {
-                                            if (collectionInstanceGroupTemp.getModelCustomizationUUID()
-                                                    .equalsIgnoreCase(collectionResourceCustomization
-                                                            .getModelCustomizationUUID())) {
-                                                collectionInstCust = collectionInstanceGroupTemp;
-                                                break;
-                                            }
-                                        }
-                                        if (collectionInstCust != null
-                                                && collectionInstCust.getSubInterfaceNetworkQuantity() != null) {
-                                            minNetworks = collectionInstCust.getSubInterfaceNetworkQuantity();
-                                        }
-                                    }
-                                    logger.debug("minNetworks: {}", minNetworks);
-                                    CollectionNetworkResourceCustomization collectionNetworkResourceCust = null;
-                                    for (CollectionNetworkResourceCustomization collectionNetworkTemp : instanceGroup
-                                            .getCollectionNetworkResourceCustomizations()) {
-                                        if (collectionNetworkTemp.getNetworkResourceCustomization()
-                                                .getModelCustomizationUUID().equalsIgnoreCase(
-                                                        collectionResourceCustomization.getModelCustomizationUUID())) {
-                                            collectionNetworkResourceCust = collectionNetworkTemp;
+            RelatedInstance relatedVpnBinding =
+                    bbInputSetupUtils.getRelatedInstanceByType(sIRequest.getRequestDetails(), ModelType.vpnBinding);
+            RelatedInstance relatedLocalNetwork =
+                    bbInputSetupUtils.getRelatedInstanceByType(sIRequest.getRequestDetails(), ModelType.network);
+            if (relatedVpnBinding != null && relatedLocalNetwork != null) {
+                traverseVrfConfiguration(execution, aaiResourceIds, resourceCounter, service, relatedVpnBinding,
+                        relatedLocalNetwork);
+            } else {
+                traverseNetworkCollection(execution, resourceCounter, service);
+            }
+        }
+    }
+
+    protected void traverseVrfConfiguration(DelegateExecution execution,
+            List<Pair<WorkflowType, String>> aaiResourceIds, List<Resource> resourceCounter,
+            org.onap.so.db.catalog.beans.Service service, RelatedInstance relatedVpnBinding,
+            RelatedInstance relatedLocalNetwork) {
+        try {
+            org.onap.aai.domain.yang.L3Network aaiLocalNetwork =
+                    bbInputSetupUtils.getAAIL3Network(relatedLocalNetwork.getInstanceId());
+            vrfValidation.vrfServiceValidation(service);
+            vrfValidation.vrfCatalogDbChecks(service);
+            vrfValidation
+                    .aaiVpnBindingValidation(bbInputSetupUtils.getAAIVpnBinding(relatedVpnBinding.getInstanceId()));
+            vrfValidation.aaiSubnetValidation(aaiLocalNetwork);
+            vrfValidation.aaiAggregateRouteValidation(aaiLocalNetwork);
+            vrfValidation.aaiRouteTargetValidation(aaiLocalNetwork);
+            String existingAAIVrfConfiguration = getExistingAAIVrfConfiguration(relatedVpnBinding, aaiLocalNetwork);
+            if (existingAAIVrfConfiguration != null) {
+                aaiResourceIds
+                        .add(new Pair<WorkflowType, String>(WorkflowType.CONFIGURATION, existingAAIVrfConfiguration));
+            }
+            resourceCounter.add(new Resource(WorkflowType.CONFIGURATION,
+                    service.getConfigurationCustomizations().get(0).getModelCustomizationUUID(), false));
+        } catch (VrfBondingServiceException | JsonProcessingException e) {
+            buildAndThrowException(execution, e.getMessage());
+        }
+    }
+
+    protected String getExistingAAIVrfConfiguration(RelatedInstance relatedVpnBinding,
+            org.onap.aai.domain.yang.L3Network aaiLocalNetwork)
+            throws JsonProcessingException, VrfBondingServiceException {
+        Optional<Relationships> relationshipsOp = new AAIResultWrapper(
+                new AAICommonObjectMapperProvider().getMapper().writeValueAsString(aaiLocalNetwork)).getRelationships();
+        if (relationshipsOp.isPresent()) {
+            List<AAIResultWrapper> configurationsRelatedToLocalNetwork =
+                    relationshipsOp.get().getByType(AAIObjectType.CONFIGURATION);
+            if (configurationsRelatedToLocalNetwork.size() > 1) {
+                throw new VrfBondingServiceException(
+                        "Network: " + aaiLocalNetwork.getNetworkId() + " has more than 1 configuration related to it");
+            }
+            if (configurationsRelatedToLocalNetwork.size() == 1) {
+                AAIResultWrapper configWrapper = configurationsRelatedToLocalNetwork.get(0);
+                Optional<Configuration> relatedConfiguration = configWrapper.asBean(Configuration.class);
+                if (relatedConfiguration.isPresent() && vrfConfigurationAlreadyExists(relatedVpnBinding,
+                        relatedConfiguration.get(), configWrapper)) {
+                    return relatedConfiguration.get().getConfigurationId();
+                }
+            }
+        }
+        return null;
+    }
+
+    protected boolean vrfConfigurationAlreadyExists(RelatedInstance relatedVpnBinding, Configuration vrfConfiguration,
+            AAIResultWrapper configWrapper) throws VrfBondingServiceException {
+        if (vrfConfiguration.getConfigurationType().equalsIgnoreCase("VRF-ENTRY")) {
+            Optional<Relationships> relationshipsConfigOp = configWrapper.getRelationships();
+            if (relationshipsConfigOp.isPresent()) {
+                Optional<VpnBinding> relatedInfraVpnBindingOp =
+                        workflowActionUtils.extractRelationshipsVpnBinding(relationshipsConfigOp.get());
+                if (relatedInfraVpnBindingOp.isPresent()) {
+                    VpnBinding relatedInfraVpnBinding = relatedInfraVpnBindingOp.get();
+                    if (!relatedInfraVpnBinding.getVpnId().equalsIgnoreCase(relatedVpnBinding.getInstanceId())) {
+                        throw new VrfBondingServiceException("Configuration: " + vrfConfiguration.getConfigurationId()
+                                + " is not connected to the same vpn binding id provided in request: "
+                                + relatedVpnBinding.getInstanceId());
+                    } else {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    protected void traverseNetworkCollection(DelegateExecution execution, List<Resource> resourceCounter,
+            org.onap.so.db.catalog.beans.Service service) {
+        if (service.getVnfCustomizations() == null || service.getVnfCustomizations().isEmpty()) {
+            List<CollectionResourceCustomization> customizations = service.getCollectionResourceCustomizations();
+            if (customizations.isEmpty()) {
+                logger.debug("No Collections found. CollectionResourceCustomization list is empty.");
+            } else {
+                CollectionResourceCustomization collectionResourceCustomization =
+                        findCatalogNetworkCollection(execution, service);
+                if (collectionResourceCustomization != null) {
+                    resourceCounter.add(new Resource(WorkflowType.NETWORKCOLLECTION,
+                            collectionResourceCustomization.getModelCustomizationUUID(), false));
+                    logger.debug("Found a network collection");
+                    if (collectionResourceCustomization.getCollectionResource() != null) {
+                        if (collectionResourceCustomization.getCollectionResource().getInstanceGroup() != null) {
+                            String toscaNodeType = collectionResourceCustomization.getCollectionResource()
+                                    .getInstanceGroup().getToscaNodeType();
+                            if (toscaNodeType != null && toscaNodeType.contains("NetworkCollection")) {
+                                int minNetworks = 0;
+                                org.onap.so.db.catalog.beans.InstanceGroup instanceGroup =
+                                        collectionResourceCustomization.getCollectionResource().getInstanceGroup();
+                                CollectionResourceInstanceGroupCustomization collectionInstCust = null;
+                                if (!instanceGroup.getCollectionInstanceGroupCustomizations().isEmpty()) {
+                                    for (CollectionResourceInstanceGroupCustomization collectionInstanceGroupTemp : instanceGroup
+                                            .getCollectionInstanceGroupCustomizations()) {
+                                        if (collectionInstanceGroupTemp.getModelCustomizationUUID().equalsIgnoreCase(
+                                                collectionResourceCustomization.getModelCustomizationUUID())) {
+                                            collectionInstCust = collectionInstanceGroupTemp;
                                             break;
                                         }
                                     }
-                                    for (int i = 0; i < minNetworks; i++) {
-                                        if (collectionNetworkResourceCust != null && collectionInstCust != null) {
-                                            Resource resource = new Resource(WorkflowType.VIRTUAL_LINK,
-                                                    collectionNetworkResourceCust.getModelCustomizationUUID(), false);
-                                            resource.setVirtualLinkKey(Integer.toString(i));
-                                            resourceCounter.add(resource);
-                                        }
+                                    if (collectionInstCust != null
+                                            && collectionInstCust.getSubInterfaceNetworkQuantity() != null) {
+                                        minNetworks = collectionInstCust.getSubInterfaceNetworkQuantity();
                                     }
-                                } else {
-                                    logger.debug(
-                                            "Instance Group tosca node type does not contain NetworkCollection:  {}",
-                                            toscaNodeType);
+                                }
+                                logger.debug("minNetworks: {}", minNetworks);
+                                CollectionNetworkResourceCustomization collectionNetworkResourceCust = null;
+                                for (CollectionNetworkResourceCustomization collectionNetworkTemp : instanceGroup
+                                        .getCollectionNetworkResourceCustomizations()) {
+                                    if (collectionNetworkTemp.getNetworkResourceCustomization()
+                                            .getModelCustomizationUUID().equalsIgnoreCase(
+                                                    collectionResourceCustomization.getModelCustomizationUUID())) {
+                                        collectionNetworkResourceCust = collectionNetworkTemp;
+                                        break;
+                                    }
+                                }
+                                for (int i = 0; i < minNetworks; i++) {
+                                    if (collectionNetworkResourceCust != null && collectionInstCust != null) {
+                                        Resource resource = new Resource(WorkflowType.VIRTUAL_LINK,
+                                                collectionNetworkResourceCust.getModelCustomizationUUID(), false);
+                                        resource.setVirtualLinkKey(Integer.toString(i));
+                                        resourceCounter.add(resource);
+                                    }
                                 }
                             } else {
-                                logger.debug("No Instance Group found for network collection.");
+                                logger.debug("Instance Group tosca node type does not contain NetworkCollection:  {}",
+                                        toscaNodeType);
                             }
                         } else {
-                            logger.debug("No Network Collection found. collectionResource is null");
+                            logger.debug("No Instance Group found for network collection.");
                         }
                     } else {
-                        logger.debug("No Network Collection Customization found");
+                        logger.debug("No Network Collection found. collectionResource is null");
                     }
+                } else {
+                    logger.debug("No Network Collection Customization found");
                 }
-                if (resourceCounter.stream().filter(x -> WorkflowType.NETWORKCOLLECTION == x.getResourceType())
-                        .collect(Collectors.toList()).isEmpty()) {
-                    if (service.getNetworkCustomizations() == null) {
-                        logger.debug("No networks were found on this service model");
-                    } else {
-                        for (int i = 0; i < service.getNetworkCustomizations().size(); i++) {
-                            resourceCounter.add(new Resource(WorkflowType.NETWORK,
-                                    service.getNetworkCustomizations().get(i).getModelCustomizationUUID(), false));
-                        }
-                    }
-                }
-            } else {
-                buildAndThrowException(execution,
-                        "Cannot orchestrate Service-Macro-Create without user params with a vnf. Please update ASDC model for new macro orchestration support or add service_recipe records to route to old macro flows");
             }
+            if (resourceCounter.stream().filter(x -> WorkflowType.NETWORKCOLLECTION == x.getResourceType())
+                    .collect(Collectors.toList()).isEmpty()) {
+                if (service.getNetworkCustomizations() == null) {
+                    logger.debug("No networks were found on this service model");
+                } else {
+                    for (int i = 0; i < service.getNetworkCustomizations().size(); i++) {
+                        resourceCounter.add(new Resource(WorkflowType.NETWORK,
+                                service.getNetworkCustomizations().get(i).getModelCustomizationUUID(), false));
+                    }
+                }
+            }
+        } else {
+            buildAndThrowException(execution,
+                    "Cannot orchestrate Service-Macro-Create without user params with a vnf. Please update ASDC model for new macro orchestration support or add service_recipe records to route to old macro flows");
         }
     }
 
@@ -759,7 +850,8 @@ public class WorkflowAction {
                             aaiConfigurationResources.getConfiguration(config.getConfigurationId());
                     if (aaiConfig.isPresent() && aaiConfig.get().getRelationshipList() != null) {
                         for (Relationship relationship : aaiConfig.get().getRelationshipList().getRelationship()) {
-                            if (relationship.getRelatedTo().contains("vnfc")) {
+                            if (relationship.getRelatedTo().contains("vnfc")
+                                    || relationship.getRelatedTo().contains("vpn-binding")) {
                                 aaiResourceIds.add(new Pair<WorkflowType, String>(WorkflowType.CONFIGURATION,
                                         config.getConfigurationId()));
                                 resourceCounter.add(
@@ -1315,7 +1407,8 @@ public class WorkflowAction {
             WorkflowType resourceName, boolean aLaCarte, String cloudOwner, String serviceType) {
         List<OrchestrationFlow> listToExecute = new ArrayList<>();
         NorthBoundRequest northBoundRequest = null;
-        if (serviceType.equalsIgnoreCase(SERVICE_TYPE_TRANSPORT)) {
+        if (serviceType.equalsIgnoreCase(SERVICE_TYPE_TRANSPORT)
+                || serviceType.equalsIgnoreCase(SERVICE_TYPE_BONDING)) {
             northBoundRequest =
                     catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwnerAndServiceType(
                             requestAction, resourceName.toString(), aLaCarte, cloudOwner, serviceType);
