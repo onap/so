@@ -22,7 +22,7 @@
  */
 package org.onap.so.bpmn.infrastructure.scripts
 
-import com.google.common.base.Strings
+import org.onap.so.logger.LoggingAnchor
 import org.onap.aai.domain.yang.AllottedResource
 import org.onap.so.logger.ErrorCode
 
@@ -945,7 +945,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 
 
         }catch(Exception e){
-			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Occured Processing preUpdateServiceOperationStatus.", "BPMN",
 					ErrorCode.UnknownError.getValue(), e);
             execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during preUpdateServiceOperationStatus Method:\n" + e.getMessage())

@@ -22,7 +22,7 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import com.google.common.base.Strings
+import org.onap.so.logger.LoggingAnchor
 import org.onap.so.logger.ErrorCode
 
 import static org.apache.commons.lang3.StringUtils.*
@@ -295,7 +295,7 @@ public class ScaleCustomE2EServiceInstance extends AbstractServiceTaskProcessor 
             logger.debug("Scale network service updateServiceOperStatusRequest Request: " + payload)
 
         }catch(Exception e){
-            logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+            logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
                     "Exception Occured Processing prepareInitServiceOperationStatus.", "BPMN",
                     ErrorCode.UnknownError.getValue(), e);
             execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during prepareInitServiceOperationStatus Method:\n" + e.getMessage())

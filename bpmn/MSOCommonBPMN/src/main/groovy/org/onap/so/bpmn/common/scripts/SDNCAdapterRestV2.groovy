@@ -22,7 +22,7 @@
 
 package org.onap.so.bpmn.common.scripts
 
-import com.google.common.base.Strings
+import org.onap.so.logger.LoggingAnchor
 import org.onap.so.logger.ErrorCode
 
 import java.text.SimpleDateFormat
@@ -86,7 +86,7 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 			if (sdncAdapterEndpoint == null || sdncAdapterEndpoint.isEmpty()) {
 				String msg = getProcessKey(execution) + ': mso:adapters:sdnc:rest:endpoint URN mapping is not defined'
 				logger.debug(msg)
-				logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+				logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 						ErrorCode.UnknownError.getValue());
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
@@ -107,7 +107,7 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 				if (sdncRequestId == null || sdncRequestId.isEmpty()) {
 					String msg = getProcessKey(execution) + ': no sdncRequestId in ' + requestType
 					logger.debug(msg)
-					logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+					logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 							ErrorCode.UnknownError.getValue());
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 				}
@@ -122,7 +122,7 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 				if (bpNotificationUrl == null || bpNotificationUrl.isEmpty()) {
 					String msg = getProcessKey(execution) + ': no bpNotificationUrl in ' + requestType
 					logger.debug(msg)
-					logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+					logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 							ErrorCode.UnknownError.getValue());
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 				}
@@ -133,7 +133,7 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 			} else {
 				String msg = getProcessKey(execution) + ': Unsupported request type: ' + requestType
 				logger.debug(msg)
-				logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+				logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 						ErrorCode.UnknownError.getValue());
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
@@ -151,7 +151,7 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 
 			if (basicAuthValue == null || basicAuthValue.isEmpty()) {
 				logger.debug(getProcessKey(execution) + ": mso:adapters:po:auth URN mapping is not defined")
-				logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+				logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 						getProcessKey(execution) + ": mso:adapters:po:auth URN mapping is not defined", "BPMN",
 						ErrorCode.UnknownError.getValue());
 			} else {
@@ -160,7 +160,7 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 					execution.setVariable(prefix + 'basicAuthHeaderValue', encodedString)
 				} catch (IOException ex) {
 					logger.debug(getProcessKey(execution) + ": Unable to encode BasicAuth credentials for SDNCAdapter")
-					logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 							getProcessKey(execution) + ": Unable to encode BasicAuth credentials for SDNCAdapter",
 							"BPMN", ErrorCode.UnknownError.getValue(), ex);
 				}
@@ -192,7 +192,7 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 		} catch (Exception e) {
 			String msg = 'Caught exception in ' + method + ": " + e
 			logger.debug(msg)
-			logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+			logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 					ErrorCode.UnknownError.getValue());
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 		}

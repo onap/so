@@ -22,7 +22,7 @@
 
 package org.onap.so.bpmn.common.scripts
 
-import com.google.common.base.Strings
+import org.onap.so.logger.LoggingAnchor
 import org.onap.so.client.HttpClientFactory
 import org.onap.so.logger.ErrorCode
 
@@ -135,13 +135,13 @@ class AaiUtil {
 				}
 				logger.debug("Cloud Region value for code='404' of " + backend + " is: " + regionId)
 			}else{
-				logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+				logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 						"Call AAI Cloud Region is NOT Successful.", "BPMN",
 						ErrorCode.UnknownError.getValue());
 				throw new BpmnError("MSOWorkflowException")
 			}
 		}catch(Exception e) {
-			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception occured while getting the Cloud Reqion.", "BPMN",
 					ErrorCode.UnknownError.getValue(), e.getMessage());
 			(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 9999, e.getMessage())

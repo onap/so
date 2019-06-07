@@ -33,7 +33,7 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
-import com.google.common.base.Strings;
+import org.onap.so.logger.LoggingAnchor;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
@@ -89,17 +89,16 @@ public class BpmnInstaller {
                         logger.debug("Response entity: {}", response.getEntity().toString());
                         if (response.getStatusLine().getStatusCode() != 200) {
                             logger.debug("Failed deploying BPMN {}", name);
-                            logger.error(Strings.repeat("{} ", 6),
-                                    MessageEnum.ASDC_ARTIFACT_NOT_DEPLOYED_DETAIL.toString(), name, fileName,
-                                    Integer.toString(response.getStatusLine().getStatusCode()),
+                            logger.error(LoggingAnchor.SIX, MessageEnum.ASDC_ARTIFACT_NOT_DEPLOYED_DETAIL.toString(),
+                                    name, fileName, Integer.toString(response.getStatusLine().getStatusCode()),
                                     ErrorCode.DataError.getValue(), "ASDC BPMN deploy failed");
                         } else {
                             logger.debug("Successfully deployed to Camunda: {}", name);
                         }
                     } catch (Exception e) {
                         logger.debug("Exception :", e);
-                        logger.error(Strings.repeat("{} ", 5), MessageEnum.ASDC_ARTIFACT_NOT_DEPLOYED_DETAIL.toString(),
-                                name, e.getMessage(), ErrorCode.DataError.getValue(), "ASDC BPMN deploy failed");
+                        logger.error(LoggingAnchor.FIVE, MessageEnum.ASDC_ARTIFACT_NOT_DEPLOYED_DETAIL.toString(), name,
+                                e.getMessage(), ErrorCode.DataError.getValue(), "ASDC BPMN deploy failed");
                     }
                 }
                 entry = csarFile.getNextEntry();
@@ -107,9 +106,8 @@ public class BpmnInstaller {
             csarFile.close();
         } catch (IOException ex) {
             logger.debug("Exception :", ex);
-            logger.error(Strings.repeat("{} ", 5), MessageEnum.ASDC_ARTIFACT_NOT_DEPLOYED_DETAIL.toString(),
-                    csarFilePath, ex.getMessage(), ErrorCode.DataError.getValue(),
-                    "ASDC reading CSAR with workflows failed");
+            logger.error(LoggingAnchor.FIVE, MessageEnum.ASDC_ARTIFACT_NOT_DEPLOYED_DETAIL.toString(), csarFilePath,
+                    ex.getMessage(), ErrorCode.DataError.getValue(), "ASDC reading CSAR with workflows failed");
         }
         return;
     }
@@ -127,7 +125,7 @@ public class BpmnInstaller {
             }
         } catch (Exception e) {
             logger.debug("Exception :", e);
-            logger.error(Strings.repeat("{} ", 5), MessageEnum.ASDC_ARTIFACT_CHECK_EXC.toString(), csarFilePath,
+            logger.error(LoggingAnchor.FIVE, MessageEnum.ASDC_ARTIFACT_CHECK_EXC.toString(), csarFilePath,
                     e.getMessage(), ErrorCode.DataError.getValue(), "ASDC Unable to check CSAR entries");
         }
         return workflowsInCsar;

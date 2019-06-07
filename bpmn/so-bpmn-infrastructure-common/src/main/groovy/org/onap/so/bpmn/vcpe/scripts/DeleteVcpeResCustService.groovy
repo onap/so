@@ -21,7 +21,7 @@
  */
 package org.onap.so.bpmn.vcpe.scripts
 
-import com.google.common.base.Strings
+import org.onap.so.logger.LoggingAnchor
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
@@ -420,7 +420,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 			execution.setVariable(Prefix+"unexpectedError", "Caught a Java Lang Exception")  // Adding this line temporarily until this flows error handling gets updated
 			exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Caught a Java Lang Exception")
 		}catch(BpmnError b){
-			logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Rethrowing MSOWorkflowException", "BPMN",
 					ErrorCode.UnknownError.getValue());
 			throw b

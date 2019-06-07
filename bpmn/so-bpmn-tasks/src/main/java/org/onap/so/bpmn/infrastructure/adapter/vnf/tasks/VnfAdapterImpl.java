@@ -22,7 +22,7 @@
 
 package org.onap.so.bpmn.infrastructure.adapter.vnf.tasks;
 
-import com.google.common.base.Strings;
+import org.onap.so.logger.LoggingAnchor;
 import org.apache.commons.lang3.StringUtils;
 import org.onap.so.adapters.vnfrest.CreateVfModuleResponse;
 import org.onap.so.adapters.vnfrest.CreateVolumeGroupResponse;
@@ -172,7 +172,7 @@ public class VnfAdapterImpl {
             SAXSource source = new SAXSource(xmlReader, inputSource);
             return jaxbUnmarshaller.unmarshal(source);
         } catch (Exception e) {
-            logger.error(Strings.repeat("{} ", 3), MessageEnum.GENERAL_EXCEPTION.toString(),
+            logger.error(LoggingAnchor.THREE, MessageEnum.GENERAL_EXCEPTION.toString(),
                     ErrorCode.SchemaError.getValue(), e.getMessage(), e);
             throw new MarshallerException("Error parsing VNF Adapter response. " + e.getMessage(),
                     ErrorCode.SchemaError.getValue(), e);

@@ -31,7 +31,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import com.google.common.base.Strings;
+import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.adapters.sdnc.impl.Constants;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
@@ -62,14 +62,14 @@ public class SNIROResponse {
     @Consumes("*/*")
     @Produces({MediaType.TEXT_PLAIN})
     public Response serviceNotification(@PathParam("correlator") String correlator, String content) {
-        logger.info(Strings.repeat("{} ", 4), MessageEnum.RA_RECEIVE_SDNC_NOTIF.toString(), content, "SDNC",
+        logger.info(LoggingAnchor.FOUR, MessageEnum.RA_RECEIVE_SDNC_NOTIF.toString(), content, "SDNC",
                 "SDNCNotify/SNIROResponse");
 
         String bpUrl = env.getProperty(Constants.BPEL_REST_URL_PROP, "");
 
         if (bpUrl == null || ("").equals(bpUrl)) {
             String error = "Missing configuration for: " + Constants.BPEL_REST_URL_PROP;
-            logger.error(Strings.repeat("{} ", 5), MessageEnum.RA_SDNC_MISS_CONFIG_PARAM.toString(),
+            logger.error(LoggingAnchor.FIVE, MessageEnum.RA_SDNC_MISS_CONFIG_PARAM.toString(),
                     Constants.BPEL_REST_URL_PROP, "SDNC", ErrorCode.DataError.getValue(), "Missing config param");
 
             return Response.status(HttpServletResponse.SC_BAD_REQUEST).entity(error).build();

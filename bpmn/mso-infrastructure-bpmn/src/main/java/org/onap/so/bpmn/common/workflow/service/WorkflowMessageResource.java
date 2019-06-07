@@ -32,7 +32,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import com.google.common.base.Strings;
+import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.bpmn.common.workflow.service.CallbackHandlerService.CallbackError;
 import org.onap.so.bpmn.common.workflow.service.CallbackHandlerService.CallbackResult;
 import org.onap.so.logger.ErrorCode;
@@ -79,7 +79,7 @@ public class WorkflowMessageResource {
         if (messageType == null || messageType.isEmpty()) {
             String msg = "Missing message type";
             logger.debug(LOGMARKER + " " + msg);
-            logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN",
+            logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN",
                     ErrorCode.DataError.getValue(), LOGMARKER + ":" + msg);
             return Response.status(400).entity(msg).build();
         }
@@ -87,7 +87,7 @@ public class WorkflowMessageResource {
         if (correlator == null || correlator.isEmpty()) {
             String msg = "Missing correlator";
             logger.debug(LOGMARKER + " " + msg);
-            logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN",
+            logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN",
                     ErrorCode.DataError.getValue(), LOGMARKER + ":" + msg);
             return Response.status(400).entity(msg).build();
         }
