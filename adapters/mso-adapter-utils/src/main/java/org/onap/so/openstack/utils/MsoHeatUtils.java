@@ -401,7 +401,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
                 .filter(p -> "OS::Nova::KeyPair".equalsIgnoreCase(p.getType())).collect(Collectors.toList());
         keyPairs.stream().forEach(keyPair -> {
             try {
-                novaClient.deleteKeyPair(cloudSiteId, tenantId, keyPair.getPhysicalResourceId());
+                novaClient.deleteKeyPair(cloudSiteId, tenantId, keyPair.getLogicalResourceId());
             } catch (MsoCloudSiteNotFound | NovaClientException e) {
                 logger.warn("Could not delete keypair", e);
             }
