@@ -49,8 +49,7 @@
     <sonar.cpd.exclusions>**/*</sonar.cpd.exclusions>
     <jacoco.version>0.7.5.201505241946</jacoco.version>
     <org.apache.maven.user-settings />
-    <!-- TODO: update to version 1.4.0 for Dublin -->
-    <openstack.version>1.4.0-SNAPSHOT</openstack.version>
+    <openstack.version>1.4.0</openstack.version>
     <maven.build.timestamp.format>yyyyMMdd'T'HHmm</maven.build.timestamp.format>
     <originalClassifier>original</originalClassifier>
     <docker.skip>true</docker.skip>
