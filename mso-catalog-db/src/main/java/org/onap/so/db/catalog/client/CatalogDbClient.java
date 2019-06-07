@@ -823,9 +823,14 @@ public class CatalogDbClient {
 
     public VnfResourceCustomization findVnfResourceCustomizationInList(String vnfCustomizationUUID,
             List<VnfResourceCustomization> vnfResourceCusts) {
-        List<VnfResourceCustomization> filtered = vnfResourceCusts.stream()
-                .filter(vnfCustRes -> vnfCustomizationUUID.equals(vnfCustRes.getModelCustomizationUUID()))
-                .collect(Collectors.toList());
+        if (vnfCustomizationUUID == null) {
+            throw new EntityNotFoundException(
+                    "a NULL UUID was provided in query to search for VnfResourceCustomization");
+        }
+        List<VnfResourceCustomization> filtered =
+                vnfResourceCusts.stream().filter(v -> v.getModelCustomizationUUID() != null)
+                        .filter(vnfCustRes -> vnfCustomizationUUID.equals(vnfCustRes.getModelCustomizationUUID()))
+                        .collect(Collectors.toList());
         if (filtered != null && !filtered.isEmpty() && filtered.size() == 1) {
             return filtered.get(0);
         } else
@@ -833,9 +838,12 @@ public class CatalogDbClient {
                     "Unable to find VnfResourceCustomization ModelCustomizationUUID:" + vnfCustomizationUUID);
     }
 
-    private VfModuleCustomization findVfModuleCustomizationInList(String vfModuleCustomizationUUID,
+    protected VfModuleCustomization findVfModuleCustomizationInList(String vfModuleCustomizationUUID,
             List<VfModuleCustomization> vfModuleList) {
-        List<VfModuleCustomization> filtered = vfModuleList.stream()
+        if (vfModuleCustomizationUUID == null) {
+            throw new EntityNotFoundException("a NULL UUID was provided in query to search for VfModuleCustomization");
+        }
+        List<VfModuleCustomization> filtered = vfModuleList.stream().filter(v -> v.getModelCustomizationUUID() != null)
                 .filter(vfModuleCust -> vfModuleCustomizationUUID.equals(vfModuleCust.getModelCustomizationUUID()))
                 .collect(Collectors.toList());
         if (filtered != null && !filtered.isEmpty() && filtered.size() == 1) {
@@ -845,9 +853,13 @@ public class CatalogDbClient {
                     "Unable to find VfModuleCustomization ModelCustomizationUUID:" + vfModuleCustomizationUUID);
     }
 
-    private CvnfcCustomization findCvnfcCustomizationInAList(String cvnfcCustomizationUuid,
+    protected CvnfcCustomization findCvnfcCustomizationInAList(String cvnfcCustomizationUuid,
             List<CvnfcCustomization> cvnfcCustomList) {
-        List<CvnfcCustomization> filtered = cvnfcCustomList.stream()
+        if (cvnfcCustomizationUuid == null) {
+            throw new EntityNotFoundException(
+                    "a NULL UUID was provided in query to search for CvnfcCustomization" + cvnfcCustomizationUuid);
+        }
+        List<CvnfcCustomization> filtered = cvnfcCustomList.stream().filter(c -> c.getModelCustomizationUUID() != null)
                 .filter(cvnfc -> cvnfcCustomizationUuid.equals(cvnfc.getModelCustomizationUUID()))
                 .collect(Collectors.toList());
         if (filtered != null && !filtered.isEmpty() && filtered.size() == 1) {
