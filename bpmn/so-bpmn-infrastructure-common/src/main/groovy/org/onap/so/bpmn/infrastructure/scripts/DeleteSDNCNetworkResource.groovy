@@ -25,6 +25,9 @@ package org.onap.so.bpmn.infrastructure.scripts
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.aai.domain.yang.AllottedResource
+import org.onap.aai.domain.yang.Relationship
+import org.onap.aai.domain.yang.RelationshipData
 import org.onap.so.bpmn.common.recipe.ResourceInput
 import org.onap.so.bpmn.common.resource.ResourceRequestBuilder
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
@@ -35,8 +38,15 @@ import org.onap.so.bpmn.core.domain.ModelInfo
 import org.onap.so.bpmn.core.domain.ResourceType
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
+import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.AAIResourcesClient
+import org.onap.so.client.aai.entities.AAIResultWrapper
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+
+import javax.ws.rs.NotFoundException
 
 import static org.apache.commons.lang3.StringUtils.*
 
@@ -76,6 +86,27 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
             //Deal with recipeParams
             String recipeParamsFromWf = execution.getVariable("recipeParamXsd")
             String resourceModelName = resourceInputObj.getResourceModelInfo().getModelName()
+            String resourceInstanceId = resourceInputObj.getResourceInstancenUuid()
+            String globalCustomerId = resourceInputObj.getGlobalSubscriberId()
+            String serviceType = resourceInputObj.getServiceType()
+            String serviceInstanceId = resourceInputObj.getServiceInstanceId()
+
+            // fetch parent instance id for allotted resources
+            String modelType = resourceInputObj.getResourceModelInfo().getModelType()
+            switch (modelType) {
+            // sdwanvpnattachment or sotnvpnattachment
+                case "ALLOTTED_RESOURCE":
+                    String parentServiceId = fetchParentServiceInstance(globalCustomerId, serviceType, serviceInstanceId, resourceInstanceId)
+                    if (null != parentServiceId) {
+                        execution.setVariable("allotedParentServiceInstanceId", parentServiceId)
+                    } else {
+                        logger.warn("Alloted Resource ParentServiceInstanceId not found in AAI response for allotedId: " + resourceInstanceId)
+                    }
+                    break;
+                default:
+                    break;
+            }
+
             //For sdnc requestAction default is "NetworkInstance"
             String operationType = "Network"
             if(!StringUtils.isBlank(recipeParamsFromRequest) && "null" != recipeParamsFromRequest){
@@ -106,11 +137,45 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
         } catch (BpmnError e) {
             throw e;
         } catch (Exception ex){
-            msg = "Exception in preProcessRequest " + ex.getMessage()
+            String msg = "Exception in preProcessRequest " + ex.getMessage()
             logger.debug( msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
         logger.info(" ***** Exit preProcessRequest *****")
+    }
+
+    private String fetchParentServiceInstance(String globalCustId, String serviceType, String serviceInstanceId, String allotedResourceId ) {
+        logger.trace("Entered fetchParentServiceInstance")
+        try {
+            String parentServiceId = "";
+            AAIResourcesClient resourceClient = new AAIResourcesClient();
+            AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.ALLOTTED_RESOURCE, globalCustId, serviceType, serviceInstanceId, allotedResourceId)
+            AAIResultWrapper aaiResult = resourceClient.get(serviceInstanceUri, NotFoundException.class)
+            Optional<AllottedResource> si = aaiResult.asBean(AllottedResource.class)
+            if((si.present) && (null != si.get().getRelationshipList()) && (null != si.get().getRelationshipList().getRelationship())) {
+                logger.debug("SI Data relationship-list exists")
+                List<Relationship> relationshipList = si.get().getRelationshipList().getRelationship()
+                for (Relationship relationship : relationshipList) {
+                    String rt = relationship.getRelatedTo()
+                    List<RelationshipData> rl_datas = relationship.getRelationshipData()
+                    if(rt.equals("service-instance") ){
+                        for (RelationshipData rl_data : rl_datas) {
+                            String eKey = rl_data.getRelationshipKey()
+                            String eValue = rl_data.getRelationshipValue()
+                            if(eKey.equals("service-instance.service-instance-id") && (!eValue.equals(serviceInstanceId))){
+                                return eValue
+                            }
+                        }
+                    }
+                }
+            }
+
+            logger.trace("Exited fetchParentServiceInstance")
+        }catch(Exception e){
+            logger.debug("Error occured within deleteServiceInstance method: " + e)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Error occured during deleteServiceInstance from aai")
+        }
+        return null
     }
 
     /**
@@ -135,6 +200,7 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
             String sdnc_service_id = execution.getVariable(Prefix + "sdncServiceId")
             String resourceInput = execution.getVariable(Prefix + "resourceInput")
             logger.info("The resourceInput is: " + resourceInput)
+            String allotedParentServiceInstanceId = execution.getVariable("allotedParentServiceInstanceId")
             ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(resourceInput, ResourceInput.class)
             String serviceType = resourceInputObj.getServiceType()
             String serviceModelInvariantUuid = resourceInputObj.getServiceModelInfo().getModelInvariantUuid()
@@ -285,7 +351,61 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
                                 </aetgt:SDNCAdapterWorkflowRequest>""".trim()
                     break
 
-            // for SDWANConnectivity and SOTNConnectivity:
+                // sdwanvpnattachment or sotnvpnattachment
+                case "ALLOTTED_RESOURCE" :
+                    sdncTopologyDeleteRequest = """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
+                                                              xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1" 
+                                                              xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
+                                 <sdncadapter:RequestHeader>
+                                    <sdncadapter:RequestId>${msoUtils.xmlEscape(hdrRequestId)}</sdncadapter:RequestId>
+                                    <sdncadapter:SvcInstanceId>${msoUtils.xmlEscape(serviceInstanceId)}</sdncadapter:SvcInstanceId>
+                                    <sdncadapter:SvcAction>${msoUtils.xmlEscape(sdnc_svcAction)}</sdncadapter:SvcAction>
+                                    <sdncadapter:SvcOperation>connection-attachment-topology-operation</sdncadapter:SvcOperation>
+                                    <sdncadapter:CallbackUrl>sdncCallback</sdncadapter:CallbackUrl>
+                                    <sdncadapter:MsoAction>generic-resource</sdncadapter:MsoAction>
+                                 </sdncadapter:RequestHeader>
+                                 <sdncadapterworkflow:SDNCRequestData>
+                                     <request-information>
+                                        <request-id>${msoUtils.xmlEscape(hdrRequestId)}</request-id>
+                                        <request-action>${msoUtils.xmlEscape(sdnc_requestAction)}</request-action>
+                                        <source>${msoUtils.xmlEscape(source)}</source>
+                                        <notification-url></notification-url>
+                                        <order-number></order-number>
+                                        <order-version></order-version>
+                                     </request-information>
+                                     <service-information>
+                                        <service-id>${msoUtils.xmlEscape(serviceInstanceId)}</service-id>
+                                        <subscription-service-type>${msoUtils.xmlEscape(serviceType)}</subscription-service-type>
+                                        <onap-model-information>
+                                             <model-invariant-uuid>${msoUtils.xmlEscape(serviceModelInvariantUuid)}</model-invariant-uuid>
+                                             <model-uuid>${msoUtils.xmlEscape(serviceModelUuid)}</model-uuid>
+                                             <model-version>${msoUtils.xmlEscape(serviceModelVersion)}</model-version>
+                                             <model-name>${msoUtils.xmlEscape(serviceModelName)}</model-name>
+                                        </onap-model-information>
+                                        <service-instance-id>${msoUtils.xmlEscape(serviceInstanceId)}</service-instance-id>
+                                        <global-customer-id>${msoUtils.xmlEscape(globalCustomerId)}</global-customer-id>
+                                        <subscriber-name></subscriber-name>
+                                     </service-information>
+                                     <allotted-resource-information>
+                                        <allotted-resource-id>$resourceInstnaceId</allotted-resource-id>
+                                        <allotted-resource-type></allotted-resource-type>
+                                        <parent-service-instance-id>$allotedParentServiceInstanceId</parent-service-instance-id>
+                                        <onap-model-information>
+                                             <model-invariant-uuid>${msoUtils.xmlEscape(modelInvariantUuid)}</model-invariant-uuid>
+                                             <model-customization-uuid>${msoUtils.xmlEscape(modelCustomizationUuid)}</model-customization-uuid>
+                                             <model-uuid>${msoUtils.xmlEscape(modelUuid)}</model-uuid>
+                                             <model-version>${msoUtils.xmlEscape(modelVersion)}</model-version>
+                                             <model-name>${msoUtils.xmlEscape(modelName)}</model-name>
+                                        </onap-model-information>
+                                     </allotted-resource-information>
+                                     <connection-attachment-request-input>
+                                     </connection-attachment-request-input>
+                                </sdncadapterworkflow:SDNCRequestData>
+                             </aetgt:SDNCAdapterWorkflowRequest>""".trim()
+
+                    break
+
+                // for SDWANConnectivity and SOTNConnectivity:
                 default:
                     sdncTopologyDeleteRequest = """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
                                                               xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1" 

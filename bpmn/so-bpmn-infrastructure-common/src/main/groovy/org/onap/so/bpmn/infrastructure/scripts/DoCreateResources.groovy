@@ -28,7 +28,6 @@ import com.google.gson.Gson
 import org.apache.http.util.EntityUtils
 import org.onap.so.bpmn.common.resource.InstanceResourceList
 import org.onap.so.bpmn.common.scripts.CatalogDbUtilsFactory
-import org.onap.so.bpmn.core.domain.GroupResource
 import org.onap.so.bpmn.core.domain.ModelInfo
 import org.onap.so.bpmn.core.domain.ResourceType
 import org.onap.so.bpmn.infrastructure.properties.BPMNProperties
@@ -96,16 +95,6 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         logger.trace("Exit preProcessRequest ")
     }
 
-    // this method will convert resource list to instance_resource_list
-    public void prepareInstanceResourceList(DelegateExecution execution) {
-
-        String uuiRequest = execution.getVariable("uuiRequest")
-        List<Resource> sequencedResourceList = execution.getVariable("sequencedResourceList")
-        List<Resource> instanceResourceList = InstanceResourceList.getInstanceResourceList(sequencedResourceList, uuiRequest)
-
-        execution.setVariable("instanceResourceList", instanceResourceList)
-    }
-
     public void sequenceResoure(DelegateExecution execution) {
         logger.trace("Start sequenceResoure Process ")
 
@@ -134,23 +123,20 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
             for (resourceType in resourceSequence) {
                 for (resource in addResourceList) {
                     if (StringUtils.containsIgnoreCase(resource.getModelInfo().getModelName(), resourceType)) {
-                        sequencedResourceList.add(resource)
+
 
                         // if resource type is vnfResource then check for groups also
                         // Did not use continue because if same model type is used twice
                         // then we would like to add it twice for processing
-                        // e.g.  S{ V1{G1, G2, G1}} --> S{ V1{G1, G1, G2}}
-                        if (resource instanceof VnfResource) {
-                            if (resource.getGroupOrder() != null && !StringUtils.isEmpty(resource.getGroupOrder())) {
-                                String[] grpSequence = resource.getGroupOrder().split(",")
-                                for (String grpType in grpSequence) {
-                                    for (GroupResource gResource in resource.getGroups()) {
-                                        if (StringUtils.containsIgnoreCase(gResource.getModelInfo().getModelName(), grpType)) {
-                                            sequencedResourceList.add(gResource)
-                                        }
-                                    }
-                                }
-                            }
+                        // ex-1. S{ V1{G1, G2}} --> S{ V1{G1, G1, G2}}
+                        // ex-2. S{ V1{G1, G2}} --> S{ V1{G1, G2, G2, G2} V1 {G1, G1, G2}}
+                        if ((resource.getResourceType() == ResourceType.VNF) && (resource instanceof VnfResource)) {
+
+                            // check the size of VNF/Group list from UUI
+                            List<Resource> sequencedInstanceResourceList = InstanceResourceList.getInstanceResourceList((VnfResource) resource, incomingRequest)
+                            sequencedResourceList.addAll(sequencedInstanceResourceList)
+                        } else {
+                            sequencedResourceList.add(resource)
                         }
                         if (resource instanceof NetworkResource) {
                             networkResourceList.add(resource)
@@ -167,7 +153,9 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
 
             for (Resource rc : addResourceList){
                 if (rc instanceof VnfResource) {
-                    vnfResourceList.add(rc)
+                    // check the size of VNF/Group list from UUI
+                    List<Resource> sequencedGroupResourceList = InstanceResourceList.getInstanceResourceList((VnfResource) rc, incomingRequest)
+                    vnfResourceList.addAll(sequencedGroupResourceList)
                 } else if (rc instanceof NetworkResource) {
                     networkResourceList.add(rc)
                 } else if (rc instanceof AllottedResource) {
@@ -216,8 +204,8 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
     public void getCurrentResoure(DelegateExecution execution){
         logger.trace("Start getCurrentResoure Process ")
         def currentIndex = execution.getVariable("currentResourceIndex")
-        List<Resource> instanceResourceList = execution.getVariable("instanceResourceList")
-        Resource currentResource = instanceResourceList.get(currentIndex)
+        List<Resource> sequencedResourceList = execution.getVariable("sequencedResourceList")
+        Resource currentResource = sequencedResourceList.get(currentIndex)
         execution.setVariable("resourceType", currentResource.getModelInfo().getModelName())
         logger.info("Now we deal with resource:" + currentResource.getModelInfo().getModelName())
         logger.trace("COMPLETED getCurrentResource Process ")
@@ -228,8 +216,8 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         def currentIndex = execution.getVariable("currentResourceIndex")
         def nextIndex =  currentIndex + 1
         execution.setVariable("currentResourceIndex", nextIndex)
-        List<Resource> instanceResourceList = execution.getVariable("instanceResourceList")
-        if(nextIndex >= instanceResourceList.size()){
+        List<Resource> sequencedResourceList = execution.getVariable("sequencedResourceList")
+        if(nextIndex >= sequencedResourceList.size()){
             execution.setVariable("allResourceFinished", "true")
         }else{
             execution.setVariable("allResourceFinished", "false")
@@ -256,7 +244,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         resourceInput.setOperationId(operationId)
         resourceInput.setOperationType(operationType);
         def currentIndex = execution.getVariable("currentResourceIndex")
-        List<Resource> sequencedResourceList = execution.getVariable("instanceResourceList")
+        List<Resource> sequencedResourceList = execution.getVariable("sequencedResourceList")
         Resource currentResource = sequencedResourceList.get(currentIndex)
         resourceInput.setResourceModelInfo(currentResource.getModelInfo())
         resourceInput.getResourceModelInfo().setModelType(currentResource.getResourceType().toString())
@@ -320,8 +308,8 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
                 HttpResponse resp = bpmnRestClient.post(recipeURL, requestId, recipeTimeOut, requestAction, serviceInstanceId, serviceType, resourceInput, recipeParamXsd)
 
                 def currentIndex = execution.getVariable("currentResourceIndex")
-                List<Resource> instanceResourceList = execution.getVariable("instanceResourceList") as List<Resource>
-                Resource currentResource = instanceResourceList.get(currentIndex)
+                List<Resource> sequencedResourceList = execution.getVariable("sequencedResourceList") as List<Resource>
+                Resource currentResource = sequencedResourceList.get(currentIndex)
                 if(ResourceType.VNF == currentResource.getResourceType()) {
                     if (resp.getStatusLine().getStatusCode() > 199 && resp.getStatusLine().getStatusCode() < 300) {
                         String responseString = EntityUtils.toString(resp.getEntity(), "UTF-8")

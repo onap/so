@@ -58,8 +58,8 @@ import org.onap.so.utils.TargetEntity
 import org.springframework.web.util.UriUtils
 
 import javax.ws.rs.NotFoundException
+import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
-
 
 import static org.apache.commons.lang3.StringUtils.isBlank
 
@@ -237,6 +237,9 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
             )) {
                 jObj.put("resourceInstanceId", eValue)
             }
+            else if (rt.equals("allotted-resource") && eKey.equals("allotted-resource.id")){
+                jObj.put("resourceInstanceId", eValue)
+            }
             // for sp-partner and others
             else if (eKey.endsWith("-id")) {
                 jObj.put("resourceInstanceId", eValue)
@@ -386,7 +389,10 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
 
 		URL url = new URL(serviceAaiPath)
 		HttpClient client = new HttpClientFactory().newXmlClient(url, TargetEntity.AAI)
-
+        client.addBasicAuthHeader(UrnPropertiesReader.getVariable("aai.auth", execution), UrnPropertiesReader.getVariable("mso.msoKey", execution))
+        client.addAdditionalHeader("X-FromAppId", "MSO")
+        client.addAdditionalHeader("X-TransactionId", utils.getRequestID())
+        client.setAcceptType(MediaType.APPLICATION_XML)
 
 		Response response = client.get()
 		int responseCode = response.getStatus()
@@ -413,12 +419,17 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
 			if(jObj.has("model-invariant-id")) {
 				modelInvariantId = jObj.get("model-invariant-id")
 				modelUuid = jObj.get("model-version-id")
-				modelCustomizationId = jObj.get("model-customization-id")
+                if (jObj.has("model-customization-id")) {
+                    modelCustomizationId = jObj.get("model-customization-id")
+                } else {
+                    logger.info("resource customization id is not found for :" + url)
+                }
 			}
 
 			jObj.put("modelInvariantId", modelInvariantId)
 			jObj.put("modelVersionId", modelUuid)
 			jObj.put("modelCustomizationId", modelCustomizationId)
+            logger.info("resource detail from AAI:" + jObj)
 		}
 		else {
             String exceptionMessage = "Get RelatedResource Received a Bad Response Code. Response Code is: " + responseCode
@@ -505,11 +516,12 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
         String modelName = resource.getModelInfo().getModelName()
 
         String modelCustomizationUuid = resource.getModelInfo().getModelCustomizationUuid()
+        String modelUuid = resource.getModelInfo().getModelUuid()
         if (StringUtils.containsIgnoreCase(obj.get("resourceType"), modelName)) {
             resource.setResourceId(obj.get("resourceInstanceId"))
             //deleteRealResourceList.add(resource)
             matches = true;
-        } else if (modelCustomizationUuid.equals(obj.get("modelCustomizationId"))) {
+        } else if (modelCustomizationUuid.equals(obj.get("modelCustomizationId")) || modelUuid.equals(obj.get("model-version-id")) ) {
             resource.setResourceId(obj.get("resourceInstanceId"))
             resource.setResourceInstanceName(obj.get("resourceType"))
             //deleteRealResourceList.add(resource)
@@ -623,5 +635,27 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
      public void postConfigRequest(execution){
          //to do
      }
+
+    /**
+     * Deletes the service instance in aai
+     */
+    public void deleteServiceInstance(DelegateExecution execution) {
+        logger.trace("Entered deleteServiceInstance")
+        try {
+            String globalCustId = execution.getVariable("globalSubscriberId")
+            String serviceType = execution.getVariable("serviceType")
+            String serviceInstanceId = execution.getVariable("serviceInstanceId")
+
+            AAIResourcesClient resourceClient = new AAIResourcesClient();
+            AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalCustId, serviceType, serviceInstanceId)
+            resourceClient.delete(serviceInstanceUri)
+
+            logger.trace("Exited deleteServiceInstance")
+        }catch(Exception e){
+            logger.debug("Error occured within deleteServiceInstance method: " + e)
+            exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Error occured during deleteServiceInstance from aai")
+        }
+    }
+
 
 }

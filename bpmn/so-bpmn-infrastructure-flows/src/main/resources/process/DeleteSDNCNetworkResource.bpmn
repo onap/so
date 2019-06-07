@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.0.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.1.0">
   <bpmn:process id="DeleteSDNCNetworkResource" name="DeleteSDNCNetworkResource" isExecutable="true">
     <bpmn:startEvent id="deleteNetworkResource_StartEvent_delete" name="deleteNetworkResource_StartEvent">
       <bpmn:outgoing>SequenceFlow_1qo2pln_delete</bpmn:outgoing>
@@ -123,6 +123,7 @@ csi.sendSyncResponse(execution)</bpmn:script>
         <camunda:in source="recipeParamXsd" target="recipeParamXsd" />
         <camunda:in source="URN_mso_workflow_sdncadapter_callback" target="URN_mso_workflow_sdncadapter_callback" />
         <camunda:in source="resourceInput" target="resourceInput" />
+        <camunda:in source="allotedParentServiceInstanceId" target="allotedParentServiceInstanceId" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0h3klf0_delete</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_00vqgvt_delete</bpmn:outgoing>
@@ -154,145 +155,145 @@ dcsi.prepareUpdateAfterDeleteSDNCResource(execution)</bpmn:script>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DeleteSDNCNetworkResource">
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="deleteNetworkResource_StartEvent_delete">
-        <dc:Bounds x="-111" y="111" width="36" height="36" />
+        <dc:Bounds x="180" y="244" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="-135" y="147" width="88" height="40" />
+          <dc:Bounds x="156" y="280" width="88" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1qo2pln_di" bpmnElement="SequenceFlow_1qo2pln_delete">
-        <di:waypoint x="-75" y="129" />
-        <di:waypoint x="-10" y="129" />
+        <di:waypoint x="216" y="262" />
+        <di:waypoint x="281" y="262" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="-87.5" y="108" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0khtova_di" bpmnElement="SequenceFlow_0khtova_delete">
-        <di:waypoint x="593" y="129" />
-        <di:waypoint x="684" y="129" />
+        <di:waypoint x="884" y="262" />
+        <di:waypoint x="975" y="262" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="391.5" y="108" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_03j6ogo_di" bpmnElement="PreprocessIncomingRequest_task_delete">
-        <dc:Bounds x="493" y="89" width="100" height="80" />
+        <dc:Bounds x="784" y="222" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_15pcuuc_di" bpmnElement="EndEvent_1x6k78c_delete">
-        <dc:Bounds x="898" y="317" width="36" height="36" />
+        <dc:Bounds x="1189" y="450" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="862" y="359" width="84" height="27" />
+          <dc:Bounds x="1153" y="492" width="84" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0ow44q0_di" bpmnElement="SequenceFlow_0ow44q0_delete">
-        <di:waypoint x="624" y="335" />
-        <di:waypoint x="709" y="335" />
+        <di:waypoint x="915" y="468" />
+        <di:waypoint x="1000" y="468" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="719" y="314" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_0gyej62_di" bpmnElement="Task_023hred_delete">
-        <dc:Bounds x="524" y="295" width="100" height="80" />
+        <dc:Bounds x="815" y="428" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0w2es8j_di" bpmnElement="SequenceFlow_0w2es8j_delete">
-        <di:waypoint x="90" y="129" />
-        <di:waypoint x="148" y="129" />
+        <di:waypoint x="381" y="262" />
+        <di:waypoint x="439" y="262" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="74" y="108" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_18l3crb_di" bpmnElement="SequenceFlow_18l3crb_delete">
-        <di:waypoint x="248" y="129" />
-        <di:waypoint x="325" y="129" />
+        <di:waypoint x="539" y="262" />
+        <di:waypoint x="616" y="262" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="235.5" y="108" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_0lc6l7a_di" bpmnElement="Task_1dlrfiw_delete">
-        <dc:Bounds x="-10" y="89" width="100" height="80" />
+        <dc:Bounds x="281" y="222" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_14l9mlv_di" bpmnElement="Task_13sx2bp_delete">
-        <dc:Bounds x="148" y="89" width="100" height="80" />
+        <dc:Bounds x="439" y="222" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1mz0vdx_di" bpmnElement="SequenceFlow_1mz0vdx_delete">
-        <di:waypoint x="784" y="129" />
-        <di:waypoint x="900" y="129" />
+        <di:waypoint x="1075" y="262" />
+        <di:waypoint x="1191" y="262" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="608" y="123" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_15mvedq_di" bpmnElement="SequenceFlow_15mvedq_delete">
-        <di:waypoint x="950" y="169" />
-        <di:waypoint x="950" y="246" />
-        <di:waypoint x="-106" y="246" />
-        <di:waypoint x="-106" y="335" />
-        <di:waypoint x="9" y="335" />
+        <di:waypoint x="1241" y="302" />
+        <di:waypoint x="1241" y="379" />
+        <di:waypoint x="185" y="379" />
+        <di:waypoint x="185" y="468" />
+        <di:waypoint x="300" y="468" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="349" y="197" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_1kqf4ge_di" bpmnElement="Task_0tfzqd4_delete">
-        <dc:Bounds x="684" y="89" width="100" height="80" />
+        <dc:Bounds x="975" y="222" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_1q6ssz7_di" bpmnElement="Task_18tomkl_delete">
-        <dc:Bounds x="900" y="89" width="100" height="80" />
+        <dc:Bounds x="1191" y="222" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_1cm8iwr_di" bpmnElement="ServiceTask_1cm8iwr_delete">
-        <dc:Bounds x="355" y="295" width="100" height="80" />
+        <dc:Bounds x="646" y="428" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_1emjxm2_di" bpmnElement="ScriptTask_1emjxm2_delete">
-        <dc:Bounds x="709" y="295" width="100" height="80" />
+        <dc:Bounds x="1000" y="428" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_15wux6a_di" bpmnElement="SequenceFlow_15wux6a_delete">
-        <di:waypoint x="809" y="335" />
-        <di:waypoint x="898" y="335" />
+        <di:waypoint x="1100" y="468" />
+        <di:waypoint x="1189" y="468" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="930" y="313" width="0" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0ds04u5_di" bpmnElement="SequenceFlow_0ds04u5_delete">
-        <di:waypoint x="455" y="335" />
-        <di:waypoint x="524" y="335" />
+        <di:waypoint x="746" y="468" />
+        <di:waypoint x="815" y="468" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ExclusiveGateway_0xrgeq3_di" bpmnElement="ExclusiveGateway_0xrgeq3_delete" isMarkerVisible="true">
-        <dc:Bounds x="325" y="104" width="50" height="50" />
+        <dc:Bounds x="616" y="237" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="320" y="161" width="63" height="27" />
+          <dc:Bounds x="611" y="294" width="63" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0jh88qw_di" bpmnElement="SequenceFlow_0jh88qw_delete">
-        <di:waypoint x="375" y="129" />
-        <di:waypoint x="493" y="129" />
+        <di:waypoint x="666" y="262" />
+        <di:waypoint x="784" y="262" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="427" y="111" width="14" height="14" />
+          <dc:Bounds x="718" y="244" width="14" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0h3klf0_di" bpmnElement="SequenceFlow_0h3klf0_delete">
-        <di:waypoint x="350" y="104" />
-        <di:waypoint x="350" y="-12" />
-        <di:waypoint x="493" y="-12" />
+        <di:waypoint x="641" y="237" />
+        <di:waypoint x="641" y="121" />
+        <di:waypoint x="784" y="121" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="356" y="43" width="19" height="14" />
+          <dc:Bounds x="647" y="176" width="19" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_00vqgvt_di" bpmnElement="SequenceFlow_00vqgvt_delete">
-        <di:waypoint x="543" y="28" />
-        <di:waypoint x="543" y="89" />
+        <di:waypoint x="834" y="161" />
+        <di:waypoint x="834" y="222" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="CallActivity_1lddjec_di" bpmnElement="Task_1xychp0_delete">
-        <dc:Bounds x="493" y="-52" width="100" height="80" />
+        <dc:Bounds x="784" y="81" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_1wj862v_di" bpmnElement="Task_1ikbt2h_delete">
-        <dc:Bounds x="205" y="295" width="100" height="80" />
+        <dc:Bounds x="496" y="428" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0yooswe_di" bpmnElement="SequenceFlow_0yooswe_delete">
-        <di:waypoint x="305" y="335" />
-        <di:waypoint x="355" y="335" />
+        <di:waypoint x="596" y="468" />
+        <di:waypoint x="646" y="468" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="CallActivity_0bj0odq_di" bpmnElement="CallActivity_0bj0odq">
-        <dc:Bounds x="9" y="295" width="100" height="80" />
+        <dc:Bounds x="300" y="428" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0lplazm_di" bpmnElement="SequenceFlow_0lplazm">
-        <di:waypoint x="109" y="335" />
-        <di:waypoint x="205" y="335" />
+        <di:waypoint x="400" y="468" />
+        <di:waypoint x="496" y="468" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

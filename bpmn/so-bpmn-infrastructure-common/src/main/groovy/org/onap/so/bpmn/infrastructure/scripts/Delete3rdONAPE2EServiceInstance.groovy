@@ -217,6 +217,7 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 
 		// ExternalAPI message format
 		String externalId = execution.getVariable("resourceName")
+		String serviceType = execution.getVariable("serviceType")
 		String category = "E2E Service"
 		String description = "Service Order from SPPartner"
 		String requestedStartDate = utils.generateCurrentTimeInUtc()
@@ -224,13 +225,12 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 		String priority = "1" // 0-4 0:highest
 		String subscriberId = execution.getVariable("globalSubscriberId")
 		String customerRole = "ONAPcustomer"
-		String subscriberName = subscriberId
+		String subscriberName = serviceType
 		String referredType = "Consumer"
 		String orderItemId = "1"
 		String action = "delete" //for delete
 		String serviceState = "active"
 		String serviceName = ""
-		String serviceType = execution.getVariable("serviceType")
 		String serviceId = execution.getVariable(Prefix + "SppartnerId")
 
 		queryServicefrom3rdONAP(execution)
@@ -260,7 +260,7 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 
 		String payload = externalAPIUtil.setTemplate(ExternalAPIUtil.PostServiceOrderRequestsTemplate, valueMap)
 		execution.setVariable(Prefix + "Payload", payload)
-		logger.info( "Exit " + prepare3rdONAPRequest)
+		logger.info( "***** Exit prepare3rdONAPRequest *****")
 	}
 
 	private void queryServicefrom3rdONAP(DelegateExecution execution)
@@ -294,7 +294,8 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 		{
 			logger.debug("Get Service Received a Good Response")
 			JSONArray responseList = new JSONArray(extApiResponse)
-			for(JSONObject obj : responseList) {
+			for(int i=0; i< responseList.length(); i++) {
+				JSONObject obj = responseList.getJSONObject(i)
 				String svcId  = obj.get("id")
 				if(StringUtils.equalsIgnoreCase(SppartnerServiceId, svcId)) {
 					JSONObject serviceSpecification = obj.get("serviceSpecification")
@@ -311,7 +312,7 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
         }catch(Exception e) {
             logger.error("queryServicefrom3rdONAP exception:" + e.getMessage())
         }
-		logger.info( "Exit " + queryServicefrom3rdONAP)
+		logger.info( "***** Exit queryServicefrom3rdONAP *****")
 	}
 
 	public void doDeleteE2ESIin3rdONAP(DelegateExecution execution) {
@@ -354,7 +355,7 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 		}catch(Exception e) {
 			logger.error("doDeleteE2ESIin3rdONAP exception:" + e.getMessage())
 		}
-		logger.info( "Exit " + doDeleteE2ESIin3rdONAP)
+		logger.info( "***** Exit doDeleteE2ESIin3rdONAP *****")
 	}
 
 
@@ -450,7 +451,7 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
             execution.setVariable("statusDescription", "Get Delete ServiceOrder Exception")
             logger.error("getE2ESIProgressin3rdONAP exception:" + e.getMessage())
         }
-		logger.info( "Exit " + getE2ESIProgressin3rdONAP)
+		logger.info( "***** Exit getE2ESIProgressin3rdONAP *****")
 	}
 
 	/**
@@ -495,7 +496,7 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 //            throw new BpmnError("MSOWorkflowException")
         }
 
-		logger.info( "Exit " + getSPPartnerInAAI)
+		logger.info( "***** Exit getSPPartnerInAAI *****")
 	}
 
 	public void deleteSPPartnerInAAI(DelegateExecution execution) {
@@ -516,7 +517,7 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
         }
 		
 
-		logger.info( "Exit " + deleteSPPartnerInAAI)
+		logger.info( "**** Exit deleteSPPartnerInAAI ****")
 	}
 
 	private void setProgressUpdateVariables(DelegateExecution execution, String body) {

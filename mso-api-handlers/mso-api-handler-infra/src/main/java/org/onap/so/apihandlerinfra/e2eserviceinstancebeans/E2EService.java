@@ -47,6 +47,9 @@ public class E2EService {
     @JsonProperty("serviceType")
     private String serviceType;
 
+    @JsonProperty("serviceId")
+    private String serviceId;
+
     @JsonProperty("parameters")
     private E2EParameters parameters;
 
@@ -107,6 +110,14 @@ public class E2EService {
 
     public void setServiceType(String serviceType) {
         this.serviceType = serviceType;
+    }
+
+    public String getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(String serviceId) {
+        this.serviceId = serviceId;
     }
 
     public String getServiceUuid() {
