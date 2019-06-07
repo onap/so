@@ -24,85 +24,17 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.onap.so.bpmn.core.domain.GroupResource;
-import org.onap.so.bpmn.core.domain.Resource;
-import org.onap.so.bpmn.core.domain.ResourceType;
-import org.onap.so.bpmn.core.domain.VnfResource;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.apache.commons.lang3.StringUtils;
+import org.onap.so.bpmn.core.domain.GroupResource;
+import org.onap.so.bpmn.core.domain.Resource;
+import org.onap.so.bpmn.core.domain.VnfResource;
 
 public class InstanceResourceList {
-
-    private static Map<String, List<List<GroupResource>>> convertUUIReqTOStd(final JsonObject reqInputJsonObj,
-            List<Resource> seqResourceList) {
-
-        Map<String, List<List<GroupResource>>> normalizedRequest = new HashMap<>();
-        Resource lastVfProcessed = null;
-        for (Resource r : seqResourceList) {
-
-            if (r.getResourceType() == ResourceType.VNF) {
-                String pk = getPrimaryKey(r);
-
-                JsonElement vfNode = reqInputJsonObj.get(pk);
-                lastVfProcessed = r;
-
-                // if the service property is type of array then it
-                // means it is a VF resource
-                if (vfNode instanceof JsonArray) {
-
-                    for (int i = 0; i < ((JsonArray) vfNode).size(); i++) {
-                        List<List<GroupResource>> groupsList = normalizedRequest.get(pk);
-                        if (groupsList == null) {
-                            groupsList = new ArrayList<>();
-                            normalizedRequest.put(pk, groupsList);
-                        }
-
-                        groupsList.add(new ArrayList<>());
-                    }
-                }
-
-            } else if (r.getResourceType() == ResourceType.GROUP) {
-                String sk = getPrimaryKey(r);
-
-                // if sk is empty that means it is not list type
-                if (sk.isEmpty()) {
-                    List<List<GroupResource>> vfList = normalizedRequest.get(getPrimaryKey(lastVfProcessed));
-                    for (List<GroupResource> grpList : vfList) {
-                        grpList.add((GroupResource) r);
-                    }
-                    continue;
-                }
-
-                String pk = getPrimaryKey(lastVfProcessed);
-                JsonArray vfs = reqInputJsonObj.getAsJsonArray(pk);
-
-                for (int i = 0; i < vfs.size(); i++) {
-
-                    JsonElement vfcsNode = vfs.get(i).getAsJsonObject().get(sk);
-                    if (vfcsNode instanceof JsonArray) {
-
-                        List<GroupResource> groupResources = normalizedRequest.get(pk).get(i);
-
-                        if (groupResources == null) {
-                            groupResources = new ArrayList<>();
-                            normalizedRequest.get(pk).add(i, groupResources);
-                        }
-
-                        for (int j = 0; j < ((JsonArray) vfcsNode).size(); j++) {
-                            groupResources.add((GroupResource) r);
-                        }
-                    }
-                }
-
-            }
-        }
-        return normalizedRequest;
-    }
 
     // this method returns key from resource input
     // e.g. {\"sdwansite_emails\" : \"[sdwansiteresource_list(PK), INDEX, sdwansite_emails]|default\",
@@ -126,45 +58,87 @@ public class InstanceResourceList {
 
             return pkOpt.isPresent() ? pkOpt.get() : "";
         } else {
-            // TODO: handle the case if VNF resource is not list
-            // e.g. { resourceInput
             return "";
         }
     }
 
-    private static List<Resource> convertToInstanceResourceList(Map<String, List<List<GroupResource>>> normalizedReq,
-            List<Resource> seqResourceList) {
-        List<Resource> flatResourceList = new ArrayList<>();
-        for (Resource r : seqResourceList) {
-            if (r.getResourceType() == ResourceType.VNF) {
-                String primaryKey = getPrimaryKey(r);
-                for (String pk : normalizedReq.keySet()) {
 
-                    if (primaryKey.equalsIgnoreCase(pk)) {
-
-                        List<List<GroupResource>> vfs = normalizedReq.get(pk);
-
-                        vfs.stream().forEach(e -> {
-                            flatResourceList.add(r);
-                            flatResourceList.addAll(e);
-                        });
-                    }
-                }
-            }
-        }
-        return flatResourceList;
-    }
-
-    public static List<Resource> getInstanceResourceList(final List<Resource> seqResourceList,
-            final String uuiRequest) {
-
+    public static List<Resource> getInstanceResourceList(final VnfResource vnfResource, final String uuiRequest) {
+        List<Resource> sequencedResourceList = new ArrayList<Resource>();
         Gson gson = new Gson();
         JsonObject servJsonObject = gson.fromJson(uuiRequest, JsonObject.class);
         JsonObject reqInputJsonObj = servJsonObject.getAsJsonObject("service").getAsJsonObject("parameters")
                 .getAsJsonObject("requestInputs");
 
-        // this will convert UUI request to normalized form
-        Map<String, List<List<GroupResource>>> normalizedRequest = convertUUIReqTOStd(reqInputJsonObj, seqResourceList);
-        return convertToInstanceResourceList(normalizedRequest, seqResourceList);
+        String pk = getPrimaryKey(vnfResource);
+        // if pk is not empty that means it can contain list of VNF
+        if (!pk.isEmpty()) {
+            JsonElement vfNode = reqInputJsonObj.get(pk);
+            if (vfNode.isJsonArray()) {
+                // multiple instance of VNF
+                JsonArray vfNodeList = vfNode.getAsJsonArray();
+                for (JsonElement vf : vfNodeList) {
+                    JsonObject vfObj = vf.getAsJsonObject();
+
+                    // Add VF first before adding groups
+                    sequencedResourceList.add(vnfResource);
+                    List<Resource> sequencedGroupResourceList = getGroupResourceInstanceList(vnfResource, vfObj);
+                    if (!sequencedGroupResourceList.isEmpty()) {
+                        sequencedResourceList.addAll(sequencedGroupResourceList);
+                    }
+                }
+            }
+        } else {
+            // if pk is empty that means it has only one VNF Node
+            // Add VF first before adding groups
+            sequencedResourceList.add(vnfResource);
+            // check the groups for this VNF and add into resource list
+            List<Resource> sequencedGroupResourceList = getGroupResourceInstanceList(vnfResource, reqInputJsonObj);
+            if (!sequencedGroupResourceList.isEmpty()) {
+                sequencedResourceList.addAll(sequencedGroupResourceList);
+            }
+        }
+
+        // In negative case consider only VNF resource only
+        if (sequencedResourceList.isEmpty()) {
+            sequencedResourceList.add(vnfResource);
+        }
+
+        return sequencedResourceList;
+    }
+
+    private static List<Resource> getGroupResourceInstanceList(VnfResource vnfResource, JsonObject vfObj) {
+        List<Resource> sequencedResourceList = new ArrayList<Resource>();
+        if (vnfResource.getGroupOrder() != null && !StringUtils.isEmpty(vnfResource.getGroupOrder())) {
+            String[] grpSequence = vnfResource.getGroupOrder().split(",");
+            for (String grpType : grpSequence) {
+                for (GroupResource gResource : vnfResource.getGroups()) {
+                    if (StringUtils.containsIgnoreCase(gResource.getModelInfo().getModelName(), grpType)) {
+                        // check the number of group instances from UUI to be added
+                        String sk = getPrimaryKey(gResource);
+
+                        // if sk is empty that means it is not list type
+                        // only one group / vnfc to be considered
+                        if (sk.isEmpty()) {
+                            sequencedResourceList.add(gResource);
+                        } else {
+                            // check the number of list size of VNFC of a group
+                            JsonElement vfcNode = vfObj.get(sk);
+                            if (vfcNode.isJsonArray()) {
+                                JsonArray vfcList = vfcNode.getAsJsonArray();
+                                for (JsonElement vfc : vfcList) {
+                                    sequencedResourceList.add(gResource);
+                                }
+                            } else {
+                                // consider only one vnfc/group if not an array
+                                sequencedResourceList.add(gResource);
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+        return sequencedResourceList;
     }
 }

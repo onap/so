@@ -285,7 +285,61 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
                                 </aetgt:SDNCAdapterWorkflowRequest>""".trim()
                     break
 
-            // for SDWANConnectivity and SOTNConnectivity:
+                // sdwanvpnattachment or sotnvpnattachment
+                case "ALLOTTED_RESOURCE" :
+                    sdncTopologyDeleteRequest = """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
+                                                              xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1" 
+                                                              xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
+                                 <sdncadapter:RequestHeader>
+                                    <sdncadapter:RequestId>${msoUtils.xmlEscape(hdrRequestId)}</sdncadapter:RequestId>
+                                    <sdncadapter:SvcInstanceId>${msoUtils.xmlEscape(serviceInstanceId)}</sdncadapter:SvcInstanceId>
+                                    <sdncadapter:SvcAction>${msoUtils.xmlEscape(sdnc_svcAction)}</sdncadapter:SvcAction>
+                                    <sdncadapter:SvcOperation>connection-attachment-topology-operation</sdncadapter:SvcOperation>
+                                    <sdncadapter:CallbackUrl>sdncCallback</sdncadapter:CallbackUrl>
+                                    <sdncadapter:MsoAction>generic-resource</sdncadapter:MsoAction>
+                                 </sdncadapter:RequestHeader>
+                                 <sdncadapterworkflow:SDNCRequestData>
+                                     <request-information>
+                                        <request-id>${msoUtils.xmlEscape(hdrRequestId)}</request-id>
+                                        <request-action>${msoUtils.xmlEscape(sdnc_requestAction)}</request-action>
+                                        <source>${msoUtils.xmlEscape(source)}</source>
+                                        <notification-url></notification-url>
+                                        <order-number></order-number>
+                                        <order-version></order-version>
+                                     </request-information>
+                                     <service-information>
+                                        <service-id>${msoUtils.xmlEscape(serviceInstanceId)}</service-id>
+                                        <subscription-service-type>${msoUtils.xmlEscape(serviceType)}</subscription-service-type>
+                                        <onap-model-information>
+                                             <model-invariant-uuid>${msoUtils.xmlEscape(serviceModelInvariantUuid)}</model-invariant-uuid>
+                                             <model-uuid>${msoUtils.xmlEscape(serviceModelUuid)}</model-uuid>
+                                             <model-version>${msoUtils.xmlEscape(serviceModelVersion)}</model-version>
+                                             <model-name>${msoUtils.xmlEscape(serviceModelName)}</model-name>
+                                        </onap-model-information>
+                                        <service-instance-id>${msoUtils.xmlEscape(serviceInstanceId)}</service-instance-id>
+                                        <global-customer-id>${msoUtils.xmlEscape(globalCustomerId)}</global-customer-id>
+                                        <subscriber-name></subscriber-name>
+                                     </service-information>
+                                     <allotted-resource-information>
+                                        <allotted-resource-id>$resourceInstnaceId</allotted-resource-id>
+                                        <allotted-resource-type></allotted-resource-type>
+                                        <parent-service-instance-id></parent-service-instance-id>
+                                        <onap-model-information>
+                                             <model-invariant-uuid>${msoUtils.xmlEscape(modelInvariantUuid)}</model-invariant-uuid>
+                                             <model-customization-uuid>${msoUtils.xmlEscape(modelCustomizationUuid)}</model-customization-uuid>
+                                             <model-uuid>${msoUtils.xmlEscape(modelUuid)}</model-uuid>
+                                             <model-version>${msoUtils.xmlEscape(modelVersion)}</model-version>
+                                             <model-name>${msoUtils.xmlEscape(modelName)}</model-name>
+                                        </onap-model-information>
+                                     </allotted-resource-information>
+                                     <connection-attachment-request-input>
+                                     </connection-attachment-request-input>
+                                </sdncadapterworkflow:SDNCRequestData>
+                             </aetgt:SDNCAdapterWorkflowRequest>""".trim()
+
+                    break
+
+                // for SDWANConnectivity and SOTNConnectivity:
                 default:
                     sdncTopologyDeleteRequest = """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
                                                               xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1" 
