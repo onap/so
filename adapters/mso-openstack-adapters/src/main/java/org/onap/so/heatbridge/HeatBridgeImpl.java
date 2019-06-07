@@ -50,16 +50,17 @@ import org.onap.so.heatbridge.helpers.AaiHelper;
 import org.onap.so.heatbridge.openstack.api.OpenstackClient;
 import org.onap.so.heatbridge.openstack.factory.OpenstackClientFactoryImpl;
 import org.onap.so.heatbridge.utils.HeatBridgeUtils;
-import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.ErrorCode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.onap.so.logger.LoggingAnchor;
+import org.onap.so.logger.MessageEnum;
 import org.openstack4j.model.compute.Server;
 import org.openstack4j.model.heat.Resource;
 import org.openstack4j.model.network.IP;
 import org.openstack4j.model.network.Network;
 import org.openstack4j.model.network.NetworkType;
 import org.openstack4j.model.network.Port;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -323,9 +324,9 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                 }
             } catch (WebApplicationException e) {
                 // Silently log that we failed to update the Pserver p-interface with PCI-ID
-                logger.error(Strings.repeat("{} ", 9), MessageEnum.GENERAL_EXCEPTION, pserverHostName,
-                        matchingPifName.get(), cloudOwner, tenantId, "OpenStack", "Heatbridge",
-                        ErrorCode.DataError.getValue(), "Exception - Failed to add sriov-pf object to pserver", e);
+                logger.error(LoggingAnchor.NINE, MessageEnum.GENERAL_EXCEPTION, pserverHostName, matchingPifName.get(),
+                        cloudOwner, tenantId, "OpenStack", "Heatbridge", ErrorCode.DataError.getValue(),
+                        "Exception - Failed to add sriov-pf object to pserver", e);
             }
         }
     }

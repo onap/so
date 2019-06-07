@@ -24,7 +24,7 @@ package org.onap.so.client.sdnc.mapper;
 
 import java.util.Map;
 import java.util.UUID;
-import com.google.common.base.Strings;
+import org.onap.so.logger.LoggingAnchor;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiParam;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiParamParam;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestActionEnumeration;
@@ -189,8 +189,8 @@ public class VfModuleTopologyOperationRequestMapper {
                         mapper.readValue(sdncAssignResponse, GenericResourceApiVfModuleResponseInformation.class);
                 objectPath = assignResponseInfo.getVfModuleResponseInformation().getObjectPath();
             } catch (Exception e) {
-                logger.error(Strings.repeat("{} ", 5), MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), e.getMessage(),
-                        "BPMN", ErrorCode.UnknownError.getValue(), e.getMessage());
+                logger.error(LoggingAnchor.FIVE, MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), e.getMessage(), "BPMN",
+                        ErrorCode.UnknownError.getValue(), e.getMessage());
             }
         }
         return objectPath;

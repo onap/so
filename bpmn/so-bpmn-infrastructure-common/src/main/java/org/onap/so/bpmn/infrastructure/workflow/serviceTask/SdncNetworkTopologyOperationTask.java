@@ -23,7 +23,7 @@
 package org.onap.so.bpmn.infrastructure.workflow.serviceTask;
 
 import java.util.Map;
-import com.google.common.base.Strings;
+import org.onap.so.logger.LoggingAnchor;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -79,7 +79,7 @@ public class SdncNetworkTopologyOperationTask extends AbstractSdncOperationTask 
         httpPost.addHeader("Authorization", defaulAuth);
         httpPost.addHeader("Content-type", "application/json");
         String postBody = getPostbody(inputEntity);
-        logger.info(Strings.repeat("{} ", 3), MessageEnum.RA_SEND_REQUEST_SDNC, postBody, "SDNC");
+        logger.info(LoggingAnchor.THREE, MessageEnum.RA_SEND_REQUEST_SDNC, postBody, "SDNC");
         httpPost.setEntity(new StringEntity(postBody, ContentType.APPLICATION_XML));
         httpPost(url, httpPost);
         logger.info("SdncNetworkTopologyOperationTask.send2SdncDirectly end!");

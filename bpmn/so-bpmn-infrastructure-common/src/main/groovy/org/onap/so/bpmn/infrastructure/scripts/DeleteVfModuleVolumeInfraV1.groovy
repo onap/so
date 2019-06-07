@@ -22,7 +22,7 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import com.google.common.base.Strings
+import org.onap.so.logger.LoggingAnchor
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.VolumeGroup
@@ -464,7 +464,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 		logger.debug(xmlHandlerRequest)
 
 		execution.setVariable("DELVfModVol_FalloutHandlerRequest", xmlHandlerRequest)
-		logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+		logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 				"Overall Error Response going to FalloutHandler", "BPMN",
 				ErrorCode.UnknownError.getValue(), "\n" + xmlHandlerRequest);
 	}
@@ -485,7 +485,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 
 		def String errorMessage = 'TenantId ' + tenantId + ' in incoming request does not match Tenant Id ' + volumeGroupTenantId +
 			' retrieved from AAI for Volume Group Id ' + volumeGroupId
-		logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+		logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 				"Error in DeleteVfModuleVolume: " + "\n" + errorMessage, "BPMN",
 				ErrorCode.UnknownError.getValue());
 

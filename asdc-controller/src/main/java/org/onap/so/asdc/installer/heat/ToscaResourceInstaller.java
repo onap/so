@@ -38,7 +38,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import com.google.common.base.Strings;
+import org.onap.so.logger.LoggingAnchor;
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.exception.LockAcquisitionException;
 import org.onap.sdc.api.notification.IArtifactInfo;
@@ -325,7 +325,7 @@ public class ToscaResourceInstaller {
             }
             return status;
         } catch (Exception e) {
-            logger.error(Strings.repeat("{} ", 3), MessageEnum.ASDC_ARTIFACT_CHECK_EXC.toString(),
+            logger.error(LoggingAnchor.THREE, MessageEnum.ASDC_ARTIFACT_CHECK_EXC.toString(),
                     ErrorCode.SchemaError.getValue(), "Exception - isResourceAlreadyDeployed");
             throw new ArtifactInstallerException("Exception caught during checking existence of the VNF Resource.", e);
         }
@@ -396,7 +396,7 @@ public class ToscaResourceInstaller {
 
             if (dbExceptionToCapture instanceof ConstraintViolationException
                     || dbExceptionToCapture instanceof LockAcquisitionException) {
-                logger.warn(Strings.repeat("{} ", 5), MessageEnum.ASDC_ARTIFACT_ALREADY_DEPLOYED.toString(),
+                logger.warn(LoggingAnchor.FIVE, MessageEnum.ASDC_ARTIFACT_ALREADY_DEPLOYED.toString(),
                         resourceStruct.getResourceInstance().getResourceName(),
                         resourceStruct.getNotification().getServiceVersion(), ErrorCode.DataError.getValue(),
                         "Exception - ASCDC Artifact already deployed", e);
@@ -404,7 +404,7 @@ public class ToscaResourceInstaller {
                 String elementToLog = (!artifactListForLogging.isEmpty()
                         ? artifactListForLogging.get(artifactListForLogging.size() - 1).toString()
                         : "No element listed");
-                logger.error(Strings.repeat("{} ", 4), MessageEnum.ASDC_ARTIFACT_INSTALL_EXC.toString(), elementToLog,
+                logger.error(LoggingAnchor.FOUR, MessageEnum.ASDC_ARTIFACT_INSTALL_EXC.toString(), elementToLog,
                         ErrorCode.DataError.getValue(), "Exception caught during installation of "
                                 + resourceStruct.getResourceInstance().getResourceName() + ". Transaction rollback",
                         e);
@@ -475,7 +475,7 @@ public class ToscaResourceInstaller {
 
             if (dbExceptionToCapture instanceof ConstraintViolationException
                     || dbExceptionToCapture instanceof LockAcquisitionException) {
-                logger.warn(Strings.repeat("{} ", 5), MessageEnum.ASDC_ARTIFACT_ALREADY_DEPLOYED.toString(),
+                logger.warn(LoggingAnchor.FIVE, MessageEnum.ASDC_ARTIFACT_ALREADY_DEPLOYED.toString(),
                         vfResourceStructure.getResourceInstance().getResourceName(),
                         vfResourceStructure.getNotification().getServiceVersion(), ErrorCode.DataError.getValue(),
                         "Exception - ASCDC Artifact already deployed", e);
@@ -483,7 +483,7 @@ public class ToscaResourceInstaller {
                 String elementToLog = (!artifactListForLogging.isEmpty()
                         ? artifactListForLogging.get(artifactListForLogging.size() - 1).toString()
                         : "No element listed");
-                logger.error(Strings.repeat("{} ", 4), MessageEnum.ASDC_ARTIFACT_INSTALL_EXC.toString(), elementToLog,
+                logger.error(LoggingAnchor.FOUR, MessageEnum.ASDC_ARTIFACT_INSTALL_EXC.toString(), elementToLog,
                         ErrorCode.DataError.getValue(),
                         "Exception caught during installation of "
                                 + vfResourceStructure.getResourceInstance().getResourceName()
@@ -1158,7 +1158,7 @@ public class ToscaResourceInstaller {
                 case ASDCConfiguration.HEAT_NET:
                 case ASDCConfiguration.OTHER:
                 case ASDCConfiguration.CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT:
-                    logger.warn(Strings.repeat("{} ", 4), MessageEnum.ASDC_ARTIFACT_TYPE_NOT_SUPPORT.toString(),
+                    logger.warn(LoggingAnchor.FOUR, MessageEnum.ASDC_ARTIFACT_TYPE_NOT_SUPPORT.toString(),
                             vfModuleArtifact.getArtifactInfo().getArtifactType() + "(Artifact Name:"
                                     + vfModuleArtifact.getArtifactInfo().getArtifactName() + ")",
                             ErrorCode.DataError.getValue(), "Artifact type not supported");

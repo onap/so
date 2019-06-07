@@ -25,7 +25,7 @@ package org.onap.so.adapters.sdnc.impl;
 import javax.annotation.PostConstruct;
 import javax.jws.WebService;
 import javax.servlet.http.HttpServletResponse;
-import com.google.common.base.Strings;
+import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.adapters.sdnc.SDNCAdapterPortType;
 import org.onap.so.adapters.sdnc.SDNCAdapterRequest;
 import org.onap.so.adapters.sdnc.SDNCAdapterResponse;
@@ -52,8 +52,7 @@ public class SDNCAdapterPortTypeImpl implements SDNCAdapterPortType {
 
     @PostConstruct
     public void init() {
-        logger.info(Strings.repeat("{} ", 3), MessageEnum.RA_INIT_SDNC_ADAPTER.toString(), "SDNC",
-                "SDNCAdapterPortType");
+        logger.info(LoggingAnchor.THREE, MessageEnum.RA_INIT_SDNC_ADAPTER.toString(), "SDNC", "SDNCAdapterPortType");
     }
 
     /**
@@ -73,7 +72,7 @@ public class SDNCAdapterPortTypeImpl implements SDNCAdapterPortType {
             sdncClient.executeRequest(bpelRequest);
         } catch (Exception e) {
             String respMsg = "Error sending request to SDNC. Failed to start SDNC Client thread " + e.getMessage();
-            logger.error(Strings.repeat("{} ", 4), MessageEnum.RA_SEND_REQUEST_SDNC_ERR.toString(), "SDNC",
+            logger.error(LoggingAnchor.FOUR, MessageEnum.RA_SEND_REQUEST_SDNC_ERR.toString(), "SDNC",
                     ErrorCode.DataError.getValue(), respMsg, e);
 
             SDNCResponse sdncResp = new SDNCResponse(bpelReqId);

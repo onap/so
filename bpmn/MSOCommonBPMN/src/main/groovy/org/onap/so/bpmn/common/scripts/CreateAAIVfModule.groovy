@@ -22,7 +22,7 @@
 
 package org.onap.so.bpmn.common.scripts
 
-import com.google.common.base.Strings
+import org.onap.so.logger.LoggingAnchor
 import org.apache.commons.lang.StringUtils
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.GenericVnf
@@ -424,7 +424,7 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 
 	// generates a WorkflowException when the A&AI query returns a response code other than 200 or 404
 	public void handleAAIQueryFailure(DelegateExecution execution) {
-		logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+		logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 				"Error occurred attempting to query AAI, Response Code " + execution.getVariable("CAAIVfMod_queryGenericVnfResponseCode") + ", Error Response " + execution.getVariable("CAAIVfMod_queryGenericVnfResponse"),
 				"BPMN", ErrorCode.UnknownError.getValue());
 		int code = execution.getVariable("CAAIVfMod_queryGenericVnfResponseCode")
@@ -476,7 +476,7 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 			errorCode = 2000
 		}
 
-		logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+		logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 				"Error occurred during CreateAAIVfModule flow", "BPMN",
 				ErrorCode.UnknownError.getValue(), errorResponse);
 		exceptionUtil.buildAndThrowWorkflowException(execution, errorCode, errorResponse)
