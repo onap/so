@@ -22,7 +22,7 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import com.google.gson.Gson
+
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
@@ -32,11 +32,8 @@ import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.aai.domain.yang.ServiceInstances
 import org.onap.aai.domain.yang.v13.Metadata
 import org.onap.aai.domain.yang.v13.Metadatum
-import org.onap.aai.domain.yang.v13.Pnf
-import org.onap.aai.domain.yang.v13.Pnfs
 import org.onap.so.bpmn.common.recipe.ResourceInput
 import org.onap.so.bpmn.common.resource.ResourceRequestBuilder
-import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
@@ -51,8 +48,6 @@ import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
-import static org.apache.commons.lang3.StringUtils.*
 
 /**
  * This groovy class supports the <class>CreateSDNCCNetworkResource.bpmn</class> process.
@@ -88,7 +83,6 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
 
             //Deal with recipeParams
             String recipeParamsFromWf = execution.getVariable("recipeParamXsd")
-            String resourceName = resourceInputObj.getResourceInstanceName()
 
             //For sdnc requestAction default is "createNetworkInstance"
             String operationType = "Network"
@@ -100,9 +94,14 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                 //the operationType from worflow(first node) is highest priority.
                 operationType = jsonUtil.getJsonValue(recipeParamsFromWf, "operationType")
             }
+            String operationTypeFromConfig = UrnPropertiesReader.getVariable("resource-config." + resourceInputObj.resourceModelInfo.getModelName() + ".operation-type")
+            if (StringUtils.isNotEmpty(operationTypeFromConfig)) {
+                // highest priority if operation type configured
+                operationType = operationTypeFromConfig
+            }
 
             String sdnc_svcAction = "create"
-            String sdnc_requestAction = sdnc_svcAction.capitalize() + UrnPropertiesReader.getVariable("resource-config." + resourceInputObj.resourceModelInfo.getModelName() +".operation-type") + "Instance"
+            String sdnc_requestAction = sdnc_svcAction.capitalize() + operationType + "Instance"
             String isActivateRequired = UrnPropertiesReader.getVariable("resource-config." + resourceInputObj.resourceModelInfo.getModelName() +".activation-required")
             execution.setVariable("isActivateRequired", isActivateRequired)
 
@@ -278,25 +277,35 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             case ~/[\w\s\W]*sdwanvpnattachment[\w\s\W]*/ :
             case ~/[\w\s\W]*sotnvpnattachment[\w\s\W]*/ :
                 // fill attachment TP in networkInputParamJson
-                String customer = resourceInputObj.getGlobalSubscriberId()
-                String serviceType = resourceInputObj.getServiceType()
-
                 def vpnName = StringUtils.containsIgnoreCase(modelName, "sotnvpnattachment") ? "sotnvpnattachmentvf_sotncondition_sotnVpnName" : "sdwanvpnattachmentvf_sdwancondition_sdwanVpnName"
-                String parentServiceName = jsonUtil.getJsonValueForKey(resourceInputObj.getRequestsInputs(), vpnName)
-
-                AAIResourcesClient client = new AAIResourcesClient()
-                AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.SERVICE_INSTANCE, customer, serviceType).queryParam("service-instance-name", parentServiceName)
-                ServiceInstances sis = client.get(uri).asBean(ServiceInstances.class).get()
-                ServiceInstance si = sis.getServiceInstance().get(0)
-
-                def parentServiceInstanceId = si.getServiceInstanceId()
-                execution.setVariable("parentServiceInstanceId", parentServiceInstanceId)
+                fillAttachmentTPInfo(resourceInputObj, modelName, execution, vpnName)
 
                 break
             default:
+                // Special case for handling alloted resource types
+                // in case name is different as expected
+                if ("ALLOTTED_RESOURCE".equals(resourceInputObj.getResourceModelInfo().getModelType())) {
+                    def vpnName = modelName + "_sotnVpnName"
+                    fillAttachmentTPInfo(resourceInputObj, modelName, execution, vpnName)
+                }
                 break
         }
         return resourceInputObj
+    }
+
+    private void fillAttachmentTPInfo(ResourceInput resourceInputObj, String modelName, DelegateExecution execution, String vpnName) {
+        String customer = resourceInputObj.getGlobalSubscriberId()
+        String serviceType = resourceInputObj.getServiceType()
+
+        String parentServiceName = jsonUtil.getJsonValueForKey(resourceInputObj.getRequestsInputs(), vpnName)
+
+        AAIResourcesClient client = new AAIResourcesClient()
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.SERVICE_INSTANCE, customer, serviceType).queryParam("service-instance-name", parentServiceName)
+        ServiceInstances sis = client.get(uri).asBean(ServiceInstances.class).get()
+        ServiceInstance si = sis.getServiceInstance().get(0)
+
+        def parentServiceInstanceId = si.getServiceInstanceId()
+        execution.setVariable("parentServiceInstanceId", parentServiceInstanceId)
     }
 
     /**
@@ -339,26 +348,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             // 1. prepare assign topology via SDNC Adapter SUBFLOW call
             String sdncTopologyCreateRequest = "";
 
-
-
-            //When a new resource creation request reaches SO, the parent resources information needs to be provided
-            //while creating the child resource.
-            String vnfid = ""
-            String vnfmodelInvariantUuid = ""
-            String vnfmodelCustomizationUuid = ""
-            String vnfmodelUuid = ""
-            String vnfmodelVersion = ""
-            String vnfmodelName = ""
             String modelType = resourceInputObj.getResourceModelInfo().getModelType()
-            if(modelType.equalsIgnoreCase(ResourceType.GROUP.toString())) {
-                vnfid = resourceInputObj.getVnfId()
-                ModelInfo vfModelInfo = resourceInputObj.getVfModelInfo()
-                vnfmodelInvariantUuid = vfModelInfo.getModelInvariantUuid()
-                vnfmodelCustomizationUuid = vfModelInfo.getModelCustomizationUuid()
-                vnfmodelUuid = vfModelInfo.getModelUuid()
-                vnfmodelVersion = vfModelInfo.getModelVersion()
-                vnfmodelName = vfModelInfo.getModelName()
-            }
 
             switch (modelType) {
                 case "VNF" :
@@ -418,6 +408,13 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                              </aetgt:SDNCAdapterWorkflowRequest>""".trim()
                     break
                 case "GROUP" :
+                    String vnfid = resourceInputObj.getVnfId()
+                    ModelInfo vfModelInfo = resourceInputObj.getVfModelInfo()
+                    String vnfmodelInvariantUuid = vfModelInfo.getModelInvariantUuid()
+                    String vnfmodelCustomizationUuid = vfModelInfo.getModelCustomizationUuid()
+                    String vnfmodelUuid = vfModelInfo.getModelUuid()
+                    String vnfmodelVersion = vfModelInfo.getModelVersion()
+                    String vnfmodelName = vfModelInfo.getModelName()
                     sdncTopologyCreateRequest = """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
                                                               xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1"
                                                               xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
@@ -480,7 +477,62 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                              </aetgt:SDNCAdapterWorkflowRequest>""".trim()
                     break
 
-            // for SDWANConnectivity and SOTNConnectivity:
+                // sdwanvpnattachment or sotnvpnattachment
+                case "ALLOTTED_RESOURCE" :
+                    sdncTopologyCreateRequest = """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
+                                                              xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1"
+                                                              xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
+                                 <sdncadapter:RequestHeader>
+                                    <sdncadapter:RequestId>${msoUtils.xmlEscape(hdrRequestId)}</sdncadapter:RequestId>
+                                    <sdncadapter:SvcInstanceId>${msoUtils.xmlEscape(serviceInstanceId)}</sdncadapter:SvcInstanceId>
+                                    <sdncadapter:SvcAction>${msoUtils.xmlEscape(sdnc_svcAction)}</sdncadapter:SvcAction>
+                                    <sdncadapter:SvcOperation>connection-attachment-topology-operation</sdncadapter:SvcOperation>
+                                    <sdncadapter:CallbackUrl>sdncCallback</sdncadapter:CallbackUrl>
+                                    <sdncadapter:MsoAction>generic-resource</sdncadapter:MsoAction>
+                                 </sdncadapter:RequestHeader>
+                                 <sdncadapterworkflow:SDNCRequestData>
+                                     <request-information>
+                                        <request-id>${msoUtils.xmlEscape(hdrRequestId)}</request-id>
+                                        <request-action>${msoUtils.xmlEscape(sdnc_requestAction)}</request-action>
+                                        <source>${msoUtils.xmlEscape(source)}</source>
+                                        <notification-url></notification-url>
+                                        <order-number></order-number>
+                                        <order-version></order-version>
+                                     </request-information>
+                                     <service-information>
+                                        <service-id>${msoUtils.xmlEscape(serviceInstanceId)}</service-id>
+                                        <subscription-service-type>${msoUtils.xmlEscape(serviceType)}</subscription-service-type>
+                                        <onap-model-information>
+                                             <model-invariant-uuid>${msoUtils.xmlEscape(serviceModelInvariantUuid)}</model-invariant-uuid>
+                                             <model-uuid>${msoUtils.xmlEscape(serviceModelUuid)}</model-uuid>
+                                             <model-version>${msoUtils.xmlEscape(serviceModelVersion)}</model-version>
+                                             <model-name>${msoUtils.xmlEscape(serviceModelName)}</model-name>
+                                        </onap-model-information>
+                                        <service-instance-id>${msoUtils.xmlEscape(serviceInstanceId)}</service-instance-id>
+                                        <global-customer-id>${msoUtils.xmlEscape(globalCustomerId)}</global-customer-id>
+                                        <subscriber-name>${msoUtils.xmlEscape(globalCustomerId)}</subscriber-name>
+                                     </service-information>
+                                     <allotted-resource-information>
+                                        <allotted-resource-id></allotted-resource-id>
+                                        <allotted-resource-type></allotted-resource-type>
+                                        <parent-service-instance-id>$parentServiceInstanceId</parent-service-instance-id>
+                                        <onap-model-information>
+                                             <model-invariant-uuid>${msoUtils.xmlEscape(modelInvariantUuid)}</model-invariant-uuid>
+                                             <model-customization-uuid>${msoUtils.xmlEscape(modelCustomizationUuid)}</model-customization-uuid>
+                                             <model-uuid>${msoUtils.xmlEscape(modelUuid)}</model-uuid>
+                                             <model-version>${msoUtils.xmlEscape(modelVersion)}</model-version>
+                                             <model-name>${msoUtils.xmlEscape(modelName)}</model-name>
+                                        </onap-model-information>
+                                     </allotted-resource-information>
+                                     <connection-attachment-request-input>
+                                       $netowrkInputParameters
+                                     </connection-attachment-request-input>
+                                </sdncadapterworkflow:SDNCRequestData>
+                             </aetgt:SDNCAdapterWorkflowRequest>""".trim()
+
+                    break
+
+                // for SDWANConnectivity and SOTNConnectivity:
                 default:
                     sdncTopologyCreateRequest = """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
                                                xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1"
@@ -531,198 +583,6 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
 
 
             }
-
-
-
-
-            //switch (modelName) {
-            //    case ~/[\w\s\W]*deviceVF[\w\s\W]*/
-            //    case ~/[\w\s\W]*SiteWANVF[\w\s\W]*/ :
-            //    case ~/[\w\s\W]*SiteVF[\w\s\W]*/:
-            /*        sdncTopologyCreateRequest = """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
-                                                              xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1"
-                                                              xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
-                                 <sdncadapter:RequestHeader>
-                                    <sdncadapter:RequestId>${msoUtils.xmlEscape(hdrRequestId)}</sdncadapter:RequestId>
-                                    <sdncadapter:SvcInstanceId>${msoUtils.xmlEscape(serviceInstanceId)}</sdncadapter:SvcInstanceId>
-                                    <sdncadapter:SvcAction>${msoUtils.xmlEscape(sdnc_svcAction)}</sdncadapter:SvcAction>
-                                    <sdncadapter:SvcOperation>vnf-topology-operation</sdncadapter:SvcOperation>
-                                    <sdncadapter:CallbackUrl>sdncCallback</sdncadapter:CallbackUrl>
-                                    <sdncadapter:MsoAction>generic-resource</sdncadapter:MsoAction>
-                                 </sdncadapter:RequestHeader>
-                                 <sdncadapterworkflow:SDNCRequestData>
-                                     <request-information>
-                                        <request-id>${msoUtils.xmlEscape(hdrRequestId)}</request-id>
-                                        <request-action>${msoUtils.xmlEscape(sdnc_requestAction)}</request-action>
-                                        <source>${msoUtils.xmlEscape(source)}</source>
-                                        <notification-url></notification-url>
-                                        <order-number></order-number>
-                                        <order-version></order-version>
-                                     </request-information>
-                                     <service-information>
-                                        <service-id>${msoUtils.xmlEscape(serviceInstanceId)}</service-id>
-                                        <subscription-service-type>${msoUtils.xmlEscape(serviceType)}</subscription-service-type>
-                                        <onap-model-information>
-                                             <model-invariant-uuid>${msoUtils.xmlEscape(serviceModelInvariantUuid)}</model-invariant-uuid>
-                                             <model-uuid>${msoUtils.xmlEscape(serviceModelUuid)}</model-uuid>
-                                             <model-version>${msoUtils.xmlEscape(serviceModelVersion)}</model-version>
-                                             <model-name>${msoUtils.xmlEscape(serviceModelName)}</model-name>
-                                        </onap-model-information>
-                                        <service-instance-id>${msoUtils.xmlEscape(serviceInstanceId)}</service-instance-id>
-                                        <global-customer-id>${msoUtils.xmlEscape(globalCustomerId)}</global-customer-id>
-                                        <subscriber-name>${msoUtils.xmlEscape(globalCustomerId)}</subscriber-name>
-                                     </service-information>
-                                     <vnf-information>
-                                        <vnf-id></vnf-id>
-                                        <vnf-type></vnf-type>
-                                        <onap-model-information>
-                                             <model-invariant-uuid>${msoUtils.xmlEscape(modelInvariantUuid)}</model-invariant-uuid>
-                                             <model-customization-uuid>${msoUtils.xmlEscape(modelCustomizationUuid)}</model-customization-uuid>
-                                             <model-uuid>${msoUtils.xmlEscape(modelUuid)}</model-uuid>
-                                             <model-version>${msoUtils.xmlEscape(modelVersion)}</model-version>
-                                             <model-name>${msoUtils.xmlEscape(modelName)}</model-name>
-                                        </onap-model-information>
-                                     </vnf-information>
-                                     <vnf-request-input>
-                                         <vnf-input-parameters>
-                                           $netowrkInputParameters
-                                         </vnf-input-parameters>
-                                         <request-version></request-version>
-                                         <vnf-name></vnf-name>
-                                         <vnf-networks>
-                                        </vnf-networks>
-                                      </vnf-request-input>
-                                </sdncadapterworkflow:SDNCRequestData>
-                             </aetgt:SDNCAdapterWorkflowRequest>""".trim()
-
-
-                    break
-
-                //case ~/[\w\s\W]*sdwanvpnattachment[\w\s\W]*/
-            //case ~/[\w\s\W]*sotnvpnattachment[\w\s\W]*/ :
-            /*    sdncTopologyCreateRequest = """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
-                                                          xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1"
-                                                          xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
-                             <sdncadapter:RequestHeader>
-                                <sdncadapter:RequestId>${msoUtils.xmlEscape(hdrRequestId)}</sdncadapter:RequestId>
-                                <sdncadapter:SvcInstanceId>${msoUtils.xmlEscape(serviceInstanceId)}</sdncadapter:SvcInstanceId>
-                                <sdncadapter:SvcAction>${msoUtils.xmlEscape(sdnc_svcAction)}</sdncadapter:SvcAction>
-                                <sdncadapter:SvcOperation>connection-attachment-topology-operation</sdncadapter:SvcOperation>
-                                <sdncadapter:CallbackUrl>sdncCallback</sdncadapter:CallbackUrl>
-                                <sdncadapter:MsoAction>generic-resource</sdncadapter:MsoAction>
-                             </sdncadapter:RequestHeader>
-                             <sdncadapterworkflow:SDNCRequestData>
-                                 <request-information>
-                                    <request-id>${msoUtils.xmlEscape(hdrRequestId)}</request-id>
-                                    <request-action>${msoUtils.xmlEscape(sdnc_requestAction)}</request-action>
-                                    <source>${msoUtils.xmlEscape(source)}</source>
-                                    <notification-url></notification-url>
-                                    <order-number></order-number>
-                                    <order-version></order-version>
-                                 </request-information>
-                                 <service-information>
-                                    <service-id>${msoUtils.xmlEscape(serviceInstanceId)}</service-id>
-                                    <subscription-service-type>${msoUtils.xmlEscape(serviceType)}</subscription-service-type>
-                                    <onap-model-information>
-                                         <model-invariant-uuid>${msoUtils.xmlEscape(serviceModelInvariantUuid)}</model-invariant-uuid>
-                                         <model-uuid>${msoUtils.xmlEscape(serviceModelUuid)}</model-uuid>
-                                         <model-version>${msoUtils.xmlEscape(serviceModelVersion)}</model-version>
-                                         <model-name>${msoUtils.xmlEscape(serviceModelName)}</model-name>
-                                    </onap-model-information>
-                                    <service-instance-id>${msoUtils.xmlEscape(serviceInstanceId)}</service-instance-id>
-                                    <global-customer-id>${msoUtils.xmlEscape(globalCustomerId)}</global-customer-id>
-                                    <subscriber-name>${msoUtils.xmlEscape(globalCustomerId)}</subscriber-name>
-                                 </service-information><vnf-information>
-                                    <vnf-id></vnf-id>
-                                    <vnf-type></vnf-type>
-                                    <onap-model-information>
-                                         <model-invariant-uuid>${msoUtils.xmlEscape(modelInvariantUuid)}</model-invariant-uuid>
-                                         <model-customization-uuid>${msoUtils.xmlEscape(modelCustomizationUuid)}</model-customization-uuid>
-                                         <model-uuid>${msoUtils.xmlEscape(modelUuid)}</model-uuid>
-                                         <model-version>${msoUtils.xmlEscape(modelVersion)}</model-version>
-                                         <model-name>${msoUtils.xmlEscape(modelName)}</model-name>
-                                    </onap-model-information>
-                                 </vnf-information>
-                                 <vnf-request-input>
-                                     <vnf-input-parameters>
-                                       $netowrkInputParameters
-                                     </vnf-input-parameters>
-                                     <request-version></request-version>
-                                     <vnf-name></vnf-name>
-                                     <vnf-networks>
-                                    </vnf-networks>
-                                  </vnf-request-input>
-                                 <allotted-resource-information>
-                                    <!-- TODO: to be filled as per the request input -->
-                                    <allotted-resource-id></allotted-resource-id>
-                                    <allotted-resource-type></allotted-resource-type>
-                                    <parent-service-instance-id>$parentServiceInstanceId</parent-service-instance-id>
-                                    <onap-model-information>
-                                         <model-invariant-uuid>${msoUtils.xmlEscape(modelInvariantUuid)}</model-invariant-uuid>
-                                         <model-customization-uuid>${msoUtils.xmlEscape(modelCustomizationUuid)}</model-customization-uuid>
-                                         <model-uuid>${msoUtils.xmlEscape(modelUuid)}</model-uuid>
-                                         <model-version>${msoUtils.xmlEscape(modelVersion)}</model-version>
-                                         <model-name>${msoUtils.xmlEscape(modelName)}</model-name>
-                                    </onap-model-information>
-                                 </allotted-resource-information>
-                                 <connection-attachment-request-input>
-                                   $netowrkInputParameters
-                                 </connection-attachment-request-input>
-                            </sdncadapterworkflow:SDNCRequestData>
-                         </aetgt:SDNCAdapterWorkflowRequest>""".trim()
-                break
-
-            // for SDWANConnectivity and SOTNConnectivity:
-            default:
-                sdncTopologyCreateRequest = """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
-                                                          xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1"
-                                                          xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
-                             <sdncadapter:RequestHeader>
-                                <sdncadapter:RequestId>${hdrRequestId}</sdncadapter:RequestId>
-                                <sdncadapter:SvcInstanceId>${msoUtils.xmlEscape(serviceInstanceId)}</sdncadapter:SvcInstanceId>
-                                <sdncadapter:SvcAction>${msoUtils.xmlEscape(sdnc_svcAction)}</sdncadapter:SvcAction>
-                                <sdncadapter:SvcOperation>network-topology-operation</sdncadapter:SvcOperation>
-                                <sdncadapter:CallbackUrl>sdncCallback</sdncadapter:CallbackUrl>
-                                <sdncadapter:MsoAction>generic-resource</sdncadapter:MsoAction>
-                             </sdncadapter:RequestHeader>
-                             <sdncadapterworkflow:SDNCRequestData>
-                                 <request-information>
-                                    <request-id>${msoUtils.xmlEscape(hdrRequestId)}</request-id>
-                                    <request-action>${msoUtils.xmlEscape(sdnc_requestAction)}</request-action>
-                                    <source>${msoUtils.xmlEscape(source)}</source>
-                                    <notification-url></notification-url>
-                                    <order-number></order-number>
-                                    <order-version></order-version>
-                                 </request-information>
-                                 <service-information>
-                                    <service-id>${msoUtils.xmlEscape(serviceInstanceId)}</service-id>
-                                    <subscription-service-type>${msoUtils.xmlEscape(serviceType)}</subscription-service-type>
-                                    <onap-model-information>
-                                         <model-invariant-uuid>${msoUtils.xmlEscape(serviceModelInvariantUuid)}</model-invariant-uuid>
-                                         <model-uuid>${msoUtils.xmlEscape(serviceModelUuid)}</model-uuid>
-                                         <model-version>${msoUtils.xmlEscape(serviceModelVersion)}</model-version>
-                                         <model-name>${msoUtils.xmlEscape(serviceModelName)}</model-name>
-                                    </onap-model-information>
-                                    <service-instance-id>${msoUtils.xmlEscape(serviceInstanceId)}</service-instance-id>
-                                    <global-customer-id>${msoUtils.xmlEscape(globalCustomerId)}</global-customer-id>
-                                 </service-information>
-                                 <network-information>
-                                    <onap-model-information>
-                                         <model-invariant-uuid>${msoUtils.xmlEscape(modelInvariantUuid)}</model-invariant-uuid>
-                                         <model-customization-uuid>${msoUtils.xmlEscape(modelCustomizationUuid)}</model-customization-uuid>
-                                         <model-uuid>${msoUtils.xmlEscape(modelUuid)}</model-uuid>
-                                         <model-version>${msoUtils.xmlEscape(modelVersion)}</model-version>
-                                         <model-name>${msoUtils.xmlEscape(modelName)}</model-name>
-                                    </onap-model-information>
-                                 </network-information>
-                                 <network-request-input>
-                                   <network-input-parameters>$netowrkInputParameters</network-input-parameters>
-                                 </network-request-input>
-                            </sdncadapterworkflow:SDNCRequestData>
-                         </aetgt:SDNCAdapterWorkflowRequest>""".trim()
-        }
-
-        **/
 
             String sndcTopologyCreateRequesAsString = utils.formatXml(sdncTopologyCreateRequest)
             execution.setVariable("sdncAdapterWorkflowRequest", sndcTopologyCreateRequesAsString)
@@ -813,39 +673,19 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
         String responseCode = execution.getVariable(Prefix + "sdncCreateReturnCode")
         String responseObj = execution.getVariable(Prefix + "SuccessIndicator")
 
-        def instnaceId = getInstnaceId(execution)
+        def instnaceId = getInstanceId(execution)
         execution.setVariable("resourceInstanceId", instnaceId)
 
         logger.info("response from sdnc, response code :" + responseCode + "  response object :" + responseObj)
         logger.info(" ***** Exit prepareSDNCRequest *****")
     }
 
-    private def getInstnaceId(DelegateExecution execution) {
+    private def getInstanceId(DelegateExecution execution) {
         def response  = new XmlSlurper().parseText(execution.getVariable("CRENWKI_createSDNCResponse"))
 
         ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(execution.getVariable(Prefix + "resourceInput"), ResourceInput.class)
         String modelName = resourceInputObj.getResourceModelInfo().getModelName()
         def val = ""
-
-
-        //switch (modelName) {
-        //    case ~/[\w\s\W]*deviceVF[\w\s\W]*/ :
-        //    case ~/[\w\s\W]*SiteWANVF[\w\s\W]*/ :
-        //    case ~/[\w\s\W]*Site[\w\s\W]*/:
-        //        val = response."response-data"."RequestData"."output"."vnf-response-information"."instance-id"
-        //          break
-
-        //    case ~/[\w\s\W]*sdwanvpnattachment[\w\s\W]*/ :
-        //   case ~/[\w\s\W]*sotnvpprepareUpdateAfterCreateSDNCResourcenattachment[\w\s\W]*/:
-        //        val = response."response-data"."RequestData"."output"."connection-attachment-response-information"."instance-id"
-        //        break
-
-        // for SDWANConnectivity and SOTNConnectivity and default:
-        //    default:
-        //        val = response."response-data"."RequestData"."output"."network-response-information"."instance-id"
-        //        break
-        //}
-
 
         String modelType = resourceInputObj.getResourceModelInfo().getModelType()
         switch (modelType) {
@@ -855,7 +695,12 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             case "GROUP":
                 val = response."response-data"."RequestData"."output"."vf-module-response-information"."instance-id"
                 break
+            case "ALLOTTED_RESOURCE":
+                // sdwanvpnattachment or sotnvpnattachment
+                val = response."response-data"."RequestData"."output"."connection-attachment-response-information"."instance-id"
+                break
             default:
+                // SDWANConnectivity or SOTN Connectivity
                 val = response."response-data"."RequestData"."output"."network-response-information"."instance-id"
                 break
         }
