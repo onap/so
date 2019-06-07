@@ -22,6 +22,9 @@
  */
 package org.onap.so.bpmn.infrastructure.scripts
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+
 import org.onap.so.logger.LoggingAnchor
 import org.onap.so.logger.ErrorCode;
 
@@ -31,6 +34,7 @@ import javax.ws.rs.NotFoundException
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.onap.aai.domain.yang.Relationship
 import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
@@ -290,6 +294,103 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		}
 		logger.trace("Exit createServiceInstance ")
 	}
+
+	public void createCustomRelationship(DelegateExecution execution) {
+		logger.trace("createCustomRelationship ")
+		String msg = ""
+		try {
+			String uuiRequest = execution.getVariable("uuiRequest")
+			String  vpnName =  isNeedProcessCustomRelationship(uuiRequest)
+
+			if(null != vpnName){
+				logger.debug("fetching resource-link information for the given sotnVpnName:"+vpnName)
+				// fetch the service instance to link the relationship
+				AAIResourcesClient client = new AAIResourcesClient()
+				AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.NODES_QUERY).queryParam("search-node-type","service-instance").queryParam("filter","service-instance-name:EQUALS:"+vpnName)
+				AAIResultWrapper aaiResult = client.get(uri,NotFoundException.class)
+				Map<String, Object> result = aaiResult.asMap()
+				List<Object> resources =
+						(List<Object>) result.getOrDefault("result-data", Collections.emptyList());
+				if(resources.size()>0) {
+					String relationshipUrl = ((Map<String, Object>) resources.get(0)).get("resource-link")
+
+					final Relationship body = new Relationship();
+					body.setRelatedLink(relationshipUrl)
+
+					createRelationShipInAAI(execution, body)
+				} else {
+					logger.warn("No resource-link found for the given sotnVpnName:"+vpnName)
+				}
+
+			} else {
+				logger.error("VPNName not found in request input")
+			}
+
+
+
+		} catch (BpmnError e) {
+			throw e;
+		} catch (Exception ex) {
+
+			msg = "Exception in DoCreateE2EServiceInstance.createCustomRelationship. " + ex.getMessage()
+			logger.info(msg)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+		}
+		logger.trace("Exit createCustomRelationship ")
+	}
+
+	private void createRelationShipInAAI(DelegateExecution execution, final Relationship relationship){
+		logger.trace("createRelationShipInAAI ")
+		String msg = ""
+		try {
+			String serviceInstanceId = execution.getVariable("serviceInstanceId")
+			AAIResourcesClient client = new AAIResourcesClient()
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), execution.getVariable("serviceType"), serviceInstanceId).relationshipAPI()
+			client.create(uri, relationship)
+
+		} catch (BpmnError e) {
+			throw e;
+		} catch (Exception ex) {
+
+			msg = "Exception in DoCreateE2EServiceInstance.createRelationShipInAAI. " + ex.getMessage()
+			logger.info(msg)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+		}
+		logger.trace("Exit createRelationShipInAAI ")
+
+	}
+
+	private String isNeedProcessCustomRelationship(String uuiRequest) {
+		String requestInput = jsonUtil.getJsonValue(uuiRequest, "service.parameters.requestInputs")
+		Map<String, String> requestInputObject = getJsonObject(requestInput, Map.class);
+		if (requestInputObject == null) {
+			return null;
+		}
+
+		Optional<Map.Entry> firstKey =
+		requestInputObject.entrySet()
+				.stream()
+				.filter({entry -> entry.getKey().toString().contains("_sotnVpnName")})
+				.findFirst()
+		if (firstKey.isPresent()) {
+			return firstKey.get().getValue()
+		}
+
+		return null
+	}
+
+	private static <T> T getJsonObject(String jsonstr, Class<T> type) {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
+		try {
+			return mapper.readValue(jsonstr, type);
+		} catch (IOException e) {
+			logger.error("{} {} fail to unMarshal json", MessageEnum.RA_NS_EXC.toString(),
+					ErrorCode.BusinessProcesssError.getValue(), e);
+		}
+		return null;
+	}
+
 
 	/**
 	 * Gets the service instance and its relationships from aai

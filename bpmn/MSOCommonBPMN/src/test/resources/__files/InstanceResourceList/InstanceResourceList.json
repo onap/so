@@ -67,6 +67,19 @@
         }
       ],
       "requestInputs":{
+        "emptygroup_list": [
+          {
+            "topology": "hub_spoke",
+            "name": "defaultvpn",
+            "role":"Hub",
+            "portType":"GE",
+            "portSwitch":"layer3-port",
+            "vlanId":"",
+            "ipAddress":"192.168.10.1",
+            "deviceName":"vCPE",
+            "portNumer":"0/0/1"
+          }
+        ],
         "sdwanvpnresource_list":[
           {
             "sdwanvpn_topology":"hub_spoke",
@@ -117,6 +130,19 @@
                 "portNumber":"0/0/0",
                 "ipMode":"DHCP",
                 "publicIP":"119.3.7.113"
+              },
+              {
+                "providerIpAddress":"",
+                "portType":"GE",
+                "inputBandwidth":"1200",
+                "ipAddress":"",
+                "name":"10001",
+                "transportNetworkName":"internet",
+                "outputBandwidth":"10001",
+                "deviceName":"vCPE",
+                "portNumber":"0/0/0",
+                "ipMode":"DHCP",
+                "publicIP":"119.3.7.114"
               }
             ],
             "sdwandevice_list":[

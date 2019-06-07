@@ -624,7 +624,7 @@ public class E2EServiceInstances {
 
         String serviceInstanceType = e2eSir.getService().getServiceType();
 
-        String serviceId = "";
+        String serviceId = e2eSir.getService().getServiceId();
         RequestClient requestClient;
         HttpResponse response;
 
