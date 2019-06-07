@@ -39,7 +39,7 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.ws.Holder;
-import com.google.common.base.Strings;
+import org.onap.so.logger.LoggingAnchor;
 import org.apache.http.HttpStatus;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
@@ -85,7 +85,7 @@ public class VnfAdapterRestV2 {
     private static Logger logger = LoggerFactory.getLogger(VnfAdapterRestV2.class);
     private static final String TESTING_KEYWORD = "___TESTING___";
     private static final String RESP = ", resp=";
-    private static final String BRACKETS = Strings.repeat("{} ", 4);
+    private static final String BRACKETS = LoggingAnchor.FOUR;
 
     @Autowired
     private VnfAdapterRestUtils vnfAdapterRestUtils;
@@ -200,7 +200,7 @@ public class VnfAdapterRestV2 {
                 response = new DeleteVfModuleResponse(req.getVnfId(), req.getVfModuleId(), Boolean.TRUE,
                         req.getMessageId(), outputs.value);
             } catch (VnfException e) {
-                logger.error(Strings.repeat("{} ", 3), MessageEnum.RA_DELETE_VNF_ERR.toString(),
+                logger.error(LoggingAnchor.THREE, MessageEnum.RA_DELETE_VNF_ERR.toString(),
                         ErrorCode.BusinessProcesssError.getValue(), "VnfException - " + "Delete VNF Module", e);
                 eresp = new VfModuleExceptionResponse(e.getMessage(), MsoExceptionCategory.INTERNAL, Boolean.TRUE,
                         req.getMessageId());
@@ -270,8 +270,8 @@ public class VnfAdapterRestV2 {
             logger.debug("Query vfModule exit");
             return Response.status(respStatus).entity(new GenericEntity<QueryVfModuleResponse>(qryResp) {}).build();
         } catch (VnfException e) {
-            logger.error(Strings.repeat("{} ", 5), MessageEnum.RA_QUERY_VNF_ERR.toString(), vfModuleName,
-                    "queryVfModule", ErrorCode.BusinessProcesssError.getValue(), "VnfException - queryVfModule", e);
+            logger.error(LoggingAnchor.FIVE, MessageEnum.RA_QUERY_VNF_ERR.toString(), vfModuleName, "queryVfModule",
+                    ErrorCode.BusinessProcesssError.getValue(), "VnfException - queryVfModule", e);
             VfModuleExceptionResponse excResp =
                     new VfModuleExceptionResponse(e.getMessage(), MsoExceptionCategory.INTERNAL, Boolean.FALSE, null);
             return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
@@ -611,7 +611,7 @@ public class VnfAdapterRestV2 {
 
                 response = new RollbackVfModuleResponse(Boolean.TRUE, req.getMessageId());
             } catch (VnfException e) {
-                logger.error(Strings.repeat("{} ", 3), MessageEnum.RA_ROLLBACK_VNF_ERR.toString(),
+                logger.error(LoggingAnchor.THREE, MessageEnum.RA_ROLLBACK_VNF_ERR.toString(),
                         ErrorCode.BusinessProcesssError.getValue(), "Exception - rollbackVfModule", e);
                 eresp = new VfModuleExceptionResponse(e.getMessage(), MsoExceptionCategory.INTERNAL, false,
                         req.getMessageId());

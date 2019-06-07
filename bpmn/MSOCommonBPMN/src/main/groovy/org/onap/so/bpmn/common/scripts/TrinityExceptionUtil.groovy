@@ -22,7 +22,7 @@
 
 package org.onap.so.bpmn.common.scripts
 
-import com.google.common.base.Strings
+import org.onap.so.logger.LoggingAnchor
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.apache.commons.lang3.*
 import org.onap.so.logger.ErrorCode
@@ -216,7 +216,7 @@ class TrinityExceptionUtil {
 
 		if(message != null) {
 			 execution.setVariable(prefix+"ErrorResponse",message)
-			 logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Fault", "BPMN",
+			 logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Fault", "BPMN",
 					 ErrorCode.UnknownError.getValue(),
 					 execution.getVariable(prefix+"ErrorResponse"));
 			 return message
@@ -312,7 +312,7 @@ class TrinityExceptionUtil {
 				 execution.setVariable(prefix+"err", myErr)
 				 execution.setVariable(prefix+"errTxt", messageTxt)
 				 execution.setVariable(prefix+"errVariables", msgVars)
-				 logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Fault", "BPMN",
+				 logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Fault", "BPMN",
 						 ErrorCode.UnknownError.getValue(),
 						 execution.getVariable(prefix+"ErrorResponse"));
 				 return message

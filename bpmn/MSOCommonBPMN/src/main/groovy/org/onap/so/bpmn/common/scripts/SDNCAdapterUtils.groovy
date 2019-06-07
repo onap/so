@@ -22,7 +22,7 @@
 
 package org.onap.so.bpmn.common.scripts
 
-import com.google.common.base.Strings;
+import org.onap.so.logger.LoggingAnchor;
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.L3Network
@@ -258,7 +258,7 @@ class SDNCAdapterUtils {
 
 			def callbackUrl = (String)UrnPropertiesReader.getVariable('mso.workflow.sdncadapter.callback',execution)
 			if (callbackUrl == null || callbackUrl.trim() == "") {
-				logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+				logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 						'mso:workflow:sdncadapter:callback URN is not set', "BPMN",
 						ErrorCode.UnknownError.getValue());
 				workflowException(execution, 'Internal Error', 9999) // TODO: what message and error code?
@@ -396,7 +396,7 @@ class SDNCAdapterUtils {
 
 			def callbackUrl = (String)UrnPropertiesReader.getVariable('mso.workflow.sdncadapter.callback',execution)
 			if (callbackUrl == null || callbackUrl.trim() == "") {
-				logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+				logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 						'mso:workflow:sdncadapter:callback URN is not set', "BPMN",
 						ErrorCode.UnknownError.getValue());
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Internal Error - During PreProcess Request")
@@ -469,7 +469,7 @@ class SDNCAdapterUtils {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
 					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error")
@@ -974,7 +974,7 @@ class SDNCAdapterUtils {
 
 						}
 					}else {
-						logger.warn(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_WARNING,
+						logger.warn(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_WARNING,
 								'sdncAdapter did not complete successfully, sdncAdapter Success Indicator was false ',
 								"BPMN", ErrorCode.UnknownError,
 								'sdncAdapter did not complete successfully, sdncAdapter Success Indicator was false ')
@@ -984,7 +984,7 @@ class SDNCAdapterUtils {
 					}
 
 					if (response == null || response.trim().equals("")) {
-						logger.warn(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_WARNING,
+						logger.warn(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_WARNING,
 								'sdncAdapter workflow response is empty', "BPMN",
 								ErrorCode.UnknownError, 'sdncAdapter workflow response is empty')
 						execution.setVariable("L3HLAB_rollback", true)
@@ -997,7 +997,7 @@ class SDNCAdapterUtils {
 				} catch (BpmnError e) {
 					throw e;
 				} catch (Exception e) {
-					logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught ' +
+					logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught ' +
 							'exception in ' + method, "BPMN", ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 					execution.setVariable(prefix+"ResponseCode",400)
 					execution.setVariable("L3HLAB_rollback", true)

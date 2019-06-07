@@ -25,7 +25,7 @@ package org.onap.so.asdc.installer;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.List;
-import com.google.common.base.Strings;
+import org.onap.so.logger.LoggingAnchor;
 import org.onap.sdc.api.notification.IArtifactInfo;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory;
@@ -143,14 +143,14 @@ public class ToscaResourceStructure {
             File spoolFile = new File(filePath);
 
             logger.debug("ASDC File path is: {}", spoolFile.getAbsolutePath());
-            logger.info(Strings.repeat("{} ", 4), MessageEnum.ASDC_RECEIVE_SERVICE_NOTIF.toString(), "***PATH", "ASDC",
+            logger.info(LoggingAnchor.FOUR, MessageEnum.ASDC_RECEIVE_SERVICE_NOTIF.toString(), "***PATH", "ASDC",
                     spoolFile.getAbsolutePath());
 
             sdcCsarHelper = factory.getSdcCsarHelper(spoolFile.getAbsolutePath(), false);
 
         } catch (Exception e) {
             logger.debug(e.getMessage(), e);
-            logger.error(Strings.repeat("{} ", 6), MessageEnum.ASDC_GENERAL_EXCEPTION_ARG.toString(),
+            logger.error(LoggingAnchor.SIX, MessageEnum.ASDC_GENERAL_EXCEPTION_ARG.toString(),
                     "Exception caught during parser *****LOOK********* " + artifact.getArtifactName(), "ASDC",
                     "processResourceNotification", ErrorCode.BusinessProcesssError.getValue(),
                     "Exception in " + "processResourceNotification", e);

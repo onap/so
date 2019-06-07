@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import com.google.common.base.Strings;
+import org.onap.so.logger.LoggingAnchor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -283,7 +283,7 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
         } catch (Exception exception) {
             logger.info("exception: AbstractSdncOperationTask.updateProgress fail!");
             logger.error("exception: AbstractSdncOperationTask.updateProgress fail:", exception);
-            logger.error(Strings.repeat("{} ", 5), MessageEnum.GENERAL_EXCEPTION.toString(),
+            logger.error(LoggingAnchor.FIVE, MessageEnum.GENERAL_EXCEPTION.toString(),
                     " updateProgress catch exception: ", this.getTaskName(), ErrorCode.UnknownError.getValue(),
                     exception.getClass().toString());
         }
