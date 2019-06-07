@@ -271,6 +271,7 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
         execution.setVariable("sequencedResourceList", sequencedResourceList)
         execution.setVariable("parentVNF", parentVNF)
         logger.debug("resourceSequence: " + resourceSequence)
+        logger.debug("delete resource sequence list : " + sequencedResourceList)
         logger.debug(" ======== END sequenceResource Process ======== ")
     }
 
