@@ -24,7 +24,7 @@
 package org.onap.so.adapters.vfc.util;
 
 import java.io.IOException;
-import com.google.common.base.Strings;
+import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.adapters.vfc.constant.HttpCode;
 import org.onap.so.adapters.vfc.exceptions.ApplicationException;
 import org.onap.so.logger.ErrorCode;
@@ -84,7 +84,7 @@ public class JsonUtil {
         try {
             return MAPPER.readValue(jsonstr, type);
         } catch (IOException e) {
-            logger.error(Strings.repeat("{} ", 3), MessageEnum.RA_NS_EXC.toString(),
+            logger.error(LoggingAnchor.THREE, MessageEnum.RA_NS_EXC.toString(),
                     ErrorCode.BusinessProcesssError.getValue(), UNMARSHAL_FAIL_MSG, e);
             throw new ApplicationException(HttpCode.BAD_REQUEST, UNMARSHAL_FAIL_MSG);
         }
@@ -102,7 +102,7 @@ public class JsonUtil {
         try {
             return MAPPER.readValue(jsonstr, type);
         } catch (IOException e) {
-            logger.error(Strings.repeat("{} ", 3), MessageEnum.RA_NS_EXC.toString(),
+            logger.error(LoggingAnchor.THREE, MessageEnum.RA_NS_EXC.toString(),
                     ErrorCode.BusinessProcesssError.getValue(), UNMARSHAL_FAIL_MSG, e);
             throw new ApplicationException(HttpCode.BAD_REQUEST, UNMARSHAL_FAIL_MSG);
         }
@@ -119,7 +119,7 @@ public class JsonUtil {
         try {
             return MAPPER.writeValueAsString(srcObj);
         } catch (IOException e) {
-            logger.error(Strings.repeat("{} ", 3), MessageEnum.RA_NS_EXC.toString(),
+            logger.error(LoggingAnchor.THREE, MessageEnum.RA_NS_EXC.toString(),
                     ErrorCode.BusinessProcesssError.getValue(), "fail to marshal json", e);
             throw new ApplicationException(HttpCode.BAD_REQUEST, "srcObj marshal failed!");
         }

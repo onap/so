@@ -22,7 +22,7 @@
 
 package org.onap.so.bpmn.common.scripts
 
-import com.google.common.base.Strings
+import org.onap.so.logger.LoggingAnchor
 import org.onap.so.client.HttpClientFactory
 import org.onap.so.logger.ErrorCode
 
@@ -87,7 +87,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 			if (sdncAdapterEndpoint == null || sdncAdapterEndpoint.isEmpty()) {
 				String msg = getProcessKey(execution) + ': mso:adapters:sdnc:rest:endpoint URN mapping is not defined'
 				logger.debug(msg)
-				logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+				logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 						ErrorCode.UnknownError.getValue());
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
@@ -108,7 +108,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 				if (sdncRequestId == null || sdncRequestId.isEmpty()) {
 					String msg = getProcessKey(execution) + ': no sdncRequestId in ' + requestType
 					logger.debug(msg)
-					logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+					logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 							ErrorCode.UnknownError.getValue());
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 				}
@@ -123,7 +123,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 				if (bpNotificationUrl == null || bpNotificationUrl.isEmpty()) {
 					String msg = getProcessKey(execution) + ': no bpNotificationUrl in ' + requestType
 					logger.debug(msg)
-					logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+					logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 							ErrorCode.UnknownError.getValue());
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 				}
@@ -140,7 +140,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 			} else {
 				String msg = getProcessKey(execution) + ': Unsupported request type: ' + requestType
 				logger.debug(msg)
-				logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+				logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 						ErrorCode.UnknownError.getValue());
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
@@ -155,7 +155,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 
 			if (basicAuthValue == null || basicAuthValue.isEmpty()) {
 				logger.debug(getProcessKey(execution) + ": mso:adapters:po:auth URN mapping is not defined")
-				logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+				logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 						getProcessKey(execution) + ": mso:adapters:po:auth URN mapping is not defined", "BPMN",
 						ErrorCode.UnknownError.getValue());
 			} else {
@@ -164,7 +164,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 					execution.setVariable(prefix + 'basicAuthHeaderValue', encodedString)
 				} catch (IOException ex) {
 					logger.debug(getProcessKey(execution) + ": Unable to encode BasicAuth credentials for SDNCAdapter")
-					logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 							getProcessKey(execution) + ": Unable to encode BasicAuth credentials for SDNCAdapter",
 							"BPMN", ErrorCode.UnknownError.getValue(), ex);
 				}
@@ -196,7 +196,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 		} catch (Exception e) {
 			String msg = 'Caught exception in ' + method + ": " + e
 			logger.debug(msg)
-			logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+			logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 					ErrorCode.UnknownError.getValue());
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 		}
@@ -244,7 +244,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 			} else {
 				String msg = 'Unsupported HTTP method "' + sdncAdapterMethod + '" in ' + method + ": " + e
 				logger.debug(msg)
-				logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+				logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 						ErrorCode.UnknownError.getValue());
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
@@ -258,7 +258,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 		} catch (Exception e) {
 			String msg = 'Caught exception in ' + method + ": " + e
 			logger.debug(msg, e)
-			logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+			logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 					ErrorCode.UnknownError.getValue());
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 		}
@@ -369,7 +369,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 		} catch (Exception e) {
 			String msg = 'Caught exception in ' + method + ": " + e
 			logger.debug(msg)
-			logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+			logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 					ErrorCode.UnknownError.getValue());
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 		}
@@ -395,7 +395,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 		} catch (Exception e) {
 			String msg = 'Caught exception in ' + method + ": " + e
 			logger.debug(msg)
-			logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+			logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 					ErrorCode.UnknownError.getValue());
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 		}

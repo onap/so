@@ -22,7 +22,7 @@
 
 package org.onap.so.bpmn.vcpe.scripts
 
-import com.google.common.base.Strings
+import org.onap.so.logger.LoggingAnchor
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.common.scripts.AllottedResourceUtils
@@ -352,7 +352,7 @@ public class DoDeleteAllottedResourceBRG extends AbstractServiceTaskProcessor{
 		} catch (BpmnError e) {
 			throw e;
 		}catch(Exception ex){
-			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Occurred Processing preProcessSDNCGetRequest." + ex, "BPMN",
 					ErrorCode.UnknownError.getValue(), "Exception is:" + ex);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occured during SDNC GET Method:\n" + ex.getMessage())

@@ -45,6 +45,7 @@ import org.onap.so.adapters.vnf.async.client.VnfAdapterNotify_Service;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
 import org.onap.so.entity.MsoRequest;
 import org.onap.so.logger.ErrorCode;
+import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.openstack.beans.VnfRollback;
 import org.onap.so.openstack.beans.VnfStatus;
@@ -153,7 +154,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
                 logger.error("{} {} Exception sending createVnf notification ", MessageEnum.RA_SEND_VNF_NOTIF_ERR,
                         ErrorCode.BusinessProcesssError.getValue(), e1);
             }
-            logger.info("{}", MessageEnum.RA_ASYNC_CREATE_VNF_COMPLETE);
+            logger.info(LoggingAnchor.ONE, MessageEnum.RA_ASYNC_CREATE_VNF_COMPLETE);
             return;
         }
         logger.debug("Async Create VNF: {} VnfId:{}", vnfName, vnfId.value);
@@ -245,7 +246,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
             MsoRequest msoRequest, String notificationUrl) {
 
         String serviceName = "QueryVnfA";
-        logger.info("{}", MessageEnum.RA_ASYNC_QUERY_VNF);
+        logger.info(LoggingAnchor.ONE, MessageEnum.RA_ASYNC_QUERY_VNF);
 
         // Use the synchronous method to perform the actual query
         MsoVnfAdapter vnfAdapter = vnfImpl;
@@ -323,7 +324,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
             MsoRequest msoRequest, String notificationUrl) {
 
         String serviceName = "DeleteVnfA";
-        logger.info("{}", MessageEnum.RA_ASYNC_DELETE_VNF);
+        logger.info(LoggingAnchor.ONE, MessageEnum.RA_ASYNC_DELETE_VNF);
 
         // Use the synchronous method to perform the actual delete
         MsoVnfAdapter vnfAdapter = vnfImpl;

@@ -47,6 +47,7 @@ import org.onap.so.adapters.network.async.client.UpdateNetworkNotification;
 import org.onap.so.adapters.network.exceptions.NetworkException;
 import org.onap.so.entity.MsoRequest;
 import org.onap.so.logger.ErrorCode;
+import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.openstack.beans.NetworkRollback;
 import org.onap.so.openstack.beans.NetworkStatus;
@@ -404,7 +405,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
             return;
         }
 
-        logger.info("{} {}", MessageEnum.RA_ASYNC_ROLLBACK, rollback.getNetworkStackId());
+        logger.info(LoggingAnchor.TWO, MessageEnum.RA_ASYNC_ROLLBACK, rollback.getNetworkStackId());
         // Use the synchronous method to perform the actual Create
 
 

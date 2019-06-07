@@ -23,7 +23,7 @@
 package org.onap.so.utils;
 
 
-import com.google.common.base.Strings;
+import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
@@ -90,7 +90,7 @@ public final class CryptoUtils {
         try {
             return CryptoUtils.encrypt(message, CLOUD_KEY);
         } catch (GeneralSecurityException e) {
-            logger.error(Strings.repeat("{} ", 3), MessageEnum.RA_GENERAL_EXCEPTION.toString(),
+            logger.error(LoggingAnchor.THREE, MessageEnum.RA_GENERAL_EXCEPTION.toString(),
                     ErrorCode.BusinessProcesssError.getValue(), "Exception in encryptPassword ", e);
             return null;
         }
@@ -100,7 +100,7 @@ public final class CryptoUtils {
         try {
             return CryptoUtils.decrypt(message, CLOUD_KEY);
         } catch (GeneralSecurityException e) {
-            logger.error(Strings.repeat("{} ", 3), MessageEnum.RA_GENERAL_EXCEPTION.toString(),
+            logger.error(LoggingAnchor.THREE, MessageEnum.RA_GENERAL_EXCEPTION.toString(),
                     ErrorCode.BusinessProcesssError.getValue(), "Exception in encryptPassword ", e);
             return null;
         }

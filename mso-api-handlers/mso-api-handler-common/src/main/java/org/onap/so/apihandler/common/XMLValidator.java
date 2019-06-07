@@ -31,7 +31,7 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
-import com.google.common.base.Strings;
+import org.onap.so.logger.LoggingAnchor;
 import org.apache.commons.io.IOUtils;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
@@ -95,7 +95,7 @@ public class XMLValidator {
             return "ErrorDetails: " + e.getMessage();
 
         } catch (Exception e) {
-            logger.error(Strings.repeat("{} ", 3), MessageEnum.APIH_CANNOT_READ_SCHEMA.toString(),
+            logger.error(LoggingAnchor.THREE, MessageEnum.APIH_CANNOT_READ_SCHEMA.toString(),
                     ErrorCode.SchemaError.getValue(), "APIH cannot read schema file", e);
 
             return "ErrorDetails: " + "Unable to read the schema file";

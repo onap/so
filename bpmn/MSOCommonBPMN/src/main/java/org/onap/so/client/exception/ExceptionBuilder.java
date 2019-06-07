@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import com.google.common.base.Strings;
+import org.onap.so.logger.LoggingAnchor;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.aai.domain.yang.LInterface;
@@ -76,7 +76,7 @@ public class ExceptionBuilder {
                 }
             }
 
-            logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+            logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
                     ErrorCode.UnknownError.getValue(), msg.toString());
             execution.setVariable(errorVariable, exception.getMessage());
         } catch (Exception ex) {
@@ -107,7 +107,7 @@ public class ExceptionBuilder {
                     break;
                 }
             }
-            logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+            logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
                     ErrorCode.UnknownError.getValue(), msg.toString());
             execution.setVariable(errorVariable, exception.getMessage());
         } catch (Exception ex) {

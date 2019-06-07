@@ -23,7 +23,7 @@
 
 package org.onap.so.adapters.sdnc.impl;
 
-import com.google.common.base.Strings;
+import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
@@ -70,7 +70,7 @@ public class MapRequestTunables {
 
             String[] parts = value.split("\\|"); // escape pipe
             if (parts.length < 3) {
-                logger.warn(Strings.repeat("{} ", 6), MessageEnum.RA_SDNC_INVALID_CONFIG.toString(), key, value, "SDNC",
+                logger.warn(LoggingAnchor.SIX, MessageEnum.RA_SDNC_INVALID_CONFIG.toString(), key, value, "SDNC",
                         ErrorCode.DataError.getValue(), "Invalid config");
             }
 
@@ -106,7 +106,7 @@ public class MapRequestTunables {
             error = "Missing configuration for:" + key;
         }
         if (error != null) {
-            logger.error(Strings.repeat("{} ", 5), MessageEnum.RA_SDNC_MISS_CONFIG_PARAM.toString(), key, "SDNC",
+            logger.error(LoggingAnchor.FIVE, MessageEnum.RA_SDNC_MISS_CONFIG_PARAM.toString(), key, "SDNC",
                     ErrorCode.DataError.getValue(), "Missing config param");
         }
         logger.debug("RequestTunables Key:{} Value:{} Tunables:{}", key, value, this.toString());
