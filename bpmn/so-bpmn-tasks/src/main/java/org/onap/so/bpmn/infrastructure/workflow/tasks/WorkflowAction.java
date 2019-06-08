@@ -1415,6 +1415,10 @@ public class WorkflowAction {
                     requestAction, resourceName.toString(), aLaCarte, cloudOwner);
         }
         if (northBoundRequest == null) {
+            northBoundRequest = catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScope(requestAction,
+                    resourceName.toString(), aLaCarte);
+        }
+        if (northBoundRequest == null) {
             if (aLaCarte) {
                 buildAndThrowException(execution,
                         "The request: ALaCarte " + resourceName + " " + requestAction + " is not supported by GR_API.");
