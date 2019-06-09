@@ -253,7 +253,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
     protected Stack createStack(CreateStackParam stack, String cloudSiteId, String tenantId) throws MsoException {
         try {
             OpenStackRequest<Stack> request = getHeatClient(cloudSiteId, tenantId).getStacks().create(stack);
-            saveStackRequest(request, MDC.get(ONAPLogConstants.MDCs.REQUEST_ID), stack.getStackName());
+            saveStackRequest(stack, MDC.get(ONAPLogConstants.MDCs.REQUEST_ID), stack.getStackName());
             return executeAndRecordOpenstackRequest(request);
         } catch (OpenStackResponseException e) {
             if (e.getStatus() == 409) {
@@ -341,11 +341,11 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
         }
     }
 
-    protected void saveStackRequest(OpenStackRequest<Stack> request, String requestId, String stackName) {
+    protected void saveStackRequest(CreateStackParam request, String requestId, String stackName) {
         try {
             ObjectMapper mapper = new ObjectMapper();
             InfraActiveRequests foundRequest = requestDBClient.getInfraActiveRequestbyRequestId(requestId);
-            String stackRequest = mapper.writeValueAsString(request.entity());
+            String stackRequest = mapper.writeValueAsString(request.getParameters());
             CloudApiRequests cloudReq = new CloudApiRequests();
             cloudReq.setCloudIdentifier(stackName);
             cloudReq.setRequestBody(stackRequest);

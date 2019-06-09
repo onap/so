@@ -34,7 +34,9 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -52,7 +54,6 @@ import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.exceptions.MsoOpenstackException;
 import org.onap.so.openstack.exceptions.MsoStackAlreadyExists;
 import org.springframework.core.env.Environment;
-import com.woorea.openstack.base.client.Entity;
 import com.woorea.openstack.base.client.OpenStackResponseException;
 import com.woorea.openstack.heat.Heat;
 import com.woorea.openstack.heat.StackResource;
@@ -122,7 +123,6 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
         latestStack.setStackName("stackName");
         latestStack.setStackStatus("CREATE_COMPLETE");
         latestStack.setStackStatusReason("Stack Finished");
-        doNothing().when(stackStatusHandler).updateStackStatus(stack);
         doReturn(latestStack).when(heatUtils).queryHeatStack(isA(Heat.class), eq("stackName/id"));
         doReturn(heatClient).when(heatUtils).getHeatClient(cloudSiteId, tenantId);
         Stack actual = heatUtils.pollStackForStatus(1, stack, "CREATE_IN_PROGRESS", cloudSiteId, tenantId);
@@ -397,26 +397,23 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
 
         heatUtils.createStack(createStackParam, cloudSiteId, tenantId);
         Mockito.verify(stackResource, times(1)).create(createStackParam);
-        Mockito.verify(heatUtils, times(1)).saveStackRequest(eq(mockCreateStack), isNull(), eq("stackName"));
+        Mockito.verify(heatUtils, times(1)).saveStackRequest(eq(createStackParam), isNull(), eq("stackName"));
         Mockito.verify(heatClient, times(1)).getStacks();
         Mockito.verify(stackResource, times(1)).create(createStackParam);
     }
 
     @Test
     public final void saveStack_Test() throws MsoException, IOException, NovaClientException {
-        Stack stack = new Stack();
-        stack.setId("id");
-        stack.setStackName("stackName");
-        stack.setStackStatus("CREATE_FAILED");
-        stack.setStackStatusReason(
-                "Resource CREATE failed: Conflict: resources.my_keypair: Key pair 'hst3bbfnm0011vm001' already exists. (HTTP 409) (Request-ID: req-941b0af6-63ae-4d6a-afbc-90b728bacf82");
-        Entity<Stack> entity = new Entity(stack, "application/json");
-        doReturn(entity).when(mockCreateStack).entity();
+        CreateStackParam createStackParam = new CreateStackParam();
+        createStackParam.setStackName("stackName");
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("test", "value");
+        createStackParam.setParameters(parameters);
         InfraActiveRequests request = new InfraActiveRequests();
         request.setRequestId("requestId");
         doReturn(request).when(requestDbClient).getInfraActiveRequestbyRequestId("requestId");
         doNothing().when(requestDbClient).updateInfraActiveRequests(request);
-        heatUtils.saveStackRequest(mockCreateStack, "requestId", "stackName");
+        heatUtils.saveStackRequest(createStackParam, "requestId", "stackName");
         Mockito.verify(requestDbClient, times(1)).updateInfraActiveRequests(request);
         assertNotNull(request.getCloudApiRequests().get(0));
         assertEquals(request.getCloudApiRequests().get(0).getRequestId(), "requestId");
@@ -424,14 +421,11 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
 
     @Test
     public final void saveStack__Exists_Test() throws MsoException, IOException, NovaClientException {
-        Stack stack = new Stack();
-        stack.setId("id");
-        stack.setStackName("stackName");
-        stack.setStackStatus("CREATE_FAILED");
-        stack.setStackStatusReason(
-                "Resource CREATE failed: Conflict: resources.my_keypair: Key pair 'hst3bbfnm0011vm001' already exists. (HTTP 409) (Request-ID: req-941b0af6-63ae-4d6a-afbc-90b728bacf82");
-        Entity<Stack> entity = new Entity(stack, "application/json");
-        doReturn(entity).when(mockCreateStack).entity();
+        CreateStackParam createStackParam = new CreateStackParam();
+        createStackParam.setStackName("stackName");
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("test", "value");
+        createStackParam.setParameters(parameters);
         InfraActiveRequests request = new InfraActiveRequests();
         request.setRequestId("requestId");
         CloudApiRequests cloudRequest = new CloudApiRequests();
@@ -441,7 +435,7 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
         request.getCloudApiRequests().add(cloudRequest);
         doReturn(request).when(requestDbClient).getInfraActiveRequestbyRequestId("requestId");
         doNothing().when(requestDbClient).updateInfraActiveRequests(request);
-        heatUtils.saveStackRequest(mockCreateStack, "requestId", "stackName");
+        heatUtils.saveStackRequest(createStackParam, "requestId", "stackName");
         Mockito.verify(requestDbClient, times(1)).updateInfraActiveRequests(request);
         assertNotNull(request.getCloudApiRequests().get(0));
         assertEquals("requestId", request.getCloudApiRequests().get(0).getRequestId());
@@ -463,7 +457,7 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
         exceptionRule.expectMessage("Unknown Error");
         heatUtils.createStack(createStackParam, cloudSiteId, tenantId);
         Mockito.verify(stackResource, times(1)).create(createStackParam);
-        Mockito.verify(heatUtils, times(1)).saveStackRequest(eq(mockCreateStack), isNull(), eq("stackName"));
+        Mockito.verify(heatUtils, times(1)).saveStackRequest(eq(createStackParam), isNull(), eq("stackName"));
         Mockito.verify(heatClient, times(1)).getStacks();
         Mockito.verify(stackResource, times(1)).create(createStackParam);
     }
@@ -483,7 +477,7 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
         exceptionRule.expectMessage("Stack stackName already exists in Tenant tenantId in Cloud cloudSiteId");
         heatUtils.createStack(createStackParam, cloudSiteId, tenantId);
         Mockito.verify(stackResource, times(1)).create(createStackParam);
-        Mockito.verify(heatUtils, times(1)).saveStackRequest(eq(mockCreateStack), isNull(), eq("stackName"));
+        Mockito.verify(heatUtils, times(1)).saveStackRequest(eq(createStackParam), isNull(), eq("stackName"));
         Mockito.verify(heatClient, times(1)).getStacks();
         Mockito.verify(stackResource, times(1)).create(createStackParam);
     }
