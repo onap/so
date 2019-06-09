@@ -155,6 +155,8 @@ public abstract class InfraRequests implements java.io.Serializable {
     private String requestUrl;
     @Column(name = "ORIGINAL_REQUEST_ID", length = 45)
     private String originalRequestId;
+    @Column(name = "EXT_SYSTEM_ERROR_SOURCE", length = 80)
+    private String extSystemErrorSource;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "SO_REQUEST_ID", referencedColumnName = "REQUEST_ID")
@@ -580,6 +582,14 @@ public abstract class InfraRequests implements java.io.Serializable {
         this.originalRequestId = originalRequestId;
     }
 
+    public String getExtSystemErrorSource() {
+        return this.extSystemErrorSource;
+    }
+
+    public void setExtSystemErrorSource(String extSystemErrorSource) {
+        this.extSystemErrorSource = extSystemErrorSource;
+    }
+
     @PrePersist
     protected void onCreate() {
         if (requestScope == null)
@@ -642,6 +652,7 @@ public abstract class InfraRequests implements java.io.Serializable {
                 .append("configurationName", getConfigurationName()).append("operationalEnvId", getOperationalEnvId())
                 .append("operationalEnvName", getOperationalEnvName()).append("instanceGroupId", getInstanceGroupId())
                 .append("instanceGroupName", getInstanceGroupName()).append("requestUrl", getRequestUrl())
-                .append("originalRequestId", originalRequestId).toString();
+                .append("originalRequestId", originalRequestId).append("extSystemErrorSource", extSystemErrorSource)
+                .toString();
     }
 }
