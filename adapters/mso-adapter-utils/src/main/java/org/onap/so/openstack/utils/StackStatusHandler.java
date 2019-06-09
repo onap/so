@@ -28,8 +28,8 @@ public class StackStatusHandler {
             String requestId = MDC.get(ONAPLogConstants.MDCs.REQUEST_ID);
             String stackStatus = mapper.writeValueAsString(stack);
             RequestProcessingData requestProcessingData =
-                    requestDBClient.getRequestProcessingDataBySoRequestIdAndNameAndGrouping(requestId, stack.getId(),
-                            stack.getStackName());
+                    requestDBClient.getRequestProcessingDataBySoRequestIdAndNameAndGrouping(requestId,
+                            stack.getStackName(), stack.getId());
             if (requestProcessingData == null) {
                 requestProcessingData = new RequestProcessingData();
                 requestProcessingData.setGroupingId(stack.getId());
