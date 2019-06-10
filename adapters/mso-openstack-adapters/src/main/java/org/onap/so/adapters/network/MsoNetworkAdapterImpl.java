@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
-import com.google.common.base.Strings;
+import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.adapters.network.beans.ContrailPolicyRef;
 import org.onap.so.adapters.network.beans.ContrailPolicyRefSeq;
 import org.onap.so.adapters.network.beans.ContrailSubnet;
@@ -206,7 +206,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             String error = String.format(
                     "Configuration Error. Stack %s in %s/%s: CloudSite does not exist in MSO Configuration",
                     networkName, cloudSiteId, tenantId);
-            logger.error(Strings.repeat("{} ", 3), MessageEnum.RA_CONFIG_EXC, ErrorCode.DataError.getValue(), error);
+            logger.error(LoggingAnchor.THREE, MessageEnum.RA_CONFIG_EXC, ErrorCode.DataError.getValue(), error);
             // Set the detailed error as the Exception 'message'
             throw new NetworkException(error, MsoExceptionCategory.USERDATA);
         }
@@ -241,7 +241,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 if (failIfExists != null && failIfExists) {
                     String error = String.format("Create Nework: Network %s already exists in %s/%s with ID %s",
                             networkName, cloudSiteId, tenantId, netInfo.getId());
-                    logger.error(Strings.repeat("{} ", 3), MessageEnum.RA_NETWORK_ALREADY_EXIST,
+                    logger.error(LoggingAnchor.THREE, MessageEnum.RA_NETWORK_ALREADY_EXIST,
                             ErrorCode.DataError.getValue(), error);
                     throw new NetworkException(error, MsoExceptionCategory.USERDATA);
                 } else {
@@ -286,7 +286,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             HeatTemplate heatTemplate = networkResource.getHeatTemplate();
             if (heatTemplate == null) {
                 String error = String.format("Network error - undefined Heat Template. Network Type = %s", networkType);
-                logger.error(Strings.repeat("{} ", 3), MessageEnum.RA_PARAM_NOT_FOUND, ErrorCode.DataError.getValue(),
+                logger.error(LoggingAnchor.THREE, MessageEnum.RA_PARAM_NOT_FOUND, ErrorCode.DataError.getValue(),
                         error);
                 throw new NetworkException(error, MsoExceptionCategory.INTERNAL);
             }
@@ -324,7 +324,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 if (failIfExists != null && failIfExists) {
                     String error = String.format("CreateNetwork: Stack %s already exists in %s/%s as %s", networkName,
                             cloudSiteId, tenantId, heatStack.getCanonicalName());
-                    logger.error(Strings.repeat("{} ", 3), MessageEnum.RA_NETWORK_ALREADY_EXIST,
+                    logger.error(LoggingAnchor.THREE, MessageEnum.RA_NETWORK_ALREADY_EXIST,
                             ErrorCode.DataError.getValue(), error);
                     throw new NetworkException(error, MsoExceptionCategory.USERDATA);
                 } else {
@@ -373,8 +373,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 stackParams = heat.validateStackParams(stackParams, heatTemplate);
             } catch (IllegalArgumentException e) {
                 String error = "Create Network: Configuration Error: " + e.getMessage();
-                logger.error(Strings.repeat("{} ", 3), MessageEnum.RA_CONFIG_EXC, ErrorCode.DataError.getValue(), error,
-                        e);
+                logger.error(LoggingAnchor.THREE, MessageEnum.RA_CONFIG_EXC, ErrorCode.DataError.getValue(), error, e);
                 // Input parameters were not valid
                 throw new NetworkException(error, MsoExceptionCategory.INTERNAL);
             }
@@ -540,7 +539,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             String error = String.format(
                     "UpdateNetwork: Configuration Error. Stack %s in %s/%s: CloudSite does not exist in MSO Configuration",
                     networkName, cloudSiteId, tenantId);
-            logger.error(Strings.repeat("{} ", 3), MessageEnum.RA_CONFIG_EXC, ErrorCode.DataError.getValue(), error);
+            logger.error(LoggingAnchor.THREE, MessageEnum.RA_CONFIG_EXC, ErrorCode.DataError.getValue(), error);
             // Set the detailed error as the Exception 'message'
             throw new NetworkException(error, MsoExceptionCategory.USERDATA);
         }
@@ -572,7 +571,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             if (netInfo == null) {
                 String error = String.format("Update Nework: Network %s does not exist in %s/%s", networkId,
                         cloudSiteId, tenantId);
-                logger.error(Strings.repeat("{} ", 3), MessageEnum.RA_NETWORK_NOT_FOUND,
+                logger.error(LoggingAnchor.THREE, MessageEnum.RA_NETWORK_NOT_FOUND,
                         ErrorCode.BusinessProcesssError.getValue(), error);
                 // Does not exist. Throw an exception (can't update a non-existent network)
                 throw new NetworkException(error, MsoExceptionCategory.USERDATA);
@@ -616,7 +615,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             if (heatStack == null || (heatStack.getStatus() == HeatStatus.NOTFOUND)) {
                 String error = String.format("UpdateNetwork: Stack %s does not exist in %s/%s", networkName,
                         cloudSiteId, tenantId);
-                logger.error(Strings.repeat("{} ", 3), MessageEnum.RA_NETWORK_NOT_FOUND, ErrorCode.DataError.getValue(),
+                logger.error(LoggingAnchor.THREE, MessageEnum.RA_NETWORK_NOT_FOUND, ErrorCode.DataError.getValue(),
                         error);
                 // Network stack does not exist. Return an error
                 throw new NetworkException(error, MsoExceptionCategory.USERDATA);
@@ -648,7 +647,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             HeatTemplate heatTemplate = networkResource.getHeatTemplate();
             if (heatTemplate == null) {
                 String error = "Network error - undefined Heat Template. Network Type=" + networkType;
-                logger.error(Strings.repeat("{} ", 3), MessageEnum.RA_PARAM_NOT_FOUND, ErrorCode.DataError.getValue(),
+                logger.error(LoggingAnchor.THREE, MessageEnum.RA_PARAM_NOT_FOUND, ErrorCode.DataError.getValue(),
                         error);
                 throw new NetworkException(error, MsoExceptionCategory.INTERNAL);
             }
@@ -677,8 +676,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 stackParams = heat.validateStackParams(stackParams, heatTemplate);
             } catch (IllegalArgumentException e) {
                 String error = "UpdateNetwork: Configuration Error: Network Type=" + networkType;
-                logger.error(Strings.repeat("{} ", 3), MessageEnum.RA_CONFIG_EXC, ErrorCode.DataError.getValue(),
-                        error);
+                logger.error(LoggingAnchor.THREE, MessageEnum.RA_CONFIG_EXC, ErrorCode.DataError.getValue(), error);
                 throw new NetworkException(error, MsoExceptionCategory.INTERNAL, e);
             }
 
@@ -808,7 +806,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             String error = String.format(
                     "Create/UpdateNetwork: Unable to get network resource with NetworkType: %s or ModelCustomizationUUID:%s",
                     networkType, modelCustomizationUuid);
-            logger.error(Strings.repeat("{} ", 3), MessageEnum.RA_UNKOWN_PARAM, ErrorCode.DataError.getValue(), error);
+            logger.error(LoggingAnchor.THREE, MessageEnum.RA_UNKOWN_PARAM, ErrorCode.DataError.getValue(), error);
 
             throw new NetworkException(error, MsoExceptionCategory.USERDATA);
         }
@@ -820,7 +818,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         // All Networks are orchestrated via HEAT or Neutron
         if (!("HEAT".equals(mode) || NEUTRON_MODE.equals(mode))) {
             String error = "CreateNetwork: Configuration Error: Network Type = " + networkType;
-            logger.error(Strings.repeat("{} ", 3), MessageEnum.RA_NETWORK_ORCHE_MODE_NOT_SUPPORT,
+            logger.error(LoggingAnchor.THREE, MessageEnum.RA_NETWORK_ORCHE_MODE_NOT_SUPPORT,
                     ErrorCode.DataError.getValue(), error);
             throw new NetworkException(error, MsoExceptionCategory.INTERNAL);
         }
@@ -842,7 +840,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                     "Network Type:%s Version_Min:%s Version_Max:%s not supported on Cloud:%s with AIC_Version:%s",
                     networkType, networkType, networkResource.getAicVersionMin(), networkResource.getAicVersionMax(),
                     cloudSiteId, cloudSite.getCloudVersion());
-            logger.error(Strings.repeat("{} ", 3), MessageEnum.RA_CONFIG_EXC, ErrorCode.DataError.getValue(), error);
+            logger.error(LoggingAnchor.THREE, MessageEnum.RA_CONFIG_EXC, ErrorCode.DataError.getValue(), error);
             throw new NetworkException(error, MsoExceptionCategory.USERDATA);
         }
 
@@ -851,7 +849,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 validateNetworkParams(neutronNetworkType, networkName, physicalNetworkName, vlans, routeTargets);
         if (!missing.isEmpty()) {
             String error = "Create Network: Missing parameters: " + missing;
-            logger.error(Strings.repeat("{} ", 3), MessageEnum.RA_MISSING_PARAM, ErrorCode.DataError.getValue(), error);
+            logger.error(LoggingAnchor.THREE, MessageEnum.RA_MISSING_PARAM, ErrorCode.DataError.getValue(), error);
 
             throw new NetworkException(error, MsoExceptionCategory.USERDATA);
         }
@@ -896,7 +894,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 || commonUtils.isNullOrEmpty(networkNameOrId)) {
 
             String error = "Missing mandatory parameter cloudSiteId, tenantId or networkId";
-            logger.error(Strings.repeat("{} ", 3), MessageEnum.RA_MISSING_PARAM, ErrorCode.DataError.getValue(), error);
+            logger.error(LoggingAnchor.THREE, MessageEnum.RA_MISSING_PARAM, ErrorCode.DataError.getValue(), error);
             throw new NetworkException(error, MsoExceptionCategory.USERDATA);
         }
 
@@ -905,7 +903,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             String error = String.format(
                     "Configuration Error. Stack %s in %s/%s: CloudSite does not exist in MSO Configuration",
                     networkNameOrId, cloudSiteId, tenantId);
-            logger.error(Strings.repeat("{} ", 3), MessageEnum.RA_CONFIG_EXC, ErrorCode.DataError.getValue(), error);
+            logger.error(LoggingAnchor.THREE, MessageEnum.RA_CONFIG_EXC, ErrorCode.DataError.getValue(), error);
             // Set the detailed error as the Exception 'message'
             throw new NetworkException(error, MsoExceptionCategory.USERDATA);
         }
@@ -1023,7 +1021,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         if (commonUtils.isNullOrEmpty(cloudSiteId) || commonUtils.isNullOrEmpty(tenantId)
                 || commonUtils.isNullOrEmpty(networkId)) {
             String error = "Missing mandatory parameter cloudSiteId, tenantId or networkId";
-            logger.error(Strings.repeat("{} ", 3), MessageEnum.RA_MISSING_PARAM, ErrorCode.DataError.getValue(), error);
+            logger.error(LoggingAnchor.THREE, MessageEnum.RA_MISSING_PARAM, ErrorCode.DataError.getValue(), error);
             throw new NetworkException(error, MsoExceptionCategory.USERDATA);
         }
 
@@ -1315,8 +1313,8 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             logger.debug("Json PolicyRefs Data:{}", jsonString);
         } catch (Exception e) {
             String error = "Error creating JsonNode for policyRefs Data";
-            logger.error(Strings.repeat("{} ", 3), MessageEnum.RA_MARSHING_ERROR,
-                    ErrorCode.BusinessProcesssError.getValue(), error, e);
+            logger.error(LoggingAnchor.THREE, MessageEnum.RA_MARSHING_ERROR, ErrorCode.BusinessProcesssError.getValue(),
+                    error, e);
             throw new MsoAdapterException(error);
         }
         // update parameters
@@ -1392,8 +1390,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             logger.debug("Json Subnet List:{}", jsonString);
         } catch (Exception e) {
             String error = "Error creating JsonNode from input subnets";
-            logger.error(Strings.repeat("{} ", 3), MessageEnum.RA_MARSHING_ERROR, ErrorCode.DataError.getValue(), error,
-                    e);
+            logger.error(LoggingAnchor.THREE, MessageEnum.RA_MARSHING_ERROR, ErrorCode.DataError.getValue(), error, e);
             throw new MsoAdapterException(error);
         }
         // update parameters
@@ -1439,8 +1436,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 curR = curR.replace("%subnetId%", subnet.getSubnetId());
             } else {
                 String error = "Missing Required AAI SubnetId for subnet in HEAT Template";
-                logger.error(Strings.repeat("{} ", 3), MessageEnum.RA_MISSING_PARAM, ErrorCode.DataError.getValue(),
-                        error);
+                logger.error(LoggingAnchor.THREE, MessageEnum.RA_MISSING_PARAM, ErrorCode.DataError.getValue(), error);
                 throw new MsoAdapterException(error);
             }
 
@@ -1454,8 +1450,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 curR = curR.replace("%cidr%", subnet.getCidr());
             } else {
                 String error = "Missing Required cidr for subnet in HEAT Template";
-                logger.error(Strings.repeat("{} ", 3), MessageEnum.RA_MISSING_PARAM, ErrorCode.DataError.getValue(),
-                        error);
+                logger.error(LoggingAnchor.THREE, MessageEnum.RA_MISSING_PARAM, ErrorCode.DataError.getValue(), error);
                 throw new MsoAdapterException(error);
             }
 

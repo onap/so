@@ -22,7 +22,7 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import com.google.common.base.Strings
+import org.onap.so.logger.LoggingAnchor
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.v12.GenericVnf;
@@ -252,7 +252,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 			String restFaultMessage = e.getMessage()
 			//execution.setVariable("CVFMODVOL2_RESTFault", restFaultMessage)
 			//execution.setVariable("CVFMODVOL2_isDataOk", false)
-			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					" Exception Encountered - " + "\n" + restFaultMessage, "BPMN",
 					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 400, "Internal Error - During PreProcessRequest")
@@ -302,7 +302,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Encountered ", "BPMN",
 					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in sendResponse(): ' + e.getMessage())
@@ -403,7 +403,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 			logger.debug("Outgoing MsoCompletionRequest: \n" + payload)
 
 		}catch(Exception e){
-			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Occured Processing PostProcessResponse - " + "\n", "BPMN",
 					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			execution.setVariable("CVFMI_ErrorResponse", "Error Occured during PostProcessResponse Method:\n" + e.getMessage())
@@ -480,7 +480,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Caught exception in " + method , "BPMN",
 					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Invalid Message")
@@ -529,7 +529,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 			logger.debug("CreateVfModuleInfra Outgoing UpdateInfra Request: " + payload)
 
 		}catch(Exception e){
-			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Occured Processing prepareUpdateInfraRequest.", "BPMN",
 					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during prepareUpdateInfraRequest Method:\n" + e.getMessage())
@@ -585,7 +585,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Caught exception in " + method , "BPMN",
 					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildWorkflowException(execution, 2000, 'Internal Error')

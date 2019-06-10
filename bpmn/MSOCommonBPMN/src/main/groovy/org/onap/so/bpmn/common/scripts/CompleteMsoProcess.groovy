@@ -22,7 +22,7 @@
 
 package org.onap.so.bpmn.common.scripts
 
-import com.google.common.base.Strings
+import org.onap.so.logger.LoggingAnchor
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.logger.ErrorCode
@@ -75,7 +75,7 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in' +
+			logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in' +
 					' ' + method, "BPMN", ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Internal Error - Occured in" + method)
 		}
@@ -237,7 +237,7 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
 					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Internal Error - Occured in" + method)
@@ -270,7 +270,7 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
 			logger.debug("Rethrowing MSOWorkflowException")
 			throw e;
 		} catch (Exception e) {
-			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
 					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Internal Error - Occured in" + method)
@@ -308,7 +308,7 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
 				} catch (BpmnError e) {
 					throw e;
 				} catch (Exception e) {
-					logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 							'Caught exception in ' + method, "BPMN",
 							ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Internal Error - Occured in" + method)

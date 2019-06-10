@@ -31,7 +31,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import com.google.common.base.Strings;
+import org.onap.so.logger.LoggingAnchor;
 import org.apache.http.HttpStatus;
 import org.onap.so.adapters.sdnc.exception.SDNCAdapterException;
 import org.onap.so.adapters.sdncrest.RequestInformation;
@@ -186,7 +186,7 @@ public class SDNCServiceRequestTask {
             addTextChild(agnosticServiceInformation, "content-type", contentType);
             addTextChild(agnosticServiceInformation, "anydata", anydata);
         } catch (Exception e) {
-            logger.error(Strings.repeat("{} ", 4), MessageEnum.RA_ERROR_CREATE_SDNC_REQUEST.toString(), "SDNC",
+            logger.error(LoggingAnchor.FOUR, MessageEnum.RA_ERROR_CREATE_SDNC_REQUEST.toString(), "SDNC",
                     ErrorCode.BusinessProcesssError.getValue(), "Exception in genSdncReq", e);
             return null;
         }
@@ -205,7 +205,7 @@ public class SDNCServiceRequestTask {
             transformer.transform(new DOMSource(doc), new StreamResult(writer));
             xml = writer.toString();
         } catch (Exception e) {
-            logger.error(Strings.repeat("{} ", 3), MessageEnum.RA_ERROR_CONVERT_XML2STR.toString(),
+            logger.error(LoggingAnchor.THREE, MessageEnum.RA_ERROR_CONVERT_XML2STR.toString(),
                     ErrorCode.DataError.getValue(), "Exception - domToStr", e);
             return null;
         }

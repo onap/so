@@ -24,7 +24,7 @@ package org.onap.so.bpmn.infrastructure.appc.tasks;
 
 import java.util.HashMap;
 import java.util.Optional;
-import com.google.common.base.Strings;
+import org.onap.so.logger.LoggingAnchor;
 import org.onap.appc.client.lcm.model.Action;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
@@ -141,7 +141,7 @@ public class AppcRunTasks {
             appcMessage = appCClient.getErrorMessage();
             mapRollbackVariables(execution, action, appcCode);
         } catch (Exception e) {
-            logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION.toString(),
+            logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION.toString(),
                     "Caught exception in runAppcCommand", "BPMN", ErrorCode.UnknownError.getValue(), "APPC Error", e);
             appcMessage = e.getMessage();
         }

@@ -40,11 +40,11 @@ import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.ErrorCode;
+import org.onap.so.logger.LoggingAnchor
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.web.util.UriUtils
-import com.google.common.base.Strings
 import groovy.json.*
 
 /**
@@ -330,7 +330,7 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
             logger.debug("CreateVfModuleInfra Outgoing updateServiceOperStatusRequest Request: " + payload)
 
         }catch(Exception e){
-			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Occured Processing prepareInitServiceOperationStatus.", "BPMN",
 					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
             execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during prepareInitServiceOperationStatus Method:\n" + e.getMessage())

@@ -22,7 +22,7 @@
 
 package org.onap.so.bpmn.common.scripts
 
-import com.google.common.base.Strings
+import org.onap.so.logger.LoggingAnchor
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.core.json.JsonUtils
@@ -121,7 +121,7 @@ public class AppCClient extends AbstractServiceTaskProcessor{
 			appcMessage = client.getErrorMessage()
 		}
 		catch (BpmnError e) {
-			logger.error(Strings.repeat("{} ", 5), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
 					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			appcMessage = e.getMessage()

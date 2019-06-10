@@ -25,7 +25,7 @@ package org.onap.so.bpmn.common.workflow.context;
 
 import java.util.concurrent.DelayQueue;
 import java.util.concurrent.TimeUnit;
-import com.google.common.base.Strings;
+import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
@@ -131,7 +131,7 @@ public class WorkflowContextHolder {
                     Thread.currentThread().interrupt();
                 } catch (Exception e) {
                     logger.debug("WorkflowContextHolder timeout thread caught exception: ", e);
-                    logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN",
+                    logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN",
                             ErrorCode.UnknownError.getValue(), "Error in WorkflowContextHolder timeout thread");
                 }
             }

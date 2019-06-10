@@ -22,7 +22,7 @@
 
 package org.onap.so.bpmn.common.scripts
 
-import com.google.common.base.Strings;
+import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.logger.ErrorCode;
 
@@ -75,7 +75,7 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 				def encodedString = utils.getBasicAuth(basicAuthValue, UrnPropertiesReader.getVariable("mso.msoKey", execution))
 				execution.setVariable("BasicAuthHeaderValue",encodedString)
 			} catch (IOException ex) {
-				logger.error(Strings.repeat("{} ", 4), MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+				logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 						"Unable to encode username password string", "BPMN",
 						ErrorCode.UnknownError.getValue());
 			}

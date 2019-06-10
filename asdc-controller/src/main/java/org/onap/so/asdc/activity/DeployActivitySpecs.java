@@ -22,7 +22,7 @@ package org.onap.so.asdc.activity;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.google.common.base.Strings;
+import org.onap.so.logger.LoggingAnchor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -67,16 +67,15 @@ public class DeployActivitySpecs {
             ActivitySpec activitySpec = mapActivitySpecFromCatalogToSdc(activitySpecFromCatalog);
             String activitySpecId = activitySpecsActions.createActivitySpec(hostname, activitySpec);
             if (activitySpecId != null) {
-                logger.info(Strings.repeat("{} ", 2), "Successfully created activitySpec", activitySpec.getName());
+                logger.info(LoggingAnchor.TWO, "Successfully created activitySpec", activitySpec.getName());
                 boolean certificationResult = activitySpecsActions.certifyActivitySpec(hostname, activitySpecId);
                 if (certificationResult) {
-                    logger.info(Strings.repeat("{} ", 2), "Successfully certified activitySpec",
-                            activitySpec.getName());
+                    logger.info(LoggingAnchor.TWO, "Successfully certified activitySpec", activitySpec.getName());
                 } else {
-                    logger.info(Strings.repeat("{} ", 2), "Failed to certify activitySpec", activitySpec.getName());
+                    logger.info(LoggingAnchor.TWO, "Failed to certify activitySpec", activitySpec.getName());
                 }
             } else {
-                logger.info(Strings.repeat("{} ", 2), "Failed to create activitySpec", activitySpec.getName());
+                logger.info(LoggingAnchor.TWO, "Failed to create activitySpec", activitySpec.getName());
             }
         }
     }
