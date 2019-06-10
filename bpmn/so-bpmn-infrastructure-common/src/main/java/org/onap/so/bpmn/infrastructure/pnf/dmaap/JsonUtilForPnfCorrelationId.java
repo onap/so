@@ -5,6 +5,7 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Copyright (C) 2018 Nokia.
+ * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,15 +36,18 @@ public final class JsonUtilForPnfCorrelationId {
 
     private static final String JSON_PNF_CORRELATION_ID_FIELD_NAME = "correlationId";
 
+    private JsonUtilForPnfCorrelationId() {
+        throw new IllegalStateException("Utility class");
+    }
+
     static List<String> parseJsonToGelAllPnfCorrelationId(String json) {
         JsonElement je = new JsonParser().parse(json);
         JsonArray array = je.getAsJsonArray();
         List<String> list = new ArrayList<>();
         Spliterator<JsonElement> spliterator = array.spliterator();
-        spliterator.forEachRemaining(jsonElement -> {
-            handleEscapedCharacters(jsonElement).ifPresent(jsonObject -> getPnfCorrelationId(jsonObject)
-                    .ifPresent(pnfCorrelationId -> list.add(pnfCorrelationId)));
-        });
+        spliterator.forEachRemaining(jsonElement -> handleEscapedCharacters(jsonElement)
+                .ifPresent(jsonObject -> getPnfCorrelationId(jsonObject)
+                        .ifPresent(pnfCorrelationId -> list.add(pnfCorrelationId))));
         return list;
     }
 
