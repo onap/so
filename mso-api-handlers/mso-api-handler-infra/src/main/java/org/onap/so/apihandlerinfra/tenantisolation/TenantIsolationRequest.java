@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.ws.rs.core.MultivaluedMap;
-import org.onap.so.logger.LoggingAnchor;
 import org.apache.commons.lang3.StringUtils;
 import org.onap.so.apihandlerinfra.Constants;
 import org.onap.so.apihandlerinfra.Status;
@@ -46,8 +45,6 @@ import org.onap.so.apihandlerinfra.vnfbeans.RequestStatusType;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.exceptions.ValidationException;
-import org.onap.so.logger.ErrorCode;
-import org.onap.so.logger.MessageEnum;
 import org.onap.so.utils.UUIDChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -357,8 +354,7 @@ public class TenantIsolationRequest {
             request.setLastModifiedBy(Constants.MODIFIED_BY_APIHANDLER);
             requestsDbClient.save(request);
         } catch (Exception e) {
-            logger.error(LoggingAnchor.FOUR, MessageEnum.APIH_DB_UPDATE_EXC.toString(), e.getMessage(),
-                    ErrorCode.DataError.getValue(), "Exception when updating record in DB");
+            logger.error("Exception when updating record in DB", e);
             logger.debug("Exception: ", e);
         }
     }
