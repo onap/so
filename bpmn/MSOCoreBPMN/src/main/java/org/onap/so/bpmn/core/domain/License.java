@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,7 +24,6 @@ package org.onap.so.bpmn.core.domain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import org.json.JSONArray;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -40,9 +41,9 @@ public class License extends JsonWrapper implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private List<String> entitlementPoolList = new ArrayList<String>();
+    private List<String> entitlementPoolList = new ArrayList();
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private List<String> licenseKeyGroupList = new ArrayList<String>();
+    private List<String> licenseKeyGroupList = new ArrayList<>();
 
 
     public List<String> getEntitlementPoolList() {

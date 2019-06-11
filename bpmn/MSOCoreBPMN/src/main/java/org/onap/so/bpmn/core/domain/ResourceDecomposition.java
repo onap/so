@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,7 +29,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * Abstract superclass for all individual decomposition resources
  * 
  */
-// @JsonIgnoreProperties
 public abstract class ResourceDecomposition extends JsonWrapper implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -74,9 +75,6 @@ public abstract class ResourceDecomposition extends JsonWrapper implements Seria
     public String getResourceInstanceName() {
         return this.getInstanceData().getInstanceName();
     }
-    // @JsonIgnore
-    // public String getResourceHomingSolution() {
-    // }
 
     public void setResourceInstanceId(String newInstanceId) {
         this.getInstanceData().setInstanceId(newInstanceId);
@@ -85,7 +83,4 @@ public abstract class ResourceDecomposition extends JsonWrapper implements Seria
     public void setResourceInstanceName(String newInstanceName) {
         this.getInstanceData().setInstanceName(newInstanceName);
     }
-    // @JsonIgnore
-    // public String setResourceHomingSolution() {
-    // }
 }
