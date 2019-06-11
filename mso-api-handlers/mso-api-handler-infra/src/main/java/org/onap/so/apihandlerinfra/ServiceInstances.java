@@ -203,7 +203,7 @@ public class ServiceInstances {
             @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
             throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
-        HashMap<String, String> instanceIdMap = new HashMap<String, String>();
+        HashMap<String, String> instanceIdMap = new HashMap<>();
         instanceIdMap.put("serviceInstanceId", serviceInstanceId);
         return serviceInstances(request, Action.unassignInstance, instanceIdMap, version, requestId,
                 requestHandlerUtils.getRequestUri(requestContext, uriPrefix));
@@ -759,10 +759,9 @@ public class ServiceInstances {
 
     public Response serviceInstances(String requestJSON, Actions action, HashMap<String, String> instanceIdMap,
             String version, String requestId, String requestUri) throws ApiException {
-        String serviceInstanceId = (instanceIdMap == null) ? null : instanceIdMap.get("serviceInstanceId");
+        String serviceInstanceId;
         Boolean aLaCarte = null;
-        long startTime = System.currentTimeMillis();
-        ServiceInstancesRequest sir = null;
+        ServiceInstancesRequest sir;
         String apiVersion = version.substring(1);
 
         sir = requestHandlerUtils.convertJsonToServiceInstanceRequest(requestJSON, action, requestId, requestUri);
@@ -914,7 +913,6 @@ public class ServiceInstances {
             String requestId, String requestUri, ContainerRequestContext requestContext) throws ApiException {
         String instanceGroupId = instanceIdMap.get(CommonConstants.INSTANCE_GROUP_INSTANCE_ID);
         Boolean aLaCarte = true;
-        long startTime = System.currentTimeMillis();
         String apiVersion = version.substring(1);
         ServiceInstancesRequest sir = new ServiceInstancesRequest();
         sir.setInstanceGroupId(instanceGroupId);
@@ -1231,8 +1229,7 @@ public class ServiceInstances {
         return mapFlatMapToNameValue(userParams);
     }
 
-    private Service serviceMapper(Map<String, Object> params)
-            throws JsonProcessingException, IOException, JsonParseException, JsonMappingException {
+    private Service serviceMapper(Map<String, Object> params) throws IOException {
         ObjectMapper obj = new ObjectMapper();
         String input = obj.writeValueAsString(params.get("service"));
         return obj.readValue(input, Service.class);
@@ -1269,7 +1266,7 @@ public class ServiceInstances {
             instanceList = servInstReq.getRequestDetails().getRelatedInstanceList();
         }
 
-        Recipe recipe = null;
+        Recipe recipe;
         String defaultSource = requestHandlerUtils.getDefaultModel(servInstReq);
         String modelCustomizationId = modelInfo.getModelCustomizationId();
         String modelCustomizationName = modelInfo.getModelCustomizationName();
@@ -1559,13 +1556,11 @@ public class ServiceInstances {
 
     private Response configurationRecipeLookup(String requestJSON, Action action, HashMap<String, String> instanceIdMap,
             String version, String requestId, String requestUri) throws ApiException {
-        String serviceInstanceId = (instanceIdMap == null) ? null : instanceIdMap.get("serviceInstanceId");
+        String serviceInstanceId;
         Boolean aLaCarte = null;
         String apiVersion = version.substring(1);
         boolean inProgress = false;
-
-        long startTime = System.currentTimeMillis();
-        ServiceInstancesRequest sir = null;
+        ServiceInstancesRequest sir;
 
         sir = requestHandlerUtils.convertJsonToServiceInstanceRequest(requestJSON, action, requestId, requestUri);
         String requestScope = requestHandlerUtils.deriveRequestScope(action, sir, requestUri);
