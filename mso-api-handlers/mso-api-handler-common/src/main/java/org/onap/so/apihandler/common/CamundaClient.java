@@ -27,7 +27,6 @@ package org.onap.so.apihandler.common;
 import java.io.IOException;
 import java.util.UUID;
 import javax.xml.bind.DatatypeConverter;
-import org.onap.so.logger.LoggingAnchor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -38,8 +37,6 @@ import org.onap.so.apihandler.camundabeans.CamundaInput;
 import org.onap.so.apihandler.camundabeans.CamundaIntegerInput;
 import org.onap.so.apihandler.camundabeans.CamundaRequest;
 import org.onap.so.apihandler.camundabeans.CamundaVIDRequest;
-import org.onap.so.logger.ErrorCode;
-import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -162,8 +159,7 @@ public class CamundaClient extends RequestClient {
             jsonReq = mapper.writeValueAsString(camundaRequest);
             logger.trace("request body is {}", jsonReq);
         } catch (Exception e) {
-            logger.error(LoggingAnchor.FIVE, MessageEnum.APIH_WARP_REQUEST.toString(), "Camunda", "wrapRequest",
-                    ErrorCode.BusinessProcesssError.getValue(), "Error in APIH Warp request", e);
+            logger.error("Error in APIH Warp request", e);
         }
         return jsonReq;
     }
@@ -253,8 +249,7 @@ public class CamundaClient extends RequestClient {
             jsonReq = mapper.writeValueAsString(camundaRequest);
             logger.trace("request body is {}", jsonReq);
         } catch (Exception e) {
-            logger.error(LoggingAnchor.FIVE, MessageEnum.APIH_WARP_REQUEST.toString(), "Camunda", "wrapVIDRequest",
-                    ErrorCode.BusinessProcesssError.getValue(), "Error in APIH Warp request", e);
+            logger.error("Error in APIH Warp request", e);
         }
         return jsonReq;
     }

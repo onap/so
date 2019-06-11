@@ -92,7 +92,7 @@ public class CloudResourcesOrchestration {
 
         CloudOrchestrationRequest cor = null;
 
-        logger.debug("requestId is: " + requestId);
+        logger.debug("requestId is: {}", requestId);
 
         try {
             ObjectMapper mapper = new ObjectMapper();

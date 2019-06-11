@@ -52,7 +52,7 @@ public class RequestIdFilter implements ContainerRequestFilter {
 
         if (infraActiveRequests != null) {
             MDC.put(ONAPLogConstants.MDCs.RESPONSE_CODE, String.valueOf(HttpStatus.SC_BAD_REQUEST));
-            logger.error("RequestID exists in RequestDB.InfraActiveRequests : " + requestId);
+            logger.error("RequestID exists in RequestDB.InfraActiveRequests : {}", requestId);
         }
     }
 }

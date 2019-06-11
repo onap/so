@@ -36,18 +36,15 @@ import javax.ws.rs.ext.Provider;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
-import org.onap.so.logger.ErrorCode;
-import org.onap.so.logger.MessageEnum;
 import org.onap.so.serviceinstancebeans.RequestError;
 import org.onap.so.serviceinstancebeans.ServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Provider
 public class ApiExceptionMapper implements ExceptionMapper<ApiException> {
@@ -135,8 +132,7 @@ public class ApiExceptionMapper implements ExceptionMapper<ApiException> {
         } catch (JsonProcessingException | JAXBException e) {
             String errorMsg =
                     "Exception in buildServiceErrorResponse writing exceptionType to string " + e.getMessage();
-            logger.error(LoggingAnchor.FOUR, MessageEnum.GENERAL_EXCEPTION.toString(), "BuildServiceErrorResponse",
-                    ErrorCode.DataError.getValue(), errorMsg, e);
+            logger.error("BuildServiceErrorResponse", e);
             return errorMsg;
         }
 
