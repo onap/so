@@ -11,7 +11,7 @@ The SO provides the highest level of service orchestration in the ONAP architect
 Version: 1.4.4
 --------------
 
-:Release Date: 2019-06-06
+:Release Date: 2019-06-13
 
 **Docker Images**
 
@@ -218,7 +218,9 @@ The main goal of the Dublin release was to:
 
 **Known Issues**
 
-	TBD
+Testing Terminate and Delete of ETSI VNFM Adapter is done and has some of the minor issues pending, it will be done in El Alto.
+
+-  [`SO-1742 <https://jira.onap.org/browse/SO-1742>`__\ ] - Test Terminate/Delete VNF with VNFM Adapter	
 
 **Upgrade Notes**
 
