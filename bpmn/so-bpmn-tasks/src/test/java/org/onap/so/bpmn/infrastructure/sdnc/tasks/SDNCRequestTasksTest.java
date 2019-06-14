@@ -23,8 +23,6 @@ package org.onap.so.bpmn.infrastructure.sdnc.tasks;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Files;
@@ -39,7 +37,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -68,6 +65,7 @@ public class SDNCRequestTasksTest extends SDNCRequestTasks {
 
     @Mock
     SDNCClient sdncClient;
+
 
     @Spy
     private ExceptionBuilder exceptionBuilder;
@@ -151,7 +149,7 @@ public class SDNCRequestTasksTest extends SDNCRequestTasks {
         db = dbf.newDocumentBuilder();
         Document doc = db.parse(new InputSource(new StringReader(sdncResponse)));
 
-        String finalMessageIndicator = getXmlElement(doc, "/input/ack-final-indicator");
+        String finalMessageIndicator = getXmlElement(doc, "//*:ack-final-indicator");
         String responseCode = getXmlElement(doc, "/input/response-code");
         String responseMessage = getXmlElement(doc, "/input/response-message");
 

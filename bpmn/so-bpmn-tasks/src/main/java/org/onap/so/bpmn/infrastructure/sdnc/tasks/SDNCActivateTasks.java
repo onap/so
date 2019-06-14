@@ -22,6 +22,8 @@
 
 package org.onap.so.bpmn.infrastructure.sdnc.tasks;
 
+import java.net.URI;
+import javax.ws.rs.core.UriBuilder;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiNetworkOperationInformation;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVfModuleOperationInformation;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfOperationInformation;
@@ -46,6 +48,7 @@ import org.onap.so.client.sdnc.endpoint.SDNCTopology;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -62,7 +65,8 @@ public class SDNCActivateTasks {
     private SDNCNetworkResources sdncNetworkResources;
     @Autowired
     private SDNCVfModuleResources sdncVfModuleResources;
-
+    @Autowired
+    private Environment env;
 
     public void activateVnf(BuildingBlockExecution execution) {
         try {
@@ -122,9 +126,12 @@ public class SDNCActivateTasks {
             vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
             Customer customer = gBBInput.getCustomer();
             CloudRegion cloudRegion = gBBInput.getCloudRegion();
-            GenericResourceApiVfModuleOperationInformation req = sdncVfModuleResources.activateVfModule(vfModule, vnf,
-                    serviceInstance, customer, cloudRegion, requestContext);
             SDNCRequest sdncRequest = new SDNCRequest();
+            UriBuilder builder = UriBuilder.fromPath(env.getRequiredProperty("mso.workflow.message.endpoint"))
+                    .path(sdncRequest.getCorrelationName()).path(sdncRequest.getCorrelationValue());
+            URI uri = builder.build();
+            GenericResourceApiVfModuleOperationInformation req = sdncVfModuleResources.activateVfModule(vfModule, vnf,
+                    serviceInstance, customer, cloudRegion, requestContext, uri);
             sdncRequest.setSDNCPayload(req);
             sdncRequest.setTopology(SDNCTopology.VFMODULE);
             execution.setVariable(SDNC_REQUEST, sdncRequest);

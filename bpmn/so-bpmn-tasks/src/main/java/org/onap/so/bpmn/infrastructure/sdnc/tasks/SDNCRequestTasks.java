@@ -21,8 +21,13 @@
 package org.onap.so.bpmn.infrastructure.sdnc.tasks;
 
 import java.io.StringReader;
+import java.io.StringWriter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -98,12 +103,18 @@ public class SDNCRequestTasks {
             Document doc = db.parse(new InputSource(new StringReader(asyncRequest)));
 
             String finalMessageIndicator = getXmlElement(doc, "/input/ack-final-indicator");
+
             boolean isCallbackCompleted = convertIndicatorToBoolean(finalMessageIndicator);
             execution.setVariable(IS_CALLBACK_COMPLETED, isCallbackCompleted);
             if (isCallbackCompleted) {
                 String responseCode = getXmlElement(doc, "/input/response-code");
-                String responseMessage = getXmlElement(doc, "/input/response-message");
                 if (!SDNC_SUCCESS.equalsIgnoreCase(responseCode)) {
+                    String responseMessage;
+                    try {
+                        responseMessage = getXmlElement(doc, "/input/response-message");
+                    } catch (Exception e) {
+                        responseMessage = "Unknown Error in SDNC";
+                    }
                     throw new SDNCErrorResponseException(responseMessage);
                 }
             }
@@ -126,8 +137,17 @@ public class SDNCRequestTasks {
     }
 
     protected String getXmlElement(Document doc, String exp) throws Exception {
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer transformer = tf.newTransformer();
+        StringWriter writer = new StringWriter();
+        transformer.transform(new DOMSource(doc), new StreamResult(writer));
+        logger.debug(writer.getBuffer().toString());
         XPath xPath = XPathFactory.newInstance().newXPath();
-        return xPath.evaluate(exp, doc);
+        String result = xPath.evaluate(exp, doc);
+        if (result == null || result.isEmpty()) {
+            throw new Exception("XPath Failed to find element expression: " + exp);
+        }
+        return result;
     }
 
 }
