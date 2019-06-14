@@ -86,6 +86,9 @@ public class RequestProcessingData implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date created = null;
 
+    @Column(name = "IS_DATA_INTERNAL")
+    private Boolean isDataInternal = true;
+
     @Override
     public boolean equals(final Object other) {
         if (!(other instanceof RequestProcessingData)) {
@@ -105,7 +108,7 @@ public class RequestProcessingData implements Serializable {
     public String toString() {
         return new ToStringBuilder(this).append("id", id).append("soRequestId", soRequestId)
                 .append("groupingId", groupingId).append("name", name).append("value", value).append("tag", tag)
-                .toString();
+                .append("isDataInternal", isDataInternal).toString();
     }
 
     @PrePersist
@@ -163,5 +166,13 @@ public class RequestProcessingData implements Serializable {
 
     public Date getCreated() {
         return created;
+    }
+
+    public Boolean getIsDataInternal() {
+        return isDataInternal;
+    }
+
+    public void setIsDataInternal(Boolean isDataInternal) {
+        this.isDataInternal = isDataInternal;
     }
 }
