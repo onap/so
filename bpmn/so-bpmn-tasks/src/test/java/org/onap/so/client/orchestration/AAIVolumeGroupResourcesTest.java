@@ -21,7 +21,10 @@
 package org.onap.so.client.orchestration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -39,8 +42,11 @@ import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
+import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIResourcesClient;
+import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
+import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 
@@ -145,5 +151,23 @@ public class AAIVolumeGroupResourcesTest extends TestDataSetup {
         verify(MOCK_aaiResourcesClient, times(1)).update(any(AAIResourceUri.class), ArgumentMatchers.isNull());
 
         assertEquals("testVolumeHeatStackId", volumeGroup.getHeatStackId());
+    }
+
+    @Test
+    public void checkNameInUseTrueTest() {
+        AAIResourceUri volumeGroupUri = AAIUriFactory.createNodesUri(AAIObjectPlurals.VOLUME_GROUP)
+                .queryParam("volume-group-name", "testVolumeGroupName1");
+        doReturn(true).when(MOCK_aaiResourcesClient).exists(eq(volumeGroupUri));
+        boolean nameInUse = aaiVolumeGroupResources.checkNameInUse(volumeGroup);
+        assertTrue(nameInUse);
+    }
+
+    @Test
+    public void checkNameInUseFalseTest() {
+        AAIResourceUri volumeGroupUri = AAIUriFactory.createNodesUri(AAIObjectPlurals.VOLUME_GROUP)
+                .queryParam("volume-group-name", "testVolumeGroupName1");
+        doReturn(false).when(MOCK_aaiResourcesClient).exists(eq(volumeGroupUri));
+        boolean nameInUse = aaiVolumeGroupResources.checkNameInUse(volumeGroup);
+        assertFalse(nameInUse);
     }
 }

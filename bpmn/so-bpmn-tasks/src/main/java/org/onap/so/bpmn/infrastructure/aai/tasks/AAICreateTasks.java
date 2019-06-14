@@ -50,6 +50,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
+import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.DuplicateNameException;
 import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
@@ -76,6 +77,7 @@ public class AAICreateTasks {
 
     private static final Logger logger = LoggerFactory.getLogger(AAICreateTasks.class);
     private static final String networkTypeProvider = "PROVIDER";
+    private static final String A_LA_CARTE = "aLaCarte";
     private static String NETWORK_COLLECTION_NAME = "networkCollectionName";
     private static String CONTRAIL_NETWORK_POLICY_FQDN_LIST = "contrailNetworkPolicyFqdnList";
     private static String HEAT_STACK_ID = "heatStackId";
@@ -193,7 +195,11 @@ public class AAICreateTasks {
 
     public void createVnf(BuildingBlockExecution execution) {
         try {
+            Boolean alaCarte = execution.getVariable(A_LA_CARTE);
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
+            if (Boolean.TRUE.equals(alaCarte) && aaiVnfResources.checkNameInUse(vnf.getVnfName())) {
+                throw new DuplicateNameException("generic-vnf", vnf.getVnfName());
+            }
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
             execution.setVariable("homing", Boolean.TRUE.equals(vnf.isCallHoming()));
@@ -252,6 +258,10 @@ public class AAICreateTasks {
             GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
             VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID);
             CloudRegion cloudRegion = gBBInput.getCloudRegion();
+            Boolean alaCarte = execution.getVariable(A_LA_CARTE);
+            if (Boolean.TRUE.equals(alaCarte) && aaiVolumeGroupResources.checkNameInUse(volumeGroup)) {
+                throw new DuplicateNameException("volume-group", volumeGroup.getVolumeGroupName());
+            }
             aaiVolumeGroupResources.createVolumeGroup(volumeGroup, cloudRegion);
             aaiVolumeGroupResources.connectVolumeGroupToVnf(genericVnf, volumeGroup, cloudRegion);
             aaiVolumeGroupResources.connectVolumeGroupToTenant(volumeGroup, cloudRegion);
@@ -264,6 +274,10 @@ public class AAICreateTasks {
         try {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
             VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
+            Boolean alaCarte = execution.getVariable(A_LA_CARTE);
+            if (Boolean.TRUE.equals(alaCarte) && aaiVfModuleResources.checkNameInUse(vfModule)) {
+                throw new DuplicateNameException("vf-module", vfModule.getVfModuleName());
+            }
             int moduleIndex = 0;
             if (vfModule.getModelInfoVfModule() != null
                     && !Boolean.TRUE.equals(vfModule.getModelInfoVfModule().getIsBaseBoolean())) {

@@ -21,7 +21,10 @@
 package org.onap.so.client.orchestration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -41,8 +44,10 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
+import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
+import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 
@@ -153,5 +158,40 @@ public class AAIVfModuleResourcesTest extends TestDataSetup {
         verify(MOCK_aaiResourcesClient, times(1)).update(any(AAIResourceUri.class), ArgumentMatchers.isNull());
 
         assertEquals("testContrailServiceInstanceFqdn", vfModule.getContrailServiceInstanceFqdn());
+    }
+
+    @Test
+    public void checkNameInUseTrueTest() throws Exception {
+        AAIResourceUri vfModuleUri = AAIUriFactory.createNodesUri(AAIObjectPlurals.VF_MODULE)
+                .queryParam("vf-module-name", vfModule.getVfModuleName());
+        AAIResourceUri vfModuleUriWithCustomization = vfModuleUri.clone().queryParam("model-customization-id",
+                vfModule.getModelInfoVfModule().getModelCustomizationUUID());
+        doReturn(false).when(MOCK_aaiResourcesClient).exists(eq(vfModuleUriWithCustomization));
+        doReturn(true).when(MOCK_aaiResourcesClient).exists(eq(vfModuleUri));
+        boolean nameInUse = aaiVfModuleResources.checkNameInUse(vfModule);
+        assertTrue(nameInUse);
+    }
+
+    @Test
+    public void checkNameInUseFalseIsResumeTest() throws Exception {
+        AAIResourceUri vfModuleUri = AAIUriFactory.createNodesUri(AAIObjectPlurals.VF_MODULE)
+                .queryParam("vf-module-name", vfModule.getVfModuleName());
+        AAIResourceUri vfModuleUriWithCustomization = vfModuleUri.clone().queryParam("model-customization-id",
+                vfModule.getModelInfoVfModule().getModelCustomizationUUID());
+        doReturn(true).when(MOCK_aaiResourcesClient).exists(eq(vfModuleUriWithCustomization));
+        boolean nameInUse = aaiVfModuleResources.checkNameInUse(vfModule);
+        assertFalse(nameInUse);
+    }
+
+    @Test
+    public void checkNameInUseFalseTest() throws Exception {
+        AAIResourceUri vfModuleUri = AAIUriFactory.createNodesUri(AAIObjectPlurals.VF_MODULE)
+                .queryParam("vf-module-name", vfModule.getVfModuleName());
+        AAIResourceUri vfModuleUriWithCustomization = vfModuleUri.clone().queryParam("model-customization-id",
+                vfModule.getModelInfoVfModule().getModelCustomizationUUID());
+        doReturn(false).when(MOCK_aaiResourcesClient).exists(eq(vfModuleUriWithCustomization));
+        doReturn(false).when(MOCK_aaiResourcesClient).exists(eq(vfModuleUri));
+        boolean nameInUse = aaiVfModuleResources.checkNameInUse(vfModule);
+        assertFalse(nameInUse);
     }
 }

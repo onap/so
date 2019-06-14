@@ -30,8 +30,10 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.LineOfBusiness;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Platform;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIValidatorImpl;
+import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
@@ -151,5 +153,11 @@ public class AAIVnfResources {
                 .orElse(new org.onap.aai.domain.yang.GenericVnf());
         return aaiValidatorImpl.isPhysicalServerLocked(vnf.getVnfId());
 
+    }
+
+    public boolean checkNameInUse(String vnfName) {
+        AAIResourceUri vnfUri =
+                AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", vnfName);
+        return injectionHelper.getAaiClient().exists(vnfUri);
     }
 }

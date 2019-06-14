@@ -26,6 +26,7 @@ import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
+import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
@@ -92,5 +93,11 @@ public class AAIVolumeGroupResources {
 
         copiedVolumeGroup.setHeatStackId(volumeGroup.getHeatStackId());
         injectionHelper.getAaiClient().update(uri, aaiObjectMapper.mapVolumeGroup(copiedVolumeGroup));
+    }
+
+    public boolean checkNameInUse(VolumeGroup volumeGroup) {
+        AAIResourceUri volumeGroupUri = AAIUriFactory.createNodesUri(AAIObjectPlurals.VOLUME_GROUP)
+                .queryParam("volume-group-name", volumeGroup.getVolumeGroupName());
+        return injectionHelper.getAaiClient().exists(volumeGroupUri);
     }
 }

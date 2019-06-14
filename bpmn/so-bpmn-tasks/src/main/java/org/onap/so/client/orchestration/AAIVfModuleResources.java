@@ -23,12 +23,15 @@
 package org.onap.so.client.orchestration;
 
 import java.util.Optional;
+import org.onap.aai.domain.yang.VfModules;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
+import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
+import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
@@ -107,5 +110,20 @@ public class AAIVfModuleResources {
         AAIResourceUri volumeGroupURI = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP,
                 cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId());
         injectionHelper.getAaiClient().connect(vfModuleURI, volumeGroupURI);
+    }
+
+    public boolean checkNameInUse(VfModule vfModule) {
+        boolean nameInUse = false;
+        AAIResourceUri vfModuleUri = AAIUriFactory.createNodesUri(AAIObjectPlurals.VF_MODULE)
+                .queryParam("vf-module-name", vfModule.getVfModuleName());
+        AAIResourceUri vfModuleUriWithCustomization = vfModuleUri.clone().queryParam("model-customization-id",
+                vfModule.getModelInfoVfModule().getModelCustomizationUUID());
+        if (injectionHelper.getAaiClient().exists(vfModuleUriWithCustomization)) {
+            // assume it's a resume case and return false
+            nameInUse = false;
+        } else {
+            nameInUse = injectionHelper.getAaiClient().exists(vfModuleUri);
+        }
+        return nameInUse;
     }
 }

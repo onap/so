@@ -21,6 +21,7 @@
 package org.onap.so.client.orchestration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -45,9 +46,11 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.LineOfBusiness;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Platform;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.AAIValidatorImpl;
+import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
@@ -226,5 +229,24 @@ public class AAIVnfResourcesTest extends TestDataSetup {
                 isA(AAIResourceUri.class));
         verify(MOCK_aaiValidatorImpl, times(1)).isPhysicalServerLocked(isA(String.class));
         assertTrue(isVnfPserversLockedFlag);
+    }
+
+
+    @Test
+    public void checkNameInUseTrueTest() {
+        AAIResourceUri vnfUri =
+                AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", "vnfName");
+        doReturn(true).when(MOCK_aaiResourcesClient).exists(eq(vnfUri));
+        boolean nameInUse = aaiVnfResources.checkNameInUse("vnfName");
+        assertTrue(nameInUse);
+    }
+
+    @Test
+    public void checkNameInUseFalseTest() {
+        AAIResourceUri vnfUri =
+                AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", "vnfName");
+        doReturn(false).when(MOCK_aaiResourcesClient).exists(eq(vnfUri));
+        boolean nameInUse = aaiVnfResources.checkNameInUse("vnfName");
+        assertFalse(nameInUse);
     }
 }

@@ -60,6 +60,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoGenericVnf;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
+import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.DuplicateNameException;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
@@ -140,7 +141,7 @@ public class AAICreateTasksTest extends BaseTaskTest {
     @Test
     public void createVolumeGroupTest() throws Exception {
         volumeGroup.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
-
+        execution.setVariable("aLaCarte", Boolean.FALSE);
         doNothing().when(aaiVolumeGroupResources).createVolumeGroup(volumeGroup, cloudRegion);
         doNothing().when(aaiVolumeGroupResources).connectVolumeGroupToVnf(genericVnf, volumeGroup, cloudRegion);
 
@@ -149,6 +150,14 @@ public class AAICreateTasksTest extends BaseTaskTest {
         verify(aaiVolumeGroupResources, times(1)).createVolumeGroup(volumeGroup, cloudRegion);
         verify(aaiVolumeGroupResources, times(1)).connectVolumeGroupToVnf(genericVnf, volumeGroup, cloudRegion);
         verify(aaiVolumeGroupResources, times(1)).connectVolumeGroupToTenant(volumeGroup, cloudRegion);
+    }
+
+    @Test
+    public void createVolumeGroupDuplicateNameTest() throws Exception {
+        expectedException.expect(BpmnError.class);
+        execution.setVariable("aLaCarte", Boolean.TRUE);
+        doReturn(true).when(aaiVolumeGroupResources).checkNameInUse(volumeGroup);
+        aaiCreateTasks.createVolumeGroup(execution);
     }
 
     @Test
@@ -325,8 +334,17 @@ public class AAICreateTasksTest extends BaseTaskTest {
     @Test
     public void createVnfTest() throws Exception {
         doNothing().when(aaiVnfResources).createVnfandConnectServiceInstance(genericVnf, serviceInstance);
+        execution.setVariable("aLaCarte", Boolean.FALSE);
         aaiCreateTasks.createVnf(execution);
         verify(aaiVnfResources, times(1)).createVnfandConnectServiceInstance(genericVnf, serviceInstance);
+    }
+
+    @Test
+    public void createVnfDuplicateNameTest() throws Exception {
+        expectedException.expect(BpmnError.class);
+        doReturn(true).when(aaiVnfResources).checkNameInUse(genericVnf.getVnfName());
+        execution.setVariable("aLaCarte", Boolean.TRUE);
+        aaiCreateTasks.createVnf(execution);
     }
 
     @Test
@@ -352,9 +370,18 @@ public class AAICreateTasksTest extends BaseTaskTest {
                 .thenReturn(newVfModule);
 
         assertEquals(null, newVfModule.getModuleIndex());
+        execution.setVariable("aLaCarte", Boolean.FALSE);
         aaiCreateTasks.createVfModule(execution);
         assertEquals(1, newVfModule.getModuleIndex().intValue());
         verify(aaiVfModuleResources, times(1)).createVfModule(newVfModule, genericVnf);
+    }
+
+    @Test
+    public void createVfModuleDuplicateNameTest() throws Exception {
+        expectedException.expect(BpmnError.class);
+        execution.setVariable("aLaCarte", Boolean.TRUE);
+        doReturn(true).when(aaiVfModuleResources).checkNameInUse(vfModule);
+        aaiCreateTasks.createVfModule(execution);
     }
 
     @Test
