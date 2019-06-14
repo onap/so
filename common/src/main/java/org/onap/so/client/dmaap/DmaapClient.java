@@ -49,12 +49,12 @@ public abstract class DmaapClient {
         this.msoProperties = dmaapProperties.getProperties();
         this.properties = new Properties();
         this.properties.load(resource.getInputStream());
-        try {
-            this.properties.put("auth", CryptoUtils.decrypt(this.getAuth(), this.getKey()).getBytes());
-        } catch (GeneralSecurityException e) {
-            logger.error(e.getMessage(), e);
+        if (this.getAuth() != null && this.getKey() != null) {
+            this.properties.put("auth", this.getAuth());
+            this.properties.put("key", this.getKey());
+        } else {
+            logger.error("Dmaap auth or key is null");
         }
-        this.properties.put("key", this.getKey());
         this.properties.put("topic", this.getTopic());
         Optional<String> host = this.getHost();
         if (host.isPresent()) {
