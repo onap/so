@@ -69,6 +69,7 @@ public class MsoCommonUtilsTest extends BaseTest {
         Mockito.when(openstackRequest.path()).thenReturn("/test");
         // TODO:Must try a real connection
         assertNull(commonUtils.executeAndRecordOpenstackRequest(openstackRequest));
+        assertNull(commonUtils.executeAndRecordOpenstackRequest(openstackRequest, true));
     }
 
     @Test
@@ -78,6 +79,7 @@ public class MsoCommonUtilsTest extends BaseTest {
         doThrow(OpenStackResponseException.class).when(openstackRequest).execute();
 
         commonUtils.executeAndRecordOpenstackRequest(openstackRequest);
+        commonUtils.executeAndRecordOpenstackRequest(openstackRequest, true);
     }
 
     @Test
@@ -86,7 +88,7 @@ public class MsoCommonUtilsTest extends BaseTest {
 
         doThrow(OpenStackConnectException.class).when(openstackRequest).execute();
 
-        commonUtils.executeAndRecordOpenstackRequest(openstackRequest);
+        commonUtils.executeAndRecordOpenstackRequest(openstackRequest, true);
     }
 
     @Test

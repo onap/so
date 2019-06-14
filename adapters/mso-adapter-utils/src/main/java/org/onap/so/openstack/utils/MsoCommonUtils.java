@@ -98,19 +98,23 @@ public class MsoCommonUtils {
      */
 
     protected <T> T executeAndRecordOpenstackRequest(OpenStackRequest<T> request) {
+        return executeAndRecordOpenstackRequest(request, true);
+    }
 
-        String requestType;
-        if (request.getClass().getEnclosingClass() != null) {
-            requestType =
-                    request.getClass().getEnclosingClass().getSimpleName() + "." + request.getClass().getSimpleName();
-        } else {
-            requestType = request.getClass().getSimpleName();
-        }
+    /*
+     * Method to execute an Openstack command and track its execution time. For the metrics log, a category of
+     * "Openstack" is used along with a sub-category that identifies the specific call (using the real
+     * openstack-java-sdk classname of the OpenStackRequest<T> parameter). boolean isNoRetry - true if No retry; and
+     * false if Retry.
+     */
 
+    protected <T> T executeAndRecordOpenstackRequest(OpenStackRequest<T> request, boolean shouldRetry) {
         int retryDelay = poConfig.getRetryDelay();
         int retryCount = poConfig.getRetryCount();
         String retryCodes = poConfig.getRetryCodes();
-
+        if (!shouldRetry) {
+            retryCodes = null;
+        }
         // Run the actual command. All exceptions will be propagated
         while (true) {
             try {

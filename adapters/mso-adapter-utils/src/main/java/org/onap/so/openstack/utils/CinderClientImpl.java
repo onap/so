@@ -76,7 +76,7 @@ public class CinderClientImpl extends MsoCommonUtils {
             // list is set to false, otherwise an invalid URL is appended
             OpenStackRequest<Volumes> request =
                     cinderClient.volumes().list(false).queryParam("limit", limit).queryParam("marker", marker);
-            return executeAndRecordOpenstackRequest(request);
+            return executeAndRecordOpenstackRequest(request, false);
         } catch (MsoException e) {
             logger.error("Error building Cinder Client", e);
             throw new CinderClientException("Error building Cinder Client", e);
@@ -90,7 +90,7 @@ public class CinderClientImpl extends MsoCommonUtils {
             Cinder cinderClient = getCinderClient(cloudSiteId, tenantId);
             // list is set to false, otherwise an invalid URL is appended
             OpenStackRequest<Volume> request = cinderClient.volumes().show(volumeId);
-            return executeAndRecordOpenstackRequest(request);
+            return executeAndRecordOpenstackRequest(request, false);
         } catch (MsoException e) {
             logger.error("Error building Cinder Client", e);
             throw new CinderClientException("Error building Cinder Client", e);

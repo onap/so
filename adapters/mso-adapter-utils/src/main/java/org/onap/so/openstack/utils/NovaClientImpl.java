@@ -78,7 +78,7 @@ public class NovaClientImpl extends MsoCommonUtils {
             Nova novaClient = getNovaClient(cloudSiteId, tenantId);
             OpenStackRequest<Flavors> request =
                     novaClient.flavors().list(false).queryParam("limit", limit).queryParam("marker", marker);
-            return executeAndRecordOpenstackRequest(request);
+            return executeAndRecordOpenstackRequest(request, false);
         } catch (MsoException e) {
             logger.error("Error building Nova Client", e);
             throw new NovaClientException("Error building Nova Client", e);
@@ -103,7 +103,7 @@ public class NovaClientImpl extends MsoCommonUtils {
             Nova novaClient = getNovaClient(cloudSiteId, tenantId);
             novaClient = getNovaClient(cloudSiteId, tenantId);
             OpenStackRequest<Flavor> request = novaClient.flavors().show(id);
-            return executeAndRecordOpenstackRequest(request);
+            return executeAndRecordOpenstackRequest(request, false);
         } catch (MsoException e) {
             logger.error("Error building Nova Client", e);
             throw new NovaClientException("Error building Nova Client", e);
@@ -128,7 +128,7 @@ public class NovaClientImpl extends MsoCommonUtils {
             Nova novaClient = getNovaClient(cloudSiteId, tenantId);
             OpenStackRequest<HostAggregates> request =
                     novaClient.aggregates().list().queryParam("limit", limit).queryParam("marker", marker);
-            return executeAndRecordOpenstackRequest(request);
+            return executeAndRecordOpenstackRequest(request, false);
         } catch (MsoException e) {
             logger.error("Error building Nova Client", e);
             throw new NovaClientException("Error building Nova Client", e);
@@ -152,7 +152,7 @@ public class NovaClientImpl extends MsoCommonUtils {
         try {
             Nova novaClient = getNovaClient(cloudSiteId, tenantId);
             OpenStackRequest<HostAggregate> request = novaClient.aggregates().showAggregate(id);
-            return executeAndRecordOpenstackRequest(request);
+            return executeAndRecordOpenstackRequest(request, false);
         } catch (MsoException e) {
             logger.error("Error building Nova Client", e);
             throw new NovaClientException("Error building Nova Client", e);
@@ -176,7 +176,7 @@ public class NovaClientImpl extends MsoCommonUtils {
         try {
             Nova novaClient = getNovaClient(cloudSiteId, tenantId);
             OpenStackRequest<QuotaSet> request = novaClient.quotaSets().showQuota(tenantId);
-            return executeAndRecordOpenstackRequest(request);
+            return executeAndRecordOpenstackRequest(request, false);
         } catch (MsoException e) {
             logger.error("Error building Nova Client", e);
             throw new NovaClientException("Error building Nova Client", e);
@@ -198,7 +198,7 @@ public class NovaClientImpl extends MsoCommonUtils {
         try {
             Nova novaClient = getNovaClient(cloudSiteId, tenantId);
             OpenStackRequest<Void> request = novaClient.keyPairs().delete(keyPairName);
-            executeAndRecordOpenstackRequest(request);
+            executeAndRecordOpenstackRequest(request, false);
         } catch (MsoException e) {
             logger.error("Error building Nova Client", e);
             throw new NovaClientException("Error building Nova Client", e);
