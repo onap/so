@@ -188,6 +188,31 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
     }
 
     @Test
+    public final void postProcessStackCreate_Backout_True_Delete_Fail_Test() throws MsoException, IOException {
+        Stack stack = new Stack();
+        stack.setId("id");
+        stack.setStackName("stackName");
+        stack.setStackStatus("CREATE_IN_PROGRESS");
+        stack.setStackStatusReason("Stack Finished");
+
+        Stack deletedStack = new Stack();
+        deletedStack.setId("id");
+        deletedStack.setStackName("stackName");
+        deletedStack.setStackStatus("DELETE_COMPLETE");
+        deletedStack.setStackStatusReason("Stack Deleted");
+
+        CreateStackParam createStackParam = new CreateStackParam();
+        createStackParam.setStackName("stackName");
+        doThrow(new MsoOpenstackException(500, "Error In Delete", "Error In Delete")).when(heatUtils)
+                .handleUnknownCreateStackFailure(stack, 120, cloudSiteId, tenantId);
+        exceptionRule.expect(MsoException.class);
+        exceptionRule.expectMessage(
+                "Stack Creation Failed Openstack Status: CREATE_IN_PROGRESS Status Reason: Stack Finished , Rollback of Stack Creation failed with sync error: Error In Delete");
+        heatUtils.postProcessStackCreate(stack, true, 120, false, cloudSiteId, tenantId, createStackParam);
+        Mockito.verify(heatUtils, times(1)).handleUnknownCreateStackFailure(stack, 120, cloudSiteId, tenantId);
+    }
+
+    @Test
     public final void postProcessStackCreate_Keypair_True_Test() throws MsoException, IOException {
         Stack stack = new Stack();
         stack.setId("id");
@@ -375,12 +400,12 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
 
         doThrow(new StackCreationException("Error")).when(heatUtils).pollStackForStatus(120, stack,
                 "CREATE_IN_PROGRESS", cloudSiteId, tenantId);
-        doReturn(deletedStack).when(heatUtils).handleUnknownCreateStackFailure(stack, 120, cloudSiteId, tenantId);
         exceptionRule.expect(MsoException.class);
         exceptionRule.expectMessage("Error");
         heatUtils.processCreateStack(cloudSiteId, tenantId, 120, true, stack, createStackParam, true);
         Mockito.verify(heatUtils, times(1)).pollStackForStatus(120, stack, "CREATE_IN_PROGRESS", cloudSiteId, tenantId);
-        Mockito.verify(heatUtils, times(1)).handleUnknownCreateStackFailure(stack, 120, cloudSiteId, tenantId);
+        Mockito.verify(heatUtils, times(1)).postProcessStackCreate(stack, true, 120, true, cloudSiteId, tenantId,
+                createStackParam);
     }
 
 
