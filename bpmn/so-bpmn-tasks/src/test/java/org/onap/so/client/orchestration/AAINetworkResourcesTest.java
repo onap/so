@@ -23,6 +23,7 @@ package org.onap.so.client.orchestration;
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -423,6 +424,24 @@ public class AAINetworkResourcesTest extends TestDataSetup {
         doNothing().when(MOCK_aaiResourcesClient).delete(isA(AAIResourceUri.class));
         aaiNetworkResources.deleteNetworkPolicy(networkPolicy.getNetworkPolicyId());
         verify(MOCK_aaiResourcesClient, times(1)).delete(any(AAIResourceUri.class));
+    }
+
+    @Test
+    public void checkInstanceGroupNameInUseTrueTest() throws Exception {
+        AAIResourceUri uri =
+                AAIUriFactory.createResourceUri(AAIObjectPlurals.L3_NETWORK).queryParam("network-name", "networkName");
+        doReturn(true).when(MOCK_aaiResourcesClient).exists(eq(uri));
+        boolean nameInUse = aaiNetworkResources.checkNetworkNameInUse("networkName");
+        assertTrue(nameInUse);
+    }
+
+    @Test
+    public void checkInstanceGroupNameInUseFalseTest() throws Exception {
+        AAIResourceUri uri =
+                AAIUriFactory.createResourceUri(AAIObjectPlurals.L3_NETWORK).queryParam("network-name", "networkName");
+        doReturn(false).when(MOCK_aaiResourcesClient).exists(eq(uri));
+        boolean nameInUse = aaiNetworkResources.checkNetworkNameInUse("networkName");
+        assertFalse(nameInUse);
     }
 
 }

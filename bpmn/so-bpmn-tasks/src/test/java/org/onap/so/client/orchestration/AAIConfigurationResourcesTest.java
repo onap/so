@@ -20,6 +20,8 @@
 package org.onap.so.client.orchestration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
@@ -44,6 +46,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceProxy;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VpnBinding;
+import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.AAIEdgeLabel;
@@ -240,4 +243,23 @@ public class AAIConfigurationResourcesTest extends TestDataSetup {
         verify(MOCK_aaiResourcesClient, times(1)).update(any(AAIResourceUri.class),
                 any(org.onap.aai.domain.yang.Configuration.class));
     }
+
+    @Test
+    public void checkConfigurationNameInUseTrueTest() throws Exception {
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.CONFIGURATION)
+                .queryParam("configuration-name", "configurationName");
+        doReturn(true).when(MOCK_aaiResourcesClient).exists(eq(uri));
+        boolean nameInUse = aaiConfigurationResources.checkConfigurationNameInUse("configurationName");
+        assertTrue(nameInUse);
+    }
+
+    @Test
+    public void checkConfigurationNameInUseFalseTest() throws Exception {
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.CONFIGURATION)
+                .queryParam("configuration-name", "configurationName");
+        doReturn(false).when(MOCK_aaiResourcesClient).exists(eq(uri));
+        boolean nameInUse = aaiConfigurationResources.checkConfigurationNameInUse("configurationName");
+        assertFalse(nameInUse);
+    }
+
 }
