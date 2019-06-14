@@ -382,7 +382,7 @@ public class MsoNeutronUtils extends MsoCommonUtils {
                 Authentication credentials = authenticationMethodFactory.getAuthenticationFor(cloudIdentity);
                 OpenStackRequest<Access> request =
                         keystoneTenantClient.tokens().authenticate(credentials).withTenantId(tenantId);
-                access = executeAndRecordOpenstackRequest(request);
+                access = executeAndRecordOpenstackRequest(request, true);
 
 
                 try {
@@ -499,7 +499,7 @@ public class MsoNeutronUtils extends MsoCommonUtils {
 
         try {
             OpenStackRequest<Port> request = neutronClient.ports().show(neutronPortId);
-            Port port = executeAndRecordOpenstackRequest(request);
+            Port port = executeAndRecordOpenstackRequest(request, false);
             return port;
         } catch (OpenStackResponseException e) {
             if (e.getStatus() == 404) {

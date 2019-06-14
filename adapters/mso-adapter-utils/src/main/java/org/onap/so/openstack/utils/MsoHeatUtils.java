@@ -1249,7 +1249,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
         Heat heatClient = getHeatClient(cloudSiteId, tenantId);
         OpenStackRequest<Resources> request =
                 heatClient.getResources().listResources(stackName).queryParam("nested_depth", nestedDepth);
-        return executeAndRecordOpenstackRequest(request);
+        return executeAndRecordOpenstackRequest(request, false);
     }
 
     public Events queryStackEvents(String cloudSiteId, String tenantId, String stackName, String stackId,
@@ -1257,7 +1257,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
         Heat heatClient = getHeatClient(cloudSiteId, tenantId);
         OpenStackRequest<Events> request =
                 heatClient.getEvents().listEvents(stackName, stackId).queryParam("nested_depth", nestedDepth);
-        return executeAndRecordOpenstackRequest(request);
+        return executeAndRecordOpenstackRequest(request, false);
     }
 
     public Stacks queryStacks(String cloudSiteId, String tenantId, int limit, String marker)
@@ -1271,14 +1271,14 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
         }
         OpenStackRequest<Stacks> request =
                 heatClient.getStacks().list().queryParam("limit", limit).queryParam("marker", marker);
-        return executeAndRecordOpenstackRequest(request);
+        return executeAndRecordOpenstackRequest(request, false);
     }
 
     public <R> R executeHeatClientRequest(String url, String cloudSiteId, String tenantId, Class<R> returnType)
             throws MsoException {
         Heat heatClient = getHeatClient(cloudSiteId, tenantId);
         OpenStackRequest<R> request = heatClient.get(url, returnType);
-        return executeAndRecordOpenstackRequest(request);
+        return executeAndRecordOpenstackRequest(request, false);
     }
 
     protected void sleep(long time) {

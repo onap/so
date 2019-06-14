@@ -74,7 +74,7 @@ public class GlanceClientImpl extends MsoCommonUtils {
             // list is set to false, otherwise an invalid URL is appended
             OpenStackRequest<Images> request = glanceClient.images().list(false).queryParam("visibility", visibility)
                     .queryParam("limit", limit).queryParam("marker", marker).queryParam("name", name);
-            return executeAndRecordOpenstackRequest(request);
+            return executeAndRecordOpenstackRequest(request, false);
         } catch (MsoException e) {
             logger.error("Error building Glance Client", e);
             throw new GlanceClientException("Error building Glance Client", e);
