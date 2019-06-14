@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 - 2019 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,28 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.common.validation;
+package org.onap.so.bpmn.common.listener.validation;
 
-public interface PostWorkflowValidator extends FlowValidator {
+import java.util.Optional;
+import org.onap.so.bpmn.common.BuildingBlockExecution;
+
+public interface FlowValidator {
+
+    /**
+     * Should this validator run for given bb
+     * 
+     * @return
+     * 
+     */
+    public boolean shouldRunFor(String bbName);
+
+    /**
+     * Determines whether or not the workflow should be executed
+     * 
+     * 
+     * @param execution
+     * @return
+     */
+    public Optional<String> validate(BuildingBlockExecution execution);
 
 }

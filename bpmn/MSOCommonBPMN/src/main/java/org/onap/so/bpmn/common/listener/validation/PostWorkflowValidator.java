@@ -18,27 +18,8 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.common.validation;
+package org.onap.so.bpmn.common.listener.validation;
 
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Set;
-import javax.annotation.Priority;
-import org.onap.so.bpmn.common.BuildingBlockExecution;
-import org.springframework.stereotype.Component;
-
-@Priority(1)
-@Component
-public class WorkflowPreValidatorTwo implements PreWorkflowValidator {
-
-    @Override
-    public boolean shouldRunFor(String bbName) {
-        return Collections.singleton("test").contains(bbName);
-    }
-
-    @Override
-    public Optional<String> validate(BuildingBlockExecution exeuction) {
-        return Optional.of("my-error-two");
-    }
+public interface PostWorkflowValidator extends FlowValidator {
 
 }

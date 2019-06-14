@@ -112,6 +112,11 @@ public class DelegateExecutionImpl implements BuildingBlockExecution, Serializab
         return this.get("flowToBeCalled");
     }
 
+    @JsonIgnore
+    @Override
+    public int getCurrentSequence() {
+        return this.get("gCurrentSequence");
+    }
 
     public void setDelegateExecution(final DelegateExecution execution) {
         this.execution = execution;

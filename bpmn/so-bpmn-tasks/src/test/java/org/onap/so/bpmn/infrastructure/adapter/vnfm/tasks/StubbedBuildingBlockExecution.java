@@ -79,6 +79,11 @@ public class StubbedBuildingBlockExecution implements BuildingBlockExecution {
         return null;
     }
 
+    @Override
+    public int getCurrentSequence() {
+        return 0;
+    }
+
     public static String getTenantId() {
         return TENANT_ID;
     }

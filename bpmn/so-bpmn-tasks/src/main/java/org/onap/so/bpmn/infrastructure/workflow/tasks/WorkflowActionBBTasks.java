@@ -27,6 +27,8 @@ import java.util.UUID;
 import javax.persistence.EntityNotFoundException;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.aai.domain.yang.Vnfc;
+import org.onap.so.bpmn.common.DelegateExecutionImpl;
+import org.onap.so.bpmn.common.listener.flowmanipulator.FlowManipulatorListenerRunner;
 import org.onap.so.bpmn.common.workflow.context.WorkflowCallbackResponse;
 import org.onap.so.bpmn.common.workflow.context.WorkflowContextHolder;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
@@ -77,41 +79,19 @@ public class WorkflowActionBBTasks {
     private BBInputSetupUtils bbInputSetupUtils;
     @Autowired
     private CatalogDbClient catalogDbClient;
+    @Autowired
+    private FlowManipulatorListenerRunner flowManipulatorListenerRunner;
 
     public void selectBB(DelegateExecution execution) {
         List<ExecuteBuildingBlock> flowsToExecute =
                 (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
         execution.setVariable("MacroRollback", false);
+
+        flowManipulatorListenerRunner.modifyFlows(flowsToExecute, new DelegateExecutionImpl(execution));
         int currentSequence = (int) execution.getVariable(G_CURRENT_SEQUENCE);
+
         ExecuteBuildingBlock ebb = flowsToExecute.get(currentSequence);
 
-        if (ebb.getBuildingBlock().getBpmnFlowName().equals("ConfigAssignVnfBB")
-                || ebb.getBuildingBlock().getBpmnFlowName().equals("ConfigDeployVnfBB")) {
-            String vnfCustomizationUUID = ebb.getBuildingBlock().getKey();
-
-            List<VnfResourceCustomization> vnfResourceCustomizations = catalogDbClient
-                    .getVnfResourceCustomizationByModelUuid(ebb.getRequestDetails().getModelInfo().getModelUuid());
-            if (vnfResourceCustomizations != null && vnfResourceCustomizations.size() >= 1) {
-                VnfResourceCustomization vrc = catalogDbClient.findVnfResourceCustomizationInList(vnfCustomizationUUID,
-                        vnfResourceCustomizations);
-                boolean skipConfigVNF = vrc.isSkipPostInstConf();
-                if (skipConfigVNF) {
-                    currentSequence++;
-                    ebb = flowsToExecute.get(currentSequence);
-                }
-            }
-        }
-
-        boolean homing = (boolean) execution.getVariable("homing");
-        boolean calledHoming = (boolean) execution.getVariable("calledHoming");
-        if (homing && !calledHoming) {
-            if (ebb.getBuildingBlock().getBpmnFlowName().equals("AssignVnfBB")) {
-                ebb.setHoming(true);
-                execution.setVariable("calledHoming", true);
-            }
-        } else {
-            ebb.setHoming(false);
-        }
         execution.setVariable("buildingBlock", ebb);
         currentSequence++;
         if (currentSequence >= flowsToExecute.size()) {
