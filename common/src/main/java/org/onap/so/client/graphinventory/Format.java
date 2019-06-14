@@ -29,7 +29,8 @@ public enum Format {
     CONSOLE("console"),
     PATHED("pathed"),
     GRAPHSON("graphson"),
-    ID("id");
+    ID("id"),
+    COUNT("count");
 
     private final String name;
 
