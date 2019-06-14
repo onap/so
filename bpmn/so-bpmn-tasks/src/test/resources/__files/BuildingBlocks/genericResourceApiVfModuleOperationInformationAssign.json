@@ -43,7 +43,7 @@
   },
   "sdnc-request-header" : {
     "svc-request-id" : "svcRequestId",
-    "svc-notification-url" : null,
+    "svc-notification-url" : "http://localhost:8080",
     "svc-action" : "assign"
   },
   "vf-module-information" : {

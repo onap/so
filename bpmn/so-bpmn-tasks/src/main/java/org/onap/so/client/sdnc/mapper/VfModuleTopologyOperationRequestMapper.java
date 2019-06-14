@@ -22,6 +22,7 @@
 
 package org.onap.so.client.sdnc.mapper;
 
+import java.net.URI;
 import java.util.Map;
 import java.util.UUID;
 import org.onap.so.logger.LoggingAnchor;
@@ -65,7 +66,7 @@ public class VfModuleTopologyOperationRequestMapper {
     public GenericResourceApiVfModuleOperationInformation reqMapper(SDNCSvcOperation svcOperation,
             SDNCSvcAction svcAction, VfModule vfModule, VolumeGroup volumeGroup, GenericVnf vnf,
             ServiceInstance serviceInstance, Customer customer, CloudRegion cloudRegion, RequestContext requestContext,
-            String sdncAssignResponse) throws MapperException {
+            String sdncAssignResponse, URI callbackURL) throws MapperException {
         GenericResourceApiVfModuleOperationInformation req = new GenericResourceApiVfModuleOperationInformation();
 
         boolean includeModelInformation = false;
@@ -114,7 +115,7 @@ public class VfModuleTopologyOperationRequestMapper {
         GenericResourceApiVfmodulerequestinputVfModuleRequestInput vfModuleRequestInput =
                 buildVfModuleRequestInput(vfModule, volumeGroup, cloudRegion, requestContext);
         GenericResourceApiSdncrequestheaderSdncRequestHeader sdncRequestHeader =
-                buildVfModuleSdncRequestHeader(sdncReqId, genericResourceApiSvcAction);
+                buildVfModuleSdncRequestHeader(sdncReqId, genericResourceApiSvcAction, callbackURL);
 
         req.setRequestInformation(requestInformation);
         req.setSdncRequestHeader(sdncRequestHeader);
@@ -170,13 +171,12 @@ public class VfModuleTopologyOperationRequestMapper {
     }
 
     private GenericResourceApiSdncrequestheaderSdncRequestHeader buildVfModuleSdncRequestHeader(String sdncReqId,
-            GenericResourceApiSvcActionEnumeration svcAction) {
+            GenericResourceApiSvcActionEnumeration svcAction, URI callbackUrl) {
         GenericResourceApiSdncrequestheaderSdncRequestHeader sdncRequestHeader =
                 new GenericResourceApiSdncrequestheaderSdncRequestHeader();
-
         sdncRequestHeader.setSvcRequestId(sdncReqId);
         sdncRequestHeader.setSvcAction(svcAction);
-
+        sdncRequestHeader.setSvcNotificationUrl(callbackUrl.toString());
         return sdncRequestHeader;
     }
 

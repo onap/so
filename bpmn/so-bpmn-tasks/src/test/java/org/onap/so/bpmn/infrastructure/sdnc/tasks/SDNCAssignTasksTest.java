@@ -28,6 +28,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import java.net.URI;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
@@ -89,6 +90,7 @@ public class SDNCAssignTasksTest extends BaseTaskTest {
                 .thenReturn(serviceInstance);
         when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.VOLUME_GROUP_ID)))
                 .thenReturn(volumeGroup);
+        when(env.getRequiredProperty("mso.workflow.message.endpoint")).thenReturn("http://localhost:9090");
     }
 
     @Test
@@ -132,10 +134,11 @@ public class SDNCAssignTasksTest extends BaseTaskTest {
     @Test
     public void assignVfModuleTest() throws Exception {
         doReturn(new GenericResourceApiVfModuleOperationInformation()).when(sdncVfModuleResources).assignVfModule(
-                vfModule, volumeGroup, genericVnf, serviceInstance, customer, cloudRegion, requestContext);
+                eq(vfModule), eq(volumeGroup), eq(genericVnf), eq(serviceInstance), eq(customer), eq(cloudRegion),
+                eq(requestContext), any(URI.class));
         sdncAssignTasks.assignVfModule(execution);
-        verify(sdncVfModuleResources, times(1)).assignVfModule(vfModule, volumeGroup, genericVnf, serviceInstance,
-                customer, cloudRegion, requestContext);
+        verify(sdncVfModuleResources, times(1)).assignVfModule(eq(vfModule), eq(volumeGroup), eq(genericVnf),
+                eq(serviceInstance), eq(customer), eq(cloudRegion), eq(requestContext), any(URI.class));
         SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
         assertEquals(SDNCTopology.VFMODULE, sdncRequest.getTopology());
     }
@@ -143,8 +146,8 @@ public class SDNCAssignTasksTest extends BaseTaskTest {
     @Test
     public void assignVfModuleExceptionTest() throws Exception {
         expectedException.expect(BpmnError.class);
-        doThrow(RuntimeException.class).when(sdncVfModuleResources).assignVfModule(vfModule, volumeGroup, genericVnf,
-                serviceInstance, customer, cloudRegion, requestContext);
+        doThrow(RuntimeException.class).when(sdncVfModuleResources).assignVfModule(eq(vfModule), eq(volumeGroup),
+                eq(genericVnf), eq(serviceInstance), eq(customer), eq(cloudRegion), eq(requestContext), any(URI.class));
         sdncAssignTasks.assignVfModule(execution);
     }
 

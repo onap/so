@@ -28,6 +28,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import java.net.URI;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
@@ -81,16 +82,17 @@ public class SDNCDeactivateTaskTest extends BaseTaskTest {
         when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
         when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID)))
                 .thenReturn(serviceInstance);
-
+        when(env.getRequiredProperty("mso.workflow.message.endpoint")).thenReturn("http://localhost:9090");
     }
 
     @Test
     public void deactivateVfModuleTest() throws Exception {
-        doReturn(new GenericResourceApiVfModuleOperationInformation()).when(sdncVfModuleResources)
-                .deactivateVfModule(vfModule, genericVnf, serviceInstance, customer, cloudRegion, requestContext);
+        doReturn(new GenericResourceApiVfModuleOperationInformation()).when(sdncVfModuleResources).deactivateVfModule(
+                eq(vfModule), eq(genericVnf), eq(serviceInstance), eq(customer), eq(cloudRegion), eq(requestContext),
+                any(URI.class));
         sdncDeactivateTasks.deactivateVfModule(execution);
-        verify(sdncVfModuleResources, times(1)).deactivateVfModule(vfModule, genericVnf, serviceInstance, customer,
-                cloudRegion, requestContext);
+        verify(sdncVfModuleResources, times(1)).deactivateVfModule(eq(vfModule), eq(genericVnf), eq(serviceInstance),
+                eq(customer), eq(cloudRegion), eq(requestContext), any(URI.class));
         SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
         assertEquals(SDNCTopology.VFMODULE, sdncRequest.getTopology());
     }
@@ -98,8 +100,8 @@ public class SDNCDeactivateTaskTest extends BaseTaskTest {
     @Test
     public void deactivateVfModuleExceptionTest() throws Exception {
         expectedException.expect(BpmnError.class);
-        doThrow(RuntimeException.class).when(sdncVfModuleResources).deactivateVfModule(vfModule, genericVnf,
-                serviceInstance, customer, cloudRegion, requestContext);
+        doThrow(RuntimeException.class).when(sdncVfModuleResources).deactivateVfModule(eq(vfModule), eq(genericVnf),
+                eq(serviceInstance), eq(customer), eq(cloudRegion), eq(requestContext), any(URI.class));
         sdncDeactivateTasks.deactivateVfModule(execution);
     }
 

@@ -22,6 +22,7 @@
 
 package org.onap.so.client.orchestration;
 
+import java.net.URI;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVfModuleOperationInformation;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
@@ -53,22 +54,22 @@ public class SDNCVfModuleResources {
 
     public GenericResourceApiVfModuleOperationInformation assignVfModule(VfModule vfModule, VolumeGroup volumeGroup,
             GenericVnf vnf, ServiceInstance serviceInstance, Customer customer, CloudRegion cloudRegion,
-            RequestContext requestContext) throws MapperException {
+            RequestContext requestContext, URI callbackURI) throws MapperException {
         return sdncRM.reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN, vfModule,
-                volumeGroup, vnf, serviceInstance, customer, cloudRegion, requestContext, null);
+                volumeGroup, vnf, serviceInstance, customer, cloudRegion, requestContext, null, callbackURI);
     }
 
     public GenericResourceApiVfModuleOperationInformation unassignVfModule(VfModule vfModule, GenericVnf vnf,
-            ServiceInstance serviceInstance) throws MapperException {
+            ServiceInstance serviceInstance, URI callbackURI) throws MapperException {
         return sdncRM.reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.UNASSIGN, vfModule, null,
-                vnf, serviceInstance, null, null, null, null);
+                vnf, serviceInstance, null, null, null, null, callbackURI);
     }
 
     public GenericResourceApiVfModuleOperationInformation deactivateVfModule(VfModule vfModule, GenericVnf vnf,
-            ServiceInstance serviceInstance, Customer customer, CloudRegion cloudRegion, RequestContext requestContext)
-            throws MapperException {
+            ServiceInstance serviceInstance, Customer customer, CloudRegion cloudRegion, RequestContext requestContext,
+            URI callbackURI) throws MapperException {
         return sdncRM.reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.DEACTIVATE, vfModule, null,
-                vnf, serviceInstance, customer, cloudRegion, requestContext, null);
+                vnf, serviceInstance, customer, cloudRegion, requestContext, null, callbackURI);
     }
 
     public String queryVfModule(VfModule vfModule) throws MapperException, BadResponseException {
@@ -77,16 +78,16 @@ public class SDNCVfModuleResources {
     }
 
     public GenericResourceApiVfModuleOperationInformation activateVfModule(VfModule vfModule, GenericVnf vnf,
-            ServiceInstance serviceInstance, Customer customer, CloudRegion cloudRegion, RequestContext requestContext)
-            throws MapperException {
+            ServiceInstance serviceInstance, Customer customer, CloudRegion cloudRegion, RequestContext requestContext,
+            URI callbackURI) throws MapperException {
         return sdncRM.reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.ACTIVATE, vfModule, null,
-                vnf, serviceInstance, customer, cloudRegion, requestContext, null);
+                vnf, serviceInstance, customer, cloudRegion, requestContext, null, callbackURI);
     }
 
     public GenericResourceApiVfModuleOperationInformation changeAssignVfModule(VfModule vfModule, GenericVnf vnf,
-            ServiceInstance serviceInstance, Customer customer, CloudRegion cloudRegion, RequestContext requestContext)
-            throws MapperException {
+            ServiceInstance serviceInstance, Customer customer, CloudRegion cloudRegion, RequestContext requestContext,
+            URI callbackURI) throws MapperException {
         return sdncRM.reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.CHANGE_ASSIGN, vfModule,
-                null, vnf, serviceInstance, customer, cloudRegion, requestContext, null);
+                null, vnf, serviceInstance, customer, cloudRegion, requestContext, null, callbackURI);
     }
 }

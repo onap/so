@@ -25,6 +25,7 @@ import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVfModuleOperationInformation;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
@@ -53,7 +55,6 @@ import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
 import org.onap.so.client.exception.MapperException;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
 import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
-import org.onap.sdnc.northbound.client.model.GenericResourceApiVfModuleOperationInformation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -134,9 +135,9 @@ public class VfModuleTopologyOperationRequestMapperTest {
 
         CloudRegion cloudRegion = new CloudRegion();
 
-        GenericResourceApiVfModuleOperationInformation vfModuleSDNCrequest =
-                mapper.reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN, vfModule,
-                        volumeGroup, vnf, serviceInstance, customer, cloudRegion, requestContext, null);
+        GenericResourceApiVfModuleOperationInformation vfModuleSDNCrequest = mapper.reqMapper(
+                SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN, vfModule, volumeGroup, vnf,
+                serviceInstance, customer, cloudRegion, requestContext, null, new URI("http://localhost:8080"));
 
         String jsonToCompare = new String(Files.readAllBytes(
                 Paths.get(JSON_FILE_LOCATION + "genericResourceApiVfModuleOperationInformationAssign.json")));
@@ -145,7 +146,7 @@ public class VfModuleTopologyOperationRequestMapperTest {
         GenericResourceApiVfModuleOperationInformation reqMapper1 =
                 omapper.readValue(jsonToCompare, GenericResourceApiVfModuleOperationInformation.class);
 
-        assertThat(reqMapper1, sameBeanAs(vfModuleSDNCrequest).ignoring("sdncRequestHeader.svcRequestId")
+        assertThat(vfModuleSDNCrequest, sameBeanAs(reqMapper1).ignoring("sdncRequestHeader.svcRequestId")
                 .ignoring("requestInformation.requestId"));
         assertEquals("MsoRequestId", vfModuleSDNCrequest.getRequestInformation().getRequestId());
     }
@@ -174,7 +175,7 @@ public class VfModuleTopologyOperationRequestMapperTest {
 
         GenericResourceApiVfModuleOperationInformation vfModuleSDNCrequest =
                 mapper.reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.UNASSIGN, vfModule, null,
-                        vnf, serviceInstance, null, null, requestContext, null);
+                        vnf, serviceInstance, null, null, requestContext, null, new URI("http://localhost:8080"));
 
         String jsonToCompare = new String(Files.readAllBytes(
                 Paths.get(JSON_FILE_LOCATION + "genericResourceApiVfModuleOperationInformationUnassign.json")));
@@ -183,7 +184,7 @@ public class VfModuleTopologyOperationRequestMapperTest {
         GenericResourceApiVfModuleOperationInformation reqMapper1 =
                 omapper.readValue(jsonToCompare, GenericResourceApiVfModuleOperationInformation.class);
 
-        assertThat(reqMapper1, sameBeanAs(vfModuleSDNCrequest).ignoring("sdncRequestHeader.svcRequestId")
+        assertThat(vfModuleSDNCrequest, sameBeanAs(reqMapper1).ignoring("sdncRequestHeader.svcRequestId")
                 .ignoring("requestInformation.requestId"));
         assertEquals("MsoRequestId", vfModuleSDNCrequest.getRequestInformation().getRequestId());
     }
@@ -211,7 +212,7 @@ public class VfModuleTopologyOperationRequestMapperTest {
 
         GenericResourceApiVfModuleOperationInformation vfModuleSDNCrequest =
                 mapper.reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.UNASSIGN, vfModule, null,
-                        vnf, serviceInstance, null, null, requestContext, null);
+                        vnf, serviceInstance, null, null, requestContext, null, new URI("http://localhost:8080"));
 
         assertNotNull(vfModuleSDNCrequest.getRequestInformation().getRequestId());
     }
@@ -271,9 +272,9 @@ public class VfModuleTopologyOperationRequestMapperTest {
 
         CloudRegion cloudRegion = new CloudRegion();
 
-        GenericResourceApiVfModuleOperationInformation vfModuleSDNCrequest =
-                mapper.reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN, vfModule, null,
-                        vnf, serviceInstance, customer, cloudRegion, requestContext, null);
+        GenericResourceApiVfModuleOperationInformation vfModuleSDNCrequest = mapper.reqMapper(
+                SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN, vfModule, null, vnf,
+                serviceInstance, customer, cloudRegion, requestContext, null, new URI("http://localhost:8080"));
 
         assertNull(vfModuleSDNCrequest.getServiceInformation().getOnapModelInformation().getModelCustomizationUuid());
         assertEquals("vnfModelCustomizationUuid",
@@ -330,7 +331,7 @@ public class VfModuleTopologyOperationRequestMapperTest {
         expectedException.expectMessage(ERRORMESSAGE);
 
         mapper.reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN, vfModule, null, vnf,
-                serviceInstance, customer, cloudRegion, requestContext, null);
+                serviceInstance, customer, cloudRegion, requestContext, null, new URI("http://localhost:8080"));
     }
 
 }
