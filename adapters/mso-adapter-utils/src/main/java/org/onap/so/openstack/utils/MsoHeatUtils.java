@@ -220,7 +220,6 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
             boolean backout) throws MsoException {
 
         stripMultiCloudInputs(stackInputs);
-
         CreateStackParam createStack =
                 createStackParam(stackName, heatTemplate, stackInputs, timeoutMinutes, environment, files, heatFiles);
         Stack currentStack = createStack(createStack, cloudSiteId, tenantId);
@@ -271,20 +270,14 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
         }
     }
 
+
     protected Stack processCreateStack(String cloudSiteId, String tenantId, int timeoutMinutes, boolean backout,
             Stack heatStack, CreateStackParam stackCreate, boolean keyPairCleanUp) throws MsoException {
-        Stack latestStack;
+        Stack latestStack = null;
         try {
             latestStack = pollStackForStatus(timeoutMinutes, heatStack, CREATE_IN_PROGRESS, cloudSiteId, tenantId);
         } catch (MsoException me) {
-            if (!backout) {
-                logger.info("Exception in Create Stack, stack deletion suppressed", me);
-            } else {
-                logger.info("Exception in Create Stack, stack deletion will be executed", me);
-                handleUnknownCreateStackFailure(heatStack, timeoutMinutes, cloudSiteId, tenantId);
-            }
-            me.addContext(CREATE_STACK);
-            throw me;
+            logger.error("Exception in Create Stack", me);
         }
         return postProcessStackCreate(latestStack, backout, timeoutMinutes, keyPairCleanUp, cloudSiteId, tenantId,
                 stackCreate);
@@ -292,26 +285,43 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
 
     protected Stack postProcessStackCreate(Stack stack, boolean backout, int timeoutMinutes, boolean cleanUpKeyPair,
             String cloudSiteId, String tenantId, CreateStackParam stackCreate) throws MsoException {
-        logger.info("Performing post processing backout: {} cleanUpKeyPair: {}, stack {}", backout, cleanUpKeyPair,
-                stack);
-        if (!CREATE_COMPLETE.equals(stack.getStackStatus())) {
-            if (cleanUpKeyPair && !Strings.isNullOrEmpty(stack.getStackStatusReason())
-                    && isKeyPairFailure(stack.getStackStatusReason())) {
-                return handleKeyPairConflict(cloudSiteId, tenantId, stackCreate, timeoutMinutes, backout, stack);
-            }
-            if (!backout) {
-                logger.info("Status is not CREATE_COMPLETE, stack deletion suppressed");
-                throw new StackCreationException("Stack rollback suppressed, stack not deleted");
-            } else {
-                logger.info("Status is not CREATE_COMPLETE, stack deletion will be executed");
-                Stack deletedStack = handleUnknownCreateStackFailure(stack, timeoutMinutes, cloudSiteId, tenantId);
-                throw new StackCreationException("Stack Creation Failed Openstack Status: " + stack.getStackStatus()
-                        + " Status Reason: " + stack.getStackStatusReason()
-                        + " , Rollback of Stack Creation completed with status: " + deletedStack.getStackStatus()
-                        + " Status Reason: " + deletedStack.getStackStatusReason());
-            }
+        if (stack == null) {
+            throw new StackCreationException("Unknown Error in Stack Creation");
         } else {
-            return stack;
+            logger.info("Performing post processing backout: {} cleanUpKeyPair: {}, stack {}", backout, cleanUpKeyPair,
+                    stack);
+            if (!CREATE_COMPLETE.equals(stack.getStackStatus())) {
+                if (cleanUpKeyPair && !Strings.isNullOrEmpty(stack.getStackStatusReason())
+                        && isKeyPairFailure(stack.getStackStatusReason())) {
+                    return handleKeyPairConflict(cloudSiteId, tenantId, stackCreate, timeoutMinutes, backout, stack);
+                }
+                if (!backout) {
+                    logger.info("Status is not CREATE_COMPLETE, stack deletion suppressed");
+                    throw new StackCreationException("Stack rollback suppressed, stack not deleted");
+                } else {
+                    logger.info("Status is not CREATE_COMPLETE, stack deletion will be executed");
+                    String errorMessage = "Stack Creation Failed Openstack Status: " + stack.getStackStatus()
+                            + " Status Reason: " + stack.getStackStatusReason();
+                    try {
+                        Stack deletedStack =
+                                handleUnknownCreateStackFailure(stack, timeoutMinutes, cloudSiteId, tenantId);
+                        errorMessage = errorMessage + " , Rollback of Stack Creation completed with status: "
+                                + deletedStack.getStackStatus() + " Status Reason: "
+                                + deletedStack.getStackStatusReason();
+                    } catch (MsoException e) {
+                        logger.error("Sync Error Deleting Stack during rollback", e);
+                        if (e instanceof StackRollbackException) {
+                            errorMessage = errorMessage + e.getMessage();
+                        } else {
+                            errorMessage = errorMessage + " , Rollback of Stack Creation failed with sync error: "
+                                    + e.getMessage();
+                        }
+                    }
+                    throw new StackCreationException(errorMessage);
+                }
+            } else {
+                return stack;
+            }
         }
     }
 
