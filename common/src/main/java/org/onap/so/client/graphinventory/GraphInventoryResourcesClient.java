@@ -32,9 +32,7 @@ import org.onap.so.client.RestClient;
 import org.onap.so.client.RestProperties;
 import org.onap.so.client.graphinventory.entities.GraphInventoryEdgeLabel;
 import org.onap.so.client.graphinventory.entities.GraphInventoryResultWrapper;
-import org.onap.so.client.graphinventory.entities.uri.Depth;
 import org.onap.so.client.graphinventory.entities.uri.GraphInventoryResourceUri;
-import org.onap.so.client.graphinventory.entities.uri.GraphInventoryUri;
 
 public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInventoryResourceUri, EdgeLabel extends GraphInventoryEdgeLabel, Wrapper extends GraphInventoryResultWrapper, TransactionalClient, SingleTransactionClient> {
 
@@ -74,7 +72,9 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
      * @return
      */
     public boolean exists(Uri uri) {
-        GraphInventoryUri forceMinimal = this.addParams(Optional.of(Depth.ZERO), true, uri);
+        GraphInventoryResourceUri forceMinimal = uri.clone();
+        forceMinimal.format(Format.COUNT);
+        forceMinimal.limit(1);
         try {
             RestClient giRC = client.createClient(forceMinimal);
 
@@ -313,18 +313,6 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
      * @return
      */
     public abstract SingleTransactionClient beginSingleTransaction();
-
-    private GraphInventoryUri addParams(Optional<Depth> depth, boolean nodesOnly, GraphInventoryUri uri) {
-        GraphInventoryUri clone = uri.clone();
-        if (depth.isPresent()) {
-            clone.depth(depth.get());
-        }
-        if (nodesOnly) {
-            clone.nodesOnly(nodesOnly);
-        }
-
-        return clone;
-    }
 
     public <T extends RestProperties> T getRestProperties() {
         return client.getRestProperties();

@@ -22,7 +22,6 @@ package org.onap.so.client.graphinventory.entities.uri;
 
 import java.net.URI;
 import java.util.Map;
-import org.onap.so.client.graphinventory.entities.uri.Depth;
 import org.onap.so.client.graphinventory.GraphInventoryObjectType;
 
 public interface GraphInventoryUri {
