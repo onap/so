@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.common.validation;
+package org.onap.so.bpmn.common.listener;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -34,6 +34,12 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.common.DelegateExecutionImpl;
+import org.onap.so.bpmn.common.listener.validation.BuildingBlockValidatorRunner;
+import org.onap.so.bpmn.common.listener.validation.FlowValidator;
+import org.onap.so.bpmn.common.listener.validation.MyPreValidatorOne;
+import org.onap.so.bpmn.common.listener.validation.MyPreValidatorThree;
+import org.onap.so.bpmn.common.listener.validation.MyPreValidatorTwo;
+import org.onap.so.bpmn.common.listener.validation.ValidationConfig;
 import org.onap.so.bpmn.core.WorkflowException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -57,7 +63,7 @@ public class BuildingBlockValidatorRunnerTest {
         MyPreValidatorThree three = new MyPreValidatorThree();
         List<FlowValidator> validators = Arrays.asList(one, two, three);
 
-        List<FlowValidator> result = runner.filterValidators(validators, "test");
+        List<FlowValidator> result = runner.filterListeners(validators, (item -> item.shouldRunFor("test")));
 
         List<FlowValidator> expected = Arrays.asList(two, one);
 
@@ -75,7 +81,7 @@ public class BuildingBlockValidatorRunnerTest {
         } catch (BpmnError e) {
             WorkflowException workflowException = (WorkflowException) execution.getVariable("WorkflowException");
             assertEquals(
-                    "Failed Validations:\norg.onap.so.bpmn.common.validation.MyPreValidatorTwo: my-error-two\norg.onap.so.bpmn.common.validation.MyPreValidatorOne: my-error-one",
+                    "Failed Validations:\norg.onap.so.bpmn.common.listener.validation.MyPreValidatorTwo: my-error-two\norg.onap.so.bpmn.common.listener.validation.MyPreValidatorOne: my-error-one",
                     workflowException.getErrorMessage());
         }
         runner.preValidate("test2", mock(BuildingBlockExecution.class));

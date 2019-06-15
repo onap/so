@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.common.validation;
+package org.onap.so.bpmn.common.listener.validation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,31 +29,32 @@ import org.springframework.stereotype.Component;
 
 
 /**
- * Controls running all pre and post validation for workflows.
+ * Controls running all pre and post validation for building blocks.
  * 
  * To define a validation you must make it a spring bean and implement either
- * {@link org.onap.so.bpmn.common.validation.PreWorkflowValidator} or
- * {@link org.onap.so.bpmn.common.validation.PostWorkflowValidator} your validation will automatically be run by this
- * class.
+ * {@link org.onap.so.bpmn.common.listener.validation.PreBuildingBlockValidator} or
+ * {@link org.onap.so.bpmn.common.listener.validation.PostBuildingBlockValidator} your validation will automatically be
+ * run by this class.
  *
  */
 @Component
-public class WorkflowValidatorRunner extends FlowValidatorRunner<PreWorkflowValidator, PostWorkflowValidator> {
+public class BuildingBlockValidatorRunner
+        extends FlowValidatorRunner<PreBuildingBlockValidator, PostBuildingBlockValidator> {
 
     @PostConstruct
     protected void init() {
 
-        preFlowValidators = new ArrayList<>(Optional.ofNullable(context.getBeansOfType(PreWorkflowValidator.class))
+        preFlowValidators = new ArrayList<>(Optional.ofNullable(context.getBeansOfType(PreBuildingBlockValidator.class))
                 .orElse(new HashMap<>()).values());
-        postFlowValidators = new ArrayList<>(Optional.ofNullable(context.getBeansOfType(PostWorkflowValidator.class))
-                .orElse(new HashMap<>()).values());
+        postFlowValidators = new ArrayList<>(Optional
+                .ofNullable(context.getBeansOfType(PostBuildingBlockValidator.class)).orElse(new HashMap<>()).values());
     }
 
-    protected List<PreWorkflowValidator> getPreFlowValidators() {
+    protected List<PreBuildingBlockValidator> getPreFlowValidators() {
         return this.preFlowValidators;
     }
 
-    protected List<PostWorkflowValidator> getPostFlowValidators() {
+    protected List<PostBuildingBlockValidator> getPostFlowValidators() {
         return this.postFlowValidators;
     }
 

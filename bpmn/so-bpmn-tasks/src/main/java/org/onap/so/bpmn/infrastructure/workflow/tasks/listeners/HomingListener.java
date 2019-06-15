@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 - 2019 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,25 +18,34 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.common.validation;
+package org.onap.so.bpmn.infrastructure.workflow.tasks.listeners;
 
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Set;
+import java.util.List;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.onap.so.bpmn.common.listener.flowmanipulator.FlowManipulator;
+import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MyPreValidatorFour implements PreBuildingBlockValidator {
+public class HomingListener implements FlowManipulator {
+
 
     @Override
-    public boolean shouldRunFor(String bbName) {
-        return Collections.singleton("test2").contains(bbName);
+    public boolean shouldRunFor(String currentBBName, boolean isFirst, BuildingBlockExecution execution) {
+        return "AssignVnfBB".equals(currentBBName);
     }
 
     @Override
-    public Optional<String> validate(BuildingBlockExecution exeuction) {
-        return Optional.of("my-error-four");
+    public void run(List<ExecuteBuildingBlock> flowsToExecute, ExecuteBuildingBlock currentBB,
+            BuildingBlockExecution execution) {
+
+        boolean homing = (boolean) execution.getVariable("homing");
+        boolean calledHoming = (boolean) execution.getVariable("calledHoming");
+        if (homing && !calledHoming) {
+            currentBB.setHoming(true);
+            execution.setVariable("calledHoming", true);
+        }
     }
+
 
 }

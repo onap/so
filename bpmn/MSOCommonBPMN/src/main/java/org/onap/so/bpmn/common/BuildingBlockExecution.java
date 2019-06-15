@@ -39,4 +39,6 @@ public interface BuildingBlockExecution {
     public Map<ResourceKey, String> getLookupMap();
 
     public String getFlowToBeCalled();
+
+    public int getCurrentSequence();
 }

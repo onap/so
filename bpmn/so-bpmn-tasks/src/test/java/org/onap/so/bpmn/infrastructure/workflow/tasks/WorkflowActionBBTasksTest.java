@@ -42,6 +42,7 @@ import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.so.bpmn.BaseTaskTest;
+import org.onap.so.bpmn.common.listener.flowmanipulator.FlowManipulatorListenerRunner;
 import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
@@ -71,6 +72,9 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 
     @Mock
     protected Environment environment;
+
+    @Mock
+    private FlowManipulatorListenerRunner flowManipulatorListenerRunner;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();

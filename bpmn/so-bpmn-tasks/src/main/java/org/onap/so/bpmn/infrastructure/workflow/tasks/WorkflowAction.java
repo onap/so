@@ -42,6 +42,7 @@ import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aai.domain.yang.Vnfc;
 import org.onap.aai.domain.yang.VolumeGroup;
 import org.onap.aai.domain.yang.VpnBinding;
+import org.onap.so.bpmn.common.BBConstants;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
@@ -95,15 +96,6 @@ public class WorkflowAction {
     private static final String VF_MODULES = "vfModules";
     private static final String WORKFLOW_ACTION_WAS_UNABLE_TO_VERIFY_IF_THE_INSTANCE_NAME_ALREADY_EXIST_IN_AAI =
             "WorkflowAction was unable to verify if the instance name already exist in AAI.";
-    private static final String G_ORCHESTRATION_FLOW = "gOrchestrationFlow";
-    private static final String G_ACTION = "requestAction";
-    private static final String G_CURRENT_SEQUENCE = "gCurrentSequence";
-    private static final String G_REQUEST_ID = "mso-request-id";
-    private static final String G_BPMN_REQUEST = "bpmnRequest";
-    private static final String G_ALACARTE = "aLaCarte";
-    private static final String G_APIVERSION = "apiVersion";
-    private static final String G_URI = "requestUri";
-    private static final String G_ISTOPLEVELFLOW = "isTopLevelFlow";
     private static final String VNF_TYPE = "vnfType";
     private static final String SERVICE = "Service";
     private static final String VNF = "Vnf";
@@ -119,7 +111,6 @@ public class WorkflowAction {
             "vnfs|vfModules|networks|networkCollections|volumeGroups|serviceInstances|instanceGroups";
     private static final String HOMINGSOLUTION = "Homing_Solution";
     private static final String FABRIC_CONFIGURATION = "FabricConfiguration";
-    private static final String G_SERVICE_TYPE = "serviceType";
     private static final String SERVICE_TYPE_TRANSPORT = "TRANSPORT";
     private static final String SERVICE_TYPE_BONDING = "BONDING";
     private static final Logger logger = LoggerFactory.getLogger(WorkflowAction.class);
@@ -152,17 +143,19 @@ public class WorkflowAction {
     }
 
     public void selectExecutionList(DelegateExecution execution) throws Exception {
-        final String requestAction = (String) execution.getVariable(G_ACTION);
-        final String requestId = (String) execution.getVariable(G_REQUEST_ID);
-        final String bpmnRequest = (String) execution.getVariable(G_BPMN_REQUEST);
-        final boolean aLaCarte = (boolean) execution.getVariable(G_ALACARTE);
-        final String apiVersion = (String) execution.getVariable(G_APIVERSION);
-        final String uri = (String) execution.getVariable(G_URI);
+        final String requestAction = (String) execution.getVariable(BBConstants.G_ACTION);
+        final String requestId = (String) execution.getVariable(BBConstants.G_REQUEST_ID);
+        final String bpmnRequest = (String) execution.getVariable(BBConstants.G_BPMN_REQUEST);
+        final boolean aLaCarte = (boolean) execution.getVariable(BBConstants.G_ALACARTE);
+        final String apiVersion = (String) execution.getVariable(BBConstants.G_APIVERSION);
+        final String uri = (String) execution.getVariable(BBConstants.G_URI);
         final String vnfType = (String) execution.getVariable(VNF_TYPE);
         String serviceInstanceId = (String) execution.getVariable("serviceInstanceId");
-        final String serviceType = Optional.ofNullable((String) execution.getVariable(G_SERVICE_TYPE)).orElse("");
+        final String serviceType =
+                Optional.ofNullable((String) execution.getVariable(BBConstants.G_SERVICE_TYPE)).orElse("");
 
-        List<OrchestrationFlow> orchFlows = (List<OrchestrationFlow>) execution.getVariable(G_ORCHESTRATION_FLOW);
+        List<OrchestrationFlow> orchFlows =
+                (List<OrchestrationFlow>) execution.getVariable(BBConstants.G_ORCHESTRATION_FLOW);
         List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
         WorkflowResourceIds workflowResourceIds = populateResourceIdsFromApiHandler(execution);
         List<Pair<WorkflowType, String>> aaiResourceIds = new ArrayList<>();
@@ -173,7 +166,7 @@ public class WorkflowAction {
 
         try {
             ObjectMapper mapper = new ObjectMapper();
-            execution.setVariable(G_ISTOPLEVELFLOW, true);
+            execution.setVariable(BBConstants.G_ISTOPLEVELFLOW, true);
             ServiceInstancesRequest sIRequest = mapper.readValue(bpmnRequest, ServiceInstancesRequest.class);
             RequestDetails requestDetails = sIRequest.getRequestDetails();
             String cloudOwner = "";
@@ -361,7 +354,7 @@ public class WorkflowAction {
                 flowNames.add(ebb.getBuildingBlock().getBpmnFlowName());
             }
             execution.setVariable("flowNames", flowNames);
-            execution.setVariable(G_CURRENT_SEQUENCE, 0);
+            execution.setVariable(BBConstants.G_CURRENT_SEQUENCE, 0);
             execution.setVariable("retryCount", 0);
             execution.setVariable("isRollback", false);
             execution.setVariable("flowsToExecute", flowsToExecute);
@@ -1428,7 +1421,7 @@ public class WorkflowAction {
             }
         } else {
             if (northBoundRequest.getIsToplevelflow() != null) {
-                execution.setVariable(G_ISTOPLEVELFLOW, northBoundRequest.getIsToplevelflow());
+                execution.setVariable(BBConstants.G_ISTOPLEVELFLOW, northBoundRequest.getIsToplevelflow());
             }
             List<OrchestrationFlow> flows = northBoundRequest.getOrchestrationFlowList();
             if (flows == null)

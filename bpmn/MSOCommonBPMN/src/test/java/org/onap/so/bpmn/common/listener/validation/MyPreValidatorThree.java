@@ -18,8 +18,26 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.common.validation;
+package org.onap.so.bpmn.common.listener.validation;
 
-public interface PreWorkflowValidator extends FlowValidator {
+import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
+import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.onap.so.bpmn.common.listener.validation.PreBuildingBlockValidator;
+import org.springframework.stereotype.Component;
+
+@Component
+public class MyPreValidatorThree implements PreBuildingBlockValidator {
+
+    @Override
+    public boolean shouldRunFor(String bbName) {
+        return Collections.singleton("test2").contains(bbName);
+    }
+
+    @Override
+    public Optional<String> validate(BuildingBlockExecution exeuction) {
+        return Optional.of("my-error-three");
+    }
 
 }

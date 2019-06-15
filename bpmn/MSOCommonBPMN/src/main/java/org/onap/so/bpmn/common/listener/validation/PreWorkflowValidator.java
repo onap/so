@@ -18,9 +18,8 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.common.validation;
+package org.onap.so.bpmn.common.listener.validation;
 
-
-public interface PostBuildingBlockValidator extends FlowValidator {
+public interface PreWorkflowValidator extends FlowValidator {
 
 }

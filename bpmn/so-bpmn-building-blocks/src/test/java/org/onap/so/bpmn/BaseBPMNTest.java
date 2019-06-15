@@ -36,7 +36,7 @@ import org.junit.runner.RunWith;
 import org.onap.so.TestApplication;
 import org.onap.so.bpmn.buildingblock.HomingV2;
 import org.onap.so.bpmn.common.DelegateExecutionImpl;
-import org.onap.so.bpmn.common.validation.BuildingBlockValidatorRunner;
+import org.onap.so.bpmn.common.listener.validation.BuildingBlockValidatorRunner;
 import org.onap.so.bpmn.infrastructure.aai.tasks.AAICommonTasks;
 import org.onap.so.bpmn.infrastructure.aai.tasks.AAICreateTasks;
 import org.onap.so.bpmn.infrastructure.aai.tasks.AAIDeleteTasks;

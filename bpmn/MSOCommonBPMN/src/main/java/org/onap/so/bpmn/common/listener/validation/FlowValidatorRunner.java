@@ -18,25 +18,19 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.common.validation;
+package org.onap.so.bpmn.common.listener.validation;
 
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import javax.annotation.Priority;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.javatuples.Pair;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.common.DelegateExecutionImpl;
-import org.onap.so.client.exception.ExceptionBuilder;
-import org.reflections.Reflections;
+import org.onap.so.bpmn.common.listener.ListenerRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 
@@ -49,14 +43,9 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
-public abstract class FlowValidatorRunner<S extends FlowValidator, E extends FlowValidator> {
+public abstract class FlowValidatorRunner<S extends FlowValidator, E extends FlowValidator> extends ListenerRunner {
 
     private static Logger logger = LoggerFactory.getLogger(FlowValidatorRunner.class);
-    @Autowired
-    protected ApplicationContext context;
-
-    @Autowired
-    protected ExceptionBuilder exceptionBuilder;
 
     protected List<S> preFlowValidators;
     protected List<E> postFlowValidators;
@@ -114,44 +103,12 @@ public abstract class FlowValidatorRunner<S extends FlowValidator, E extends Flo
     protected List<Pair<String, Optional<String>>> runValidations(List<? extends FlowValidator> validators,
             String bbName, BuildingBlockExecution execution) {
 
-        List<FlowValidator> filtered = filterValidators(validators, bbName);
+        List<? extends FlowValidator> filtered = filterListeners(validators, (item -> item.shouldRunFor(bbName)));
 
         List<Pair<String, Optional<String>>> results = new ArrayList<>();
         filtered.forEach(item -> results.add(new Pair<>(item.getClass().getName(), item.validate(execution))));
 
         return results.stream().filter(item -> item.getValue1().isPresent()).collect(Collectors.toList());
-    }
-
-    protected List<FlowValidator> filterValidators(List<? extends FlowValidator> validators, String bbName) {
-        return validators.stream().filter(item -> {
-            return !item.getClass().isAnnotationPresent(Skip.class) && item.shouldRunFor(bbName);
-        }).sorted(Comparator.comparing(item -> {
-            Priority p = Optional.ofNullable(item.getClass().getAnnotation(Priority.class)).orElse(new Priority() {
-                public int value() {
-                    return 1000;
-                }
-
-                @Override
-                public Class<? extends Annotation> annotationType() {
-                    return Priority.class;
-                }
-            });
-            return p.value();
-        })).collect(Collectors.toList());
-    }
-
-    protected <T> List<T> buildalidatorList(Reflections reflections, Class<T> clazz) {
-        List<T> result = new ArrayList<>();
-        try {
-            for (Class<? extends T> klass : reflections.getSubTypesOf(clazz)) {
-                result.add(klass.newInstance());
-            }
-        } catch (InstantiationException | IllegalAccessException e) {
-            logger.error("failed to build validator list for {}", clazz.getName(), e);
-            throw new RuntimeException(e);
-        }
-
-        return result;
     }
 
     protected abstract List<S> getPreFlowValidators();

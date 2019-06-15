@@ -119,5 +119,10 @@ public class InputParameterRetrieverTaskTest extends BaseTaskTest {
             return null;
         }
 
+        @Override
+        public int getCurrentSequence() {
+            return 0;
+        }
+
     }
 }

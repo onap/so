@@ -35,7 +35,7 @@ public class ExecuteBuildingBlock implements Serializable {
     private String requestAction;
     private String vnfType;
     private Boolean aLaCarte;
-    private Boolean homing;
+    private Boolean homing = false;
     private WorkflowResourceIds workflowResourceIds;
     private RequestDetails requestDetails;
     private ConfigurationResourceKeys configurationResourceKeys;

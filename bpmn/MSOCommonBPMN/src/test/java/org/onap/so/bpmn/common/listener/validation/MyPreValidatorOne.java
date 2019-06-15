@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 - 2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,27 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.common.validation;
+package org.onap.so.bpmn.common.listener.validation;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
+import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.onap.so.bpmn.common.listener.validation.PreBuildingBlockValidator;
+import org.springframework.stereotype.Component;
 
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Skip {
+@Component
+public class MyPreValidatorOne implements PreBuildingBlockValidator {
+
+    @Override
+    public boolean shouldRunFor(String bbName) {
+
+        return Collections.singleton("test").contains(bbName);
+    }
+
+    @Override
+    public Optional<String> validate(BuildingBlockExecution exeuction) {
+        return Optional.of("my-error-one");
+    }
 
 }

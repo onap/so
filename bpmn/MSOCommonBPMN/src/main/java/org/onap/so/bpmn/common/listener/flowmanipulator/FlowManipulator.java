@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 - 2019 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,26 +18,16 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.common.validation;
+package org.onap.so.bpmn.common.listener.flowmanipulator;
 
-import java.util.Collections;
-import java.util.Optional;
+import java.util.List;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
-import org.springframework.stereotype.Component;
+import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 
-@Component
-@Skip
-public class MyDisabledValidator implements PreBuildingBlockValidator {
+public interface FlowManipulator {
 
-    @Override
-    public boolean shouldRunFor(String bbName) {
+    public boolean shouldRunFor(String currentBBName, boolean isFirst, BuildingBlockExecution execution);
 
-        return Collections.singleton("test").contains(bbName);
-    }
-
-    @Override
-    public Optional<String> validate(BuildingBlockExecution exeuction) {
-        return Optional.of("my-disabled-validator");
-    }
-
+    public void run(List<ExecuteBuildingBlock> flowsToExecute, ExecuteBuildingBlock currentBB,
+            BuildingBlockExecution execution);
 }
