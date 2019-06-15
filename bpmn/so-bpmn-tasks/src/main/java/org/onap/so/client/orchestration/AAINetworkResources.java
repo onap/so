@@ -32,6 +32,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet;
+import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.entities.AAIEdgeLabel;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
@@ -206,4 +207,11 @@ public class AAINetworkResources {
                 AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, networkPolicyId);
         injectionHelper.getAaiClient().delete(networkPolicyURI);
     }
+
+    public boolean checkNetworkNameInUse(String networkName) {
+        AAIResourceUri uri =
+                AAIUriFactory.createResourceUri(AAIObjectPlurals.L3_NETWORK).queryParam("network-name", networkName);
+        return injectionHelper.getAaiClient().exists(uri);
+    }
+
 }

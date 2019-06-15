@@ -323,9 +323,13 @@ public class AAICreateTasks {
      */
     public void createNetwork(BuildingBlockExecution execution) {
         try {
+            Boolean alaCarte = execution.getVariable(A_LA_CARTE);
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
             L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
+            if (alaCarte != null && alaCarte && aaiNetworkResources.checkNetworkNameInUse(l3network.getNetworkName())) {
+                throw new DuplicateNameException("l3Network", l3network.getNetworkName());
+            }
             // set default to false. ToBe updated by SDNC
             l3network.setIsBoundToVpn(false);
             // define is bound to vpn flag as true if NEUTRON_NETWORK_TYPE is PROVIDER
@@ -376,11 +380,16 @@ public class AAICreateTasks {
      */
     public void createNetworkCollectionInstanceGroup(BuildingBlockExecution execution) {
         try {
+            Boolean alaCarte = execution.getVariable(A_LA_CARTE);
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
             InstanceGroup instanceGroup = serviceInstance.getCollection().getInstanceGroup();
             // set name generated for NetworkCollection/NetworkCollectionInstanceGroup in previous step of the BB flow
             instanceGroup.setInstanceGroupName(execution.getVariable(NETWORK_COLLECTION_NAME));
+            if (alaCarte != null && alaCarte
+                    && aaiInstanceGroupResources.checkInstanceGroupNameInUse(instanceGroup.getInstanceGroupName())) {
+                throw new DuplicateNameException("instance-group", instanceGroup.getInstanceGroupName());
+            }
             // put shell in AAI
             aaiNetworkResources.createNetworkInstanceGroup(instanceGroup);
         } catch (Exception ex) {
@@ -497,7 +506,12 @@ public class AAICreateTasks {
 
     public void createConfiguration(BuildingBlockExecution execution) {
         try {
+            Boolean alaCarte = execution.getVariable(A_LA_CARTE);
             Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID);
+            if (alaCarte != null && alaCarte
+                    && aaiConfigurationResources.checkConfigurationNameInUse(configuration.getConfigurationName())) {
+                throw new DuplicateNameException("configuration", configuration.getConfigurationName());
+            }
             aaiConfigurationResources.createConfiguration(configuration);
         } catch (Exception ex) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
@@ -506,9 +520,14 @@ public class AAICreateTasks {
 
     public void createInstanceGroupVnf(BuildingBlockExecution execution) {
         try {
+            Boolean alaCarte = execution.getVariable(A_LA_CARTE);
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
             InstanceGroup instanceGroup = extractPojosForBB.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID);
+            if (alaCarte != null && alaCarte
+                    && aaiInstanceGroupResources.checkInstanceGroupNameInUse(instanceGroup.getInstanceGroupName())) {
+                throw new DuplicateNameException("instance-group", instanceGroup.getInstanceGroupName());
+            }
             aaiInstanceGroupResources.createInstanceGroupandConnectServiceInstance(instanceGroup, serviceInstance);
         } catch (Exception ex) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);

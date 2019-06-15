@@ -22,6 +22,8 @@ package org.onap.so.client.orchestration;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doNothing;
@@ -40,6 +42,7 @@ import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.AAIEdgeLabel;
@@ -129,6 +132,24 @@ public class AAIInstanceGroupResourcesTest extends TestDataSetup {
         verify(MOCK_aaiObjectMapper, times(1)).mapInstanceGroup(instanceGroup);
         verify(MOCK_aaiResourcesClient, times(1)).createIfNotExists(any(AAIResourceUri.class), any(Optional.class));
         verify(MOCK_aaiResourcesClient, times(1)).connect(any(AAIResourceUri.class), any(AAIResourceUri.class));
+    }
+
+    @Test
+    public void checkInstanceGroupNameInUseTrueTest() throws Exception {
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.INSTANCE_GROUP)
+                .queryParam("instance-group-name", "instanceGroupName");
+        doReturn(true).when(MOCK_aaiResourcesClient).exists(eq(uri));
+        boolean nameInUse = aaiInstanceGroupResources.checkInstanceGroupNameInUse("instanceGroupName");
+        assertTrue(nameInUse);
+    }
+
+    @Test
+    public void checkInstanceGroupNameInUseFalseTest() throws Exception {
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.INSTANCE_GROUP)
+                .queryParam("instance-group-name", "instanceGroupName");
+        doReturn(false).when(MOCK_aaiResourcesClient).exists(eq(uri));
+        boolean nameInUse = aaiInstanceGroupResources.checkInstanceGroupNameInUse("instanceGroupName");
+        assertFalse(nameInUse);
     }
 
 }

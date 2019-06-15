@@ -425,10 +425,18 @@ public class AAICreateTasksTest extends BaseTaskTest {
     @Test
     public void createNetworkTest() throws Exception {
         network.getModelInfoNetwork().setNeutronNetworkType("PROVIDER");
-
+        execution.setVariable("aLaCarte", Boolean.FALSE);
         doNothing().when(aaiNetworkResources).createNetworkConnectToServiceInstance(network, serviceInstance);
         aaiCreateTasks.createNetwork(execution);
         verify(aaiNetworkResources, times(1)).createNetworkConnectToServiceInstance(network, serviceInstance);
+    }
+
+    @Test
+    public void createNetworkNameInUseExceptionTest() throws Exception {
+        expectedException.expect(BpmnError.class);
+        execution.setVariable("aLaCarte", Boolean.TRUE);
+        doReturn(true).when(aaiNetworkResources).checkNetworkNameInUse(network.getNetworkName());
+        aaiCreateTasks.createNetwork(execution);
     }
 
     @Test
@@ -471,6 +479,7 @@ public class AAICreateTasksTest extends BaseTaskTest {
     public void createNetworkCollectionInstanceGroupTest() throws Exception {
         doNothing().when(aaiNetworkResources)
                 .createNetworkInstanceGroup(serviceInstance.getCollection().getInstanceGroup());
+        execution.setVariable("aLaCarte", Boolean.FALSE);
         aaiCreateTasks.createNetworkCollectionInstanceGroup(execution);
         verify(aaiNetworkResources, times(1))
                 .createNetworkInstanceGroup(serviceInstance.getCollection().getInstanceGroup());
@@ -536,8 +545,18 @@ public class AAICreateTasksTest extends BaseTaskTest {
     public void createConfigurationTest() throws Exception {
         gBBInput = execution.getGeneralBuildingBlock();
         doNothing().when(aaiConfigurationResources).createConfiguration(configuration);
+        execution.setVariable("aLaCarte", Boolean.FALSE);
         aaiCreateTasks.createConfiguration(execution);
         verify(aaiConfigurationResources, times(1)).createConfiguration(configuration);
+    }
+
+    @Test
+    public void createConfigurationNameInUseExceptionTest() throws Exception {
+        expectedException.expect(BpmnError.class);
+        doReturn(true).when(aaiConfigurationResources)
+                .checkConfigurationNameInUse(configuration.getConfigurationName());
+        execution.setVariable("aLaCarte", Boolean.TRUE);
+        aaiCreateTasks.createConfiguration(execution);
     }
 
     @Test
@@ -570,11 +589,23 @@ public class AAICreateTasksTest extends BaseTaskTest {
 
     @Test
     public void createInstanceGroupVnfTest() throws Exception {
+        doReturn(false).when(aaiInstanceGroupResources)
+                .checkInstanceGroupNameInUse(instanceGroup.getInstanceGroupName());
         doNothing().when(aaiInstanceGroupResources).createInstanceGroupandConnectServiceInstance(instanceGroup,
                 serviceInstance);
+        execution.setVariable("aLaCarte", Boolean.FALSE);
         aaiCreateTasks.createInstanceGroupVnf(execution);
         verify(aaiInstanceGroupResources, times(1)).createInstanceGroupandConnectServiceInstance(instanceGroup,
                 serviceInstance);
+    }
+
+    @Test
+    public void createInstanceGroupVnfNameInUseExceptionTest() throws Exception {
+        expectedException.expect(BpmnError.class);
+        doReturn(true).when(aaiInstanceGroupResources)
+                .checkInstanceGroupNameInUse(instanceGroup.getInstanceGroupName());
+        execution.setVariable("aLaCarte", Boolean.TRUE);
+        aaiCreateTasks.createInstanceGroupVnf(execution);
     }
 
     @Test
