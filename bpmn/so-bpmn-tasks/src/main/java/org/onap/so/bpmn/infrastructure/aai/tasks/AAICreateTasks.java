@@ -107,8 +107,12 @@ public class AAICreateTasks {
 
     public void createServiceInstance(BuildingBlockExecution execution) {
         try {
+            Boolean alaCarte = execution.getVariable(A_LA_CARTE);
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+            if (Boolean.TRUE.equals(alaCarte) && aaiSIResources.checkInstanceServiceNameInUse(serviceInstance)) {
+                throw new DuplicateNameException("service-instance", serviceInstance.getServiceInstanceName());
+            }
             Customer customer = execution.getGeneralBuildingBlock().getCustomer();
             aaiSIResources.createServiceInstance(serviceInstance, customer);
         } catch (Exception ex) {
@@ -327,7 +331,8 @@ public class AAICreateTasks {
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
             L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
-            if (alaCarte != null && alaCarte && aaiNetworkResources.checkNetworkNameInUse(l3network.getNetworkName())) {
+            if (Boolean.TRUE.equals(alaCarte)
+                    && aaiNetworkResources.checkNetworkNameInUse(l3network.getNetworkName())) {
                 throw new DuplicateNameException("l3Network", l3network.getNetworkName());
             }
             // set default to false. ToBe updated by SDNC
@@ -386,7 +391,7 @@ public class AAICreateTasks {
             InstanceGroup instanceGroup = serviceInstance.getCollection().getInstanceGroup();
             // set name generated for NetworkCollection/NetworkCollectionInstanceGroup in previous step of the BB flow
             instanceGroup.setInstanceGroupName(execution.getVariable(NETWORK_COLLECTION_NAME));
-            if (alaCarte != null && alaCarte
+            if (Boolean.TRUE.equals(alaCarte)
                     && aaiInstanceGroupResources.checkInstanceGroupNameInUse(instanceGroup.getInstanceGroupName())) {
                 throw new DuplicateNameException("instance-group", instanceGroup.getInstanceGroupName());
             }
@@ -508,7 +513,7 @@ public class AAICreateTasks {
         try {
             Boolean alaCarte = execution.getVariable(A_LA_CARTE);
             Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID);
-            if (alaCarte != null && alaCarte
+            if (Boolean.TRUE.equals(alaCarte)
                     && aaiConfigurationResources.checkConfigurationNameInUse(configuration.getConfigurationName())) {
                 throw new DuplicateNameException("configuration", configuration.getConfigurationName());
             }
@@ -524,7 +529,7 @@ public class AAICreateTasks {
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
             InstanceGroup instanceGroup = extractPojosForBB.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID);
-            if (alaCarte != null && alaCarte
+            if (Boolean.TRUE.equals(alaCarte)
                     && aaiInstanceGroupResources.checkInstanceGroupNameInUse(instanceGroup.getInstanceGroupName())) {
                 throw new DuplicateNameException("instance-group", instanceGroup.getInstanceGroupName());
             }

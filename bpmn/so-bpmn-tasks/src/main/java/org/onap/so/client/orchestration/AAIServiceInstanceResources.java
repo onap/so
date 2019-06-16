@@ -157,5 +157,10 @@ public class AAIServiceInstanceResources {
         injectionHelper.getAaiClient().update(serviceInstanceURI, aaiServiceInstance);
     }
 
+    public boolean checkInstanceServiceNameInUse(ServiceInstance serviceInstance) {
+        AAIResourceUri uriSI = AAIUriFactory.createNodesUri(AAIObjectPlurals.SERVICE_INSTANCE)
+                .queryParam("service-instance-name", serviceInstance.getServiceInstanceName());
+        return injectionHelper.getAaiClient().exists(uriSI);
+    }
 
 }
