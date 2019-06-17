@@ -123,9 +123,18 @@ public class AAICreateTasksTest extends BaseTaskTest {
 
     @Test
     public void createServiceInstanceTest() throws Exception {
+        doReturn(false).when(aaiServiceInstanceResources).checkInstanceServiceNameInUse(serviceInstance);
         doNothing().when(aaiServiceInstanceResources).createServiceInstance(serviceInstance, customer);
         aaiCreateTasks.createServiceInstance(execution);
         verify(aaiServiceInstanceResources, times(1)).createServiceInstance(serviceInstance, customer);
+    }
+
+    @Test
+    public void createServiceInstanceNameInUseExceptionTest() throws Exception {
+        expectedException.expect(BpmnError.class);
+        doReturn(true).when(aaiServiceInstanceResources).checkInstanceServiceNameInUse(serviceInstance);
+        execution.setVariable("aLaCarte", Boolean.TRUE);
+        aaiCreateTasks.createServiceInstance(execution);
     }
 
     @Test
