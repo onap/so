@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javax.annotation.PostConstruct;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiParam;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiParamParam;
@@ -118,7 +119,7 @@ public class VnfAdapterVfModuleObjectMapper {
     public CreateVfModuleRequest createVfModuleRequestMapper(RequestContext requestContext, CloudRegion cloudRegion,
             OrchestrationContext orchestrationContext, ServiceInstance serviceInstance, GenericVnf genericVnf,
             VfModule vfModule, VolumeGroup volumeGroup, String sdncVnfQueryResponse, String sdncVfModuleQueryResponse)
-            throws JsonParseException, JsonMappingException, IOException {
+            throws IOException {
         CreateVfModuleRequest createVfModuleRequest = new CreateVfModuleRequest();
 
         createVfModuleRequest.setCloudSiteId(cloudRegion.getLcpCloudRegionId());
@@ -167,7 +168,7 @@ public class VnfAdapterVfModuleObjectMapper {
 
     private Map<String, Object> buildVfModuleParamsMap(RequestContext requestContext, ServiceInstance serviceInstance,
             GenericVnf genericVnf, VfModule vfModule, String sdncVnfQueryResponse, String sdncVfModuleQueryResponse)
-            throws JsonParseException, JsonMappingException, IOException {
+            throws IOException {
 
 
         GenericResourceApiVnfTopology vnfTop =
@@ -206,7 +207,7 @@ public class VnfAdapterVfModuleObjectMapper {
             Map<String, Object> srcMap) {
         StringBuilder directives = new StringBuilder();
         int no_directives_size = 0;
-        if (directives.equals(MsoMulticloudUtils.USER_DIRECTIVES)
+        if (directive.equals(MsoMulticloudUtils.USER_DIRECTIVES)
                 && srcMap.containsKey(MsoMulticloudUtils.OOF_DIRECTIVES)) {
             no_directives_size = 1;
         }
@@ -214,7 +215,7 @@ public class VnfAdapterVfModuleObjectMapper {
             directives.append("{ \"attributes\": [ ");
             int i = 0;
             for (String attributeName : srcMap.keySet()) {
-                if (!(MsoMulticloudUtils.USER_DIRECTIVES.equals(directives)
+                if (!(MsoMulticloudUtils.USER_DIRECTIVES.equals(directive)
                         && attributeName.equals(MsoMulticloudUtils.OOF_DIRECTIVES))) {
                     directives.append(new AttributeNameValue(attributeName, srcMap.get(attributeName).toString()));
                     if (i < (srcMap.size() - 1 + no_directives_size))
@@ -247,7 +248,7 @@ public class VnfAdapterVfModuleObjectMapper {
 
     private void buildParamsMapFromVnfSdncResponse(Map<String, Object> paramsMap,
             GenericResourceApiVnftopologyVnfTopology vnfTopology, Map<String, String> networkRoleMap,
-            boolean skipVnfResourceAssignments) throws JsonParseException, JsonMappingException, IOException {
+            boolean skipVnfResourceAssignments) throws IOException {
         // Get VNF parameters from SDNC response
         GenericResourceApiParam vnfParametersData = vnfTopology.getVnfParametersData();
         buildParamsMapFromSdncParams(paramsMap, vnfParametersData);
