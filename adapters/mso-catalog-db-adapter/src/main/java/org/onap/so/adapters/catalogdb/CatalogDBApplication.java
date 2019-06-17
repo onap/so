@@ -24,12 +24,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication(scanBasePackages = {"org.onap.so.adapters.catalogdb", "org.onap.so.db.catalog.client",
         "org.onap.so.logging.jaxrs.filter", "org.onap.so.logging.spring.interceptor", "org.onap.so.client",
-        "org.onap.so.configuration"})
+        "org.onap.so.configuration", "org.onap.so.db"})
 @EnableJpaRepositories("org.onap.so.db.catalog.data.repository")
 @EntityScan("org.onap.so.db.catalog.beans")
+@EnableScheduling
 public class CatalogDBApplication {
 
     private static final String LOGS_DIR = "logs_dir";
@@ -42,6 +44,7 @@ public class CatalogDBApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(CatalogDBApplication.class, args);
+        java.security.Security.setProperty("networkaddress.cache.ttl", "10");
         System.getProperties().setProperty("mso.db", "MARIADB");
         System.getProperties().setProperty("server.name", "Springboot");
         setLogsDir();

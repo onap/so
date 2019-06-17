@@ -18,10 +18,13 @@ mso:
 # H2
 spring:
   datasource:
-    jdbcUrl: jdbc:mariadb://${DB_HOST}:${DB_PORT}/requestdb
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: org.mariadb.jdbc.Driver
+    hikari:
+      jdbc-url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/requestdb
+      username: ${DB_USERNAME}
+      password: ${DB_PASSWORD}
+      driver-class-name: org.mariadb.jdbc.Driver 
+      pool-name: reqdb-pool
+      registerMbeans: true
   flyway:
     baseline-on-migrate: false
     url:  jdbc:mariadb://${DB_HOST}:${DB_PORT}/requestdb

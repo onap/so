@@ -20,6 +20,10 @@
 
   <dependencies>
     <dependency>
+      <groupId>hikari-cp</groupId>
+      <artifactId>hikari-cp</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
     </dependency>

@@ -18,8 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.apihandlerinfra.configuration;
-
+package org.onap.so.adapters.catalogdb;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -29,6 +28,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jmx.export.MBeanExporter;
@@ -41,40 +41,42 @@ import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(entityManagerFactoryRef = "requestEntityManagerFactory",
-        transactionManagerRef = "requestTransactionManager", basePackages = {"org.onap.so.db.request.data.repository"})
+@EnableJpaRepositories(entityManagerFactoryRef = "entityManagerFactory",
+        basePackages = {"org.onap.so.db.catalog.data.repository"})
 @Profile({"!test"})
-public class RequestDBConfig {
+public class CatalogDBConfig {
 
     @Autowired(required = false)
     private MBeanExporter mBeanExporter;
 
     @Bean
-    @ConfigurationProperties(prefix = "request.datasource.hikari")
-    public HikariConfig requestDbConfig() {
+    @ConfigurationProperties(prefix = "spring.datasource.hikari")
+    public HikariConfig catalogDbConfig() {
         return new HikariConfig();
     }
 
-    @Bean(name = "requestDataSource")
+    @Primary
+    @Bean(name = "dataSource")
     public DataSource dataSource() {
         if (mBeanExporter != null) {
-            mBeanExporter.addExcludedBean("requestDataSource");
+            mBeanExporter.addExcludedBean("dataSource");
         }
-        HikariConfig hikariConfig = this.requestDbConfig();
+        HikariConfig hikariConfig = this.catalogDbConfig();
         return new HikariDataSource(hikariConfig);
     }
 
-    @Bean(name = "requestEntityManagerFactory")
+    @Primary
+    @Bean(name = "entityManagerFactory")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder,
-            @Qualifier("requestDataSource") DataSource dataSource) {
-        return builder.dataSource(dataSource).packages("org.onap.so.db.request.beans").persistenceUnit("requestDB")
+            @Qualifier("dataSource") DataSource dataSource) {
+        return builder.dataSource(dataSource).packages("org.onap.so.db.catalog.beans").persistenceUnit("catalogDB")
                 .build();
     }
 
-
-    @Bean(name = "requestTransactionManager")
+    @Primary
+    @Bean(name = "transactionManager")
     public PlatformTransactionManager transactionManager(
-            @Qualifier("requestEntityManagerFactory") EntityManagerFactory entityManagerFactory) {
+            @Qualifier("entityManagerFactory") EntityManagerFactory entityManagerFactory) {
         return new JpaTransactionManager(entityManagerFactory);
     }
 

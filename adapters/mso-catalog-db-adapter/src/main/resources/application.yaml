@@ -16,11 +16,14 @@ mso:
     
 spring:
   datasource:
-    url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: org.mariadb.jdbc.Driver
-    initialization-mode: never
+     hikari:
+       jdbcUrl: jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb
+       username: ${DB_USERNAME}
+       password: ${DB_PASSWORD}
+       driver-class-name: org.mariadb.jdbc.Driver
+       pool-name: catdb-pool
+       registerMbeans: true
+       
   flyway:
     baseline-on-migrate: false
     url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb

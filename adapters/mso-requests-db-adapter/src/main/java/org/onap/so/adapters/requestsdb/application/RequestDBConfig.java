@@ -23,6 +23,7 @@ package org.onap.so.adapters.requestsdb.application;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -32,10 +33,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.jmx.export.MBeanExporter;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 @Profile({"!test"})
 @Configuration
@@ -44,12 +48,24 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
         transactionManagerRef = "requestTransactionManager", basePackages = {"org.onap.so.db.request.data.repository"})
 public class RequestDBConfig {
 
-    @Primary
-    @Bean(name = "requestDataSource")
-    @ConfigurationProperties(prefix = "spring.datasource")
-    public DataSource dataSource() {
-        return DataSourceBuilder.create().build();
+    @Autowired(required = false)
+    private MBeanExporter mBeanExporter;
+
+    @Bean
+    @ConfigurationProperties(prefix = "spring.datasource.hikari")
+    public HikariConfig requestDbConfig() {
+        return new HikariConfig();
     }
+
+    @Bean(name = "requestDataSource")
+    public DataSource dataSource() {
+        if (mBeanExporter != null) {
+            mBeanExporter.addExcludedBean("requestDataSource");
+        }
+        HikariConfig hikariConfig = this.requestDbConfig();
+        return new HikariDataSource(hikariConfig);
+    }
+
 
     @Primary
     @Bean(name = "requestEntityManagerFactory")

@@ -27,6 +27,9 @@ import javax.sql.DataSource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.EnableMBeanExport;
+import org.springframework.jmx.support.RegistrationPolicy;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import net.javacrumbs.shedlock.core.LockProvider;
 import net.javacrumbs.shedlock.provider.jdbctemplate.JdbcTemplateLockProvider;
 import net.javacrumbs.shedlock.spring.ScheduledLockConfiguration;
@@ -38,6 +41,8 @@ import net.javacrumbs.shedlock.spring.ScheduledLockConfigurationBuilder;
  */
 
 @SpringBootApplication(scanBasePackages = {"org.onap.so"})
+@EnableScheduling
+@EnableMBeanExport(registration = RegistrationPolicy.IGNORE_EXISTING)
 public class MSORequestDBApplication {
 
     private static final String LOGS_DIR = "logs_dir";
@@ -50,6 +55,7 @@ public class MSORequestDBApplication {
 
     public static void main(String... args) {
         SpringApplication.run(MSORequestDBApplication.class, args);
+        java.security.Security.setProperty("networkaddress.cache.ttl", "10");
         setLogsDir();
     }
 
@@ -63,6 +69,5 @@ public class MSORequestDBApplication {
         return ScheduledLockConfigurationBuilder.withLockProvider(lockProvider).withPoolSize(10)
                 .withDefaultLockAtMostFor(Duration.ofMinutes(10)).build();
     }
-
 
 }
