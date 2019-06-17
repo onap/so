@@ -812,6 +812,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                     logger.trace("Found vfModuleCust entry {}", vfmc.toString());
                 }
                 if (vf.getIsBase()) {
+                    isBaseRequest = true;
                     logger.debug("This is a BASE VF request!");
                 } else {
                     logger.debug("This is *not* a BASE VF request!");
@@ -938,8 +939,9 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
             if (heatTemplate == null) {
                 String error = "UpdateVF: No Heat Template ID defined in catalog database for " + vfModuleType
-                        + ", modelCustomizationUuid=" + mcu + ", vfModuleUuid=" + vf.getModelUUID()
-                        + ", vnfResourceModelUuid=" + vnfResource.getModelUUID() + ", reqType=" + requestTypeString;
+                        + ", modelCustomizationUuid=" + mcu + ", vfModuleUuid="
+                        + (vf != null ? vf.getModelUUID() : "null") + ", vnfResourceModelUuid="
+                        + vnfResource.getModelUUID() + ", reqType=" + requestTypeString;
                 logger.error(LoggingAnchor.SIX, MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(), "Heat Template " + "ID",
                         vfModuleType, OPENSTACK, ErrorCode.DataError.getValue(), error);
                 logger.debug(error);
@@ -954,8 +956,9 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             } else {
                 if (heatEnvironment == null) {
                     String error = "Update VNF: undefined Heat Environment. VF=" + vfModuleType
-                            + ", modelCustomizationUuid=" + mcu + ", vfModuleUuid=" + vf.getModelUUID()
-                            + ", vnfResourceModelUuid=" + vnfResource.getModelUUID() + ", reqType=" + requestTypeString;
+                            + ", modelCustomizationUuid=" + mcu + ", vfModuleUuid="
+                            + (vf != null ? vf.getModelUUID() : "null") + ", vnfResourceModelUuid="
+                            + vnfResource.getModelUUID() + ", reqType=" + requestTypeString;
                     logger.error(LoggingAnchor.FIVE, MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(),
                             "Heat " + "Environment ID", OPENSTACK, ErrorCode.DataError.getValue(), error);
                     logger.debug(error);
