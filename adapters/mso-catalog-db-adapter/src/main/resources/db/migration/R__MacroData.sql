@@ -189,7 +189,7 @@ VALUES
 ('AAICheckVnfInMaintBB', '*', '*', '*', '*' , 'Abort'),
 ('AAISetVnfInMaintBB', '*', '*', '*', '*' , 'Abort'),
 ('AAIUnsetVnfInMaintBB', '*', '*', '*', '*' , 'Abort');
-
+('ConfigDeployVnfBB', '*', '*', '*', 'Retry' , 'Abort');
 
 
 INSERT INTO building_block_detail (building_block_name, resource_type, target_action)
