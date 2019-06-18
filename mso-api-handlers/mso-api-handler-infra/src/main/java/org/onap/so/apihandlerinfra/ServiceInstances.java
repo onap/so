@@ -50,7 +50,7 @@ import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.RecipeNotFoundException;
 import org.onap.so.apihandlerinfra.exceptions.RequestDbFailureException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
-import org.onap.so.apihandlerinfra.exceptions.VfModuleNotFoundException;
+import org.onap.so.apihandlerinfra.infra.rest.handler.AbstractRestHandler;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
 import org.onap.so.db.catalog.beans.NetworkResource;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
@@ -86,6 +86,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -96,7 +97,7 @@ import io.swagger.annotations.ApiOperation;
 @Component
 @Path("/onap/so/infra/serviceInstantiation")
 @Api(value = "/onap/so/infra/serviceInstantiation", description = "Infrastructure API Requests for Service Instances")
-public class ServiceInstances {
+public class ServiceInstances extends AbstractRestHandler {
 
     private static Logger logger = LoggerFactory.getLogger(MsoRequest.class);
     private static String NAME = "name";
@@ -106,6 +107,9 @@ public class ServiceInstances {
 
     @Autowired
     private Environment env;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Autowired
     private CatalogDbClient catalogDbClient;

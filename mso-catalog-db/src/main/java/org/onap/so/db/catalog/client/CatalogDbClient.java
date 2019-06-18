@@ -655,6 +655,8 @@ public class CatalogDbClient {
                         .queryParam(SERVICE_MODEL_UUID, modelUUID).queryParam(ACTION, action).build().toString()));
     }
 
+
+
     public NetworkRecipe getFirstNetworkRecipeByModelNameAndAction(String modelName, String action) {
         return this.getSingleResource(networkRecipeClient, UriBuilder.fromUri(findFirstByModelNameAndAction)
                 .queryParam(MODEL_NAME, modelName).queryParam(ACTION, action).build());
@@ -717,21 +719,19 @@ public class CatalogDbClient {
     }
 
     public VnfComponentsRecipe getFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction(
-            String vfModuleModelUUID, String vnfComponentType, String action) {
+            String vfModuleModelUUID, String modelType, String action) {
         return this.getSingleResource(vnfComponentsRecipeClient,
                 getUri(UriBuilder.fromUri(findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction)
-                        .queryParam(VF_MODULE_MODEL_UUID, vfModuleModelUUID)
-                        .queryParam(VNF_COMPONENT_TYPE, vnfComponentType).queryParam(ACTION, action).build()
-                        .toString()));
+                        .queryParam(VF_MODULE_MODEL_UUID, vfModuleModelUUID).queryParam(VNF_COMPONENT_TYPE, modelType)
+                        .queryParam(ACTION, action).build().toString()));
     }
 
-    public VnfComponentsRecipe getFirstVnfComponentsRecipeByVnfComponentTypeAndAction(String vnfComponentType,
-            String action) {
+    public VnfComponentsRecipe getFirstVnfComponentsRecipeByVnfComponentTypeAndAction(String modelType, String action) {
         return this.getSingleResource(vnfComponentsRecipeClient,
                 getUri(UriBuilder.fromUri(findFirstVnfComponentsRecipeByVnfComponentTypeAndAction)
-                        .queryParam(VNF_COMPONENT_TYPE, vnfComponentType).queryParam(ACTION, action).build()
-                        .toString()));
+                        .queryParam(VNF_COMPONENT_TYPE, modelType).queryParam(ACTION, action).build().toString()));
     }
+
 
     protected URI getUri(String template) {
         return URI.create(template);

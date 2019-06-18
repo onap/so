@@ -1,0 +1,131 @@
+{
+	"vnf-id": "829924cc-8932-4875-b0af-d7a02799da9a",
+	"vnf-name": "Robot_VNF_For_Volume_Group",
+	"vnf-type": "Vf zrdm5bpxmc02092017-Service/Vf zrdm5bpxmc02092017-VF 0",
+	"service-id": "06f76284-8710-11e6-ae22-56b6b6499611",
+	"prov-status": "PREPROV",
+	"orchestration-status": "Active",
+	"in-maint": false,
+	"is-closed-loop-disabled": false,
+	"resource-version": "1560538316260",
+	"model-invariant-id": "23122c9b-dd7f-483f-bf0a-e069303db2f7",
+	"model-version-id": "d326f424-2312-4dd6-b7fe-364fadbd1ef5",
+	"model-customization-id": "96c23a4a-6887-4b2c-9cce-1e4ea35eaade",
+	"selflink": "/sim/restconf/config/GENERIC-RESOURCE-API:services/service/e9fbfab4-d91c-4508-a429-2046c8751371/service-data/vnfs/vnf/829924cc-8932-4875-b0af-d7a02799da9a/vnf-data/vnf-topology/",
+	"relationship-list": {
+		"relationship": [
+			{
+				"related-to": "service-instance",
+				"relationship-label": "org.onap.relationships.inventory.ComposedOf",
+				"related-link": "/aai/v15/business/customers/customer/Robot_Test_Subscriber_ID/service-subscriptions/service-subscription/Robot_Test_Service_Type/service-instances/service-instance/e9fbfab4-d91c-4508-a429-2046c8751371",
+				"relationship-data": [
+					{
+						"relationship-key": "customer.global-customer-id",
+						"relationship-value": "Robot_Test_Subscriber_ID"
+					},
+					{
+						"relationship-key": "service-subscription.service-type",
+						"relationship-value": "Robot_Test_Service_Type"
+					},
+					{
+						"relationship-key": "service-instance.service-instance-id",
+						"relationship-value": "e9fbfab4-d91c-4508-a429-2046c8751371"
+					}
+				],
+				"related-to-property": [
+					{
+						"property-key": "service-instance.service-instance-name",
+						"property-value": "Robot_SI_For_VolumeGroup"
+					}
+				]
+			},
+			{
+				"related-to": "platform",
+				"relationship-label": "org.onap.relationships.inventory.Uses",
+				"related-link": "/aai/v15/business/platforms/platform/vSAMP12_14-2XXX-Aug18-9001%20-%20Platform",
+				"relationship-data": [
+					{
+						"relationship-key": "platform.platform-name",
+						"relationship-value": "vSAMP12_14-2XXX-Aug18-9001 - Platform"
+					}
+				]
+			},
+			{
+				"related-to": "line-of-business",
+				"relationship-label": "org.onap.relationships.inventory.Uses",
+				"related-link": "/aai/v15/business/lines-of-business/line-of-business/vSAMP12_14-2XXX-Aug18-9001%20-%20LOB",
+				"relationship-data": [
+					{
+						"relationship-key": "line-of-business.line-of-business-name",
+						"relationship-value": "vSAMP12_14-2XXX-Aug18-9001 - LOB"
+					}
+				]
+			},
+			{
+				"related-to": "tenant",
+				"relationship-label": "org.onap.relationships.inventory.BelongsTo",
+				"related-link": "/aai/v15/cloud-infrastructure/cloud-regions/cloud-region/cloudOwner/regionOne/tenants/tenant/0422ffb57ba042c0800a29dc85ca70f8",
+				"relationship-data": [
+					{
+						"relationship-key": "cloud-region.cloud-owner",
+						"relationship-value": "cloudOwner"
+					},
+					{
+						"relationship-key": "cloud-region.cloud-region-id",
+						"relationship-value": "regionOne"
+					},
+					{
+						"relationship-key": "tenant.tenant-id",
+						"relationship-value": "0422ffb57ba042c0800a29dc85ca70f8"
+					}
+				],
+				"related-to-property": [
+					{
+						"property-key": "tenant.tenant-name",
+						"property-value": "tenantName"
+					}
+				]
+			},
+			{
+				"related-to": "volume-group",
+				"relationship-label": "org.onap.relationships.inventory.DependsOn",
+				"related-link": "/aai/v15/cloud-infrastructure/cloud-regions/cloud-region/cloudOwner/regionOne/volume-groups/volume-group/volumeGroupId",
+				"relationship-data": [
+					{
+						"relationship-key": "cloud-region.cloud-owner",
+						"relationship-value": "cloudOwner"
+					},
+					{
+						"relationship-key": "cloud-region.cloud-region-id",
+						"relationship-value": "regionOne"
+					},
+					{
+						"relationship-key": "volume-group.volume-group-id",
+						"relationship-value": "18b220c8-af84-4b82-a8c0-41bbea6328a6"
+					}
+				]
+			},
+			{
+				"related-to": "cloud-region",
+				"relationship-label": "org.onap.relationships.inventory.LocatedIn",
+				"related-link": "/aai/v15/cloud-infrastructure/cloud-regions/cloud-region/cloudOwner/regionOne",
+				"relationship-data": [
+					{
+						"relationship-key": "cloud-region.cloud-owner",
+						"relationship-value": "cloudOwner"
+					},
+					{
+						"relationship-key": "cloud-region.cloud-region-id",
+						"relationship-value": "regionOne"
+					}
+				],
+				"related-to-property": [
+					{
+						"property-key": "cloud-region.owner-defined-type",
+						"property-value": "LCP"
+					}
+				]
+			}
+		]
+	}
+}

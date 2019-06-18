@@ -1,0 +1,56 @@
+{
+	"volume-group-id": "5e6bca5b-8e14-4bdd-a419-820f68019b19",
+	"volume-group-name": "VolumeGroup",
+	"heat-stack-id": "VolumeGroup/stackId",
+	"vnf-type": "Vf zrdm5bpxmc02092017-Service/Vf zrdm5bpxmc02092017-VF 0",
+	"orchestration-status": "Active",
+	"model-customization-id": "e38906fa-717c-49b0-b391-e6ec12b50c4a",
+	"vf-module-model-customization-id": "e38906fa-717c-49b0-b391-e6ec12b50c4a",
+	"resource-version": "1560526466219",
+	"relationship-list": {
+		"relationship": [
+			{
+				"related-to": "tenant",
+				"relationship-label": "org.onap.relationships.inventory.DependsOn",
+				"related-link": "/aai/v15/cloud-infrastructure/cloud-regions/cloud-region/cloudOwner/regionOne/tenants/tenant/0422ffb57ba042c0800a29dc85ca70f8",
+				"relationship-data": [
+					{
+						"relationship-key": "cloud-region.cloud-owner",
+						"relationship-value": "cloudOwner"
+					},
+					{
+						"relationship-key": "cloud-region.cloud-region-id",
+						"relationship-value": "regionOne"
+					},
+					{
+						"relationship-key": "tenant.tenant-id",
+						"relationship-value": "0422ffb57ba042c0800a29dc85ca70f8"
+					}
+				],
+				"related-to-property": [
+					{
+						"property-key": "tenant.tenant-name",
+						"property-value": "tenantName"
+					}
+				]
+			},
+			{
+				"related-to": "generic-vnf",
+				"relationship-label": "org.onap.relationships.inventory.DependsOn",
+				"related-link": "/aai/v15/network/generic-vnfs/generic-vnf/82035634-1878-4fd9-ab14-04b819bea24b",
+				"relationship-data": [
+					{
+						"relationship-key": "generic-vnf.vnf-id",
+						"relationship-value": "82035634-1878-4fd9-ab14-04b819bea24b"
+					}
+				],
+				"related-to-property": [
+					{
+						"property-key": "generic-vnf.vnf-name",
+						"property-value": "Robot_VNF_For_Volume_Group"
+					}
+				]
+			}
+		]
+	}
+}

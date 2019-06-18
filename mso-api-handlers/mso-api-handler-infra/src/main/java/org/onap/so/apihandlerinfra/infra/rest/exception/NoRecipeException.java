@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 - 2019 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,27 +18,14 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.apihandlerinfra.exceptions;
+package org.onap.so.apihandlerinfra.infra.rest.exception;
 
+public class NoRecipeException extends Exception {
 
-public class RecipeNotFoundException extends ApiException {
-
-    private RecipeNotFoundException(Builder builder) {
-        super(builder);
+    public NoRecipeException(String error) {
+        super(error);
     }
 
 
-    public static class Builder extends ApiException.Builder<Builder> {
-
-
-        public Builder(String message, int httpResponseCode, String messageID) {
-            super(message, httpResponseCode, messageID);
-        }
-
-        public RecipeNotFoundException build() {
-
-            return new RecipeNotFoundException(this);
-        }
-    }
 
 }

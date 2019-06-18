@@ -92,7 +92,8 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
     protected static final String OPENV = "operationalEnvironment";
 
     private static final List<String> VALID_COLUMNS =
-            Arrays.asList(REQUEST_ID, SERVICE_INSTANCE_ID, SERVICE_INSTANCE_NAME, ACTION, REQUEST_STATUS);
+            Arrays.asList(REQUEST_ID, SERVICE_INSTANCE_ID, SERVICE_INSTANCE_NAME, ACTION, REQUEST_STATUS,
+                    VFMODULE_INSTANCE_ID, VNF_INSTANCE_ID, NETWORK_INSTANCE_ID, VOLUME_GROUP_INSTANCE_ID);
 
 
     /*

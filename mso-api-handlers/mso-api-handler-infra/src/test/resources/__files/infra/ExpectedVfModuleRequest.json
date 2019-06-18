@@ -1,0 +1,25 @@
+{
+  "requestDetails": {
+    "modelInfo": {
+      "modelType": "vfModule",
+      "modelCustomizationUuid": "074c64d0-7e13-4bcc-8bdb-ea922331102d",
+      "modelCustomizationId": "074c64d0-7e13-4bcc-8bdb-ea922331102d"
+    },
+    "requestInfo": {
+      "instanceName": "dummy_id",
+      "suppressRollback": false
+    },
+    "cloudConfiguration": {
+      "tenantId": "0422ffb57ba042c0800a29dc85ca70f8",
+      "cloudOwner": "cloudOwner",
+      "lcpCloudRegionId": "regionOne"
+    },
+    "requestParameters": {
+      "userParams": [],
+      "aLaCarte": true,
+      "testApi": "GR_API"
+    },
+    "instanceName": [],
+    "configurationParameters": []
+  }
+}

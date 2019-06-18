@@ -52,7 +52,6 @@ import org.onap.so.apihandler.common.RequestClientFactory;
 import org.onap.so.apihandler.common.RequestClientParameter;
 import org.onap.so.apihandler.common.ResponseBuilder;
 import org.onap.so.apihandler.common.ResponseHandler;
-import org.onap.so.apihandlerinfra.TestApi;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.BPMNFailureException;
 import org.onap.so.apihandlerinfra.exceptions.ClientConnectionException;
@@ -61,6 +60,7 @@ import org.onap.so.apihandlerinfra.exceptions.DuplicateRequestException;
 import org.onap.so.apihandlerinfra.exceptions.RequestDbFailureException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.apihandlerinfra.exceptions.VfModuleNotFoundException;
+import org.onap.so.apihandlerinfra.infra.rest.handler.AbstractRestHandler;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
 import org.onap.so.db.catalog.beans.VfModule;
 import org.onap.so.db.catalog.client.CatalogDbClient;
@@ -96,7 +96,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
-public class RequestHandlerUtils {
+public class RequestHandlerUtils extends AbstractRestHandler {
 
     private static Logger logger = LoggerFactory.getLogger(RequestHandlerUtils.class);
 
@@ -184,8 +184,8 @@ public class RequestHandlerUtils {
                     ObjectMapper mapper = new ObjectMapper();
                     jsonResponse = mapper.readValue(camundaResp.getResponse(), ServiceInstancesResponse.class);
                     jsonResponse.getRequestReferences().setRequestId(requestClientParameter.getRequestId());
-                    Optional<URL> selfLinkUrl = msoRequest.buildSelfLinkUrl(currentActiveReq.getRequestUrl(),
-                            requestClientParameter.getRequestId());
+                    Optional<URL> selfLinkUrl =
+                            buildSelfLinkUrl(currentActiveReq.getRequestUrl(), requestClientParameter.getRequestId());
                     if (selfLinkUrl.isPresent()) {
                         jsonResponse.getRequestReferences().setRequestSelfLink(selfLinkUrl.get());
                     } else {

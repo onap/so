@@ -1,0 +1,25 @@
+{
+  "requestDetails": {
+    "modelInfo": {
+      "modelType": "volumeGroup",
+      "modelCustomizationUuid": "e38906fa-717c-49b0-b391-e6ec12b50c4a",
+      "modelCustomizationId": "e38906fa-717c-49b0-b391-e6ec12b50c4a"
+    },
+    "requestInfo": {
+      "instanceName": "VolumeGroup",
+      "suppressRollback": false
+    },
+    "cloudConfiguration": {
+      "tenantId": "0422ffb57ba042c0800a29dc85ca70f8",
+      "cloudOwner": "cloudOwner",
+      "lcpCloudRegionId": "regionOne"
+    },
+    "requestParameters": {
+      "userParams": [],
+      "aLaCarte": true,
+      "testApi": "GR_API"
+    },
+    "instanceName": [],
+    "configurationParameters": []
+  }
+}

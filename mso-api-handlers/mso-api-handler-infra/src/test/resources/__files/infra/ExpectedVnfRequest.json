@@ -1,0 +1,20 @@
+{
+  "requestDetails": {
+    "modelInfo": {
+      "modelType": "vnf",
+      "modelCustomizationUuid": "96c23a4a-6887-4b2c-9cce-1e4ea35eaade",
+      "modelCustomizationId": "96c23a4a-6887-4b2c-9cce-1e4ea35eaade"
+    },
+    "requestInfo": {
+      "instanceName": "Robot_VNF_For_Volume_Group",
+      "suppressRollback": false
+    },
+    "requestParameters": {
+      "userParams": [],
+      "aLaCarte": true,
+      "testApi": "GR_API"
+    },
+    "instanceName": [],
+    "configurationParameters": []
+  }
+}
