@@ -61,7 +61,6 @@ public class SDNCServiceRequestTask {
     @Autowired
     private BPRestCallback bpRestCallback;
 
-    @Async
     public void runRequest(SDNCServiceRequest request, String msoRequestId, String msoServiceInstanceId,
             String myUrlSuffix) {
 
