@@ -31,8 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.adapters.vdu.CloudInfo;
 import org.onap.so.adapters.vdu.PluginAction;
@@ -79,7 +79,6 @@ import com.woorea.openstack.base.client.OpenStackResponseException;
 import com.woorea.openstack.heat.Heat;
 import com.woorea.openstack.heat.model.CreateStackParam;
 import com.woorea.openstack.heat.model.Events;
-import com.woorea.openstack.heat.model.Resource;
 import com.woorea.openstack.heat.model.Resources;
 import com.woorea.openstack.heat.model.Stack;
 import com.woorea.openstack.heat.model.Stack.Output;
@@ -405,17 +404,15 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
     protected Stack handleKeyPairConflict(String cloudSiteId, String tenantId, CreateStackParam stackCreate,
             int timeoutMinutes, boolean backout, Stack stack) throws MsoException {
         logger.info("Keypair conflict found on stack, attempting to clean up");
-
-        Resources resources = queryStackResources(cloudSiteId, tenantId, stackCreate.getStackName(), 2);
-        List<Resource> keyPairs = resources.getList().stream()
-                .filter(p -> "OS::Nova::KeyPair".equalsIgnoreCase(p.getType())).collect(Collectors.toList());
-        keyPairs.stream().forEach(keyPair -> {
-            try {
-                novaClient.deleteKeyPair(cloudSiteId, tenantId, keyPair.getLogicalResourceId());
-            } catch (MsoCloudSiteNotFound | NovaClientException e) {
-                logger.warn("Could not delete keypair", e);
+        try {
+            Matcher m = Pattern.compile("'([^']+?)'").matcher(stack.getStackStatusReason());
+            if (m.find()) {
+                novaClient.deleteKeyPair(cloudSiteId, tenantId, m.group(1));
             }
-        });
+        } catch (NovaClientException e) {
+            logger.warn("Could not delete keypair", e);
+        }
+
         handleUnknownCreateStackFailure(stack, timeoutMinutes, cloudSiteId, tenantId);
         Stack newStack = createStack(stackCreate, cloudSiteId, tenantId);
         newStack.setStackName(stackCreate.getStackName());
