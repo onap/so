@@ -20,11 +20,9 @@
 
 package org.onap.so.asdc;
 
-
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
@@ -36,6 +34,8 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
 @EnableTransactionManagement
@@ -44,11 +44,17 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Profile({"!test"})
 public class CatalogDBConfig {
 
+    @Bean
+    @ConfigurationProperties(prefix = "spring.datasource.hikari")
+    public HikariConfig catalogDbConfig() {
+        return new HikariConfig();
+    }
+
     @Primary
     @Bean(name = "dataSource")
-    @ConfigurationProperties(prefix = "spring.datasource")
     public DataSource dataSource() {
-        return DataSourceBuilder.create().build();
+        HikariConfig hikariConfig = this.catalogDbConfig();
+        return new HikariDataSource(hikariConfig);
     }
 
     @Primary

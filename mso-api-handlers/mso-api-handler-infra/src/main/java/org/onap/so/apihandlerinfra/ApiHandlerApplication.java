@@ -21,17 +21,18 @@
 package org.onap.so.apihandlerinfra;
 
 import java.util.concurrent.Executor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.onap.so.logging.jaxrs.filter.MDCTaskDecorator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.onap.so.logging.jaxrs.filter.MDCTaskDecorator;
 
 @SpringBootApplication(scanBasePackages = {"org.onap"})
 @EnableAsync
+@EnableScheduling
 public class ApiHandlerApplication {
 
     @Value("${mso.async.core-pool-size}")
@@ -53,6 +54,7 @@ public class ApiHandlerApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(ApiHandlerApplication.class, args);
+        java.security.Security.setProperty("networkaddress.cache.ttl", "10");
         System.getProperties().setProperty("mso.db", "MARIADB");
         System.getProperties().setProperty("server.name", "Springboot");
         setLogsDir();
@@ -69,4 +71,5 @@ public class ApiHandlerApplication {
         executor.initialize();
         return executor;
     }
+
 }
