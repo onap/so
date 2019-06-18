@@ -84,42 +84,53 @@ public class JobManager {
             throw new JobNotFoundException("No job found with ID: " + jobId);
         }
 
-        final Optional<InlineResponse200> operationOptional =
-                vnfmServiceProvider.getOperation(vnfmOperation.getVnfmId(), vnfmOperation.getOperationId());
-        if (!operationOptional.isPresent()) {
-            return response.operationStatusRetrievalStatus(OperationStatusRetrievalStatusEnum.OPERATION_NOT_FOUND);
+        if (vnfmOperation.isVnfDeleted()) {
+            response.setOperationStatusRetrievalStatus(OperationStatusRetrievalStatusEnum.STATUS_FOUND);
+            return response.operationState(getOperationState(vnfmOperation, null));
         }
-        final InlineResponse200 operation = operationOptional.get();
 
-        logger.debug("Job Id: " + jobId + ", operationId: " + operation.getId() + ", operation details: " + operation);
+        try {
+            final Optional<InlineResponse200> operationOptional =
+                    vnfmServiceProvider.getOperation(vnfmOperation.getVnfmId(), vnfmOperation.getOperationId());
 
-        if (operation.getOperationState() == null) {
+            if (!operationOptional.isPresent()) {
+                return response.operationStatusRetrievalStatus(OperationStatusRetrievalStatusEnum.OPERATION_NOT_FOUND);
+            }
+            final InlineResponse200 operation = operationOptional.get();
+
+            logger.debug(
+                    "Job Id: " + jobId + ", operationId: " + operation.getId() + ", operation details: " + operation);
+
+            if (operation.getOperationState() == null) {
+                return response.operationStatusRetrievalStatus(OperationStatusRetrievalStatusEnum.WAITING_FOR_STATUS);
+            }
+
+            response.setOperationStatusRetrievalStatus(OperationStatusRetrievalStatusEnum.STATUS_FOUND);
+            response.setId(operation.getId());
+            response.setOperation(OperationEnum.fromValue(operation.getOperation().getValue()));
+            response.setOperationState(getOperationState(vnfmOperation, operation));
+            response.setStartTime(operation.getStartTime());
+            response.setStateEnteredTime(operation.getStateEnteredTime());
+            response.setVnfInstanceId(operation.getVnfInstanceId());
+
+            return response;
+        } catch (final Exception exception) {
+            logger.error("Exception encountered trying to get operation status for operation id "
+                    + vnfmOperation.getOperationId(), exception);
             return response.operationStatusRetrievalStatus(OperationStatusRetrievalStatusEnum.WAITING_FOR_STATUS);
         }
-
-        response.setOperationStatusRetrievalStatus(OperationStatusRetrievalStatusEnum.STATUS_FOUND);
-        response.setId(operation.getId());
-        response.setOperation(OperationEnum.fromValue(operation.getOperation().getValue()));
-        response.setOperationState(getOperationState(vnfmOperation, operation));
-        response.setStartTime(operation.getStartTime());
-        response.setStateEnteredTime(operation.getStateEnteredTime());
-        response.setVnfInstanceId(operation.getVnfInstanceId());
-
-        return response;
     }
 
     private OperationStateEnum getOperationState(final VnfmOperation vnfmOperation,
             final InlineResponse200 operationResponse) {
-        final OperationStateEnum operationState =
-                OperationStateEnum.fromValue(operationResponse.getOperationState().getValue());
         switch (vnfmOperation.getNotificationStatus()) {
             case NOTIFICATION_PROCESSING_NOT_REQUIRED:
             default:
-                return operationState;
+                return OperationStateEnum.fromValue(operationResponse.getOperationState().getValue());
             case NOTIFICATION_PROCESSING_PENDING:
                 return org.onap.vnfmadapter.v1.model.OperationStateEnum.PROCESSING;
             case NOTIFICATION_PROCEESING_SUCCESSFUL:
-                return operationState;
+                return org.onap.vnfmadapter.v1.model.OperationStateEnum.COMPLETED;
             case NOTIFICATION_PROCESSING_FAILED:
                 return org.onap.vnfmadapter.v1.model.OperationStateEnum.FAILED;
         }
@@ -133,6 +144,17 @@ public class JobManager {
                 .filter(operation -> operation.getOperationId().equals(operationId)).findFirst();
         if (relatedOperation.isPresent()) {
             relatedOperation.get().setNotificationProcessed(notificationProcessingWasSuccessful);
+        } else {
+            logger.debug("No operation found for operation ID " + operationId);
+        }
+    }
+
+    public void vnfDeleted(final String operationId) {
+        logger.debug("VNF deleyed for operation ID {}", operationId);
+        final java.util.Optional<VnfmOperation> relatedOperation = mapOfJobIdToVnfmOperation.values().stream()
+                .filter(operation -> operation.getOperationId().equals(operationId)).findFirst();
+        if (relatedOperation.isPresent()) {
+            relatedOperation.get().setVnfDeleted();;
         } else {
             logger.debug("No operation found for operation ID " + operationId);
         }

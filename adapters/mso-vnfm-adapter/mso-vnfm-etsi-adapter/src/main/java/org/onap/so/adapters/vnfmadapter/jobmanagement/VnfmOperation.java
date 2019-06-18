@@ -28,6 +28,7 @@ public class VnfmOperation {
     private final String vnfmId;
     private final String operationId;
     private NotificationStatus notificationStatus;
+    private boolean vnfDeleted;
 
     public VnfmOperation(final String vnfmId, final String operationId, final boolean waitForNotificationForSuccess) {
         this.vnfmId = vnfmId;
@@ -74,6 +75,23 @@ public class VnfmOperation {
     public NotificationStatus getNotificationStatus() {
         return notificationStatus;
     }
+
+    /**
+     * Set the VNF has been deleted from the VNFM.
+     */
+    public void setVnfDeleted() {
+        this.vnfDeleted = true;
+    }
+
+    /**
+     * Check if the VNF has been deleted from the VNFM
+     *
+     * @return <code>true</code> of the VNF has been deleted from the VNFM, <code>false</code> otherwise
+     */
+    public boolean isVnfDeleted() {
+        return vnfDeleted;
+    }
+
 
     public enum NotificationStatus {
         /**
