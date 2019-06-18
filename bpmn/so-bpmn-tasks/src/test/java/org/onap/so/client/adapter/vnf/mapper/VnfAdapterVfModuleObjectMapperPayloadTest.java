@@ -29,7 +29,9 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVmNetworkData;
 import org.onap.so.adapters.vnfrest.CreateVfModuleRequest;
 import org.onap.so.adapters.vnfrest.DeleteVfModuleRequest;
@@ -43,6 +45,8 @@ import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoGenericVnf;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
+import org.onap.so.openstack.utils.MsoMulticloudUtils;
+import org.onap.so.client.adapter.vnf.mapper.exceptions.MissingValueTagException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class VnfAdapterVfModuleObjectMapperPayloadTest {
@@ -51,6 +55,9 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
 
     private VnfAdapterVfModuleObjectMapper vfModuleObjectMapper = new VnfAdapterVfModuleObjectMapper();
     private ObjectMapper omapper = new ObjectMapper();
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -359,6 +366,34 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
         CreateVfModuleRequest reqMapper1 = omapper.readValue(jsonToCompare, CreateVfModuleRequest.class);
 
         assertThat(vfModuleVNFAdapterRequest, sameBeanAs(reqMapper1).ignoring("messageId").ignoring("notificationUrl"));
+    }
+
+    @Test
+    public void buildDirectivesParamFromMapNoValueTagTest() throws Exception {
+
+        Map<String, Object> paramsMap = new HashMap<>();
+        Map<String, Object> srcMap = new HashMap<>();
+        srcMap.put("key1", "value1");
+        srcMap.put("key2", "value2");
+        srcMap.put("key3", null);
+
+        expectedException.expect(MissingValueTagException.class);
+        vfModuleObjectMapper.buildDirectivesParamFromMap(paramsMap, MsoMulticloudUtils.SDNC_DIRECTIVES, srcMap);
+    }
+
+    @Test
+    public void buildDirectivesParamFromMapSunnyDayTest() throws Exception {
+
+        Map<String, Object> paramsMap = new HashMap<>();
+        Map<String, Object> srcMap = new HashMap<>();
+        srcMap.put("key1", "value1");
+        srcMap.put("key2", "value2");
+        String expectedResult =
+                "[{ \"attributes\": [ {\"attribute_name\": \"key1\", \"attribute_value\": \"value1\"}, {\"attribute_name\": \"key2\", \"attribute_value\": \"value2\"}] }]";
+
+        vfModuleObjectMapper.buildDirectivesParamFromMap(paramsMap, MsoMulticloudUtils.SDNC_DIRECTIVES, srcMap);
+
+        assertEquals(expectedResult, paramsMap.values().toString());
     }
 
     @Test
