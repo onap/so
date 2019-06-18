@@ -25,14 +25,12 @@ package org.onap.so.apihandlerinfra;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.StringTokenizer;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -778,23 +776,4 @@ public class MsoRequest {
 
     }
 
-    public Optional<URL> buildSelfLinkUrl(String url, String requestId) {
-        Optional<URL> selfLinkUrl = Optional.empty();
-        String version = "";
-        try {
-            URL aUrl = new URL(url);
-            String aPath = aUrl.getPath();
-            if (aPath.indexOf("/v") == -1) {
-                version = aPath.substring(aPath.indexOf("/V"), aPath.indexOf("/V") + 4);
-            } else {
-                version = aPath.substring(aPath.indexOf("/v"), aPath.indexOf("/v") + 4);
-            }
-            String selfLinkPath = Constants.ORCHESTRATION_REQUESTS_PATH.concat(version).concat(requestId);
-            selfLinkUrl = Optional.of(new URL(aUrl.getProtocol(), aUrl.getHost(), aUrl.getPort(), selfLinkPath));
-        } catch (Exception e) {
-            selfLinkUrl = Optional.empty(); // ignore
-            logger.info(e.getMessage());
-        }
-        return selfLinkUrl;
-    }
 }

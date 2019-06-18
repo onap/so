@@ -27,6 +27,16 @@ import org.glassfish.jersey.servlet.ServletProperties;
 import org.onap.so.apihandler.filters.RequestIdFilter;
 import org.onap.so.apihandler.filters.RequestUriFilter;
 import org.onap.so.apihandlerinfra.exceptions.ApiExceptionMapper;
+import org.onap.so.apihandlerinfra.infra.rest.Network;
+import org.onap.so.apihandlerinfra.infra.rest.ServiceInstance;
+import org.onap.so.apihandlerinfra.infra.rest.VfModules;
+import org.onap.so.apihandlerinfra.infra.rest.Vnf;
+import org.onap.so.apihandlerinfra.infra.rest.Volumes;
+import org.onap.so.apihandlerinfra.infra.rest.exception.mapper.AAIEntityNotFoundMapper;
+import org.onap.so.apihandlerinfra.infra.rest.exception.mapper.CloudConfigurationNotFoundMapper;
+import org.onap.so.apihandlerinfra.infra.rest.exception.mapper.NoRecipeExceptionMapper;
+import org.onap.so.apihandlerinfra.infra.rest.exception.mapper.RequestConflictMapper;
+import org.onap.so.apihandlerinfra.infra.rest.exception.mapper.WorkflowEngineConnectionMapper;
 import org.onap.so.apihandlerinfra.tenantisolation.CloudOrchestration;
 import org.onap.so.apihandlerinfra.tenantisolation.CloudResourcesOrchestration;
 import org.onap.so.apihandlerinfra.tenantisolation.ModelDistributionRequest;
@@ -50,6 +60,11 @@ public class JerseyConfiguration extends ResourceConfig {
         register(CloudOrchestration.class);
         register(CloudResourcesOrchestration.class);
         register(OrchestrationRequests.class);
+        register(VfModules.class);
+        register(Vnf.class);
+        register(Network.class);
+        register(Volumes.class);
+        register(ServiceInstance.class);
         register(JaxRsFilterLogging.class);
         register(ManualTasks.class);
         register(TasksHandler.class);
@@ -63,6 +78,11 @@ public class JerseyConfiguration extends ResourceConfig {
         register(WorkflowSpecificationsHandler.class);
         register(InstanceManagement.class);
         register(ResumeOrchestrationRequest.class);
+        register(AAIEntityNotFoundMapper.class);
+        register(CloudConfigurationNotFoundMapper.class);
+        register(NoRecipeExceptionMapper.class);
+        register(RequestConflictMapper.class);
+        register(WorkflowEngineConnectionMapper.class);
         // this registration seems to be needed to get predictable
         // execution behavior for the above JSON Exception Mappers
         register(com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider.class);

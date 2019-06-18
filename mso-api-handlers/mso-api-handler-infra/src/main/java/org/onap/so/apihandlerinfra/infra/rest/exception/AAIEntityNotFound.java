@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 - 2019 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,12 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.apihandlerinfra;
+package org.onap.so.apihandlerinfra.infra.rest.exception;
 
-/*
- * Enum for Status values returned by API Handler to Tail-F
- */
-public enum ModelType {
-    service, vnf, vfModule, volumeGroup, network
+public class AAIEntityNotFound extends Exception {
+
+    public AAIEntityNotFound(String errorMessage) {
+        super(errorMessage);
+    }
+
 }

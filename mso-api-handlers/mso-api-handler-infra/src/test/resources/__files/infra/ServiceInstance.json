@@ -1,0 +1,35 @@
+{
+	"service-instance-id": "e9fbfab4-d91c-4508-a429-2046c8751371",
+	"service-instance-name": "Robot_SI_For_VolumeGroup",
+	"environment-context": "General_Revenue-Bearing",
+	"model-invariant-id": "b16a9398-ffa3-4041-b78c-2956b8ad9c7b",
+	"model-version-id": "bad955c3-29b2-4a27-932e-28e942cc6480",
+	"resource-version": "1560538276937",
+	"orchestration-status": "Active",
+	"relationship-list": {
+		"relationship": [
+			{
+				"related-to": "project",
+				"relationship-label": "org.onap.relationships.inventory.Uses",
+				"related-link": "/aai/v15/business/projects/project/GR_API_OE_MSO_Test200",
+				"relationship-data": [
+					{
+						"relationship-key": "project.project-name",
+						"relationship-value": "GR_API_OE_MSO_Test200"
+					}
+				]
+			},
+			{
+				"related-to": "owning-entity",
+				"relationship-label": "org.onap.relationships.inventory.BelongsTo",
+				"related-link": "/aai/v15/business/owning-entities/owning-entity/c3f57fa8-ac7d-11e8-98d0-529269fb1459",
+				"relationship-data": [
+					{
+						"relationship-key": "owning-entity.owning-entity-id",
+						"relationship-value": "c3f57fa8-ac7d-11e8-98d0-529269fb1459"
+					}
+				]
+			}
+		]
+	}
+}

@@ -37,6 +37,9 @@ public interface InfraActiveRequestsRepository
     InfraActiveRequests findOneByRequestIdOrClientRequestIdAndRequestType(String requestId, String clientRequestId,
             String requestType);
 
+    List<InfraActiveRequests> findByActionAndRequestStatusAndVfModuleId(String action, String requestStatus,
+            String vfModuleId);
+
     InfraActiveRequests findOneByRequestId(String string);
 
     InfraActiveRequests findOneByRequestBody(String requestBody);
