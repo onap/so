@@ -22,6 +22,7 @@
         <camunda:in source="networkAdapterRequest" target="networkAdapterRequest" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:out source="deleteNetworkResponse" target="deleteNetworkResponse" />
+        <camunda:in source="mso-request-id" target="mso-request-id" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_16ti327</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0gnafn2</bpmn:outgoing>
