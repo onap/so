@@ -626,7 +626,7 @@ public class RequestHandlerUtils {
 
     protected InfraActiveRequests createNewRecordCopyFromInfraActiveRequest(InfraActiveRequests infraActiveRequest,
             String requestId, Timestamp startTimeStamp, String source, String requestUri, String requestorId,
-            String originalRequestId) {
+            String originalRequestId) throws ApiException {
         InfraActiveRequests request = new InfraActiveRequests();
         request.setRequestId(requestId);
         request.setStartTime(startTimeStamp);
@@ -649,11 +649,24 @@ public class RequestHandlerUtils {
     }
 
     protected void setInstanceIdAndName(InfraActiveRequests infraActiveRequest,
-            InfraActiveRequests currentActiveRequest) {
+            InfraActiveRequests currentActiveRequest) throws ApiException {
         String requestScope = infraActiveRequest.getRequestScope();
         try {
             ModelType type = ModelType.valueOf(requestScope);
-            type.setName(currentActiveRequest, type.getName(infraActiveRequest));
+            String instanceName = type.getName(infraActiveRequest);
+            if (instanceName == null && type.equals(ModelType.vfModule)) {
+                logger.error("vfModule for requestId: {} being resumed does not have an instanceName.",
+                        infraActiveRequest.getRequestId());
+                ValidateException validateException = new ValidateException.Builder(
+                        "vfModule for requestId: " + infraActiveRequest.getRequestId()
+                                + " being resumed does not have an instanceName.",
+                        HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).build();
+                updateStatus(currentActiveRequest, Status.FAILED, validateException.getMessage());
+                throw validateException;
+            }
+            if (instanceName != null) {
+                type.setName(currentActiveRequest, instanceName);
+            }
             type.setId(currentActiveRequest, type.getId(infraActiveRequest));
         } catch (IllegalArgumentException e) {
             logger.error(
