@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1as67q3" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.2.4">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1as67q3" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.0.3">
   <bpmn:process id="EtsiVnfDeleteBB" name="&#10;EtsiVnfDeleteBB" isExecutable="true">
     <bpmn:startEvent id="StartEvent_0i3wi1x">
       <bpmn:outgoing>SequenceFlow_01pwrcr</bpmn:outgoing>
@@ -14,11 +14,22 @@
     <bpmn:sequenceFlow id="SequenceFlow_1064iul" sourceRef="ServiceTask_1d5jbsb" targetRef="CallActivity_1f7uwws" />
     <bpmn:sequenceFlow id="SequenceFlow_01pwrcr" sourceRef="StartEvent_0i3wi1x" targetRef="ServiceTask_1d5jbsb" />
     <bpmn:callActivity id="CallActivity_1f7uwws" name="Monitor Delete Job" calledElement="MonitorVnfmDeleteJob">
+      <bpmn:extensionElements>
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:out source="gBuildingBlockExecution" target="gBuildingBlockExecution" />
+        <camunda:out source="WorkflowExceptionErrorMessage" target="WorkflowExceptionErrorMessage" />
+        <camunda:in source="gBuildingBlockExecution" target="gBuildingBlockExecution" />
+        <camunda:in source="deleteVnfResponse" target="deleteVnfResponse" />
+      </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1064iul</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0qt5cvg</bpmn:outgoing>
     </bpmn:callActivity>
     <bpmn:sequenceFlow id="SequenceFlow_0qt5cvg" sourceRef="CallActivity_1f7uwws" targetRef="CallActivity_0udkzom" />
     <bpmn:callActivity id="CallActivity_0udkzom" name="Monitor Delete Node Status" calledElement="MonitorVnfmDeleteNodeStatus">
+      <bpmn:extensionElements>
+        <camunda:in source="gBuildingBlockExecution" target="gBuildingBlockExecution" />
+        <camunda:out source="gBuildingBlockExecution" target="gBuildingBlockExecution" />
+      </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0qt5cvg</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0503le2</bpmn:outgoing>
     </bpmn:callActivity>
