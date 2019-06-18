@@ -36,6 +36,16 @@ public class RequestStatus {
     protected Integer percentProgress;
     @JsonProperty("timestamp")
     protected String timeStamp;
+    @JsonProperty("extSystemErrorSource")
+    protected String extSystemErrorSource;
+
+    public String getExtSystemErrorSource() {
+        return extSystemErrorSource;
+    }
+
+    public void setExtSystemErrorSource(String extSystemErrorSource) {
+        this.extSystemErrorSource = extSystemErrorSource;
+    }
 
     public String getRequestState() {
         return requestState;
@@ -72,6 +82,7 @@ public class RequestStatus {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("requestState", requestState).append("statusMessage", statusMessage)
-                .append("percentProgress", percentProgress).append("timestamp", timeStamp).toString();
+                .append("percentProgress", percentProgress).append("timestamp", timeStamp)
+                .append("extSystemErrorSource", extSystemErrorSource).toString();
     }
 }

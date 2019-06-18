@@ -94,8 +94,8 @@ public class OrchestrationRequests {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response getOrchestrationRequest(@PathParam("requestId") String requestId,
-            @PathParam("version") String version, @QueryParam("includeCloudRequest") boolean includeCloudRequest)
-            throws ApiException {
+            @PathParam("version") String version, @QueryParam("includeCloudRequest") boolean includeCloudRequest,
+            @QueryParam("extSystemErrorSource") boolean extSystemErrorSource) throws ApiException {
 
         String apiVersion = version.substring(1);
         GetOrchestrationResponse orchestrationResponse = new GetOrchestrationResponse();
@@ -142,7 +142,8 @@ public class OrchestrationRequests {
             throw validateException;
         }
 
-        Request request = mapInfraActiveRequestToRequest(infraActiveRequest, includeCloudRequest);
+        Request request = mapInfraActiveRequestToRequest(infraActiveRequest, includeCloudRequest, extSystemErrorSource);
+
         if (!requestProcessingData.isEmpty()) {
             request.setRequestProcessingData(mapRequestProcessingData(requestProcessingData));
         }
@@ -158,7 +159,8 @@ public class OrchestrationRequests {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response getOrchestrationRequest(@Context UriInfo ui, @PathParam("version") String version,
-            @QueryParam("includeCloudRequest") boolean includeCloudRequest) throws ApiException {
+            @QueryParam("includeCloudRequest") boolean includeCloudRequest,
+            @QueryParam("extSystemErrorSource") boolean extSystemErrorSource) throws ApiException {
 
         long startTime = System.currentTimeMillis();
 
@@ -195,7 +197,8 @@ public class OrchestrationRequests {
             List<RequestProcessingData> requestProcessingData =
                     requestsDbClient.getRequestProcessingDataBySoRequestId(infraActive.getRequestId());
             RequestList requestList = new RequestList();
-            Request request = mapInfraActiveRequestToRequest(infraActive, includeCloudRequest);
+            Request request = mapInfraActiveRequestToRequest(infraActive, includeCloudRequest, extSystemErrorSource);
+
             if (!requestProcessingData.isEmpty()) {
                 request.setRequestProcessingData(mapRequestProcessingData(requestProcessingData));
             }
@@ -290,8 +293,8 @@ public class OrchestrationRequests {
         return Response.status(HttpStatus.SC_NO_CONTENT).entity("").build();
     }
 
-    protected Request mapInfraActiveRequestToRequest(InfraActiveRequests iar, boolean includeCloudRequest)
-            throws ApiException {
+    protected Request mapInfraActiveRequestToRequest(InfraActiveRequests iar, boolean includeCloudRequest,
+            boolean extSystemErrorSource) throws ApiException {
         String requestBody = iar.getRequestBody();
         Request request = new Request();
 
@@ -427,8 +430,17 @@ public class OrchestrationRequests {
             });
         }
 
+        mapExtSystemErrorSourceToRequest(iar, status, extSystemErrorSource);
+
         request.setRequestStatus(status);
         return request;
+    }
+
+    protected void mapExtSystemErrorSourceToRequest(InfraActiveRequests iar, RequestStatus status,
+            boolean extSystemErrorSource) {
+        if (extSystemErrorSource) {
+            status.setExtSystemErrorSource(iar.getExtSystemErrorSource());
+        }
     }
 
     public List<org.onap.so.serviceinstancebeans.RequestProcessingData> mapRequestProcessingData(
