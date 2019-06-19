@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "134ab7cf_d44c8cd0",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/jobmanagement/JobManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2019-06-19T11:00:36Z",
+      "side": 1,
+      "message": "It will return WAITING_FOR_STATUS until the VNFM comes back up and the status is retrieved.\nThere is a timeout in the flow so there wont be an infinite loop if the VNFM never comes back",
+      "parentUuid": "689f8a18_c8faa08b",
+      "range": {
+        "startLine": 117,
+        "startChar": 9,
+        "endLine": 120,
+        "endChar": 114
+      },
+      "revId": "63842b9394eaf8eefc227024fc5ecba62dfea3d5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f3c537d7_247fb603",
         "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/notificationhandling/NotificationHandler.java",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2019-06-19T08:53:02Z",
       "side": 1,
       "message": "wouldn\u0027t you need to check if delete was Successful ???\n\nif(deleteSuccessful){\n            jobManager.vnfDeleted(vnfLcmOperationOccurrenceNotification.getVnfLcmOpOccId());\n}",
+      "range": {
+        "startLine": 164,
+        "startChar": 12,
+        "endLine": 164,
+        "endChar": 92
+      },
+      "revId": "63842b9394eaf8eefc227024fc5ecba62dfea3d5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "965cdfb4_4ec4a6a9",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/notificationhandling/NotificationHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2019-06-19T11:00:36Z",
+      "side": 1,
+      "message": "No need to, the check on this value is to ensure we dont go to the VNFM for the operation status after the identifier of the VNF has been deleted from the VNFM.\nThe getOperationState method in JobManager takes care of ensuring the correct status is returned if the delete fails",
+      "parentUuid": "f3c537d7_247fb603",
       "range": {
         "startLine": 164,
         "startChar": 12,
