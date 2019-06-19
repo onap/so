@@ -6,10 +6,10 @@
 Service Orchestrator Release Notes
 ==================================
 
-The SO provides the highest level of service orchestration in the ONAP architecture.
+The SO provides the highest level of service orchestration in the ONAP architecture. 
 
 Version: 1.4.4
---------------
+-----------------------
 
 :Release Date: 2019-06-13
 
