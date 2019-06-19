@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "689f8a18_c8faa08b",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/jobmanagement/JobManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-06-19T09:15:57Z",
+      "side": 1,
+      "message": "if adapter is unable to communicate with VNFM or VNFM is down this will always return WAITING_FOR_STATUS which might cause infinite looping in flow for getting status no?",
+      "range": {
+        "startLine": 117,
+        "startChar": 9,
+        "endLine": 120,
+        "endChar": 114
+      },
+      "revId": "63842b9394eaf8eefc227024fc5ecba62dfea3d5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f3c537d7_247fb603",
         "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/notificationhandling/NotificationHandler.java",
         "patchSetId": 1
