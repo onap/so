@@ -21,11 +21,17 @@
 package org.onap.svnfm.simulator.services;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model.GrantsAddResources;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model.InlineResponse201;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model.InlineResponse201AddResources;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model.InlineResponse201VimConnections;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201InstantiatedVnfInfoVnfcResourceInfo;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRequest;
 import org.onap.svnfm.simulator.config.ApplicationConfig;
 import org.onap.svnfm.simulator.model.VnfOperation;
@@ -40,13 +46,22 @@ public class InstantiateOperatorProgressorTest {
     private static final String VNFC_TYPE = "COMPUTE";
     private static final String RESOURCE_TEMPLATE_ID = "resTempIdTest";
     private static final String VDU_ID = "vduIdTest";
+    private static final String VNF_INSTANCE_ID = "vnfInstanceId";
+    private static final String VNFC_ID = "vnfcIdTest";
+    private static final String RESOURCE_DEFINITION_ID = "resDefTestId";
+    private static final String VIM_CONNECTION_ID = "vimConnTestId";
+
+    private SvnfmService svnfmServiceMock;
 
     private InstantiateOperationProgressor testedObject;
 
     @Before
     public void setup() {
-        testedObject = new InstantiateOperationProgressor(new VnfOperation(), new SvnfmService(), null,
-                new ApplicationConfig(), createVnfds(), createSubscriptionService());
+        svnfmServiceMock = mock(SvnfmService.class);
+        VnfOperation vnfOperation = new VnfOperation();
+        vnfOperation.setVnfInstanceId(VNF_INSTANCE_ID);
+        testedObject = new InstantiateOperationProgressor(vnfOperation, svnfmServiceMock, null, new ApplicationConfig(),
+                createVnfds(), createSubscriptionService());
     }
 
     @Test
@@ -65,13 +80,49 @@ public class InstantiateOperatorProgressorTest {
         assertThat(result).isEmpty();
     }
 
+    @Test
+    public void handleGrantResponse_VnfdObjectsAvailable() {
+        when(svnfmServiceMock.getVnf(VNF_INSTANCE_ID)).thenReturn(createInlineResponse201());
+
+        InlineResponse201VimConnections inlineResponse201VimConnections = new InlineResponse201VimConnections();
+        List<InlineResponse201VimConnections> listOfVimConnection = new ArrayList<>();
+        listOfVimConnection.add(inlineResponse201VimConnections);
+
+        InlineResponse201AddResources inlineResponse201AddResources = new InlineResponse201AddResources();
+        inlineResponse201AddResources.setResourceDefinitionId(RESOURCE_DEFINITION_ID);
+        inlineResponse201AddResources.setVimConnectionId(VIM_CONNECTION_ID);
+        List<InlineResponse201AddResources> listOfResources = new ArrayList<>();
+        listOfResources.add(inlineResponse201AddResources);
+
+        InlineResponse201 inlineResponse201 = new InlineResponse201();
+        inlineResponse201.setVimConnections(listOfVimConnection);
+        inlineResponse201.setAddResources(listOfResources);
+        List<InlineResponse201InstantiatedVnfInfoVnfcResourceInfo> resultList =
+                testedObject.handleGrantResponse(inlineResponse201);
+
+        assertThat(resultList).hasSize(1);
+        InlineResponse201InstantiatedVnfInfoVnfcResourceInfo resultObject = resultList.get(0);
+        assertThat(resultObject.getId()).isEqualTo(VNFC_ID);
+        assertThat(resultObject.getVduId()).isEqualTo(VDU_ID);
+        assertThat(resultObject.getComputeResource().getVimConnectionId()).isEqualTo(VIM_CONNECTION_ID);
+    }
+
+    @Test
+    public void getVnfcChangeType_enumAdded() {
+        assertThat(testedObject.getVnfcChangeType().getValue()).isEqualTo("ADDED");
+    }
+
+    @Test
+    public void getRemoveResourcesShouldReturnEmptyList() {
+        assertThat(testedObject.getRemoveResources("anyVnfId")).isEmpty();
+    }
+
     private Vnfds createVnfds() {
         Vnfd vnfd = new Vnfd();
         vnfd.setVnfdId(VNF_ID);
         List<Vnfc> vnfcList = new ArrayList<>();
         vnfcList.add(createVnfc());
         vnfd.setVnfcList(vnfcList);
-
         List<Vnfd> vnfdList = new ArrayList<>();
         vnfdList.add(vnfd);
 
@@ -82,9 +133,11 @@ public class InstantiateOperatorProgressorTest {
 
     private Vnfc createVnfc() {
         Vnfc vnfc = new Vnfc();
+        vnfc.setVnfcId(VNFC_ID);
         vnfc.setType(VNFC_TYPE);
         vnfc.setResourceTemplateId(RESOURCE_TEMPLATE_ID);
         vnfc.setVduId(VDU_ID);
+        vnfc.setGrantResourceId(RESOURCE_DEFINITION_ID);
         return vnfc;
     }
 
@@ -96,4 +149,10 @@ public class InstantiateOperatorProgressorTest {
         return subscriptionService;
     }
 
+    private org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201 createInlineResponse201() {
+        org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201 inlineResponse201 =
+                new org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201();
+        inlineResponse201.setVnfdId(VNF_ID);
+        return inlineResponse201;
+    }
 }
