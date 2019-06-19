@@ -6,10 +6,10 @@
 Service Orchestrator Release Notes
 ==================================
 
-The SO provides the highest level of service orchestration in the ONAP architecture.
+The SO provides the highest level of service orchestration in the ONAP architecture. 
 
 Version: 1.4.4
---------------
+-----------------------
 
 :Release Date: 2019-06-13
 
@@ -43,7 +43,7 @@ The main goal of the Dublin release was to:
 
 -  [`SO-1508 <https://jira.onap.org/browse/SO-1508>`__\ ] - ETSI Alignment - SO SOL003 plugin support to connect to external VNFMs
 -  [`SO-1468 <https://jira.onap.org/browse/SO-1468>`__\ ] - Hardening of HPA in SO and extension of HPA capabilities to existing use-cases
--  [`SO-1394 <https://jira.onap.org/browse/SO-1394>`__\ ] - Extended and enhance the SO generic building block to support pre and post instantiation.
+-  [`SO-1394 <https://jira.onap.org/browse/SO-1394>`__\ ] - Extended and enhance the SO generic building block to support pre and post instantiation. 
 -  [`SO-1393 <https://jira.onap.org/browse/SO-1393>`__\ ] - Support the CCVPN Extension
 -  [`SO-1392 <https://jira.onap.org/browse/SO-1392>`__\ ] - Support the BroadBand Service Usecase
 -  [`SO-1353 <https://jira.onap.org/browse/SO-1353>`__\ ] - SO to be made independent of Cloud technologies
@@ -384,7 +384,7 @@ There are some issues around the HPA and CCVPN that have been resolved in the pa
 
 - `SO-1257 <https://jira.onap.org/browse/SO-1257>`_
   Authorization header added to multicloud adapter breaks communication.
-
+  
 - `SO-1258 <https://jira.onap.org/browse/SO-1258>`_
   OOF Directives are not passed through flows to Multicloud Adapter.
 
@@ -393,8 +393,8 @@ There are some issues around the HPA and CCVPN that have been resolved in the pa
 
 - `SO-1194 <https://jira.onap.org/browse/SO-1194>`_
   Unable to find TOSCA CSAR location using ServiceModelUUID in DoCreateResource BPMN flow.
-
-
+  
+	
 Below issues will be resolved in the next release:
 
 - `SO-1248 <https://jira.onap.org/browse/SO-1248>`_
@@ -450,19 +450,19 @@ The Beijing release is the second release of the Service Orchestrator (SO) proje
 
 * Enhance Platform maturity by improving SO maturity matrix see `Wiki <https://wiki.onap.org/display/DW/Beijing+Release+Platform+Maturity>`_.
 * Manual scaling of network services and VNFs.
-* Homing and placement capabilities through OOF interaction.
+* Homing and placement capabilities through OOF interaction. 
 * Ability to perform change management.
 * Integrated to APPC
-* Integrated to OOF
+* Integrated to OOF 
 * Integrated to OOM
-
+ 
 **Bug Fixes**
 
 	The defects fixed in this release could be found `here <https://jira.onap.org/issues/?jql=project%20%3D%20SO%20AND%20affectedVersion%20%3D%20%22Beijing%20Release%22%20AND%20status%20%3D%20Closed%20>`_.
 
 **Known Issues**
 
-	SO docker image is still on ecmop and not onap in the repository.
+	SO docker image is still on ecmop and not onap in the repository. 
 	This will be addressed in the next release.
 
 **Security Notes**
@@ -512,18 +512,18 @@ Version: 1.1.1
 **New Features**
 
 The SO provides the highest level of service orchestration in the ONAP architecture.
-It executes end-to-end service activities by processing workflows and business logic and coordinating other ONAP and external component activities.
+It executes end-to-end service activities by processing workflows and business logic and coordinating other ONAP and external component activities. 
 
-The orchestration engine is a reusable service. Any component of the architecture can execute SO orchestration capabilities.
+The orchestration engine is a reusable service. Any component of the architecture can execute SO orchestration capabilities. 
 
-* Orchestration services will process workflows based on defined models and recipe.
+* Orchestration services will process workflows based on defined models and recipe. 
 * The service model maintains consistency and re-usability across all orchestration activities and ensures consistent methods, structure and version of the workflow execution environment.
 * Orchestration processes interact with other platform components or external systems via standard and well-defined APIs.
 
 
 **Deprecation Notes**
 
-There is a MSO 1.0.0 SO implementation existing in the pre-R1 ONAP Gerrit system.
+There is a MSO 1.0.0 SO implementation existing in the pre-R1 ONAP Gerrit system.  
 The MSO1.0.0 is deprecated by the R1 release and the current release is built over this release.
 The Gerrit repos of mso/* are voided and already locked as read-only.
 Following are the deprecated SO projects in gerrit repo:
@@ -533,7 +533,7 @@ Following are the deprecated SO projects in gerrit repo:
 - mso/docker-config
 - mso/libs
 - mso/mso-config
-
+	
 **Other**
 	NA
 
