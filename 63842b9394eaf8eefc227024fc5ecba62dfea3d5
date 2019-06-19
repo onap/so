@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f3c537d7_247fb603",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/notificationhandling/NotificationHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-06-19T08:53:02Z",
+      "side": 1,
+      "message": "wouldn\u0027t you need to check if delete was Successful ???\n\nif(deleteSuccessful){\n            jobManager.vnfDeleted(vnfLcmOperationOccurrenceNotification.getVnfLcmOpOccId());\n}",
+      "range": {
+        "startLine": 164,
+        "startChar": 12,
+        "endLine": 164,
+        "endChar": 92
+      },
+      "revId": "63842b9394eaf8eefc227024fc5ecba62dfea3d5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
