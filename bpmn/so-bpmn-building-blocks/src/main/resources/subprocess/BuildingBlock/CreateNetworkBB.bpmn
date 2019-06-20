@@ -60,6 +60,7 @@
         <camunda:in source="networkAdapterRequest" target="networkAdapterRequest" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:out source="createNetworkResponse" target="createNetworkResponse" />
+        <camunda:in source="mso-request-id" target="mso-request-id" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_1fm99t6</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0qpu80i</bpmn2:outgoing>
