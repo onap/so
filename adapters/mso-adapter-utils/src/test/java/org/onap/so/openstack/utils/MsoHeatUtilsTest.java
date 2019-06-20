@@ -33,9 +33,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.junit.Before;
 import org.junit.Rule;
@@ -60,7 +58,6 @@ import com.woorea.openstack.heat.StackResource;
 import com.woorea.openstack.heat.StackResource.CreateStack;
 import com.woorea.openstack.heat.StackResource.DeleteStack;
 import com.woorea.openstack.heat.model.CreateStackParam;
-import com.woorea.openstack.heat.model.Resource;
 import com.woorea.openstack.heat.model.Resources;
 import com.woorea.openstack.heat.model.Stack;
 
@@ -320,19 +317,9 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
         createdStack.setStackStatus("CREATE_COMPLETE");
         createdStack.setStackStatusReason("Stack Created");
 
-
-
-        List<Resource> resources = new ArrayList<>();
-        Resource resource = new Resource();
-        resource.setName("KeypairName");
-        resource.setLogicalResourceId("KeypairName");
-        resource.setType("OS::Nova::KeyPair");
-        resources.add(resource);
-
         CreateStackParam createStackParam = new CreateStackParam();
         createStackParam.setStackName("stackName");
 
-        doReturn(resources).when(mockResources).getList();
         doReturn(mockResources).when(heatUtils).queryStackResources(cloudSiteId, tenantId, "stackName", 2);
         doNothing().when(novaClient).deleteKeyPair(cloudSiteId, tenantId, "KeypairName");
         doReturn(null).when(heatUtils).handleUnknownCreateStackFailure(stack, 120, cloudSiteId, tenantId);
@@ -341,8 +328,7 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
                 createStackParam, false);
 
         heatUtils.handleKeyPairConflict(cloudSiteId, tenantId, createStackParam, 120, true, stack);
-        Mockito.verify(heatUtils, times(1)).queryStackResources(cloudSiteId, tenantId, "stackName", 2);
-        Mockito.verify(novaClient, times(1)).deleteKeyPair(cloudSiteId, tenantId, "KeypairName");
+        Mockito.verify(novaClient, times(1)).deleteKeyPair(cloudSiteId, tenantId, "hst3bbfnm0011vm001");
         Mockito.verify(heatUtils, times(1)).handleUnknownCreateStackFailure(stack, 120, cloudSiteId, tenantId);
         Mockito.verify(heatUtils, times(1)).createStack(createStackParam, cloudSiteId, tenantId);
         Mockito.verify(heatUtils, times(1)).processCreateStack(cloudSiteId, tenantId, 120, true, createdStack,
