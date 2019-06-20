@@ -216,9 +216,13 @@ public class WorkflowAction {
                 boolean isConfiguration = isConfiguration(orchFlows);
                 Resource resourceKey = new Resource(resourceType, key, aLaCarte);
                 if (isConfiguration && !requestAction.equalsIgnoreCase(CREATEINSTANCE)) {
-                    List<ExecuteBuildingBlock> configBuildingBlocks = getConfigBuildingBlocks(sIRequest, orchFlows,
-                            requestId, resourceKey, apiVersion, resourceId, requestAction, aLaCarte, vnfType,
-                            workflowResourceIds, requestDetails, execution);
+                    List<ExecuteBuildingBlock> configBuildingBlocks = getConfigBuildingBlocks(
+                            new ConfigBuildingBlocksDataObject().setsIRequest(sIRequest).setOrchFlows(orchFlows)
+                                    .setRequestId(requestId).setResourceKey(resourceKey).setApiVersion(apiVersion)
+                                    .setResourceId(resourceId).setRequestAction(requestAction).setaLaCarte(aLaCarte)
+                                    .setVnfType(vnfType).setWorkflowResourceIds(workflowResourceIds)
+                                    .setRequestDetails(requestDetails).setExecution(execution));
+
                     flowsToExecute.addAll(configBuildingBlocks);
                 }
                 orchFlows = orchFlows.stream().filter(item -> !item.getFlowName().contains(FABRIC_CONFIGURATION))
@@ -327,7 +331,8 @@ public class WorkflowAction {
                 }
             }
 
-            // If the user set "Homing_Solution" to "none", disable homing, else if "Homing_Solution" is specified,
+            // If the user set "Homing_Solution" to "none", disable homing, else if "Homing_Solution" is
+            // specified,
             // enable it.
             if (sIRequest.getRequestDetails().getRequestParameters() != null
                     && sIRequest.getRequestDetails().getRequestParameters().getUserParams() != null) {
@@ -422,17 +427,14 @@ public class WorkflowAction {
         return false;
     }
 
-    protected List<ExecuteBuildingBlock> getConfigBuildingBlocks(ServiceInstancesRequest sIRequest,
-            List<OrchestrationFlow> orchFlows, String requestId, Resource resourceKey, String apiVersion,
-            String resourceId, String requestAction, boolean aLaCarte, String vnfType,
-            WorkflowResourceIds workflowResourceIds, RequestDetails requestDetails, DelegateExecution execution) {
+    protected List<ExecuteBuildingBlock> getConfigBuildingBlocks(ConfigBuildingBlocksDataObject dataObj) {
 
         List<ExecuteBuildingBlock> flowsToExecuteConfigs = new ArrayList<>();
-        List<OrchestrationFlow> result = new ArrayList<>(orchFlows);
-        result = orchFlows.stream().filter(item -> item.getFlowName().contains(FABRIC_CONFIGURATION))
+        List<OrchestrationFlow> result = new ArrayList<>(dataObj.getOrchFlows());
+        result = dataObj.getOrchFlows().stream().filter(item -> item.getFlowName().contains(FABRIC_CONFIGURATION))
                 .collect(Collectors.toList());
-        String vnfId = workflowResourceIds.getVnfId();
-        String vfModuleId = workflowResourceIds.getVfModuleId();
+        String vnfId = dataObj.getWorkflowResourceIds().getVnfId();
+        String vfModuleId = dataObj.getWorkflowResourceIds().getVfModuleId();
 
         String vnfCustomizationUUID = bbInputSetupUtils.getAAIGenericVnf(vnfId).getModelCustomizationId();
         String vfModuleCustomizationUUID =
@@ -446,21 +448,22 @@ public class WorkflowAction {
             if (configurations.size() > 1) {
                 String multipleRelationshipsError =
                         "Multiple relationships exist from VNFC " + vnfc.getVnfcName() + " to Configurations";
-                buildAndThrowException(execution, multipleRelationshipsError,
+                buildAndThrowException(dataObj.getExecution(), multipleRelationshipsError,
                         new Exception(multipleRelationshipsError));
             }
             for (org.onap.aai.domain.yang.Configuration configuration : configurations) {
-                workflowResourceIds.setConfigurationId(configuration.getConfigurationId());
+                dataObj.getWorkflowResourceIds().setConfigurationId(configuration.getConfigurationId());
                 for (OrchestrationFlow orchFlow : result) {
-                    resourceKey.setVfModuleCustomizationId(vfModuleCustomizationUUID);
-                    resourceKey.setCvnfModuleCustomizationId(vnfc.getModelCustomizationId());
-                    resourceKey.setVnfCustomizationId(vnfCustomizationUUID);
-                    ExecuteBuildingBlock ebb = buildExecuteBuildingBlock(orchFlow, requestId, resourceKey, apiVersion,
-                            resourceId, requestAction, aLaCarte, vnfType, workflowResourceIds, requestDetails, false,
-                            null, true);
+                    dataObj.getResourceKey().setVfModuleCustomizationId(vfModuleCustomizationUUID);
+                    dataObj.getResourceKey().setCvnfModuleCustomizationId(vnfc.getModelCustomizationId());
+                    dataObj.getResourceKey().setVnfCustomizationId(vnfCustomizationUUID);
+                    ExecuteBuildingBlock ebb = buildExecuteBuildingBlock(orchFlow, dataObj.getRequestId(),
+                            dataObj.getResourceKey(), dataObj.getApiVersion(), dataObj.getResourceId(),
+                            dataObj.getRequestAction(), dataObj.isaLaCarte(), dataObj.getVnfType(),
+                            dataObj.getWorkflowResourceIds(), dataObj.getRequestDetails(), false, null, true);
                     String vnfcName = getVnfcNameForConfiguration(configuration);
                     if (vnfcName == null || vnfcName.isEmpty()) {
-                        buildAndThrowException(execution, "Exception in create execution list "
+                        buildAndThrowException(dataObj.getExecution(), "Exception in create execution list "
                                 + ": VnfcName does not exist or is null while there is a configuration for the vfModule",
                                 new Exception("Vnfc and Configuration do not match"));
                     }
