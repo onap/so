@@ -23,9 +23,9 @@ package org.onap.so.apihandlerinfra.validation;
 
 import org.onap.so.apihandlerinfra.Action;
 import org.onap.so.apihandlerinfra.Actions;
-import org.onap.so.apihandlerinfra.ModelType;
 import org.onap.so.exceptions.ValidationException;
 import org.onap.so.serviceinstancebeans.LineOfBusiness;
+import org.onap.so.serviceinstancebeans.ModelType;
 import org.onap.so.serviceinstancebeans.Platform;
 
 public class PlatformLOBValidation implements ValidationRule {

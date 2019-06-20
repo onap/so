@@ -1,0 +1,20 @@
+{
+  "requestDetails": {
+    "modelInfo": {
+      "modelType": "service",
+      "modelVersionId": "bad955c3-29b2-4a27-932e-28e942cc6480",
+      "modelUuid": "bad955c3-29b2-4a27-932e-28e942cc6480"
+    },
+    "requestInfo": {
+      "instanceName": "Robot_SI_For_VolumeGroup",
+      "suppressRollback": false
+    },
+    "requestParameters": {
+      "userParams": [],
+      "aLaCarte": true,
+      "testApi": "GR_API"
+    },
+    "instanceName": [],
+    "configurationParameters": []
+  }
+}

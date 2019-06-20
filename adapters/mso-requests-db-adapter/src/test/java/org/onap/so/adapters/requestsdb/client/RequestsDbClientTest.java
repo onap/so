@@ -26,6 +26,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,9 +34,7 @@ import java.util.Map;
 import java.util.UUID;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.onap.so.adapters.requestsdb.RequestsAdapterBase;
-import org.onap.so.adapters.requestsdb.application.MSORequestDBApplication;
 import org.onap.so.db.request.beans.CloudApiRequests;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.beans.OperationStatus;
@@ -43,10 +42,7 @@ import org.onap.so.db.request.beans.OperationalEnvDistributionStatus;
 import org.onap.so.db.request.beans.OperationalEnvServiceModelStatus;
 import org.onap.so.db.request.beans.RequestProcessingData;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 
 public class RequestsDbClientTest extends RequestsAdapterBase {
 
@@ -86,6 +82,7 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
         infraActiveRequests.setRequestStatus("IN_PROGRESS");
         infraActiveRequests.setAction("create");
         infraActiveRequests.setRequestAction("someaction");
+        infraActiveRequests.setStartTime(new Timestamp(System.currentTimeMillis()));
         infraActiveRequests
                 .setRequestUrl("http://localhost:8080/onap/so/infra/serviceInstantiation/v7/serviceInstances");
         List<CloudApiRequests> cloudApiRequests = new ArrayList<>();
@@ -97,6 +94,34 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
         cloudApiRequests.add(cloudRequest);
         infraActiveRequests.setCloudApiRequests(cloudApiRequests);
         requestsDbClient.save(infraActiveRequests);
+
+        InfraActiveRequests infraActiveRequests2 = new InfraActiveRequests();
+        infraActiveRequests2.setRequestId(UUID.randomUUID().toString());
+        infraActiveRequests2.setOperationalEnvId(UUID.randomUUID().toString());
+        infraActiveRequests2.setServiceInstanceId(UUID.randomUUID().toString());
+        infraActiveRequests2.setServiceInstanceName("serviceInstanceNameTest");
+        infraActiveRequests2.setVnfId(UUID.randomUUID().toString());
+        infraActiveRequests2.setVnfName("vnfInstanceNameTest");
+        infraActiveRequests2.setVfModuleId(UUID.randomUUID().toString());
+        infraActiveRequests2.setVfModuleName("vfModuleInstanceNameTest");
+        infraActiveRequests2.setVolumeGroupId(UUID.randomUUID().toString());
+        infraActiveRequests2.setVolumeGroupName("volumeGroupInstanceNameTest");
+        infraActiveRequests2.setNetworkId(UUID.randomUUID().toString());
+        infraActiveRequests2.setNetworkName("networkInstanceNameTest");
+        infraActiveRequests2.setConfigurationId(UUID.randomUUID().toString());
+        infraActiveRequests2.setConfigurationName("configurationInstanceNameTest");
+        infraActiveRequests2.setAicCloudRegion("1");
+        infraActiveRequests2.setTenantId(UUID.randomUUID().toString());
+        infraActiveRequests2.setRequestScope("operationalEnvironment");
+        infraActiveRequests2.setRequestorId(UUID.randomUUID().toString());
+        infraActiveRequests2.setSource("sourceTest");
+        infraActiveRequests2.setOperationalEnvName(UUID.randomUUID().toString());
+        infraActiveRequests2.setRequestStatus("IN_PROGRESS");
+        infraActiveRequests2.setAction("create");
+        infraActiveRequests2.setRequestAction("someaction");
+        infraActiveRequests2.setStartTime(new Timestamp(System.currentTimeMillis()));
+        infraActiveRequests
+                .setRequestUrl("http://localhost:8080/onap/so/infra/serviceInstantiation/v7/serviceInstances");
     }
 
     private void verifyOperationStatus(OperationStatus request, OperationStatus response) {
@@ -277,5 +302,16 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
                         "requestAction", "7d2e8c07-4d10-456d-bddc-37abf38ca714");
         assertNotNull(requestProcessingData);
 
+    }
+
+    @Test
+    public void getInfraActiveRequestbyRequestId_Filters_Test() {
+        Map<String, String[]> filters = new HashMap<>();
+        filters.put("requestStatus", new String[] {"EQ", "IN_PROGRESS"});
+        filters.put("action", new String[] {"EQ", "create"});
+        filters.put("serviceInstanceId", new String[] {"EQ", infraActiveRequests.getServiceInstanceId()});
+        List<InfraActiveRequests> infraActiveRequestsResponse = requestsDbClient.getRequest(filters);
+
+        verifyInfraActiveRequests(infraActiveRequestsResponse.get(0));
     }
 }

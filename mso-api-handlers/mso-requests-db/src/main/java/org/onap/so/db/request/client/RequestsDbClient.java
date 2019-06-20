@@ -73,7 +73,6 @@ public class RequestsDbClient {
     private static final String OPERATIONAL_ENVIRONMENT_ID = "OPERATIONAL_ENV_ID";
     private static final String SERVICE_MODEL_VERSION_ID = "SERVICE_MODEL_VERSION_ID";
 
-
     @Value("${mso.adapters.requestDb.endpoint:#{null}}")
     protected String endpoint;
 
@@ -106,6 +105,8 @@ public class RequestsDbClient {
 
     private String requestProcessingDataURI = "/requestProcessingData";
 
+    private String getInfraActiveRequests = "/infraActiveRequests/v1/getInfraActiveRequests";
+
     private static final String findBySoRequestIdAndGroupIdAndName =
             "/requestProcessingData/search/findOneBySoRequestIdAndGroupingIdAndName";
 
@@ -128,6 +129,7 @@ public class RequestsDbClient {
         cloudOrchestrationFiltersFromInfraActive = endpoint + cloudOrchestrationFiltersFromInfraActive;
         findOneByServiceIdAndOperationIdURI = endpoint + OPERATION_STATUS_SEARCH + findOneByServiceIdAndOperationIdURI;
         requestProcessingDataURI = endpoint + requestProcessingDataURI;
+        getInfraActiveRequests = endpoint + getInfraActiveRequests;
         operationalEnvDistributionStatusURI = endpoint + operationalEnvDistributionStatusURI;
         findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestIdURI =
                 endpoint + OPERATIONAL_ENV_SERVICE_MODEL_STATUS_SEARCH
@@ -366,6 +368,17 @@ public class RequestsDbClient {
         Iterator<RequestProcessingData> it = requestProcessingDataIterator.iterator();
         it.forEachRemaining(requestProcessingDataList::add);
         return requestProcessingDataList;
+    }
+
+    // From and To are defaulted to ignore start/endtime on query to database
+    public List<InfraActiveRequests> getRequest(final Map<String, String[]> filters) {
+        String url = UriBuilder.fromUri(getUri(getInfraActiveRequests)).queryParam("from", "0")
+                .queryParam("to", "10000000000000").build().toString();
+        HttpHeaders headers = getHttpHeaders();
+        HttpEntity<Map> entity = new HttpEntity<>(filters, headers);
+        return restTemplate
+                .exchange(url, HttpMethod.POST, entity, new ParameterizedTypeReference<List<InfraActiveRequests>>() {})
+                .getBody();
     }
 
     @Component

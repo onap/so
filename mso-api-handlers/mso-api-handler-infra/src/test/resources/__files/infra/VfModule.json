@@ -1,0 +1,37 @@
+{
+	"vf-module-id": "b70060b7-0031-4065-9462-3cd5b753d2db",
+	"vf-module-name": "dummy_id",
+	"heat-stack-id": "dummy_id/stackId",
+	"orchestration-status": "Active",
+	"is-base-vf-module": true,
+	"automated-assignment": false,
+	"resource-version": "1560538368229",
+	"model-invariant-id": "f7a867f2-596b-4f4a-a128-421e825a6190",
+	"model-version-id": "eb5de6fb-9ecf-4009-b922-fae3a9ae7d46",
+	"model-customization-id": "074c64d0-7e13-4bcc-8bdb-ea922331102d",
+	"module-index": 0,
+	"selflink": "/sim/restconf/config/GENERIC-RESOURCE-API:services/service/e9fbfab4-d91c-4508-a429-2046c8751371/service-data/vnfs/vnf/829924cc-8932-4875-b0af-d7a02799da9a/vnf-data//vf-modules/vf-module/dummy_id/vf-module-data/vf-module-topology/",
+	"relationship-list": {
+		"relationship": [
+			{
+				"related-to": "volume-group",
+				"relationship-label": "org.onap.relationships.inventory.Uses",
+				"related-link": "/aai/v15/cloud-infrastructure/cloud-regions/cloud-region/cloudOwner/regionOne/volume-groups/volume-group/18b220c8-af84-4b82-a8c0-41bbea6328a6",
+				"relationship-data": [
+					{
+						"relationship-key": "cloud-region.cloud-owner",
+						"relationship-value": "cloudOwner"
+					},
+					{
+						"relationship-key": "cloud-region.cloud-region-id",
+						"relationship-value": "regionOne"
+					},
+					{
+						"relationship-key": "volume-group.volume-group-id",
+						"relationship-value": "18b220c8-af84-4b82-a8c0-41bbea6328a6"
+					}
+				]
+			}
+		]
+	}
+}
