@@ -39,6 +39,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
+import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.apihandlerinfra.exceptions.VfModuleNotFoundException;
 import org.onap.so.db.catalog.beans.VfModule;
 import org.onap.so.db.catalog.client.CatalogDbClient;
@@ -140,7 +141,7 @@ public class RequestHandlerUtilsUnitTest {
 
 
     @Test
-    public void createNewRecordCopyFromInfraActiveRequestTest() throws IOException {
+    public void createNewRecordCopyFromInfraActiveRequestTest() throws IOException, ApiException {
         doNothing().when(requestHandler).setInstanceIdAndName(infraActiveRequest, currentActiveRequest);
         doReturn(getRequestBody("/RequestBodyNewRequestorId.json")).when(requestHandler)
                 .updateRequestorIdInRequestBody(infraActiveRequest, "yyyyyy");
@@ -150,14 +151,14 @@ public class RequestHandlerUtilsUnitTest {
     }
 
     @Test
-    public void createNewRecordCopyFromInfraActiveRequestNullIARTest() {
+    public void createNewRecordCopyFromInfraActiveRequestNullIARTest() throws ApiException {
         InfraActiveRequests result = requestHandler.createNewRecordCopyFromInfraActiveRequest(null, CURRENT_REQUEST_ID,
                 startTimeStamp, "VID", requestUri, "xxxxxx", RESUMED_REQUEST_ID);
         assertThat(currentActiveRequestIARNull, sameBeanAs(result));
     }
 
     @Test
-    public void setInstanceIdAndNameServiceTest() {
+    public void setInstanceIdAndNameServiceTest() throws ApiException {
         InfraActiveRequests serviceRequest = new InfraActiveRequests();
 
         InfraActiveRequests expected = new InfraActiveRequests();
@@ -169,7 +170,40 @@ public class RequestHandlerUtilsUnitTest {
     }
 
     @Test
-    public void setInstanceIdAndNameRequestScopeNotValidTest() {
+    public void setInstanceIdAndNameServiceNullInstanceNameTest() throws ApiException {
+        InfraActiveRequests serviceRequest = new InfraActiveRequests();
+
+        InfraActiveRequests request = new InfraActiveRequests();
+        request.setServiceInstanceId(SERVICE_INSTANCE_ID);
+        request.setRequestScope(ModelType.service.toString());
+
+        InfraActiveRequests expected = new InfraActiveRequests();
+        expected.setServiceInstanceId(SERVICE_INSTANCE_ID);
+
+        requestHandler.setInstanceIdAndName(request, serviceRequest);
+        assertThat(serviceRequest, sameBeanAs(expected));
+    }
+
+    @Test
+    public void setInstanceIdAndNameServiceNullInstanceNameVfModuleTest() throws ApiException {
+        InfraActiveRequests vfModuleRequest = new InfraActiveRequests();
+        String errorMessage =
+                "vfModule for requestId: 59c7247f-839f-4923-90c3-05faa3ab354d being resumed does not have an instanceName.";
+        doNothing().when(requestHandler).updateStatus(vfModuleRequest, Status.FAILED, errorMessage);
+
+        InfraActiveRequests request = new InfraActiveRequests();
+        request.setServiceInstanceId(VFMODULE_ID);
+        request.setRequestScope(ModelType.vfModule.toString());
+        request.setRequestId(RESUMED_REQUEST_ID);
+
+        thrown.expect(ValidateException.class);
+        thrown.expectMessage(errorMessage);
+
+        requestHandler.setInstanceIdAndName(request, vfModuleRequest);
+    }
+
+    @Test
+    public void setInstanceIdAndNameRequestScopeNotValidTest() throws ApiException {
         InfraActiveRequests originalServiceRequest = new InfraActiveRequests();
         originalServiceRequest.setRequestScope("test");
         InfraActiveRequests serviceRequest = new InfraActiveRequests();
@@ -181,7 +215,7 @@ public class RequestHandlerUtilsUnitTest {
     }
 
     @Test
-    public void setInstanceIdAndNameVnfTest() {
+    public void setInstanceIdAndNameVnfTest() throws ApiException {
         InfraActiveRequests vnfRequestOriginal = new InfraActiveRequests();
         vnfRequestOriginal.setRequestScope("vnf");
         vnfRequestOriginal.setVnfId(VNF_ID);
@@ -197,7 +231,7 @@ public class RequestHandlerUtilsUnitTest {
     }
 
     @Test
-    public void setInstanceIdAndNameVfModuleTest() {
+    public void setInstanceIdAndNameVfModuleTest() throws ApiException {
         InfraActiveRequests vfModuleRequestOriginal = new InfraActiveRequests();
         vfModuleRequestOriginal.setRequestScope("vfModule");
         vfModuleRequestOriginal.setVfModuleId(VFMODULE_ID);
@@ -213,7 +247,7 @@ public class RequestHandlerUtilsUnitTest {
     }
 
     @Test
-    public void setInstanceIdAndNameNetworkTest() {
+    public void setInstanceIdAndNameNetworkTest() throws ApiException {
         InfraActiveRequests networkRequestOriginal = new InfraActiveRequests();
         networkRequestOriginal.setRequestScope("network");
         networkRequestOriginal.setNetworkId(NETWORK_ID);
@@ -229,7 +263,7 @@ public class RequestHandlerUtilsUnitTest {
     }
 
     @Test
-    public void setInstanceIdAndNameVolumeGroupTest() {
+    public void setInstanceIdAndNameVolumeGroupTest() throws ApiException {
         InfraActiveRequests volumeGroupRequestOriginal = new InfraActiveRequests();
         volumeGroupRequestOriginal.setRequestScope("volumeGroup");
         volumeGroupRequestOriginal.setVolumeGroupId(VOLUME_GROUP_ID);
@@ -357,7 +391,7 @@ public class RequestHandlerUtilsUnitTest {
     }
 
     @Test
-    public void getModelTypeApplyUpdatedConfigTest() {
+    public void getModelTypeApplyUpdatedConfigTest() throws ApiException {
         ModelType modelTypeExpected = ModelType.vnf;
 
         ModelType modelTypeResult = requestHandler.getModelType(Action.applyUpdatedConfig, null);
@@ -365,7 +399,7 @@ public class RequestHandlerUtilsUnitTest {
     }
 
     @Test
-    public void getModelTypeInPlaceSoftwareUpdateTest() {
+    public void getModelTypeInPlaceSoftwareUpdateTest() throws ApiException {
         ModelType modelTypeExpected = ModelType.vnf;
 
         ModelType modelTypeResult = requestHandler.getModelType(Action.inPlaceSoftwareUpdate, null);
@@ -373,7 +407,7 @@ public class RequestHandlerUtilsUnitTest {
     }
 
     @Test
-    public void getModelTypeAddMembersTest() {
+    public void getModelTypeAddMembersTest() throws ApiException {
         ModelType modelTypeExpected = ModelType.instanceGroup;
 
         ModelType modelTypeResult = requestHandler.getModelType(Action.addMembers, null);
@@ -381,7 +415,7 @@ public class RequestHandlerUtilsUnitTest {
     }
 
     @Test
-    public void getModelTypeRemoveMembersTest() {
+    public void getModelTypeRemoveMembersTest() throws ApiException {
         ModelType modelTypeExpected = ModelType.instanceGroup;
 
         ModelType modelTypeResult = requestHandler.getModelType(Action.removeMembers, null);
@@ -389,7 +423,7 @@ public class RequestHandlerUtilsUnitTest {
     }
 
     @Test
-    public void getModelTypeTest() {
+    public void getModelTypeTest() throws ApiException {
         ModelType modelTypeExpected = ModelType.service;
         ModelInfo modelInfo = new ModelInfo();
         modelInfo.setModelType(ModelType.service);
