@@ -78,6 +78,9 @@ import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.entity.MsoRequest;
 import org.onap.so.jsonpath.JsonPathUtil;
 import org.onap.so.openstack.utils.MsoMulticloudUtils;
+import org.onap.so.client.adapter.vnf.mapper.exceptions.MissingValueTagException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -92,6 +95,7 @@ import com.google.common.base.Joiner;
 public class VnfAdapterVfModuleObjectMapper {
     @Autowired
     protected VnfAdapterObjectMapperUtils vnfAdapterObjectMapperUtils;
+    private static final Logger logger = LoggerFactory.getLogger(VnfAdapterVfModuleObjectMapper.class);
     private static List<String> sdncResponseParamsToSkip =
             asList("vnf_id", "vf_module_id", "vnf_name", "vf_module_name");
 
@@ -203,8 +207,8 @@ public class VnfAdapterVfModuleObjectMapper {
         return paramsMap;
     }
 
-    private void buildDirectivesParamFromMap(Map<String, Object> paramsMap, String directive,
-            Map<String, Object> srcMap) {
+    protected void buildDirectivesParamFromMap(Map<String, Object> paramsMap, String directive,
+            Map<String, Object> srcMap) throws MissingValueTagException {
         StringBuilder directives = new StringBuilder();
         int no_directives_size = 0;
         if (directive.equals(MsoMulticloudUtils.USER_DIRECTIVES)
@@ -217,6 +221,10 @@ public class VnfAdapterVfModuleObjectMapper {
             for (String attributeName : srcMap.keySet()) {
                 if (!(MsoMulticloudUtils.USER_DIRECTIVES.equals(directive)
                         && attributeName.equals(MsoMulticloudUtils.OOF_DIRECTIVES))) {
+                    if (srcMap.get(attributeName) == null) {
+                        logger.error("No value tag found for attribute: {}", attributeName);
+                        throw new MissingValueTagException("No value tag found for " + attributeName);
+                    }
                     directives.append(new AttributeNameValue(attributeName, srcMap.get(attributeName).toString()));
                     if (i < (srcMap.size() - 1 + no_directives_size))
                         directives.append(", ");

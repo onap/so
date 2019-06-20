@@ -33,6 +33,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.client.adapter.vnf.mapper.VnfAdapterVfModuleObjectMapper;
+import org.onap.so.client.adapter.vnf.mapper.exceptions.MissingValueTagException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,7 @@ public class VnfAdapterVfModuleResources {
     public CreateVfModuleRequest createVfModuleRequest(RequestContext requestContext, CloudRegion cloudRegion,
             OrchestrationContext orchestrationContext, ServiceInstance serviceInstance, GenericVnf genericVnf,
             VfModule vfModule, VolumeGroup volumeGroup, String sdncVnfQueryResponse, String sdncVfModuleQueryResponse)
-            throws IOException {
+            throws IOException, MissingValueTagException {
         return vnfAdapterVfModuleObjectMapper.createVfModuleRequestMapper(requestContext, cloudRegion,
                 orchestrationContext, serviceInstance, genericVnf, vfModule, volumeGroup, sdncVnfQueryResponse,
                 sdncVfModuleQueryResponse);
