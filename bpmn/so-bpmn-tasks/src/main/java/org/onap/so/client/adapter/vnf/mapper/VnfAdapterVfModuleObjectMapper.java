@@ -123,7 +123,7 @@ public class VnfAdapterVfModuleObjectMapper {
     public CreateVfModuleRequest createVfModuleRequestMapper(RequestContext requestContext, CloudRegion cloudRegion,
             OrchestrationContext orchestrationContext, ServiceInstance serviceInstance, GenericVnf genericVnf,
             VfModule vfModule, VolumeGroup volumeGroup, String sdncVnfQueryResponse, String sdncVfModuleQueryResponse)
-            throws IOException {
+            throws IOException, MissingValueTagException {
         CreateVfModuleRequest createVfModuleRequest = new CreateVfModuleRequest();
 
         createVfModuleRequest.setCloudSiteId(cloudRegion.getLcpCloudRegionId());
@@ -172,7 +172,7 @@ public class VnfAdapterVfModuleObjectMapper {
 
     private Map<String, Object> buildVfModuleParamsMap(RequestContext requestContext, ServiceInstance serviceInstance,
             GenericVnf genericVnf, VfModule vfModule, String sdncVnfQueryResponse, String sdncVfModuleQueryResponse)
-            throws IOException {
+            throws IOException, MissingValueTagException {
 
 
         GenericResourceApiVnfTopology vnfTop =
