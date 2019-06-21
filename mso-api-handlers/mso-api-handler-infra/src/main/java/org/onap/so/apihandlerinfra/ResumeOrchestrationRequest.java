@@ -80,7 +80,7 @@ public class ResumeOrchestrationRequest {
     private MsoRequest msoRequest;
 
     @POST
-    @Path("/{version:[vV][7]}/requests/{requestId}/resume")
+    @Path("/{version:[vV][7]}/{requestId}/resume")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Resume request for a given requestId", response = Response.class)
