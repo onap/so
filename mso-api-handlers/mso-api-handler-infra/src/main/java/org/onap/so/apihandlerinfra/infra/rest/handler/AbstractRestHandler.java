@@ -182,7 +182,7 @@ public abstract class AbstractRestHandler {
         }
         return selfLinkUrl;
     }
-    
+
     /**
      * @param vfmoduleInstanceId
      * @param requestId
