@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,8 +41,8 @@ public class WebSecurityConfigImpl extends WebSecurityConfig {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests().antMatchers("/manage/health", "/manage/info").permitAll()
-                .antMatchers("/**").hasAnyRole(StringUtils.collectionToDelimitedString(getRoles(), ",").toString())
-                .and().httpBasic();
+                .antMatchers("/**").hasAnyRole(StringUtils.collectionToDelimitedString(getRoles(), ",")).and()
+                .httpBasic();
 
     }
 

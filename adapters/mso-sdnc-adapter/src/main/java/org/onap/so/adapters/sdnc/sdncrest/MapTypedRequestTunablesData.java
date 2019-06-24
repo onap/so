@@ -41,7 +41,6 @@ public class MapTypedRequestTunablesData {
 
     private static final String MISSING_CONFIGURATION_ERROR_MSG = "Missing configuration for: ";
     private static final String MISSING_CONFIG_PARAM_ERROR_MSG = "Missing config param";
-    private static final String MSO_INTERNAL_ERROR = "MsoInternalError";
 
     @Autowired
     private Environment env;
