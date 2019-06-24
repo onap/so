@@ -245,7 +245,6 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
     public void queryVnfA(String cloudSiteId, String cloudOwner, String tenantId, String vnfName, String messageId,
             MsoRequest msoRequest, String notificationUrl) {
 
-        String serviceName = "QueryVnfA";
         logger.info(LoggingAnchor.ONE, MessageEnum.RA_ASYNC_QUERY_VNF);
 
         // Use the synchronous method to perform the actual query
@@ -323,7 +322,6 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
     public void deleteVnfA(String cloudSiteId, String cloudOwner, String tenantId, String vnfName, String messageId,
             MsoRequest msoRequest, String notificationUrl) {
 
-        String serviceName = "DeleteVnfA";
         logger.info(LoggingAnchor.ONE, MessageEnum.RA_ASYNC_DELETE_VNF);
 
         // Use the synchronous method to perform the actual delete
@@ -460,7 +458,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
         CreateVnfNotification.Outputs outputs = new CreateVnfNotification.Outputs();
 
         if (hMap != null && hMap.value != null) {
-            Map<String, String> sMap = new HashMap<>();
+            Map<String, String> sMap;
             sMap = hMap.value;
             CreateVnfNotification.Outputs.Entry entry = new CreateVnfNotification.Outputs.Entry();
 
@@ -478,7 +476,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
         UpdateVnfNotification.Outputs outputs = new UpdateVnfNotification.Outputs();
 
         if (hMap != null && hMap.value != null) {
-            Map<String, String> sMap = new HashMap<>();
+            Map<String, String> sMap;
             sMap = hMap.value;
             UpdateVnfNotification.Outputs.Entry entry = new UpdateVnfNotification.Outputs.Entry();
 
@@ -498,7 +496,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
         QueryVnfNotification.Outputs outputs = new QueryVnfNotification.Outputs();
 
         if (hMap != null && hMap.value != null) {
-            Map<String, String> sMap = new HashMap<>();
+            Map<String, String> sMap;
             sMap = hMap.value;
 
             QueryVnfNotification.Outputs.Entry entry = new QueryVnfNotification.Outputs.Entry();
