@@ -442,7 +442,6 @@ public class ToscaResourceInstaller {
                         vfCustomizationCategory);
             }
 
-            workflowResource.processWorkflows(vfResourceStructure);
             processResourceSequence(toscaResourceStruct, service);
             List<NodeTemplate> allottedResourceList = toscaResourceStruct.getSdcCsarHelper().getAllottedResources();
             processAllottedResources(toscaResourceStruct, service, allottedResourceList);
@@ -455,6 +454,8 @@ public class ToscaResourceInstaller {
             logger.info("Saving Service: {} ", service.getModelName());
             service = serviceRepo.save(service);
             correlateConfigCustomResources(service);
+
+            workflowResource.processWorkflows(vfResourceStructure);
 
             WatchdogComponentDistributionStatus status = new WatchdogComponentDistributionStatus(
                     vfResourceStruct.getNotification().getDistributionID(), MSO);

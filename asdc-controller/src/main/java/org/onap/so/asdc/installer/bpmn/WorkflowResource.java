@@ -32,16 +32,19 @@ import org.onap.sdc.api.notification.IArtifactInfo;
 import org.onap.so.asdc.installer.VfResourceStructure;
 import org.onap.so.asdc.installer.WorkflowArtifact;
 import org.onap.so.db.catalog.beans.ActivitySpec;
+import org.onap.so.db.catalog.beans.VnfResource;
 import org.onap.so.db.catalog.beans.VnfResourceWorkflow;
 import org.onap.so.db.catalog.beans.Workflow;
 import org.onap.so.db.catalog.beans.WorkflowActivitySpecSequence;
 import org.onap.so.db.catalog.data.repository.ActivitySpecRepository;
+import org.onap.so.db.catalog.data.repository.VnfResourceRepository;
 import org.onap.so.db.catalog.data.repository.WorkflowRepository;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -60,20 +63,33 @@ public class WorkflowResource {
     protected ActivitySpecRepository activityRepo;
 
     @Autowired
+    protected VnfResourceRepository vnfResourceRepo;
+
+    @Autowired
     private BpmnInstaller bpmnInstaller;
 
     public void processWorkflows(VfResourceStructure vfResourceStructure) throws Exception {
         Map<String, WorkflowArtifact> artifactsMapByUUID = vfResourceStructure.getWorkflowArtifactsMapByUUID();
-        String vfResourceModelUuid = vfResourceStructure.getResourceInstance().getResourceUUID();
-        for (String uuid : artifactsMapByUUID.keySet()) {
-            WorkflowArtifact artifactToInstall = artifactsMapByUUID.get(uuid);
-            if (isLatestVersionAvailable(artifactsMapByUUID, artifactToInstall)) {
-                logger.debug("Installing the BPMN: " + artifactToInstall.getArtifactInfo().getArtifactName());
-                deployWorkflowResourceToCamunda(artifactToInstall);
-                installWorkflowResource(artifactToInstall, vfResourceModelUuid);
-            } else {
-                logger.debug("Skipping installing - not the latest version: "
-                        + artifactToInstall.getArtifactInfo().getArtifactName());
+        if (artifactsMapByUUID != null && !artifactsMapByUUID.isEmpty()) {
+            String vfResourceModelUuid = vfResourceStructure.getResourceInstance().getResourceUUID();
+            VnfResource vnfResource = vnfResourceRepo.findResourceByModelUUID(vfResourceModelUuid);
+            if (vnfResource == null) {
+                logger.debug("Failed deploying BPMN for vfResourceModelUUID {}", vfResourceModelUuid);
+                logger.error("{} {} {} {} {} {}", MessageEnum.ASDC_ARTIFACT_NOT_DEPLOYED_DETAIL.toString(),
+                        vfResourceModelUuid, vfResourceModelUuid, HttpStatus.NOT_FOUND, ErrorCode.DataError.getValue(),
+                        "ASDC BPMN deploy failed");
+                throw (new Exception("VF Resource not present in Catalog DB: " + vfResourceModelUuid));
+            }
+            for (String uuid : artifactsMapByUUID.keySet()) {
+                WorkflowArtifact artifactToInstall = artifactsMapByUUID.get(uuid);
+                if (isLatestVersionAvailable(artifactsMapByUUID, artifactToInstall)) {
+                    logger.debug("Installing the BPMN: " + artifactToInstall.getArtifactInfo().getArtifactName());
+                    deployWorkflowResourceToCamunda(artifactToInstall);
+                    installWorkflowResource(artifactToInstall, vfResourceModelUuid);
+                } else {
+                    logger.debug("Skipping installing - not the latest version: "
+                            + artifactToInstall.getArtifactInfo().getArtifactName());
+                }
             }
         }
     }
