@@ -516,7 +516,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
                 logger.debug("Heat Client is NULL");
             }
 
-	    if (null != request) {
+            if (null != request) {
                 executeAndRecordOpenstackRequest(request);
             } else {
                 logger.debug("Request is NULL");
