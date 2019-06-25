@@ -515,7 +515,12 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
             } else {
                 logger.debug("Heat Client is NULL");
             }
-            executeAndRecordOpenstackRequest(request);
+
+            if (null != request) {
+                executeAndRecordOpenstackRequest(request);
+            } else {
+                logger.debug("Request is NULL");
+            }
         } catch (OpenStackResponseException e) {
             if (e.getStatus() == 404) {
                 // Not found. We are OK with this. Return a StackInfo with status NOTFOUND
