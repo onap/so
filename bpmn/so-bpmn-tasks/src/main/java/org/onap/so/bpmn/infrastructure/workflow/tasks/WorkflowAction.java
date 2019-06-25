@@ -113,6 +113,7 @@ public class WorkflowAction {
     private static final String FABRIC_CONFIGURATION = "FabricConfiguration";
     private static final String SERVICE_TYPE_TRANSPORT = "TRANSPORT";
     private static final String SERVICE_TYPE_BONDING = "BONDING";
+    private static final String CLOUD_OWNER = "DEFAULT";
     private static final Logger logger = LoggerFactory.getLogger(WorkflowAction.class);
 
     @Autowired
@@ -1411,8 +1412,8 @@ public class WorkflowAction {
                     requestAction, resourceName.toString(), aLaCarte, cloudOwner);
         }
         if (northBoundRequest == null) {
-            northBoundRequest = catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScope(requestAction,
-                    resourceName.toString(), aLaCarte);
+            northBoundRequest = catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(
+                    requestAction, resourceName.toString(), aLaCarte, CLOUD_OWNER);
         }
         if (northBoundRequest == null) {
             if (aLaCarte) {

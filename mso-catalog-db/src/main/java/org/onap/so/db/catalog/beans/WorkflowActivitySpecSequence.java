@@ -53,22 +53,20 @@ public class WorkflowActivitySpecSequence implements Serializable {
     @Column(name = "ACTIVITY_SPEC_ID")
     private Integer activitySpecId;
 
-    @BusinessKey
-    @Column(name = "WORKFLOW_ID")
-    private Integer workflowId;
+    @Column(name = "SEQ_NO")
+    private Integer seqNo;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "ACTIVITY_SPEC_ID", updatable = false, insertable = false)
     private ActivitySpec activitySpec;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "WORKFLOW_ID", updatable = false, insertable = false)
+    @JoinColumn(name = "WORKFLOW_ID")
     private Workflow workflow;
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("workflowId", workflowId).append("activitySpecId", activitySpecId)
-                .toString();
+        return new ToStringBuilder(this).append("activitySpecId", activitySpecId).toString();
     }
 
     @Override
@@ -77,13 +75,12 @@ public class WorkflowActivitySpecSequence implements Serializable {
             return false;
         }
         WorkflowActivitySpecSequence castOther = (WorkflowActivitySpecSequence) other;
-        return new EqualsBuilder().append(activitySpecId, castOther.activitySpecId)
-                .append(workflowId, castOther.workflowId).isEquals();
+        return new EqualsBuilder().append(activitySpecId, castOther.activitySpecId).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(activitySpecId).append(workflowId).toHashCode();
+        return new HashCodeBuilder().append(activitySpecId).toHashCode();
     }
 
     public Integer getID() {
@@ -96,14 +93,6 @@ public class WorkflowActivitySpecSequence implements Serializable {
 
     public void setActivitySpecId(Integer activitySpecId) {
         this.activitySpecId = activitySpecId;
-    }
-
-    public Integer getWorkflowId() {
-        return workflowId;
-    }
-
-    public void setWorkflowId(Integer workflowId) {
-        this.workflowId = workflowId;
     }
 
     @LinkedResource
@@ -122,6 +111,14 @@ public class WorkflowActivitySpecSequence implements Serializable {
 
     public void setWorkflow(Workflow workflow) {
         this.workflow = workflow;
+    }
+
+    public Integer getSeqNo() {
+        return seqNo;
+    }
+
+    public void setSeqNo(Integer seqNo) {
+        this.seqNo = seqNo;
     }
 
 }
