@@ -113,9 +113,9 @@ public class ApplicationControllerAction {
                 errorCode = Integer.toString(appCStatus.getCode());
                 errorMessage = appCStatus.getMessage();
 
-            }
-            if (ApplicationControllerSupport.getCategoryOf(appCStatus).equals(StatusCategory.NORMAL)) {
-                errorCode = "0";
+                if (ApplicationControllerSupport.getCategoryOf(appCStatus).equals(StatusCategory.NORMAL)) {
+                    errorCode = "0";
+                }
             }
         } catch (JsonProcessingException e) {
             logger.error("Incorrect Payload format for action request: {}", action.toString(), e);
