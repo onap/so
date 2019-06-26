@@ -161,6 +161,7 @@ public class NotificationHandler implements Runnable {
         } finally {
             jobManager.notificationProcessedForOperation(vnfLcmOperationOccurrenceNotification.getVnfLcmOpOccId(),
                     deleteSuccessful);
+            jobManager.vnfDeleted(vnfLcmOperationOccurrenceNotification.getVnfLcmOpOccId());
             genericVnf.setOrchestrationStatus("Assigned");
             genericVnf.setSelflink("");
             aaiServiceProvider.invokePutGenericVnf(genericVnf);
