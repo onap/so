@@ -29,6 +29,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -73,6 +74,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
+import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.Relationships;
@@ -347,13 +349,10 @@ public class WorkflowActionTest extends BaseTaskTest {
                 new org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf();
         vnf.setVnfId("vnf0");
 
-        org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule =
-                new org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule();
-        vfModule.setVfModuleId("vfModule0");
+
+        org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule = buildVfModule();
         vnf.getVfModules().add(vfModule);
-        org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule2 =
-                new org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule();
-        vfModule2.setVfModuleId("vfModule1");
+        org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule2 = buildVfModule();
         vnf.getVfModules().add(vfModule2);
 
         org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup volumeGroup =
@@ -374,10 +373,10 @@ public class WorkflowActionTest extends BaseTaskTest {
                 "ActivateServiceInstanceBB");
         assertEquals("volumeGroup0", ebbs.get(0).getWorkflowResourceIds().getVolumeGroupId());
         assertEquals("volumeGroup0", ebbs.get(1).getWorkflowResourceIds().getVolumeGroupId());
-        assertEquals("vfModule0", ebbs.get(2).getWorkflowResourceIds().getVfModuleId());
-        assertEquals("vfModule1", ebbs.get(3).getWorkflowResourceIds().getVfModuleId());
-        assertEquals("vfModule0", ebbs.get(4).getWorkflowResourceIds().getVfModuleId());
-        assertEquals("vfModule1", ebbs.get(5).getWorkflowResourceIds().getVfModuleId());
+        assertEquals("testVfModuleId1", ebbs.get(2).getWorkflowResourceIds().getVfModuleId());
+        assertEquals("testVfModuleId2", ebbs.get(3).getWorkflowResourceIds().getVfModuleId());
+        assertEquals("testVfModuleId1", ebbs.get(4).getWorkflowResourceIds().getVfModuleId());
+        assertEquals("testVfModuleId2", ebbs.get(5).getWorkflowResourceIds().getVfModuleId());
         assertEquals("vnf0", ebbs.get(6).getWorkflowResourceIds().getVnfId());
         assertEquals("si0", ebbs.get(7).getWorkflowResourceIds().getServiceInstanceId());
 
@@ -682,13 +681,9 @@ public class WorkflowActionTest extends BaseTaskTest {
                 new org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf();
         vnf.setVnfId("vnfId123");
 
-        org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule =
-                new org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule();
-        vfModule.setVfModuleId("vfModule1");
+        org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule = buildVfModule();
         vnf.getVfModules().add(vfModule);
-        org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule2 =
-                new org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule();
-        vfModule2.setVfModuleId("vfModule2");
+        org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule2 = buildVfModule();
         vnf.getVfModules().add(vfModule2);
 
         org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup volumeGroup =
@@ -737,13 +732,9 @@ public class WorkflowActionTest extends BaseTaskTest {
                 new org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf();
         vnf.setVnfId("vnfId123");
 
-        org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule =
-                new org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule();
-        vfModule.setVfModuleId("vfModule1");
+        org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule = buildVfModule();
         vnf.getVfModules().add(vfModule);
-        org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule2 =
-                new org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule();
-        vfModule2.setVfModuleId("vfModule2");
+        org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule2 = buildVfModule();
         vnf.getVfModules().add(vfModule2);
 
         org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup volumeGroup =
@@ -1726,6 +1717,7 @@ public class WorkflowActionTest extends BaseTaskTest {
                     .getConfiguration("testConfigurationId2");
             workflowAction.traverseAAIService(execution, resourceCounter, resourceId, aaiResourceIds);
             assertEquals(8, resourceCounter.size());
+            assertTrue(resourceCounter.get(2).isBaseVfModule());
             assertThat(aaiResourceIds, sameBeanAs(getExpectedResourceIds()));
         } catch (Exception e) {
             fail("Unexpected exception was thrown.");
