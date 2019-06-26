@@ -23,6 +23,9 @@
 package org.onap.so.bpmn.servicedecomposition.tasks;
 
 import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -42,6 +45,7 @@ import org.onap.aai.domain.yang.VolumeGroups;
 import org.onap.aai.domain.yang.VpnBinding;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
+import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.MultipleObjectsFoundException;
 import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.NoServiceInstanceFoundException;
 import org.onap.so.client.aai.AAIObjectPlurals;
@@ -59,6 +63,7 @@ import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;
+import org.onap.so.db.request.beans.RequestProcessingData;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.ModelType;
@@ -69,7 +74,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -79,6 +87,9 @@ public class BBInputSetupUtils {
     private static final Logger logger = LoggerFactory.getLogger(BBInputSetupUtils.class);
     private ObjectMapper objectMapper = new ObjectMapper();
     private static final String REQUEST_ERROR = "Could not find request.";
+    private static final String DATA_LOAD_ERROR = "Could not process loading data from database";
+    private static final String DATA_PARSE_ERROR = "Could not parse data";
+    private static final String PROCESSING_DATA_NAME_EXECUTION_FLOWS = "flowExecutionPath";
 
     @Autowired
     protected CatalogDbClient catalogDbClient;
@@ -137,6 +148,66 @@ public class BBInputSetupUtils {
         } else {
             logger.debug(REQUEST_ERROR);
         }
+    }
+
+    public void persistFlowExecutionPath(String requestId, List<ExecuteBuildingBlock> flowsToExecute) {
+
+        if (requestId != null) {
+            List<String> flows = new ArrayList<>();
+            ObjectMapper om = new ObjectMapper();
+            try {
+                for (ExecuteBuildingBlock ebb : flowsToExecute) {
+                    flows.add(om.writeValueAsString(ebb));
+                }
+            } catch (JsonProcessingException e) {
+                logger.error(DATA_PARSE_ERROR, e);
+            }
+
+            this.requestsDbClient.persistProcessingData(flows.toString(), requestId);
+        } else {
+            logger.debug(REQUEST_ERROR);
+        }
+    }
+
+    public InfraActiveRequests loadInfraActiveRequestById(String requestId) {
+
+        return this.requestsDbClient.getInfraActiveRequestbyRequestId(requestId);
+    }
+
+    public InfraActiveRequests loadOriginalInfraActiveRequestById(String requestId) {
+
+        return this.requestsDbClient.getInfraActiveRequestbyRequestId(
+                this.requestsDbClient.getInfraActiveRequestbyRequestId(requestId).getOriginalRequestId());
+    }
+
+    public List<ExecuteBuildingBlock> loadOriginalFlowExecutionPath(String requestId) {
+
+        List<ExecuteBuildingBlock> asList = null;
+        if (requestId != null) {
+
+            InfraActiveRequests request = loadInfraActiveRequestById(requestId);
+
+            if (request.getOriginalRequestId() != null) {
+
+                RequestProcessingData requestProcessingData =
+                        this.requestsDbClient.getRequestProcessingDataBySoRequestIdAndName(
+                                request.getOriginalRequestId(), PROCESSING_DATA_NAME_EXECUTION_FLOWS);
+
+                ObjectMapper om = new ObjectMapper();
+                try {
+                    ExecuteBuildingBlock[] asArray =
+                            om.readValue(requestProcessingData.getValue(), ExecuteBuildingBlock[].class);
+                    asList = Arrays.asList(asArray);
+                } catch (Exception e) {
+                    logger.error(DATA_LOAD_ERROR, e);
+                }
+            }
+
+        } else {
+            logger.debug(REQUEST_ERROR);
+        }
+
+        return asList;
     }
 
     public Service getCatalogServiceByModelUUID(String modelUUID) {

@@ -72,6 +72,8 @@ public class RequestsDbClient {
     private static final String REQUEST_ID = "REQUEST_ID";
     private static final String OPERATIONAL_ENVIRONMENT_ID = "OPERATIONAL_ENV_ID";
     private static final String SERVICE_MODEL_VERSION_ID = "SERVICE_MODEL_VERSION_ID";
+    private static final String FLOW_EXECUTION_PATH = "flowExecutionPath";
+    private static final String BPMN_EXECUTION_DATA_TAG = "BPMNExecutionData";
 
     @Value("${mso.adapters.requestDb.endpoint:#{null}}")
     protected String endpoint;
@@ -95,6 +97,8 @@ public class RequestsDbClient {
 
     private String findOneByServiceIdAndOperationIdURI = "/findOneByServiceIdAndOperationId";
 
+    private String findOneByRequestId = "/infraActiveRequests/search/findOneByRequestId";
+
     private String findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestIdURI =
             "/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId";
 
@@ -109,6 +113,8 @@ public class RequestsDbClient {
 
     private static final String findBySoRequestIdAndGroupIdAndName =
             "/requestProcessingData/search/findOneBySoRequestIdAndGroupingIdAndName";
+
+    private static final String findBySoRequestIdAndName = "/requestProcessingData/search/findOneBySoRequestIdAndName";
 
     private static final String findBySoRequestIdOrderByGroupingIdDesc =
             "/requestProcessingData/search/findBySoRequestIdOrderByGroupingIdDesc";
@@ -136,6 +142,7 @@ public class RequestsDbClient {
                         + findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestIdURI;
         findAllByOperationalEnvIdAndRequestIdURI =
                 endpoint + OPERATIONAL_ENV_SERVICE_MODEL_STATUS_SEARCH + findAllByOperationalEnvIdAndRequestIdURI;
+        findOneByRequestId = endpoint + findOneByRequestId;
     }
 
     private ClientFactory getClientFactory() {
@@ -361,6 +368,27 @@ public class RequestsDbClient {
                         .queryParam(GROUPING_ID, groupingId).build().toString()));
     }
 
+    public RequestProcessingData getRequestProcessingDataBySoRequestIdAndName(String soRequestId, String name) {
+        return getClientFactory().create(RequestProcessingData.class)
+                .get(getUri(UriBuilder.fromUri(endpoint + findBySoRequestIdAndName)
+                        .queryParam(SO_REQUEST_ID, soRequestId).queryParam(NAME, name).build().toString()));
+    }
+
+
+    public void persistProcessingData(String flowExecutionPath, String requestId) {
+
+        HttpHeaders headers = getHttpHeaders();
+        URI uri = getUri(requestProcessingDataURI);
+        RequestProcessingData rpd = new RequestProcessingData();
+        rpd.setName(FLOW_EXECUTION_PATH);
+        rpd.setSoRequestId(requestId);
+        rpd.setValue(flowExecutionPath);
+        rpd.setTag(BPMN_EXECUTION_DATA_TAG);
+
+        HttpEntity<RequestProcessingData> entity = new HttpEntity<>(rpd, headers);
+        restTemplate.postForLocation(uri, entity);
+    }
+
     private List<RequestProcessingData> getRequestProcessingData(URI uri) {
         Iterable<RequestProcessingData> requestProcessingDataIterator =
                 getClientFactory().create(RequestProcessingData.class).getAll(uri);
@@ -368,6 +396,20 @@ public class RequestsDbClient {
         Iterator<RequestProcessingData> it = requestProcessingDataIterator.iterator();
         it.forEachRemaining(requestProcessingDataList::add);
         return requestProcessingDataList;
+    }
+
+    public InfraActiveRequests findOneByRequestId(String requestId) {
+        try {
+            HttpEntity<?> entity = getHttpEntity();
+            return restTemplate.exchange(
+                    getUri(UriBuilder.fromUri(findOneByRequestId).queryParam(REQUEST_ID, requestId).build().toString()),
+                    HttpMethod.GET, entity, InfraActiveRequests.class).getBody();
+        } catch (HttpClientErrorException e) {
+            if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
+                return null;
+            }
+            throw e;
+        }
     }
 
     // From and To are defaulted to ignore start/endtime on query to database
