@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "112ac61b_c81b8264",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/openstack/utils/MsoHeatUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 522,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-06-26T13:00:23Z",
+      "side": 1,
+      "message": "I think instead of just logging this it should throw an exception",
+      "revId": "4342e7fa6849cce1a1ece9fec65af015b0d59cea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
