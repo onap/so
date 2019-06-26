@@ -38,6 +38,8 @@ public class RequestStatus {
     protected String timeStamp;
     @JsonProperty("extSystemErrorSource")
     protected String extSystemErrorSource;
+    @JsonProperty("rollbackExtSystemErrorSource")
+    protected String rollbackExtSystemErrorSource;
 
     public String getExtSystemErrorSource() {
         return extSystemErrorSource;
@@ -79,10 +81,19 @@ public class RequestStatus {
         this.timeStamp = timeStamp;
     }
 
+    public String getRollbackExtSystemErrorSource() {
+        return rollbackExtSystemErrorSource;
+    }
+
+    public void setRollbackExtSystemErrorSource(String rollbackExtSystemErrorSource) {
+        this.rollbackExtSystemErrorSource = rollbackExtSystemErrorSource;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("requestState", requestState).append("statusMessage", statusMessage)
                 .append("percentProgress", percentProgress).append("timestamp", timeStamp)
-                .append("extSystemErrorSource", extSystemErrorSource).toString();
+                .append("extSystemErrorSource", extSystemErrorSource)
+                .append("rollbackExtSystemErrorSource", rollbackExtSystemErrorSource).toString();
     }
 }
