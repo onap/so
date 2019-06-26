@@ -38,7 +38,7 @@ The main goal of the Dublin release was to:
     - Support BroadBand Service Usecase
     - SO SOL003 plugin support
     - Improve PNF PnP
-	- Improve SO internal modularity
+    - Improve SO internal modularity
 
 **Epics**
 
@@ -220,7 +220,7 @@ The main goal of the Dublin release was to:
 
 Testing Terminate and Delete of ETSI VNFM Adapter is done and has some of the minor issues pending, it will be done in El Alto.
 
--  [`SO-1742 <https://jira.onap.org/browse/SO-1742>`__\ ] - Test Terminate/Delete VNF with VNFM Adapter	
+-  [`SO-2013 <https://jira.onap.org/browse/SO-2013>`__\ ] - Test Terminate/Delete VNF with VNFM Adapter	
 
 **Upgrade Notes**
 
