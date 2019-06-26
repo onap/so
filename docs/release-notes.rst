@@ -26,6 +26,7 @@ Version: 1.4.4
  - onap/so/sdnc-adapter,1.4.4
  - onap/so/so-monitoring,1.4.4
  - onap/so/vfc-adapter,1.4.4
+ - onap/so/vnfm-adapter,1.4.4
 
 **Release Purpose**
 
@@ -37,7 +38,7 @@ The main goal of the Dublin release was to:
     - Support BroadBand Service Usecase
     - SO SOL003 plugin support
     - Improve PNF PnP
-
+	- Improve SO internal modularity
 
 **Epics**
 
@@ -50,7 +51,6 @@ The main goal of the Dublin release was to:
 -  [`SO-1273 <https://jira.onap.org/browse/SO-1273>`__\ ] - PNF PnP Dublin updates & improvements
 -  [`SO-1271 <https://jira.onap.org/browse/SO-1271>`__\ ] - PNF PnP Casablanca MR updates
 -  [`SO-677  <https://jira.onap.org/browse/SO-677>`__\ ] - Improve the issues and findings of the SO Casablanca Release
--  [`SO-166  <https://jira.onap.org/browse/SO-166>`__\ ] - Non-stop operations required.
 
 **Stories**
 
