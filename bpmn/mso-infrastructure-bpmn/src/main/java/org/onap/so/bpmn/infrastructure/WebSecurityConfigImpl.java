@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -36,7 +38,7 @@ public class WebSecurityConfigImpl extends WebSecurityConfig {
         http.csrf().disable().authorizeRequests().antMatchers("/manage/health", "/manage/info").permitAll()
                 .antMatchers("/async/services/**", "/workflow/services/*", "/SDNCAdapterCallbackService",
                         "/WorkflowMessage", "/vnfAdapterNotify", "/vnfAdapterRestNotify")
-                .hasAnyRole(StringUtils.collectionToDelimitedString(getRoles(), ",").toString()).and().httpBasic();
+                .hasAnyRole(StringUtils.collectionToDelimitedString(getRoles(), ",")).and().httpBasic();
     }
 
     @Override
