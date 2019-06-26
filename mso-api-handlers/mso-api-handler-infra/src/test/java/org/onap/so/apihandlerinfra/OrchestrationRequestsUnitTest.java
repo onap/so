@@ -29,8 +29,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.core.Response;
@@ -74,19 +72,13 @@ public class OrchestrationRequestsUnitTest {
     private static final String ORIGINAL_REQUEST_ID = "8f2d38a6-7c20-465a-bd7e-075645f1394b";
     private static final String SERVICE = "service";
     private static final String EXT_SYSTEM_ERROR_SOURCE = "external system error source";
+    private static final String ROLLBACK_EXT_SYSTEM_ERROR_SOURCE = "SDNC";
     private InfraActiveRequests iar;
     boolean includeCloudRequest = false;
     boolean extSystemErrorSource = false;
-    private static final String SERVICE_INSTANCE_NAME = "serviceInstanceName";
-    private static final String VNF_ID = "00032ab7-na18-42e5-965d-8ea592502017";
-    private static final String VFMODULE_ID = "00032ab7-na18-42e5-965d-8ea592502016";
-    private static final String NETWORK_ID = "00032ab7-na18-42e5-965d-8ea592502015";
-    private static final String VOLUME_GROUP_ID = "00032ab7-na18-42e5-965d-8ea592502014";
-    private static final String VNF_NAME = "vnfName";
-    private static final String VFMODULE_NAME = "vfModuleName";
-    private static final String NETWORK_NAME = "networkName";
-    private static final String VOLUME_GROUP_NAME = "volumeGroupName";
+
     private static final String VERSION = "v7";
+
     List<org.onap.so.db.request.beans.RequestProcessingData> requestProcessingData = new ArrayList<>();
 
     @Before
@@ -164,6 +156,7 @@ public class OrchestrationRequestsUnitTest {
         instanceReferences.setServiceInstanceId(SERVICE_INSTANCE_ID);
         RequestStatus requestStatus = new RequestStatus();
         requestStatus.setExtSystemErrorSource(EXT_SYSTEM_ERROR_SOURCE);
+        requestStatus.setRollbackExtSystemErrorSource(ROLLBACK_EXT_SYSTEM_ERROR_SOURCE);
 
         Request expected = new Request();
         expected.setRequestId(REQUEST_ID);
@@ -174,6 +167,7 @@ public class OrchestrationRequestsUnitTest {
         extSystemErrorSource = true;
         includeCloudRequest = false;
         iar.setExtSystemErrorSource(EXT_SYSTEM_ERROR_SOURCE);
+        iar.setRollbackExtSystemErrorSource(ROLLBACK_EXT_SYSTEM_ERROR_SOURCE);
 
         Request actual =
                 orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest, extSystemErrorSource);
