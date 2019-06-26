@@ -23,15 +23,15 @@
 package org.onap.so.client;
 
 import java.util.Optional;
-import java.util.concurrent.Callable;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import net.jodah.failsafe.function.CheckedSupplier;
 
-public class RestRequest implements Callable<Response> {
+public class RestRequest implements CheckedSupplier<Response> {
 
     private static final Logger logger = LoggerFactory.getLogger(RestRequest.class);
 
@@ -46,7 +46,7 @@ public class RestRequest implements Callable<Response> {
     }
 
     @Override
-    public Response call() throws Exception {
+    public Response get() throws Exception {
         final Response response;
         if ("GET".equals(method)) {
             response = this.client.getBuilder().accept(this.client.getAccept()).get();
