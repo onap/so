@@ -516,6 +516,11 @@ public class BuildingBlockTestDataSetup {
         modelInfoVfModule.setModelUUID("testModelUUID" + vfModuleCounter);
         modelInfoVfModule.setModelName("testModelName" + vfModuleCounter);
         modelInfoVfModule.setModelCustomizationUUID("testModelCustomizationUUID" + vfModuleCounter);
+        if (vfModuleCounter == 1) {
+            modelInfoVfModule.setIsBaseBoolean(Boolean.TRUE);
+        } else {
+            modelInfoVfModule.setIsBaseBoolean(Boolean.FALSE);
+        }
         vfModule.setModelInfoVfModule(modelInfoVfModule);
 
         return vfModule;

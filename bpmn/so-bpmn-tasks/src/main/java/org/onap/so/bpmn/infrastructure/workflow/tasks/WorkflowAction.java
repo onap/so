@@ -811,7 +811,9 @@ public class WorkflowAction {
                         for (VfModule vfModule : vnf.getVfModules()) {
                             aaiResourceIds.add(
                                     new Pair<WorkflowType, String>(WorkflowType.VFMODULE, vfModule.getVfModuleId()));
-                            resourceCounter.add(new Resource(WorkflowType.VFMODULE, vfModule.getVfModuleId(), false));
+                            Resource resource = new Resource(WorkflowType.VFMODULE, vfModule.getVfModuleId(), false);
+                            resource.setBaseVfModule(vfModule.getModelInfoVfModule().getIsBaseBoolean());
+                            resourceCounter.add(resource);
                         }
                     }
                     if (vnf.getVolumeGroups() != null) {
