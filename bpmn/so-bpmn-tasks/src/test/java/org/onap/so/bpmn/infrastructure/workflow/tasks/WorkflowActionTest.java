@@ -1063,7 +1063,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         vnfVfmoduleCvnfcConfigurationCustomization.setConfigurationResource(configurationResource);
         vnfVfmoduleCvnfcConfigurationCustomization.setModelInstanceName("modelInstanceName1");
         vnfVfmoduleCvnfcConfigurationCustomization.setCvnfcCustomization(cvnfcCustomization);
-        Set<CvnfcConfigurationCustomization> custSet = new HashSet<CvnfcConfigurationCustomization>();
+        List<CvnfcConfigurationCustomization> custSet = new ArrayList<CvnfcConfigurationCustomization>();
         custSet.add(vnfVfmoduleCvnfcConfigurationCustomization);
         cvnfcCustomization.setCvnfcConfigurationCustomization(custSet);
         cvnfcCustomization.setDescription("description");
@@ -1077,7 +1077,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         vnfVfmoduleCvnfcConfigurationCustomization2.setConfigurationResource(configurationResource2);
         vnfVfmoduleCvnfcConfigurationCustomization2.setModelInstanceName("modelInstanceName2");
         vnfVfmoduleCvnfcConfigurationCustomization2.setCvnfcCustomization(cvnfcCustomization2);
-        Set<CvnfcConfigurationCustomization> custSet2 = new HashSet<CvnfcConfigurationCustomization>();
+        List<CvnfcConfigurationCustomization> custSet2 = new ArrayList<CvnfcConfigurationCustomization>();
         custSet2.add(vnfVfmoduleCvnfcConfigurationCustomization2);
         cvnfcCustomization2.setCvnfcConfigurationCustomization(custSet2);
         cvnfcCustomization2.setDescription("description2");

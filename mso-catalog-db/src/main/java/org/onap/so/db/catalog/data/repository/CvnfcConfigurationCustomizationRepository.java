@@ -20,6 +20,7 @@
 
 package org.onap.so.db.catalog.data.repository;
 
+import java.util.List;
 import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
@@ -28,5 +29,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
         path = "cvnfcConfigurationCustomization")
 public interface CvnfcConfigurationCustomizationRepository
         extends JpaRepository<CvnfcConfigurationCustomization, Integer> {
+
+    List<CvnfcConfigurationCustomization> findByModelCustomizationUUID(String modelCustomizationUUID);
 
 }

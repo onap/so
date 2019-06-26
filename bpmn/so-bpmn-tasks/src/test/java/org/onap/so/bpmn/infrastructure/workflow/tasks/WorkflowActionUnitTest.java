@@ -89,7 +89,7 @@ public class WorkflowActionUnitTest {
         configuration.setToscaNodeType("FabricConfiguration");
         configuration.setModelUUID("my-uuid");
         vfModuleCustomization.setConfigurationResource(configuration);
-        cvnfcCustomization.setCvnfcConfigurationCustomization(Collections.singleton(vfModuleCustomization));
+        cvnfcCustomization.setCvnfcConfigurationCustomization(Collections.singletonList(vfModuleCustomization));
         List<CvnfcCustomization> cvnfcCustomizations = Arrays.asList(cvnfcCustomization);
         // when(catalogDbClient.getCvnfcCustomizationByVnfCustomizationUUIDAndVfModuleCustomizationUUID(any(String.class),
         // any(String.class)))
