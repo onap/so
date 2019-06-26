@@ -125,7 +125,7 @@ public class WorkflowActionBBFailure {
     }
 
     private Optional<String> retrieveErrorMessage(DelegateExecution execution) {
-        String errorMsg = "";
+        String errorMsg = null;
         try {
             WorkflowException exception = (WorkflowException) execution.getVariable("WorkflowException");
             if (exception != null && (exception.getErrorMessage() != null || !exception.getErrorMessage().equals(""))) {
@@ -133,6 +133,10 @@ public class WorkflowActionBBFailure {
             }
             if (errorMsg == null || errorMsg.equals("")) {
                 errorMsg = (String) execution.getVariable("WorkflowExceptionErrorMessage");
+            }
+            if (errorMsg == null) {
+                throw new IllegalStateException(
+                        "could not find WorkflowException or WorkflowExceptionErrorMessage in execution");
             }
             return Optional.of(errorMsg);
         } catch (Exception ex) {
