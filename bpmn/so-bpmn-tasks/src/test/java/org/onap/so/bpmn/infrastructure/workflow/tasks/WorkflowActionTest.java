@@ -26,6 +26,7 @@ import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
@@ -96,6 +97,8 @@ import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.macro.NorthBoundRequest;
 import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
+import org.onap.so.db.request.beans.InfraActiveRequests;
+import org.onap.so.db.request.beans.RequestProcessingData;
 import org.onap.so.serviceinstancebeans.RequestDetails;
 import org.onap.so.serviceinstancebeans.RequestParameters;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
@@ -1195,6 +1198,49 @@ public class WorkflowActionTest extends BaseTaskTest {
     }
 
     @Test
+    public void selectExecutionListMacroResumeTest() throws Exception {
+        String gAction = "createInstance";
+        String resource = "Service";
+        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
+        execution.setVariable("requestAction", gAction);
+        String bpmnRequest =
+                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/Macro/ServiceMacroAssign.json")));
+        execution.setVariable("bpmnRequest", bpmnRequest);
+        execution.setVariable("aLaCarte", false);
+        execution.setVariable("apiVersion", "7");
+        execution.setVariable("requestUri", "v6/serviceInstances/123");
+
+        NorthBoundRequest northBoundRequest = new NorthBoundRequest();
+        List<OrchestrationFlow> orchFlows = createFlowList("AssignServiceInstanceBB");
+        northBoundRequest.setOrchestrationFlowList(orchFlows);
+
+        Service service = new Service();
+        service.setModelUUID("3c40d244-808e-42ca-b09a-256d83d19d0a");
+
+        ServiceInstance si = new ServiceInstance();
+
+        when(bbSetupUtils.getAAIServiceInstanceById("123")).thenReturn(si);
+        when(catalogDbClient.getServiceByID("3c40d244-808e-42ca-b09a-256d83d19d0a")).thenReturn(service);
+
+        String flowsToExecuteString =
+                "[{\"buildingBlock\":{\"mso-id\":\"2f9ddc4b-4dcf-4129-a35f-be1625ae0176\",\"bpmn-flow-name\":\"AssignServiceInstanceBB\",\"key\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"is-virtual-link\":false,\"virtual-link-key\":null},\"requestId\":\"9c944122-d161-4280-8594-48c06a9d96d5\",\"apiVersion\":\"7\",\"resourceId\":\"d1d35800-783d-42d3-82f6-d654c5054a6e\",\"requestAction\":\"deleteInstance\",\"vnfType\":\"\",\"aLaCarte\":true,\"homing\":false,\"workflowResourceIds\":{\"serviceInstanceId\":\"ff9dae72-05bb-4277-ad2b-1b082467c138\",\"vnfId\":\"84a29830-e533-4f20-a838-910c740bf24c\",\"networkId\":\"\",\"volumeGroupId\":\"\",\"vfModuleId\":\"d1d35800-783d-42d3-82f6-d654c5054a6e\",\"networkCollectionId\":null,\"configurationId\":\"10f8a3a3-91bf-4821-9515-c01b2864dff0\",\"instanceGroupId\":\"\"},\"requestDetails\":{\"modelInfo\":{\"modelCustomizationName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\",\"modelInvariantId\":\"8028fcc0-96dc-427d-a4de-4536245943da\",\"modelType\":\"vfModule\",\"modelId\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\",\"modelVersion\":\"1\",\"modelCustomizationUuid\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"modelVersionId\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelCustomizationId\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"modelUuid\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelInvariantUuid\":\"8028fcc0-96dc-427d-a4de-4536245943da\",\"modelInstanceName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\"},\"requestInfo\":{\"source\":\"VID\",\"suppressRollback\":false,\"requestorId\":\"pj8646\"},\"cloudConfiguration\":{\"tenantId\":\"e2a6af59d1cb43b2874e943bbbf8470a\",\"cloudOwner\":\"att-nc\",\"lcpCloudRegionId\":\"auk51b\"},\"requestParameters\":{\"testApi\":\"GR_API\"}},\"configurationResourceKeys\":{\"vfModuleCustomizationUUID\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"vnfResourceCustomizationUUID\":\"a80f05b8-d651-44af-b999-8ed78fb4582f\",\"cvnfcCustomizationUUID\":\"69cce457-9ffd-4359-962b-0596a1e83ad1\",\"vnfcName\":\"zauk51bmcmr01mcm001\"}}]";
+        ObjectMapper om = new ObjectMapper();
+        List<ExecuteBuildingBlock> flowsToExecute = null;
+        try {
+            ExecuteBuildingBlock[] asArray = om.readValue(flowsToExecuteString, ExecuteBuildingBlock[].class);
+            flowsToExecute = Arrays.asList(asArray);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        when(bbSetupUtils.loadOriginalFlowExecutionPath(anyString())).thenReturn(flowsToExecute);
+
+        workflowAction.selectExecutionList(execution);
+        List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+        assertEqualsBulkFlowName(ebbs, "AssignServiceInstanceBB");
+    }
+
+    @Test
     public void getRelatedResourcesInVfModuleTest() throws Exception {
         org.onap.aai.domain.yang.Vnfc vnfc = new org.onap.aai.domain.yang.Vnfc();
         vnfc.setModelInvariantId("modelInvariantId");
@@ -1421,6 +1467,21 @@ public class WorkflowActionTest extends BaseTaskTest {
         this.expectedException.expect(IllegalArgumentException.class);
         this.expectedException.expectMessage(containsString("Uri could not be parsed:"));
         workflowAction.extractResourceIdAndTypeFromUri("something that doesn't match anything");
+    }
+
+    @Test
+    public void isUriResumeTest() {
+        assertTrue(workflowAction.isUriResume(
+                "http://localhost:9100/onap/so/infra/orchestrationRequests/v7/requests/2f8ab587-ef6a-4456-b7b2-d73f9363dabd/resume"));
+        assertFalse(workflowAction.isUriResume("/v6/serviceInstances/123/vnfs/1234/vfmodules/5678/replace"));
+    }
+
+    @Test
+    public void isRequestMacroServiceResumeTest() {
+        ServiceInstance si = new ServiceInstance();
+        when(bbSetupUtils.getAAIServiceInstanceById(anyString())).thenReturn(si);
+        assertFalse(workflowAction.isRequestMacroServiceResume(false, WorkflowType.SERVICE, "createInstance", ""));
+        assertTrue(workflowAction.isRequestMacroServiceResume(false, WorkflowType.SERVICE, "createInstance", "123"));
     }
 
     @Test

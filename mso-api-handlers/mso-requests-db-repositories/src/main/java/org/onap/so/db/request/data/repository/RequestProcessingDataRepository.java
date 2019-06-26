@@ -34,5 +34,8 @@ public interface RequestProcessingDataRepository extends JpaRepository<RequestPr
     RequestProcessingData findOneBySoRequestIdAndGroupingIdAndName(@Param("SO_REQUEST_ID") String soRequestId,
             @Param("GROUPING_ID") String groupingId, @Param("NAME") String name);
 
+    RequestProcessingData findOneBySoRequestIdAndName(@Param("SO_REQUEST_ID") String soRequestId,
+            @Param("NAME") String name);
+
     List<RequestProcessingData> findBySoRequestIdOrderByGroupingIdDesc(@Param("SO_REQUEST_ID") String soRequestId);
 }
