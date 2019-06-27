@@ -20,10 +20,10 @@
 
 package org.onap.so.cloud.authentication;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import org.onap.so.config.beans.PoConfig;
 import org.onap.so.db.catalog.beans.CloudIdentity;
@@ -89,8 +89,7 @@ public class KeystoneV3Authentication {
         return result;
     }
 
-    protected RetryPolicy createRetryPolicy() {
-        RetryPolicy policy = new RetryPolicy();
+    protected RetryPolicy<OpenStackResponse> createRetryPolicy() {
         List<Predicate<Throwable>> result = new ArrayList<>();
         result.add(e -> {
             return e.getCause() instanceof OpenStackResponseException
@@ -102,10 +101,8 @@ public class KeystoneV3Authentication {
         });
 
         Predicate<Throwable> pred = result.stream().reduce(Predicate::or).orElse(x -> false);
-
-        policy.retryOn(error -> pred.test(error));
-
-        policy.withDelay(poConfig.getRetryDelay(), TimeUnit.SECONDS).withMaxRetries(poConfig.getRetryCount());
+        RetryPolicy<OpenStackResponse> policy = new RetryPolicy<OpenStackResponse>().handleIf(error -> pred.test(error))
+                .withDelay(Duration.ofSeconds(poConfig.getRetryDelay())).withMaxRetries(poConfig.getRetryCount());
 
         return policy;
     }

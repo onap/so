@@ -22,24 +22,24 @@ package org.onap.so.client;
 
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.ArgumentMatchers;
-import org.onap.so.utils.TargetEntity;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.so.utils.TargetEntity;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RestClientTest {
@@ -49,34 +49,34 @@ public class RestClientTest {
     @Mock
     private RestProperties props;
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void retries() throws Exception {
         RestClient spy = buildSpy();
-        RestRequest mockCallable = mock(RestRequest.class);
-        when(mockCallable.call()).thenThrow(new WebApplicationException(new SocketTimeoutException()));
-        doReturn(mockCallable).when(spy).buildRequest(any(String.class), ArgumentMatchers.isNull());
+        doThrow(new WebApplicationException(new SocketTimeoutException())).when(spy).buildRequest(any(String.class),
+                ArgumentMatchers.isNull());
         try {
             spy.get();
         } catch (Exception e) {
-            // we expect an exception, ignore it
+            // ignore this exception for this test
         }
-        verify(mockCallable, times(3)).call();
+        verify(spy, times(3)).buildRequest(any(String.class), ArgumentMatchers.isNull());
 
     }
 
     @Test
     public void exceptionDoNotRetry() throws Exception {
         RestClient spy = buildSpy();
-        RestRequest mockCallable = mock(RestRequest.class);
-        when(mockCallable.call()).thenThrow(new WebApplicationException(new NotFoundException()));
-        doReturn(mockCallable).when(spy).buildRequest(any(String.class), ArgumentMatchers.isNull());
+        doThrow(new WebApplicationException(new NotFoundException())).when(spy).buildRequest(any(String.class),
+                ArgumentMatchers.isNull());
         try {
             spy.get();
         } catch (Exception e) {
             // we expect an exception, ignore it
         }
-        verify(mockCallable, times(1)).call();
+        verify(spy, times(1)).buildRequest(any(String.class), ArgumentMatchers.isNull());
 
     }
 

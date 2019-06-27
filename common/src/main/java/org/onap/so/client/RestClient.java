@@ -26,6 +26,7 @@ import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URL;
 import java.security.GeneralSecurityException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
@@ -33,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -275,22 +275,20 @@ public abstract class RestClient {
     }
 
     public Response method(String method, Object entity) {
-        RetryPolicy policy = new RetryPolicy();
 
         List<Predicate<Throwable>> items = retryOn();
 
         Predicate<Throwable> pred = items.stream().reduce(Predicate::or).orElse(x -> false);
 
-        policy.retryOn(error -> pred.test(error));
+        RetryPolicy<Object> policy =
+                new RetryPolicy<>().handleIf(pred).withDelay(Duration.ofMillis(this.props.getDelayBetweenRetries()))
+                        .withMaxRetries(this.props.getRetries());
 
-        policy.withDelay(this.props.getDelayBetweenRetries(), TimeUnit.MILLISECONDS)
-                .withMaxRetries(this.props.getRetries());
-
-        return Failsafe.with(policy).get(buildRequest(method, entity));
+        return Failsafe.with(policy).get(() -> buildRequest(method, entity));
     }
 
-    protected RestRequest buildRequest(String method, Object entity) {
-        return new RestRequest(this, method, entity);
+    protected Response buildRequest(String method, Object entity) throws Exception {
+        return new RestRequest(this, method, entity).get();
     }
 
     private <T> Optional<T> format(Response response, Class<T> resultClass) {
