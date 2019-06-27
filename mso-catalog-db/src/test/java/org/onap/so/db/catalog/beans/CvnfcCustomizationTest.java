@@ -21,7 +21,9 @@
 package org.onap.so.db.catalog.beans;
 
 import static org.junit.Assert.assertTrue;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.junit.Test;
 
@@ -54,7 +56,7 @@ public class CvnfcCustomizationTest {
         cvnfcCustomization.setNfcNamingCode(NFC_NAMING_CODE);
         cvnfcCustomization.setToscaNodeType(TOSCA_NODE_TYPE);
         cvnfcCustomization.setVfModuleCustomization(setupVfModuleCustomization());
-        Set<CvnfcConfigurationCustomization> cvnfcConfigurationCustomizationSet = new HashSet();
+        List<CvnfcConfigurationCustomization> cvnfcConfigurationCustomizationSet = new ArrayList();
         cvnfcConfigurationCustomizationSet.add(setupCvnfcConfigurationCustomization());
         cvnfcCustomization.setCvnfcConfigurationCustomization(cvnfcConfigurationCustomizationSet);
 

@@ -22,6 +22,7 @@ package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -100,7 +101,7 @@ public class CvnfcCustomization implements Serializable {
     private VnfcCustomization vnfcCustomization;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cvnfcCustomization")
-    private Set<CvnfcConfigurationCustomization> cvnfcConfigurationCustomization;
+    private List<CvnfcConfigurationCustomization> cvnfcConfigurationCustomization;
 
     @Override
     public boolean equals(final Object other) {
@@ -142,12 +143,12 @@ public class CvnfcCustomization implements Serializable {
     }
 
     @LinkedResource
-    public Set<CvnfcConfigurationCustomization> getCvnfcConfigurationCustomization() {
+    public List<CvnfcConfigurationCustomization> getCvnfcConfigurationCustomization() {
         return cvnfcConfigurationCustomization;
     }
 
     public void setCvnfcConfigurationCustomization(
-            Set<CvnfcConfigurationCustomization> cvnfcConfigurationCustomization) {
+            List<CvnfcConfigurationCustomization> cvnfcConfigurationCustomization) {
         this.cvnfcConfigurationCustomization = cvnfcConfigurationCustomization;
     }
 
