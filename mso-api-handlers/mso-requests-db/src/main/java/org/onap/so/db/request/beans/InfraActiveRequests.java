@@ -89,6 +89,7 @@ public class InfraActiveRequests extends InfraRequests {
                 .append("configurationName", getConfigurationName()).append("operationalEnvId", getOperationalEnvId())
                 .append("operationalEnvName", getOperationalEnvName()).append("requestUrl", getRequestUrl())
                 .append("originalRequestId", getOriginalRequestId())
-                .append("extSystemErrorSource", getExtSystemErrorSource()).toString();
+                .append("extSystemErrorSource", getExtSystemErrorSource())
+                .append("rollbackExtSystemErrorSource", getRollbackExtSystemErrorSource()).toString();
     }
 }

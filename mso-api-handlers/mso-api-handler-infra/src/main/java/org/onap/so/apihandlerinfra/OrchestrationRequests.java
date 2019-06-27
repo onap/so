@@ -440,6 +440,7 @@ public class OrchestrationRequests {
             boolean extSystemErrorSource) {
         if (extSystemErrorSource) {
             status.setExtSystemErrorSource(iar.getExtSystemErrorSource());
+            status.setRollbackExtSystemErrorSource(iar.getRollbackExtSystemErrorSource());
         }
     }
 
