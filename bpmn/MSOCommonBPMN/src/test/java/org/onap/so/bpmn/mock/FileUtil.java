@@ -62,6 +62,7 @@ public class FileUtil {
             }
         } catch (IOException e) {
             logger.debug("Exception:", e);
+            stream.close();
             return "";
         }
     }
