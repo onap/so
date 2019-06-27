@@ -95,6 +95,9 @@ public class CloudifyClient {
      */
     public <T> T execute(CloudifyRequest<T> request) {
         CloudifyResponse response = request(request);
+
+        if (null == response) return null;
+
         return (request.returnType() != null && request.returnType() != Void.class)
                 ? response.getEntity(request.returnType())
                 : null;
