@@ -53,7 +53,12 @@ public class WorkflowActionBBFailure {
             } else {
                 errorMsg = "Failed to determine error message";
             }
-            request.setStatusMessage(errorMsg);
+            Boolean isRollback = (Boolean) execution.getVariable("isRollback");
+            if (!Boolean.TRUE.equals(isRollback)) {
+                request.setStatusMessage(errorMsg);
+            } else {
+                request.setRollbackStatusMessage(errorMsg);
+            }
             request.setProgress(Long.valueOf(100));
             request.setLastModifiedBy("CamundaBPMN");
             request.setEndTime(new Timestamp(System.currentTimeMillis()));
