@@ -160,4 +160,38 @@ public class WorkflowActionBBFailureTest extends BaseTaskTest {
         Mockito.verify(reqMock, Mockito.times(1)).setLastModifiedBy("CamundaBPMN");
         Mockito.verify(reqMock, Mockito.times(1)).setEndTime(any(Timestamp.class));
     }
+
+    @Test
+    public void updateRequestRollbackErrorStatusMessageTest() {
+        String reqId = "reqId123";
+        execution.setVariable("mso-request-id", reqId);
+        WorkflowException we = new WorkflowException("WorkflowAction", 1231, "Error Case");
+        execution.setVariable("WorkflowException", we);
+        execution.setVariable("isRollback", true);
+
+        doReturn(reqMock).when(requestsDbClient).getInfraActiveRequestbyRequestId(reqId);
+        workflowActionBBFailure.updateRequestErrorStatusMessage(execution);
+        Mockito.verify(reqMock, Mockito.times(0)).setStatusMessage("Error Case");
+        Mockito.verify(reqMock, Mockito.times(1)).setRollbackStatusMessage("Error Case");
+        Mockito.verify(reqMock, Mockito.times(1)).setProgress(Long.valueOf(100));
+        Mockito.verify(reqMock, Mockito.times(1)).setLastModifiedBy("CamundaBPMN");
+        Mockito.verify(reqMock, Mockito.times(1)).setEndTime(any(Timestamp.class));
+    }
+
+    @Test
+    public void updateRequestNotRollbackErrorStatusMessageTest() {
+        String reqId = "reqId123";
+        execution.setVariable("mso-request-id", reqId);
+        WorkflowException we = new WorkflowException("WorkflowAction", 1231, "Error Case");
+        execution.setVariable("WorkflowException", we);
+        execution.setVariable("isRollback", false);
+
+        doReturn(reqMock).when(requestsDbClient).getInfraActiveRequestbyRequestId(reqId);
+        workflowActionBBFailure.updateRequestErrorStatusMessage(execution);
+        Mockito.verify(reqMock, Mockito.times(1)).setStatusMessage("Error Case");
+        Mockito.verify(reqMock, Mockito.times(0)).setRollbackStatusMessage("Error Case");
+        Mockito.verify(reqMock, Mockito.times(1)).setProgress(Long.valueOf(100));
+        Mockito.verify(reqMock, Mockito.times(1)).setLastModifiedBy("CamundaBPMN");
+        Mockito.verify(reqMock, Mockito.times(1)).setEndTime(any(Timestamp.class));
+    }
 }
