@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1de1f6e1_15b8eca4",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/client/ASDCController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 733,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-07-01T11:08:03Z",
+      "side": 1,
+      "message": "please revert this change, as it should go as part of another patch",
+      "range": {
+        "startLine": 733,
+        "startChar": 15,
+        "endLine": 733,
+        "endChar": 48
+      },
+      "revId": "511906bc77a1abbb86f544049f809e0546196b4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6cb407ed_e2b58197",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/Create3rdONAPE2EServiceInstance.groovy",
+        "patchSetId": 3
+      },
+      "lineNbr": 364,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-07-01T11:08:03Z",
+      "side": 1,
+      "message": "please add comment for this specific change",
+      "range": {
+        "startLine": 364,
+        "startChar": 2,
+        "endLine": 364,
+        "endChar": 37
+      },
+      "revId": "511906bc77a1abbb86f544049f809e0546196b4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a5233cb2_0f27a78e",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/CreateSDNCNetworkResource.groovy",
+        "patchSetId": 3
+      },
+      "lineNbr": 289,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-07-01T11:08:03Z",
+      "side": 1,
+      "message": "can we make it configurable ?",
+      "range": {
+        "startLine": 287,
+        "startChar": 15,
+        "endLine": 289,
+        "endChar": 89
+      },
+      "revId": "511906bc77a1abbb86f544049f809e0546196b4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2b3e71cc_814cf10e",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/CreateSDNCNetworkResource.groovy",
+        "patchSetId": 3
+      },
+      "lineNbr": 305,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-07-01T11:08:03Z",
+      "side": 1,
+      "message": "could you please add logger to log our selection from aai response",
+      "range": {
+        "startLine": 305,
+        "startChar": 7,
+        "endLine": 305,
+        "endChar": 60
+      },
+      "revId": "511906bc77a1abbb86f544049f809e0546196b4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b0c4bcb1_9bb429e2",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/Delete3rdONAPE2EServiceInstance.groovy",
+        "patchSetId": 3
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-07-01T11:08:03Z",
+      "side": 1,
+      "message": "please add comment",
+      "range": {
+        "startLine": 228,
+        "startChar": 1,
+        "endLine": 228,
+        "endChar": 37
+      },
+      "revId": "511906bc77a1abbb86f544049f809e0546196b4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3ae34430_f025282c",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoCreateE2EServiceInstance.groovy",
+        "patchSetId": 3
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-07-01T11:08:03Z",
+      "side": 1,
+      "message": "error log for vpn name",
+      "range": {
+        "startLine": 303,
+        "startChar": 3,
+        "endLine": 303,
+        "endChar": 65
+      },
+      "revId": "511906bc77a1abbb86f544049f809e0546196b4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
