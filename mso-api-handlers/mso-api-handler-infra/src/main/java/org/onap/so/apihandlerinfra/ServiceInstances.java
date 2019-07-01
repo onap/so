@@ -52,6 +52,7 @@ import org.onap.so.apihandlerinfra.exceptions.RequestDbFailureException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.apihandlerinfra.infra.rest.handler.AbstractRestHandler;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
+import org.onap.so.constants.Status;
 import org.onap.so.db.catalog.beans.NetworkResource;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.Recipe;

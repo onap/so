@@ -33,6 +33,7 @@ import org.onap.so.apihandlerinfra.exceptions.RecipeNotFoundException;
 import org.onap.so.apihandlerinfra.exceptions.RequestDbFailureException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
+import org.onap.so.constants.Status;
 import org.onap.so.db.catalog.beans.Workflow;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;

@@ -56,6 +56,7 @@ import org.onap.so.apihandlerinfra.e2eserviceinstancebeans.GetE2EServiceInstance
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
+import org.onap.so.constants.Status;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ServiceRecipe;
 import org.onap.so.db.catalog.client.CatalogDbClient;

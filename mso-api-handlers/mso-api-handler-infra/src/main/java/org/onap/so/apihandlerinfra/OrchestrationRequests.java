@@ -48,6 +48,8 @@ import org.onap.so.apihandler.common.ResponseBuilder;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
+import org.onap.so.constants.OrchestrationRequestFormat;
+import org.onap.so.constants.Status;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.beans.RequestProcessingData;
 import org.onap.so.db.request.client.RequestsDbClient;
@@ -72,6 +74,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
+
 @Path("onap/so/infra/orchestrationRequests")
 @Api(value = "onap/so/infra/orchestrationRequests", description = "API Requests for Orchestration requests")
 @Component
@@ -95,7 +98,7 @@ public class OrchestrationRequests {
     @Transactional
     public Response getOrchestrationRequest(@PathParam("requestId") String requestId,
             @PathParam("version") String version, @QueryParam("includeCloudRequest") boolean includeCloudRequest,
-            @QueryParam("extSystemErrorSource") boolean extSystemErrorSource) throws ApiException {
+            @QueryParam(value = "format") String format) throws ApiException {
 
         String apiVersion = version.substring(1);
         GetOrchestrationResponse orchestrationResponse = new GetOrchestrationResponse();
@@ -142,7 +145,7 @@ public class OrchestrationRequests {
             throw validateException;
         }
 
-        Request request = mapInfraActiveRequestToRequest(infraActiveRequest, includeCloudRequest, extSystemErrorSource);
+        Request request = mapInfraActiveRequestToRequest(infraActiveRequest, includeCloudRequest, format);
 
         if (!requestProcessingData.isEmpty()) {
             request.setRequestProcessingData(mapRequestProcessingData(requestProcessingData));
@@ -159,8 +162,8 @@ public class OrchestrationRequests {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response getOrchestrationRequest(@Context UriInfo ui, @PathParam("version") String version,
-            @QueryParam("includeCloudRequest") boolean includeCloudRequest,
-            @QueryParam("extSystemErrorSource") boolean extSystemErrorSource) throws ApiException {
+            @QueryParam("includeCloudRequest") boolean includeCloudRequest, @QueryParam(value = "format") String format)
+            throws ApiException {
 
         long startTime = System.currentTimeMillis();
 
@@ -197,7 +200,7 @@ public class OrchestrationRequests {
             List<RequestProcessingData> requestProcessingData =
                     requestsDbClient.getRequestProcessingDataBySoRequestId(infraActive.getRequestId());
             RequestList requestList = new RequestList();
-            Request request = mapInfraActiveRequestToRequest(infraActive, includeCloudRequest, extSystemErrorSource);
+            Request request = mapInfraActiveRequestToRequest(infraActive, includeCloudRequest, format);
 
             if (!requestProcessingData.isEmpty()) {
                 request.setRequestProcessingData(mapRequestProcessingData(requestProcessingData));
@@ -269,9 +272,10 @@ public class OrchestrationRequests {
 
         } else {
             String status = infraActiveRequest.getRequestStatus();
-            if (status.equalsIgnoreCase("IN_PROGRESS") || status.equalsIgnoreCase("PENDING")
-                    || status.equalsIgnoreCase("PENDING_MANUAL_TASK")) {
-                infraActiveRequest.setRequestStatus("UNLOCKED");
+            if (Status.IN_PROGRESS.toString().equalsIgnoreCase(status)
+                    || Status.PENDING.toString().equalsIgnoreCase(status)
+                    || Status.PENDING_MANUAL_TASK.toString().equalsIgnoreCase(status)) {
+                infraActiveRequest.setRequestStatus(Status.UNLOCKED.toString());
                 infraActiveRequest.setLastModifiedBy(Constants.MODIFIED_BY_APIHANDLER);
                 infraActiveRequest.setRequestId(requestId);
                 requestsDbClient.save(infraActiveRequest);
@@ -294,7 +298,7 @@ public class OrchestrationRequests {
     }
 
     protected Request mapInfraActiveRequestToRequest(InfraActiveRequests iar, boolean includeCloudRequest,
-            boolean extSystemErrorSource) throws ApiException {
+            String format) throws ApiException {
         String requestBody = iar.getRequestBody();
         Request request = new Request();
 
@@ -303,9 +307,6 @@ public class OrchestrationRequests {
         request.setRequestId(iar.getRequestId());
         request.setRequestScope(iar.getRequestScope());
         request.setRequestType(iar.getRequestAction());
-        String rollbackStatusMessage = iar.getRollbackStatusMessage();
-        String flowStatusMessage = iar.getFlowStatus();
-        String retryStatusMessage = iar.getRetryStatusMessage();
 
         String originalRequestId = iar.getOriginalRequestId();
         if (originalRequestId != null) {
@@ -376,43 +377,15 @@ public class OrchestrationRequests {
             String endTimeStamp = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(iar.getEndTime()) + " GMT";
             request.setFinishTime(endTimeStamp);
         }
-        String statusMessages = null;
+
         RequestStatus status = new RequestStatus();
-        if (iar.getStatusMessage() != null) {
-            statusMessages = "STATUS: " + iar.getStatusMessage();
-        }
-        if (flowStatusMessage != null) {
-            if (statusMessages != null) {
-                statusMessages = statusMessages + " " + "FLOW STATUS: " + flowStatusMessage;
-            } else {
-                statusMessages = "FLOW STATUS: " + flowStatusMessage;
-            }
-        }
-        if (retryStatusMessage != null) {
-            if (statusMessages != null) {
-                statusMessages = statusMessages + " " + "RETRY STATUS: " + retryStatusMessage;
-            } else {
-                statusMessages = "RETRY STATUS: " + retryStatusMessage;
-            }
-        }
-        if (rollbackStatusMessage != null) {
-            if (statusMessages != null) {
-                statusMessages = statusMessages + " " + "ROLLBACK STATUS: " + rollbackStatusMessage;
-            } else {
-                statusMessages = "ROLLBACK STATUS: " + rollbackStatusMessage;
-            }
-        }
-        if (statusMessages != null) {
-            status.setStatusMessage(statusMessages);
-        }
+
         if (iar.getModifyTime() != null) {
             String timeStamp = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(iar.getModifyTime()) + " GMT";
             status.setTimeStamp(timeStamp);
         }
 
-        if (iar.getRequestStatus() != null) {
-            status.setRequestState(iar.getRequestStatus());
-        }
+        status.setRequestState(mapRequestStatusToRequest(iar, format));
 
         if (iar.getProgress() != null) {
             status.setPercentProgress(iar.getProgress().intValue());
@@ -430,17 +403,80 @@ public class OrchestrationRequests {
             });
         }
 
-        mapExtSystemErrorSourceToRequest(iar, status, extSystemErrorSource);
+        mapRequestStatusAndExtSysErrSrcToRequest(iar, status, format);
 
         request.setRequestStatus(status);
         return request;
     }
 
-    protected void mapExtSystemErrorSourceToRequest(InfraActiveRequests iar, RequestStatus status,
-            boolean extSystemErrorSource) {
-        if (extSystemErrorSource) {
+    protected String mapRequestStatusToRequest(InfraActiveRequests iar, String format) {
+        if (iar.getRequestStatus() != null) {
+            if (!StringUtils.isBlank(format) && OrchestrationRequestFormat.DETAIL.toString().equalsIgnoreCase(format)) {
+                return iar.getRequestStatus();
+            } else {
+                if (Status.ABORTED.toString().equalsIgnoreCase(iar.getRequestStatus())
+                        || Status.ROLLED_BACK.toString().equalsIgnoreCase(iar.getRequestStatus())
+                        || Status.ROLLED_BACK_TO_ASSIGNED.toString().equalsIgnoreCase(iar.getRequestStatus())
+                        || Status.ROLLED_BACK_TO_CREATED.toString().equalsIgnoreCase(iar.getRequestStatus())) {
+                    return Status.FAILED.toString();
+                } else {
+                    return iar.getRequestStatus();
+                }
+            }
+        }
+        return null;
+    }
+
+    protected void mapRequestStatusAndExtSysErrSrcToRequest(InfraActiveRequests iar, RequestStatus status,
+            String format) {
+        String rollbackStatusMessage = iar.getRollbackStatusMessage();
+        String flowStatusMessage = iar.getFlowStatus();
+        String retryStatusMessage = iar.getRetryStatusMessage();
+
+        String statusMessages = null;
+        if (iar.getStatusMessage() != null) {
+            statusMessages = "STATUS: " + iar.getStatusMessage();
+        }
+
+        if (OrchestrationRequestFormat.STATUSDETAIL.toString().equalsIgnoreCase(format)) {
+            if (flowStatusMessage != null) {
+                status.setFlowStatus(flowStatusMessage);
+            }
+            if (retryStatusMessage != null) {
+                status.setRetryStatusMessage(retryStatusMessage);
+            }
+            if (rollbackStatusMessage != null) {
+                status.setRollbackStatusMessage(rollbackStatusMessage);
+            }
             status.setExtSystemErrorSource(iar.getExtSystemErrorSource());
             status.setRollbackExtSystemErrorSource(iar.getRollbackExtSystemErrorSource());
+        } else {
+
+            if (flowStatusMessage != null) {
+                if (statusMessages != null) {
+                    statusMessages = statusMessages + " " + "FLOW STATUS: " + flowStatusMessage;
+                } else {
+                    statusMessages = "FLOW STATUS: " + flowStatusMessage;
+                }
+            }
+            if (retryStatusMessage != null) {
+                if (statusMessages != null) {
+                    statusMessages = statusMessages + " " + "RETRY STATUS: " + retryStatusMessage;
+                } else {
+                    statusMessages = "RETRY STATUS: " + retryStatusMessage;
+                }
+            }
+            if (rollbackStatusMessage != null) {
+                if (statusMessages != null) {
+                    statusMessages = statusMessages + " " + "ROLLBACK STATUS: " + rollbackStatusMessage;
+                } else {
+                    statusMessages = "ROLLBACK STATUS: " + rollbackStatusMessage;
+                }
+            }
+        }
+
+        if (statusMessages != null) {
+            status.setStatusMessage(statusMessages);
         }
     }
 

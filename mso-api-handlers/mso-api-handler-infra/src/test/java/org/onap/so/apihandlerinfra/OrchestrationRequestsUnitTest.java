@@ -23,16 +23,10 @@ package org.onap.so.apihandlerinfra;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import javax.ws.rs.core.Response;
-import org.apache.http.HttpStatus;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,11 +34,11 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.apihandler.common.ResponseBuilder;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
+import org.onap.so.constants.OrchestrationRequestFormat;
+import org.onap.so.constants.Status;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.serviceinstancebeans.InstanceReferences;
@@ -64,7 +58,6 @@ public class OrchestrationRequestsUnitTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
     @InjectMocks
-    @Spy
     private OrchestrationRequests orchestrationRequests;
 
     private static final String REQUEST_ID = "7cb9aa56-dd31-41e5-828e-d93027d4ebba";
@@ -72,14 +65,13 @@ public class OrchestrationRequestsUnitTest {
     private static final String ORIGINAL_REQUEST_ID = "8f2d38a6-7c20-465a-bd7e-075645f1394b";
     private static final String SERVICE = "service";
     private static final String EXT_SYSTEM_ERROR_SOURCE = "external system error source";
-    private static final String ROLLBACK_EXT_SYSTEM_ERROR_SOURCE = "SDNC";
+    private static final String FLOW_STATUS = "FlowStatus";
+    private static final String RETRY_STATUS_MESSAGE = "RetryStatusMessage";
+    private static final String ROLLBACK_STATUS_MESSAGE = "RollbackStatusMessage";
     private InfraActiveRequests iar;
     boolean includeCloudRequest = false;
-    boolean extSystemErrorSource = false;
+    private static final String ROLLBACK_EXT_SYSTEM_ERROR_SOURCE = "SDNC";
 
-    private static final String VERSION = "v7";
-
-    List<org.onap.so.db.request.beans.RequestProcessingData> requestProcessingData = new ArrayList<>();
 
     @Before
     public void setup() {
@@ -87,12 +79,6 @@ public class OrchestrationRequestsUnitTest {
         iar.setRequestScope(SERVICE);
         iar.setRequestId(REQUEST_ID);
         iar.setServiceInstanceId(SERVICE_INSTANCE_ID);
-        when(requestDbClient.getInfraActiveRequestbyRequestId(Mockito.eq(REQUEST_ID))).thenReturn(iar);
-        when(requestDbClient.getRequestProcessingDataBySoRequestId(Mockito.eq(REQUEST_ID)))
-                .thenReturn(requestProcessingData);
-
-        when(builder.buildResponse(Mockito.eq(HttpStatus.SC_OK), Mockito.eq(REQUEST_ID), any(Object.class),
-                any(String.class))).thenReturn(response);
     }
 
     @Test
@@ -100,6 +86,7 @@ public class OrchestrationRequestsUnitTest {
         InstanceReferences instanceReferences = new InstanceReferences();
         instanceReferences.setServiceInstanceId(SERVICE_INSTANCE_ID);
         RequestStatus requestStatus = new RequestStatus();
+        requestStatus.setRequestState(iar.getRequestStatus());
         Request expected = new Request();
         expected.setRequestId(REQUEST_ID);
         expected.setOriginalRequestId(ORIGINAL_REQUEST_ID);
@@ -109,8 +96,8 @@ public class OrchestrationRequestsUnitTest {
 
         iar.setOriginalRequestId(ORIGINAL_REQUEST_ID);
 
-        Request result =
-                orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest, extSystemErrorSource);
+        Request result = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
+                OrchestrationRequestFormat.DETAIL.toString());
         assertThat(result, sameBeanAs(expected));
     }
 
@@ -119,22 +106,24 @@ public class OrchestrationRequestsUnitTest {
         InstanceReferences instanceReferences = new InstanceReferences();
         instanceReferences.setServiceInstanceId(SERVICE_INSTANCE_ID);
         RequestStatus requestStatus = new RequestStatus();
+        requestStatus.setRequestState(iar.getRequestStatus());
         Request expected = new Request();
         expected.setRequestId(REQUEST_ID);
         expected.setInstanceReferences(instanceReferences);
         expected.setRequestStatus(requestStatus);
         expected.setRequestScope(SERVICE);
 
-        Request result =
-                orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest, extSystemErrorSource);
+        Request result = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
+                OrchestrationRequestFormat.DETAIL.toString());
         assertThat(result, sameBeanAs(expected));
     }
 
     @Test
-    public void mapExtSystemErrorSourceToRequestFalseTest() throws ApiException {
+    public void mapRequestStatusAndExtSysErrSrcToRequestFalseTest() throws ApiException {
         InstanceReferences instanceReferences = new InstanceReferences();
         instanceReferences.setServiceInstanceId(SERVICE_INSTANCE_ID);
         RequestStatus requestStatus = new RequestStatus();
+        requestStatus.setRequestState(iar.getRequestStatus());
 
         Request expected = new Request();
         expected.setRequestId(REQUEST_ID);
@@ -142,21 +131,24 @@ public class OrchestrationRequestsUnitTest {
         expected.setRequestStatus(requestStatus);
         expected.setRequestScope(SERVICE);
 
-        extSystemErrorSource = false;
         includeCloudRequest = false;
 
-        Request actual =
-                orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest, extSystemErrorSource);
+        Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
+                OrchestrationRequestFormat.DETAIL.toString());
         assertThat(actual, sameBeanAs(expected));
     }
 
     @Test
-    public void mapExtSystemErrorSourceToRequestTrueTest() throws ApiException {
+    public void mapRequestStatusAndExtSysErrSrcToRequestStatusDetailTest() throws ApiException {
         InstanceReferences instanceReferences = new InstanceReferences();
         instanceReferences.setServiceInstanceId(SERVICE_INSTANCE_ID);
         RequestStatus requestStatus = new RequestStatus();
         requestStatus.setExtSystemErrorSource(EXT_SYSTEM_ERROR_SOURCE);
         requestStatus.setRollbackExtSystemErrorSource(ROLLBACK_EXT_SYSTEM_ERROR_SOURCE);
+        requestStatus.setRequestState(iar.getRequestStatus());
+        requestStatus.setFlowStatus(FLOW_STATUS);
+        requestStatus.setRollbackStatusMessage(ROLLBACK_STATUS_MESSAGE);
+        requestStatus.setRetryStatusMessage(RETRY_STATUS_MESSAGE);
 
         Request expected = new Request();
         expected.setRequestId(REQUEST_ID);
@@ -164,24 +156,44 @@ public class OrchestrationRequestsUnitTest {
         expected.setRequestStatus(requestStatus);
         expected.setRequestScope(SERVICE);
 
-        extSystemErrorSource = true;
         includeCloudRequest = false;
         iar.setExtSystemErrorSource(EXT_SYSTEM_ERROR_SOURCE);
         iar.setRollbackExtSystemErrorSource(ROLLBACK_EXT_SYSTEM_ERROR_SOURCE);
+        iar.setFlowStatus(FLOW_STATUS);
+        iar.setRollbackStatusMessage(ROLLBACK_STATUS_MESSAGE);
+        iar.setRetryStatusMessage(RETRY_STATUS_MESSAGE);
 
-        Request actual =
-                orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest, extSystemErrorSource);
+        Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
+                OrchestrationRequestFormat.STATUSDETAIL.toString());
         assertThat(actual, sameBeanAs(expected));
     }
 
     @Test
-    public void mapExtSystemErrorSourceToRequestMethodInvokedTest() throws ApiException, IOException {
-        extSystemErrorSource = true;
-        includeCloudRequest = false;
-        orchestrationRequests.getOrchestrationRequest(REQUEST_ID, VERSION, includeCloudRequest, extSystemErrorSource);
+    public void mapRequestStatusAndExtSysErrSrcToRequestDetailTest() throws ApiException {
+        InstanceReferences instanceReferences = new InstanceReferences();
+        instanceReferences.setServiceInstanceId(SERVICE_INSTANCE_ID);
+        RequestStatus requestStatus = new RequestStatus();
+        requestStatus.setRequestState(iar.getRequestStatus());
+        requestStatus.setStatusMessage(String.format("FLOW STATUS: %s RETRY STATUS: %s ROLLBACK STATUS: %s",
+                FLOW_STATUS, RETRY_STATUS_MESSAGE, ROLLBACK_STATUS_MESSAGE));
 
-        verify(orchestrationRequests, times(1)).mapExtSystemErrorSourceToRequest(Mockito.eq(iar), Mockito.any(),
-                Mockito.eq(extSystemErrorSource));
+        Request expected = new Request();
+        expected.setRequestId(REQUEST_ID);
+        expected.setInstanceReferences(instanceReferences);
+        expected.setRequestStatus(requestStatus);
+        expected.setRequestScope(SERVICE);
+
+        includeCloudRequest = false;
+        iar.setExtSystemErrorSource(EXT_SYSTEM_ERROR_SOURCE);
+        iar.setRollbackExtSystemErrorSource(ROLLBACK_EXT_SYSTEM_ERROR_SOURCE);
+        iar.setFlowStatus(FLOW_STATUS);
+        iar.setRollbackStatusMessage(ROLLBACK_STATUS_MESSAGE);
+        iar.setRetryStatusMessage(RETRY_STATUS_MESSAGE);
+
+        Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
+                OrchestrationRequestFormat.DETAIL.toString());
+
+        assertThat(actual, sameBeanAs(expected));
     }
 
     @Test
@@ -189,5 +201,23 @@ public class OrchestrationRequestsUnitTest {
         RequestStatus requestStatus = new RequestStatus();
         requestStatus.setExtSystemErrorSource(EXT_SYSTEM_ERROR_SOURCE);
         assertThat(requestStatus.getExtSystemErrorSource(), is(equalTo(EXT_SYSTEM_ERROR_SOURCE)));
+    }
+
+    @Test
+    public void mapRequestStatusToRequestForFormatDetailTest() throws ApiException {
+        iar.setRequestStatus(Status.ABORTED.toString());
+        String result =
+                orchestrationRequests.mapRequestStatusToRequest(iar, OrchestrationRequestFormat.DETAIL.toString());
+
+        assertEquals(Status.ABORTED.toString(), result);
+    }
+
+
+    @Test
+    public void mapRequestStatusToRequestForFormatEmptyStringTest() throws ApiException {
+        iar.setRequestStatus(Status.ABORTED.toString());
+        String result = orchestrationRequests.mapRequestStatusToRequest(iar, StringUtils.EMPTY);
+
+        assertEquals(Status.FAILED.toString(), result);
     }
 }

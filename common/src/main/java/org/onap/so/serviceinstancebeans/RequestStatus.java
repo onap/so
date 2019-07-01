@@ -40,6 +40,36 @@ public class RequestStatus {
     protected String extSystemErrorSource;
     @JsonProperty("rollbackExtSystemErrorSource")
     protected String rollbackExtSystemErrorSource;
+    @JsonProperty("flowStatus")
+    protected String flowStatus;
+    @JsonProperty("retryStatusMessage")
+    protected String retryStatusMessage;
+    @JsonProperty("rollbackStatusMessage")
+    protected String rollbackStatusMessage;
+
+    public String getFlowStatus() {
+        return flowStatus;
+    }
+
+    public void setFlowStatus(String flowStatus) {
+        this.flowStatus = flowStatus;
+    }
+
+    public String getRetryStatusMessage() {
+        return retryStatusMessage;
+    }
+
+    public void setRetryStatusMessage(String retryStatusMessage) {
+        this.retryStatusMessage = retryStatusMessage;
+    }
+
+    public String getRollbackStatusMessage() {
+        return rollbackStatusMessage;
+    }
+
+    public void setRollbackStatusMessage(String rollbackStatusMessage) {
+        this.rollbackStatusMessage = rollbackStatusMessage;
+    }
 
     public String getExtSystemErrorSource() {
         return extSystemErrorSource;
@@ -94,6 +124,8 @@ public class RequestStatus {
         return new ToStringBuilder(this).append("requestState", requestState).append("statusMessage", statusMessage)
                 .append("percentProgress", percentProgress).append("timestamp", timeStamp)
                 .append("extSystemErrorSource", extSystemErrorSource)
-                .append("rollbackExtSystemErrorSource", rollbackExtSystemErrorSource).toString();
+                .append("rollbackExtSystemErrorSource", rollbackExtSystemErrorSource).append("flowStatus", flowStatus)
+                .append("retryStatusMessage", retryStatusMessage).append("rollbackStatusMessage", rollbackStatusMessage)
+                .toString();
     }
 }

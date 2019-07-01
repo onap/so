@@ -31,7 +31,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 import javax.ws.rs.ext.Providers;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
-import org.onap.so.apihandlerinfra.Status;
+import org.onap.so.constants.Status;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.serviceinstancebeans.RequestError;

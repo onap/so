@@ -63,6 +63,7 @@ import org.onap.so.apihandlerinfra.validation.ValidationRule;
 import org.onap.so.apihandlerinfra.vnfbeans.RequestStatusType;
 import org.onap.so.apihandlerinfra.vnfbeans.VnfInputs;
 import org.onap.so.apihandlerinfra.vnfbeans.VnfRequest;
+import org.onap.so.constants.Status;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.exceptions.ValidationException;

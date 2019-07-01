@@ -18,12 +18,23 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.apihandlerinfra;
+package org.onap.so.constants;
 
 
 /*
  * Enum for Status values returned by API Handler to Tail-F
  */
 public enum Status {
-    PENDING, IN_PROGRESS, COMPLETE, COMPLETED, FAILED, TIMEOUT, UNLOCKED, PENDING_MANUAL_TASK
+    PENDING,
+    IN_PROGRESS,
+    COMPLETE,
+    COMPLETED,
+    FAILED,
+    TIMEOUT,
+    UNLOCKED,
+    PENDING_MANUAL_TASK,
+    ABORTED,
+    ROLLED_BACK,
+    ROLLED_BACK_TO_ASSIGNED,
+    ROLLED_BACK_TO_CREATED
 }
