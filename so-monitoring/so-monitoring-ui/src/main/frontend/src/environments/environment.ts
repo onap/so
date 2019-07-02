@@ -24,5 +24,7 @@ SPDX-License-Identifier: Apache-2.0
 export const environment = {
   production: false,
 
-  soMonitoringBackendURL: 'http://so-monitoring:30224/so/monitoring/'
+  soMonitoringBackendURL: 'http://so-monitoring:30224/so/monitoring/',
+  soMonitoringBackendUser: 'gui',
+  soMonitoringBackendPassword: 'password1$'
 };

@@ -21,7 +21,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { BpmnInfraRequest } from './model/bpmnInfraRequest.model';
 import { catchError } from 'rxjs/operators';
 import { Observable } from 'rxjs';
@@ -38,12 +38,19 @@ import { ActivityInstance } from './model/activityInstance.model';
 })
 export class DataService {
 
+  readonly httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type':  'application/json',
+      'Authorization': 'Basic ' + btoa(environment.soMonitoringBackendUser + ':' + environment.soMonitoringBackendPassword)
+    })
+  };
+
   constructor(private http: HttpClient, private httpErrorHandlerService: HttpErrorHandlerService) { }
 
   // HTTP POST call to running Spring Boot application
   getBpmnInfraRequest(servInstId: {}, from: number, to: number): Observable<BpmnInfraRequest[]> {
     var url = environment.soMonitoringBackendURL + 'v1/search?from=' + from + "&to=" + to;
-    return this.http.post<BpmnInfraRequest[]>(url, servInstId)
+    return this.http.post<BpmnInfraRequest[]>(url, servInstId, this.httpOptions)
       .pipe(
         catchError(this.httpErrorHandlerService.handleError("POST", url))
       );
@@ -53,7 +60,7 @@ export class DataService {
   getProcessInstanceId(requestId: string): Observable<HttpResponse<ProcessInstanceId>> {
     var url = environment.soMonitoringBackendURL + 'process-instance-id/' + requestId;
     console.log(requestId);
-    return this.http.get<ProcessInstanceId>(url, { observe: 'response' })
+    return this.http.get<ProcessInstanceId>(url, { observe: 'response', headers: this.httpOptions.headers })
       .pipe(
         catchError(this.httpErrorHandlerService.handleError("GET", url))
       );
@@ -62,7 +69,7 @@ export class DataService {
   // HTTP GET to return Activity instancs using ProcessInstanceID
   getActivityInstance(processInstanceId: string): Promise<ActivityInstance[]> {
     var url = environment.soMonitoringBackendURL + 'activity-instance/' + processInstanceId;
-    return this.http.get<ActivityInstance[]>(url)
+    return this.http.get<ActivityInstance[]>(url, this.httpOptions)
       .pipe(
         catchError(this.httpErrorHandlerService.handleError("GET", url))
       ).toPromise();
@@ -71,7 +78,7 @@ export class DataService {
   // HTTP GET to return Activity Instance using ProcessInstanceID
   async getProcessInstance(processInstanceId: string): Promise<ProcessInstanceDetail> {
     var url = environment.soMonitoringBackendURL + 'process-instance/' + processInstanceId;
-    return await (this.http.get<ProcessInstanceDetail>(url)
+    return await (this.http.get<ProcessInstanceDetail>(url, this.httpOptions)
       .pipe(
         catchError(this.httpErrorHandlerService.handleError("GET", url))))
       .toPromise();
@@ -80,7 +87,7 @@ export class DataService {
   // HTTP GET to return Process Definition using processDefinitionId
   getProcessDefinition(processDefinitionId: string): Observable<Object> {
     var url = environment.soMonitoringBackendURL + 'process-definition/' + processDefinitionId;
-    return this.http.get(url).pipe(
+    return this.http.get(url, this.httpOptions).pipe(
       catchError(this.httpErrorHandlerService.handleError("GET", url))
     );
   }
@@ -88,7 +95,7 @@ export class DataService {
   // HTTP GET to return Variable Instance using ProcessInstanceID
   getVariableInstance(processDefinitionId: string): Observable<Object> {
     var url = environment.soMonitoringBackendURL + 'variable-instance/' + processDefinitionId;
-    return this.http.get(url).pipe(
+    return this.http.get(url, this.httpOptions).pipe(
       catchError(this.httpErrorHandlerService.handleError("GET", url))
     );
   }
