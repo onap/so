@@ -177,15 +177,11 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
             Holder<Map<String, String>> outputs) throws VnfException {
         logger.debug("Querying VNF {} in {}", vnfName, cloudSiteId + "/" + tenantId);
 
-<<<<<<< HEAD
-        DeploymentInfo deployment = null;
-=======
         // Will capture execution time for metrics
         long startTime = System.currentTimeMillis();
         long subStartTime = System.currentTimeMillis();
 
         DeploymentV31 deployment = null;
->>>>>>> rewrote client and made related changes
 
         try {
             deployment = cloudifyUtils.queryDeployment(cloudSiteId, vnfName);
@@ -761,12 +757,8 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
             }
 
             if (baseVfModuleId != null) {
-<<<<<<< HEAD
-                DeploymentInfo baseDeployment = null;
-=======
                 long subStartTime2 = System.currentTimeMillis();
                 DeploymentV31 baseDeployment = null;
->>>>>>> rewrote client and made related changes
                 try {
                     baseDeployment = cloudifyUtils.queryDeployment(cloudSiteId, baseVfModuleId);
                 } catch (MsoException me) {
@@ -837,14 +829,8 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
         }
 
         if (heatEnvironment == null) {
-<<<<<<< HEAD
-            String error = "Update VNF: undefined Heat Environment. VF=" + vfModuleType + ", modelCustomizationUuid="
-                    + modelCustomizationUuid + ", vfModuleUuid=" + vf.getModelUUID() + ", reqType=" + requestType;
-            logger.error(LoggingAnchor.FIVE, MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(), "Heat Environment ID",
-=======
             String error = "Update VNF: undefined Heat Environment. VF=" + vfModuleType;
             logger.error("{} {} {} {} {}", MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(), "Heat Environment ID",
->>>>>>> rewrote client and made related changes
                     OPENSTACK, ErrorCode.DataError.getValue(), error);
             // Alarm on this error, configuration must be fixed
             throw new VnfException(error, MsoExceptionCategory.INTERNAL);
