@@ -962,7 +962,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             if (netInfo != null) {
                 // Found. Populate the output elements
                 networkExists.value = Boolean.TRUE;
-                if ("HEAT".equals(mode)) {
+                if ("HEAT".equals(mode) && heatStack != null) {
                     networkId.value = heatStack.getCanonicalName();
                 } else {
                     networkId.value = netInfo.getId();
