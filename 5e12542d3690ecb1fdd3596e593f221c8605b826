@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "42b62933_9462dcda",
+        "filename": "so-monitoring/so-monitoring-service/src/main/java/org/onap/so/monitoring/rest/api/WebApplicationConfig.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-07-03T15:57:36Z",
+      "side": 1,
+      "message": "remove used import",
+      "range": {
+        "startLine": 27,
+        "startChar": 1,
+        "endLine": 27,
+        "endChar": 81
+      },
+      "revId": "5e12542d3690ecb1fdd3596e593f221c8605b826",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1f6f2309_82a29a86",
+        "filename": "so-monitoring/so-monitoring-service/src/main/resources/application.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-07-03T15:57:36Z",
+      "side": 1,
+      "message": "update https://gerrit.onap.org/r/gitweb?p\u003doom.git;a\u003dblob;f\u003dkubernetes/so/charts/so-monitoring/resources/config/overrides/override.yaml;h\u003dc2e6ad06f316615f37b9a1fc3647bdff83298741;hb\u003drefs/heads/master override.yml file as well in oom project",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 22
+      },
+      "revId": "5e12542d3690ecb1fdd3596e593f221c8605b826",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d0a52146_0dfc7d23",
+        "filename": "so-monitoring/so-monitoring-ui/src/main/frontend/src/environments/environment.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-07-03T15:57:36Z",
+      "side": 1,
+      "message": "Can https support be added as part of this JIRA as well or is it covered under some other JIRA",
+      "range": {
+        "startLine": 27,
+        "startChar": 27,
+        "endLine": 27,
+        "endChar": 31
+      },
+      "revId": "5e12542d3690ecb1fdd3596e593f221c8605b826",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
