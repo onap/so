@@ -877,7 +877,7 @@ public abstract class WorkflowTest {
                 processInstanceQuery = runtimeService.createProcessInstanceQuery().processDefinitionKey(processKey);
             }
 
-            if (processInstanceQuery.count() == 1 || processInstanceQuery.count() == 0) {
+            if (processInstanceQuery != null && (processInstanceQuery.count() == 1 || processInstanceQuery.count() == 0)) {
                 processInstance = processInstanceQuery.singleResult();
             } else {
                 // TODO There shouldnt be more than one in the list but seems to be happening, need to figure out why
