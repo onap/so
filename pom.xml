@@ -210,17 +210,17 @@
       </resource>
     </resources>
     <plugins>
-      <plugin>
+      <!-- <plugin>
         <groupId>org.sonatype.plugins</groupId>
         <artifactId>nexus-staging-maven-plugin</artifactId>
-        <!-- defined in oparent <version>1.6.7</version> -->
+        <version>1.6.7</version>
         <extensions>true</extensions>
         <configuration>
           <nexusUrl>${nexusproxy}</nexusUrl>
           <stagingProfileId>176c31dfe190a</stagingProfileId>
           <serverId>ecomp-staging</serverId>
         </configuration>
-      </plugin>
+      </plugin> -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-deploy-plugin</artifactId>
