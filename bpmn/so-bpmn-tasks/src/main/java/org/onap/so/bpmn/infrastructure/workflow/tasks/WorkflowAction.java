@@ -319,8 +319,7 @@ public class WorkflowAction {
                                 cloudOwner, serviceType);
                     }
                     flowsToExecute = buildExecuteBuildingBlockList(orchFlows, resourceCounter, requestId, apiVersion,
-                            resourceId, resourceType, requestAction, aLaCarte, vnfType, workflowResourceIds,
-                            requestDetails);
+                            resourceId, requestAction, aLaCarte, vnfType, workflowResourceIds, requestDetails);
                     if (!resourceCounter.stream().filter(x -> WorkflowType.NETWORKCOLLECTION == x.getResourceType())
                             .collect(Collectors.toList()).isEmpty()) {
                         logger.info("Sorting for Vlan Tagging");
@@ -445,9 +444,8 @@ public class WorkflowAction {
     protected List<ExecuteBuildingBlock> getConfigBuildingBlocks(ConfigBuildingBlocksDataObject dataObj) {
 
         List<ExecuteBuildingBlock> flowsToExecuteConfigs = new ArrayList<>();
-        List<OrchestrationFlow> result = new ArrayList<>(dataObj.getOrchFlows());
-        result = dataObj.getOrchFlows().stream().filter(item -> item.getFlowName().contains(FABRIC_CONFIGURATION))
-                .collect(Collectors.toList());
+        List<OrchestrationFlow> result = dataObj.getOrchFlows().stream()
+                .filter(item -> item.getFlowName().contains(FABRIC_CONFIGURATION)).collect(Collectors.toList());
         String vnfId = dataObj.getWorkflowResourceIds().getVnfId();
         String vfModuleId = dataObj.getWorkflowResourceIds().getVfModuleId();
 
@@ -647,7 +645,7 @@ public class WorkflowAction {
             RelatedInstance relatedLocalNetwork =
                     bbInputSetupUtils.getRelatedInstanceByType(sIRequest.getRequestDetails(), ModelType.network);
             if (relatedVpnBinding != null && relatedLocalNetwork != null) {
-                traverseVrfConfiguration(execution, aaiResourceIds, resourceCounter, service, relatedVpnBinding,
+                traverseVrfConfiguration(aaiResourceIds, resourceCounter, service, relatedVpnBinding,
                         relatedLocalNetwork);
             } else {
                 traverseNetworkCollection(execution, resourceCounter, service);
@@ -655,10 +653,10 @@ public class WorkflowAction {
         }
     }
 
-    protected void traverseVrfConfiguration(DelegateExecution execution,
-            List<Pair<WorkflowType, String>> aaiResourceIds, List<Resource> resourceCounter,
-            org.onap.so.db.catalog.beans.Service service, RelatedInstance relatedVpnBinding,
-            RelatedInstance relatedLocalNetwork) throws VrfBondingServiceException, JsonProcessingException {
+    protected void traverseVrfConfiguration(List<Pair<WorkflowType, String>> aaiResourceIds,
+            List<Resource> resourceCounter, org.onap.so.db.catalog.beans.Service service,
+            RelatedInstance relatedVpnBinding, RelatedInstance relatedLocalNetwork)
+            throws VrfBondingServiceException, JsonProcessingException {
         org.onap.aai.domain.yang.L3Network aaiLocalNetwork =
                 bbInputSetupUtils.getAAIL3Network(relatedLocalNetwork.getInstanceId());
         vrfValidation.vrfServiceValidation(service);
@@ -1277,8 +1275,8 @@ public class WorkflowAction {
 
     protected List<ExecuteBuildingBlock> buildExecuteBuildingBlockList(List<OrchestrationFlow> orchFlows,
             List<Resource> resourceCounter, String requestId, String apiVersion, String resourceId,
-            WorkflowType resourceType, String requestAction, boolean aLaCarte, String vnfType,
-            WorkflowResourceIds workflowResourceIds, RequestDetails requestDetails) {
+            String requestAction, boolean aLaCarte, String vnfType, WorkflowResourceIds workflowResourceIds,
+            RequestDetails requestDetails) {
         List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
         for (OrchestrationFlow orchFlow : orchFlows) {
             if (orchFlow.getFlowName().contains(SERVICE)) {
