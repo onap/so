@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "9ae90719_6c2344ed",
+        "filename": "so-monitoring/so-monitoring-service/src/main/resources/application.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 4313
+      },
+      "writtenOn": "2019-07-04T14:23:39Z",
+      "side": 1,
+      "message": "Thanks! will do it in a separate commit to oom",
+      "parentUuid": "1f6f2309_82a29a86",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 22
+      },
+      "revId": "5e12542d3690ecb1fdd3596e593f221c8605b826",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d0a52146_0dfc7d23",
         "filename": "so-monitoring/so-monitoring-ui/src/main/frontend/src/environments/environment.ts",
         "patchSetId": 2
@@ -68,6 +92,30 @@
       "revId": "5e12542d3690ecb1fdd3596e593f221c8605b826",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "37d989da_8e8b40cc",
+        "filename": "so-monitoring/so-monitoring-ui/src/main/frontend/src/environments/environment.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 4313
+      },
+      "writtenOn": "2019-07-04T14:23:39Z",
+      "side": 1,
+      "message": "Yes, there is a separate task for https https://jira.onap.org/browse/OJSI-110\nThis one is for authentication only",
+      "parentUuid": "d0a52146_0dfc7d23",
+      "range": {
+        "startLine": 27,
+        "startChar": 27,
+        "endLine": 27,
+        "endChar": 31
+      },
+      "revId": "5e12542d3690ecb1fdd3596e593f221c8605b826",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
