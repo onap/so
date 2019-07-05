@@ -3,6 +3,8 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2019 Huawei Intellectual Property. All rights reserved.
+ *
+ * Copyright (C) 2019 IBM.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +23,6 @@
 package org.onap.so.adapters.catalogdb.catalogrest;
 
 import org.onap.so.db.catalog.beans.InstanceGroup;
-import org.onap.so.db.catalog.beans.VFCInstanceGroup;
 import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
