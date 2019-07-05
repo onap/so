@@ -43,6 +43,9 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.client.exception.BBObjectNotFoundException;
+import org.onap.so.client.exception.BadResponseException;
+import org.onap.so.utils.TargetEntities;
+import org.onap.so.utils.TargetEntity;
 
 public class SDNCQueryTasksTest extends BaseTaskTest {
     @InjectMocks
@@ -61,8 +64,8 @@ public class SDNCQueryTasksTest extends BaseTaskTest {
         genericVnf = setGenericVnf();
         vfModule = setVfModule();
 
-        doThrow(new BpmnError("BPMN Error")).when(exceptionUtil)
-                .buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
+        doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(
+                any(BuildingBlockExecution.class), eq(7000), any(Exception.class), any(TargetEntities.class));
         when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID)))
                 .thenReturn(serviceInstance);
 
@@ -88,6 +91,28 @@ public class SDNCQueryTasksTest extends BaseTaskTest {
     }
 
     @Test
+    public void queryVfModuleBadResponseExceptionTest() throws Exception {
+        BadResponseException exception = new BadResponseException("Error received from SDNC");
+        doThrow(exception).when(sdncVfModuleResources).queryVfModule(vfModule);
+
+        expectedException.expect(BpmnError.class);
+        sdncQueryTasks.queryVfModule(execution);
+
+        verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(execution, 700, exception, TargetEntity.SDNC);
+    }
+
+    @Test
+    public void queryVfModuleResponseExceptionNoResponseTest() throws Exception {
+        BadResponseException exception = new BadResponseException("Error did not receive a response from SDNC.");
+        doThrow(exception).when(sdncVfModuleResources).queryVfModule(vfModule);
+
+        expectedException.expect(BpmnError.class);
+        sdncQueryTasks.queryVfModule(execution);
+
+        verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(execution, 700, exception, TargetEntity.SO);
+    }
+
+    @Test
     public void queryVnfTest() throws Exception {
         String sdncQueryResponse = "response";
 
@@ -98,6 +123,28 @@ public class SDNCQueryTasksTest extends BaseTaskTest {
         assertEquals(sdncQueryResponse, execution.getVariable("SDNCQueryResponse_" + genericVnf.getVnfId()));
 
         verify(sdncVnfResources, times(1)).queryVnf(genericVnf);
+    }
+
+    @Test
+    public void queryVnfBadResponseExceptionTest() throws Exception {
+        BadResponseException exception = new BadResponseException("Error received from SDNC");
+        doThrow(exception).when(sdncVnfResources).queryVnf(genericVnf);
+
+        expectedException.expect(BpmnError.class);
+        sdncQueryTasks.queryVnf(execution);
+
+        verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(execution, 700, exception, TargetEntity.SDNC);
+    }
+
+    @Test
+    public void queryVnfBadResponseExceptionNoResponseTest() throws Exception {
+        BadResponseException exception = new BadResponseException("Error did not receive a response from SDNC.");
+        doThrow(exception).when(sdncVnfResources).queryVnf(genericVnf);
+
+        expectedException.expect(BpmnError.class);
+        sdncQueryTasks.queryVnf(execution);
+
+        verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(execution, 700, exception, TargetEntity.SO);
     }
 
     @Test
@@ -112,6 +159,28 @@ public class SDNCQueryTasksTest extends BaseTaskTest {
         assertEquals(sdncQueryResponse, execution.getVariable("SDNCQueryResponse_" + vfModule.getVfModuleId()));
 
         verify(sdncVfModuleResources, times(1)).queryVfModule(vfModule);
+    }
+
+    @Test
+    public void queryVfModuleForVolumeGroupBadResponseExceptionTest() throws Exception {
+        BadResponseException exception = new BadResponseException("Error received from SDNC");
+        doThrow(exception).when(sdncVfModuleResources).queryVfModule(vfModule);
+
+        expectedException.expect(BpmnError.class);
+        sdncQueryTasks.queryVfModuleForVolumeGroup(execution);
+
+        verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(execution, 700, exception, TargetEntity.SDNC);
+    }
+
+    @Test
+    public void queryVfModuleForVolumeGroupBadResponseExceptionNoResponseTest() throws Exception {
+        BadResponseException exception = new BadResponseException("Error did not receive a response from SDNC.");
+        doThrow(exception).when(sdncVfModuleResources).queryVfModule(vfModule);
+
+        expectedException.expect(BpmnError.class);
+        sdncQueryTasks.queryVfModuleForVolumeGroup(execution);
+
+        verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(execution, 700, exception, TargetEntity.SO);
     }
 
     @Test

@@ -21,6 +21,7 @@
 package org.onap.so.bpmn.infrastructure.sdnc.tasks;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import java.io.IOException;
@@ -48,6 +49,7 @@ import org.onap.so.client.exception.MapperException;
 import org.onap.so.client.sdnc.SDNCClient;
 import org.onap.so.client.sdnc.beans.SDNCRequest;
 import org.onap.so.client.sdnc.endpoint.SDNCTopology;
+import org.onap.so.utils.TargetEntity;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -65,7 +67,6 @@ public class SDNCRequestTasksTest extends SDNCRequestTasks {
 
     @Mock
     SDNCClient sdncClient;
-
 
     @Spy
     private ExceptionBuilder exceptionBuilder;

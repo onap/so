@@ -23,6 +23,7 @@
         <camunda:out source="RetryDuration" target="RetryDuration" />
         <camunda:in source="suppressRollback" target="suppressRollback" />
         <camunda:out source="StatusMessage" target="StatusMessage" />
+        <camunda:in source="isRollback" target="isRollback" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0mew9im</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1hsqed1</bpmn:outgoing>

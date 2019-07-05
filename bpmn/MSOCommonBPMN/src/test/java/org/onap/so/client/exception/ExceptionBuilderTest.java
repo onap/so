@@ -55,6 +55,7 @@ public class ExceptionBuilderTest extends BaseTest {
     @Mock
     protected ExtractPojosForBB extractPojosForBB;
 
+
     @Spy
     @InjectMocks
     private ExceptionBuilder exceptionBuilder = new ExceptionBuilder();

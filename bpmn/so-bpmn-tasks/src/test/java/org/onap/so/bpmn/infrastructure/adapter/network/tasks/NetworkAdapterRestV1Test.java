@@ -39,12 +39,14 @@ import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.exception.MapperException;
+import org.onap.so.utils.TargetEntity;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -110,8 +112,9 @@ public class NetworkAdapterRestV1Test extends BaseTaskTest {
         delegateExecution.setVariable("networkAdapterRequest", updateNetworkRequest);
         delegateExecution.setVariable("NetworkAResponse_MESSAGE", updateNetworkResponse.toXmlString());
 
-        doThrow(new BpmnError("MSOWorkflowException")).when(exceptionBuilder)
-                .buildAndThrowWorkflowException(any(DelegateExecution.class), anyInt(), any(String.class));
+        doThrow(new BpmnError("MSOWorkflowException")).when(exceptionBuilder).buildAndThrowWorkflowException(
+                any(DelegateExecution.class), anyInt(), any(String.class), any(TargetEntity.class));
+
         try {
             networkAdapterRestV1Tasks.processCallback(delegateExecution);
         } catch (BpmnError be) {
@@ -119,6 +122,6 @@ public class NetworkAdapterRestV1Test extends BaseTaskTest {
         }
         assertNull(delegateExecution.getVariable("updateNetworkResponse"));
         verify(exceptionBuilder, times(1)).buildAndThrowWorkflowException(any(DelegateExecution.class), eq(7000),
-                eq("test error message"));
+                eq("test error message"), eq(TargetEntity.OPENSTACK));
     }
 }

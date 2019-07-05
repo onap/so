@@ -38,6 +38,7 @@ import org.onap.so.adapters.nwrest.UpdateNetworkRequest;
 import org.onap.so.adapters.nwrest.UpdateNetworkResponse;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.NetworkAdapterResources;
+import org.onap.so.utils.TargetEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,7 +94,7 @@ public class NetworkAdapterRestV1 {
                 throw new Exception("No Network Request was created. networkAdapterRequest was null.");
             }
         } catch (Exception ex) {
-            exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, ex);
+            exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SO);
         }
     }
 
@@ -138,7 +139,7 @@ public class NetworkAdapterRestV1 {
             }
         } catch (Exception e) {
             logger.error("Error in Openstack Adapter callback", e);
-            exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, e.getMessage());
+            exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, e.getMessage(), TargetEntity.OPENSTACK);
         }
     }
 
@@ -151,7 +152,7 @@ public class NetworkAdapterRestV1 {
 
     public void handleTimeOutException(DelegateExecution execution) {
         exceptionBuilder.buildAndThrowWorkflowException(execution, 7000,
-                "Error timed out waiting on Openstack Async-Response");
+                "Error timed out waiting on Openstack Async-Response", TargetEntity.SO);
     }
 
     public void handleSyncError(DelegateExecution execution) {
@@ -159,6 +160,6 @@ public class NetworkAdapterRestV1 {
         String responseString = (String) execution.getVariable(NETWORK_SYNC_RESPONSE);
         String errorMessage = "Error with Openstack Adapter Sync Request: StatusCode = " + statusCode + " Response = "
                 + responseString;
-        exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, errorMessage);
+        exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, errorMessage, TargetEntity.OPENSTACK);
     }
 }

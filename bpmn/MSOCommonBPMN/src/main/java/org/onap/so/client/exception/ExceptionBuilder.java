@@ -43,6 +43,8 @@ import org.onap.so.client.graphinventory.GraphInventoryCommonObjectMapperProvide
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.objects.audit.AAIObjectAudit;
 import org.onap.so.objects.audit.AAIObjectAuditList;
+import org.onap.so.utils.TargetEntities;
+import org.onap.so.utils.TargetEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -89,6 +91,39 @@ public class ExceptionBuilder {
         buildAndThrowWorkflowException(execution, errorCode, msg);
     }
 
+    public void buildAndThrowWorkflowException(BuildingBlockExecution execution, int errorCode, Exception exception,
+            TargetEntities extSystemErrorSource) {
+        String msg = "Exception in %s.%s ";
+        try {
+            logger.error("Exception occurred", exception);
+
+            String errorVariable = "Error%s%s";
+
+            StackTraceElement[] trace = Thread.currentThread().getStackTrace();
+            for (StackTraceElement traceElement : trace) {
+                if (!traceElement.getClassName().equals(this.getClass().getName())
+                        && !traceElement.getClassName().equals(Thread.class.getName())) {
+                    msg = String.format(msg, traceElement.getClassName(), traceElement.getMethodName());
+                    String shortClassName =
+                            traceElement.getClassName().substring(traceElement.getClassName().lastIndexOf(".") + 1);
+                    errorVariable = String.format(errorVariable, shortClassName, traceElement.getMethodName());
+                    break;
+                }
+            }
+
+            logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+                    ErrorCode.UnknownError.getValue(), msg.toString());
+            execution.setVariable(errorVariable, exception.getMessage());
+        } catch (Exception ex) {
+            // log trace, allow process to complete gracefully
+            logger.error("Exception occurred", ex);
+        }
+
+        if (exception.getMessage() != null)
+            msg = msg.concat(exception.getMessage());
+        buildAndThrowWorkflowException(execution, errorCode, msg, extSystemErrorSource);
+    }
+
     public void buildAndThrowWorkflowException(DelegateExecution execution, int errorCode, Exception exception) {
         String msg = "Exception in %s.%s ";
         try {
@@ -120,10 +155,50 @@ public class ExceptionBuilder {
         buildAndThrowWorkflowException(execution, errorCode, msg);
     }
 
+    public void buildAndThrowWorkflowException(DelegateExecution execution, int errorCode, Exception exception,
+            TargetEntities extSystemErrorSource) {
+        String msg = "Exception in %s.%s ";
+        try {
+            logger.error("Exception occurred", exception);
+
+            String errorVariable = "Error%s%s";
+
+            StackTraceElement[] trace = Thread.currentThread().getStackTrace();
+            for (StackTraceElement traceElement : trace) {
+                if (!traceElement.getClassName().equals(this.getClass().getName())
+                        && !traceElement.getClassName().equals(Thread.class.getName())) {
+                    msg = String.format(msg, traceElement.getClassName(), traceElement.getMethodName());
+                    String shortClassName =
+                            traceElement.getClassName().substring(traceElement.getClassName().lastIndexOf(".") + 1);
+                    errorVariable = String.format(errorVariable, shortClassName, traceElement.getMethodName());
+                    break;
+                }
+            }
+            logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+                    ErrorCode.UnknownError.getValue(), msg.toString());
+            execution.setVariable(errorVariable, exception.getMessage());
+        } catch (Exception ex) {
+            // log trace, allow process to complete gracefully
+            logger.error("Exception occurred", ex);
+        }
+
+        if (exception.getMessage() != null)
+            msg = msg.concat(exception.getMessage());
+        buildAndThrowWorkflowException(execution, errorCode, msg, extSystemErrorSource);
+    }
+
     public void buildAndThrowWorkflowException(BuildingBlockExecution execution, int errorCode, String errorMessage) {
         if (execution instanceof DelegateExecutionImpl) {
             buildAndThrowWorkflowException(((DelegateExecutionImpl) execution).getDelegateExecution(), errorCode,
                     errorMessage);
+        }
+    }
+
+    public void buildAndThrowWorkflowException(BuildingBlockExecution execution, int errorCode, String errorMessage,
+            TargetEntities extSystemErrorSource) {
+        if (execution instanceof DelegateExecutionImpl) {
+            buildAndThrowWorkflowException(((DelegateExecutionImpl) execution).getDelegateExecution(), errorCode,
+                    errorMessage, extSystemErrorSource);
         }
     }
 
@@ -132,6 +207,19 @@ public class ExceptionBuilder {
         logger.info("Building a WorkflowException for Subflow");
 
         WorkflowException exception = new WorkflowException(processKey, errorCode, errorMessage);
+        execution.setVariable("WorkflowException", exception);
+        execution.setVariable("WorkflowExceptionErrorMessage", errorMessage);
+        logger.info("Outgoing WorkflowException is {}", exception);
+        logger.info("Throwing MSOWorkflowException");
+        throw new BpmnError("MSOWorkflowException");
+    }
+
+    public void buildAndThrowWorkflowException(DelegateExecution execution, int errorCode, String errorMessage,
+            TargetEntities extSystemErrorSource) {
+        String processKey = getProcessKey(execution);
+        logger.info("Building a WorkflowException for Subflow");
+
+        WorkflowException exception = new WorkflowException(processKey, errorCode, errorMessage, extSystemErrorSource);
         execution.setVariable("WorkflowException", exception);
         execution.setVariable("WorkflowExceptionErrorMessage", errorMessage);
         logger.info("Outgoing WorkflowException is {}", exception);
@@ -204,7 +292,8 @@ public class ExceptionBuilder {
             if (flowShouldContinue) {
                 execution.setVariable("StatusMessage", errorMessage.toString());
             } else {
-                WorkflowException exception = new WorkflowException(processKey, 400, errorMessage.toString());
+                WorkflowException exception =
+                        new WorkflowException(processKey, 400, errorMessage.toString(), TargetEntity.SO);
                 execution.setVariable("WorkflowException", exception);
                 execution.setVariable("WorkflowExceptionErrorMessage", errorMessage.toString());
                 logger.info("Outgoing WorkflowException is {}", exception);

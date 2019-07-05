@@ -37,6 +37,7 @@ import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.exception.MapperException;
 import org.onap.so.client.sdnc.SDNCClient;
 import org.onap.so.client.sdnc.beans.SDNCRequest;
+import org.onap.so.utils.TargetEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,17 +80,19 @@ public class SDNCRequestTasks {
         } catch (PathNotFoundException e) {
             logger.error("Error Parsing SDNC Response. Could not find read final ack indicator from JSON.", e);
             exceptionBuilder.buildAndThrowWorkflowException(execution, 7000,
-                    "Recieved invalid response from SDNC, unable to read message content.");
+                    "Recieved invalid response from SDNC, unable to read message content.", TargetEntity.SO);
         } catch (MapperException e) {
             logger.error("Failed to map SDNC object to JSON prior to POST.", e);
             exceptionBuilder.buildAndThrowWorkflowException(execution, 7000,
-                    "Failed to map SDNC object to JSON prior to POST.");
+                    "Failed to map SDNC object to JSON prior to POST.", TargetEntity.SO);
         } catch (BadResponseException e) {
             logger.error("Did not receive a successful response from SDNC.", e);
-            exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, e.getLocalizedMessage());
+            exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, e.getLocalizedMessage(),
+                    TargetEntity.SDNC);
         } catch (HttpClientErrorException e) {
             logger.error("HttpClientErrorException: 404 Not Found, Failed to contact SDNC", e);
-            exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, "SDNC cannot be contacted.");
+            exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, "SDNC cannot be contacted.",
+                    TargetEntity.SO);
         }
     }
 
@@ -120,16 +123,17 @@ public class SDNCRequestTasks {
             }
         } catch (SDNCErrorResponseException e) {
             logger.error("SDNC error response - " + e.getMessage());
-            exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, e.getMessage());
+            exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, e.getMessage(), TargetEntity.SDNC);
         } catch (Exception e) {
-            logger.error("Error procesing SDNC callback", e);
-            exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, "Error procesing SDNC callback");
+            logger.error("Error processing SDNC callback", e);
+            exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, "Error processing SDNC callback",
+                    TargetEntity.SO);
         }
     }
 
     public void handleTimeOutException(DelegateExecution execution) {
         exceptionBuilder.buildAndThrowWorkflowException(execution, 7000,
-                "Error timed out waiting on SDNC Async-Response");
+                "Error timed out waiting on SDNC Async-Response", TargetEntity.SO);
     }
 
     protected boolean convertIndicatorToBoolean(String finalMessageIndicator) {
@@ -149,5 +153,4 @@ public class SDNCRequestTasks {
         }
         return result;
     }
-
 }

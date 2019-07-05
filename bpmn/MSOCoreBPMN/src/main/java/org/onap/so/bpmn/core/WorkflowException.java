@@ -21,6 +21,7 @@
 package org.onap.so.bpmn.core;
 
 import java.io.Serializable;
+import org.onap.so.utils.TargetEntities;
 
 /**
  * An object that represents a workflow exception.
@@ -32,6 +33,7 @@ public class WorkflowException implements Serializable {
     private final int errorCode;
     private final String errorMessage;
     private final String workStep;
+    private TargetEntities extSystemErrorSource;
 
     /**
      * Constructor
@@ -47,11 +49,29 @@ public class WorkflowException implements Serializable {
         workStep = "*";
     }
 
+    public WorkflowException(String processKey, int errorCode, String errorMessage,
+            TargetEntities extSystemErrorSource) {
+        this.processKey = processKey;
+        this.errorCode = errorCode;
+        this.errorMessage = errorMessage;
+        workStep = "*";
+        this.extSystemErrorSource = extSystemErrorSource;
+    }
+
     public WorkflowException(String processKey, int errorCode, String errorMessage, String workStep) {
         this.processKey = processKey;
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
         this.workStep = workStep;
+    }
+
+    public WorkflowException(String processKey, int errorCode, String errorMessage, String workStep,
+            TargetEntities extSystemErrorSource) {
+        this.processKey = processKey;
+        this.errorCode = errorCode;
+        this.errorMessage = errorMessage;
+        this.workStep = workStep;
+        this.extSystemErrorSource = extSystemErrorSource;
     }
 
     /**
@@ -82,12 +102,17 @@ public class WorkflowException implements Serializable {
         return workStep;
     }
 
+    public TargetEntities getExtSystemErrorSource() {
+        return extSystemErrorSource;
+    }
+
     /**
      * Returns a string representation of this object.
      */
     @Override
     public String toString() {
         return getClass().getSimpleName() + "[processKey=" + getProcessKey() + ",errorCode=" + getErrorCode()
-                + ",errorMessage=" + getErrorMessage() + ",workStep=" + getWorkStep() + "]";
+                + ",errorMessage=" + getErrorMessage() + ",workStep=" + getWorkStep() + ",extSystemErrorSource="
+                + extSystemErrorSource + "]";
     }
 }

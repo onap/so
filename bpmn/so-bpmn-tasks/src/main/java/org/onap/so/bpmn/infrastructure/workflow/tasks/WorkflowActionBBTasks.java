@@ -312,7 +312,6 @@ public class WorkflowActionBBTasks {
             }
 
             workflowActionBBFailure.updateRequestErrorStatusMessage(execution);
-
             if (rollbackFlows.isEmpty())
                 execution.setVariable("isRollbackNeeded", false);
             else

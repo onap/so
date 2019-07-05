@@ -65,6 +65,7 @@ import org.onap.so.client.sniro.beans.ServiceInfo;
 import org.onap.so.client.sniro.beans.SniroManagerRequest;
 import org.onap.so.client.sniro.beans.SubscriberInfo;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
+import org.onap.so.utils.TargetEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -160,14 +161,15 @@ public class SniroHomingV2 {
             logger.trace("Completed Sniro Homing Call Sniro");
         } catch (BpmnError e) {
             logger.error(EXCEPTION_OCCURRED, e);
-            exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(e.getErrorCode()), e.getMessage());
+            exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(e.getErrorCode()), e.getMessage(),
+                    TargetEntity.SNIRO);
         } catch (BadResponseException e) {
             logger.error(EXCEPTION_OCCURRED, e);
-            exceptionUtil.buildAndThrowWorkflowException(execution, 400, e.getMessage());
+            exceptionUtil.buildAndThrowWorkflowException(execution, 400, e.getMessage(), TargetEntity.SNIRO);
         } catch (Exception e) {
             logger.error(EXCEPTION_OCCURRED, e);
             exceptionUtil.buildAndThrowWorkflowException(execution, INTERNAL,
-                    "Internal Error - occurred while preparing sniro request: " + e.getMessage());
+                    "Internal Error - occurred while preparing sniro request: " + e.getMessage(), TargetEntity.SO);
         }
     }
 
@@ -211,14 +213,16 @@ public class SniroHomingV2 {
             logger.trace("Completed Sniro Homing Process Solution");
         } catch (BpmnError e) {
             logger.error(EXCEPTION_OCCURRED, e);
-            exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(e.getErrorCode()), e.getMessage());
+            exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(e.getErrorCode()), e.getMessage(),
+                    TargetEntity.SNIRO);
         } catch (BadResponseException e) {
             logger.error(EXCEPTION_OCCURRED, e);
-            exceptionUtil.buildAndThrowWorkflowException(execution, 400, e.getMessage());
+            exceptionUtil.buildAndThrowWorkflowException(execution, 400, e.getMessage(), TargetEntity.SNIRO);
         } catch (Exception e) {
             logger.error(EXCEPTION_OCCURRED, e);
             exceptionUtil.buildAndThrowWorkflowException(execution, INTERNAL,
-                    "Internal Error - occurred while processing sniro asynchronous response: " + e.getMessage());
+                    "Internal Error - occurred while processing sniro asynchronous response: " + e.getMessage(),
+                    TargetEntity.SO);
         }
     }
 

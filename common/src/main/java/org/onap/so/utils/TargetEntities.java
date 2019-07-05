@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,40 +20,6 @@
 
 package org.onap.so.utils;
 
-import java.util.EnumSet;
+public interface TargetEntities {
 
-public enum TargetEntity implements TargetEntities {
-    OPENSTACK_ADAPTER,
-    BPMN,
-    GRM,
-    AAI,
-    DMAAP,
-    POLICY,
-    CATALOG_DB,
-    REQUEST_DB,
-    VNF_ADAPTER,
-    SDNC_ADAPTER,
-    SNIRO,
-    SDC,
-    EXTERNAL,
-    MULTICLOUD,
-    OOF,
-    SDNC,
-    SO,
-    UNKNOWN,
-    OPENSTACK;
-
-    private static final String PREFIX = "SO";
-
-    public static EnumSet<TargetEntity> getSOInternalComponents() {
-        return EnumSet.of(OPENSTACK_ADAPTER, BPMN, CATALOG_DB, REQUEST_DB, VNF_ADAPTER, SDNC_ADAPTER);
-    }
-
-    @Override
-    public String toString() {
-        if (getSOInternalComponents().contains(this))
-            return TargetEntity.PREFIX + "." + this.name();
-        else
-            return this.name();
-    }
 }

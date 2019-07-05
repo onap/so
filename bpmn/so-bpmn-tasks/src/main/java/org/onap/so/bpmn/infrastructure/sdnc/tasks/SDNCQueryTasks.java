@@ -29,8 +29,10 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.exception.BBObjectNotFoundException;
+import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.SDNCVnfResources;
+import org.onap.so.utils.TargetEntity;
 import org.onap.so.client.orchestration.SDNCVfModuleResources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +41,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SDNCQueryTasks {
-
+    private static final Logger logger = LoggerFactory.getLogger(SDNCQueryTasks.class);
+    private static final String NO_RESPONSE_FROM_SDNC = "Error did not receive a response from SDNC.";
     public static final String SDNCQUERY_RESPONSE = "SDNCQueryResponse_";
     @Autowired
     private SDNCVnfResources sdncVnfResources;
@@ -63,8 +66,14 @@ public class SDNCQueryTasks {
             }
             String response = sdncVnfResources.queryVnf(genericVnf);
             execution.setVariable(SDNCQUERY_RESPONSE + genericVnf.getVnfId(), response);
+        } catch (BadResponseException ex) {
+            if (!ex.getMessage().equals(NO_RESPONSE_FROM_SDNC)) {
+                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SDNC);
+            } else {
+                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SO);
+            }
         } catch (Exception ex) {
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SO);
         }
     }
 
@@ -88,6 +97,12 @@ public class SDNCQueryTasks {
                 throw new Exception("Vf Module " + vfModule.getVfModuleId()
                         + " exists in gBuildingBlock but does not have a selflink value");
             }
+        } catch (BadResponseException ex) {
+            if (!ex.getMessage().equals(NO_RESPONSE_FROM_SDNC)) {
+                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SDNC);
+            } else {
+                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SO);
+            }
         } catch (Exception ex) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
@@ -109,10 +124,16 @@ public class SDNCQueryTasks {
             // If we see a bb object not found exception for something that is not a vf module id, then we should throw
             // the error as normal
             if (!ResourceKey.VF_MODULE_ID.equals(bbException.getResourceKey())) {
-                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, bbException);
+                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, bbException, TargetEntity.SO);
+            }
+        } catch (BadResponseException ex) {
+            if (!ex.getMessage().equals(NO_RESPONSE_FROM_SDNC)) {
+                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SDNC);
+            } else {
+                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SO);
             }
         } catch (Exception ex) {
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SO);
         }
     }
 }

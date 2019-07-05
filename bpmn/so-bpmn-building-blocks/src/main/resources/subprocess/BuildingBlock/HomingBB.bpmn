@@ -50,6 +50,7 @@ ex.processJavaException(execution)]]></bpmn2:script>
         <camunda:in source="asyncCorrelator" target="RCVWFMSG_correlator" />
         <camunda:in source="asyncTimeout" target="RCVWFMSG_timeout" />
         <camunda:out source="WorkflowResponse" target="asyncResponse" />
+        <camunda:in source="mso-request-id" target="mso-request-id" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_0qrwjzu</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_03cy5y5</bpmn2:outgoing>

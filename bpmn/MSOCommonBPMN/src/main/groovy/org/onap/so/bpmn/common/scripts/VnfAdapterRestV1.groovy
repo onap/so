@@ -40,7 +40,6 @@ import java.util.UUID
 
 
 
-
 class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
     private static final Logger logger = LoggerFactory.getLogger( VnfAdapterRestV1.class);
 
@@ -81,7 +80,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 				String msg = getProcessKey(execution) + ': no messageId in ' + requestType
 				logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 						ErrorCode.UnknownError.getValue());
-				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
+				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg, TargetEntity.SO)
 			}
 
 			execution.setVariable('VNFAResponse_CORRELATOR', messageId)
@@ -95,7 +94,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 				String msg = getProcessKey(execution) + ': no notificationUrl in ' + requestType
 				logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 						ErrorCode.UnknownError.getValue());
-				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
+				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg, TargetEntity.SO)
 			}
 
 			execution.setVariable(prefix + 'notificationUrl', notificationUrl)
@@ -109,7 +108,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 				String msg = getProcessKey(execution) + ': mso:adapters:vnf:rest:endpoint URN mapping is not defined'
 				logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 						ErrorCode.UnknownError.getValue());
-				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
+				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg, TargetEntity.SO)
 			}
 
 			while (vnfAdapterEndpoint.endsWith('/')) {
@@ -127,7 +126,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 					String msg = getProcessKey(execution) + ': no vnfId in ' + requestType
 					logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 							ErrorCode.UnknownError.getValue());
-					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
+					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg, TargetEntity.SO)
 				}
 
 				vnfAdapterMethod = 'POST'
@@ -140,7 +139,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 					String msg = getProcessKey(execution) + ': no vnfId in ' + requestType
 					logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 							ErrorCode.UnknownError.getValue());
-					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
+					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg, TargetEntity.SO)
 				}
 
 				String vfModuleId = getChildText(root, 'vfModuleId')
@@ -149,7 +148,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 					String msg = getProcessKey(execution) + ': no vfModuleId in ' + requestType
 					logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 							ErrorCode.UnknownError.getValue());
-					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
+					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg, TargetEntity.SO)
 				}
 
 				vnfAdapterMethod = 'PUT'
@@ -163,7 +162,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 					String msg = getProcessKey(execution) + ': no vnfId in ' + requestType
 					logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 							ErrorCode.UnknownError.getValue());
-					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
+					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg, TargetEntity.SO)
 				}
 
 				String vfModuleId = getChildText(root, 'vfModuleId')
@@ -172,7 +171,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 					String msg = getProcessKey(execution) + ': no vfModuleId in ' + requestType
 					logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 							ErrorCode.UnknownError.getValue());
-					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
+					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg, TargetEntity.SO)
 				}
 
 				vnfAdapterMethod = 'DELETE'
@@ -186,7 +185,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 					String msg = getProcessKey(execution) + ': no vfModuleRollback in ' + requestType
 					logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 							ErrorCode.UnknownError.getValue());
-					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
+					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg, TargetEntity.SO)
 				}
 
 				String vnfId = getChildText(vfModuleRollbackNode, 'vnfId')
@@ -195,7 +194,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 					String msg = getProcessKey(execution) + ': no vnfId in ' + requestType
 					logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 							ErrorCode.UnknownError.getValue());
-					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
+					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg, TargetEntity.SO)
 				}
 
 				String vfModuleId = getChildText(vfModuleRollbackNode, 'vfModuleId')
@@ -204,7 +203,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 					String msg = getProcessKey(execution) + ': no vfModuleId in ' + requestType
 					logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 							ErrorCode.UnknownError.getValue());
-					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
+					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg, TargetEntity.SO)
 				}
 
 				vnfAdapterMethod = 'DELETE'
@@ -225,7 +224,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 					String msg = getProcessKey(execution) + ': no volumeGroupId in ' + requestType
 					logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 							ErrorCode.UnknownError.getValue());
-					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
+					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg, TargetEntity.SO)
 				}
 
 				vnfAdapterMethod = 'PUT'
@@ -241,7 +240,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 					String msg = getProcessKey(execution) + ': no volumeGroupId in ' + requestType
 					logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 							ErrorCode.UnknownError.getValue());
-					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
+					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg, TargetEntity.SO)
 				}
 
 				vnfAdapterMethod = 'DELETE'
@@ -257,7 +256,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 					String msg = getProcessKey(execution) + ': no volumeGroupId in ' + requestType
 					logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 							ErrorCode.UnknownError.getValue());
-					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
+					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg, TargetEntity.SO)
 				}
 
 				vnfAdapterMethod = 'DELETE'
@@ -270,7 +269,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 				String msg = getProcessKey(execution) + ': Unsupported request type: ' + requestType
 				logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 						ErrorCode.UnknownError.getValue());
-				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
+				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg, TargetEntity.SO)
 			}
 
 			execution.setVariable(prefix + 'vnfAdapterMethod', vnfAdapterMethod)
@@ -307,7 +306,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 			logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 					ErrorCode.UnknownError.getValue());
 			logger.debug(msg)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg, TargetEntity.SO)
 		}
 	}
 
@@ -358,7 +357,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 				String msg = 'Unsupported HTTP method "' + vnfAdapterMethod + '" in ' + method + ": " + e
 				logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 						ErrorCode.UnknownError.getValue());
-				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
+				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg, TargetEntity.SO)
 			}
 
 			execution.setVariable(prefix + "vnfAdapterStatusCode", response.getStatus())
@@ -371,7 +370,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 			String msg = 'Caught exception in ' + method + ": " + e
 			logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
 					ErrorCode.UnknownError.getValue());
-			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg, TargetEntity.SO)
 		}
 	}
 
@@ -400,7 +399,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 			}
 		} catch (Exception e) {
 			logger.debug("Error encountered within VnfAdapterRest ProcessCallback method: {}", e.getMessage(), e)
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7020, "Error encountered within VnfAdapterRest ProcessCallback method")
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7020, "Error encountered within VnfAdapterRest ProcessCallback method", TargetEntity.SO)
 		}
 	}
 
@@ -419,10 +418,10 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 			String rolledBack = getChildText(root, "rolledBack")
 			rolledBack = rolledBack == null || rolledBack.isEmpty() ? "" : " rolledBack='" + rolledBack + "'"
 			exceptionUtil.buildWorkflowException(execution, 7020, "Received " + root.name() +
-				" from VnfAdapter:" + category + message + rolledBack);
+				" from VnfAdapter:" + category + message + rolledBack, TargetEntity.OPENSTACK);
 		} catch (Exception e) {
 			response = response == null || String.valueOf(response).isEmpty() ? "NONE" : response
-			exceptionUtil.buildWorkflowException(execution, 7020, "Received error from VnfAdapter: " + response)
+			exceptionUtil.buildWorkflowException(execution, 7020, "Received error from VnfAdapter: " + response, TargetEntity.OPENSTACK)
 		}
 	}
 
