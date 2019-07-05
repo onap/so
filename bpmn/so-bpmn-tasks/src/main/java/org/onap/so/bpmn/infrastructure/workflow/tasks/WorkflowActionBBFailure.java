@@ -26,6 +26,7 @@ import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
+import org.onap.so.constants.Status;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.slf4j.Logger;
@@ -37,6 +38,7 @@ import org.springframework.stereotype.Component;
 public class WorkflowActionBBFailure {
 
     private static final Logger logger = LoggerFactory.getLogger(WorkflowActionBBFailure.class);
+    public static final String ROLLBACK_TARGET_STATE = "rollbackTargetState";
     @Autowired
     private RequestsDbClient requestDbclient;
     @Autowired
@@ -89,6 +91,8 @@ public class WorkflowActionBBFailure {
                 rollbackErrorMsg = "Rollback has been completed successfully.";
                 request.setRollbackStatusMessage(rollbackErrorMsg);
                 execution.setVariable("RollbackErrorMessage", rollbackErrorMsg);
+                String rollbackTargetState = (String) execution.getVariable(ROLLBACK_TARGET_STATE);
+                request.setRequestStatus(rollbackTargetState);
             } else if (isRollbackFailure) {
                 Optional<String> rollbackErrorMsgOp = retrieveErrorMessage(execution);
                 if (rollbackErrorMsgOp.isPresent()) {
@@ -98,6 +102,7 @@ public class WorkflowActionBBFailure {
                 }
                 request.setRollbackStatusMessage(rollbackErrorMsg);
                 execution.setVariable("RollbackErrorMessage", rollbackErrorMsg);
+                request.setRequestStatus(Status.FAILED.toString());
             } else {
                 Optional<String> errorMsgOp = retrieveErrorMessage(execution);
                 if (errorMsgOp.isPresent()) {
@@ -107,6 +112,12 @@ public class WorkflowActionBBFailure {
                 }
                 request.setStatusMessage(errorMsg);
                 execution.setVariable("ErrorMessage", errorMsg);
+                String handlingCode = (String) execution.getVariable("handlingCode");
+                if ("Abort".equalsIgnoreCase(handlingCode)) {
+                    request.setRequestStatus(Status.ABORTED.toString());
+                } else {
+                    request.setRequestStatus(Status.FAILED.toString());
+                }
             }
             if (ebb != null && ebb.getBuildingBlock() != null) {
                 String flowStatus = "";
@@ -120,7 +131,6 @@ public class WorkflowActionBBFailure {
             }
 
             request.setProgress(Long.valueOf(100));
-            request.setRequestStatus("FAILED");
             request.setLastModifiedBy("CamundaBPMN");
             request.setEndTime(new Timestamp(System.currentTimeMillis()));
             requestDbclient.updateInfraActiveRequests(request);

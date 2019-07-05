@@ -38,6 +38,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
+import org.onap.so.constants.Status;
 import org.onap.so.db.catalog.beans.macro.RainyDayHandlerStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -207,6 +208,7 @@ public class ExecuteBuildlingBlockRainyDayTest extends BaseTest {
         executeBuildingBlockRainyDay.queryRainyDayTable(delegateExecution, true);
 
         assertEquals("Rollback", delegateExecution.getVariable("handlingCode"));
+        assertEquals(Status.ROLLED_BACK.toString(), delegateExecution.getVariable("rollbackTargetState"));
     }
 
     @Test
@@ -232,7 +234,35 @@ public class ExecuteBuildlingBlockRainyDayTest extends BaseTest {
         executeBuildingBlockRainyDay.queryRainyDayTable(delegateExecution, true);
 
         assertEquals("RollbackToAssigned", delegateExecution.getVariable("handlingCode"));
+        assertEquals(Status.ROLLED_BACK_TO_ASSIGNED.toString(), delegateExecution.getVariable("rollbackTargetState"));
     }
+
+    @Test
+    public void queryRainyDayTableRollbackToCreated() throws Exception {
+        customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
+        serviceInstance.getModelInfoServiceInstance().setServiceType("st1");
+        vnf.setVnfType("vnft1");
+        delegateExecution.setVariable("aLaCarte", true);
+        delegateExecution.setVariable("suppressRollback", false);
+        delegateExecution.setVariable("WorkflowExceptionCode", "7000");
+        RainyDayHandlerStatus rainyDayHandlerStatus = new RainyDayHandlerStatus();
+        rainyDayHandlerStatus.setErrorCode("7000");
+        rainyDayHandlerStatus.setFlowName("AssignServiceInstanceBB");
+        rainyDayHandlerStatus.setServiceType("st1");
+        rainyDayHandlerStatus.setVnfType("vnft1");
+        rainyDayHandlerStatus.setPolicy("RollbackToCreated");
+        rainyDayHandlerStatus.setWorkStep(ASTERISK);
+        rainyDayHandlerStatus.setSecondaryPolicy("Abort");
+
+        doReturn(rainyDayHandlerStatus).when(MOCK_catalogDbClient).getRainyDayHandlerStatus("AssignServiceInstanceBB",
+                "st1", "vnft1", "7000", "*", "errorMessage");
+
+        executeBuildingBlockRainyDay.queryRainyDayTable(delegateExecution, true);
+
+        assertEquals("RollbackToCreated", delegateExecution.getVariable("handlingCode"));
+        assertEquals(Status.ROLLED_BACK_TO_CREATED.toString(), delegateExecution.getVariable("rollbackTargetState"));
+    }
+
 
     @Test
     public void suppressRollbackTest() throws Exception {

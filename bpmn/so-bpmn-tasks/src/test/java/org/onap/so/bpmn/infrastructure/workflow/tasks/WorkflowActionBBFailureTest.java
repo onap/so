@@ -41,6 +41,7 @@ import org.mockito.Spy;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
+import org.onap.so.constants.Status;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 
 public class WorkflowActionBBFailureTest extends BaseTaskTest {
@@ -102,6 +103,24 @@ public class WorkflowActionBBFailureTest extends BaseTaskTest {
         workflowActionBBFailure.updateRequestStatusToFailed(execution);
         String errorMsg = (String) execution.getVariable("ErrorMessage");
         assertEquals("error in test case", errorMsg);
+        assertEquals(Status.FAILED.toString(), req.getRequestStatus());
+    }
+
+    @Test
+    public void updateRequestStatusToAborted() {
+        execution.setVariable("mso-request-id", "123");
+        execution.setVariable("isRollbackComplete", false);
+        execution.setVariable("isRollback", false);
+        execution.setVariable("handlingCode", "Abort");
+        InfraActiveRequests req = new InfraActiveRequests();
+        WorkflowException wfe = new WorkflowException("processKey123", 1, "error in test case");
+        execution.setVariable("WorkflowException", wfe);
+        doReturn(req).when(requestsDbClient).getInfraActiveRequestbyRequestId("123");
+        doNothing().when(requestsDbClient).updateInfraActiveRequests(isA(InfraActiveRequests.class));
+        workflowActionBBFailure.updateRequestStatusToFailed(execution);
+        String errorMsg = (String) execution.getVariable("ErrorMessage");
+        assertEquals("error in test case", errorMsg);
+        assertEquals(Status.ABORTED.toString(), req.getRequestStatus());
     }
 
     @Test
@@ -117,19 +136,52 @@ public class WorkflowActionBBFailureTest extends BaseTaskTest {
         workflowActionBBFailure.updateRequestStatusToFailed(execution);
         String errorMsg = (String) execution.getVariable("RollbackErrorMessage");
         assertEquals("error in rollback", errorMsg);
+        assertEquals(Status.FAILED.toString(), req.getRequestStatus());
     }
 
     @Test
-    public void updateRequestStatusToFailedRollbackCompleted() {
+    public void updateRequestStatusToRolledback() {
         execution.setVariable("mso-request-id", "123");
         execution.setVariable("isRollbackComplete", true);
         execution.setVariable("isRollback", true);
+        execution.setVariable("rollbackTargetState", "ROLLED_BACK");
         InfraActiveRequests req = new InfraActiveRequests();
         doReturn(req).when(requestsDbClient).getInfraActiveRequestbyRequestId("123");
         doNothing().when(requestsDbClient).updateInfraActiveRequests(isA(InfraActiveRequests.class));
         workflowActionBBFailure.updateRequestStatusToFailed(execution);
         String errorMsg = (String) execution.getVariable("RollbackErrorMessage");
         assertEquals("Rollback has been completed successfully.", errorMsg);
+        assertEquals(Status.ROLLED_BACK.toString(), req.getRequestStatus());
+    }
+
+    @Test
+    public void updateRequestStatusToRolledbackToAssigned() {
+        execution.setVariable("mso-request-id", "123");
+        execution.setVariable("isRollbackComplete", true);
+        execution.setVariable("isRollback", true);
+        execution.setVariable("rollbackTargetState", "ROLLED_BACK_TO_ASSIGNED");
+        InfraActiveRequests req = new InfraActiveRequests();
+        doReturn(req).when(requestsDbClient).getInfraActiveRequestbyRequestId("123");
+        doNothing().when(requestsDbClient).updateInfraActiveRequests(isA(InfraActiveRequests.class));
+        workflowActionBBFailure.updateRequestStatusToFailed(execution);
+        String errorMsg = (String) execution.getVariable("RollbackErrorMessage");
+        assertEquals("Rollback has been completed successfully.", errorMsg);
+        assertEquals(Status.ROLLED_BACK_TO_ASSIGNED.toString(), req.getRequestStatus());
+    }
+
+    @Test
+    public void updateRequestStatusToRolledbackToCreated() {
+        execution.setVariable("mso-request-id", "123");
+        execution.setVariable("isRollbackComplete", true);
+        execution.setVariable("isRollback", true);
+        execution.setVariable("rollbackTargetState", "ROLLED_BACK_TO_CREATED");
+        InfraActiveRequests req = new InfraActiveRequests();
+        doReturn(req).when(requestsDbClient).getInfraActiveRequestbyRequestId("123");
+        doNothing().when(requestsDbClient).updateInfraActiveRequests(isA(InfraActiveRequests.class));
+        workflowActionBBFailure.updateRequestStatusToFailed(execution);
+        String errorMsg = (String) execution.getVariable("RollbackErrorMessage");
+        assertEquals("Rollback has been completed successfully.", errorMsg);
+        assertEquals(Status.ROLLED_BACK_TO_CREATED.toString(), req.getRequestStatus());
     }
 
     @Test

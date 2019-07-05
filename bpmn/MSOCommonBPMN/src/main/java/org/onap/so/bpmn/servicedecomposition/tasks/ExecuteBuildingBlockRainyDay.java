@@ -30,6 +30,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
+import org.onap.so.constants.Status;
 import org.onap.so.db.catalog.beans.macro.RainyDayHandlerStatus;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;
@@ -47,6 +48,7 @@ public class ExecuteBuildingBlockRainyDay {
 
     private static final Logger logger = LoggerFactory.getLogger(ExecuteBuildingBlockRainyDay.class);
     public static final String HANDLING_CODE = "handlingCode";
+    public static final String ROLLBACK_TARGET_STATE = "rollbackTargetState";
 
     @Autowired
     private CatalogDbClient catalogDbClient;
@@ -166,6 +168,18 @@ public class ExecuteBuildingBlockRainyDay {
                 }
                 if (handlingCode.equals("RollbackToAssigned") && !aLaCarte) {
                     handlingCode = "Rollback";
+                }
+                if (handlingCode.startsWith("Rollback")) {
+                    String targetState = "";
+                    if (handlingCode.equalsIgnoreCase("RollbackToAssigned")) {
+                        targetState = Status.ROLLED_BACK_TO_ASSIGNED.toString();
+                    } else if (handlingCode.equalsIgnoreCase("RollbackToCreated")) {
+                        targetState = Status.ROLLED_BACK_TO_CREATED.toString();
+                    } else {
+                        targetState = Status.ROLLED_BACK.toString();
+                    }
+                    execution.setVariable(ROLLBACK_TARGET_STATE, targetState);
+                    logger.debug("Rollback target state is: {}", targetState);
                 }
             }
             logger.debug("RainyDayHandler Status Code is: {}", handlingCode);
