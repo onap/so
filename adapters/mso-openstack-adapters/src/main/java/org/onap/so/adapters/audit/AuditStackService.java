@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Copyright (C) 2019 IBM.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -71,10 +73,9 @@ public class AuditStackService {
 
     protected ExternalTaskClient createExternalTaskClient() throws Exception {
         ClientRequestInterceptor interceptor = createClientRequestInterceptor();
-        ExternalTaskClient client = ExternalTaskClient.create()
+        return ExternalTaskClient.create()
                 .baseUrl(env.getRequiredProperty("mso.workflow.endpoint")).maxTasks(1).addInterceptor(interceptor)
                 .asyncResponseTimeout(120000).backoffStrategy(new ExponentialBackoffStrategy(0, 0, 0)).build();
-        return client;
     }
 
     protected ClientRequestInterceptor createClientRequestInterceptor() {
@@ -84,9 +85,8 @@ public class AuditStackService {
         } catch (IllegalStateException | GeneralSecurityException e) {
             logger.error("Error Decrypting Password", e);
         }
-        ClientRequestInterceptor interceptor =
-                new BasicAuthProvider(env.getRequiredProperty("mso.config.cadi.aafId"), auth);
-        return interceptor;
+
+        return new BasicAuthProvider(env.getRequiredProperty("mso.config.cadi.aafId"), auth);
     }
 
     protected int getMaxClients() {
