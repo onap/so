@@ -43,8 +43,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class VnfmHelper {
 
-    @Autowired
     private ApplicationConfig applicationConfig;
+
+    @Autowired
+    public VnfmHelper(ApplicationConfig applicationConfig) {
+        this.applicationConfig = applicationConfig;
+    }
 
     /**
      *
