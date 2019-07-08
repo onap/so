@@ -843,8 +843,10 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             // Add version check
             // First - see if it's in the VnfResource record
             // if we have a vf Module - then we have to query to get the VnfResource record.
-            if (!oldWay && vf.getVnfResources() != null) {
-                vnfResource = vf.getVnfResources();
+            if (!oldWay) {
+                if (vf != null) {
+                    vnfResource = vf.getVnfResources();
+                }
                 if (vnfResource == null) {
                     logger.debug("Unable to find vnfResource will not error for now...");
                 }
