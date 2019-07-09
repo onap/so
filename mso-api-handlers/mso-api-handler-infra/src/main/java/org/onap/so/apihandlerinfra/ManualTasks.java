@@ -50,8 +50,6 @@ import org.onap.so.apihandlerinfra.tasksbeans.TaskRequestReference;
 import org.onap.so.apihandlerinfra.tasksbeans.TasksRequest;
 import org.onap.so.apihandlerinfra.tasksbeans.Value;
 import org.onap.so.apihandlerinfra.tasksbeans.Variables;
-import org.onap.so.constants.Status;
-import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.exceptions.ValidationException;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
@@ -94,7 +92,6 @@ public class ManualTasks {
 
         String requestId = requestContext.getProperty("requestId").toString();
         logger.info(LoggingAnchor.TWO, MessageEnum.APIH_GENERATED_REQUEST_ID.toString(), requestId);
-        long startTime = System.currentTimeMillis();
         logger.debug("requestId is: {}", requestId);
         TasksRequest taskRequest = null;
         String apiVersion = version.substring(1);
@@ -141,9 +138,6 @@ public class ManualTasks {
             throw validateException;
 
         }
-        // Create Request Record
-        InfraActiveRequests currentActiveReq =
-                msoRequest.createRequestObject(taskRequest, Action.completeTask, requestId, Status.PENDING, request);
 
         // Transform the request to Camunda-style Complete request
         Variables variablesForComplete = new Variables();
@@ -157,7 +151,7 @@ public class ManualTasks {
         variablesForComplete.setResponseValue(responseValue);
         variablesForComplete.setRequestorId(requestorIdValue);
 
-        String camundaJsonReq = null;
+        String camundaJsonReq;
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
@@ -176,9 +170,8 @@ public class ManualTasks {
             throw validateException;
         }
 
-        RequestClient requestClient = null;
-        HttpResponse response = null;
-        long subStartTime = System.currentTimeMillis();
+        RequestClient requestClient;
+        HttpResponse response;
         String requestUrl = taskUri + "/" + taskId + "/complete";
         try {
             requestClient = reqClientFactory.getRequestClient(requestUrl);
