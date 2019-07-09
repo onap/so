@@ -3,6 +3,8 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017-2019 AT&T Intellectual Property. All rights reserved.
+ *
+ * Copyright (C) 2019 IBM
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +40,8 @@ public class CreateInventoryTask {
     private static final String UNABLE_TO_WRITE_ALL_INVENTORY_TO_A_AI = "Unable to write all inventory to A&AI";
 
     private static final Logger logger = LoggerFactory.getLogger(CreateInventoryTask.class);
+
+    private static final String AAI_INVENTORY_FAILURE = "AAIInventoryFailure";
 
     @Autowired
     CreateAAIInventory createInventory;
@@ -75,7 +79,7 @@ public class CreateInventoryTask {
                 logger.debug("The External Task Id: {}  Successful", externalTask.getId());
             } else if (inventoryException) {
                 logger.debug("The External Task Id: {}  Failed, Retry not needed", externalTask.getId());
-                externalTaskService.handleBpmnError(externalTask, "AAIInventoryFailure");
+                externalTaskService.handleBpmnError(externalTask, AAI_INVENTORY_FAILURE);
             } else {
                 if (externalTask.getRetries() == null) {
                     logger.debug("The External Task Id: {}  Failed, Setting Retries to Default Start Value: {}",
@@ -84,7 +88,7 @@ public class CreateInventoryTask {
                             UNABLE_TO_WRITE_ALL_INVENTORY_TO_A_AI, getRetrySequence().length, 10000);
                 } else if (externalTask.getRetries() != null && externalTask.getRetries() - 1 == 0) {
                     logger.debug("The External Task Id: {}  Failed, All Retries Exhausted", externalTask.getId());
-                    externalTaskService.handleBpmnError(externalTask, "AAIInventoryFailure");
+                    externalTaskService.handleBpmnError(externalTask, AAI_INVENTORY_FAILURE);
                 } else {
                     logger.debug("The External Task Id: {}  Failed, Decrementing Retries: {} , Retry Delay: ",
                             externalTask.getId(), externalTask.getRetries() - 1,
@@ -97,13 +101,13 @@ public class CreateInventoryTask {
             }
         } else {
             logger.debug("The External Task Id: {}  Failed, No Audit Results Written", externalTask.getId());
-            externalTaskService.handleBpmnError(externalTask, "AAIInventoryFailure");
+            externalTaskService.handleBpmnError(externalTask, AAI_INVENTORY_FAILURE);
         }
     }
 
     private void setupMDC(ExternalTask externalTask) {
         try {
-            String msoRequestId = (String) externalTask.getVariable("mso-request-id");
+            String msoRequestId = externalTask.getVariable("mso-request-id");
             if (msoRequestId != null && !msoRequestId.isEmpty())
                 MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, msoRequestId);
         } catch (Exception e) {
