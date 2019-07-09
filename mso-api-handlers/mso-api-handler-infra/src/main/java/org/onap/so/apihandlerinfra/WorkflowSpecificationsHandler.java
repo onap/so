@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -91,13 +93,13 @@ public class WorkflowSpecificationsHandler {
         List<Workflow> workflows = catalogDbClient.findWorkflowByModelUUID(vnfModelVersionId);
 
         List<Workflow> nativeWorkflows = catalogDbClient.findWorkflowBySource(NATIVE_WORKFLOW);
-        if (nativeWorkflows != null && nativeWorkflows.size() != 0) {
+        if (nativeWorkflows != null && !nativeWorkflows.isEmpty()) {
             workflows.addAll(nativeWorkflows);
         }
 
         WorkflowSpecifications workflowSpecifications = mapWorkflowsToWorkflowSpecifications(workflows);
 
-        String jsonResponse = null;
+        String jsonResponse;
         try {
             ObjectMapper mapper = new ObjectMapper();
             jsonResponse = mapper.writeValueAsString(workflowSpecifications);
@@ -116,11 +118,11 @@ public class WorkflowSpecificationsHandler {
     }
 
     protected WorkflowSpecifications mapWorkflowsToWorkflowSpecifications(List<Workflow> workflows) {
-        if (workflows == null || workflows.size() == 0) {
+        if (workflows == null || workflows.isEmpty()) {
             return null;
         }
         WorkflowSpecifications workflowSpecifications = new WorkflowSpecifications();
-        List<WorkflowSpecificationList> workflowSpecificationList = new ArrayList<WorkflowSpecificationList>();
+        List<WorkflowSpecificationList> workflowSpecificationList = new ArrayList<>();
 
         for (Workflow workflow : workflows) {
             WorkflowSpecificationList workflowSpecificationListItem = new WorkflowSpecificationList();
@@ -153,10 +155,10 @@ public class WorkflowSpecificationsHandler {
 
     private List<ActivitySequence> buildActivitySequence(Workflow workflow) {
         List<WorkflowActivitySpecSequence> workflowActivitySpecSequences = workflow.getWorkflowActivitySpecSequence();
-        if (workflowActivitySpecSequences == null || workflowActivitySpecSequences.size() == 0) {
+        if (workflowActivitySpecSequences == null || workflowActivitySpecSequences.isEmpty()) {
             return null;
         }
-        List<ActivitySequence> activitySequences = new ArrayList<ActivitySequence>();
+        List<ActivitySequence> activitySequences = new ArrayList<>();
         for (WorkflowActivitySpecSequence workflowActivitySpecSequence : workflowActivitySpecSequences) {
             if (workflowActivitySpecSequence != null) {
                 ActivitySpec activitySpec = workflowActivitySpecSequence.getActivitySpec();
@@ -174,17 +176,17 @@ public class WorkflowSpecificationsHandler {
 
     private List<WorkflowInputParameter> buildWorkflowInputParameters(Workflow workflow) {
         List<WorkflowActivitySpecSequence> workflowActivitySpecSequences = workflow.getWorkflowActivitySpecSequence();
-        if (workflowActivitySpecSequences == null || workflowActivitySpecSequences.size() == 0) {
-            return new ArrayList<WorkflowInputParameter>();
+        if (workflowActivitySpecSequences == null || workflowActivitySpecSequences.isEmpty()) {
+            return new ArrayList<>();
         }
-        Map<String, WorkflowInputParameter> workflowInputParameterMap = new HashMap<String, WorkflowInputParameter>();
+        Map<String, WorkflowInputParameter> workflowInputParameterMap = new HashMap<>();
         for (WorkflowActivitySpecSequence workflowActivitySpecSequence : workflowActivitySpecSequences) {
             if (workflowActivitySpecSequence != null) {
                 ActivitySpec activitySpec = workflowActivitySpecSequence.getActivitySpec();
                 if (activitySpec != null) {
                     List<ActivitySpecUserParameters> activitySpecUserParameters =
                             activitySpec.getActivitySpecUserParameters();
-                    if (activitySpecUserParameters != null && activitySpecUserParameters.size() != 0) {
+                    if (activitySpecUserParameters != null && !activitySpecUserParameters.isEmpty()) {
                         for (ActivitySpecUserParameters activitySpecUserParameter : activitySpecUserParameters) {
                             UserParameters userParameter = activitySpecUserParameter.getUserParameters();
                             if (userParameter != null) {
@@ -199,7 +201,7 @@ public class WorkflowSpecificationsHandler {
         }
 
         if (workflowInputParameterMap.size() == 0) {
-            return new ArrayList<WorkflowInputParameter>();
+            return new ArrayList<>();
         }
         List<WorkflowInputParameter> workflowInputParameterList =
                 workflowInputParameterMap.values().stream().collect(Collectors.toList());
@@ -220,7 +222,7 @@ public class WorkflowSpecificationsHandler {
     private List<Validation> buildValidationList(UserParameters userParameter) {
         List<Validation> validationList = null;
         if (userParameter.getMaxLength() != null || userParameter.getAllowableChars() != null) {
-            validationList = new ArrayList<Validation>();
+            validationList = new ArrayList<>();
             Validation validation = new Validation();
             if (userParameter.getMaxLength() != null) {
                 validation.setMaxLength(userParameter.getMaxLength().toString());

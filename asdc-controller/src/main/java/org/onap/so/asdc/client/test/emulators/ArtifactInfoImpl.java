@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -59,7 +61,7 @@ public class ArtifactInfoImpl implements IArtifactInfo {
     }
 
     public static List<ArtifactInfoImpl> convertToArtifactInfoImpl(List<IArtifactInfo> list) {
-        List<ArtifactInfoImpl> ret = new ArrayList<ArtifactInfoImpl>();
+        List<ArtifactInfoImpl> ret = new ArrayList<>();
         if (list != null) {
             for (IArtifactInfo artifactInfo : list) {
                 ret.add(new ArtifactInfoImpl(artifactInfo));
@@ -159,7 +161,7 @@ public class ArtifactInfoImpl implements IArtifactInfo {
 
     @Override
     public List<IArtifactInfo> getRelatedArtifacts() {
-        List<IArtifactInfo> temp = new ArrayList<IArtifactInfo>();
+        List<IArtifactInfo> temp = new ArrayList<>();
         if (relatedArtifactsInfo != null) {
             temp.addAll(relatedArtifactsImpl);
         }

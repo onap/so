@@ -75,8 +75,7 @@ public class ModelDistributionRequest {
     @Transactional
     public Response updateModelDistributionStatus(String requestJSON, @PathParam("version") String version,
             @PathParam("distributionId") String distributionId) throws ApiException {
-        long startTime = System.currentTimeMillis();
-        Distribution distributionRequest = null;
+        Distribution distributionRequest;
 
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -146,7 +145,7 @@ public class ModelDistributionRequest {
         }
         re.setServiceException(se);
 
-        String requestErrorStr = null;
+        String requestErrorStr;
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.setSerializationInclusion(Include.NON_DEFAULT);
