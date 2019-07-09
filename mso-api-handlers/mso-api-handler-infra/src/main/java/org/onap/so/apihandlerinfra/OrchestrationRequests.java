@@ -165,13 +165,11 @@ public class OrchestrationRequests {
             @QueryParam("includeCloudRequest") boolean includeCloudRequest, @QueryParam(value = "format") String format)
             throws ApiException {
 
-        long startTime = System.currentTimeMillis();
-
         MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
 
-        List<InfraActiveRequests> activeRequests = null;
+        List<InfraActiveRequests> activeRequests;
 
-        GetOrchestrationListResponse orchestrationList = null;
+        GetOrchestrationListResponse orchestrationList;
         Map<String, List<String>> orchestrationMap;
         String apiVersion = version.substring(1);
 
@@ -222,12 +220,10 @@ public class OrchestrationRequests {
     public Response unlockOrchestrationRequest(String requestJSON, @PathParam("requestId") String requestId,
             @PathParam("version") String version) throws ApiException {
 
-        long startTime = System.currentTimeMillis();
         logger.debug("requestId is: {}", requestId);
-        ServiceInstancesRequest sir = null;
+        ServiceInstancesRequest sir;
 
-        InfraActiveRequests infraActiveRequest = null;
-        Request request = null;
+        InfraActiveRequests infraActiveRequest;
 
         try {
             ObjectMapper mapper = new ObjectMapper();
