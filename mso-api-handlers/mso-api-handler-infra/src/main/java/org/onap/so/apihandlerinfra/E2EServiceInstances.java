@@ -140,7 +140,7 @@ public class E2EServiceInstances {
 
         instanceIdMap.put("serviceId", serviceId);
 
-        return updateE2EserviceInstances(request, Action.updateInstance, instanceIdMap, version);
+        return updateE2EserviceInstances(request, Action.updateInstance, version);
     }
 
     /**
@@ -188,7 +188,7 @@ public class E2EServiceInstances {
 
         logger.debug("------------------scale begin------------------");
         instanceIdMap.put("serviceId", serviceId);
-        return scaleE2EserviceInstances(request, Action.scaleInstance, instanceIdMap, version);
+        return scaleE2EserviceInstances(request, Action.scaleInstance, version);
     }
 
     /**
@@ -251,8 +251,6 @@ public class E2EServiceInstances {
         RequestClient requestClient;
         HttpResponse response;
 
-        long subStartTime = System.currentTimeMillis();
-
         try {
             requestClient = requestClientFactory.getRequestClient(workflowUrl);
 
@@ -291,8 +289,7 @@ public class E2EServiceInstances {
         ResponseHandler respHandler = new ResponseHandler(response, requestClient.getType());
         int bpelStatus = respHandler.getStatus();
 
-        return beplStatusUpdate(requestId, startTime, requestClient, respHandler, bpelStatus, action, instanceIdMap,
-                version);
+        return beplStatusUpdate(requestClient, respHandler, bpelStatus, version);
     }
 
     private Response getE2EServiceInstance(String serviceId, String operationId, String version) {
@@ -300,8 +297,6 @@ public class E2EServiceInstances {
         GetE2EServiceInstanceResponse e2eServiceResponse = new GetE2EServiceInstanceResponse();
 
         String apiVersion = version.substring(1);
-
-        long startTime = System.currentTimeMillis();
 
         OperationStatus operationStatus;
 
@@ -392,7 +387,6 @@ public class E2EServiceInstances {
         RequestClient requestClient;
         HttpResponse response;
 
-        long subStartTime = System.currentTimeMillis();
         try {
             requestClient = requestClientFactory.getRequestClient(recipeLookupResult.getOrchestrationURI());
 
@@ -436,12 +430,10 @@ public class E2EServiceInstances {
         ResponseHandler respHandler = new ResponseHandler(response, requestClient.getType());
         int bpelStatus = respHandler.getStatus();
 
-        return beplStatusUpdate(requestId, startTime, requestClient, respHandler, bpelStatus, action, instanceIdMap,
-                version);
+        return beplStatusUpdate(requestClient, respHandler, bpelStatus, version);
     }
 
-    private Response updateE2EserviceInstances(String requestJSON, Action action, HashMap<String, String> instanceIdMap,
-            String version) throws ApiException {
+    private Response updateE2EserviceInstances(String requestJSON, Action action, String version) throws ApiException {
 
         String requestId = UUID.randomUUID().toString();
         long startTime = System.currentTimeMillis();
@@ -513,7 +505,6 @@ public class E2EServiceInstances {
         RequestClient requestClient;
         HttpResponse response;
 
-        long subStartTime = System.currentTimeMillis();
         String sirRequestJson = convertToString(sir);
 
         try {
@@ -554,8 +545,7 @@ public class E2EServiceInstances {
         ResponseHandler respHandler = new ResponseHandler(response, requestClient.getType());
         int bpelStatus = respHandler.getStatus();
 
-        return beplStatusUpdate(serviceId, startTime, requestClient, respHandler, bpelStatus, action, instanceIdMap,
-                version);
+        return beplStatusUpdate(requestClient, respHandler, bpelStatus, version);
     }
 
     private Response processE2EserviceInstances(String requestJSON, Action action,
@@ -629,7 +619,6 @@ public class E2EServiceInstances {
         RequestClient requestClient;
         HttpResponse response;
 
-        long subStartTime = System.currentTimeMillis();
         String sirRequestJson = convertToString(sir);
 
         try {
@@ -668,12 +657,10 @@ public class E2EServiceInstances {
         ResponseHandler respHandler = new ResponseHandler(response, requestClient.getType());
         int bpelStatus = respHandler.getStatus();
 
-        return beplStatusUpdate(requestId, startTime, requestClient, respHandler, bpelStatus, action, instanceIdMap,
-                version);
+        return beplStatusUpdate(requestClient, respHandler, bpelStatus, version);
     }
 
-    private Response scaleE2EserviceInstances(String requestJSON, Action action, HashMap<String, String> instanceIdMap,
-            String version) throws ApiException {
+    private Response scaleE2EserviceInstances(String requestJSON, Action action, String version) throws ApiException {
 
         String requestId = UUID.randomUUID().toString();
         long startTime = System.currentTimeMillis();
@@ -728,7 +715,6 @@ public class E2EServiceInstances {
         RequestClient requestClient;
         HttpResponse response;
 
-        long subStartTime = System.currentTimeMillis();
         try {
             requestClient = requestClientFactory.getRequestClient(recipeLookupResult.getOrchestrationURI());
 
@@ -772,12 +758,10 @@ public class E2EServiceInstances {
         ResponseHandler respHandler = new ResponseHandler(response, requestClient.getType());
         int bpelStatus = respHandler.getStatus();
 
-        return beplStatusUpdate(requestId, startTime, requestClient, respHandler, bpelStatus, action, instanceIdMap,
-                version);
+        return beplStatusUpdate(requestClient, respHandler, bpelStatus, version);
     }
 
-    private Response beplStatusUpdate(String serviceId, long startTime, RequestClient requestClient,
-            ResponseHandler respHandler, int bpelStatus, Action action, HashMap<String, String> instanceIdMap,
+    private Response beplStatusUpdate(RequestClient requestClient, ResponseHandler respHandler, int bpelStatus,
             String version) {
 
         String apiVersion = version.substring(1);
@@ -876,7 +860,6 @@ public class E2EServiceInstances {
 
         ServiceInstancesRequest sir = new ServiceInstancesRequest();
 
-        String returnString = null;
         RequestDetails requestDetails = new RequestDetails();
         ModelInfo modelInfo = new ModelInfo();
 
