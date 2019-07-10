@@ -29,7 +29,7 @@ public class RollbackData implements Serializable {
     private static final long serialVersionUID = -4811571658272937718L;
 
     private String requestId;
-    private Map<String, String> additionalData = new HashMap<String, String>();
+    private Map<String, String> additionalData = new HashMap<>();
 
 
     public String getRequestId() {

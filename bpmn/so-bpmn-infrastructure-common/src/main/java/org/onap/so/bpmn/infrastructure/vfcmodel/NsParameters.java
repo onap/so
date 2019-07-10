@@ -37,7 +37,7 @@ public class NsParameters {
 
     private List<LocationConstraint> locationConstraints;
 
-    private Map<String, Object> additionalParamForNs = new HashMap<String, Object>();
+    private Map<String, Object> additionalParamForNs = new HashMap<>();
 
     /**
      * @return Returns the locationConstraints.
