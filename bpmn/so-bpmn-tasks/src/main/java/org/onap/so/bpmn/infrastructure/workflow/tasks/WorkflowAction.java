@@ -6,6 +6,8 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
+ * Modifications Copyright (c) 2019 IBM
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -358,10 +360,10 @@ public class WorkflowAction {
                     }
                 }
             }
-
-            if (flowsToExecute.isEmpty()) {
+            
+            if(flowsToExecute!= null && flowsToExecute.isEmpty()) {	
                 throw new IllegalStateException("Macro did not come up with a valid execution path.");
-            }
+            }           
             List<String> flowNames = new ArrayList<>();
             logger.info("List of BuildingBlocks to execute:");
             for (ExecuteBuildingBlock ebb : flowsToExecute) {
