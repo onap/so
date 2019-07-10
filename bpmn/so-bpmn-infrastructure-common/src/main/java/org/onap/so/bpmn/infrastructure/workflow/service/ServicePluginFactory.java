@@ -26,6 +26,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Properties;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
@@ -73,13 +75,9 @@ import org.springframework.web.util.UriUtils;
 
 public class ServicePluginFactory {
 
-    // SOTN calculate route
-    public static final String OOF_DEFAULT_ENDPOINT = "http://192.168.1.223:8443/oof/sotncalc";
-
-    public static final String THIRD_SP_DEFAULT_ENDPOINT = "http://192.168.1.223:8443/sp/resourcemgr/querytps";
-
-    public static final String INVENTORY_OSS_DEFAULT_ENDPOINT = "http://192.168.1.199:8443/oss/inventory";
-
+    private static String OOF_DEFAULT_ENDPOINT;
+    private static String THIRD_SP_DEFAULT_ENDPOINT;
+    private static String INVENTORY_OSS_DEFAULT_ENDPOINT;
     private static final int DEFAULT_TIME_OUT = 60000;
 
     static JsonUtils jsonUtil = new JsonUtils();
@@ -88,6 +86,17 @@ public class ServicePluginFactory {
 
     private static ServicePluginFactory instance;
 
+    static {
+        try (InputStream is = ClassLoader.class.getResourceAsStream("/application.properties")) {
+            Properties prop = new Properties();
+            prop.load(is);
+            OOF_DEFAULT_ENDPOINT = prop.getProperty("oof.default.endpoint");
+            THIRD_SP_DEFAULT_ENDPOINT = prop.getProperty("third.sp.default.endpoint");
+            INVENTORY_OSS_DEFAULT_ENDPOINT = prop.getProperty("inventory.oss.default.endpoint");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static synchronized ServicePluginFactory getInstance() {
         if (null == instance) {
@@ -802,4 +811,5 @@ public class ServicePluginFactory {
             }
         }
     }
+
 }
