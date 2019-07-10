@@ -95,8 +95,7 @@ public class WorkflowActionBBTest extends BaseBPMNTest {
         Map<String, String> map = new HashMap<>();
         map.put("handlingCode", "Abort");
 
-        doThrow(new BpmnError("7000", "TESTING ERRORS")).when(workflowActionBBFailure)
-                .abortCallErrorHandling();
+        doThrow(new BpmnError("7000", "TESTING ERRORS")).when(workflowActionBBFailure).abortCallErrorHandling();
         mockSubprocess("ExecuteBuildingBlock", "Mocked ExecuteBuildingBlock", "GenericStub", map);
 
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("WorkflowActionBB", variables);
