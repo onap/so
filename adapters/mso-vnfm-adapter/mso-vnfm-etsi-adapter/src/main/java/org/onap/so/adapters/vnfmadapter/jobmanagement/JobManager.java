@@ -2,6 +2,8 @@
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2019 Nordix Foundation.
  * ================================================================================
+ * Modification Copyright (C) 2019 IBM.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -125,14 +127,14 @@ public class JobManager {
             final InlineResponse200 operationResponse) {
         switch (vnfmOperation.getNotificationStatus()) {
             case NOTIFICATION_PROCESSING_NOT_REQUIRED:
-            default:
-                return OperationStateEnum.fromValue(operationResponse.getOperationState().getValue());
             case NOTIFICATION_PROCESSING_PENDING:
                 return org.onap.vnfmadapter.v1.model.OperationStateEnum.PROCESSING;
             case NOTIFICATION_PROCEESING_SUCCESSFUL:
                 return org.onap.vnfmadapter.v1.model.OperationStateEnum.COMPLETED;
             case NOTIFICATION_PROCESSING_FAILED:
                 return org.onap.vnfmadapter.v1.model.OperationStateEnum.FAILED;
+            default:
+                return OperationStateEnum.fromValue(operationResponse !=null ? operationResponse.getOperationState().getValue():null);
         }
     }
 
