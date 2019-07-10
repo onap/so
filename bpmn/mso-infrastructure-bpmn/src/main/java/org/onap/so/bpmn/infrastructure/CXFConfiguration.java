@@ -52,8 +52,6 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 @Configuration
 public class CXFConfiguration {
 
-    private static final Logger logger = LoggerFactory.getLogger(CXFConfiguration.class);
-
     @Autowired
     private Bus bus;
 

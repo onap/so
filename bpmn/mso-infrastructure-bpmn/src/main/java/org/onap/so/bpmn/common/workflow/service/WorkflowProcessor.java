@@ -45,8 +45,7 @@ public class WorkflowProcessor extends ProcessEngineAwareService {
     @Async
     public void startProcess(String processKey, VariableMapImpl variableMap) {
 
-        long startTime = System.currentTimeMillis();
-        Map<String, Object> inputVariables = null;
+        Map<String, Object> inputVariables;
         String processInstanceId = null;
         try {
             inputVariables = getInputVariables(variableMap);

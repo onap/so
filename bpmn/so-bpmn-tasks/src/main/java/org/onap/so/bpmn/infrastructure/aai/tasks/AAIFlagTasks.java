@@ -35,7 +35,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AAIFlagTasks {
-    private static final Logger logger = LoggerFactory.getLogger(AAIFlagTasks.class);
 
     @Autowired
     private AAIVnfResources aaiVnfResources;
