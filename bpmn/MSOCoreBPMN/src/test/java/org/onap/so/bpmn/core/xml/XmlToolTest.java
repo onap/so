@@ -28,7 +28,7 @@ public class XmlToolTest {
     private String encodeResponseNamespace =
             "<Response xmlns:ns2=\"http://ecomp.att.com/mso/request/types/v1\">good</Response>";
     private String attribute = "<Response>good&\"bad\"</Response>";
-    private String updatedAttribute = "&lt;Response&gt;good&amp;&quot;bad&quot;&lt;/Response&gt;";
+    // private String updatedAttribute = "&lt;Response&gt;good&amp;&quot;bad&quot;&lt;/Response&gt;";
 
     private String content = "<dummy><configuration-event>" + "<event-type>test</event-type>"
             + "<event-correlator-type>test</event-correlator-type>" + "<event-correlator>123</event-correlator>"
