@@ -196,11 +196,9 @@ public class ASDCController {
      * @throws IOException In case of issues when trying to load the key file
      */
     public void initASDC() throws ASDCControllerException {
-        String event = "Initialize the ASDC Controller";
-        logger.debug(event);
-        if (this.getControllerStatus() != ASDCControllerStatus.STOPPED) {
-            String endEvent = "The controller is already initialized, call the closeASDC method first";
-            throw new ASDCControllerException(endEvent);
+        logger.debug("Initialize the ASDC Controller");
+        if (!isStopped()) {
+            throw new ASDCControllerException("The controller is already initialized, call the closeASDC method first");
         }
 
         if (asdcConfig != null) {
@@ -238,6 +236,13 @@ public class ASDCController {
     }
 
     /**
+     * @return true if controller is stopped
+     */
+    public boolean isStopped() {
+        return this.getControllerStatus() == ASDCControllerStatus.STOPPED;
+    }
+
+    /**
      * This method closes the ASDC Controller and the ASDC Client.
      *
      * @throws ASDCControllerException It throws an exception if the ASDC Client cannot be closed because it's currently
@@ -245,7 +250,7 @@ public class ASDCController {
      */
     public void closeASDC() throws ASDCControllerException {
 
-        if (this.getControllerStatus() == ASDCControllerStatus.BUSY) {
+        if (isBusy()) {
             throw new ASDCControllerException("Cannot close the ASDC controller as it's currently in BUSY state");
         }
         if (this.distributionClient != null) {
@@ -259,6 +264,13 @@ public class ASDCController {
 
         }
         this.changeControllerStatus(ASDCControllerStatus.STOPPED);
+    }
+
+    /**
+     * @return true if controller is currently processing notification
+     */
+    public boolean isBusy() {
+        return this.getControllerStatus() == ASDCControllerStatus.BUSY;
     }
 
     protected boolean checkResourceAlreadyDeployed(ResourceStructure resource, boolean serviceDeployed)
@@ -713,12 +725,6 @@ public class ASDCController {
 
         try {
             this.processCsarServiceArtifacts(iNotif, toscaResourceStructure);
-            IArtifactInfo iArtifact = toscaResourceStructure.getToscaArtifact();
-            String filePath =
-                    msoConfigPath + "/ASDC/" + iArtifact.getArtifactVersion() + "/" + iArtifact.getArtifactName();
-            File csarFile = new File(filePath);
-
-
             if (isCsarAlreadyDeployed(iNotif, toscaResourceStructure)) {
                 return;
             }

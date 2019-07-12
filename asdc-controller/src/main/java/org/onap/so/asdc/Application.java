@@ -35,7 +35,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableJpaRepositories("org.onap.so.db.catalog.data.repository")
 public class Application {
     private static final Logger logger = LoggerFactory.getLogger(Application.class);
-    private static final String MSO_CONFIG_PATH = "mso.config.path";
     private static final String LOGS_DIR = "logs_dir";
 
     @Autowired
@@ -45,11 +44,6 @@ public class Application {
         if (System.getProperty(LOGS_DIR) == null) {
             System.getProperties().setProperty(LOGS_DIR, "./logs/asdc/");
         }
-    }
-
-    private static void setConfigPath() {
-        if (System.getProperty(MSO_CONFIG_PATH) == null)
-            System.getProperties().setProperty(MSO_CONFIG_PATH, ".");
     }
 
     @PostConstruct

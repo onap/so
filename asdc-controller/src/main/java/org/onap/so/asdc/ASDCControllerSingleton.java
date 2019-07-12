@@ -38,21 +38,26 @@ import java.security.SecureRandom;
 @Profile("!test")
 public class ASDCControllerSingleton {
 
+    private static final Logger logger = LoggerFactory.getLogger(ASDCControllerSingleton.class);
+    private final ASDCController asdcController;
 
     @Autowired
-    private ASDCController asdcController;
-    private static Logger logger = LoggerFactory.getLogger(ASDCControllerSingleton.class);
-
-
+    public ASDCControllerSingleton(final ASDCController asdcController) {
+        this.asdcController = asdcController;
+    }
 
     @Scheduled(fixedRate = 50000)
     public void periodicControllerTask() {
         try {
-            int randomNumber = new SecureRandom().nextInt(Integer.MAX_VALUE);
+            final int randomNumber = new SecureRandom().nextInt(Integer.MAX_VALUE);
             asdcController.setControllerName("mso-controller" + randomNumber);
-            asdcController.initASDC();
-        } catch (ASDCControllerException e) {
-            logger.error("Exception occurred", e);
+            if (asdcController.isStopped()) {
+                logger.info("{} not running will try to initialize it, currrent status: {}",
+                        asdcController.getClass().getName(), asdcController.getControllerStatus());
+                asdcController.initASDC();
+            }
+        } catch (final ASDCControllerException controllerException) {
+            logger.error("Exception occurred", controllerException);
         }
     }
 
@@ -60,8 +65,8 @@ public class ASDCControllerSingleton {
     private void terminate() {
         try {
             asdcController.closeASDC();
-        } catch (ASDCControllerException e) {
-            logger.error("Exception occurred", e);
+        } catch (final ASDCControllerException controllerException) {
+            logger.error("Exception occurred", controllerException);
         }
     }
 

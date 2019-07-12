@@ -24,7 +24,9 @@ import javax.annotation.PostConstruct;
 import javax.ws.rs.ApplicationPath;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.onap.so.asdc.client.test.rest.ASDCRestInterface;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.jaxrs.listing.ApiListingResource;
 import io.swagger.jaxrs.listing.SwaggerSerializers;
@@ -33,6 +35,12 @@ import io.swagger.jaxrs.listing.SwaggerSerializers;
 @ApplicationPath("/test")
 public class JerseyConfiguration extends ResourceConfig {
 
+    private Environment environment;
+
+    @Autowired
+    public JerseyConfiguration(final Environment environment) {
+        this.environment = environment;
+    }
 
     @PostConstruct
     public void setUp() {
@@ -40,10 +48,10 @@ public class JerseyConfiguration extends ResourceConfig {
         register(ApiListingResource.class);
         register(SwaggerSerializers.class);
 
-        BeanConfig beanConfig = new BeanConfig();
+        final BeanConfig beanConfig = new BeanConfig();
         beanConfig.setVersion("1.0.2");
         beanConfig.setSchemes(new String[] {"http"});
-        beanConfig.setHost("localhost:8080");
+        beanConfig.setHost("localhost:" + environment.getProperty("server.port"));
         beanConfig.setBasePath("/mso");
         beanConfig.setResourcePackage("org.onap.so.apihandlerinfra");
         beanConfig.setPrettyPrint(true);

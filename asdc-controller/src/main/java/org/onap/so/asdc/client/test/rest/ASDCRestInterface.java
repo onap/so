@@ -23,7 +23,6 @@
 package org.onap.so.asdc.client.test.rest;
 
 
-import java.io.IOException;
 import javax.transaction.Transactional;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -31,15 +30,14 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.onap.so.logger.LoggingAnchor;
+import javax.ws.rs.core.Response.Status;
 import org.onap.so.asdc.client.ASDCController;
-import org.onap.so.asdc.client.exceptions.ASDCControllerException;
-import org.onap.so.asdc.client.exceptions.ASDCParametersException;
 import org.onap.so.asdc.client.test.emulators.DistributionClientEmulator;
-import org.onap.so.asdc.client.test.emulators.NotificationDataImpl;
 import org.onap.so.asdc.client.test.emulators.JsonStatusData;
+import org.onap.so.asdc.client.test.emulators.NotificationDataImpl;
 import org.onap.so.asdc.installer.heat.ToscaResourceInstaller;
 import org.onap.so.logger.ErrorCode;
+import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,13 +46,15 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
- * This is a TEST only rest interface. It is not used in production, it is used to aid in testing the ASDC service on
- * jboss without the need to be connected to the ASDC service broker. It starts the test at the treatNotification step
- * and simulates both the notification step as well as the artifact download step.
+ * This is a TEST only rest interface. It is not used in production, it is used to aid in testing the ASDC service
+ * without the need to be connected to the ASDC service broker. It starts the test at the treatNotification step and
+ * simulates both the notification step as well as the artifact download step.
  * <p>
- * i.e. http://localhost:8080/asdc/treatNotification/v1
+ * i.e. http://localhost:8085/test/treatNotification/v1
  * <p>
- * i.e. http://localhost:8080/asdc/statusData/v1
+ * i.e. http://localhost:8085/test/statusData/v1
+ * 
+ * This interface is also used in CSIT to simulate a distribution of a service, without using SDC
  *
  * @author jm5423
  */
@@ -66,48 +66,75 @@ public class ASDCRestInterface {
 
     private static final Logger logger = LoggerFactory.getLogger(ASDCRestInterface.class);
 
-    @Autowired
-    private ASDCController asdcController;
+    private final ASDCController asdcController;
+
+    private final ToscaResourceInstaller toscaInstaller;
 
     @Autowired
-    private ToscaResourceInstaller toscaInstaller;
+    public ASDCRestInterface(final ASDCController asdcController, final ToscaResourceInstaller toscaInstaller) {
+        this.asdcController = asdcController;
+        this.toscaInstaller = toscaInstaller;
+    }
 
     @POST
     @Path("/treatNotification/v1")
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response invokeASDCService(NotificationDataImpl request,
-            @HeaderParam("resource-location") String resourceLocation)
-            throws ASDCControllerException, ASDCParametersException, IOException {
-        DistributionClientEmulator distributionClientEmulator = new DistributionClientEmulator(resourceLocation);
+    public Response invokeASDCService(final NotificationDataImpl request,
+            @HeaderParam("resource-location") final String resourceLocation) {
 
-        asdcController.setControllerName("asdc-controller1");
-        asdcController.setDistributionClient(distributionClientEmulator);
-        asdcController.initASDC();
-        asdcController.treatNotification(request);
-        asdcController.closeASDC();
-        return Response.status(200).build();
+        try {
+            logger.info("Received message : {}", request);
+            logger.info("resource-location : {}", resourceLocation);
+            final DistributionClientEmulator distributionClientEmulator =
+                    getDistributionClientEmulator(resourceLocation);
+
+            asdcController.setControllerName("asdc-controller1");
+            asdcController.setDistributionClient(distributionClientEmulator);
+
+            if (asdcController.isStopped()) {
+                logger.info("{} not running will try to initialize it, currrent status: {}",
+                        asdcController.getClass().getName(), asdcController.getControllerStatus());
+                asdcController.initASDC();
+            }
+
+            asdcController.treatNotification(request);
+
+            if (!asdcController.isBusy()) {
+                asdcController.closeASDC();
+            }
+
+            return Response.status(Status.OK).build();
+        } catch (final Exception exception) {
+            logger.error("Unable to process notification request", exception);
+            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
+
+    private DistributionClientEmulator getDistributionClientEmulator(final String resourceLocation) {
+        return new DistributionClientEmulator(resourceLocation);
     }
 
     @POST
     @Path("/statusData/v1")
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response invokeASDCStatusData(String request) {
+    public Response invokeASDCStatusData(final String request) {
 
         try {
-            DistributionClientEmulator distributionClientEmulator =
-                    new DistributionClientEmulator("resource-examples/");
-            JsonStatusData statusData = JsonStatusData.instantiateNotifFromJsonFile("resource-examples/");
+            final DistributionClientEmulator distributionClientEmulator =
+                    getDistributionClientEmulator("resource-examples/");
+            final JsonStatusData statusData = JsonStatusData.instantiateNotifFromJsonFile("resource-examples/");
 
-            ASDCController controller = new ASDCController("asdc-controller1", distributionClientEmulator);
-            controller.initASDC();
+            asdcController.setDistributionClient(distributionClientEmulator);
+            asdcController.initASDC();
             toscaInstaller.installTheComponentStatus(statusData);
-            controller.closeASDC();
+            asdcController.closeASDC();
 
             logger.info(LoggingAnchor.FOUR, MessageEnum.ASDC_ARTIFACT_DEPLOY_SUC.toString(),
                     statusData.getDistributionID(), "ASDC", "ASDC Updates Are Complete");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.info("Error caught " + e.getMessage());
             logger.error(LoggingAnchor.SIX, MessageEnum.ASDC_GENERAL_EXCEPTION.toString(),
                     "Exception caught during ASDCRestInterface", "ASDC", "invokeASDCService",
