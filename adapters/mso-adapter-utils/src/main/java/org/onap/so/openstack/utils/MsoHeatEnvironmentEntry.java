@@ -58,9 +58,12 @@ public class MsoHeatEnvironmentEntry {
                 return;
             byte[] b = this.rawEntry.toString().getBytes();
             MsoYamlEditorWithEnvt yaml = new MsoYamlEditorWithEnvt(b);
-            this.parameters = yaml.getParameterListFromEnvt();
-            // this.resources = yaml.getResourceListFromEnvt();
-            StringBuilder sb = this.getResourceRegistryRawEntry();
+            StringBuilder sb = null;
+            if (yaml != null) {
+                this.parameters = yaml.getParameterListFromEnvt();
+                // this.resources = yaml.getResourceListFromEnvt();
+                sb = this.getResourceRegistryRawEntry();
+            }
             if (sb == null) {
                 this.resourceRegistryEntryRaw = new StringBuilder("");
             } else {
