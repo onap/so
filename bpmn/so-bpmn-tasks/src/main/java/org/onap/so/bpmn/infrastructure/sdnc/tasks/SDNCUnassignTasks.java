@@ -91,16 +91,18 @@ public class SDNCUnassignTasks {
 
     public void unassignVfModule(BuildingBlockExecution execution) {
         try {
+            GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
+            RequestContext requestContext = gBBInput.getRequestContext();
             VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
             SDNCRequest sdncRequest = new SDNCRequest();
             UriBuilder builder = UriBuilder.fromPath(env.getRequiredProperty("mso.workflow.message.endpoint"))
                     .path(sdncRequest.getCorrelationName()).path(sdncRequest.getCorrelationValue());
             URI uri = builder.build();
             GenericResourceApiVfModuleOperationInformation req =
-                    sdncVfModuleResources.unassignVfModule(vfModule, vnf, serviceInstance, uri);
+                    sdncVfModuleResources.unassignVfModule(vfModule, vnf, serviceInstance, requestContext, uri);
             sdncRequest.setSDNCPayload(req);
             sdncRequest.setTopology(SDNCTopology.VFMODULE);
             execution.setVariable(SDNC_REQUEST, sdncRequest);
