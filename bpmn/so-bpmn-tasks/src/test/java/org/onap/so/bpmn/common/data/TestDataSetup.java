@@ -159,7 +159,7 @@ public class TestDataSetup {
 
     public RequestContext buildRequestContext() {
         RequestContext requestContext = new RequestContext();
-        requestContext.setMsoRequestId(UUID.randomUUID().toString());
+        requestContext.setMsoRequestId("fb06f44c-c797-4f38-9b17-b4b975344600");
         requestContext.setProductFamilyId("testProductFamilyId");
         requestContext.setRequestorId("testRequestorId");
 

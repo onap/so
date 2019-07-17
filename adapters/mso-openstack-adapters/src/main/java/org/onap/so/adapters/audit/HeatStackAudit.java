@@ -35,11 +35,16 @@ import org.onap.aai.domain.yang.LInterfaces;
 import org.onap.aai.domain.yang.Vlan;
 import org.onap.aai.domain.yang.Vlans;
 import org.onap.aai.domain.yang.Vserver;
+import org.onap.so.client.aai.AAIObjectType;
+import org.onap.so.client.aai.entities.uri.AAIResourceUri;
+import org.onap.so.client.aai.entities.uri.AAIUriFactory;
+import org.onap.so.objects.audit.AAIObjectAudit;
 import org.onap.so.objects.audit.AAIObjectAuditList;
 import org.onap.so.openstack.utils.MsoHeatUtils;
 import org.onap.so.openstack.utils.MsoNeutronUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.woorea.openstack.heat.model.Link;
@@ -65,6 +70,28 @@ public class HeatStackAudit {
 
     @Autowired
     protected AuditVServer auditVservers;
+
+    public Optional<AAIObjectAuditList> queryHeatStack(String cloudOwner, String cloudRegion, String tenantId,
+            String heatStackName) {
+        try {
+            logger.debug("Fetching Top Level Stack Information");
+            Resources resources = heat.queryStackResources(cloudRegion, tenantId, heatStackName, 3);
+            List<Resource> novaResources = resources.getList().stream()
+                    .filter(p -> "OS::Nova::Server".equals(p.getType())).collect(Collectors.toList());
+            if (novaResources.isEmpty())
+                return Optional.of(new AAIObjectAuditList());
+            else {
+                Set<Vserver> vserversToAudit = createVserverSet(novaResources);
+                AAIObjectAuditList aaiObjectAuditList = new AAIObjectAuditList();
+                vserversToAudit.stream().forEach(vServer -> aaiObjectAuditList.getAuditList()
+                        .add(createAAIObjectAudit(cloudOwner, cloudRegion, tenantId, vServer)));
+                return Optional.of(aaiObjectAuditList);
+            }
+        } catch (Exception e) {
+            logger.error("Error during query stack resources", e);
+            return Optional.of(new AAIObjectAuditList());
+        }
+    }
 
     public Optional<AAIObjectAuditList> auditHeatStack(String cloudRegion, String cloudOwner, String tenantId,
             String heatStackName) {
@@ -213,6 +240,31 @@ public class HeatStackAudit {
             vserversToAudit.add(auditVserver);
         }
         return vserversToAudit;
+    }
+
+    protected Set<Vserver> createVserverSet(List<Resource> novaResources) {
+        Set<Vserver> vserversToAudit = new HashSet<>();
+        for (Resource novaResource : novaResources) {
+            Vserver auditVserver = new Vserver();
+            auditVserver.setLInterfaces(new LInterfaces());
+            auditVserver.setVserverId(novaResource.getPhysicalResourceId());
+            vserversToAudit.add(auditVserver);
+        }
+        return vserversToAudit;
+    }
+
+    protected AAIObjectAudit createAAIObjectAudit(String cloudOwner, String cloudRegion, String tenantId,
+            Vserver vServer) {
+        AAIObjectAudit aaiObjectAudit = new AAIObjectAudit();
+        Vserver vServerShallow = new Vserver();
+        BeanUtils.copyProperties(vServer, vServerShallow);
+        aaiObjectAudit.setAaiObject(vServerShallow);
+        aaiObjectAudit.setAaiObjectType(AAIObjectType.VSERVER.typeName());
+        aaiObjectAudit.setResourceURI(AAIUriFactory
+                .createResourceUri(AAIObjectType.VSERVER, cloudOwner, cloudRegion, tenantId, vServer.getVserverId())
+                .build());
+
+        return aaiObjectAudit;
     }
 
     /**

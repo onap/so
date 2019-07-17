@@ -20,10 +20,12 @@
 
 package org.onap.so.adapters.audit;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.onap.aai.domain.yang.LInterface;
 import org.onap.aai.domain.yang.Vserver;
+import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
@@ -39,6 +41,38 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 @Component
 public class AuditVServer extends AbstractAudit {
     private static final Logger logger = LoggerFactory.getLogger(AuditVServer.class);
+
+    public void auditVservers(AAIObjectAuditList aaiObjectAuditList) {
+
+        aaiObjectAuditList.getAuditList().forEach(aaiObjectAudit -> {
+            boolean vserverExist = getAaiClient().exists(AAIUriFactory
+                    .createResourceFromExistingURI(AAIObjectType.VSERVER, aaiObjectAudit.getResourceURI()));
+            aaiObjectAudit.setDoesObjectExist(vserverExist);
+        });
+    }
+
+    public Optional<AAIObjectAuditList> auditVserversThroughRelationships(String genericVnfId, String vfModuleName) {
+        AAIObjectAuditList auditList = new AAIObjectAuditList();
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VF_MODULE, genericVnfId)
+                .queryParam("vf-module-name", vfModuleName);
+        if (getAaiClient().get(uri).getRelationships().isPresent()) {
+            List<AAIResourceUri> relatedVservers =
+                    getAaiClient().get(uri).getRelationships().get().getRelatedUris(AAIObjectType.VSERVER);
+            if (!relatedVservers.isEmpty()) {
+                relatedVservers.forEach(vserverUri -> {
+                    Optional<Vserver> vserver = getAaiClient().get(vserverUri).asBean(Vserver.class);
+                    Vserver vServerShallow = new Vserver();
+                    BeanUtils.copyProperties(vserver, vServerShallow);
+                    AAIObjectAudit vServerAudit = new AAIObjectAudit();
+                    vServerAudit.setAaiObject(vServerShallow);
+                    vServerAudit.setAaiObjectType(AAIObjectType.VSERVER.typeName());
+                    vServerAudit.setDoesObjectExist(true);
+                    auditList.getAuditList().add(vServerAudit);
+                });
+            }
+        }
+        return Optional.of(auditList);
+    }
 
     public Optional<AAIObjectAuditList> auditVservers(Set<Vserver> vServersToAudit, String tenantId, String cloudOwner,
             String cloudRegion) {

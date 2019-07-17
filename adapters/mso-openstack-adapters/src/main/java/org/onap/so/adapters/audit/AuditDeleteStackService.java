@@ -40,10 +40,16 @@ public class AuditDeleteStackService extends AbstractAuditService {
     private static final Logger logger = LoggerFactory.getLogger(AuditDeleteStackService.class);
 
     @Autowired
-    public HeatStackAudit heatStackAudit;
+    protected HeatStackAudit heatStackAudit;
 
     @Autowired
-    public Environment environment;
+    protected AuditVServer auditVservers;
+
+    @Autowired
+    protected AuditDataService auditDataService;
+
+    @Autowired
+    protected Environment env;
 
     protected void executeExternalTask(ExternalTask externalTask, ExternalTaskService externalTaskService) {
         AuditInventory auditInventory = externalTask.getVariable("auditInventory");
@@ -51,17 +57,21 @@ public class AuditDeleteStackService extends AbstractAuditService {
         setupMDC(externalTask);
         boolean success = false;
         try {
-            logger.info("Executing External Task Audit Inventory, Retry Number: {} \n {}", auditInventory,
-                    externalTask.getRetries());
-            Optional<AAIObjectAuditList> auditListOpt = heatStackAudit.auditHeatStack(auditInventory.getCloudRegion(),
-                    auditInventory.getCloudOwner(), auditInventory.getTenantId(), auditInventory.getHeatStackName());
+            logger.info("Executing External Task Delete Audit Inventory. Retry Number: {}", externalTask.getRetries());
+            Optional<AAIObjectAuditList> auditListOpt = auditDataService.getStackDataFromRequestDb(auditInventory);
             if (auditListOpt.isPresent()) {
-                auditListOpt.get().setAuditType("delete");
-                auditListOpt.get().setHeatStackName(auditInventory.getHeatStackName());
-                GraphInventoryCommonObjectMapperProvider objectMapper = new GraphInventoryCommonObjectMapperProvider();
-                variables.put("auditInventoryResult", objectMapper.getMapper().writeValueAsString(auditListOpt.get()));
-                success = !didDeleteAuditFail(auditListOpt);
+                auditVservers.auditVservers(auditListOpt.get());
+            } else {
+                logger.debug("Auditing Vservers based on vf module relationships");
+                auditListOpt = auditVservers.auditVserversThroughRelationships(auditInventory.getGenericVnfId(),
+                        auditInventory.getHeatStackName());
             }
+            auditListOpt.get().setHeatStackName(auditInventory.getHeatStackName());
+            auditListOpt.get().setAuditType("delete");
+            GraphInventoryCommonObjectMapperProvider objectMapper = new GraphInventoryCommonObjectMapperProvider();
+            variables.put("auditInventoryResult", objectMapper.getMapper().writeValueAsString(auditListOpt.get()));
+            success = !didDeleteAuditFail(auditListOpt.get());
+
         } catch (Exception e) {
             logger.error("Error during audit of stack", e);
         }

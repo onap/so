@@ -49,6 +49,9 @@ public class AuditStackService {
     @Autowired
     private AuditDeleteStackService auditDeleteStack;
 
+    @Autowired
+    private AuditQueryStackService auditQueryStack;
+
     @PostConstruct
     public void auditAddAAIInventory() throws Exception {
         for (int i = 0; i < getMaxClients(); i++) {
@@ -66,6 +69,16 @@ public class AuditStackService {
             client.subscribe("InventoryDeleteAudit")
                     .lockDuration(Long.parseLong(env.getProperty("mso.audit.lock-time", "60000")))
                     .handler(auditDeleteStack::executeExternalTask).open();
+        }
+    }
+
+    @PostConstruct
+    public void auditQueryInventory() throws Exception {
+        for (int i = 0; i < getMaxClients(); i++) {
+            ExternalTaskClient client = createExternalTaskClient();
+            client.subscribe("InventoryQueryAudit")
+                    .lockDuration(Long.parseLong(env.getProperty("mso.audit.lock-time", "60000")))
+                    .handler(auditQueryStack::executeExternalTask).open();
         }
     }
 
