@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,14 +33,19 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.LInterface;
 import org.onap.aai.domain.yang.LInterfaces;
+import org.onap.aai.domain.yang.Relationship;
+import org.onap.aai.domain.yang.RelationshipList;
+import org.onap.aai.domain.yang.VfModule;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
@@ -48,6 +53,7 @@ import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
+import org.onap.so.objects.audit.AAIObjectAudit;
 import org.onap.so.objects.audit.AAIObjectAuditList;
 import org.skyscreamer.jsonassert.JSONAssert;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -361,6 +367,69 @@ public class AuditVServerTest extends AuditVServer {
 
         JSONAssert.assertEquals(expected, actualString, false);
     }
+
+    @Test
+    public void testAuditVserversWithList() {
+
+        AAIObjectAuditList auditList = new AAIObjectAuditList();
+        AAIObjectAudit obj1 = new AAIObjectAudit();
+        Vserver vserver = new Vserver();
+        vserver.setVserverId("testVserverId");
+        obj1.setAaiObject(vserver);
+        obj1.setResourceURI(AAIUriFactory
+                .createResourceUri(AAIObjectType.VSERVER, cloudOwner, cloudRegion, tenantId, "testVserverId").build());
+        auditList.getAuditList().add(obj1);
+
+        doReturn(false).when(aaiResourcesMock).exists(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, cloudOwner,
+                cloudRegion, tenantId, "testVserverId"));
+
+        auditNova.auditVservers(auditList);
+
+        Mockito.verify(aaiResourcesMock).exists(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, cloudOwner,
+                cloudRegion, tenantId, "testVserverId"));
+
+        Assert.assertEquals(false, auditList.getAuditList().get(0).isDoesObjectExist());
+    }
+
+    @Test
+    public void testAuditVserversThroughRelationships() {
+
+        VfModule vfModule = new VfModule();
+        vfModule.setVfModuleId("id");
+
+        AAIResultWrapper wrapper = new AAIResultWrapper(vfModule);
+
+        doReturn(wrapper).when(aaiResourcesMock)
+                .get(AAIUriFactory.createResourceUri(AAIObjectPlurals.VF_MODULE, "genericVnfId")
+                        .queryParam("vf-module-name", "vfModuleName"));
+
+        Optional<AAIObjectAuditList> auditList =
+                auditNova.auditVserversThroughRelationships("genericVnfId", "vfModuleName");
+
+        Assert.assertTrue(auditList.get().getAuditList().isEmpty());
+    }
+
+    @Test
+    public void testAuditVserversThroughRelationships_exists() throws IOException {
+
+        String vfModule = getJson("vfModule.json");
+
+        AAIResultWrapper wrapper = new AAIResultWrapper(vfModule);
+        AAIResultWrapper vserverWrapper = new AAIResultWrapper(new Vserver());
+
+        doReturn(wrapper).when(aaiResourcesMock)
+                .get(AAIUriFactory.createResourceUri(AAIObjectPlurals.VF_MODULE, "genericVnfId")
+                        .queryParam("vf-module-name", "vfModuleName"));
+
+        doReturn(vserverWrapper).when(aaiResourcesMock).get(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER,
+                "cloud-owner", "cloud-region-id", "tenant-id", "VUSCHGA1"));
+
+        Optional<AAIObjectAuditList> auditList =
+                auditNova.auditVserversThroughRelationships("genericVnfId", "vfModuleName");
+
+        Assert.assertFalse(auditList.get().getAuditList().isEmpty());
+    }
+
 
     private String getJson(String filename) throws IOException {
         return new String(Files.readAllBytes(Paths.get("src/test/resources/" + filename)));

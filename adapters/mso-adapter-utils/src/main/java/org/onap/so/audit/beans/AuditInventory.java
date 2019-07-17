@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,9 +25,11 @@ import java.io.Serializable;
 public class AuditInventory implements Serializable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 4937350343452380760L;
+
+    private String msoRequestId;
 
     private String cloudRegion;
 
@@ -35,7 +37,11 @@ public class AuditInventory implements Serializable {
 
     private String tenantId;
 
+    private String vfModuleId;
+
     private String heatStackName;
+
+    private String genericVnfId;
 
     public String getCloudRegion() {
         return cloudRegion;
@@ -67,6 +73,30 @@ public class AuditInventory implements Serializable {
 
     public void setHeatStackName(String heatStackName) {
         this.heatStackName = heatStackName;
+    }
+
+    public String getGenericVnfId() {
+        return genericVnfId;
+    }
+
+    public void setGenericVnfId(String genericVnfId) {
+        this.genericVnfId = genericVnfId;
+    }
+
+    public String getVfModuleId() {
+        return vfModuleId;
+    }
+
+    public void setVfModuleId(String vfModuleId) {
+        this.vfModuleId = vfModuleId;
+    }
+
+    public String getMsoRequestId() {
+        return msoRequestId;
+    }
+
+    public void setMsoRequestId(String msoRequestId) {
+        this.msoRequestId = msoRequestId;
     }
 
 

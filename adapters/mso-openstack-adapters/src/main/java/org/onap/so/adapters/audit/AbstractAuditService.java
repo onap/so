@@ -43,6 +43,8 @@ public abstract class AbstractAuditService {
     protected static final String UNABLE_TO_FIND_ALL_V_SERVERS_AND_L_INTERACES_IN_A_AI =
             "Unable to find all VServers and L-Interaces in A&AI";
 
+    protected static final String UNABLE_TO_FIND_V_SERVERS_IN_OPENSTACK = "Unable to find VServers in Openstack";
+
     @Autowired
     public Environment env;
 
@@ -68,12 +70,12 @@ public abstract class AbstractAuditService {
      * @param auditList
      * @return
      */
-    protected boolean didDeleteAuditFail(Optional<AAIObjectAuditList> auditList) {
-        if (auditList.get().getAuditList() != null && !auditList.get().getAuditList().isEmpty()) {
+    protected boolean didDeleteAuditFail(AAIObjectAuditList auditList) {
+        if (auditList.getAuditList() != null && !auditList.getAuditList().isEmpty()) {
             if (logger.isInfoEnabled()) {
-                logger.info("Audit Results: {}", auditList.get().toString());
+                logger.info("Audit Results: {}", auditList.toString());
             }
-            return auditList.get().getAuditList().stream().filter(AAIObjectAudit::isDoesObjectExist).findFirst()
+            return auditList.getAuditList().stream().filter(AAIObjectAudit::isDoesObjectExist).findFirst()
                     .map(v -> true).orElse(false);
         } else {
             return false;

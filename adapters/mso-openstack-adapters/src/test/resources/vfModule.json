@@ -1,0 +1,38 @@
+{
+                "vf-module-id": "a62d14f0-421e-4e64-980a-a368722819db",
+                "vf-module-name": "vig30001vm001vig001_migrated.base.module-0",
+                "is-base-vf-module": false,
+                "resource-version": "1494001780539",
+                "relationship-list": {
+                    "relationship": [
+                        {
+                            "related-to": "vserver",
+                            "related-link": "/aai/v11/cloud-infrastructure/cloud-regions/cloud-region/cloud-owner/cloud-region-id/tenants/tenant/tenant-id/vservers/vserver/VUSCHGA1",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "cloud-region.cloud-owner",
+                                    "relationship-value": "cloud-owner"
+                                },
+                                {
+                                    "relationship-key": "cloud-region.cloud-region-id",
+                                    "relationship-value": "cloud-region-id"
+                                },
+                                {
+                                    "relationship-key": "tenant.tenant-id",
+                                    "relationship-value": "tenant-id"
+                                },
+                                {
+                                    "relationship-key": "vserver.vserver-id",
+                                    "relationship-value": "VUSCHGA1"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "vserver.vserver-name",
+                                    "property-value": "VUSCHGA1"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }

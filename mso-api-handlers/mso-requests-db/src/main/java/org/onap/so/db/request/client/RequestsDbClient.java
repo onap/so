@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import javax.annotation.PostConstruct;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
@@ -72,6 +74,7 @@ public class RequestsDbClient {
     private static final String REQUEST_ID = "REQUEST_ID";
     private static final String OPERATIONAL_ENVIRONMENT_ID = "OPERATIONAL_ENV_ID";
     private static final String SERVICE_MODEL_VERSION_ID = "SERVICE_MODEL_VERSION_ID";
+    private static final String TAG = "TAG";
     private static final String FLOW_EXECUTION_PATH = "flowExecutionPath";
     private static final String BPMN_EXECUTION_DATA_TAG = "BPMNExecutionData";
 
@@ -119,6 +122,8 @@ public class RequestsDbClient {
     private static final String findBySoRequestIdOrderByGroupingIdDesc =
             "/requestProcessingData/search/findBySoRequestIdOrderByGroupingIdDesc";
 
+    private static final String findByGroupingIdAndNameAndTag =
+            "/requestProcessingData/search/findByGroupingIdAndNameAndTag";
 
     @Autowired
     protected RestTemplate restTemplate;
@@ -366,6 +371,20 @@ public class RequestsDbClient {
                 .get(getUri(UriBuilder.fromUri(endpoint + findBySoRequestIdAndGroupIdAndName)
                         .queryParam(SO_REQUEST_ID, soRequestId).queryParam(NAME, name)
                         .queryParam(GROUPING_ID, groupingId).build().toString()));
+    }
+
+    public List<RequestProcessingData> getRequestProcessingDataByGroupingIdAndNameAndTag(String groupingId, String name,
+            String tag) {
+        Iterable<RequestProcessingData> requestProcessingDataListIt =
+                getClientFactory().create(RequestProcessingData.class)
+                        .getAll(getUri(UriBuilder.fromUri(endpoint + findByGroupingIdAndNameAndTag)
+                                .queryParam(GROUPING_ID, groupingId).queryParam(NAME, name).queryParam(TAG, tag).build()
+                                .toString()));
+
+        List<RequestProcessingData> requestProcessingDataList =
+                StreamSupport.stream(requestProcessingDataListIt.spliterator(), false).collect(Collectors.toList());
+
+        return requestProcessingDataList;
     }
 
     public RequestProcessingData getRequestProcessingDataBySoRequestIdAndName(String soRequestId, String name) {
