@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.audit.beans.AuditInventory;
 import org.onap.so.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
 import org.onap.so.objects.audit.AAIObjectAuditList;
@@ -48,9 +49,9 @@ public class AuditCreateStackService extends AbstractAuditService {
     public Environment environment;
 
     protected void executeExternalTask(ExternalTask externalTask, ExternalTaskService externalTaskService) {
+        setupMDC(externalTask);
         AuditInventory auditInventory = externalTask.getVariable("auditInventory");
         Map<String, Object> variables = new HashMap<>();
-        setupMDC(externalTask);
         boolean success = false;
         try {
             logger.info("Executing External Task Audit Inventory, Retry Number: {} \n {}", auditInventory,
@@ -71,6 +72,7 @@ public class AuditCreateStackService extends AbstractAuditService {
         if (success) {
             externalTaskService.complete(externalTask, variables);
             logger.debug("The External Task Id: {}  Successful", externalTask.getId());
+            logger.info(ONAPLogConstants.Markers.EXIT, "Exiting");
         } else {
             if (externalTask.getRetries() == null) {
                 logger.debug("The External Task Id: {}  Failed, Setting Retries to Default Start Value: {}",
@@ -80,6 +82,7 @@ public class AuditCreateStackService extends AbstractAuditService {
             } else if (externalTask.getRetries() != null && externalTask.getRetries() - 1 == 0) {
                 logger.debug("The External Task Id: {}  Failed, All Retries Exhausted", externalTask.getId());
                 externalTaskService.complete(externalTask, variables);
+                logger.info(ONAPLogConstants.Markers.EXIT, "Exiting");
             } else {
                 logger.debug("The External Task Id: {}  Failed, Decrementing Retries: {} , Retry Delay: ",
                         externalTask.getId(), externalTask.getRetries() - 1,

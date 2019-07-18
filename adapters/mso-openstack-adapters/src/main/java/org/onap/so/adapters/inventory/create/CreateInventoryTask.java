@@ -77,6 +77,7 @@ public class CreateInventoryTask {
             if (success) {
                 externalTaskService.complete(externalTask);
                 logger.debug("The External Task Id: {}  Successful", externalTask.getId());
+                logger.info(ONAPLogConstants.Markers.EXIT, "Exiting");
             } else if (inventoryException) {
                 logger.debug("The External Task Id: {}  Failed, Retry not needed", externalTask.getId());
                 externalTaskService.handleBpmnError(externalTask, AAI_INVENTORY_FAILURE);
@@ -89,6 +90,7 @@ public class CreateInventoryTask {
                 } else if (externalTask.getRetries() != null && externalTask.getRetries() - 1 == 0) {
                     logger.debug("The External Task Id: {}  Failed, All Retries Exhausted", externalTask.getId());
                     externalTaskService.handleBpmnError(externalTask, AAI_INVENTORY_FAILURE);
+                    logger.info(ONAPLogConstants.Markers.EXIT, "Exiting");
                 } else {
                     logger.debug("The External Task Id: {}  Failed, Decrementing Retries: {} , Retry Delay: ",
                             externalTask.getId(), externalTask.getRetries() - 1,
@@ -107,6 +109,8 @@ public class CreateInventoryTask {
 
     private void setupMDC(ExternalTask externalTask) {
         try {
+            logger.info(ONAPLogConstants.Markers.ENTRY, "Entering");
+            MDC.put(ONAPLogConstants.MDCs.SERVICE_NAME, externalTask.getTopicName());
             String msoRequestId = externalTask.getVariable("mso-request-id");
             if (msoRequestId != null && !msoRequestId.isEmpty())
                 MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, msoRequestId);
