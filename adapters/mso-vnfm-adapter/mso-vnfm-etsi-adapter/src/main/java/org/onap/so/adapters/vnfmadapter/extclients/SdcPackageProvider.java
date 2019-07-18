@@ -49,6 +49,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import javax.net.ssl.SSLContext;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -133,7 +134,7 @@ public class SdcPackageProvider {
 
     private byte[] getPackage(final String csarId) {
         final String SERVICE_NAME = "vnfm-adapter";
-        try (CloseableHttpClient client = HttpClients.createDefault()) {
+        try (CloseableHttpClient client = HttpClients.custom().setSSLContext(SSLContext.getDefault()).build()) {
             final HttpGet httpget = new HttpGet(format(GET_PACKAGE_URL, baseUrl, csarId));
             httpget.setHeader(ACCEPT, APPLICATION_OCTET_STREAM_VALUE);
             httpget.setHeader("X-ECOMP-InstanceID", SERVICE_NAME);

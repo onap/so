@@ -34,6 +34,11 @@ server:
   port: 9093
   tomcat:
     max-threads: 50
+  ssl:
+    key-alias: so@so.onap.org
+    key--store-password: '7Em3&j4.19xYiMelhD5?xbQ.'
+    key-store: classpath:so-vnfm-simulator.p12
+    key-store-type: PKCS12
 
 vnfds:
   vnfdlist:

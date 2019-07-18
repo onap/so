@@ -54,7 +54,7 @@ public class VnfmServiceProviderImpl implements VnfmServiceProvider {
 
     @Override
     public Optional<InlineResponse201> getVnf(final String vnfSelfLink) {
-        return httpServiceProvider.get(vnfSelfLink.replaceAll("https", "http"), InlineResponse201.class);
+        return httpServiceProvider.get(vnfSelfLink, InlineResponse201.class);
     }
 
     @Override
