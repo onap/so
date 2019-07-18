@@ -354,7 +354,7 @@ public class RequestsDbClient {
 
     public void updateRequestProcessingData(RequestProcessingData requestProcessingData) {
         HttpHeaders headers = getHttpHeaders();
-        URI uri = getUri(requestProcessingDataURI);
+        URI uri = getUri(requestProcessingDataURI + "/" + requestProcessingData.getId());
         HttpEntity<RequestProcessingData> entity = new HttpEntity<>(requestProcessingData, headers);
         restTemplate.put(uri, entity);
     }
