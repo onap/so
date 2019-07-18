@@ -201,5 +201,5 @@ VALUES
 INSERT INTO `workflow` (`ARTIFACT_UUID`,`ARTIFACT_NAME`,`NAME`,`OPERATION_NAME`,`VERSION`,`DESCRIPTION`,`RESOURCE_TARGET`,`SOURCE`)
 VALUES
 ('9d45cd30-1a89-4993-87c1-6dd09c1696cf','VFModule-ScaleOut','VNF Scale Out','ScaleOut',1.0,'native static workflow to support ScaleOut','vfModule','native'),
-('da6478e4-ea33-3346-ac12-ab121284a333','VnfInPlaceUpdate.bpmn','VNF In Place Software Update','inPlaceSoftwareUpdate',1.0,'native static workflow to support inPlaceSoftwareUpdate','vnf','native'),
-('fdb3ac48-70f9-4584-bd92-253bdbdec1e1','VnfConfigUpdate.bpmn','VNF Config Update','applyConfigModify',1.0,'native static workflow to support applyConfigModify','vnf','native');
+('da6478e4-ea33-3346-ac12-ab121284a333','VnfInPlaceUpdate.bpmn','VnfInPlaceUpdate','inPlaceSoftwareUpdate',1.0,'native static workflow to support inPlaceSoftwareUpdate','vnf','native'),
+('fdb3ac48-70f9-4584-bd92-253bdbdec1e1','VnfConfigUpdate.bpmn','VnfConfigUpdate','applyConfigModify',1.0,'native static workflow to support applyConfigModify','vnf','native');
