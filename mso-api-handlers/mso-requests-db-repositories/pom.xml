@@ -30,7 +30,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-rest</artifactId>
-      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>com.h2database</groupId>
