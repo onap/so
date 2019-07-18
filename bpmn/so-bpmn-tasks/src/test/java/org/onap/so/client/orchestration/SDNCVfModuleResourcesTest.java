@@ -98,10 +98,12 @@ public class SDNCVfModuleResourcesTest extends TestDataSetup {
     @Test
     public void unassignVfModuleTest() throws MapperException {
         doReturn(sdncReq).when(vfModuleTopologyMapper).reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION,
-                SDNCSvcAction.UNASSIGN, vfModule, null, vnf, serviceInstance, null, null, null, null, testURI);
-        sdncVfModuleResources.unassignVfModule(vfModule, vnf, serviceInstance, testURI);
+                SDNCSvcAction.UNASSIGN, vfModule, null, vnf, serviceInstance, null, null, requestContext, null,
+                testURI);
+        sdncVfModuleResources.unassignVfModule(vfModule, vnf, serviceInstance, requestContext, testURI);
         verify(vfModuleTopologyMapper, times(1)).reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION,
-                SDNCSvcAction.UNASSIGN, vfModule, null, vnf, serviceInstance, null, null, null, null, testURI);
+                SDNCSvcAction.UNASSIGN, vfModule, null, vnf, serviceInstance, null, null, requestContext, null,
+                testURI);
     }
 
     @Test

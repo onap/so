@@ -60,9 +60,9 @@ public class SDNCVfModuleResources {
     }
 
     public GenericResourceApiVfModuleOperationInformation unassignVfModule(VfModule vfModule, GenericVnf vnf,
-            ServiceInstance serviceInstance, URI callbackURI) throws MapperException {
+            ServiceInstance serviceInstance, RequestContext requestContext, URI callbackURI) throws MapperException {
         return sdncRM.reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.UNASSIGN, vfModule, null,
-                vnf, serviceInstance, null, null, null, null, callbackURI);
+                vnf, serviceInstance, null, null, requestContext, null, callbackURI);
     }
 
     public GenericResourceApiVfModuleOperationInformation deactivateVfModule(VfModule vfModule, GenericVnf vnf,
