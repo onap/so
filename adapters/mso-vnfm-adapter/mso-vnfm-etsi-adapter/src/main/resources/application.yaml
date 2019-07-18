@@ -23,6 +23,12 @@ spring:
   http:
     converters:
     preferred-json-mapper: gson
+    
+http:
+  client:
+    ssl:
+      trust-store: classpath:org.onap.so.trust.jks
+      trust-store-password: ',sx#.C*W)]wVgJC6ccFHI#:H'
         
 server:
   port: 9092

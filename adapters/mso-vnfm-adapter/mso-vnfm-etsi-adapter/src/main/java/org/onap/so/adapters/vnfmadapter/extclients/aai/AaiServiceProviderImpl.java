@@ -28,6 +28,7 @@ import org.onap.aai.domain.yang.GenericVnfs;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
+import org.onap.so.client.graphinventory.entities.uri.Depth;
 import org.onap.vnfmadapter.v1.model.Tenant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,8 +59,8 @@ public class AaiServiceProviderImpl implements AaiServiceProvider {
     @Override
     public GenericVnfs invokeQueryGenericVnf(final String selfLink) {
         return aaiClientProvider.getAaiClient()
-                .get(GenericVnfs.class, AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNFS)
-                        .queryParam("selflink", selfLink.replaceAll("https", "http")))
+                .get(GenericVnfs.class,
+                        AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNFS).queryParam("selflink", selfLink))
                 .orElseGet(() -> {
                     logger.debug("No vnf found in AAI with selflink: {}", selfLink);
                     return null;
@@ -78,7 +79,8 @@ public class AaiServiceProviderImpl implements AaiServiceProvider {
     @Override
     public EsrVnfm invokeGetVnfm(final String vnfmId) {
         return aaiClientProvider.getAaiClient()
-                .get(EsrVnfm.class, AAIUriFactory.createResourceUri(AAIObjectType.VNFM, vnfmId)).orElseGet(() -> {
+                .get(EsrVnfm.class, AAIUriFactory.createResourceUri(AAIObjectType.VNFM, vnfmId).depth(Depth.ONE))
+                .orElseGet(() -> {
                     logger.debug("VNFM not found in AAI");
                     return null;
                 });

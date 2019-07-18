@@ -114,7 +114,7 @@ public class LifecycleManager {
     private String getSelfLink(final InlineResponse201 vnfmResponse, final EsrVnfm vnfm) {
         if (vnfmResponse.getLinks() != null && vnfmResponse.getLinks().getSelf() != null
                 && vnfmResponse.getLinks().getSelf().getHref() != null) {
-            return vnfmResponse.getLinks().getSelf().getHref().replaceAll("https", "http");
+            return vnfmResponse.getLinks().getSelf().getHref();
         }
         return vnfm.getEsrSystemInfoList().getEsrSystemInfo().iterator().next().getServiceUrl() + "/vnf_instances/"
                 + vnfmResponse.getId();

@@ -168,6 +168,6 @@ public class SvnfmController {
 
         final HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
-        return new ResponseEntity<>(response, headers, HttpStatus.OK);
+        return new ResponseEntity<>(response, headers, HttpStatus.CREATED);
     }
 }
