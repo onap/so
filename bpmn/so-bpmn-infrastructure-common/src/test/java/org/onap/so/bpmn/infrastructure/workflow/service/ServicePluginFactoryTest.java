@@ -20,6 +20,7 @@
 package org.onap.so.bpmn.infrastructure.workflow.service;
 
 import static org.mockito.Mockito.doReturn;
+import org.apache.commons.lang.reflect.FieldUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -153,5 +154,22 @@ public class ServicePluginFactoryTest {
         String invalidJsonWithOnlyNeededValues = "\"clientSignal\":\"\",\"vpnType\":\"\"}";
         String result = servicePluginFactory.doServiceHoming(null, invalidJsonWithOnlyNeededValues);
         Assert.assertEquals(result, invalidJsonWithOnlyNeededValues);
+    }
+
+    @Test
+    public void verifyExternalConfigurationLoading() throws IllegalAccessException {
+
+        ServicePluginFactory servicePluginFactory = ServicePluginFactory.getInstance();
+
+        String oofDefaultEndpoint = (String) FieldUtils.readField(servicePluginFactory, "OOF_DEFAULT_ENDPOINT", true);
+        Assert.assertNotNull(oofDefaultEndpoint);
+
+        String thirdSpDefaultEndpoint =
+                (String) FieldUtils.readField(servicePluginFactory, "THIRD_SP_DEFAULT_ENDPOINT", true);
+        Assert.assertNotNull(thirdSpDefaultEndpoint);
+
+        String inventoryOssDefaultEndpoint =
+                (String) FieldUtils.readField(servicePluginFactory, "INVENTORY_OSS_DEFAULT_ENDPOINT", true);
+        Assert.assertNotNull(inventoryOssDefaultEndpoint);
     }
 }
