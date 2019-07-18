@@ -88,9 +88,9 @@ public class CloudResourcesOrchestration {
     public Response unlockOrchestrationRequest(String requestJSON, @PathParam("requestId") String requestId,
             @PathParam("version") String version) throws ApiException {
         TenantIsolationRequest msoRequest = new TenantIsolationRequest(requestId);
-        InfraActiveRequests infraActiveRequest = null;
+        InfraActiveRequests infraActiveRequest;
 
-        CloudOrchestrationRequest cor = null;
+        CloudOrchestrationRequest cor;
 
         logger.debug("requestId is: {}", requestId);
 
@@ -140,8 +140,8 @@ public class CloudResourcesOrchestration {
 
         } else {
             String status = infraActiveRequest.getRequestStatus();
-            if (status.equalsIgnoreCase("IN_PROGRESS") || status.equalsIgnoreCase("PENDING")
-                    || status.equalsIgnoreCase("PENDING_MANUAL_TASK")) {
+            if ("IN_PROGRESS".equalsIgnoreCase(status) || "PENDING".equalsIgnoreCase(status)
+                    || "PENDING_MANUAL_TASK".equalsIgnoreCase(status)) {
                 infraActiveRequest.setRequestStatus("UNLOCKED");
                 infraActiveRequest.setLastModifiedBy(Constants.MODIFIED_BY_APIHANDLER);
                 infraActiveRequest.setRequestId(requestId);
@@ -181,8 +181,7 @@ public class CloudResourcesOrchestration {
             String requestId = requestIdKey.get(0);
 
             CloudOrchestrationResponse cloudOrchestrationGetResponse = new CloudOrchestrationResponse();
-            TenantIsolationRequest tenantIsolationRequest = new TenantIsolationRequest(requestId);
-            InfraActiveRequests requestDB = null;
+            InfraActiveRequests requestDB;
 
             try {
                 requestDB = requestDbClient.getInfraActiveRequestbyRequestId(requestId);
@@ -213,8 +212,8 @@ public class CloudResourcesOrchestration {
 
         } else {
             TenantIsolationRequest tenantIsolationRequest = new TenantIsolationRequest();
-            List<InfraActiveRequests> activeRequests = null;
-            CloudOrchestrationRequestList orchestrationList = null;
+            List<InfraActiveRequests> activeRequests;
+            CloudOrchestrationRequestList orchestrationList;
 
 
             Map<String, String> orchestrationMap;
@@ -233,7 +232,7 @@ public class CloudResourcesOrchestration {
             }
             activeRequests = requestDbClient.getCloudOrchestrationFiltersFromInfraActive(orchestrationMap);
             orchestrationList = new CloudOrchestrationRequestList();
-            List<CloudOrchestrationResponse> requestLists = new ArrayList<CloudOrchestrationResponse>();
+            List<CloudOrchestrationResponse> requestLists = new ArrayList<>();
 
             for (InfraActiveRequests infraActive : activeRequests) {
 
