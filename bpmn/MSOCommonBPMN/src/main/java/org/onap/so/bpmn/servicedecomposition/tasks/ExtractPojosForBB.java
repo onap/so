@@ -60,7 +60,7 @@ public class ExtractPojosForBB {
                     if (gBBInput.getCustomer().getServiceSubscription() == null
                             && gBBInput.getServiceInstance() != null) {
                         result = Optional.of((T) gBBInput.getServiceInstance());
-                    } else {
+                    } else if (gBBInput.getCustomer().getServiceSubscription() != null) {
                         result = lookupObjectInList(
                                 gBBInput.getCustomer().getServiceSubscription().getServiceInstances(), value);
                     }

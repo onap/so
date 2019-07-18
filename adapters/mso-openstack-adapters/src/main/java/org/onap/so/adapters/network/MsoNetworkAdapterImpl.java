@@ -1294,15 +1294,23 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         // Resource Property
         List<ContrailPolicyRef> prlist = new ArrayList<>();
         int index = 1;
-        for (String pf : pFqdns) {
-            if (!commonUtils.isNullOrEmpty(pf)) {
-                ContrailPolicyRef pr = new ContrailPolicyRef();
-                ContrailPolicyRefSeq refSeq = new ContrailPolicyRefSeq(String.valueOf(index), "0");
-                pr.setSeq(refSeq);
-                index++;
-                logger.debug("Contrail PolicyRefs Data:{}", pr);
-                prlist.add(pr);
+
+        if (pFqdns != null) {
+            for (String pf : pFqdns) {
+                if (!commonUtils.isNullOrEmpty(pf)) {
+                    ContrailPolicyRef pr = new ContrailPolicyRef();
+                    ContrailPolicyRefSeq refSeq = new ContrailPolicyRefSeq(String.valueOf(index), "0");
+                    pr.setSeq(refSeq);
+                    index++;
+                    logger.debug("Contrail PolicyRefs Data:{}", pr);
+                    prlist.add(pr);
+                }
             }
+        } else {
+            String error = "Null pFqdns at start of mergePolicyRefs";
+            logger.error(LoggingAnchor.THREE, MessageEnum.RA_MARSHING_ERROR, ErrorCode.BusinessProcesssError.getValue(),
+                    error);
+            throw new MsoAdapterException(error);
         }
 
         JsonNode node = null;
