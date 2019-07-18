@@ -317,7 +317,8 @@ public class BPMNUtil {
      */
     static class ProcessThread extends Thread {
 
-        public WorkflowResponse workflowResponse = null;
+        public WorkflowResponse workflowResponse;
+        // public WorkflowResponse workflowResponse = null;
         public String processKey;
         public boolean started;
         public ProcessEngineServices processEngineServices;
