@@ -21,6 +21,7 @@
 package org.onap.so.bpmn.infrastructure.namingservice.tasks;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doReturn;
@@ -31,6 +32,7 @@ import static org.mockito.Mockito.when;
 import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -47,6 +49,8 @@ import org.onap.so.client.aai.AAICommonObjectMapperProvider;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.Relationships;
 import org.onap.so.client.exception.BBObjectNotFoundException;
+import org.onap.so.client.namingservice.NamingRequestObject;
+import org.onap.so.client.namingservice.NamingServiceConstants;
 
 public class NamingServiceCreateTasksTest extends BaseTaskTest {
     @InjectMocks
@@ -106,9 +110,17 @@ public class NamingServiceCreateTasksTest extends BaseTaskTest {
         String generatedName = "generatedWanTransportServiceName";
         doReturn(generatedName).when(namingServiceResources).generateServiceInstanceName(any());
         NamingServiceCreateTasks spy = Mockito.spy(namingServiceCreateTasks);
+        ArgumentCaptor<NamingRequestObject> captor = ArgumentCaptor.forClass(NamingRequestObject.class);
 
         spy.createWanTransportServiceName(execution);
-        verify(namingServiceResources, times(1)).generateServiceInstanceName(any());
+        verify(namingServiceResources, times(1)).generateServiceInstanceName(captor.capture());
+        assertTrue(captor.getAllValues().get(0).getExternalKeyValue().startsWith("testServiceInstanceId"));
+        assertEquals(captor.getAllValues().get(0).getNamingTypeValue(), NamingServiceConstants.NAMING_TYPE_SERVICE);
+        assertEquals(captor.getAllValues().get(0).getResourceNameValue(),
+                NamingServiceConstants.RESOURCE_NAME_SERVICE_INSTANCE_NAME);
+        assertEquals(captor.getAllValues().get(0).getPolicyInstanceNameValue(), null);
+        assertTrue(captor.getAllValues().get(0).getServiceModelNameValue().startsWith("testModelName"));
+        assertTrue(captor.getAllValues().get(0).getModelVersionValue().startsWith("testModelVersion"));
         assertEquals(generatedName, serviceInstance.getServiceInstanceName());
     }
 
@@ -118,10 +130,20 @@ public class NamingServiceCreateTasksTest extends BaseTaskTest {
                 .thenReturn(buildL3Network());
         when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.VPN_ID)))
                 .thenReturn(buildVpnBinding());
+        ArgumentCaptor<NamingRequestObject> captor = ArgumentCaptor.forClass(NamingRequestObject.class);
         String generatedName = "generatedWanTransportServiceName";
         doReturn(generatedName).when(namingServiceResources).generateServiceInstanceName(any());
         namingServiceCreateTasks.createVpnBondingServiceName(execution);
-        verify(namingServiceResources, times(1)).generateServiceInstanceName(any());
+        verify(namingServiceResources, times(1)).generateServiceInstanceName(captor.capture());
+        assertTrue(captor.getAllValues().get(0).getExternalKeyValue().startsWith("testServiceInstanceId"));
+        assertEquals(captor.getAllValues().get(0).getPolicyInstanceNameValue(), null);
+        assertEquals(captor.getAllValues().get(0).getNamingTypeValue(), NamingServiceConstants.NAMING_TYPE_SERVICE);
+        assertTrue(captor.getAllValues().get(0).getServiceModelNameValue().startsWith("testModelName"));
+        assertTrue(captor.getAllValues().get(0).getModelVersionValue().startsWith("testModelVersion"));
+        assertTrue(captor.getAllValues().get(0).getNetworkNameValue().startsWith("testNetworkName"));
+        assertTrue(captor.getAllValues().get(0).getVpnNameValue().startsWith("testVpnName"));
+        assertEquals(captor.getAllValues().get(0).getResourceNameValue(),
+                NamingServiceConstants.RESOURCE_NAME_SERVICE_INSTANCE_NAME);
         assertEquals(generatedName, serviceInstance.getServiceInstanceName());
     }
 }
