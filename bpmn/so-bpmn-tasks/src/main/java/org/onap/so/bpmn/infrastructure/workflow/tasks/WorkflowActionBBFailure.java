@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2019 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -143,10 +145,10 @@ public class WorkflowActionBBFailure {
         String errorMsg = null;
         try {
             WorkflowException exception = (WorkflowException) execution.getVariable("WorkflowException");
-            if (exception != null && (exception.getErrorMessage() != null || !exception.getErrorMessage().equals(""))) {
+            if (exception != null && (exception.getErrorMessage() != null || !"".equals(exception.getErrorMessage()))) {
                 errorMsg = exception.getErrorMessage();
             }
-            if (errorMsg == null || errorMsg.equals("")) {
+            if (errorMsg == null || "".equals(errorMsg)) {
                 errorMsg = (String) execution.getVariable("WorkflowExceptionErrorMessage");
             }
             if (errorMsg == null) {
@@ -165,7 +167,7 @@ public class WorkflowActionBBFailure {
         updateRequestStatusToFailed(execution);
     }
 
-    public void abortCallErrorHandling(DelegateExecution execution) {
+    public void abortCallErrorHandling() {
         String msg = "Flow has failed. Rainy day handler has decided to abort the process.";
         logger.error(msg);
         throw new BpmnError(msg);
