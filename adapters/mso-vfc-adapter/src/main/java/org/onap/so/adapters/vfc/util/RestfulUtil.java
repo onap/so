@@ -7,6 +7,7 @@
  * ================================================================================
  * Modifications Copyright (C) 2018.
  * Modifications Copyright (c) 2019 Samsung
+ * Modifications Copyright (C) 2019 IBM.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +40,6 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.onap.so.adapters.vfc.model.RestfulResponse;
 import org.onap.so.logger.ErrorCode;
@@ -96,10 +96,6 @@ public class RestfulUtil {
         logger.debug("msbEndpoint in vfc adapter: {}", msbEndpoint);
 
         return msbEndpoint;
-    }
-
-    private RestfulUtil() {
-
     }
 
     public RestfulResponse send(String url, String methodType, String content) {
