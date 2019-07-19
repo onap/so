@@ -108,7 +108,7 @@ public class NamingServiceCreateTasks {
         namingRequestObject.setNamingTypeValue(NamingServiceConstants.NAMING_TYPE_SERVICE);
         namingRequestObject.setServiceModelNameValue(serviceInstance.getModelInfoServiceInstance().getModelName());
         namingRequestObject.setModelVersionValue(serviceInstance.getModelInfoServiceInstance().getModelVersion());
-        namingRequestObject.setNetworkNameValue(execution.getVariable(network.getNetworkName()));
+        namingRequestObject.setNetworkNameValue(network.getNetworkName());
         namingRequestObject.setVpnNameValue(vpnBinding.getVpnName());
         namingRequestObject.setResourceNameValue(NamingServiceConstants.RESOURCE_NAME_SERVICE_INSTANCE_NAME);
 
