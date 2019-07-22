@@ -584,6 +584,13 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		List<Resource> addResourceList = serviceDecomposition.getServiceResources()
 		execution.setVariable("addResourceList", addResourceList)
 
+		boolean isCreateResourceListValid = true
+		if (addResourceList == null || addResourceList.isEmpty()) {
+			isCreateResourceListValid = false
+		}
+
+		execution.setVariable("isCreateResourceListValid", isCreateResourceListValid)
+
 		logger.trace("COMPLETED preProcessForAddResource Process ")
 	}
 
