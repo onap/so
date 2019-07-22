@@ -25,6 +25,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.doReturn;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
@@ -55,6 +56,8 @@ public class OrchestrationRequestsUnitTest {
     private ResponseBuilder builder;
     @Mock
     private Response response;
+    @Mock
+    private CamundaRequestHandler camundaRequestHandler;
     @Rule
     public ExpectedException thrown = ExpectedException.none();
     @InjectMocks
@@ -68,6 +71,7 @@ public class OrchestrationRequestsUnitTest {
     private static final String FLOW_STATUS = "FlowStatus";
     private static final String RETRY_STATUS_MESSAGE = "RetryStatusMessage";
     private static final String ROLLBACK_STATUS_MESSAGE = "RollbackStatusMessage";
+    private static final String TASK_INFORMATION = " TASK INFORMATION: Last task executed: Call SDNC";
     private InfraActiveRequests iar;
     boolean includeCloudRequest = false;
     private static final String ROLLBACK_EXT_SYSTEM_ERROR_SOURCE = "SDNC";
@@ -79,14 +83,23 @@ public class OrchestrationRequestsUnitTest {
         iar.setRequestScope(SERVICE);
         iar.setRequestId(REQUEST_ID);
         iar.setServiceInstanceId(SERVICE_INSTANCE_ID);
+        iar.setExtSystemErrorSource(EXT_SYSTEM_ERROR_SOURCE);
+        iar.setRollbackExtSystemErrorSource(ROLLBACK_EXT_SYSTEM_ERROR_SOURCE);
+        iar.setFlowStatus(FLOW_STATUS);
+        iar.setRollbackStatusMessage(ROLLBACK_STATUS_MESSAGE);
+        iar.setRetryStatusMessage(RETRY_STATUS_MESSAGE);
     }
 
     @Test
     public void mapInfraActiveRequestToRequestWithOriginalRequestIdTest() throws ApiException {
+        doReturn("Last task executed: Call SDNC").when(camundaRequestHandler).getTaskName(REQUEST_ID);
         InstanceReferences instanceReferences = new InstanceReferences();
         instanceReferences.setServiceInstanceId(SERVICE_INSTANCE_ID);
         RequestStatus requestStatus = new RequestStatus();
         requestStatus.setRequestState(iar.getRequestStatus());
+        requestStatus.setStatusMessage(String.format("FLOW STATUS: %s RETRY STATUS: %s ROLLBACK STATUS: %s",
+                FLOW_STATUS + TASK_INFORMATION, RETRY_STATUS_MESSAGE, ROLLBACK_STATUS_MESSAGE));
+
         Request expected = new Request();
         expected.setRequestId(REQUEST_ID);
         expected.setOriginalRequestId(ORIGINAL_REQUEST_ID);
@@ -103,10 +116,13 @@ public class OrchestrationRequestsUnitTest {
 
     @Test
     public void mapInfraActiveRequestToRequestOriginalRequestIdNullTest() throws ApiException {
+        doReturn("Last task executed: Call SDNC").when(camundaRequestHandler).getTaskName(REQUEST_ID);
         InstanceReferences instanceReferences = new InstanceReferences();
         instanceReferences.setServiceInstanceId(SERVICE_INSTANCE_ID);
         RequestStatus requestStatus = new RequestStatus();
         requestStatus.setRequestState(iar.getRequestStatus());
+        requestStatus.setStatusMessage(String.format("FLOW STATUS: %s RETRY STATUS: %s ROLLBACK STATUS: %s",
+                FLOW_STATUS + TASK_INFORMATION, RETRY_STATUS_MESSAGE, ROLLBACK_STATUS_MESSAGE));
         Request expected = new Request();
         expected.setRequestId(REQUEST_ID);
         expected.setInstanceReferences(instanceReferences);
@@ -120,10 +136,13 @@ public class OrchestrationRequestsUnitTest {
 
     @Test
     public void mapRequestStatusAndExtSysErrSrcToRequestFalseTest() throws ApiException {
+        doReturn("Last task executed: Call SDNC").when(camundaRequestHandler).getTaskName(REQUEST_ID);
         InstanceReferences instanceReferences = new InstanceReferences();
         instanceReferences.setServiceInstanceId(SERVICE_INSTANCE_ID);
         RequestStatus requestStatus = new RequestStatus();
         requestStatus.setRequestState(iar.getRequestStatus());
+        requestStatus.setStatusMessage(String.format("FLOW STATUS: %s RETRY STATUS: %s ROLLBACK STATUS: %s",
+                FLOW_STATUS + TASK_INFORMATION, RETRY_STATUS_MESSAGE, ROLLBACK_STATUS_MESSAGE));
 
         Request expected = new Request();
         expected.setRequestId(REQUEST_ID);
@@ -140,6 +159,7 @@ public class OrchestrationRequestsUnitTest {
 
     @Test
     public void mapRequestStatusAndExtSysErrSrcToRequestStatusDetailTest() throws ApiException {
+        doReturn(null).when(camundaRequestHandler).getTaskName(REQUEST_ID);
         InstanceReferences instanceReferences = new InstanceReferences();
         instanceReferences.setServiceInstanceId(SERVICE_INSTANCE_ID);
         RequestStatus requestStatus = new RequestStatus();
@@ -157,11 +177,6 @@ public class OrchestrationRequestsUnitTest {
         expected.setRequestScope(SERVICE);
 
         includeCloudRequest = false;
-        iar.setExtSystemErrorSource(EXT_SYSTEM_ERROR_SOURCE);
-        iar.setRollbackExtSystemErrorSource(ROLLBACK_EXT_SYSTEM_ERROR_SOURCE);
-        iar.setFlowStatus(FLOW_STATUS);
-        iar.setRollbackStatusMessage(ROLLBACK_STATUS_MESSAGE);
-        iar.setRetryStatusMessage(RETRY_STATUS_MESSAGE);
 
         Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
                 OrchestrationRequestFormat.STATUSDETAIL.toString());
@@ -170,12 +185,13 @@ public class OrchestrationRequestsUnitTest {
 
     @Test
     public void mapRequestStatusAndExtSysErrSrcToRequestDetailTest() throws ApiException {
+        doReturn("Last task executed: Call SDNC").when(camundaRequestHandler).getTaskName(REQUEST_ID);
         InstanceReferences instanceReferences = new InstanceReferences();
         instanceReferences.setServiceInstanceId(SERVICE_INSTANCE_ID);
         RequestStatus requestStatus = new RequestStatus();
         requestStatus.setRequestState(iar.getRequestStatus());
         requestStatus.setStatusMessage(String.format("FLOW STATUS: %s RETRY STATUS: %s ROLLBACK STATUS: %s",
-                FLOW_STATUS, RETRY_STATUS_MESSAGE, ROLLBACK_STATUS_MESSAGE));
+                FLOW_STATUS + TASK_INFORMATION, RETRY_STATUS_MESSAGE, ROLLBACK_STATUS_MESSAGE));
 
         Request expected = new Request();
         expected.setRequestId(REQUEST_ID);
@@ -184,11 +200,78 @@ public class OrchestrationRequestsUnitTest {
         expected.setRequestScope(SERVICE);
 
         includeCloudRequest = false;
-        iar.setExtSystemErrorSource(EXT_SYSTEM_ERROR_SOURCE);
-        iar.setRollbackExtSystemErrorSource(ROLLBACK_EXT_SYSTEM_ERROR_SOURCE);
-        iar.setFlowStatus(FLOW_STATUS);
-        iar.setRollbackStatusMessage(ROLLBACK_STATUS_MESSAGE);
-        iar.setRetryStatusMessage(RETRY_STATUS_MESSAGE);
+
+        Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
+                OrchestrationRequestFormat.DETAIL.toString());
+
+        assertThat(actual, sameBeanAs(expected));
+    }
+
+    @Test
+    public void mapRequestStatusAndExtSysErrSrcToRequestNoFlowStatusTest() throws ApiException {
+        InstanceReferences instanceReferences = new InstanceReferences();
+        instanceReferences.setServiceInstanceId(SERVICE_INSTANCE_ID);
+        RequestStatus requestStatus = new RequestStatus();
+        requestStatus.setRequestState(iar.getRequestStatus());
+        requestStatus.setStatusMessage(
+                String.format("RETRY STATUS: %s ROLLBACK STATUS: %s", RETRY_STATUS_MESSAGE, ROLLBACK_STATUS_MESSAGE));
+
+        Request expected = new Request();
+        expected.setRequestId(REQUEST_ID);
+        expected.setInstanceReferences(instanceReferences);
+        expected.setRequestStatus(requestStatus);
+        expected.setRequestScope(SERVICE);
+
+        includeCloudRequest = false;
+        iar.setFlowStatus(null);
+
+        Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
+                OrchestrationRequestFormat.DETAIL.toString());
+
+        assertThat(actual, sameBeanAs(expected));
+    }
+
+    @Test
+    public void mapRequestStatusAndExtSysErrSrcToRequestFlowStatusSuccessfulCompletionTest() throws ApiException {
+        InstanceReferences instanceReferences = new InstanceReferences();
+        instanceReferences.setServiceInstanceId(SERVICE_INSTANCE_ID);
+        RequestStatus requestStatus = new RequestStatus();
+        requestStatus.setRequestState(iar.getRequestStatus());
+        requestStatus.setStatusMessage(String.format("FLOW STATUS: %s RETRY STATUS: %s ROLLBACK STATUS: %s",
+                "Successfully completed all Building Blocks", RETRY_STATUS_MESSAGE, ROLLBACK_STATUS_MESSAGE));
+
+        Request expected = new Request();
+        expected.setRequestId(REQUEST_ID);
+        expected.setInstanceReferences(instanceReferences);
+        expected.setRequestStatus(requestStatus);
+        expected.setRequestScope(SERVICE);
+
+        includeCloudRequest = false;
+        iar.setFlowStatus("Successfully completed all Building Blocks");
+
+        Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
+                OrchestrationRequestFormat.DETAIL.toString());
+
+        assertThat(actual, sameBeanAs(expected));
+    }
+
+    @Test
+    public void mapRequestStatusAndExtSysErrSrcToRequestFlowStatusSuccessfulRollbackTest() throws ApiException {
+        InstanceReferences instanceReferences = new InstanceReferences();
+        instanceReferences.setServiceInstanceId(SERVICE_INSTANCE_ID);
+        RequestStatus requestStatus = new RequestStatus();
+        requestStatus.setRequestState(iar.getRequestStatus());
+        requestStatus.setStatusMessage(String.format("FLOW STATUS: %s RETRY STATUS: %s ROLLBACK STATUS: %s",
+                "All Rollback flows have completed successfully", RETRY_STATUS_MESSAGE, ROLLBACK_STATUS_MESSAGE));
+
+        Request expected = new Request();
+        expected.setRequestId(REQUEST_ID);
+        expected.setInstanceReferences(instanceReferences);
+        expected.setRequestStatus(requestStatus);
+        expected.setRequestScope(SERVICE);
+
+        includeCloudRequest = false;
+        iar.setFlowStatus("All Rollback flows have completed successfully");
 
         Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
                 OrchestrationRequestFormat.DETAIL.toString());

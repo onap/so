@@ -27,7 +27,6 @@ package org.onap.so.apihandlerinfra;
 import static org.onap.so.logger.HttpHeadersConstants.REQUESTOR_ID;
 import java.io.IOException;
 import java.net.URL;
-import java.security.GeneralSecurityException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +36,6 @@ import java.util.Optional;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import javax.xml.bind.DatatypeConverter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -78,21 +76,16 @@ import org.onap.so.serviceinstancebeans.RelatedInstanceList;
 import org.onap.so.serviceinstancebeans.RequestParameters;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 import org.onap.so.serviceinstancebeans.ServiceInstancesResponse;
-import org.onap.so.utils.CryptoUtils;
 import org.onap.so.utils.UUIDChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClientException;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -119,7 +112,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
     private MsoRequest msoRequest;
 
     @Autowired
-    private RestTemplate restTemplate;
+    private CamundaRequestHandler camundaRequestHandler;
 
     @Autowired
     private CatalogDbClient catalogDbClient;
@@ -323,25 +316,20 @@ public class RequestHandlerUtils extends AbstractRestHandler {
     public boolean camundaHistoryCheck(InfraActiveRequests duplicateRecord, InfraActiveRequests currentActiveReq)
             throws RequestDbFailureException, ContactCamundaException {
         String requestId = duplicateRecord.getRequestId();
-        String path = env.getProperty("mso.camunda.rest.history.uri") + requestId;
-        String targetUrl = env.getProperty("mso.camundaURL") + path;
-        HttpHeaders headers =
-                setCamundaHeaders(env.getRequiredProperty("mso.camundaAuth"), env.getRequiredProperty("mso.msoKey"));
-        HttpEntity<?> requestEntity = new HttpEntity<>(headers);
         ResponseEntity<List<HistoricProcessInstanceEntity>> response = null;
         try {
-            response = restTemplate.exchange(targetUrl, HttpMethod.GET, requestEntity,
-                    new ParameterizedTypeReference<List<HistoricProcessInstanceEntity>>() {});
-        } catch (HttpStatusCodeException e) {
-            ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_DUPLICATE_CHECK_EXC, ErrorCode.DataError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+            response = camundaRequestHandler.getCamundaProcessInstanceHistory(requestId);
+        } catch (RestClientException e) {
+            logger.error("Error querying Camunda for process-instance history for requestId: {}, exception: {}",
+                    requestId, e.getMessage());
             ContactCamundaException contactCamundaException =
-                    new ContactCamundaException.Builder(requestId, e.toString(), HttpStatus.SC_INTERNAL_SERVER_ERROR,
-                            ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e).errorInfo(errorLoggerInfo).build();
+                    new ContactCamundaException.Builder("process-instance", requestId, e.toString(),
+                            HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e)
+                                    .build();
             updateStatus(currentActiveReq, Status.FAILED, contactCamundaException.getMessage());
             throw contactCamundaException;
         }
+
         if (response.getBody().isEmpty()) {
             updateStatus(duplicateRecord, Status.COMPLETE, "Request Completed");
         }
@@ -353,23 +341,6 @@ public class RequestHandlerUtils extends AbstractRestHandler {
             }
         }
         return false;
-    }
-
-    protected HttpHeaders setCamundaHeaders(String auth, String msoKey) {
-        HttpHeaders headers = new HttpHeaders();
-        List<org.springframework.http.MediaType> acceptableMediaTypes = new ArrayList<>();
-        acceptableMediaTypes.add(org.springframework.http.MediaType.APPLICATION_JSON);
-        headers.setAccept(acceptableMediaTypes);
-        try {
-            String userCredentials = CryptoUtils.decrypt(auth, msoKey);
-            if (userCredentials != null) {
-                headers.add(HttpHeaders.AUTHORIZATION,
-                        "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes()));
-            }
-        } catch (GeneralSecurityException e) {
-            logger.error("Security exception", e);
-        }
-        return headers;
     }
 
     public ServiceInstancesRequest convertJsonToServiceInstanceRequest(String requestJSON, Actions action,

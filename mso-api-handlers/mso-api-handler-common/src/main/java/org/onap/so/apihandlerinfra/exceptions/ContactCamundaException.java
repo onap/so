@@ -23,7 +23,7 @@ package org.onap.so.apihandlerinfra.exceptions;
 public class ContactCamundaException extends ApiException {
 
     private static final String contactCamundaErrorMessage =
-            "Unable to get process-instance history from Camunda for requestId: %s due to error: %s";
+            "Unable to get %s history from Camunda for requestId: %s due to error: %s";
 
     private ContactCamundaException(Builder builder) {
         super(builder);
@@ -32,9 +32,9 @@ public class ContactCamundaException extends ApiException {
     public static class Builder extends ApiException.Builder<Builder> {
 
 
-        public Builder(String requestId, String error, int httpResponseCode, String messageID) {
-            super(contactCamundaErrorMessage.format(contactCamundaErrorMessage, requestId, error), httpResponseCode,
-                    messageID);
+        public Builder(String query, String requestId, String error, int httpResponseCode, String messageID) {
+            super(contactCamundaErrorMessage.format(contactCamundaErrorMessage, query, requestId, error),
+                    httpResponseCode, messageID);
         }
 
         public ContactCamundaException build() {

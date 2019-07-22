@@ -26,6 +26,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
@@ -42,6 +43,7 @@ import java.util.Map;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
+import org.junit.Before;
 import org.junit.Test;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.db.request.beans.InfraActiveRequests;
@@ -90,6 +92,21 @@ public class OrchestrationRequestsTest extends BaseTest {
             ioe.printStackTrace();
         }
         return list;
+    }
+
+    @Before
+    public void setup() throws IOException {
+        wireMockServer.stubFor(get(urlMatching("/sobpmnengine/history/process-instance.*")).willReturn(aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                .withBody(new String(Files.readAllBytes(
+                        Paths.get("src/test/resources/OrchestrationRequest/ProcessInstanceHistoryResponse.json"))))
+                .withStatus(org.apache.http.HttpStatus.SC_OK)));
+        wireMockServer.stubFor(
+                get(("/sobpmnengine/history/activity-instance?processInstanceId=c4c6b647-a26e-11e9-b144-0242ac14000b"))
+                        .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                                .withBody(new String(Files.readAllBytes(Paths.get(
+                                        "src/test/resources/OrchestrationRequest/ActivityInstanceHistoryResponse.json"))))
+                                .withStatus(HttpStatus.SC_OK)));
     }
 
     @Test
