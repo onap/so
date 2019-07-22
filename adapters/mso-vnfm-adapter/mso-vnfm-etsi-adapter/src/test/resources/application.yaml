@@ -38,3 +38,17 @@ sdc:
 
 vnfmadapter:
   endpoint: https://so-vnfm-adapter.onap:30406
+  
+#Actuator
+management:
+  endpoints:
+    web:
+      base-path: /manage
+      exposure:
+        include: "*"
+  metrics:
+    se-global-registry: false
+    export:
+      prometheus:
+        enabled: true # Whether exporting of metrics to Prometheus is enabled.
+        step: 1m # Step size (i.e. reporting frequency) to use.
