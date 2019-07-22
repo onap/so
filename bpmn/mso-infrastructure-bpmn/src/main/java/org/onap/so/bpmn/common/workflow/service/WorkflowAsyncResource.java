@@ -101,7 +101,7 @@ public class WorkflowAsyncResource extends ProcessEngineAwareService {
         try {
             MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, getRequestId(inputVariables));
             processor.startProcess(processKey, variableMap);
-            WorkflowResponse response = waitForResponse(getRequestId(inputVariables));
+            WorkflowResponse response = waitForResponse(inputVariables);
             return Response.status(202).entity(response).build();
         } catch (WorkflowProcessorException e) {
             WorkflowResponse response = e.getWorkflowResponse();
@@ -112,9 +112,12 @@ public class WorkflowAsyncResource extends ProcessEngineAwareService {
         }
     }
 
-    private WorkflowResponse waitForResponse(String requestId) throws Exception {
+    private WorkflowResponse waitForResponse(Map<String, Object> inputVariables) throws Exception {
+        String requestId = getRequestId(inputVariables);
         long currentWaitTime = 0;
-        while (DEFAULT_WAIT_TIME > currentWaitTime) {
+        long waitTime = getWaitTime(inputVariables);
+        logger.debug("WorkflowAsyncResource.waitForResponse using timeout: " + waitTime);
+        while (waitTime > currentWaitTime) {
             Thread.sleep(workflowPollInterval);
             currentWaitTime = currentWaitTime + workflowPollInterval;
             WorkflowContext foundContext = contextHolder.getWorkflowContext(requestId);
@@ -123,7 +126,7 @@ public class WorkflowAsyncResource extends ProcessEngineAwareService {
                 return buildResponse(foundContext);
             }
         }
-        throw new Exception("TimeOutOccured");
+        throw new Exception("TimeOutOccured in WorkflowAsyncResource.waitForResponse for time " + waitTime + "ms");
     }
 
     private WorkflowResponse buildUnkownError(String requestId, String error) {
@@ -169,6 +172,27 @@ public class WorkflowAsyncResource extends ProcessEngineAwareService {
             inputVariables.put(vName, valueMap.get("value"));
         }
         return inputVariables;
+    }
+
+    /**
+     * Returns the wait time, this is used by the resource on how long it should wait to send a response If none
+     * specified DEFAULT_WAIT_TIME is used
+     *
+     * @param inputVariables
+     * @return
+     */
+    private long getWaitTime(Map<String, Object> inputVariables) {
+        String timeout = inputVariables.get("mso-service-request-timeout") == null ? null
+                : inputVariables.get("mso-service-request-timeout").toString();
+
+        if (timeout != null) {
+            try {
+                return Long.parseLong(timeout) * 1000;
+            } catch (NumberFormatException nex) {
+                logger.debug("Invalid input for mso-service-request-timeout");
+            }
+        }
+        return DEFAULT_WAIT_TIME;
     }
 
 }
