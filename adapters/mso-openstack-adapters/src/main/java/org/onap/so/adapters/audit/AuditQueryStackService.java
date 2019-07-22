@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.audit.beans.AuditInventory;
 import org.onap.so.objects.audit.AAIObjectAuditList;
 import org.slf4j.Logger;
@@ -24,8 +25,8 @@ public class AuditQueryStackService extends AbstractAuditService {
     protected AuditDataService auditDataService;
 
     protected void executeExternalTask(ExternalTask externalTask, ExternalTaskService externalTaskService) {
-        AuditInventory auditInventory = externalTask.getVariable("auditInventory");
         setupMDC(externalTask);
+        AuditInventory auditInventory = externalTask.getVariable("auditInventory");
         boolean success = false;
         Map<String, Object> variables = new HashMap<>();
         try {
@@ -42,6 +43,7 @@ public class AuditQueryStackService extends AbstractAuditService {
             if (success) {
                 externalTaskService.complete(externalTask, variables);
                 logger.debug("The External Task {}  was Successful", externalTask.getId());
+                logger.info(ONAPLogConstants.Markers.EXIT, "Exiting");
             } else {
                 if (externalTask.getRetries() == null) {
                     logger.debug("The External Task {} Failed. Setting Retries to Default Start Value: {}",
@@ -51,6 +53,7 @@ public class AuditQueryStackService extends AbstractAuditService {
                 } else if (externalTask.getRetries() != null && externalTask.getRetries() - 1 == 0) {
                     logger.debug("The External Task {} Failed. All Retries Exhausted", externalTask.getId());
                     externalTaskService.complete(externalTask, variables);
+                    logger.info(ONAPLogConstants.Markers.EXIT, "Exiting");
                 } else {
                     logger.debug("The External Task {} Failed. Decrementing Retries to {} , Retry Delay: ",
                             externalTask.getId(), externalTask.getRetries() - 1,
