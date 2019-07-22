@@ -22,6 +22,7 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import com.google.gson.JsonObject
 import org.json.JSONArray
 import org.json.JSONObject
 import org.json.XML
@@ -93,11 +94,12 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 			// set local resourceInput
 			execution.setVariable(Prefix + "ResourceInput", resourceInputObj)
 
+			String spPartnerModelName = UrnPropertiesReader.getVariable("sp-partner.modelName")
 			boolean is3rdONAPExist = false
 
-			if(inputParameters.has("sppartner_url"))
+			if(inputParameters.has(spPartnerModelName + "_url"))
 			{
-				String sppartnerUrl = inputParameters.get("sppartner_url")
+				String sppartnerUrl = inputParameters.get(spPartnerModelName + "_url")
 				if(!isBlank(sppartnerUrl)) {
 					execution.setVariable(Prefix + "SppartnerUrl", sppartnerUrl)
 					is3rdONAPExist = true
@@ -108,9 +110,9 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 					logger.debug(msg)
 				}
 			}
-			if(inputParameters.has("sppartner_providingServiceUuid"))
+			if(inputParameters.has(spPartnerModelName + "_providingServiceUuid"))
 			{
-				String sppartnerUUID= inputParameters.get("sppartner_providingServiceUuid")
+				String sppartnerUUID= inputParameters.get(spPartnerModelName + "_providingServiceUuid")
 				execution.setVariable(Prefix + "SppartnerUUID", sppartnerUUID)
 				is3rdONAPExist = true
 			}
@@ -119,9 +121,9 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 				String msg = "sppartner providingServiceUuid is blank."
 				logger.debug(msg)
 			}
-			if(inputParameters.has("sppartner_providingServiceInvariantUuid"))
+			if(inputParameters.has(spPartnerModelName + "_providingServiceInvariantUuid"))
 			{
-				String sppartnerInvarianteUUID  = inputParameters.get("sppartner_providingServiceInvariantUuid")
+				String sppartnerInvarianteUUID  = inputParameters.get(spPartnerModelName + "_providingServiceInvariantUuid")
 				execution.setVariable(Prefix + "SppartnerInvarianteUUID", sppartnerInvarianteUUID)
 				is3rdONAPExist = true
 			}
@@ -131,9 +133,9 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 				logger.debug(msg)
 			}
 
-			if(inputParameters.has("sppartner_handoverMode"))
+			if(inputParameters.has(spPartnerModelName + "_handoverMode"))
 			{
-				String handoverMode = inputParameters.get("sppartner_handoverMode")
+				String handoverMode = inputParameters.get(spPartnerModelName + "_handoverMode")
 				execution.setVariable(Prefix + "HandoverMode", handoverMode)
 			    is3rdONAPExist = true
 			}
@@ -167,7 +169,7 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 			String serviceParameters = JsonUtils.getJsonValue(incomingRequest, "service.parameters")
 			String requestInputs = JsonUtils.getJsonValue(serviceParameters, "requestInputs")
 			JSONObject inputParameters = new JSONObject(requestInputs)
-			execution.setVariable(Prefix + "ServiceParameters", inputParameters)
+			execution.setVariable(Prefix + "ServiceParameters", inputParameters.toString())
 
 			// CallSource is added only when ONAP SO calling 3rdONAP(External API) SO(Remote call)
 			boolean isLocalCall = true
@@ -182,7 +184,7 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 				}
 			}
 			execution.setVariable(Prefix + "CallSource", callSource)
-			logger.debug("callSource is: " + callSource )
+			logger.info("callSource is: " + callSource )
 
 			execution.setVariable("IsLocalCall", isLocalCall)
 
@@ -308,39 +310,39 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 		String handoverMode = execution.getVariable(Prefix + "HandoverMode")
 		if("SOTN".equalsIgnoreCase(handoverMode)) {
 			// Put TP Link info into serviceParameters
-			JSONObject inputParameters = execution.getVariable(Prefix + "ServiceParameters")
+			JSONObject inputParameters = new JSONObject(execution.getVariable(Prefix + "ServiceParameters"))
 			if(inputParameters.has("remote-access-provider-id")) {
 				Map<String, Object> crossTPs = new HashMap<String, Object>();
-				crossTPs.put("local-access-provider-id", inputParameters.get("remote-access-provider-id"));
-				crossTPs.put("local-access-client-id", inputParameters.get("remote-access-client-id"));
-				crossTPs.put("local-access-topology-id", inputParameters.get("remote-access-topology-id"));
-				crossTPs.put("local-access-node-id", inputParameters.get("remote-access-node-id"));
-				crossTPs.put("local-access-ltp-id", inputParameters.get("remote-access-ltp-id"));
-				crossTPs.put("remote-access-provider-id", inputParameters.get("local-access-provider-id"));
-				crossTPs.put("remote-access-client-id", inputParameters.get("local-access-client-id"));
-				crossTPs.put("remote-access-topology-id", inputParameters.get("local-access-topology-id"));
-				crossTPs.put("remote-access-node-id", inputParameters.get("local-access-node-id"));
-				crossTPs.put("remote-access-ltp-id", inputParameters.get("local-access-ltp-id"));
+				crossTPs.put("local-access-provider-id", inputParameters.get("remote-access-provider-id"))
+				crossTPs.put("local-access-client-id", inputParameters.get("remote-access-client-id"))
+				crossTPs.put("local-access-topology-id", inputParameters.get("remote-access-topology-id"))
+				crossTPs.put("local-access-node-id", inputParameters.get("remote-access-node-id"))
+				crossTPs.put("local-access-ltp-id", inputParameters.get("remote-access-ltp-id"))
+				crossTPs.put("remote-access-provider-id", inputParameters.get("local-access-provider-id"))
+				crossTPs.put("remote-access-client-id", inputParameters.get("local-access-client-id"))
+				crossTPs.put("remote-access-topology-id", inputParameters.get("local-access-topology-id"))
+				crossTPs.put("remote-access-node-id", inputParameters.get("local-access-node-id"))
+				crossTPs.put("remote-access-ltp-id", inputParameters.get("local-access-ltp-id"))
 
-				inputParameters.put("local-access-provider-id", crossTPs.get("local-access-provider-id"));
-				inputParameters.put("local-access-client-id", crossTPs.get("local-access-client-id"));
-				inputParameters.put("local-access-topology-id", crossTPs.get("local-access-topology-id"));
-				inputParameters.put("local-access-node-id", crossTPs.get("local-access-node-id"));
-				inputParameters.put("local-access-ltp-id", crossTPs.get("local-access-ltp-id"));
-				inputParameters.put("remote-access-provider-id", crossTPs.get("remote-access-provider-id"));
-				inputParameters.put("remote-access-client-id", crossTPs.get("remote-access-client-id"));
-				inputParameters.put("remote-access-topology-id", crossTPs.get("remote-access-topology-id"));
-				inputParameters.put("remote-access-node-id", crossTPs.get("remote-access-node-id"));
-				inputParameters.put("remote-access-ltp-id", crossTPs.get("remote-access-ltp-id"));
+				inputParameters.put("local-access-provider-id", crossTPs.get("local-access-provider-id"))
+				inputParameters.put("local-access-client-id", crossTPs.get("local-access-client-id"))
+				inputParameters.put("local-access-topology-id", crossTPs.get("local-access-topology-id"))
+				inputParameters.put("local-access-node-id", crossTPs.get("local-access-node-id"))
+				inputParameters.put("local-access-ltp-id", crossTPs.get("local-access-ltp-id"))
+				inputParameters.put("remote-access-provider-id", crossTPs.get("remote-access-provider-id"))
+				inputParameters.put("remote-access-client-id", crossTPs.get("remote-access-client-id"))
+				inputParameters.put("remote-access-topology-id", crossTPs.get("remote-access-topology-id"))
+				inputParameters.put("remote-access-node-id", crossTPs.get("remote-access-node-id"))
+				inputParameters.put("remote-access-ltp-id", crossTPs.get("remote-access-ltp-id"))
 
-				execution.setVariable(Prefix + "ServiceParameters", inputParameters)
+				execution.setVariable(Prefix + "ServiceParameters", inputParameters.toString())
 			}
 			else {
 					logger.error("No allocated CrossONAPResource found in ServiceParameters")
 			}
 		}
 
-		logger.info("Exit " + allocateCrossONAPResource)
+		logger.info("Exit  allocateCrossONAPResource")
 	}
 
 	public void prepare3rdONAPRequest(DelegateExecution execution) {
@@ -409,7 +411,7 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 		_requestInputs_ +=  ",\n" + externalAPIUtil.setTemplate(ExternalAPIUtil.RequestInputsTemplate, requestInputsMap)
 
 		// Transfer all uuiRequest incomeParameters to ExternalAPI format
-		JSONObject inputParameters = execution.getVariable(Prefix + "ServiceParameters")
+		JSONObject inputParameters = new JSONObject(execution.getVariable(Prefix + "ServiceParameters"))
 		for(String key : inputParameters.keySet()) {
 			String inputName = key
 			String inputValue = inputParameters.opt(key)
@@ -506,7 +508,7 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 			}
 
 			JSONArray items = responseObj.getJSONArray("orderItem")
-			JSONObject item = items[0]
+			JSONObject item = items.get(0)
 			JSONObject service = item.get("service")
 			String sppartnerServiceId = service.get("id")
 			if(sppartnerServiceId == null || sppartnerServiceId.equals("null")) {
@@ -572,7 +574,9 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 	 */
 	public void timeDelay(DelegateExecution execution) {
 		try {
+			logger.debug("going to sleep for 5 sec")
 			Thread.sleep(5000)
+			logger.debug("wakeup after 5 sec")
 		} catch(InterruptedException e) {
 			logger.error("Time Delay exception" + e)
 		}
@@ -601,6 +605,8 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 
 		AAIResourcesClient client = new AAIResourcesClient()
 		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SP_PARTNER, sppartnerId)
+		logger.info("sending request to create sp-partner: " +  uri.toString())
+		logger.info("requestbody: " + partner)
 		client.create(uri, partner)
 
 		AAIResourceUri siUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId, serviceType, serviceInstanceId)

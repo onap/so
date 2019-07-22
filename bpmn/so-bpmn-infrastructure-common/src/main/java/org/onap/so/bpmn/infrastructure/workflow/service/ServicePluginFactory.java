@@ -26,8 +26,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -54,16 +56,21 @@ import org.camunda.bpm.engine.runtime.Execution;
 import org.onap.aai.domain.yang.LogicalLink;
 import org.onap.aai.domain.yang.LogicalLinks;
 import org.onap.aai.domain.yang.PInterface;
+import org.onap.aai.domain.yang.Pnf;
+import org.onap.aai.domain.yang.Relationship;
+import org.onap.aai.domain.yang.RelationshipList;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.bpmn.core.domain.Resource;
 import org.onap.so.bpmn.core.domain.ServiceDecomposition;
 import org.onap.so.bpmn.core.json.JsonUtils;
+import org.onap.so.bpmn.infrastructure.properties.BPMNProperties;
 import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.Relationships;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
+import org.onap.so.client.aai.entities.uri.AAIUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
@@ -157,8 +164,7 @@ public class ServicePluginFactory {
     }
 
     private boolean isNeedProcessSite(String uuiRequest) {
-        return uuiRequest.toLowerCase().contains("site_address")
-                && uuiRequest.toLowerCase().contains("sotncondition_clientsignal");
+        return uuiRequest.toLowerCase().contains("address") && uuiRequest.toLowerCase().contains("clientsignal");
     }
 
     @SuppressWarnings("unchecked")
@@ -169,6 +175,7 @@ public class ServicePluginFactory {
             return true;
         }
         String host = (String) tpInfoMap.get("host");
+        logger.info("host string from tpinfo:" + host);
         // host is empty means TP is in local, not empty means TP is in remote ONAP
         if (!host.isEmpty()) {
             return false;
@@ -182,14 +189,30 @@ public class ServicePluginFactory {
         accessTPInfo.put("access-ltp-id", tpInfoMap.get("access-ltp-id"));
 
         // change resources
+        boolean flgResourceFound = false;
         String resourceName = (String) tpInfoMap.get("resourceName");
         for (Object curResource : resources) {
             Map<String, Object> resource = (Map<String, Object>) curResource;
             String curResourceName = (String) resource.get("resourceName");
             curResourceName = curResourceName.replaceAll(" ", "");
             if (resourceName.equalsIgnoreCase(curResourceName)) {
+                flgResourceFound = true;
+                logger.info("found match to add site tp info using uui template resource name");
                 putResourceRequestInputs(resource, accessTPInfo);
                 break;
+            }
+        }
+
+        if (!flgResourceFound) {
+            String attacmentResName = UrnPropertiesReader.getVariable("sp-partner.attachment-resource-name");
+            for (Object curResource : resources) {
+                Map<String, Object> resource = (Map<String, Object>) curResource;
+                String curResourceName = (String) resource.get("resourceName");
+
+                if (attacmentResName.equals(curResourceName)) {
+                    logger.info("found match to add site tp info using customized resource name");
+                    putResourceRequestInputs(resource, accessTPInfo);
+                }
             }
         }
 
@@ -206,10 +229,10 @@ public class ServicePluginFactory {
         // logic for R2 uuiRequest params in service level
         for (Entry<String, Object> entry : serviceRequestInputs.entrySet()) {
             String key = entry.getKey();
-            if (key.toLowerCase().contains("site_address")) {
+            if (key.toLowerCase().contains("address")) {
                 location = entry.getValue();
             }
-            if (key.toLowerCase().contains("sotncondition_clientsignal")) {
+            if (key.toLowerCase().contains("clientsignal")) {
                 clientSignal = entry.getValue();
                 vpnAttachmentResourceName = key.substring(0, key.indexOf("_"));
             }
@@ -233,10 +256,12 @@ public class ServicePluginFactory {
                     tpInfoMap = tpJson;
                     // add resourceName
                     tpInfoMap.put("resourceName", vpnAttachmentResourceName);
+                    logger.info("*** we will try to find resourcename(" + vpnAttachmentResourceName
+                            + ") to add resource input ***");
                     break;
                 }
             }
-            logger.debug("Get Terminal TP from InventoryOSS");
+            logger.info("Get Terminal TP from InventoryOSS: " + tpInfoMap);
             return tpInfoMap;
         }
 
@@ -321,10 +346,40 @@ public class ServicePluginFactory {
         return false;
     }
 
+    public static String CUSTOM_RESOURCE_TP = "custom-resource-tp";
+    public static String VS_MONITORED = "VS_assured";
+    public static String VS_UNMONITORED = "VS_besteffort";
+    public static String TS_MONITORED = "TS1";
+    public static String TS_UNMONITORED = "TS2";
+    public static String CUSTOM_TP_LIST[] = new String[] {VS_MONITORED, VS_UNMONITORED, TS_MONITORED, TS_UNMONITORED};
+
+    private void customizeTP(Map<String, Object> crossTps, String svcName, DelegateExecution execution) {
+        Optional<String> customType = Arrays.stream(CUSTOM_TP_LIST).filter(svcName::contains).findFirst();
+        if (customType.isPresent()) {
+            logger.info("customizing TP");
+            String localTPs = UrnPropertiesReader.getVariable(CUSTOM_RESOURCE_TP + "." + customType.get() + ".local");
+            String remoteTPs = UrnPropertiesReader.getVariable(CUSTOM_RESOURCE_TP + "." + customType.get() + ".remote");
+
+            String localTP = (String) crossTps.get("local-access-ltp-id");
+            String remoteTP = (String) crossTps.get("remote-access-ltp-id");
+
+            if (localTPs.contains(localTP) && remoteTPs.contains(remoteTP)) {
+                logger.info("using same tp returned from AAI");
+                return;
+            }
+
+            crossTps.put("local-access-ltp-id", localTPs.split(",")[0]);
+            crossTps.put("remote-access-ltp-id", remoteTPs.split(",")[0]);
+        }
+        logger.info("cross TP info:" + crossTps);
+    }
+
     @SuppressWarnings("unchecked")
     private void allocateCrossTPResources(DelegateExecution execution, Map<String, Object> serviceRequestInputs) {
 
-        Map<String, Object> crossTPs = this.getTPsfromAAI();
+        String serviceName = (String) execution.getVariable("serviceInstanceName");
+        Map<String, Object> crossTPs = this.getTPsfromAAI(serviceName);
+        // customizeTP(crossTPs, serviceName, execution);
 
         if (crossTPs == null || crossTPs.isEmpty()) {
             serviceRequestInputs.put("local-access-provider-id", "");
@@ -344,17 +399,45 @@ public class ServicePluginFactory {
             serviceRequestInputs.put("local-access-node-id", crossTPs.get("local-access-node-id"));
             serviceRequestInputs.put("local-access-ltp-id", crossTPs.get("local-access-ltp-id"));
             serviceRequestInputs.put("remote-access-provider-id", crossTPs.get("remote-access-provider-id"));
-            serviceRequestInputs.put("remote-access-client-id", crossTPs.get("remote-client-id"));
-            serviceRequestInputs.put("remote-access-topology-id", crossTPs.get("remote-topology-id"));
-            serviceRequestInputs.put("remote-access-node-id", crossTPs.get("remote-node-id"));
-            serviceRequestInputs.put("remote-access-ltp-id", crossTPs.get("remote-ltp-id"));
+            serviceRequestInputs.put("remote-access-client-id", crossTPs.get("remote-access-client-id"));
+            serviceRequestInputs.put("remote-access-topology-id", crossTPs.get("remote-access-topology-id"));
+            serviceRequestInputs.put("remote-access-node-id", crossTPs.get("remote-access-node-id"));
+            serviceRequestInputs.put("remote-access-ltp-id", crossTPs.get("remote-access-ltp-id"));
         }
 
         return;
     }
 
+    private LogicalLink selectLogicalLink(List<LogicalLink> logicalLinks, String svcName) {
+        Optional<String> customType = Arrays.stream(CUSTOM_TP_LIST).filter(svcName::contains).findFirst();
+        if (customType.isPresent()) {
+
+            String[] allowedList =
+                    UrnPropertiesReader.getVariable(CUSTOM_RESOURCE_TP + "." + customType.get() + ".local").split(",");
+
+            for (String localTp : allowedList) {
+                for (LogicalLink link : logicalLinks) {
+                    for (Relationship relationship : link.getRelationshipList().getRelationship()) {
+                        if (relationship.getRelatedTo().equals("p-interface")
+                                && relationship.getRelatedLink().contains("-ltpId-" + localTp)
+                                && link.getOperationalStatus().equalsIgnoreCase("up")) {
+                            logger.info("linkname:" + link.getLinkName() + " is matching with allowed list");
+                            return link;
+                        }
+                    }
+                }
+            }
+
+            logger.error("There is no matching logical link for allowed list :" + allowedList.toString());
+            return null;
+        } else {
+            logger.info("link customization is not required");
+            return logicalLinks.get(0);
+        }
+    }
+
     // This method returns Local and remote TPs information from AAI
-    public Map getTPsfromAAI() {
+    public Map getTPsfromAAI(String serviceName) {
         Map<String, Object> tpInfo = new HashMap<>();
 
         AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.LOGICAL_LINK);
@@ -363,11 +446,11 @@ public class ServicePluginFactory {
 
         if (result.isPresent()) {
             LogicalLinks links = result.get();
-            boolean isRemoteLink = false;
+            LogicalLink link = selectLogicalLink(links.getLogicalLink(), serviceName);
 
-            links.getLogicalLink();
-
-            for (LogicalLink link : links.getLogicalLink()) {
+            if (link != null) {
+                boolean isRemoteLink = false;
+                logger.info("processing link :" + link.getLinkName());
                 AAIResultWrapper wrapper = new AAIResultWrapper(link);
                 Optional<Relationships> optRelationships = wrapper.getRelationships();
                 List<AAIResourceUri> pInterfaces = new ArrayList<>();
@@ -377,57 +460,85 @@ public class ServicePluginFactory {
                         isRemoteLink = true;
                     }
                     pInterfaces.addAll(relationships.getRelatedAAIUris(AAIObjectType.P_INTERFACE));
-                }
+                    if (isRemoteLink) {
+                        // find remote p interface
+                        AAIResourceUri localTP = null;
+                        AAIResourceUri remoteTP = null;
 
-                if (isRemoteLink) {
-                    // find remote p interface
-                    AAIResourceUri localTP = null;
-                    AAIResourceUri remoteTP = null;
+                        AAIResourceUri pInterface0 = pInterfaces.get(0);
 
-                    AAIResourceUri pInterface0 = pInterfaces.get(0);
-
-                    if (isRemotePInterface(client, pInterface0)) {
-                        remoteTP = pInterfaces.get(0);
-                        localTP = pInterfaces.get(1);
-                    } else {
-                        localTP = pInterfaces.get(0);
-                        remoteTP = pInterfaces.get(1);
-                    }
-
-                    if (localTP != null && remoteTP != null) {
-                        // give local tp
-                        String tpUrl = localTP.build().toString();
-                        PInterface intfLocal = client.get(PInterface.class, localTP).get();
-                        tpInfo.put("local-access-node-id", tpUrl.split("/")[6]);
-
-                        String[] networkRef = intfLocal.getNetworkRef().split("/");
-                        if (networkRef.length == 6) {
-                            tpInfo.put("local-access-provider-id", networkRef[1]);
-                            tpInfo.put("local-access-client-id", networkRef[3]);
-                            tpInfo.put("local-access-topology-id", networkRef[5]);
-                        }
-                        String ltpIdStr = tpUrl.substring(tpUrl.lastIndexOf("/") + 1);
-                        if (ltpIdStr.contains("-")) {
-                            tpInfo.put("local-access-ltp-id", ltpIdStr.substring(ltpIdStr.lastIndexOf("-") + 1));
+                        if (isRemotePInterface(client, pInterface0)) {
+                            remoteTP = pInterfaces.get(0);
+                            localTP = pInterfaces.get(1);
+                        } else {
+                            localTP = pInterfaces.get(0);
+                            remoteTP = pInterfaces.get(1);
                         }
 
-                        // give remote tp
-                        tpUrl = remoteTP.build().toString();
-                        PInterface intfRemote = client.get(PInterface.class, remoteTP).get();
-                        tpInfo.put("remote-access-node-id", tpUrl.split("/")[6]);
+                        if (localTP != null && remoteTP != null) {
+                            // give local tp
+                            String tpUrl = localTP.build().toString();
+                            String localNodeId = tpUrl.split("/")[4];
+                            tpInfo.put("local-access-node-id", localNodeId);
 
-                        String[] networkRefRemote = intfRemote.getNetworkRef().split("/");
+                            logger.info("Get info for local TP :" + localNodeId);
+                            Optional<Pnf> optLocalPnf = client.get(Pnf.class,
+                                    AAIUriFactory.createResourceUri(AAIObjectType.PNF, localNodeId));
 
-                        if (networkRefRemote.length == 6) {
-                            tpInfo.put("remote-access-provider-id", networkRefRemote[1]);
-                            tpInfo.put("remote-access-client-id", networkRefRemote[3]);
-                            tpInfo.put("remote-access-topology-id", networkRefRemote[5]);
+                            if (optLocalPnf.isPresent()) {
+                                Pnf localPnf = optLocalPnf.get();
+
+                                for (Relationship rel : localPnf.getRelationshipList().getRelationship()) {
+                                    if (rel.getRelatedTo().equalsIgnoreCase("network-resource")) {
+                                        String[] networkRef = rel.getRelatedLink()
+                                                .substring(rel.getRelatedLink().lastIndexOf("/") + 1).split("-");
+                                        if (networkRef.length == 6) {
+                                            tpInfo.put("local-access-provider-id", networkRef[1]);
+                                            tpInfo.put("local-access-client-id", networkRef[3]);
+                                            tpInfo.put("local-access-topology-id", networkRef[5]);
+                                        }
+                                    }
+                                }
+                            }
+                            String ltpIdStr = tpUrl.substring(tpUrl.lastIndexOf("/") + 1);
+                            if (ltpIdStr.contains("-")) {
+                                tpInfo.put("local-access-ltp-id", ltpIdStr.substring(ltpIdStr.lastIndexOf("-") + 1));
+                            }
+
+                            // give remote tp
+                            tpUrl = remoteTP.build().toString();
+                            PInterface intfRemote = client.get(PInterface.class, remoteTP).get();
+
+                            String remoteNodeId = tpUrl.split("/")[4];
+                            tpInfo.put("remote-access-node-id", remoteNodeId);
+
+                            logger.info("Get info for remote TP:" + remoteNodeId);
+
+                            String[] networkRefRemote = intfRemote.getNetworkRef().split("-");
+                            Optional<Pnf> optRemotePnf = client.get(Pnf.class,
+                                    AAIUriFactory.createResourceUri(AAIObjectType.PNF, remoteNodeId));
+
+                            if (optRemotePnf.isPresent()) {
+                                Pnf remotePnf = optRemotePnf.get();
+
+                                for (Relationship rel : remotePnf.getRelationshipList().getRelationship()) {
+                                    if (rel.getRelatedTo().equalsIgnoreCase("network-resource")) {
+                                        String[] networkRef = rel.getRelatedLink()
+                                                .substring(rel.getRelatedLink().lastIndexOf("/") + 1).split("-");
+                                        if (networkRef.length == 6) {
+                                            tpInfo.put("remote-access-provider-id", networkRefRemote[1]);
+                                            tpInfo.put("remote-access-client-id", networkRefRemote[3]);
+                                            tpInfo.put("remote-access-topology-id", networkRefRemote[5]);
+                                        }
+                                    }
+                                }
+                            }
+
+                            String ltpIdStrR = tpUrl.substring(tpUrl.lastIndexOf("/") + 1);
+                            if (ltpIdStrR.contains("-")) {
+                                tpInfo.put("remote-access-ltp-id", ltpIdStrR.substring(ltpIdStr.lastIndexOf("-") + 1));
+                            }
                         }
-                        String ltpIdStrR = tpUrl.substring(tpUrl.lastIndexOf("/") + 1);
-                        if (ltpIdStrR.contains("-")) {
-                            tpInfo.put("remote-access-ltp-id", ltpIdStrR.substring(ltpIdStr.lastIndexOf("-") + 1));
-                        }
-                        return tpInfo;
                     }
                 }
             }

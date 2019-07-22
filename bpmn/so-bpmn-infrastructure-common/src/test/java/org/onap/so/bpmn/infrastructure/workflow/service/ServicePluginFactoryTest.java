@@ -109,7 +109,7 @@ public class ServicePluginFactoryTest {
 
     @Test
     public void doTPResourcesAllocation_Success() {
-        doReturn(null).when(servicePluginFactory).getTPsfromAAI();
+        doReturn(null).when(servicePluginFactory).getTPsfromAAI("test");
         String result = servicePluginFactory.doTPResourcesAllocation(null, uuiRequest);
         Assert.assertNotEquals(result, uuiRequest);
     }

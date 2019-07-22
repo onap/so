@@ -116,7 +116,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
             long timeToWaitAfterProcessEnded = uriInfo == null ? 5000 : 60000;
             AtomicLong timeProcessEnded = new AtomicLong(0);
             boolean endedWithNoResponse = false;
-
+            logger.debug(LOGMARKER + "WorkflowResource.startProcessInstanceByKey using timeout: " + waitTime);
             while (now <= endTime) {
                 Thread.sleep(pollingInterval);
 
