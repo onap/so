@@ -94,7 +94,7 @@ public class ServicePluginFactory {
             THIRD_SP_DEFAULT_ENDPOINT = prop.getProperty("third.sp.default.endpoint");
             INVENTORY_OSS_DEFAULT_ENDPOINT = prop.getProperty("inventory.oss.default.endpoint");
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Failed to load property file!");
         }
     }
 
