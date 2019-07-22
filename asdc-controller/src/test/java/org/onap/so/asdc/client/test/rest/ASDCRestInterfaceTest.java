@@ -144,6 +144,7 @@ public class ASDCRestInterfaceTest extends BaseTest {
         AllottedResourceCustomization arCustomization = new AllottedResourceCustomization();
         arCustomization.setModelCustomizationUUID("f62bb612-c5d4-4406-865c-0abec30631ba");
         arCustomization.setModelInstanceName("rege1802pnf 0");
+        arCustomization.setResourceInput("{}");
         arCustomizationSet.add(arCustomization);
 
         arCustomization.setAllottedResource(expectedService);
