@@ -80,11 +80,11 @@ public class SDNCChangeAssignTasksTest extends BaseTaskTest {
 
     @Test
     public void changeModelVnfTest() throws Exception {
-        doReturn(new GenericResourceApiVnfOperationInformation()).when(sdncVnfResources).changeModelVnf(genericVnf,
-                serviceInstance, customer, cloudRegion, requestContext);
+        doReturn(new GenericResourceApiVnfOperationInformation()).when(sdncVnfResources).changeModelVnf(eq(genericVnf),
+                eq(serviceInstance), eq(customer), eq(cloudRegion), eq(requestContext), any(URI.class));
         sdncChangeAssignTasks.changeModelVnf(execution);
-        verify(sdncVnfResources, times(1)).changeModelVnf(genericVnf, serviceInstance, customer, cloudRegion,
-                requestContext);
+        verify(sdncVnfResources, times(1)).changeModelVnf(eq(genericVnf), eq(serviceInstance), eq(customer),
+                eq(cloudRegion), eq(requestContext), any(URI.class));
         SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
         assertEquals(SDNCTopology.VNF, sdncRequest.getTopology());
     }
@@ -92,8 +92,8 @@ public class SDNCChangeAssignTasksTest extends BaseTaskTest {
     @Test
     public void changeModelVnfExceptionTest() throws Exception {
         expectedException.expect(BpmnError.class);
-        doThrow(RuntimeException.class).when(sdncVnfResources).changeModelVnf(genericVnf, serviceInstance, customer,
-                cloudRegion, requestContext);
+        doThrow(RuntimeException.class).when(sdncVnfResources).changeModelVnf(eq(genericVnf), eq(serviceInstance),
+                eq(customer), eq(cloudRegion), eq(requestContext), any(URI.class));
         sdncChangeAssignTasks.changeModelVnf(execution);
     }
 

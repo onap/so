@@ -22,8 +22,6 @@
 
 package org.onap.so.bpmn.infrastructure.sdnc.tasks;
 
-import java.net.URI;
-import javax.ws.rs.core.UriBuilder;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiNetworkOperationInformation;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVfModuleOperationInformation;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfOperationInformation;
@@ -52,7 +50,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SDNCActivateTasks {
+public class SDNCActivateTasks extends AbstractSDNCTask {
 
     public static final String SDNC_REQUEST = "SDNCRequest";
     @Autowired
@@ -77,9 +75,9 @@ public class SDNCActivateTasks {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
             CloudRegion cloudRegion = gBBInput.getCloudRegion();
             Customer customer = gBBInput.getCustomer();
-            GenericResourceApiVnfOperationInformation req =
-                    sdncVnfResources.activateVnf(vnf, serviceInstance, customer, cloudRegion, requestContext);
             SDNCRequest sdncRequest = new SDNCRequest();
+            GenericResourceApiVnfOperationInformation req = sdncVnfResources.activateVnf(vnf, serviceInstance, customer,
+                    cloudRegion, requestContext, buildCallbackURI(sdncRequest));
             sdncRequest.setSDNCPayload(req);
             sdncRequest.setTopology(SDNCTopology.VNF);
             execution.setVariable(SDNC_REQUEST, sdncRequest);
@@ -127,11 +125,8 @@ public class SDNCActivateTasks {
             Customer customer = gBBInput.getCustomer();
             CloudRegion cloudRegion = gBBInput.getCloudRegion();
             SDNCRequest sdncRequest = new SDNCRequest();
-            UriBuilder builder = UriBuilder.fromPath(env.getRequiredProperty("mso.workflow.message.endpoint"))
-                    .path(sdncRequest.getCorrelationName()).path(sdncRequest.getCorrelationValue());
-            URI uri = builder.build();
             GenericResourceApiVfModuleOperationInformation req = sdncVfModuleResources.activateVfModule(vfModule, vnf,
-                    serviceInstance, customer, cloudRegion, requestContext, uri);
+                    serviceInstance, customer, cloudRegion, requestContext, buildCallbackURI(sdncRequest));
             sdncRequest.setSDNCPayload(req);
             sdncRequest.setTopology(SDNCTopology.VFMODULE);
             execution.setVariable(SDNC_REQUEST, sdncRequest);

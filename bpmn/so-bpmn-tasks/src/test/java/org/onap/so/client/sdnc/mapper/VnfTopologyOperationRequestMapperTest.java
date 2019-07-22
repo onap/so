@@ -23,15 +23,18 @@ package org.onap.so.client.sdnc.mapper;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestActionEnumeration;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfOperationInformation;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
@@ -45,8 +48,6 @@ import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoInstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceInstance;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
 import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
-import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestActionEnumeration;
-import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfOperationInformation;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VnfTopologyOperationRequestMapperTest {
@@ -127,11 +128,11 @@ public class VnfTopologyOperationRequestMapperTest {
         GenericResourceApiVnfOperationInformation vnfOpInformation =
                 mapper.reqMapper(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN,
                         GenericResourceApiRequestActionEnumeration.CREATEVNFINSTANCE, vnf, serviceInstance, customer,
-                        cloudRegion, requestContext, true);
+                        cloudRegion, requestContext, true, new URI("http://localhost:8080"));
         GenericResourceApiVnfOperationInformation vnfOpInformationNullReqContext =
                 mapper.reqMapper(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN,
                         GenericResourceApiRequestActionEnumeration.CREATEVNFINSTANCE, vnf, serviceInstance, customer,
-                        cloudRegion, null, true);
+                        cloudRegion, null, true, new URI("http://localhost:8080"));
 
         assertNull(vnfOpInformation.getServiceInformation().getOnapModelInformation().getModelCustomizationUuid());
         assertEquals("vnfModelCustomizationUUID",

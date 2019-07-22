@@ -20,6 +20,7 @@
 
 package org.onap.so.client.sdnc.mapper;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +57,8 @@ public class VnfTopologyOperationRequestMapper {
 
     public GenericResourceApiVnfOperationInformation reqMapper(SDNCSvcOperation svcOperation, SDNCSvcAction svcAction,
             GenericResourceApiRequestActionEnumeration requestAction, GenericVnf vnf, ServiceInstance serviceInstance,
-            Customer customer, CloudRegion cloudRegion, RequestContext requestContext, boolean homing) {
+            Customer customer, CloudRegion cloudRegion, RequestContext requestContext, boolean homing,
+            URI callbackUrl) {
         String sdncReqId = UUID.randomUUID().toString();
         String msoRequestId = UUID.randomUUID().toString();
         if (requestContext != null && requestContext.getMsoRequestId() != null) {
@@ -64,7 +66,7 @@ public class VnfTopologyOperationRequestMapper {
         }
         GenericResourceApiVnfOperationInformation req = new GenericResourceApiVnfOperationInformation();
         GenericResourceApiSdncrequestheaderSdncRequestHeader sdncRequestHeader =
-                generalTopologyObjectMapper.buildSdncRequestHeader(svcAction, sdncReqId);
+                generalTopologyObjectMapper.buildSdncRequestHeader(svcAction, sdncReqId, callbackUrl.toString());
         GenericResourceApiRequestinformationRequestInformation requestInformation = generalTopologyObjectMapper
                 .buildGenericResourceApiRequestinformationRequestInformation(msoRequestId, requestAction);
         GenericResourceApiServiceinformationServiceInformation serviceInformation =

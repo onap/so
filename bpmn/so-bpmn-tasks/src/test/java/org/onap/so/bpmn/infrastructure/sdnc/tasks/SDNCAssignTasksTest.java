@@ -113,12 +113,12 @@ public class SDNCAssignTasksTest extends BaseTaskTest {
 
     @Test
     public void assignVnfTest() throws Exception {
-        doReturn(new GenericResourceApiVnfOperationInformation()).when(sdncVnfResources).assignVnf(genericVnf,
-                serviceInstance, customer, cloudRegion, requestContext, false);
+        doReturn(new GenericResourceApiVnfOperationInformation()).when(sdncVnfResources).assignVnf(eq(genericVnf),
+                eq(serviceInstance), eq(customer), eq(cloudRegion), eq(requestContext), eq(false), any(URI.class));
         execution.setVariable("generalBuildingBlock", gBBInput);
         sdncAssignTasks.assignVnf(execution);
-        verify(sdncVnfResources, times(1)).assignVnf(genericVnf, serviceInstance, customer, cloudRegion, requestContext,
-                false);
+        verify(sdncVnfResources, times(1)).assignVnf(eq(genericVnf), eq(serviceInstance), eq(customer), eq(cloudRegion),
+                eq(requestContext), eq(false), any(URI.class));
         SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
         assertEquals(SDNCTopology.VNF, sdncRequest.getTopology());
     }
@@ -126,8 +126,8 @@ public class SDNCAssignTasksTest extends BaseTaskTest {
     @Test
     public void assignVnfExceptionTest() throws Exception {
         expectedException.expect(BpmnError.class);
-        doThrow(RuntimeException.class).when(sdncVnfResources).assignVnf(genericVnf, serviceInstance, customer,
-                cloudRegion, requestContext, false);
+        doThrow(RuntimeException.class).when(sdncVnfResources).assignVnf(eq(genericVnf), eq(serviceInstance),
+                eq(customer), eq(cloudRegion), eq(requestContext), eq(false), any(URI.class));
         sdncAssignTasks.assignVnf(execution);
     }
 
