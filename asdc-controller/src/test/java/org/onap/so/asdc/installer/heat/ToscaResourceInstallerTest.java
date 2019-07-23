@@ -45,6 +45,7 @@ import org.mockito.MockitoAnnotations;
 import org.onap.sdc.api.notification.IArtifactInfo;
 import org.onap.sdc.api.notification.INotificationData;
 import org.onap.sdc.api.notification.IResourceInstance;
+import org.onap.sdc.tosca.parser.api.IEntityDetails;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.impl.SdcCsarHelperImpl;
 import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
@@ -101,6 +102,8 @@ public class ToscaResourceInstallerTest extends BaseTest {
     public ExpectedException expectedException = ExpectedException.none();
     @Mock
     private NodeTemplate nodeTemplate;
+    @Mock
+    private IEntityDetails entityDetails;
     @Mock
     private ToscaResourceStructure toscaResourceStructure;
     @Mock
