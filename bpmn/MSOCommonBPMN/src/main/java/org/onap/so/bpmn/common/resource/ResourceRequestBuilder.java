@@ -122,8 +122,13 @@ public class ResourceRequestBuilder {
 
         Map<String, Object> uuiRequestInputs = null;
         if (JsonUtils.getJsonValue(uuiServiceParameters, "requestInputs") != null) {
-            uuiRequestInputs =
-                    getJsonObject((String) JsonUtils.getJsonValue(uuiServiceParameters, "requestInputs"), Map.class);
+            String uuiRequestInputStr = JsonUtils.getJsonValue(uuiServiceParameters, "requestInputs");
+            logger.info("resource input from UUI: " + uuiRequestInputStr);
+            if (uuiRequestInputStr == null || uuiRequestInputStr.isEmpty()) {
+                uuiRequestInputStr = "{}";
+            }
+
+            uuiRequestInputs = getJsonObject(uuiRequestInputStr, Map.class);
         }
 
         if (uuiRequestInputs == null) {

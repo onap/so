@@ -9,8 +9,7 @@
       <bpmn:outgoing>SequenceFlow_11e6bfy</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def ddsi = new DoDeleteE2EServiceInstance()
-ddsi.preProcessRequest(execution)
-</bpmn:script>
+ddsi.preProcessRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:endEvent id="EndEvent_1uqzt26">
       <bpmn:incoming>SequenceFlow_0e7inkl</bpmn:incoming>
@@ -27,7 +26,7 @@ ddsi.postProcessAAIGET(execution)</bpmn:script>
       <bpmn:incoming>SequenceFlow_12rr1yy</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0e7inkl</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
-def ddsi = new DoCustomDeleteE2EServiceInstance()
+def ddsi = new DoDeleteE2EServiceInstance()
 ddsi.deleteServiceInstance(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:subProcess id="SubProcess_1u8zt9i" name="Sub-process for UnexpectedErrors" triggeredByEvent="true">

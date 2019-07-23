@@ -83,4 +83,16 @@ public class HttpClient extends RestClient {
         }
     }
 
+    public void setAcceptType(String value) {
+        try {
+            if (isNotBlank(value)) {
+                super.accept = value;
+            } else {
+                log.warn("Not adding accept to headers.");
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+    }
+
 }

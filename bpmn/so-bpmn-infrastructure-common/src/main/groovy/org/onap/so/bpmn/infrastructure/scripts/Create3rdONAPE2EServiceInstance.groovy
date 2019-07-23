@@ -353,6 +353,7 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 
 		// ExternalAPI message format
 		String externalId = execution.getVariable("resourceName")
+		String serviceType = execution.getVariable("serviceType")
 		String category = "E2E Service"
 		String description = "Service Order from SPPartner"
 		String requestedStartDate = utils.generateCurrentTimeInUtc()
@@ -360,7 +361,9 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 		String priority = "1" // 0-4 0:highest
 		String subscriberId = execution.getVariable("globalSubscriberId")
 		String customerRole = "ONAPcustomer"
-		String subscriberName = subscriberId
+		// Below SO will pass serviceType as subscriberName and externalAPI will use
+		// the same serviceType in another domain instead of model name
+		String subscriberName = serviceType
 		String referredType = "Consumer"
 		String orderItemId = "1"
 		String action = "add" //for create
@@ -401,7 +404,6 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 		_requestInputs_ +=  ",\n" + externalAPIUtil.setTemplate(ExternalAPIUtil.RequestInputsTemplate, requestInputsMap)
 
 		requestInputsMap.clear()
-		String serviceType = execution.getVariable("serviceType")
 		requestInputsMap.put("inputName", '"serviceType"')
 		requestInputsMap.put("inputValue", '"' + serviceType + '"')
 		_requestInputs_ +=  ",\n" + externalAPIUtil.setTemplate(ExternalAPIUtil.RequestInputsTemplate, requestInputsMap)
@@ -420,7 +422,7 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 
 		String payload = externalAPIUtil.setTemplate(ExternalAPIUtil.PostServiceOrderRequestsTemplate, valueMap)
 		execution.setVariable(Prefix + "Payload", payload)
-		logger.info("Exit " + prepare3rdONAPRequest)
+		logger.info(" ***** Exit prepare3rdONAPRequest *****")
 	}
 
 	public void doCreateE2ESIin3rdONAP(DelegateExecution execution) {
@@ -464,7 +466,7 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
             logger.error("doCreateE2ESIin3rdONAP exception:" + e.getMessage())
         }
 
-		logger.info("Exit " + doCreateE2ESIin3rdONAP)
+		logger.info(" ***** Exit doCreateE2ESIin3rdONAP *****")
 	}
 
 
@@ -562,7 +564,7 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
             execution.setVariable("statusDescription", "Get Create ServiceOrder Exception")
             logger.error("getE2ESIProgressin3rdONAP exception:" + e.getMessage())
         }
-		logger.info("Exit " + getE2ESIProgressin3rdONAP)
+		logger.info(" ***** Exit getE2ESIProgressin3rdONAP *****")
 	}
 
 	/**
@@ -608,7 +610,7 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
             logger.info(msg)
 //            throw new BpmnError("MSOWorkflowException")
         }
-		logger.info("Exit " + saveSPPartnerInAAI)
+		logger.info(" ***** Exit saveSPPartnerInAAI *****")
 	}
 
 	private void setProgressUpdateVariables(DelegateExecution execution, String body) {
