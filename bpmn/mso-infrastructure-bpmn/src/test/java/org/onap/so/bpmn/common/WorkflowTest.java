@@ -352,7 +352,9 @@ public abstract class WorkflowTest {
             try {
                 msoRequestId = (String) injectedVariables.get("requestId");
                 variables.put("mso-request-id", msoRequestId);
-                msoServiceInstanceId = (String) injectedVariables.get("serviceInstanceId");
+                if (injectedVariables != null) {
+                    msoServiceInstanceId = (String) injectedVariables.get("serviceInstanceId");
+                }
                 variables.put("mso-service-instance-id", msoServiceInstanceId);
             } catch (Exception e) {
             }
