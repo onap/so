@@ -187,11 +187,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             Holder<Map<String, String>> outputs) throws VnfException {
         logger.debug("Querying VNF " + vnfNameOrId + " in " + cloudOwner + "/" + cloudSiteId + "/" + tenantId);
 
-        // Will capture execution time for metrics
-        long startTime = System.currentTimeMillis();
-        long subStartTime = System.currentTimeMillis();
-
-        VduInstance vduInstance = null;
+        VduInstance vduInstance;
         CloudInfo cloudInfo = new CloudInfo(cloudSiteId, cloudOwner, tenantId, null);
 
         VduPlugin vduPlugin = getVduPlugin(cloudSiteId, cloudOwner);
@@ -252,7 +248,6 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
      */
     @Override
     public void rollbackVnf(VnfRollback rollback) throws VnfException {
-        long startTime = System.currentTimeMillis();
         // rollback may be null (e.g. if stack already existed when Create was called)
         if (rollback == null) {
             logger.info(LoggingAnchor.THREE, MessageEnum.RA_ROLLBACK_NULL.toString(), "OpenStack", "rollbackVnf");
@@ -279,7 +274,6 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         // Use the VduPlugin to delete the VF Module.
         VduPlugin vduPlugin = getVduPlugin(cloudSiteId, cloudOwner);
 
-        long subStartTime = System.currentTimeMillis();
         try {
             // TODO: Get a reasonable timeout. Use a global property, or store the creation timeout in rollback object
             // and use that.
@@ -336,7 +330,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                 logger.debug("Unable to convert " + inputValue + " to an integer!", e);
                 return null;
             }
-        } else if (type.equalsIgnoreCase("json")) {
+        } else if ("json".equalsIgnoreCase(type)) {
             try {
                 JsonNode jsonNode = JSON_MAPPER.readTree(JSON_MAPPER.writeValueAsString(inputValue));
                 return jsonNode;
@@ -344,7 +338,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                 logger.debug("Unable to convert " + inputValue + " to a JsonNode!", e);
                 return null;
             }
-        } else if (type.equalsIgnoreCase("boolean")) {
+        } else if ("boolean".equalsIgnoreCase(type)) {
             return new Boolean(inputValue.toString());
         }
 
@@ -353,7 +347,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
     }
 
     private Map<String, String> copyStringOutputs(Map<String, Object> stackOutputs) {
-        Map<String, String> stringOutputs = new HashMap<String, String>();
+        Map<String, String> stringOutputs = new HashMap<>();
         for (String key : stackOutputs.keySet()) {
             if (stackOutputs.get(key) instanceof String) {
                 stringOutputs.put(key, (String) stackOutputs.get(key));
@@ -447,7 +441,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         if (objectMap == null) {
             return null;
         }
-        Map<String, String> stringMap = new HashMap<String, String>();
+        Map<String, String> stringMap = new HashMap<>();
         for (String key : objectMap.keySet()) {
             if (!stringMap.containsKey(key)) {
                 Object obj = objectMap.get(key);
@@ -540,8 +534,6 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             String volumeGroupId, String baseVfModuleId, String modelCustomizationUuid, Map<String, Object> inputs,
             Boolean failIfExists, Boolean backout, Boolean enableBridge, MsoRequest msoRequest, Holder<String> vnfId,
             Holder<Map<String, String>> outputs, Holder<VnfRollback> rollback) throws VnfException {
-        // Will capture execution time for metrics
-        long startTime = System.currentTimeMillis();
 
         // Require a model customization ID. Every VF Module definition must have one.
         if (modelCustomizationUuid == null || modelCustomizationUuid.isEmpty()) {
@@ -665,7 +657,6 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         // Use the VduPlugin.
         VduPlugin vduPlugin = getVduPlugin(cloudSiteId, cloudOwner);
 
-        long subStartTime1 = System.currentTimeMillis();
         try {
             vduInstance = vduPlugin.queryVdu(cloudInfo, vfModuleName);
         } catch (VduException me) {
@@ -761,8 +752,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 
         // If a Volume Group was provided, query its outputs for inclusion in Module input parameters
         if (volumeGroupId != null) {
-            long subStartTime2 = System.currentTimeMillis();
-            VduInstance volumeVdu = null;
+            VduInstance volumeVdu;
             try {
                 volumeVdu = vduPlugin.queryVdu(cloudInfo, volumeGroupId);
             } catch (VduException me) {
@@ -811,8 +801,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             }
 
             if (baseVfModuleId != null) {
-                long subStartTime2 = System.currentTimeMillis();
-                VduInstance baseVdu = null;
+                VduInstance baseVdu;
                 try {
                     baseVdu = vduPlugin.queryVdu(cloudInfo, baseVfModuleId);
                 } catch (MsoException me) {
@@ -887,19 +876,19 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         // Create the combined set of parameters from the incoming request, base-module outputs,
         // volume-module outputs. Also, convert all variables to their native object types.
 
-        HashMap<String, Object> goldenInputs = new HashMap<String, Object>();
-        List<String> extraInputs = new ArrayList<String>();
+        HashMap<String, Object> goldenInputs = new HashMap<>();
+        List<String> extraInputs = new ArrayList<>();
 
         Boolean skipInputChecks = false;
 
         if (skipInputChecks) {
-            goldenInputs = new HashMap<String, Object>();
+            goldenInputs = new HashMap<>();
             for (String key : inputs.keySet()) {
                 goldenInputs.put(key, inputs.get(key));
             }
         } else {
             // Build maps for the parameters (including aliases) to simplify checks
-            HashMap<String, HeatTemplateParam> params = new HashMap<String, HeatTemplateParam>();
+            HashMap<String, HeatTemplateParam> params = new HashMap<>();
 
             Set<HeatTemplateParam> paramSet = heatTemplate.getParameters();
             logger.debug("paramSet has " + paramSet.size() + " entries");
@@ -909,7 +898,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 
                 // Include aliases.
                 String alias = htp.getParamAlias();
-                if (alias != null && !alias.equals("") && !params.containsKey(alias)) {
+                if (alias != null && !"".equals(alias) && !params.containsKey(alias)) {
                     params.put(alias, htp);
                 }
             }
@@ -1026,7 +1015,6 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 
 
         // Here we go... ready to deploy the VF Module.
-        long instantiateVduStartTime = System.currentTimeMillis();
         if (backout == null)
             backout = true;
 
@@ -1088,11 +1076,9 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             MsoRequest msoRequest, Holder<Map<String, String>> outputs) throws VnfException {
 
         logger.debug("Deleting VF Module " + vfModuleId + " in " + cloudOwner + "/" + cloudSiteId + "/" + tenantId);
-        // Will capture execution time for metrics
-        long startTime = System.currentTimeMillis();
 
         // Capture the output parameters on a delete, so need to query first
-        VduInstance vduInstance = null;
+        VduInstance vduInstance;
         CloudInfo cloudInfo = new CloudInfo(cloudSiteId, cloudOwner, tenantId, null);
 
         // Use the VduPlugin.
@@ -1123,7 +1109,6 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         // - a vnfInstance object with status of NOTFOUND (VDU did not exist, treat as success)
         // - a vnfInstance object with status of FAILED (error)
         // Also, VduException could be thrown.
-        long subStartTime = System.currentTimeMillis();
         try {
             // TODO: Get an appropriate timeout value - require access to the model
             vduPlugin.deleteVdu(cloudInfo, vfModuleId, 5);
@@ -1166,11 +1151,11 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             CloudSite cloudSite = cloudSiteOp.get();
             String orchestrator = cloudSite.getOrchestrator();
 
-            if (orchestrator.equalsIgnoreCase("CLOUDIFY")) {
+            if ("CLOUDIFY".equalsIgnoreCase(orchestrator)) {
                 return cloudifyUtils;
-            } else if (orchestrator.equalsIgnoreCase("HEAT")) {
+            } else if ("HEAT".equalsIgnoreCase(orchestrator)) {
                 return heatUtils;
-            } else if (orchestrator.equalsIgnoreCase("MULTICLOUD")) {
+            } else if ("MULTICLOUD".equalsIgnoreCase(orchestrator)) {
                 return multicloudUtils;
             } else {
                 // Default if cloudSite record exists - return HEAT plugin - will fail later
