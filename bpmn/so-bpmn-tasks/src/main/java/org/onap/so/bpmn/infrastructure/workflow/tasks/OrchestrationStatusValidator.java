@@ -63,6 +63,11 @@ public class OrchestrationStatusValidator {
     @Autowired
     private CatalogDbClient catalogDbClient;
 
+    /**This method validate's the status of the OrchestrationStatus
+     * against the buildingBlockDetail ResourceType
+     * 
+     * @param execution
+     */
     public void validateOrchestrationStatus(BuildingBlockExecution execution) {
         try {
             OrchestrationStatusValidationDirective previousOrchestrationStatusValidationResult =
