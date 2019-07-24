@@ -80,7 +80,8 @@ public class AAIUpdateTasks {
     private AAIConfigurationResources aaiConfigurationResources;
 
     /**
-     *  BPMN access method to update status of Service to Assigned in AAI
+     * BPMN access method to update status of Service to Assigned in AAI
+     * 
      * @param execution
      */
     public void updateOrchestrationStatusAssignedService(BuildingBlockExecution execution) {
@@ -97,6 +98,7 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update status of Service to Active in AAI
+     * 
      * @param execution
      */
     public void updateOrchestrationStatusActiveService(BuildingBlockExecution execution) {
@@ -111,7 +113,8 @@ public class AAIUpdateTasks {
     }
 
     /**
-     *  BPMN access method to update status of Vnf to Assigned in AAI
+     * BPMN access method to update status of Vnf to Assigned in AAI
+     * 
      * @param execution
      */
     public void updateOrchestrationStatusAssignedVnf(BuildingBlockExecution execution) {
@@ -124,7 +127,8 @@ public class AAIUpdateTasks {
     }
 
     /**
-     *  BPMN access method to update status of Vnf to Active in AAI
+     * BPMN access method to update status of Vnf to Active in AAI
+     * 
      * @param execution
      */
     public void updateOrchestrationStatusActiveVnf(BuildingBlockExecution execution) {
@@ -138,6 +142,7 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update status of VolumeGroup to Assigned in AAI
+     * 
      * @param execution
      */
     public void updateOrchestrationStatusAssignedVolumeGroup(BuildingBlockExecution execution) {
@@ -156,6 +161,7 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update status of VolumeGroup to Active in AAI
+     * 
      * @param execution
      */
     public void updateOrchestrationStatusActiveVolumeGroup(BuildingBlockExecution execution) {
@@ -174,6 +180,7 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update status of VolumeGroup to Created in AAI
+     * 
      * @param execution
      */
     public void updateOrchestrationStatusCreatedVolumeGroup(BuildingBlockExecution execution) {
@@ -192,6 +199,7 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update HeatStackId and VolumeGroup in AAI
+     * 
      * @param execution
      */
     public void updateHeatStackIdVolumeGroup(BuildingBlockExecution execution) {
@@ -213,6 +221,7 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update status of VfModule to Assigned in AAI
+     * 
      * @param execution
      */
     public void updateOrchestrationStatusAssignedVfModule(BuildingBlockExecution execution) {
@@ -270,6 +279,7 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update status of VfModule to Created in AAI
+     * 
      * @param execution
      * 
      */
@@ -284,7 +294,7 @@ public class AAIUpdateTasks {
     }
 
     /**
-     * BPMN access method to update aaiDeactivateVfModuleRollback to true for deactivating the VfModule 
+     * BPMN access method to update aaiDeactivateVfModuleRollback to true for deactivating the VfModule
      * 
      * @param execution
      * @throws buildAndThrowWorkflowException
@@ -382,6 +392,7 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update status of VfModule to Active in AAI
+     * 
      * @param execution
      */
     public void updateOrchestrationStatusActivateVfModule(BuildingBlockExecution execution) {
@@ -397,7 +408,8 @@ public class AAIUpdateTasks {
     }
 
     /**
-     *  BPMN access method to update HeatStackId of VfModule in AAI
+     * BPMN access method to update HeatStackId of VfModule in AAI
+     * 
      * @param execution
      */
     public void updateHeatStackIdVfModule(BuildingBlockExecution execution) {
@@ -489,6 +501,7 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update L3Network Object
+     * 
      * @param execution
      */
     public void updateObjectNetwork(BuildingBlockExecution execution) {
@@ -516,7 +529,8 @@ public class AAIUpdateTasks {
     }
 
     /**
-     *  BPMN access method to update Vnf Object
+     * BPMN access method to update Vnf Object
+     * 
      * @param execution
      */
     public void updateObjectVnf(BuildingBlockExecution execution) {
@@ -530,6 +544,7 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update status of VfModuleRollback as true
+     * 
      * @param execution
      */
     public void updateOrchestrationStatusDeleteVfModule(BuildingBlockExecution execution) {
@@ -549,7 +564,8 @@ public class AAIUpdateTasks {
     }
 
     /**
-     * BPMN access method to update Model of VfModule 
+     * BPMN access method to update Model of VfModule
+     * 
      * @param execution
      */
     public void updateModelVfModule(BuildingBlockExecution execution) {
@@ -563,7 +579,8 @@ public class AAIUpdateTasks {
     }
 
     /**
-     * BPMN access method to update status of FabricConfiguration to Assigned in AAI 
+     * BPMN access method to update status of FabricConfiguration to Assigned in AAI
+     * 
      * @param execution
      */
     public void updateOrchestrationStatusAssignFabricConfiguration(BuildingBlockExecution execution) {
@@ -576,8 +593,9 @@ public class AAIUpdateTasks {
         }
     }
 
-    /** 
-     * BPMN access method to update status of FabricConfiguration to Active in AAI 
+    /**
+     * BPMN access method to update status of FabricConfiguration to Active in AAI
+     * 
      * @param execution
      */
     public void updateOrchestrationStatusActivateFabricConfiguration(BuildingBlockExecution execution) {
@@ -590,7 +608,8 @@ public class AAIUpdateTasks {
     }
 
     /**
-     * BPMN access method to update status of FabricConfiguration to deactive in AAI 
+     * BPMN access method to update status of FabricConfiguration to deactive in AAI
+     * 
      * @param execution
      */
     public void updateOrchestrationStatusDeactivateFabricConfiguration(BuildingBlockExecution execution) {
@@ -604,7 +623,8 @@ public class AAIUpdateTasks {
     }
 
     /**
-     *  BPMN access method to update Ipv4OamAddress of Vnf 
+     * BPMN access method to update Ipv4OamAddress of Vnf
+     * 
      * @param execution
      */
     public void updateIpv4OamAddressVnf(BuildingBlockExecution execution) {
@@ -625,7 +645,8 @@ public class AAIUpdateTasks {
     }
 
     /**
-     * BPMN access method to update ManagementV6Address of Vnf 
+     * BPMN access method to update ManagementV6Address of Vnf
+     * 
      * @param execution
      */
     public void updateManagementV6AddressVnf(BuildingBlockExecution execution) {
@@ -646,7 +667,8 @@ public class AAIUpdateTasks {
     }
 
     /**
-     *  BPMN access method to update ContrailServiceInstanceFqdn of VfModule 
+     * BPMN access method to update ContrailServiceInstanceFqdn of VfModule
+     * 
      * @param execution
      */
     public void updateContrailServiceInstanceFqdnVfModule(BuildingBlockExecution execution) {
@@ -664,7 +686,8 @@ public class AAIUpdateTasks {
     }
 
     /**
-     *  BPMN access method to update status of Vnf to ConfigAssigned in AAI
+     * BPMN access method to update status of Vnf to ConfigAssigned in AAI
+     * 
      * @param execution
      */
     public void updateOrchestrationStatusConfigAssignedVnf(BuildingBlockExecution execution) {
@@ -677,7 +700,8 @@ public class AAIUpdateTasks {
     }
 
     /**
-     *  BPMN access method to update status of Vnf to Configure in AAI
+     * BPMN access method to update status of Vnf to Configure in AAI
+     * 
      * @param execution
      */
     public void updateOrchestrationStausConfigDeployConfigureVnf(BuildingBlockExecution execution) {
@@ -692,7 +716,8 @@ public class AAIUpdateTasks {
     }
 
     /**
-     * BPMN access method to update status of Vnf to configured  in AAI
+     * BPMN access method to update status of Vnf to configured in AAI
+     * 
      * @param execution
      */
     public void updateOrchestrationStausConfigDeployConfiguredVnf(BuildingBlockExecution execution) {

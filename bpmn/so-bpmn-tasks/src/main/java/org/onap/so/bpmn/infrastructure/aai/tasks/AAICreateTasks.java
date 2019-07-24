@@ -104,6 +104,15 @@ public class AAICreateTasks {
     @Autowired
     private Environment env;
 
+    /**
+     * This method is used for creating the service instance in A&AI.
+     * 
+     * It will check the alaCarte and create the service instance in A&AI.
+     * 
+     * @param execution
+     * @throws 
+     * @return 
+     */
     public void createServiceInstance(BuildingBlockExecution execution) {
         try {
             ServiceInstance serviceInstance =
@@ -114,7 +123,15 @@ public class AAICreateTasks {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
-
+    
+    /**
+     * This method is used for creating and subscribing the service in A&AI.
+     * 
+     * 
+     * @param execution
+     * @throws 
+     * @return 
+     */
     public void createServiceSubscription(BuildingBlockExecution execution) {
         try {
             ServiceInstance serviceInstance =
@@ -136,6 +153,14 @@ public class AAICreateTasks {
         }
     }
 
+    /**
+     * This method is used for creation of the project A&AI.
+     * 
+     * 
+     * @param execution
+     * @throws 
+     * @return 
+     */
     public void createProject(BuildingBlockExecution execution) {
         try {
             ServiceInstance serviceInstance =
@@ -153,6 +178,14 @@ public class AAICreateTasks {
         }
     }
 
+    /**
+     * This method is used for creating OwningEntity A&AI.
+     * 
+     * 
+     * @param execution
+     * @throws 
+     * @return 
+     */
     public void createOwningEntity(BuildingBlockExecution execution) {
         try {
             ServiceInstance serviceInstance =
@@ -192,6 +225,17 @@ public class AAICreateTasks {
         }
     }
 
+    /**
+     * This method is used for creating Vnf in A&AI.
+     * 
+     * It will check if  the Vnf Name is exits in A&AI then it will throw the duplicate name exception.
+     * 
+     * Otherwise it will create the vnf amd connect to the serviceinstance.
+     * 
+     * @param execution
+     * @throws 
+     * @return 
+     */
     public void createVnf(BuildingBlockExecution execution) {
         try {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
@@ -204,6 +248,13 @@ public class AAICreateTasks {
         }
     }
 
+    /**
+     * This method is used for separating (,) from the string.
+     * 
+     * @param str
+     * @throws 
+     * @return 
+     */
     public void createPlatform(BuildingBlockExecution execution) {
         try {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
@@ -223,10 +274,24 @@ public class AAICreateTasks {
 
     }
 
+    /**
+     * This method is used for separating (,) from the string.
+     * 
+     * @param str
+     * @throws 
+     * @return 
+     */
     public List<String> splitCDL(String str) {
         return Stream.of(str.split(",")).map(String::trim).map(elem -> new String(elem)).collect(Collectors.toList());
     }
 
+    /**
+     * This method is used for creating the type of business in A&AI.
+     * 
+     * @param execution
+     * @throws 
+     * @return 
+     */
     public void createLineOfBusiness(BuildingBlockExecution execution) {
         try {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
@@ -246,6 +311,13 @@ public class AAICreateTasks {
         }
     }
 
+    /**
+     * This method is used for creating the volume group in A&AI.
+     * 
+     * @param execution
+     * @throws 
+     * @return 
+     */
     public void createVolumeGroup(BuildingBlockExecution execution) {
         try {
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
@@ -261,6 +333,13 @@ public class AAICreateTasks {
         }
     }
 
+    /**
+     * This method is used for creating the vfModule in A&AI.
+     * 
+     * @param execution
+     * @throws 
+     * @return 
+     */
     public void createVfModule(BuildingBlockExecution execution) {
         try {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
@@ -325,6 +404,12 @@ public class AAICreateTasks {
         }
     }
 
+    /**
+     * This method is used for creating the customer  in A&AI.
+     * 
+     * @param execution
+     * @throws Exception
+     */
     public void createCustomer(BuildingBlockExecution execution) throws Exception {
         try {
             Customer customer = execution.getGeneralBuildingBlock().getCustomer();
@@ -482,6 +567,12 @@ public class AAICreateTasks {
         }
     }
 
+    /**
+     * This method is used for configuring the service in A&AI.
+     * 
+     * @param execution
+     * @throws 
+     */
     public void createConfiguration(BuildingBlockExecution execution) {
         try {
             Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID);
@@ -491,6 +582,12 @@ public class AAICreateTasks {
         }
     }
 
+    /**
+     * This method is used for creating vnf instance group in A&AI.
+     * 
+     * @param execution
+     * @throws 
+     */
     public void createInstanceGroupVnf(BuildingBlockExecution execution) {
         try {
             ServiceInstance serviceInstance =
@@ -502,6 +599,12 @@ public class AAICreateTasks {
         }
     }
 
+    /**
+     * This method is used to put the network policy in A&AI.
+     * 
+     * @param execution
+     * @throws 
+     */
     public void createNetworkPolicies(BuildingBlockExecution execution) {
         try {
             String fqdns = execution.getVariable(CONTRAIL_NETWORK_POLICY_FQDN_LIST);

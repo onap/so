@@ -150,6 +150,18 @@ public class BBInputSetup implements JavaDelegate {
         this.mapperLayer = mapperLayer;
     }
 
+    /**
+     * This method is used for executing the  building block.
+     * 
+     * It will get the BB from the execution object by checking if the aLaCarte and homing is true.
+     * 
+     * Then it will get the GBB and execute it.
+     * 
+     * 
+     * @param execution
+     * @throws Exception
+     * @return 
+     */
     @Override
     public void execute(DelegateExecution execution) throws Exception {
         try {
@@ -1538,6 +1550,14 @@ public class BBInputSetup implements JavaDelegate {
         return serviceInstance;
     }
 
+    /**
+     * This method is used for getting the existing service instance.
+     * 
+     * This will map the serviceInstanceAAI to serviceInstance and return the serviceInstance.
+     * 
+     * @throws Exception
+     * @return serviceInstance
+     */
     public ServiceInstance getExistingServiceInstance(org.onap.aai.domain.yang.ServiceInstance serviceInstanceAAI)
             throws Exception {
         ServiceInstance serviceInstance = mapperLayer.mapAAIServiceInstanceIntoServiceInstance(serviceInstanceAAI);
