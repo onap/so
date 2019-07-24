@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.ws.Holder;
 import org.onap.so.adapters.vnf.exceptions.VnfAlreadyExists;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
+import org.onap.so.adapters.vnfrest.DeleteVfModuleRequest;
 import org.onap.so.entity.MsoRequest;
 import org.onap.so.openstack.beans.VnfRollback;
 import org.onap.so.openstack.beans.VnfStatus;
@@ -117,11 +118,7 @@ public interface MsoVnfAdapter {
             throws VnfException, VnfAlreadyExists;
 
     @WebMethod
-    public void deleteVfModule(@WebParam(name = "cloudSiteId") @XmlElement(required = true) String cloudSiteId,
-            @WebParam(name = "cloudOwner") @XmlElement(required = false) String cloudOwner,
-            @WebParam(name = "tenantId") @XmlElement(required = true) String tenantId,
-            @WebParam(name = "vfName") @XmlElement(required = true) String vfName,
-            @WebParam(name = "request") MsoRequest msoRequest,
+    public void deleteVfModule(@WebParam(name = "deleteVfModuleRequest") DeleteVfModuleRequest deleteVfModuleRequest,
             @WebParam(name = "vfModuleOutputs", mode = Mode.OUT) Holder<Map<String, String>> vfModuleOutputs)
             throws VnfException;
 

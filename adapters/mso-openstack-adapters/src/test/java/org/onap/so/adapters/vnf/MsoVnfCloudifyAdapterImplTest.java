@@ -35,6 +35,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
+import org.onap.so.adapters.vnfrest.DeleteVfModuleRequest;
 import org.onap.so.cloud.CloudConfig;
 import org.onap.so.db.catalog.beans.CloudifyManager;
 import org.onap.so.entity.MsoRequest;
@@ -104,15 +105,41 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
         msoRequest.setRequestId("12345");
         msoRequest.setServiceInstanceId("12345");
 
-        instance.deleteVfModule("mtn13", "CloudOwner", "1234", "vfname", msoRequest, new Holder<>());
+        String cloudSiteId = "mtn13";
+        String cloudOwner = "CloudOwner";
+        String tenantId = "1234";
+        String vfModuleStackId = "vfname";
+
+        DeleteVfModuleRequest deleteVfModuleRequest = new DeleteVfModuleRequest();
+        deleteVfModuleRequest.setCloudSiteId(cloudSiteId);
+        deleteVfModuleRequest.setCloudOwner(cloudOwner);
+        deleteVfModuleRequest.setTenantId(tenantId);
+        deleteVfModuleRequest.setVfModuleStackId(vfModuleStackId);
+        deleteVfModuleRequest.setMsoRequest(msoRequest);
+
+        instance.deleteVfModule(deleteVfModuleRequest, new Holder<>());
     }
 
     @Test
     public void deleteVfModuleTest_ExceptionWhileDeleteDeployment() throws Exception {
         expectedException.expect(VnfException.class);
+
+        String cloudSiteId = "mtn13";
+        String cloudOwner = "CloudOwner";
+        String tenantId = "1234";
+        String vfModuleStackId = "vfname";
+
         MsoRequest msoRequest = new MsoRequest();
         msoRequest.setRequestId("12345");
         msoRequest.setServiceInstanceId("12345");
+
+        DeleteVfModuleRequest deleteVfModuleRequest = new DeleteVfModuleRequest();
+        deleteVfModuleRequest.setCloudSiteId(cloudSiteId);
+        deleteVfModuleRequest.setCloudOwner(cloudOwner);
+        deleteVfModuleRequest.setTenantId(tenantId);
+        deleteVfModuleRequest.setVfModuleStackId(vfModuleStackId);
+        deleteVfModuleRequest.setMsoRequest(msoRequest);
+
         wireMockServer.stubFor(get(urlPathEqualTo("/v2.0/api/v3/deployments/vfname"))
                 .willReturn(aResponse().withBody("{ \"id\": \"123\" }").withStatus(HttpStatus.SC_OK)));
 
@@ -127,7 +154,7 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
         wireMockServer.stubFor(get(urlPathEqualTo("/v2.0/api/v3/tokens"))
                 .willReturn(aResponse().withBodyFile("OpenstackResponse_Access.json").withStatus(HttpStatus.SC_OK)));
 
-        instance.deleteVfModule("mtn13", "CloudOwner", "1234", "vfname", msoRequest, new Holder<>());
+        instance.deleteVfModule(deleteVfModuleRequest, new Holder<>());
     }
 
     @Test
