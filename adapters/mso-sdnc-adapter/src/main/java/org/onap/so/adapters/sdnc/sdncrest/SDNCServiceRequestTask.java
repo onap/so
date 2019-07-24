@@ -88,11 +88,9 @@ public class SDNCServiceRequestTask {
 
         String xml = genSdncReq(request, mappedTunables);
 
-        long sdncStartTime = System.currentTimeMillis();
         SDNCResponseCommon response = connector.send(xml, mappedTunables);
 
-        long bpStartTime = System.currentTimeMillis();
-        boolean callbackSuccess = bpRestCallback.send(request.getBPNotificationUrl(), response.toJson());
+        bpRestCallback.send(request.getBPNotificationUrl(), response.toJson());
     }
 
     private Element addChild(Element parent, String tag) {

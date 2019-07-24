@@ -28,8 +28,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -43,8 +41,6 @@ import org.springframework.stereotype.Component;
 @Path("/")
 @Component
 public class HealthCheckHandler {
-
-    private static Logger logger = LoggerFactory.getLogger(HealthCheckHandler.class);
 
 
     private static final String CHECK_HTML =
