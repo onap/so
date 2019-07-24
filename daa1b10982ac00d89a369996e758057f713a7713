@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "598644d8_3833a696",
+        "filename": "readme.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2019-07-24T14:04:06Z",
+      "side": 1,
+      "message": "talking about external VNFMs or the adapter itself?",
+      "range": {
+        "startLine": 59,
+        "startChar": 98,
+        "endLine": 59,
+        "endChar": 131
+      },
+      "revId": "daa1b10982ac00d89a369996e758057f713a7713",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "158fe430_2234f005",
+        "filename": "readme.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2019-07-24T14:04:06Z",
+      "side": 1,
+      "message": "JBoss is gone through SO modularization. Now, we are using embedded Tomcat in spring boot. We should apply this change to the JBoss sections here.",
+      "range": {
+        "startLine": 85,
+        "startChar": 4,
+        "endLine": 85,
+        "endChar": 20
+      },
+      "revId": "daa1b10982ac00d89a369996e758057f713a7713",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1799db6f_39ff2250",
+        "filename": "readme.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2019-07-24T14:04:06Z",
+      "side": 1,
+      "message": "SO-Monitoring can show the history of process instances with variables",
+      "range": {
+        "startLine": 113,
+        "startChar": 63,
+        "endLine": 113,
+        "endChar": 153
+      },
+      "revId": "daa1b10982ac00d89a369996e758057f713a7713",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
