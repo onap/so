@@ -107,19 +107,19 @@ public class SDNCDeactivateTaskTest extends BaseTaskTest {
 
     @Test
     public void deactivateVnfTest() throws Exception {
-        doReturn(new GenericResourceApiVnfOperationInformation()).when(sdncVnfResources).deactivateVnf(genericVnf,
-                serviceInstance, customer, cloudRegion, requestContext);
+        doReturn(new GenericResourceApiVnfOperationInformation()).when(sdncVnfResources).deactivateVnf(eq(genericVnf),
+                eq(serviceInstance), eq(customer), eq(cloudRegion), eq(requestContext), any(URI.class));
         sdncDeactivateTasks.deactivateVnf(execution);
-        verify(sdncVnfResources, times(1)).deactivateVnf(genericVnf, serviceInstance, customer, cloudRegion,
-                requestContext);
+        verify(sdncVnfResources, times(1)).deactivateVnf(eq(genericVnf), eq(serviceInstance), eq(customer),
+                eq(cloudRegion), eq(requestContext), any(URI.class));
         SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
         assertEquals(SDNCTopology.VNF, sdncRequest.getTopology());
     }
 
     @Test
     public void deactivateVnfExceptionTest() throws Exception {
-        doThrow(RuntimeException.class).when(sdncVnfResources).deactivateVnf(genericVnf, serviceInstance, customer,
-                cloudRegion, requestContext);
+        doThrow(RuntimeException.class).when(sdncVnfResources).deactivateVnf(eq(genericVnf), eq(serviceInstance),
+                eq(customer), eq(cloudRegion), eq(requestContext), any(URI.class));
         expectedException.expect(BpmnError.class);
         sdncDeactivateTasks.deactivateVnf(execution);
     }

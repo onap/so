@@ -20,8 +20,6 @@
 
 package org.onap.so.bpmn.infrastructure.sdnc.tasks;
 
-import java.net.URI;
-import javax.ws.rs.core.UriBuilder;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiNetworkOperationInformation;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiServiceOperationInformation;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVfModuleOperationInformation;
@@ -49,7 +47,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SDNCChangeAssignTasks {
+public class SDNCChangeAssignTasks extends AbstractSDNCTask {
     public static final String SDNC_REQUEST = "SDNCRequest";
     @Autowired
     private SDNCNetworkResources sdncNetworkResources;
@@ -88,9 +86,10 @@ public class SDNCChangeAssignTasks {
             GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
-            GenericResourceApiVnfOperationInformation req = sdncVnfResources.changeModelVnf(genericVnf, serviceInstance,
-                    gBBInput.getCustomer(), gBBInput.getCloudRegion(), gBBInput.getRequestContext());
             SDNCRequest sdncRequest = new SDNCRequest();
+            GenericResourceApiVnfOperationInformation req =
+                    sdncVnfResources.changeModelVnf(genericVnf, serviceInstance, gBBInput.getCustomer(),
+                            gBBInput.getCloudRegion(), gBBInput.getRequestContext(), buildCallbackURI(sdncRequest));
             sdncRequest.setSDNCPayload(req);
             sdncRequest.setTopology(SDNCTopology.VNF);
             execution.setVariable(SDNC_REQUEST, sdncRequest);
@@ -127,11 +126,8 @@ public class SDNCChangeAssignTasks {
             VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
             Customer customer = gBBInput.getCustomer();
             SDNCRequest sdncRequest = new SDNCRequest();
-            UriBuilder builder = UriBuilder.fromPath(env.getRequiredProperty("mso.workflow.message.endpoint"))
-                    .path(sdncRequest.getCorrelationName()).path(sdncRequest.getCorrelationValue());
-            URI uri = builder.build();
             GenericResourceApiVfModuleOperationInformation req = sdncVfModuleResources.changeAssignVfModule(vfModule,
-                    vnf, serviceInstance, customer, cloudRegion, requestContext, uri);
+                    vnf, serviceInstance, customer, cloudRegion, requestContext, buildCallbackURI(sdncRequest));
             sdncRequest.setSDNCPayload(req);
             sdncRequest.setTopology(SDNCTopology.VFMODULE);
             execution.setVariable(SDNC_REQUEST, sdncRequest);
