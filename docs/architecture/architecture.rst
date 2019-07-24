@@ -3,10 +3,10 @@
 .. Copyright 2018 Huawei Technologies Co., Ltd.
 
 SO - Architecture
-===============
+=================
 
 SO Functional View
---------------------
+------------------
 
 .. image:: ../images/SO_Architecture_1.png
 
@@ -21,9 +21,9 @@ SO Sub-Components
 **API Handler**
 
   RESTful interface to northbound clients
-      
-	* Handle service-level and infrastructure (VNF & network) requests
-	
+
+* Handle service-level and infrastructure (VNF & network) requests
+
   Service-agnostic APIs
     * “Service Instantiation API”
 
@@ -31,7 +31,7 @@ SO Sub-Components
     * Use SO Catalog to map input requests to BPMN flows
     * Dynamic lookup based on service-model + action
     * Input data forwarded to BPMN flow
-	
+
   Track open and completed requests via SO Request DB
 
   Multiple API-H modules may support different APIs
@@ -49,7 +49,7 @@ SO Sub-Components
     * Request and configure network resources via SDN-C
     * Manage cloud resources via PO (OpenStack)
     * Update inventory via A&AI
-  
+
   Perform error handling/rollback
 
 **Resource Adapters**
@@ -59,7 +59,7 @@ SO Sub-Components
    * Hides the details of complex interfaces (e.g. OpenStack APIs)
    * Expose interfaces to BPMN flows as SOAP or REST APIs
    * Support synchronous and asynchronous operations
-   
+
   Provided as part of SO platform for use by all BPMN flows
 
   Use SO Catalog to map resource requests to a recipe/template
@@ -69,10 +69,10 @@ SO Sub-Components
    * Merge input parameters with templates at run-time
 
 **Data Stores**
-   
+
   Request DB
    * Tracks open and completed requests
-  
+
   SO Catalog
    * SO view of the SDC Catalog
       * service and resource models, recipes, and templates
@@ -81,13 +81,13 @@ SO Sub-Components
   Camunda DB
    * Maintain state for BPMN flows
    * Supports multiple active engines
-   
+
 **SDC Distribution Client**
 
   Receive updated service models from SDC
    * Event-bus notifications when new models available
    * HTTP retrieval of models (TOSCA) and artifacts (Heat)
-   
+
   Receive distributions as TOSCA models
 
   Populate SO Catalog
@@ -119,11 +119,3 @@ Third Party and Open Source
   Tomcat
   MySQL/MariaDB
   Openstack Java SDK (“woorea”)
-
-
-
-
-
-  
- 
-
