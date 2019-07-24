@@ -911,7 +911,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         // Use MsoNeutronUtils for all NEUTRON commands
 
         String mode;
-        String neutronId;
+        String neutronId = null;
         // Try Heat first, since networks may be named the same as the Heat stack
         StackInfo heatStack = null;
         long queryStackStarttime = System.currentTimeMillis();
@@ -928,10 +928,12 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         if (heatStack != null && heatStack.getStatus() != HeatStatus.NOTFOUND) {
             // Found it. Get the neutronNetworkId for further query
             Map<String, Object> outputs = heatStack.getOutputs();
-            neutronId = (String) outputs.get(NETWORK_ID);
+            Map<String, String> sMap = new HashMap<>();
+            if (outputs != null) {
+                neutronId = (String) outputs.get(NETWORK_ID);
+            }
             mode = "HEAT";
 
-            Map<String, String> sMap = new HashMap<>();
             if (outputs != null) {
                 for (String key : outputs.keySet()) {
                     if (key != null && key.startsWith("subnet_id_")) // multiples subnet_%aaid% outputs
