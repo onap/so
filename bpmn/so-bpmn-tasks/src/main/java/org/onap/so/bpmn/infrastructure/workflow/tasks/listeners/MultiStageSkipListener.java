@@ -24,16 +24,18 @@ import java.util.Collections;
 import java.util.List;
 import org.onap.so.bpmn.common.BBConstants;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.onap.so.bpmn.common.listener.db.PostCompletionRequestsDbListener;
 import org.onap.so.bpmn.common.listener.flowmanipulator.FlowManipulator;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.client.CatalogDbClient;
+import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MultiStageSkipListener implements FlowManipulator {
+public class MultiStageSkipListener implements FlowManipulator, PostCompletionRequestsDbListener {
 
     @Autowired
     protected BBInputSetupUtils bbInputSetupUtils;
@@ -41,10 +43,19 @@ public class MultiStageSkipListener implements FlowManipulator {
     @Autowired
     private CatalogDbClient catalogDbClient;
 
+    private static final String G_MULTI_STAGE_DESIGN = "multiStageDesign";
+
     @Override
     public boolean shouldRunFor(String currentBBName, boolean isFirst, BuildingBlockExecution execution) {
         return ((boolean) execution.getVariable(BBConstants.G_ALACARTE)) && "AssignVfModuleBB".equals(currentBBName)
                 && isFirst;
+    }
+
+
+    @Override
+    public boolean shouldRunFor(BuildingBlockExecution execution) {
+
+        return (boolean) execution.getVariable(G_MULTI_STAGE_DESIGN);
     }
 
     @Override
@@ -61,10 +72,15 @@ public class MultiStageSkipListener implements FlowManipulator {
                 if (vnfCust != null && vnfCust.getMultiStageDesign() != null
                         && vnfCust.getMultiStageDesign().equalsIgnoreCase("true")) {
                     flowsToExecute.retainAll(Collections.singletonList(currentBB));
+                    execution.setVariable(G_MULTI_STAGE_DESIGN, Boolean.valueOf(vnfCust.getMultiStageDesign()));
                 }
             }
         }
 
     }
 
+    @Override
+    public void run(InfraActiveRequests request, BuildingBlockExecution execution) {
+        request.setFlowStatus("Successfully completed Assign Building Block only due to multi-stage-design VNF");
+    }
 }

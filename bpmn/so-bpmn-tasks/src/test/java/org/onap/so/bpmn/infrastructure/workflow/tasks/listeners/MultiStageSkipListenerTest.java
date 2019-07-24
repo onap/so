@@ -36,16 +36,16 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.bpmn.common.BBConstants;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.common.DelegateExecutionImpl;
-import org.onap.so.bpmn.infrastructure.workflow.tasks.listeners.MultiStageSkipListener;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.client.CatalogDbClient;
+import org.onap.so.db.request.beans.InfraActiveRequests;
 
 @RunWith(MockitoJUnitRunner.class)
-public class MultiStageSkipTest {
+public class MultiStageSkipListenerTest {
 
     @Mock
     private CatalogDbClient catalogDbClient;
@@ -70,6 +70,12 @@ public class MultiStageSkipTest {
         execution.setVariable(BBConstants.G_ALACARTE, true);
         assertFalse("should not be triggered",
                 multiStageSkipListener.shouldRunFor("AssignVfModuleBB2", true, execution));
+
+        execution.setVariable("multiStageDesign", true);
+        assertTrue("should be triggered", multiStageSkipListener.shouldRunFor(execution));
+
+        execution.setVariable("multiStageDesign", false);
+        assertFalse("should not be triggered", multiStageSkipListener.shouldRunFor(execution));
 
 
     }
@@ -107,6 +113,15 @@ public class MultiStageSkipTest {
         assertEquals("Flows should only have Assign", flowsToExecute.size(), 1);
         assertEquals("Flows should only have Assign", flowsToExecute.get(0).getBuildingBlock().getBpmnFlowName(),
                 "AssignVfModuleBB");
+    }
 
+    @Test
+    public void postCompletionRequestsDbListenerTest() {
+        InfraActiveRequests request = new InfraActiveRequests();
+        BuildingBlockExecution execution = new DelegateExecutionImpl(new DelegateExecutionFake());
+        multiStageSkipListener.run(request, execution);
+
+        assertEquals("Successfully completed Assign Building Block only due to multi-stage-design VNF",
+                request.getFlowStatus());
     }
 }

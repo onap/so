@@ -28,6 +28,7 @@ import javax.persistence.EntityNotFoundException;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.aai.domain.yang.Vnfc;
 import org.onap.so.bpmn.common.DelegateExecutionImpl;
+import org.onap.so.bpmn.common.listener.db.RequestsDbListenerRunner;
 import org.onap.so.bpmn.common.listener.flowmanipulator.FlowManipulatorListenerRunner;
 import org.onap.so.bpmn.common.workflow.context.WorkflowCallbackResponse;
 import org.onap.so.bpmn.common.workflow.context.WorkflowContextHolder;
@@ -81,6 +82,8 @@ public class WorkflowActionBBTasks {
     private CatalogDbClient catalogDbClient;
     @Autowired
     private FlowManipulatorListenerRunner flowManipulatorListenerRunner;
+    @Autowired
+    private RequestsDbListenerRunner requestsDbListener;
 
     public void selectBB(DelegateExecution execution) {
         List<ExecuteBuildingBlock> flowsToExecute =
@@ -225,6 +228,7 @@ public class WorkflowActionBBTasks {
             request.setProgress(Long.valueOf(100));
             request.setRequestStatus("COMPLETE");
             request.setLastModifiedBy("CamundaBPMN");
+            requestsDbListener.post(request, new DelegateExecutionImpl(execution));
             requestDbclient.updateInfraActiveRequests(request);
         } catch (Exception ex) {
             workflowAction.buildAndThrowException(execution, "Error Updating Request Database", ex);
