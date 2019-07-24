@@ -105,13 +105,9 @@ public class InstanceManagement {
     private Response processCustomWorkflowRequest(String requestJSON, Actions action,
             HashMap<String, String> instanceIdMap, String version, String requestId,
             ContainerRequestContext requestContext) throws ApiException {
-        String serviceInstanceId = null;
-        if (instanceIdMap != null) {
-            serviceInstanceId = instanceIdMap.get("serviceInstanceId");
-        }
+        String serviceInstanceId;
         Boolean aLaCarte = true;
-        long startTime = System.currentTimeMillis();
-        ServiceInstancesRequest sir = null;
+        ServiceInstancesRequest sir;
         String apiVersion = version.substring(1);
 
         String requestUri = requestHandlerUtils.getRequestUri(requestContext, uriPrefix);
