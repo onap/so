@@ -92,6 +92,8 @@ public class E2EServiceInstances {
 
     private static final String END_OF_THE_TRANSACTION = "End of the transaction, the final response is: ";
 
+    private static final String SERVICE_ID = "serviceId";
+
     @Autowired
     private MsoRequest msoRequest;
 
@@ -138,7 +140,7 @@ public class E2EServiceInstances {
     public Response updateE2EServiceInstance(String request, @PathParam("version") String version,
             @PathParam("serviceId") String serviceId) throws ApiException {
 
-        instanceIdMap.put("serviceId", serviceId);
+        instanceIdMap.put(SERVICE_ID, serviceId);
 
         return updateE2EserviceInstances(request, Action.updateInstance, version);
     }
@@ -155,9 +157,9 @@ public class E2EServiceInstances {
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Delete E2E Service Instance on a specified version and serviceId", response = Response.class)
     public Response deleteE2EServiceInstance(String request, @PathParam("version") String version,
-            @PathParam("serviceId") String serviceId) throws ApiException {
+            @PathParam(SERVICE_ID) String serviceId) throws ApiException {
 
-        instanceIdMap.put("serviceId", serviceId);
+        instanceIdMap.put(SERVICE_ID, serviceId);
 
         return deleteE2EserviceInstances(request, Action.deleteInstance, instanceIdMap, version);
     }
@@ -167,7 +169,7 @@ public class E2EServiceInstances {
     @ApiOperation(value = "Find e2eServiceInstances Requests for a given serviceId and operationId",
             response = Response.class)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getE2EServiceInstances(@PathParam("serviceId") String serviceId,
+    public Response getE2EServiceInstances(@PathParam(SERVICE_ID) String serviceId,
             @PathParam("version") String version, @PathParam("operationId") String operationId) {
         return getE2EServiceInstance(serviceId, operationId, version);
     }
@@ -184,10 +186,10 @@ public class E2EServiceInstances {
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Scale E2E Service Instance on a specified version", response = Response.class)
     public Response scaleE2EServiceInstance(String request, @PathParam("version") String version,
-            @PathParam("serviceId") String serviceId) throws ApiException {
+            @PathParam(SERVICE_ID) String serviceId) throws ApiException {
 
         logger.debug("------------------scale begin------------------");
-        instanceIdMap.put("serviceId", serviceId);
+        instanceIdMap.put(SERVICE_ID, serviceId);
         return scaleE2EserviceInstances(request, Action.scaleInstance, version);
     }
 
@@ -207,7 +209,7 @@ public class E2EServiceInstances {
     public Response compareModelwithTargetVersion(String request, @PathParam("serviceId") String serviceId,
             @PathParam("version") String version) throws ApiException {
 
-        instanceIdMap.put("serviceId", serviceId);
+        instanceIdMap.put(SERVICE_ID, serviceId);
 
         return compareModelwithTargetVersion(request, Action.compareModel, instanceIdMap, version);
     }
@@ -216,7 +218,6 @@ public class E2EServiceInstances {
             HashMap<String, String> instanceIdMap, String version) throws ApiException {
 
         String requestId = UUID.randomUUID().toString();
-        long startTime = System.currentTimeMillis();
 
         CompareModelsRequest e2eCompareModelReq;
 
@@ -237,12 +238,12 @@ public class E2EServiceInstances {
             return response;
         }
 
-        return runCompareModelBPMWorkflow(e2eCompareModelReq, requestJSON, requestId, startTime, action, version);
+        return runCompareModelBPMWorkflow(e2eCompareModelReq, requestJSON, requestId, action, version);
 
     }
 
     private Response runCompareModelBPMWorkflow(CompareModelsRequest e2eCompareModelReq, String requestJSON,
-            String requestId, long startTime, Action action, String version) throws ApiException {
+            String requestId, Action action, String version) throws ApiException {
 
         // Define RecipeLookupResult info here instead of query DB for efficiency
         String workflowUrl = "/mso/async/services/CompareModelofE2EServiceInstance";
@@ -259,7 +260,7 @@ public class E2EServiceInstances {
 
             // Capture audit event
             logger.debug("MSO API Handler Posting call to BPEL engine for url: " + requestClient.getUrl());
-            String serviceId = instanceIdMap.get("serviceId");
+            String serviceId = instanceIdMap.get(SERVICE_ID);
             String serviceType = e2eCompareModelReq.getServiceType();
             RequestClientParameter postParam = new RequestClientParameter.Builder().setRequestId(requestId)
                     .setBaseVfModule(false).setRecipeTimeout(recipeTimeout).setRequestAction(action.name())
@@ -334,7 +335,6 @@ public class E2EServiceInstances {
     private Response deleteE2EserviceInstances(String requestJSON, Action action, HashMap<String, String> instanceIdMap,
             String version) throws ApiException {
         // TODO should be a new one or the same service instance Id
-        long startTime = System.currentTimeMillis();
         E2EServiceInstanceDeleteRequest e2eDelReq;
 
         ObjectMapper mapper = new ObjectMapper();
@@ -397,7 +397,7 @@ public class E2EServiceInstances {
 
             // Capture audit event
             logger.debug("MSO API Handler Posting call to BPEL engine for url: " + requestClient.getUrl());
-            String serviceId = instanceIdMap.get("serviceId");
+            String serviceId = instanceIdMap.get(SERVICE_ID);
             String serviceInstanceType = e2eDelReq.getServiceType();
             RequestClientParameter clientParam = new RequestClientParameter.Builder().setRequestId(requestId)
                     .setBaseVfModule(false).setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
@@ -436,9 +436,8 @@ public class E2EServiceInstances {
     private Response updateE2EserviceInstances(String requestJSON, Action action, String version) throws ApiException {
 
         String requestId = UUID.randomUUID().toString();
-        long startTime = System.currentTimeMillis();
         E2EServiceInstanceRequest e2eSir;
-        String serviceId = instanceIdMap.get("serviceId");
+        String serviceId = instanceIdMap.get(SERVICE_ID);
 
         ObjectMapper mapper = new ObjectMapper();
         try {
@@ -552,7 +551,6 @@ public class E2EServiceInstances {
             HashMap<String, String> instanceIdMap, String version) throws ApiException {
 
         String requestId = UUID.randomUUID().toString();
-        long startTime = System.currentTimeMillis();
         E2EServiceInstanceRequest e2eSir;
 
         MsoRequest msoRequest = new MsoRequest();
@@ -663,7 +661,6 @@ public class E2EServiceInstances {
     private Response scaleE2EserviceInstances(String requestJSON, Action action, String version) throws ApiException {
 
         String requestId = UUID.randomUUID().toString();
-        long startTime = System.currentTimeMillis();
         E2EServiceInstanceScaleRequest e2eScaleReq;
 
         ObjectMapper mapper = new ObjectMapper();
@@ -725,7 +722,7 @@ public class E2EServiceInstances {
 
             // Capture audit event
             logger.debug("MSO API Handler Posting call to BPEL engine for url: " + requestClient.getUrl());
-            String serviceId = instanceIdMap.get("serviceId");
+            String serviceId = instanceIdMap.get(SERVICE_ID);
             String serviceInstanceType = e2eScaleReq.getService().getServiceType();
             RequestClientParameter postParam = new RequestClientParameter.Builder().setRequestId(requestId)
                     .setBaseVfModule(false).setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
