@@ -914,6 +914,9 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
     }
 
     public List<String> convertCdlToArrayList(String cdl) {
+        if (cdl == null) {
+            return new ArrayList<>();
+        }
         String cdl2 = cdl.trim();
         String cdl3;
         if (cdl2.startsWith("[") && cdl2.endsWith("]")) {
@@ -1023,11 +1026,21 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
             } else if ("comma_delimited_list".equalsIgnoreCase(type)) {
                 String commaSeparated = inputs.get(key) != null ? inputs.get(key).toString() : null;
                 try {
-                    List<String> anArrayList = this.convertCdlToArrayList(commaSeparated);
-                    if (alias)
-                        newInputs.put(realName, anArrayList);
-                    else
-                        newInputs.put(key, anArrayList);
+                    List<String> anArrayList;
+                    if (commaSeparated != null) {
+                        anArrayList = this.convertCdlToArrayList(commaSeparated);
+                        if (alias)
+                            newInputs.put(realName, anArrayList);
+                        else
+                            newInputs.put(key, anArrayList);
+                    } else {
+                        logger.debug("Unable to convert {} to an ArrayList!!", commaSeparated);
+                        if (alias) {
+                            newInputs.put(realName, null);
+                        } else {
+                            newInputs.put(key, null);
+                        }
+                    }
                 } catch (Exception e) {
                     logger.debug("Unable to convert {} to an ArrayList!!", commaSeparated, e);
                     if (alias)
