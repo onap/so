@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2019 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,8 +39,6 @@ import org.onap.so.db.catalog.beans.Recipe;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 import org.onap.so.serviceinstancebeans.ServiceInstancesResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,8 +48,6 @@ import io.swagger.annotations.ApiOperation;
 @Component
 @Path("/onap/so/infra/serviceInstantiation")
 public class Vnf {
-
-    private static Logger logger = LoggerFactory.getLogger(Vnf.class);
 
     @Autowired
     private BpmnRequestBuilder requestBuilder;
