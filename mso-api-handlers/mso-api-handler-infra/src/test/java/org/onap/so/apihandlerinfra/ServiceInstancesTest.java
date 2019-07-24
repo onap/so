@@ -2917,19 +2917,6 @@ public class ServiceInstancesTest extends BaseTest {
     }
 
     @Test
-    public void setCamundaHeadersTest() throws ContactCamundaException, RequestDbFailureException {
-        String encryptedAuth = "015E7ACF706C6BBF85F2079378BDD2896E226E09D13DC2784BA309E27D59AB9FAD3A5E039DF0BB8408"; // user:password
-        String key = "07a7159d3bf51a0e53be7a8f89699be7";
-        HttpHeaders headers = requestHandlerUtils.setCamundaHeaders(encryptedAuth, key);
-        List<org.springframework.http.MediaType> acceptedType = headers.getAccept();
-        String expectedAcceptedType = "application/json";
-        assertEquals(expectedAcceptedType, acceptedType.get(0).toString());
-        String basicAuth = headers.getFirst(HttpHeaders.AUTHORIZATION);
-        String expectedBasicAuth = "Basic dXNlcjpwYXNzd29yZA==";
-        assertEquals(expectedBasicAuth, basicAuth);
-    }
-
-    @Test
     public void handleReplaceInstance_Test() throws JsonParseException, JsonMappingException, IOException {
         String replaceVfModule = inputStream("/ReplaceVfModule.json");
         ObjectMapper mapper = new ObjectMapper();

@@ -46,6 +46,7 @@ import org.apache.http.HttpStatus;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandler.common.ResponseBuilder;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
+import org.onap.so.apihandlerinfra.exceptions.ContactCamundaException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
 import org.onap.so.constants.OrchestrationRequestFormat;
@@ -90,6 +91,9 @@ public class OrchestrationRequests {
 
     @Autowired
     private ResponseBuilder builder;
+
+    @Autowired
+    private CamundaRequestHandler camundaRequestHandler;
 
     @GET
     @Path("/{version:[vV][4-7]}/{requestId}")
@@ -424,10 +428,19 @@ public class OrchestrationRequests {
     }
 
     protected void mapRequestStatusAndExtSysErrSrcToRequest(InfraActiveRequests iar, RequestStatus status,
-            String format) {
+            String format) throws ContactCamundaException {
         String rollbackStatusMessage = iar.getRollbackStatusMessage();
         String flowStatusMessage = iar.getFlowStatus();
         String retryStatusMessage = iar.getRetryStatusMessage();
+        String taskName = null;
+
+        if (flowStatusMessage != null && !flowStatusMessage.equals("Successfully completed all Building Blocks")
+                && !flowStatusMessage.equals("All Rollback flows have completed successfully")) {
+            taskName = camundaRequestHandler.getTaskName(iar.getRequestId());
+            if (taskName != null) {
+                flowStatusMessage = flowStatusMessage + " TASK INFORMATION: " + taskName;
+            }
+        }
 
         String statusMessages = null;
         if (iar.getStatusMessage() != null) {
