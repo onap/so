@@ -43,6 +43,7 @@ import org.junit.rules.ExpectedException;
 import org.onap.so.adapters.vnf.exceptions.VnfAlreadyExists;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
 import org.onap.so.adapters.vnf.exceptions.VnfNotFound;
+import org.onap.so.adapters.vnfrest.DeleteVfModuleRequest;
 import org.onap.so.db.catalog.beans.HeatEnvironment;
 import org.onap.so.db.catalog.beans.HeatTemplate;
 import org.onap.so.db.catalog.beans.HeatTemplateParam;
@@ -520,17 +521,26 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
     @Test
     @Ignore
     public void deleteVnfTest() throws MsoException {
-
+        String cloudSiteId = "mdt1";
+        String cloudOwner = "CloudOwner";
+        String tenantId = "88a6ca3ee0394ade9403f075db23167e";
+        String vfModuleStackId = "vSAMP12";
         Map<String, Object> outputs = new HashMap<>();
         outputs.put("Key1", "value1");
-        when(heatUtils.queryStackForOutputs("mdt1", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12"))
-                .thenReturn(outputs);
+        when(heatUtils.queryStackForOutputs(cloudSiteId, cloudOwner, tenantId, vfModuleStackId)).thenReturn(outputs);
 
         MsoVnfAdapterImpl instance = new MsoVnfAdapterImpl();
         MsoRequest msoRequest = getMsoRequest();
+
+        DeleteVfModuleRequest deleteVfModuleRequest = new DeleteVfModuleRequest();
+        deleteVfModuleRequest.setCloudSiteId(cloudSiteId);
+        deleteVfModuleRequest.setCloudOwner(cloudOwner);
+        deleteVfModuleRequest.setTenantId(tenantId);
+        deleteVfModuleRequest.setVfModuleStackId(vfModuleStackId);
+        deleteVfModuleRequest.setMsoRequest(msoRequest);
+
         try {
-            instance.deleteVfModule("mdt1", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12", msoRequest,
-                    new Holder<Map<String, String>>());
+            instance.deleteVfModule(deleteVfModuleRequest, new Holder<Map<String, String>>());
         } catch (Exception e) {
 
         }

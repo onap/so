@@ -25,6 +25,7 @@
 package org.onap.so.adapters.vnf;
 
 
+import com.google.common.base.Preconditions;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
+import org.onap.so.adapters.vnfrest.DeleteVfModuleRequest;
 import org.onap.so.logger.LoggingAnchor;
 import org.apache.commons.collections.CollectionUtils;
 import org.onap.so.adapters.valet.GenericValetResponse;
@@ -1245,8 +1247,20 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     }
 
     @Override
-    public void deleteVfModule(String cloudSiteId, String cloudOwner, String tenantId, String vnfName,
-            MsoRequest msoRequest, Holder<Map<String, String>> outputs) throws VnfException {
+    public void deleteVfModule(DeleteVfModuleRequest deleteVfModuleRequest, Holder<Map<String, String>> outputs)
+            throws VnfException {
+
+        Preconditions.checkNotNull(deleteVfModuleRequest.getCloudSiteId(),
+                "DeleteVfModuleRequest:cloudSiteId not set.");
+        Preconditions.checkNotNull(deleteVfModuleRequest.getTenantId(), "DeleteVfModuleRequest:tenantId not set.");
+        Preconditions.checkNotNull(deleteVfModuleRequest.getVfModuleStackId(),
+                "DeleteVfModuleRequest:vfModuleStackId not set.");
+
+        String cloudSiteId = deleteVfModuleRequest.getCloudSiteId();
+        String cloudOwner = deleteVfModuleRequest.getCloudOwner();
+        String tenantId = deleteVfModuleRequest.getTenantId();
+        String vnfName = deleteVfModuleRequest.getVfModuleStackId();
+        MsoRequest msoRequest = deleteVfModuleRequest.getMsoRequest();
 
         logger.debug("Deleting VF {} in ", vnfName, cloudOwner + "/" + cloudSiteId + "/" + tenantId);
         // Will capture execution time for metrics

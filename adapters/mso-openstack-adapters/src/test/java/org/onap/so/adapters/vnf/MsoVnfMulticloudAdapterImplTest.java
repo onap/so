@@ -39,6 +39,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.onap.so.adapters.vdu.VduModelInfo;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
+import org.onap.so.adapters.vnfrest.DeleteVfModuleRequest;
 import org.onap.so.cloud.CloudConfig;
 import org.onap.so.entity.MsoRequest;
 import org.onap.so.openstack.beans.StackInfo;
@@ -210,7 +211,19 @@ public class MsoVnfMulticloudAdapterImplTest extends BaseRestTestUtils {
         wireMockServer.stubFor(delete(urlPathEqualTo("/api/multicloud/v1/CloudOwner/MTN13/infra_workload/workload-id"))
                 .willReturn(aResponse().withStatus(HttpStatus.SC_NO_CONTENT)));
 
-        instance.deleteVfModule("MTN13", "CloudOwner", "123", "workload-id", msoRequest, new Holder<>());
+        String cloudSiteId = "MTN13";
+        String cloudOwner = "CloudOwner";
+        String tenantId = "123";
+        String vfModuleStackId = "workload-id";
+
+        DeleteVfModuleRequest deleteVfModuleRequest = new DeleteVfModuleRequest();
+        deleteVfModuleRequest.setCloudSiteId(cloudSiteId);
+        deleteVfModuleRequest.setCloudOwner(cloudOwner);
+        deleteVfModuleRequest.setTenantId(tenantId);
+        deleteVfModuleRequest.setVfModuleStackId(vfModuleStackId);
+        deleteVfModuleRequest.setMsoRequest(msoRequest);
+
+        instance.deleteVfModule(deleteVfModuleRequest, new Holder<>());
     }
 
     @Test

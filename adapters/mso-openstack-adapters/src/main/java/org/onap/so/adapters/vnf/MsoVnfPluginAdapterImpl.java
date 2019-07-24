@@ -34,6 +34,7 @@
 package org.onap.so.adapters.vnf;
 
 
+import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +43,7 @@ import java.util.Optional;
 import java.util.Set;
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
+import org.onap.so.adapters.vnfrest.DeleteVfModuleRequest;
 import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.adapters.vdu.CloudInfo;
 import org.onap.so.adapters.vdu.VduException;
@@ -139,7 +141,6 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 
     /**
      * This is the "Create VNF" web service implementation. This function is now unsupported and will return an error.
-     *
      */
     @Override
     public void createVnf(String cloudSiteId, String cloudOwner, String tenantId, String vnfType, String vnfVersion,
@@ -153,7 +154,6 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 
     /**
      * This is the "Update VNF" web service implementation. This function is now unsupported and will return an error.
-     *
      */
     @Override
     public void updateVnf(String cloudSiteId, String cloudOwner, String tenantId, String vnfType, String vnfVersion,
@@ -228,7 +228,6 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 
     /**
      * This is the "Delete VNF" web service implementation. This function is now unsupported and will return an error.
-     *
      */
     @Override
     public void deleteVnf(String cloudSiteId, String cloudOwner, String tenantId, String vnfName, MsoRequest msoRequest)
@@ -650,7 +649,6 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         }
         // End Version check
 
-
         VduInstance vduInstance = null;
         CloudInfo cloudInfo = new CloudInfo(cloudSiteId, cloudOwner, tenantId, null);
 
@@ -745,7 +743,6 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             }
         }
 
-
         // Collect outputs from Base Modules and Volume Modules
         Map<String, Object> baseModuleOutputs = null;
         Map<String, Object> volumeGroupOutputs = null;
@@ -833,7 +830,6 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             }
         }
 
-
         // NOTE: For this section, heatTemplate is used for all template artifacts.
         // In final implementation (post-POC), the template object would either be generic or there would
         // be a separate DB Table/Object for different sub-orchestrators.
@@ -871,7 +867,6 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         } else {
             logger.debug("Got Heat Environment from DB: " + heatEnvironment.getEnvironment());
         }
-
 
         // Create the combined set of parameters from the incoming request, base-module outputs,
         // volume-module outputs. Also, convert all variables to their native object types.
@@ -1057,7 +1052,6 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             throw new VnfException("Exception during instantiateVdu: " + e.getMessage());
         }
 
-
         // Reach this point if create is successful.
         // Populate remaining rollback info and response parameters.
         vfRollback.setVnfCreated(true);
@@ -1072,8 +1066,19 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
     }
 
 
-    public void deleteVfModule(String cloudSiteId, String cloudOwner, String tenantId, String vfModuleId,
-            MsoRequest msoRequest, Holder<Map<String, String>> outputs) throws VnfException {
+    public void deleteVfModule(DeleteVfModuleRequest deleteVfModuleRequest, Holder<Map<String, String>> outputs)
+            throws VnfException {
+
+        Preconditions.checkNotNull(deleteVfModuleRequest.getCloudSiteId(),
+                "DeleteVfModuleRequest:cloudSiteId not set.");
+        Preconditions.checkNotNull(deleteVfModuleRequest.getTenantId(), "DeleteVfModuleRequest:tenantId not set.");
+        Preconditions.checkNotNull(deleteVfModuleRequest.getVfModuleStackId(),
+                "DeleteVfModuleRequest:vfModuleStackId not set.");
+
+        String cloudSiteId = deleteVfModuleRequest.getCloudSiteId();
+        String cloudOwner = deleteVfModuleRequest.getCloudOwner();
+        String tenantId = deleteVfModuleRequest.getTenantId();
+        String vfModuleId = deleteVfModuleRequest.getVfModuleStackId();
 
         logger.debug("Deleting VF Module " + vfModuleId + " in " + cloudOwner + "/" + cloudSiteId + "/" + tenantId);
 

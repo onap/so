@@ -35,6 +35,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
+import org.onap.so.adapters.vnfrest.DeleteVfModuleRequest;
 import org.onap.so.entity.MsoRequest;
 import org.onap.so.openstack.beans.VnfRollback;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,13 +134,31 @@ public class MsoVnfPluginAdapterImplTest extends BaseRestTestUtils {
     public void deleteVfModule_QueryVduException() throws Exception {
         expectedException.expect(VnfException.class);
         MsoRequest msoRequest = getMsoRequest();
-        msoVnfPluginAdapter.deleteVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12",
-                msoRequest, new Holder<Map<String, String>>());
+
+        String cloudSiteId = "mtn13";
+        String cloudOwner = "CloudOwner";
+        String tenantId = "88a6ca3ee0394ade9403f075db23167e";
+        String vfModuleStackId = "vSAMP12";
+
+        DeleteVfModuleRequest deleteVfModuleRequest = new DeleteVfModuleRequest();
+        deleteVfModuleRequest.setCloudSiteId(cloudSiteId);
+        deleteVfModuleRequest.setCloudOwner(cloudOwner);
+        deleteVfModuleRequest.setTenantId(tenantId);
+        deleteVfModuleRequest.setVfModuleStackId(vfModuleStackId);
+        deleteVfModuleRequest.setMsoRequest(msoRequest);
+
+        msoVnfPluginAdapter.deleteVfModule(deleteVfModuleRequest, new Holder<Map<String, String>>());
     }
 
     @Test
     public void deleteVfModule_DeleteVduException() throws Exception {
         expectedException.expect(VnfException.class);
+
+        String cloudSiteId = "mtn13";
+        String cloudOwner = "CloudOwner";
+        String tenantId = "88a6ca3ee0394ade9403f075db23167e";
+        String vfModuleStackId = "vSAMP12";
+
         mockOpenStackResponseAccess(wireMockServer, wireMockPort);
         mockOpenStackGetStackVfModule_200(wireMockServer);
         wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/vSAMP12"))
@@ -150,8 +169,14 @@ public class MsoVnfPluginAdapterImplTest extends BaseRestTestUtils {
                         .willReturn(aResponse().withHeader("Content-Type", "application/json")
                                 .withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)));
         MsoRequest msoRequest = getMsoRequest();
-        msoVnfPluginAdapter.deleteVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12",
-                msoRequest, new Holder<Map<String, String>>());
+        DeleteVfModuleRequest deleteVfModuleRequest = new DeleteVfModuleRequest();
+        deleteVfModuleRequest.setCloudSiteId(cloudSiteId);
+        deleteVfModuleRequest.setCloudOwner(cloudOwner);
+        deleteVfModuleRequest.setTenantId(tenantId);
+        deleteVfModuleRequest.setVfModuleStackId(vfModuleStackId);
+        deleteVfModuleRequest.setMsoRequest(msoRequest);
+
+        msoVnfPluginAdapter.deleteVfModule(deleteVfModuleRequest, new Holder<Map<String, String>>());
     }
 
     private MsoRequest getMsoRequest() {
