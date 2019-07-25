@@ -11,6 +11,10 @@ mso:
     max-pool-size: 50
     queue-capacity: 500
 
+spring:
+  main:
+    allow-bean-definition-overriding: true
+
 #Actuator
 management:
   endpoints:

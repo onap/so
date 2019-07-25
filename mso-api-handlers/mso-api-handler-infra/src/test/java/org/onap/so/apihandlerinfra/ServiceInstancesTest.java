@@ -2398,7 +2398,7 @@ public class ServiceInstancesTest extends BaseTest {
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
         RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
         assertEquals(
-                "Unable to check for duplicate instance due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException: 500 Server Error",
+                "Unable to check for duplicate instance due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException$InternalServerError: 500 Server Error",
                 realResponse.getServiceException().getText());
     }
 
@@ -2443,7 +2443,7 @@ public class ServiceInstancesTest extends BaseTest {
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
         RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
         assertEquals(
-                "Unable to get process-instance history from Camunda for requestId: f0a35706-efc4-4e27-80ea-a995d7a2a40f due to error: org.springframework.web.client.HttpServerErrorException: 500 Server Error",
+                "Unable to get process-instance history from Camunda for requestId: f0a35706-efc4-4e27-80ea-a995d7a2a40f due to error: org.springframework.web.client.HttpServerErrorException$InternalServerError: 500 Server Error",
                 realResponse.getServiceException().getText());
     }
 
@@ -2460,7 +2460,7 @@ public class ServiceInstancesTest extends BaseTest {
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
         RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
         assertEquals(
-                "Unable to check for duplicate instance due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException: 500 Server Error",
+                "Unable to check for duplicate instance due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException$InternalServerError: 500 Server Error",
                 realResponse.getServiceException().getText());
     }
 
@@ -2492,7 +2492,7 @@ public class ServiceInstancesTest extends BaseTest {
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
         RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
         assertEquals(
-                "Unable to save instance to db due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException: 500 Server Error",
+                "Unable to save instance to db due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException$InternalServerError: 500 Server Error",
                 realResponse.getServiceException().getText());
     }
 
@@ -2512,7 +2512,7 @@ public class ServiceInstancesTest extends BaseTest {
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
         RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
         assertEquals(
-                "Unable to save instance to db due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException: 500 Server Error",
+                "Unable to save instance to db due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException$InternalServerError: 500 Server Error",
                 realResponse.getServiceException().getText());
     }
 
@@ -2529,7 +2529,7 @@ public class ServiceInstancesTest extends BaseTest {
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
         RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
         assertEquals(
-                "Unable to save instance to db due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException: 500 Server Error",
+                "Unable to save instance to db due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException$InternalServerError: 500 Server Error",
                 realResponse.getServiceException().getText());
     }
 

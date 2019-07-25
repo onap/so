@@ -19,6 +19,8 @@ spring:
       enabled: false
   jersey:
     application-path: /sobpmnengine
+  main:
+    allow-bean-definition-overriding: true
 camunda:
   bpm:
     application:

@@ -17,6 +17,8 @@ mso:
         auth: Basic YnBlbDpwYXNzd29yZDEk
 
 spring:
+  main:
+    allow-bean-definition-overriding: true
   security:
     usercredentials:
     -
