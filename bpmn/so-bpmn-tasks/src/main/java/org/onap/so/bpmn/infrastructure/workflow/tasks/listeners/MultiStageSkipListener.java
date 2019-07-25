@@ -22,6 +22,7 @@ package org.onap.so.bpmn.infrastructure.workflow.tasks.listeners;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import org.onap.so.bpmn.common.BBConstants;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.common.listener.db.PostCompletionRequestsDbListener;
@@ -55,7 +56,7 @@ public class MultiStageSkipListener implements FlowManipulator, PostCompletionRe
     @Override
     public boolean shouldRunFor(BuildingBlockExecution execution) {
 
-        return (boolean) execution.getVariable(G_MULTI_STAGE_DESIGN);
+        return (boolean) Optional.ofNullable(execution.getVariable(G_MULTI_STAGE_DESIGN)).orElse(false);
     }
 
     @Override
