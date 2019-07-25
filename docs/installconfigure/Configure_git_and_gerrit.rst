@@ -25,14 +25,14 @@ Enter your SSH public key (id_rsa) into gerrit:
 - Log in
 - Open the menu next to your name (under the green search button)
 
-.. image:: images/Configure_git_1.png
+.. image:: ../images/Configure_git_1.png
 
 - Select "Settings"
 - In the "Settings" sidebar, click "SSH Public Keys"`
 - Click "Add Key..."
 - Paste the entire contents of $HOME/.ssh/id_rsa.pub into the text area and click "Add".
 
-.. image:: images/Configure_git_2.png
+.. image:: ../images/Configure_git_2.png
 
 Install the git-review package.
 
@@ -90,4 +90,4 @@ Verify that you have connectivity to gerrit through the proxy.  Answer "yes" to 
 
   ssh -p 29418 gerrit.onap.org
 
-.. image:: images/Configure_git_3.png
+.. image:: ../images/Configure_git_3.png
