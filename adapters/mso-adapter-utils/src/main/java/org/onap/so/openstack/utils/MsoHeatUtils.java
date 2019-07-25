@@ -55,6 +55,7 @@ import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
+import org.onap.so.openstack.beans.CreateStackRequest;
 import org.onap.so.openstack.beans.HeatStatus;
 import org.onap.so.openstack.beans.StackInfo;
 import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
@@ -354,7 +355,10 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
         try {
             ObjectMapper mapper = new ObjectMapper();
             InfraActiveRequests foundRequest = requestDBClient.getInfraActiveRequestbyRequestId(requestId);
-            String stackRequest = mapper.writeValueAsString(request.getParameters());
+            CreateStackRequest createStackRequest = new CreateStackRequest();
+            createStackRequest.setEnvironment(request.getEnvironment());
+            createStackRequest.setParameters(request.getParameters());
+            String stackRequest = mapper.writeValueAsString(createStackRequest);
             CloudApiRequests cloudReq = new CloudApiRequests();
             cloudReq.setCloudIdentifier(stackName);
             cloudReq.setRequestBody(stackRequest);

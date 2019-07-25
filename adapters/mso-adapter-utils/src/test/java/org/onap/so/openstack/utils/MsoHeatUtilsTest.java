@@ -48,10 +48,12 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.db.request.beans.CloudApiRequests;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
+import org.onap.so.openstack.beans.CreateStackRequest;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.exceptions.MsoOpenstackException;
 import org.onap.so.openstack.exceptions.MsoStackAlreadyExists;
 import org.springframework.core.env.Environment;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.woorea.openstack.base.client.OpenStackResponseException;
 import com.woorea.openstack.heat.Heat;
 import com.woorea.openstack.heat.StackResource;
@@ -415,11 +417,22 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
 
     @Test
     public final void saveStack_Test() throws MsoException, IOException, NovaClientException {
+
         CreateStackParam createStackParam = new CreateStackParam();
         createStackParam.setStackName("stackName");
         Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("test", "value");
+        String environment =
+                "parameters:\n  mmn_volume_name_1: \"data-mn-v-vdb\"\n  mmn_volume_name_2: \"arch-mn-v-vdc\"\n";
         createStackParam.setParameters(parameters);
+        createStackParam.setEnvironment(environment);
+
+        CreateStackRequest createStackRequest = new CreateStackRequest();
+        createStackRequest.setEnvironment(environment);
+        createStackRequest.setParameters(parameters);
+        ObjectMapper mapper = new ObjectMapper();
+        String stackRequest = mapper.writeValueAsString(createStackRequest);
+
         InfraActiveRequests request = new InfraActiveRequests();
         request.setRequestId("requestId");
         doReturn(request).when(requestDbClient).getInfraActiveRequestbyRequestId("requestId");
@@ -427,7 +440,8 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
         heatUtils.saveStackRequest(createStackParam, "requestId", "stackName");
         Mockito.verify(requestDbClient, times(1)).updateInfraActiveRequests(request);
         assertNotNull(request.getCloudApiRequests().get(0));
-        assertEquals(request.getCloudApiRequests().get(0).getRequestId(), "requestId");
+        assertEquals("requestId", request.getCloudApiRequests().get(0).getRequestId());
+        assertEquals(stackRequest, request.getCloudApiRequests().get(0).getRequestBody());
     }
 
     @Test
