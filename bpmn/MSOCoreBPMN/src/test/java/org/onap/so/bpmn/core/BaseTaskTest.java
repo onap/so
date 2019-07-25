@@ -38,9 +38,9 @@ public class BaseTaskTest {
     private String anyValueString = "anyValue";
     private String badValueString = "123abc";
     private int anyValueInt = 123;
-    private Integer anyValueInteger = new Integer(anyValueInt);
+    private Integer anyValueInteger = Integer.valueOf(anyValueInt);
     private long anyValuelong = 123L;
-    private Long anyValueLong = new Long(anyValuelong);
+    private Long anyValueLong = Long.valueOf(anyValuelong);
 
     private DelegateExecution mockExecution;
     private Expression mockExpression;
