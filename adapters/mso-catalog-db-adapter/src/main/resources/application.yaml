@@ -41,6 +41,8 @@ spring:
   jackson:
     serialization:
       fail-on-empty-beans: false
+  main:
+    allow-bean-definition-overriding: true
 
 #Actuator
 management:

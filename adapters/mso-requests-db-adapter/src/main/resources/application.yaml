@@ -47,6 +47,8 @@ spring:
       username: mso_admin
       password: '$2a$12$tidKuu.h88E2nuL95pTVY.ZOYMN/1dp29A9b1o.0GFDsVVSYlMkHa'
       role: ACTUATOR
+  main:
+    allow-bean-definition-overriding: true
 
 #Actuator
 management:
