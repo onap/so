@@ -267,7 +267,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 				execution.setVariable(Prefix + "queryAAIResponse", l3Network.get())
 				execution.setVariable(Prefix + "isAAIGood", true)
 				if (relationships.isPresent()){
-					if(relationships.get().getRelatedAAIUris(AAIObjectType.VF_MODULE).isEmpty()){
+					if(!relationships.get().getRelatedAAIUris(AAIObjectType.VF_MODULE).isEmpty()){
 						execution.setVariable(Prefix + "isVfRelationshipExist", true)
 						isVfRelationshipExist = true
 						String relationshipMessage = "AAI Query Success Response but 'vf-module' relationship exist, not allowed to delete: network Id: " + networkId
