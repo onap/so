@@ -276,9 +276,10 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
 
             case ~/[\w\s\W]*sdwanvpnattachment[\w\s\W]*/ :
             case ~/[\w\s\W]*sotnvpnattachment[\w\s\W]*/ :
+            case ~/[\w\s\W]*SOTN-Attachment[\w\s\W]*/ :
                 // fill attachment TP in networkInputParamJson
-                def vpnName = StringUtils.containsIgnoreCase(modelName, "sotnvpnattachment") ? "sotnvpnattachmentvf_sotncondition_sotnVpnName" : "sdwanvpnattachmentvf_sdwancondition_sdwanVpnName"
-                fillAttachmentTPInfo(resourceInputObj, modelName, execution, vpnName)
+                def vpnName = StringUtils.containsIgnoreCase(modelName, "sotnvpnattachment") ? "sotnvpnattachmentvf_sotncondition_sotnVpnName" : (StringUtils.containsIgnoreCase(modelName, "SOTN-Attachment") ? "elinesotnattachmentvf0_elinesotnattachmentvfc0_sotnVpnName" : "sdwanvpnattachmentvf_sdwancondition_sdwanVpnName")
+                fillAttachmentTPInfo(resourceInputObj, execution, vpnName)
 
                 break
             default:
@@ -286,27 +287,36 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                 // in case name is different as expected
                 if ("ALLOTTED_RESOURCE".equals(resourceInputObj.getResourceModelInfo().getModelType())) {
                     def vpnName = modelName + "_sotnVpnName"
-                    fillAttachmentTPInfo(resourceInputObj, modelName, execution, vpnName)
+                    fillAttachmentTPInfo(resourceInputObj, execution, vpnName)
                 }
                 break
         }
         return resourceInputObj
     }
 
-    private void fillAttachmentTPInfo(ResourceInput resourceInputObj, String modelName, DelegateExecution execution, String vpnName) {
-        String customer = resourceInputObj.getGlobalSubscriberId()
-        String serviceType = resourceInputObj.getServiceType()
+    private void fillAttachmentTPInfo(ResourceInput resourceInputObj, DelegateExecution execution, String vpnName) {
 
         String parentServiceName = jsonUtil.getJsonValueForKey(resourceInputObj.getRequestsInputs(), vpnName)
 
         AAIResourcesClient client = new AAIResourcesClient()
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.SERVICE_INSTANCE, customer, serviceType).queryParam("service-instance-name", parentServiceName)
-        ServiceInstances sis = client.get(uri).asBean(ServiceInstances.class).get()
-        logger.debug("Fetched AAI ServiceInstances for the vpnName:" + vpnName + " is " + sis.getServiceInstance().toString())
-        ServiceInstance si = sis.getServiceInstance().get(0)
+        logger.info("sending request to resolve vpn-name:" + vpnName)
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(new AAIObjectPlurals("/nodes", "/service-instances", "queryByName")).queryParam("service-instance-name", parentServiceName)
+        Optional<ServiceInstances> serviceInstancesOpt = client.get(ServiceInstances.class, uri)
 
-        def parentServiceInstanceId = si.getServiceInstanceId()
-        execution.setVariable("parentServiceInstanceId", parentServiceInstanceId)
+        if(serviceInstancesOpt.isPresent()) {
+            List<ServiceInstance> serviceInstanceList = serviceInstancesOpt.get().getServiceInstance()
+            logger.info("response from aai:" + serviceInstanceList.toString())
+            if (serviceInstanceList.size() > 0) {
+                ServiceInstance si = serviceInstanceList.get(0)
+                String parentServiceInstanceId = si.getServiceInstanceId()
+                execution.setVariable("parentServiceInstanceId", parentServiceInstanceId)
+                logger.info("setting parentService id:" + parentServiceInstanceId)
+            } else {
+                logger.error("No service instance found for given name.")
+            }
+        } else {
+            logger.error("No nodes found with this name" + vpnName)
+        }
     }
 
     /**

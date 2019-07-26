@@ -113,7 +113,17 @@ public class ResourceRequestBuilder {
         if (resource.getResourceType() == ResourceType.VNF) {
             for (String eachResource : resourceList) {
                 String resCusUuid = JsonUtils.getJsonValue(eachResource, "resourceCustomizationUuid");
-                if ((null != resCusUuid) && resCusUuid.equals(resource.getModelInfo().getModelCustomizationUuid())) {
+                // in case of external api invocation customizatoin id is coming null
+                if (resCusUuid == null || resCusUuid.contains("null") || resCusUuid.isEmpty()) {
+                    logger.info("resource resolved using model uuid");
+                    String uuid = (String) JsonUtils.getJsonValue(eachResource, "resourceUuid");
+                    if ((null != uuid) && uuid.equals(resource.getModelInfo().getModelUuid())) {
+                        logger.info("found resource uuid" + uuid);
+                        String resourceParameters = JsonUtils.getJsonValue(eachResource, "parameters");
+                        locationConstraints = JsonUtils.getJsonValue(resourceParameters, "locationConstraints");
+                    }
+                } else if (resCusUuid.equals(resource.getModelInfo().getModelCustomizationUuid())) {
+                    logger.info("resource resolved using customization-id");
                     String resourceParameters = JsonUtils.getJsonValue(eachResource, "parameters");
                     locationConstraints = JsonUtils.getJsonValue(resourceParameters, "locationConstraints");
                 }
