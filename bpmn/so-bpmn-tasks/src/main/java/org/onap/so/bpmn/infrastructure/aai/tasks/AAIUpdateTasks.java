@@ -79,6 +79,11 @@ public class AAIUpdateTasks {
     @Autowired
     private AAIConfigurationResources aaiConfigurationResources;
 
+    /**
+     * BPMN access method to update the status of Service to Assigned in AAI
+     *
+     * @param execution
+     */
     public void updateOrchestrationStatusAssignedService(BuildingBlockExecution execution) {
         try {
             ServiceInstance serviceInstance =
@@ -91,6 +96,11 @@ public class AAIUpdateTasks {
         }
     }
 
+    /**
+     * BPMN access method to update status of Service to Active in AAI
+     *
+     * @param execution
+     */
     public void updateOrchestrationStatusActiveService(BuildingBlockExecution execution) {
         try {
             ServiceInstance serviceInstance =
@@ -102,6 +112,11 @@ public class AAIUpdateTasks {
         }
     }
 
+    /**
+     * BPMN access method to update status of Vnf to Assigned in AAI
+     *
+     * @param execution
+     */
     public void updateOrchestrationStatusAssignedVnf(BuildingBlockExecution execution) {
         try {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
@@ -111,6 +126,11 @@ public class AAIUpdateTasks {
         }
     }
 
+    /**
+     * BPMN access method to update status of Vnf to Active in AAI
+     *
+     * @param execution
+     */
     public void updateOrchestrationStatusActiveVnf(BuildingBlockExecution execution) {
         try {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
@@ -120,6 +140,11 @@ public class AAIUpdateTasks {
         }
     }
 
+    /**
+     * BPMN access method to update status of VolumeGroup to Assigned in AAI
+     *
+     * @param execution
+     */
     public void updateOrchestrationStatusAssignedVolumeGroup(BuildingBlockExecution execution) {
         try {
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
@@ -134,6 +159,11 @@ public class AAIUpdateTasks {
         }
     }
 
+    /**
+     * BPMN access method to update status of VolumeGroup to Active in AAI
+     *
+     * @param execution
+     */
     public void updateOrchestrationStatusActiveVolumeGroup(BuildingBlockExecution execution) {
         try {
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
@@ -148,6 +178,11 @@ public class AAIUpdateTasks {
         }
     }
 
+    /**
+     * BPMN access method to update status of VolumeGroup to Created in AAI
+     *
+     * @param execution
+     */
     public void updateOrchestrationStatusCreatedVolumeGroup(BuildingBlockExecution execution) {
         try {
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
@@ -162,6 +197,11 @@ public class AAIUpdateTasks {
         }
     }
 
+    /**
+     * BPMN access method to update HeatStackId and VolumeGroup in AAI
+     *
+     * @param execution
+     */
     public void updateHeatStackIdVolumeGroup(BuildingBlockExecution execution) {
         try {
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
@@ -179,6 +219,11 @@ public class AAIUpdateTasks {
         }
     }
 
+    /**
+     * BPMN access method to update status of VfModule to Assigned in AAI
+     *
+     * @param execution
+     */
     public void updateOrchestrationStatusAssignedVfModule(BuildingBlockExecution execution) {
         try {
             VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
@@ -190,6 +235,11 @@ public class AAIUpdateTasks {
         }
     }
 
+    /**
+     * BPMN access method to update status of VfModule to PendingActivation in AAI
+     *
+     * @param execution
+     */
     public void updateOrchestrationStatusPendingActivationVfModule(BuildingBlockExecution execution) {
         try {
             VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
@@ -201,6 +251,11 @@ public class AAIUpdateTasks {
         }
     }
 
+    /**
+     * BPMN access method to update status of VfModule to AssignedOrPendingActivation in AAI
+     *
+     * @param execution
+     */
     public void updateOrchestrationStatusAssignedOrPendingActivationVfModule(BuildingBlockExecution execution) {
         try {
             VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
@@ -222,6 +277,12 @@ public class AAIUpdateTasks {
         }
     }
 
+    /**
+     * BPMN access method to update status of VfModule to Created in AAI
+     *
+     * @param execution
+     * 
+     */
     public void updateOrchestrationStatusCreatedVfModule(BuildingBlockExecution execution) {
         try {
             VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
@@ -232,6 +293,12 @@ public class AAIUpdateTasks {
         }
     }
 
+    /**
+     * BPMN access method to update aaiDeactivateVfModuleRollback to true for deactivating the VfModule
+     *
+     * @param execution
+     * @throws buildAndThrowWorkflowException
+     */
     public void updateOrchestrationStatusDeactivateVfModule(BuildingBlockExecution execution) {
         execution.setVariable("aaiDeactivateVfModuleRollback", false);
         try {
@@ -246,7 +313,7 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update status of L3Network to Assigned in AAI
-     * 
+     *
      * @param execution
      * @throws BBObjectNotFoundException
      */
@@ -256,7 +323,7 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update status of L3Network to Active in AAI
-     * 
+     *
      * @param execution
      * @throws BBObjectNotFoundException
      */
@@ -266,7 +333,7 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update status of L3Network to Created in AAI
-     * 
+     *
      * @param execution
      * @throws BBObjectNotFoundException
      */
@@ -302,7 +369,7 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update status of L3Network Collection to Active in AAI
-     * 
+     *
      * @param execution
      * @throws BBObjectNotFoundException
      */
@@ -323,6 +390,11 @@ public class AAIUpdateTasks {
         }
     }
 
+    /**
+     * BPMN access method to update status of VfModule to Active in AAI
+     *
+     * @param execution
+     */
     public void updateOrchestrationStatusActivateVfModule(BuildingBlockExecution execution) {
         execution.setVariable("aaiActivateVfModuleRollback", false);
         try {
@@ -335,6 +407,11 @@ public class AAIUpdateTasks {
         }
     }
 
+    /**
+     * BPMN access method to update HeatStackId of VfModule in AAI
+     *
+     * @param execution
+     */
     public void updateHeatStackIdVfModule(BuildingBlockExecution execution) {
         try {
             String heatStackId = execution.getVariable("heatStackId");
@@ -352,7 +429,7 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update L3Network after it was created in cloud
-     * 
+     *
      * @param execution
      * @throws Exception
      */
@@ -395,7 +472,7 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update L3Network after it was updated in cloud
-     * 
+     *
      * @param execution
      * @throws Exception
      */
@@ -422,6 +499,11 @@ public class AAIUpdateTasks {
         }
     }
 
+    /**
+     * BPMN access method to update L3Network Object
+     *
+     * @param execution
+     */
     public void updateObjectNetwork(BuildingBlockExecution execution) {
         try {
             L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
@@ -433,7 +515,7 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update ServiceInstance
-     * 
+     *
      * @param execution
      */
     public void updateServiceInstance(BuildingBlockExecution execution) {
@@ -446,6 +528,11 @@ public class AAIUpdateTasks {
         }
     }
 
+    /**
+     * BPMN access method to update Vnf Object
+     *
+     * @param execution
+     */
     public void updateObjectVnf(BuildingBlockExecution execution) {
         try {
             GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
@@ -455,6 +542,11 @@ public class AAIUpdateTasks {
         }
     }
 
+    /**
+     * BPMN access method to update status of VfModuleRollback as true
+     *
+     * @param execution
+     */
     public void updateOrchestrationStatusDeleteVfModule(BuildingBlockExecution execution) {
         execution.setVariable("aaiDeleteVfModuleRollback", false);
         try {
@@ -471,6 +563,11 @@ public class AAIUpdateTasks {
         }
     }
 
+    /**
+     * BPMN access method to update Model of VfModule
+     *
+     * @param execution
+     */
     public void updateModelVfModule(BuildingBlockExecution execution) {
         try {
             VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
@@ -481,6 +578,11 @@ public class AAIUpdateTasks {
         }
     }
 
+    /**
+     * BPMN access method to update status of FabricConfiguration to Assigned in AAI
+     *
+     * @param execution
+     */
     public void updateOrchestrationStatusAssignFabricConfiguration(BuildingBlockExecution execution) {
         try {
             Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID);
@@ -491,6 +593,11 @@ public class AAIUpdateTasks {
         }
     }
 
+    /**
+     * BPMN access method to update status of FabricConfiguration to Active in AAI
+     *
+     * @param execution
+     */
     public void updateOrchestrationStatusActivateFabricConfiguration(BuildingBlockExecution execution) {
         try {
             Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID);
@@ -500,6 +607,11 @@ public class AAIUpdateTasks {
         }
     }
 
+    /**
+     * BPMN access method to update status of FabricConfiguration to deactive in AAI
+     *
+     * @param execution
+     */
     public void updateOrchestrationStatusDeactivateFabricConfiguration(BuildingBlockExecution execution) {
         try {
             Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID);
@@ -510,6 +622,11 @@ public class AAIUpdateTasks {
         }
     }
 
+    /**
+     * BPMN access method to update Ipv4OamAddress of Vnf
+     *
+     * @param execution
+     */
     public void updateIpv4OamAddressVnf(BuildingBlockExecution execution) {
         try {
             String ipv4OamAddress = execution.getVariable("oamManagementV4Address");
@@ -527,6 +644,11 @@ public class AAIUpdateTasks {
         }
     }
 
+    /**
+     * BPMN access method to update ManagementV6Address of Vnf
+     *
+     * @param execution
+     */
     public void updateManagementV6AddressVnf(BuildingBlockExecution execution) {
         try {
             String managementV6Address = execution.getVariable("oamManagementV6Address");
@@ -544,6 +666,11 @@ public class AAIUpdateTasks {
         }
     }
 
+    /**
+     * BPMN access method to update ContrailServiceInstanceFqdn of VfModule
+     *
+     * @param execution
+     */
     public void updateContrailServiceInstanceFqdnVfModule(BuildingBlockExecution execution) {
         try {
             String contrailServiceInstanceFqdn = execution.getVariable("contrailServiceInstanceFqdn");
@@ -558,6 +685,11 @@ public class AAIUpdateTasks {
         }
     }
 
+    /**
+     * BPMN access method to update status of Vnf to ConfigAssigned in AAI
+     *
+     * @param execution
+     */
     public void updateOrchestrationStatusConfigAssignedVnf(BuildingBlockExecution execution) {
         try {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
@@ -567,6 +699,11 @@ public class AAIUpdateTasks {
         }
     }
 
+    /**
+     * BPMN access method to update status of Vnf to Configure in AAI
+     *
+     * @param execution
+     */
     public void updateOrchestrationStausConfigDeployConfigureVnf(BuildingBlockExecution execution) {
         try {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
@@ -578,6 +715,11 @@ public class AAIUpdateTasks {
 
     }
 
+    /**
+     * BPMN access method to update status of Vnf to configured in AAI
+     *
+     * @param execution
+     */
     public void updateOrchestrationStausConfigDeployConfiguredVnf(BuildingBlockExecution execution) {
         try {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
