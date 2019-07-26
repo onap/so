@@ -55,6 +55,22 @@ public class VnfTopologyOperationRequestMapper {
     @Autowired
     private GeneralTopologyObjectMapper generalTopologyObjectMapper;
 
+    /**
+     * This method is used for creating the vnf request.
+     *
+     * By these parameter it will get he detailas and prepare the request.
+     *
+     * @param svcOperation
+     * @param svcAction
+     * @param requestAction
+     * @param vnf
+     * @param serviceInstance
+     * @param customer
+     * @param cloudRegion
+     * @param requestContext
+     * @param homing
+     * @return request
+     */
     public GenericResourceApiVnfOperationInformation reqMapper(SDNCSvcOperation svcOperation, SDNCSvcAction svcAction,
             GenericResourceApiRequestActionEnumeration requestAction, GenericVnf vnf, ServiceInstance serviceInstance,
             Customer customer, CloudRegion cloudRegion, RequestContext requestContext, boolean homing,
