@@ -38,6 +38,8 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.onap.so.bpmn.BaseTaskTest;
+import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.onap.so.bpmn.common.DelegateExecutionImpl;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 
 public class ManualHandlingTasksTest extends BaseTaskTest {
@@ -56,11 +58,13 @@ public class ManualHandlingTasksTest extends BaseTaskTest {
     @Mock
     private DelegateTask task;
 
-    private DelegateExecution delegateExecution;
+    @Mock
+    private BuildingBlockExecution buildingBlockExecution;
 
     @Before
     public void before() throws Exception {
         delegateExecution = new DelegateExecutionFake();
+        buildingBlockExecution = new DelegateExecutionImpl(delegateExecution);
     }
 
     @Test
@@ -99,18 +103,18 @@ public class ManualHandlingTasksTest extends BaseTaskTest {
     @Test
     public void updateRequestDbStatus_Test() throws Exception {
         InfraActiveRequests mockedRequest = new InfraActiveRequests();
-        delegateExecution.setVariable("msoRequestId", "testMsoRequestId");
+        buildingBlockExecution.setVariable("mso-request-id", "msoRequestId");
         when(requestsDbClient.getInfraActiveRequestbyRequestId(any(String.class))).thenReturn(mockedRequest);
         doNothing().when(requestsDbClient).updateInfraActiveRequests(any(InfraActiveRequests.class));
-        manualHandlingTasks.updateRequestDbStatus(delegateExecution, "IN_PROGRESS");
+        manualHandlingTasks.updateRequestDbStatus(buildingBlockExecution, "IN_PROGRESS");
         verify(requestsDbClient, times(1)).updateInfraActiveRequests(any(InfraActiveRequests.class));
         assertEquals(mockedRequest.getRequestStatus(), "IN_PROGRESS");
     }
 
     @Test
     public void createExternalTicket_Test() throws Exception {
-        delegateExecution.setVariable("msoRequestId", ("testMsoRequestId"));
-        delegateExecution.setVariable("vnfType", "testVnfType");
-        manualHandlingTasks.createExternalTicket(delegateExecution);
+        buildingBlockExecution.setVariable("mso-request-id", ("testMsoRequestId"));
+        buildingBlockExecution.setVariable("vnfType", "testVnfType");
+        manualHandlingTasks.createExternalTicket(buildingBlockExecution);
     }
 }

@@ -35,6 +35,7 @@ import org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.onap.so.bpmn.BaseBPMNTest;
+import org.onap.so.bpmn.common.BuildingBlockExecution;
 
 
 public class PauseForManualTaskActivityTest extends BaseBPMNTest {
@@ -85,7 +86,7 @@ public class PauseForManualTaskActivityTest extends BaseBPMNTest {
     @Test
     public void rainyDayPauseForManualTask_Test() throws Exception {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(manualHandlingTasks)
-                .createExternalTicket((any(DelegateExecution.class)));
+                .createExternalTicket((any(BuildingBlockExecution.class)));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("PauseForManualTaskActivity", variables);
         assertThat(pi).isNotNull().isStarted()
                 .hasPassedInOrder("PauseForManualTaskActivity_Start", "UpdateDbStatusToPendingManualTask",

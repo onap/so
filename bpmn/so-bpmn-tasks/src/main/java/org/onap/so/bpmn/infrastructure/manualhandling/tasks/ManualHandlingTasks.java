@@ -27,6 +27,7 @@ import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateTask;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.ticket.ExternalTicket;
 import org.onap.so.db.request.beans.InfraActiveRequests;
@@ -46,7 +47,7 @@ public class ManualHandlingTasks {
     private static final String TASK_TYPE_FALLOUT = "fallout";
     public static final String VNF_TYPE = "vnfType";
     public static final String SERVICE_TYPE = "serviceType";
-    public static final String MSO_REQUEST_ID = "msoRequestId";
+    public static final String MSO_REQUEST_ID = "mso-request-id";
     public static final String REQUESTOR_ID = "requestorId";
     public static final String ERROR_CODE = "errorCode";
     public static final String VALID_RESPONSES = "validResponses";
@@ -120,7 +121,7 @@ public class ManualHandlingTasks {
             String originalRequestId = (String) execution.getVariable(MSO_REQUEST_ID);
             String originalRequestorId = (String) execution.getVariable(REQUESTOR_ID);
             String description = (String) execution.getVariable(DESCRIPTION);
-            String timeout = (String) execution.getVariable("taskTimeout");
+            String timeout = "";
             String errorSource = "";
             String errorCode = "";
             String errorMessage = "";
@@ -188,7 +189,7 @@ public class ManualHandlingTasks {
 
     }
 
-    public void createExternalTicket(DelegateExecution execution) {
+    public void createExternalTicket(BuildingBlockExecution execution) {
 
         try {
             ExternalTicket ticket = new ExternalTicket();
@@ -218,7 +219,7 @@ public class ManualHandlingTasks {
 
     }
 
-    public void updateRequestDbStatus(DelegateExecution execution, String status) {
+    public void updateRequestDbStatus(BuildingBlockExecution execution, String status) {
         try {
             String requestId = (String) execution.getVariable(MSO_REQUEST_ID);
             InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);

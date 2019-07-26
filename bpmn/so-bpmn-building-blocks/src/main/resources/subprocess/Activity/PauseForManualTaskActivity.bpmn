@@ -22,11 +22,11 @@
     </bpmn2:userTask>
     <bpmn2:sequenceFlow id="SequenceFlow_0b84ki5" sourceRef="UpdateDbStatusToPendingManualTask" targetRef="CreateExternalTicket" />
     <bpmn2:sequenceFlow id="SequenceFlow_14cyk9v" sourceRef="UpdateDbStatusToInProgress" targetRef="PauseForManualTaskActivity_End" />
-    <bpmn2:serviceTask id="UpdateDbStatusToPendingManualTask" name="Update Infra DB Status to PENDING_MANUAL_TASK" camunda:expression="${ManualHandlingTasks.updateRequestDbStatus(execution,&#34;PENDING_MANUAL_TASK&#34;)}">
+    <bpmn2:serviceTask id="UpdateDbStatusToPendingManualTask" name="Update Infra DB Status to PENDING_MANUAL_TASK" camunda:expression="${ManualHandlingTasks.updateRequestDbStatus(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)),&#34;PENDING_MANUAL_TASK&#34;)}">
       <bpmn2:incoming>SequenceFlow_0jav6cu</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0b84ki5</bpmn2:outgoing>
     </bpmn2:serviceTask>
-    <bpmn2:serviceTask id="UpdateDbStatusToInProgress" name="Update Infra DB Status to IN_PROGRESS" camunda:expression="${ManualHandlingTasks.updateRequestDbStatus(execution, &#34;IN_PROGRESS&#34;)}">
+    <bpmn2:serviceTask id="UpdateDbStatusToInProgress" name="Update Infra DB Status to IN_PROGRESS" camunda:expression="${ManualHandlingTasks.updateRequestDbStatus(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)), &#34;IN_PROGRESS&#34;)}">
       <bpmn2:incoming>SequenceFlow_192yimz</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_14cyk9v</bpmn2:outgoing>
     </bpmn2:serviceTask>
@@ -37,12 +37,12 @@
         <bpmn2:timeDuration xsi:type="bpmn2:tFormalExpression"><![CDATA[${execution.getVariable("taskTimeout")}]]></bpmn2:timeDuration>
       </bpmn2:timerEventDefinition>
     </bpmn2:boundaryEvent>
-    <bpmn2:serviceTask id="CreateExternalTicket" name="Create ExternalTicket" camunda:expression="${ManualHandlingTasks.createExternalTicket(execution)}">
+    <bpmn2:serviceTask id="CreateExternalTicket" name="Create ExternalTicket" camunda:expression="${ManualHandlingTasks.createExternalTicket(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn2:incoming>SequenceFlow_0b84ki5</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0igra4l</bpmn2:outgoing>
     </bpmn2:serviceTask>
     <bpmn2:sequenceFlow id="SequenceFlow_01k6zgt" sourceRef="ManualTaskTimer" targetRef="UpdateDBStatusToTimeout" />
-    <bpmn2:serviceTask id="UpdateDBStatusToTimeout" name="Update Infra DB Status To TIMEOUT" camunda:expression="${ManualHandlingTasks.updateRequestDbStatus(execution, &#34;TIMEOUT&#34;)}">
+    <bpmn2:serviceTask id="UpdateDBStatusToTimeout" name="Update Infra DB Status To TIMEOUT" camunda:expression="${ManualHandlingTasks.updateRequestDbStatus(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)), &#34;TIMEOUT&#34;)}">
       <bpmn2:incoming>SequenceFlow_01k6zgt</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_16bjdgj</bpmn2:outgoing>
     </bpmn2:serviceTask>

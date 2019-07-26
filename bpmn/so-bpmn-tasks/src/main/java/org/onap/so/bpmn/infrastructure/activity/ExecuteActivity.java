@@ -22,6 +22,7 @@
 
 package org.onap.so.bpmn.infrastructure.activity;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -98,6 +99,12 @@ public class ExecuteActivity implements JavaDelegate {
             variables.put(G_REQUEST_ID, requestId);
             variables.put("retryCount", 1);
             variables.put("aLaCarte", true);
+
+            execution.getVariables().forEach((key, value) -> {
+                if (value instanceof Serializable) {
+                    variables.put(key, (Serializable) value);
+                }
+            });
 
             ProcessInstanceWithVariables buildingBlockResult =
                     runtimeService.createProcessInstanceByKey("ExecuteBuildingBlock").setVariables(variables)
