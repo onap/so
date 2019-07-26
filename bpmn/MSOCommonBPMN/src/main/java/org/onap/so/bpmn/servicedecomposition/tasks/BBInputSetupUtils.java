@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.onap.aai.domain.yang.CloudRegion;
 import org.onap.aai.domain.yang.Configuration;
+import org.onap.aai.domain.yang.Configurations;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.GenericVnfs;
 import org.onap.aai.domain.yang.InstanceGroup;
@@ -50,6 +51,7 @@ import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.MultipleObjectsFou
 import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.NoServiceInstanceFoundException;
 import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
+import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
@@ -574,5 +576,54 @@ public class BBInputSetupUtils {
                             .asBean(org.onap.aai.domain.yang.VpnBinding.class);
         }
         return Optional.empty();
+    }
+
+    public ServiceInstances getAAIServiceInstancesGloballyByName(String serviceInstanceName) {
+
+        return injectionHelper.getAaiClient()
+                .get(ServiceInstances.class, AAIUriFactory.createNodesUri(AAIObjectPlurals.SERVICE_INSTANCE)
+                        .queryParam("service-instance-name", serviceInstanceName))
+                .orElseGet(() -> {
+                    logger.debug("No Service Instance matched by name");
+                    return null;
+                });
+    }
+
+    public boolean existsAAINetworksGloballyByName(String networkName) {
+
+        AAIResourceUri l3networkUri =
+                AAIUriFactory.createResourceUri(AAIObjectPlurals.L3_NETWORK).queryParam("network-name", networkName);
+        AAIResourcesClient aaiRC = injectionHelper.getAaiClient();
+        return aaiRC.exists(l3networkUri);
+    }
+
+    public GenericVnfs getAAIVnfsGloballyByName(String vnfName) {
+
+        return injectionHelper.getAaiClient()
+                .get(GenericVnfs.class,
+                        AAIUriFactory.createNodesUri(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", vnfName))
+                .orElseGet(() -> {
+                    logger.debug("No GenericVnfs matched by name");
+                    return null;
+                });
+    }
+
+    public Optional<Configuration> getRelatedConfigurationByNameFromServiceInstance(String serviceInstanceId,
+            String configurationName) throws Exception {
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId);
+        uri.relatedTo(AAIObjectPlurals.CONFIGURATION).queryParam("configuration-name", configurationName);
+        Optional<Configurations> configurations = injectionHelper.getAaiClient().get(Configurations.class, uri);
+        Configuration configuration = null;
+        if (!configurations.isPresent()) {
+            logger.debug("No Configurations matched by name");
+            return Optional.empty();
+        } else {
+            if (configurations.get().getConfiguration().size() > 1) {
+                throw new Exception("Multiple Configurations Returned");
+            } else {
+                configuration = configurations.get().getConfiguration().get(0);
+            }
+            return Optional.of(configuration);
+        }
     }
 }
