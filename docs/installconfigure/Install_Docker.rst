@@ -3,7 +3,7 @@
 .. Copyright 2018 Huawei Technologies Co., Ltd.
 
 Install Docker
-===============
+==============
 
 Make sure curl is installed on the Ubuntu VM:
 
@@ -58,7 +58,7 @@ If you are behind a corporate firewall, you will need to configure proxy setting
     Restart docker:
 
 .. code-block:: bash
-	
+
         sudo systemctl daemon-reload
         sudo systemctl restart docker
 
@@ -82,4 +82,4 @@ Verify that you can download and run the hello-world container
 
     docker run hello-world
 	
-.. image:: images/Docker_install_1.png
+.. image:: ../images/Docker_install_1.png
