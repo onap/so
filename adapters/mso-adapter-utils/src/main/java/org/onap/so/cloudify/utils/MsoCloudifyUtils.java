@@ -981,7 +981,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin {
                 return null;
             }
         } else if (("boolean").equalsIgnoreCase(type)) {
-            return new Boolean(inputValue.toString());
+            return Boolean.valueOf(inputValue.toString());
         }
 
         // Nothing else matched. Return the original string
