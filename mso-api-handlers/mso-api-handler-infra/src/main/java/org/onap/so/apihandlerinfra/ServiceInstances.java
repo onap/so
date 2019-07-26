@@ -95,6 +95,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
+/**
+ * This class services calls to the REST interface for service/VNF's/VF's/VG's/VN's
+ * creation/activation/deactivation/assign/unassign/deletion etc.. (http://host:port/onap/so/infra/serviceInstantiation)
+ * JSON can be produced/consumed.
+ */
 @Component
 @Path("/onap/so/infra/serviceInstantiation")
 @Api(value = "/onap/so/infra/serviceInstantiation", description = "Infrastructure API Requests for Service Instances")
@@ -762,6 +767,27 @@ public class ServiceInstances extends AbstractRestHandler {
                 requestHandlerUtils.getRequestUri(requestContext, uriPrefix));
     }
 
+    /**
+     * This method is used for POST a request to the BPEL client (BPMN).
+     *
+     * Convert the requestJson to ServiceInstanceRequest(sir), create the msoRequest object, check whether this request
+     * is already being processed in requestdb for duplicate check.
+     *
+     * Based on the alacarte flag, sir and msoRequest will do the recipe lookup from the service and servicerecipe table
+     * of catalogdb, and get the OrchestrationURI.
+     *
+     * If the present request is not the duplicate request then this request will be saved in the requestdb. and will
+     * POST a request to the BPMN engine at the OrchestrationURI fetched.
+     *
+     * @param requestJSON Json fetched as body in the API call
+     * @param action Type of action to be performed
+     * @param instanceIdMap Map of instance ids of service/vnf/vf/configuration etc..
+     * @param version Supported version of API
+     * @param requestId Unique id for the request
+     * @param requestUri
+     * @return response object
+     * @throws ApiException
+     */
     public Response serviceInstances(String requestJSON, Actions action, HashMap<String, String> instanceIdMap,
             String version, String requestId, String requestUri) throws ApiException {
         String serviceInstanceId;
@@ -914,6 +940,21 @@ public class ServiceInstances extends AbstractRestHandler {
         return action;
     }
 
+    /**
+     * This method deletes the Instance Groups.
+     *
+     * This method will check whether the request is not duplicate in requestdb. if its not then will save as a new
+     * request. And will send a POST request to BEPL client to delete the Insatnce Groups.
+     *
+     * @param action
+     * @param instanceIdMap
+     * @param version
+     * @param requestId
+     * @param requestUri
+     * @param requestContext
+     * @return
+     * @throws ApiException
+     */
     public Response deleteInstanceGroups(Actions action, HashMap<String, String> instanceIdMap, String version,
             String requestId, String requestUri, ContainerRequestContext requestContext) throws ApiException {
         String instanceGroupId = instanceIdMap.get(CommonConstants.INSTANCE_GROUP_INSTANCE_ID);
@@ -1518,7 +1559,6 @@ public class ServiceInstances extends AbstractRestHandler {
         return new RecipeLookupResult(vnfRecipe.getOrchestrationUri(), vnfRecipe.getRecipeTimeout());
     }
 
-
     private RecipeLookupResult getNetworkUri(ServiceInstancesRequest sir, Actions action) throws ValidationException {
 
         String defaultNetworkType = requestHandlerUtils.getDefaultModel(sir);
@@ -1557,7 +1597,6 @@ public class ServiceInstances extends AbstractRestHandler {
 
         return recipe != null ? new RecipeLookupResult(recipe.getOrchestrationUri(), recipe.getRecipeTimeout()) : null;
     }
-
 
     private Response configurationRecipeLookup(String requestJSON, Action action, HashMap<String, String> instanceIdMap,
             String version, String requestId, String requestUri) throws ApiException {
