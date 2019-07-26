@@ -140,6 +140,22 @@ public class WorkflowAction {
         this.bbInputSetup = bbInputSetup;
     }
 
+    /**
+     * This method is used for fetching all the list of the BuildingBlocks from the OrchestrationFlow.
+     * 
+     * Based on the aLaCarte it will query NorthBoundRequestCatalogDb .
+     * 
+     * If the aLaCarte is false based on the requestAction & resourceType it will query again to
+     * NorthBoundRequestCatalogDb for BuildingBlocks.
+     * 
+     * Once it will true then it will get the BuildingBlocks.
+     * 
+     * It will set the flowNames,BBConstants, retryCount etc. and execute the flow.
+     * 
+     * @param execution
+     * @throws Exception
+     * @return
+     */
     public void selectExecutionList(DelegateExecution execution) throws Exception {
         final String requestAction = (String) execution.getVariable(BBConstants.G_ACTION);
         final String requestId = (String) execution.getVariable(BBConstants.G_REQUEST_ID);
@@ -476,8 +492,9 @@ public class WorkflowAction {
                             dataObj.getWorkflowResourceIds(), dataObj.getRequestDetails(), false, null, true);
                     String vnfcName = getVnfcNameForConfiguration(configuration);
                     if (vnfcName == null || vnfcName.isEmpty()) {
-                        buildAndThrowException(dataObj.getExecution(), "Exception in create execution list "
-                                + ": VnfcName does not exist or is null while there is a configuration for the vfModule",
+                        buildAndThrowException(dataObj.getExecution(),
+                                "Exception in create execution list "
+                                        + ": VnfcName does not exist or is null while there is a configuration for the vfModule",
                                 new Exception("Vnfc and Configuration do not match"));
                     }
                     ebb.getConfigurationResourceKeys().setVnfcName(vnfcName);
@@ -1471,6 +1488,14 @@ public class WorkflowAction {
         exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, msg);
     }
 
+    /**
+     * This method is used for handling the RuntimeException .
+     *
+     * In this method it will throw workflowExcetion with error code 7000.
+     * 
+     * @param execution
+     * @throws @return
+     */
     public void handleRuntimeException(DelegateExecution execution) {
         StringBuilder wfeExpMsg = new StringBuilder("Runtime error ");
         String runtimeErrorMessage = null;
