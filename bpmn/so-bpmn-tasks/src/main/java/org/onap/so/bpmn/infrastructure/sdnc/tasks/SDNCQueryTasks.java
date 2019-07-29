@@ -52,7 +52,14 @@ public class SDNCQueryTasks {
     private ExceptionBuilder exceptionUtil;
     @Autowired
     private ExtractPojosForBB extractPojosForBB;
-
+    /**
+     * BPMN access method to query the SDNC for gettig the vnf details.
+     *
+     * It will get the vnf details according to service instance id.
+     *
+     * @param execution
+     * @throws Exception
+     */
     public void queryVnf(BuildingBlockExecution execution) throws Exception {
         ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
         GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
@@ -77,7 +84,14 @@ public class SDNCQueryTasks {
         }
     }
 
-
+    /**
+     * BPMN access method to query the SDNC for gettig the VfModule details.
+     *
+     * It will get the vnf details according to service instance id, vnf id & Vf module id.
+     *
+     * @param execution
+     * @throws Exception
+     */
     public void queryVfModule(BuildingBlockExecution execution) throws Exception {
         ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
         GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
@@ -107,7 +121,14 @@ public class SDNCQueryTasks {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
-
+    /**
+     * BPMN access method to query the SDNC for gettig the VfModuleForVolumeGroup details.
+     *
+     * It will get the vnf details according to Vf module id.
+     *
+     * @param execution
+     * @throws 
+     */
     public void queryVfModuleForVolumeGroup(BuildingBlockExecution execution) {
         try {
             VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
