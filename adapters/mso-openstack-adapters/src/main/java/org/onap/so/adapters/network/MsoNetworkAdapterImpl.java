@@ -1477,13 +1477,19 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             }
 
             if (subnet.getAllocationPools() != null) {
-                curR = curR + "      allocation_pools:\n";
+                StringBuilder sb = new StringBuilder();
+                sb.append(curR);
+                sb.append("      allocation_pools:\n");
                 for (Pool pool : subnet.getAllocationPools()) {
                     if (!commonUtils.isNullOrEmpty(pool.getStart()) && !commonUtils.isNullOrEmpty(pool.getEnd())) {
-                        curR = curR + "       - start: " + pool.getStart() + "\n";
-                        curR = curR + "         end: " + pool.getEnd() + "\n";
+                        sb.append("       - start: ");
+                        sb.append(pool.getStart());
+                        sb.append("\n          end: ");
+                        sb.append(pool.getEnd());
+                        sb.append("\n");
                     }
                 }
+                curR = sb.toString();
             }
 
             resourcesBuf.append(curR);
