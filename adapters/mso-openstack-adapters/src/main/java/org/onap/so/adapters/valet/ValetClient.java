@@ -48,10 +48,10 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.BufferingClientHttpRequestFactory;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.onap.so.client.RestTemplateConfig;
+import javax.inject.Provider;
 
 @Component
 public class ValetClient {
@@ -75,6 +75,9 @@ public class ValetClient {
     private static final String BODY = ", body=";
     @Autowired
     private ObjectMapper mapper;
+    @Autowired
+    private Provider<RestTemplate> templateProvider;
+
 
     protected String baseUrl;
     protected String basePath;
@@ -123,10 +126,7 @@ public class ValetClient {
     }
 
     private RestTemplate getRestTemplate() {
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate
-                .setRequestFactory(new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory()));
-        return restTemplate;
+        return templateProvider.get();
     }
 
     /*
