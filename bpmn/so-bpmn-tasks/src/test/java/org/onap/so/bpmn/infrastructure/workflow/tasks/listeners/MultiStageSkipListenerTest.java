@@ -77,6 +77,8 @@ public class MultiStageSkipListenerTest {
         execution.setVariable("multiStageDesign", false);
         assertFalse("should not be triggered", multiStageSkipListener.shouldRunFor(execution));
 
+        execution.setVariable("multiStageDesign", null);
+        assertFalse("should not be triggered", multiStageSkipListener.shouldRunFor(execution));
 
     }
 
