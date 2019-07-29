@@ -50,6 +50,17 @@ public class SDNCVnfResources {
     @Autowired
     private SDNCClient sdncClient;
 
+    /**
+     * This method is used for setting the SDNCSvcAction for assignVnf .
+     *
+     * @param vnf
+     * @param serviceInstance
+     * @param customer
+     * @param cloudRegion
+     * @param requestContext
+     * @param homing
+     * @return
+     */
     public GenericResourceApiVnfOperationInformation assignVnf(GenericVnf vnf, ServiceInstance serviceInstance,
             Customer customer, CloudRegion cloudRegion, RequestContext requestContext, boolean homing,
             URI callbackURI) {
@@ -58,6 +69,17 @@ public class SDNCVnfResources {
                 cloudRegion, requestContext, homing, callbackURI);
     }
 
+    /**
+     * This method is used for setting the SDNCSvcAction for activate vnf.
+     *
+     * @param vnf
+     * @param serviceInstance
+     * @param customer
+     * @param cloudRegion
+     * @param requestContext
+     * @param homing
+     * @return
+     */
     public GenericResourceApiVnfOperationInformation activateVnf(GenericVnf vnf, ServiceInstance serviceInstance,
             Customer customer, CloudRegion cloudRegion, RequestContext requestContext, URI callbackURI) {
         return sdncRM.reqMapper(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION, SDNCSvcAction.ACTIVATE,
@@ -65,7 +87,17 @@ public class SDNCVnfResources {
                 cloudRegion, requestContext, false, callbackURI);
     }
 
-
+    /**
+     * This method is used for setting the SDNCSvcAction for deactivate vnf.
+     *
+     * @param vnf
+     * @param serviceInstance
+     * @param customer
+     * @param cloudRegion
+     * @param requestContext
+     * @param homing
+     * @return
+     */
     public GenericResourceApiVnfOperationInformation deactivateVnf(GenericVnf vnf, ServiceInstance serviceInstance,
             Customer customer, CloudRegion cloudRegion, RequestContext requestContext, URI callbackURI) {
         return sdncRM.reqMapper(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION, SDNCSvcAction.DEACTIVATE,
@@ -73,7 +105,17 @@ public class SDNCVnfResources {
                 cloudRegion, requestContext, false, callbackURI);
     }
 
-
+    /**
+     * This method is used for setting the SDNCSvcAction for unassign vnf.
+     *
+     * @param vnf
+     * @param serviceInstance
+     * @param customer
+     * @param cloudRegion
+     * @param requestContext
+     * @param homing
+     * @return
+     */
     public GenericResourceApiVnfOperationInformation unassignVnf(GenericVnf vnf, ServiceInstance serviceInstance,
             Customer customer, CloudRegion cloudRegion, RequestContext requestContext, URI callbackURI) {
         return sdncRM.reqMapper(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION, SDNCSvcAction.UNASSIGN,
@@ -81,6 +123,17 @@ public class SDNCVnfResources {
                 cloudRegion, requestContext, false, callbackURI);
     }
 
+    /**
+     * This method is used for setting the SDNCSvcAction for delete vnf.
+     *
+     * @param vnf
+     * @param serviceInstance
+     * @param customer
+     * @param cloudRegion
+     * @param requestContext
+     * @param homing
+     * @return
+     */
     public GenericResourceApiVnfOperationInformation deleteVnf(GenericVnf vnf, ServiceInstance serviceInstance,
             Customer customer, CloudRegion cloudRegion, RequestContext requestContext, URI callbackURI) {
         return sdncRM.reqMapper(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION, SDNCSvcAction.DEACTIVATE,
@@ -88,6 +141,17 @@ public class SDNCVnfResources {
                 cloudRegion, requestContext, false, callbackURI);
     }
 
+    /**
+     * This method is used for setting the SDNCSvcAction for changeModelVnf.
+     *
+     * @param vnf
+     * @param serviceInstance
+     * @param customer
+     * @param cloudRegion
+     * @param requestContext
+     * @param homing
+     * @return
+     */
     public GenericResourceApiVnfOperationInformation changeModelVnf(GenericVnf vnf, ServiceInstance serviceInstance,
             Customer customer, CloudRegion cloudRegion, RequestContext requestContext, URI callbackURI) {
         return sdncRM.reqMapper(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION, SDNCSvcAction.CHANGE_ASSIGN,
@@ -95,6 +159,13 @@ public class SDNCVnfResources {
                 cloudRegion, requestContext, false, callbackURI);
     }
 
+    /**
+     * This method is used for querying SDNC client for getting the vnf details.
+     *
+     * @param vnf
+     * @exception MapperException & BadResponseException
+     * @return
+     */
     public String queryVnf(GenericVnf vnf) throws MapperException, BadResponseException {
         String queryPath = vnf.getSelflink();
         return sdncClient.get(queryPath);

@@ -39,6 +39,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * This class is used for quering the SDNC
+ */
 @Component
 public class SDNCQueryTasks {
     private static final Logger logger = LoggerFactory.getLogger(SDNCQueryTasks.class);
@@ -53,6 +56,14 @@ public class SDNCQueryTasks {
     @Autowired
     private ExtractPojosForBB extractPojosForBB;
 
+    /**
+     * BPMN access method to query the SDNC for fetching the vnf details.
+     *
+     * It will get the vnf details according to service instance id.
+     *
+     * @param execution
+     * @throws Exception
+     */
     public void queryVnf(BuildingBlockExecution execution) throws Exception {
         ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
         GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
@@ -77,7 +88,14 @@ public class SDNCQueryTasks {
         }
     }
 
-
+    /**
+     * BPMN access method to query the SDNC for fetching the VfModule details.
+     *
+     * It will get the vnf details according to service instance id, vnf id & Vf module id.
+     *
+     * @param execution
+     * @throws Exception
+     */
     public void queryVfModule(BuildingBlockExecution execution) throws Exception {
         ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
         GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
@@ -108,6 +126,13 @@ public class SDNCQueryTasks {
         }
     }
 
+    /**
+     * BPMN access method to query the SDNC for fetching the VfModuleForVolumeGroup details.
+     *
+     * It will get the vnf details according to Vf module id.
+     *
+     * @param execution @throws
+     */
     public void queryVfModuleForVolumeGroup(BuildingBlockExecution execution) {
         try {
             VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
