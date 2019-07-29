@@ -32,6 +32,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -51,6 +52,8 @@ import org.onap.sdc.tosca.parser.impl.SdcCsarHelperImpl;
 import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
 import org.onap.sdc.toscaparser.api.Group;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
+import org.onap.sdc.toscaparser.api.RequirementAssignment;
+import org.onap.sdc.toscaparser.api.RequirementAssignments;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.onap.sdc.toscaparser.api.elements.StatefulEntityType;
 import org.onap.sdc.utils.DistributionStatusEnum;
@@ -76,6 +79,7 @@ import org.onap.so.db.request.data.repository.WatchdogComponentDistributionStatu
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ToscaResourceInstallerTest extends BaseTest {
     @Autowired
@@ -487,6 +491,81 @@ public class ToscaResourceInstallerTest extends BaseTest {
         verify(vnrConfigCustom, times(1)).getConfigurationResource();
         verify(vnrConfigCustom, times(1)).setConfigResourceCustomization(vrfConfigCustom);
     }
+
+    @Test
+    public void testProcessVNFCGroupSequence() {
+        List<Group> groupList = new ArrayList<>();
+
+        Group group1 = mock(Group.class);
+        NodeTemplate node1 = mock(NodeTemplate.class);
+        List<NodeTemplate> nodeList1 = new ArrayList<>();
+        nodeList1.add(node1);
+        doReturn("VfcInstanceGroup..0").when(group1).getName();
+        doReturn(nodeList1).when(group1).getMemberNodes();
+        doReturn("deviceV3").when(node1).getName();
+
+        Group group2 = mock(Group.class);
+        NodeTemplate node2 = mock(NodeTemplate.class);
+        List<NodeTemplate> nodeList2 = new ArrayList<>();
+        nodeList2.add(node2);
+        doReturn("VfcInstanceGroup..1").when(group2).getName();
+        doReturn(nodeList2).when(group2).getMemberNodes();
+        RequirementAssignments requirements2 = mock(RequirementAssignments.class);
+        RequirementAssignment requirement2 = mock(RequirementAssignment.class);
+        List<RequirementAssignment> requirementCollection2 = new ArrayList<>();
+        requirementCollection2.add(requirement2);
+        doReturn(requirementCollection2).when(requirements2).getAll();
+        doReturn("deviceV3").when(requirement2).getNodeTemplateName();
+        doReturn("SiteV2").when(node2).getName();
+
+        Group group3 = mock(Group.class);
+        NodeTemplate node3 = mock(NodeTemplate.class);
+        List<NodeTemplate> nodeList3 = new ArrayList<>();
+        nodeList3.add(node3);
+        doReturn("VfcInstanceGroup..2").when(group3).getName();
+        doReturn(nodeList3).when(group3).getMemberNodes();
+        RequirementAssignments requirements3 = mock(RequirementAssignments.class);
+        RequirementAssignment requirement3 = mock(RequirementAssignment.class);
+        List<RequirementAssignment> requirementCollection3 = new ArrayList<>();
+        requirementCollection3.add(requirement3);
+        doReturn(requirementCollection3).when(requirements3).getAll();
+        doReturn("SiteV2").when(requirement3).getNodeTemplateName();
+        doReturn("siteWanV2").when(node3).getName();
+
+        groupList.add(group1);
+        groupList.add(group2);
+        groupList.add(group3);
+
+        doReturn(csarHelper).when(toscaResourceStructure).getSdcCsarHelper();
+        doReturn(null).when(csarHelper).getRequirementsOf(node1);
+        doReturn(requirements2).when(csarHelper).getRequirementsOf(node2);
+        doReturn(requirements3).when(csarHelper).getRequirementsOf(node3);
+
+        ToscaResourceInstaller installer = new ToscaResourceInstaller();
+        Method[] methods = installer.getClass().getDeclaredMethods();
+        Method testMethod = null;
+        for (Method method : methods) {
+            String name = method.getName();
+            if (name.equals("processVNFCGroupSequence")) {
+                method.setAccessible(true);
+                testMethod = method;
+            }
+        }
+
+        if (null != testMethod) {
+            try {
+                Object seqResult = testMethod.invoke(installer, toscaResourceStructure, groupList);
+                if (seqResult instanceof List) {
+                    String resultStr = ((List<String>) seqResult).stream().collect(Collectors.joining(","));
+                    assertEquals(((List<String>) seqResult).size(), 3);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+    }
+
 
     class MockConstants {
         public final static String MODEL_NAME = "VLAN Network Receptor Configuration";
