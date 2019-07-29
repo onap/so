@@ -1,5 +1,7 @@
 package org.onap.svnfm.simulator.services;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,10 +36,13 @@ import org.onap.svnfm.simulator.model.Vnfds;
 import org.onap.svnfm.simulator.repository.VnfOperationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
 
 public abstract class OperationProgressor implements Runnable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OperationProgressor.class);
+    private static final String CERTIFICATE_TO_TRUST = "so-vnfm-adapter.crt.pem";
+
     protected final VnfOperation operation;
     protected final SvnfmService svnfmService;
     private final VnfOperationRepository vnfOperationRepository;
@@ -61,12 +66,23 @@ public abstract class OperationProgressor implements Runnable {
         String callBackUrl = subscriptionService.getSubscriptions().iterator().next().getCallbackUri();
         callBackUrl = callBackUrl.substring(0, callBackUrl.indexOf("/lcn/"));
         apiClient.setBasePath(callBackUrl);
+        apiClient.setSslCaCert(getCertificateToTrust());
         notificationClient = new DefaultApi(apiClient);
 
         final org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.ApiClient grantApiClient =
                 new org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.ApiClient();
         grantApiClient.setBasePath(callBackUrl);
+        grantApiClient.setSslCaCert(getCertificateToTrust());
         grantClient = new org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.api.DefaultApi(grantApiClient);
+    }
+
+    private InputStream getCertificateToTrust() {
+        try {
+            return new ClassPathResource(CERTIFICATE_TO_TRUST).getInputStream();
+        } catch (final IOException exception) {
+            LOGGER.error("Error reading certificate to trust, https calls to VNFM adapter will fail", exception);
+            return null;
+        }
     }
 
     @Override
@@ -176,6 +192,9 @@ public abstract class OperationProgressor implements Runnable {
                     MediaType.APPLICATION_JSON, authHeader);
         } catch (final ApiException exception) {
             LOGGER.error("Error sending notification: " + notification, exception);
+            LOGGER.error("Response code: {}, body: {}, basePath: {}", exception.getCode(), exception.getResponseBody(),
+                    notificationClient.getApiClient().getBasePath());
+
         }
     }
 

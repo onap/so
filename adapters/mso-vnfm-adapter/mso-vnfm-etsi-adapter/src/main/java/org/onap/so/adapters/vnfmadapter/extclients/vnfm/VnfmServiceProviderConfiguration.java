@@ -63,9 +63,9 @@ public class VnfmServiceProviderConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(VnfmServiceProviderConfiguration.class);
 
-    @Value("${http.client.ssl.trust-store}")
+    @Value("${http.client.ssl.trust-store:#{null}}")
     private Resource keyStore;
-    @Value("${http.client.ssl.trust-store-password}")
+    @Value("${http.client.ssl.trust-store-password:#{null}}")
     private String keyStorePassword;
 
     @Bean(name = "vnfmServiceProvider")
@@ -77,7 +77,9 @@ public class VnfmServiceProviderConfiguration {
     private HttpRestServiceProvider getHttpRestServiceProvider(final RestTemplate restTemplate,
             final HttpHeadersProvider httpHeadersProvider) {
         setGsonMessageConverter(restTemplate);
-        setTrustStore(restTemplate);
+        if (keyStore != null) {
+            setTrustStore(restTemplate);
+        }
         removeSpringClientFilter(restTemplate);
         return new HttpRestServiceProviderImpl(restTemplate, httpHeadersProvider);
     }
