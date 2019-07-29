@@ -36,9 +36,11 @@ import java.util.stream.Collectors;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.javatuples.Pair;
 import org.onap.aai.domain.yang.GenericVnf;
+import org.onap.aai.domain.yang.GenericVnfs;
 import org.onap.aai.domain.yang.L3Network;
 import org.onap.aai.domain.yang.Relationship;
 import org.onap.aai.domain.yang.ServiceInstance;
+import org.onap.aai.domain.yang.ServiceInstances;
 import org.onap.aai.domain.yang.Vnfc;
 import org.onap.aai.domain.yang.VolumeGroup;
 import org.onap.aai.domain.yang.VpnBinding;
@@ -51,6 +53,7 @@ import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetup;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
+import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.DuplicateNameException;
 import org.onap.so.client.aai.AAICommonObjectMapperProvider;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
@@ -112,6 +115,14 @@ public class WorkflowAction {
     private static final String SERVICE_TYPE_BONDING = "BONDING";
     private static final String CLOUD_OWNER = "DEFAULT";
     private static final Logger logger = LoggerFactory.getLogger(WorkflowAction.class);
+    private static final String NAME_EXISTS_WITH_DIFF_VERSION_ID = "(%s) and different version id (%s)";
+    private static final String NAME_EXISTS_MULTIPLE =
+            "(%s) and multiple combination of model-version-id + service-type + global-customer-id";
+    private static final String NAME_EXISTS_WITH_DIFF_COMBINATION =
+            "(%s) and global-customer-id (%s), service-type (%s), model-version-id (%s)";
+    private static final String NAME_EXISTS_WITH_DIFF_CUSTOMIZATION_ID =
+            "(%s), same parent and different customization id (%s)";
+    private static final String NAME_EXISTS_WITH_DIFF_PARENT = "(%s) id (%s) and different parent relationship";
 
     @Autowired
     protected BBInputSetup bbInputSetup;
@@ -149,6 +160,7 @@ public class WorkflowAction {
         String uri = (String) execution.getVariable(BBConstants.G_URI);
         final String vnfType = (String) execution.getVariable(VNF_TYPE);
         String serviceInstanceId = (String) execution.getVariable("serviceInstanceId");
+        final String createInstanceAction = "createInstance";
         final String serviceType =
                 Optional.ofNullable((String) execution.getVariable(BBConstants.G_SERVICE_TYPE)).orElse("");
 
@@ -189,7 +201,8 @@ public class WorkflowAction {
             WorkflowType resourceType = resource.getResourceType();
             execution.setVariable("resourceName", resourceType.toString());
             String resourceId = "";
-            if (resource.isGenerated()) {
+            if (resource.isGenerated() && requestAction.equalsIgnoreCase(createInstanceAction)
+                    && sIRequest.getRequestDetails().getRequestInfo().getInstanceName() != null) {
                 resourceId = validateResourceIdInAAI(resource.getResourceId(), resourceType,
                         sIRequest.getRequestDetails().getRequestInfo().getInstanceName(), sIRequest.getRequestDetails(),
                         workflowResourceIds);
@@ -1134,55 +1147,146 @@ public class WorkflowAction {
             RequestDetails reqDetails, WorkflowResourceIds workflowResourceIds) throws Exception {
         try {
             if ("SERVICE".equalsIgnoreCase(type.toString())) {
+                // Service name verification based upon name + model-version-id
+                // + service-type + global-customer-id per requirements
                 String globalCustomerId = reqDetails.getSubscriberInfo().getGlobalSubscriberId();
                 String serviceType = reqDetails.getRequestParameters().getSubscriptionServiceType();
                 if (instanceName != null) {
                     Optional<ServiceInstance> serviceInstanceAAI =
                             bbInputSetupUtils.getAAIServiceInstanceByName(globalCustomerId, serviceType, instanceName);
                     if (serviceInstanceAAI.isPresent()) {
-                        return serviceInstanceAAI.get().getServiceInstanceId();
+                        if (serviceInstanceAAI.get().getModelVersionId()
+                                .equalsIgnoreCase(reqDetails.getModelInfo().getModelVersionId())) {
+                            return serviceInstanceAAI.get().getServiceInstanceId();
+                        } else {
+                            throw new DuplicateNameException("serviceInstance",
+                                    String.format(NAME_EXISTS_WITH_DIFF_VERSION_ID, instanceName,
+                                            reqDetails.getModelInfo().getModelVersionId()));
+                        }
+                    } else {
+                        ServiceInstances aaiServiceInstances =
+                                bbInputSetupUtils.getAAIServiceInstancesGloballyByName(instanceName);
+                        if (aaiServiceInstances != null) {
+                            if (aaiServiceInstances.getServiceInstance() != null
+                                    && !aaiServiceInstances.getServiceInstance().isEmpty()) {
+                                if (aaiServiceInstances.getServiceInstance().size() > 1) {
+                                    throw new DuplicateNameException("serviceInstance",
+                                            String.format(NAME_EXISTS_MULTIPLE, instanceName));
+                                } else {
+                                    ServiceInstance si =
+                                            aaiServiceInstances.getServiceInstance().stream().findFirst().get();
+                                    Map<String, String> keys =
+                                            bbInputSetupUtils.getURIKeysFromServiceInstance(si.getServiceInstanceId());
+
+                                    throw new DuplicateNameException("serviceInstance",
+                                            String.format(NAME_EXISTS_WITH_DIFF_COMBINATION, instanceName,
+                                                    keys.get("global-customer-id"), keys.get("service-type"),
+                                                    si.getModelVersionId()));
+                                }
+                            }
+                        }
                     }
                 }
             } else if ("NETWORK".equalsIgnoreCase(type.toString())) {
                 Optional<L3Network> network = bbInputSetupUtils.getRelatedNetworkByNameFromServiceInstance(
                         workflowResourceIds.getServiceInstanceId(), instanceName);
                 if (network.isPresent()) {
-                    return network.get().getNetworkId();
+                    if (network.get().getModelCustomizationId()
+                            .equalsIgnoreCase(reqDetails.getModelInfo().getModelCustomizationId())) {
+                        return network.get().getNetworkId();
+                    } else {
+                        throw new DuplicateNameException("l3Network",
+                                String.format(NAME_EXISTS_WITH_DIFF_CUSTOMIZATION_ID, instanceName,
+                                        network.get().getModelCustomizationId()));
+                    }
                 }
+
+                if (bbInputSetupUtils.existsAAINetworksGloballyByName(instanceName)) {
+                    throw new DuplicateNameException("l3Network", String.format(NAME_EXISTS_WITH_DIFF_PARENT,
+                            instanceName, workflowResourceIds.getServiceInstanceId()));
+                }
+
             } else if ("VNF".equalsIgnoreCase(type.toString())) {
                 Optional<GenericVnf> vnf = bbInputSetupUtils.getRelatedVnfByNameFromServiceInstance(
                         workflowResourceIds.getServiceInstanceId(), instanceName);
                 if (vnf.isPresent()) {
-                    return vnf.get().getVnfId();
+                    if (vnf.get().getModelCustomizationId()
+                            .equalsIgnoreCase(reqDetails.getModelInfo().getModelCustomizationId())) {
+                        return vnf.get().getVnfId();
+                    } else {
+                        throw new DuplicateNameException("generic-vnf",
+                                String.format(NAME_EXISTS_WITH_DIFF_CUSTOMIZATION_ID, instanceName,
+                                        vnf.get().getModelCustomizationId()));
+                    }
+                }
+                GenericVnfs vnfs = bbInputSetupUtils.getAAIVnfsGloballyByName(instanceName);
+                if (vnfs != null) {
+                    throw new DuplicateNameException("generic-vnf", String.format(NAME_EXISTS_WITH_DIFF_PARENT,
+                            instanceName, vnfs.getGenericVnf().get(0).getVnfId()));
                 }
             } else if ("VFMODULE".equalsIgnoreCase(type.toString())) {
                 GenericVnf vnf = bbInputSetupUtils.getAAIGenericVnf(workflowResourceIds.getVnfId());
                 if (vnf != null && vnf.getVfModules() != null) {
                     for (org.onap.aai.domain.yang.VfModule vfModule : vnf.getVfModules().getVfModule()) {
                         if (vfModule.getVfModuleName().equalsIgnoreCase(instanceName)) {
-                            return vfModule.getVfModuleId();
+                            if (vfModule.getModelCustomizationId()
+                                    .equalsIgnoreCase(reqDetails.getModelInfo().getModelCustomizationId())) {
+                                return vfModule.getVfModuleId();
+                            } else {
+                                throw new DuplicateNameException("vfModule",
+                                        String.format(NAME_EXISTS_WITH_DIFF_CUSTOMIZATION_ID, instanceName,
+                                                reqDetails.getModelInfo().getModelCustomizationId()));
+                            }
                         }
                     }
                 }
             } else if ("VOLUMEGROUP".equalsIgnoreCase(type.toString())) {
+                GenericVnf vnf = bbInputSetupUtils.getAAIGenericVnf(workflowResourceIds.getVnfId());
                 Optional<VolumeGroup> volumeGroup = bbInputSetupUtils
                         .getRelatedVolumeGroupByNameFromVnf(workflowResourceIds.getVnfId(), instanceName);
                 if (volumeGroup.isPresent()) {
-                    return volumeGroup.get().getVolumeGroupId();
+                    if (vnf.getModelCustomizationId()
+                            .equalsIgnoreCase(reqDetails.getModelInfo().getModelCustomizationId())) {
+                        return volumeGroup.get().getVolumeGroupId();
+                    } else {
+                        throw new DuplicateNameException("volumeGroup", volumeGroup.get().getVolumeGroupName());
+                    }
                 }
-                GenericVnf vnf = bbInputSetupUtils.getAAIGenericVnf(workflowResourceIds.getVnfId());
                 if (vnf != null && vnf.getVfModules() != null) {
                     for (org.onap.aai.domain.yang.VfModule vfModule : vnf.getVfModules().getVfModule()) {
                         Optional<VolumeGroup> volumeGroupFromVfModule =
                                 bbInputSetupUtils.getRelatedVolumeGroupByNameFromVfModule(vnf.getVnfId(),
                                         vfModule.getVfModuleId(), instanceName);
                         if (volumeGroupFromVfModule.isPresent()) {
-                            return volumeGroupFromVfModule.get().getVolumeGroupId();
+                            if (vnf.getModelCustomizationId()
+                                    .equalsIgnoreCase(reqDetails.getModelInfo().getModelCustomizationId())) {
+                                return volumeGroupFromVfModule.get().getVolumeGroupId();
+                            } else {
+                                throw new DuplicateNameException("volumeGroup",
+                                        String.format(NAME_EXISTS_WITH_DIFF_CUSTOMIZATION_ID, instanceName,
+                                                volumeGroupFromVfModule.get().getModelCustomizationId()));
+                            }
                         }
+                    }
+                }
+            } else if ("CONFIGURATION".equalsIgnoreCase(type.toString())) {
+                Optional<org.onap.aai.domain.yang.Configuration> configuration =
+                        bbInputSetupUtils.getRelatedConfigurationByNameFromServiceInstance(
+                                workflowResourceIds.getServiceInstanceId(), instanceName);
+                if (configuration.isPresent()) {
+                    if (configuration.get().getModelCustomizationId()
+                            .equalsIgnoreCase(reqDetails.getModelInfo().getModelCustomizationId())) {
+                        return configuration.get().getConfigurationId();
+                    } else {
+                        throw new DuplicateNameException("configuration",
+                                String.format(NAME_EXISTS_WITH_DIFF_CUSTOMIZATION_ID, instanceName,
+                                        configuration.get().getConfigurationId()));
                     }
                 }
             }
             return generatedResourceId;
+        } catch (DuplicateNameException dne) {
+            throw dne;
         } catch (Exception ex) {
             logger.error(WORKFLOW_ACTION_WAS_UNABLE_TO_VERIFY_IF_THE_INSTANCE_NAME_ALREADY_EXIST_IN_AAI, ex);
             throw new IllegalStateException(

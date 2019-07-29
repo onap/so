@@ -47,6 +47,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.CloudRegion;
 import org.onap.aai.domain.yang.Configuration;
+import org.onap.aai.domain.yang.Configurations;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.GenericVnfs;
 import org.onap.aai.domain.yang.L3Network;
@@ -863,6 +864,18 @@ public class BBInputSetupUtilsTest {
 
         List<ExecuteBuildingBlock> flowsToExecute = bbInputSetupUtils.loadOriginalFlowExecutionPath(requestId);
         assertEquals(expectedFlowsToExecute.size(), flowsToExecute.size());
+    }
+
+    @Test
+    public void getRelatedConfigurationByNameFromServiceInstanceTest() throws Exception {
+        Optional<Configurations> expected = Optional.of(new Configurations());
+        Configuration configuration = new Configuration();
+        configuration.setConfigurationId("id123");
+        expected.get().getConfiguration().add(configuration);
+        doReturn(expected).when(MOCK_aaiResourcesClient).get(eq(Configurations.class), any(AAIResourceUri.class));
+        Optional<Configuration> actual =
+                this.bbInputSetupUtils.getRelatedConfigurationByNameFromServiceInstance("id123", "name123");
+        assertEquals(actual.get().getConfigurationId(), expected.get().getConfiguration().get(0).getConfigurationId());
     }
 
 }
