@@ -89,6 +89,14 @@ public class ServicePluginFactory {
 
     private static ServicePluginFactory instance;
 
+    private static final String CUSTOM_RESOURCE_TP = "custom-resource-tp";
+    private static final String VS_MONITORED = "VS_assured";
+    private static final String VS_UNMONITORED = "VS_besteffort";
+    private static final String TS_MONITORED = "TS1";
+    private static final String TS_UNMONITORED = "TS2";
+    private static final String CUSTOM_TP_LIST[] =
+            new String[] {VS_MONITORED, VS_UNMONITORED, TS_MONITORED, TS_UNMONITORED};
+
     static {
         try (InputStream is = ClassLoader.class.getResourceAsStream("/application.properties")) {
             Properties prop = new Properties();
@@ -350,13 +358,6 @@ public class ServicePluginFactory {
         }
         return false;
     }
-
-    public static String CUSTOM_RESOURCE_TP = "custom-resource-tp";
-    public static String VS_MONITORED = "VS_assured";
-    public static String VS_UNMONITORED = "VS_besteffort";
-    public static String TS_MONITORED = "TS1";
-    public static String TS_UNMONITORED = "TS2";
-    public static String CUSTOM_TP_LIST[] = new String[] {VS_MONITORED, VS_UNMONITORED, TS_MONITORED, TS_UNMONITORED};
 
     private void customizeTP(Map<String, Object> crossTps, String svcName, DelegateExecution execution) {
         Optional<String> customType = Arrays.stream(CUSTOM_TP_LIST).filter(svcName::contains).findFirst();
