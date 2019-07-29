@@ -33,6 +33,8 @@ spring:
         ddl-auto: none
         naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
         enable-lazy-load-no-trans: true
+  main:
+    allow-bean-definition-overriding: true
 org:
   onap:
     so:

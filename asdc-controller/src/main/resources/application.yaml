@@ -18,6 +18,8 @@ spring:
         ddl-auto: validate
         naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
         enable-lazy-load-no-trans: true
+  main:
+    allow-bean-definition-overriding: true
 
 request:
   datasource:

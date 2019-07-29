@@ -49,6 +49,8 @@ spring:
         enable-lazy-load-no-trans: true
   jersey:
     type: filter
+  main:
+    allow-bean-definition-overriding: true
                        
 request:
   datasource:
