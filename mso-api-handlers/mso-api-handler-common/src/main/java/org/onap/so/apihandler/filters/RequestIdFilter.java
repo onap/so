@@ -24,22 +24,27 @@ import javax.annotation.Priority;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.ext.Provider;
-import org.apache.http.HttpStatus;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
+import org.onap.so.apihandler.common.ErrorNumbers;
+import org.onap.so.apihandlerinfra.exceptions.DuplicateRequestIdException;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
-import org.slf4j.MDC;
+import org.onap.so.serviceinstancebeans.RequestError;
+import org.onap.so.serviceinstancebeans.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Priority(2)
 @Provider
 @Component
 public class RequestIdFilter implements ContainerRequestFilter {
 
-    protected static Logger logger = LoggerFactory.getLogger(RequestIdFilter.class);
+    private static Logger logger = LoggerFactory.getLogger(RequestIdFilter.class);
 
     @Autowired
     private RequestsDbClient infraActiveRequestsClient;
@@ -48,11 +53,33 @@ public class RequestIdFilter implements ContainerRequestFilter {
     public void filter(ContainerRequestContext context) throws IOException {
         String requestId = MDC.get(ONAPLogConstants.MDCs.REQUEST_ID);
 
+        logger.info("Checking if requestId: {} already exists in requestDb InfraActiveRequests table", requestId);
         InfraActiveRequests infraActiveRequests = infraActiveRequestsClient.getInfraActiveRequestbyRequestId(requestId);
 
         if (infraActiveRequests != null) {
-            MDC.put(ONAPLogConstants.MDCs.RESPONSE_CODE, String.valueOf(HttpStatus.SC_BAD_REQUEST));
-            logger.error("RequestID exists in RequestDB.InfraActiveRequests : {}", requestId);
+            logger.error(
+                    "RequestId: {} already exists in RequestDB InfraActiveRequests table, throwing DuplicateRequestIdException",
+                    requestId);
+            throw new DuplicateRequestIdException(createRequestError(requestId, "InfraActiveRequests"));
         }
+    }
+
+    protected String createRequestError(String requestId, String requestTable) {
+        ObjectMapper mapper = new ObjectMapper();
+        RequestError error = new RequestError();
+        ServiceException serviceException = new ServiceException();
+        serviceException.setMessageId(ErrorNumbers.SVC_BAD_PARAMETER);
+        serviceException
+                .setText("RequestId: " + requestId + " already exists in the RequestDB " + requestTable + " table");
+        error.setServiceException(serviceException);
+        String errorMessage = null;
+
+        try {
+            errorMessage = mapper.writeValueAsString(error);
+        } catch (JsonProcessingException e) {
+            return "Unable to write requestError to String when requestId already exists in the RequestDb due to error: "
+                    + e.getMessage();
+        }
+        return errorMessage;
     }
 }
