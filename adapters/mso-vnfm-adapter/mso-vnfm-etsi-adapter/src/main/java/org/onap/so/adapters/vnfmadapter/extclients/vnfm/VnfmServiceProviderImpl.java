@@ -21,6 +21,7 @@
 package org.onap.so.adapters.vnfmadapter.extclients.vnfm;
 
 import com.google.common.base.Optional;
+import org.onap.aai.domain.yang.EsrVnfm;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.CreateVnfRequest;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse2001;
@@ -33,7 +34,6 @@ import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -42,28 +42,29 @@ import org.springframework.stereotype.Service;
 public class VnfmServiceProviderImpl implements VnfmServiceProvider {
     private static final Logger logger = LoggerFactory.getLogger(VnfmServiceProviderImpl.class);
 
-    private final HttpRestServiceProvider httpServiceProvider;
+    private final VnfmServiceProviderConfiguration vnfmServiceProviderConfiguration;
     private final VnfmUrlProvider urlProvider;
 
     @Autowired
     public VnfmServiceProviderImpl(final VnfmUrlProvider urlProvider,
-            @Qualifier("vnfmServiceProvider") final HttpRestServiceProvider httpServiceProvider) {
-        this.httpServiceProvider = httpServiceProvider;
+            VnfmServiceProviderConfiguration vnfmServiceProviderConfiguration) {
+        this.vnfmServiceProviderConfiguration = vnfmServiceProviderConfiguration;
         this.urlProvider = urlProvider;
     }
 
     @Override
-    public Optional<InlineResponse201> getVnf(final String vnfSelfLink) {
-        return httpServiceProvider.get(vnfSelfLink, InlineResponse201.class);
+    public Optional<InlineResponse201> getVnf(final EsrVnfm vnfm, final String vnfSelfLink) {
+        return getHttpServiceProvider(vnfm).get(vnfSelfLink, InlineResponse201.class);
     }
 
     @Override
-    public String instantiateVnf(final String vnfSelfLink, final InstantiateVnfRequest instantiateVnfRequest) {
+    public String instantiateVnf(final EsrVnfm vnfm, final String vnfSelfLink,
+            final InstantiateVnfRequest instantiateVnfRequest) {
         logger.debug("Sending instantiate request " + instantiateVnfRequest + " to : " + vnfSelfLink);
 
         ResponseEntity<Void> response = null;
         try {
-            response = httpServiceProvider.postHttpRequest(instantiateVnfRequest, vnfSelfLink + "/instantiate",
+            response = getHttpServiceProvider(vnfm).postHttpRequest(instantiateVnfRequest, vnfSelfLink + "/instantiate",
                     Void.class);
         } catch (final Exception exception) {
             final String errorMessage =
@@ -82,22 +83,22 @@ public class VnfmServiceProviderImpl implements VnfmServiceProvider {
     }
 
     @Override
-    public InlineResponse2001 subscribeForNotifications(final String vnfmId,
+    public InlineResponse2001 subscribeForNotifications(final EsrVnfm vnfm,
             final LccnSubscriptionRequest subscriptionRequest) {
         logger.info("Subscribing for notifications {}", subscriptionRequest);
-        final String url = urlProvider.getSubscriptionsUrl(vnfmId);
+        final String url = urlProvider.getSubscriptionsUrl(vnfm.getVnfmId());
         ResponseEntity<InlineResponse2001> response = null;
         try {
-            response = httpServiceProvider.postHttpRequest(subscriptionRequest, url, InlineResponse2001.class);
+            response = getHttpServiceProvider(vnfm).postHttpRequest(subscriptionRequest, url, InlineResponse2001.class);
             logger.info("Subscribing for notifications response {}", response);
         } catch (final Exception exception) {
             final String errorMessage =
-                    "Subscription to VNFM " + vnfmId + " resulted in exception" + subscriptionRequest;
+                    "Subscription to VNFM " + vnfm.getVnfmId() + " resulted in exception" + subscriptionRequest;
             logger.error(errorMessage, exception);
             throw new VnfmRequestFailureException(errorMessage, exception);
         }
         if (response.getStatusCode() != HttpStatus.CREATED) {
-            final String errorMessage = "Subscription to VNFM " + vnfmId + " returned status code: "
+            final String errorMessage = "Subscription to VNFM " + vnfm.getVnfmId() + " returned status code: "
                     + response.getStatusCode() + ", request: " + subscriptionRequest;
             logger.error(errorMessage);
             throw new VnfmRequestFailureException(errorMessage);
@@ -106,12 +107,14 @@ public class VnfmServiceProviderImpl implements VnfmServiceProvider {
     }
 
     @Override
-    public String terminateVnf(final String vnfSelfLink, final TerminateVnfRequest terminateVnfRequest) {
+    public String terminateVnf(final EsrVnfm vnfm, final String vnfSelfLink,
+            final TerminateVnfRequest terminateVnfRequest) {
         logger.debug("Sending terminate request " + terminateVnfRequest + " to : " + vnfSelfLink);
 
         ResponseEntity<Void> response = null;
         try {
-            response = httpServiceProvider.postHttpRequest(terminateVnfRequest, vnfSelfLink + "/terminate", Void.class);
+            response = getHttpServiceProvider(vnfm).postHttpRequest(terminateVnfRequest, vnfSelfLink + "/terminate",
+                    Void.class);
         } catch (final Exception exception) {
             final String errorMessage =
                     "Terminate request to " + vnfSelfLink + " resulted in exception" + terminateVnfRequest;
@@ -130,9 +133,9 @@ public class VnfmServiceProviderImpl implements VnfmServiceProvider {
     }
 
     @Override
-    public void deleteVnf(final String vnfSelfLink) {
+    public void deleteVnf(final EsrVnfm vnfm, final String vnfSelfLink) {
         logger.debug("Sending delete request to : " + vnfSelfLink);
-        final ResponseEntity<Void> response = httpServiceProvider.deleteHttpRequest(vnfSelfLink, Void.class);
+        final ResponseEntity<Void> response = getHttpServiceProvider(vnfm).deleteHttpRequest(vnfSelfLink, Void.class);
         if (response.getStatusCode() != HttpStatus.NO_CONTENT) {
             throw new VnfmRequestFailureException(
                     "Delete request to " + vnfSelfLink + " return status code: " + response.getStatusCode());
@@ -140,23 +143,27 @@ public class VnfmServiceProviderImpl implements VnfmServiceProvider {
     }
 
     @Override
-    public Optional<InlineResponse200> getOperation(final String vnfmId, final String operationId) {
-        final String url = urlProvider.getOperationUrl(vnfmId, operationId);
-        return httpServiceProvider.get(url, InlineResponse200.class);
+    public Optional<InlineResponse200> getOperation(final EsrVnfm vnfm, final String operationId) {
+        final String url = urlProvider.getOperationUrl(vnfm.getVnfmId(), operationId);
+        return getHttpServiceProvider(vnfm).get(url, InlineResponse200.class);
     }
 
     @Override
-    public Optional<InlineResponse201> createVnf(final String vnfmId, final CreateVnfRequest createVnfRequest) {
-        final String url = urlProvider.getCreationUrl(vnfmId);
+    public Optional<InlineResponse201> createVnf(final EsrVnfm vnfm, final CreateVnfRequest createVnfRequest) {
+        final String url = urlProvider.getCreationUrl(vnfm.getVnfmId());
         logger.debug("Sending create request {} to : {}", createVnfRequest, url);
         try {
-            return httpServiceProvider.post(createVnfRequest, url, InlineResponse201.class);
+            return getHttpServiceProvider(vnfm).post(createVnfRequest, url, InlineResponse201.class);
         } catch (final Exception exception) {
             final String errorMessage =
-                    "Create request to vnfm:" + vnfmId + " resulted in exception" + createVnfRequest;
+                    "Create request to vnfm:" + vnfm.getVnfmId() + " resulted in exception" + createVnfRequest;
             logger.error(errorMessage, exception);
             throw new VnfmRequestFailureException(errorMessage, exception);
         }
+    }
+
+    private HttpRestServiceProvider getHttpServiceProvider(final EsrVnfm vnfm) {
+        return vnfmServiceProviderConfiguration.createHttpRestServiceProvider(vnfm);
     }
 
 }
