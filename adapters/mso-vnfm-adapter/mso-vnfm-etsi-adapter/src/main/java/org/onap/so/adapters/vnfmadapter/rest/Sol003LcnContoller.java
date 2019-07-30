@@ -20,6 +20,14 @@
 
 package org.onap.so.adapters.vnfmadapter.rest;
 
+import static org.onap.so.adapters.vnfmadapter.Constants.BASE_URL;
+import static org.onap.so.adapters.vnfmadapter.Constants.OPERATION_NOTIFICATION_ENDPOINT;
+import static org.slf4j.LoggerFactory.getLogger;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import javax.ws.rs.core.MediaType;
+import org.onap.aai.domain.yang.EsrVnfm;
+import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.so.adapters.vnfmadapter.extclients.aai.AaiHelper;
 import org.onap.so.adapters.vnfmadapter.extclients.aai.AaiServiceProvider;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.VnfmServiceProvider;
@@ -39,12 +47,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import javax.ws.rs.core.MediaType;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import static org.onap.so.adapters.vnfmadapter.Constants.BASE_URL;
-import static org.onap.so.adapters.vnfmadapter.Constants.OPERATION_NOTIFICATION_ENDPOINT;
-import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * Controller for handling notifications from the VNFM (Virtual Network Function Manager).
@@ -118,8 +120,12 @@ public class Sol003LcnContoller {
 
     private InlineResponse201 getVnfInstance(
             final VnfLcmOperationOccurrenceNotification vnfLcmOperationOccurrenceNotification) {
-        return vnfmServiceProvider.getVnf(vnfLcmOperationOccurrenceNotification.getLinks().getVnfInstance().getHref())
-                .get();
+        GenericVnf vnfInAai = aaiServiceProvider
+                .invokeQueryGenericVnf(vnfLcmOperationOccurrenceNotification.getLinks().getVnfInstance().getHref())
+                .getGenericVnf().get(0);
+        EsrVnfm vnfm = aaiHelper.getAssignedVnfm(vnfInAai);
+        return vnfmServiceProvider
+                .getVnf(vnfm, vnfLcmOperationOccurrenceNotification.getLinks().getVnfInstance().getHref()).get();
     }
 
 }
