@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "666fd1a0_875f1a6c",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/R__MacroData.sql",
+        "patchSetId": 2
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 153
+      },
+      "writtenOn": "2019-07-30T12:43:41Z",
+      "side": 1,
+      "message": "In most scenarios add/remove config looks similar in particular with netconf with operation delete and the goal is not to duplicate building blocks. I had some chat with CDS folks there will be a second pass to perhaps rename ConfigDeployVnfBB to ConfigDeployBB and pass the scope and action so we don\u0027t need to create new building blocks for ConfigDeployVfModule etc...",
+      "parentUuid": "77e93cd7_b7d86e59",
+      "revId": "1ff00e32e57198bfc0a1c0c549a826ee754a4230",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ea02e4ef_c9eacbb9",
         "filename": "mso-catalog-db/src/test/resources/data.sql",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2019-07-30T10:17:26Z",
       "side": 1,
       "message": "Shouldnt we have the delete VNF instead after the deactivate VNF?",
+      "revId": "1ff00e32e57198bfc0a1c0c549a826ee754a4230",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6859979e_c4471971",
+        "filename": "mso-catalog-db/src/test/resources/data.sql",
+        "patchSetId": 2
+      },
+      "lineNbr": 349,
+      "author": {
+        "id": 153
+      },
+      "writtenOn": "2019-07-30T12:43:41Z",
+      "side": 1,
+      "message": "I am not sure about deactivate VNF, I simply changed the order for this one after introducing ConfigDeployVnfBB in the sequence",
+      "parentUuid": "ea02e4ef_c9eacbb9",
       "revId": "1ff00e32e57198bfc0a1c0c549a826ee754a4230",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
