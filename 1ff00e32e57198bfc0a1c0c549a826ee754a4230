@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "77e93cd7_b7d86e59",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/R__MacroData.sql",
+        "patchSetId": 2
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2019-07-30T10:17:26Z",
+      "side": 1,
+      "message": "Why is this configDeployVnf required in the delete flow?\nShouldnt we have the delete VNF instead after the deactivate VNF",
+      "revId": "1ff00e32e57198bfc0a1c0c549a826ee754a4230",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ea02e4ef_c9eacbb9",
+        "filename": "mso-catalog-db/src/test/resources/data.sql",
+        "patchSetId": 2
+      },
+      "lineNbr": 349,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2019-07-30T10:17:26Z",
+      "side": 1,
+      "message": "Shouldnt we have the delete VNF instead after the deactivate VNF?",
+      "revId": "1ff00e32e57198bfc0a1c0c549a826ee754a4230",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
