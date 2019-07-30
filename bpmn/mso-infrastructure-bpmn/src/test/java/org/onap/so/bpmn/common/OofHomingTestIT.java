@@ -60,7 +60,6 @@ public class OofHomingTestIT extends BaseIntegrationTest {
     Logger logger = LoggerFactory.getLogger(CreateAAIVfModuleIT.class);
 
     ServiceDecomposition serviceDecomposition = new ServiceDecomposition();
-    String subscriber = "";
     String subscriber2 = "";
 
     private final CallbackSet callbacks = new CallbackSet();
@@ -208,8 +207,6 @@ public class OofHomingTestIT extends BaseIntegrationTest {
         serviceDecomposition.setServiceInstance(si);
 
         // Subscriber
-        subscriber =
-                "{\"globalSubscriberId\": \"SUB12_0322_DS_1201\",\"subscriberCommonSiteId\": \"DALTX0101\",\"subscriberName\": \"SUB_12_0322_DS_1201\"}";
         subscriber2 = "{\"globalSubscriberId\": \"SUB12_0322_DS_1201\",\"subscriberName\": \"SUB_12_0322_DS_1201\"}";
     }
 
