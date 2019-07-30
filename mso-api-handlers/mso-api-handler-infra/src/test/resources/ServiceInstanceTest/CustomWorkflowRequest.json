@@ -1,0 +1,21 @@
+{
+   "requestDetails": {
+      "requestInfo": {
+         "source": "VID",
+         "requestorId": "xxxxxx",
+         "instanceName": "inPlaceSoftwareUpdateTest"
+      },
+      "cloudConfiguration": {
+			"lcpCloudRegionId": "mdt1",
+			"tenantId": "88a6ca3ee0394ade9403f075db23167e"
+		},
+      "requestParameters": {
+         "payload": "{\"request-parameters\":{\"host-ip-address\":\"10.10.10.10\"},\"configuration-parameters\":{\"name1\":\"value1\",\"name2\":\"value2\"}}",
+         "userParams": [{
+               "name": "vnf-id",
+               "value": "4603ad6d-dbfb-4899-a8bd-bc1dd0d74914"               
+            } 	
+         ]
+      }
+   }
+}

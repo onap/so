@@ -196,7 +196,7 @@ public class InstanceManagement {
                     .setBaseVfModule(isBaseVfModule).setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
                     .setRequestAction(action.toString()).setServiceInstanceId(serviceInstanceId).setVnfId(vnfId)
                     .setServiceType(serviceInstanceType).setVnfType(vnfType)
-                    .setRequestDetails(requestHandlerUtils.mapJSONtoMSOStyle(requestJSON, sir, aLaCarte, action))
+                    .setRequestDetails(requestHandlerUtils.mapJSONtoMSOStyle(requestJSON, null, aLaCarte, action))
                     .setApiVersion(apiVersion).setALaCarte(aLaCarte).setRequestUri(requestUri).build();
         } catch (IOException e) {
             ErrorLoggerInfo errorLoggerInfo =

@@ -27,6 +27,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.onap.so.logger.HttpHeadersConstants.ONAP_REQUEST_ID;
@@ -148,6 +149,18 @@ public class RequestHandlerUtilsTest extends BaseTest {
         assertEquals("f7ce78bb-423b-11e7-93f8-0050569a7965", modelInfo.getModelInvariantUuid());
         assertEquals("10", modelInfo.getModelUuid());
 
+    }
+
+    @Test
+    public void test_mapJSONtoMSOStyleCustomWorkflowRequest() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(Include.NON_NULL);
+        String testRequest = inputStream("/CustomWorkflowRequest.json");
+        String resultString =
+                requestHandlerUtils.mapJSONtoMSOStyle(testRequest, null, true, Action.inPlaceSoftwareUpdate);
+        ServiceInstancesRequest sir = mapper.readValue(resultString, ServiceInstancesRequest.class);
+        assertEquals(sir.getRequestDetails().getCloudConfiguration().getTenantId(), "88a6ca3ee0394ade9403f075db23167e");
+        assertNotEquals(sir.getRequestDetails().getRequestParameters().getUserParams().size(), 0);
     }
 
 
