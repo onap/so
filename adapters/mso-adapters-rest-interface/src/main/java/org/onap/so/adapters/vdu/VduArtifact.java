@@ -37,6 +37,16 @@ public class VduArtifact {
     private byte[] content;
     private ArtifactType type;
 
+    // Default constructor
+    public VduArtifact() {}
+
+    // Fully specified constructor
+    public VduArtifact(String name, byte[] content, ArtifactType type) {
+        this.name = name;
+        this.content = content;
+        this.type = type;
+    }
+
     @Override
     public boolean equals(final Object other) {
         if (!(other instanceof VduArtifact)) {
@@ -50,16 +60,6 @@ public class VduArtifact {
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(name).append(content).append(type).toHashCode();
-    }
-
-    // Default constructor
-    public VduArtifact() {}
-
-    // Fully specified constructor
-    public VduArtifact(String name, byte[] content, ArtifactType type) {
-        this.name = name;
-        this.content = content;
-        this.type = type;
     }
 
     public String getName() {
