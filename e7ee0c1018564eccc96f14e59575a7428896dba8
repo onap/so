@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "2e932526_fd82be24",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/extclients/vnfm/VnfmServiceProviderConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2019-07-30T16:23:35Z",
+      "side": 1,
+      "message": "Created a map to reuse already created. Cant use bean as will be different for each VNFM",
+      "parentUuid": "a44a9340_5e94c4de",
+      "range": {
+        "startLine": 85,
+        "startChar": 2,
+        "endLine": 118,
+        "endChar": 5
+      },
+      "revId": "e7ee0c1018564eccc96f14e59575a7428896dba8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2f7489f3_c18a7876",
         "filename": "vnfm-simulator/vnfm-service/src/main/java/org/onap/svnfm/simulator/oauth/AuthorizationServerConfig.java",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2019-07-30T16:14:06Z",
       "side": 1,
       "message": "extract to yml file",
+      "range": {
+        "startLine": 22,
+        "startChar": 24,
+        "endLine": 22,
+        "endChar": 86
+      },
+      "revId": "e7ee0c1018564eccc96f14e59575a7428896dba8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d114119b_3e4b440c",
+        "filename": "vnfm-simulator/vnfm-service/src/main/java/org/onap/svnfm/simulator/oauth/AuthorizationServerConfig.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2019-07-30T16:23:35Z",
+      "side": 1,
+      "message": "Why? I dont see where it would be useful to be able change the password needed to get a token from the simulator?",
+      "parentUuid": "2f7489f3_c18a7876",
       "range": {
         "startLine": 22,
         "startChar": 24,
