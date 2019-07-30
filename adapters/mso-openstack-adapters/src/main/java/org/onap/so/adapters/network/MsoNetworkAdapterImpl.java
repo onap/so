@@ -330,14 +330,15 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 } else {
                     // Populate the outputs from the existing stack.
                     networkId.value = heatStack.getCanonicalName();
-                    neutronNetworkId.value = (String) heatStack.getOutputs().get(NETWORK_ID);
-                    rollback.value = networkRollback; // Default rollback - no updates performed
-                    if (aic3template) {
-                        networkFqdn.value = (String) heatStack.getOutputs().get(NETWORK_FQDN);
-                    }
-                    Map<String, Object> outputs = heatStack.getOutputs();
                     Map<String, String> sMap = new HashMap<>();
-                    if (outputs != null) {
+                    if (heatStack.getOutputs() != null) {
+                        neutronNetworkId.value = (String) heatStack.getOutputs().get(NETWORK_ID);
+                        rollback.value = networkRollback; // Default rollback - no updates performed
+                        if (aic3template) {
+                            networkFqdn.value = (String) heatStack.getOutputs().get(NETWORK_FQDN);
+                        }
+                        Map<String, Object> outputs = heatStack.getOutputs();
+
                         for (Map.Entry<String, Object> entry : outputs.entrySet()) {
                             String key = entry.getKey();
                             if (key != null && key.startsWith("subnet")) {
@@ -437,9 +438,11 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             // For Heat-based orchestration, the MSO-tracked network ID is the heat stack,
             // and the neutronNetworkId is the network UUID returned in stack outputs.
             networkId.value = heatStack.getCanonicalName();
-            neutronNetworkId.value = (String) heatStack.getOutputs().get(NETWORK_ID);
-            if (aic3template) {
-                networkFqdn.value = (String) heatStack.getOutputs().get(NETWORK_FQDN);
+            if (heatStack.getOutputs() != null) {
+                neutronNetworkId.value = (String) heatStack.getOutputs().get(NETWORK_ID);
+                if (aic3template) {
+                    networkFqdn.value = (String) heatStack.getOutputs().get(NETWORK_FQDN);
+                }
             }
             Map<String, Object> outputs = heatStack.getOutputs();
             Map<String, String> sMap = new HashMap<>();
