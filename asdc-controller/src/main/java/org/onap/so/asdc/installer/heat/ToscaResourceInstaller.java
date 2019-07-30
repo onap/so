@@ -1087,9 +1087,9 @@ public class ToscaResourceInstaller {
         tempGroupList.addAll(groupList);
 
         for (Group group : groupList) {
+            boolean isAllExists = true;
             ArrayList<NodeTemplate> members = group.getMemberNodes();
             for (NodeTemplate memberNode : members) {
-                boolean isAllExists = true;
                 RequirementAssignments requirements = iSdcCsarHelper.getRequirementsOf(memberNode);
                 if (requirements == null || requirements.getAll() == null || requirements.getAll().isEmpty()) {
                     continue;
@@ -1097,26 +1097,27 @@ public class ToscaResourceInstaller {
                 List<RequirementAssignment> rqaList = requirements.getAll();
                 for (RequirementAssignment rqa : rqaList) {
                     String name = rqa.getNodeTemplateName();
-                    for (NodeTemplate node : nodes) {
-                        if (name.equals(node.getName())) {
-                            break;
-                        }
+                    Optional<NodeTemplate> findNode =
+                            nodes.stream().filter(node -> node.getName().equals(name)).findFirst();
+                    if (!findNode.isPresent()) {
+                        isAllExists = false;
+                        break;
                     }
-
-                    isAllExists = false;
+                }
+                if (!isAllExists) {
                     break;
                 }
-
-                if (isAllExists) {
-                    strSequence.add(group.getName());
-                    tempGroupList.remove(group);
-                    nodes.addAll(group.getMemberNodes());
-                }
             }
 
-            if (!tempGroupList.isEmpty() && tempGroupList.size() < groupList.size()) {
-                getVNFCGroupSequenceList(strSequence, tempGroupList, nodes, iSdcCsarHelper);
+            if (isAllExists) {
+                strSequence.add(group.getName());
+                tempGroupList.remove(group);
+                nodes.addAll(group.getMemberNodes());
             }
+        }
+
+        if (tempGroupList.size() != 0 && tempGroupList.size() < groupList.size()) {
+            getVNFCGroupSequenceList(strSequence, tempGroupList, nodes, iSdcCsarHelper);
         }
     }
 
@@ -1896,7 +1897,13 @@ public class ToscaResourceInstaller {
                 vnfcCustomization
                         .setDescription(testNull(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION)));
                 vnfcCustomization.setResourceInput(getVnfcResourceInput(vfcTemplate, inputList));
-                vfcInstanceGroupCustom.getVnfcCustomizations().add(vnfcCustomization);
+                List<VnfcCustomization> vnfcCustomizations = vfcInstanceGroupCustom.getVnfcCustomizations();
+
+                if (vnfcCustomizations == null) {
+                    vnfcCustomizations = new ArrayList<>();
+                    vfcInstanceGroupCustom.setVnfcCustomizations(vnfcCustomizations);
+                }
+                vnfcCustomizations.add(vnfcCustomization);
             }
         }
     }
