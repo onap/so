@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "708cab15_4612d61c",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/network/MsoNetworkAdapterImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 448,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2019-07-30T12:02:02Z",
+      "side": 1,
+      "message": "we already have a check for the null values of the getOutputs here, its better to reuse this block for the above case too.\n\nhaving too many checks will make the code unreadable and hard to maintain",
+      "revId": "9d208983f9b09545ce50114ee4b15a26df8cd9d2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
