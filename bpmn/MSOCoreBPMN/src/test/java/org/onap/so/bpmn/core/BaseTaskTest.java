@@ -38,9 +38,9 @@ public class BaseTaskTest {
     private String anyValueString = "anyValue";
     private String badValueString = "123abc";
     private int anyValueInt = 123;
-    private Integer anyValueInteger = new Integer(anyValueInt);
+    private Integer anyValueInteger = Integer.valueOf(anyValueInt);
     private long anyValuelong = 123L;
-    private Long anyValueLong = new Long(anyValuelong);
+    private Long anyValueLong = Long.valueOf(anyValuelong);
 
     private DelegateExecution mockExecution;
     private Expression mockExpression;
@@ -113,7 +113,7 @@ public class BaseTaskTest {
         assertEquals(anyValueString, obj1.toString());
 
         expectedException.expect(MissingInjectedFieldException.class);
-        Object objectBoolean = new Boolean(true); // bad data
+        Object objectBoolean = Boolean.valueOf(true); // bad data
         when(mockExpression.getValue(mockExecution)).thenReturn(objectBoolean);
         obj2 = baseTask.getStringField(null, mockExecution, anyVariable);
     }
@@ -134,7 +134,7 @@ public class BaseTaskTest {
 
     @Test
     public void testGetIntegerFieldAndMissingInjectedFieldException() throws Exception {
-        objectInteger = new Integer(anyValueInt);
+        objectInteger = Integer.valueOf(anyValueInt);
         when(mockExpression.getValue(mockExecution)).thenReturn(objectInteger);
         obj1 = baseTask.getIntegerField(mockExpression, mockExecution, anyVariable);
         assertEquals(anyValueInteger, (Integer) obj1);
@@ -154,7 +154,7 @@ public class BaseTaskTest {
 
     @Test
     public void testGetOptionalIntegerField() throws Exception {
-        objectInteger = new Integer(anyValueInt);
+        objectInteger = Integer.valueOf(anyValueInt);
         when(mockExpression.getValue(mockExecution)).thenReturn(objectInteger);
         obj1 = baseTask.getOptionalIntegerField(mockExpression, mockExecution, anyVariable);
         assertEquals(anyValueInteger, (Integer) obj1);
@@ -163,14 +163,14 @@ public class BaseTaskTest {
     @Test
     public void testGetOptionalIntegerFieldAndBadInjectedFieldException() throws Exception {
         expectedException.expect(BadInjectedFieldException.class);
-        objectBoolean = new Boolean(true);
+        objectBoolean = Boolean.valueOf(true);
         when(mockExpression.getValue(mockExecution)).thenReturn(objectBoolean);
         obj1 = baseTask.getOptionalIntegerField(mockExpression, mockExecution, anyVariable);
     }
 
     @Test
     public void testGetLongFieldAndMissingInjectedFieldException() throws Exception {
-        objectLong = new Long(anyValuelong);
+        objectLong = Long.valueOf(anyValuelong);
         when(mockExpression.getValue(mockExecution)).thenReturn(objectLong);
         obj1 = baseTask.getLongField(mockExpression, mockExecution, anyVariable);
         assertEquals(anyValueLong, (Long) obj1);
@@ -189,7 +189,7 @@ public class BaseTaskTest {
 
     @Test
     public void testGetOptionalLongField() throws Exception {
-        objectLong = new Long(anyValuelong);
+        objectLong = Long.valueOf(anyValuelong);
         when(mockExpression.getValue(mockExecution)).thenReturn(objectLong);
         obj1 = baseTask.getOptionalLongField(mockExpression, mockExecution, anyVariable);
         assertEquals(anyValueLong, (Long) obj1);
@@ -198,7 +198,7 @@ public class BaseTaskTest {
     @Test
     public void testGetOptionalLongFieldAndBadInjectedFieldException() throws Exception {
         expectedException.expect(BadInjectedFieldException.class);
-        objectBoolean = new Boolean(true);
+        objectBoolean = Boolean.valueOf(true);
         when(mockExpression.getValue(mockExecution)).thenReturn(objectBoolean);
         obj1 = baseTask.getOptionalLongField(mockExpression, mockExecution, anyVariable);
     }
@@ -233,7 +233,7 @@ public class BaseTaskTest {
     @Test
     public void testGetOptionalOutputFieldAndBadInjectedFieldException() throws Exception {
         expectedException.expect(BadInjectedFieldException.class);
-        objectBoolean = new Boolean(true);
+        objectBoolean = Boolean.valueOf(true);
         when(mockExpression.getValue(mockExecution)).thenReturn(objectBoolean);
         obj1 = baseTask.getOptionalOutputField(mockExpression, mockExecution, anyVariable);
     }
