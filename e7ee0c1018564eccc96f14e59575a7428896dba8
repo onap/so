@@ -93,6 +93,30 @@
       "revId": "e7ee0c1018564eccc96f14e59575a7428896dba8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "95971b36_a4e6a643",
+        "filename": "vnfm-simulator/vnfm-service/src/main/java/org/onap/svnfm/simulator/oauth/AuthorizationServerConfig.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-07-30T18:13:52Z",
+      "side": 1,
+      "message": "Okay sure, the reason i asked to put in ymal file was that it would be easy to change.",
+      "parentUuid": "d114119b_3e4b440c",
+      "range": {
+        "startLine": 22,
+        "startChar": 24,
+        "endLine": 22,
+        "endChar": 86
+      },
+      "revId": "e7ee0c1018564eccc96f14e59575a7428896dba8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
