@@ -94,7 +94,7 @@ public class InputParametersProviderImpl implements InputParametersProvider {
     }
 
     private List<ExternalVirtualLink> getExtVirtualLinks(final Map<String, String> vnfParametersMap)
-            throws JsonParseException, IOException {
+            throws IOException  {
         try {
             final String extVirtualLinksString = vnfParametersMap.get(EXT_VIRTUAL_LINKS);
 
@@ -112,7 +112,7 @@ public class InputParametersProviderImpl implements InputParametersProvider {
     }
 
     private Map<String, String> getAdditionalParameters(final Map<String, String> vnfParametersMap)
-            throws JsonParseException, IOException {
+            throws IOException {
         try {
             final String additionalParamsString = vnfParametersMap.get(ADDITIONAL_PARAMS);
             if (additionalParamsString != null && !additionalParamsString.isEmpty()) {
