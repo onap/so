@@ -3,7 +3,7 @@
 .. Copyright 2017 Huawei Technologies Co., Ltd.
 
 SO Install & Configure
-==========================================
+======================
 
 Get Ubuntu
 ----------
@@ -13,6 +13,7 @@ Get VirtualBox and VirtualBox Guest Additions
 ---------------------------------------------
 Make sure you have the VirtualBox Guest Additions ISO for your version of VirtualBox.  I'm using VirtualBox 5.1.28.  Save the Guest Additions ISO on your host computer along with the Ubuntu ISO.  Get the Guest Additions ISO from here:
     http://download.virtualbox.org/virtualbox
+
 *NOTE*: Guest Additions versions prior to 5.1 will not work with Ubuntu 16.04.3.  If you have an earlier version of VirtualBox, you should upgrade to the latest 5.1 version.
 
 Create a new VM in VirtualBox for Ubuntu
@@ -73,9 +74,11 @@ Read-only: <unchecked>
 
 Install Ubuntu in the VM
 ------------------------
-On the "Storage" panel in VirtualBox, click on "[ optical drive ]" and then "Choose Disk Image".  Select your Ubuntu ISO image.
+On the "Storage" panel in VirtualBox, click on "[ optical drive ]" and then "Choose Disk Image".
 
-.. image:: images/Configure_ubuntu_SO_5.png
+Select your Ubuntu ISO image:
+
+.. image:: ../images/Configure_ubuntu_SO_5.png
 
 After selecting the ISO image, start the VM.
 
@@ -83,14 +86,15 @@ Follow the prompts to install Ubuntu.
 
 Proxy Configuration (optional)
 ------------------------------
-If you're behind a corporate firewall, configure some proxy settings.  NOTE: your proxy configuration may require username and password credentials, not shown here.
+If you're behind a corporate firewall, configure some proxy settings.
+NOTE: your proxy configuration may require username and password credentials, not shown here.
 **Ubuntu system proxy setting:**
 
 	System Settings → Network → Network proxy
 	
 	(Replace "proxyhost" and port with your actual proxy information)
 
-.. image:: images/Configure_ubuntu_SO_6.png
+.. image:: ../images/Configure_ubuntu_SO_6.png
 	
 **apt proxy setting:**
 	Edit /etc/apt/apt.conf and add one line at the top (replace "proxyhost:port" with your actual proxy information):
@@ -117,7 +121,7 @@ Install VirtualBox Guest Additions
 ----------------------------------
 On the "Storage" panel in VirtualBox, click on "[ optical drive ]" and then "Choose Disk Image".  Select your VirtualBox Guest Additions ISO image.
 
-.. image:: images/Configure_ubuntu_SO_8.png
+.. image:: ../images/Configure_ubuntu_SO_8.png
 
 In a VM terminal window, mount the cdrom:
 
@@ -135,7 +139,7 @@ Install necessary dependencies:
 	
 Install the guest additions.  NOTE: look for errors in the command output!  If you see an error that says you are missing kernel headers, the most likely cause is that you are using a VirtualBox version that is too old.  The error message is misleading.
 
-.. code-block:: bash
+  .. code-block:: bash
 
 	cd /media/cdrom
 	sudo ./VBoxLinuxAdditions.run
