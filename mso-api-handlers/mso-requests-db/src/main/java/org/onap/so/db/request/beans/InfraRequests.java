@@ -161,7 +161,7 @@ public abstract class InfraRequests implements java.io.Serializable {
     private String rollbackExtSystemErrorSource;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "SO_REQUEST_ID", referencedColumnName = "REQUEST_ID")
+    @JoinColumn(name = "SO_REQUEST_ID", referencedColumnName = "REQUEST_ID", updatable = false)
     private List<CloudApiRequests> cloudApiRequests = new ArrayList<>();
 
     @ResourceId
