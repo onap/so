@@ -2071,7 +2071,7 @@ public class BBInputSetupTest {
         ServiceProxy expected = new ServiceProxy();
         expected.setType("TRANSPORT");
         expected.setModelInfoServiceProxy(new ModelInfoServiceProxy());
-        expected.getModelInfoServiceProxy().setModelCustomizationUuid("modelCustomizationUUID");
+        expected.getModelInfoServiceProxy().setModelUuid("modelUUID");
         expected.setServiceInstance(new ServiceInstance());
         expected.getServiceInstance().setModelInfoServiceInstance(new ModelInfoServiceInstance());
         expected.getServiceInstance().getModelInfoServiceInstance().setModelUuid("modelUUID");
