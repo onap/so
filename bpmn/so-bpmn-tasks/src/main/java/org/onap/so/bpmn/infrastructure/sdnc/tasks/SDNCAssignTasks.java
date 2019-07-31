@@ -51,7 +51,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-
+/*
+ * This class is used for creating the service instance, assigning vnf, assigning the Vfmodule
+ * & assigning the L3Network on SDNC.
+ */
 @Component
 public class SDNCAssignTasks extends AbstractSDNCTask {
     private static final Logger logger = LoggerFactory.getLogger(SDNCAssignTasks.class);
@@ -71,6 +74,14 @@ public class SDNCAssignTasks extends AbstractSDNCTask {
     @Autowired
     private Environment env;
 
+    /**
+     * BPMN access method to assigning the service instance in SDNC.
+     *
+     * It will assign the service instance by the service instance id.
+     *
+     * @param execution
+     * @throws 
+     */
     public void assignServiceInstance(BuildingBlockExecution execution) {
         try {
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
@@ -89,6 +100,14 @@ public class SDNCAssignTasks extends AbstractSDNCTask {
         }
     }
 
+    /**
+     * BPMN access method to assigning the vnf in SDNC.
+     *
+     * It will assign the vnf according to the service instance id and vnf id.
+     *
+     * @param execution
+     * @throws 
+     */
     public void assignVnf(BuildingBlockExecution execution) {
         try {
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
@@ -111,6 +130,14 @@ public class SDNCAssignTasks extends AbstractSDNCTask {
         }
     }
 
+    /**
+     * BPMN access method to assigning the vfModule in SDNC.
+     *
+     * It will assign the VfModule by the service instance id ,Vnf id and module id.
+     *
+     * @param execution
+     * @throws 
+     */
     public void assignVfModule(BuildingBlockExecution execution) {
         try {
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
@@ -141,7 +168,7 @@ public class SDNCAssignTasks extends AbstractSDNCTask {
 
     /**
      * BPMN access method to perform Assign action on SDNC for L3Network
-     * 
+     *
      * @param execution
      * @throws Exception
      */
