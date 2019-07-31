@@ -55,7 +55,7 @@ public class NodeHealthcheckHandler {
     @Produces("text/html")
     @ApiOperation(value = "Performing node health check", response = Response.class)
     @Transactional
-    public Response nodeHealthcheck(@Context ContainerRequestContext requestContext) throws UnknownHostException {
+    public Response nodeHealthcheck(@Context ContainerRequestContext requestContext){
         // Generated RequestId
         String requestId = requestContext.getProperty("requestId").toString();
         logger.info(LoggingAnchor.TWO, MessageEnum.APIH_GENERATED_REQUEST_ID.toString(), requestId);
