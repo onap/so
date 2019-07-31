@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "909a1fe6_716d6193",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/extclients/vnfm/VnfmServiceProviderConfiguration.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2019-07-31T13:31:02Z",
+      "side": 1,
+      "message": "The number of VNFMs will be small, caching/eviction mechanism not a priority for now",
+      "parentUuid": "8c533916_4f9b5a31",
+      "range": {
+        "startLine": 71,
+        "startChar": 4,
+        "endLine": 71,
+        "endChar": 104
+      },
+      "revId": "e03c1e300f662174b05ed937eaf03992d2e72b2d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5eb5d630_4b003a13",
         "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/extclients/vnfm/VnfmServiceProviderConfiguration.java",
         "patchSetId": 3
