@@ -59,6 +59,12 @@ public class VnfAdapterCreateTasks {
     @Autowired
     private ExceptionBuilder exceptionUtil;
 
+    /**
+     * This method is used for creating the request for the VolumeGroup.
+     *
+     * @param execution
+     * @return
+     */
     public void createVolumeGroupRequest(BuildingBlockExecution execution) {
         try {
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
@@ -93,6 +99,12 @@ public class VnfAdapterCreateTasks {
     }
 
 
+    /**
+     * This method is used for creating the request for the VfModule.
+     *
+     * @param execution
+     * @return
+     */
     public void createVfModule(BuildingBlockExecution execution) {
         try {
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
