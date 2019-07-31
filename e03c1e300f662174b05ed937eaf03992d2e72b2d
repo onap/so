@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8c533916_4f9b5a31",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/extclients/vnfm/VnfmServiceProviderConfiguration.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-07-31T10:56:02Z",
+      "side": 1,
+      "message": "HashMap is not thread safe correct? this bean will be access by multiple requests. would suggest to move createRestTemplate to its own class and use Caching mechanism with eviction to remove stale resttemple or if ESR are limited and can\u0027t grow ever then use ConcurrentHashMap",
+      "range": {
+        "startLine": 71,
+        "startChar": 4,
+        "endLine": 71,
+        "endChar": 104
+      },
+      "revId": "e03c1e300f662174b05ed937eaf03992d2e72b2d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5eb5d630_4b003a13",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/extclients/vnfm/VnfmServiceProviderConfiguration.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-07-31T10:56:02Z",
+      "side": 1,
+      "message": "Subject comment this can move to its own class",
+      "range": {
+        "startLine": 105,
+        "startChar": 0,
+        "endLine": 128,
+        "endChar": 5
+      },
+      "revId": "e03c1e300f662174b05ed937eaf03992d2e72b2d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
