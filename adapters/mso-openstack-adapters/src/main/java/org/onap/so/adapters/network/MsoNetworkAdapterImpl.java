@@ -605,7 +605,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             // First, look up to see that the Network already exists.
             // For Heat-based orchestration, the networkId is the network Stack ID.
             StackInfo heatStack = null;
-            long queryStackStarttime = System.currentTimeMillis();
             try {
                 heatStack = heat.queryStack(cloudSiteId, "CloudOwner", tenantId, networkName);
             } catch (MsoException me) {
