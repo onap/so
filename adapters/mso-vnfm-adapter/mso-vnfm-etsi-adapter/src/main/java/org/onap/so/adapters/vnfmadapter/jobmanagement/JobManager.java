@@ -25,6 +25,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 import java.util.Map;
 import java.util.UUID;
+import org.onap.so.adapters.vnfmadapter.extclients.aai.AaiServiceProvider;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.VnfmServiceProvider;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.JobNotFoundException;
@@ -45,10 +46,12 @@ public class JobManager {
     private static Logger logger = getLogger(JobManager.class);
     private final Map<String, VnfmOperation> mapOfJobIdToVnfmOperation = Maps.newConcurrentMap();
     private final VnfmServiceProvider vnfmServiceProvider;
+    private final AaiServiceProvider aaiServiceProvider;
 
     @Autowired
-    JobManager(final VnfmServiceProvider vnfmServiceProvider) {
+    JobManager(final VnfmServiceProvider vnfmServiceProvider, final AaiServiceProvider aaiServiceProvider) {
         this.vnfmServiceProvider = vnfmServiceProvider;
+        this.aaiServiceProvider = aaiServiceProvider;
     }
 
     /**
@@ -90,8 +93,8 @@ public class JobManager {
         }
 
         try {
-            final Optional<InlineResponse200> operationOptional =
-                    vnfmServiceProvider.getOperation(vnfmOperation.getVnfmId(), vnfmOperation.getOperationId());
+            final Optional<InlineResponse200> operationOptional = vnfmServiceProvider.getOperation(
+                    aaiServiceProvider.invokeGetVnfm(vnfmOperation.getVnfmId()), vnfmOperation.getOperationId());
 
             if (!operationOptional.isPresent()) {
                 return response.operationStatusRetrievalStatus(OperationStatusRetrievalStatusEnum.OPERATION_NOT_FOUND);

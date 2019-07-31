@@ -156,7 +156,7 @@ public class NotificationHandler implements Runnable {
 
         boolean deleteSuccessful = false;
         try {
-            vnfmServiceProvider.deleteVnf(genericVnf.getSelflink());
+            vnfmServiceProvider.deleteVnf(aaiHelper.getAssignedVnfm(genericVnf), genericVnf.getSelflink());
             deleteSuccessful = true;
         } finally {
             jobManager.notificationProcessedForOperation(vnfLcmOperationOccurrenceNotification.getVnfLcmOpOccId(),
