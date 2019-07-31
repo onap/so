@@ -45,6 +45,20 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	public MsoUtils utils = new MsoUtils()
 
 	/**
+	 * Logs a WorkflowException at the ERROR level with the specified message.
+	 * @param execution the execution
+	 */
+	public void logWorkflowException(DelegateExecution execution, String message) {
+		def workflowException = execution.getVariable("WorkflowException")
+
+		if (workflowException == null) {
+			logger.error(message);
+		} else {
+			logger.error('{}: {}', message, workflowException)
+		}
+	}
+	
+	/**
 	 * Saves the WorkflowException in the execution to the specified variable,
 	 * clearing the WorkflowException variable so the workflow can continue
 	 * processing (perhaps catching another WorkflowException).
