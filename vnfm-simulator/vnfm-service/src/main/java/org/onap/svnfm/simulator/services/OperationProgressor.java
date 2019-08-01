@@ -1,11 +1,17 @@
 package org.onap.svnfm.simulator.services;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import javax.net.ssl.HttpsURLConnection;
 import javax.ws.rs.core.MediaType;
 import org.apache.commons.codec.binary.Base64;
 import org.modelmapper.ModelMapper;
@@ -30,6 +36,7 @@ import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.VnfLcmOperatio
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201InstantiatedVnfInfoVnfcResourceInfo;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsAuthenticationParamsBasic;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsAuthenticationParamsOauth2ClientCredentials;
 import org.onap.svnfm.simulator.config.ApplicationConfig;
 import org.onap.svnfm.simulator.model.VnfOperation;
 import org.onap.svnfm.simulator.model.Vnfds;
@@ -187,7 +194,8 @@ public abstract class OperationProgressor implements Runnable {
             final String auth =
                     subscriptionAuthentication.getUserName() + ":" + subscriptionAuthentication.getPassword();
             final byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.ISO_8859_1));
-            final String authHeader = "Basic " + new String(encodedAuth);
+            String authHeader = "Basic " + new String(encodedAuth);
+
             notificationClient.lcnVnfLcmOperationOccurrenceNotificationPostWithHttpInfo(notification,
                     MediaType.APPLICATION_JSON, authHeader);
         } catch (final ApiException exception) {
@@ -235,8 +243,15 @@ public abstract class OperationProgressor implements Runnable {
     private InlineResponse201 sendGrantRequest(final GrantRequest grantRequest) {
         LOGGER.info("Sending grant request: {}", grantRequest);
         try {
+
+            final SubscriptionsAuthenticationParamsOauth2ClientCredentials subscriptionAuthentication =
+                    subscriptionService.getSubscriptions().iterator().next().getAuthentication()
+                            .getParamsOauth2ClientCredentials();
+            final String authHeader =
+                    "Bearer " + getToken(notificationClient.getApiClient(), subscriptionAuthentication);
+
             final ApiResponse<InlineResponse201> response = grantClient.grantsPostWithHttpInfo(grantRequest,
-                    MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON, "Basic dm5mbTpwYXNzd29yZDEk");
+                    MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON, authHeader);
             LOGGER.info("Grant Response: {}", response);
             return response.getData();
         } catch (final org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.ApiException exception) {
@@ -255,6 +270,48 @@ public abstract class OperationProgressor implements Runnable {
 
     private String getLinkBaseUrl() {
         return applicationConfig.getBaseUrl() + "/vnflcm/v1";
+    }
+
+    private String getToken(final ApiClient apiClient,
+            final SubscriptionsAuthenticationParamsOauth2ClientCredentials oauthClientCredentials) {
+        final String basePath = apiClient.getBasePath().substring(0, apiClient.getBasePath().indexOf("/so/"));
+        final String tokenUrl = basePath + "/oauth/token?grant_type=client_credentials";
+
+        try {
+            URL url = new URL(tokenUrl);
+            HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            final String authorizationHeader = getAuthorizationHeader(oauthClientCredentials);
+            connection.addRequestProperty("Authorization", authorizationHeader);
+
+            connection.connect();
+
+            return getResponse(connection).get("access_token").getAsString();
+
+        } catch (IOException exception) {
+            LOGGER.error("Error getting token", exception);
+            return null;
+        }
+    }
+
+    private String getAuthorizationHeader(
+            final SubscriptionsAuthenticationParamsOauth2ClientCredentials oauthClientCredentials) {
+        final String auth = oauthClientCredentials.getClientId() + ":" + oauthClientCredentials.getClientPassword();
+        final byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));
+        return "Basic " + new String(encodedAuth);
+    }
+
+    private JsonObject getResponse(HttpsURLConnection connection) throws IOException {
+        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        String line, data = "";
+        while ((line = in.readLine()) != null) {
+            data += line;
+        }
+        in.close();
+        connection.getInputStream().close();
+
+        JsonObject jsonObject = new JsonParser().parse(data).getAsJsonObject();
+        return jsonObject;
     }
 
 }
