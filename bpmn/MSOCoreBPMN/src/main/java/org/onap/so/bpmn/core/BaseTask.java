@@ -86,8 +86,13 @@ public class BaseTask implements JavaDelegate {
             }
             return variable;
         } else {
-            throw new BadInjectedFieldException(fieldName, getTaskName(),
-                    "expected a variable name string" + ", got object of type " + o.getClass().getName());
+            if (o != null) {
+                throw new BadInjectedFieldException(fieldName, getTaskName(),
+                        "expected a variable name string, got object of type " + o.getClass().getName());
+            } else {
+                throw new BadInjectedFieldException(fieldName, getTaskName(),
+                        "expected a variable name string, got null object");
+            }
         }
     }
 
@@ -114,7 +119,7 @@ public class BaseTask implements JavaDelegate {
             return null;
         } else {
             throw new BadInjectedFieldException(fieldName, getTaskName(),
-                    "expected a variable name string" + ", got object of type " + o.getClass().getName());
+                    "expected a variable name string, got object of type " + o.getClass().getName());
         }
     }
 
@@ -133,9 +138,11 @@ public class BaseTask implements JavaDelegate {
         Object o = getFieldImpl(expression, execution, fieldName, false);
         if (o instanceof String) {
             return (String) o;
-        } else {
+        } else if (o != null) {
             throw new BadInjectedFieldException(fieldName, getTaskName(),
                     "cannot convert '" + o.toString() + "' to Integer");
+        } else {
+            throw new MissingInjectedFieldException(fieldName, getTaskName());
         }
     }
 
@@ -189,8 +196,12 @@ public class BaseTask implements JavaDelegate {
             try {
                 return Integer.parseInt(o.toString());
             } catch (NumberFormatException e) {
-                throw new BadInjectedFieldException(fieldName, getTaskName(),
-                        "cannot convert '" + o.toString() + "' to Integer");
+                if (o != null) {
+                    throw new BadInjectedFieldException(fieldName, getTaskName(),
+                            "cannot convert '" + o.toString() + "' to Integer");
+                } else {
+                    throw new MissingInjectedFieldException(fieldName, getTaskName());
+                }
             }
         }
     }
@@ -289,8 +300,12 @@ public class BaseTask implements JavaDelegate {
             try {
                 return Long.parseLong(o.toString());
             } catch (NumberFormatException e) {
-                throw new BadInjectedFieldException(fieldName, getTaskName(),
-                        "cannot convert '" + o.toString() + "' to Long");
+                if (o != null) {
+                    throw new BadInjectedFieldException(fieldName, getTaskName(),
+                            "cannot convert '" + o.toString() + "' to Long");
+                } else {
+                    throw new MissingInjectedFieldException(fieldName, getTaskName());
+                }
             }
         }
     }
