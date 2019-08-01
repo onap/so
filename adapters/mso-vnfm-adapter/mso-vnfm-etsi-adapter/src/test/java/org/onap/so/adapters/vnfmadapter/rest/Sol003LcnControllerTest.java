@@ -46,6 +46,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.hamcrest.MockitoHamcrest;
+import org.onap.aai.domain.yang.EsrSystemInfoList;
+import org.onap.aai.domain.yang.EsrVnfm;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.GenericVnfs;
 import org.onap.aai.domain.yang.Relationship;
@@ -169,6 +171,7 @@ public class Sol003LcnControllerTest {
                 .andRespond(withSuccess(gson.toJson(vnfInstance), MediaType.APPLICATION_JSON));
 
         final GenericVnf genericVnf = createGenericVnf("vnfmType1");
+        addRelationshipFromGenericVnfToVnfm(genericVnf, "vnfm1");
         final List<GenericVnf> listOfGenericVnfs = new ArrayList<>();
         listOfGenericVnfs.add(genericVnf);
         final GenericVnfs genericVnfs = new GenericVnfs();
@@ -176,6 +179,12 @@ public class Sol003LcnControllerTest {
         doReturn(Optional.of(genericVnfs)).when(aaiResourcesClient).get(eq(GenericVnfs.class),
                 MockitoHamcrest.argThat(new AaiResourceUriMatcher(
                         "/network/generic-vnfs?selflink=http%3A%2F%2Fvnfm%3A8080%2Fvnfs%2FmyTestVnfIdOnVnfm")));
+        EsrVnfm vnfm = new EsrVnfm();
+        vnfm.setVnfmId("vnfm1");
+        final EsrSystemInfoList esrSystemInfoList = new EsrSystemInfoList();
+        vnfm.setEsrSystemInfoList(esrSystemInfoList);
+        doReturn(Optional.of(vnfm)).when(aaiResourcesClient).get(eq(EsrVnfm.class), MockitoHamcrest
+                .argThat(new AaiResourceUriMatcher("/external-system/esr-vnfm-list/esr-vnfm/vnfm1?depth=1")));
 
         final ResponseEntity<Void> response =
                 controller.lcnVnfLcmOperationOccurrenceNotificationPost(vnfLcmOperationOccurrenceNotification);
@@ -226,6 +235,7 @@ public class Sol003LcnControllerTest {
                 .andRespond(withStatus(HttpStatus.NO_CONTENT).contentType(MediaType.APPLICATION_JSON));
 
         final GenericVnf genericVnf = createGenericVnf("vnfmType1");
+        addRelationshipFromGenericVnfToVnfm(genericVnf, "vnfm1");
         genericVnf.setSelflink("http://vnfm:8080/vnfs/myTestVnfIdOnVnfm");
         final List<GenericVnf> listOfGenericVnfs = new ArrayList<>();
         listOfGenericVnfs.add(genericVnf);
@@ -236,6 +246,12 @@ public class Sol003LcnControllerTest {
         doReturn(Optional.of(genericVnfs)).when(aaiResourcesClient).get(eq(GenericVnfs.class),
                 MockitoHamcrest.argThat(new AaiResourceUriMatcher(
                         "/network/generic-vnfs?selflink=http%3A%2F%2Fvnfm%3A8080%2Fvnfs%2FmyTestVnfIdOnVnfm")));
+        EsrVnfm vnfm = new EsrVnfm();
+        vnfm.setVnfmId("vnfm1");
+        final EsrSystemInfoList esrSystemInfoList = new EsrSystemInfoList();
+        vnfm.setEsrSystemInfoList(esrSystemInfoList);
+        doReturn(Optional.of(vnfm)).when(aaiResourcesClient).get(eq(EsrVnfm.class), MockitoHamcrest
+                .argThat(new AaiResourceUriMatcher("/external-system/esr-vnfm-list/esr-vnfm/vnfm1?depth=1")));
 
         final ResponseEntity<Void> response =
                 controller.lcnVnfLcmOperationOccurrenceNotificationPost(vnfLcmOperationOccurrenceNotification);
@@ -323,6 +339,22 @@ public class Sol003LcnControllerTest {
         return genericVnf;
     }
 
+    private void addRelationshipFromGenericVnfToVnfm(final GenericVnf genericVnf, final String vnfmId) {
+        final Relationship relationshipToVnfm = new Relationship();
+        relationshipToVnfm.setRelatedLink("/aai/v15/external-system/esr-vnfm-list/esr-vnfm/" + vnfmId);
+        relationshipToVnfm.setRelatedTo("esr-vnfm");
+        final RelationshipData relationshipData = new RelationshipData();
+        relationshipData.setRelationshipKey("esr-vnfm.vnfm-id");
+        relationshipData.setRelationshipValue(vnfmId);
+        relationshipToVnfm.getRelationshipData().add(relationshipData);
+
+        if (genericVnf.getRelationshipList() == null) {
+            final RelationshipList relationshipList = new RelationshipList();
+            genericVnf.setRelationshipList(relationshipList);
+        }
+        genericVnf.getRelationshipList().getRelationship().add(relationshipToVnfm);
+    }
+
     private void addRelationshipFromGenericVnfToVserver(final GenericVnf genericVnf, final String vserverId) {
         final Relationship relationshipToVserver = new Relationship();
         relationshipToVserver.setRelatedTo("vserver");
@@ -343,9 +375,11 @@ public class Sol003LcnControllerTest {
         relationshipData4.setRelationshipValue(TENANT_ID);
         relationshipToVserver.getRelationshipData().add(relationshipData4);
 
-        final RelationshipList relationshipList = new RelationshipList();
-        relationshipList.getRelationship().add(relationshipToVserver);
-        genericVnf.setRelationshipList(relationshipList);
+        if (genericVnf.getRelationshipList() == null) {
+            final RelationshipList relationshipList = new RelationshipList();
+            genericVnf.setRelationshipList(relationshipList);
+        }
+        genericVnf.getRelationshipList().getRelationship().add(relationshipToVserver);
     }
 
     private class AaiResourceUriMatcher extends BaseMatcher<AAIResourceUri> {

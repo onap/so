@@ -21,6 +21,7 @@
 package org.onap.so.adapters.vnfmadapter.extclients.vnfm;
 
 import com.google.common.base.Optional;
+import org.onap.aai.domain.yang.EsrVnfm;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.CreateVnfRequest;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse2001;
@@ -37,63 +38,67 @@ public interface VnfmServiceProvider {
     /**
      * Invoke a get request for a VNF.
      *
+     * @param vnfm the VNFM in AAI
      * @param vnfSelfLink the link to the VNF in the VNFM
      * @return the VNF from the VNFM
      */
-    Optional<InlineResponse201> getVnf(final String vnfSelfLink);
+    Optional<InlineResponse201> getVnf(final EsrVnfm vnfm, final String vnfSelfLink);
 
     /**
      * Invoke an instantiate request for a VNF.
      *
+     * @param vnfm the VNFM in AAI
      * @param vnfSelfLink the link to he VNF on the VNFM
      * @param instantiateVnfRequest the instantiate request
      * @return the operation ID of the instantiation operation
      */
-    String instantiateVnf(final String vnfSelfLink, final InstantiateVnfRequest instantiateVnfRequest);
+    String instantiateVnf(final EsrVnfm vnfm, final String vnfSelfLink,
+            final InstantiateVnfRequest instantiateVnfRequest);
 
     /**
      * Invoke a notification subscription request to a VNFM.
      *
-     * @param vnfmId the ID of the VNFM
+     * @param vnfm the VNFM in AAI
      * @param subscriptionRequest
      * @return the response to the subscription request
      */
-    InlineResponse2001 subscribeForNotifications(final String vnfmId,
-            final LccnSubscriptionRequest subscriptionRequest);
+    InlineResponse2001 subscribeForNotifications(final EsrVnfm vnfm, final LccnSubscriptionRequest subscriptionRequest);
 
     /**
      * Invoke a terminate request for a VNF.
      *
+     * @param vnfm the VNFM in AAI
      * @param vnfSelfLink the link to he VNF on the VNFM
      * @param terminateVnfRequest the terminate request
      * @return the operation ID of the termination operation
      */
-    String terminateVnf(final String vnfSelfLink, final TerminateVnfRequest terminateVnfRequest);
+    String terminateVnf(final EsrVnfm vnfm, final String vnfSelfLink, final TerminateVnfRequest terminateVnfRequest);
 
     /**
      * Invoke a delete request for a VNF.
      *
+     * @param vnfm the VNFM in AAI
      * @param vnfSelfLink the link to he VNF on the VNFM
      * @return the operation ID of the instantiation operation
      */
-    void deleteVnf(final String vnfSelfLink);
+    void deleteVnf(final EsrVnfm vnfm, final String vnfSelfLink);
 
     /**
      * Invoke a get request for a VNFM operation.
      *
-     * @param vnfmId the id of the VNFM in AAI
+     * @param vnfm the VNFM in AAI
      * @param operationId the id of the operation on the VNFM
      * @return the operation from the VNFM
      */
-    Optional<InlineResponse200> getOperation(final String vnfmId, final String operationId);
+    Optional<InlineResponse200> getOperation(final EsrVnfm vnfm, final String operationId);
 
     /**
      * Invoke a create request to a VNFM
      *
-     * @param vnfmId the id of the VNFM in AAI
+     * @param vnfm the VNFM in AAI
      * @param createVnfRequest the parameters for creating a VNF
      * @return the newly created VNF
      */
-    Optional<InlineResponse201> createVnf(final String vnfmId, final CreateVnfRequest createVnfRequest);
+    Optional<InlineResponse201> createVnf(final EsrVnfm vnfm, final CreateVnfRequest createVnfRequest);
 
 }

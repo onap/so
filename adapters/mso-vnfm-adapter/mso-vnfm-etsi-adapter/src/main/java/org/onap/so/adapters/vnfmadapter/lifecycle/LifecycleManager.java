@@ -82,16 +82,15 @@ public class LifecycleManager {
      */
     public CreateVnfResponse createVnf(final String vnfIdInAai, final CreateVnfRequest request) {
         final GenericVnf genericVnf = getGenericVnfFromAai(vnfIdInAai);
-        checkIfVnfAlreadyExistsInVnfm(genericVnf);
-
         EsrVnfm vnfm = aaiHelper.getAssignedVnfm(genericVnf);
+        checkIfVnfAlreadyExistsInVnfm(vnfm, genericVnf);
+
         if (vnfm == null) {
             vnfm = aaiHelper.selectVnfm(genericVnf);
             aaiHelper.addRelationshipFromGenericVnfToVnfm(genericVnf, vnfm.getVnfmId());
         }
         aaiHelper.addRelationshipFromGenericVnfToTenant(genericVnf, request.getTenant());
-        final InlineResponse201 vnfmResponse =
-                sendCreateRequestToVnfm(request, genericVnf, vnfIdInAai, vnfm.getVnfmId());
+        final InlineResponse201 vnfmResponse = sendCreateRequestToVnfm(request, genericVnf, vnfIdInAai, vnfm);
 
         logger.info("Create response: {}", vnfmResponse);
 
@@ -102,8 +101,8 @@ public class LifecycleManager {
         final OamIpAddressSource oamIpAddressSource = extractOamIpAddressSource(request);
         aaiHelper.setOamIpAddressSource(vnfIdInVnfm, oamIpAddressSource);
 
-        createNotificationSubscription(vnfm.getVnfmId(), vnfIdInVnfm);
-        final String operationId = sendInstantiateRequestToVnfm(vnfm, genericVnf, request, vnfIdInAai, vnfIdInVnfm);
+        createNotificationSubscription(vnfm, vnfIdInVnfm);
+        final String operationId = sendInstantiateRequestToVnfm(vnfm, genericVnf, request);
 
         final String jobId = jobManager.createJob(vnfm.getVnfmId(), operationId, false);
         final CreateVnfResponse response = new CreateVnfResponse();
@@ -133,11 +132,11 @@ public class LifecycleManager {
         }
     }
 
-    private void checkIfVnfAlreadyExistsInVnfm(final GenericVnf genericVnf) {
-        if (genericVnf.getSelflink() != null && !genericVnf.getSelflink().isEmpty()) {
+    private void checkIfVnfAlreadyExistsInVnfm(final EsrVnfm vnfm, final GenericVnf genericVnf) {
+        if (genericVnf.getSelflink() != null && !genericVnf.getSelflink().isEmpty() && vnfm != null) {
             Optional<InlineResponse201> response = Optional.absent();
             try {
-                response = vnfmServiceProvider.getVnf(genericVnf.getSelflink());
+                response = vnfmServiceProvider.getVnf(vnfm, genericVnf.getSelflink());
             } catch (final Exception exception) {
                 logger.debug("Ignoring invalid self link in generic vnf", exception);
             }
@@ -149,7 +148,7 @@ public class LifecycleManager {
     }
 
     private InlineResponse201 sendCreateRequestToVnfm(final CreateVnfRequest aaiRequest, final GenericVnf genericVnf,
-            final String vnfIdInAai, final String vnfmId) {
+            final String vnfIdInAai, final EsrVnfm vnfm) {
         logger.debug("Sending a create request to SVNFM " + aaiRequest);
         final org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.CreateVnfRequest vnfmRequest =
                 new org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.CreateVnfRequest();
@@ -159,7 +158,7 @@ public class LifecycleManager {
         vnfmRequest.setVnfInstanceName(aaiRequest.getName().replaceAll(" ", "_"));
         vnfmRequest.setVnfInstanceDescription(vnfIdInAai);
 
-        final Optional<InlineResponse201> optionalResponse = vnfmServiceProvider.createVnf(vnfmId, vnfmRequest);
+        final Optional<InlineResponse201> optionalResponse = vnfmServiceProvider.createVnf(vnfm, vnfmRequest);
 
         try {
             return optionalResponse.get();
@@ -170,24 +169,24 @@ public class LifecycleManager {
         }
     }
 
-    private void createNotificationSubscription(final String vnfmId, final String vnfId) {
+    private void createNotificationSubscription(final EsrVnfm vnfm, final String vnfId) {
         try {
             final LccnSubscriptionRequest subscriptionRequest = vnfmHelper.createNotificationSubscriptionRequest(vnfId);
-            vnfmServiceProvider.subscribeForNotifications(vnfmId, subscriptionRequest);
+            vnfmServiceProvider.subscribeForNotifications(vnfm, subscriptionRequest);
         } catch (final Exception exception) {
-            logger.warn("Subscription for notifications to VNFM: " + vnfmId + " for VNF " + vnfId
+            logger.warn("Subscription for notifications to VNFM: " + vnfm.getVnfmId() + " for VNF " + vnfId
                     + " failed. AAI will not be updated unless the VNFM is configured by other means to send notifications relating to this VNF",
                     exception);
         }
     }
 
     private String sendInstantiateRequestToVnfm(final EsrVnfm vnfm, final GenericVnf genericVnf,
-            final CreateVnfRequest createVnfRequest, final String vnfIdInAai, final String vnfIdInVnfm) {
+            final CreateVnfRequest createVnfRequest) {
 
         final InstantiateVnfRequest instantiateVnfRequest =
                 vnfmHelper.createInstantiateRequest(createVnfRequest.getTenant(), createVnfRequest,
                         packageProvider.getFlavourId(genericVnf.getModelVersionId()));
-        final String jobId = vnfmServiceProvider.instantiateVnf(genericVnf.getSelflink(), instantiateVnfRequest);
+        final String jobId = vnfmServiceProvider.instantiateVnf(vnfm, genericVnf.getSelflink(), instantiateVnfRequest);
 
         logger.info("Instantiate VNF request successfully sent to " + genericVnf.getSelflink());
         return jobId;
@@ -201,18 +200,18 @@ public class LifecycleManager {
      */
     public DeleteVnfResponse deleteVnf(final String vnfIdInAai) {
         final GenericVnf genericVnf = getGenericVnfFromAai(vnfIdInAai);
-        final String vnfmId = getIdOfAssignedVnfm(genericVnf);
+        final EsrVnfm vnfm = getAssignedVnfm(genericVnf);
 
-        final String operationId = sendTerminateRequestToVnfm(genericVnf);
-        final String jobId = jobManager.createJob(vnfmId, operationId, true);
+        final String operationId = sendTerminateRequestToVnfm(vnfm, genericVnf);
+        final String jobId = jobManager.createJob(vnfm.getVnfmId(), operationId, true);
 
         return new DeleteVnfResponse().jobId(jobId);
     }
 
-    private String sendTerminateRequestToVnfm(final GenericVnf genericVnf) {
+    private String sendTerminateRequestToVnfm(final EsrVnfm vnfm, final GenericVnf genericVnf) {
         final TerminateVnfRequest terminateVnfRequest = new TerminateVnfRequest();
         terminateVnfRequest.setTerminationType(TerminationTypeEnum.FORCEFUL);
-        return vnfmServiceProvider.terminateVnf(genericVnf.getSelflink(), terminateVnfRequest);
+        return vnfmServiceProvider.terminateVnf(vnfm, genericVnf.getSelflink(), terminateVnfRequest);
     }
 
     private GenericVnf getGenericVnfFromAai(final String vnfIdInAai) {
@@ -224,11 +223,11 @@ public class LifecycleManager {
         return genericVnf;
     }
 
-    private String getIdOfAssignedVnfm(final GenericVnf genericVnf) {
-        final String vnfmId = aaiHelper.getIdOfAssignedVnfm(genericVnf);
-        if (vnfmId == null) {
+    private EsrVnfm getAssignedVnfm(final GenericVnf genericVnf) {
+        final EsrVnfm vnfm = aaiHelper.getAssignedVnfm(genericVnf);
+        if (vnfm == null) {
             throw new VnfmNotFoundException("No VNFM found in AAI for VNF " + genericVnf.getVnfId());
         }
-        return vnfmId;
+        return vnfm;
     }
 }
