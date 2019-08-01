@@ -91,6 +91,13 @@ public class AAIValidatorTest {
     }
 
     @Test
+    public void test_IsPhysicalServerLocked_NoServers_False() throws IOException {
+        when(client.getPhysicalServerByVnfId(vnfName)).thenReturn(null);
+        boolean locked = validator.isPhysicalServerLocked(vnfName);
+        assertEquals(false, locked);
+    }
+
+    @Test
     public void test_IsVNFLocked_False() {
         when(client.getVnfByName(vnfName)).thenReturn(createGenericVnfs(false));
         boolean locked = validator.isVNFLocked(vnfName);
