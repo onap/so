@@ -24,11 +24,12 @@ import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.security.KeyManagementException;
+import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.Iterator;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,7 +43,6 @@ import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.aai.domain.yang.EsrVnfm;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.JSON;
 import org.onap.so.configuration.rest.BasicHttpHeadersProvider;
-import org.onap.so.logging.jaxrs.filter.SpringClientFilter;
 import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.onap.so.rest.service.HttpRestServiceProviderImpl;
 import org.slf4j.Logger;
@@ -52,7 +52,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
@@ -73,7 +73,12 @@ public class VnfmServiceProviderConfiguration {
     @Value("${http.client.ssl.trust-store:#{null}}")
     private Resource trustStore;
     @Value("${http.client.ssl.trust-store-password:#{null}}")
-    private String trustPassword;
+    private String trustStorePassword;
+
+    @Value("${server.ssl.key-store:#{null}}")
+    private Resource keyStoreResource;
+    @Value("${server.ssl.key--store-password:#{null}}")
+    private String keyStorePassword;
 
     /**
      * This property is only intended to be temporary until the AAI schema is updated to support setting the endpoint
@@ -98,7 +103,6 @@ public class VnfmServiceProviderConfiguration {
         if (trustStore != null) {
             setTrustStore(restTemplate);
         }
-        removeSpringClientFilter(restTemplate);
         return new HttpRestServiceProviderImpl(restTemplate, new BasicHttpHeadersProvider());
     }
 
@@ -141,26 +145,25 @@ public class VnfmServiceProviderConfiguration {
     private void setTrustStore(final RestTemplate restTemplate) {
         SSLContext sslContext;
         try {
-            sslContext =
-                    new SSLContextBuilder().loadTrustMaterial(trustStore.getURL(), trustPassword.toCharArray()).build();
+            if (keyStoreResource != null) {
+                KeyStore keystore = KeyStore.getInstance("pkcs12");
+                keystore.load(keyStoreResource.getInputStream(), keyStorePassword.toCharArray());
+                sslContext =
+                        new SSLContextBuilder().loadTrustMaterial(trustStore.getURL(), trustStorePassword.toCharArray())
+                                .loadKeyMaterial(keystore, keyStorePassword.toCharArray()).build();
+            } else {
+                sslContext = new SSLContextBuilder()
+                        .loadTrustMaterial(trustStore.getURL(), trustStorePassword.toCharArray()).build();
+            }
             logger.info("Setting truststore: {}", trustStore.getURL());
             final SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(sslContext);
             final HttpClient httpClient = HttpClients.custom().setSSLSocketFactory(socketFactory).build();
             final HttpComponentsClientHttpRequestFactory factory =
                     new HttpComponentsClientHttpRequestFactory(httpClient);
-            restTemplate.setRequestFactory(factory);
+            restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(factory));
         } catch (KeyManagementException | NoSuchAlgorithmException | KeyStoreException | CertificateException
-                | IOException exception) {
+                | IOException | UnrecoverableKeyException exception) {
             logger.error("Error reading truststore, TLS connection to VNFM will fail.", exception);
-        }
-    }
-
-    private void removeSpringClientFilter(final RestTemplate restTemplate) {
-        ListIterator<ClientHttpRequestInterceptor> interceptorIterator = restTemplate.getInterceptors().listIterator();
-        while (interceptorIterator.hasNext()) {
-            if (interceptorIterator.next() instanceof SpringClientFilter) {
-                interceptorIterator.remove();
-            }
         }
     }
 

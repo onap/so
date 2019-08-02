@@ -1,6 +1,5 @@
 package org.onap.svnfm.simulator.config;
 
-import java.net.InetAddress;
 import java.util.Arrays;
 import org.onap.svnfm.simulator.constants.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +22,9 @@ public class ApplicationConfig implements ApplicationRunner {
     @Value("${server.dns.name:so-vnfm-simulator.onap}")
     private String serverDnsName;
 
+    @Value("${server.request.grant.auth:oauth}")
+    private String grantAuth;
+
     @Autowired
     private Environment environment;
 
@@ -35,6 +37,10 @@ public class ApplicationConfig implements ApplicationRunner {
 
     public String getBaseUrl() {
         return baseUrl;
+    }
+
+    public String getGrantAuth() {
+        return grantAuth;
     }
 
     @Bean

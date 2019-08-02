@@ -133,7 +133,7 @@ public class VnfmAdapterControllerTest {
         setUpVimInMockAai();
 
         final String expectedsubscriptionRequest =
-                "{\"filter\":{\"vnfInstanceSubscriptionFilter\":{\"vnfInstanceIds\":[\"vnfId\"]},\"notificationTypes\":[\"VnfLcmOperationOccurrenceNotification\"]},\"callbackUri\":\"https://so-vnfm-adapter.onap:30406/so/vnfm-adapter/v1/lcn/VnfLcmOperationOccurrenceNotification\",\"authentication\":{\"authType\":[\"OAUTH2_CLIENT_CREDENTIALS\", \"BASIC\"],\"paramsOauth2ClientCredentials\":{\"clientId\":\"vnfm\",\"clientPassword\":\"password1$\",\"tokenEndpoint\":\"https://so-vnfm-adapter.onap:30406/oauth/token\"},\"paramsBasic\":{\"userName\":\"vnfm\",\"password\":\"password1$\"}}}";
+                "{\"filter\":{\"vnfInstanceSubscriptionFilter\":{\"vnfInstanceIds\":[\"vnfId\"]},\"notificationTypes\":[\"VnfLcmOperationOccurrenceNotification\"]},\"callbackUri\":\"https://so-vnfm-adapter.onap:30406/so/vnfm-adapter/v1/lcn/VnfLcmOperationOccurrenceNotification\",\"authentication\":{\"authType\":[\"OAUTH2_CLIENT_CREDENTIALS\", \"BASIC\", \"TLS_CERT\"],\"paramsOauth2ClientCredentials\":{\"clientId\":\"vnfm\",\"clientPassword\":\"password1$\",\"tokenEndpoint\":\"https://so-vnfm-adapter.onap:30406/oauth/token\"},\"paramsBasic\":{\"userName\":\"vnfm\",\"password\":\"password1$\"}}}";
         final InlineResponse2001 subscriptionResponse = new InlineResponse2001();
 
         final InlineResponse201 createResponse = createCreateResponse();
