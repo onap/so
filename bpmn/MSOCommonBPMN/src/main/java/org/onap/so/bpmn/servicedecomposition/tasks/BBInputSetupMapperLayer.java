@@ -581,6 +581,9 @@ public class BBInputSetupMapperLayer {
 
     protected ModelInfoServiceProxy mapServiceProxyCustomizationToServiceProxy(
             ServiceProxyResourceCustomization serviceProxyCustomization) {
-        return modelMapper.map(serviceProxyCustomization.getSourceService(), ModelInfoServiceProxy.class);
+        ModelInfoServiceProxy modelInfoServiceProxy =
+                modelMapper.map(serviceProxyCustomization.getSourceService(), ModelInfoServiceProxy.class);
+        modelInfoServiceProxy.setModelInstanceName(serviceProxyCustomization.getModelInstanceName());
+        return modelInfoServiceProxy;
     }
 }
