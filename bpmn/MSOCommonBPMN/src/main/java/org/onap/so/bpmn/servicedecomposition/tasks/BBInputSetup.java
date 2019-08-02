@@ -1388,8 +1388,10 @@ public class BBInputSetup implements JavaDelegate {
                     vnfs.getInstanceParams(), productFamilyId);
         } else if (bbName.contains(VF_MODULE) || bbName.contains(VOLUME_GROUP)) {
             Pair<Vnfs, VfModules> vnfsAndVfModules = getVfModulesAndItsVnfsByKey(key, resources);
-            vfModules = vnfsAndVfModules.getValue1();
-            vnfs = vnfsAndVfModules.getValue0();
+            if (vnfsAndVfModules != null) {
+                vfModules = vnfsAndVfModules.getValue1();
+                vnfs = vnfsAndVfModules.getValue0();
+            }
             lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, getVnfId(executeBB, lookupKeyMap));
             if (vnfs == null) {
                 throw new Exception("Could not find Vnf to orchestrate VfModule");
@@ -1410,8 +1412,10 @@ public class BBInputSetup implements JavaDelegate {
         } else if (bbName.contains(NETWORK)) {
             networks = findNetworksByKey(key, resources);
             String networkId = lookupKeyMap.get(ResourceKey.NETWORK_ID);
-            this.populateL3Network(networks.getInstanceName(), networks.getModelInfo(), service, bbName,
-                    serviceInstance, lookupKeyMap, networkId, networks.getInstanceParams());
+            if (networks != null) {
+                this.populateL3Network(networks.getInstanceName(), networks.getModelInfo(), service, bbName,
+                        serviceInstance, lookupKeyMap, networkId, networks.getInstanceParams());
+            }
         } else if (bbName.contains("Configuration")) {
             String configurationId = lookupKeyMap.get(ResourceKey.CONFIGURATION_ID);
             ModelInfo configurationModelInfo = new ModelInfo();
@@ -1608,8 +1612,10 @@ public class BBInputSetup implements JavaDelegate {
 
     protected void mapCatalogNetworkCollectionInstanceGroup(Service service, InstanceGroup instanceGroup, String key) {
         CollectionResourceCustomization collectionCust = this.findCatalogNetworkCollection(service, key);
-        org.onap.so.db.catalog.beans.InstanceGroup catalogInstanceGroup =
-                collectionCust.getCollectionResource().getInstanceGroup();
+        org.onap.so.db.catalog.beans.InstanceGroup catalogInstanceGroup = null;
+        if (collectionCust != null) {
+            catalogInstanceGroup = collectionCust.getCollectionResource().getInstanceGroup();
+        }
         instanceGroup.setModelInfoInstanceGroup(
                 mapperLayer.mapCatalogInstanceGroupToInstanceGroup(collectionCust, catalogInstanceGroup));
     }
