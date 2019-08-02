@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e6cf3875_a5c5a3a4",
+        "filename": "bpmn/MSOCoreBPMN/src/test/java/org/onap/so/bpmn/core/utils/CamundaDBSetup.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2019-08-02T12:04:01Z",
+      "side": 1,
+      "message": "why is this even required here?",
+      "revId": "85fd3a1eb1b057fca35a5c4c818d1346f802b665",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
