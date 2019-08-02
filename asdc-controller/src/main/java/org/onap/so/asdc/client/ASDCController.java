@@ -742,8 +742,7 @@ public class ASDCController {
 
                 logger.info("Processing Resource Type: {}, Model UUID: {}", resourceType, resource.getResourceUUID());
 
-                if ("VF".equals(resourceType) && resource.getArtifacts() != null
-                        && !resource.getArtifacts().isEmpty()) {
+                if ("VF".equals(resourceType)) {
                     resourceStructure = new VfResourceStructure(iNotif, resource);
                 } else if ("PNF".equals(resourceType)) {
                     resourceStructure = new PnfResourceStructure(iNotif, resource);
@@ -761,8 +760,8 @@ public class ASDCController {
                         logger.debug("Processing Resource Type: " + resourceType + " and Model UUID: "
                                 + resourceStructure.getResourceInstance().getResourceUUID());
 
-                        if ("VF".equals(resourceType) && resource.getArtifacts() != null
-                                && !resource.getArtifacts().isEmpty()) {
+
+                        if ("VF".equals(resourceType)) {
                             hasVFResource = true;
                             for (IArtifactInfo artifact : resource.getArtifacts()) {
                                 IDistributionClientDownloadResult resultArtifact =
