@@ -33,7 +33,7 @@ public class VNFUnsetClosedLoopDisabledFlagActivityTest extends BaseBPMNTest {
     @Test
     public void sunnyDayVNFUnsetClosedLoopDisabledFlagActivity_Test() throws InterruptedException {
         ProcessInstance pi =
-                runtimeService.startProcessInstanceByKey("VNFUnsetInClosedLoopDisabledFlagActivity", variables);
+                runtimeService.startProcessInstanceByKey("VNFUnsetClosedLoopDisabledFlagActivity", variables);
         assertThat(pi).isNotNull();
         assertThat(pi).isStarted().hasPassedInOrder("VNFUnsetClosedLoopDisabledFlagActivity_Start",
                 "TaskVNFUnsetClosedLoopDisabledFlagActivity", "VNFUnsetClosedLoopDisabledFlagActivity_End");
@@ -45,7 +45,7 @@ public class VNFUnsetClosedLoopDisabledFlagActivityTest extends BaseBPMNTest {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiFlagTasks)
                 .modifyVnfClosedLoopDisabledFlag(any(BuildingBlockExecution.class), any(boolean.class));
         ProcessInstance pi =
-                runtimeService.startProcessInstanceByKey("VNFUnsetInClosedLoopDisabledFlagActivity", variables);
+                runtimeService.startProcessInstanceByKey("VNFUnsetClosedLoopDisabledFlagActivity", variables);
         assertThat(pi).isNotNull();
         assertThat(pi).isStarted()
                 .hasPassedInOrder("VNFUnsetClosedLoopDisabledFlagActivity_Start",
