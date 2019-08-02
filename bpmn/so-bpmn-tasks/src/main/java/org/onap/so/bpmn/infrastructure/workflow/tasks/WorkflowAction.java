@@ -372,7 +372,7 @@ public class WorkflowAction {
                 }
             }
 
-            if (flowsToExecute.isEmpty()) {
+            if (flowsToExecute == null || flowsToExecute.isEmpty()) {
                 throw new IllegalStateException("Macro did not come up with a valid execution path.");
             }
             List<String> flowNames = new ArrayList<>();
