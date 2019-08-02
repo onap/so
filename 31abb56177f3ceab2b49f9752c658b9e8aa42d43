@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8d8a0f4c_53dd5943",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/appc/tasks/AppcRunTasks.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2019-08-02T07:22:36Z",
+      "side": 1,
+      "message": "The intension to avoid the null pointer exception is well understood here.\nBut even hardcoding APPC as the controller would not be a fool proof solution as it might break the functionlaity at a later stage.\nShouldnt we examine the reasons for the controllerSelectionReference being null to eradicate the issue completely?\nIs it due to unavoidable circumstances?",
+      "revId": "31abb56177f3ceab2b49f9752c658b9e8aa42d43",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
