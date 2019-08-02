@@ -20,14 +20,16 @@
 package org.onap.so.adapters.vnfmadapter;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
 import java.util.Collection;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.JSON;
+import org.onap.so.adapters.vnfmadapter.oauth.OAuth2AccessTokenAdapter;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 
 /**
  * Configures message converter
@@ -38,7 +40,8 @@ public class MessageConverterConfiguration {
     @Bean
     public HttpMessageConverters customConverters() {
         final Collection<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
-        final Gson gson = new JSON().getGson();
+        final Gson gson = new GsonBuilder()
+                .registerTypeHierarchyAdapter(OAuth2AccessToken.class, new OAuth2AccessTokenAdapter()).create();
         final GsonHttpMessageConverter gsonHttpMessageConverter = new GsonHttpMessageConverter(gson);
         messageConverters.add(gsonHttpMessageConverter);
         return new HttpMessageConverters(true, messageConverters);

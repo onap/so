@@ -41,6 +41,7 @@ import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRe
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsAuthentication;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsAuthentication.AuthTypeEnum;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsAuthenticationParamsBasic;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsAuthenticationParamsOauth2ClientCredentials;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsFilter;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsFilter.NotificationTypesEnum;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsFilterVnfInstanceSubscriptionFilter;
@@ -194,12 +195,21 @@ public class VnfmHelper {
     }
 
     private SubscriptionsAuthentication getSubscriptionsAuthentication() throws GeneralSecurityException {
-        final SubscriptionsAuthenticationParamsBasic basicAuthParams = new SubscriptionsAuthenticationParamsBasic();
+        final SubscriptionsAuthentication authentication = new SubscriptionsAuthentication();
+
         final String[] decrypedAuth = CryptoUtils.decrypt(vnfmAdapterAuth, msoEncryptionKey).split(":");
+
+        SubscriptionsAuthenticationParamsOauth2ClientCredentials oauthParams =
+                new SubscriptionsAuthenticationParamsOauth2ClientCredentials();
+        oauthParams.setTokenEndpoint(vnfmAdapterEndoint + "/oauth/token");
+        oauthParams.clientId(decrypedAuth[0]);
+        oauthParams.setClientPassword(decrypedAuth[1]);
+        authentication.addAuthTypeItem(AuthTypeEnum.OAUTH2_CLIENT_CREDENTIALS);
+        authentication.paramsOauth2ClientCredentials(oauthParams);
+
+        final SubscriptionsAuthenticationParamsBasic basicAuthParams = new SubscriptionsAuthenticationParamsBasic();
         basicAuthParams.setUserName(decrypedAuth[0]);
         basicAuthParams.setPassword(decrypedAuth[1]);
-
-        final SubscriptionsAuthentication authentication = new SubscriptionsAuthentication();
         authentication.addAuthTypeItem(AuthTypeEnum.BASIC);
         authentication.paramsBasic(basicAuthParams);
         return authentication;
