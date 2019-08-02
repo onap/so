@@ -101,8 +101,7 @@ public class JobManager {
             }
             final InlineResponse200 operation = operationOptional.get();
 
-            logger.debug(
-                    "Job Id: " + jobId + ", operationId: " + operation.getId() + ", operation details: " + operation);
+            logger.debug("Job Id: {} operationId: {} operation details: {} ", jobId, operation.getId(), operation);
 
             if (operation.getOperationState() == null) {
                 return response.operationStatusRetrievalStatus(OperationStatusRetrievalStatusEnum.WAITING_FOR_STATUS);
@@ -148,7 +147,8 @@ public class JobManager {
         if (relatedOperation.isPresent()) {
             relatedOperation.get().setNotificationProcessed(notificationProcessingWasSuccessful);
         } else {
-            logger.debug("No operation found for operation ID " + operationId);
+            logger.debug("No operation found for operation ID {} ", operationId);
+
         }
     }
 
@@ -159,7 +159,7 @@ public class JobManager {
         if (relatedOperation.isPresent()) {
             relatedOperation.get().setVnfDeleted();;
         } else {
-            logger.debug("No operation found for operation ID " + operationId);
+            logger.debug("No operation found for operation ID {} ", operationId);
         }
     }
 
