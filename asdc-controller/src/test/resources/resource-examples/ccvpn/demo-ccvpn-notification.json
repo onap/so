@@ -1,0 +1,57 @@
+{
+  "distributionID": "cbc7ab24-7d96-4cb5-949c-f23ada265513",
+  "serviceName": "SDWAN",
+  "serviceVersion": "2.0",
+  "serviceUUID": "5c4d4793-67fb-4155-b7d8-60ec011138c9",
+  "serviceDescription": "SDWAN Service",
+  "serviceInvariantUUID": "e830c260-ee21-4830-980c-c802cd9bbb1c",
+  "resources": [
+    {
+      "resourceInstanceName": "siteVF 0",
+      "resourceName": "siteVF",
+      "resourceVersion": "1.0",
+      "resoucreType": "VF",
+      "resourceUUID": "2c10d85c-e492-4813-a2d6-d1fab757fe49",
+      "resourceInvariantUUID": "ed9b1fe5-1e94-4974-a48f-389571837fd6",
+      "resourceCustomizationUUID": "33de5105-edf3-48cb-bda0-37b2aa2f681f",
+      "category": "Configuration",
+      "subcategory": "Configuration",
+      "artifacts": []
+    },
+    {
+      "resourceInstanceName": "vpn 0",
+      "resourceName": "vpn",
+      "resourceVersion": "2.0",
+      "resoucreType": "VF",
+      "resourceUUID": "235861f1-ea93-4443-94fa-82f29903f54f",
+      "resourceInvariantUUID": "c4eff5e7-c4fe-4caf-989b-11efc8e42a73",
+      "resourceCustomizationUUID": "faa89d44-329b-4fcb-a5dc-6e6f84946537",
+      "category": "Configuration",
+      "subcategory": "Configuration",
+      "artifacts": []
+    }
+  ],
+  "serviceArtifacts": [
+    {
+      "artifactName": "service-Sdwan-template.yml",
+      "artifactType": "TOSCA_TEMPLATE",
+      "artifactURL": "/sdc/v1/catalog/services/Sdwan/2.0/artifacts/service-Sdwan-template.yml",
+      "artifactChecksum": "Zjg4MmJmNzI1MTliYzBiZjA2ZmJjN2EwNzZhZTcxYTQ=",
+      "artifactDescription": "TOSCA representation of the asset",
+      "artifactTimeout": 0,
+      "artifactUUID": "5e7beb91-61f9-4613-8cc5-1d288a624abb",
+      "artifactVersion": "2"
+    },
+    {
+      "artifactName": "service-Sdwan-csar.csar",
+      "artifactType": "TOSCA_CSAR",
+      "artifactURL": "/service-Sdwan-csar.csar",
+      "artifactChecksum": "ODA1ZGViMzI0NzIxMmRmNTIzYzE0ZTg5NmExYWFjZTE=",
+      "artifactDescription": "TOSCA definition package of the asset",
+      "artifactTimeout": 0,
+      "artifactUUID": "771ec21a-1d14-4891-a56f-d4e47e2c8c91",
+      "artifactVersion": "2"
+    }
+  ],
+  "workloadContext": "Production"
+}
