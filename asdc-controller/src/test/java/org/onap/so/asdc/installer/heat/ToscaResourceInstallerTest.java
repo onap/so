@@ -25,16 +25,19 @@ import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.hibernate.exception.LockAcquisitionException;
 import org.junit.Before;
@@ -54,26 +57,33 @@ import org.onap.sdc.toscaparser.api.Group;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
 import org.onap.sdc.toscaparser.api.RequirementAssignment;
 import org.onap.sdc.toscaparser.api.RequirementAssignments;
+import org.onap.sdc.toscaparser.api.SubstitutionMappings;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.onap.sdc.toscaparser.api.elements.StatefulEntityType;
+import org.onap.sdc.toscaparser.api.parameters.Input;
 import org.onap.sdc.utils.DistributionStatusEnum;
 import org.onap.so.asdc.BaseTest;
 import org.onap.so.asdc.client.exceptions.ArtifactInstallerException;
 import org.onap.so.asdc.client.test.emulators.ArtifactInfoImpl;
 import org.onap.so.asdc.client.test.emulators.JsonStatusData;
 import org.onap.so.asdc.client.test.emulators.NotificationDataImpl;
+import org.onap.so.asdc.installer.IVfModuleData;
 import org.onap.so.asdc.installer.ResourceStructure;
 import org.onap.so.asdc.installer.ToscaResourceStructure;
+import org.onap.so.asdc.installer.VfModuleStructure;
+import org.onap.so.asdc.installer.VfResourceStructure;
 import org.onap.so.db.catalog.beans.ConfigurationResource;
 import org.onap.so.db.catalog.beans.ConfigurationResourceCustomization;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ServiceProxyResourceCustomization;
 import org.onap.so.db.catalog.beans.ToscaCsar;
+import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
 import org.onap.so.db.catalog.data.repository.AllottedResourceCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.AllottedResourceRepository;
 import org.onap.so.db.catalog.data.repository.ConfigurationResourceCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.ServiceRepository;
 import org.onap.so.db.catalog.data.repository.ToscaCsarRepository;
+import org.onap.so.db.catalog.data.repository.VnfcInstanceGroupCustomizationRepository;
 import org.onap.so.db.request.beans.WatchdogComponentDistributionStatus;
 import org.onap.so.db.request.data.repository.WatchdogComponentDistributionStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,6 +120,8 @@ public class ToscaResourceInstallerTest extends BaseTest {
     private IEntityDetails entityDetails;
     @Mock
     private ToscaResourceStructure toscaResourceStructure;
+    @Mock
+    private VfResourceStructure vfResourceStruct;
     @Mock
     private ServiceProxyResourceCustomization spResourceCustomization;
     @Mock
@@ -174,20 +186,20 @@ public class ToscaResourceInstallerTest extends BaseTest {
         expectedComponentDistributionStatus
                 .setComponentDistributionStatus(DistributionStatusEnum.COMPONENT_DONE_OK.name());
 
-        doReturn(true).when(vfResourceStructure).isDeployedSuccessfully();
-        doReturn(notificationData).when(vfResourceStructure).getNotification();
-        doReturn(resourceInstance).when(vfResourceStructure).getResourceInstance();
+        doReturn(true).when(vfResourceStruct).isDeployedSuccessfully();
+        doReturn(notificationData).when(vfResourceStruct).getNotification();
+        doReturn(resourceInstance).when(vfResourceStruct).getResourceInstance();
         doReturn("resourceInstanceName").when(resourceInstance).getResourceInstanceName();
         doReturn("resourceCustomizationUUID").when(resourceInstance).getResourceCustomizationUUID();
         doReturn("resourceName").when(resourceInstance).getResourceName();
 
-        toscaInstaller.isResourceAlreadyDeployed(vfResourceStructure, false);
+        toscaInstaller.isResourceAlreadyDeployed(vfResourceStruct, false);
 
         WatchdogComponentDistributionStatus actualWatchdogComponentDistributionStatus = getWatchdogCDStatusWithName(
                 watchdogCDStatusRepository.findByDistributionId(notificationData.getDistributionID()), MSO);
 
-        verify(vfResourceStructure, times(3)).getResourceInstance();
-        verify(vfResourceStructure, times(5)).getNotification();
+        verify(vfResourceStruct, times(3)).getResourceInstance();
+        verify(vfResourceStruct, times(5)).getNotification();
         assertThat(actualWatchdogComponentDistributionStatus,
                 sameBeanAs(expectedComponentDistributionStatus).ignoring("createTime").ignoring("modifyTime"));
     }
@@ -199,24 +211,24 @@ public class ToscaResourceInstallerTest extends BaseTest {
         notificationData.setServiceUUID("serviceUUID");
         notificationData.setDistributionID("testStatusSuccess");
 
-        doThrow(RuntimeException.class).when(vfResourceStructure).isDeployedSuccessfully();
-        doReturn(notificationData).when(vfResourceStructure).getNotification();
-        doReturn(resourceInstance).when(vfResourceStructure).getResourceInstance();
+        doThrow(RuntimeException.class).when(vfResourceStruct).isDeployedSuccessfully();
+        doReturn(notificationData).when(vfResourceStruct).getNotification();
+        doReturn(resourceInstance).when(vfResourceStruct).getResourceInstance();
         doReturn("resourceInstanceName").when(resourceInstance).getResourceInstanceName();
         doReturn("resourceCustomizationUUID").when(resourceInstance).getResourceCustomizationUUID();
         doReturn("resourceName").when(resourceInstance).getResourceName();
 
-        toscaInstaller.isResourceAlreadyDeployed(vfResourceStructure, false);
+        toscaInstaller.isResourceAlreadyDeployed(vfResourceStruct, false);
 
-        verify(vfResourceStructure, times(3)).getResourceInstance();
-        verify(vfResourceStructure, times(4)).getNotification();
+        verify(vfResourceStruct, times(3)).getResourceInstance();
+        verify(vfResourceStruct, times(4)).getNotification();
     }
 
     @Test
     public void isResourceAlreadyDeployedExceptionTest() throws ArtifactInstallerException {
         expectedException.expect(ArtifactInstallerException.class);
 
-        toscaInstaller.isResourceAlreadyDeployed(vfResourceStructure, false);
+        toscaInstaller.isResourceAlreadyDeployed(vfResourceStruct, false);
     }
 
     @Test
@@ -257,6 +269,167 @@ public class ToscaResourceInstallerTest extends BaseTest {
         toscaInstaller.installTheComponentStatus(statusData);
     }
 
+    //@Test
+    public void installTheResourceWithGroupAndVFModulesTest() throws Exception {
+        ToscaResourceStructure toscaResourceStructObj = prepareToscaResourceStructure(true);
+
+        toscaInstaller.installTheResource(toscaResourceStructObj, vfResourceStruct);
+        assertEquals(true, toscaResourceStructObj.isDeployedSuccessfully());
+    }
+
+    //@Test
+    public void installTheResourceGroupWithoutVFModulesTest() throws Exception {
+        ToscaResourceStructure toscaResourceStructObj = prepareToscaResourceStructure(false);
+
+        toscaInstaller.installTheResource(toscaResourceStructObj, vfResourceStruct);
+        assertEquals(true, toscaResourceStructObj.isDeployedSuccessfully());
+    }
+
+    private ToscaResourceStructure prepareToscaResourceStructure(boolean prepareVFModuleStructures)
+            throws ArtifactInstallerException {
+        IArtifactInfo inputCsar = mock(IArtifactInfo.class);
+        String artifactUuid = "0122c05e-e13a-4c63-b5d2-475ccf13aa74";
+        String checkSum = "MGUzNjJjMzk3OTBkYzExYzQ0MDg2ZDc2M2E2ZjZiZmY=";
+
+        doReturn(checkSum).when(inputCsar).getArtifactChecksum();
+        doReturn(artifactUuid).when(inputCsar).getArtifactUUID();
+        doReturn("1.0").when(inputCsar).getArtifactVersion();
+        doReturn("TestCsarWithGroupAndVFModule").when(inputCsar).getArtifactName();
+        doReturn("Test Csar data with Group and VF module inputs").when(inputCsar).getArtifactDescription();
+        doReturn("http://localhost/dummy/url/test.csar").when(inputCsar).getArtifactURL();
+
+        ToscaResourceStructure toscaResourceStructObj = new ToscaResourceStructure();
+        toscaResourceStructObj.setToscaArtifact(inputCsar);
+
+        notificationData.setDistributionID("testStatusFailureTosca");
+        notificationData.setServiceVersion("123456");
+        notificationData.setServiceUUID("serviceUUID");
+        notificationData.setWorkloadContext("workloadContext");
+
+        serviceRepo = spy(ServiceRepository.class);
+
+        ReflectionTestUtils.setField(toscaInstaller, "serviceRepo", serviceRepo);
+
+        String serviceType = "test-type";
+        String serviceRole = "test-role";
+        String category = "Network L4+";
+        String description = "Customer Orderable service description";
+        String name = "Customer_Orderable_Service";
+        String uuid = "72db5868-4575-4804-b546-0b0d3c3b5ac6";
+        String invariantUUID = "6f30bbe3-4590-4185-a7e0-4f9610926c6f";
+        String namingPolicy = "naming Policy";
+        String ecompGeneratedNaming = "true";
+        String environmentContext = "General_Revenue-Bearing";
+        String resourceCustomizationUUID = "0177ba22-5547-4e4e-bcf8-178f7f71ce3a";
+
+        doReturn(serviceType).when(metadata).getValue("serviceType");
+        doReturn(serviceRole).when(metadata).getValue("serviceRole");
+
+        doReturn(category).when(metadata).getValue(SdcPropertyNames.PROPERTY_NAME_CATEGORY);
+        doReturn(description).when(metadata).getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION);
+        doReturn("1.0").when(metadata).getValue(SdcPropertyNames.PROPERTY_NAME_VERSION);
+        doReturn(name).when(metadata).getValue(SdcPropertyNames.PROPERTY_NAME_NAME);
+
+        doReturn(uuid).when(metadata).getValue(SdcPropertyNames.PROPERTY_NAME_UUID);
+
+        doReturn(environmentContext).when(metadata).getValue(metadata.getValue("environmentContext"));
+        doReturn(invariantUUID).when(metadata).getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID);
+        doReturn(namingPolicy).when(metadata).getValue("namingPolicy");
+        doReturn(ecompGeneratedNaming).when(metadata).getValue("ecompGeneratedNaming");
+        doReturn(resourceCustomizationUUID).when(metadata).getValue("vfModuleModelCustomizationUUID");
+
+        // doReturn(csarHelper).when(toscaResourceStructure).getSdcCsarHelper();
+        toscaResourceStructObj.setSdcCsarHelper(csarHelper);
+        doReturn(null).when(csarHelper).getNodeTemplatePropertyLeafValue(nodeTemplate,
+                SdcPropertyNames.PROPERTY_NAME_NFFUNCTION);
+        doReturn(null).when(csarHelper).getNodeTemplatePropertyLeafValue(nodeTemplate,
+                SdcPropertyNames.PROPERTY_NAME_NFROLE);
+        doReturn(null).when(csarHelper).getNodeTemplatePropertyLeafValue(nodeTemplate,
+                SdcPropertyNames.PROPERTY_NAME_NFTYPE);
+        doReturn(resourceCustomizationUUID).when(csarHelper).getMetadataPropertyValue(metadata,
+                SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
+        doReturn(uuid).when(csarHelper).getMetadataPropertyValue(metadata,
+                SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELUUID);
+
+
+        // vnfc instance group list
+        List<Group> vnfcInstanceGroupList = new ArrayList<>();
+        Group vnfcG1 = mock(Group.class);
+        Map<String, Object> metaProperties = new HashMap<>();
+        metaProperties.put(SdcPropertyNames.PROPERTY_NAME_UUID, "vnfc_group1_uuid");
+        metaProperties.put(SdcPropertyNames.PROPERTY_NAME_NAME, "vnfc_group1_uuid");
+        metaProperties.put(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID, "vnfc_group1_invariantid");
+        metaProperties.put(SdcPropertyNames.PROPERTY_NAME_VERSION, "1.0");
+        Metadata vnfcmetadata = new Metadata(metaProperties);
+
+        doReturn(vnfcmetadata).when(vnfcG1).getMetadata();
+        ArrayList<NodeTemplate> memberList = new ArrayList();
+        doReturn(memberList).when(vnfcG1).getMemberNodes();
+        vnfcInstanceGroupList.add(vnfcG1);
+        SubstitutionMappings submappings = mock(SubstitutionMappings.class);
+        doReturn(new ArrayList<Input>()).when(submappings).getInputs();
+        doReturn(submappings).when(nodeTemplate).getSubMappingToscaTemplate();
+
+        doReturn(vnfcInstanceGroupList).when(csarHelper).getGroupsOfOriginOfNodeTemplateByToscaGroupType(nodeTemplate,
+                "org.openecomp.groups.VfcInstanceGroup");
+
+
+        doReturn(notificationData).when(vfResourceStruct).getNotification();
+        doReturn(resourceInstance).when(vfResourceStruct).getResourceInstance();
+
+        if (prepareVFModuleStructures) {
+
+            // VfModule list
+            List<Group> vfModuleGroups = new ArrayList<>();
+            Group g1 = mock(Group.class);
+            doReturn(metadata).when(g1).getMetadata();
+            vfModuleGroups.add(g1);
+
+            doReturn(vfModuleGroups).when(csarHelper).getVfModulesByVf(resourceCustomizationUUID);
+            doReturn("1").when(csarHelper).getGroupPropertyLeafValue(g1, SdcPropertyNames.PROPERTY_NAME_INITIALCOUNT);
+
+            doReturn(metadata).when(nodeTemplate).getMetaData();
+            List<NodeTemplate> nodeList = new ArrayList<>();
+            nodeList.add(nodeTemplate);
+            doReturn(nodeList).when(csarHelper).getServiceVfList();
+
+            IVfModuleData moduleMetadata = mock(IVfModuleData.class);
+            doReturn(name).when(moduleMetadata).getVfModuleModelName();
+            doReturn(invariantUUID).when(moduleMetadata).getVfModuleModelInvariantUUID();
+            doReturn(Collections.<String>emptyList()).when(moduleMetadata).getArtifacts();
+            doReturn(resourceCustomizationUUID).when(moduleMetadata).getVfModuleModelCustomizationUUID();
+            doReturn(uuid).when(moduleMetadata).getVfModuleModelUUID();
+            doReturn("1.0").when(moduleMetadata).getVfModuleModelVersion();
+
+            VfModuleStructure moduleStructure = new VfModuleStructure(vfResourceStruct, moduleMetadata);
+
+            List<VfModuleStructure> moduleStructures = new ArrayList<>();
+            moduleStructures.add(moduleStructure);
+            doReturn(moduleStructures).when(vfResourceStruct).getVfModuleStructure();
+        }
+
+        toscaResourceStructObj.setServiceMetadata(metadata);
+        doReturn("resourceInstanceName").when(resourceInstance).getResourceInstanceName();
+        doReturn(resourceCustomizationUUID).when(resourceInstance).getResourceCustomizationUUID();
+        doReturn("resourceName").when(resourceInstance).getResourceName();
+
+        Service service = toscaInstaller.createService(toscaResourceStructObj, vfResourceStruct);
+
+        assertNotNull(service);
+        service.setModelVersion("1.0");
+
+        doReturn(service).when(serviceRepo).save(service);
+
+        VnfcInstanceGroupCustomizationRepository vnfcInstanceGroupCustomizationRepo =
+                spy(VnfcInstanceGroupCustomizationRepository.class);
+        ReflectionTestUtils.setField(toscaInstaller, "vnfcInstanceGroupCustomizationRepo",
+                vnfcInstanceGroupCustomizationRepo);
+        doReturn(null).when(vnfcInstanceGroupCustomizationRepo).save(any(VnfcInstanceGroupCustomization.class));
+        return toscaResourceStructObj;
+    }
+
+
+
     @Test
     public void installTheResourceExceptionTest() throws Exception {
         expectedException.expect(ArtifactInstallerException.class);
@@ -266,10 +439,10 @@ public class ToscaResourceInstallerTest extends BaseTest {
         notificationData.setServiceUUID("serviceUUID");
         notificationData.setWorkloadContext("workloadContext");
 
-        doReturn(notificationData).when(vfResourceStructure).getNotification();
-        doReturn(resourceInstance).when(vfResourceStructure).getResourceInstance();
+        doReturn(notificationData).when(vfResourceStruct).getNotification();
+        doReturn(resourceInstance).when(vfResourceStruct).getResourceInstance();
 
-        toscaInstaller.installTheResource(toscaResourceStruct, vfResourceStructure);
+        toscaInstaller.installTheResource(toscaResourceStruct, vfResourceStruct);
     }
 
     @Test
@@ -279,11 +452,11 @@ public class ToscaResourceInstallerTest extends BaseTest {
         notificationData.setServiceUUID("serviceUUID");
         notificationData.setWorkloadContext("workloadContext");
 
-        doReturn(notificationData).when(vfResourceStructure).getNotification();
-        doReturn(resourceInstance).when(vfResourceStructure).getResourceInstance();
+        doReturn(notificationData).when(vfResourceStruct).getNotification();
+        doReturn(resourceInstance).when(vfResourceStruct).getResourceInstance();
         doThrow(LockAcquisitionException.class).when(toscaResourceStruct).getToscaArtifact();
 
-        toscaInstaller.installTheResource(toscaResourceStruct, vfResourceStructure);
+        toscaInstaller.installTheResource(toscaResourceStruct, vfResourceStruct);
     }
 
     @Test
