@@ -84,8 +84,9 @@ public class AuditVServer extends AbstractAudit {
             try {
                 logger.debug("Vserver to Audit: {}", objectMapper.getMapper().writeValueAsString(vserver));
             } catch (JsonProcessingException e) {
-
+                logger.error("Json parse exception: {}", e.getMessage());
             }
+
         });
         AAIObjectAuditList auditList = new AAIObjectAuditList();
         vServersToAudit.stream().forEach(vServer -> auditList.getAuditList()

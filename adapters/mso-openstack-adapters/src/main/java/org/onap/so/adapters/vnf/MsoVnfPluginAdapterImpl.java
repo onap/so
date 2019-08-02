@@ -616,7 +616,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             vnfResource = vfModuleCust.getVfModule().getVnfResources();
         } catch (Exception e) {
 
-            logger.debug("unhandled exception in create VF - [Query]" + e.getMessage());
+            logger.debug("unhandled exception in create VF - [Query] {}", e.getMessage());
             throw new VnfException("Exception during create VF " + e.getMessage());
         }
 
