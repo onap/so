@@ -113,14 +113,17 @@ public class AAICreateTasks {
      * @throws @return
      */
     public void createServiceInstance(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAICreateTasks createServiceInstance Process");
         try {
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
             Customer customer = execution.getGeneralBuildingBlock().getCustomer();
             aaiSIResources.createServiceInstance(serviceInstance, customer);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in  AAICreateTasks createServiceInstance");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAICreateTasks createServiceInstance");
     }
 
     /**
@@ -130,6 +133,7 @@ public class AAICreateTasks {
      * @throws @return
      */
     public void createServiceSubscription(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAICreateTasks createServiceSubscription Process");
         try {
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
@@ -144,10 +148,13 @@ public class AAICreateTasks {
             }
             aaiSIResources.createServiceSubscription(customer);
         } catch (BpmnError ex) {
+            logger.debug("BPMN Exception occurred during AAICreateTasks createServiceSubscription");
             throw ex;
         } catch (Exception ex) {
+            logger.debug("Exception occurred during AAICreateTasks createServiceSubscription");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAICreateTasks createServiceSubscription");
     }
 
     /**
@@ -157,6 +164,7 @@ public class AAICreateTasks {
      * @throws @return
      */
     public void createProject(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAICreateTasks createProject Process");
         try {
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
@@ -169,8 +177,10 @@ public class AAICreateTasks {
                 }
             }
         } catch (Exception ex) {
+            logger.debug("Exception occurred during AAICreateTasks createProject");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAICreateTasks createProject");
     }
 
     /**
@@ -180,6 +190,7 @@ public class AAICreateTasks {
      * @throws @return
      */
     public void createOwningEntity(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAICreateTasks createOwningEntity Process");
         try {
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
@@ -214,8 +225,10 @@ public class AAICreateTasks {
                 }
             }
         } catch (Exception ex) {
+            logger.debug("Exception occurred in AAICreateTasks createOwningEntity");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAICreateTasks createOwningEntity");
     }
 
     /**
@@ -229,6 +242,7 @@ public class AAICreateTasks {
      * @throws @return
      */
     public void createVnf(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAICreateTasks createVnf Process");
         try {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
             ServiceInstance serviceInstance =
@@ -236,17 +250,20 @@ public class AAICreateTasks {
             execution.setVariable("homing", Boolean.TRUE.equals(vnf.isCallHoming()));
             aaiVnfResources.createVnfandConnectServiceInstance(vnf, serviceInstance);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in  AAICreateTasks for createVnf");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAICreateTasks createVnf");
     }
 
     /**
-     * This method is used for separating (,) from the string.
-     *
-     * @param str
+     * This method is used for creating the platform in A&AI.
+     * 
+     * @param execution
      * @throws @return
      */
     public void createPlatform(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAICreateTasks createPlatform Process");
         try {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
             Platform platform = vnf.getPlatform();
@@ -260,8 +277,10 @@ public class AAICreateTasks {
                 }
             }
         } catch (Exception ex) {
+            logger.debug("Exception Occurred in AAICreateTasks createPlatform");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAICreateTasks createPlatform");
 
     }
 
@@ -282,6 +301,7 @@ public class AAICreateTasks {
      * @throws @return
      */
     public void createLineOfBusiness(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAICreateTasks createLineOfBusiness Process");
         try {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
             LineOfBusiness lineOfBusiness = vnf.getLineOfBusiness();
@@ -296,8 +316,10 @@ public class AAICreateTasks {
                 }
             }
         } catch (Exception ex) {
+            logger.debug("Exception occurred in  AAICreateTasks createLineOfBusiness");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAICreateTasks createLineOfBusiness");
     }
 
     /**
@@ -307,6 +329,7 @@ public class AAICreateTasks {
      * @throws @return
      */
     public void createVolumeGroup(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAICreateTasks createVolumeGroup Process");
         try {
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
 
@@ -317,8 +340,10 @@ public class AAICreateTasks {
             aaiVolumeGroupResources.connectVolumeGroupToVnf(genericVnf, volumeGroup, cloudRegion);
             aaiVolumeGroupResources.connectVolumeGroupToTenant(volumeGroup, cloudRegion);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in AAICreateTasks createVolumeGroup");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAICreateTasks createVolumeGroup");
     }
 
     /**
@@ -328,6 +353,7 @@ public class AAICreateTasks {
      * @throws @return
      */
     public void createVfModule(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAICreateTasks createVfModule Process");
         try {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
             VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
@@ -339,8 +365,10 @@ public class AAICreateTasks {
             vfModule.setModuleIndex(moduleIndex);
             aaiVfModuleResources.createVfModule(vfModule, vnf);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in  AAICreateTasks createVfModule");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAICreateTasks createVfModule");
     }
 
     /**
@@ -350,6 +378,7 @@ public class AAICreateTasks {
      * @throws Exception
      */
     public void connectVfModuleToVolumeGroup(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAICreateTasks connectVfModuleToVolumeGroup Process");
         try {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
             VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
@@ -364,8 +393,10 @@ public class AAICreateTasks {
                         execution.getGeneralBuildingBlock().getCloudRegion());
             }
         } catch (Exception ex) {
+            logger.debug("Exception occurred in  AAICreateTasks connectVfModuleToVolumeGroup");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAICreateTasks connectVfModuleToVolumeGroup");
     }
 
     /**
@@ -375,6 +406,7 @@ public class AAICreateTasks {
      * @throws Exception
      */
     public void createNetwork(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAICreateTasks createNetwork process");
         try {
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
@@ -387,8 +419,10 @@ public class AAICreateTasks {
             // put network shell in AAI
             aaiNetworkResources.createNetworkConnectToServiceInstance(l3network, serviceInstance);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in  AAICreateTasks createNetwork");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAICreateTasks createNetwork");
     }
 
     /**
@@ -398,13 +432,16 @@ public class AAICreateTasks {
      * @throws Exception
      */
     public void createCustomer(BuildingBlockExecution execution) throws Exception {
+        logger.debug("STARTED AAICreateTasks createCustomer process");
         try {
             Customer customer = execution.getGeneralBuildingBlock().getCustomer();
 
             aaiVpnBindingResources.createCustomer(customer);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in  AAICreateTasks createCustomer");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAICreateTasks createCustomer");
     }
 
     /**
@@ -414,17 +451,21 @@ public class AAICreateTasks {
      * @throws Exception
      */
     public void createNetworkCollection(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAICreateTasks createNetworkCollection");
         try {
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
             Collection networkCollection = serviceInstance.getCollection();
-            // pass name generated for NetworkCollection/NetworkCollectionInstanceGroup in previous step of the BB flow
+            // pass name generated for NetworkCollection/NetworkCollectionInstanceGroup in
+            // previous step of the BB flow
             // put shell in AAI
             networkCollection.setName(execution.getVariable(NETWORK_COLLECTION_NAME));
             aaiNetworkResources.createNetworkCollection(networkCollection);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in AAICreateTasks createNetworkCollection");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAICreateTasks createNetworkCollection");
     }
 
     /**
@@ -438,7 +479,8 @@ public class AAICreateTasks {
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
             InstanceGroup instanceGroup = serviceInstance.getCollection().getInstanceGroup();
-            // set name generated for NetworkCollection/NetworkCollectionInstanceGroup in previous step of the BB flow
+            // set name generated for NetworkCollection/NetworkCollectionInstanceGroup in
+            // previous step of the BB flow
             instanceGroup.setInstanceGroupName(execution.getVariable(NETWORK_COLLECTION_NAME));
             // put shell in AAI
             aaiNetworkResources.createNetworkInstanceGroup(instanceGroup);
@@ -446,7 +488,6 @@ public class AAICreateTasks {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
-
 
     /**
      * BPMN access method to establish relationships in AAI
@@ -541,6 +582,7 @@ public class AAICreateTasks {
      * @throws Exception
      */
     public void connectNetworkToNetworkCollectionInstanceGroup(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAICreateTasks connectNetworkToNetworkCollectionInstanceGroup process");
         try {
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
@@ -550,8 +592,10 @@ public class AAICreateTasks {
                 aaiNetworkResources.connectNetworkToNetworkCollectionInstanceGroup(l3network,
                         serviceInstance.getCollection().getInstanceGroup());
         } catch (Exception ex) {
+            logger.debug("Exception occurred in AAICreateTasks connectNetworkToNetworkCollectionInstanceGroup");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAICreateTasks connectNetworkToNetworkCollectionInstanceGroup");
     }
 
     /**
@@ -560,12 +604,15 @@ public class AAICreateTasks {
      * @param execution @throws
      */
     public void createConfiguration(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAICreateTasks createConfiguration process");
         try {
             Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID);
             aaiConfigurationResources.createConfiguration(configuration);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in AAICreateTasks createConfiguration");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAICreateTasks createConfiguration");
     }
 
     /**
@@ -574,14 +621,17 @@ public class AAICreateTasks {
      * @param execution @throws
      */
     public void createInstanceGroupVnf(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAICreateTasks createInstanceGroupVnf process");
         try {
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
             InstanceGroup instanceGroup = extractPojosForBB.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID);
             aaiInstanceGroupResources.createInstanceGroupandConnectServiceInstance(instanceGroup, serviceInstance);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in  AAICreateTasks createInstanceGroupVnf");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAICreateTasks createInstanceGroupVnf");
     }
 
     /**
@@ -590,6 +640,7 @@ public class AAICreateTasks {
      * @param execution @throws
      */
     public void createNetworkPolicies(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAICreateTasks createNetworkPolicies process");
         try {
             String fqdns = execution.getVariable(CONTRAIL_NETWORK_POLICY_FQDN_LIST);
             if (fqdns != null && !fqdns.isEmpty()) {
@@ -617,8 +668,10 @@ public class AAICreateTasks {
                 }
             }
         } catch (Exception ex) {
+            logger.debug("Exception occurred in  AAICreateTasks createNetworkPolicies");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAICreateTasks createNetworkPolicies");
     }
 
     /**
@@ -634,7 +687,6 @@ public class AAICreateTasks {
         if (newVfModule.getModelInfoVfModule() != null) {
             newVfModuleModelInvariantUUID = newVfModule.getModelInfoVfModule().getModelInvariantUUID();
         }
-
 
         if (genericVnf != null && genericVnf.getVfModules() != null && !genericVnf.getVfModules().isEmpty()) {
             List<VfModule> modules = genericVnf.getVfModules().stream()
@@ -668,7 +720,8 @@ public class AAICreateTasks {
         Integer[] array = moduleIndices.toArray(temp);
         int result = 0;
         // when a null is found skip that potential value
-        // effectively creates something like, [0,1,3,null,null] -> [0,1,null(2),3,null(4)]
+        // effectively creates something like, [0,1,3,null,null] ->
+        // [0,1,null(2),3,null(4)]
         for (int i = 0; i < array.length; i++, result++) {
             if (Integer.valueOf(result) != array[i]) {
                 if (nullIndexFound > 0) {

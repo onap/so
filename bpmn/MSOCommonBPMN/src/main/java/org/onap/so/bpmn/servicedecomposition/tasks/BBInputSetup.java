@@ -163,6 +163,7 @@ public class BBInputSetup implements JavaDelegate {
      */
     @Override
     public void execute(DelegateExecution execution) throws Exception {
+        logger.debug("STARTED BBInputSetup execute Process");
         try {
             GeneralBuildingBlock outputBB = null;
             ExecuteBuildingBlock executeBB = this.getExecuteBBFromExecution(execution);
@@ -191,6 +192,7 @@ public class BBInputSetup implements JavaDelegate {
             logger.error("Exception occurred", e);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, e.getMessage());
         }
+        logger.debug("ENDED BBInputSetup execute");
     }
 
     protected void setHomingFlag(GeneralBuildingBlock outputBB, boolean homing, Map<ResourceKey, String> lookupKeyMap) {
@@ -381,7 +383,8 @@ public class BBInputSetup implements JavaDelegate {
 
     protected void mapCatalogInstanceGroup(InstanceGroup instanceGroup, ModelInfo modelInfo, Service service) {
         // @TODO: this will populate the instanceGroup model info.
-        // Dependent on MSO-5821 653458 US - MSO - Enhance Catalog DB Schema & Adapter to support VNF Groups
+        // Dependent on MSO-5821 653458 US - MSO - Enhance Catalog DB Schema & Adapter
+        // to support VNF Groups
     }
 
     protected void populateConfiguration(ModelInfo modelInfo, Service service, String bbName,
@@ -888,7 +891,6 @@ public class BBInputSetup implements JavaDelegate {
                 project = mapperLayer.mapRequestProject(requestDetails.getProject());
             if (requestDetails.getOwningEntity() != null)
                 owningEntity = mapperLayer.mapRequestOwningEntity(requestDetails.getOwningEntity());
-
 
             Service service =
                     bbInputSetupUtils.getCatalogServiceByModelUUID(requestDetails.getModelInfo().getModelVersionId());
@@ -1563,12 +1565,14 @@ public class BBInputSetup implements JavaDelegate {
      */
     public ServiceInstance getExistingServiceInstance(org.onap.aai.domain.yang.ServiceInstance serviceInstanceAAI)
             throws Exception {
+        logger.debug("STARTED BBInputSetup getExistingServiceInstance Process");
         ServiceInstance serviceInstance = mapperLayer.mapAAIServiceInstanceIntoServiceInstance(serviceInstanceAAI);
         if (serviceInstanceAAI.getRelationshipList() != null
                 && serviceInstanceAAI.getRelationshipList().getRelationship() != null
                 && !serviceInstanceAAI.getRelationshipList().getRelationship().isEmpty()) {
             addRelationshipsToSI(serviceInstanceAAI, serviceInstance);
         }
+        logger.debug("ENDED BBInputSetup getExistingServiceInstance");
         return serviceInstance;
     }
 
@@ -1935,6 +1939,5 @@ public class BBInputSetup implements JavaDelegate {
         }
         return customer;
     }
-
 
 }

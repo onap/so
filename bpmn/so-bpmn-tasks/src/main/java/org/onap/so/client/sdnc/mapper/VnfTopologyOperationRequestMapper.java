@@ -46,11 +46,15 @@ import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoInstanceGroup;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
 import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class VnfTopologyOperationRequestMapper {
+
+    private static final Logger logger = LoggerFactory.getLogger(VnfTopologyOperationRequestMapper.class);
 
     @Autowired
     private GeneralTopologyObjectMapper generalTopologyObjectMapper;
@@ -75,6 +79,7 @@ public class VnfTopologyOperationRequestMapper {
             GenericResourceApiRequestActionEnumeration requestAction, GenericVnf vnf, ServiceInstance serviceInstance,
             Customer customer, CloudRegion cloudRegion, RequestContext requestContext, boolean homing,
             URI callbackUrl) {
+        logger.debug("STARTED VnfTopologyOperationRequestMapper reqMapper process");
         String sdncReqId = UUID.randomUUID().toString();
         String msoRequestId = UUID.randomUUID().toString();
         if (requestContext != null && requestContext.getMsoRequestId() != null) {
@@ -159,6 +164,7 @@ public class VnfTopologyOperationRequestMapper {
         vnfRequestInput.setVnfNetworkInstanceGroupIds(networkInstanceGroupIdList);
         vnfRequestInput.setVnfInputParameters(vnfInputParameters);
         req.setVnfRequestInput(vnfRequestInput);
+        logger.debug("ENDED VnfTopologyOperationRequestMapper reqMapper");
         return req;
     }
 }

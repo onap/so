@@ -151,7 +151,24 @@ public class WorkflowAction {
         this.bbInputSetup = bbInputSetup;
     }
 
+    /**
+     * This method is used for fetching all the list of the BuildingBlocks from the OrchestrationFlow.
+     *
+     * Based on the aLaCarte it will query NorthBoundRequestCatalogDb .
+     *
+     * If the aLaCarte is false based on the requestAction & resourceType it will query again to
+     * NorthBoundRequestCatalogDb for BuildingBlocks.
+     *
+     * Once it will true then it will get the BuildingBlocks.
+     *
+     * It will set the flowNames,BBConstants, retryCount etc. and execute the flow.
+     *
+     * @param execution
+     * @throws Exception
+     * @return
+     */
     public void selectExecutionList(DelegateExecution execution) throws Exception {
+        logger.debug("STARTED WorkflowAction selectExecutionList process");
         final String requestAction = (String) execution.getVariable(BBConstants.G_ACTION);
         final String requestId = (String) execution.getVariable(BBConstants.G_REQUEST_ID);
         final String bpmnRequest = (String) execution.getVariable(BBConstants.G_BPMN_REQUEST);
@@ -355,7 +372,8 @@ public class WorkflowAction {
                     }
                 }
             }
-            // If the user set "Homing_Solution" to "none", disable homing, else if "Homing_Solution" is specified,
+            // If the user set "Homing_Solution" to "none", disable homing, else if
+            // "Homing_Solution" is specified,
             // enable it.
             if (sIRequest.getRequestDetails().getRequestParameters() != null
                     && sIRequest.getRequestDetails().getRequestParameters().getUserParams() != null) {
@@ -393,8 +411,10 @@ public class WorkflowAction {
             execution.setVariable("isRollbackComplete", false);
 
         } catch (Exception ex) {
+            logger.debug("Exception occurred in WorkflowAction selectExecutionList");
             buildAndThrowException(execution, "Exception in create execution list. " + ex.getMessage(), ex);
         }
+        logger.debug("ENDED WorkflowAction selectExecutionList");
     }
 
     protected <T> List<T> getRelatedResourcesInVfModule(String vnfId, String vfModuleId, Class<T> resultClass,
@@ -1606,4 +1626,3 @@ public class WorkflowAction {
                 && (bbInputSetupUtils.getAAIServiceInstanceById(serviceInstanceId) != null));
     }
 }
-
