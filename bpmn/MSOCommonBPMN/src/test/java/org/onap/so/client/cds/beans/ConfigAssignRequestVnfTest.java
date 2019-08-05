@@ -31,7 +31,7 @@ public class ConfigAssignRequestVnfTest {
     ConfigAssignPropertiesForVnf configAssignPropertiesForVnf = new ConfigAssignPropertiesForVnf();
     private Map<String, Object> userParam = new HashMap<String, Object>();
 
-    private String resolutionKey;
+    private String resolutionKey = null;
 
     @Test
     public final void testConfigAssignRequestVnf() {
