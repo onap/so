@@ -20,6 +20,7 @@
 package org.onap.so.bpmn.infrastructure.appc.tasks;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
@@ -29,18 +30,24 @@ import java.util.Optional;
 import java.util.UUID;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.onap.appc.client.lcm.model.Action;
 import org.onap.so.BaseIntegrationTest;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestParameters;
+import org.onap.so.client.orchestration.AAIVnfResources;
 import org.onap.so.db.catalog.beans.ControllerSelectionReference;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 public class AppcRunTasksIT extends BaseIntegrationTest {
 
     @Autowired
     private AppcRunTasks appcRunTasks;
+
+    @MockBean
+    protected AAIVnfResources aaiVnfResources;
 
     private GenericVnf genericVnf;
     private RequestContext requestContext;
@@ -57,6 +64,7 @@ public class AppcRunTasksIT extends BaseIntegrationTest {
 
     @Test
     public void preProcessActivityTest() throws Exception {
+        doReturn(null).when(aaiVnfResources).queryVnfWrapperById(any(GenericVnf.class));
         appcRunTasks.preProcessActivity(execution);
         assertEquals(execution.getVariable("actionQuiesceTraffic"), Action.QuiesceTraffic);
         assertEquals(execution.getVariable("rollbackQuiesceTraffic"), false);
