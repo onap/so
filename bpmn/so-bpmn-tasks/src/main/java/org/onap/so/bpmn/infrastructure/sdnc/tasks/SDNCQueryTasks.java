@@ -65,6 +65,7 @@ public class SDNCQueryTasks {
      * @throws Exception
      */
     public void queryVnf(BuildingBlockExecution execution) throws Exception {
+        logger.debug("STARTED SDNCQueryTasks queryVnf process");
         ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
         GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 
@@ -78,14 +79,17 @@ public class SDNCQueryTasks {
             String response = sdncVnfResources.queryVnf(genericVnf);
             execution.setVariable(SDNCQUERY_RESPONSE + genericVnf.getVnfId(), response);
         } catch (BadResponseException ex) {
+            logger.debug("Error occurred for badresponxe in SDNCQueryTasks queryVnf");
             if (!ex.getMessage().equals(NO_RESPONSE_FROM_SDNC)) {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SDNC);
             } else {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SO);
             }
         } catch (Exception ex) {
+            logger.debug("Error occurred in SDNCQueryTasks queryVnf");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SO);
         }
+        logger.debug("ENDED SDNCQueryTasks queryVnf");
     }
 
     /**
@@ -97,6 +101,7 @@ public class SDNCQueryTasks {
      * @throws Exception
      */
     public void queryVfModule(BuildingBlockExecution execution) throws Exception {
+        logger.debug("STARTED SDNCQueryTasks queryVfModule process");
         ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
         GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
         VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
@@ -116,14 +121,17 @@ public class SDNCQueryTasks {
                         + " exists in gBuildingBlock but does not have a selflink value");
             }
         } catch (BadResponseException ex) {
+            logger.debug("Error occurred for badresponse on SDNCQueryTasks queryVfModule");
             if (!ex.getMessage().equals(NO_RESPONSE_FROM_SDNC)) {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SDNC);
             } else {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SO);
             }
         } catch (Exception ex) {
+            logger.debug("Error occurred in SDNCQueryTasks queryVfModule");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED SDNCQueryTasks queryVfModule");
     }
 
     /**
@@ -134,6 +142,7 @@ public class SDNCQueryTasks {
      * @param execution @throws
      */
     public void queryVfModuleForVolumeGroup(BuildingBlockExecution execution) {
+        logger.debug("STARTED SDNCQueryTasks queryVfModuleForVolumeGroup process");
         try {
             VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
             if (vfModule.getSelflink() != null && !vfModule.getSelflink().isEmpty()) {
@@ -144,21 +153,27 @@ public class SDNCQueryTasks {
                         + " exists in gBuildingBlock but does not have a selflink value");
             }
         } catch (BBObjectNotFoundException bbException) {
-            // If there is not a vf module in the general building block, we will not call SDNC and proceed as normal
+            logger.debug("Error occurred if bb object not found in SDNCQueryTasks queryVfModuleForVolumeGroup");
+            // If there is not a vf module in the general building block, we will not call
+            // SDNC and proceed as normal
             // without throwing an error
-            // If we see a bb object not found exception for something that is not a vf module id, then we should throw
+            // If we see a bb object not found exception for something that is not a vf
+            // module id, then we should throw
             // the error as normal
             if (!ResourceKey.VF_MODULE_ID.equals(bbException.getResourceKey())) {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 7000, bbException, TargetEntity.SO);
             }
         } catch (BadResponseException ex) {
+            logger.debug("Error occurred for BadResponseException in SDNCQueryTasks queryVfModuleForVolumeGroup");
             if (!ex.getMessage().equals(NO_RESPONSE_FROM_SDNC)) {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SDNC);
             } else {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SO);
             }
         } catch (Exception ex) {
+            logger.debug("Error occurred in SDNCQueryTasks queryVfModuleForVolumeGroup");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SO);
         }
+        logger.debug("ENDED SDNCQueryTasks queryVfModuleForVolumeGroup");
     }
 }

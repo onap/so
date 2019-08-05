@@ -55,7 +55,6 @@ public class OrchestrationStatusValidator {
     private static final String MULTI_STAGE_DESIGN_OFF = "false";
     private static final String MULTI_STAGE_DESIGN_ON = "true";
 
-
     @Autowired
     private ExtractPojosForBB extractPojosForBB;
     @Autowired
@@ -69,6 +68,7 @@ public class OrchestrationStatusValidator {
      * @param execution
      */
     public void validateOrchestrationStatus(BuildingBlockExecution execution) {
+        logger.debug("STARTED OrchestrationStatusValidator validateOrchestrationStatus process");
         try {
             OrchestrationStatusValidationDirective previousOrchestrationStatusValidationResult =
                     execution.getVariable(ORCHESTRATION_STATUS_VALIDATION_RESULT);
@@ -137,7 +137,8 @@ public class OrchestrationStatusValidator {
                             OrchestrationStatusValidationDirective.VALIDATION_SKIPPED);
                     return;
                 default:
-                    // can't currently get here, so not tested. Added in case enum is expanded without a change to this
+                    // can't currently get here, so not tested. Added in case enum is expanded
+                    // without a change to this
                     // code
                     throw new OrchestrationStatusValidationException(
                             String.format(UNKNOWN_RESOURCE_TYPE, buildingBlockFlowName,
@@ -172,6 +173,8 @@ public class OrchestrationStatusValidator {
             execution.setVariable(ORCHESTRATION_STATUS_VALIDATION_RESULT,
                     orchestrationStatusStateTransitionDirective.getFlowDirective());
         } catch (BBObjectNotFoundException ex) {
+            logger.debug(
+                    "Error occurred for bb object notfound in OrchestrationStatusValidator validateOrchestrationStatus");
             if (execution.getFlowToBeCalled().contains("Unassign")) {
                 execution.setVariable(ORCHESTRATION_STATUS_VALIDATION_RESULT,
                         OrchestrationStatusValidationDirective.SILENT_SUCCESS);
@@ -179,8 +182,10 @@ public class OrchestrationStatusValidator {
                 exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, ex);
             }
         } catch (Exception e) {
+            logger.debug("Error occurred in OrchestrationStatusValidator validateOrchestrationStatus");
             exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, e);
         }
+        logger.debug("ENDED OrchestrationStatusValidator validateOrchestrationStatus");
     }
 
     private OrchestrationStatusStateTransitionDirective processPossibleSecondStageofVfModuleCreate(

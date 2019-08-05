@@ -83,6 +83,7 @@ public class SDNCAssignTasks extends AbstractSDNCTask {
      * @param execution
      */
     public void assignServiceInstance(BuildingBlockExecution execution) {
+        logger.debug("STARTED SDNCAssignTasks assignServiceInstance process");
         try {
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
             RequestContext requestContext = gBBInput.getRequestContext();
@@ -96,8 +97,10 @@ public class SDNCAssignTasks extends AbstractSDNCTask {
             sdncRequest.setTopology(SDNCTopology.SERVICE);
             execution.setVariable(SDNC_REQUEST, sdncRequest);
         } catch (Exception ex) {
+            logger.debug("Exception Occured in  SDNCAssignTasks assignServiceInstance");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED SDNCAssignTasks assignServiceInstance");
     }
 
     /**
@@ -108,6 +111,7 @@ public class SDNCAssignTasks extends AbstractSDNCTask {
      * @param execution
      */
     public void assignVnf(BuildingBlockExecution execution) {
+        logger.debug("STARTED SDNCAssignTasks assignVnf process");
         try {
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
             RequestContext requestContext = gBBInput.getRequestContext();
@@ -125,8 +129,10 @@ public class SDNCAssignTasks extends AbstractSDNCTask {
             sdncRequest.setTopology(SDNCTopology.VNF);
             execution.setVariable(SDNC_REQUEST, sdncRequest);
         } catch (Exception ex) {
+            logger.debug("Exception occured in  SDNCAssignTasks assignVnf");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED SDNCAssignTasks assignVnf");
     }
 
     /**
@@ -137,6 +143,7 @@ public class SDNCAssignTasks extends AbstractSDNCTask {
      * @param execution
      */
     public void assignVfModule(BuildingBlockExecution execution) {
+        logger.debug("STARTED SDNCAssignTasks assignVfModule process");
         try {
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
             RequestContext requestContext = gBBInput.getRequestContext();
@@ -160,8 +167,10 @@ public class SDNCAssignTasks extends AbstractSDNCTask {
             sdncRequest.setTopology(SDNCTopology.VFMODULE);
             execution.setVariable(SDNC_REQUEST, sdncRequest);
         } catch (Exception ex) {
+            logger.debug("Exception occured in  SDNCAssignTasks assignVfModule");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED SDNCAssignTasks assignVfModule");
     }
 
     /**

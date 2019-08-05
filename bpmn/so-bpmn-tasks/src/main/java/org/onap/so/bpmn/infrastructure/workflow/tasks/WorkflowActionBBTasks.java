@@ -85,7 +85,18 @@ public class WorkflowActionBBTasks {
     @Autowired
     private RequestsDbListenerRunner requestsDbListener;
 
+    /**
+     * This method is used to check the currentSequence of the flow to execute.
+     *
+     * It will get the currentSequence from execution object and increase its count by +1 and check if the
+     * currentSequence is grater than or equal to flowsToExecute size then set the currentSequence to the execution
+     * object to execute.
+     *
+     * @param execution
+     * @throws @return
+     */
     public void selectBB(DelegateExecution execution) {
+        logger.debug("STARTED WorkflowActionBBTasks selectBB Process");
         List<ExecuteBuildingBlock> flowsToExecute =
                 (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
         execution.setVariable("MacroRollback", false);
@@ -103,9 +114,20 @@ public class WorkflowActionBBTasks {
             execution.setVariable("completed", false);
         }
         execution.setVariable(G_CURRENT_SEQUENCE, currentSequence);
+        logger.debug("ENDEN WorkflowActionBBTasks selectBB");
     }
 
+    /**
+     * This method is used to update the FlowStatistics in RequestDBclient.
+     *
+     * It will get the currentSequence from execution and check if the currentSequence is grater than 1 then it will
+     * update the requestDbclient.
+     *
+     * @param execution
+     * @throws @return
+     */
     public void updateFlowStatistics(DelegateExecution execution) {
+        logger.debug("STARTED WorkflowActionBBTasks updateFlowStatistics Process");
         try {
             int currentSequence = (int) execution.getVariable(G_CURRENT_SEQUENCE);
             if (currentSequence > 1) {
@@ -116,6 +138,7 @@ public class WorkflowActionBBTasks {
             logger.warn(
                     "Bpmn Flow Statistics was unable to update Request Db with the new completion percentage. Competion percentage may be invalid.");
         }
+        logger.debug("ENDED WorkflowActionBBTasks updateFlowStatistics");
     }
 
     protected InfraActiveRequests getUpdatedRequest(DelegateExecution execution, int currentSequence) {
@@ -149,7 +172,16 @@ public class WorkflowActionBBTasks {
                 + ").";
     }
 
+    /**
+     * This method is used send the acknowledgement request.
+     *
+     * It will updated the status accordingly.
+     *
+     * @param execution
+     * @throws @return
+     */
     public void sendSyncAck(DelegateExecution execution) {
+        logger.debug("STARTED WorkflowActionBBTasks sendSyncAck Process");
         final String requestId = (String) execution.getVariable(G_REQUEST_ID);
         final String resourceId = (String) execution.getVariable("resourceId");
         ServiceInstancesResponse serviceInstancesResponse = new ServiceInstancesResponse();
@@ -162,6 +194,7 @@ public class WorkflowActionBBTasks {
         try {
             jsonRequest = mapper.writeValueAsString(serviceInstancesResponse);
         } catch (JsonProcessingException e) {
+            logger.debug("Exception occurred for processing JSON in WorkflowActionBBTasks sendSyncAck");
             workflowAction.buildAndThrowException(execution,
                     "Could not marshall ServiceInstancesRequest to Json string to respond to API Handler.", e);
         }
@@ -175,9 +208,19 @@ public class WorkflowActionBBTasks {
                 callbackResponse);
         logger.info("Successfully sent sync ack.");
         updateInstanceId(execution);
+        logger.debug("ENDED WorkflowActionBBTasks sendSyncAck");
     }
 
+    /**
+     * This method is used send the error acknowledgement.
+     *
+     * This will set the response and update the status.
+     *
+     * @param execution
+     * @throws @return
+     */
     public void sendErrorSyncAck(DelegateExecution execution) {
+        logger.debug("STARTED WorkflowActionBBTasks sendErrorSyncAck Process");
         final String requestId = (String) execution.getVariable(G_REQUEST_ID);
         try {
             ExceptionBuilder exceptionBuilder = new ExceptionBuilder();
@@ -199,9 +242,18 @@ public class WorkflowActionBBTasks {
             execution.setVariable("sentSyncResponse", true);
         } catch (Exception ex) {
             logger.error(" Sending Sync Error Activity Failed. {}", ex.getMessage(), ex);
+            logger.debug("ENDEN WorkflowActionBBTasks sendErrorSyncAck");
         }
     }
 
+    /**
+     * This method is used update the request status in RequestDB.
+     *
+     * It will update the requestDB according the macroAction if it is alacarte or macro.
+     *
+     * @param execution
+     * @throws @return
+     */
     public void updateRequestStatusToComplete(DelegateExecution execution) {
         try {
             final String requestId = (String) execution.getVariable(G_REQUEST_ID);
@@ -231,11 +283,22 @@ public class WorkflowActionBBTasks {
             requestsDbListener.post(request, new DelegateExecutionImpl(execution));
             requestDbclient.updateInfraActiveRequests(request);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in WorkflowActionBBTasks updateRequestStatusToComplete");
             workflowAction.buildAndThrowException(execution, "Error Updating Request Database", ex);
         }
+        logger.debug("ENDED WorkflowActionBBTasks updateRequestStatusToComplete");
     }
 
+    /**
+     * This method is used for retrying the status.
+     *
+     * It will retrieve based on the maxRetries & retrycount.
+     *
+     * @param execution
+     * @throws @return
+     */
     public void checkRetryStatus(DelegateExecution execution) {
+        logger.debug("STARTED WorkflowActionBBTasks checkRetryStatus Process");
         String handlingCode = (String) execution.getVariable("handlingCode");
         String requestId = (String) execution.getVariable(G_REQUEST_ID);
         String retryDuration = (String) execution.getVariable("RetryDuration");
@@ -269,6 +332,7 @@ public class WorkflowActionBBTasks {
         } else {
             execution.setVariable(RETRY_COUNT, 0);
         }
+        logger.debug("ENDED WorkflowActionBBTasks checkRetryStatus");
     }
 
     /**
@@ -358,7 +422,16 @@ public class WorkflowActionBBTasks {
         }
     }
 
+    /**
+     * This method is used for activating the VFmodules.
+     *
+     * It will check if the aLaCarte is success then it will execute the BB and activate the Vfmodule.
+     *
+     * @param execution
+     * @throws @return
+     */
     public void postProcessingExecuteBB(DelegateExecution execution) {
+        logger.debug("STARTED WorkflowActionBBTasks postProcessingExecuteBB Process");
         List<ExecuteBuildingBlock> flowsToExecute =
                 (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
         String handlingCode = (String) execution.getVariable("handlingCode");
@@ -369,6 +442,7 @@ public class WorkflowActionBBTasks {
         if (bbFlowName.equalsIgnoreCase("ActivateVfModuleBB") && aLaCarte && handlingCode.equalsIgnoreCase("Success")) {
             postProcessingExecuteBBActivateVfModule(execution, ebb, flowsToExecute);
         }
+        logger.debug("ENDEN WorkflowActionBBTasks postProcessingExecuteBB");
     }
 
     protected void postProcessingExecuteBBActivateVfModule(DelegateExecution execution, ExecuteBuildingBlock ebb,
