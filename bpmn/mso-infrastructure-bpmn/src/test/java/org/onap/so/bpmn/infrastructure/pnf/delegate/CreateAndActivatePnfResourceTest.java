@@ -63,7 +63,11 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
     public void shouldWaitForMessageFromDmaapAndUpdateAaiEntryWhenAaiEntryExists() {
         // given
         variables.put(PNF_CORRELATION_ID, PnfManagementTestImpl.ID_WITH_ENTRY);
-        variables.put("resourceInput", getUpdateResInputObj("OLT").toString());
+        if (getUpdateResInputObj("OLT") != null) {
+            variables.put("resourceInput", getUpdateResInputObj("OLT").toString());
+        } else {
+            variables.put("resourceInput", null);
+        }
         // when
         ProcessInstance instance =
                 runtimeService.startProcessInstanceByKey("CreateAndActivatePnfResource", "businessKey", variables);
