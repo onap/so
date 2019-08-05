@@ -59,7 +59,9 @@ public class CloudifyClientTokenProvider implements CloudifyTokenProvider {
         tokenRequest.setBasicAuthentication(user, password);
         Token newToken = tokenRequest.execute();
 
-        token = newToken.getValue();
+        if (newToken != null) {
+            token = newToken.getValue();
+        }
 
         if (expiration == null) {
             expiration = new Date();
