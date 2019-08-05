@@ -30,7 +30,7 @@ public class ConfigAssignRequestPnfTest {
     ConfigAssignRequestPnf configAssignRequestPnf = new ConfigAssignRequestPnf();
     ConfigAssignPropertiesForPnf configAssignPropertiesForPnf = new ConfigAssignPropertiesForPnf();
     private Map<String, Object> userParam = new HashMap<String, Object>();
-    private String resolutionKey;
+    private String resolutionKey = null;
 
     @Test
     public final void testConfigAssignRequestPnfTest() {
