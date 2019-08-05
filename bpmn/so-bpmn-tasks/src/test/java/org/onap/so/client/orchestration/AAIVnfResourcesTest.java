@@ -20,6 +20,8 @@
 
 package org.onap.so.client.orchestration;
 
+import static com.shazam.shazamcrest.MatcherAssert.assertThat;
+import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -31,6 +33,8 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,10 +58,13 @@ import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
+import org.onap.so.client.graphinventory.entities.uri.Depth;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class AAIVnfResourcesTest extends TestDataSetup {
+
+    private final static String JSON_FILE_LOCATION = "src/test/resources/__files/BuildingBlocks/";
 
     private GenericVnf genericVnf;
 
@@ -248,5 +255,38 @@ public class AAIVnfResourcesTest extends TestDataSetup {
         doReturn(false).when(MOCK_aaiResourcesClient).exists(eq(vnfUri));
         boolean nameInUse = aaiVnfResources.checkNameInUse("vnfName");
         assertFalse(nameInUse);
+    }
+
+    @Test
+    public void queryVnfWrapperByIdTest() throws Exception {
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "vnfId").depth(Depth.ALL);
+        final String aaiResponse = new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "aaiGenericVnf.json")));
+        GenericVnf genericVnf = new GenericVnf();
+        genericVnf.setVnfId("vnfId");
+        AAIResultWrapper aaiResultWrapper = new AAIResultWrapper(aaiResponse);
+        doReturn(aaiResultWrapper).when(MOCK_aaiResourcesClient).get(eq(uri));
+        AAIResultWrapper actualResult = aaiVnfResources.queryVnfWrapperById(genericVnf);
+        assertEquals(actualResult, aaiResultWrapper);
+
+    }
+
+    @Test
+    public void getVserverTest() throws Exception {
+        final String content =
+                new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "aaiVserverQueryResponse.json")));
+        AAIResultWrapper aaiResultWrapper = new AAIResultWrapper(content);
+        Optional<org.onap.aai.domain.yang.Vserver> oVserver = Optional.empty();
+        AAIResourceUri vserverUri = AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, "ModelInvariantUUID",
+                "serviceModelVersionId", "abc", "abc");
+
+        doReturn(aaiResultWrapper).when(MOCK_aaiResourcesClient).get(isA(AAIResourceUri.class));
+        oVserver = aaiVnfResources.getVserver(vserverUri);
+
+        verify(MOCK_aaiResourcesClient, times(1)).get(any(AAIResourceUri.class));
+
+        if (oVserver.isPresent()) {
+            org.onap.aai.domain.yang.Vserver vserver = oVserver.get();
+            assertThat(aaiResultWrapper.asBean(org.onap.aai.domain.yang.Vserver.class).get(), sameBeanAs(vserver));
+        }
     }
 }

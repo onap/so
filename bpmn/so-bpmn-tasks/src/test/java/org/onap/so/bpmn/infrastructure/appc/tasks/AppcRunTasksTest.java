@@ -26,12 +26,17 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Optional;
 import org.junit.Test;
 import org.mockito.InjectMocks;
+import org.onap.aai.domain.yang.Vserver;
 import org.onap.appc.client.lcm.model.Action;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
@@ -39,10 +44,15 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
+import org.onap.so.client.aai.entities.AAIResultWrapper;
+import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.db.catalog.beans.ControllerSelectionReference;
+import wiremock.com.fasterxml.jackson.databind.ObjectMapper;
 
 public class AppcRunTasksTest extends BaseTaskTest {
+
+    private final static String JSON_FILE_LOCATION = "src/test/resources/__files/BuildingBlocks/";
 
     @InjectMocks
     private AppcRunTasks appcRunTasks = new AppcRunTasks();
@@ -132,6 +142,32 @@ public class AppcRunTasksTest extends BaseTaskTest {
         assertEquals(true, execution.getVariable("rollbackVnfLock"));
     }
 
+    @Test
+    public void getVserversForAppcTest() throws Exception {
+
+        GenericVnf genericVnf = getTestGenericVnf();
+
+        final String aaiVnfJson =
+                new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "aaiGenericVnfWithVservers.json")));
+        final String aaiVserverJson =
+                new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "aaiVserverQueryResponse.json")));
+        AAIResultWrapper aaiResultWrapper = new AAIResultWrapper(aaiVnfJson);
+        ObjectMapper mapper = new ObjectMapper();
+        Vserver vserver = mapper.readValue(aaiVserverJson, Vserver.class);
+        doReturn(aaiResultWrapper).when(aaiVnfResources).queryVnfWrapperById(genericVnf);
+        doReturn(Optional.of(vserver)).when(aaiVnfResources).getVserver(any(AAIResourceUri.class));
+        appcRunTasks.getVserversForAppc(execution, genericVnf);
+        String vserverIdList = execution.getVariable("vserverIdList");
+        String expectedVserverIdList =
+                "{\"vserverIds\":\"[\\\"1b3f44e5-d96d-4aac-bd9a-310e8cfb0af5\\\",\\\"14551849-1e70-45cd-bc5d-a256d49548a2\\\",\\\"48bd7f11-408f-417c-b834-b41c1b98f7d7\\\"]\"}";
+        String vmIdList = execution.getVariable("vmIdList");
+        String expectedVmIdList =
+                "{\"vmIds\":\"[\\\"http://VSERVER-link.com\\\",\\\"http://VSERVER-link.com\\\",\\\"http://VSERVER-link.com\\\"]\"}";
+
+        assertEquals(vserverIdList, expectedVserverIdList);
+        assertEquals(vmIdList, expectedVmIdList);
+    }
+
     private void mockReferenceResponse() {
         ControllerSelectionReference reference = new ControllerSelectionReference();
         reference.setControllerName("TEST-CONTROLLER-NAME");
@@ -157,4 +193,5 @@ public class AppcRunTasksTest extends BaseTaskTest {
         genericVnf.setIpv4OamAddress("129.0.0.1");
         return genericVnf;
     }
+
 }
