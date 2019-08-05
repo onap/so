@@ -23,7 +23,6 @@
 
 package org.onap.so.apihandlerinfra;
 
-
 import static org.onap.so.logger.HttpHeadersConstants.REQUESTOR_ID;
 import java.io.IOException;
 import java.net.URL;
@@ -92,611 +91,810 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Component
 public class RequestHandlerUtils extends AbstractRestHandler {
 
-    private static Logger logger = LoggerFactory.getLogger(RequestHandlerUtils.class);
-
-    private static final String SAVE_TO_DB = "save instance to db";
-
-    @Autowired
-    private Environment env;
-
-    @Autowired
-    private RequestClientFactory reqClientFactory;
-
-    @Autowired
-    private RequestsDbClient infraActiveRequestsClient;
-
-    @Autowired
-    private ResponseBuilder builder;
-
-    @Autowired
-    private MsoRequest msoRequest;
-
-    @Autowired
-    private CamundaRequestHandler camundaRequestHandler;
-
-    @Autowired
-    private CatalogDbClient catalogDbClient;
-
-    public Response postBPELRequest(InfraActiveRequests currentActiveReq, RequestClientParameter requestClientParameter,
-            String orchestrationUri, String requestScope) throws ApiException {
-        RequestClient requestClient = null;
-        HttpResponse response = null;
-        try {
-            requestClient = reqClientFactory.getRequestClient(orchestrationUri);
-            response = requestClient.post(requestClientParameter);
-        } catch (Exception e) {
-
-            ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, ErrorCode.AvailabilityError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
-            String url = requestClient != null ? requestClient.getUrl() : "";
-            ClientConnectionException clientException =
-                    new ClientConnectionException.Builder(url, HttpStatus.SC_BAD_GATEWAY,
-                            ErrorNumbers.SVC_NO_SERVER_RESOURCES).cause(e).errorInfo(errorLoggerInfo).build();
-            updateStatus(currentActiveReq, Status.FAILED, clientException.getMessage());
-
-            throw clientException;
-        }
-
-        if (response == null) {
-
-            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR,
-                    ErrorCode.BusinessProcesssError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
-            ClientConnectionException clientException = new ClientConnectionException.Builder(requestClient.getUrl(),
-                    HttpStatus.SC_BAD_GATEWAY, ErrorNumbers.SVC_NO_SERVER_RESOURCES).errorInfo(errorLoggerInfo).build();
-
-            updateStatus(currentActiveReq, Status.FAILED, clientException.getMessage());
-
-            throw clientException;
-        }
-
-        ResponseHandler respHandler = null;
-        int bpelStatus = 500;
-        try {
-            respHandler = new ResponseHandler(response, requestClient.getType());
-            bpelStatus = respHandler.getStatus();
-        } catch (ApiException e) {
-            logger.error("Exception occurred", e);
-            ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.SchemaError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
-            ValidateException validateException =
-                    new ValidateException.Builder("Exception caught mapping Camunda JSON response to object",
-                            HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
-                                    .errorInfo(errorLoggerInfo).build();
-            updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
-            throw validateException;
-        }
-
-        // BPEL accepted the request, the request is in progress
-        if (bpelStatus == HttpStatus.SC_ACCEPTED) {
-            ServiceInstancesResponse jsonResponse;
-            CamundaResponse camundaResp = respHandler.getResponse();
-
-            if ("Success".equalsIgnoreCase(camundaResp.getMessage())) {
-                try {
-                    ObjectMapper mapper = new ObjectMapper();
-                    jsonResponse = mapper.readValue(camundaResp.getResponse(), ServiceInstancesResponse.class);
-                    jsonResponse.getRequestReferences().setRequestId(requestClientParameter.getRequestId());
-                    Optional<URL> selfLinkUrl =
-                            buildSelfLinkUrl(currentActiveReq.getRequestUrl(), requestClientParameter.getRequestId());
-                    if (selfLinkUrl.isPresent()) {
-                        jsonResponse.getRequestReferences().setRequestSelfLink(selfLinkUrl.get());
-                    } else {
-                        jsonResponse.getRequestReferences().setRequestSelfLink(null);
-                    }
-                } catch (IOException e) {
-                    logger.error("Exception occurred", e);
-                    ErrorLoggerInfo errorLoggerInfo =
-                            new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.SchemaError)
-                                    .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
-                    ValidateException validateException =
-                            new ValidateException.Builder("Exception caught mapping Camunda JSON response to object",
-                                    HttpStatus.SC_NOT_ACCEPTABLE, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
-                                            .errorInfo(errorLoggerInfo).build();
-                    updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
-                    throw validateException;
-                }
-                return builder.buildResponse(HttpStatus.SC_ACCEPTED, requestClientParameter.getRequestId(),
-                        jsonResponse, requestClientParameter.getApiVersion());
-            }
-        }
-
-        List<String> variables = new ArrayList<>();
-        variables.add(bpelStatus + "");
-        String camundaJSONResponseBody = respHandler.getResponseBody();
-        if (camundaJSONResponseBody != null && !camundaJSONResponseBody.isEmpty()) {
-
-            ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.BusinessProcesssError)
-                            .errorSource(requestClient.getUrl()).build();
-            BPMNFailureException bpmnException =
-                    new BPMNFailureException.Builder(String.valueOf(bpelStatus) + camundaJSONResponseBody, bpelStatus,
-                            ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
-
-            updateStatus(currentActiveReq, Status.FAILED, bpmnException.getMessage());
-
-            throw bpmnException;
-        } else {
-
-            ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.BusinessProcesssError)
-                            .errorSource(requestClient.getUrl()).build();
-
-
-            BPMNFailureException servException = new BPMNFailureException.Builder(String.valueOf(bpelStatus),
-                    bpelStatus, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
-            updateStatus(currentActiveReq, Status.FAILED, servException.getMessage());
-
-            throw servException;
-        }
-    }
-
-    public void updateStatus(InfraActiveRequests aq, Status status, String errorMessage)
-            throws RequestDbFailureException {
-        if ((status == Status.FAILED) || (status == Status.COMPLETE)) {
-            aq.setStatusMessage(errorMessage);
-            aq.setProgress(new Long(100));
-            aq.setRequestStatus(status.toString());
-            Timestamp endTimeStamp = new Timestamp(System.currentTimeMillis());
-            aq.setEndTime(endTimeStamp);
-            try {
-                infraActiveRequestsClient.save(aq);
-            } catch (Exception e) {
-                ErrorLoggerInfo errorLoggerInfo =
-                        new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.DataError)
-                                .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
-                throw new RequestDbFailureException.Builder(SAVE_TO_DB, e.toString(),
-                        HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e)
-                                .errorInfo(errorLoggerInfo).build();
-            }
-        }
-    }
-
-    public String deriveRequestScope(Actions action, ServiceInstancesRequest sir, String requestUri) {
-        if (action == Action.inPlaceSoftwareUpdate || action == Action.applyUpdatedConfig) {
-            return (ModelType.vnf.name());
-        } else if (action == Action.addMembers || action == Action.removeMembers) {
-            return (ModelType.instanceGroup.toString());
-        } else {
-            String requestScope;
-            if (sir.getRequestDetails().getModelInfo().getModelType() == null) {
-                requestScope = requestScopeFromUri(requestUri);
-            } else {
-                requestScope = sir.getRequestDetails().getModelInfo().getModelType().name();
-            }
-            return requestScope;
-        }
-    }
-
-
-    public void validateHeaders(ContainerRequestContext context) throws ValidationException {
-        MultivaluedMap<String, String> headers = context.getHeaders();
-        if (!headers.containsKey(ONAPLogConstants.Headers.REQUEST_ID)) {
-            throw new ValidationException(ONAPLogConstants.Headers.REQUEST_ID + " header", true);
-        }
-        if (!headers.containsKey(ONAPLogConstants.Headers.PARTNER_NAME)) {
-            throw new ValidationException(ONAPLogConstants.Headers.PARTNER_NAME + " header", true);
-        }
-        if (!headers.containsKey(REQUESTOR_ID)) {
-            throw new ValidationException(REQUESTOR_ID + " header", true);
-        }
-    }
-
-    public String getRequestUri(ContainerRequestContext context, String uriPrefix) {
-        String requestUri = context.getUriInfo().getPath();
-        String httpUrl = MDC.get(LogConstants.URI_BASE).concat(requestUri);
-        MDC.put(LogConstants.HTTP_URL, httpUrl);
-        requestUri = requestUri.substring(requestUri.indexOf(uriPrefix) + uriPrefix.length());
-        return requestUri;
-    }
-
-    public InfraActiveRequests duplicateCheck(Actions action, HashMap<String, String> instanceIdMap,
-            String instanceName, String requestScope, InfraActiveRequests currentActiveReq) throws ApiException {
-        InfraActiveRequests dup = null;
-        try {
-            if (!(instanceName == null && requestScope.equals("service") && (action == Action.createInstance
-                    || action == Action.activateInstance || action == Action.assignInstance))) {
-                dup = infraActiveRequestsClient.checkInstanceNameDuplicate(instanceIdMap, instanceName, requestScope);
-            }
-        } catch (Exception e) {
-            ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_DUPLICATE_CHECK_EXC, ErrorCode.DataError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
-            RequestDbFailureException requestDbFailureException =
-                    new RequestDbFailureException.Builder("check for duplicate instance", e.toString(),
-                            HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e)
-                                    .errorInfo(errorLoggerInfo).build();
-            updateStatus(currentActiveReq, Status.FAILED, requestDbFailureException.getMessage());
-            throw requestDbFailureException;
-        }
-        return dup;
-    }
-
-    public boolean camundaHistoryCheck(InfraActiveRequests duplicateRecord, InfraActiveRequests currentActiveReq)
-            throws RequestDbFailureException, ContactCamundaException {
-        String requestId = duplicateRecord.getRequestId();
-        ResponseEntity<List<HistoricProcessInstanceEntity>> response = null;
-        try {
-            response = camundaRequestHandler.getCamundaProcessInstanceHistory(requestId);
-        } catch (RestClientException e) {
-            logger.error("Error querying Camunda for process-instance history for requestId: {}, exception: {}",
-                    requestId, e.getMessage());
-            ContactCamundaException contactCamundaException =
-                    new ContactCamundaException.Builder("process-instance", requestId, e.toString(),
-                            HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e)
-                                    .build();
-            updateStatus(currentActiveReq, Status.FAILED, contactCamundaException.getMessage());
-            throw contactCamundaException;
-        }
-
-        if (response.getBody().isEmpty()) {
-            updateStatus(duplicateRecord, Status.COMPLETE, "Request Completed");
-        }
-        for (HistoricProcessInstance instance : response.getBody()) {
-            if (instance.getState().equals("ACTIVE")) {
-                return true;
-            } else {
-                updateStatus(duplicateRecord, Status.COMPLETE, "Request Completed");
-            }
-        }
-        return false;
-    }
-
-    public ServiceInstancesRequest convertJsonToServiceInstanceRequest(String requestJSON, Actions action,
-            String requestId, String requestUri) throws ApiException {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.readValue(requestJSON, ServiceInstancesRequest.class);
-
-        } catch (IOException e) {
-
-            ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
-
-            ValidateException validateException =
-                    new ValidateException.Builder("Error mapping request: " + e.getMessage(), HttpStatus.SC_BAD_REQUEST,
-                            ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
-            String requestScope = requestScopeFromUri(requestUri);
-
-            msoRequest.createErrorRequestRecord(Status.FAILED, requestId, validateException.getMessage(), action,
-                    requestScope, requestJSON);
-
-            throw validateException;
-        }
-    }
-
-    public void parseRequest(ServiceInstancesRequest sir, HashMap<String, String> instanceIdMap, Actions action,
-            String version, String requestJSON, Boolean aLaCarte, String requestId,
-            InfraActiveRequests currentActiveReq) throws ValidateException, RequestDbFailureException {
-        int reqVersion = Integer.parseInt(version.substring(1));
-        try {
-            msoRequest.parse(sir, instanceIdMap, action, version, requestJSON, reqVersion, aLaCarte);
-        } catch (Exception e) {
-            logger.error("failed to parse request", e);
-            ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
-            ValidateException validateException =
-                    new ValidateException.Builder("Error parsing request: " + e.getMessage(), HttpStatus.SC_BAD_REQUEST,
-                            ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
-
-            updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
-
-            throw validateException;
-        }
-    }
-
-    public void buildErrorOnDuplicateRecord(InfraActiveRequests currentActiveReq, Actions action,
-            HashMap<String, String> instanceIdMap, String instanceName, String requestScope, InfraActiveRequests dup)
-            throws ApiException {
-
-        String instance = null;
-        if (instanceName != null) {
-            instance = instanceName;
-        } else {
-            instance = instanceIdMap.get(requestScope + "InstanceId");
-        }
-        ErrorLoggerInfo errorLoggerInfo =
-                new ErrorLoggerInfo.Builder(MessageEnum.APIH_DUPLICATE_FOUND, ErrorCode.SchemaError)
-                        .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
-
-        DuplicateRequestException dupException =
-                new DuplicateRequestException.Builder(requestScope, instance, dup.getRequestStatus(),
-                        dup.getRequestId(), HttpStatus.SC_CONFLICT, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR)
-                                .errorInfo(errorLoggerInfo).build();
-
-        updateStatus(currentActiveReq, Status.FAILED, dupException.getMessage());
-
-        throw dupException;
-    }
-
-    public String getRequestId(ContainerRequestContext requestContext) throws ValidateException {
-        String requestId = null;
-        if (requestContext.getProperty("requestId") != null) {
-            requestId = requestContext.getProperty("requestId").toString();
-        }
-        if (UUIDChecker.isValidUUID(requestId)) {
-            return requestId;
-        } else {
-            ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.SchemaError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
-            ValidateException validateException =
-                    new ValidateException.Builder("Request Id " + requestId + " is not a valid UUID",
-                            HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_BAD_PARAMETER)
-                                    .errorInfo(errorLoggerInfo).build();
-
-            throw validateException;
-        }
-    }
-
-    public void setInstanceId(InfraActiveRequests currentActiveReq, String requestScope, String instanceId,
-            Map<String, String> instanceIdMap) {
-        if (StringUtils.isNotBlank(instanceId)) {
-            if (ModelType.service.name().equalsIgnoreCase(requestScope)) {
-                currentActiveReq.setServiceInstanceId(instanceId);
-            } else if (ModelType.vnf.name().equalsIgnoreCase(requestScope)) {
-                currentActiveReq.setVnfId(instanceId);
-            } else if (ModelType.vfModule.name().equalsIgnoreCase(requestScope)) {
-                currentActiveReq.setVfModuleId(instanceId);
-            } else if (ModelType.volumeGroup.name().equalsIgnoreCase(requestScope)) {
-                currentActiveReq.setVolumeGroupId(instanceId);
-            } else if (ModelType.network.name().equalsIgnoreCase(requestScope)) {
-                currentActiveReq.setNetworkId(instanceId);
-            } else if (ModelType.configuration.name().equalsIgnoreCase(requestScope)) {
-                currentActiveReq.setConfigurationId(instanceId);
-            } else if (ModelType.instanceGroup.toString().equalsIgnoreCase(requestScope)) {
-                currentActiveReq.setInstanceGroupId(instanceId);
-            }
-        } else if (instanceIdMap != null && !instanceIdMap.isEmpty()) {
-            if (instanceIdMap.get("serviceInstanceId") != null) {
-                currentActiveReq.setServiceInstanceId(instanceIdMap.get("serviceInstanceId"));
-            }
-            if (instanceIdMap.get("vnfInstanceId") != null) {
-                currentActiveReq.setVnfId(instanceIdMap.get("vnfInstanceId"));
-            }
-            if (instanceIdMap.get("vfModuleInstanceId") != null) {
-                currentActiveReq.setVfModuleId(instanceIdMap.get("vfModuleInstanceId"));
-            }
-            if (instanceIdMap.get("volumeGroupInstanceId") != null) {
-                currentActiveReq.setVolumeGroupId(instanceIdMap.get("volumeGroupInstanceId"));
-            }
-            if (instanceIdMap.get("networkInstanceId") != null) {
-                currentActiveReq.setNetworkId(instanceIdMap.get("networkInstanceId"));
-            }
-            if (instanceIdMap.get("configurationInstanceId") != null) {
-                currentActiveReq.setConfigurationId(instanceIdMap.get("configurationInstanceId"));
-            }
-            if (instanceIdMap.get(CommonConstants.INSTANCE_GROUP_INSTANCE_ID) != null) {
-                currentActiveReq.setInstanceGroupId(instanceIdMap.get(CommonConstants.INSTANCE_GROUP_INSTANCE_ID));
-            }
-        }
-    }
-
-    public String mapJSONtoMSOStyle(String msoRawRequest, ServiceInstancesRequest serviceInstRequest,
-            boolean isAlaCarte, Actions action) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(Include.NON_NULL);
-        if (msoRawRequest != null) {
-            ServiceInstancesRequest sir = mapper.readValue(msoRawRequest, ServiceInstancesRequest.class);
-            if (serviceInstRequest != null && serviceInstRequest.getRequestDetails() != null
-                    && serviceInstRequest.getRequestDetails().getRequestParameters() != null) {
-                if (!isAlaCarte && Action.createInstance.equals(action)) {
-                    sir.getRequestDetails()
-                            .setCloudConfiguration(serviceInstRequest.getRequestDetails().getCloudConfiguration());
-                    sir.getRequestDetails().getRequestParameters().setUserParams(
-                            serviceInstRequest.getRequestDetails().getRequestParameters().getUserParams());
-                }
-                sir.getRequestDetails().getRequestParameters()
-                        .setUsePreload(serviceInstRequest.getRequestDetails().getRequestParameters().getUsePreload());
-            }
-
-            logger.debug("Value as string: {}", mapper.writeValueAsString(sir));
-            return mapper.writeValueAsString(sir);
-        }
-        return null;
-    }
-
-    public Optional<String> retrieveModelName(RequestParameters requestParams) {
-        String requestTestApi = null;
-        TestApi testApi = null;
-
-        if (requestParams != null) {
-            requestTestApi = requestParams.getTestApi();
-        }
-
-        if (requestTestApi == null) {
-            if (requestParams != null && requestParams.getALaCarte() != null && !requestParams.getALaCarte()) {
-                requestTestApi = env.getProperty(CommonConstants.MACRO_TEST_API);
-            } else {
-                requestTestApi = env.getProperty(CommonConstants.ALACARTE_TEST_API);
-            }
-        }
-
-        try {
-            testApi = TestApi.valueOf(requestTestApi);
-            return Optional.of(testApi.getModelName());
-        } catch (Exception e) {
-            logger.warn("Catching the exception on the valueOf enum call and continuing", e);
-            throw new IllegalArgumentException("Invalid TestApi is provided", e);
-        }
-    }
-
-    public String getDefaultModel(ServiceInstancesRequest sir) {
-        String defaultModel = sir.getRequestDetails().getRequestInfo().getSource() + "_DEFAULT";
-        Optional<String> oModelName = retrieveModelName(sir.getRequestDetails().getRequestParameters());
-        if (oModelName.isPresent()) {
-            defaultModel = oModelName.get();
-        }
-        return defaultModel;
-    }
-
-    public String getServiceType(String requestScope, ServiceInstancesRequest sir, Boolean aLaCarteFlag) {
-        String serviceType = null;
-        if (requestScope.equalsIgnoreCase(ModelType.service.toString())) {
-            String defaultServiceModelName = getDefaultModel(sir);
-            org.onap.so.db.catalog.beans.Service serviceRecord;
-            if (aLaCarteFlag) {
-                serviceRecord = catalogDbClient.getFirstByModelNameOrderByModelVersionDesc(defaultServiceModelName);
-                if (serviceRecord != null) {
-                    serviceType = serviceRecord.getServiceType();
-                }
-            } else {
-                serviceRecord =
-                        catalogDbClient.getServiceByID(sir.getRequestDetails().getModelInfo().getModelVersionId());
-                if (serviceRecord != null) {
-                    serviceType = serviceRecord.getServiceType();
-                } else {
-                    serviceRecord = catalogDbClient.getFirstByModelNameOrderByModelVersionDesc(defaultServiceModelName);
-                    if (serviceRecord != null) {
-                        serviceType = serviceRecord.getServiceType();
-                    }
-                }
-            }
-        } else {
-            serviceType = msoRequest.getServiceInstanceType(sir, requestScope);
-        }
-        return serviceType;
-    }
-
-    protected String setServiceInstanceId(String requestScope, ServiceInstancesRequest sir) {
-        if (sir.getServiceInstanceId() != null) {
-            return sir.getServiceInstanceId();
-        } else if (requestScope.equalsIgnoreCase(ModelType.instanceGroup.toString())) {
-            RelatedInstanceList[] relatedInstances = sir.getRequestDetails().getRelatedInstanceList();
-            if (relatedInstances != null) {
-                for (RelatedInstanceList relatedInstanceList : relatedInstances) {
-                    RelatedInstance relatedInstance = relatedInstanceList.getRelatedInstance();
-                    if (relatedInstance.getModelInfo().getModelType() == ModelType.service) {
-                        return relatedInstance.getInstanceId();
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    private String requestScopeFromUri(String requestUri) {
-        String requestScope;
-        if (requestUri.contains(ModelType.network.name())) {
-            requestScope = ModelType.network.name();
-        } else if (requestUri.contains(ModelType.vfModule.name())) {
-            requestScope = ModelType.vfModule.name();
-        } else if (requestUri.contains(ModelType.volumeGroup.name())) {
-            requestScope = ModelType.volumeGroup.name();
-        } else if (requestUri.contains(ModelType.configuration.name())) {
-            requestScope = ModelType.configuration.name();
-        } else if (requestUri.contains(ModelType.vnf.name())) {
-            requestScope = ModelType.vnf.name();
-        } else {
-            requestScope = ModelType.service.name();
-        }
-        return requestScope;
-    }
-
-    protected InfraActiveRequests createNewRecordCopyFromInfraActiveRequest(InfraActiveRequests infraActiveRequest,
-            String requestId, Timestamp startTimeStamp, String source, String requestUri, String requestorId,
-            String originalRequestId) throws ApiException {
-        InfraActiveRequests request = new InfraActiveRequests();
-        request.setRequestId(requestId);
-        request.setStartTime(startTimeStamp);
-        request.setSource(source);
-        request.setRequestUrl(requestUri);
-        request.setProgress(new Long(5));
-        request.setRequestorId(requestorId);
-        request.setRequestStatus(Status.IN_PROGRESS.toString());
-        request.setOriginalRequestId(originalRequestId);
-        request.setLastModifiedBy(Constants.MODIFIED_BY_APIHANDLER);
-        if (infraActiveRequest != null) {
-            request.setTenantId(infraActiveRequest.getTenantId());
-            request.setRequestBody(updateRequestorIdInRequestBody(infraActiveRequest, requestorId));
-            request.setAicCloudRegion(infraActiveRequest.getAicCloudRegion());
-            request.setRequestScope(infraActiveRequest.getRequestScope());
-            request.setRequestAction(infraActiveRequest.getRequestAction());
-            setInstanceIdAndName(infraActiveRequest, request);
-        }
-        return request;
-    }
-
-    protected void setInstanceIdAndName(InfraActiveRequests infraActiveRequest,
-            InfraActiveRequests currentActiveRequest) throws ApiException {
-        String requestScope = infraActiveRequest.getRequestScope();
-        try {
-            ModelType type = ModelType.valueOf(requestScope);
-            String instanceName = type.getName(infraActiveRequest);
-            if (instanceName == null && type.equals(ModelType.vfModule)) {
-                logger.error("vfModule for requestId: {} being resumed does not have an instanceName.",
-                        infraActiveRequest.getRequestId());
-                ValidateException validateException = new ValidateException.Builder(
-                        "vfModule for requestId: " + infraActiveRequest.getRequestId()
-                                + " being resumed does not have an instanceName.",
-                        HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).build();
-                updateStatus(currentActiveRequest, Status.FAILED, validateException.getMessage());
-                throw validateException;
-            }
-            if (instanceName != null) {
-                type.setName(currentActiveRequest, instanceName);
-            }
-            type.setId(currentActiveRequest, type.getId(infraActiveRequest));
-        } catch (IllegalArgumentException e) {
-            logger.error(
-                    "requestScope \"{}\" does not match a ModelType enum. Unable to set instanceId and instanceName from the original request.",
-                    requestScope);
-        }
-    }
-
-    protected Boolean getIsBaseVfModule(ModelInfo modelInfo, Actions action, String vnfType,
-            String sdcServiceModelVersion, InfraActiveRequests currentActiveReq) throws ApiException {
-        // Get VF Module-specific base module indicator
-        VfModule vfm = null;
-        String modelVersionId = modelInfo.getModelVersionId();
-        Boolean isBaseVfModule = false;
-
-        if (modelVersionId != null) {
-            vfm = catalogDbClient.getVfModuleByModelUUID(modelVersionId);
-        } else if (modelInfo.getModelInvariantId() != null && modelInfo.getModelVersion() != null) {
-            vfm = catalogDbClient.getVfModuleByModelInvariantUUIDAndModelVersion(modelInfo.getModelInvariantId(),
-                    modelInfo.getModelVersion());
-        }
-
-        if (vfm != null) {
-            if (vfm.getIsBase()) {
-                isBaseVfModule = true;
-            }
-        } else if (action == Action.createInstance || action == Action.updateInstance) {
-            String serviceVersionText = "";
-            if (sdcServiceModelVersion != null && !sdcServiceModelVersion.isEmpty()) {
-                serviceVersionText = " with version " + sdcServiceModelVersion;
-            }
-            String errorMessage = "VnfType " + vnfType + " and VF Module Model Name " + modelInfo.getModelName()
-                    + serviceVersionText + " not found in MSO Catalog DB";
-            ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, ErrorCode.DataError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
-            VfModuleNotFoundException vfModuleException = new VfModuleNotFoundException.Builder(errorMessage,
-                    HttpStatus.SC_NOT_FOUND, ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo).build();
-            updateStatus(currentActiveReq, Status.FAILED, vfModuleException.getMessage());
-            throw vfModuleException;
-        }
-        return isBaseVfModule;
-    }
-
-    protected ModelType getModelType(Actions action, ModelInfo modelInfo) {
-        if (action == Action.applyUpdatedConfig || action == Action.inPlaceSoftwareUpdate) {
-            return ModelType.vnf;
-        } else if (action == Action.addMembers || action == Action.removeMembers) {
-            return ModelType.instanceGroup;
-        } else {
-            return modelInfo.getModelType();
-        }
-    }
-
-    protected String updateRequestorIdInRequestBody(InfraActiveRequests infraActiveRequest, String newRequestorId) {
-        String requestBody = infraActiveRequest.getRequestBody();
-        return requestBody.replaceAll(
-                "(?s)(\"requestInfo\"\\s*?:\\s*?\\{.*?\"requestorId\"\\s*?:\\s*?\")(.*?)(\"[ ]*(?:,|\\R|\\}))",
-                "$1" + newRequestorId + "$3");
-    }
+	private static Logger logger = LoggerFactory.getLogger(RequestHandlerUtils.class);
+
+	private static final String SAVE_TO_DB = "save instance to db";
+
+	@Autowired
+	private Environment env;
+
+	@Autowired
+	private RequestClientFactory reqClientFactory;
+
+	@Autowired
+	private RequestsDbClient infraActiveRequestsClient;
+
+	@Autowired
+	private ResponseBuilder builder;
+
+	@Autowired
+	private MsoRequest msoRequest;
+
+	@Autowired
+	private CamundaRequestHandler camundaRequestHandler;
+
+	@Autowired
+	private CatalogDbClient catalogDbClient;
+
+	/**
+	 * This method is used for updateStatus of BPEL .
+	 *
+	 * It will create requestClient by calling the orchestrationUri then call the
+	 * post method of requestClient to pass the requestClientParameter and store in
+	 * response object.
+	 *
+	 * Then it will check if the response is null then it will update the Status is
+	 * FAILED.
+	 *
+	 * Then it will check if BPEL accepted the request then request is in progress
+	 *
+	 * @param currentActiveReq
+	 * @param requestClientParameter
+	 * @param orchestrationUri
+	 * @param requestScope
+	 * @return
+	 * @throws ApiException
+	 */
+	public Response postBPELRequest(InfraActiveRequests currentActiveReq, RequestClientParameter requestClientParameter,
+			String orchestrationUri, String requestScope) throws ApiException {
+		logger.debug("STARTED RequestHandlerUtils postBPELRequest Process");
+		RequestClient requestClient = null;
+		HttpResponse response = null;
+		try {
+			requestClient = reqClientFactory.getRequestClient(orchestrationUri);
+			response = requestClient.post(requestClientParameter);
+		} catch (Exception e) {
+			logger.debug("Exception occurred in  RequestHandlerUtils postBPELRequest Process");
+
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR,
+					ErrorCode.AvailabilityError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+			String url = requestClient != null ? requestClient.getUrl() : "";
+			ClientConnectionException clientException = new ClientConnectionException.Builder(url,
+					HttpStatus.SC_BAD_GATEWAY, ErrorNumbers.SVC_NO_SERVER_RESOURCES).cause(e).errorInfo(errorLoggerInfo)
+							.build();
+			updateStatus(currentActiveReq, Status.FAILED, clientException.getMessage());
+
+			throw clientException;
+		}
+
+		if (response == null) {
+
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR,
+					ErrorCode.BusinessProcesssError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+			ClientConnectionException clientException = new ClientConnectionException.Builder(requestClient.getUrl(),
+					HttpStatus.SC_BAD_GATEWAY, ErrorNumbers.SVC_NO_SERVER_RESOURCES).errorInfo(errorLoggerInfo).build();
+
+			updateStatus(currentActiveReq, Status.FAILED, clientException.getMessage());
+
+			throw clientException;
+		}
+
+		ResponseHandler respHandler = null;
+		int bpelStatus = 500;
+		try {
+			respHandler = new ResponseHandler(response, requestClient.getType());
+			bpelStatus = respHandler.getStatus();
+		} catch (ApiException e) {
+			logger.error("Exception occurred", e);
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR,
+					ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+			ValidateException validateException = new ValidateException.Builder(
+					"Exception caught mapping Camunda JSON response to object", HttpStatus.SC_INTERNAL_SERVER_ERROR,
+					ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
+			updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
+			throw validateException;
+		}
+
+		// BPEL accepted the request, the request is in progress
+		if (bpelStatus == HttpStatus.SC_ACCEPTED) {
+			ServiceInstancesResponse jsonResponse;
+			CamundaResponse camundaResp = respHandler.getResponse();
+
+			if ("Success".equalsIgnoreCase(camundaResp.getMessage())) {
+				try {
+					ObjectMapper mapper = new ObjectMapper();
+					jsonResponse = mapper.readValue(camundaResp.getResponse(), ServiceInstancesResponse.class);
+					jsonResponse.getRequestReferences().setRequestId(requestClientParameter.getRequestId());
+					Optional<URL> selfLinkUrl = buildSelfLinkUrl(currentActiveReq.getRequestUrl(),
+							requestClientParameter.getRequestId());
+					if (selfLinkUrl.isPresent()) {
+						jsonResponse.getRequestReferences().setRequestSelfLink(selfLinkUrl.get());
+					} else {
+						jsonResponse.getRequestReferences().setRequestSelfLink(null);
+					}
+				} catch (IOException e) {
+					logger.error("Exception occurred", e);
+					ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR,
+							ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+					ValidateException validateException = new ValidateException.Builder(
+							"Exception caught mapping Camunda JSON response to object", HttpStatus.SC_NOT_ACCEPTABLE,
+							ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
+					updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
+					throw validateException;
+				}
+				return builder.buildResponse(HttpStatus.SC_ACCEPTED, requestClientParameter.getRequestId(),
+						jsonResponse, requestClientParameter.getApiVersion());
+			}
+		}
+
+		List<String> variables = new ArrayList<>();
+		variables.add(bpelStatus + "");
+		String camundaJSONResponseBody = respHandler.getResponseBody();
+		if (camundaJSONResponseBody != null && !camundaJSONResponseBody.isEmpty()) {
+
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR,
+					ErrorCode.BusinessProcesssError).errorSource(requestClient.getUrl()).build();
+			BPMNFailureException bpmnException = new BPMNFailureException.Builder(
+					String.valueOf(bpelStatus) + camundaJSONResponseBody, bpelStatus,
+					ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
+
+			updateStatus(currentActiveReq, Status.FAILED, bpmnException.getMessage());
+
+			throw bpmnException;
+		} else {
+
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR,
+					ErrorCode.BusinessProcesssError).errorSource(requestClient.getUrl()).build();
+
+			BPMNFailureException servException = new BPMNFailureException.Builder(String.valueOf(bpelStatus),
+					bpelStatus, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
+			updateStatus(currentActiveReq, Status.FAILED, servException.getMessage());
+
+			logger.debug("ENDED RequestHandlerUtils postBPELRequest");
+			throw servException;
+		}
+	}
+
+	/**
+	 * This method is used for updateStatus in InfraActiveRequests DB.
+	 *
+	 * It will check if the status is FAILED or COMPLETE.
+	 *
+	 * It will set the StatusMessage,Progress,RequestStatus,EndTime in
+	 * InfraActiveRequests and save it in DB.
+	 *
+	 * @param InfraActiveRequests
+	 * @param status
+	 * @param errorMessage
+	 * @return
+	 * @throws RequestDbFailureException
+	 */
+	public void updateStatus(InfraActiveRequests aq, Status status, String errorMessage)
+			throws RequestDbFailureException {
+		logger.debug("STARTED RequestHandlerUtils updateStatus Process");
+		if ((status == Status.FAILED) || (status == Status.COMPLETE)) {
+			aq.setStatusMessage(errorMessage);
+			aq.setProgress(new Long(100));
+			aq.setRequestStatus(status.toString());
+			Timestamp endTimeStamp = new Timestamp(System.currentTimeMillis());
+			aq.setEndTime(endTimeStamp);
+			try {
+				infraActiveRequestsClient.save(aq);
+			} catch (Exception e) {
+				logger.debug("Exception occurred in  RequestHandlerUtils updateStatus");
+				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC,
+						ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+				throw new RequestDbFailureException.Builder(SAVE_TO_DB, e.toString(),
+						HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e)
+								.errorInfo(errorLoggerInfo).build();
+			}
+		}
+		logger.debug("ENDED RequestHandlerUtils updateStatus");
+	}
+
+	/**
+	 * This method is used for get the requestScope from requestUri .
+	 *
+	 * It will get the requestScope from ServiceInstancesRequest(sir) as request
+	 * details, modelInfo & modeltype.
+	 *
+	 * @param action Type of action to be performed @param sir @param
+	 *               requestUri @return requestScope @throws
+	 */
+	public String deriveRequestScope(Actions action, ServiceInstancesRequest sir, String requestUri) {
+		logger.debug("STARTED RequestHandlerUtils deriveRequestScope Process");
+		if (action == Action.inPlaceSoftwareUpdate || action == Action.applyUpdatedConfig) {
+			return (ModelType.vnf.name());
+		} else if (action == Action.addMembers || action == Action.removeMembers) {
+			return (ModelType.instanceGroup.toString());
+		} else {
+			String requestScope;
+			if (sir.getRequestDetails().getModelInfo().getModelType() == null) {
+				requestScope = requestScopeFromUri(requestUri);
+			} else {
+				requestScope = sir.getRequestDetails().getModelInfo().getModelType().name();
+			}
+			logger.debug("ENDED RequestHandlerUtils deriveRequestScope Process");
+			return requestScope;
+		}
+	}
+
+	/**
+	 * This method is used for validating the header.
+	 *
+	 * It will check the containsKey and validate it.
+	 *
+	 * @param ContainerRequestContext
+	 * @throws ValidationException
+	 */
+	public void validateHeaders(ContainerRequestContext context) throws ValidationException {
+		logger.debug("STARTED RequestHandlerUtils deriveRequestScope Process");
+		MultivaluedMap<String, String> headers = context.getHeaders();
+		if (!headers.containsKey(ONAPLogConstants.Headers.REQUEST_ID)) {
+			throw new ValidationException(ONAPLogConstants.Headers.REQUEST_ID + " header", true);
+		}
+		if (!headers.containsKey(ONAPLogConstants.Headers.PARTNER_NAME)) {
+			throw new ValidationException(ONAPLogConstants.Headers.PARTNER_NAME + " header", true);
+		}
+		if (!headers.containsKey(REQUESTOR_ID)) {
+			throw new ValidationException(REQUESTOR_ID + " header", true);
+		}
+		logger.debug("ENDED RequestHandlerUtils deriveRequestScope Process");
+	}
+
+	/**
+	 * This method is used for getting the requestURI.
+	 *
+	 * It will get the requestUri path from ContainerRequestContext.
+	 *
+	 *
+	 * @param ContainerRequestContext
+	 * @param uriPrefix
+	 * @throws @return requestUri
+	 */
+	public String getRequestUri(ContainerRequestContext context, String uriPrefix) {
+		logger.debug("STARTED RequestHandlerUtils getRequestUri Process");
+		String requestUri = context.getUriInfo().getPath();
+		String httpUrl = MDC.get(LogConstants.URI_BASE).concat(requestUri);
+		MDC.put(LogConstants.HTTP_URL, httpUrl);
+		requestUri = requestUri.substring(requestUri.indexOf(uriPrefix) + uriPrefix.length());
+		logger.debug("ENDED RequestHandlerUtils getRequestUri Process");
+		return requestUri;
+	}
+
+	/**
+	 * This method is used for checking duplicate.
+	 *
+	 * It will check if the instance name is duplicate by passing the
+	 * instanceIdMap,instanceName,requestScope to infraActiveRequestsClient.
+	 *
+	 *
+	 * @param action
+	 * @param instanceIdMap
+	 * @param instanceName
+	 * @param requestScope
+	 * @param currentActiveReq
+	 * @throws ApiException
+	 * @return InfraActiveRequests
+	 */
+	public InfraActiveRequests duplicateCheck(Actions action, HashMap<String, String> instanceIdMap,
+			String instanceName, String requestScope, InfraActiveRequests currentActiveReq) throws ApiException {
+		logger.debug("STARTED RequestHandlerUtils duplicateCheck Process");
+		InfraActiveRequests dup = null;
+		try {
+			if (!(instanceName == null && requestScope.equals("service") && (action == Action.createInstance
+					|| action == Action.activateInstance || action == Action.assignInstance))) {
+				dup = infraActiveRequestsClient.checkInstanceNameDuplicate(instanceIdMap, instanceName, requestScope);
+			}
+		} catch (Exception e) {
+			logger.debug("Exception occurred in RequestHandlerUtils duplicateCheck Process");
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DUPLICATE_CHECK_EXC,
+					ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+			RequestDbFailureException requestDbFailureException = new RequestDbFailureException.Builder(
+					"check for duplicate instance", e.toString(), HttpStatus.SC_INTERNAL_SERVER_ERROR,
+					ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e).errorInfo(errorLoggerInfo).build();
+			updateStatus(currentActiveReq, Status.FAILED, requestDbFailureException.getMessage());
+			throw requestDbFailureException;
+		}
+		logger.debug("ENDED RequestHandlerUtils duplicateCheck Process");
+		return dup;
+	}
+
+	public boolean camundaHistoryCheck(InfraActiveRequests duplicateRecord, InfraActiveRequests currentActiveReq)
+			throws RequestDbFailureException, ContactCamundaException {
+		String requestId = duplicateRecord.getRequestId();
+		ResponseEntity<List<HistoricProcessInstanceEntity>> response = null;
+		try {
+			response = camundaRequestHandler.getCamundaProcessInstanceHistory(requestId);
+		} catch (RestClientException e) {
+			logger.error("Error querying Camunda for process-instance history for requestId: {}, exception: {}",
+					requestId, e.getMessage());
+			ContactCamundaException contactCamundaException = new ContactCamundaException.Builder("process-instance",
+					requestId, e.toString(), HttpStatus.SC_INTERNAL_SERVER_ERROR,
+					ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e).build();
+			updateStatus(currentActiveReq, Status.FAILED, contactCamundaException.getMessage());
+			throw contactCamundaException;
+		}
+
+		if (response.getBody().isEmpty()) {
+			updateStatus(duplicateRecord, Status.COMPLETE, "Request Completed");
+		}
+		for (HistoricProcessInstance instance : response.getBody()) {
+			if (instance.getState().equals("ACTIVE")) {
+				return true;
+			} else {
+				updateStatus(duplicateRecord, Status.COMPLETE, "Request Completed");
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * This method is used for converting the JSON to ServiceInstanceRequest(sir).
+	 *
+	 * @param requestJSON
+	 * @param action
+	 * @param requestId
+	 * @param requestUri
+	 * @throws ApiException
+	 * @return
+	 */
+	public ServiceInstancesRequest convertJsonToServiceInstanceRequest(String requestJSON, Actions action,
+			String requestId, String requestUri) throws ApiException {
+		logger.debug("STARTED RequestHandlerUtils convertJsonToServiceInstanceRequest Process");
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			return mapper.readValue(requestJSON, ServiceInstancesRequest.class);
+
+		} catch (IOException e) {
+			logger.debug("Exception Occurred in RequestHandlerUtils convertJsonToServiceInstanceRequest Process");
+
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR,
+					ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+
+			ValidateException validateException = new ValidateException.Builder(
+					"Error mapping request: " + e.getMessage(), HttpStatus.SC_BAD_REQUEST,
+					ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
+			String requestScope = requestScopeFromUri(requestUri);
+
+			msoRequest.createErrorRequestRecord(Status.FAILED, requestId, validateException.getMessage(), action,
+					requestScope, requestJSON);
+			logger.debug("ENDED RequestHandlerUtils convertJsonToServiceInstanceRequest Process");
+
+			throw validateException;
+		}
+	}
+
+	/**
+	 * This method is used for parsing the msoRequest.
+	 *
+	 * MsoRequest parse the sir, instanceIdMap, action, version, requestJSON,
+	 * reqVersion, aLaCarte to update the status.
+	 *
+	 * @param ServiceInstancesRequest(sir)
+	 * @param action
+	 * @param instanceIdMap
+	 * @param version
+	 * @param requestJSON
+	 * @param aLaCarte
+	 * @param requestId
+	 * @param currentActiveReq
+	 * @throws validateException,RequestDbFailureException
+	 * @return
+	 */
+	public void parseRequest(ServiceInstancesRequest sir, HashMap<String, String> instanceIdMap, Actions action,
+			String version, String requestJSON, Boolean aLaCarte, String requestId,
+			InfraActiveRequests currentActiveReq) throws ValidateException, RequestDbFailureException {
+		logger.debug("STARTED RequestHandlerUtils parseRequest Process");
+		int reqVersion = Integer.parseInt(version.substring(1));
+		try {
+			msoRequest.parse(sir, instanceIdMap, action, version, requestJSON, reqVersion, aLaCarte);
+		} catch (Exception e) {
+			logger.error("failed to parse request", e);
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR,
+					ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+			ValidateException validateException = new ValidateException.Builder(
+					"Error parsing request: " + e.getMessage(), HttpStatus.SC_BAD_REQUEST,
+					ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
+
+			updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
+
+			logger.debug("ENDED RequestHandlerUtils parseRequest Process");
+			throw validateException;
+		}
+	}
+
+	/**
+	 * This method is used for parsing the msoRequest.
+	 *
+	 * MsoRequest parse the sir, instanceIdMap, action, version, requestJSON,
+	 * reqVersion, aLaCarte to update the status.
+	 *
+	 * @param ServiceInstancesRequest(sir)
+	 * @param action
+	 * @param instanceIdMap
+	 * @param version
+	 * @param requestJSON
+	 * @param aLaCarte
+	 * @param requestId
+	 * @param currentActiveReq
+	 * @throws validateException,RequestDbFailureException
+	 * @return
+	 */
+	public void buildErrorOnDuplicateRecord(InfraActiveRequests currentActiveReq, Actions action,
+			HashMap<String, String> instanceIdMap, String instanceName, String requestScope, InfraActiveRequests dup)
+			throws ApiException {
+		logger.debug("STARTED RequestHandlerUtils parseRequest Process");
+
+		String instance = null;
+		if (instanceName != null) {
+			instance = instanceName;
+		} else {
+			instance = instanceIdMap.get(requestScope + "InstanceId");
+		}
+		ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DUPLICATE_FOUND,
+				ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+
+		DuplicateRequestException dupException = new DuplicateRequestException.Builder(requestScope, instance,
+				dup.getRequestStatus(), dup.getRequestId(), HttpStatus.SC_CONFLICT,
+				ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
+
+		updateStatus(currentActiveReq, Status.FAILED, dupException.getMessage());
+
+		logger.debug("ENDED RequestHandlerUtils parseRequest Process");
+		throw dupException;
+	}
+
+	/**
+	 * This method is used for getting the RequestId .
+	 *
+	 * It will validate if the requestId is a ValidUUID then it will return the
+	 * requestId.
+	 *
+	 * @param ContainerRequestContext
+	 * @throws validateException
+	 * @return
+	 */
+	public String getRequestId(ContainerRequestContext requestContext) throws ValidateException {
+		logger.debug("STARTED RequestHandlerUtils getRequestId Process");
+		String requestId = null;
+		if (requestContext.getProperty("requestId") != null) {
+			requestId = requestContext.getProperty("requestId").toString();
+		}
+		if (UUIDChecker.isValidUUID(requestId)) {
+			return requestId;
+		} else {
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR,
+					ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+			ValidateException validateException = new ValidateException.Builder(
+					"Request Id " + requestId + " is not a valid UUID", HttpStatus.SC_INTERNAL_SERVER_ERROR,
+					ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo).build();
+			logger.debug("ENDED RequestHandlerUtils getRequestId Process");
+
+			throw validateException;
+		}
+	}
+
+	/**
+	 * This method is used for setting the InstanceId .
+	 *
+	 * This will set the instance group ID according to the model type.
+	 *
+	 * @param currentActiveReq
+	 * @param requestScope
+	 * @param instanceId
+	 * @param instanceIdMap
+	 * @throws @return
+	 */
+	public void setInstanceId(InfraActiveRequests currentActiveReq, String requestScope, String instanceId,
+			Map<String, String> instanceIdMap) {
+		logger.debug("STARTED RequestHandlerUtils setInstanceId Process");
+		if (StringUtils.isNotBlank(instanceId)) {
+			if (ModelType.service.name().equalsIgnoreCase(requestScope)) {
+				currentActiveReq.setServiceInstanceId(instanceId);
+			} else if (ModelType.vnf.name().equalsIgnoreCase(requestScope)) {
+				currentActiveReq.setVnfId(instanceId);
+			} else if (ModelType.vfModule.name().equalsIgnoreCase(requestScope)) {
+				currentActiveReq.setVfModuleId(instanceId);
+			} else if (ModelType.volumeGroup.name().equalsIgnoreCase(requestScope)) {
+				currentActiveReq.setVolumeGroupId(instanceId);
+			} else if (ModelType.network.name().equalsIgnoreCase(requestScope)) {
+				currentActiveReq.setNetworkId(instanceId);
+			} else if (ModelType.configuration.name().equalsIgnoreCase(requestScope)) {
+				currentActiveReq.setConfigurationId(instanceId);
+			} else if (ModelType.instanceGroup.toString().equalsIgnoreCase(requestScope)) {
+				currentActiveReq.setInstanceGroupId(instanceId);
+			}
+		} else if (instanceIdMap != null && !instanceIdMap.isEmpty()) {
+			if (instanceIdMap.get("serviceInstanceId") != null) {
+				currentActiveReq.setServiceInstanceId(instanceIdMap.get("serviceInstanceId"));
+			}
+			if (instanceIdMap.get("vnfInstanceId") != null) {
+				currentActiveReq.setVnfId(instanceIdMap.get("vnfInstanceId"));
+			}
+			if (instanceIdMap.get("vfModuleInstanceId") != null) {
+				currentActiveReq.setVfModuleId(instanceIdMap.get("vfModuleInstanceId"));
+			}
+			if (instanceIdMap.get("volumeGroupInstanceId") != null) {
+				currentActiveReq.setVolumeGroupId(instanceIdMap.get("volumeGroupInstanceId"));
+			}
+			if (instanceIdMap.get("networkInstanceId") != null) {
+				currentActiveReq.setNetworkId(instanceIdMap.get("networkInstanceId"));
+			}
+			if (instanceIdMap.get("configurationInstanceId") != null) {
+				currentActiveReq.setConfigurationId(instanceIdMap.get("configurationInstanceId"));
+			}
+			if (instanceIdMap.get(CommonConstants.INSTANCE_GROUP_INSTANCE_ID) != null) {
+				currentActiveReq.setInstanceGroupId(instanceIdMap.get(CommonConstants.INSTANCE_GROUP_INSTANCE_ID));
+			}
+		}
+		logger.debug("ENDED RequestHandlerUtils setInstanceId Process");
+	}
+
+	/**
+	 * This method is used for mapping Msorequest to ServiceInstancesRequest.
+	 *
+	 * @param msoRawRequest
+	 * @param serviceInstRequest
+	 * @param isAlaCarte
+	 * @param action
+	 * @throws @return null
+	 */
+	public String mapJSONtoMSOStyle(String msoRawRequest, ServiceInstancesRequest serviceInstRequest,
+			boolean isAlaCarte, Actions action) throws IOException {
+		logger.debug("STARTED RequestHandlerUtils mapJSONtoMSOStyle Process");
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.setSerializationInclusion(Include.NON_NULL);
+		if (msoRawRequest != null) {
+			ServiceInstancesRequest sir = mapper.readValue(msoRawRequest, ServiceInstancesRequest.class);
+			if (serviceInstRequest != null && serviceInstRequest.getRequestDetails() != null
+					&& serviceInstRequest.getRequestDetails().getRequestParameters() != null) {
+				if (!isAlaCarte && Action.createInstance.equals(action)) {
+					sir.getRequestDetails()
+							.setCloudConfiguration(serviceInstRequest.getRequestDetails().getCloudConfiguration());
+					sir.getRequestDetails().getRequestParameters().setUserParams(
+							serviceInstRequest.getRequestDetails().getRequestParameters().getUserParams());
+				}
+				sir.getRequestDetails().getRequestParameters()
+						.setUsePreload(serviceInstRequest.getRequestDetails().getRequestParameters().getUsePreload());
+			}
+
+			logger.debug("Value as string: {}", mapper.writeValueAsString(sir));
+			return mapper.writeValueAsString(sir);
+		}
+		logger.debug("ENDED RequestHandlerUtils mapJSONtoMSOStyle Process");
+		return null;
+	}
+
+	/**
+	 * This method is used for retrieving the model name.
+	 *
+	 * It will get the testApi from the requestParams and store in requestTestApi.
+	 *
+	 * It will get the property from Environment and check if it is MACRO_TEST_API
+	 * or ALACARTE_TEST_API.
+	 *
+	 * And check if the TestApi is the object of requestTestApi then it will get the
+	 * modelName from testApi.
+	 *
+	 * @param requestParams
+	 * @throws IllegalArgumentException
+	 * @return
+	 */
+	public Optional<String> retrieveModelName(RequestParameters requestParams) {
+		logger.debug("STARTED RequestHandlerUtils retrieveModelName Process");
+		String requestTestApi = null;
+		TestApi testApi = null;
+
+		if (requestParams != null) {
+			requestTestApi = requestParams.getTestApi();
+		}
+
+		if (requestTestApi == null) {
+			if (requestParams != null && requestParams.getALaCarte() != null && !requestParams.getALaCarte()) {
+				requestTestApi = env.getProperty(CommonConstants.MACRO_TEST_API);
+			} else {
+				requestTestApi = env.getProperty(CommonConstants.ALACARTE_TEST_API);
+			}
+		}
+
+		try {
+			testApi = TestApi.valueOf(requestTestApi);
+			logger.debug("ENDED RequestHandlerUtils retrieveModelName");
+			return Optional.of(testApi.getModelName());
+		} catch (Exception e) {
+			logger.debug("Exception Occurred in  RequestHandlerUtils retrieveModelName Process");
+			logger.warn("Catching the exception on the valueOf enum call and continuing", e);
+			throw new IllegalArgumentException("Invalid TestApi is provided", e);
+		}
+
+	}
+
+	/**
+	 * This method is used for getting the DefaultModel name .
+	 *
+	 * It will get the defaultModel from ServiceInstancesRequest (sir) Object.
+	 *
+	 * @param ServiceInstancesRequest
+	 * @throws @return defaultModel
+	 */
+	public String getDefaultModel(ServiceInstancesRequest sir) {
+		logger.debug("STARTED RequestHandlerUtils getDefaultModel Process");
+		String defaultModel = sir.getRequestDetails().getRequestInfo().getSource() + "_DEFAULT";
+		Optional<String> oModelName = retrieveModelName(sir.getRequestDetails().getRequestParameters());
+		if (oModelName.isPresent()) {
+			defaultModel = oModelName.get();
+		}
+		logger.debug("ENDED RequestHandlerUtils getDefaultModel Process");
+		return defaultModel;
+	}
+
+	/**
+	 * This method is used for getting the Service record from catalogdb .
+	 *
+	 * According to aLaCarteFlag it will get the service record from the catalogdb.
+	 *
+	 * @param requestScope
+	 * @param ServiceInstancesRequest
+	 * @param aLaCarteFlag
+	 * @throws @return serviceType
+	 */
+	public String getServiceType(String requestScope, ServiceInstancesRequest sir, Boolean aLaCarteFlag) {
+		logger.debug("STARTED RequestHandlerUtils getServiceType Process");
+
+		String serviceType = null;
+		if (requestScope.equalsIgnoreCase(ModelType.service.toString())) {
+			String defaultServiceModelName = getDefaultModel(sir);
+			org.onap.so.db.catalog.beans.Service serviceRecord;
+			if (aLaCarteFlag) {
+				serviceRecord = catalogDbClient.getFirstByModelNameOrderByModelVersionDesc(defaultServiceModelName);
+				if (serviceRecord != null) {
+					serviceType = serviceRecord.getServiceType();
+				}
+			} else {
+				serviceRecord = catalogDbClient
+						.getServiceByID(sir.getRequestDetails().getModelInfo().getModelVersionId());
+				if (serviceRecord != null) {
+					serviceType = serviceRecord.getServiceType();
+				} else {
+					serviceRecord = catalogDbClient.getFirstByModelNameOrderByModelVersionDesc(defaultServiceModelName);
+					if (serviceRecord != null) {
+						serviceType = serviceRecord.getServiceType();
+					}
+				}
+			}
+		} else {
+			serviceType = msoRequest.getServiceInstanceType(sir, requestScope);
+		}
+		logger.debug("ENDED RequestHandlerUtils getServiceType Process");
+		return serviceType;
+	}
+
+	protected String setServiceInstanceId(String requestScope, ServiceInstancesRequest sir) {
+		if (sir.getServiceInstanceId() != null) {
+			return sir.getServiceInstanceId();
+		} else if (requestScope.equalsIgnoreCase(ModelType.instanceGroup.toString())) {
+			RelatedInstanceList[] relatedInstances = sir.getRequestDetails().getRelatedInstanceList();
+			if (relatedInstances != null) {
+				for (RelatedInstanceList relatedInstanceList : relatedInstances) {
+					RelatedInstance relatedInstance = relatedInstanceList.getRelatedInstance();
+					if (relatedInstance.getModelInfo().getModelType() == ModelType.service) {
+						return relatedInstance.getInstanceId();
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	private String requestScopeFromUri(String requestUri) {
+		String requestScope;
+		if (requestUri.contains(ModelType.network.name())) {
+			requestScope = ModelType.network.name();
+		} else if (requestUri.contains(ModelType.vfModule.name())) {
+			requestScope = ModelType.vfModule.name();
+		} else if (requestUri.contains(ModelType.volumeGroup.name())) {
+			requestScope = ModelType.volumeGroup.name();
+		} else if (requestUri.contains(ModelType.configuration.name())) {
+			requestScope = ModelType.configuration.name();
+		} else if (requestUri.contains(ModelType.vnf.name())) {
+			requestScope = ModelType.vnf.name();
+		} else {
+			requestScope = ModelType.service.name();
+		}
+		return requestScope;
+	}
+
+	protected InfraActiveRequests createNewRecordCopyFromInfraActiveRequest(InfraActiveRequests infraActiveRequest,
+			String requestId, Timestamp startTimeStamp, String source, String requestUri, String requestorId,
+			String originalRequestId) throws ApiException {
+		InfraActiveRequests request = new InfraActiveRequests();
+		request.setRequestId(requestId);
+		request.setStartTime(startTimeStamp);
+		request.setSource(source);
+		request.setRequestUrl(requestUri);
+		request.setProgress(new Long(5));
+		request.setRequestorId(requestorId);
+		request.setRequestStatus(Status.IN_PROGRESS.toString());
+		request.setOriginalRequestId(originalRequestId);
+		request.setLastModifiedBy(Constants.MODIFIED_BY_APIHANDLER);
+		if (infraActiveRequest != null) {
+			request.setTenantId(infraActiveRequest.getTenantId());
+			request.setRequestBody(updateRequestorIdInRequestBody(infraActiveRequest, requestorId));
+			request.setAicCloudRegion(infraActiveRequest.getAicCloudRegion());
+			request.setRequestScope(infraActiveRequest.getRequestScope());
+			request.setRequestAction(infraActiveRequest.getRequestAction());
+			setInstanceIdAndName(infraActiveRequest, request);
+		}
+		return request;
+	}
+
+	protected void setInstanceIdAndName(InfraActiveRequests infraActiveRequest,
+			InfraActiveRequests currentActiveRequest) throws ApiException {
+		String requestScope = infraActiveRequest.getRequestScope();
+		try {
+			ModelType type = ModelType.valueOf(requestScope);
+			String instanceName = type.getName(infraActiveRequest);
+			if (instanceName == null && type.equals(ModelType.vfModule)) {
+				logger.error("vfModule for requestId: {} being resumed does not have an instanceName.",
+						infraActiveRequest.getRequestId());
+				ValidateException validateException = new ValidateException.Builder(
+						"vfModule for requestId: " + infraActiveRequest.getRequestId()
+								+ " being resumed does not have an instanceName.",
+						HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).build();
+				updateStatus(currentActiveRequest, Status.FAILED, validateException.getMessage());
+				throw validateException;
+			}
+			if (instanceName != null) {
+				type.setName(currentActiveRequest, instanceName);
+			}
+			type.setId(currentActiveRequest, type.getId(infraActiveRequest));
+		} catch (IllegalArgumentException e) {
+			logger.error(
+					"requestScope \"{}\" does not match a ModelType enum. Unable to set instanceId and instanceName from the original request.",
+					requestScope);
+		}
+	}
+
+	protected Boolean getIsBaseVfModule(ModelInfo modelInfo, Actions action, String vnfType,
+			String sdcServiceModelVersion, InfraActiveRequests currentActiveReq) throws ApiException {
+		// Get VF Module-specific base module indicator
+		VfModule vfm = null;
+		String modelVersionId = modelInfo.getModelVersionId();
+		Boolean isBaseVfModule = false;
+
+		if (modelVersionId != null) {
+			vfm = catalogDbClient.getVfModuleByModelUUID(modelVersionId);
+		} else if (modelInfo.getModelInvariantId() != null && modelInfo.getModelVersion() != null) {
+			vfm = catalogDbClient.getVfModuleByModelInvariantUUIDAndModelVersion(modelInfo.getModelInvariantId(),
+					modelInfo.getModelVersion());
+		}
+
+		if (vfm != null) {
+			if (vfm.getIsBase()) {
+				isBaseVfModule = true;
+			}
+		} else if (action == Action.createInstance || action == Action.updateInstance) {
+			String serviceVersionText = "";
+			if (sdcServiceModelVersion != null && !sdcServiceModelVersion.isEmpty()) {
+				serviceVersionText = " with version " + sdcServiceModelVersion;
+			}
+			String errorMessage = "VnfType " + vnfType + " and VF Module Model Name " + modelInfo.getModelName()
+					+ serviceVersionText + " not found in MSO Catalog DB";
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND,
+					ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+			VfModuleNotFoundException vfModuleException = new VfModuleNotFoundException.Builder(errorMessage,
+					HttpStatus.SC_NOT_FOUND, ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo).build();
+			updateStatus(currentActiveReq, Status.FAILED, vfModuleException.getMessage());
+			throw vfModuleException;
+		}
+		return isBaseVfModule;
+	}
+
+	protected ModelType getModelType(Actions action, ModelInfo modelInfo) {
+		if (action == Action.applyUpdatedConfig || action == Action.inPlaceSoftwareUpdate) {
+			return ModelType.vnf;
+		} else if (action == Action.addMembers || action == Action.removeMembers) {
+			return ModelType.instanceGroup;
+		} else {
+			return modelInfo.getModelType();
+		}
+	}
+
+	protected String updateRequestorIdInRequestBody(InfraActiveRequests infraActiveRequest, String newRequestorId) {
+		String requestBody = infraActiveRequest.getRequestBody();
+		return requestBody.replaceAll(
+				"(?s)(\"requestInfo\"\\s*?:\\s*?\\{.*?\"requestorId\"\\s*?:\\s*?\")(.*?)(\"[ ]*(?:,|\\R|\\}))",
+				"$1" + newRequestorId + "$3");
+	}
 }

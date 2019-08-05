@@ -46,51 +46,53 @@ import org.springframework.stereotype.Component;
 @Component
 public class VnfAdapterVfModuleResources {
 
-    @Autowired
-    private VnfAdapterVfModuleObjectMapper vnfAdapterVfModuleObjectMapper;
+	@Autowired
+	private VnfAdapterVfModuleObjectMapper vnfAdapterVfModuleObjectMapper;
 
-    /**
-     * This method is used for creating the request for the VfModule.
-     *
-     * This method take these parameter and call the VnfAdapterVfModuleObjectMapper to create the request.
-     *
-     * @param requestContext
-     * @param cloudRegion
-     * @param orchestrationContext
-     * @param serviceInstance
-     * @param genericVnf
-     * @param vfModule
-     * @param volumeGroup
-     * @param sdncVnfQueryResponse
-     * @param sdncVfModuleQueryResponse
-     * @throws IOException & MissingValueTagException
-     * @return
-     */
-    public CreateVfModuleRequest createVfModuleRequest(RequestContext requestContext, CloudRegion cloudRegion,
-            OrchestrationContext orchestrationContext, ServiceInstance serviceInstance, GenericVnf genericVnf,
-            VfModule vfModule, VolumeGroup volumeGroup, String sdncVnfQueryResponse, String sdncVfModuleQueryResponse)
-            throws IOException, MissingValueTagException {
-        return vnfAdapterVfModuleObjectMapper.createVfModuleRequestMapper(requestContext, cloudRegion,
-                orchestrationContext, serviceInstance, genericVnf, vfModule, volumeGroup, sdncVnfQueryResponse,
-                sdncVfModuleQueryResponse);
-    }
+	/**
+	 * This method is used for creating the request for the VfModule.
+	 *
+	 * This method take these parameter and call the VnfAdapterVfModuleObjectMapper
+	 * to create the request.
+	 *
+	 * @param requestContext
+	 * @param cloudRegion
+	 * @param orchestrationContext
+	 * @param serviceInstance
+	 * @param genericVnf
+	 * @param vfModule
+	 * @param volumeGroup
+	 * @param sdncVnfQueryResponse
+	 * @param sdncVfModuleQueryResponse
+	 * @throws IOException & MissingValueTagException
+	 * @return
+	 */
+	public CreateVfModuleRequest createVfModuleRequest(RequestContext requestContext, CloudRegion cloudRegion,
+			OrchestrationContext orchestrationContext, ServiceInstance serviceInstance, GenericVnf genericVnf,
+			VfModule vfModule, VolumeGroup volumeGroup, String sdncVnfQueryResponse, String sdncVfModuleQueryResponse)
+			throws IOException, MissingValueTagException {
+		return vnfAdapterVfModuleObjectMapper.createVfModuleRequestMapper(requestContext, cloudRegion,
+				orchestrationContext, serviceInstance, genericVnf, vfModule, volumeGroup, sdncVnfQueryResponse,
+				sdncVfModuleQueryResponse);
+	}
 
-    /**
-     * This method is used for delete the request for the VfModule.
-     *
-     * This method take these parameter and call the VnfAdapterVfModuleObjectMapper to delete the request.
-     *
-     * @param requestContext
-     * @param cloudRegion
-     * @param serviceInstance
-     * @param genericVnf
-     * @param vfModule
-     * @throws IOException
-     * @return
-     */
-    public DeleteVfModuleRequest deleteVfModuleRequest(RequestContext requestContext, CloudRegion cloudRegion,
-            ServiceInstance serviceInstance, GenericVnf genericVnf, VfModule vfModule) throws IOException {
-        return vnfAdapterVfModuleObjectMapper.deleteVfModuleRequestMapper(requestContext, cloudRegion, serviceInstance,
-                genericVnf, vfModule);
-    }
+	/**
+	 * This method is used for delete the request for the VfModule.
+	 *
+	 * This method take these parameter and call the VnfAdapterVfModuleObjectMapper
+	 * to delete the request.
+	 *
+	 * @param requestContext
+	 * @param cloudRegion
+	 * @param serviceInstance
+	 * @param genericVnf
+	 * @param vfModule
+	 * @throws IOException
+	 * @return
+	 */
+	public DeleteVfModuleRequest deleteVfModuleRequest(RequestContext requestContext, CloudRegion cloudRegion,
+			ServiceInstance serviceInstance, GenericVnf genericVnf, VfModule vfModule) throws IOException {
+		return vnfAdapterVfModuleObjectMapper.deleteVfModuleRequestMapper(requestContext, cloudRegion, serviceInstance,
+				genericVnf, vfModule);
+	}
 }
