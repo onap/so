@@ -23,8 +23,12 @@
 package org.onap.so.bpmn.infrastructure.appc.tasks;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 import org.onap.so.logger.LoggingAnchor;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.onap.aai.domain.yang.Vserver;
 import org.onap.appc.client.lcm.model.Action;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
@@ -33,9 +37,14 @@ import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestParameters;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
+import org.onap.so.client.aai.AAIObjectType;
+import org.onap.so.client.aai.entities.AAIResultWrapper;
+import org.onap.so.client.aai.entities.Relationships;
+import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.appc.ApplicationControllerAction;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.client.exception.ExceptionBuilder;
+import org.onap.so.client.orchestration.AAIVnfResources;
 import org.onap.so.db.catalog.beans.ControllerSelectionReference;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.logger.ErrorCode;
@@ -59,6 +68,8 @@ public class AppcRunTasks {
     private CatalogDbClient catalogDbClient;
     @Autowired
     private ApplicationControllerAction appCClient;
+    @Autowired
+    private AAIVnfResources aaiVnfResources;
 
     public void preProcessActivity(BuildingBlockExecution execution) {
         execution.setVariable("actionSnapshot", Action.Snapshot);
@@ -78,6 +89,20 @@ public class AppcRunTasks {
         execution.setVariable(ROLLBACK_VNF_STOP, false);
         execution.setVariable(ROLLBACK_VNF_LOCK, false);
         execution.setVariable(ROLLBACK_QUIESCE_TRAFFIC, false);
+
+        GenericVnf vnf = null;
+        try {
+            vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
+        } catch (BBObjectNotFoundException e) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "No valid VNF exists");
+        }
+
+        try {
+            getVserversForAppc(execution, vnf);
+        } catch (Exception e) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "Unable to retrieve vservers");
+        }
+
     }
 
     public void runAppcCommand(BuildingBlockExecution execution, Action action) {
@@ -183,5 +208,44 @@ public class AppcRunTasks {
         payloadInfo.put("identityUrl", identityUrl);
         payloadInfo.put("vfModuleId", vfModuleId);
         return payloadInfo;
+    }
+
+    protected void getVserversForAppc(BuildingBlockExecution execution, GenericVnf vnf) throws Exception {
+        AAIResultWrapper aaiRW = aaiVnfResources.queryVnfWrapperById(vnf);
+
+        if (aaiRW != null && aaiRW.getRelationships() != null) {
+            Relationships relationships = aaiRW.getRelationships().get();
+            if (relationships != null) {
+                List<AAIResourceUri> vserverUris = relationships.getRelatedAAIUris(AAIObjectType.VSERVER);
+                JSONArray vserverIds = new JSONArray();
+                JSONArray vserverSelfLinks = new JSONArray();
+                for (AAIResourceUri j : vserverUris) {
+                    if (j != null) {
+                        if (j.getURIKeys() != null) {
+                            String vserverId = j.getURIKeys().get("vserver-id");
+                            vserverIds.put(vserverId);
+                        }
+                        Optional<Vserver> oVserver = aaiVnfResources.getVserver(j);
+                        if (oVserver.isPresent()) {
+                            Vserver vserver = oVserver.get();
+                            if (vserver != null) {
+                                String vserverSelfLink = vserver.getVserverSelflink();
+                                vserverSelfLinks.put(vserverSelfLink);
+                            }
+                        }
+                    }
+                }
+
+                JSONObject vmidsArray = new JSONObject();
+                JSONObject vserveridsArray = new JSONObject();
+                vmidsArray.put("vmIds", vserverSelfLinks.toString());
+                vserveridsArray.put("vserverIds", vserverIds.toString());
+                logger.debug("vmidsArray is: {}", vmidsArray.toString());
+                logger.debug("vserveridsArray is: {}", vserveridsArray.toString());
+
+                execution.setVariable("vmIdList", vmidsArray.toString());
+                execution.setVariable("vserverIdList", vserveridsArray.toString());
+            }
+        }
     }
 }
