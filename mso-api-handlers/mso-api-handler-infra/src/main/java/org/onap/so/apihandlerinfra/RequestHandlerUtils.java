@@ -23,7 +23,6 @@
 
 package org.onap.so.apihandlerinfra;
 
-
 import static org.onap.so.logger.HttpHeadersConstants.REQUESTOR_ID;
 import java.io.IOException;
 import java.net.URL;
@@ -117,14 +116,33 @@ public class RequestHandlerUtils extends AbstractRestHandler {
     @Autowired
     private CatalogDbClient catalogDbClient;
 
+    /**
+     * This method is used for updateStatus of BPEL .
+     *
+     * It will create requestClient by calling the orchestrationUri then call the post method of requestClient to pass
+     * the requestClientParameter and store in response object.
+     *
+     * Then it will check if the response is null then it will update the Status is FAILED.
+     *
+     * Then it will check if BPEL accepted the request then request is in progress
+     *
+     * @param currentActiveReq
+     * @param requestClientParameter
+     * @param orchestrationUri
+     * @param requestScope
+     * @return
+     * @throws ApiException
+     */
     public Response postBPELRequest(InfraActiveRequests currentActiveReq, RequestClientParameter requestClientParameter,
             String orchestrationUri, String requestScope) throws ApiException {
+        logger.debug("STARTED RequestHandlerUtils postBPELRequest Process");
         RequestClient requestClient = null;
         HttpResponse response = null;
         try {
             requestClient = reqClientFactory.getRequestClient(orchestrationUri);
             response = requestClient.post(requestClientParameter);
         } catch (Exception e) {
+            logger.debug("Exception occurred in  RequestHandlerUtils postBPELRequest Process");
 
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, ErrorCode.AvailabilityError)
@@ -223,17 +241,31 @@ public class RequestHandlerUtils extends AbstractRestHandler {
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.BusinessProcesssError)
                             .errorSource(requestClient.getUrl()).build();
 
-
             BPMNFailureException servException = new BPMNFailureException.Builder(String.valueOf(bpelStatus),
                     bpelStatus, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
             updateStatus(currentActiveReq, Status.FAILED, servException.getMessage());
 
+            logger.debug("ENDED RequestHandlerUtils postBPELRequest");
             throw servException;
         }
     }
 
+    /**
+     * This method is used for updateStatus in InfraActiveRequests DB.
+     *
+     * It will check if the status is FAILED or COMPLETE.
+     *
+     * It will set the StatusMessage,Progress,RequestStatus,EndTime in InfraActiveRequests and save it in DB.
+     *
+     * @param InfraActiveRequests
+     * @param status
+     * @param errorMessage
+     * @return
+     * @throws RequestDbFailureException
+     */
     public void updateStatus(InfraActiveRequests aq, Status status, String errorMessage)
             throws RequestDbFailureException {
+        logger.debug("STARTED RequestHandlerUtils updateStatus Process");
         if ((status == Status.FAILED) || (status == Status.COMPLETE)) {
             aq.setStatusMessage(errorMessage);
             aq.setProgress(new Long(100));
@@ -243,6 +275,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
             try {
                 infraActiveRequestsClient.save(aq);
             } catch (Exception e) {
+                logger.debug("Exception occurred in  RequestHandlerUtils updateStatus");
                 ErrorLoggerInfo errorLoggerInfo =
                         new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.DataError)
                                 .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
@@ -251,9 +284,18 @@ public class RequestHandlerUtils extends AbstractRestHandler {
                                 .errorInfo(errorLoggerInfo).build();
             }
         }
+        logger.debug("ENDED RequestHandlerUtils updateStatus");
     }
 
+    /**
+     * This method is used for get the requestScope from requestUri .
+     *
+     * It will get the requestScope from ServiceInstancesRequest(sir) as request details, modelInfo & modeltype.
+     *
+     * @param action Type of action to be performed @param sir @param requestUri @return requestScope @throws
+     */
     public String deriveRequestScope(Actions action, ServiceInstancesRequest sir, String requestUri) {
+        logger.debug("STARTED RequestHandlerUtils deriveRequestScope Process");
         if (action == Action.inPlaceSoftwareUpdate || action == Action.applyUpdatedConfig) {
             return (ModelType.vnf.name());
         } else if (action == Action.addMembers || action == Action.removeMembers) {
@@ -265,12 +307,21 @@ public class RequestHandlerUtils extends AbstractRestHandler {
             } else {
                 requestScope = sir.getRequestDetails().getModelInfo().getModelType().name();
             }
+            logger.debug("ENDED RequestHandlerUtils deriveRequestScope Process");
             return requestScope;
         }
     }
 
-
+    /**
+     * This method is used for validating the header.
+     *
+     * It will check the containsKey and validate it.
+     *
+     * @param ContainerRequestContext
+     * @throws ValidationException
+     */
     public void validateHeaders(ContainerRequestContext context) throws ValidationException {
+        logger.debug("STARTED RequestHandlerUtils deriveRequestScope Process");
         MultivaluedMap<String, String> headers = context.getHeaders();
         if (!headers.containsKey(ONAPLogConstants.Headers.REQUEST_ID)) {
             throw new ValidationException(ONAPLogConstants.Headers.REQUEST_ID + " header", true);
@@ -281,18 +332,47 @@ public class RequestHandlerUtils extends AbstractRestHandler {
         if (!headers.containsKey(REQUESTOR_ID)) {
             throw new ValidationException(REQUESTOR_ID + " header", true);
         }
+        logger.debug("ENDED RequestHandlerUtils deriveRequestScope Process");
     }
 
+    /**
+     * This method is used for getting the requestURI.
+     *
+     * It will get the requestUri path from ContainerRequestContext.
+     *
+     *
+     * @param ContainerRequestContext
+     * @param uriPrefix
+     * @throws @return requestUri
+     */
     public String getRequestUri(ContainerRequestContext context, String uriPrefix) {
+        logger.debug("STARTED RequestHandlerUtils getRequestUri Process");
         String requestUri = context.getUriInfo().getPath();
         String httpUrl = MDC.get(LogConstants.URI_BASE).concat(requestUri);
         MDC.put(LogConstants.HTTP_URL, httpUrl);
         requestUri = requestUri.substring(requestUri.indexOf(uriPrefix) + uriPrefix.length());
+        logger.debug("ENDED RequestHandlerUtils getRequestUri Process");
         return requestUri;
     }
 
+    /**
+     * This method is used for checking duplicate.
+     *
+     * It will check if the instance name is duplicate by passing the instanceIdMap,instanceName,requestScope to
+     * infraActiveRequestsClient.
+     *
+     *
+     * @param action
+     * @param instanceIdMap
+     * @param instanceName
+     * @param requestScope
+     * @param currentActiveReq
+     * @throws ApiException
+     * @return InfraActiveRequests
+     */
     public InfraActiveRequests duplicateCheck(Actions action, HashMap<String, String> instanceIdMap,
             String instanceName, String requestScope, InfraActiveRequests currentActiveReq) throws ApiException {
+        logger.debug("STARTED RequestHandlerUtils duplicateCheck Process");
         InfraActiveRequests dup = null;
         try {
             if (!(instanceName == null && requestScope.equals("service") && (action == Action.createInstance
@@ -300,6 +380,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
                 dup = infraActiveRequestsClient.checkInstanceNameDuplicate(instanceIdMap, instanceName, requestScope);
             }
         } catch (Exception e) {
+            logger.debug("Exception occurred in RequestHandlerUtils duplicateCheck Process");
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_DUPLICATE_CHECK_EXC, ErrorCode.DataError)
                             .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
@@ -310,6 +391,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
             updateStatus(currentActiveReq, Status.FAILED, requestDbFailureException.getMessage());
             throw requestDbFailureException;
         }
+        logger.debug("ENDED RequestHandlerUtils duplicateCheck Process");
         return dup;
     }
 
@@ -343,13 +425,25 @@ public class RequestHandlerUtils extends AbstractRestHandler {
         return false;
     }
 
+    /**
+     * This method is used for converting the JSON to ServiceInstanceRequest(sir).
+     *
+     * @param requestJSON
+     * @param action
+     * @param requestId
+     * @param requestUri
+     * @throws ApiException
+     * @return
+     */
     public ServiceInstancesRequest convertJsonToServiceInstanceRequest(String requestJSON, Actions action,
             String requestId, String requestUri) throws ApiException {
+        logger.debug("STARTED RequestHandlerUtils convertJsonToServiceInstanceRequest Process");
         try {
             ObjectMapper mapper = new ObjectMapper();
             return mapper.readValue(requestJSON, ServiceInstancesRequest.class);
 
         } catch (IOException e) {
+            logger.debug("Exception Occurred in RequestHandlerUtils convertJsonToServiceInstanceRequest Process");
 
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError)
@@ -362,14 +456,32 @@ public class RequestHandlerUtils extends AbstractRestHandler {
 
             msoRequest.createErrorRequestRecord(Status.FAILED, requestId, validateException.getMessage(), action,
                     requestScope, requestJSON);
+            logger.debug("ENDED RequestHandlerUtils convertJsonToServiceInstanceRequest Process");
 
             throw validateException;
         }
     }
 
+    /**
+     * This method is used for parsing the msoRequest.
+     *
+     * MsoRequest parse the sir, instanceIdMap, action, version, requestJSON, reqVersion, aLaCarte to update the status.
+     *
+     * @param ServiceInstancesRequest(sir)
+     * @param action
+     * @param instanceIdMap
+     * @param version
+     * @param requestJSON
+     * @param aLaCarte
+     * @param requestId
+     * @param currentActiveReq
+     * @throws validateException,RequestDbFailureException
+     * @return
+     */
     public void parseRequest(ServiceInstancesRequest sir, HashMap<String, String> instanceIdMap, Actions action,
             String version, String requestJSON, Boolean aLaCarte, String requestId,
             InfraActiveRequests currentActiveReq) throws ValidateException, RequestDbFailureException {
+        logger.debug("STARTED RequestHandlerUtils parseRequest Process");
         int reqVersion = Integer.parseInt(version.substring(1));
         try {
             msoRequest.parse(sir, instanceIdMap, action, version, requestJSON, reqVersion, aLaCarte);
@@ -384,13 +496,31 @@ public class RequestHandlerUtils extends AbstractRestHandler {
 
             updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
 
+            logger.debug("ENDED RequestHandlerUtils parseRequest Process");
             throw validateException;
         }
     }
 
+    /**
+     * This method is used for parsing the msoRequest.
+     *
+     * MsoRequest parse the sir, instanceIdMap, action, version, requestJSON, reqVersion, aLaCarte to update the status.
+     *
+     * @param ServiceInstancesRequest(sir)
+     * @param action
+     * @param instanceIdMap
+     * @param version
+     * @param requestJSON
+     * @param aLaCarte
+     * @param requestId
+     * @param currentActiveReq
+     * @throws validateException,RequestDbFailureException
+     * @return
+     */
     public void buildErrorOnDuplicateRecord(InfraActiveRequests currentActiveReq, Actions action,
             HashMap<String, String> instanceIdMap, String instanceName, String requestScope, InfraActiveRequests dup)
             throws ApiException {
+        logger.debug("STARTED RequestHandlerUtils parseRequest Process");
 
         String instance = null;
         if (instanceName != null) {
@@ -409,10 +539,21 @@ public class RequestHandlerUtils extends AbstractRestHandler {
 
         updateStatus(currentActiveReq, Status.FAILED, dupException.getMessage());
 
+        logger.debug("ENDED RequestHandlerUtils parseRequest Process");
         throw dupException;
     }
 
+    /**
+     * This method is used for getting the RequestId .
+     *
+     * It will validate if the requestId is a ValidUUID then it will return the requestId.
+     *
+     * @param ContainerRequestContext
+     * @throws validateException
+     * @return
+     */
     public String getRequestId(ContainerRequestContext requestContext) throws ValidateException {
+        logger.debug("STARTED RequestHandlerUtils getRequestId Process");
         String requestId = null;
         if (requestContext.getProperty("requestId") != null) {
             requestId = requestContext.getProperty("requestId").toString();
@@ -427,13 +568,26 @@ public class RequestHandlerUtils extends AbstractRestHandler {
                     new ValidateException.Builder("Request Id " + requestId + " is not a valid UUID",
                             HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_BAD_PARAMETER)
                                     .errorInfo(errorLoggerInfo).build();
+            logger.debug("ENDED RequestHandlerUtils getRequestId Process");
 
             throw validateException;
         }
     }
 
+    /**
+     * This method is used for setting the InstanceId .
+     *
+     * This will set the instance group ID according to the model type.
+     *
+     * @param currentActiveReq
+     * @param requestScope
+     * @param instanceId
+     * @param instanceIdMap
+     * @throws @return
+     */
     public void setInstanceId(InfraActiveRequests currentActiveReq, String requestScope, String instanceId,
             Map<String, String> instanceIdMap) {
+        logger.debug("STARTED RequestHandlerUtils setInstanceId Process");
         if (StringUtils.isNotBlank(instanceId)) {
             if (ModelType.service.name().equalsIgnoreCase(requestScope)) {
                 currentActiveReq.setServiceInstanceId(instanceId);
@@ -473,10 +627,21 @@ public class RequestHandlerUtils extends AbstractRestHandler {
                 currentActiveReq.setInstanceGroupId(instanceIdMap.get(CommonConstants.INSTANCE_GROUP_INSTANCE_ID));
             }
         }
+        logger.debug("ENDED RequestHandlerUtils setInstanceId Process");
     }
 
+    /**
+     * This method is used for mapping Msorequest to ServiceInstancesRequest.
+     *
+     * @param msoRawRequest
+     * @param serviceInstRequest
+     * @param isAlaCarte
+     * @param action
+     * @throws @return null
+     */
     public String mapJSONtoMSOStyle(String msoRawRequest, ServiceInstancesRequest serviceInstRequest,
             boolean isAlaCarte, Actions action) throws IOException {
+        logger.debug("STARTED RequestHandlerUtils mapJSONtoMSOStyle Process");
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(Include.NON_NULL);
         if (msoRawRequest != null) {
@@ -496,10 +661,25 @@ public class RequestHandlerUtils extends AbstractRestHandler {
             logger.debug("Value as string: {}", mapper.writeValueAsString(sir));
             return mapper.writeValueAsString(sir);
         }
+        logger.debug("ENDED RequestHandlerUtils mapJSONtoMSOStyle Process");
         return null;
     }
 
+    /**
+     * This method is used for retrieving the model name.
+     *
+     * It will get the testApi from the requestParams and store in requestTestApi.
+     *
+     * It will get the property from Environment and check if it is MACRO_TEST_API or ALACARTE_TEST_API.
+     *
+     * And check if the TestApi is the object of requestTestApi then it will get the modelName from testApi.
+     *
+     * @param requestParams
+     * @throws IllegalArgumentException
+     * @return
+     */
     public Optional<String> retrieveModelName(RequestParameters requestParams) {
+        logger.debug("STARTED RequestHandlerUtils retrieveModelName Process");
         String requestTestApi = null;
         TestApi testApi = null;
 
@@ -517,23 +697,48 @@ public class RequestHandlerUtils extends AbstractRestHandler {
 
         try {
             testApi = TestApi.valueOf(requestTestApi);
+            logger.debug("ENDED RequestHandlerUtils retrieveModelName");
             return Optional.of(testApi.getModelName());
         } catch (Exception e) {
+            logger.debug("Exception Occurred in  RequestHandlerUtils retrieveModelName Process");
             logger.warn("Catching the exception on the valueOf enum call and continuing", e);
             throw new IllegalArgumentException("Invalid TestApi is provided", e);
         }
+
     }
 
+    /**
+     * This method is used for getting the DefaultModel name .
+     *
+     * It will get the defaultModel from ServiceInstancesRequest (sir) Object.
+     *
+     * @param ServiceInstancesRequest
+     * @throws @return defaultModel
+     */
     public String getDefaultModel(ServiceInstancesRequest sir) {
+        logger.debug("STARTED RequestHandlerUtils getDefaultModel Process");
         String defaultModel = sir.getRequestDetails().getRequestInfo().getSource() + "_DEFAULT";
         Optional<String> oModelName = retrieveModelName(sir.getRequestDetails().getRequestParameters());
         if (oModelName.isPresent()) {
             defaultModel = oModelName.get();
         }
+        logger.debug("ENDED RequestHandlerUtils getDefaultModel Process");
         return defaultModel;
     }
 
+    /**
+     * This method is used for getting the Service record from catalogdb .
+     *
+     * According to aLaCarteFlag it will get the service record from the catalogdb.
+     *
+     * @param requestScope
+     * @param ServiceInstancesRequest
+     * @param aLaCarteFlag
+     * @throws @return serviceType
+     */
     public String getServiceType(String requestScope, ServiceInstancesRequest sir, Boolean aLaCarteFlag) {
+        logger.debug("STARTED RequestHandlerUtils getServiceType Process");
+
         String serviceType = null;
         if (requestScope.equalsIgnoreCase(ModelType.service.toString())) {
             String defaultServiceModelName = getDefaultModel(sir);
@@ -558,6 +763,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
         } else {
             serviceType = msoRequest.getServiceInstanceType(sir, requestScope);
         }
+        logger.debug("ENDED RequestHandlerUtils getServiceType Process");
         return serviceType;
     }
 

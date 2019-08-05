@@ -440,7 +440,6 @@ public class ServiceInstances extends AbstractRestHandler {
                 requestHandlerUtils.getRequestUri(requestContext, uriPrefix));
     }
 
-
     @DELETE
     @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -588,7 +587,6 @@ public class ServiceInstances extends AbstractRestHandler {
         return serviceInstances(request, Action.scaleOut, instanceIdMap, version, requestId,
                 requestHandlerUtils.getRequestUri(requestContext, uriPrefix));
     }
-
 
     @POST
     @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/volumeGroups")
@@ -762,8 +760,30 @@ public class ServiceInstances extends AbstractRestHandler {
                 requestHandlerUtils.getRequestUri(requestContext, uriPrefix));
     }
 
+    /**
+     * This method is used for POST a request to the BPEL client (BPMN).
+     *
+     * Convert the requestJson to ServiceInstanceRequest(sir), create the msoRequest object, check whether this request
+     * is already being processed in requestdb for duplicate check.
+     *
+     * Based on the alacarte flag, sir and msoRequest will do the recipe lookup from the service and servicerecipe table
+     * of catalogdb, and get the OrchestrationURI.
+     *
+     * If the present request is not the duplicate request then this request will be saved in the requestdb. and will
+     * POST a request to the BPMN engine at the OrchestrationURI fetched.
+     *
+     * @param requestJSON Json fetched as body in the API call
+     * @param action Type of action to be performed
+     * @param instanceIdMap Map of instance ids of service/vnf/vf/configuration etc..
+     * @param version Supported version of API
+     * @param requestId Unique id for the request
+     * @param requestUri
+     * @return response object
+     * @throws ApiException
+     */
     public Response serviceInstances(String requestJSON, Actions action, HashMap<String, String> instanceIdMap,
             String version, String requestId, String requestUri) throws ApiException {
+        logger.debug("STARTED ServiceInstances serviceInstances process");
         String serviceInstanceId;
         Boolean aLaCarte = null;
         ServiceInstancesRequest sir;
@@ -864,6 +884,8 @@ public class ServiceInstances extends AbstractRestHandler {
         try {
             infraActiveRequestsClient.save(currentActiveReq);
         } catch (Exception e) {
+            logger.debug(
+                    "Exception occurred at the time of saving currentActiveReq in infraActiveRequestsClient in  ServiceInstances");
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.DataError)
                             .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
@@ -889,6 +911,8 @@ public class ServiceInstances extends AbstractRestHandler {
                     .setApiVersion(apiVersion).setALaCarte(aLaCarte).setRequestUri(requestUri)
                     .setInstanceGroupId(instanceGroupId).build();
         } catch (IOException e) {
+            logger.debug(
+                    "Exception occurred at the time of building requestClientParameter in ServiceInstances serviceInstances");
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.SchemaError)
                             .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
@@ -896,6 +920,7 @@ public class ServiceInstances extends AbstractRestHandler {
                     HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo)
                             .build();
         }
+        logger.debug("ENDED ServiceInstances for POST a request to the BPEL client");
         return requestHandlerUtils.postBPELRequest(currentActiveReq, requestClientParameter,
                 recipeLookupResult.getOrchestrationURI(), requestScope);
     }
@@ -914,8 +939,24 @@ public class ServiceInstances extends AbstractRestHandler {
         return action;
     }
 
+    /**
+     * This method deletes the Instance Groups.
+     *
+     * This method will check whether the request is not duplicate in requestdb. if its not then will save as a new
+     * request. And will send a POST request to BEPL client to delete the Insatnce Groups.
+     *
+     * @param action
+     * @param instanceIdMap
+     * @param version
+     * @param requestId
+     * @param requestUri
+     * @param requestContext
+     * @return
+     * @throws ApiException
+     */
     public Response deleteInstanceGroups(Actions action, HashMap<String, String> instanceIdMap, String version,
             String requestId, String requestUri, ContainerRequestContext requestContext) throws ApiException {
+        logger.debug("STARTED ServiceInstances deleteInstanceGroups to deletes the Instance Groups");
         String instanceGroupId = instanceIdMap.get(CommonConstants.INSTANCE_GROUP_INSTANCE_ID);
         Boolean aLaCarte = true;
         String apiVersion = version.substring(1);
@@ -929,6 +970,8 @@ public class ServiceInstances extends AbstractRestHandler {
         try {
             requestHandlerUtils.validateHeaders(requestContext);
         } catch (ValidationException e) {
+            logger.debug(
+                    "Exception occurred at the time of validating requestContext in  ServiceInstances deleteInstanceGroups");
             logger.error("Exception occurred", e);
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_VALIDATION_ERROR, ErrorCode.SchemaError)
@@ -967,6 +1010,8 @@ public class ServiceInstances extends AbstractRestHandler {
         try {
             infraActiveRequestsClient.save(currentActiveReq);
         } catch (Exception e) {
+            logger.debug(
+                    "Exception occurred at the time of saving at infraActiveRequestsClient in ServiceInstances deleteInstanceGroups to deletes the Instance Groups ");
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.DataError)
                             .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
@@ -978,6 +1023,8 @@ public class ServiceInstances extends AbstractRestHandler {
                 .setBaseVfModule(isBaseVfModule).setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
                 .setRequestAction(action.toString()).setApiVersion(apiVersion).setALaCarte(aLaCarte)
                 .setRequestUri(requestUri).setInstanceGroupId(instanceGroupId).build();
+
+        logger.debug("ENDED ServiceInstances deleteInstanceGroups to deletes the Instance Groups ");
 
         return requestHandlerUtils.postBPELRequest(currentActiveReq, requestClientParameter,
                 recipeLookupResult.getOrchestrationURI(), requestScope);
@@ -992,7 +1039,8 @@ public class ServiceInstances extends AbstractRestHandler {
     protected RecipeLookupResult getServiceInstanceOrchestrationURI(ServiceInstancesRequest sir, Actions action,
             boolean alaCarteFlag, InfraActiveRequests currentActiveReq) throws ApiException {
         RecipeLookupResult recipeLookupResult = null;
-        // if the aLaCarte flag is set to TRUE, the API-H should choose the VID_DEFAULT recipe for the requested action
+        // if the aLaCarte flag is set to TRUE, the API-H should choose the VID_DEFAULT
+        // recipe for the requested action
         ModelInfo modelInfo = sir.getRequestDetails().getModelInfo();
         // Query MSO Catalog DB
 
@@ -1007,7 +1055,6 @@ public class ServiceInstances extends AbstractRestHandler {
                 ErrorLoggerInfo errorLoggerInfo =
                         new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError)
                                 .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
-
 
                 ValidateException validateException =
                         new ValidateException.Builder(e.getMessage(), HttpStatus.SC_BAD_REQUEST,
@@ -1027,7 +1074,6 @@ public class ServiceInstances extends AbstractRestHandler {
                         new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError)
                                 .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
 
-
                 ValidateException validateException =
                         new ValidateException.Builder(e.getMessage(), HttpStatus.SC_BAD_REQUEST,
                                 ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
@@ -1045,7 +1091,6 @@ public class ServiceInstances extends AbstractRestHandler {
                         new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError)
                                 .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
 
-
                 ValidateException validateException =
                         new ValidateException.Builder(e.getMessage(), HttpStatus.SC_BAD_REQUEST,
                                 ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
@@ -1061,7 +1106,6 @@ public class ServiceInstances extends AbstractRestHandler {
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.DataError)
                             .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
-
 
             RecipeNotFoundException recipeNotFoundExceptionException =
                     new RecipeNotFoundException.Builder("Recipe could not be retrieved from catalog DB.",
@@ -1112,7 +1156,8 @@ public class ServiceInstances extends AbstractRestHandler {
             }
         }
 
-        // if an aLaCarte flag was sent in the request, throw an error if the recipe was not found
+        // if an aLaCarte flag was sent in the request, throw an error if the recipe was
+        // not found
         RequestParameters reqParam = requestDetails.getRequestParameters();
         if (reqParam != null && alaCarteFlag && recipe == null) {
             return null;
@@ -1301,23 +1346,32 @@ public class ServiceInstances extends AbstractRestHandler {
 
             if (modelInfo.getModelType().equals(ModelType.vnf)) {
                 // a. For a vnf request (only create, no update currently):
-                // i. (v3-v4) If modelInfo.modelCustomizationId is provided, use it to validate catalog DB has record in
+                // i. (v3-v4) If modelInfo.modelCustomizationId is provided, use it to validate
+                // catalog DB has record in
                 // vnf_resource_customization.model_customization_uuid.
-                // ii. (v2-v4) If modelInfo.modelCustomizationId is NOT provided (because it is a pre-1702 ASDC model or
+                // ii. (v2-v4) If modelInfo.modelCustomizationId is NOT provided (because it is
+                // a pre-1702 ASDC model or
                 // pre-v3), then modelInfo.modelCustomizationName must have
                 // been provided (else create request should be rejected). APIH should use the
-                // relatedInstance.modelInfo[service].modelVersionId** + modelInfo[vnf].modelCustomizationName
-                // to â€œjoinâ€�? service_to_resource_customizations with vnf_resource_customization to confirm a
+                // relatedInstance.modelInfo[service].modelVersionId** +
+                // modelInfo[vnf].modelCustomizationName
+                // to â€œjoinâ€�? service_to_resource_customizations with
+                // vnf_resource_customization to confirm a
                 // vnf_resource_customization.model_customization_uuid record exists.
                 // **If relatedInstance.modelInfo[service].modelVersionId was not provided, use
-                // relatedInstance.modelInfo[service].modelInvariantId + modelVersion instead to lookup modelVersionId
+                // relatedInstance.modelInfo[service].modelInvariantId + modelVersion instead to
+                // lookup modelVersionId
                 // (MODEL_UUID) in SERVICE table.
-                // iii. Regardless of how the value was provided/obtained above, APIH must always populate
-                // vnfModelCustomizationId in bpmnRequest. It would be assumed it was MSO generated
+                // iii. Regardless of how the value was provided/obtained above, APIH must
+                // always populate
+                // vnfModelCustomizationId in bpmnRequest. It would be assumed it was MSO
+                // generated
                 // during 1707 data migration if VID did not provide it originally on request.
-                // iv. Note: continue to construct the â€œvnf-typeâ€�? value and pass to BPMN (must still be populated
+                // iv. Note: continue to construct the â€œvnf-typeâ€�? value and pass to BPMN
+                // (must still be populated
                 // in A&AI).
-                // 1. If modelCustomizationName is NOT provided on a vnf/vfModule request, use modelCustomizationId to
+                // 1. If modelCustomizationName is NOT provided on a vnf/vfModule request, use
+                // modelCustomizationId to
                 // look it up in our catalog to construct vnf-type value to pass to BPMN.
 
                 VnfResource vnfResource = null;
@@ -1448,13 +1502,12 @@ public class ServiceInstances extends AbstractRestHandler {
                     throw new ValidationException("vfModuleCustomization");
                 } else if (vfModule == null && vfmc != null) {
                     vfModule = vfmc.getVfModule(); // can't be null as vfModuleModelUUID is not-null property in
-                                                   // VfModuleCustomization table
+                    // VfModuleCustomization table
                 }
 
                 if (modelInfo.getModelVersionId() == null) {
                     modelInfo.setModelVersionId(vfModule.getModelUUID());
                 }
-
 
                 recipe = catalogDbClient.getFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction(
                         vfModule.getModelUUID(), vnfComponentType, action.toString());
@@ -1518,7 +1571,6 @@ public class ServiceInstances extends AbstractRestHandler {
         return new RecipeLookupResult(vnfRecipe.getOrchestrationUri(), vnfRecipe.getRecipeTimeout());
     }
 
-
     private RecipeLookupResult getNetworkUri(ServiceInstancesRequest sir, Actions action) throws ValidationException {
 
         String defaultNetworkType = requestHandlerUtils.getDefaultModel(sir);
@@ -1558,7 +1610,6 @@ public class ServiceInstances extends AbstractRestHandler {
         return recipe != null ? new RecipeLookupResult(recipe.getOrchestrationUri(), recipe.getRecipeTimeout()) : null;
     }
 
-
     private Response configurationRecipeLookup(String requestJSON, Action action, HashMap<String, String> instanceIdMap,
             String version, String requestId, String requestUri) throws ApiException {
         String serviceInstanceId;
@@ -1597,7 +1648,6 @@ public class ServiceInstances extends AbstractRestHandler {
         referencesResponse.setRequestId(requestId);
         serviceResponse.setRequestReferences(referencesResponse);
 
-
         String orchestrationUri = env.getProperty(CommonConstants.ALACARTE_ORCHESTRATION);
         String timeOut = env.getProperty(CommonConstants.ALACARTE_RECIPE_TIMEOUT);
 
@@ -1608,7 +1658,6 @@ public class ServiceInstances extends AbstractRestHandler {
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, ErrorCode.DataError)
                             .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
-
 
             ValidateException validateException = new ValidateException.Builder(error, HttpStatus.SC_NOT_FOUND,
                     ErrorNumbers.SVC_GENERAL_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
