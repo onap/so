@@ -856,8 +856,7 @@ public class CatalogDbClient {
     protected CvnfcCustomization findCvnfcCustomizationInAList(String cvnfcCustomizationUuid,
             List<CvnfcCustomization> cvnfcCustomList) {
         if (cvnfcCustomizationUuid == null) {
-            throw new EntityNotFoundException(
-                    "a NULL UUID was provided in query to search for CvnfcCustomization" + cvnfcCustomizationUuid);
+            throw new EntityNotFoundException("a NULL UUID was provided in query to search for CvnfcCustomization");
         }
         List<CvnfcCustomization> filtered = cvnfcCustomList.stream().filter(c -> c.getModelCustomizationUUID() != null)
                 .filter(cvnfc -> cvnfcCustomizationUuid.equals(cvnfc.getModelCustomizationUUID()))
