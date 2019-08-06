@@ -33,8 +33,7 @@ import org.onap.so.client.graphinventory.exceptions.BulkProcessFailed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInventoryResourceUri, EdgeLabel extends GraphInventoryEdgeLabel>
-        implements TransactionBuilder {
+public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInventoryResourceUri, EdgeLabel extends GraphInventoryEdgeLabel> {
 
     protected static Logger logger = LoggerFactory.getLogger(GraphInventoryTransactionClient.class);
 
@@ -181,7 +180,7 @@ public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInv
         Map<String, Object> result = this.get(new GenericType<Map<String, Object>>() {}, (Uri) uri.clone())
                 .orElseThrow(() -> new NotFoundException(uri.build() + " does not exist in " + this.getGraphDBName()));
         String resourceVersion = (String) result.get("resource-version");
-        this.delete(uri.resourceVersion(resourceVersion).build().toString(), "");
+        this.delete(uri.resourceVersion(resourceVersion).build().toString());
         incrementActionAmount();
         return (Self) this;
     }
@@ -191,6 +190,14 @@ public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInv
     protected abstract boolean exists(Uri uri);
 
     protected abstract String getGraphDBName();
+
+    protected abstract void put(String uri, Object body);
+
+    protected abstract void delete(String uri);
+
+    protected abstract void delete(String uri, Object obj);
+
+    protected abstract void patch(String uri, Object body);
 
     /**
      * @param obj - can be any object which will marshal into a valid A&AI payload

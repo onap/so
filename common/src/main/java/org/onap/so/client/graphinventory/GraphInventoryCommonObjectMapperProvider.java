@@ -40,6 +40,7 @@ public class GraphInventoryCommonObjectMapperProvider extends CommonObjectMapper
         mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
         mapper.enable(MapperFeature.USE_ANNOTATIONS);
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, false);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         AnnotationIntrospector aiJaxb = new JaxbAnnotationIntrospector(TypeFactory.defaultInstance());

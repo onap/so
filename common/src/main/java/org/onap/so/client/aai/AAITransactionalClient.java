@@ -169,18 +169,22 @@ public class AAITransactionalClient
     }
 
     @Override
-    public void put(String uri, Object body) {
+    protected void put(String uri, Object body) {
         currentTransaction.getPut().add(new OperationBody().withUri(uri).withBody(body));
     }
 
     @Override
-    public void delete(String uri, Object body) {
-        currentTransaction.getDelete().add(new OperationBody().withUri(uri).withBody(body));
-
+    protected void delete(String uri) {
+        currentTransaction.getDelete().add(new OperationBody().withUri(uri).withBody(null));
     }
 
     @Override
-    public void patch(String uri, Object body) {
+    protected void delete(String uri, Object obj) {
+        currentTransaction.getDelete().add(new OperationBody().withUri(uri).withBody(obj));
+    }
+
+    @Override
+    protected void patch(String uri, Object body) {
         currentTransaction.getPatch().add(new OperationBody().withUri(uri).withBody(body));
     }
 
