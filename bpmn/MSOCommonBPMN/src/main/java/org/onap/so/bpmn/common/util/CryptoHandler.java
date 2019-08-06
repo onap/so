@@ -24,6 +24,7 @@
 package org.onap.so.bpmn.common.util;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.util.Properties;
 import org.onap.so.utils.CryptoUtils;
@@ -40,7 +41,10 @@ public class CryptoHandler implements ICryptoHandler {
     public String getMsoAaiPassword() {
         Properties keyProp = new Properties();
         try {
-            keyProp.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("urn.properties"));
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            InputStream rs = cl.getResourceAsStream("urn.properties");
+            keyProp.load(rs);
+            rs.close();
             return CryptoUtils.decrypt((String) keyProp.get(PROPERTY_KEY), MSO_KEY);
         } catch (GeneralSecurityException | IOException e) {
             logger.error(GENERAL_SECURITY_EXCEPTION_PREFIX + e.getMessage(), e);
