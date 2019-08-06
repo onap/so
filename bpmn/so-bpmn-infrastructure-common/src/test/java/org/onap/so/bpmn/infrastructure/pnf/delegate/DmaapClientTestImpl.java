@@ -21,9 +21,8 @@
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
 import org.onap.so.bpmn.infrastructure.pnf.dmaap.DmaapClient;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 public class DmaapClientTestImpl implements DmaapClient {
 
@@ -31,8 +30,7 @@ public class DmaapClientTestImpl implements DmaapClient {
     private Runnable informConsumer;
 
     @Override
-    public void registerForUpdate(String pnfCorrelationId, Runnable informConsumer,
-            Optional<HashMap<String, String>> updateInfo) {
+    public void registerForUpdate(String pnfCorrelationId, Runnable informConsumer, Map<String, String> updateInfo) {
         this.pnfCorrelationId = pnfCorrelationId;
         this.informConsumer = informConsumer;
     }
