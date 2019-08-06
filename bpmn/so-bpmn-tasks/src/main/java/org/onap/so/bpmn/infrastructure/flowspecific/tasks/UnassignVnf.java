@@ -30,12 +30,15 @@ import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoInstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.AAIInstanceGroupResources;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 
 @Component()
 public class UnassignVnf {
+    private static final Logger logger = LoggerFactory.getLogger(UnassignVnf.class);
     @Autowired
     private ExceptionBuilder exceptionUtil;
     @Autowired
@@ -45,7 +48,13 @@ public class UnassignVnf {
     @Autowired
     private AAIObjectInstanceNameGenerator aaiObjectInstanceNameGenerator;
 
+    /**
+     * BPMN access method to deleting instanceGroup in AAI.
+     *
+     * @param execution
+     */
     public void deleteInstanceGroups(BuildingBlockExecution execution) {
+        logger.debug("STARTED SDNCActivateTasks deleteInstanceGroups process");
         try {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
             List<InstanceGroup> instanceGroups = vnf.getInstanceGroups();
@@ -56,7 +65,9 @@ public class UnassignVnf {
                 }
             }
         } catch (Exception ex) {
+            logger.debug("Exception occurred in SDNCActivateTasks deleteInstanceGroups");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("NDED SDNCActivateTasks deleteInstanceGroups");
     }
 }

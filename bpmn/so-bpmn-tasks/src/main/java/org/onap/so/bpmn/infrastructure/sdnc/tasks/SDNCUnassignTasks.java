@@ -50,9 +50,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+
 @Component
 public class SDNCUnassignTasks extends AbstractSDNCTask {
 
+    private static final Logger logger = LoggerFactory.getLogger(SDNCUnassignTasks.class);
     public static final String SDNC_REQUEST = "SDNCRequest";
     @Autowired
     private SDNCServiceInstanceResources sdncSIResources;
@@ -69,7 +71,13 @@ public class SDNCUnassignTasks extends AbstractSDNCTask {
     @Autowired
     private Environment env;
 
+    /**
+     * BPMN access method to invoke unassign the ServiceInstance on SSDNC.
+     *
+     * @param execution
+     */
     public void unassignServiceInstance(BuildingBlockExecution execution) {
+        logger.debug("STARTED SDNCUnassignTasks unassignServiceInstance process");
         try {
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
             ServiceInstance serviceInstance =
@@ -83,11 +91,19 @@ public class SDNCUnassignTasks extends AbstractSDNCTask {
             sdncRequest.setTopology(SDNCTopology.SERVICE);
             execution.setVariable(SDNC_REQUEST, sdncRequest);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in  SDNCUnassignTasks unassignServiceInstance");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED SDNCUnassignTasks unassignServiceInstance");
     }
 
+    /**
+     * BPMN access method to invoke unassign the VfModule on SSDNC.
+     *
+     * @param execution
+     */
     public void unassignVfModule(BuildingBlockExecution execution) {
+        logger.debug("STARTED SDNCUnassignTasks unassignVfModule process");
         try {
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
             ServiceInstance serviceInstance =
@@ -102,11 +118,19 @@ public class SDNCUnassignTasks extends AbstractSDNCTask {
             sdncRequest.setTopology(SDNCTopology.VFMODULE);
             execution.setVariable(SDNC_REQUEST, sdncRequest);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in SDNCUnassignTasks unassignVfModule");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED SDNCUnassignTasks unassignVfModule");
     }
 
+    /**
+     * BPMN access method to invoke unassign the Vnf on SSDNC.
+     *
+     * @param execution
+     */
     public void unassignVnf(BuildingBlockExecution execution) {
+        logger.debug("STARTED SDNCUnassignTasks unassignVnf process");
         try {
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
             ServiceInstance serviceInstance =
@@ -122,11 +146,19 @@ public class SDNCUnassignTasks extends AbstractSDNCTask {
             sdncRequest.setTopology(SDNCTopology.VNF);
             execution.setVariable(SDNC_REQUEST, sdncRequest);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in SDNCUnassignTasks unassignVnf");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED SDNCUnassignTasks unassignVnf");
     }
 
+    /**
+     * BPMN access method to invoke unassign on a L3Network object on SDNC.
+     *
+     * @param execution
+     */
     public void unassignNetwork(BuildingBlockExecution execution) throws Exception {
+        logger.debug("STARTED SDNCUnassignTasks unassignNetwork process");
         try {
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
             L3Network network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
@@ -144,7 +176,9 @@ public class SDNCUnassignTasks extends AbstractSDNCTask {
             sdncRequest.setTopology(SDNCTopology.NETWORK);
             execution.setVariable(SDNC_REQUEST, sdncRequest);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in SDNCUnassignTasks unassignNetwork");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED SDNCUnassignTasks unassignNetwork");
     }
 }

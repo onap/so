@@ -80,7 +80,13 @@ public class AAIDeleteTasks {
     @Autowired
     private AAIInstanceGroupResources aaiInstanceGroupResources;
 
+    /**
+     * BPMN access method to delete the VfModule from A&AI.
+     *
+     * @param execution
+     */
     public void deleteVfModule(BuildingBlockExecution execution) throws Exception {
+        logger.debug("STARTED AAIDeleteTasks deleteVfModule process");
         GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
         VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
 
@@ -89,11 +95,19 @@ public class AAIDeleteTasks {
             aaiVfModuleResources.deleteVfModule(vfModule, genericVnf);
             execution.setVariable("aaiVfModuleRollback", true);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in  AAIDeleteTasks deleteVfModule process");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAIDeleteTasks deleteVfModule process");
     }
 
+    /**
+     * BPMN access method to delete the Vnf from A&AI.
+     *
+     * @param execution
+     */
     public void deleteVnf(BuildingBlockExecution execution) throws Exception {
+        logger.debug("STARTED AAIDeleteTasks deleteVnf process");
         GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 
         execution.setVariable("aaiVnfRollback", false);
@@ -101,80 +115,144 @@ public class AAIDeleteTasks {
             aaiVnfResources.deleteVnf(genericVnf);
             execution.setVariable("aaiVnfRollback", true);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in  AAIDeleteTasks deleteVnf process");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAIDeleteTasks deleteVnf process");
     }
 
+    /**
+     * BPMN access method to delete the ServiceInstance from A&AI.
+     *
+     * @param execution
+     */
     public void deleteServiceInstance(BuildingBlockExecution execution) throws Exception {
+        logger.debug("STARTED AAIDeleteTasks deleteServiceInstance process");
         try {
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
             aaiSIResources.deleteServiceInstance(serviceInstance);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in  AAIDeleteTasks deleteServiceInstance");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAIDeleteTasks deleteServiceInstance");
 
     }
 
+    /**
+     * BPMN access method to delete the L3 Network from A&AI.
+     *
+     * @param execution
+     */
     public void deleteNetwork(BuildingBlockExecution execution) throws Exception {
+        logger.debug("STARTED AAIDeleteTasks deleteNetwork process");
         try {
             L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
             aaiNetworkResources.deleteNetwork(l3network);
             execution.setVariable("isRollbackNeeded", true);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in  AAIDeleteTasks deleteNetwork");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAIDeleteTasks deleteNetwork");
     }
 
+    /**
+     * BPMN access method to delete the collection from A&AI.
+     *
+     * @param execution
+     */
     public void deleteCollection(BuildingBlockExecution execution) throws Exception {
+        logger.debug("STARTED AAIDeleteTasks deleteCollection process");
         try {
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
             aaiNetworkResources.deleteCollection(serviceInstance.getCollection());
         } catch (Exception ex) {
+            logger.debug("Exception occurred in  AAIDeleteTasks deleteCollection");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAIDeleteTasks deleteCollection");
     }
 
+    /**
+     * BPMN access method to delete the InstanceGroup from A&AI.
+     *
+     * @param execution
+     */
     public void deleteInstanceGroup(BuildingBlockExecution execution) throws Exception {
+        logger.debug("STARTED AAIDeleteTasks deleteInstanceGroup process");
         try {
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
             aaiNetworkResources.deleteNetworkInstanceGroup(serviceInstance.getCollection().getInstanceGroup());
         } catch (Exception ex) {
+            logger.debug("Exception occurred in  AAIDeleteTasks deleteInstanceGroup");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAIDeleteTasks deleteInstanceGroup");
     }
 
+    /**
+     * BPMN access method to delete the VolumeGroup from A&AI.
+     *
+     * @param execution
+     */
     public void deleteVolumeGroup(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAIDeleteTasks deleteVolumeGroup process");
         try {
             VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID);
             CloudRegion cloudRegion = execution.getGeneralBuildingBlock().getCloudRegion();
             aaiVolumeGroupResources.deleteVolumeGroup(volumeGroup, cloudRegion);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in  AAIDeleteTasks deleteVolumeGroup");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAIDeleteTasks deleteVolumeGroup");
     }
 
+    /**
+     * BPMN access method to delete the Configuration from A&AI.
+     *
+     * @param execution
+     */
     public void deleteConfiguration(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAIDeleteTasks deleteConfiguration process");
         try {
             Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID);
             aaiConfigurationResources.deleteConfiguration(configuration);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in AAIDeleteTasks deleteConfiguration");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAIDeleteTasks deleteConfiguration");
     }
 
+    /**
+     * BPMN access method to delete the InstanceGroup of Vnf from A&AI.
+     *
+     * @param execution
+     */
     public void deleteInstanceGroupVnf(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAIDeleteTasks deleteInstanceGroupVnf process");
         try {
             InstanceGroup instanceGroup = extractPojosForBB.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID);
             aaiInstanceGroupResources.deleteInstanceGroup(instanceGroup);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in  AAIDeleteTasks deleteInstanceGroupVnf");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAIDeleteTasks deleteInstanceGroupVnf");
     }
 
+    /**
+     * BPMN access method to delete the Network Policies from A&AI.
+     *
+     * @param execution
+     */
     public void deleteNetworkPolicies(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAIDeleteTasks deleteNetworkPolicies process");
         try {
             String fqdns = execution.getVariable(contrailNetworkPolicyFqdnList);
             if (fqdns != null && !fqdns.isEmpty()) {
@@ -200,7 +278,9 @@ public class AAIDeleteTasks {
                 }
             }
         } catch (Exception ex) {
+            logger.debug("Exception occurred in  AAIDeleteTasks deleteNetworkPolicies");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAIDeleteTasks deleteNetworkPolicies");
     }
 }

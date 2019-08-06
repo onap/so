@@ -120,10 +120,28 @@ public class VnfAdapterVfModuleObjectMapper {
         mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
     }
 
+    /**
+     * This method is used for preparing the request for VfModule.
+     *
+     * This method take these parameter and create the request for VfModule.
+     *
+     * @param requestContext
+     * @param cloudRegion
+     * @param orchestrationContext
+     * @param serviceInstance
+     * @param genericVnf
+     * @param vfModule
+     * @param volumeGroup
+     * @param sdncVnfQueryResponse
+     * @param sdncVfModuleQueryResponse
+     * @throws IOException & MissingValueTagException
+     * @return createVfModuleRequest
+     */
     public CreateVfModuleRequest createVfModuleRequestMapper(RequestContext requestContext, CloudRegion cloudRegion,
             OrchestrationContext orchestrationContext, ServiceInstance serviceInstance, GenericVnf genericVnf,
             VfModule vfModule, VolumeGroup volumeGroup, String sdncVnfQueryResponse, String sdncVfModuleQueryResponse)
             throws IOException, MissingValueTagException {
+        logger.debug("STARTED VnfAdapterVfModuleObjectMapper createVfModuleRequestMapper process");
         CreateVfModuleRequest createVfModuleRequest = new CreateVfModuleRequest();
 
         createVfModuleRequest.setCloudSiteId(cloudRegion.getLcpCloudRegionId());
@@ -160,6 +178,7 @@ public class VnfAdapterVfModuleObjectMapper {
         createVfModuleRequest
                 .setNotificationUrl(vnfAdapterObjectMapperUtils.createCallbackUrl("VNFAResponse", messageId));
 
+        logger.debug("ENDED VnfAdapterVfModuleObjectMapper createVfModuleRequestMapper");
         return createVfModuleRequest;
     }
 
@@ -861,8 +880,26 @@ public class VnfAdapterVfModuleObjectMapper {
         return networkRoleMap;
     }
 
+    /**
+     * This method is used for preparing the request which will perform delete action for VfModule.
+     *
+     * This method take these parameter and create the request .
+     *
+     * @param requestContext
+     * @param cloudRegion
+     * @param orchestrationContext
+     * @param serviceInstance
+     * @param genericVnf
+     * @param vfModule
+     * @param volumeGroup
+     * @param sdncVnfQueryResponse
+     * @param sdncVfModuleQueryResponse
+     * @throws IOException
+     * @return deleteVfModuleRequest
+     */
     public DeleteVfModuleRequest deleteVfModuleRequestMapper(RequestContext requestContext, CloudRegion cloudRegion,
             ServiceInstance serviceInstance, GenericVnf genericVnf, VfModule vfModule) throws IOException {
+        logger.debug("STARTED VnfAdapterVfModuleObjectMapper deleteVfModuleRequestMapper process");
         DeleteVfModuleRequest deleteVfModuleRequest = new DeleteVfModuleRequest();
         deleteVfModuleRequest.setCloudSiteId(cloudRegion.getLcpCloudRegionId());
         deleteVfModuleRequest.setCloudOwner(cloudRegion.getCloudOwner());
@@ -879,6 +916,7 @@ public class VnfAdapterVfModuleObjectMapper {
         setIdAndUrl(deleteVfModuleRequest);
         MsoRequest msoRequest = buildMsoRequest(requestContext, serviceInstance);
         deleteVfModuleRequest.setMsoRequest(msoRequest);
+        logger.debug("ENDED VnfAdapterVfModuleObjectMapper deleteVfModuleRequestMapper");
         return deleteVfModuleRequest;
     }
 

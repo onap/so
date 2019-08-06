@@ -85,6 +85,7 @@ public class AAIUpdateTasks {
      * @param execution
      */
     public void updateOrchestrationStatusAssignedService(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAIUpdateTasks updateOrchestrationStatusAssignedService process");
         try {
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
@@ -92,8 +93,10 @@ public class AAIUpdateTasks {
                     OrchestrationStatus.ASSIGNED);
             execution.setVariable("aaiServiceInstanceRollback", true);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in AAIUpdateTasks updateOrchestrationStatusAssignedService");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAIUpdateTasks updateOrchestrationStatusAssignedService");
     }
 
     /**
@@ -102,14 +105,17 @@ public class AAIUpdateTasks {
      * @param execution
      */
     public void updateOrchestrationStatusActiveService(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAIUpdateTasks updateOrchestrationStatusActiveService process");
         try {
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
             aaiServiceInstanceResources.updateOrchestrationStatusServiceInstance(serviceInstance,
                     OrchestrationStatus.ACTIVE);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in AAIUpdateTasks updateOrchestrationStatusActiveService");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAIUpdateTasks updateOrchestrationStatusActiveService");
     }
 
     /**
@@ -118,12 +124,15 @@ public class AAIUpdateTasks {
      * @param execution
      */
     public void updateOrchestrationStatusAssignedVnf(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAIUpdateTasks updateOrchestrationStatusAssignedVnf process");
         try {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
             aaiVnfResources.updateOrchestrationStatusVnf(vnf, OrchestrationStatus.ASSIGNED);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in  AAIUpdateTasks updateOrchestrationStatusAssignedVnf");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAIUpdateTasks updateOrchestrationStatusAssignedVnf");
     }
 
     /**
@@ -132,12 +141,15 @@ public class AAIUpdateTasks {
      * @param execution
      */
     public void updateOrchestrationStatusActiveVnf(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAIUpdateTasks updateOrchestrationStatusActiveVnf");
         try {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
             aaiVnfResources.updateOrchestrationStatusVnf(vnf, OrchestrationStatus.ACTIVE);
         } catch (Exception ex) {
+            logger.debug("Exception occurred AAIUpdateTasks updateOrchestrationStatusActiveVnf");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAIUpdateTasks updateOrchestrationStatusActiveVnf");
     }
 
     /**
@@ -146,6 +158,7 @@ public class AAIUpdateTasks {
      * @param execution
      */
     public void updateOrchestrationStatusAssignedVolumeGroup(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAIUpdateTasks updateOrchestrationStatusAssignedVolumeGroup procss");
         try {
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
 
@@ -155,8 +168,10 @@ public class AAIUpdateTasks {
             aaiVolumeGroupResources.updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion,
                     OrchestrationStatus.ASSIGNED);
         } catch (Exception ex) {
+            logger.debug("Exception occurred AAIUpdateTasks updateOrchestrationStatusAssignedVolumeGroup");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAIUpdateTasks updateOrchestrationStatusAssignedVolumeGroup");
     }
 
     /**
@@ -165,6 +180,7 @@ public class AAIUpdateTasks {
      * @param execution
      */
     public void updateOrchestrationStatusActiveVolumeGroup(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAIUpdateTasks updateOrchestrationStatusActiveVolumeGroup procss");
         try {
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
 
@@ -174,8 +190,10 @@ public class AAIUpdateTasks {
             aaiVolumeGroupResources.updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion,
                     OrchestrationStatus.ACTIVE);
         } catch (Exception ex) {
+            logger.debug("Exception occurred AAIUpdateTasks updateOrchestrationStatusActiveVolumeGroup");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAIUpdateTasks updateOrchestrationStatusActiveVolumeGroup");
     }
 
     /**
@@ -184,6 +202,7 @@ public class AAIUpdateTasks {
      * @param execution
      */
     public void updateOrchestrationStatusCreatedVolumeGroup(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAIUpdateTasks updateOrchestrationStatusCreatedVolumeGroup procss");
         try {
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
 
@@ -193,8 +212,10 @@ public class AAIUpdateTasks {
             aaiVolumeGroupResources.updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion,
                     OrchestrationStatus.CREATED);
         } catch (Exception ex) {
+            logger.debug("Exception occurred AAIUpdateTasks updateOrchestrationStatusCreatedVolumeGroup");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAIUpdateTasks updateOrchestrationStatusCreatedVolumeGroup");
     }
 
     /**
@@ -203,6 +224,7 @@ public class AAIUpdateTasks {
      * @param execution
      */
     public void updateHeatStackIdVolumeGroup(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAIUpdateTasks updateHeatStackIdVolumeGroup procss");
         try {
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
             String heatStackId = execution.getVariable("heatStackId");
@@ -215,8 +237,10 @@ public class AAIUpdateTasks {
 
             aaiVolumeGroupResources.updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in AAIUpdateTasks updateHeatStackIdVolumeGroup");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAIUpdateTasks updateHeatStackIdVolumeGroup procss");
     }
 
     /**
@@ -225,14 +249,17 @@ public class AAIUpdateTasks {
      * @param execution
      */
     public void updateOrchestrationStatusAssignedVfModule(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAIUpdateTasks updateOrchestrationStatusAssignedVfModule procss");
         try {
             VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
             vfModule.setHeatStackId("");
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
             aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule, vnf, OrchestrationStatus.ASSIGNED);
         } catch (Exception ex) {
+            logger.debug("Exception occurred AAIUpdateTasks updateOrchestrationStatusAssignedVfModule procss");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAIUpdateTasks updateOrchestrationStatusAssignedVfModule procss");
     }
 
     /**
@@ -241,14 +268,17 @@ public class AAIUpdateTasks {
      * @param execution
      */
     public void updateOrchestrationStatusPendingActivationVfModule(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAIUpdateTasks updateOrchestrationStatusPendingActivationVfModule procss");
         try {
             VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
             aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule, vnf,
                     OrchestrationStatus.PENDING_ACTIVATION);
         } catch (Exception ex) {
+            logger.debug("Exception occurred AAIUpdateTasks updateOrchestrationStatusPendingActivationVfModule");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDD AAIUpdateTasks updateOrchestrationStatusPendingActivationVfModule");
     }
 
     /**
@@ -257,6 +287,7 @@ public class AAIUpdateTasks {
      * @param execution
      */
     public void updateOrchestrationStatusAssignedOrPendingActivationVfModule(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAIUpdateTasks updateOrchestrationStatusAssignedOrPendingActivationVfModule procss");
         try {
             VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
             vfModule.setHeatStackId("");
@@ -273,8 +304,11 @@ public class AAIUpdateTasks {
                 aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule, vnf, OrchestrationStatus.ASSIGNED);
             }
         } catch (Exception ex) {
+            logger.debug(
+                    "Exception occurred AAIUpdateTasks updateOrchestrationStatusAssignedOrPendingActivationVfModule procss");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAIUpdateTasks updateOrchestrationStatusAssignedOrPendingActivationVfModule");
     }
 
     /**
@@ -284,13 +318,16 @@ public class AAIUpdateTasks {
      * 
      */
     public void updateOrchestrationStatusCreatedVfModule(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAIUpdateTasks updateOrchestrationStatusCreatedVfModule procss");
         try {
             VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
             aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule, vnf, OrchestrationStatus.CREATED);
         } catch (Exception ex) {
+            logger.debug("Exception occurred AAIUpdateTasks updateOrchestrationStatusCreatedVfModule procss");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAIUpdateTasks updateOrchestrationStatusCreatedVfModule");
     }
 
     /**
@@ -300,6 +337,7 @@ public class AAIUpdateTasks {
      * @throws buildAndThrowWorkflowException
      */
     public void updateOrchestrationStatusDeactivateVfModule(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAIUpdateTasks updateOrchestrationStatusDeactivateVfModule procss");
         execution.setVariable("aaiDeactivateVfModuleRollback", false);
         try {
             VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
@@ -307,6 +345,7 @@ public class AAIUpdateTasks {
             aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule, vnf, OrchestrationStatus.CREATED);
             execution.setVariable("aaiDeactivateVfModuleRollback", true);
         } catch (Exception ex) {
+            logger.debug("Exception occurred AAIUpdateTasks updateOrchestrationStatusDeactivateVfModule procss");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -374,6 +413,7 @@ public class AAIUpdateTasks {
      * @throws BBObjectNotFoundException
      */
     public void updateOrchestrationStatusActiveNetworkCollection(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAIUpdateTasks updateOrchestrationStatusActiveNetworkCollection procss");
         execution.setVariable("aaiNetworkCollectionActivateRollback", false);
         try {
             ServiceInstance serviceInstance =
@@ -386,8 +426,11 @@ public class AAIUpdateTasks {
             aaiCollectionResources.updateCollection(copiedNetworkCollection);
             execution.setVariable("aaiNetworkCollectionActivateRollback", true);
         } catch (Exception ex) {
+            logger.debug(
+                    "Exception occurred in AAIUpdateTasks updateOrchestrationStatusActiveNetworkCollection procss");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAIUpdateTasks updateOrchestrationStatusActiveNetworkCollection procss");
     }
 
     /**
@@ -396,6 +439,7 @@ public class AAIUpdateTasks {
      * @param execution
      */
     public void updateOrchestrationStatusActivateVfModule(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAIUpdateTasks updateOrchestrationStatusActivateVfModule procss");
         execution.setVariable("aaiActivateVfModuleRollback", false);
         try {
             VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
@@ -403,8 +447,10 @@ public class AAIUpdateTasks {
             aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule, vnf, OrchestrationStatus.ACTIVE);
             execution.setVariable("aaiActivateVfModuleRollback", true);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in AAIUpdateTasks updateOrchestrationStatusActivateVfModule procss");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAIUpdateTasks updateOrchestrationStatusActivateVfModule procss");
     }
 
     /**
@@ -413,6 +459,7 @@ public class AAIUpdateTasks {
      * @param execution
      */
     public void updateHeatStackIdVfModule(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAIUpdateTasks updateHeatStackIdVfModule procss");
         try {
             String heatStackId = execution.getVariable("heatStackId");
             if (heatStackId == null) {
@@ -423,8 +470,10 @@ public class AAIUpdateTasks {
             vfModule.setHeatStackId(heatStackId);
             aaiVfModuleResources.updateHeatStackIdVfModule(vfModule, vnf);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in AAIUpdateTasks updateHeatStackIdVfModule procss");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAIUpdateTasks updateHeatStackIdVfModule procss");
     }
 
     /**
@@ -434,6 +483,7 @@ public class AAIUpdateTasks {
      * @throws Exception
      */
     public void updateNetworkCreated(BuildingBlockExecution execution) throws Exception {
+        logger.debug("STARTED AAIUpdateTasks updateNetworkCreated procss");
         execution.setVariable("aaiNetworkActivateRollback", false);
         L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
         L3Network copiedl3network = l3network.shallowCopyId();
@@ -466,8 +516,10 @@ public class AAIUpdateTasks {
 
             execution.setVariable("aaiNetworkActivateRollback", true);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in  AAIUpdateTasks updateNetworkCreated procss");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAIUpdateTasks updateNetworkCreated procss");
     }
 
     /**
@@ -477,6 +529,7 @@ public class AAIUpdateTasks {
      * @throws Exception
      */
     public void updateNetworkUpdated(BuildingBlockExecution execution) throws Exception {
+        logger.debug("STARTED AAIUpdateTasks updateNetworkUpdated procss");
         L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
         L3Network copiedl3network = l3network.shallowCopyId();
         UpdateNetworkResponse response = execution.getVariable("updateNetworkResponse");
@@ -495,8 +548,10 @@ public class AAIUpdateTasks {
                 }
             }
         } catch (Exception ex) {
+            logger.debug("Exception occurred AAIUpdateTasks updateNetworkUpdated procss");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAIUpdateTasks updateNetworkUpdated procss");
     }
 
     /**
@@ -505,12 +560,15 @@ public class AAIUpdateTasks {
      * @param execution
      */
     public void updateObjectNetwork(BuildingBlockExecution execution) {
+        logger.debug("STARTED AAIUpdateTasks updateObjectNetwork procss");
         try {
             L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
             aaiNetworkResources.updateNetwork(l3network);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in  AAIUpdateTasks updateObjectNetwork procss");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED AAIUpdateTasks updateObjectNetwork procss");
     }
 
     /**

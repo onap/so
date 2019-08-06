@@ -49,9 +49,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+/**
+ * This class is used for Activating the Vnf,L3Network & VfModule on SDNC.
+ */
 @Component
 public class SDNCActivateTasks extends AbstractSDNCTask {
 
+    private static final Logger logger = LoggerFactory.getLogger(SDNCActivateTasks.class);
     public static final String SDNC_REQUEST = "SDNCRequest";
     @Autowired
     private SDNCVnfResources sdncVnfResources;
@@ -66,7 +70,14 @@ public class SDNCActivateTasks extends AbstractSDNCTask {
     @Autowired
     private Environment env;
 
+    /**
+     * BPMN access method to perform Activate action on SDNC for Vnf.
+     *
+     * @param execution
+     * @throws BBObjectNotFoundException
+     */
     public void activateVnf(BuildingBlockExecution execution) {
+        logger.debug("STARTED SDNCActivateTasks activateVnf process");
         try {
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
             RequestContext requestContext = gBBInput.getRequestContext();
@@ -82,8 +93,10 @@ public class SDNCActivateTasks extends AbstractSDNCTask {
             sdncRequest.setTopology(SDNCTopology.VNF);
             execution.setVariable(SDNC_REQUEST, sdncRequest);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in  SDNCActivateTasks activateVnf process");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED SDNCActivateTasks activateVnf process");
     }
 
     /**
@@ -112,7 +125,13 @@ public class SDNCActivateTasks extends AbstractSDNCTask {
         }
     }
 
+    /**
+     * BPMN access method to perform Activate action on SDNC for VfModule.
+     *
+     * @param execution
+     */
     public void activateVfModule(BuildingBlockExecution execution) {
+        logger.debug("STARTED SDNCActivateTasks activateVfModule process");
         GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
         RequestContext requestContext = gBBInput.getRequestContext();
         ServiceInstance serviceInstance = null;
@@ -131,7 +150,9 @@ public class SDNCActivateTasks extends AbstractSDNCTask {
             sdncRequest.setTopology(SDNCTopology.VFMODULE);
             execution.setVariable(SDNC_REQUEST, sdncRequest);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in  SDNCActivateTasks activateVfModule");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED SDNCActivateTasks activateVfModule");
     }
 }

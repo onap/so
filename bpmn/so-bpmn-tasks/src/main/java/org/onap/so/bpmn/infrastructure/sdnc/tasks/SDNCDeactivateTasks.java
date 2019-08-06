@@ -53,6 +53,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class SDNCDeactivateTasks extends AbstractSDNCTask {
 
+    private static final Logger logger = LoggerFactory.getLogger(SDNCDeactivateTasks.class);
     public static final String SDNC_REQUEST = "SDNCRequest";
     @Autowired
     private SDNCNetworkResources sdncNetworkResources;
@@ -69,7 +70,13 @@ public class SDNCDeactivateTasks extends AbstractSDNCTask {
     @Autowired
     private Environment env;
 
+    /**
+     * BPMN access method to perform Service Topology Deactivate action on SDNC for VfModule.
+     *
+     * @param execution @throws
+     */
     public void deactivateVfModule(BuildingBlockExecution execution) {
+        logger.debug("STARTED SDNCDeactivateTasks deactivateVfModule process");
         try {
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
             RequestContext requestContext = gBBInput.getRequestContext();
@@ -86,8 +93,10 @@ public class SDNCDeactivateTasks extends AbstractSDNCTask {
             sdncRequest.setTopology(SDNCTopology.VFMODULE);
             execution.setVariable(SDNC_REQUEST, sdncRequest);
         } catch (Exception ex) {
+            logger.debug("Exception occurred in  SDNCDeactivateTasks deactivateVfModule");
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+        logger.debug("ENDED SDNCDeactivateTasks deactivateVfModule");
     }
 
     /**
