@@ -48,6 +48,7 @@ import org.onap.sdc.tosca.parser.api.IEntityDetails;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.elements.queries.EntityQuery;
 import org.onap.sdc.tosca.parser.elements.queries.TopologyTemplateQuery;
+import org.onap.sdc.tosca.parser.elements.queries.TopologyTemplateQuery.TopologyTemplateQueryBuilder;
 import org.onap.sdc.tosca.parser.enums.SdcTypes;
 import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
 import org.onap.sdc.toscaparser.api.*;
@@ -629,7 +630,7 @@ public class ToscaResourceInstaller {
     protected void processNetworks(ToscaResourceStructure toscaResourceStruct, Service service)
             throws ArtifactInstallerException {
 
-        List<IEntityDetails> vlEntityList = getEntityDetails(toscaResourceStruct, SdcTypes.VL, SdcTypes.SERVICE);
+        List<IEntityDetails> vlEntityList = getEntityDetails(toscaResourceStruct, SdcTypes.VL, SdcTypes.SERVICE, false);
 
         if (vlEntityList != null) {
             for (IEntityDetails vlEntity : vlEntityList) {
@@ -1432,10 +1433,10 @@ public class ToscaResourceInstaller {
         return configCustomizationResource;
     }
 
-    protected ConfigurationResource createFabricConfiguration(NodeTemplate nodeTemplate,
+    protected ConfigurationResource createFabricConfiguration(IEntityDetails fabricEntity,
             ToscaResourceStructure toscaResourceStructure) {
 
-        Metadata fabricMetadata = nodeTemplate.getMetaData();
+        Metadata fabricMetadata = fabricEntity.getMetadata();
 
         ConfigurationResource configResource = new ConfigurationResource();
 
@@ -1444,7 +1445,7 @@ public class ToscaResourceInstaller {
         configResource.setModelUUID(fabricMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
         configResource.setModelVersion(fabricMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_VERSION));
         configResource.setDescription(fabricMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION));
-        configResource.setToscaNodeType(nodeTemplate.getType());
+        configResource.setToscaNodeType(fabricEntity.getToscaType());
 
         return configResource;
     }
@@ -1475,7 +1476,6 @@ public class ToscaResourceInstaller {
 
         if (vnfcCustomization == null)
             vnfcCustomization = vnfcCustomizationRepo.findOneByModelCustomizationUUID(customizationUUID);
-        // vnfcCustomization = new VnfcCustomization();
 
         return vnfcCustomization;
     }
@@ -1979,16 +1979,16 @@ public class ToscaResourceInstaller {
         }
 
         // Extract CVFC lists
-        List<NodeTemplate> cvfcList =
-                toscaResourceStructure.getSdcCsarHelper().getNodeTemplateBySdcType(vfTemplate, SdcTypes.CVFC);
+        List<IEntityDetails> cvnfcEntityList =
+                getEntityDetails(toscaResourceStructure, SdcTypes.CVFC, SdcTypes.VF, false);
 
-        for (NodeTemplate cvfcTemplate : cvfcList) {
+        for (IEntityDetails cvfcEntity : cvnfcEntityList) {
             boolean cvnfcVfModuleNameMatch = false;
 
             for (NodeTemplate node : groupMembers) {
                 vfModuleMemberName = node.getName();
 
-                if (vfModuleMemberName.equalsIgnoreCase(cvfcTemplate.getName())) {
+                if (vfModuleMemberName.equalsIgnoreCase(cvfcEntity.getName())) {
                     cvnfcVfModuleNameMatch = true;
                     break;
                 }
@@ -1997,16 +1997,18 @@ public class ToscaResourceInstaller {
             if (vfModuleMemberName != null && cvnfcVfModuleNameMatch) {
 
                 // Extract associated VFC - Should always be just one
-                List<NodeTemplate> vfcList =
-                        toscaResourceStructure.getSdcCsarHelper().getNodeTemplateBySdcType(cvfcTemplate, SdcTypes.VFC);
+                List<IEntityDetails> vfcEntityList = getEntityDetails(toscaResourceStructure, SdcTypes.VFC,
+                        TopologyTemplateQuery.newBuilder(SdcTypes.CVFC).customizationUUID(
+                                cvfcEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID)),
+                        false);
 
-                for (NodeTemplate vfcTemplate : vfcList) {
+                for (IEntityDetails vfcEntity : vfcEntityList) {
 
                     VnfcCustomization vnfcCustomization = new VnfcCustomization();
                     VnfcCustomization existingVnfcCustomization = null;
 
                     existingVnfcCustomization = findExistingVfc(existingVnfcSet,
-                            vfcTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
+                            vfcEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
 
                     if (existingVnfcCustomization == null) {
                         vnfcCustomization = new VnfcCustomization();
@@ -2015,23 +2017,24 @@ public class ToscaResourceInstaller {
                     }
 
                     // Only Add Abstract VNFC's to our DB, ignore all others
-                    if (existingVnfcCustomization == null && vfcTemplate.getMetaData()
+                    if (existingVnfcCustomization == null && vfcEntity.getMetadata()
                             .getValue(SdcPropertyNames.PROPERTY_NAME_SUBCATEGORY).equalsIgnoreCase("Abstract")) {
+
                         vnfcCustomization.setModelCustomizationUUID(
-                                vfcTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
-                        vnfcCustomization.setModelInstanceName(vfcTemplate.getName());
+                                vfcEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
+                        vnfcCustomization.setModelInstanceName(vfcEntity.getName());
                         vnfcCustomization.setModelInvariantUUID(
-                                vfcTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID));
+                                vfcEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID));
                         vnfcCustomization
-                                .setModelName(vfcTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
+                                .setModelName(vfcEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
                         vnfcCustomization
-                                .setModelUUID(vfcTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
+                                .setModelUUID(vfcEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
 
                         vnfcCustomization.setModelVersion(
-                                testNull(vfcTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_VERSION)));
-                        vnfcCustomization.setDescription(testNull(
-                                vfcTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION)));
-                        vnfcCustomization.setToscaNodeType(testNull(vfcTemplate.getType()));
+                                testNull(vfcEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_VERSION)));
+                        vnfcCustomization.setDescription(
+                                testNull(vfcEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION)));
+                        vnfcCustomization.setToscaNodeType(testNull(vfcEntity.getToscaType()));
 
                         vnfcCustomizations.add(vnfcCustomization);
                         existingVnfcSet.add(vnfcCustomization);
@@ -2043,20 +2046,20 @@ public class ToscaResourceInstaller {
                     if (vnfcCustomization.getModelCustomizationUUID() != null) {
                         CvnfcCustomization cvnfcCustomization = new CvnfcCustomization();
                         cvnfcCustomization.setModelCustomizationUUID(
-                                cvfcTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
-                        cvnfcCustomization.setModelInstanceName(cvfcTemplate.getName());
+                                cvfcEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
+                        cvnfcCustomization.setModelInstanceName(cvfcEntity.getName());
                         cvnfcCustomization.setModelInvariantUUID(
-                                cvfcTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID));
+                                cvfcEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID));
                         cvnfcCustomization
-                                .setModelName(cvfcTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
+                                .setModelName(cvfcEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
                         cvnfcCustomization
-                                .setModelUUID(cvfcTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
+                                .setModelUUID(cvfcEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
 
                         cvnfcCustomization.setModelVersion(
-                                testNull(cvfcTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_VERSION)));
+                                testNull(cvfcEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_VERSION)));
                         cvnfcCustomization.setDescription(testNull(
-                                cvfcTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION)));
-                        cvnfcCustomization.setToscaNodeType(testNull(cvfcTemplate.getType()));
+                                cvfcEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION)));
+                        cvnfcCustomization.setToscaNodeType(testNull(cvfcEntity.getToscaType()));
 
                         if (existingVnfcCustomization != null) {
                             cvnfcCustomization.setVnfcCustomization(existingVnfcCustomization);
@@ -2064,38 +2067,35 @@ public class ToscaResourceInstaller {
                             cvnfcCustomization.setVnfcCustomization(vnfcCustomization);
                         }
 
-                        cvnfcCustomization.setNfcFunction(toscaResourceStructure.getSdcCsarHelper()
-                                .getNodeTemplatePropertyLeafValue(cvfcTemplate, "nfc_function"));
-                        cvnfcCustomization.setNfcNamingCode(toscaResourceStructure.getSdcCsarHelper()
-                                .getNodeTemplatePropertyLeafValue(cvfcTemplate, "nfc_naming_code"));
+                        cvnfcCustomization.setNfcFunction(getLeafPropertyValue(cvfcEntity, "nfc_function"));
+                        cvnfcCustomization.setNfcNamingCode(getLeafPropertyValue(cvfcEntity, "nfc_naming_code"));
+
                         cvnfcCustomization.setVfModuleCustomization(vfModuleCustomization);
-
-
                         // *****************************************************************************************************************************************
                         // * Extract Fabric Configuration
                         // *****************************************************************************************************************************************
 
-                        List<NodeTemplate> fabricConfigList = toscaResourceStructure.getSdcCsarHelper()
-                                .getNodeTemplateBySdcType(vfTemplate, SdcTypes.CONFIGURATION);
+                        List<IEntityDetails> fabricEntityList =
+                                getEntityDetails(toscaResourceStructure, SdcTypes.CONFIGURATION, SdcTypes.VF, false);
 
-                        for (NodeTemplate fabricTemplate : fabricConfigList) {
+                        for (IEntityDetails fabricEntity : fabricEntityList) {
 
                             ConfigurationResource fabricConfig = null;
 
                             ConfigurationResource existingConfig =
                                     findExistingConfiguration(existingCvnfcConfigurationCustom,
-                                            fabricTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
+                                            fabricEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
 
                             if (existingConfig == null) {
 
-                                fabricConfig = createFabricConfiguration(fabricTemplate, toscaResourceStructure);
+                                fabricConfig = createFabricConfiguration(fabricEntity, toscaResourceStructure);
 
                             } else {
                                 fabricConfig = existingConfig;
                             }
 
                             CvnfcConfigurationCustomization cvnfcConfigurationCustomization =
-                                    createCvnfcConfigurationCustomization(fabricTemplate, toscaResourceStructure,
+                                    createCvnfcConfigurationCustomization(fabricEntity, toscaResourceStructure,
                                             vnfResource, vfModuleCustomization, cvnfcCustomization, fabricConfig,
                                             vfTemplate, vfModuleMemberName);
 
@@ -2119,12 +2119,12 @@ public class ToscaResourceInstaller {
         return vfModuleCustomization;
     }
 
-    protected CvnfcConfigurationCustomization createCvnfcConfigurationCustomization(NodeTemplate fabricTemplate,
+    protected CvnfcConfigurationCustomization createCvnfcConfigurationCustomization(IEntityDetails fabricEntity,
             ToscaResourceStructure toscaResourceStruct, VnfResourceCustomization vnfResource,
             VfModuleCustomization vfModuleCustomization, CvnfcCustomization cvnfcCustomization,
             ConfigurationResource configResource, NodeTemplate vfTemplate, String vfModuleMemberName) {
 
-        Metadata fabricMetadata = fabricTemplate.getMetaData();
+        Metadata fabricMetadata = fabricEntity.getMetadata();
 
         CvnfcConfigurationCustomization cvnfcConfigurationCustomization = new CvnfcConfigurationCustomization();
 
@@ -2134,34 +2134,31 @@ public class ToscaResourceInstaller {
 
         cvnfcConfigurationCustomization
                 .setModelCustomizationUUID(fabricMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
-        cvnfcConfigurationCustomization.setModelInstanceName(fabricTemplate.getName());
+        cvnfcConfigurationCustomization.setModelInstanceName(fabricEntity.getName());
 
-        List<Policy> policyList = toscaResourceStruct.getSdcCsarHelper()
-                .getPoliciesOfOriginOfNodeTemplateByToscaPolicyType(vfTemplate, "org.openecomp.policies.External");
+        List<IEntityDetails> policyList =
+                getEntityDetails(toscaResourceStruct, "org.openecomp.policies.External", SdcTypes.VF, true);
 
         if (policyList != null) {
-            for (Policy policy : policyList) {
+            for (IEntityDetails policyEntity : policyList) {
 
-                for (String policyCvfcTarget : policy.getTargets()) {
+                for (String policyCvfcTarget : policyEntity.getTargets()) {
 
                     if (policyCvfcTarget.equalsIgnoreCase(vfModuleMemberName)) {
 
-                        Map<String, Object> propMap = policy.getPolicyProperties();
+                        String policyType = getLeafPropertyValue(policyEntity, "type");
 
-                        if (propMap.get("type").toString().equalsIgnoreCase("Fabric Policy")) {
-                            cvnfcConfigurationCustomization.setPolicyName(propMap.get("name").toString());
+                        if (policyType != null && policyType.equalsIgnoreCase("Fabric Policy")) {
+                            cvnfcConfigurationCustomization.setPolicyName(getLeafPropertyValue(policyEntity, "name"));
                         }
                     }
                 }
             }
         }
 
-        cvnfcConfigurationCustomization.setConfigurationFunction(
-                toscaResourceStruct.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(fabricTemplate, "function"));
-        cvnfcConfigurationCustomization.setConfigurationRole(
-                toscaResourceStruct.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(fabricTemplate, "role"));
-        cvnfcConfigurationCustomization.setConfigurationType(
-                toscaResourceStruct.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(fabricTemplate, "type"));
+        cvnfcConfigurationCustomization.setConfigurationFunction(getLeafPropertyValue(fabricEntity, "function"));
+        cvnfcConfigurationCustomization.setConfigurationRole(getLeafPropertyValue(fabricEntity, "role"));
+        cvnfcConfigurationCustomization.setConfigurationType(getLeafPropertyValue(fabricEntity, "type"));
 
         return cvnfcConfigurationCustomization;
     }
@@ -2680,24 +2677,36 @@ public class ToscaResourceInstaller {
     }
 
     protected List<IEntityDetails> getEntityDetails(ToscaResourceStructure toscaResourceStruct, SdcTypes entityType,
-            SdcTypes topologyTemplate) {
+            SdcTypes topologyTemplate, boolean nestedSearch) {
 
         EntityQuery entityQuery = EntityQuery.newBuilder(entityType).build();
         TopologyTemplateQuery topologyTemplateQuery = TopologyTemplateQuery.newBuilder(topologyTemplate).build();
         List<IEntityDetails> entityDetails =
-                toscaResourceStruct.getSdcCsarHelper().getEntity(entityQuery, topologyTemplateQuery, false);
+                toscaResourceStruct.getSdcCsarHelper().getEntity(entityQuery, topologyTemplateQuery, nestedSearch);
 
         return entityDetails;
 
     }
 
     protected List<IEntityDetails> getEntityDetails(ToscaResourceStructure toscaResourceStruct, String entityType,
-            SdcTypes topologyTemplate) {
+            SdcTypes topologyTemplate, boolean nestedSearch) {
 
         EntityQuery entityQuery = EntityQuery.newBuilder(entityType).build();
         TopologyTemplateQuery topologyTemplateQuery = TopologyTemplateQuery.newBuilder(topologyTemplate).build();
         List<IEntityDetails> entityDetails =
-                toscaResourceStruct.getSdcCsarHelper().getEntity(entityQuery, topologyTemplateQuery, true);
+                toscaResourceStruct.getSdcCsarHelper().getEntity(entityQuery, topologyTemplateQuery, nestedSearch);
+
+        return entityDetails;
+
+    }
+
+    protected List<IEntityDetails> getEntityDetails(ToscaResourceStructure toscaResourceStruct, SdcTypes entityType,
+            TopologyTemplateQueryBuilder topologyTemplateBuilder, boolean nestedSearch) {
+
+        EntityQuery entityQuery = EntityQuery.newBuilder(entityType).build();
+        TopologyTemplateQuery topologyTemplateQuery = topologyTemplateBuilder.build();
+        List<IEntityDetails> entityDetails =
+                toscaResourceStruct.getSdcCsarHelper().getEntity(entityQuery, topologyTemplateQuery, nestedSearch);
 
         return entityDetails;
 
