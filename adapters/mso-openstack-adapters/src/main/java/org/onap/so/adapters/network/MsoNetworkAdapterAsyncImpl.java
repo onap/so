@@ -370,7 +370,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                 NetworkAdapterNotify notifyPort = getNotifyEP(notificationUrl);
                 notifyPort.deleteNetworkNotification(messageId, false, exCat, eMsg, null);
             } catch (Exception e1) {
-                logger.error("{} {} Error sending createNetwork notification {} ",
+                logger.error(CREATE_NETWORK_ERROR_LOGMSG,
                         MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC, ErrorCode.DataError.getValue(), e1.getMessage(), e1);
 
             }
