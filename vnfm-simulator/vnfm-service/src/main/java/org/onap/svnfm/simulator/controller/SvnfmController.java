@@ -26,7 +26,6 @@ import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.CreateVnfRequest;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse2001;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InstantiateVnfRequest;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRequest;
 import org.onap.svnfm.simulator.constants.Constant;
 import org.onap.svnfm.simulator.repository.VnfmCacheRepository;
@@ -101,13 +100,12 @@ public class SvnfmController {
      * @throws InterruptedException
      */
     @PostMapping(value = "/vnf_instances/{vnfInstanceId}/instantiate")
-    public ResponseEntity<Void> instantiateVnf(@PathVariable("vnfInstanceId") final String vnfId,
-            @RequestBody final InstantiateVnfRequest instantiateVNFRequest) {
-        LOGGER.info("Start instantiateVNFRequest {} ", instantiateVNFRequest);
+    public ResponseEntity<Void> instantiateVnf(@PathVariable("vnfInstanceId") final String vnfId) {
+        LOGGER.info("Start instantiateVNFRequest for vnf id {} ", vnfId);
 
         final HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
-        headers.add(HttpHeaders.LOCATION, svnfmService.instantiateVnf(vnfId, instantiateVNFRequest));
+        headers.add(HttpHeaders.LOCATION, svnfmService.instantiateVnf(vnfId));
         return new ResponseEntity<>(headers, HttpStatus.ACCEPTED);
     }
 

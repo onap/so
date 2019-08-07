@@ -32,7 +32,6 @@ import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201.InstantiationStateEnum;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201InstantiatedVnfInfo;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201VimConnectionInfo;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InstantiateVnfRequest;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRequest;
 import org.onap.svnfm.simulator.config.ApplicationConfig;
 import org.onap.svnfm.simulator.constants.Constant;
@@ -60,36 +59,31 @@ import org.springframework.stereotype.Service;
 @Service
 public class SvnfmService {
 
-    @Autowired
-    VnfmRepository vnfmRepository;
-
-    @Autowired
-    VnfOperationRepository vnfOperationRepository;
-
-    @Autowired
+    private VnfmRepository vnfmRepository;
+    private VnfOperationRepository vnfOperationRepository;
     private VnfmHelper vnfmHelper;
-
-    @Autowired
-    ApplicationConfig applicationConfig;
-
-    @Autowired
-    CacheManager cacheManager;
-
-    @Autowired
-    Vnfds vnfds;
-
-    @Autowired
-    SubscriptionService subscriptionService;
+    private ApplicationConfig applicationConfig;
+    private CacheManager cacheManager;
+    private Vnfds vnfds;
+    private SubscriptionService subscriptionService;
 
     private final ExecutorService executor = Executors.newCachedThreadPool();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SvnfmService.class);
 
-    /**
-     *
-     * @param createVNFRequest
-     * @return inlineResponse201
-     */
+    @Autowired
+    public SvnfmService(VnfmRepository vnfmRepository, VnfOperationRepository vnfOperationRepository,
+            VnfmHelper vnfmHelper, ApplicationConfig applicationConfig, CacheManager cacheManager, Vnfds vnfds,
+            SubscriptionService subscriptionService) {
+        this.vnfmRepository = vnfmRepository;
+        this.vnfOperationRepository = vnfOperationRepository;
+        this.vnfmHelper = vnfmHelper;
+        this.applicationConfig = applicationConfig;
+        this.cacheManager = cacheManager;
+        this.vnfds = vnfds;
+        this.subscriptionService = subscriptionService;
+    }
+
     public InlineResponse201 createVnf(final CreateVnfRequest createVNFRequest, final String id) {
         InlineResponse201 inlineResponse201 = null;
         try {
@@ -106,24 +100,16 @@ public class SvnfmService {
     }
 
     @CachePut(value = Constant.IN_LINE_RESPONSE_201_CACHE, key = "#id")
-    public InlineResponse201 updateVnf(final InstantiationStateEnum instantiationState,
+    public void updateVnf(final InstantiationStateEnum instantiationState,
             final InlineResponse201InstantiatedVnfInfo instantiatedVnfInfo, final String id,
             final List<InlineResponse201VimConnectionInfo> vimConnectionInfo) {
         final InlineResponse201 vnf = getVnf(id);
         vnf.setInstantiatedVnfInfo(instantiatedVnfInfo);
         vnf.setInstantiationState(instantiationState);
         vnf.setVimConnectionInfo(vimConnectionInfo);
-        return vnf;
     }
 
-    /**
-     *
-     * @param vnfId
-     * @param instantiateVNFRequest
-     * @param operationId
-     * @throws InterruptedException
-     */
-    public String instantiateVnf(final String vnfId, final InstantiateVnfRequest instantiateVNFRequest) {
+    public String instantiateVnf(final String vnfId) {
         final VnfOperation vnfOperation = buildVnfOperation(InlineResponse200.OperationEnum.INSTANTIATE, vnfId);
         vnfOperationRepository.save(vnfOperation);
         executor.submit(new InstantiateOperationProgressor(vnfOperation, this, vnfOperationRepository,
@@ -131,13 +117,7 @@ public class SvnfmService {
         return vnfOperation.getId();
     }
 
-    /**
-     * vnfOperationRepository
-     *
-     * @param vnfId
-     * @param instantiateOperationId
-     */
-    public VnfOperation buildVnfOperation(final InlineResponse200.OperationEnum operation, final String vnfId) {
+    private VnfOperation buildVnfOperation(final InlineResponse200.OperationEnum operation, final String vnfId) {
         final VnfOperation vnfOperation = new VnfOperation();
         vnfOperation.setId(UUID.randomUUID().toString());
         vnfOperation.setOperation(operation);
@@ -146,11 +126,6 @@ public class SvnfmService {
         return vnfOperation;
     }
 
-    /**
-     *
-     * @param operationId
-     * @throws InterruptedException
-     */
     public InlineResponse200 getOperationStatus(final String operationId) {
         LOGGER.info("Getting operation status with id: {}", operationId);
         final Thread instantiationNotification = new Thread(new VnfInstantiationNotification());
@@ -165,14 +140,13 @@ public class SvnfmService {
         return null;
     }
 
-    /**
-     *
-     * @param vnfId
-     * @return inlineResponse201
-     */
     public InlineResponse201 getVnf(final String vnfId) {
         final Cache ca = cacheManager.getCache(Constant.IN_LINE_RESPONSE_201_CACHE);
+        if (ca == null)
+            return null;
         final SimpleValueWrapper wrapper = (SimpleValueWrapper) ca.get(vnfId);
+        if (wrapper == null)
+            return null;
         final InlineResponse201 inlineResponse201 = (InlineResponse201) wrapper.get();
         if (inlineResponse201 != null) {
             LOGGER.info("Cache Read Successful");
@@ -181,10 +155,6 @@ public class SvnfmService {
         return null;
     }
 
-    /**
-     * @param vnfId
-     * @return
-     */
     public String terminateVnf(final String vnfId) {
         final VnfOperation vnfOperation = buildVnfOperation(InlineResponse200.OperationEnum.TERMINATE, vnfId);
         vnfOperationRepository.save(vnfOperation);
