@@ -144,9 +144,20 @@ public class ExecuteBuildingBlockRainyDay {
                     // keep default workStep value
                 }
 
+                String serviceRole = ASTERISK;
+                try {
+                    serviceRole = gBBInput.getCustomer().getServiceSubscription().getServiceInstances().get(0)
+                            .getModelInfoServiceInstance().getServiceRole();
+                    if (serviceRole == null || serviceRole.isEmpty()) {
+                        serviceRole = ASTERISK;
+                    }
+                } catch (Exception ex) {
+                    // keep default serviceRole value
+                }
+
                 RainyDayHandlerStatus rainyDayHandlerStatus;
                 rainyDayHandlerStatus = catalogDbClient.getRainyDayHandlerStatus(bbName, serviceType, vnfType,
-                        errorCode, workStep, errorMessage);
+                        errorCode, workStep, errorMessage, serviceRole);
 
                 if (rainyDayHandlerStatus == null) {
                     handlingCode = "Abort";
