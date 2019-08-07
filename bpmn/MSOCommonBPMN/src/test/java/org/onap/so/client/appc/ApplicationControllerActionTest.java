@@ -481,4 +481,100 @@ public class ApplicationControllerActionTest extends BaseTest {
         assertEquals(expectedErrorCode, appCAction.getErrorCode());
     }
 
+    @Test
+    public void runAppCCommand_Snapshot_vmIdList_Empty_Test()
+            throws ApplicationControllerOrchestratorException, JsonProcessingException {
+        Action action = Action.Snapshot;
+        String msoRequestId = "testMsoRequestId";
+        String vnfId = "testVnfId";
+        Optional<String> payload = Optional.empty();
+        HashMap<String, String> payloadInfo = new HashMap<String, String>();
+        payloadInfo.put("identityUrl", "testIdentityUrl");
+        String controllerType = "testControllerType";
+
+        Status status = new Status();
+        Optional<String> otherPayloadVm = PayloadClient.snapshotFormat("", "identityUrl");
+        doReturn(status).when(client).vnfCommand(action, msoRequestId, vnfId, null, otherPayloadVm, controllerType);
+
+        appCAction.runAppCCommand(action, msoRequestId, vnfId, payload, payloadInfo, controllerType);
+
+        verify(client, times(0)).vnfCommand(action, msoRequestId, vnfId, null, otherPayloadVm, controllerType);
+    }
+
+    @Test
+    public void runAppCCommand_Snapshot_vmId_null_Test()
+            throws ApplicationControllerOrchestratorException, JsonProcessingException {
+        Action action = Action.Snapshot;
+        String msoRequestId = "testMsoRequestId";
+        String vnfId = "testVnfId";
+        Optional<String> payload = Optional.empty();
+        HashMap<String, String> payloadInfo = new HashMap<String, String>();
+        payloadInfo.put("identityUrl", "testIdentityUrl");
+
+        JSONObject vmIdListJson = new JSONObject();
+        payloadInfo.put("vmIdList", vmIdListJson.toString());
+        String controllerType = "testControllerType";
+
+        Status status = new Status();
+        Optional<String> otherPayloadVm = PayloadClient.snapshotFormat("", payloadInfo.get("identityUrl"));
+        doReturn(status).when(client).vnfCommand(action, msoRequestId, vnfId, null, otherPayloadVm, controllerType);
+
+        appCAction.runAppCCommand(action, msoRequestId, vnfId, payload, payloadInfo, controllerType);
+
+        verify(client, times(0)).vnfCommand(action, msoRequestId, vnfId, null, otherPayloadVm, controllerType);
+    }
+
+    @Test
+    public void runAppCCommand_Snapshot_vserverIdList_Empty_Test()
+            throws ApplicationControllerOrchestratorException, JsonProcessingException {
+        Action action = Action.Snapshot;
+        String msoRequestId = "testMsoRequestId";
+        String vnfId = "testVnfId";
+        Optional<String> payload = Optional.empty();
+        HashMap<String, String> payloadInfo = new HashMap<String, String>();
+        payloadInfo.put("identityUrl", "testIdentityUrl");
+        ArrayList<String> vmIdList = new ArrayList<String>();
+        String vmId = "testlink:testVmId";
+        vmIdList.add(vmId);
+        JSONObject vmIdListJson = new JSONObject();
+        vmIdListJson.put("vmIds", vmIdList);
+        payloadInfo.put("vmIdList", vmIdListJson.toString());
+        String controllerType = "testControllerType";
+
+        Status status = new Status();
+        Optional<String> otherPayloadVm = PayloadClient.snapshotFormat(vmId, payloadInfo.get("identityUrl"));
+        doReturn(status).when(client).vnfCommand(action, msoRequestId, vnfId, null, otherPayloadVm, controllerType);
+
+        appCAction.runAppCCommand(action, msoRequestId, vnfId, payload, payloadInfo, controllerType);
+
+        verify(client, times(0)).vnfCommand(action, msoRequestId, vnfId, null, otherPayloadVm, controllerType);
+    }
+
+    @Test
+    public void runAppCCommand_Snapshot_vserverId_null_Test()
+            throws ApplicationControllerOrchestratorException, JsonProcessingException {
+        Action action = Action.Snapshot;
+        String msoRequestId = "testMsoRequestId";
+        String vnfId = "testVnfId";
+        Optional<String> payload = Optional.empty();
+        HashMap<String, String> payloadInfo = new HashMap<String, String>();
+        payloadInfo.put("identityUrl", "testIdentityUrl");
+        ArrayList<String> vmIdList = new ArrayList<String>();
+        String vmId = "testlink:testVmId1";
+        vmIdList.add(vmId);
+        JSONObject vmIdListJson = new JSONObject();
+        vmIdListJson.put("vmIds", vmIdList);
+        payloadInfo.put("vmIdList", vmIdListJson.toString());
+        JSONObject vserverIdListJson = new JSONObject();
+        payloadInfo.put("vserverIdList", vserverIdListJson.toString());
+        String controllerType = "testControllerType";
+
+        Status status = new Status();
+        Optional<String> otherPayloadVm = PayloadClient.snapshotFormat(vmId, payloadInfo.get("identityUrl"));
+        doReturn(status).when(client).vnfCommand(action, msoRequestId, vnfId, null, otherPayloadVm, controllerType);
+
+        appCAction.runAppCCommand(action, msoRequestId, vnfId, payload, payloadInfo, controllerType);
+
+        verify(client, times(0)).vnfCommand(action, msoRequestId, vnfId, null, otherPayloadVm, controllerType);
+    }
 }
