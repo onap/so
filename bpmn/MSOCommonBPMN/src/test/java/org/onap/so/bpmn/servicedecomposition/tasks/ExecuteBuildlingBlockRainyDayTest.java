@@ -105,7 +105,7 @@ public class ExecuteBuildlingBlockRainyDayTest extends BaseTest {
         rainyDayHandlerStatus.setWorkStep(ASTERISK);
 
         doReturn(rainyDayHandlerStatus).when(MOCK_catalogDbClient).getRainyDayHandlerStatus("AssignServiceInstanceBB",
-                "st1", "vnft1", "7000", "*", "errorMessage");
+                "st1", "vnft1", "7000", "*", "errorMessage", "*");
 
         executeBuildingBlockRainyDay.queryRainyDayTable(delegateExecution, true);
         assertEquals("Rollback", delegateExecution.getVariable("handlingCode"));
@@ -128,7 +128,7 @@ public class ExecuteBuildlingBlockRainyDayTest extends BaseTest {
         rainyDayHandlerStatus.setWorkStep(ASTERISK);
 
         doReturn(rainyDayHandlerStatus).when(MOCK_catalogDbClient).getRainyDayHandlerStatus("AssignServiceInstanceBB",
-                "st1", "vnft1", ASTERISK, ASTERISK, "errorMessage");
+                "st1", "vnft1", ASTERISK, ASTERISK, "errorMessage", "*");
         executeBuildingBlockRainyDay.queryRainyDayTable(delegateExecution, true);
         assertEquals("Rollback", delegateExecution.getVariable("handlingCode"));
         assertEquals(5, delegateExecution.getVariable("maxRetries"));
@@ -141,7 +141,7 @@ public class ExecuteBuildlingBlockRainyDayTest extends BaseTest {
         vnf.setVnfType("vnft1");
         delegateExecution.setVariable("aLaCarte", true);
         doReturn(null).when(MOCK_catalogDbClient).getRainyDayHandlerStatus(isA(String.class), isA(String.class),
-                isA(String.class), isA(String.class), isA(String.class), isA(String.class));
+                isA(String.class), isA(String.class), isA(String.class), isA(String.class), isA(String.class));
         delegateExecution.setVariable("suppressRollback", false);
 
         executeBuildingBlockRainyDay.queryRainyDayTable(delegateExecution, true);
@@ -152,7 +152,8 @@ public class ExecuteBuildlingBlockRainyDayTest extends BaseTest {
     @Test
     public void queryRainyDayTableExceptionTest() {
         doThrow(RuntimeException.class).when(MOCK_catalogDbClient).getRainyDayHandlerStatus(isA(String.class),
-                isA(String.class), isA(String.class), isA(String.class), isA(String.class), isA(String.class));
+                isA(String.class), isA(String.class), isA(String.class), isA(String.class), isA(String.class),
+                isA(String.class));
         delegateExecution.setVariable("aLaCarte", true);
         executeBuildingBlockRainyDay.queryRainyDayTable(delegateExecution, true);
         delegateExecution.setVariable("suppressRollback", false);
@@ -178,7 +179,7 @@ public class ExecuteBuildlingBlockRainyDayTest extends BaseTest {
         rainyDayHandlerStatus.setSecondaryPolicy("Abort");
 
         doReturn(rainyDayHandlerStatus).when(MOCK_catalogDbClient).getRainyDayHandlerStatus("AssignServiceInstanceBB",
-                "st1", "vnft1", "7000", "*", "errorMessage");
+                "st1", "vnft1", "7000", "*", "errorMessage", "*");
 
         executeBuildingBlockRainyDay.queryRainyDayTable(delegateExecution, false);
 
@@ -203,7 +204,7 @@ public class ExecuteBuildlingBlockRainyDayTest extends BaseTest {
         rainyDayHandlerStatus.setSecondaryPolicy("Abort");
 
         doReturn(rainyDayHandlerStatus).when(MOCK_catalogDbClient).getRainyDayHandlerStatus("AssignServiceInstanceBB",
-                "st1", "vnft1", "7000", "*", "errorMessage");
+                "st1", "vnft1", "7000", "*", "errorMessage", "*");
 
         executeBuildingBlockRainyDay.queryRainyDayTable(delegateExecution, true);
 
@@ -229,7 +230,7 @@ public class ExecuteBuildlingBlockRainyDayTest extends BaseTest {
         rainyDayHandlerStatus.setSecondaryPolicy("Abort");
 
         doReturn(rainyDayHandlerStatus).when(MOCK_catalogDbClient).getRainyDayHandlerStatus("AssignServiceInstanceBB",
-                "st1", "vnft1", "7000", "*", "errorMessage");
+                "st1", "vnft1", "7000", "*", "errorMessage", "*");
 
         executeBuildingBlockRainyDay.queryRainyDayTable(delegateExecution, true);
 
@@ -255,7 +256,7 @@ public class ExecuteBuildlingBlockRainyDayTest extends BaseTest {
         rainyDayHandlerStatus.setSecondaryPolicy("Abort");
 
         doReturn(rainyDayHandlerStatus).when(MOCK_catalogDbClient).getRainyDayHandlerStatus("AssignServiceInstanceBB",
-                "st1", "vnft1", "7000", "*", "errorMessage");
+                "st1", "vnft1", "7000", "*", "errorMessage", "*");
 
         executeBuildingBlockRainyDay.queryRainyDayTable(delegateExecution, true);
 
@@ -268,6 +269,54 @@ public class ExecuteBuildlingBlockRainyDayTest extends BaseTest {
     public void suppressRollbackTest() throws Exception {
         delegateExecution.setVariable("suppressRollback", true);
         delegateExecution.setVariable("aLaCarte", true);
+        executeBuildingBlockRainyDay.queryRainyDayTable(delegateExecution, true);
+        assertEquals("Abort", delegateExecution.getVariable("handlingCode"));
+    }
+
+    @Test
+    public void queryRainyDayTableServiceRoleNotDefined() throws Exception {
+        customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
+        serviceInstance.getModelInfoServiceInstance().setServiceType("st1");
+        serviceInstance.getModelInfoServiceInstance().setServiceRole("sr1");
+        vnf.setVnfType("vnft1");
+        delegateExecution.setVariable("aLaCarte", true);
+        delegateExecution.setVariable("suppressRollback", false);
+        delegateExecution.setVariable("WorkflowExceptionCode", "7000");
+        RainyDayHandlerStatus rainyDayHandlerStatus = new RainyDayHandlerStatus();
+        rainyDayHandlerStatus.setErrorCode("7000");
+        rainyDayHandlerStatus.setFlowName("AssignServiceInstanceBB");
+        rainyDayHandlerStatus.setServiceType("st1");
+        rainyDayHandlerStatus.setVnfType("vnft1");
+        rainyDayHandlerStatus.setPolicy("Rollback");
+        rainyDayHandlerStatus.setWorkStep(ASTERISK);
+
+        doReturn(rainyDayHandlerStatus).when(MOCK_catalogDbClient).getRainyDayHandlerStatus("AssignServiceInstanceBB",
+                "st1", "vnft1", "7000", "*", "errorMessage", "sr1");
+
+        executeBuildingBlockRainyDay.queryRainyDayTable(delegateExecution, true);
+        assertEquals("Rollback", delegateExecution.getVariable("handlingCode"));
+    }
+
+    @Test
+    public void queryRainyDayTableServiceRoleNC() throws Exception {
+        customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
+        serviceInstance.getModelInfoServiceInstance().setServiceType("st1");
+        serviceInstance.getModelInfoServiceInstance().setServiceRole("NETWORK-COLLECTION");
+        vnf.setVnfType("vnft1");
+        delegateExecution.setVariable("aLaCarte", true);
+        delegateExecution.setVariable("suppressRollback", false);
+        delegateExecution.setVariable("WorkflowExceptionCode", "7000");
+        RainyDayHandlerStatus rainyDayHandlerStatus = new RainyDayHandlerStatus();
+        rainyDayHandlerStatus.setErrorCode("7000");
+        rainyDayHandlerStatus.setFlowName("ActivateServiceInstanceBB");
+        rainyDayHandlerStatus.setServiceType("st1");
+        rainyDayHandlerStatus.setVnfType("vnft1");
+        rainyDayHandlerStatus.setPolicy("Abort");
+        rainyDayHandlerStatus.setWorkStep(ASTERISK);
+
+        doReturn(rainyDayHandlerStatus).when(MOCK_catalogDbClient).getRainyDayHandlerStatus("AssignServiceInstanceBB",
+                "st1", "vnft1", "7000", "*", "errorMessage", "NETWORK-COLLECTION");
+
         executeBuildingBlockRainyDay.queryRainyDayTable(delegateExecution, true);
         assertEquals("Abort", delegateExecution.getVariable("handlingCode"));
     }

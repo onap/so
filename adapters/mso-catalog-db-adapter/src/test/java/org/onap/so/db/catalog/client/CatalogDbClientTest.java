@@ -87,7 +87,7 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
     @Test
     public void testGetRainyDayHandler_Regex() {
         RainyDayHandlerStatus rainyDayHandlerStatus = client.getRainyDayHandlerStatus("AssignServiceInstanceBB", "*",
-                "*", "*", "*", "The Flavor ID (nd.c6r16d20) could not be found.");
+                "*", "*", "*", "The Flavor ID (nd.c6r16d20) could not be found.", "*");
         Assert.assertEquals("Rollback", rainyDayHandlerStatus.getPolicy());
     }
 
@@ -95,7 +95,8 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
     public void testGetRainyDayHandler__Encoding_Regex() {
         RainyDayHandlerStatus rainyDayHandlerStatus = client.getRainyDayHandlerStatus("AssignServiceInstanceBB", "*",
                 "*", "*", "*",
-                "resources.lba_0_dmz_vmi_0: Unknown id: Error: oper 1 url /fqname-to-id body {\"fq_name\": [\"zrdm6bvota05-dmz_sec_group\"], \"type\": \"security-group\"} response Name ['zrdm6bvota05-dmz_sec_group'] not found");
+                "resources.lba_0_dmz_vmi_0: Unknown id: Error: oper 1 url /fqname-to-id body {\"fq_name\": [\"zrdm6bvota05-dmz_sec_group\"], \"type\": \"security-group\"} response Name ['zrdm6bvota05-dmz_sec_group'] not found",
+                "*");
         Assert.assertEquals("Rollback", rainyDayHandlerStatus.getPolicy());
     }
 
