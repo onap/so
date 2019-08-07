@@ -11,9 +11,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -370,8 +370,8 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                 NetworkAdapterNotify notifyPort = getNotifyEP(notificationUrl);
                 notifyPort.deleteNetworkNotification(messageId, false, exCat, eMsg, null);
             } catch (Exception e1) {
-                logger.error("{} {} Error sending createNetwork notification {} ",
-                        MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC, ErrorCode.DataError.getValue(), e1.getMessage(), e1);
+                logger.error(CREATE_NETWORK_ERROR_LOGMSG, MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC,
+                        ErrorCode.DataError.getValue(), e1.getMessage(), e1);
 
             }
             return;

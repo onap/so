@@ -90,6 +90,7 @@ public class NetworkAdapterRest {
     private static final String TESTING_KEYWORD = "___TESTING___";
     private String exceptionMsg = "Exception:";
     private static final String SHARED = "shared";
+    private static final String EXTERNAL = "external";
 
     @Autowired
     private MsoNetworkAdapterImpl adapter;
@@ -207,8 +208,8 @@ public class NetworkAdapterRest {
                             shared = ctn.getShared();
                         }
                     }
-                    if (params.containsKey("external")) {
-                        external = params.get("external");
+                    if (params.containsKey(EXTERNAL)) {
+                        external = params.get(EXTERNAL);
                     } else {
                         if (ctn.getExternal() != null) {
                             external = ctn.getExternal();
@@ -228,8 +229,8 @@ public class NetworkAdapterRest {
                     }
                     if (params.containsKey(SHARED))
                         shared = params.get(SHARED);
-                    if (params.containsKey("external"))
-                        external = params.get("external");
+                    if (params.containsKey(EXTERNAL))
+                        external = params.get(EXTERNAL);
                     adapter.createNetwork(req.getCloudSiteId(), req.getTenantId(), req.getNetworkType(),
                             req.getModelCustomizationUuid(), req.getNetworkName(),
                             req.getProviderVlanNetwork().getPhysicalNetworkName(),
@@ -603,8 +604,8 @@ public class NetworkAdapterRest {
                             shared = ctn.getShared();
                         }
                     }
-                    if (params.containsKey("external")) {
-                        external = params.get("external");
+                    if (params.containsKey(EXTERNAL)) {
+                        external = params.get(EXTERNAL);
                     } else {
                         if (ctn.getExternal() != null) {
                             external = ctn.getExternal();
@@ -624,8 +625,8 @@ public class NetworkAdapterRest {
                     if (params.containsKey(SHARED)) {
                         shared = params.get(SHARED);
                     }
-                    if (params.containsKey("external")) {
-                        external = params.get("external");
+                    if (params.containsKey(EXTERNAL)) {
+                        external = params.get(EXTERNAL);
                     }
                     adapter.updateNetwork(req.getCloudSiteId(), req.getTenantId(), req.getNetworkType(),
                             req.getModelCustomizationUuid(), req.getNetworkStackId(), req.getNetworkName(),
