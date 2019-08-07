@@ -78,8 +78,24 @@ public class ApplicationControllerAction {
                     appCStatus = healthCheckAction(msoRequestId, vnfId, vnfName, vnfHostIpAddress, controllerType);
                     break;
                 case Snapshot:
+                    if (vmIdList.isEmpty()) {
+                        logger.warn("vmIdList is Empty in AppCClient");
+                        break;
+                    }
                     String vmIds = JsonUtils.getJsonValue(vmIdList, "vmIds");
+                    if (vmIds == null) {
+                        logger.warn("vmIds null in AppCClient");
+                        break;
+                    }
+                    if (vserverIdList.isEmpty()) {
+                        logger.warn("vserverIdList is empty in AppCClient");
+                        break;
+                    }
                     String vserverIds = JsonUtils.getJsonValue(vserverIdList, "vserverIds");
+                    if (vserverIds == null) {
+                        logger.warn("vserverIds  null in AppCClient");
+                        break;
+                    }
                     String vmId = "";
                     String vserverId = "";
                     ObjectMapper mapper = new ObjectMapper();
