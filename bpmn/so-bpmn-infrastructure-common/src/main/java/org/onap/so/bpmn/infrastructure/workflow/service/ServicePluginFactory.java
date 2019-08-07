@@ -434,7 +434,7 @@ public class ServicePluginFactory {
                 }
             }
 
-            logger.error("There is no matching logical link for allowed list :" + allowedList.toString());
+            logger.error("There is no matching logical link for allowed list :" + Arrays.toString(allowedList));
             return null;
         } else {
             logger.info("link customization is not required");
