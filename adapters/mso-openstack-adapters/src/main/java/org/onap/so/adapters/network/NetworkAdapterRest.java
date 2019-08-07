@@ -237,9 +237,12 @@ public class NetworkAdapterRest {
                             req.getBackout(), req.getSubnets(), params, req.getMsoRequest(), networkId,
                             neutronNetworkId, subnetIdMap, rollback);
                 }
-                response = new CreateNetworkResponse(req.getNetworkId(), neutronNetworkId.value,
-                        rollback.value.getNetworkStackId(), networkFqdn.value, rollback.value.getNetworkCreated(),
-                        subnetIdMap.value, rollback.value, req.getMessageId());
+                response = new CreateNetworkResponse.NetworkResponseBuilder().setNetworkId(req.getNetworkId())
+                        .setNeutronNetworkId(neutronNetworkId.value)
+                        .setNetworkStackId(rollback.value.getNetworkStackId()).setNetworkFqdn(networkFqdn.value)
+                        .setNetworkCreated(rollback.value.getNetworkCreated()).setSubnetMap(subnetIdMap.value)
+                        .setRollback(rollback.value).setMessageId(req.getMessageId()).createNetworkResponse();
+
             } catch (NetworkException e) {
                 logger.debug(exceptionMsg, e);
                 eresp = new CreateNetworkError(e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());

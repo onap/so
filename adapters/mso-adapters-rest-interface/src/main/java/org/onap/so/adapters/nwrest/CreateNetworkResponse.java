@@ -48,16 +48,15 @@ public class CreateNetworkResponse extends NetworkResponseCommon {
         super();
     }
 
-    public CreateNetworkResponse(String networkId, String neutronNetworkId, String networkStackId, String networkFqdn,
-            Boolean networkCreated, Map<String, String> subnetIdMap, NetworkRollback rollback, String messageId) {
-        super(messageId);
-        this.networkId = networkId;
-        this.neutronNetworkId = neutronNetworkId;
-        this.networkStackId = networkStackId;
-        this.networkFqdn = networkFqdn;
-        this.networkCreated = networkCreated;
-        this.subnetMap = subnetIdMap;
-        this.rollback = rollback;
+    CreateNetworkResponse(NetworkResponseBuilder builder) {
+        super(builder.messageId);
+        this.networkId = builder.networkId;
+        this.neutronNetworkId = builder.neutronNetworkId;
+        this.networkStackId = builder.networkStackId;
+        this.networkFqdn = builder.networkFqdn;
+        this.networkCreated = builder.networkCreated;
+        this.subnetMap = builder.subnetIdMap;
+        this.rollback = builder.rollback;
     }
 
     public String getNetworkId() {
@@ -114,5 +113,94 @@ public class CreateNetworkResponse extends NetworkResponseCommon {
 
     public void setRollback(NetworkRollback rollback) {
         this.rollback = rollback;
+    }
+
+    public static class NetworkResponseBuilder {
+        private String networkId;
+        private String neutronNetworkId;
+        private String networkStackId;
+        private String networkFqdn;
+        private Boolean networkCreated;
+        private Map<String, String> subnetIdMap;
+        private NetworkRollback rollback;
+        private String messageId;
+
+        public String getNetworkId() {
+            return networkId;
+        }
+
+        public NetworkResponseBuilder setNetworkId(String networkId) {
+            this.networkId = networkId;
+            return this;
+        }
+
+        public String getNeutronNetworkId() {
+            return neutronNetworkId;
+        }
+
+        public NetworkResponseBuilder setNeutronNetworkId(String neutronNetworkId) {
+            this.neutronNetworkId = neutronNetworkId;
+            return this;
+        }
+
+        public String getNetworkStackId() {
+            return networkStackId;
+        }
+
+        public NetworkResponseBuilder setNetworkStackId(String networkStackId) {
+            this.networkStackId = networkStackId;
+            return this;
+        }
+
+        public String getNetworkFqdn() {
+            return networkFqdn;
+        }
+
+        public NetworkResponseBuilder setNetworkFqdn(String networkFqdn) {
+            this.networkFqdn = networkFqdn;
+            return this;
+        }
+
+        public Boolean getNetworkCreated() {
+            return networkCreated;
+        }
+
+        public NetworkResponseBuilder setNetworkCreated(Boolean networkCreated) {
+            this.networkCreated = networkCreated;
+            return this;
+        }
+
+        public Map<String, String> getSubnetMap() {
+            return subnetIdMap;
+        }
+
+        public NetworkResponseBuilder setSubnetMap(Map<String, String> subnetMap) {
+            this.subnetIdMap = subnetMap;
+            return this;
+        }
+
+        public NetworkRollback getRollback() {
+            return rollback;
+        }
+
+        public NetworkResponseBuilder setRollback(NetworkRollback rollback) {
+            this.rollback = rollback;
+            return this;
+        }
+
+        public String getMessageId() {
+            return messageId;
+        }
+
+        public NetworkResponseBuilder setMessageId(String messageId) {
+            this.messageId = messageId;
+            return this;
+        }
+
+        public CreateNetworkResponse createNetworkResponse() {
+            return new CreateNetworkResponse(this);
+        }
+
+
     }
 }
