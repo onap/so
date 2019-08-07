@@ -24,6 +24,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -32,12 +33,14 @@ import static org.mockito.Mockito.verify;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import javax.ws.rs.core.GenericType;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.Pserver;
@@ -46,7 +49,6 @@ import org.onap.so.client.aai.entities.singletransaction.SingleTransactionReques
 import org.onap.so.client.aai.entities.singletransaction.SingleTransactionResponse;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
-import org.onap.so.client.defaultproperties.DefaultAAIPropertiesImpl;
 import org.onap.so.client.graphinventory.GraphInventoryPatchConverter;
 import org.skyscreamer.jsonassert.JSONAssert;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -60,11 +62,13 @@ public class AAISingleTransactionClientTest {
     private final static String AAI_JSON_FILE_LOCATION = "src/test/resources/__files/aai/singletransaction/";
     AAIResourceUri uriA = AAIUriFactory.createResourceUri(AAIObjectType.PSERVER, "pserver-hostname");
     AAIResourceUri uriB = AAIUriFactory.createResourceUri(AAIObjectType.COMPLEX, "my-complex");
+    AAIResourceUri uriC = AAIUriFactory.createResourceUri(AAIObjectType.COMPLEX, "my-complex2");
 
     ObjectMapper mapper;
 
     public AAIClient client = new AAIClient();
 
+    @Spy
     public AAIResourcesClient aaiClient = new AAIResourcesClient();
 
     @Before
@@ -82,9 +86,11 @@ public class AAISingleTransactionClientTest {
         pserver2.setFqdn("patched-fqdn");
         Complex complex = new Complex();
         complex.setCity("my-city");
-        AAISingleTransactionClient singleTransaction =
-                aaiClient.beginSingleTransaction().create(uriA, pserver).update(uriA, pserver2).create(uriB, complex);
-
+        Map<String, Object> map = new HashMap<>();
+        map.put("resource-version", "1234");
+        doReturn(Optional.of(map)).when(aaiClient).get(any(GenericType.class), eq(uriC));
+        AAISingleTransactionClient singleTransaction = aaiClient.beginSingleTransaction().create(uriA, pserver)
+                .update(uriA, pserver2).create(uriB, complex).delete(uriC);
 
         SingleTransactionRequest actual = singleTransaction.getRequest();
 

@@ -21,6 +21,12 @@
       "body": {
         "city": "my-city"
       }
+    },
+    {
+      "action": "delete",
+      "uri": "/cloud-infrastructure/complexes/complex/my-complex2?resource-version=1234",
+      "body" : {
+      }
     }
   ]
 }

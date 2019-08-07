@@ -22,6 +22,7 @@ package org.onap.so.client.aai;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -31,19 +32,19 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import javax.ws.rs.core.GenericType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.Relationship;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
-import org.onap.so.client.defaultproperties.DefaultAAIPropertiesImpl;
 import org.onap.so.client.graphinventory.GraphInventoryPatchConverter;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -61,11 +62,13 @@ public class AAITransactionalClientTest {
     AAIResourceUri uriD = AAIUriFactory.createResourceUri(AAIObjectType.PSERVER, "test4");
     AAIResourceUri uriE = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test5");
     AAIResourceUri uriF = AAIUriFactory.createResourceUri(AAIObjectType.PSERVER, "test6");
+    AAIResourceUri uriG = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test7");
 
     ObjectMapper mapper;
 
     public AAIClient client = new AAIClient();
 
+    @Spy
     public AAIResourcesClient aaiClient = new AAIResourcesClient();
 
     @Before
@@ -95,9 +98,12 @@ public class AAITransactionalClientTest {
         List<AAIResourceUri> uris = new ArrayList<AAIResourceUri>();
         uris.add(uriB);
 
+        Map<String, Object> map = new HashMap<>();
+        map.put("resource-version", "1234");
+        doReturn(Optional.of(map)).when(aaiClient).get(any(GenericType.class), eq(uriG));
         AAIResourceUri uriAClone = uriA.clone();
         AAITransactionalClient transactions = aaiClient.beginTransaction().connect(uriA, uris).connect(uriC, uriD)
-                .beginNewTransaction().connect(uriE, uriF);
+                .beginNewTransaction().connect(uriE, uriF).beginNewTransaction().delete(uriG);
 
         String serializedTransactions = mapper.writeValueAsString(transactions.getTransactions());
         Map<String, Object> actual =

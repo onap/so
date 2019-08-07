@@ -116,17 +116,23 @@ public class AAISingleTransactionClient
     }
 
     @Override
-    public void put(String uri, Object body) {
+    protected void put(String uri, Object body) {
         request.getOperations().add(new OperationBodyRequest().withAction("put").withUri(uri).withBody(body));
     }
 
     @Override
-    public void delete(String uri, Object body) {
-        request.getOperations().add(new OperationBodyRequest().withAction("delete").withUri(uri).withBody(body));
+    protected void delete(String uri) {
+        request.getOperations()
+                .add(new OperationBodyRequest().withAction("delete").withUri(uri).withBody(new Object()));
     }
 
     @Override
-    public void patch(String uri, Object body) {
+    protected void delete(String uri, Object obj) {
+        request.getOperations().add(new OperationBodyRequest().withAction("delete").withUri(uri).withBody(obj));
+    }
+
+    @Override
+    protected void patch(String uri, Object body) {
         request.getOperations().add(new OperationBodyRequest().withAction("patch").withUri(uri).withBody(body));
     }
 
