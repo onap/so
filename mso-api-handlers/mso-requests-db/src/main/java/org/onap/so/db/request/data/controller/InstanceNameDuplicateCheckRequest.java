@@ -20,28 +20,28 @@
 
 package org.onap.so.db.request.data.controller;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class InstanceNameDuplicateCheckRequest {
 
-    private HashMap<String, String> instanceIdMap;
+    private Map<String, String> instanceIdMap;
     private String instanceName;
     private String requestScope;
 
     public InstanceNameDuplicateCheckRequest() {}
 
-    public InstanceNameDuplicateCheckRequest(HashMap<String, String> instanceIdMap, String instanceName,
+    public InstanceNameDuplicateCheckRequest(Map<String, String> instanceIdMap, String instanceName,
             String requestScope) {
         this.instanceIdMap = instanceIdMap;
         this.instanceName = instanceName;
         this.requestScope = requestScope;
     }
 
-    public HashMap<String, String> getInstanceIdMap() {
+    public Map<String, String> getInstanceIdMap() {
         return instanceIdMap;
     }
 
-    public void setInstanceIdMap(HashMap<String, String> instanceIdMap) {
+    public void setInstanceIdMap(Map<String, String> instanceIdMap) {
         this.instanceIdMap = instanceIdMap;
     }
 

@@ -217,7 +217,7 @@ public class RequestsDbClient {
         return restTemplate.exchange(uri, HttpMethod.GET, entity, InfraActiveRequests.class).getBody();
     }
 
-    public InfraActiveRequests checkInstanceNameDuplicate(HashMap<String, String> instanceIdMap, String instanceName,
+    public InfraActiveRequests checkInstanceNameDuplicate(Map<String, String> instanceIdMap, String instanceName,
             String requestScope) {
         HttpHeaders headers = getHttpHeaders();
         URI uri = getUri(checkInstanceNameDuplicate);

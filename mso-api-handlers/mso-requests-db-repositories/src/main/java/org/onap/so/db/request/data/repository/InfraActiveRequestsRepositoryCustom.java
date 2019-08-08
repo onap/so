@@ -33,7 +33,7 @@ public interface InfraActiveRequestsRepositoryCustom {
 
     public InfraActiveRequests getRequestFromInfraActive(String requestId);
 
-    public InfraActiveRequests checkInstanceNameDuplicate(HashMap<String, String> instanceIdMap, String instanceName,
+    public InfraActiveRequests checkInstanceNameDuplicate(Map<String, String> instanceIdMap, String instanceName,
             String requestScope);
 
     public List<InfraActiveRequests> getOrchestrationFiltersFromInfraActive(Map<String, List<String>> orchestrationMap);

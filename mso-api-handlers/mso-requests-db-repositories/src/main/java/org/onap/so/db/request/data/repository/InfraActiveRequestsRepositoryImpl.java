@@ -152,7 +152,7 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
      * java.lang.String, java.lang.String)
      */
     @Override
-    public InfraActiveRequests checkInstanceNameDuplicate(final HashMap<String, String> instanceIdMap,
+    public InfraActiveRequests checkInstanceNameDuplicate(final Map<String, String> instanceIdMap,
             final String instanceName, final String requestScope) {
 
         final List<Predicate> predicates = new LinkedList<>();

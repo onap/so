@@ -23,7 +23,7 @@ package org.onap.so.apihandlerinfra.infra.rest.handler;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Timestamp;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import javax.ws.rs.container.ContainerRequestContext;
 import org.apache.http.HttpStatus;
@@ -63,7 +63,7 @@ public abstract class AbstractRestHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractRestHandler.class);
 
-    public static final String conflictFailMessage = "Error: Locked instance - This %s (%s) "
+    public static final String CONFLICT_FAIL_MESSAGE = "Error: Locked instance - This %s (%s) "
             + "already has a request being worked with a status of %s (RequestId - %s). The existing request must finish or be cleaned up before proceeding.";
 
 
@@ -95,22 +95,19 @@ public abstract class AbstractRestHandler {
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.SchemaError)
                             .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
-            ValidateException validateException =
-                    new ValidateException.Builder("Request Id " + requestId + " is not a valid UUID",
-                            HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_BAD_PARAMETER)
-                                    .errorInfo(errorLoggerInfo).build();
-
-            throw validateException;
+            throw new ValidateException.Builder("Request Id " + requestId + " is not a valid UUID",
+                    HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo)
+                            .build();
         }
     }
 
-    public InfraActiveRequests duplicateCheck(Actions action, HashMap<String, String> instanceIdMap, long startTime,
+    public InfraActiveRequests duplicateCheck(Actions action, Map<String, String> instanceIdMap, long startTime,
             MsoRequest msoRequest, String instanceName, String requestScope, InfraActiveRequests currentActiveReq)
             throws ApiException {
         return duplicateCheck(action, instanceIdMap, startTime, instanceName, requestScope, currentActiveReq);
     }
 
-    public InfraActiveRequests duplicateCheck(Actions action, HashMap<String, String> instanceIdMap, long startTime,
+    public InfraActiveRequests duplicateCheck(Actions action, Map<String, String> instanceIdMap, long startTime,
             String instanceName, String requestScope, InfraActiveRequests currentActiveReq) throws ApiException {
         InfraActiveRequests dup = null;
         try {
@@ -134,19 +131,19 @@ public abstract class AbstractRestHandler {
 
     public void updateStatus(InfraActiveRequests aq, Status status, String errorMessage)
             throws RequestDbFailureException {
-        if (aq != null) {
-            if ((status == Status.FAILED) || (status == Status.COMPLETE)) {
-                aq.setStatusMessage(errorMessage);
-                aq.setProgress(100L);
-                aq.setRequestStatus(status.toString());
-                Timestamp endTimeStamp = new Timestamp(System.currentTimeMillis());
-                aq.setEndTime(endTimeStamp);
-                try {
-                    infraActiveRequestsClient.updateInfraActiveRequests(aq);
-                } catch (Exception e) {
-                    logger.error("Error updating status", e);
-                }
+        if ((aq != null) && ((status == Status.FAILED) || (status == Status.COMPLETE))) {
+
+            aq.setStatusMessage(errorMessage);
+            aq.setProgress(100L);
+            aq.setRequestStatus(status.toString());
+            Timestamp endTimeStamp = new Timestamp(System.currentTimeMillis());
+            aq.setEndTime(endTimeStamp);
+            try {
+                infraActiveRequestsClient.updateInfraActiveRequests(aq);
+            } catch (Exception e) {
+                logger.error("Error updating status", e);
             }
+
         }
     }
 
@@ -178,15 +175,15 @@ public abstract class AbstractRestHandler {
             selfLinkUrl = Optional.of(new URL(aUrl.getProtocol(), aUrl.getHost(), aUrl.getPort(), selfLinkPath));
         } catch (Exception e) {
             selfLinkUrl = Optional.empty(); // ignore
-            logger.info(e.getMessage());
+            logger.error(e.getMessage());
         }
         return selfLinkUrl;
     }
 
     /**
-     * @param vfmoduleInstanceId
+     * @param instanceId
      * @param requestId
-     * @param response
+     * @param requestContext
      */
     public ServiceInstancesResponse createResponse(String instanceId, String requestId,
             ContainerRequestContext requestContext) {
@@ -202,13 +199,13 @@ public abstract class AbstractRestHandler {
         return response;
     }
 
-    public void checkDuplicateRequest(HashMap<String, String> instanceIdMap, ModelType modelType, String instanceName,
+    public void checkDuplicateRequest(Map<String, String> instanceIdMap, ModelType modelType, String instanceName,
             String requestId) throws RequestConflictedException {
         InfraActiveRequests conflictedRequest =
                 infraActiveRequestsClient.checkInstanceNameDuplicate(instanceIdMap, instanceName, modelType.toString());
         if (conflictedRequest != null && !conflictedRequest.getRequestId().equals(requestId)) {
-            throw new RequestConflictedException(String.format(conflictFailMessage, modelType.toString(), instanceName,
-                    conflictedRequest.getRequestStatus(), conflictedRequest.getRequestId()));
+            throw new RequestConflictedException(String.format(CONFLICT_FAIL_MESSAGE, modelType.toString(),
+                    instanceName, conflictedRequest.getRequestStatus(), conflictedRequest.getRequestId()));
         }
     }
 
