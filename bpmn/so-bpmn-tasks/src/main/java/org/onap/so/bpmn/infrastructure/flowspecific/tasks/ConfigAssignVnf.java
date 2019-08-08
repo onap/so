@@ -20,9 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
@@ -33,10 +31,17 @@ import org.onap.so.client.cds.beans.AbstractCDSPropertiesBean;
 import org.onap.so.client.cds.beans.ConfigAssignPropertiesForVnf;
 import org.onap.so.client.cds.beans.ConfigAssignRequestVnf;
 import org.onap.so.client.exception.ExceptionBuilder;
+import org.onap.so.serviceinstancebeans.Service;
+import org.onap.so.serviceinstancebeans.Vnfs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * 
@@ -50,6 +55,7 @@ public class ConfigAssignVnf {
     private static final String ORIGINATOR_ID = "SO";
     private static final String ACTION_NAME = "config-assign";
     private static final String MODE = "sync";
+    private static final String SERVICE = "service";
 
     @Autowired
     private ExceptionBuilder exceptionUtil;
@@ -64,13 +70,31 @@ public class ConfigAssignVnf {
      */
     public void preProcessAbstractCDSProcessing(BuildingBlockExecution execution) {
         logger.info("Start preProcessAbstractCDSProcessing ");
+        List<Map<String, String>> userParameters = new ArrayList<>();
         try {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 
-            List<Map<String, Object>> userParams =
-                    execution.getGeneralBuildingBlock().getRequestContext().getRequestParameters().getUserParams();
+            Optional<Map<String, Object>> requestDetails =
+                    execution.getGeneralBuildingBlock()
+                            .getRequestContext()
+                            .getRequestParameters()
+                            .getUserParams().stream()
+                            .filter(x -> x.containsKey(SERVICE))
+                            .findFirst();
+
+            if (requestDetails.isPresent()) {
+                ObjectMapper mapper = new ObjectMapper();
+                String input = mapper.writeValueAsString(requestDetails.get().get(SERVICE));
+                Service service = mapper.readValue(input, Service.class);
+
+                service.getResources()
+                        .getVnfs()
+                        .stream()
+                        .map(Vnfs::getInstanceParams)
+                        .forEach(userParameters::addAll);
+            }
 
             ConfigAssignPropertiesForVnf configAssignPropertiesForVnf = new ConfigAssignPropertiesForVnf();
             configAssignPropertiesForVnf.setServiceInstanceId(serviceInstance.getServiceInstanceId());
@@ -81,11 +105,9 @@ public class ConfigAssignVnf {
             configAssignPropertiesForVnf.setVnfId(vnf.getVnfId());
             configAssignPropertiesForVnf.setVnfName(vnf.getVnfName());
 
-            for (Map<String, Object> params : userParams) {
-                for (Map.Entry<String, Object> entry : params.entrySet()) {
-                    configAssignPropertiesForVnf.setUserParam(entry.getKey(), entry.getValue());
-                }
-            }
+            userParameters.stream()
+                          .flatMap(params -> params.entrySet().stream())
+                          .forEach(entry -> configAssignPropertiesForVnf.setUserParam(entry.getKey(), entry.getValue()));
 
             ConfigAssignRequestVnf configAssignRequestVnf = new ConfigAssignRequestVnf();
             configAssignRequestVnf.setResolutionKey(vnf.getVnfName());
@@ -93,7 +115,7 @@ public class ConfigAssignVnf {
 
             String blueprintName = vnf.getModelInfoGenericVnf().getBlueprintName();
             String blueprintVersion = vnf.getModelInfoGenericVnf().getBlueprintVersion();
-            logger.debug(" BlueprintName : " + blueprintName + " BlueprintVersion : " + blueprintVersion);
+            logger.debug(" BlueprintName :  {}  BlueprintVersion :  {} " , blueprintName,  blueprintVersion);
 
             AbstractCDSPropertiesBean abstractCDSPropertiesBean = new AbstractCDSPropertiesBean();
 
@@ -114,5 +136,4 @@ public class ConfigAssignVnf {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
-
 }
