@@ -99,6 +99,7 @@ public class ExecuteActivity implements JavaDelegate {
             variables.put(G_REQUEST_ID, requestId);
             variables.put("retryCount", 1);
             variables.put("aLaCarte", true);
+            variables.put("suppressRollback", true);
 
             execution.getVariables().forEach((key, value) -> {
                 if (value instanceof Serializable) {
