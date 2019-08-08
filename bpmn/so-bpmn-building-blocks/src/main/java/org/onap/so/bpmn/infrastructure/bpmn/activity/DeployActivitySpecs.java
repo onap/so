@@ -53,16 +53,19 @@ public class DeployActivitySpecs {
             return;
         }
 
-        for (File f : dir.listFiles()) {
-            String activitySpecName = f.getName();
-            String errorMessage = deployActivitySpec(hostname, activitySpecName);
-            if (errorMessage == null) {
-                System.out.println("Deployed Activity Spec: " + activitySpecName);
-            } else {
-                System.out.println("Error deploying Activity Spec: " + activitySpecName + " : " + errorMessage);
+        if (dir.listFiles() != null) {
+            for (File f : dir.listFiles()) {
+                String activitySpecName = f.getName();
+                String errorMessage = deployActivitySpec(hostname, activitySpecName);
+                if (errorMessage == null) {
+                    System.out.println("Deployed Activity Spec: " + activitySpecName);
+                } else {
+                    System.out.println("Error deploying Activity Spec: " + activitySpecName + " : " + errorMessage);
+                }
             }
+        } else {
+            System.out.println("Null file list for Activity Specs.");
         }
-        return;
     }
 
     protected static String deployActivitySpec(String hostname, String activitySpecName) throws Exception {
