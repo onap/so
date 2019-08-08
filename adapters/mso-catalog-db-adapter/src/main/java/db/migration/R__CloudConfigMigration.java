@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -67,35 +67,35 @@ public class R__CloudConfigMigration implements JdbcMigration, MigrationInfoProv
     public void migrate(Connection connection) throws Exception {
         logger.debug("Starting migration for CloudConfig");
 
-        CloudConfig cloudConfig = null;
+        CloudConfig cloudConfiguration = null;
 
         // Try the override file
         String configLocation = System.getProperty("spring.config.additional-location");
         if (configLocation != null) {
             try (InputStream stream = new FileInputStream(Paths.get(configLocation).normalize().toString())) {
-                cloudConfig = loadCloudConfig(stream);
+                cloudConfiguration = loadCloudConfig(stream);
             } catch (Exception e) {
                 logger.warn("Error Loading override.yaml", e);
             }
         }
 
-        if (cloudConfig == null) {
+        if (cloudConfiguration == null) {
             logger.debug("No CloudConfig defined in {}", configLocation);
 
             // Try the application.yaml file
             try (InputStream stream = R__CloudConfigMigration.class.getResourceAsStream(getApplicationYamlName())) {
-                cloudConfig = loadCloudConfig(stream);
+                cloudConfiguration = loadCloudConfig(stream);
             }
 
-            if (cloudConfig == null) {
+            if (cloudConfiguration == null) {
                 logger.debug("No CloudConfig defined in {}", getApplicationYamlName());
             }
         }
 
-        if (cloudConfig != null) {
-            migrateCloudIdentity(cloudConfig.getIdentityServices().values(), connection);
-            migrateCloudSite(cloudConfig.getCloudSites().values(), connection);
-            migrateCloudifyManagers(cloudConfig.getCloudifyManagers().values(), connection);
+        if (cloudConfiguration != null) {
+            migrateCloudIdentity(cloudConfiguration.getIdentityServices().values(), connection);
+            migrateCloudSite(cloudConfiguration.getCloudSites().values(), connection);
+            migrateCloudifyManagers(cloudConfiguration.getCloudifyManagers().values(), connection);
         }
     }
 
@@ -110,13 +110,13 @@ public class R__CloudConfigMigration implements JdbcMigration, MigrationInfoProv
     private CloudConfig loadCloudConfig(InputStream stream) throws IOException {
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         R__CloudConfigMigration cloudConfigMigration = mapper.readValue(stream, R__CloudConfigMigration.class);
-        CloudConfig cloudConfig = cloudConfigMigration.getCloudConfig();
+        CloudConfig cloudConfiguration = cloudConfigMigration.getCloudConfig();
 
-        if (cloudConfig != null) {
-            cloudConfig.populateId();
+        if (cloudConfiguration != null) {
+            cloudConfiguration.populateId();
         }
 
-        return cloudConfig;
+        return cloudConfiguration;
     }
 
     private String getApplicationYamlName() {
