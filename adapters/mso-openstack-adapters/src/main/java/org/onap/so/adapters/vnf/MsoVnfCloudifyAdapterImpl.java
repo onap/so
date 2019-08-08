@@ -854,7 +854,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
 
                     // Include aliases.
                     String alias = htp.getParamAlias();
-                    if (alias != null && !alias.equals("") && !params.containsKey(alias)) {
+                    if (alias != null && !"".equals(alias) && !params.containsKey(alias)) {
                         params.put(alias, htp);
                     }
                 }
