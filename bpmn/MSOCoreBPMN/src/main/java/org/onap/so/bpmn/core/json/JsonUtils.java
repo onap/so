@@ -323,7 +323,7 @@ public class JsonUtils {
                     logger.debug("getJsonValue(): the raw value is a String Object={}", rawValue);
                     return (String) rawValue;
                 } else {
-                    logger.debug("getJsonValue(): the raw value is NOT a String Object={}", rawValue.toString());
+                    logger.debug("getJsonValue(): the raw value is NOT a String Object={}", rawValue);
                     return rawValue.toString();
                 }
             }
@@ -352,7 +352,7 @@ public class JsonUtils {
                     logger.debug("getJsonNodeValue(): the raw value is a String Object={}", rawValue);
                     return (String) rawValue;
                 } else {
-                    logger.debug("getJsonNodeValue(): the raw value is NOT a String Object={}", rawValue.toString());
+                    logger.debug("getJsonNodeValue(): the raw value is NOT a String Object={}", rawValue);
                     return rawValue.toString();
                 }
             }
@@ -380,11 +380,10 @@ public class JsonUtils {
                 return 0;
             } else {
                 if (rawValue instanceof Integer) {
-                    logger.debug("getJsonIntValue(): the raw value is an Integer Object={}",
-                            ((String) rawValue).toString());
+                    logger.debug("getJsonIntValue(): the raw value is an Integer Object={}", rawValue);
                     return (Integer) rawValue;
                 } else {
-                    logger.debug("getJsonIntValue(): the raw value is NOT an Integer Object={}", rawValue.toString());
+                    logger.debug("getJsonIntValue(): the raw value is NOT an Integer Object={}", rawValue);
                     return 0;
                 }
             }
@@ -412,8 +411,7 @@ public class JsonUtils {
                     logger.debug("getJsonBooleanValue(): the raw value is a Boolean Object={}", rawValue);
                     return (Boolean) rawValue;
                 } else {
-                    logger.debug("getJsonBooleanValue(): the raw value is NOT an Boolean Object={}",
-                            rawValue.toString());
+                    logger.debug("getJsonBooleanValue(): the raw value is NOT an Boolean Object={}", rawValue);
                     return false;
                 }
             }
@@ -455,7 +453,7 @@ public class JsonUtils {
                 return null;
             } else {
                 if (rawValue instanceof JSONArray) {
-                    logger.debug("getJsonParamValue(): keys={} points to JSONArray: {}", keys, rawValue.toString());
+                    logger.debug("getJsonParamValue(): keys={} points to JSONArray: {}", keys, rawValue);
                     int arrayLen = ((JSONArray) rawValue).length();
                     if (index < 0 || arrayLen < index + 1) {
                         logger.debug("getJsonParamValue(): index: {} is out of bounds for array size of {}", index,
@@ -464,8 +462,7 @@ public class JsonUtils {
                     }
                     int foundCnt = 0;
                     for (int i = 0; i < arrayLen; i++) {
-                        logger.debug("getJsonParamValue(): index: {}, value: {}", i,
-                                ((JSONArray) rawValue).get(i).toString());
+                        logger.debug("getJsonParamValue(): index: {}, value: {}", i, ((JSONArray) rawValue).get(i));
                         if (((JSONArray) rawValue).get(i) instanceof JSONObject) {
                             JSONObject jsonObj = (JSONObject) ((JSONArray) rawValue).get(i);
                             String parmValue = jsonObj.get(name).toString();
@@ -482,16 +479,14 @@ public class JsonUtils {
                                 continue;
                             }
                         } else {
-                            logger.debug("getJsonParamValue(): the JSONArray element is NOT a JSONObject={}",
-                                    rawValue.toString());
+                            logger.debug("getJsonParamValue(): the JSONArray element is NOT a JSONObject={}", rawValue);
                             return null;
                         }
                     }
                     logger.debug("getJsonParamValue(): content value NOT found for name: {}", name);
                     return null;
                 } else {
-                    logger.debug("getJsonParamValue(): the raw value is NOT a JSONArray Object={}",
-                            rawValue.toString());
+                    logger.debug("getJsonParamValue(): the raw value is NOT a JSONArray Object={}", rawValue);
                     return null;
                 }
             }
@@ -1057,13 +1052,13 @@ public class JsonUtils {
             JsonValidator validator = factory.getValidator();
 
             ProcessingReport report = validator.validate(schema, document);
-            logger.debug("JSON schema validation report: {}", report.toString());
+            logger.debug("JSON schema validation report: {}", report);
             return report.toString();
         } catch (IOException e) {
-            logger.debug("IOException performing JSON schema validation on document: {}", e.toString());
+            logger.debug("IOException performing JSON schema validation on document:", e);
             throw new ValidationException(e.getMessage());
         } catch (ProcessingException e) {
-            logger.debug("ProcessingException performing JSON schema validation on document: {}", e.toString());
+            logger.debug("ProcessingException performing JSON schema validation on document:", e);
             throw new ValidationException(e.getMessage());
         }
     }
