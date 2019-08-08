@@ -91,7 +91,7 @@ public class TasksHandler {
             @QueryParam("originalRequestDate") String originalRequestDate,
             @QueryParam("originalRequestorId") String originalRequestorId, @PathParam("version") String version)
             throws ApiException {
-        Response responseBack = null;
+
         String apiVersion = version.substring(1);
 
         // Prepare the query string to /task interface
@@ -159,60 +159,49 @@ public class TasksHandler {
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError)
                             .build();
+            throw new ValidateException.Builder("Mapping of request to JSON object failed : " + e.getMessage(),
+                    HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo)
+                            .build();
 
-
-            ValidateException validateException =
-                    new ValidateException.Builder("Mapping of request to JSON object failed : " + e.getMessage(),
-                            HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
-                                    .errorInfo(errorLoggerInfo).build();
-
-            throw validateException;
         } catch (IOException e) {
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, ErrorCode.AvailabilityError)
                             .build();
-            BPMNFailureException bpmnFailureException =
-                    new BPMNFailureException.Builder(String.valueOf(HttpStatus.SC_BAD_GATEWAY),
-                            HttpStatus.SC_BAD_GATEWAY, ErrorNumbers.SVC_NO_SERVER_RESOURCES).build();
-            throw bpmnFailureException;
+            throw new BPMNFailureException.Builder(String.valueOf(HttpStatus.SC_BAD_GATEWAY), HttpStatus.SC_BAD_GATEWAY,
+                    ErrorNumbers.SVC_NO_SERVER_RESOURCES).cause(e).errorInfo(errorLoggerInfo).build();
         }
         TasksGetResponse trr = new TasksGetResponse();
         List<TaskList> taskList = new ArrayList<>();
 
         ResponseHandler respHandler = new ResponseHandler(response, requestClient.getType());
         int bpelStatus = respHandler.getStatus();
-        if (bpelStatus == HttpStatus.SC_NO_CONTENT || bpelStatus == HttpStatus.SC_ACCEPTED) {
-            String respBody = respHandler.getResponseBody();
-            if (respBody != null) {
-                JSONArray data = new JSONArray(respBody);
+        String respBody = respHandler.getResponseBody();
+        if ((bpelStatus == HttpStatus.SC_NO_CONTENT || bpelStatus == HttpStatus.SC_ACCEPTED) && (null != respBody)) {
 
-                for (int i = 0; i < data.length(); i++) {
-                    JSONObject taskEntry = data.getJSONObject(i);
-                    String id = taskEntry.getString("id");
-                    if (taskId != null && !taskId.equals(id)) {
-                        continue;
-                    }
-                    // Get variables info for each task ID
-                    TaskList taskListEntry = null;
-                    taskListEntry = getTaskInfo(id);
+            JSONArray data = new JSONArray(respBody);
 
-                    taskList.add(taskListEntry);
-
+            for (int i = 0; i < data.length(); i++) {
+                JSONObject taskEntry = data.getJSONObject(i);
+                String id = taskEntry.getString("id");
+                if (taskId != null && !taskId.equals(id)) {
+                    continue;
                 }
-                trr.setTaskList(taskList);
+                // Get variables info for each task ID
+                TaskList taskListEntry = null;
+                taskListEntry = getTaskInfo(id);
+
+                taskList.add(taskListEntry);
+
             }
+            trr.setTaskList(taskList);
 
         } else {
 
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.BusinessProcesssError)
                             .build();
-
-
-            BPMNFailureException bpmnFailureException = new BPMNFailureException.Builder(String.valueOf(bpelStatus),
-                    bpelStatus, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
-
-            throw bpmnFailureException;
+            throw new BPMNFailureException.Builder(String.valueOf(bpelStatus), bpelStatus,
+                    ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
         }
 
         String jsonResponse = null;
@@ -223,14 +212,10 @@ public class TasksHandler {
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError)
                             .build();
+            throw new ValidateException.Builder("Mapping of request to JSON object failed : " + e.getMessage(),
+                    HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo)
+                            .build();
 
-
-            ValidateException validateException =
-                    new ValidateException.Builder("Mapping of request to JSON object failed : " + e.getMessage(),
-                            HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
-                                    .errorInfo(errorLoggerInfo).build();
-
-            throw validateException;
         }
 
         return builder.buildResponse(HttpStatus.SC_ACCEPTED, "", jsonResponse, apiVersion);
@@ -250,10 +235,8 @@ public class TasksHandler {
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, ErrorCode.AvailabilityError)
                             .build();
-            BPMNFailureException validateException =
-                    new BPMNFailureException.Builder(String.valueOf(HttpStatus.SC_BAD_GATEWAY),
-                            HttpStatus.SC_BAD_GATEWAY, ErrorNumbers.SVC_NO_SERVER_RESOURCES).build();
-            throw validateException;
+            throw new BPMNFailureException.Builder(String.valueOf(HttpStatus.SC_BAD_GATEWAY), HttpStatus.SC_BAD_GATEWAY,
+                    ErrorNumbers.SVC_NO_SERVER_RESOURCES).cause(e).errorInfo(errorLoggerInfo).build();
         }
         ResponseHandler respHandler = new ResponseHandler(getResponse, requestClient.getType());
         int bpelStatus = respHandler.getStatus();
@@ -264,14 +247,10 @@ public class TasksHandler {
             } else {
                 ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR,
                         ErrorCode.AvailabilityError).build();
+                throw new BPMNFailureException.Builder(String.valueOf(HttpStatus.SC_BAD_GATEWAY),
+                        HttpStatus.SC_BAD_GATEWAY, ErrorNumbers.SVC_NO_SERVER_RESOURCES).errorInfo(errorLoggerInfo)
+                                .build();
 
-
-
-                BPMNFailureException bpmnFailureException =
-                        new BPMNFailureException.Builder(String.valueOf(HttpStatus.SC_BAD_GATEWAY),
-                                HttpStatus.SC_BAD_GATEWAY, ErrorNumbers.SVC_NO_SERVER_RESOURCES).build();
-
-                throw bpmnFailureException;
             }
 
         } else {
@@ -279,20 +258,15 @@ public class TasksHandler {
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, ErrorCode.AvailabilityError)
                             .build();
 
-
-
-            BPMNFailureException bpmnFailureException = new BPMNFailureException.Builder(String.valueOf(bpelStatus),
-                    bpelStatus, ErrorNumbers.SVC_NO_SERVER_RESOURCES).build();
-
-
-            throw bpmnFailureException;
+            throw new BPMNFailureException.Builder(String.valueOf(bpelStatus), bpelStatus,
+                    ErrorNumbers.SVC_NO_SERVER_RESOURCES).errorInfo(errorLoggerInfo).build();
         }
 
         return taskList;
 
     }
 
-    private TaskList buildTaskList(String taskId, String respBody) throws JSONException {
+    private TaskList buildTaskList(String taskId, String respBody) {
         TaskList taskList = new TaskList();
         JSONObject variables = new JSONObject(respBody);
 
@@ -317,7 +291,7 @@ public class TasksHandler {
         return taskList;
     }
 
-    private String getOptVariableValue(JSONObject variables, String name) throws JSONException {
+    private String getOptVariableValue(JSONObject variables, String name) {
         String variableEntry = variables.optString(name);
         String value = "";
         if (!variableEntry.isEmpty()) {
