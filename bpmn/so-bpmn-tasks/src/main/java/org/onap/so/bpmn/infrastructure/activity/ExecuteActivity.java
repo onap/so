@@ -59,9 +59,18 @@ public class ExecuteActivity implements JavaDelegate {
     private static final String VNF_ID = "vnfId";
     private static final String SERVICE_INSTANCE_ID = "serviceInstanceId";
     private static final String WORKFLOW_SYNC_ACK_SENT = "workflowSyncAckSent";
+    private static final String BUILDING_BLOCK = "buildingBlock";
+    private static final String EXECUTE_BUILDING_BLOCK = "ExecuteBuildingBlock";
+    private static final String RETRY_COUNT = "retryCount";
+    private static final String A_LA_CARTE = "aLaCarte";
+    private static final String SUPPRESS_ROLLBACK = "suppressRollback";
+    private static final String WORKFLOW_EXCEPTION = "WorkflowException";
+    private static final String HANDLING_CODE = "handlingCode";
+    private static final String ABORT_HANDLING_CODE = "Abort";
 
     private static final String SERVICE_TASK_IMPLEMENTATION_ATTRIBUTE = "implementation";
     private static final String ACTIVITY_PREFIX = "activity:";
+    private static final String EXECUTE_ACTIVITY_ERROR_MESSAGE = "ExecuteActivityErrorMessage";
 
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -75,7 +84,8 @@ public class ExecuteActivity implements JavaDelegate {
     @Override
     public void execute(DelegateExecution execution) throws Exception {
         final String requestId = (String) execution.getVariable(G_REQUEST_ID);
-
+        WorkflowException workflowException = null;
+        String handlingCode = null;
         try {
             Boolean workflowSyncAckSent = (Boolean) execution.getVariable(WORKFLOW_SYNC_ACK_SENT);
             if (workflowSyncAckSent == null || workflowSyncAckSent == false) {
@@ -95,31 +105,44 @@ public class ExecuteActivity implements JavaDelegate {
             ExecuteBuildingBlock executeBuildingBlock = buildExecuteBuildingBlock(execution, requestId, buildingBlock);
 
             Map<String, Object> variables = new HashMap<>();
-            variables.put("buildingBlock", executeBuildingBlock);
-            variables.put(G_REQUEST_ID, requestId);
-            variables.put("retryCount", 1);
-            variables.put("aLaCarte", true);
-            variables.put("suppressRollback", true);
 
-            execution.getVariables().forEach((key, value) -> {
-                if (value instanceof Serializable) {
-                    variables.put(key, (Serializable) value);
-                }
-            });
+            if (execution.getVariables() != null) {
+                execution.getVariables().forEach((key, value) -> {
+                    if (value instanceof Serializable) {
+                        variables.put(key, (Serializable) value);
+                    }
+                });
+            }
+
+            variables.put(BUILDING_BLOCK, executeBuildingBlock);
+            variables.put(G_REQUEST_ID, requestId);
+            variables.put(RETRY_COUNT, 1);
+            variables.put(A_LA_CARTE, true);
+            variables.put(SUPPRESS_ROLLBACK, true);
 
             ProcessInstanceWithVariables buildingBlockResult =
-                    runtimeService.createProcessInstanceByKey("ExecuteBuildingBlock").setVariables(variables)
+                    runtimeService.createProcessInstanceByKey(EXECUTE_BUILDING_BLOCK).setVariables(variables)
                             .executeWithVariablesInReturn();
             VariableMap variableMap = buildingBlockResult.getVariables();
 
-            WorkflowException workflowException = (WorkflowException) variableMap.get("WorklfowException");
+            workflowException = (WorkflowException) variableMap.get(WORKFLOW_EXCEPTION);
             if (workflowException != null) {
                 logger.error("Workflow exception is: {}", workflowException.getErrorMessage());
             }
-            execution.setVariable("WorkflowException", workflowException);
+
+            handlingCode = (String) variableMap.get(HANDLING_CODE);
+            logger.debug("Handling code: " + handlingCode);
+
+            execution.setVariable(WORKFLOW_EXCEPTION, workflowException);
         } catch (Exception e) {
             buildAndThrowException(execution, e.getMessage());
         }
+
+        if (workflowException != null && handlingCode != null && handlingCode.equals(ABORT_HANDLING_CODE)) {
+            logger.debug("Aborting execution of the custom workflow");
+            buildAndThrowException(execution, workflowException.getErrorMessage());
+        }
+
     }
 
     protected BuildingBlock buildBuildingBlock(String activityName) {
@@ -161,7 +184,7 @@ public class ExecuteActivity implements JavaDelegate {
 
     protected void buildAndThrowException(DelegateExecution execution, String msg) {
         logger.error(msg);
-        execution.setVariable("ExecuteActuvityErrorMessage", msg);
+        execution.setVariable(EXECUTE_ACTIVITY_ERROR_MESSAGE, msg);
         exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, msg);
     }
 }
