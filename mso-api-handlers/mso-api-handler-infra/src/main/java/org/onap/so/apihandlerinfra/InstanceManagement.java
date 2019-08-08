@@ -216,7 +216,7 @@ public class InstanceManagement {
 
         try {
             recipeLookupResult = getCustomWorkflowUri(workflowUuid);
-        } catch (IOException e) {
+        } catch (Exception e) {
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError)
                             .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
@@ -243,7 +243,7 @@ public class InstanceManagement {
         return recipeLookupResult;
     }
 
-    private RecipeLookupResult getCustomWorkflowUri(String workflowUuid) throws IOException {
+    private RecipeLookupResult getCustomWorkflowUri(String workflowUuid) {
 
         String recipeUri = null;
         Workflow workflow = catalogDbClient.findWorkflowByArtifactUUID(workflowUuid);
