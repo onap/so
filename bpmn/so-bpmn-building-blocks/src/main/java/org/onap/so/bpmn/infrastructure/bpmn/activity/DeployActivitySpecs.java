@@ -31,6 +31,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 public class DeployActivitySpecs {
@@ -38,10 +40,12 @@ public class DeployActivitySpecs {
     private static final String ACTIVITY_SPEC_URI = "/activityspec-api/v1.0/activity-spec";
     private static final String CONTENT_TYPE_JSON = "application/json";
 
+    private static final Logger logger = LoggerFactory.getLogger(DeployActivitySpecs.class);
+
     public static void main(String[] args) throws Exception {
 
         if (args == null || args.length == 0) {
-            System.out.println("Please specify hostname argument");
+            logger.info("Please specify hostname argument");
             return;
         }
 
@@ -49,20 +53,23 @@ public class DeployActivitySpecs {
 
         File dir = new File(ACTIVITY_FILE_LOCATION);
         if (!dir.isDirectory()) {
-            System.out.println("ActivitySpec store is not a directory");
+            logger.debug("ActivitySpec store is not a directory");
             return;
         }
 
-        for (File f : dir.listFiles()) {
-            String activitySpecName = f.getName();
-            String errorMessage = deployActivitySpec(hostname, activitySpecName);
-            if (errorMessage == null) {
-                System.out.println("Deployed Activity Spec: " + activitySpecName);
-            } else {
-                System.out.println("Error deploying Activity Spec: " + activitySpecName + " : " + errorMessage);
+        if (dir.listFiles() != null) {
+            for (File f : dir.listFiles()) {
+                String activitySpecName = f.getName();
+                String errorMessage = deployActivitySpec(hostname, activitySpecName);
+                if (errorMessage == null) {
+                    logger.debug("Deployed Activity Spec: " + activitySpecName);
+                } else {
+                    logger.error("Error deploying Activity Spec: " + activitySpecName + " : " + errorMessage);
+                }
             }
+        } else {
+            logger.error("Null file list for Activity Specs.");
         }
-        return;
     }
 
     protected static String deployActivitySpec(String hostname, String activitySpecName) throws Exception {
