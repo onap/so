@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.onap.so.logger.LoggingAnchor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -41,7 +42,6 @@ import org.json.JSONObject;
 import org.onap.msb.sdk.discovery.common.RouteException;
 import org.onap.msb.sdk.httpclient.RestServiceCreater;
 import org.onap.msb.sdk.httpclient.msb.MSBServiceClient;
-import org.onap.so.bpmn.core.BaseTask;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.GenericResourceApi;
 import org.onap.so.db.request.beans.ResourceOperationStatus;
@@ -56,7 +56,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public abstract class AbstractSdncOperationTask extends BaseTask {
+public abstract class AbstractSdncOperationTask implements JavaDelegate {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractSdncOperationTask.class);
 
@@ -284,7 +284,7 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
             logger.info("exception: AbstractSdncOperationTask.updateProgress fail!");
             logger.error("exception: AbstractSdncOperationTask.updateProgress fail:", exception);
             logger.error(LoggingAnchor.FIVE, MessageEnum.GENERAL_EXCEPTION.toString(),
-                    " updateProgress catch exception: ", this.getTaskName(), ErrorCode.UnknownError.getValue(),
+                    " updateProgress catch exception: ", ErrorCode.UnknownError.getValue(),
                     exception.getClass().toString());
         }
     }

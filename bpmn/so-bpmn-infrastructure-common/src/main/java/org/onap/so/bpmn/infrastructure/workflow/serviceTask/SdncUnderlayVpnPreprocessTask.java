@@ -22,12 +22,12 @@ package org.onap.so.bpmn.infrastructure.workflow.serviceTask;
 
 import org.apache.commons.lang3.StringUtils;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
-import org.onap.so.bpmn.core.BaseTask;
+import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.onap.so.db.request.beans.ResourceOperationStatus;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SdncUnderlayVpnPreprocessTask extends BaseTask {
+public class SdncUnderlayVpnPreprocessTask implements JavaDelegate {
     public static final String RESOURCE_OPER_TYPE = "resourceOperType";
 
     @Override
