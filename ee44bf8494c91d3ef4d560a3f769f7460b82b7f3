@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "76170ea9_d9b9227c",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/audit/AuditStackService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 5286
+      },
+      "writtenOn": "2019-08-08T14:25:26Z",
+      "side": 1,
+      "message": "There is one more MR raised which covers all changes related to this file. we should include as much possible scenarios to cover in one commit belonging to same class.",
+      "revId": "ee44bf8494c91d3ef4d560a3f769f7460b82b7f3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
