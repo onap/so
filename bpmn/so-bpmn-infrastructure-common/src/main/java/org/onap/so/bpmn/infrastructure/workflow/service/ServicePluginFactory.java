@@ -98,12 +98,17 @@ public class ServicePluginFactory {
             new String[] {VS_MONITORED, VS_UNMONITORED, TS_MONITORED, TS_UNMONITORED};
 
     static {
-        try (InputStream is = ClassLoader.class.getResourceAsStream("/application.properties")) {
-            Properties prop = new Properties();
-            prop.load(is);
-            OOF_DEFAULT_ENDPOINT = prop.getProperty("oof.default.endpoint");
-            THIRD_SP_DEFAULT_ENDPOINT = prop.getProperty("third.sp.default.endpoint");
-            INVENTORY_OSS_DEFAULT_ENDPOINT = prop.getProperty("inventory.oss.default.endpoint");
+        try {
+            InputStream is = ClassLoader.class.getResourceAsStream("/application.properties");
+            if (null != is) {
+                Properties prop = new Properties();
+                prop.load(is);
+                OOF_DEFAULT_ENDPOINT = prop.getProperty("oof.default.endpoint");
+                THIRD_SP_DEFAULT_ENDPOINT = prop.getProperty("third.sp.default.endpoint");
+                INVENTORY_OSS_DEFAULT_ENDPOINT = prop.getProperty("inventory.oss.default.endpoint");
+            } else {
+                logger.error("Failed to load property file, Either property file is missing or empty!");
+            }
         } catch (IOException e) {
             logger.error("Failed to load property file!");
         }
