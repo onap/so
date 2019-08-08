@@ -40,6 +40,10 @@ public class AuditStackService {
 
     private static final Logger logger = LoggerFactory.getLogger(AuditStackService.class);
 
+    private static final String DEFAULT_AUDIT_LOCK_TIME = "60000";
+
+    private static final String DEFAULT_MAX_CLIENTS_FOR_TOPIC = "10";
+
     @Autowired
     public Environment env;
 
@@ -53,41 +57,40 @@ public class AuditStackService {
     private AuditQueryStackService auditQueryStack;
 
     @PostConstruct
-    public void auditAddAAIInventory() throws Exception {
+    public void auditAddAAIInventory() {
         for (int i = 0; i < getMaxClients(); i++) {
             ExternalTaskClient client = createExternalTaskClient();
             client.subscribe("InventoryAddAudit")
-                    .lockDuration(Long.parseLong(env.getProperty("mso.audit.lock-time", "60000")))
+                    .lockDuration(Long.parseLong(env.getProperty("mso.audit.lock-time", DEFAULT_AUDIT_LOCK_TIME)))
                     .handler(auditCreateStack::executeExternalTask).open();
         }
     }
 
     @PostConstruct
-    public void auditDeleteAAIInventory() throws Exception {
+    public void auditDeleteAAIInventory() {
         for (int i = 0; i < getMaxClients(); i++) {
             ExternalTaskClient client = createExternalTaskClient();
             client.subscribe("InventoryDeleteAudit")
-                    .lockDuration(Long.parseLong(env.getProperty("mso.audit.lock-time", "60000")))
+                    .lockDuration(Long.parseLong(env.getProperty("mso.audit.lock-time", DEFAULT_AUDIT_LOCK_TIME)))
                     .handler(auditDeleteStack::executeExternalTask).open();
         }
     }
 
     @PostConstruct
-    public void auditQueryInventory() throws Exception {
+    public void auditQueryInventory() {
         for (int i = 0; i < getMaxClients(); i++) {
             ExternalTaskClient client = createExternalTaskClient();
             client.subscribe("InventoryQueryAudit")
-                    .lockDuration(Long.parseLong(env.getProperty("mso.audit.lock-time", "60000")))
+                    .lockDuration(Long.parseLong(env.getProperty("mso.audit.lock-time", DEFAULT_AUDIT_LOCK_TIME)))
                     .handler(auditQueryStack::executeExternalTask).open();
         }
     }
 
-    protected ExternalTaskClient createExternalTaskClient() throws Exception {
+    protected ExternalTaskClient createExternalTaskClient() {
         ClientRequestInterceptor interceptor = createClientRequestInterceptor();
-        ExternalTaskClient client = ExternalTaskClient.create()
-                .baseUrl(env.getRequiredProperty("mso.workflow.endpoint")).maxTasks(1).addInterceptor(interceptor)
-                .asyncResponseTimeout(120000).backoffStrategy(new ExponentialBackoffStrategy(0, 0, 0)).build();
-        return client;
+        return ExternalTaskClient.create().baseUrl(env.getRequiredProperty("mso.workflow.endpoint")).maxTasks(1)
+                .addInterceptor(interceptor).asyncResponseTimeout(120000)
+                .backoffStrategy(new ExponentialBackoffStrategy(0, 0, 0)).build();
     }
 
     protected ClientRequestInterceptor createClientRequestInterceptor() {
@@ -97,13 +100,11 @@ public class AuditStackService {
         } catch (IllegalStateException | GeneralSecurityException e) {
             logger.error("Error Decrypting Password", e);
         }
-        ClientRequestInterceptor interceptor =
-                new BasicAuthProvider(env.getRequiredProperty("mso.config.cadi.aafId"), auth);
-        return interceptor;
+        return new BasicAuthProvider(env.getRequiredProperty("mso.config.cadi.aafId"), auth);
     }
 
     protected int getMaxClients() {
-        return Integer.parseInt(env.getProperty("workflow.topics.maxClients", "10"));
+        return Integer.parseInt(env.getProperty("workflow.topics.maxClients", DEFAULT_MAX_CLIENTS_FOR_TOPIC));
     }
 
 
