@@ -8,10 +8,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
 import javax.ws.rs.core.MediaType;
 import org.apache.commons.codec.binary.Base64;
 import org.modelmapper.ModelMapper;
@@ -44,11 +51,15 @@ import org.onap.svnfm.simulator.repository.VnfOperationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 public abstract class OperationProgressor implements Runnable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OperationProgressor.class);
     private static final String CERTIFICATE_TO_TRUST = "so-vnfm-adapter.crt.pem";
+
+    private Resource keyStoreResource = new ClassPathResource("so-vnfm-simulator.p12");
+    private String keyStorePassword = "7Em3&j4.19xYiMelhD5?xbQ.";
 
     protected final VnfOperation operation;
     protected final SvnfmService svnfmService;
@@ -73,12 +84,14 @@ public abstract class OperationProgressor implements Runnable {
         String callBackUrl = subscriptionService.getSubscriptions().iterator().next().getCallbackUri();
         callBackUrl = callBackUrl.substring(0, callBackUrl.indexOf("/lcn/"));
         apiClient.setBasePath(callBackUrl);
+        apiClient.setKeyManagers(getKeyManagers());
         apiClient.setSslCaCert(getCertificateToTrust());
         notificationClient = new DefaultApi(apiClient);
 
         final org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.ApiClient grantApiClient =
                 new org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.ApiClient();
         grantApiClient.setBasePath(callBackUrl);
+        grantApiClient.setKeyManagers(getKeyManagers());
         grantApiClient.setSslCaCert(getCertificateToTrust());
         grantClient = new org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.api.DefaultApi(grantApiClient);
     }
@@ -89,6 +102,22 @@ public abstract class OperationProgressor implements Runnable {
         } catch (final IOException exception) {
             LOGGER.error("Error reading certificate to trust, https calls to VNFM adapter will fail", exception);
             return null;
+        }
+    }
+
+    private KeyManager[] getKeyManagers() {
+        KeyStore keystore;
+        try {
+            keystore = KeyStore.getInstance("pkcs12");
+            keystore.load(keyStoreResource.getInputStream(), keyStorePassword.toCharArray());
+            KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
+            keyManagerFactory.init(keystore, keyStorePassword.toCharArray());
+            return keyManagerFactory.getKeyManagers();
+        } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException
+                | UnrecoverableKeyException exception) {
+            LOGGER.error("Error reading certificate, https calls using two way TLS to VNFM adapter will fail",
+                    exception);
+            return new KeyManager[0];
         }
     }
 
@@ -247,8 +276,10 @@ public abstract class OperationProgressor implements Runnable {
             final SubscriptionsAuthenticationParamsOauth2ClientCredentials subscriptionAuthentication =
                     subscriptionService.getSubscriptions().iterator().next().getAuthentication()
                             .getParamsOauth2ClientCredentials();
-            final String authHeader =
-                    "Bearer " + getToken(notificationClient.getApiClient(), subscriptionAuthentication);
+
+            final String authHeader = applicationConfig.getGrantAuth().equals("oauth")
+                    ? "Bearer " + getToken(notificationClient.getApiClient(), subscriptionAuthentication)
+                    : null;
 
             final ApiResponse<InlineResponse201> response = grantClient.grantsPostWithHttpInfo(grantRequest,
                     MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON, authHeader);

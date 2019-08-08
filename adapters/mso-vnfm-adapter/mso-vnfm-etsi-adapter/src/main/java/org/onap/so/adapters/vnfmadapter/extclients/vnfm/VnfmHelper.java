@@ -212,6 +212,8 @@ public class VnfmHelper {
         basicAuthParams.setPassword(decrypedAuth[1]);
         authentication.addAuthTypeItem(AuthTypeEnum.BASIC);
         authentication.paramsBasic(basicAuthParams);
+
+        authentication.addAuthTypeItem(AuthTypeEnum.TLS_CERT);
         return authentication;
     }
 

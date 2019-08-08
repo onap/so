@@ -22,6 +22,7 @@ package org.onap.so.adapters.vnfmadapter;
 
 import org.onap.so.security.MSOSpringFirewall;
 import org.onap.so.security.WebSecurityConfig;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -34,11 +35,18 @@ import org.springframework.util.StringUtils;
 @EnableWebSecurity
 public class WebSecurityConfigImpl extends WebSecurityConfig {
 
+    @Value("${server.ssl.client-auth:none}")
+    private String clientAuth;
+
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests().antMatchers("/manage/health", "/manage/info").permitAll()
-                .antMatchers("/**").hasAnyRole(StringUtils.collectionToDelimitedString(getRoles(), ",")).and()
-                .httpBasic();
+        if (clientAuth.equalsIgnoreCase("need")) {
+            http.csrf().disable().authorizeRequests().anyRequest().permitAll();
+        } else {
+            http.csrf().disable().authorizeRequests().antMatchers("/manage/health", "/manage/info").permitAll()
+                    .antMatchers("/**").hasAnyRole(StringUtils.collectionToDelimitedString(getRoles(), ",")).and()
+                    .httpBasic();
+        }
     }
 
     @Override
