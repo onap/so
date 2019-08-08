@@ -323,7 +323,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         String type = templateParam.getParamType();
         logger.debug("Parameter: {} is of type ", templateParam.getParamName(), type);
 
-        if (type.equalsIgnoreCase("number")) {
+        if ("number".equalsIgnoreCase(type)) {
             try {
                 return Integer.valueOf(inputValue.toString());
             } catch (Exception e) {
