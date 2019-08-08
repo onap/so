@@ -140,7 +140,7 @@ public class WorkflowResource {
         VnfResourceWorkflow vnfResourceWorkflow = new VnfResourceWorkflow();
         vnfResourceWorkflow.setVnfResourceModelUUID(vfResourceModelUuid);
         vnfResourceWorkflow.setWorkflow(workflow);
-        List<VnfResourceWorkflow> vnfResourceWorkflows = new ArrayList<VnfResourceWorkflow>();
+        List<VnfResourceWorkflow> vnfResourceWorkflows = new ArrayList<>();
         vnfResourceWorkflows.add(vnfResourceWorkflow);
 
         workflow.setVnfResourceWorkflow(vnfResourceWorkflows);
@@ -174,7 +174,7 @@ public class WorkflowResource {
     }
 
     protected List<String> getActivityNameList(String bpmnContent) {
-        List<String> activityNameList = new ArrayList<String>();
+        List<String> activityNameList = new ArrayList<>();
 
         Pattern p = Pattern.compile(pattern);
         Matcher m = p.matcher(bpmnContent);
@@ -186,10 +186,10 @@ public class WorkflowResource {
 
     protected List<WorkflowActivitySpecSequence> getWorkflowActivitySpecSequence(List<String> activityNames,
             Workflow workflow) throws Exception {
-        if (activityNames == null || activityNames.size() == 0) {
+        if (activityNames == null || activityNames.isEmpty()) {
             return null;
         }
-        List<WorkflowActivitySpecSequence> workflowActivitySpecs = new ArrayList<WorkflowActivitySpecSequence>();
+        List<WorkflowActivitySpecSequence> workflowActivitySpecs = new ArrayList<>();
         int seqNo = 1;
         for (String activityName : activityNames) {
             ActivitySpec activitySpec = activityRepo.findByName(activityName);

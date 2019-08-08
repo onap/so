@@ -1117,7 +1117,7 @@ public class ToscaResourceInstaller {
             }
         }
 
-        if (tempGroupList.size() != 0 && tempGroupList.size() < groupList.size()) {
+        if (!tempGroupList.isEmpty() && tempGroupList.size() < groupList.size()) {
             getVNFCGroupSequenceList(strSequence, tempGroupList, nodes, iSdcCsarHelper);
         }
     }
