@@ -22,6 +22,30 @@
       "revId": "37cacbd89a7129e5736916627b25d0ecf0364947",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7ea2dcf1_8dcdb486",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/extclients/vnfm/VnfmServiceProviderConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-08-08T09:57:31Z",
+      "side": 1,
+      "message": "Went through the code and resttemplate is not shared within adapter so the change should not effect any other service",
+      "parentUuid": "c9dbd368_7982eba5",
+      "range": {
+        "startLine": 145,
+        "startChar": 3,
+        "endLine": 167,
+        "endChar": 9
+      },
+      "revId": "37cacbd89a7129e5736916627b25d0ecf0364947",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
