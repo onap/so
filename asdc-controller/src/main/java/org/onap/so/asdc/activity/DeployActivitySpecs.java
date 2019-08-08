@@ -92,7 +92,7 @@ public class DeployActivitySpecs {
 
     private void mapCategoryList(List<ActivitySpecActivitySpecCategories> activitySpecActivitySpecCategories,
             ActivitySpec activitySpec) {
-        if (activitySpecActivitySpecCategories == null || activitySpecActivitySpecCategories.size() == 0) {
+        if (activitySpecActivitySpecCategories == null || activitySpecActivitySpecCategories.isEmpty()) {
             return;
         }
         List<String> categoryList = new ArrayList<>();
@@ -108,7 +108,7 @@ public class DeployActivitySpecs {
 
     private void mapInputsAndOutputs(List<ActivitySpecActivitySpecParameters> activitySpecActivitySpecParameters,
             ActivitySpec activitySpec) {
-        if (activitySpecActivitySpecParameters == null || activitySpecActivitySpecParameters.size() == 0) {
+        if (activitySpecActivitySpecParameters == null || activitySpecActivitySpecParameters.isEmpty()) {
             return;
         }
         List<Input> inputs = new ArrayList<>();
