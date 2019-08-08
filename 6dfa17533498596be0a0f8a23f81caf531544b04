@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27e33d09_90e54a02",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreateAndActivatePnfResourceTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-08-08T11:46:53Z",
+      "side": 1,
+      "message": "If..else statement in junit test is not acceptable, it means that you are not sure what you test.",
+      "range": {
+        "startLine": 66,
+        "startChar": 8,
+        "endLine": 71,
+        "endChar": 9
+      },
+      "revId": "6dfa17533498596be0a0f8a23f81caf531544b04",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bfbf54c4_996c2108",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreateAndActivatePnfResourceTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-08-08T11:46:53Z",
+      "side": 1,
+      "message": "the same as above",
+      "range": {
+        "startLine": 90,
+        "startChar": 3,
+        "endLine": 95,
+        "endChar": 9
+      },
+      "revId": "6dfa17533498596be0a0f8a23f81caf531544b04",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
