@@ -8,14 +8,15 @@ SO Developer Information
 .. toctree::
    :maxdepth: 1
 
-   Camunda_Modeler.rst
+
    Building_SO.rst
    Working_with_SO_Docker.rst
    Camunda_Cockpit_Community_Edition.rst
    Camunda_Cockpit_Enterprise_Edition.rst
-   Camunda_Modeler
+   Camunda_Modeler.rst
    BPMN_Project_Structure.rst
    BPMN_Main_Process_Flows.rst
    BPMN_Subprocess_Process_Flows.rst
    BPMN_Project_Deployment_Strategy.rst
+   instantiate/index.rst
    FAQs.rst
