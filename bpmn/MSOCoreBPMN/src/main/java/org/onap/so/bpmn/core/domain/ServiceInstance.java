@@ -22,9 +22,7 @@ package org.onap.so.bpmn.core.domain;
 
 import java.io.Serializable;
 import java.util.Map;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonRootName;
 
 /**
  * This class is used to store instance data of services aka ServiceDecomposition
@@ -46,7 +44,7 @@ public class ServiceInstance extends JsonWrapper implements Serializable {
     private ModelInfo modelInfo;
     private String environmentContext;
     private String workloadContext;
-    private Map serviceParams;
+    private transient Map serviceParams;
     private Customer customer = new Customer();
     private String e2eVpnKey;
 
