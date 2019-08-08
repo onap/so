@@ -33,15 +33,15 @@ public class RouteTarget implements Serializable {
      * 
      */
     private static final long serialVersionUID = 5425083030715789604L;
-    private String routeTarget;
+    private String route_target;
     private String routeTargetRole;
 
     public String getRouteTarget() {
-        return routeTarget;
+        return route_target;
     }
 
     public void setRouteTarget(String routeTarget) {
-        this.routeTarget = routeTarget;
+        this.route_target = routeTarget;
     }
 
     public String getRouteTargetRole() {
@@ -55,7 +55,7 @@ public class RouteTarget implements Serializable {
 
     @Override
     public String toString() {
-        return "RouteTarget [routeTarget=" + routeTarget + ", routeTargetRole=" + routeTargetRole + "]";
+        return "RouteTarget [routeTarget=" + route_target + ", routeTargetRole=" + routeTargetRole + "]";
     }
 
 }
