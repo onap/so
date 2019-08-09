@@ -137,6 +137,7 @@ public class CatalogDbClient {
     private static final String CLOUD_OWNER = "cloudOwner";
     private static final String FLOW_NAME = "flowName";
     private static final String ERROR_MESSAGE = "errorMessage";
+    private static final String SERVICE_ROLE = "serviceRole";
     private static final String SERVICE_TYPE = "serviceType";
     private static final String VNF_TYPE = "vnfType";
     private static final String ERROR_CODE = "errorCode";
@@ -638,7 +639,7 @@ public class CatalogDbClient {
     }
 
     public RainyDayHandlerStatus getRainyDayHandlerStatus(String flowName, String serviceType, String vnfType,
-            String errorCode, String workStep, String errorMessage) {
+            String errorCode, String workStep, String errorMessage, String serviceRole) {
         logger.debug(
                 "Get Rainy Day Status - Flow Name {}, Service Type: {} , vnfType {} , errorCode {}, workStep {}, errorMessage {}",
                 flowName, serviceType, vnfType, errorCode, workStep, errorMessage);
@@ -646,7 +647,8 @@ public class CatalogDbClient {
                 UriComponentsBuilder.fromUriString(endpoint + RAINY_DAY_HANDLER_MACRO + SEARCH + findRainyDayHandler)
                         .queryParam(FLOW_NAME, flowName).queryParam(SERVICE_TYPE, serviceType)
                         .queryParam(VNF_TYPE, vnfType).queryParam(ERROR_CODE, errorCode).queryParam(WORK_STEP, workStep)
-                        .queryParam(ERROR_MESSAGE, errorMessage).build().encode().toUri());
+                        .queryParam(ERROR_MESSAGE, errorMessage).queryParam(SERVICE_ROLE, serviceRole).build().encode()
+                        .toUri());
     }
 
     public ServiceRecipe getFirstByServiceModelUUIDAndAction(String modelUUID, String action) {

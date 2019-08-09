@@ -813,3 +813,5 @@ VALUES
 ('ConfigDeployVnfBB', 'NO_VALIDATE', 'CUSTOM');
 
 UPDATE rainy_day_handler_macro SET reg_ex_error_message = '*' WHERE reg_ex_error_message IS null;
+
+UPDATE rainy_day_handler_macro SET SERVICE_ROLE = '*' WHERE SERVICE_ROLE IS null;
