@@ -57,10 +57,10 @@ public class SniroClient {
      *
      * @param homingRequest
      * @return
-     * @throws JsonProcessingException
+     * @throws BadResponseException
      * @throws BpmnError
      */
-    public void postDemands(SniroManagerRequest homingRequest) throws BadResponseException, JsonProcessingException {
+    public void postDemands(SniroManagerRequest homingRequest) throws BadResponseException {
         logger.trace("Started Sniro Client Post Demands");
         String url = managerProperties.getHost() + managerProperties.getUri().get("v2");
         logger.debug("Post demands url: {}", url);
