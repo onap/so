@@ -59,20 +59,6 @@ public class SDNCServiceRequest extends SDNCRequestCommon implements Serializabl
     // The SDNC service data specified by SDNC "agnostic" API
     private String sdncServiceData;
 
-    public SDNCServiceRequest() {}
-
-    public SDNCServiceRequest(String bpNotificationUrl, String bpTimeout, String sdncRequestId, String sdncService,
-            String sdncOperation, RequestInformation requestInformation, ServiceInformation serviceInformation,
-            String sdncServiceDataType, String sndcServiceData) {
-        super(bpNotificationUrl, bpTimeout, sdncRequestId);
-        this.requestInformation = requestInformation;
-        this.serviceInformation = serviceInformation;
-        this.sdncService = sdncService;
-        this.sdncOperation = sdncOperation;
-        this.sdncServiceDataType = sdncServiceDataType;
-        this.sdncServiceData = sndcServiceData;
-    }
-
     @JsonProperty("requestInformation")
     @XmlElement(name = "requestInformation")
     public RequestInformation getRequestInformation() {
