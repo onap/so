@@ -19,17 +19,31 @@
  */
 package org.onap.so.apihandlerinfra;
 
-public enum HealthcheckStatus {
-    UP("UP"), DOWN("DOWN");
+import java.util.ArrayList;
+import java.util.List;
 
-    private String status;
+public class HealthCheckResponse {
 
-    private HealthcheckStatus(String status) {
-        this.status = status;
+
+    private List<HealthCheckSubsystem> subsystems = new ArrayList<>();
+    private String message;
+
+
+    public List<HealthCheckSubsystem> getSubsystems() {
+        return subsystems;
     }
 
-    @Override
-    public String toString() {
-        return status;
+    public void setSubsystems(List<HealthCheckSubsystem> subsystems) {
+        this.subsystems = subsystems;
     }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+
 }

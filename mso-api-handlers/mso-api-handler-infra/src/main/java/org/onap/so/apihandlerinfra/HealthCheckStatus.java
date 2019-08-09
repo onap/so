@@ -19,25 +19,17 @@
  */
 package org.onap.so.apihandlerinfra;
 
-public enum MsoSubsystems {
-    APIH("API Handler"),
-    ASDC("ASDC Controller"),
-    BPMN("BPMN Infra"),
-    CATALOGDB("CatalogDb Adapter"),
-    OPENSTACK("Openstack Adapter"),
-    REQUESTDB("RequestDB Adapter"),
-    SDNC("SDNC Adapter");
+public enum HealthCheckStatus {
+    UP("UP"), DOWN("DOWN");
 
-    private String subsystem;
+    private String status;
 
-    private MsoSubsystems(String subsystem) {
-        this.subsystem = subsystem;
+    private HealthCheckStatus(String status) {
+        this.status = status;
     }
 
     @Override
     public String toString() {
-        return subsystem;
+        return status;
     }
-
 }
-

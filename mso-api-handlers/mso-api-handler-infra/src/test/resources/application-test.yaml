@@ -9,14 +9,20 @@ server:
 mso:
   health:
     endpoints:
-      catalogdb: http://localhost:${wiremock.server.port}
-      requestdb: http://localhost:${wiremock.server.port}
-      sdnc: http://localhost:${wiremock.server.port}
-      openstack: http://localhost:${wiremock.server.port}
-      bpmn: http://localhost:${wiremock.server.port}
-      asdc: http://localhost:${wiremock.server.port}
-      requestdbattsvc: http://localhost:${wiremock.server.port}
-      
+      - subsystem: apih
+        uri: http://localhost:${wiremock.server.port}
+      - subsystem: asdc
+        uri: http://localhost:${wiremock.server.port}
+      - subsystem: bpmn
+        uri: http://localhost:${wiremock.server.port}
+      - subsystem: catalogdb
+        uri: http://localhost:${wiremock.server.port}
+      - subsystem: openstack
+        uri: http://localhost:${wiremock.server.port}
+      - subsystem: requestdb
+        uri: http://localhost:${wiremock.server.port}
+      - subsystem: sdnc
+        uri: http://localhost:${wiremock.server.port}
   infra-requests:
     archived:
       period: 180
@@ -118,7 +124,13 @@ mariaDB4j:
   port: 3307
   databaseName: catalogdb
   databaseName2: requestdb
-
+#Actuator
+management:
+  endpoints:
+    web:
+      base-path: /manage
+      exposure:
+        include: "*"
 
 org:
   onap:
