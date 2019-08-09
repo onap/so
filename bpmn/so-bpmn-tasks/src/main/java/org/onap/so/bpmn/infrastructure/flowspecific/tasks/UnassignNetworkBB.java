@@ -30,8 +30,6 @@ import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.AAINetworkResources;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -61,10 +59,10 @@ public class UnassignNetworkBB {
      * @param execution - BuildingBlockExecution
      * @param relatedToValue - String, ex: vf-module
      * @return void - nothing
-     * @throws Exception
+     *
      */
 
-    public void checkRelationshipRelatedTo(BuildingBlockExecution execution, String relatedToValue) throws Exception {
+    public void checkRelationshipRelatedTo(BuildingBlockExecution execution, String relatedToValue) {
         try {
             L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
             AAIResultWrapper aaiResultWrapper = aaiNetworkResources.queryNetworkWrapperById(l3network);
@@ -85,10 +83,10 @@ public class UnassignNetworkBB {
      * 
      * @param execution - BuildingBlockExecution
      * @return void - nothing
-     * @throws Exception
+     *
      */
 
-    public void getCloudSdncRegion(BuildingBlockExecution execution) throws Exception {
+    public void getCloudSdncRegion(BuildingBlockExecution execution) {
         try {
             String cloudRegionSdnc = networkBBUtils.getCloudRegion(execution, SourceSystem.SDNC);
             execution.setVariable("cloudRegionSdnc", cloudRegionSdnc);
@@ -107,7 +105,7 @@ public class UnassignNetworkBB {
         String msg;
         boolean isRollbackNeeded =
                 execution.getVariable("isRollbackNeeded") != null ? execution.getVariable("isRollbackNeeded") : false;
-        if (isRollbackNeeded == true) {
+        if (isRollbackNeeded) {
             msg = execution.getVariable("ErrorUnassignNetworkBB") + messageErrorRollback;
         } else {
             msg = execution.getVariable("ErrorUnassignNetworkBB");
