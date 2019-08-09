@@ -75,7 +75,7 @@ import org.slf4j.LoggerFactory
  *
  * This BB processes Macros(except TRANSPORT all sent to sdnc) and Alacartes(sdncSvcs && nonSdncSvcs)
  */
-public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
+ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger( DoCreateServiceInstance.class);
 	String Prefix="DCRESI_"
@@ -83,7 +83,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 	JsonUtils jsonUtil = new JsonUtils()
 	CatalogDbUtils catalogDbUtils = new CatalogDbUtilsFactory().create()
 
-	public void preProcessRequest (DelegateExecution execution) {
+	 void preProcessRequest (DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		String msg = ""
 		logger.trace("preProcessRequest")
@@ -286,7 +286,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 		logger.trace("Exit preProcessRequest")
 	}
 
-	public void getAAICustomerById (DelegateExecution execution) {
+	void getAAICustomerById (DelegateExecution execution) {
 		// https://{aaiEP}/aai/v8/business/customers/customer/{globalCustomerId}
 		try {
 
@@ -306,7 +306,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 
 	}
 
-	public void putServiceInstance(DelegateExecution execution) {
+	void putServiceInstance(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		logger.trace("putServiceInstance")
 		String msg = ""
@@ -380,7 +380,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 		logger.trace("Exit putServiceInstance")
 	}
 
-	public void preProcessSDNCAssignRequest(DelegateExecution execution) {
+	void preProcessSDNCAssignRequest(DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		String msg = ""
 		logger.trace("preProcessSDNCAssignRequest")
@@ -479,7 +479,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 		logger.trace("Exit preProcessSDNCAssignRequest")
 	}
 
-	public void postProcessSDNCAssign (DelegateExecution execution) {
+	void postProcessSDNCAssign (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		logger.trace("postProcessSDNCAssign")
 		try {
@@ -518,7 +518,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 		logger.trace("Exit postProcessSDNCAssign")
 	}
 
-	public void postProcessAAIGET2(DelegateExecution execution) {
+	void postProcessAAIGET2(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		logger.trace("postProcessAAIGET2")
 		String msg = ""
@@ -561,7 +561,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 		logger.trace("Exit postProcessAAIGET2")
 	}
 
-	public void preProcessRollback (DelegateExecution execution) {
+	void preProcessRollback (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		logger.trace("preProcessRollback")
 		try {
@@ -582,7 +582,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 		logger.trace("Exit preProcessRollback")
 	}
 
-	public void postProcessRollback (DelegateExecution execution) {
+	void postProcessRollback (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		logger.trace("postProcessRollback")
 		String msg = ""
@@ -603,7 +603,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 		logger.trace("Exit postProcessRollback")
 	}
 
-	public void createProject(DelegateExecution execution) {
+	void createProject(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		logger.trace("createProject")
 
@@ -631,7 +631,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 		logger.trace("Exit createProject")
 	}
 
-	public void createOwningEntity(DelegateExecution execution) {
+	void createOwningEntity(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		logger.trace("createOwningEntity")
 		String msg = "";
@@ -679,7 +679,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 	//     Build Error Section
 	// *******************************
 
-	public void processJavaException(DelegateExecution execution){
+	void processJavaException(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 
 		try{
