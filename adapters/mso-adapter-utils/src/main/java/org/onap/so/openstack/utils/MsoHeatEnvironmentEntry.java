@@ -132,14 +132,14 @@ public class MsoHeatEnvironmentEntry {
     }
 
     public boolean hasResources() {
-        if (this.resources != null && this.resources.size() > 0) {
+        if (this.resources != null && !this.resources.isEmpty()) {
             return true;
         }
         return false;
     }
 
     public boolean hasParameters() {
-        if (this.parameters != null && this.parameters.size() > 0) {
+        if (this.parameters != null && !this.parameters.isEmpty()) {
             return true;
         }
         return false;
@@ -147,7 +147,7 @@ public class MsoHeatEnvironmentEntry {
 
     public boolean containsParameter(String paramName) {
         boolean contains = false;
-        if (this.parameters == null || this.parameters.size() < 1) {
+        if (this.parameters == null || this.parameters.isEmpty()) {
             return false;
         }
         if (this.parameters.contains(new MsoHeatEnvironmentParameter(paramName))) {
