@@ -57,7 +57,7 @@ public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
 
     MsoUtils msoUtils = new MsoUtils()
 
-    public void preProcessRequest(DelegateExecution execution) {
+     void preProcessRequest(DelegateExecution execution) {
         logger.info(" ***** Started preProcessRequest *****")
 
         try {
@@ -106,7 +106,7 @@ public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
         }
     }
 
-    public void prepareUpdateAfterActivateSDNCResource(DelegateExecution execution) {
+     void prepareUpdateAfterActivateSDNCResource(DelegateExecution execution) {
         logger.info("started prepareUpdateAfterActivateSDNCResource ")
 
         ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(execution.getVariable(Prefix + "resourceInput"), ResourceInput.class)
@@ -163,7 +163,7 @@ public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
         return  new JSONObject(paramMap).toString()
     }
 
-    public void prepareSDNCRequest (DelegateExecution execution) {
+     void prepareSDNCRequest (DelegateExecution execution) {
         logger.info("Started prepareSDNCRequest ")
 
         try {
@@ -451,7 +451,7 @@ public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
         logger.info(" ***** Exit prepareSDNCRequest *****")
     }
 
-    public void postActivateSDNCCall(DelegateExecution execution) {
+     void postActivateSDNCCall(DelegateExecution execution) {
         logger.info("started postCreateSDNCCall ")
 
         String responseCode = execution.getVariable(Prefix + "sdncCreateReturnCode")
@@ -460,7 +460,7 @@ public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
         logger.info("response from sdnc, response code :" + responseCode + "  response object :" + responseObj)
     }
 
-    public void sendSyncResponse(DelegateExecution execution) {
+     void sendSyncResponse(DelegateExecution execution) {
         logger.info("started sendsyncResp")
 
         try {
