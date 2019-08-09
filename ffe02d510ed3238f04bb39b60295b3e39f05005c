@@ -22,6 +22,30 @@
       "revId": "ffe02d510ed3238f04bb39b60295b3e39f05005c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "88ef182d_e0539f8c",
+        "filename": "adapters/mso-adapters-rest-interface/src/main/java/org/onap/so/adapters/sdncrest/SDNCServiceRequest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 5443
+      },
+      "writtenOn": "2019-08-09T12:33:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b7fd9245_12dc0f47",
+      "range": {
+        "startLine": 62,
+        "startChar": 0,
+        "endLine": 74,
+        "endChar": 5
+      },
+      "revId": "ffe02d510ed3238f04bb39b60295b3e39f05005c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
