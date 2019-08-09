@@ -1,0 +1,13 @@
+{
+	"in-maint": null, 
+    "is-closed-loop-disabled": null, 
+	"linterfaces": null, 
+	"prov-status": null, 
+	"relationship-list": null, 
+	"resource-version": null, 
+	"volumes": null, 
+    "vserver-id": "VServerId",
+    "vserver-name": "VServerName",
+    "vserver-name2": "VServerName2",
+    "vserver-selflink": "http://VSERVER-link.com"
+ }
