@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b7fd9245_12dc0f47",
+        "filename": "adapters/mso-adapters-rest-interface/src/main/java/org/onap/so/adapters/sdncrest/SDNCServiceRequest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-08-09T11:08:53Z",
+      "side": 1,
+      "message": "please remove these constructors, they are not used",
+      "range": {
+        "startLine": 62,
+        "startChar": 0,
+        "endLine": 74,
+        "endChar": 5
+      },
+      "revId": "ffe02d510ed3238f04bb39b60295b3e39f05005c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
