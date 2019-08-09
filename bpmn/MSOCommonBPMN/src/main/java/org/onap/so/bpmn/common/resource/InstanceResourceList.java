@@ -108,6 +108,11 @@ public class InstanceResourceList {
             sequencedResourceList.add(vnfResource);
         }
 
+        // check if the resource contains vf-module
+        if (vnfResource != null && vnfResource.getVfModules() != null) {
+            sequencedResourceList.addAll(vnfResource.getVfModules());
+        }
+
         return sequencedResourceList;
     }
 
