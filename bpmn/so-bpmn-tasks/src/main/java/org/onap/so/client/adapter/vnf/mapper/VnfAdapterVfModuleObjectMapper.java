@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import javax.annotation.PostConstruct;
 import org.apache.commons.lang3.StringUtils;
@@ -210,23 +211,25 @@ public class VnfAdapterVfModuleObjectMapper {
     protected void buildDirectivesParamFromMap(Map<String, Object> paramsMap, String directive,
             Map<String, Object> srcMap) throws MissingValueTagException {
         StringBuilder directives = new StringBuilder();
-        int no_directives_size = 0;
+        int noOfDirectivesSize = 0;
         if (directive.equals(MsoMulticloudUtils.USER_DIRECTIVES)
                 && srcMap.containsKey(MsoMulticloudUtils.OOF_DIRECTIVES)) {
-            no_directives_size = 1;
+            noOfDirectivesSize = 1;
         }
-        if (srcMap.size() > no_directives_size) {
+        if (srcMap.size() > noOfDirectivesSize) {
             directives.append("{ \"attributes\": [ ");
             int i = 0;
-            for (String attributeName : srcMap.keySet()) {
+            for (Map.Entry<String, Object> attributeEntry : srcMap.entrySet()) {
+                String attributeName = attributeEntry.getKey();
+                Object attributeValue = attributeEntry.getValue();
                 if (!(MsoMulticloudUtils.USER_DIRECTIVES.equals(directive)
                         && attributeName.equals(MsoMulticloudUtils.OOF_DIRECTIVES))) {
-                    if (srcMap.get(attributeName) == null) {
+                    if (attributeValue == null) {
                         logger.error("No value tag found for attribute: {}", attributeName);
                         throw new MissingValueTagException("No value tag found for " + attributeName);
                     }
-                    directives.append(new AttributeNameValue(attributeName, srcMap.get(attributeName).toString()));
-                    if (i < (srcMap.size() - 1 + no_directives_size))
+                    directives.append(new AttributeNameValue(attributeName, attributeValue.toString()));
+                    if (i < (srcMap.size() - 1 + noOfDirectivesSize))
                         directives.append(", ");
                     i++;
                 }
