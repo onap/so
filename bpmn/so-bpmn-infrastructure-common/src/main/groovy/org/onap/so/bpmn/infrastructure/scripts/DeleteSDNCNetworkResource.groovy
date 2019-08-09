@@ -67,7 +67,7 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
 
     MsoUtils msoUtils = new MsoUtils()
 
-    public void preProcessRequest(DelegateExecution execution){
+    void preProcessRequest(DelegateExecution execution){
         logger.info(" ***** Started preProcessRequest *****")
         try {
 
@@ -184,7 +184,7 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
      * generate the nsOperationKey
      * generate the nsParameters
      */
-    public void prepareSDNCRequest (DelegateExecution execution) {
+     void prepareSDNCRequest (DelegateExecution execution) {
         logger.info(" ***** Started prepareSDNCRequest *****")
 
         try {
@@ -475,7 +475,7 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
         execution.setVariable("CVFMI_updateResOperStatusRequest", body)
     }
 
-    public void prepareUpdateBeforeDeleteSDNCResource(DelegateExecution execution) {
+    void prepareUpdateBeforeDeleteSDNCResource(DelegateExecution execution) {
         logger.debug(" *** prepareUpdateBeforeDeleteSDNCResource *** ")
         String resourceInput = execution.getVariable(Prefix + "resourceInput");
         ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(resourceInput, ResourceInput.class)
@@ -511,7 +511,7 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
 
     }
 
-    public void prepareUpdateAfterDeleteSDNCResource(DelegateExecution execution) {
+    void prepareUpdateAfterDeleteSDNCResource(DelegateExecution execution) {
         logger.debug(" *** prepareUpdateAfterDeleteSDNCResource *** ")
         String resourceInput = execution.getVariable(Prefix + "resourceInput");
         ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(resourceInput, ResourceInput.class)
@@ -546,7 +546,7 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
         logger.debug(" ***** Exit prepareUpdateAfterDeleteSDNCResource *****")
     }
 
-    public void postDeleteSDNCCall(DelegateExecution execution){
+    void postDeleteSDNCCall(DelegateExecution execution){
         logger.info(" ***** Started postDeleteSDNCCall *****")
         String responseCode = execution.getVariable(Prefix + "sdncDeleteReturnCode")
         String responseObj = execution.getVariable(Prefix + "SuccessIndicator")
@@ -555,7 +555,7 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
         logger.info(" ***** Exit postDeleteSDNCCall *****")
     }
 
-    public void sendSyncResponse (DelegateExecution execution) {
+    void sendSyncResponse (DelegateExecution execution) {
         logger.debug( " *** sendSyncResponse *** ")
 
         try {
