@@ -6,7 +6,7 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory
  * flow for SDNC Network Resource Activate
  */
 public class DeActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
-    private static final Logger logger = LoggerFactory.getLogger( DeActivateSDNCNetworkResource.class);
+    private static final Logger logger = LoggerFactory.getLogger( DeActivateSDNCNetworkResource.class)
     String Prefix = "DEACTSDNCRES_"
 
     ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -96,7 +96,7 @@ public class DeActivateSDNCNetworkResource extends AbstractServiceTaskProcessor 
             execution.setVariable("mso-request-id", requestId)
             execution.setVariable("mso-service-instance-id", resourceInputObj.getServiceInstanceId())
         } catch (BpmnError e) {
-            throw e;
+            throw e
         } catch (Exception ex){
             msg = "Exception in preProcessRequest " + ex.getMessage()
             logger.debug(msg)
@@ -127,7 +127,7 @@ public class DeActivateSDNCNetworkResource extends AbstractServiceTaskProcessor 
             String serviceModelVersion = resourceInputObj.getServiceModelInfo().getModelVersion()
             String serviceModelName = resourceInputObj.getServiceModelInfo().getModelName()
             String globalCustomerId = resourceInputObj.getGlobalSubscriberId()
-            String modelInvariantUuid = resourceInputObj.getResourceModelInfo().getModelInvariantUuid();
+            String modelInvariantUuid = resourceInputObj.getResourceModelInfo().getModelInvariantUuid()
             String modelCustomizationUuid = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
             String modelUuid = resourceInputObj.getResourceModelInfo().getModelUuid()
             String modelName = resourceInputObj.getResourceModelInfo().getModelName()
@@ -418,7 +418,7 @@ public class DeActivateSDNCNetworkResource extends AbstractServiceTaskProcessor 
                                <statusDescription>${msoUtils.xmlEscape(statusDescription)}</statusDescription>
                     </ns:updateResourceOperationStatus>
                 </soapenv:Body>
-                </soapenv:Envelope>""";
+                </soapenv:Envelope>"""
 
         setProgressUpdateVariables(execution, body)
     }

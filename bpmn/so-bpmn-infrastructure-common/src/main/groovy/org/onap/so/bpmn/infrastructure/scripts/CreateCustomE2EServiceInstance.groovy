@@ -7,7 +7,7 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -39,7 +39,7 @@ import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
-import org.onap.so.logger.ErrorCode;
+import org.onap.so.logger.ErrorCode
 import org.onap.so.logger.LoggingAnchor
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
@@ -56,7 +56,7 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 	String Prefix="CRESI_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
-    private static final Logger logger = LoggerFactory.getLogger( CreateCustomE2EServiceInstance.class);
+    private static final Logger logger = LoggerFactory.getLogger( CreateCustomE2EServiceInstance.class)
 	
 
 	public void preProcessRequest (DelegateExecution execution) {
@@ -154,7 +154,7 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			//execution.setVariable("serviceInputParams", jsonUtil.getJsonValue(siRequest, "requestDetails.requestParameters.userParams"))
 			//execution.setVariable("failExists", true)
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
 			logger.debug(msg)
@@ -332,7 +332,7 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
         }catch(Exception e){
 			logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Occured Processing prepareInitServiceOperationStatus.", "BPMN",
-					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e)
             execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during prepareInitServiceOperationStatus Method:\n" + e.getMessage())
         }
 		logger.trace("finished prepareInitServiceOperationStatus")

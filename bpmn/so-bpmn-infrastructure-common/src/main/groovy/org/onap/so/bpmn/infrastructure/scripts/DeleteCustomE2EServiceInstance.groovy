@@ -8,7 +8,7 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -22,9 +22,9 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.infrastructure.scripts;
+package org.onap.so.bpmn.infrastructure.scripts
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.*
 
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
@@ -38,7 +38,7 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.web.util.UriUtils;
+import org.springframework.web.util.UriUtils
 
 import groovy.json.*
 
@@ -52,7 +52,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
 	VidUtils vidUtils = new VidUtils()
-    private static final Logger logger = LoggerFactory.getLogger( DeleteCustomE2EServiceInstance.class);
+    private static final Logger logger = LoggerFactory.getLogger( DeleteCustomE2EServiceInstance.class)
 	
 	public void preProcessRequest (DelegateExecution execution) {
 		execution.setVariable("prefix",Prefix)

@@ -6,7 +6,7 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -60,7 +60,7 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 
 	JsonUtils jsonUtil = new JsonUtils()
 
-    private static final Logger logger = LoggerFactory.getLogger( Delete3rdONAPE2EServiceInstance.class);
+    private static final Logger logger = LoggerFactory.getLogger( Delete3rdONAPE2EServiceInstance.class)
 
 	public void checkSPPartnerInfoFromAAI (DelegateExecution execution) {
 		logger.info(" ***** Started checkSPPartnerInfo *****")
