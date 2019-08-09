@@ -75,7 +75,7 @@ import org.slf4j.LoggerFactory
  *
  * This BB processes Macros(except TRANSPORT all sent to sdnc) and Alacartes(sdncSvcs && nonSdncSvcs)
  */
-public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
+ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger( DoCreateServiceInstance.class);
 	String Prefix="DCRESI_"
@@ -83,7 +83,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 	JsonUtils jsonUtil = new JsonUtils()
 	CatalogDbUtils catalogDbUtils = new CatalogDbUtilsFactory().create()
 
-	public void preProcessRequest (DelegateExecution execution) {
+	 void preProcessRequest (DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		String msg = ""
 		logger.trace("preProcessRequest")
