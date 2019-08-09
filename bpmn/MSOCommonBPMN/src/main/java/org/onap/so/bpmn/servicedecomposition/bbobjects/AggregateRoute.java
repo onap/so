@@ -36,8 +36,6 @@ public class AggregateRoute implements Serializable, ShallowCopy<AggregateRoute>
     @Id
     @JsonProperty("route-id")
     private String routeId;
-    @JsonProperty("route-name")
-    private String routeName;
     @JsonProperty("network-start-address")
     private String networkStartAddress;
     @JsonProperty("cidr-mask")
@@ -52,14 +50,6 @@ public class AggregateRoute implements Serializable, ShallowCopy<AggregateRoute>
 
     public void setRouteId(String routeId) {
         this.routeId = routeId;
-    }
-
-    public String getRouteName() {
-        return routeName;
-    }
-
-    public void setRouteName(String routeName) {
-        this.routeName = routeName;
     }
 
     public String getNetworkStartAddress() {
