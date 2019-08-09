@@ -322,8 +322,8 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
         CreateStackParam createStackParam = new CreateStackParam();
         createStackParam.setStackName("stackName");
 
-        doReturn(mockResources).when(heatUtils).queryStackResources(cloudSiteId, tenantId, "stackName", 2);
-        doNothing().when(novaClient).deleteKeyPair(cloudSiteId, tenantId, "KeypairName");
+        // doReturn(mockResources).when(heatUtils).queryStackResources(cloudSiteId, tenantId, "stackName", 2);
+        // doNothing().when(novaClient).deleteKeyPair(cloudSiteId, tenantId, "KeypairName");
         doReturn(null).when(heatUtils).handleUnknownCreateStackFailure(stack, 120, cloudSiteId, tenantId);
         doReturn(createdStack).when(heatUtils).createStack(createStackParam, cloudSiteId, tenantId);
         doReturn(createdStack).when(heatUtils).processCreateStack(cloudSiteId, tenantId, 120, true, createdStack,

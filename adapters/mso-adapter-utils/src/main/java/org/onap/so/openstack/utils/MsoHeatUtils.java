@@ -44,7 +44,6 @@ import org.onap.so.adapters.vdu.VduModelInfo;
 import org.onap.so.adapters.vdu.VduPlugin;
 import org.onap.so.adapters.vdu.VduStateType;
 import org.onap.so.adapters.vdu.VduStatus;
-import org.onap.so.cloud.CloudConfig;
 import org.onap.so.cloud.authentication.KeystoneAuthHolder;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
@@ -108,10 +107,6 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
             "{} Create Stack: Nested exception rolling back stack: {} ";
     public static final String IN_PROGRESS = "in_progress";
 
-    // Fetch cloud configuration each time (may be cached in CloudConfig class)
-    @Autowired
-    protected CloudConfig cloudConfig;
-
     @Autowired
     private Environment environment;
 
@@ -134,7 +129,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
 
     protected static final String CREATE_POLL_INTERVAL_DEFAULT = "15";
     private static final String DELETE_POLL_INTERVAL_DEFAULT = "15";
-    private static final String pollingMultiplierDefault = "60";
+    private static final String POLLING_MULTIPLIER_DEFAULT = "60";
 
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
@@ -200,7 +195,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
      * @param cloudOwner the cloud owner of the cloud site in which to create the stack
      * @param tenantId The Openstack ID of the tenant in which to create the Stack
      * @param stackName The name of the stack to create
-     * @param vduModelInfo contains information about the vdu model (added for plugin adapter)
+     * @param vduModel contains information about the vdu model (added for plugin adapter)
      * @param heatTemplate The Heat template
      * @param stackInputs A map of key/value inputs
      * @param pollForCompletion Indicator that polling should be handled in Java vs. in the client
@@ -287,42 +282,41 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
             String cloudSiteId, String tenantId, CreateStackParam stackCreate) throws MsoException {
         if (stack == null) {
             throw new StackCreationException("Unknown Error in Stack Creation");
-        } else {
-            logger.info("Performing post processing backout: {} cleanUpKeyPair: {}, stack {}", backout, cleanUpKeyPair,
-                    stack);
-            if (!CREATE_COMPLETE.equals(stack.getStackStatus())) {
-                if (cleanUpKeyPair && !Strings.isNullOrEmpty(stack.getStackStatusReason())
-                        && isKeyPairFailure(stack.getStackStatusReason())) {
-                    return handleKeyPairConflict(cloudSiteId, tenantId, stackCreate, timeoutMinutes, backout, stack);
-                }
-                if (!backout) {
-                    logger.info("Status is not CREATE_COMPLETE, stack deletion suppressed");
-                    throw new StackCreationException("Stack rollback suppressed, stack not deleted");
-                } else {
-                    logger.info("Status is not CREATE_COMPLETE, stack deletion will be executed");
-                    String errorMessage = "Stack Creation Failed Openstack Status: " + stack.getStackStatus()
-                            + " Status Reason: " + stack.getStackStatusReason();
-                    try {
-                        Stack deletedStack =
-                                handleUnknownCreateStackFailure(stack, timeoutMinutes, cloudSiteId, tenantId);
-                        errorMessage = errorMessage + " , Rollback of Stack Creation completed with status: "
-                                + deletedStack.getStackStatus() + " Status Reason: "
-                                + deletedStack.getStackStatusReason();
-                    } catch (MsoException e) {
-                        logger.error("Sync Error Deleting Stack during rollback", e);
-                        if (e instanceof StackRollbackException) {
-                            errorMessage = errorMessage + e.getMessage();
-                        } else {
-                            errorMessage = errorMessage + " , Rollback of Stack Creation failed with sync error: "
-                                    + e.getMessage();
-                        }
-                    }
-                    throw new StackCreationException(errorMessage);
-                }
-            } else {
-                return stack;
-            }
         }
+
+        logger.info("Performing post processing backout: {} cleanUpKeyPair: {}, stack {}", backout, cleanUpKeyPair,
+                stack);
+        if (!CREATE_COMPLETE.equals(stack.getStackStatus())) {
+            if (cleanUpKeyPair && !Strings.isNullOrEmpty(stack.getStackStatusReason())
+                    && isKeyPairFailure(stack.getStackStatusReason())) {
+                return handleKeyPairConflict(cloudSiteId, tenantId, stackCreate, timeoutMinutes, backout, stack);
+            }
+            if (!backout) {
+                logger.info("Status is not CREATE_COMPLETE, stack deletion suppressed");
+                throw new StackCreationException("Stack rollback suppressed, stack not deleted");
+            } else {
+                logger.info("Status is not CREATE_COMPLETE, stack deletion will be executed");
+                String errorMessage = "Stack Creation Failed Openstack Status: " + stack.getStackStatus()
+                        + " Status Reason: " + stack.getStackStatusReason();
+                try {
+                    Stack deletedStack = handleUnknownCreateStackFailure(stack, timeoutMinutes, cloudSiteId, tenantId);
+                    errorMessage = errorMessage + " , Rollback of Stack Creation completed with status: "
+                            + deletedStack.getStackStatus() + " Status Reason: " + deletedStack.getStackStatusReason();
+                } catch (StackRollbackException se) {
+                    logger.error("Sync Error Deleting Stack during rollback process", se);
+                    errorMessage = errorMessage + se.getMessage();
+                } catch (MsoException e) {
+                    logger.error("Sync Error Deleting Stack during rollback", e);
+
+                    errorMessage =
+                            errorMessage + " , Rollback of Stack Creation failed with sync error: " + e.getMessage();
+                }
+                throw new StackCreationException(errorMessage);
+            }
+        } else {
+            return stack;
+        }
+
     }
 
     protected Stack pollStackForStatus(int timeoutMinutes, Stack stack, String stackStatus, String cloudSiteId,
@@ -330,7 +324,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
         int pollingFrequency =
                 Integer.parseInt(this.environment.getProperty(createPollIntervalProp, CREATE_POLL_INTERVAL_DEFAULT));
         int pollingMultiplier =
-                Integer.parseInt(this.environment.getProperty(pollingMultiplierProp, pollingMultiplierDefault));
+                Integer.parseInt(this.environment.getProperty(pollingMultiplierProp, POLLING_MULTIPLIER_DEFAULT));
         int numberOfPollingAttempts = Math.floorDiv((timeoutMinutes * pollingMultiplier), pollingFrequency);
         Heat heatClient = getHeatClient(cloudSiteId, tenantId);
         Stack latestStack = null;

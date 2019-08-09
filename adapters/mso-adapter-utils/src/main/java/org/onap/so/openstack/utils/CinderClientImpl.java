@@ -22,7 +22,6 @@
 package org.onap.so.openstack.utils;
 
 import org.onap.so.cloud.authentication.KeystoneAuthHolder;
-import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +41,7 @@ public class CinderClientImpl extends MsoCommonUtils {
     /**
      * Gets the Cinder client.
      *
-     * @param cloudSite the cloud site
+     * @param cloudSiteId the cloud site
      * @param tenantId the tenant id
      * @return the glance client
      * @throws MsoException the mso exception
@@ -62,15 +61,12 @@ public class CinderClientImpl extends MsoCommonUtils {
      * @param cloudSiteId the cloud site id
      * @param tenantId the tenant id
      * @param limit limits the number of records returned
-     * @param visibility visibility in the image in openstack
      * @param marker the last viewed record
-     * @param name the image names
      * @return the list of images in openstack
-     * @throws MsoCloudSiteNotFound the mso cloud site not found
      * @throws CinderClientException the glance client exception
      */
     public Volumes queryVolumes(String cloudSiteId, String tenantId, int limit, String marker)
-            throws MsoCloudSiteNotFound, CinderClientException {
+            throws CinderClientException {
         try {
             Cinder cinderClient = getCinderClient(cloudSiteId, tenantId);
             // list is set to false, otherwise an invalid URL is appended
@@ -78,22 +74,23 @@ public class CinderClientImpl extends MsoCommonUtils {
                     cinderClient.volumes().list(false).queryParam("limit", limit).queryParam("marker", marker);
             return executeAndRecordOpenstackRequest(request, false);
         } catch (MsoException e) {
-            logger.error("Error building Cinder Client", e);
-            throw new CinderClientException("Error building Cinder Client", e);
+            String errorMsg = "Error building Cinder Client";
+            logger.error(errorMsg, e);
+            throw new CinderClientException(errorMsg, e);
         }
     }
 
 
-    public Volume queryVolume(String cloudSiteId, String tenantId, String volumeId)
-            throws MsoCloudSiteNotFound, CinderClientException {
+    public Volume queryVolume(String cloudSiteId, String tenantId, String volumeId) throws CinderClientException {
         try {
             Cinder cinderClient = getCinderClient(cloudSiteId, tenantId);
             // list is set to false, otherwise an invalid URL is appended
             OpenStackRequest<Volume> request = cinderClient.volumes().show(volumeId);
             return executeAndRecordOpenstackRequest(request, false);
         } catch (MsoException e) {
-            logger.error("Error building Cinder Client", e);
-            throw new CinderClientException("Error building Cinder Client", e);
+            String errorMsg = "Error building Cinder Client";
+            logger.error(errorMsg, e);
+            throw new CinderClientException(errorMsg, e);
         }
     }
 
