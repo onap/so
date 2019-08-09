@@ -37,7 +37,7 @@ public class CloudifyRequest<R> {
 
     private StringBuilder path = new StringBuilder();
 
-    private Map<String, List<Object>> headers = new HashMap<String, List<Object>>();
+    private Map<String, List<Object>> headers = new HashMap<>();
 
     private Entity<?> entity;
 
@@ -100,7 +100,7 @@ public class CloudifyRequest<R> {
     }
 
     public <T> Entity<T> entity(T entity, String contentType) {
-        return new Entity<T>(entity, contentType);
+        return new Entity<>(entity, contentType);
     }
 
     public Entity<?> entity() {
@@ -160,7 +160,7 @@ public class CloudifyRequest<R> {
                 + headers + ", entity=" + entity + ", returnType=" + returnType + "]";
     }
 
-    private Map<String, List<Object>> queryParams = new LinkedHashMap<String, List<Object>>();
+    private Map<String, List<Object>> queryParams = new LinkedHashMap<>();
 
     public Map<String, List<Object>> queryParams() {
         return queryParams;
@@ -171,7 +171,7 @@ public class CloudifyRequest<R> {
             List<Object> values = queryParams.get(key);
             values.add(value);
         } else {
-            List<Object> values = new ArrayList<Object>();
+            List<Object> values = new ArrayList<>();
             values.add(value);
             queryParams.put(key, values);
         }
