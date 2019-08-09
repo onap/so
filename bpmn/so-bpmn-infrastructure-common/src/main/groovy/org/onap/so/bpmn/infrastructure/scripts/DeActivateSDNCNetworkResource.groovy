@@ -41,8 +41,13 @@ import org.slf4j.LoggerFactory
  * This groovy class supports the <class>ActivateSDNCCNetworkResource.bpmn</class> process.
  * flow for SDNC Network Resource Activate
  */
+
 public class DeActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
     private static final Logger logger = LoggerFactory.getLogger( DeActivateSDNCNetworkResource.class)
+
+
+
+
     String Prefix = "DEACTSDNCRES_"
 
     ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -53,7 +58,7 @@ public class DeActivateSDNCNetworkResource extends AbstractServiceTaskProcessor 
     
     MsoUtils msoUtils = new MsoUtils()
 
-    public void preProcessRequest(DelegateExecution execution) {
+     void preProcessRequest(DelegateExecution execution) {
 
         logger.info(" ***** Started preProcessRequest *****")
 
@@ -104,7 +109,7 @@ public class DeActivateSDNCNetworkResource extends AbstractServiceTaskProcessor 
         }
     }
 
-    public void prepareSDNCRequest(DelegateExecution execution) {
+     void prepareSDNCRequest(DelegateExecution execution) {
         logger.info(" ***** Started prepareSDNCRequest *****")
 
         try {
@@ -390,7 +395,7 @@ public class DeActivateSDNCNetworkResource extends AbstractServiceTaskProcessor 
         logger.info(" ***** Exit prepareSDNCRequest *****")
     }
 
-    public void prepareUpdateAfterDeActivateSDNCResource(DelegateExecution execution) {
+     void prepareUpdateAfterDeActivateSDNCResource(DelegateExecution execution) {
         String resourceInput = execution.getVariable("resourceInput")
         ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(resourceInput, ResourceInput.class)
         String operType = resourceInputObj.getOperationType()
@@ -429,7 +434,7 @@ public class DeActivateSDNCNetworkResource extends AbstractServiceTaskProcessor 
         execution.setVariable("CVFMI_updateResOperStatusRequest", body)
     }
 
-    public void postDeactivateSDNCCall(DelegateExecution execution) {
+     void postDeactivateSDNCCall(DelegateExecution execution) {
         logger.info(" ***** Started prepareSDNCRequest *****")        
         String responseCode = execution.getVariable(Prefix + "sdncDeleteReturnCode")
         String responseObj = execution.getVariable(Prefix + "SuccessIndicator")
@@ -438,7 +443,7 @@ public class DeActivateSDNCNetworkResource extends AbstractServiceTaskProcessor 
         logger.info(" ***** Exit prepareSDNCRequest *****")
     }
 
-    public void sendSyncResponse(DelegateExecution execution) {
+     void sendSyncResponse(DelegateExecution execution) {
         logger.debug(" *** sendSyncResponse *** ")
 
         try {
