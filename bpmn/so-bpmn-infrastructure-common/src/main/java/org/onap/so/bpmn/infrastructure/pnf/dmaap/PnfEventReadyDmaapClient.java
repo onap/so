@@ -90,7 +90,7 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
     @Override
     public synchronized Runnable unregister(String pnfCorrelationId) {
         logger.debug("unregistering from pnf ready dmaap event for pnf correlation id: {}", pnfCorrelationId);
-        Runnable runnable = runnable = pnfCorrelationIdToThreadMap.remove(pnfCorrelationId);
+        Runnable runnable = pnfCorrelationIdToThreadMap.remove(pnfCorrelationId);
         synchronized (updateInfoMap) {
             for (int i = updateInfoMap.size() - 1; i >= 0; i--) {
                 if (!updateInfoMap.get(i).containsKey("pnfCorrelationId"))
