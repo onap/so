@@ -29,7 +29,7 @@ class StubbedToastrNotificationService extends ToastrNotificationService {
   }
 }
 
-describe('ToasterNotificationService', () => {
+describe('ToastrNotificationService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [ToastrNotificationService,
