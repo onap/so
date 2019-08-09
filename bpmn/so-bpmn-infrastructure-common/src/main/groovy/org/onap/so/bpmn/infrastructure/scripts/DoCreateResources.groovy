@@ -78,7 +78,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
     JsonUtils jsonUtil = new JsonUtils()
     CatalogDbUtils catalogDbUtils = new CatalogDbUtilsFactory().create()
 
-    public void preProcessRequest(DelegateExecution execution) {
+     void preProcessRequest(DelegateExecution execution) {
         logger.trace("preProcessRequest ")
         String msg = ""
 
@@ -95,7 +95,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         logger.trace("Exit preProcessRequest ")
     }
 
-    public void sequenceResoure(DelegateExecution execution) {
+     void sequenceResoure(DelegateExecution execution) {
         logger.trace("Start sequenceResoure Process ")
 
         String incomingRequest = execution.getVariable("uuiRequest")
@@ -181,7 +181,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         logger.trace("COMPLETED sequenceResoure Process ")
     }
 
-    public prepareServiceTopologyRequest(DelegateExecution execution) {
+     prepareServiceTopologyRequest(DelegateExecution execution) {
 
         logger.trace("======== Start prepareServiceTopologyRequest Process ======== ")
 
@@ -201,7 +201,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         logger.trace("======== End prepareServiceTopologyRequest Process ======== ")
     }
 
-    public void getCurrentResoure(DelegateExecution execution){
+     void getCurrentResoure(DelegateExecution execution){
         logger.trace("Start getCurrentResoure Process ")
         def currentIndex = execution.getVariable("currentResourceIndex")
         List<Resource> sequencedResourceList = execution.getVariable("sequencedResourceList")
@@ -211,7 +211,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         logger.trace("COMPLETED getCurrentResource Process ")
     }
 
-    public void parseNextResource(DelegateExecution execution){
+     void parseNextResource(DelegateExecution execution){
         logger.trace("Start parseNextResource Process ")
         def currentIndex = execution.getVariable("currentResourceIndex")
         def nextIndex =  currentIndex + 1
@@ -225,7 +225,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         logger.trace("COMPLETED parseNextResource Process ")
     }
 
-    public void prepareResourceRecipeRequest(DelegateExecution execution){
+     void prepareResourceRecipeRequest(DelegateExecution execution){
         logger.trace("Start prepareResourceRecipeRequest Process ")
         ResourceInput resourceInput = new ResourceInput()
         String serviceInstanceName = execution.getVariable("serviceInstanceName")
@@ -284,7 +284,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         logger.trace("COMPLETED prepareResourceRecipeRequest Process ")
     }
 
-    public void executeResourceRecipe(DelegateExecution execution){
+     void executeResourceRecipe(DelegateExecution execution){
         logger.trace("Start executeResourceRecipe Process ")
 
         try {
@@ -338,7 +338,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         }
     }
 
-    public void postConfigRequest(DelegateExecution execution){
+     void postConfigRequest(DelegateExecution execution){
         //now do noting
         ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
         for (VnfResource resource : serviceDecomposition.vnfResources) {
