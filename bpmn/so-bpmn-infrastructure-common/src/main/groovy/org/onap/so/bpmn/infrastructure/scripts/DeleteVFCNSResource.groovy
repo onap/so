@@ -32,7 +32,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 
-public class DeleteVFCNSResource extends AbstractServiceTaskProcessor {
+ class DeleteVFCNSResource extends AbstractServiceTaskProcessor {
 
     String Prefix = "DCUSE_"
     ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -63,14 +63,14 @@ public class DeleteVFCNSResource extends AbstractServiceTaskProcessor {
         logger.info(" ***** end preProcessRequest *****")
     }
 
-    public void postProcessRequest (DelegateExecution execution) {
+     void postProcessRequest (DelegateExecution execution) {
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
         logger.info(" ***** start postProcessRequest *****")
 
         logger.info(" ***** end postProcessRequest *****")
     }
 
-    public void sendSyncResponse (DelegateExecution execution) {
+     void sendSyncResponse (DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
         logger.debug( " *** sendSyncResponse *** ")
 
