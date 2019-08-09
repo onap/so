@@ -63,13 +63,13 @@ import org.springframework.web.util.UriUtils;
  * @param - rolledBack (no localRB->null, localRB F->false, localRB S->true)
  *
  */
-public class DoCreateServiceInstanceRollback extends AbstractServiceTaskProcessor{
+ class DoCreateServiceInstanceRollback extends AbstractServiceTaskProcessor{
     private static final Logger logger = LoggerFactory.getLogger( DoCreateServiceInstanceRollback.class);
 
 
 	String Prefix="DCRESIRB_"
 
-	public void preProcessRequest(DelegateExecution execution) {
+	 void preProcessRequest(DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		String msg = ""
@@ -139,7 +139,7 @@ public class DoCreateServiceInstanceRollback extends AbstractServiceTaskProcesso
 		logger.trace("Exit preProcessRequest")
 	}
 
-	public void validateSDNCResponse(DelegateExecution execution, String response, String method) {
+	 void validateSDNCResponse(DelegateExecution execution, String response, String method) {
 
 		logger.trace("validateSDNCResponse")
 		String msg = ""
