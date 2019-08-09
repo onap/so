@@ -1,0 +1,35 @@
+
+catalog:
+  db:
+    endpoint: http://localhost:8090
+
+ssl-enable: false
+mso:
+  site-name: localDevEnv
+  logPath: logs
+  catalog:
+    db:
+      spring:
+        endpoint: http://localhost:8090
+  db:
+    auth: Basic YnBlbDptc28tZGItMTUwNyE=
+spring:
+  security:
+    usercredentials:
+    -
+      username: test
+      password: '$2a$12$Zi3AuYcZoZO/gBQyUtST2.F5N6HqcTtaNci2Et.ufsQhski56srIu'
+      role: BPEL-Client
+    -
+      username: bpel
+      password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
+      role: BPEL-Client
+    -
+      username: mso_admin
+      password: '$2a$12$tidKuu.h88E2nuL95pTVY.ZOYMN/1dp29A9b1o.0GFDsVVSYlMkHa'
+      role: ACTUATOR
+
+server:
+    port: 8090
+
+

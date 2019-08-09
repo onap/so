@@ -1,0 +1,179 @@
+# will be used as entry in DB to say SITE OFF/ON for healthcheck
+
+server:
+    port: 8080
+    tomcat:
+        max-threads: 50
+ssl-enable: false
+
+apih-healthcheck-urn: /ecomp/mso/healthcheck,/ecomp/mso/homing/healthcheck,/ecomp/mso/infra/healthcheck,/asdc/healthcheck,/dbadapters/healthcheck,/ecomp/mso/catalog/v2/healthcheck
+jra-healthcheck-urn: /networks/rest/healthcheck,/adapters/rest/healthcheck,/vnfs/rest/healthcheck,/tenants/rest/healthcheck,/appc/rest/healthcheck,/workflows/messages/healthcheck
+camunda-healthcheck-urn: /mso/healthcheck
+
+apih-nodehealthcheck-urn: /ecomp/mso/infra/nodehealthcheck
+jra-nodehealthcheck-urn: /adapters/rest/nodehealthcheck
+camunda-nodehealthcheck-urn: /mso/nodehealthcheck
+
+
+
+mso:
+  health:
+    endpoints:
+      catalogdb: http://localhost:8800
+      sdnc: http://localhost:8400
+      openstack: http://localhost:8300
+      requestdb: http://localhost:8700
+      bpmn: http://localhost:8200
+      asdc: http://localhost:8400
+      requestdbattsvc: http://localhost:8600
+
+  adapters:
+    requestDb:
+      auth: Basic YnBlbDpwYXNzd29yZDEk
+      endpoint: http://localhost:8083
+  logPath: logs
+  site-name: mtanj
+  catalog:
+    db:
+      spring:
+        endpoint: "http://localhost:8082"
+  db:
+    auth: Basic YnBlbDpwYXNzd29yZDEk
+  config:
+    path: /src/main/resources/
+  infra:
+    default:
+      alacarte:
+        orchestrationUri: /mso/async/services/ALaCarteOrchestrator
+        recipeTimeout: 180
+        testApi: VNF_API
+      service:
+        macro:
+          default:
+            testApi: GR_API
+  apih:
+    homing:
+      sdna:
+        url: http://localhost:9080
+        password: 4E0BDC08EE8EDC0572ABBE9FD2D59B62DB725A00B8469E39393D6C86D64284C5D34A57D56F7B58C375316F
+  camundaURL: http://localhost:9080
+  camundaAuth: E8E19DD16CC90D2E458E8FF9A884CC0452F8F3EB8E321F96038DE38D5C1B0B02DFAE00B88E2CF6E2A4101AB2C011FC161212EE
+  async:
+    core-pool-size: 50
+    max-pool-size: 50
+    queue-capacity: 500
+  sdc:
+    client:
+      auth: 97FF88AB352DA16E00DDD81E3876431DEF8744465DACA489EB3B3BE1F10F63EDA1715E626D0A4827A3E19CD88421BF
+    activate:
+      instanceid: test
+      userid: cs0008
+    endpoint: http://localhost:28090
+  msoKey: 07a7159d3bf51a0e53be7a8f89699be7
+  tenant:
+    isolation:
+      retry:
+        count: 3
+  aai:
+    endpoint: http://localhost:28090
+    auth: 5E12ACACBD552A415E081E29F2C4772F9835792A51C766CCFDD7433DB5220B59969CB2798C
+  grm:
+    endpoint: http://localhost:28090
+    username: gmruser
+    password: test
+  so:
+    operational-environment:
+      dmaap:
+        username: testuser
+        password: VjR5NDcxSzA=
+        host: http://localhost:28090
+      publisher:
+        topic: com.att.ecomp.mso.operationalEnvironmentEvent
+
+# controls what actions the infra API (APIH) allows sent in on REST request
+vnf:
+  v1:
+    ApiAllowableActions:
+  v2:
+    ApiAllowableActions:
+  v3:
+    ApiAllowableActions:
+
+network:
+  v1:
+    ApiAllowableActions:
+  v2:
+    ApiAllowableActions:
+  v3:
+    ApiAllowableActions:
+
+volume:
+  v1:
+    ApiAllowableActions:
+  v2:
+    ApiAllowableActions:
+  v3:
+    ApiAllowableActions:
+
+# H2
+spring:
+  datasource:
+    url: jdbc:h2:mem:AZ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password: sa
+    driver-class-name: org.h2.Driver
+    intialize: true
+  h2:
+    console:
+      enabled: true
+      path: /h2
+
+  jpa:
+      show-sql: true
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        ddl-auto: validate
+        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+        enable_lazy_load_no_trans: true
+  jersey:
+    type: filter
+  security:
+    usercredentials:
+    -
+      username: sitecontrol
+      password: '$2a$12$VBUF.qBmeK1FNyO2MqTpD.P2M1tvlesZlhCkAjjHvF9hmYNVdMDmu'
+      role: SiteControl-Client
+    -
+      username: gui
+      password: '$2a$12$9Y4daXavh.oX5fz6t/e7TuCdj7EKW5B5ibqq425fN3/xpp0/Fhyti'
+      role: GUI-Client
+    -
+      username: InfraPortalClient
+      password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
+      role: InfraPortal-Client
+    -
+      username: bpel
+      password: '$2a$12$1xyutEZNfjGewIZRfKaE8eZE99f5sYFUmmM80BobI65KNjmcK0JuO'
+      role: BPEL-Client
+    -
+      username: mso_admin
+      password: '$2a$12$tidKuu.h88E2nuL95pTVY.ZOYMN/1dp29A9b1o.0GFDsVVSYlMkHa'
+      role: ACTUATOR
+request:
+  datasource:
+    url: jdbc:h2:mem:AZ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password: sa
+    driver-class-name: org.h2.Driver
+    intialize: true
+
+#Actuator
+management:
+  context-path: /manage
+
+org:
+  onap:
+    so:
+      adapters:
+        network:
+          encryptionKey: aa3871669d893c7fb8abbcda31b88b4f
