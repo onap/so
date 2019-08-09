@@ -6,7 +6,7 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory
  * any non-final response received from SDNC.
  */
 class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
-    private static final Logger logger = LoggerFactory.getLogger( SDNCAdapterRestV2.class);
+    private static final Logger logger = LoggerFactory.getLogger( SDNCAdapterRestV2.class)
 
 
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -87,7 +87,7 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 				String msg = getProcessKey(execution) + ': mso:adapters:sdnc:rest:endpoint URN mapping is not defined'
 				logger.debug(msg)
 				logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-						ErrorCode.UnknownError.getValue());
+						ErrorCode.UnknownError.getValue())
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
 
@@ -108,7 +108,7 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 					String msg = getProcessKey(execution) + ': no sdncRequestId in ' + requestType
 					logger.debug(msg)
 					logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-							ErrorCode.UnknownError.getValue());
+							ErrorCode.UnknownError.getValue())
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 				}
 
@@ -123,7 +123,7 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 					String msg = getProcessKey(execution) + ': no bpNotificationUrl in ' + requestType
 					logger.debug(msg)
 					logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-							ErrorCode.UnknownError.getValue());
+							ErrorCode.UnknownError.getValue())
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 				}
 
@@ -134,7 +134,7 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 				String msg = getProcessKey(execution) + ': Unsupported request type: ' + requestType
 				logger.debug(msg)
 				logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-						ErrorCode.UnknownError.getValue());
+						ErrorCode.UnknownError.getValue())
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
 
@@ -153,7 +153,7 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 				logger.debug(getProcessKey(execution) + ": mso:adapters:po:auth URN mapping is not defined")
 				logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 						getProcessKey(execution) + ": mso:adapters:po:auth URN mapping is not defined", "BPMN",
-						ErrorCode.UnknownError.getValue());
+						ErrorCode.UnknownError.getValue())
 			} else {
 				try {
 					def encodedString = utils.getBasicAuth(basicAuthValue, UrnPropertiesReader.getVariable("mso.msoKey", execution))
@@ -162,7 +162,7 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 					logger.debug(getProcessKey(execution) + ": Unable to encode BasicAuth credentials for SDNCAdapter")
 					logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 							getProcessKey(execution) + ": Unable to encode BasicAuth credentials for SDNCAdapter",
-							"BPMN", ErrorCode.UnknownError.getValue(), ex);
+							"BPMN", ErrorCode.UnknownError.getValue(), ex)
 				}
 			}
 
@@ -172,7 +172,7 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 			String timeout = jsonUtil.getJsonValue(request, requestType + ".bpTimeout")
 
 			// in addition to null/empty, also need to verify that the timer value is a valid duration "P[n]T[n]H|M|S"
-			String timerRegex = "PT[0-9]+[HMS]";
+			String timerRegex = "PT[0-9]+[HMS]"
 			if (timeout == null || timeout.isEmpty() || !timeout.matches(timerRegex)) {
 				logger.debug(getProcessKey(execution) + ': preProcessRequest(): null/empty/invalid bpTimeout value. Using "mso.adapters.sdnc.timeout"')
 				timeout = UrnPropertiesReader.getVariable("mso.adapters.sdnc.timeout", execution)
@@ -193,7 +193,7 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 			String msg = 'Caught exception in ' + method + ": " + e
 			logger.debug(msg)
 			logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-					ErrorCode.UnknownError.getValue());
+					ErrorCode.UnknownError.getValue())
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 		}
 	}
@@ -297,6 +297,6 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 	}
 	
 	public Logger getLogger() {
-		return logger;
+		return logger
 	}
 }

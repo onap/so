@@ -6,7 +6,7 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -22,9 +22,9 @@
 
 package org.onap.so.bpmn.common.scripts
 
-import org.onap.so.logger.LoggingAnchor;
+import org.onap.so.logger.LoggingAnchor
 import org.onap.so.bpmn.core.UrnPropertiesReader
-import org.onap.so.logger.ErrorCode;
+import org.onap.so.logger.ErrorCode
 
 import java.text.SimpleDateFormat
 
@@ -39,7 +39,7 @@ import static org.apache.commons.lang3.StringUtils.*
 
 // SDNC Adapter Request/Response processing
 public class SDNCAdapter extends AbstractServiceTaskProcessor {
-    private static final Logger logger = LoggerFactory.getLogger( SDNCAdapter.class);
+    private static final Logger logger = LoggerFactory.getLogger( SDNCAdapter.class)
 
 
 	def Prefix="SDNCA_"
@@ -77,7 +77,7 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 			} catch (IOException ex) {
 				logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 						"Unable to encode username password string", "BPMN",
-						ErrorCode.UnknownError.getValue());
+						ErrorCode.UnknownError.getValue())
 			}
 
 			// TODO Use variables instead of passing xml request - Huh?
@@ -238,9 +238,9 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 		def sdnccallbackreq=execution.getVariable("sdncAdapterCallbackRequest")
 		logger.debug("sdncAdapterCallbackRequest :" + sdnccallbackreq)
 		if (sdnccallbackreq==null){
-			execution.setVariable("callbackResponseReceived",false);
+			execution.setVariable("callbackResponseReceived",false)
 		}else{
-			execution.setVariable("callbackResponseReceived",true);
+			execution.setVariable("callbackResponseReceived",true)
 		}
 	}
 
@@ -303,10 +303,10 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 	}
 
 	public String generateCurrentTimeInUtc(){
-		final  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-		sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-		final String utcTime = sdf.format(new Date());
-		return utcTime;
+		final  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+		sdf.setTimeZone(TimeZone.getTimeZone("UTC"))
+		final String utcTime = sdf.format(new Date())
+		return utcTime
 	}
 
 	public void toggleSuccessIndicator(DelegateExecution execution){

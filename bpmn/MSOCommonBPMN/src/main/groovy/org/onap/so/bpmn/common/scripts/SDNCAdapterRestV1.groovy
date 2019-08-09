@@ -6,7 +6,7 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -53,7 +53,7 @@ import org.onap.so.utils.TargetEntity
 
 
 class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
-    private static final Logger logger = LoggerFactory.getLogger( SDNCAdapterRestV1.class);
+    private static final Logger logger = LoggerFactory.getLogger( SDNCAdapterRestV1.class)
 
 
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -88,7 +88,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 				String msg = getProcessKey(execution) + ': mso:adapters:sdnc:rest:endpoint URN mapping is not defined'
 				logger.debug(msg)
 				logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-						ErrorCode.UnknownError.getValue());
+						ErrorCode.UnknownError.getValue())
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
 
@@ -109,7 +109,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 					String msg = getProcessKey(execution) + ': no sdncRequestId in ' + requestType
 					logger.debug(msg)
 					logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-							ErrorCode.UnknownError.getValue());
+							ErrorCode.UnknownError.getValue())
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 				}
 
@@ -124,7 +124,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 					String msg = getProcessKey(execution) + ': no bpNotificationUrl in ' + requestType
 					logger.debug(msg)
 					logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-							ErrorCode.UnknownError.getValue());
+							ErrorCode.UnknownError.getValue())
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 				}
 
@@ -141,7 +141,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 				String msg = getProcessKey(execution) + ': Unsupported request type: ' + requestType
 				logger.debug(msg)
 				logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-						ErrorCode.UnknownError.getValue());
+						ErrorCode.UnknownError.getValue())
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
 
@@ -157,7 +157,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 				logger.debug(getProcessKey(execution) + ": mso:adapters:po:auth URN mapping is not defined")
 				logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 						getProcessKey(execution) + ": mso:adapters:po:auth URN mapping is not defined", "BPMN",
-						ErrorCode.UnknownError.getValue());
+						ErrorCode.UnknownError.getValue())
 			} else {
 				try {
 					def encodedString = utils.getBasicAuth(basicAuthValue, UrnPropertiesReader.getVariable("mso.msoKey", execution))
@@ -166,7 +166,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 					logger.debug(getProcessKey(execution) + ": Unable to encode BasicAuth credentials for SDNCAdapter")
 					logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 							getProcessKey(execution) + ": Unable to encode BasicAuth credentials for SDNCAdapter",
-							"BPMN", ErrorCode.UnknownError.getValue(), ex);
+							"BPMN", ErrorCode.UnknownError.getValue(), ex)
 				}
 			}
 
@@ -176,7 +176,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 			String timeout = jsonUtil.getJsonValue(request, requestType + ".bpTimeout")
 
 			// in addition to null/empty, also need to verify that the timer value is a valid duration "P[n]T[n]H|M|S"
-			String timerRegex = "PT[0-9]+[HMS]";
+			String timerRegex = "PT[0-9]+[HMS]"
 			if (timeout == null || timeout.isEmpty() || !timeout.matches(timerRegex)) {
 				logger.debug(getProcessKey(execution) + ': preProcessRequest(): null/empty/invalid bpTimeout value. Using "mso.adapters.sdnc.timeout"')
 				timeout = UrnPropertiesReader.getVariable("mso.adapters.sdnc.timeout", execution)
@@ -197,7 +197,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 			String msg = 'Caught exception in ' + method + ": " + e
 			logger.debug(msg)
 			logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-					ErrorCode.UnknownError.getValue());
+					ErrorCode.UnknownError.getValue())
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 		}
 	}
@@ -221,7 +221,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 			String sdncAdapterRequest = execution.getVariable(prefix + 'sdncAdapterRequest')
 			logger.debug("SDNC Rest Request is: " + sdncAdapterRequest)
 
-			URL url = new URL(sdncAdapterUrl);
+			URL url = new URL(sdncAdapterUrl)
 
 			HttpClient httpClient = new HttpClientFactory().newJsonClient(url, TargetEntity.SDNC_ADAPTER)
 			httpClient.addAdditionalHeader("X-ONAP-RequestID", execution.getVariable("mso-request-id"))
@@ -245,7 +245,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 				String msg = 'Unsupported HTTP method "' + sdncAdapterMethod + '" in ' + method + ": " + e
 				logger.debug(msg)
 				logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-						ErrorCode.UnknownError.getValue());
+						ErrorCode.UnknownError.getValue())
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
 
@@ -259,7 +259,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 			String msg = 'Caught exception in ' + method + ": " + e
 			logger.debug(msg, e)
 			logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-					ErrorCode.UnknownError.getValue());
+					ErrorCode.UnknownError.getValue())
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 		}
 	}
@@ -330,7 +330,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 			}
 
 			// Note: the mapping function handles a null or empty responseCode
-			int mappedResponseCode = Integer.parseInt(exceptionUtil.MapSDNCResponseCodeToErrorCode(responseCode));
+			int mappedResponseCode = Integer.parseInt(exceptionUtil.MapSDNCResponseCodeToErrorCode(responseCode))
 			exceptionUtil.buildWorkflowException(execution, mappedResponseCode, "Received " + responseType +
 				" from SDNCAdapter:" + info)
 		} catch (Exception e) {
@@ -370,7 +370,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 			String msg = 'Caught exception in ' + method + ": " + e
 			logger.debug(msg)
 			logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-					ErrorCode.UnknownError.getValue());
+					ErrorCode.UnknownError.getValue())
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 		}
 	}
@@ -396,12 +396,12 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 			String msg = 'Caught exception in ' + method + ": " + e
 			logger.debug(msg)
 			logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-					ErrorCode.UnknownError.getValue());
+					ErrorCode.UnknownError.getValue())
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 		}
 	}
 	
 	public Logger getLogger() {
-		return logger;
+		return logger
 	}
 }

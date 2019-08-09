@@ -6,7 +6,7 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -40,11 +40,11 @@ class ExternalAPIUtil {
 
 	String Prefix="EXTAPI_"
 
-    private static final Logger logger = LoggerFactory.getLogger( ExternalAPIUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger( ExternalAPIUtil.class)
 
-	private final HttpClientFactory httpClientFactory;
-	private final MsoUtils utils;
-	private final ExceptionUtil exceptionUtil;
+	private final HttpClientFactory httpClientFactory
+	private final MsoUtils utils
+	private final ExceptionUtil exceptionUtil
 
 	public static final String PostServiceOrderRequestsTemplate =
 	"{\n" +
@@ -107,22 +107,22 @@ class ExternalAPIUtil {
 //	}
 
 	public String setTemplate(String template, Map<String, String> valueMap) {
-		logger.debug("ExternalAPIUtil setTemplate", true);
-		StringBuffer result = new StringBuffer();
+		logger.debug("ExternalAPIUtil setTemplate", true)
+		StringBuffer result = new StringBuffer()
 
-		String pattern = "<.*>";
-		Pattern r = Pattern.compile(pattern);
-		Matcher m = r.matcher(template);
+		String pattern = "<.*>"
+		Pattern r = Pattern.compile(pattern)
+		Matcher m = r.matcher(template)
 
-		logger.debug("ExternalAPIUtil template:" + template, true);
+		logger.debug("ExternalAPIUtil template:" + template, true)
 		while (m.find()) {
-			String key = template.substring(m.start() + 1, m.end() - 1);
-			logger.debug("ExternalAPIUtil key:" + key + " contains key? " + valueMap.containsKey(key), true);
-			m.appendReplacement(result, valueMap.getOrDefault(key, "\"TBD\""));
+			String key = template.substring(m.start() + 1, m.end() - 1)
+			logger.debug("ExternalAPIUtil key:" + key + " contains key? " + valueMap.containsKey(key), true)
+			m.appendReplacement(result, valueMap.getOrDefault(key, "\"TBD\""))
 		}
-		m.appendTail(result);
-		logger.debug("ExternalAPIUtil return:" + result.toString(), true);
-		return result.toString();
+		m.appendTail(result)
+		logger.debug("ExternalAPIUtil return:" + result.toString(), true)
+		return result.toString()
 	}
 
 	/**
