@@ -7,7 +7,7 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -26,9 +26,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 
 import org.onap.so.logger.LoggingAnchor
-import org.onap.so.logger.ErrorCode;
+import org.onap.so.logger.ErrorCode
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.*
 
 import javax.ws.rs.NotFoundException
 
@@ -83,7 +83,7 @@ import org.onap.so.bpmn.core.UrnPropertiesReader
  *
  */
 public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
-    private static final Logger logger = LoggerFactory.getLogger( DoCreateE2EServiceInstance.class);
+    private static final Logger logger = LoggerFactory.getLogger( DoCreateE2EServiceInstance.class)
 
 
 	String Prefix="DCRESI_"
@@ -165,7 +165,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			execution.setVariable("serviceInstanceData", si)
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
 			logger.info(msg)
@@ -210,7 +210,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
        //we need a service plugin platform here.
     	ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
     	String uuiRequest = execution.getVariable("uuiRequest")
-    	String newUuiRequest = ServicePluginFactory.getInstance().preProcessService(serviceDecomposition, uuiRequest);
+    	String newUuiRequest = ServicePluginFactory.getInstance().preProcessService(serviceDecomposition, uuiRequest)
     	execution.setVariable("uuiRequest", newUuiRequest)
     }
 
@@ -218,7 +218,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
     	//we need a service plugin platform here.
     	ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
     	String uuiRequest = execution.getVariable("uuiRequest")
-    	String newUuiRequest = ServicePluginFactory.getInstance().doServiceHoming(serviceDecomposition, uuiRequest);
+    	String newUuiRequest = ServicePluginFactory.getInstance().doServiceHoming(serviceDecomposition, uuiRequest)
     	execution.setVariable("uuiRequest", newUuiRequest)
     }
 
@@ -254,7 +254,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 				}
 			}
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex) {
 			msg = "Exception in DoCreateServiceInstance.postProcessAAIGET. " + ex.getMessage()
 			logger.info(msg)
@@ -276,7 +276,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			client.create(uri, si)
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex) {
 			//start rollback set up
 			RollbackData rollbackData = new RollbackData()
@@ -310,11 +310,11 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 				AAIResultWrapper aaiResult = client.get(uri,NotFoundException.class)
 				Map<String, Object> result = aaiResult.asMap()
 				List<Object> resources =
-						(List<Object>) result.getOrDefault("result-data", Collections.emptyList());
+						(List<Object>) result.getOrDefault("result-data", Collections.emptyList())
 				if(resources.size()>0) {
 					String relationshipUrl = ((Map<String, Object>) resources.get(0)).get("resource-link")
 
-					final Relationship body = new Relationship();
+					final Relationship body = new Relationship()
 					body.setRelatedLink(relationshipUrl)
 
 					createRelationShipInAAI(execution, body)
@@ -329,7 +329,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex) {
 
 			msg = "Exception in DoCreateE2EServiceInstance.createCustomRelationship. " + ex.getMessage()
@@ -349,7 +349,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			client.create(uri, relationship)
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex) {
 
 			msg = "Exception in DoCreateE2EServiceInstance.createRelationShipInAAI. " + ex.getMessage()
@@ -362,9 +362,9 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 
 	private String isNeedProcessCustomRelationship(String uuiRequest) {
 		String requestInput = jsonUtil.getJsonValue(uuiRequest, "service.parameters.requestInputs")
-		Map<String, String> requestInputObject = getJsonObject(requestInput, Map.class);
+		Map<String, String> requestInputObject = getJsonObject(requestInput, Map.class)
 		if (requestInputObject == null) {
-			return null;
+			return null
 		}
 
 		Optional<Map.Entry> firstKey =
@@ -380,15 +380,15 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 	}
 
 	private static <T> T getJsonObject(String jsonstr, Class<T> type) {
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
+		ObjectMapper mapper = new ObjectMapper()
+		mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true)
 		try {
-			return mapper.readValue(jsonstr, type);
+			return mapper.readValue(jsonstr, type)
 		} catch (IOException e) {
 			logger.error("{} {} fail to unMarshal json", MessageEnum.RA_NS_EXC.toString(),
-					ErrorCode.BusinessProcesssError.getValue(), e);
+					ErrorCode.BusinessProcesssError.getValue(), e)
 		}
-		return null;
+		return null
 	}
 
 
@@ -409,7 +409,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			execution.setVariable("serviceInstanceName", si.get().getServiceInstanceName())
 
 		}catch(BpmnError e) {
-			throw e;
+			throw e
 		}catch(Exception ex) {
 			String msg = "Internal Error in getServiceInstance: " + ex.getMessage()
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
@@ -449,7 +449,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 				}
 			}
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex) {
 			msg = "Exception in DoCreateServiceInstance.postProcessAAIGET2 " + ex.getMessage()
 			logger.info(msg)
@@ -462,12 +462,12 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		logger.trace("preProcessRollback ")
 		try {
 
-			Object workflowException = execution.getVariable("WorkflowException");
+			Object workflowException = execution.getVariable("WorkflowException")
 
 			if (workflowException instanceof WorkflowException) {
 				logger.info("Prev workflowException: " + workflowException.getErrorMessage())
-				execution.setVariable("prevWorkflowException", workflowException);
-				//execution.setVariable("WorkflowException", null);
+				execution.setVariable("prevWorkflowException", workflowException)
+				//execution.setVariable("WorkflowException", null)
 			}
 		} catch (BpmnError e) {
 			logger.info("BPMN Error during preProcessRollback")
@@ -482,15 +482,15 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		logger.trace("postProcessRollback ")
 		String msg = ""
 		try {
-			Object workflowException = execution.getVariable("prevWorkflowException");
+			Object workflowException = execution.getVariable("prevWorkflowException")
 			if (workflowException instanceof WorkflowException) {
 				logger.info("Setting prevException to WorkflowException: ")
-				execution.setVariable("WorkflowException", workflowException);
+				execution.setVariable("WorkflowException", workflowException)
 			}
 			execution.setVariable("rollbackData", null)
 		} catch (BpmnError b) {
 			logger.info("BPMN Error during postProcessRollback")
-			throw b;
+			throw b
 		} catch(Exception ex) {
 			msg = "Exception in postProcessRollback. " + ex.getMessage()
 			logger.info(msg)
@@ -547,19 +547,19 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
         }catch(Exception e){
             logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Occured Processing preInitResourcesOperStatus.", "BPMN",
-					ErrorCode.UnknownError.getValue(), e);
+					ErrorCode.UnknownError.getValue(), e)
             execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during preInitResourcesOperStatus Method:\n" + e.getMessage())
         }
         logger.trace("COMPLETED preInitResourcesOperStatus Process ")
 	}
 
-	// if site location is in local Operator, create all resources in local ONAP;
+	// if site location is in local Operator, create all resources in local ONAP
 	// if site location is in 3rd Operator, only process sp-partner to create all resources in 3rd ONAP
 	public void doProcessSiteLocation(DelegateExecution execution){
 		logger.trace("======== Start doProcessSiteLocation Process ======== ")
 		ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
 		String uuiRequest = execution.getVariable("uuiRequest")
-		uuiRequest = ServicePluginFactory.getInstance().doProcessSiteLocation(serviceDecomposition, uuiRequest);
+		uuiRequest = ServicePluginFactory.getInstance().doProcessSiteLocation(serviceDecomposition, uuiRequest)
 		execution.setVariable("uuiRequest", uuiRequest)
 		execution.setVariable("serviceDecomposition", serviceDecomposition)
 
@@ -571,7 +571,7 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
 		logger.trace("======== Start doTPResourcesAllocation Process ======== ")
 		ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
 		String uuiRequest = execution.getVariable("uuiRequest")
-		uuiRequest = ServicePluginFactory.getInstance().doTPResourcesAllocation(execution, uuiRequest);
+		uuiRequest = ServicePluginFactory.getInstance().doTPResourcesAllocation(execution, uuiRequest)
 		execution.setVariable("uuiRequest", uuiRequest)
 		logger.trace("======== COMPLETED doTPResourcesAllocation Process ======== ")
 	}

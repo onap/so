@@ -7,7 +7,7 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -25,7 +25,7 @@ package org.onap.so.bpmn.infrastructure.scripts
 import org.onap.so.logger.LoggingAnchor
 import org.onap.so.logger.ErrorCode
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.*
 
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
@@ -33,8 +33,8 @@ import javax.xml.parsers.DocumentBuilderFactory
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.json.JSONArray;
-import org.json.JSONObject;
+import org.json.JSONArray
+import org.json.JSONObject
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
@@ -44,7 +44,7 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.web.util.UriUtils;
+import org.springframework.web.util.UriUtils
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -79,7 +79,7 @@ import groovy.json.*
  * Rollback - Deferred
  */
 public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
-    private static final Logger logger = LoggerFactory.getLogger( DoCustomDeleteE2EServiceInstance.class);
+    private static final Logger logger = LoggerFactory.getLogger( DoCustomDeleteE2EServiceInstance.class)
 
 
 	String Prefix="DDELSI_"
@@ -151,7 +151,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 			execution.setVariable("siParamsXml", siParamsXml)
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
 			logger.info(msg)
@@ -271,7 +271,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 			logger.info("sdncDelete:\n" + sdncDelete)
 
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch(Exception ex) {
 			msg = "Exception in preProcessSDNCDelete. " + ex.getMessage()
 			logger.info(msg)
@@ -302,7 +302,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 				exceptionUtil.buildAndThrowWorkflowException(execution, 3500, msg)
 			}
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch(Exception ex) {
 			msg = "Exception in postProcessSDNC " + method + " Exception:" + ex.getMessage()
 			logger.info(msg)
@@ -337,8 +337,8 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 					//Confirm there are no related service instances (vnf/network or volume)
 					if (utils.nodeExists(siData, "relationship-list")) {
 						logger.info("SI Data relationship-list exists:")
-						InputSource source = new InputSource(new StringReader(siData));
-						DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+						InputSource source = new InputSource(new StringReader(siData))
+						DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance()
 						DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
 						Document serviceXml = docBuilder.parse(source)
 						serviceXml.getDocumentElement().normalize()
@@ -433,7 +433,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 				logger.info("Service-instance NOT found in AAI. Silent Success")
 			}
 		}catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex) {
 			msg = "Exception in DoDeleteE2EServiceInstance.postProcessAAIGET. " + ex.getMessage()
 			logger.info(msg)
@@ -452,7 +452,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 			String serviceType = execution.getVariable("serviceType")
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 
-			AAIResourcesClient resourceClient = new AAIResourcesClient();
+			AAIResourcesClient resourceClient = new AAIResourcesClient()
 			AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalCustId, serviceType, serviceInstanceId)
 			resourceClient.delete(serviceInstanceUri)
 
@@ -535,7 +535,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
         }catch(Exception e){
 			logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Occured Processing preInitResourcesOperStatus.", "BPMN",
-					ErrorCode.UnknownError.getValue(), e);
+					ErrorCode.UnknownError.getValue(), e)
             execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during preInitResourcesOperStatus Method:\n" + e.getMessage())
         }
         logger.trace("COMPLETED preInitResourcesOperStatus Process ")
