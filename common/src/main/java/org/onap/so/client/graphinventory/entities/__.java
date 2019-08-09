@@ -45,7 +45,7 @@ public class __ {
         return __.<DSLNode>start(new DSLNode(name, key));
     }
 
-    public static DSLNodeKey key(String keyName, String... value) {
+    public static DSLNodeKey key(String keyName, Object... value) {
         return new DSLNodeKey(keyName, value);
     }
 

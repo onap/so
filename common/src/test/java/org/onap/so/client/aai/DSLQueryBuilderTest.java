@@ -108,4 +108,14 @@ public class DSLQueryBuilderTest {
                 builder.equals("pserver*('hostname', 'my-hostname') > p-interface > sriov-pf('pf-pci-id', 'my-id')"));
         assertTrue(builder.equals(builder));
     }
+
+
+    @Test
+    public void mixedTypeTest() {
+        DSLQueryBuilder<DSLNode, DSLNode> builder = new DSLQueryBuilder<>(new DSLNode(AAIObjectType.CLOUD_REGION,
+                __.key("cloud-owner", "owner"), __.key("cloud-region-id", "id")));
+        builder.to(__.node(AAIObjectType.VLAN_TAG, __.key("vlan-id-outer", 167), __.key("my-boolean", true)).output());
+        assertTrue(builder.equals(
+                "cloud-region('cloud-owner', 'owner')('cloud-region-id', 'id') > vlan-tag*('vlan-id-outer', 167)('my-boolean', true)"));
+    }
 }
