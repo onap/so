@@ -64,7 +64,7 @@ public class SDNCServiceRequest extends SDNCRequestCommon implements Serializabl
     public SDNCServiceRequest(String bpNotificationUrl, String bpTimeout, String sdncRequestId, String sdncService,
             String sdncOperation, RequestInformation requestInformation, ServiceInformation serviceInformation,
             String sdncServiceDataType, String sndcServiceData) {
-        super(bpNotificationUrl, bpTimeout, sdncRequestId);
+        super(sdncRequestId, bpNotificationUrl, bpTimeout);
         this.requestInformation = requestInformation;
         this.serviceInformation = serviceInformation;
         this.sdncService = sdncService;
