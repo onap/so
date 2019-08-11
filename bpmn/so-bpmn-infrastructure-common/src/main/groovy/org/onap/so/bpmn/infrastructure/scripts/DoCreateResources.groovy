@@ -6,7 +6,7 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -72,7 +72,7 @@ import java.lang.reflect.Type
  * @param - WorkflowException
  */
 public class DoCreateResources extends AbstractServiceTaskProcessor{
-    private static final Logger logger = LoggerFactory.getLogger( DoCreateResources.class);
+    private static final Logger logger = LoggerFactory.getLogger( DoCreateResources.class)
 
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     JsonUtils jsonUtil = new JsonUtils()
@@ -170,7 +170,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         String isContainsWanResource = networkResourceList.isEmpty() ? "false" : "true"
         //if no networkResource, get SDNC config from properties file
         if( "false".equals(isContainsWanResource)) {
-            String serviceNeedSDNC = "mso.workflow.custom." + serviceModelName + ".sdnc.need";
+            String serviceNeedSDNC = "mso.workflow.custom." + serviceModelName + ".sdnc.need"
             isContainsWanResource = BPMNProperties.getProperty(serviceNeedSDNC, isContainsWanResource)
         }
 
@@ -242,7 +242,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         resourceInput.setServiceType(serviceType)
         resourceInput.setServiceInstanceId(serviceInstanceId)
         resourceInput.setOperationId(operationId)
-        resourceInput.setOperationType(operationType);
+        resourceInput.setOperationType(operationType)
         def currentIndex = execution.getVariable("currentResourceIndex")
         List<Resource> sequencedResourceList = execution.getVariable("sequencedResourceList")
         Resource currentResource = sequencedResourceList.get(currentIndex)

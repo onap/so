@@ -6,7 +6,7 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -19,9 +19,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.so.bpmn.infrastructure.scripts;
+package org.onap.so.bpmn.infrastructure.scripts
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.*
 
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
@@ -55,7 +55,7 @@ import groovy.json.*
  * @param - WorkflowException
  */
 public class CompareModelofE2EServiceInstance extends AbstractServiceTaskProcessor {
-    private static final Logger logger = LoggerFactory.getLogger( CompareModelofE2EServiceInstance.class);
+    private static final Logger logger = LoggerFactory.getLogger( CompareModelofE2EServiceInstance.class)
 
 	String Prefix="CMPMDSI_"
 	private static final String DebugFlag = "isDebugEnabled"
@@ -128,7 +128,7 @@ public class CompareModelofE2EServiceInstance extends AbstractServiceTaskProcess
 			execution.setVariable("operationType", "CompareModel") 
 	
 		} catch (BpmnError e) {
-			throw e;
+			throw e
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
 			logger.info(msg)

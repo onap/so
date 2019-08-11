@@ -6,7 +6,7 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -90,7 +90,7 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
 	String Prefix="DDEESI_"
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     JsonUtils jsonUtil = new JsonUtils()
-    private static final Logger logger = LoggerFactory.getLogger( DoDeleteE2EServiceInstance.class);
+    private static final Logger logger = LoggerFactory.getLogger( DoDeleteE2EServiceInstance.class)
 
 
     public void preProcessRequest (DelegateExecution execution) {
@@ -158,7 +158,7 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
             execution.setVariable("siParamsXml", siParamsXml)
 
         } catch (BpmnError e) {
-            throw e;
+            throw e
         } catch (Exception ex){
             msg = "Exception in preProcessRequest " + ex.getMessage()
             logger.error(msg)
@@ -243,7 +243,7 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
             // for sp-partner and others
             else if (eKey.endsWith("-id")) {
                 jObj.put("resourceInstanceId", eValue)
-                String resourceName = rt + eValue;
+                String resourceName = rt + eValue
                 jObj.put("resourceType", resourceName)
             }
             jObj.put("resourceLinkUrl", rl)
@@ -520,12 +520,12 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
         if (StringUtils.containsIgnoreCase(obj.get("resourceType"), modelName)) {
             resource.setResourceId(obj.get("resourceInstanceId"))
             //deleteRealResourceList.add(resource)
-            matches = true;
+            matches = true
         } else if (modelCustomizationUuid.equals(obj.get("modelCustomizationId")) || modelUuid.equals(obj.get("model-version-id")) ) {
             resource.setResourceId(obj.get("resourceInstanceId"))
             resource.setResourceInstanceName(obj.get("resourceType"))
             //deleteRealResourceList.add(resource)
-            matches = true;
+            matches = true
         }
         return matches
     }
@@ -646,7 +646,7 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
             String serviceType = execution.getVariable("serviceType")
             String serviceInstanceId = execution.getVariable("serviceInstanceId")
 
-            AAIResourcesClient resourceClient = new AAIResourcesClient();
+            AAIResourcesClient resourceClient = new AAIResourcesClient()
             AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalCustId, serviceType, serviceInstanceId)
             resourceClient.delete(serviceInstanceUri)
 

@@ -4,7 +4,7 @@
  * ================================================================================
  * Copyright (C) 2017 - 2019 Huawei Intellectual Property. All rights reserved.
  * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -34,7 +34,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 public class HandlePNF extends AbstractServiceTaskProcessor{
-    private static final Logger logger = LoggerFactory.getLogger( HandlePNF.class);
+    private static final Logger logger = LoggerFactory.getLogger( HandlePNF.class)
 
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     JsonUtils jsonUtil = new JsonUtils()
@@ -95,7 +95,7 @@ public class HandlePNF extends AbstractServiceTaskProcessor{
                                <statusDescription>${msoUtils.xmlEscape(statusDescription)}</statusDescription>
                     </ns:updateResourceOperationStatus>
                 </soapenv:Body>
-                </soapenv:Envelope>""";
+                </soapenv:Envelope>"""
         logger.debug("body: "+body)
         setProgressUpdateVariables(execution, body)
         logger.debug("exit postProcess for HandlePNF")

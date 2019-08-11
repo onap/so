@@ -6,7 +6,7 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory
  */
 public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
 
-    private static final Logger logger = LoggerFactory.getLogger( CreateSDNCNetworkResource.class);
+    private static final Logger logger = LoggerFactory.getLogger( CreateSDNCNetworkResource.class)
     String Prefix="CRESDNCRES_"
 
     ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -120,20 +120,20 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
     }
 
     String customizeResourceParam(String networkInputParametersJson) {
-        List<Map<String, Object>> paramList = new ArrayList();
-        JSONObject jsonObject = new JSONObject(networkInputParametersJson);
-        Iterator iterator = jsonObject.keys();
+        List<Map<String, Object>> paramList = new ArrayList()
+        JSONObject jsonObject = new JSONObject(networkInputParametersJson)
+        Iterator iterator = jsonObject.keys()
         while (iterator.hasNext()) {
-            String key = iterator.next();
-            HashMap<String, String> hashMap = new HashMap();
-            hashMap.put("name", key);
+            String key = iterator.next()
+            HashMap<String, String> hashMap = new HashMap()
+            hashMap.put("name", key)
             hashMap.put("value", jsonObject.get(key))
             paramList.add(hashMap)
         }
-        Map<String, List<Map<String, Object>>> paramMap = new HashMap();
-        paramMap.put("param", paramList);
+        Map<String, List<Map<String, Object>>> paramMap = new HashMap()
+        paramMap.put("param", paramList)
 
-        return  new JSONObject(paramMap).toString();
+        return  new JSONObject(paramMap).toString()
     }
 
     private List<Metadatum> getMetaDatum(String customerId,
@@ -347,7 +347,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             String serviceModelVersion = resourceInputObj.getServiceModelInfo().getModelVersion()
             String serviceModelName = resourceInputObj.getServiceModelInfo().getModelName()
             String globalCustomerId = resourceInputObj.getGlobalSubscriberId()
-            String modelInvariantUuid = resourceInputObj.getResourceModelInfo().getModelInvariantUuid();
+            String modelInvariantUuid = resourceInputObj.getResourceModelInfo().getModelInvariantUuid()
             String modelCustomizationUuid = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
             String modelUuid = resourceInputObj.getResourceModelInfo().getModelUuid()
             String modelName = resourceInputObj.getResourceModelInfo().getModelName()
@@ -357,7 +357,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             //here convert json string to xml string
             String netowrkInputParameters = XML.toString(new JSONObject(customizeResourceParam(networkInputParametersJson)))
             // 1. prepare assign topology via SDNC Adapter SUBFLOW call
-            String sdncTopologyCreateRequest = "";
+            String sdncTopologyCreateRequest = ""
 
             String modelType = resourceInputObj.getResourceModelInfo().getModelType()
 
@@ -641,7 +641,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                                <statusDescription>${msoUtils.xmlEscape(statusDescription)}</statusDescription>
                     </ns:updateResourceOperationStatus>
                 </soapenv:Body>
-                </soapenv:Envelope>""";
+                </soapenv:Envelope>"""
 
         setProgressUpdateVariables(execution, body)
 
@@ -674,7 +674,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                                <statusDescription>${msoUtils.xmlEscape(statusDescription)}</statusDescription>
                     </ns:updateResourceOperationStatus>
                 </soapenv:Body>
-                </soapenv:Envelope>""";
+                </soapenv:Envelope>"""
 
         setProgressUpdateVariables(execution, body)
     }
@@ -724,7 +724,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
         try {
             String operationStatus = "finished"
             // RESTResponse for main flow
-            String vnfid=execution.getVariable("resourceInstanceId");
+            String vnfid=execution.getVariable("resourceInstanceId")
             String resourceOperationResp = """{"operationStatus":"${operationStatus}","vnf-id":"${vnfid}"}""".trim()
             logger.debug(" sendSyncResponse to APIH:" + "\n" + resourceOperationResp)
             sendWorkflowResponse(execution, 202, resourceOperationResp)

@@ -6,7 +6,7 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory
  * flow for SDNC Network Resource Activate
  */
 public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
-    private static final Logger logger = LoggerFactory.getLogger( ActivateSDNCNetworkResource.class);
+    private static final Logger logger = LoggerFactory.getLogger( ActivateSDNCNetworkResource.class)
 
     String Prefix = "ACTSDNCRES_"
 
@@ -135,7 +135,7 @@ public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                                <statusDescription>${msoUtils.xmlEscape(statusDescription)}</statusDescription>
                     </ns:updateResourceOperationStatus>
                 </soapenv:Body>
-                </soapenv:Envelope>""";
+                </soapenv:Envelope>"""
 
         setProgressUpdateVariables(execution, body)
     }
@@ -148,12 +148,12 @@ public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
 
     String customizeResourceParam(String networkInputParametersJson) {
         List<Map<String, Object>> paramList = new ArrayList()
-        JSONObject jsonObject = new JSONObject(networkInputParametersJson);
+        JSONObject jsonObject = new JSONObject(networkInputParametersJson)
         Iterator iterator = jsonObject.keys()
         while (iterator.hasNext()) {
             String key = iterator.next()
             HashMap<String, String> hashMap = new HashMap()
-            hashMap.put("name", key);
+            hashMap.put("name", key)
             hashMap.put("value", jsonObject.get(key))
             paramList.add(hashMap)
         }
@@ -186,7 +186,7 @@ public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             String serviceModelVersion = resourceInputObj.getServiceModelInfo().getModelVersion()
             String serviceModelName = resourceInputObj.getServiceModelInfo().getModelName()
             String globalCustomerId = resourceInputObj.getGlobalSubscriberId()
-            String modelInvariantUuid = resourceInputObj.getResourceModelInfo().getModelInvariantUuid();
+            String modelInvariantUuid = resourceInputObj.getResourceModelInfo().getModelInvariantUuid()
             String modelCustomizationUuid = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
             String modelUuid = resourceInputObj.getResourceModelInfo().getModelUuid()
             String modelName = resourceInputObj.getResourceModelInfo().getModelName()

@@ -6,7 +6,7 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -19,9 +19,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.so.bpmn.infrastructure.scripts;
+package org.onap.so.bpmn.infrastructure.scripts
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.*
 
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.domain.Resource
@@ -52,7 +52,7 @@ public class DoCompareModelVersions extends AbstractServiceTaskProcessor {
 	String Prefix="DCMPMDV_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
-    private static final Logger logger = LoggerFactory.getLogger( DoCompareModelVersions.class);
+    private static final Logger logger = LoggerFactory.getLogger( DoCompareModelVersions.class)
 
 	public void preProcessRequest (DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
@@ -196,8 +196,8 @@ public class DoCompareModelVersions extends AbstractServiceTaskProcessor {
         ServiceDecomposition serviceDecomposition_Target = execution.getVariable("serviceDecomposition_Target")
         ServiceDecomposition serviceDecomposition_Original = execution.getVariable("serviceDecomposition_Original")
 
-        List<Resource> allSR_target = serviceDecomposition_Target.getServiceResources();
-        List<Resource> allSR_original = serviceDecomposition_Original.getServiceResources();
+        List<Resource> allSR_target = serviceDecomposition_Target.getServiceResources()
+        List<Resource> allSR_original = serviceDecomposition_Original.getServiceResources()
 
         List<Resource> addResourceList = new ArrayList<String>()
         List<Resource> delResourceList = new ArrayList<String>()
@@ -214,8 +214,8 @@ public class DoCompareModelVersions extends AbstractServiceTaskProcessor {
                 if(rc_o.getModelInfo().getModelUuid() == muuid
                 && rc_o.getModelInfo().getModelInvariantUuid() == mIuuid
                 && rc_o.getModelInfo().getModelCustomizationUuid() == mCuuid) {
-                    addResourceList.remove(rc_t);
-                    delResourceList.remove(rc_o);
+                    addResourceList.remove(rc_t)
+                    delResourceList.remove(rc_o)
                 }
             }
         }
