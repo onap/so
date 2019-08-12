@@ -79,7 +79,7 @@ public class ServiceInstance implements Serializable, ShallowCopy<ServiceInstanc
     @JsonProperty("instance-groups")
     private List<InstanceGroup> instanceGroups = new ArrayList<>();
     @JsonProperty("service-proxies")
-    private List<ServiceProxy> serviceProxies = new ArrayList<ServiceProxy>();
+    private List<ServiceProxy> serviceProxies = new ArrayList<>();
 
     public void setServiceProxies(List<ServiceProxy> serviceProxies) {
         this.serviceProxies = serviceProxies;
