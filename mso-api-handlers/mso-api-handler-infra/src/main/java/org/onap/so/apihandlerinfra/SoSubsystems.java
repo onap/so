@@ -19,18 +19,18 @@
  */
 package org.onap.so.apihandlerinfra;
 
-public enum MsoSubsystems {
+public enum SoSubsystems implements Subsystem {
     APIH("API Handler"),
     ASDC("ASDC Controller"),
     BPMN("BPMN Infra"),
     CATALOGDB("CatalogDb Adapter"),
     OPENSTACK("Openstack Adapter"),
     REQUESTDB("RequestDB Adapter"),
-    REQUESTDBATT("RequestDB Adapter ATT Svc"),
     SDNC("SDNC Adapter");
+
     private String subsystem;
 
-    private MsoSubsystems(String subsystem) {
+    private SoSubsystems(String subsystem) {
         this.subsystem = subsystem;
     }
 
