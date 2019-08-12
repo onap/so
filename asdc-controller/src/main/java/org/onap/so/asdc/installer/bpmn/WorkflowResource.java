@@ -52,7 +52,7 @@ import org.springframework.stereotype.Component;
 public class WorkflowResource {
     protected static final Logger logger = LoggerFactory.getLogger(WorkflowResource.class);
 
-    private static final String pattern = ".*\\\"activity:(.*)\\\" .*";
+    private static final String PATTERN = ".*\\\"activity:(.*)\\\" .*";
     private static final String TARGET_RESOURCE_VNF = "vnf";
     private static final String SOURCE_SDC = "sdc";
     private static final String BPMN_SUFFIX = ".bpmn";
@@ -176,7 +176,7 @@ public class WorkflowResource {
     protected List<String> getActivityNameList(String bpmnContent) {
         List<String> activityNameList = new ArrayList<>();
 
-        Pattern p = Pattern.compile(pattern);
+        Pattern p = Pattern.compile(PATTERN);
         Matcher m = p.matcher(bpmnContent);
         while (m.find()) {
             activityNameList.add(m.group(1));
