@@ -34,9 +34,9 @@ public class License implements Serializable {
     private static final long serialVersionUID = 2345786874755685318L;
 
     @JsonProperty("entitlement-pool-uuids")
-    private List<String> entitlementPoolUuids = new ArrayList<String>();
+    private List<String> entitlementPoolUuids = new ArrayList<>();
     @JsonProperty("license-key-group-uuids")
-    private List<String> licenseKeyGroupUuids = new ArrayList<String>();
+    private List<String> licenseKeyGroupUuids = new ArrayList<>();
 
 
     public List<String> getEntitlementPoolUuids() {

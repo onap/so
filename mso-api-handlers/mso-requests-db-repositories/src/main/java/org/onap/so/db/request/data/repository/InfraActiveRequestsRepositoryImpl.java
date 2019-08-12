@@ -117,14 +117,11 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
         final long startTime = System.currentTimeMillis();
         logger.debug("Execute query on infra active request table");
 
-        List<InfraActiveRequests> results = new ArrayList<InfraActiveRequests>();
-
         final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         crit.where(cb.and(predicates.toArray(new Predicate[0])));
         crit.orderBy(order);
-        results = entityManager.createQuery(crit).getResultList();
 
-        return results;
+        return entityManager.createQuery(crit).getResultList();
     }
 
     /*
