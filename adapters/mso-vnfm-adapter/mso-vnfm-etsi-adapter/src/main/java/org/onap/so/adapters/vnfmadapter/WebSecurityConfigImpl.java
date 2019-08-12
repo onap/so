@@ -40,7 +40,7 @@ public class WebSecurityConfigImpl extends WebSecurityConfig {
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        if (clientAuth.equalsIgnoreCase("need")) {
+        if (("need").equalsIgnoreCase(clientAuth)) {
             http.csrf().disable().authorizeRequests().anyRequest().permitAll();
         } else {
             http.csrf().disable().authorizeRequests().antMatchers("/manage/health", "/manage/info").permitAll()
