@@ -29,13 +29,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class ServiceEndPointList {
 
     @JsonAlias("ServiceEndPointList")
-    private List<ServiceEndPoint> serviceEndPointList = null;
+    private List<ServiceEndPoint> serviceEndPoints = null;
 
     public List<ServiceEndPoint> getServiceEndPointList() {
-        return serviceEndPointList;
+        return serviceEndPoints;
     }
 
     public void setServiceEndPointList(List<ServiceEndPoint> serviceEndPointList) {
-        this.serviceEndPointList = serviceEndPointList;
+        serviceEndPoints = serviceEndPointList;
     }
 }
