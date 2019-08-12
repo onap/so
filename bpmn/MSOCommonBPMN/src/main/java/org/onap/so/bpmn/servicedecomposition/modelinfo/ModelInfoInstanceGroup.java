@@ -31,9 +31,9 @@ public class ModelInfoInstanceGroup implements Serializable {
     public static final String TYPE_VNFC = "VNFC";
 
     @JsonProperty("model-uuid")
-    private String ModelUUID;
+    private String modelUUID;
     @JsonProperty("model-invariant-uuid")
-    private String ModelInvariantUUID;
+    private String modelInvariantUUID;
     @JsonProperty("type")
     private String type;
     @JsonProperty("instance-group-role")
@@ -44,19 +44,19 @@ public class ModelInfoInstanceGroup implements Serializable {
     private String description;
 
     public String getModelUUID() {
-        return ModelUUID;
+        return modelUUID;
     }
 
     public void setModelUUID(String modelUUID) {
-        ModelUUID = modelUUID;
+        this.modelUUID = modelUUID;
     }
 
     public String getModelInvariantUUID() {
-        return ModelInvariantUUID;
+        return modelInvariantUUID;
     }
 
     public void setModelInvariantUUID(String modelInvariantUUID) {
-        ModelInvariantUUID = modelInvariantUUID;
+        this.modelInvariantUUID = modelInvariantUUID;
     }
 
     public String getType() {

@@ -61,7 +61,7 @@ public abstract class ResourceStructure {
     /**
      * Number of resources provided by the resource structure.
      */
-    protected int NumberOfResources;
+    protected int numberOfResources;
 
     /**
      * The list of artifacts existing in this resource hashed by UUID.
@@ -142,11 +142,11 @@ public abstract class ResourceStructure {
     }
 
     public int getNumberOfResources() {
-        return NumberOfResources;
+        return numberOfResources;
     }
 
     public void setNumberOfResources(int numberOfResources) {
-        NumberOfResources = numberOfResources;
+        this.numberOfResources = numberOfResources;
     }
 
     public Map<String, VfModuleArtifact> getArtifactsMapByUUID() {
