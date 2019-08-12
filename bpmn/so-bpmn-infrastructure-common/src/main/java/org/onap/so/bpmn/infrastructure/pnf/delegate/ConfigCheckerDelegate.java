@@ -45,7 +45,7 @@ public class ConfigCheckerDelegate implements JavaDelegate {
     private Logger logger = LoggerFactory.getLogger(ConfigCheckerDelegate.class);
 
     // ERROR CODE for variable not found in the delegation Context
-    private static int ERROR_CODE = 601;
+    private static int errorCode = 601;
 
     @Autowired
     protected ExceptionBuilder exceptionUtil;
@@ -78,12 +78,12 @@ public class ConfigCheckerDelegate implements JavaDelegate {
             } else {
                 logger.warn("Unable to find the PNF resource customizations of model service UUID: {}",
                         serviceModelUuid);
-                exceptionUtil.buildAndThrowWorkflowException(delegateExecution, ERROR_CODE,
+                exceptionUtil.buildAndThrowWorkflowException(delegateExecution, errorCode,
                         "Unable to find the PNF resource customizations of model service UUID:  " + serviceModelUuid);
             }
         } else {
             logger.warn("Unable to find the parameter: {} in the execution context", SERVICE_MODEL_INFO);
-            exceptionUtil.buildAndThrowWorkflowException(delegateExecution, ERROR_CODE,
+            exceptionUtil.buildAndThrowWorkflowException(delegateExecution, errorCode,
                     "Unable to find parameter " + SERVICE_MODEL_INFO);
         }
     }
