@@ -246,22 +246,4 @@ public class MsoHeatEnvironmentEntry {
         sb.append(this.rawEntry.substring(indexOf));
         return sb;
     }
-
-    public void setHPAParameters(StringBuilder hpasb) {
-        try {
-            MsoYamlEditorWithEnvt yaml = new MsoYamlEditorWithEnvt(hpasb.toString().getBytes());
-            Set<MsoHeatEnvironmentParameter> hpaParams = yaml.getParameterListFromEnvt();
-            for (MsoHeatEnvironmentParameter hpaparam : hpaParams) {
-                for (MsoHeatEnvironmentParameter param : this.parameters) {
-                    if (param.getName() == hpaparam.getName()) {
-                        param.setValue(hpaparam.getValue());
-                    }
-                }
-            }
-        } catch (Exception e) {
-            logger.debug("Exception:", e);
-            this.errorString = e.getMessage();
-            // e.printStackTrace();
-        }
-    }
 }
