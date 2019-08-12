@@ -22,7 +22,7 @@ package org.onap.so.apihandlerinfra.exceptions;
 
 public class DuplicateRequestException extends ApiException {
 
-    private static final String duplicateFailMessage = "Error: Locked instance - This %s (%s) "
+    private static final String DUPLICATE_FAIL_MESSAGE = "Error: Locked instance - This %s (%s) "
             + "already has a request being worked with a status of %s (RequestId - %s). The existing request must finish or be cleaned up before proceeding.";
 
     private DuplicateRequestException(Builder builder) {
@@ -36,7 +36,7 @@ public class DuplicateRequestException extends ApiException {
 
         public Builder(String requestScope, String instance, String requestStatus, String requestID,
                 int httpResponseCode, String messageID) {
-            super(String.format(duplicateFailMessage, requestScope, instance, requestStatus, requestID),
+            super(String.format(DUPLICATE_FAIL_MESSAGE, requestScope, instance, requestStatus, requestID),
                     httpResponseCode, messageID);
 
         }
