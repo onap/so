@@ -45,7 +45,7 @@ public class ConfigCheckerDelegate implements JavaDelegate {
     private Logger logger = LoggerFactory.getLogger(ConfigCheckerDelegate.class);
 
     // ERROR CODE for variable not found in the delegation Context
-    private static int ERROR_CODE = 601;
+    private static final int ERROR_CODE = 601;
 
     @Autowired
     protected ExceptionBuilder exceptionUtil;
