@@ -32,9 +32,9 @@ public class DSLNodeKey implements QueryStep {
     private boolean not = false;
     private final StringBuilder query = new StringBuilder();
     private final String keyName;
-    private final List<String> values;
+    private final List<Object> values;
 
-    public DSLNodeKey(String keyName, String... value) {
+    public DSLNodeKey(String keyName, Object... value) {
 
         this.keyName = keyName;
         this.values = Arrays.asList(value);
@@ -54,14 +54,18 @@ public class DSLNodeKey implements QueryStep {
             result.append(" !");
         }
         result.append("('").append(keyName).append("', ");
-        List<String> temp = new ArrayList<>();
-        for (String item : values) {
+        List<Object> temp = new ArrayList<>();
+        for (Object item : values) {
             if ("null".equals(item)) {
                 temp.add(String.format("' %s '", item));
             } else if ("".equals(item)) {
                 temp.add("' '");
             } else {
-                temp.add(String.format("'%s'", item));
+                if (item instanceof String) {
+                    temp.add(String.format("'%s'", item));
+                } else {
+                    temp.add(item);
+                }
             }
         }
         result.append(Joiner.on(", ").join(temp)).append(")");
