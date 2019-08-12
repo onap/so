@@ -342,6 +342,7 @@ public class Deployment implements Serializable {
                 String s = mapper.writeValueAsString(map.get(key));
                 return (mapper.readValue(s, type));
             } catch (IOException e) {
+                logger.info(e);
                 return null;
             }
         }
