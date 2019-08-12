@@ -97,10 +97,8 @@ public class DeployActivitySpecs {
         }
         List<String> categoryList = new ArrayList<>();
         for (ActivitySpecActivitySpecCategories activitySpecCat : activitySpecActivitySpecCategories) {
-            if (activitySpecCat != null) {
-                if (activitySpecCat.getActivitySpecCategories() != null) {
-                    categoryList.add(activitySpecCat.getActivitySpecCategories().getName());
-                }
+            if (activitySpecCat != null && activitySpecCat.getActivitySpecCategories() != null) {
+                categoryList.add(activitySpecCat.getActivitySpecCategories().getName());
             }
         }
         activitySpec.setCategoryList(categoryList);
