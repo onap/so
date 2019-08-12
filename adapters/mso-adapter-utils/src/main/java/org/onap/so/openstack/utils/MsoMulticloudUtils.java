@@ -22,10 +22,6 @@
 
 package org.onap.so.openstack.utils;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.woorea.openstack.heat.model.CreateStackParam;
-import com.woorea.openstack.heat.model.Stack;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -52,7 +48,6 @@ import org.onap.so.logger.MessageEnum;
 import org.onap.so.openstack.beans.HeatStatus;
 import org.onap.so.openstack.beans.StackInfo;
 import org.onap.so.openstack.exceptions.MsoAdapterException;
-import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.exceptions.MsoOpenstackException;
 import org.onap.so.openstack.mappers.StackInfoMapper;
@@ -62,7 +57,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableSet;
+import com.woorea.openstack.heat.model.CreateStackParam;
+import com.woorea.openstack.heat.model.Stack;
 
 @Component
 public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
@@ -299,7 +298,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
                 responseBody = getQueryBody((java.io.InputStream) response.getEntity());
                 if (responseBody != null) {
                     if (logger.isDebugEnabled()) {
-                        logger.debug("Multicloud Create Response Body: " + responseBody.toString());
+                        logger.debug("Multicloud Create Response Body: {}", responseBody);
                     }
                     Stack workloadStack = getWorkloadStack(responseBody.getWorkloadStatusReason());
                     if (workloadStack != null && !responseBody.getWorkloadStatus().equals("GET_FAILED")
@@ -354,7 +353,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
             }
         }
         if (workloadStack != null)
-            logger.debug("Multicloud getWorkloadStack() returning Stack Object: {} ", workloadStack.toString());
+            logger.debug("Multicloud getWorkloadStack() returning Stack Object: {} ", workloadStack);
         return workloadStack;
     }
 
@@ -457,8 +456,8 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
         Response response = multicloudClient.post(multicloudRequest);
         if (response.getStatus() != Response.Status.ACCEPTED.getStatusCode()) {
             if (logger.isDebugEnabled())
-                logger.debug(
-                        "Multicloud AAI update request failed: " + response.getStatus() + response.getStatusInfo());
+                logger.debug("Multicloud AAI update request failed: {} {}", response.getStatus(),
+                        response.getStatusInfo());
             return;
         }
 
@@ -470,14 +469,14 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
                 Integer.parseInt(this.environment.getProperty(createPollIntervalProp, CREATE_POLL_INTERVAL_DEFAULT));
         int pollTimeout = (timeoutMinutes * 60) + updatePollInterval;
         boolean updateTimedOut = false;
-        logger.debug("updatePollInterval=" + updatePollInterval + ", pollTimeout=" + pollTimeout);
+        logger.debug("updatePollInterval={}, pollTimeout={}", updatePollInterval, pollTimeout);
 
         StackInfo stackInfo = null;
         while (true) {
             try {
                 stackInfo = queryStack(cloudSiteId, cloudOwner, tenantId, workloadId);
                 if (logger.isDebugEnabled())
-                    logger.debug(stackInfo.getStatus() + " (" + workloadId + ")");
+                    logger.debug("{} ({})", stackInfo.getStatus(), workloadId);
 
                 if (HeatStatus.UPDATING.equals(stackInfo.getStatus())) {
                     if (pollTimeout <= 0) {
@@ -494,7 +493,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
 
                     pollTimeout -= updatePollInterval;
                     if (logger.isDebugEnabled())
-                        logger.debug("pollTimeout remaining: " + pollTimeout);
+                        logger.debug("pollTimeout remaining: {}", pollTimeout);
                 } else {
                     break;
                 }
@@ -508,15 +507,14 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
         if (updateTimedOut) {
             if (logger.isDebugEnabled())
                 logger.debug("Multicloud AAI update request failed: {} {}", response.getStatus(),
-                        response.getStatusInfo().toString());
+                        response.getStatusInfo());
         } else if (!HeatStatus.UPDATED.equals(stackInfo.getStatus())) {
             if (logger.isDebugEnabled())
                 logger.debug("Multicloud AAI update request failed: {} {}", response.getStatus(),
-                        response.getStatusInfo().toString());
+                        response.getStatusInfo());
         } else {
             if (logger.isDebugEnabled())
-                logger.debug("Multicloud AAI update successful: {} {}", response.getStatus(),
-                        response.getStatusInfo().toString());
+                logger.debug("Multicloud AAI update successful: {} {}", response.getStatus(), response.getStatusInfo());
         }
     }
 
@@ -543,12 +541,12 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
             int deletePollTimeout = pollTimeout;
             boolean createTimedOut = false;
             StringBuilder stackErrorStatusReason = new StringBuilder("");
-            logger.debug("createPollInterval=" + createPollInterval + ", pollTimeout=" + pollTimeout);
+            logger.debug("createPollInterval={}, pollTimeout={} ", createPollInterval, pollTimeout);
 
             while (true) {
                 try {
                     stackInfo = queryStack(cloudSiteId, cloudOwner, tenantId, instanceId);
-                    logger.debug(stackInfo.getStatus() + " (" + instanceId + ")");
+                    logger.debug("{} ({})", stackInfo.getStatus(), instanceId);
 
                     if (HeatStatus.BUILDING.equals(stackInfo.getStatus())) {
                         // Stack creation is still running.
@@ -567,7 +565,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
                         sleep(createPollInterval * 1000L);
 
                         pollTimeout -= createPollInterval;
-                        logger.debug("pollTimeout remaining: " + pollTimeout);
+                        logger.debug("pollTimeout remaining: {}", pollTimeout);
                     } else {
                         // save off the status & reason msg before we attempt delete
                         stackErrorStatusReason
@@ -596,7 +594,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
                             while (!deleted) {
                                 try {
                                     StackInfo queryInfo = queryStack(cloudSiteId, cloudOwner, tenantId, instanceId);
-                                    logger.debug("Deleting " + instanceId + ", status: " + queryInfo.getStatus());
+                                    logger.debug("Deleting {}, status: {}", instanceId, queryInfo.getStatus());
                                     if (HeatStatus.DELETING.equals(queryInfo.getStatus())) {
                                         if (deletePollTimeout <= 0) {
                                             logger.error(String.format("%s %s %s %s %s %s %s %s %d %s",
@@ -610,7 +608,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
                                             deletePollTimeout -= deletePollInterval;
                                         }
                                     } else if (HeatStatus.NOTFOUND.equals(queryInfo.getStatus())) {
-                                        logger.debug("DELETE_COMPLETE for " + instanceId);
+                                        logger.debug("DELETE_COMPLETE for {}", instanceId);
                                         deleted = true;
                                         continue;
                                     } else {
@@ -664,7 +662,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
                         while (!deleted) {
                             try {
                                 StackInfo queryInfo = queryStack(cloudSiteId, cloudOwner, tenantId, instanceId);
-                                logger.debug("Deleting " + instanceId + ", status: " + queryInfo.getStatus());
+                                logger.debug("Deleting {}, status: {}", instanceId, queryInfo.getStatus());
                                 if (HeatStatus.DELETING.equals(queryInfo.getStatus())) {
                                     if (deletePollTimeout <= 0) {
                                         logger.error(String.format("%s %s %s %s %s %s %s %s %d %s",
@@ -678,7 +676,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
                                         deletePollTimeout -= deletePollInterval;
                                     }
                                 } else if (HeatStatus.NOTFOUND.equals(queryInfo.getStatus())) {
-                                    logger.debug("DELETE_COMPLETE for " + instanceId);
+                                    logger.debug("DELETE_COMPLETE for {}", instanceId);
                                     deleted = true;
                                     continue;
                                 } else {
@@ -730,7 +728,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
         } else {
             // Get initial status, since it will have been null after the create.
             stackInfo = queryStack(cloudSiteId, cloudOwner, tenantId, instanceId);
-            logger.debug("Multicloud stack query status is: " + stackInfo.getStatus());
+            logger.debug("Multicloud stack query status is: {}", stackInfo.getStatus());
         }
         return stackInfo;
     }
@@ -769,7 +767,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
         try {
             return new ObjectMapper().readerFor(MulticloudCreateResponse.class).readValue(body);
         } catch (Exception e) {
-            logger.debug("Exception retrieving multicloud vfModule POST response body " + e);
+            logger.debug("Exception retrieving multicloud vfModule POST response body ", e);
         }
         return null;
     }
@@ -786,7 +784,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
         try {
             return new ObjectMapper().readerFor(MulticloudQueryResponse.class).readValue(body);
         } catch (Exception e) {
-            logger.debug("Exception retrieving multicloud workload query response body " + e);
+            logger.debug("Exception retrieving multicloud workload query response body ", e);
         }
         return null;
     }
@@ -828,14 +826,11 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
                 client.addAdditionalHeader("Project", tenantId);
             }
         } catch (MalformedURLException e) {
-            logger.debug(
-                    String.format("Encountered malformed URL error getting multicloud rest client %s", e.getMessage()));
+            logger.debug("Encountered malformed URL error getting multicloud rest client ", e);
         } catch (IllegalArgumentException e) {
-            logger.debug(
-                    String.format("Encountered illegal argument getting multicloud rest client %s", e.getMessage()));
+            logger.debug("Encountered illegal argument getting multicloud rest client ", e);
         } catch (UriBuilderException e) {
-            logger.debug(
-                    String.format("Encountered URI builder error getting multicloud rest client %s", e.getMessage()));
+            logger.debug("Encountered URI builder error getting multicloud rest client ", e);
         }
         return client;
     }
@@ -989,7 +984,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
         // There are lots of HeatStatus values, so this is a bit long...
         HeatStatus heatStatus = stackInfo.getStatus();
         String statusMessage = stackInfo.getStatusMessage();
-        logger.debug("HeatStatus = " + heatStatus + " msg = " + statusMessage);
+        logger.debug("HeatStatus = {} msg = {}", heatStatus, statusMessage);
 
         if (logger.isDebugEnabled()) {
             logger.debug(String.format("Stack Status: %s", heatStatus.toString()));

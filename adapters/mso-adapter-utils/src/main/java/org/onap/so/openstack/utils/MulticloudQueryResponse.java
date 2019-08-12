@@ -40,7 +40,7 @@ public class MulticloudQueryResponse implements Serializable {
     @JsonProperty("workload_status")
     private String workloadStatus;
     @JsonProperty("workload_status_reason")
-    private JsonNode workloadStatusReason;
+    private transient JsonNode workloadStatusReason;
 
     @JsonCreator
     public MulticloudQueryResponse(@JsonProperty("template_type") String templateType,
