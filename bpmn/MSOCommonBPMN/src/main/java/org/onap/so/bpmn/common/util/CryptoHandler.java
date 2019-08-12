@@ -40,14 +40,22 @@ public class CryptoHandler implements ICryptoHandler {
     @Override
     public String getMsoAaiPassword() {
         Properties keyProp = new Properties();
+        InputStream rs = null;
         try {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            InputStream rs = cl.getResourceAsStream("urn.properties");
+            rs = cl.getResourceAsStream("urn.properties");
             keyProp.load(rs);
             rs.close();
             return CryptoUtils.decrypt((String) keyProp.get(PROPERTY_KEY), MSO_KEY);
         } catch (GeneralSecurityException | IOException e) {
             logger.error(GENERAL_SECURITY_EXCEPTION_PREFIX + e.getMessage(), e);
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (IOException ex) {
+                    logger.error(GENERAL_SECURITY_EXCEPTION_PREFIX + e.getMessage(), e);
+                }
+            }
             return null;
         }
     }
