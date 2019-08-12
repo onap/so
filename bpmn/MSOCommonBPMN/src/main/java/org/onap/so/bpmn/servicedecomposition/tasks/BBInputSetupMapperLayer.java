@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.AggregateRoute;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.AllottedResource;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
@@ -129,6 +130,10 @@ public class BBInputSetupMapperLayer {
     protected SegmentationAssignment mapAAISegmentationAssignment(
             org.onap.aai.domain.yang.SegmentationAssignment aaiSegmentationAssignment) {
         return modelMapper.map(aaiSegmentationAssignment, SegmentationAssignment.class);
+    }
+
+    protected AggregateRoute mapAAIAggregateRoute(org.onap.aai.domain.yang.AggregateRoute aaiAggregateRoute) {
+        return modelMapper.map(aaiAggregateRoute, AggregateRoute.class);
     }
 
     protected CtagAssignment mapAAICtagAssignment(org.onap.aai.domain.yang.CtagAssignment aaiCtagAssignment) {
@@ -262,8 +267,19 @@ public class BBInputSetupMapperLayer {
         mapAllSubnetsIntoL3Network(aaiL3Network, network);
         mapAllCtagAssignmentsIntoL3Network(aaiL3Network, network);
         mapAllSegmentationAssignmentsIntoL3Network(aaiL3Network, network);
+        mapAllAggregateRoutesIntoL3Network(aaiL3Network, network);
         network.setOrchestrationStatus(this.mapOrchestrationStatusFromAAI(aaiL3Network.getOrchestrationStatus()));
         return network;
+    }
+
+    protected void mapAllAggregateRoutesIntoL3Network(org.onap.aai.domain.yang.L3Network aaiL3Network,
+            L3Network network) {
+        if (aaiL3Network.getAggregateRoutes() != null) {
+            for (org.onap.aai.domain.yang.AggregateRoute aaiAggregateRoute : aaiL3Network.getAggregateRoutes()
+                    .getAggregateRoute()) {
+                network.getAggregateRoutes().add(mapAAIAggregateRoute(aaiAggregateRoute));
+            }
+        }
     }
 
     protected void mapAllSegmentationAssignmentsIntoL3Network(org.onap.aai.domain.yang.L3Network aaiL3Network,
