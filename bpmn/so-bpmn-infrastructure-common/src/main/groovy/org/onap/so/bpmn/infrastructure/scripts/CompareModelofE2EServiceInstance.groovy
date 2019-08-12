@@ -64,7 +64,7 @@ public class CompareModelofE2EServiceInstance extends AbstractServiceTaskProcess
 	JsonUtils jsonUtil = new JsonUtils()
 	VidUtils vidUtils = new VidUtils()
 
-	public void preProcessRequest (DelegateExecution execution) {
+	 void preProcessRequest (DelegateExecution execution) {
 		execution.setVariable("prefix",Prefix)
 		String msg = ""
 		
@@ -137,7 +137,7 @@ public class CompareModelofE2EServiceInstance extends AbstractServiceTaskProcess
 		logger.trace("Exit preProcessRequest ")
 	}
 
-	public void sendSyncResponse (DelegateExecution execution) {
+	 void sendSyncResponse (DelegateExecution execution) {
 		logger.trace("sendSyncResponse  ")
 
 		try {
@@ -155,7 +155,7 @@ public class CompareModelofE2EServiceInstance extends AbstractServiceTaskProcess
 		logger.trace("Exit sendSyncResopnse ")
 	}
 	
-	public void sendSyncError (DelegateExecution execution) {
+	 void sendSyncError (DelegateExecution execution) {
 		logger.trace("sendSyncError ")
 
 		try {
@@ -182,7 +182,7 @@ public class CompareModelofE2EServiceInstance extends AbstractServiceTaskProcess
 
 	}
 	
-	public void prepareCompletionRequest (DelegateExecution execution) {
+	 void prepareCompletionRequest (DelegateExecution execution) {
 		logger.trace("prepareCompletion ")
 
 		try {
@@ -214,7 +214,7 @@ public class CompareModelofE2EServiceInstance extends AbstractServiceTaskProcess
 		logger.trace("Exit prepareCompletionRequest ")
 	}
 	
-	public void prepareFalloutRequest(DelegateExecution execution){
+	 void prepareFalloutRequest(DelegateExecution execution){
 		logger.trace("prepareFalloutRequest ")
 
 		try {
