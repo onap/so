@@ -295,7 +295,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
             String instanceName, String requestScope, InfraActiveRequests currentActiveReq) throws ApiException {
         InfraActiveRequests dup = null;
         try {
-            if (!(instanceName == null && requestScope.equals("service") && (action == Action.createInstance
+            if (!(instanceName == null && "service".equals(requestScope) && (action == Action.createInstance
                     || action == Action.activateInstance || action == Action.assignInstance))) {
                 dup = infraActiveRequestsClient.checkInstanceNameDuplicate(instanceIdMap, instanceName, requestScope);
             }
@@ -334,7 +334,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
             updateStatus(duplicateRecord, Status.COMPLETE, "Request Completed");
         }
         for (HistoricProcessInstance instance : response.getBody()) {
-            if (instance.getState().equals("ACTIVE")) {
+            if (("ACTIVE").equals(instance.getState())) {
                 return true;
             } else {
                 updateStatus(duplicateRecord, Status.COMPLETE, "Request Completed");
