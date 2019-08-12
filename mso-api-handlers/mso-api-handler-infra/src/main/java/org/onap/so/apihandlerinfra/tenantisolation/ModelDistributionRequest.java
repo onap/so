@@ -137,10 +137,8 @@ public class ModelDistributionRequest {
         se.setMessageId(messageId);
         se.setText(text);
         if (variables != null) {
-            if (variables != null) {
-                for (String variable : variables) {
-                    se.getVariables().add(variable);
-                }
+            for (String variable : variables) {
+                se.getVariables().add(variable);
             }
         }
         re.setServiceException(se);
