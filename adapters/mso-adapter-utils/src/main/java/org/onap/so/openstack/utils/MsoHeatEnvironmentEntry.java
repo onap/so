@@ -251,10 +251,12 @@ public class MsoHeatEnvironmentEntry {
         try {
             MsoYamlEditorWithEnvt yaml = new MsoYamlEditorWithEnvt(hpasb.toString().getBytes());
             Set<MsoHeatEnvironmentParameter> hpaParams = yaml.getParameterListFromEnvt();
-            for (MsoHeatEnvironmentParameter hpaparam : hpaParams) {
-                for (MsoHeatEnvironmentParameter param : this.parameters) {
-                    if (param.getName() == hpaparam.getName()) {
-                        param.setValue(hpaparam.getValue());
+            if (hpaParams != null) {
+                for (MsoHeatEnvironmentParameter hpaparam : hpaParams) {
+                    for (MsoHeatEnvironmentParameter param : this.parameters) {
+                        if (param.getName() == hpaparam.getName()) {
+                            param.setValue(hpaparam.getValue());
+                        }
                     }
                 }
             }
