@@ -41,10 +41,10 @@ public class VpnBondingLink implements Serializable, ShallowCopy<VpnBondingLink>
     private String vpnBondingLinkId;
 
     @JsonProperty("configurations")
-    private List<Configuration> configurations = new ArrayList<Configuration>();
+    private List<Configuration> configurations = new ArrayList<>();
 
     @JsonProperty("service-proxies")
-    private List<ServiceProxy> serviceProxies = new ArrayList<ServiceProxy>();
+    private List<ServiceProxy> serviceProxies = new ArrayList<>();
 
     public String getVpnBondingLinkId() {
         return vpnBondingLinkId;

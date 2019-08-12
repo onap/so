@@ -133,7 +133,7 @@ public class GenericVnf implements Serializable, ShallowCopy<GenericVnf> {
     @JsonProperty("model-info-generic-vnf")
     private ModelInfoGenericVnf modelInfoGenericVnf;
     @JsonProperty("instance-groups")
-    private List<InstanceGroup> instanceGroups = new ArrayList<InstanceGroup>();
+    private List<InstanceGroup> instanceGroups = new ArrayList<>();
     @JsonProperty("call-homing")
     private Boolean callHoming;
     @JsonProperty("nf-function")

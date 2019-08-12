@@ -68,7 +68,7 @@ public class InstanceResourceList {
 
 
     public static List<Resource> getInstanceResourceList(final VnfResource vnfResource, final String uuiRequest) {
-        List<Resource> sequencedResourceList = new ArrayList<Resource>();
+        List<Resource> sequencedResourceList = new ArrayList<>();
         Gson gson = new Gson();
         JsonObject servJsonObject = gson.fromJson(uuiRequest, JsonObject.class);
         JsonObject reqInputJsonObj = servJsonObject.getAsJsonObject("service").getAsJsonObject("parameters")
@@ -117,7 +117,7 @@ public class InstanceResourceList {
     }
 
     private static List<Resource> getGroupResourceInstanceList(VnfResource vnfResource, JsonObject vfObj) {
-        List<Resource> sequencedResourceList = new ArrayList<Resource>();
+        List<Resource> sequencedResourceList = new ArrayList<>();
         if (vnfResource.getGroupOrder() != null && !StringUtils.isEmpty(vnfResource.getGroupOrder())) {
             String[] grpSequence = vnfResource.getGroupOrder().split(",");
             for (String grpType : grpSequence) {

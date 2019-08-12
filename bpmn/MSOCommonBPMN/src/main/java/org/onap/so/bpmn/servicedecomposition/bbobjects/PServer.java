@@ -41,9 +41,9 @@ public class PServer implements Serializable, ShallowCopy<PServer> {
     @JsonProperty("hostname")
     private String hostname;
     @JsonProperty("physical-links")
-    private List<PhysicalLink> physicalLinks = new ArrayList<PhysicalLink>(); // TODO techincally there is a pInterface
-                                                                              // between (pserver <--> physical-link)
-                                                                              // but dont really need that pojo
+    private List<PhysicalLink> physicalLinks = new ArrayList<>(); // TODO techincally there is a pInterface
+                                                                  // between (pserver <--> physical-link)
+                                                                  // but dont really need that pojo
 
     public String getPserverId() {
         return pserverId;
