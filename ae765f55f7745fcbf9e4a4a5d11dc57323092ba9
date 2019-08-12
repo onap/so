@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b28f4c13_cce750fc",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/ConfigCheckerDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-08-12T14:15:04Z",
+      "side": 1,
+      "message": "make private static final and leave big letters",
+      "range": {
+        "startLine": 48,
+        "startChar": 4,
+        "endLine": 48,
+        "endChar": 18
+      },
+      "revId": "ae765f55f7745fcbf9e4a4a5d11dc57323092ba9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
