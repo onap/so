@@ -61,7 +61,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
      * generate the nsOperationKey
      * generate the nsParameters
      */
-    public void preProcessRequest (DelegateExecution execution) {
+    void preProcessRequest (DelegateExecution execution) {
        String msg = ""
        logger.trace("preProcessRequest()")
        try {
@@ -130,7 +130,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
     /**
      * create NS task
      */
-    public void createNetworkService(DelegateExecution execution) {
+    void createNetworkService(DelegateExecution execution) {
         logger.trace("createNetworkService")
         String vfcAdapterUrl = execution.getVariable("vfcAdapterUrl")
         String nsOperationKey = execution.getVariable("nsOperationKey");
@@ -157,7 +157,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
     /**
      * instantiate NS task
      */
-    public void instantiateNetworkService(DelegateExecution execution) {
+    void instantiateNetworkService(DelegateExecution execution) {
         logger.trace("instantiateNetworkService")
         String vfcAdapterUrl = execution.getVariable("vfcAdapterUrl")
         String nsOperationKey = execution.getVariable("nsOperationKey");
@@ -186,7 +186,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
     /**
      * query NS task
      */
-    public void queryNSProgress(DelegateExecution execution) {
+    void queryNSProgress(DelegateExecution execution) {
         logger.trace("queryNSProgress")
         String vfcAdapterUrl = execution.getVariable("vfcAdapterUrl")
         String jobId = execution.getVariable("jobId")
@@ -206,7 +206,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
     /**
      * delay 5 sec
      */
-    public void timeDelay(DelegateExecution execution) {
+    void timeDelay(DelegateExecution execution) {
         try {
             Thread.sleep(5000);
         } catch(InterruptedException e) {
@@ -217,7 +217,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
     /**
      * finish NS task
      */
-    public void addNSRelationship(DelegateExecution execution) {
+    void addNSRelationship(DelegateExecution execution) {
         logger.trace("addNSRelationship")
         String nsInstanceId = execution.getVariable("nsInstanceId")
         if(nsInstanceId == null || nsInstanceId == ""){
