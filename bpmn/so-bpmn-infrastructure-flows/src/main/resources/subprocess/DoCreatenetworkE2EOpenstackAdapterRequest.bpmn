@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_0x0k7rh" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.2.3">
+  <bpmn:process id="Process_1" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>SequenceFlow_1k4swp0</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:scriptTask id="preProcessOpenStackAdaptorReq" name="preprocess incoming request" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1k4swp0</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_11jljke</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def dcosreq = new DoCreateE2EOpenstackAdapterRequest()
+dcosreq.preProcessRequest(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1k4swp0" sourceRef="StartEvent_1" targetRef="preProcessOpenStackAdaptorReq" />
+    <bpmn:sequenceFlow id="SequenceFlow_11jljke" sourceRef="preProcessOpenStackAdaptorReq" targetRef="IntermediateCatchEvent_0yz3pr3" />
+    <bpmn:intermediateThrowEvent id="IntermediateCatchEvent_0yz3pr3" name="Go to StartPrepareRequest">
+      <bpmn:incoming>SequenceFlow_11jljke</bpmn:incoming>
+      <bpmn:linkEventDefinition name="StartPrepareRequest" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:intermediateCatchEvent id="IntermediateThrowEvent_18v5kp5" name="StartPrepareRequest">
+      <bpmn:outgoing>SequenceFlow_0kxf1ma</bpmn:outgoing>
+      <bpmn:linkEventDefinition name="StartPrepareRequest" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:scriptTask id="Task_0hkkbcv" name="Prepare Request" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0kxf1ma</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1qfqley</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def dcosreq = new DoCreateE2EOpenstackAdapterRequest()
+dcosreq.prepareRequest(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0kxf1ma" sourceRef="IntermediateThrowEvent_18v5kp5" targetRef="Task_0hkkbcv" />
+    <bpmn:scriptTask id="Task_10zf6ew" name="Execute openstack Request" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1qfqley</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0sk17fx</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def dcosreq = new DoCreateE2EOpenstackAdapterRequest()
+dcosreq.sendOpenstackRequest(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1qfqley" sourceRef="Task_0hkkbcv" targetRef="Task_10zf6ew" />
+    <bpmn:scriptTask id="Task_1goqg7s" name="postProcessRequest" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0sk17fx</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1vk2c6h</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def dcosreq = new DoCreateE2EOpenstackAdapterRequest()
+dcosreq.postProcessRequest(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0sk17fx" sourceRef="Task_10zf6ew" targetRef="Task_1goqg7s" />
+    <bpmn:endEvent id="EndEvent_08u6uql">
+      <bpmn:incoming>SequenceFlow_1vk2c6h</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1vk2c6h" sourceRef="Task_1goqg7s" targetRef="EndEvent_08u6uql" />
+    <bpmn:subProcess id="SubProcess_1s6vb2v" name="Sub-process for UnexpectedErrors" triggeredByEvent="true">
+      <bpmn:startEvent id="StartEvent_0a1mihi">
+        <bpmn:outgoing>SequenceFlow_1iamgbk</bpmn:outgoing>
+        <bpmn:errorEventDefinition />
+      </bpmn:startEvent>
+      <bpmn:scriptTask id="Task_05v7mx6" name="Log / Print Unexpected Error" scriptFormat="groovy">
+        <bpmn:incoming>SequenceFlow_1iamgbk</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_01vyjy5</bpmn:outgoing>
+        <bpmn:script>import org.onap.so.bpmn.common.scripts.*
+ExceptionUtil ex = new ExceptionUtil()
+ex.processJavaException(execution)</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:endEvent id="EndEvent_0ppdsoo">
+        <bpmn:incoming>SequenceFlow_01vyjy5</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_1iamgbk" sourceRef="StartEvent_0a1mihi" targetRef="Task_05v7mx6" />
+      <bpmn:sequenceFlow id="SequenceFlow_01vyjy5" sourceRef="Task_05v7mx6" targetRef="EndEvent_0ppdsoo" />
+    </bpmn:subProcess>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="173" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1gpyyjv_di" bpmnElement="preProcessOpenStackAdaptorReq">
+        <dc:Bounds x="296" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1k4swp0_di" bpmnElement="SequenceFlow_1k4swp0">
+        <di:waypoint x="209" y="120" />
+        <di:waypoint x="296" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_11jljke_di" bpmnElement="SequenceFlow_11jljke">
+        <di:waypoint x="396" y="120" />
+        <di:waypoint x="469" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateThrowEvent_0o44def_di" bpmnElement="IntermediateCatchEvent_0yz3pr3">
+        <dc:Bounds x="469" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="443" y="145" width="89" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_1jq3sin_di" bpmnElement="IntermediateThrowEvent_18v5kp5">
+        <dc:Bounds x="150" y="401" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="124" y="444" width="89" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_09ivf6u_di" bpmnElement="Task_0hkkbcv">
+        <dc:Bounds x="277" y="379" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0kxf1ma_di" bpmnElement="SequenceFlow_0kxf1ma">
+        <di:waypoint x="186" y="419" />
+        <di:waypoint x="277" y="419" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_02cl13s_di" bpmnElement="Task_10zf6ew">
+        <dc:Bounds x="454" y="379" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1qfqley_di" bpmnElement="SequenceFlow_1qfqley">
+        <di:waypoint x="377" y="419" />
+        <di:waypoint x="454" y="419" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_01ouvbs_di" bpmnElement="Task_1goqg7s">
+        <dc:Bounds x="625" y="379" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0sk17fx_di" bpmnElement="SequenceFlow_0sk17fx">
+        <di:waypoint x="554" y="419" />
+        <di:waypoint x="625" y="419" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_08u6uql_di" bpmnElement="EndEvent_08u6uql">
+        <dc:Bounds x="796" y="401" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1vk2c6h_di" bpmnElement="SequenceFlow_1vk2c6h">
+        <di:waypoint x="725" y="419" />
+        <di:waypoint x="796" y="419" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="SubProcess_1tw98i9_di" bpmnElement="SubProcess_1s6vb2v" isExpanded="true">
+        <dc:Bounds x="312" y="608" width="350" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_1by4j05_di" bpmnElement="StartEvent_0a1mihi">
+        <dc:Bounds x="331" y="703" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_10b5sfw_di" bpmnElement="Task_05v7mx6">
+        <dc:Bounds x="426" y="681" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0ppdsoo_di" bpmnElement="EndEvent_0ppdsoo">
+        <dc:Bounds x="599" y="703" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1iamgbk_di" bpmnElement="SequenceFlow_1iamgbk">
+        <di:waypoint x="367" y="721" />
+        <di:waypoint x="426" y="721" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_01vyjy5_di" bpmnElement="SequenceFlow_01vyjy5">
+        <di:waypoint x="526" y="721" />
+        <di:waypoint x="599" y="721" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
