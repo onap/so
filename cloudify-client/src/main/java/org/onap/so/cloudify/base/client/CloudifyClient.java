@@ -135,7 +135,7 @@ public class CloudifyClient {
      * @return An object of Class <R>
      */
     public <R> CloudifyRequest<R> get(String path, Class<R> returnType) {
-        return new CloudifyRequest<R>(this, HttpMethod.GET, path, null, returnType);
+        return new CloudifyRequest<>(this, HttpMethod.GET, path, null, returnType);
     }
 
 }
