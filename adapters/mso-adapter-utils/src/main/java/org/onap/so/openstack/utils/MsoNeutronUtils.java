@@ -130,13 +130,13 @@ public class MsoNeutronUtils extends MsoCommonUtils {
         network.setAdminStateUp(true);
 
         if (type == NetworkType.PROVIDER) {
-            if (provider != null && vlans != null && vlans.size() > 0) {
+            if (provider != null && vlans != null && !vlans.isEmpty()) {
                 network.setProviderPhysicalNetwork(provider);
                 network.setProviderNetworkType("vlan");
                 network.setProviderSegmentationId(vlans.get(0));
             }
         } else if (type == NetworkType.MULTI_PROVIDER) {
-            if (provider != null && vlans != null && vlans.size() > 0) {
+            if (provider != null && vlans != null && !vlans.isEmpty()) {
                 List<Segment> segments = new ArrayList<>(vlans.size());
                 for (int vlan : vlans) {
                     Segment segment = new Segment();
