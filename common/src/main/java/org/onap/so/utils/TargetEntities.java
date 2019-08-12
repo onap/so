@@ -20,6 +20,8 @@
 
 package org.onap.so.utils;
 
-public interface TargetEntities {
+import java.io.Serializable;
+
+public interface TargetEntities extends Serializable {
 
 }

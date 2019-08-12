@@ -33,7 +33,7 @@ public class WorkflowException implements Serializable {
     private final int errorCode;
     private final String errorMessage;
     private final String workStep;
-    private transient TargetEntities extSystemErrorSource;
+    private TargetEntities extSystemErrorSource;
 
     /**
      * Constructor

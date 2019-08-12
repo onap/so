@@ -20,6 +20,8 @@
 
 package org.onap.so.apihandlerinfra;
 
-public interface Actions {
+import java.io.Serializable;
+
+public interface Actions extends Serializable {
 
 }
