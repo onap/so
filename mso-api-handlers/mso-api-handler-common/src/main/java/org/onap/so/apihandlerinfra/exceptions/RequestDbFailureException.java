@@ -22,7 +22,7 @@ package org.onap.so.apihandlerinfra.exceptions;
 
 public class RequestDbFailureException extends ApiException {
 
-    private static final String requestDbFailMessage = "Unable to %s due to error contacting requestDb: %s";
+    private static final String REQUEST_DB_FAIL_MESSAGE = "Unable to %s due to error contacting requestDb: %s";
 
     private RequestDbFailureException(Builder builder) {
         super(builder);
@@ -32,7 +32,7 @@ public class RequestDbFailureException extends ApiException {
 
 
         public Builder(String action, String error, int httpResponseCode, String messageID) {
-            super(requestDbFailMessage.format(requestDbFailMessage, action, error), httpResponseCode, messageID);
+            super(REQUEST_DB_FAIL_MESSAGE.format(REQUEST_DB_FAIL_MESSAGE, action, error), httpResponseCode, messageID);
         }
 
         public RequestDbFailureException build() {
