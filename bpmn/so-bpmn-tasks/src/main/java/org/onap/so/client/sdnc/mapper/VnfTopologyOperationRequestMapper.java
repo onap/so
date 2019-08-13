@@ -46,11 +46,15 @@ import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoInstanceGroup;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
 import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class VnfTopologyOperationRequestMapper {
+
+    private static final Logger logger = LoggerFactory.getLogger(VnfTopologyOperationRequestMapper.class);
 
     @Autowired
     private GeneralTopologyObjectMapper generalTopologyObjectMapper;
@@ -58,7 +62,7 @@ public class VnfTopologyOperationRequestMapper {
     /**
      * This method is used for creating the vnf request.
      *
-     * By these parameter it will get he detailas and prepare the request.
+     * By these parameter it will get the details and prepare the request.
      *
      * @param svcOperation
      * @param svcAction
@@ -142,6 +146,7 @@ public class VnfTopologyOperationRequestMapper {
                 }
             }
         }
+
         List<InstanceGroup> instanceGroups = vnf.getInstanceGroups();
         List<GenericResourceApiVnfrequestinputVnfrequestinputVnfNetworkInstanceGroupIds> networkInstanceGroupIdList =
                 new ArrayList<>();

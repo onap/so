@@ -40,7 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * This class is used for quering the SDNC
+ * This class is used for querying the SDNC.
  */
 @Component
 public class SDNCQueryTasks {
@@ -78,15 +78,18 @@ public class SDNCQueryTasks {
             String response = sdncVnfResources.queryVnf(genericVnf);
             execution.setVariable(SDNCQUERY_RESPONSE + genericVnf.getVnfId(), response);
         } catch (BadResponseException ex) {
+            logger.error("Exception occurred", ex);
             if (!ex.getMessage().equals(NO_RESPONSE_FROM_SDNC)) {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SDNC);
             } else {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SO);
             }
         } catch (Exception ex) {
+            logger.error("Exception occurred", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SO);
         }
     }
+
 
     /**
      * BPMN access method to query the SDNC for fetching the VfModule details.
@@ -116,12 +119,14 @@ public class SDNCQueryTasks {
                         + " exists in gBuildingBlock but does not have a selflink value");
             }
         } catch (BadResponseException ex) {
+            logger.error("Exception occurred for BadResponse ", ex);
             if (!ex.getMessage().equals(NO_RESPONSE_FROM_SDNC)) {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SDNC);
             } else {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SO);
             }
         } catch (Exception ex) {
+            logger.error("Exception occurred", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -144,20 +149,26 @@ public class SDNCQueryTasks {
                         + " exists in gBuildingBlock but does not have a selflink value");
             }
         } catch (BBObjectNotFoundException bbException) {
-            // If there is not a vf module in the general building block, we will not call SDNC and proceed as normal
+            logger.error("Error occurred if bb object not found in SDNCQueryTasks queryVfModuleForVolumeGroup "
+                    + bbException);
+            // If there is not a vf module in the general building block, we will not call
+            // SDNC and proceed as normal
             // without throwing an error
-            // If we see a bb object not found exception for something that is not a vf module id, then we should throw
+            // If we see a bb object not found exception for something that is not a vf
+            // module id, then we should throw
             // the error as normal
             if (!ResourceKey.VF_MODULE_ID.equals(bbException.getResourceKey())) {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 7000, bbException, TargetEntity.SO);
             }
         } catch (BadResponseException ex) {
+            logger.error("Error occurred for BadResponseException in SDNCQueryTasks queryVfModuleForVolumeGroup " + ex);
             if (!ex.getMessage().equals(NO_RESPONSE_FROM_SDNC)) {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SDNC);
             } else {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SO);
             }
         } catch (Exception ex) {
+            logger.error("Exception occurred", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SO);
         }
     }

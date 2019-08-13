@@ -96,6 +96,7 @@ public class SDNCAssignTasks extends AbstractSDNCTask {
             sdncRequest.setTopology(SDNCTopology.SERVICE);
             execution.setVariable(SDNC_REQUEST, sdncRequest);
         } catch (Exception ex) {
+            logger.error("Exception occurred", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -117,7 +118,6 @@ public class SDNCAssignTasks extends AbstractSDNCTask {
             Customer customer = gBBInput.getCustomer();
             CloudRegion cloudRegion = gBBInput.getCloudRegion();
             SDNCRequest sdncRequest = new SDNCRequest();
-
             GenericResourceApiVnfOperationInformation req =
                     sdncVnfResources.assignVnf(vnf, serviceInstance, customer, cloudRegion, requestContext,
                             Boolean.TRUE.equals(vnf.isCallHoming()), buildCallbackURI(sdncRequest));
@@ -125,9 +125,11 @@ public class SDNCAssignTasks extends AbstractSDNCTask {
             sdncRequest.setTopology(SDNCTopology.VNF);
             execution.setVariable(SDNC_REQUEST, sdncRequest);
         } catch (Exception ex) {
+            logger.error("Exception occurred", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
+
 
     /**
      * BPMN access method to assigning the vfModule in SDNC.
@@ -160,6 +162,7 @@ public class SDNCAssignTasks extends AbstractSDNCTask {
             sdncRequest.setTopology(SDNCTopology.VFMODULE);
             execution.setVariable(SDNC_REQUEST, sdncRequest);
         } catch (Exception ex) {
+            logger.error("Exception occurred", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }

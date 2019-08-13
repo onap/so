@@ -47,6 +47,7 @@ import static org.apache.commons.lang3.StringUtils.*;
 
 @Component
 public class VnfAdapterCreateTasks {
+    private static final Logger logger = LoggerFactory.getLogger(VnfAdapterCreateTasks.class);
     public static final String SDNCQUERY_RESPONSE = "SDNCQueryResponse_";
     private static final String VNFREST_REQUEST = "VNFREST_Request";
 
@@ -85,7 +86,9 @@ public class VnfAdapterCreateTasks {
                             + " exists in gBuildingBlock but does not have a selflink value");
                 }
             } catch (BBObjectNotFoundException bbException) {
-                // If there is not a vf module in the general building block (in aLaCarte case), we will not retrieve
+                logger.error("Exception occurred", bbException);
+                // If there is not a vf module in the general building block (in aLaCarte case),
+                // we will not retrieve
                 // the SDNCQueryResponse and proceed as normal without throwing an error
             }
 
@@ -94,6 +97,7 @@ public class VnfAdapterCreateTasks {
                     genericVnf, volumeGroup, sdncVfModuleQueryResponse);
             execution.setVariable(VNFREST_REQUEST, createVolumeGroupRequest.toXmlString());
         } catch (Exception ex) {
+            logger.error("Exception occurred", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -117,6 +121,8 @@ public class VnfAdapterCreateTasks {
             try {
                 volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID);
             } catch (BBObjectNotFoundException bbException) {
+                logger.error("Exception occurred if bb objrct not found in VnfAdapterCreateTasks createVfModule "
+                        + bbException);
             }
             CloudRegion cloudRegion = gBBInput.getCloudRegion();
             RequestContext requestContext = gBBInput.getRequestContext();
@@ -129,9 +135,9 @@ public class VnfAdapterCreateTasks {
                     volumeGroup, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
             execution.setVariable(VNFREST_REQUEST, createVfModuleRequest.toXmlString());
         } catch (Exception ex) {
+            logger.error("Exception occurred", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
-
 
 }

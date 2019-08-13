@@ -119,12 +119,13 @@ public class AAICreateTasks {
             Customer customer = execution.getGeneralBuildingBlock().getCustomer();
             aaiSIResources.createServiceInstance(serviceInstance, customer);
         } catch (Exception ex) {
+            logger.error("Exception occurred", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
 
     /**
-     * This method is used for creating and subscribing the service in A&AI.
+     * This method is used for creating and subscribing the service in A&AI .
      *
      * @param execution
      * @throws @return
@@ -144,11 +145,14 @@ public class AAICreateTasks {
             }
             aaiSIResources.createServiceSubscription(customer);
         } catch (BpmnError ex) {
+            logger.error("Exception occurred", ex);
             throw ex;
         } catch (Exception ex) {
+            logger.error("Exception occurred", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
+
 
     /**
      * This method is used for creation of the project A&AI.
@@ -169,6 +173,7 @@ public class AAICreateTasks {
                 }
             }
         } catch (Exception ex) {
+            logger.error("Exception occurred", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -214,6 +219,7 @@ public class AAICreateTasks {
                 }
             }
         } catch (Exception ex) {
+            logger.error("Exception occurred", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -236,14 +242,15 @@ public class AAICreateTasks {
             execution.setVariable("homing", Boolean.TRUE.equals(vnf.isCallHoming()));
             aaiVnfResources.createVnfandConnectServiceInstance(vnf, serviceInstance);
         } catch (Exception ex) {
+            logger.error("Exception occurred", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
 
     /**
-     * This method is used for separating (,) from the string.
-     *
-     * @param str
+     * This method is used for creating the platform in A&AI.
+     * 
+     * @param execution
      * @throws @return
      */
     public void createPlatform(BuildingBlockExecution execution) {
@@ -260,6 +267,7 @@ public class AAICreateTasks {
                 }
             }
         } catch (Exception ex) {
+            logger.error("Exception occurred", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
 
@@ -296,6 +304,7 @@ public class AAICreateTasks {
                 }
             }
         } catch (Exception ex) {
+            logger.error("Exception occurred", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -317,6 +326,7 @@ public class AAICreateTasks {
             aaiVolumeGroupResources.connectVolumeGroupToVnf(genericVnf, volumeGroup, cloudRegion);
             aaiVolumeGroupResources.connectVolumeGroupToTenant(volumeGroup, cloudRegion);
         } catch (Exception ex) {
+            logger.error("Exception occurred", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -339,6 +349,7 @@ public class AAICreateTasks {
             vfModule.setModuleIndex(moduleIndex);
             aaiVfModuleResources.createVfModule(vfModule, vnf);
         } catch (Exception ex) {
+            logger.error("Exception occurred", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -364,6 +375,7 @@ public class AAICreateTasks {
                         execution.getGeneralBuildingBlock().getCloudRegion());
             }
         } catch (Exception ex) {
+            logger.error("Exception occurred", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -387,6 +399,7 @@ public class AAICreateTasks {
             // put network shell in AAI
             aaiNetworkResources.createNetworkConnectToServiceInstance(l3network, serviceInstance);
         } catch (Exception ex) {
+            logger.error("Exception occurred", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -403,6 +416,7 @@ public class AAICreateTasks {
 
             aaiVpnBindingResources.createCustomer(customer);
         } catch (Exception ex) {
+            logger.error("Exception occurred", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -418,11 +432,13 @@ public class AAICreateTasks {
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
             Collection networkCollection = serviceInstance.getCollection();
-            // pass name generated for NetworkCollection/NetworkCollectionInstanceGroup in previous step of the BB flow
+            // pass name generated for NetworkCollection/NetworkCollectionInstanceGroup in
+            // previous step of the BB flow
             // put shell in AAI
             networkCollection.setName(execution.getVariable(NETWORK_COLLECTION_NAME));
             aaiNetworkResources.createNetworkCollection(networkCollection);
         } catch (Exception ex) {
+            logger.error("Exception occurred", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -438,7 +454,8 @@ public class AAICreateTasks {
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
             InstanceGroup instanceGroup = serviceInstance.getCollection().getInstanceGroup();
-            // set name generated for NetworkCollection/NetworkCollectionInstanceGroup in previous step of the BB flow
+            // set name generated for NetworkCollection/NetworkCollectionInstanceGroup in
+            // previous step of the BB flow
             instanceGroup.setInstanceGroupName(execution.getVariable(NETWORK_COLLECTION_NAME));
             // put shell in AAI
             aaiNetworkResources.createNetworkInstanceGroup(instanceGroup);
@@ -446,7 +463,6 @@ public class AAICreateTasks {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
-
 
     /**
      * BPMN access method to establish relationships in AAI
@@ -550,6 +566,7 @@ public class AAICreateTasks {
                 aaiNetworkResources.connectNetworkToNetworkCollectionInstanceGroup(l3network,
                         serviceInstance.getCollection().getInstanceGroup());
         } catch (Exception ex) {
+            logger.error("Exception occurred", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -564,6 +581,7 @@ public class AAICreateTasks {
             Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID);
             aaiConfigurationResources.createConfiguration(configuration);
         } catch (Exception ex) {
+            logger.error("Exception occurred", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -580,6 +598,7 @@ public class AAICreateTasks {
             InstanceGroup instanceGroup = extractPojosForBB.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID);
             aaiInstanceGroupResources.createInstanceGroupandConnectServiceInstance(instanceGroup, serviceInstance);
         } catch (Exception ex) {
+            logger.error("Exception occurred", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -617,6 +636,7 @@ public class AAICreateTasks {
                 }
             }
         } catch (Exception ex) {
+            logger.error("Exception occurred", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -634,7 +654,6 @@ public class AAICreateTasks {
         if (newVfModule.getModelInfoVfModule() != null) {
             newVfModuleModelInvariantUUID = newVfModule.getModelInfoVfModule().getModelInvariantUUID();
         }
-
 
         if (genericVnf != null && genericVnf.getVfModules() != null && !genericVnf.getVfModules().isEmpty()) {
             List<VfModule> modules = genericVnf.getVfModules().stream()
@@ -668,7 +687,8 @@ public class AAICreateTasks {
         Integer[] array = moduleIndices.toArray(temp);
         int result = 0;
         // when a null is found skip that potential value
-        // effectively creates something like, [0,1,3,null,null] -> [0,1,null(2),3,null(4)]
+        // effectively creates something like, [0,1,3,null,null] ->
+        // [0,1,null(2),3,null(4)]
         for (int i = 0; i < array.length; i++, result++) {
             if (Integer.valueOf(result) != array[i]) {
                 if (nullIndexFound > 0) {
