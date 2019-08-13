@@ -48,7 +48,7 @@ public class ConfigAssignPropertiesForVnf {
     private String vnfCustomizationUuid;
 
     @JsonIgnore
-    private Map<String, Object> userParam = new HashMap<String, Object>();
+    private Map<String, Object> userParam = new HashMap<>();
 
     public String getServiceInstanceId() {
         return serviceInstanceId;
