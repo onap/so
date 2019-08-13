@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5299411c_2153bd3a",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/openstack/utils/MsoHeatEnvironmentEntry.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 250,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-08-13T10:25:36Z",
+      "side": 1,
+      "message": "please remove this method, it is not used",
+      "range": {
+        "startLine": 250,
+        "startChar": 16,
+        "endLine": 250,
+        "endChar": 32
+      },
+      "revId": "70c5a6ae5f71b87e105f35a330d2e54c7260fd40",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
