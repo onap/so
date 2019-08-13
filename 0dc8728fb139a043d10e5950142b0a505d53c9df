@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6b978b50_787becb0",
+        "filename": "mso-api-handlers/mso-requests-db-repositories/src/main/java/org/onap/so/db/request/data/repository/InfraActiveRequestsRepositoryImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-08-13T10:38:37Z",
+      "side": 1,
+      "message": "remove the line",
+      "range": {
+        "startLine": 120,
+        "startChar": 7,
+        "endLine": 120,
+        "endChar": 62
+      },
+      "revId": "0dc8728fb139a043d10e5950142b0a505d53c9df",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7d745f3f_276d913f",
+        "filename": "mso-api-handlers/mso-requests-db-repositories/src/main/java/org/onap/so/db/request/data/repository/InfraActiveRequestsRepositoryImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-08-13T10:38:37Z",
+      "side": 1,
+      "message": "remove the line",
+      "range": {
+        "startLine": 125,
+        "startChar": 7,
+        "endLine": 125,
+        "endChar": 66
+      },
+      "revId": "0dc8728fb139a043d10e5950142b0a505d53c9df",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "279a187e_259d3e0d",
+        "filename": "mso-api-handlers/mso-requests-db-repositories/src/main/java/org/onap/so/db/request/data/repository/InfraActiveRequestsRepositoryImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-08-13T10:38:37Z",
+      "side": 1,
+      "message": "return entityManager.createQuery(crit).getResultList();",
+      "range": {
+        "startLine": 127,
+        "startChar": 8,
+        "endLine": 127,
+        "endChar": 23
+      },
+      "revId": "0dc8728fb139a043d10e5950142b0a505d53c9df",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
