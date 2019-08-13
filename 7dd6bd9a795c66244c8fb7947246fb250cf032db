@@ -22,6 +22,30 @@
       "revId": "7dd6bd9a795c66244c8fb7947246fb250cf032db",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "daa9b516_2c3695a2",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/workflow/service/ServicePluginFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 921,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-08-13T09:47:33Z",
+      "side": 1,
+      "message": "Correction from side. Maybe these two catch blocks was made in purpose, I mean if one method throws exception then a second method should invoke anyway.\n\nPlease cancel my first comment.",
+      "parentUuid": "28e15b1b_cfbd5722",
+      "range": {
+        "startLine": 907,
+        "startChar": 0,
+        "endLine": 921,
+        "endChar": 9
+      },
+      "revId": "7dd6bd9a795c66244c8fb7947246fb250cf032db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
