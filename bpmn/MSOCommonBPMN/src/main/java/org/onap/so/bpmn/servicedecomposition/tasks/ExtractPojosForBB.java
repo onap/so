@@ -90,7 +90,6 @@ public class ExtractPojosForBB {
                     result = lookupObjectInList(serviceInstance.getConfigurations(), value);
                     break;
                 case VPN_ID:
-                    serviceInstance = extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
                     result = lookupObjectInList(gBBInput.getCustomer().getVpnBindings(), value);
                     break;
                 case VPN_BONDING_LINK_ID:
@@ -107,8 +106,9 @@ public class ExtractPojosForBB {
         } catch (BBObjectNotFoundException e) { // re-throw parent object not found
             throw e;
         } catch (Exception e) { // convert all other exceptions to object not found
-            logger.warn("BBObjectNotFoundException in ExtractPojosForBB",
-                    "BBObject " + key + " was not found in " + "gBBInput using reference value: " + value);
+            logger.warn(String.format(
+                    "BBObjectNotFoundException in ExtractPojosForBB, BBObject %s was not found in gBBInput using reference value: %s",
+                    key, value), e);
             throw new BBObjectNotFoundException(key, value);
         }
 
@@ -119,13 +119,13 @@ public class ExtractPojosForBB {
         }
     }
 
-    protected <T> Optional<T> lookupObject(Object obj, String value) throws IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+    protected <T> Optional<T> lookupObject(Object obj, String value)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         return findValue(obj, value);
     }
 
-    protected <T> Optional<T> lookupObjectInList(List<?> list, String value) throws IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+    protected <T> Optional<T> lookupObjectInList(List<?> list, String value)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         Optional<T> result = Optional.empty();
         for (Object obj : list) {
             result = findValue(obj, value);
@@ -137,8 +137,8 @@ public class ExtractPojosForBB {
 
     }
 
-    protected <T> Optional<T> findValue(Object obj, String value) throws IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+    protected <T> Optional<T> findValue(Object obj, String value)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         for (Field field : obj.getClass().getDeclaredFields()) {
             if (field.isAnnotationPresent(Id.class)) {
                 String fieldName = field.getName();

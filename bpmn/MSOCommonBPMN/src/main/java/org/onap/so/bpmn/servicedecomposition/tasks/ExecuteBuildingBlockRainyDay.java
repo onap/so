@@ -104,6 +104,7 @@ public class ExecuteBuildingBlockRainyDay {
                     }
                 } catch (Exception ex) {
                     // keep default serviceType value
+                    logger.error("Exception in serviceType retrivel", ex);
                 }
                 String vnfType = ASTERISK;
                 try {
@@ -115,6 +116,7 @@ public class ExecuteBuildingBlockRainyDay {
                     }
                 } catch (Exception ex) {
                     // keep default vnfType value
+                    logger.error("Exception in vnfType retrivel", ex);
                 }
 
                 String errorCode = ASTERISK;
@@ -122,12 +124,14 @@ public class ExecuteBuildingBlockRainyDay {
                     errorCode = "" + workflowException.getErrorCode();
                 } catch (Exception ex) {
                     // keep default errorCode value
+                    logger.error("Exception in errorCode retrivel", ex);
                 }
 
                 try {
                     errorCode = "" + (String) execution.getVariable("WorkflowExceptionCode");
                 } catch (Exception ex) {
                     // keep default errorCode value
+                    logger.error("Exception in errorCode retrivel", ex);
                 }
 
                 String workStep = ASTERISK;
@@ -135,6 +139,7 @@ public class ExecuteBuildingBlockRainyDay {
                     workStep = workflowException.getWorkStep();
                 } catch (Exception ex) {
                     // keep default workStep value
+                    logger.error("Exception in workStep retrivel", ex);
                 }
 
                 String errorMessage = ASTERISK;
@@ -142,6 +147,7 @@ public class ExecuteBuildingBlockRainyDay {
                     errorMessage = workflowException.getErrorMessage();
                 } catch (Exception ex) {
                     // keep default workStep value
+                    logger.error("Exception in errorMessage retrivel", ex);
                 }
 
                 String serviceRole = ASTERISK;
@@ -177,14 +183,14 @@ public class ExecuteBuildingBlockRainyDay {
                         logger.error("Failed to update Request Db Infra Active Requests with Retry Status", ex);
                     }
                 }
-                if (handlingCode.equals("RollbackToAssigned") && !aLaCarte) {
+                if ("RollbackToAssigned".equals(handlingCode) && !aLaCarte) {
                     handlingCode = "Rollback";
                 }
                 if (handlingCode.startsWith("Rollback")) {
                     String targetState = "";
-                    if (handlingCode.equalsIgnoreCase("RollbackToAssigned")) {
+                    if ("RollbackToAssigned".equalsIgnoreCase(handlingCode)) {
                         targetState = Status.ROLLED_BACK_TO_ASSIGNED.toString();
-                    } else if (handlingCode.equalsIgnoreCase("RollbackToCreated")) {
+                    } else if ("RollbackToCreated".equalsIgnoreCase(handlingCode)) {
                         targetState = Status.ROLLED_BACK_TO_CREATED.toString();
                     } else {
                         targetState = Status.ROLLED_BACK.toString();
@@ -204,7 +210,7 @@ public class ExecuteBuildingBlockRainyDay {
             int envMaxRetries = Integer.parseInt(this.environment.getProperty(maxRetries));
             execution.setVariable("maxRetries", envMaxRetries);
         } catch (Exception ex) {
-            logger.error("Could not read maxRetries from config file. Setting max to 5 retries");
+            logger.error("Could not read maxRetries from config file. Setting max to 5 retries", ex);
             execution.setVariable("maxRetries", 5);
         }
     }
@@ -247,8 +253,7 @@ public class ExecuteBuildingBlockRainyDay {
             request.setLastModifiedBy("CamundaBPMN");
             requestDbclient.updateInfraActiveRequests(request);
         } catch (Exception e) {
-            logger.error("Failed to update Request db with extSystemErrorSource or rollbackExtSystemErrorSource: "
-                    + e.getMessage());
+            logger.error("Failed to update Request db with extSystemErrorSource or rollbackExtSystemErrorSource: ", e);
         }
     }
 
