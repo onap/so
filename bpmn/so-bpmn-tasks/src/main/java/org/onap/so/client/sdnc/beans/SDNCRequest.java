@@ -36,7 +36,7 @@ public class SDNCRequest implements Serializable {
     private SDNCTopology topology;
     private String correlationValue = UUID.randomUUID().toString();
     private String correlationName = "SDNCCallback";
-    private Object SDNCPayload;
+    private Object sdncPayload;
 
 
     public String getTimeOut() {
@@ -72,11 +72,11 @@ public class SDNCRequest implements Serializable {
     }
 
     public Object getSDNCPayload() {
-        return SDNCPayload;
+        return sdncPayload;
     }
 
     public void setSDNCPayload(Object sDNCPayload) {
-        SDNCPayload = sDNCPayload;
+        this.sdncPayload = sDNCPayload;
     }
 
     @Override
