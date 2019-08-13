@@ -196,6 +196,19 @@ public class CamundaRequestHandlerTest {
     }
 
     @Test
+    public void getTaskNameEmptyProcessInstanceListTest() throws IOException, ContactCamundaException {
+        List<HistoricProcessInstanceEntity> processInstanceList = new ArrayList<>();
+        ResponseEntity<List<HistoricProcessInstanceEntity>> response =
+                new ResponseEntity<>(processInstanceList, HttpStatus.OK);
+        doReturn(response).when(camundaRequestHandler).getCamundaProcessInstanceHistory(REQUEST_ID);
+        String expected = "No processInstances returned for requestId: " + REQUEST_ID;
+
+        String actual = camundaRequestHandler.getTaskName(REQUEST_ID);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
     public void getTaskNameProcessInstanceLookupFailureTest() throws IOException, ContactCamundaException {
         doThrow(HttpClientErrorException.class).when(camundaRequestHandler)
                 .getCamundaProcessInstanceHistory(REQUEST_ID);
