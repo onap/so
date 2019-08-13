@@ -863,23 +863,23 @@ public class ServicePluginFactory {
 
             HttpClient client = HttpClientBuilder.create().build();
 
-            if ("POST".equals(methodType.toUpperCase())) {
+            if ("POST".equalsIgnoreCase(methodType)) {
                 HttpPost httpPost = new HttpPost(msbUrl);
                 httpPost.setConfig(requestConfig);
                 httpPost.setEntity(new StringEntity(content, ContentType.APPLICATION_JSON));
                 method = httpPost;
-            } else if ("PUT".equals(methodType.toUpperCase())) {
+            } else if ("PUT".equalsIgnoreCase(methodType)) {
                 HttpPut httpPut = new HttpPut(msbUrl);
                 httpPut.setConfig(requestConfig);
                 httpPut.setEntity(new StringEntity(content, ContentType.APPLICATION_JSON));
                 method = httpPut;
-            } else if ("GET".equals(methodType.toUpperCase())) {
+            } else if ("GET".equalsIgnoreCase(methodType)) {
                 HttpGet httpGet = new HttpGet(msbUrl);
                 httpGet.setConfig(requestConfig);
                 httpGet.addHeader("X-FromAppId", "MSO");
                 httpGet.addHeader("Accept", "application/json");
                 method = httpGet;
-            } else if ("DELETE".equals(methodType.toUpperCase())) {
+            } else if ("DELETE".equalsIgnoreCase(methodType)) {
                 HttpDelete httpDelete = new HttpDelete(msbUrl);
                 httpDelete.setConfig(requestConfig);
                 method = httpDelete;
