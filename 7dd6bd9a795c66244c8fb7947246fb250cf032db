@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "28e15b1b_cfbd5722",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/workflow/service/ServicePluginFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 921,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-08-13T09:24:36Z",
+      "side": 1,
+      "message": "Let\u0027s make this code shorter, please make it one catch block like this:\n\n        try {\n                if (httpResponse !\u003d null) {\n                    EntityUtils.consume(httpResponse.getEntity());\n                }\n                if (method !\u003d null) {\n                    method.reset();\n                }\n            }\n            catch (Exception e){\n                logger.debug(\"Exception while executing finally block\", e);\n            }",
+      "range": {
+        "startLine": 907,
+        "startChar": 0,
+        "endLine": 921,
+        "endChar": 9
+      },
+      "revId": "7dd6bd9a795c66244c8fb7947246fb250cf032db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
