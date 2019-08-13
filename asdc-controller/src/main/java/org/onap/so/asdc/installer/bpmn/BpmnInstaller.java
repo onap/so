@@ -71,9 +71,9 @@ public class BpmnInstaller {
 
     public void installBpmn(String csarFilePath) {
         logger.info("Deploying BPMN files from {}", csarFilePath);
-        try {
+        try (
             ZipInputStream csarFile =
-                    new ZipInputStream(new FileInputStream(Paths.get(csarFilePath).normalize().toString()));
+                    new ZipInputStream(new FileInputStream(Paths.get(csarFilePath).normalize().toString()))) {
             ZipEntry entry = csarFile.getNextEntry();
 
             while (entry != null) {
@@ -103,7 +103,6 @@ public class BpmnInstaller {
                 }
                 entry = csarFile.getNextEntry();
             }
-            csarFile.close();
         } catch (IOException ex) {
             logger.debug("Exception :", ex);
             logger.error(LoggingAnchor.FIVE, MessageEnum.ASDC_ARTIFACT_NOT_DEPLOYED_DETAIL.toString(), csarFilePath,

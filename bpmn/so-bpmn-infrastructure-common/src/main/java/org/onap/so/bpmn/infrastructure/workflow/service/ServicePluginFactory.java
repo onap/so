@@ -50,6 +50,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -98,8 +99,7 @@ public class ServicePluginFactory {
             new String[] {VS_MONITORED, VS_UNMONITORED, TS_MONITORED, TS_UNMONITORED};
 
     static {
-        try {
-            InputStream is = ClassLoader.class.getResourceAsStream("/application.properties");
+        try (InputStream is = ClassLoader.class.getResourceAsStream("/application.properties")) {
             if (null != is) {
                 Properties prop = new Properties();
                 prop.load(is);
@@ -855,13 +855,11 @@ public class ServicePluginFactory {
         HttpRequestBase method = null;
         HttpResponse httpResponse = null;
 
-        try {
+        try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
             int timeout = DEFAULT_TIME_OUT;
 
             RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(timeout).setConnectTimeout(timeout)
                     .setConnectionRequestTimeout(timeout).build();
-
-            HttpClient client = HttpClientBuilder.create().build();
 
             if ("POST".equalsIgnoreCase(methodType)) {
                 HttpPost httpPost = new HttpPost(msbUrl);
@@ -902,9 +900,6 @@ public class ServicePluginFactory {
             method = null;
             return responseContent;
 
-        } catch (SocketTimeoutException | ConnectTimeoutException e) {
-            return null;
-
         } catch (Exception e) {
             return null;
 
@@ -913,13 +908,14 @@ public class ServicePluginFactory {
                 try {
                     EntityUtils.consume(httpResponse.getEntity());
                 } catch (Exception e) {
+                    logger.debug("Exception while executing finally block", e);
                 }
             }
             if (method != null) {
                 try {
                     method.reset();
                 } catch (Exception e) {
-
+                    logger.debug("Exception while executing finally block", e);
                 }
             }
         }
