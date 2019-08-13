@@ -842,8 +842,8 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         } else {
             String error = String.format(
                     "Network Type:%s Version_Min:%s Version_Max:%s not supported on Cloud:%s with AIC_Version:%s",
-                    networkType, networkType, networkResource.getAicVersionMin(), networkResource.getAicVersionMax(),
-                    cloudSiteId, cloudSite.getCloudVersion());
+                    networkType, networkResource.getAicVersionMin(), networkResource.getAicVersionMax(), cloudSiteId,
+                    cloudSite.getCloudVersion());
             logger.error(LoggingAnchor.THREE, MessageEnum.RA_CONFIG_EXC, ErrorCode.DataError.getValue(), error);
             throw new NetworkException(error, MsoExceptionCategory.USERDATA);
         }
