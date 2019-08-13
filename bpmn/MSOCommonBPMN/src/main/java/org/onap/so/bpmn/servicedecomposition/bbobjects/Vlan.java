@@ -62,9 +62,9 @@ public class Vlan implements Serializable, ShallowCopy<Vlan> {
     @JsonProperty("is-ip-unnumbered")
     private Boolean isIpUnnumbered;
     @JsonProperty("l3-interface-ipv4-address-list")
-    private List<L3InterfaceIpv4AddressList> l3InterfaceIpv4AddressList = new ArrayList<L3InterfaceIpv4AddressList>();
+    private List<L3InterfaceIpv4AddressList> l3InterfaceIpv4AddressList = new ArrayList<>();
     @JsonProperty("l3-interface-ipv6-address-list")
-    private List<L3InterfaceIpv6AddressList> l3InterfaceIpv6AddressList = new ArrayList<L3InterfaceIpv6AddressList>();
+    private List<L3InterfaceIpv6AddressList> l3InterfaceIpv6AddressList = new ArrayList<>();
 
     public String getVlanInterface() {
         return vlanInterface;

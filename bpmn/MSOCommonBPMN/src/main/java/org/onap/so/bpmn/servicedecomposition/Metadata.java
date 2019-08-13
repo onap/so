@@ -31,7 +31,7 @@ public class Metadata implements Serializable {
     private static final long serialVersionUID = 4981393122007858950L;
 
     @JsonProperty("metadatum")
-    private List<Metadatum> metadatum = new ArrayList<Metadatum>();
+    private List<Metadatum> metadatum = new ArrayList<>();
 
     public List<Metadatum> getMetadatum() {
         return metadatum;

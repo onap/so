@@ -65,15 +65,15 @@ public class LInterface implements Serializable, ShallowCopy<LInterface> {
     @JsonProperty("allowed-address-pairs")
     private String allowedAddressPairs;
     @JsonProperty("vlans")
-    private List<Vlan> vlans = new ArrayList<Vlan>();
+    private List<Vlan> vlans = new ArrayList<>();
     @JsonProperty("sriov-vfs")
-    private List<SriovVf> sriovVfs = new ArrayList<SriovVf>();
+    private List<SriovVf> sriovVfs = new ArrayList<>();
     @JsonProperty("l-interfaces")
-    private List<LInterface> lInterfaces = new ArrayList<LInterface>();
+    private List<LInterface> lInterfaces = new ArrayList<>();
     @JsonProperty("l3-interface-ipv4-address-list")
-    private List<L3InterfaceIpv4AddressList> l3InterfaceIpv4AddressList = new ArrayList<L3InterfaceIpv4AddressList>();
+    private List<L3InterfaceIpv4AddressList> l3InterfaceIpv4AddressList = new ArrayList<>();
     @JsonProperty("l3-interface-ipv6-address-list")
-    private List<L3InterfaceIpv6AddressList> l3InterfaceIpv6AddressList = new ArrayList<L3InterfaceIpv6AddressList>();
+    private List<L3InterfaceIpv6AddressList> l3InterfaceIpv6AddressList = new ArrayList<>();
 
     public String getInterfaceName() {
         return interfaceName;

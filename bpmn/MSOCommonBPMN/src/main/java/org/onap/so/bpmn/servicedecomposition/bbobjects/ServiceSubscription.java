@@ -41,7 +41,7 @@ public class ServiceSubscription implements Serializable, ShallowCopy<ServiceSub
     @JsonProperty("temp-ub-sub-account-id")
     private String tempUbSubAccountId;
     @JsonProperty("service-instances")
-    private List<ServiceInstance> serviceInstances = new ArrayList<ServiceInstance>();
+    private List<ServiceInstance> serviceInstances = new ArrayList<>();
 
     public String getServiceType() {
         return serviceType;
