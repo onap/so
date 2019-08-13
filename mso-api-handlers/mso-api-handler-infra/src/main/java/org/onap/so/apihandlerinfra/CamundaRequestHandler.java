@@ -115,7 +115,7 @@ public class CamundaRequestHandler {
 
         List<HistoricProcessInstanceEntity> historicProcessInstanceList = response.getBody();
 
-        if (historicProcessInstanceList != null) {
+        if (historicProcessInstanceList != null && !historicProcessInstanceList.isEmpty()) {
             Collections.reverse(historicProcessInstanceList);
             processInstanceId = historicProcessInstanceList.get(0).getId();
         } else {
