@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da5f1575_0371d63e",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/client/ASDCController.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 740,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-08-14T14:04:11Z",
+      "side": 0,
+      "message": "removing this might cause NullPointerException in any class that uses getResourceInstance() in \nResourceStructure",
+      "range": {
+        "startLine": 739,
+        "startChar": 49,
+        "endLine": 740,
+        "endChar": 61
+      },
+      "revId": "6aae98ed959c27cb86a8d2cdf2861eb33eb58ccf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
