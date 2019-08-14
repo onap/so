@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a1bc5d88_e34ad4d5",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/CamundaRequestHandlerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-08-14T10:22:47Z",
+      "side": 1,
+      "message": "this does not throw IOException, remove it please",
+      "range": {
+        "startLine": 199,
+        "startChar": 65,
+        "endLine": 199,
+        "endChar": 76
+      },
+      "revId": "a4f3079cca05c7852b9183b4ec2fd55b0fadb88a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9fcbae8e_7b079cfe",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/CamundaRequestHandlerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-08-14T10:22:47Z",
+      "side": 1,
+      "message": "remove it",
+      "range": {
+        "startLine": 200,
+        "startChar": 8,
+        "endLine": 200,
+        "endChar": 84
+      },
+      "revId": "a4f3079cca05c7852b9183b4ec2fd55b0fadb88a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2fe8e504_60fcb285",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/java/org/onap/so/apihandlerinfra/CamundaRequestHandlerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-08-14T10:22:47Z",
+      "side": 1,
+      "message": "change to Collections.emptyList()",
+      "range": {
+        "startLine": 202,
+        "startChar": 37,
+        "endLine": 202,
+        "endChar": 56
+      },
+      "revId": "a4f3079cca05c7852b9183b4ec2fd55b0fadb88a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
