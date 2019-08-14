@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "08401134_afc3c63c",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/java/org/onap/so/adapters/catalogdb/SoCadiFilter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-08-14T13:56:45Z",
+      "side": 1,
+      "message": "SecurityFilters and SecurityFilters  is copied in each adapter, would suggest to move it to common module",
+      "range": {
+        "startLine": 37,
+        "startChar": 13,
+        "endLine": 37,
+        "endChar": 26
+      },
+      "revId": "aa247d1acfbcc9ed5e66b7f09d213ee1ec186953",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
