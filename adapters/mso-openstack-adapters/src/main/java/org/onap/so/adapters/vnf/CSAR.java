@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,7 +40,7 @@ import com.google.common.io.Files;
 /**
  * The purpose of this class is to create a CSAR byte array from Vdu inputs for the purpose of forwarding to a TOSCA
  * orchestrator.
- * 
+ *
  * @author DeWayne
  *
  */
@@ -54,7 +54,7 @@ public class CSAR {
 
     /**
      * Creates a byte array representation of a CSAR corresponding to the VduBlueprint arg in the constructor.
-     * 
+     *
      * @return
      * @throws VnfException
      */
@@ -139,12 +139,15 @@ public class CSAR {
 
     /**
      * Compresses (ZIPs) a directory tree
-     * 
+     *
      * @param dir
      * @throws IOException
      */
     private void compressTree(ZipOutputStream zos, String path, File basedir, File dir) throws IOException {
         if (!dir.isDirectory())
+            return;
+
+        if (dir.listFiles() == null)
             return;
 
         for (File f : dir.listFiles()) {
