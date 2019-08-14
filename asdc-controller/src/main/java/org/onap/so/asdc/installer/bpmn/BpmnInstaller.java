@@ -33,7 +33,6 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
-import org.onap.so.logger.LoggingAnchor;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
@@ -49,6 +48,7 @@ import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.onap.so.asdc.client.ASDCConfiguration;
 import org.onap.so.logger.ErrorCode;
+import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,9 +71,8 @@ public class BpmnInstaller {
 
     public void installBpmn(String csarFilePath) {
         logger.info("Deploying BPMN files from {}", csarFilePath);
-        try {
-            ZipInputStream csarFile =
-                    new ZipInputStream(new FileInputStream(Paths.get(csarFilePath).normalize().toString()));
+        try (ZipInputStream csarFile =
+                new ZipInputStream(new FileInputStream(Paths.get(csarFilePath).normalize().toString()))) {
             ZipEntry entry = csarFile.getNextEntry();
 
             while (entry != null) {
@@ -103,7 +102,6 @@ public class BpmnInstaller {
                 }
                 entry = csarFile.getNextEntry();
             }
-            csarFile.close();
         } catch (IOException ex) {
             logger.debug("Exception :", ex);
             logger.error(LoggingAnchor.FIVE, MessageEnum.ASDC_ARTIFACT_NOT_DEPLOYED_DETAIL.toString(), csarFilePath,

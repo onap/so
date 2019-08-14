@@ -35,11 +35,12 @@ public class DefaultDmaapPropertiesImpl implements DmaapProperties {
 
     public DefaultDmaapPropertiesImpl() throws IOException {
         File initialFile = new File("src/test/resources/dmaap.properties");
-        InputStream targetStream = new FileInputStream(initialFile);
         Properties properties = new Properties();
-        properties.load(targetStream);
-        this.properties = new HashMap<>();
-        properties.forEach((key, value) -> this.properties.put((String) key, (String) value));
+        try (InputStream targetStream = new FileInputStream(initialFile)) {
+            properties.load(targetStream);
+            this.properties = new HashMap<>();
+            properties.forEach((key, value) -> this.properties.put((String) key, (String) value));
+        }
     }
 
     @Override
