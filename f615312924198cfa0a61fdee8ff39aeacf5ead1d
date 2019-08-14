@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f404f49b_795d2e98",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/ExtractPojosForBB.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-08-14T10:07:16Z",
+      "side": 1,
+      "message": "it is only my suggestion, I think this form is more readable:\n\nlogger.warn(\"printing param1 {} and param2 {}\", param1, param2)",
+      "range": {
+        "startLine": 109,
+        "startChar": 12,
+        "endLine": 111,
+        "endChar": 36
+      },
+      "revId": "f615312924198cfa0a61fdee8ff39aeacf5ead1d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3d2196a7_25363c54",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/ExtractPojosForBB.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-08-14T10:07:16Z",
+      "side": 1,
+      "message": "please delete this method, it is not used",
+      "range": {
+        "startLine": 122,
+        "startChar": 4,
+        "endLine": 122,
+        "endChar": 68
+      },
+      "revId": "f615312924198cfa0a61fdee8ff39aeacf5ead1d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
