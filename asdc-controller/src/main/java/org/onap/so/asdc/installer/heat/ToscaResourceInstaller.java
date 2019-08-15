@@ -1897,6 +1897,7 @@ public class ToscaResourceInstaller {
                 vnfcCustomization
                         .setDescription(testNull(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION)));
                 vnfcCustomization.setResourceInput(getVnfcResourceInput(vfcTemplate, inputList));
+                vnfcCustomization.setVnfcInstanceGroupCustomization(vfcInstanceGroupCustom);
                 List<VnfcCustomization> vnfcCustomizations = vfcInstanceGroupCustom.getVnfcCustomizations();
 
                 if (vnfcCustomizations == null) {
