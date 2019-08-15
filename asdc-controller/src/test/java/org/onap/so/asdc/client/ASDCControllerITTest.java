@@ -33,6 +33,7 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.asdc.BaseTest;
 import org.onap.so.asdc.client.exceptions.ASDCControllerException;
 import org.onap.so.asdc.client.test.emulators.ArtifactInfoImpl;
@@ -55,6 +56,7 @@ import org.onap.so.db.request.beans.WatchdogComponentDistributionStatus;
 import org.onap.so.db.request.data.repository.WatchdogComponentDistributionStatusRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -270,6 +272,35 @@ public class ASDCControllerITTest extends BaseTest {
             assertEquals("COMPONENT_DONE_OK", distributionStatus.getComponentDistributionStatus());
             assertEquals("SO", distributionStatus.getComponentName());
 
+
+        } catch (Exception e) {
+            logger.info(e.getMessage(), e);
+            fail(e.getMessage());
+        }
+    }
+
+    /**
+     * Test to check RequestId is being set using the DistributionID.
+     */
+    @Test
+    public void treatNotification_verifyRequestID() {
+
+        String serviceUuid = "efaea486-561f-4159-9191-a8d3cb346728";
+        String serviceInvariantUuid = "f2edfbf4-bb0a-4fe7-a57a-71362d4b0b23";
+        distributionId = "bb15de12-166d-4e45-9e5f-4b3f25200d7b";
+
+        initMockAaiServer(serviceUuid, serviceInvariantUuid);
+
+        NotificationDataImpl notificationData = new NotificationDataImpl();
+        notificationData.setServiceUUID(serviceUuid);
+        notificationData.setDistributionID(distributionId);
+        notificationData.setServiceInvariantUUID(serviceInvariantUuid);
+        notificationData.setServiceVersion("1.0");
+
+        try {
+            asdcController.treatNotification(notificationData);
+            logger.info("Verify RequestId : {}", MDC.get(ONAPLogConstants.MDCs.REQUEST_ID));
+            assertEquals("bb15de12-166d-4e45-9e5f-4b3f25200d7b", MDC.get(ONAPLogConstants.MDCs.REQUEST_ID));
 
         } catch (Exception e) {
             logger.info(e.getMessage(), e);

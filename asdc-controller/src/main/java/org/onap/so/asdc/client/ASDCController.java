@@ -37,6 +37,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import org.onap.so.logger.LoggingAnchor;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.sdc.api.IDistributionClient;
 import org.onap.sdc.api.consumer.IDistributionStatusMessage;
 import org.onap.sdc.api.consumer.IFinalDistrStatusMessage;
@@ -71,6 +72,7 @@ import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Component;
@@ -588,6 +590,10 @@ public class ASDCController {
         logger.info(LoggingAnchor.FOUR, MessageEnum.ASDC_RECEIVE_CALLBACK_NOTIF.toString(),
                 String.valueOf(noOfArtifacts), iNotif.getServiceUUID(), "ASDC");
         try {
+
+            if (iNotif.getDistributionID() != null && !iNotif.getDistributionID().isEmpty()) {
+                MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, iNotif.getDistributionID());
+            }
             logger.debug(ASDCNotificationLogging.dumpASDCNotification(iNotif));
             logger.info(LoggingAnchor.FOUR, MessageEnum.ASDC_RECEIVE_SERVICE_NOTIF.toString(), iNotif.getServiceUUID(),
                     "ASDC", "treatNotification");
