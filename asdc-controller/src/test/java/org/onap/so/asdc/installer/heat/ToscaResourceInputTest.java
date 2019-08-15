@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.onap.sdc.tosca.parser.api.IEntityDetails;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
 import org.onap.sdc.toscaparser.api.Property;
@@ -49,6 +50,9 @@ public class ToscaResourceInputTest {
     NodeTemplate nodeTemplate;
 
     @Mock
+    IEntityDetails entityDetails;
+
+    @Mock
     Property property;
 
     @Mock
@@ -65,16 +69,16 @@ public class ToscaResourceInputTest {
         Map<String, Object> map = new HashMap<>();
         map.put("customizationUUID", "69df3303-d2b3-47a1-9d04-41604d3a95fd");
         Metadata metadata = new Metadata(map);
-        when(nodeTemplate.getProperties()).thenReturn(hashMap);
+        when(entityDetails.getProperties()).thenReturn(hashMap);
         when(property.getValue()).thenReturn(getInput);
         when(getInput.getInputName()).thenReturn("nameKey");
         when(input.getName()).thenReturn("nameKey");
         when(input.getDefault()).thenReturn("defaultValue");
         when(getInput.toString()).thenReturn("getinput:[sites,INDEX,role]");
-        when(nodeTemplate.getMetaData()).thenReturn(metadata);
+        when(entityDetails.getMetadata()).thenReturn(metadata);
         List<Input> inputs = new ArrayList<>();
         inputs.add(input);
-        String resourceInput = toscaResourceInstaller.getVnfcResourceInput(nodeTemplate, inputs);
+        String resourceInput = toscaResourceInstaller.getVnfcResourceInput(entityDetails, inputs);
         assertEquals("{\\\"key1\\\":\\\"[sites,INDEX,role]|defaultValue\\\"}", resourceInput);
     }
 

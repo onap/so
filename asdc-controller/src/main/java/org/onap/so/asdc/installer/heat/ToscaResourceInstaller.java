@@ -47,6 +47,7 @@ import org.onap.sdc.api.notification.IStatusData;
 import org.onap.sdc.tosca.parser.api.IEntityDetails;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.elements.queries.EntityQuery;
+import org.onap.sdc.tosca.parser.elements.queries.EntityQuery.EntityQueryBuilder;
 import org.onap.sdc.tosca.parser.elements.queries.TopologyTemplateQuery;
 import org.onap.sdc.tosca.parser.elements.queries.TopologyTemplateQuery.TopologyTemplateQueryBuilder;
 import org.onap.sdc.tosca.parser.enums.SdcTypes;
@@ -1015,17 +1016,18 @@ public class ToscaResourceInstaller {
 
 
                 // Check for VNFC Instance Group info and add it if there is
-                List<Group> groupList =
-                        toscaResourceStruct.getSdcCsarHelper().getGroupsOfOriginOfNodeTemplateByToscaGroupType(
-                                nodeTemplate, "org.openecomp.groups.VfcInstanceGroup");
+                List<IEntityDetails> vfcEntityList = getEntityDetails(toscaResourceStruct,
+                        "org.openecomp.groups.VfcInstanceGroup",
+                        TopologyTemplateQuery.newBuilder(SdcTypes.VF).customizationUUID(vfCustomizationUUID), false);
 
-                for (Group group : groupList) {
+
+                for (IEntityDetails groupEntity : vfcEntityList) {
                     VnfcInstanceGroupCustomization vnfcInstanceGroupCustomization =
-                            createVNFCInstanceGroup(nodeTemplate, group, vnfResource, toscaResourceStruct);
+                            createVNFCInstanceGroup(groupEntity, nodeTemplate, vnfResource, toscaResourceStruct);
                     vnfcInstanceGroupCustomizationRepo.saveAndFlush(vnfcInstanceGroupCustomization);
                 }
 
-                List<String> seqResult = processVNFCGroupSequence(toscaResourceStruct, groupList);
+                List<String> seqResult = processVNFCGroupSequence(toscaResourceStruct, vfcEntityList);
                 if (!CollectionUtils.isEmpty(seqResult)) {
                     String resultStr = seqResult.stream().collect(Collectors.joining(","));
                     vnfResource.setVnfcInstanceGroupOrder(resultStr);
@@ -1043,82 +1045,90 @@ public class ToscaResourceInstaller {
     }
 
     private List<String> processVNFCGroupSequence(ToscaResourceStructure toscaResourceStructure,
-            List<Group> groupList) {
-        if (CollectionUtils.isEmpty(groupList)) {
+            List<IEntityDetails> groupEntityDetails) {
+        if (CollectionUtils.isEmpty(groupEntityDetails)) {
             return Collections.emptyList();
         }
 
         ISdcCsarHelper iSdcCsarHelper = toscaResourceStructure.getSdcCsarHelper();
-        List<String> strSequence = new ArrayList<>(groupList.size());
-        List<Group> tempGroupList = new ArrayList<>(groupList.size());
-        List<NodeTemplate> nodes = new ArrayList<>();
-        tempGroupList.addAll(groupList);
+        List<String> strSequence = new ArrayList<>(groupEntityDetails.size());
+        List<IEntityDetails> tempEntityList = new ArrayList<>(groupEntityDetails.size());
+        List<IEntityDetails> entities = new ArrayList<>();
+        tempEntityList.addAll(groupEntityDetails);
 
-        for (Group group : groupList) {
-            List<NodeTemplate> nodeList = group.getMemberNodes();
+        for (IEntityDetails vnfcEntityDetails : groupEntityDetails) {
+
+            List<IEntityDetails> vnfcMemberNodes = vnfcEntityDetails.getMemberNodes();
+
             boolean hasRequirements = false;
-            for (NodeTemplate node : nodeList) {
-                RequirementAssignments requirements = iSdcCsarHelper.getRequirementsOf(node);
-                if (requirements != null && requirements.getAll() != null && !requirements.getAll().isEmpty()) {
+            for (IEntityDetails vnfcDetails : vnfcMemberNodes) {
+
+                Map<String, RequirementAssignment> requirements = vnfcDetails.getRequirements();
+
+                if (requirements != null && !requirements.isEmpty()) {
                     hasRequirements = true;
                     break;
                 }
             }
 
             if (!hasRequirements) {
-                strSequence.add(group.getName());
-                tempGroupList.remove(group);
-                nodes.addAll(nodeList);
+                strSequence.add(vnfcEntityDetails.getName());
+                tempEntityList.remove(vnfcEntityDetails);
+                entities.addAll(vnfcMemberNodes);
             }
         }
 
-        getVNFCGroupSequenceList(strSequence, tempGroupList, nodes, iSdcCsarHelper);
+        getVNFCGroupSequenceList(strSequence, tempEntityList, entities, iSdcCsarHelper);
 
         return strSequence;
 
     }
 
-    private void getVNFCGroupSequenceList(List<String> strSequence, List<Group> groupList, List<NodeTemplate> nodes,
-            ISdcCsarHelper iSdcCsarHelper) {
-        if (CollectionUtils.isEmpty(groupList)) {
+    private void getVNFCGroupSequenceList(List<String> strSequence, List<IEntityDetails> vnfcGroupDetails,
+            List<IEntityDetails> vnfcMemberNodes, ISdcCsarHelper iSdcCsarHelper) {
+        if (CollectionUtils.isEmpty(vnfcGroupDetails)) {
             return;
         }
 
-        List<Group> tempGroupList = new ArrayList<>();
-        tempGroupList.addAll(groupList);
+        List<IEntityDetails> tempGroupList = new ArrayList<>();
+        tempGroupList.addAll(vnfcGroupDetails);
 
-        for (Group group : groupList) {
-            boolean isAllExists = true;
-            ArrayList<NodeTemplate> members = group.getMemberNodes();
-            for (NodeTemplate memberNode : members) {
-                RequirementAssignments requirements = iSdcCsarHelper.getRequirementsOf(memberNode);
-                if (requirements == null || requirements.getAll() == null || requirements.getAll().isEmpty()) {
+        for (IEntityDetails vnfcGroup : vnfcGroupDetails) {
+            List<IEntityDetails> members = vnfcGroup.getMemberNodes();
+            for (IEntityDetails memberNode : members) {
+                boolean isAllExists = true;
+
+
+                Map<String, RequirementAssignment> requirements = memberNode.getRequirements();
+
+                if (requirements == null || requirements.isEmpty()) {
                     continue;
                 }
-                List<RequirementAssignment> rqaList = requirements.getAll();
-                for (RequirementAssignment rqa : rqaList) {
+
+
+                for (Map.Entry<String, RequirementAssignment> entry : requirements.entrySet()) {
+                    RequirementAssignment rqa = entry.getValue();
                     String name = rqa.getNodeTemplateName();
-                    Optional<NodeTemplate> findNode =
-                            nodes.stream().filter(node -> node.getName().equals(name)).findFirst();
-                    if (!findNode.isPresent()) {
-                        isAllExists = false;
-                        break;
+                    for (IEntityDetails node : vnfcMemberNodes) {
+                        if (name.equals(node.getName())) {
+                            break;
+                        }
                     }
-                }
-                if (!isAllExists) {
+
+                    isAllExists = false;
                     break;
                 }
+
+                if (isAllExists) {
+                    strSequence.add(vnfcGroup.getName());
+                    tempGroupList.remove(vnfcGroupDetails);
+                    vnfcMemberNodes.addAll(vnfcGroupDetails);
+                }
             }
 
-            if (isAllExists) {
-                strSequence.add(group.getName());
-                tempGroupList.remove(group);
-                nodes.addAll(group.getMemberNodes());
+            if (!tempGroupList.isEmpty() && tempGroupList.size() < vnfcGroupDetails.size()) {
+                getVNFCGroupSequenceList(strSequence, tempGroupList, vnfcMemberNodes, iSdcCsarHelper);
             }
-        }
-
-        if (!tempGroupList.isEmpty() && tempGroupList.size() < groupList.size()) {
-            getVNFCGroupSequenceList(strSequence, tempGroupList, nodes, iSdcCsarHelper);
         }
     }
 
@@ -1822,10 +1832,11 @@ public class ToscaResourceInstaller {
         return collectionNetworkResourceCustomization;
     }
 
-    protected VnfcInstanceGroupCustomization createVNFCInstanceGroup(NodeTemplate vnfcNodeTemplate, Group group,
-            VnfResourceCustomization vnfResourceCustomization, ToscaResourceStructure toscaResourceStructure) {
+    protected VnfcInstanceGroupCustomization createVNFCInstanceGroup(IEntityDetails vfcInstanceEntity,
+            NodeTemplate vnfcNodeTemplate, VnfResourceCustomization vnfResourceCustomization,
+            ToscaResourceStructure toscaResourceStructure) {
 
-        Metadata instanceMetadata = group.getMetadata();
+        Metadata instanceMetadata = vfcInstanceEntity.getMetadata();
 
         InstanceGroup existingInstanceGroup =
                 instanceGroupRepo.findByModelUUID(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
@@ -1839,7 +1850,7 @@ public class ToscaResourceInstaller {
                     .setModelInvariantUUID(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID));
             vfcInstanceGroup.setModelUUID(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
             vfcInstanceGroup.setModelVersion(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_VERSION));
-            vfcInstanceGroup.setToscaNodeType(group.getType());
+            vfcInstanceGroup.setToscaNodeType(vfcInstanceEntity.getToscaType());
             vfcInstanceGroup.setRole("SUB-INTERFACE"); // Set Role
             vfcInstanceGroup.setType(InstanceGroupType.VNFC); // Set type
         } else {
@@ -1858,45 +1869,64 @@ public class ToscaResourceInstaller {
         vfcInstanceGroupCustom.setDescription(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION));
 
         String getInputName = null;
-        String groupProperty = toscaResourceStructure.getSdcCsarHelper().getGroupPropertyLeafValue(group,
-                "vfc_instance_group_function");
-        if (groupProperty != null) {
-            int getInputIndex = groupProperty.indexOf("{get_input=");
-            if (getInputIndex > -1) {
-                getInputName = groupProperty.substring(getInputIndex + 11, groupProperty.length() - 1);
+
+        Map<String, Property> groupProperties = vfcInstanceEntity.getProperties();
+
+        for (String key : groupProperties.keySet()) {
+            Property property = groupProperties.get(key);
+
+            String vfcName = property.getName();
+
+            if (vfcName != null) {
+                if (vfcName.equals("vfc_instance_group_function")) {
+
+                    String vfcValue = property.getValue().toString();
+                    int getInputIndex = vfcValue.indexOf("{get_input=");
+                    if (getInputIndex > -1) {
+                        getInputName = vfcValue.substring(getInputIndex + 11, vfcValue.length() - 1);
+                    }
+
+                }
             }
+
         }
-        vfcInstanceGroupCustom.setFunction(toscaResourceStructure.getSdcCsarHelper()
-                .getNodeTemplatePropertyLeafValue(vnfcNodeTemplate, getInputName));
+
+        List<IEntityDetails> serviceEntityList =
+                getEntityDetails(toscaResourceStructure, EntityQuery.newBuilder(SdcTypes.VF).customizationUUID(
+                        vnfResourceCustomization.getModelCustomizationUUID()), SdcTypes.SERVICE, false);
+
+        if (serviceEntityList != null && !serviceEntityList.isEmpty()) {
+            vfcInstanceGroupCustom.setFunction(getLeafPropertyValue(serviceEntityList.get(0), getInputName));
+        }
+
         vfcInstanceGroupCustom.setInstanceGroup(vfcInstanceGroup);
 
         ArrayList<Input> inputs = vnfcNodeTemplate.getSubMappingToscaTemplate().getInputs();
-        createVFCInstanceGroupMembers(vfcInstanceGroupCustom, group, inputs);
+        createVFCInstanceGroupMembers(vfcInstanceGroupCustom, vfcInstanceEntity, inputs);
 
         return vfcInstanceGroupCustom;
-
     }
 
-    private void createVFCInstanceGroupMembers(VnfcInstanceGroupCustomization vfcInstanceGroupCustom, Group group,
-            List<Input> inputList) {
-        List<NodeTemplate> members = group.getMemberNodes();
+    private void createVFCInstanceGroupMembers(VnfcInstanceGroupCustomization vfcInstanceGroupCustom,
+            IEntityDetails vfcModuleEntity, List<Input> inputList) {
+        List<IEntityDetails> members = vfcModuleEntity.getMemberNodes();
         if (!CollectionUtils.isEmpty(members)) {
-            for (NodeTemplate vfcTemplate : members) {
+            for (IEntityDetails vfcEntity : members) {
                 VnfcCustomization vnfcCustomization = new VnfcCustomization();
 
-                Metadata metadata = vfcTemplate.getMetaData();
+                Metadata metadata = vfcEntity.getMetadata();
                 vnfcCustomization
                         .setModelCustomizationUUID(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
-                vnfcCustomization.setModelInstanceName(vfcTemplate.getName());
+                vnfcCustomization.setModelInstanceName(vfcEntity.getName());
                 vnfcCustomization.setModelUUID(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
                 vnfcCustomization
                         .setModelInvariantUUID(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID));
                 vnfcCustomization.setModelVersion(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_VERSION));
                 vnfcCustomization.setModelName(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
-                vnfcCustomization.setToscaNodeType(testNull(vfcTemplate.getType()));
+                vnfcCustomization.setToscaNodeType(testNull(vfcEntity.getToscaType()));
                 vnfcCustomization
                         .setDescription(testNull(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION)));
-                vnfcCustomization.setResourceInput(getVnfcResourceInput(vfcTemplate, inputList));
+                vnfcCustomization.setResourceInput(getVnfcResourceInput(vfcEntity, inputList));
                 List<VnfcCustomization> vnfcCustomizations = vfcInstanceGroupCustom.getVnfcCustomizations();
 
                 if (vnfcCustomizations == null) {
@@ -1908,9 +1938,9 @@ public class ToscaResourceInstaller {
         }
     }
 
-    public String getVnfcResourceInput(NodeTemplate vfcTemplate, List<Input> inputList) {
+    public String getVnfcResourceInput(IEntityDetails vfcEntity, List<Input> inputList) {
         Map<String, String> resouceRequest = new HashMap<>();
-        LinkedHashMap<String, Property> vfcTemplateProperties = vfcTemplate.getProperties();
+        Map<String, Property> vfcTemplateProperties = vfcEntity.getProperties();
         for (String key : vfcTemplateProperties.keySet()) {
             Property property = vfcTemplateProperties.get(key);
             String resourceValue = getValue(property.getValue(), inputList);
@@ -1918,7 +1948,7 @@ public class ToscaResourceInstaller {
         }
 
         String resourceCustomizationUuid =
-                vfcTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
+                vfcEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
 
         String jsonStr = null;
         try {
@@ -2700,11 +2730,35 @@ public class ToscaResourceInstaller {
 
     }
 
+    protected List<IEntityDetails> getEntityDetails(ToscaResourceStructure toscaResourceStruct, String entityType,
+            TopologyTemplateQueryBuilder topologyTemplateBuilder, boolean nestedSearch) {
+
+        EntityQuery entityQuery = EntityQuery.newBuilder(entityType).build();
+        TopologyTemplateQuery topologyTemplateQuery = topologyTemplateBuilder.build();
+        List<IEntityDetails> entityDetails =
+                toscaResourceStruct.getSdcCsarHelper().getEntity(entityQuery, topologyTemplateQuery, nestedSearch);
+
+        return entityDetails;
+
+    }
+
     protected List<IEntityDetails> getEntityDetails(ToscaResourceStructure toscaResourceStruct, SdcTypes entityType,
             TopologyTemplateQueryBuilder topologyTemplateBuilder, boolean nestedSearch) {
 
         EntityQuery entityQuery = EntityQuery.newBuilder(entityType).build();
         TopologyTemplateQuery topologyTemplateQuery = topologyTemplateBuilder.build();
+        List<IEntityDetails> entityDetails =
+                toscaResourceStruct.getSdcCsarHelper().getEntity(entityQuery, topologyTemplateQuery, nestedSearch);
+
+        return entityDetails;
+
+    }
+
+    protected List<IEntityDetails> getEntityDetails(ToscaResourceStructure toscaResourceStruct,
+            EntityQueryBuilder entityType, SdcTypes topologyTemplate, boolean nestedSearch) {
+
+        EntityQuery entityQuery = entityType.build();
+        TopologyTemplateQuery topologyTemplateQuery = TopologyTemplateQuery.newBuilder(topologyTemplate).build();
         List<IEntityDetails> entityDetails =
                 toscaResourceStruct.getSdcCsarHelper().getEntity(entityQuery, topologyTemplateQuery, nestedSearch);
 
