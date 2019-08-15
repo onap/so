@@ -42,6 +42,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.http.HttpStatus;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandler.common.ResponseBuilder;
@@ -411,7 +412,11 @@ public class OrchestrationRequests {
 
     protected String mapRequestStatusToRequest(InfraActiveRequests iar, String format) {
         if (iar.getRequestStatus() != null) {
-            if (!StringUtils.isBlank(format) && OrchestrationRequestFormat.DETAIL.toString().equalsIgnoreCase(format)) {
+            boolean requestFormat = false;
+            if (format != null) {
+                requestFormat = EnumUtils.isValidEnum(OrchestrationRequestFormat.class, format.toUpperCase());
+            }
+            if (requestFormat) {
                 return iar.getRequestStatus();
             } else {
                 if (Status.ABORTED.toString().equalsIgnoreCase(iar.getRequestStatus())
