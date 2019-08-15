@@ -136,8 +136,8 @@ public class MSOInfrastructureApplication {
                         deploymentBuilder.addString(workflowName, workflowBody);
                     }
                     deploymentBuilder.enableDuplicateFiltering(true);
-                    deploymentBuilder.deploy();
                 }
+                deploymentBuilder.deploy();
             }
         } catch (Exception e) {
             logger.warn("Unable to deploy custom workflows, " + e.getMessage());
