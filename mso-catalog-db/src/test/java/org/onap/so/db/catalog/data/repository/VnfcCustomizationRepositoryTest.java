@@ -37,6 +37,7 @@ public class VnfcCustomizationRepositoryTest extends BaseTest {
     private VnfcCustomizationRepository vnfcCustomizationRepository;
 
     @Test
+    @Transactional
     public void findAllTest() throws Exception {
         List<VnfcCustomization> vnfcCustomizationList = vnfcCustomizationRepository.findAll();
         Assert.assertFalse(CollectionUtils.isEmpty(vnfcCustomizationList));

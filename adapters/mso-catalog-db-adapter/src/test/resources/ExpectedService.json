@@ -23,6 +23,7 @@
       "toscaNodeType": "toscaNodeType",
       "nfFunction": "nfFunction",
       "nfRole": "nfRole",
+      "nfType": "nfType",
       "nfNamingCode": "nfNamingCode",
       "multiStageDesign": "multiStageDesign",
       "orchestrationMode": "orchestrationMode",

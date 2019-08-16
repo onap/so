@@ -70,7 +70,7 @@ public class ApiExceptionMapper implements ExceptionMapper<ApiException> {
 
     @Override
     public Response toResponse(ApiException exception) {
-
+        logger.error("Error During API Call", exception);
         return Response.status(exception.getHttpResponseCode()).entity(buildErrorString(exception)).build();
     }
 

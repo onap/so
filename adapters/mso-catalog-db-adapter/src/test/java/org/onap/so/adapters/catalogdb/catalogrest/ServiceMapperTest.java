@@ -67,6 +67,7 @@ public class ServiceMapperTest {
         testService.setModelVersion("modelVersion");
         testService.setServiceType("serviceType");
         testService.setServiceRole("serviceRole");
+
         testService.getVnfCustomizations().add(getTestVnfCustomization());
         return testService;
     }

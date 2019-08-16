@@ -47,7 +47,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {ValidationConfig.class})
-public class BuildingBlockValidatorRunnerTest {
+public class BuildingBlockValidatorRunnerTest extends BuildingBlockValidatorRunner {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();

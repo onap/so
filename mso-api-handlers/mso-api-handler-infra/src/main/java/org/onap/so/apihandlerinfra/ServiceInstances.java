@@ -51,6 +51,7 @@ import org.onap.so.apihandlerinfra.exceptions.RecipeNotFoundException;
 import org.onap.so.apihandlerinfra.exceptions.RequestDbFailureException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.apihandlerinfra.infra.rest.handler.AbstractRestHandler;
+import org.onap.so.apihandlerinfra.infra.rest.validators.RequestValidatorListenerRunner;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
 import org.onap.so.constants.Status;
 import org.onap.so.db.catalog.beans.NetworkResource;
@@ -123,6 +124,9 @@ public class ServiceInstances extends AbstractRestHandler {
 
     @Autowired
     private RequestHandlerUtils requestHandlerUtils;
+
+    @Autowired
+    private RequestValidatorListenerRunner requestValidatorListenerRunner;
 
     @POST
     @Path("/{version:[vV][5-7]}/serviceInstances")
@@ -764,6 +768,13 @@ public class ServiceInstances extends AbstractRestHandler {
 
     public Response serviceInstances(String requestJSON, Actions action, HashMap<String, String> instanceIdMap,
             String version, String requestId, String requestUri) throws ApiException {
+        return serviceInstances(requestJSON, action, instanceIdMap, version, requestId, requestUri, null);
+
+    }
+
+    public Response serviceInstances(String requestJSON, Actions action, HashMap<String, String> instanceIdMap,
+            String version, String requestId, String requestUri, HashMap<String, String> queryParams)
+            throws ApiException {
         String serviceInstanceId;
         Boolean aLaCarte = null;
         ServiceInstancesRequest sir;
@@ -771,6 +782,8 @@ public class ServiceInstances extends AbstractRestHandler {
 
         sir = requestHandlerUtils.convertJsonToServiceInstanceRequest(requestJSON, action, requestId, requestUri);
         action = handleReplaceInstance(action, sir);
+        requestValidatorListenerRunner.runValidations(requestUri, instanceIdMap, sir, queryParams);
+
         String requestScope = requestHandlerUtils.deriveRequestScope(action, sir, requestUri);
         InfraActiveRequests currentActiveReq =
                 msoRequest.createRequestObject(sir, action, requestId, Status.IN_PROGRESS, requestJSON, requestScope);

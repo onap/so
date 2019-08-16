@@ -47,12 +47,14 @@ public class Vnf implements Serializable {
     private String nfFunction;
     private String nfRole;
     private String nfNamingCode;
+    private String nfType;
     private String multiStageDesign;
     private String orchestrationMode;
     private String cloudVersionMin;
     private String cloudVersionMax;
     private String category;
     private String subCategory;
+    private Boolean nfDataValid;
     private List<VfModule> vfModule = new ArrayList<>();
 
     public List<VfModule> getVfModule() {
@@ -215,4 +217,21 @@ public class Vnf implements Serializable {
     public void setMultiStageDesign(String multiStepDesign) {
         this.multiStageDesign = multiStepDesign;
     }
+
+    public String getNfType() {
+        return nfType;
+    }
+
+    public void setNfType(String nfType) {
+        this.nfType = nfType;
+    }
+
+    public Boolean getNfDataValid() {
+        return nfDataValid;
+    }
+
+    public void setNfDataValid(Boolean nfDataValid) {
+        this.nfDataValid = nfDataValid;
+    }
+
 }

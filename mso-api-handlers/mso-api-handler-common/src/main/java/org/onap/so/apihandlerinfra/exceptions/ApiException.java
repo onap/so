@@ -29,7 +29,7 @@ public abstract class ApiException extends Exception {
     * 
     */
     private static final long serialVersionUID = 683162058616691134L;
-    private int httpResponseCode;
+    private int httpResponseCode = 500;
     private String messageID;
     private ErrorLoggerInfo errorLoggerInfo;
 
@@ -47,6 +47,15 @@ public abstract class ApiException extends Exception {
 
     public ApiException(String message, Throwable cause) {
         super(message, cause);
+    }
+
+    public ApiException(String message, int httpResponseCode) {
+        super(message);
+        this.httpResponseCode = httpResponseCode;
+    }
+
+    public ApiException(String message) {
+        super(message);
     }
 
     public String getMessageID() {

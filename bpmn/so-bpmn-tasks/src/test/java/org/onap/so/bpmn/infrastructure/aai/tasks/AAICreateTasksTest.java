@@ -54,16 +54,16 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.LineOfBusiness;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.NetworkPolicy;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Platform;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoGenericVnf;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
+import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
-import org.onap.so.client.aai.entities.uri.AAIResourceUri;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.Platform;
 
 public class AAICreateTasksTest extends BaseTaskTest {
 
@@ -269,24 +269,6 @@ public class AAICreateTasksTest extends BaseTaskTest {
         verify(aaiServiceInstanceResources, times(1)).existsOwningEntity(serviceInstance.getOwningEntity());
         verify(aaiServiceInstanceResources, times(1))
                 .createOwningEntityandConnectServiceInstance(serviceInstance.getOwningEntity(), serviceInstance);
-    }
-
-    @Test
-    public void createOwningEntityNullOwningEntityIdTest() throws Exception {
-        expectedException.expect(BpmnError.class);
-
-        serviceInstance.getOwningEntity().setOwningEntityId(null);
-
-        aaiCreateTasks.createOwningEntity(execution);
-    }
-
-    @Test
-    public void createOwningEntityEmptyOwningEntityIdTest() throws Exception {
-        expectedException.expect(BpmnError.class);
-
-        serviceInstance.getOwningEntity().setOwningEntityId("");
-
-        aaiCreateTasks.createOwningEntity(execution);
     }
 
     @Test

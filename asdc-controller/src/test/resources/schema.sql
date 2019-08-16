@@ -1113,6 +1113,7 @@ CREATE TABLE `vnf_resource_customization` (
   `VNF_RESOURCE_MODEL_UUID` varchar(200) NOT NULL,
   `SERVICE_MODEL_UUID` varchar(200) NOT NULL,
   `VNFCINSTANCEGROUP_ORDER` varchar(200) default NULL,
+  `NF_DATA_VALID` tinyint(1) DEFAULT '0',  
   PRIMARY KEY (`ID`),
   UNIQUE KEY `UK_vnf_resource_customization` (`MODEL_CUSTOMIZATION_UUID`,`SERVICE_MODEL_UUID`),
   KEY `fk_vnf_resource_customization__vnf_resource1_idx` (`VNF_RESOURCE_MODEL_UUID`),

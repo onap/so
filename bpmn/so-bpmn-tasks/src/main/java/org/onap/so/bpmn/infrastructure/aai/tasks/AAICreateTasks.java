@@ -71,6 +71,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import com.google.common.base.Strings;
 
 @Component
 public class AAICreateTasks {
@@ -184,24 +185,35 @@ public class AAICreateTasks {
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
             OwningEntity owningEntity = serviceInstance.getOwningEntity();
-            String owningEntityId = owningEntity.getOwningEntityId();
-            String owningEntityName = owningEntity.getOwningEntityName();
-            if (owningEntityId == null || "".equals(owningEntityId)) {
-                String msg = "Exception in AAICreateOwningEntity. OwningEntityId is null.";
+            if (Strings.isNullOrEmpty(owningEntity.getOwningEntityId())
+                    && Strings.isNullOrEmpty(owningEntity.getOwningEntityName())) {
+                String msg = "Exception in AAICreateOwningEntity. OwningEntityId and Name are null.";
                 execution.setVariable("ErrorCreateOEAAI", msg);
                 exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg);
+            } else if (Strings.isNullOrEmpty(owningEntity.getOwningEntityId())
+                    && !Strings.isNullOrEmpty(owningEntity.getOwningEntityName())) {
+                if (aaiSIResources.existsOwningEntityName(owningEntity.getOwningEntityName())) {
+                    org.onap.aai.domain.yang.OwningEntity aaiEntity =
+                            aaiSIResources.getOwningEntityByName(owningEntity.getOwningEntityName());
+                    owningEntity.setOwningEntityId(aaiEntity.getOwningEntityId());
+                    owningEntity.setOwningEntityName(owningEntity.getOwningEntityName());
+                    aaiSIResources.connectOwningEntityandServiceInstance(owningEntity, serviceInstance);
+                } else {
+                    owningEntity.setOwningEntityId(UUID.randomUUID().toString());
+                    aaiSIResources.createOwningEntityandConnectServiceInstance(owningEntity, serviceInstance);
+                }
             } else {
                 if (aaiSIResources.existsOwningEntity(owningEntity)) {
                     aaiSIResources.connectOwningEntityandServiceInstance(owningEntity, serviceInstance);
                 } else {
-                    if (owningEntityName == null || "".equals(owningEntityName)) {
+                    if (Strings.isNullOrEmpty(owningEntity.getOwningEntityName())) {
                         String msg =
                                 "Exception in AAICreateOwningEntity. Can't create an owningEntity with no owningEntityName.";
                         logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
                                 ErrorCode.UnknownError.getValue(), msg);
                         exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg);
                     } else {
-                        if (aaiSIResources.existsOwningEntityName(owningEntityName)) {
+                        if (aaiSIResources.existsOwningEntityName(owningEntity.getOwningEntityName())) {
                             String msg =
                                     "Exception in AAICreateOwningEntity. Can't create OwningEntity as name already exists in AAI associated with a different owning-entity-id (name must be unique)";
                             logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg,

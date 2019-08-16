@@ -20,9 +20,11 @@
 
 package org.onap.so.rest.catalog.beans;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.onap.so.db.catalog.beans.HeatEnvironment;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -37,6 +39,7 @@ public class VfModule {
     private String description;
     private Boolean isBase;
     private HeatTemplate heatTemplate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     private Date created;
     private List<HeatFile> heatFile;
 
@@ -50,9 +53,7 @@ public class VfModule {
     private HeatEnvironment heatEnv;
     private Boolean isVolumeGroup;
 
-
-    // Add in cvnfcCustomization
-
+    private List<Cvnfc> vnfc = new ArrayList<>();
 
 
     public String getModelName() {
@@ -191,6 +192,12 @@ public class VfModule {
         this.isVolumeGroup = isVolumeGroup;
     }
 
+    public List<Cvnfc> getVnfc() {
+        return vnfc;
+    }
 
+    public void setVnfc(List<Cvnfc> vnfc) {
+        this.vnfc = vnfc;
+    }
 
 }
