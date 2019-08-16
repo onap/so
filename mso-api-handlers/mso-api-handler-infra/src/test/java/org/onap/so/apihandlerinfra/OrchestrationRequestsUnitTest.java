@@ -295,6 +295,14 @@ public class OrchestrationRequestsUnitTest {
         assertEquals(Status.ABORTED.toString(), result);
     }
 
+    @Test
+    public void mapRequestStatusToRequestForFormatStatusDetailTest() throws ApiException {
+        iar.setRequestStatus(Status.ABORTED.toString());
+        String result = orchestrationRequests.mapRequestStatusToRequest(iar, "statusDetail");
+
+        assertEquals(Status.ABORTED.toString(), result);
+    }
+
 
     @Test
     public void mapRequestStatusToRequestForFormatEmptyStringTest() throws ApiException {
