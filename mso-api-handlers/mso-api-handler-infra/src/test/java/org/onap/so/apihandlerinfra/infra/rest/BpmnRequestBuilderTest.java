@@ -23,6 +23,7 @@ package org.onap.so.apihandlerinfra.infra.rest;
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import java.io.File;
 import java.util.Optional;
 import org.junit.Before;
@@ -32,7 +33,6 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.ServiceInstance;
@@ -40,6 +40,7 @@ import org.onap.aai.domain.yang.VfModule;
 import org.onap.aai.domain.yang.VolumeGroup;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
+import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
 import org.onap.so.db.request.client.RequestsDbClient;
@@ -55,15 +56,19 @@ public class BpmnRequestBuilderTest {
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
 
+
+    @Mock
+    private AAIResourcesClient aaiResourcesClient;
+
     @InjectMocks
-    @Spy
-    BpmnRequestBuilder reqBuilder;
+    private AAIDataRetrieval aaiData = spy(AAIDataRetrieval.class);
 
     @Mock
     private RequestsDbClient requestDBClient;
 
-    @Mock
-    private AAIResourcesClient aaiResourcesClient;
+    @InjectMocks
+    private BpmnRequestBuilder reqBuilder = spy(BpmnRequestBuilder.class);
+
 
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -71,8 +76,7 @@ public class BpmnRequestBuilderTest {
 
     @Before
     public void setup() {
-        reqBuilder.setAaiResourcesClient(aaiResourcesClient);
-
+        // aaiData.setAaiResourcesClient(aaiResourcesClient);
     }
 
     @Test
@@ -80,11 +84,11 @@ public class BpmnRequestBuilderTest {
         ServiceInstance service =
                 provider.getMapper().readValue(new File(RESOURCE_PATH + "ServiceInstance.json"), ServiceInstance.class);
 
-        doReturn(service).when(reqBuilder).getServiceInstance("serviceId");
+        doReturn(service).when(aaiData).getServiceInstance("serviceId");
         ServiceInstancesRequest expectedRequest = mapper
                 .readValue(new File(RESOURCE_PATH + "ExpectedServiceRequest.json"), ServiceInstancesRequest.class);
-        expectedRequest.getRequestDetails().getModelInfo().setModelId(null);
-        // bad getter/setter setting multiple fields
+        expectedRequest.getRequestDetails().getModelInfo().setModelId(null); // bad getter/setter setting multiple
+                                                                             // fields
         ServiceInstancesRequest actualRequest = reqBuilder.buildServiceDeleteRequest("serviceId");
         assertThat(actualRequest, sameBeanAs(expectedRequest));
     }
@@ -128,13 +132,16 @@ public class BpmnRequestBuilderTest {
                 AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "vnfId"));
         VolumeGroup volumeGroup =
                 provider.getMapper().readValue(new File(RESOURCE_PATH + "VolumeGroup.json"), VolumeGroup.class);
-
-        doReturn(Optional.of(volumeGroup)).when(aaiResourcesClient).get(VolumeGroup.class, AAIUriFactory
-                .createResourceUri(AAIObjectType.VOLUME_GROUP, "cloudOwner", "regionOne", "volumeGroupId"));
+        AAIResultWrapper wrapper = new AAIResultWrapper(volumeGroup);
+        doReturn(wrapper).when(aaiResourcesClient)
+                .get(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "vnfId")
+                        .relatedTo(AAIObjectType.VOLUME_GROUP, "volumeGroupId"));
 
         ServiceInstancesRequest expectedRequest = mapper
                 .readValue(new File(RESOURCE_PATH + "ExpectedVolumeGroupRequest.json"), ServiceInstancesRequest.class);
         ServiceInstancesRequest actualRequest = reqBuilder.buildVolumeGroupDeleteRequest("vnfId", "volumeGroupId");
         assertThat(actualRequest, sameBeanAs(expectedRequest));
     }
+
 }
+

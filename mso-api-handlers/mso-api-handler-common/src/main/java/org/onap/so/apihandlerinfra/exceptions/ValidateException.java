@@ -28,6 +28,11 @@ public class ValidateException extends ApiException {
     }
 
 
+    public ValidateException(String errorMessage, int httpResponseCode) {
+        super(errorMessage, httpResponseCode);
+    }
+
+
     public static class Builder extends ApiException.Builder<Builder> {
 
         public Builder(String message, int httpResponseCode, String messageID) {

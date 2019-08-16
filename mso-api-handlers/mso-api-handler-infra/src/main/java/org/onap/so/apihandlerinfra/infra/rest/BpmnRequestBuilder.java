@@ -33,10 +33,7 @@ import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.apihandlerinfra.infra.rest.exception.AAIEntityNotFound;
 import org.onap.so.apihandlerinfra.infra.rest.exception.CloudConfigurationNotFoundException;
 import org.onap.so.client.aai.AAIObjectType;
-import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
-import org.onap.so.client.aai.entities.uri.AAIResourceUri;
-import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.constants.Status;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
@@ -75,17 +72,19 @@ public class BpmnRequestBuilder {
     @Autowired
     private RequestsDbClient infraActiveRequestsClient;
 
+    @Autowired
+    private AAIDataRetrieval aaiDataRet;
+
     private ObjectMapper mapper = new ObjectMapper();
 
-    private AAIResourcesClient aaiResourcesClient;
 
     public ServiceInstancesRequest buildVFModuleDeleteRequest(String vnfId, String vfModuleId, ModelType modelType)
             throws AAIEntityNotFound {
-        GenericVnf vnf = getGenericVnf(vnfId);
+        GenericVnf vnf = aaiDataRet.getGenericVnf(vnfId);
         if (vnf == null) {
             throw new AAIEntityNotFound(GENERIC_VNF_NOT_FOUND_IN_INVENTORY_VNF_ID + vnfId);
         }
-        VfModule vfModule = getAAIVfModule(vnfId, vfModuleId);
+        VfModule vfModule = aaiDataRet.getAAIVfModule(vnfId, vfModuleId);
         if (vfModule == null) {
             throw new AAIEntityNotFound(VF_MODULE_NOT_FOUND_IN_INVENTORY_VNF_ID + vnfId + " vfModuleId: " + vfModuleId);
         }
@@ -94,11 +93,11 @@ public class BpmnRequestBuilder {
 
     public ServiceInstancesRequest buildVolumeGroupDeleteRequest(String vnfId, String volumeGroupId)
             throws AAIEntityNotFound {
-        GenericVnf vnf = getGenericVnf(vnfId);
+        GenericVnf vnf = aaiDataRet.getGenericVnf(vnfId);
         if (vnf == null) {
             throw new AAIEntityNotFound(GENERIC_VNF_NOT_FOUND_IN_INVENTORY_VNF_ID + vnfId);
         }
-        VolumeGroup volumeGroup = getVolumeGroup(vnfId, volumeGroupId);
+        VolumeGroup volumeGroup = aaiDataRet.getVolumeGroup(vnfId, volumeGroupId);
         if (volumeGroup == null) {
             throw new AAIEntityNotFound(
                     VF_MODULE_NOT_FOUND_IN_INVENTORY_VNF_ID + vnfId + " volumeGroupId: " + volumeGroupId);
@@ -107,7 +106,7 @@ public class BpmnRequestBuilder {
     }
 
     public ServiceInstancesRequest buildServiceDeleteRequest(String serviceInstanceId) throws AAIEntityNotFound {
-        ServiceInstance serviceInstance = getServiceInstance(serviceInstanceId);
+        ServiceInstance serviceInstance = aaiDataRet.getServiceInstance(serviceInstanceId);
         if (serviceInstance == null) {
             throw new AAIEntityNotFound(
                     "ServiceInstance Not Found In Inventory, ServiceInstanceId: " + serviceInstanceId);
@@ -116,7 +115,7 @@ public class BpmnRequestBuilder {
     }
 
     public ServiceInstancesRequest buildVnfDeleteRequest(String vnfId) throws AAIEntityNotFound {
-        GenericVnf vnf = getGenericVnf(vnfId);
+        GenericVnf vnf = aaiDataRet.getGenericVnf(vnfId);
         if (vnf == null) {
             throw new AAIEntityNotFound(GENERIC_VNF_NOT_FOUND_IN_INVENTORY_VNF_ID + vnfId);
         }
@@ -124,7 +123,7 @@ public class BpmnRequestBuilder {
     }
 
     public ServiceInstancesRequest buildNetworkDeleteRequest(String networkId) throws AAIEntityNotFound {
-        L3Network network = getNetwork(networkId);
+        L3Network network = aaiDataRet.getNetwork(networkId);
         if (network == null) {
             throw new AAIEntityNotFound("Network Not Found In Inventory, NetworkId: " + networkId);
         }
@@ -407,72 +406,5 @@ public class BpmnRequestBuilder {
         return requestParams;
     }
 
-    public VfModule getAAIVfModule(String vnfId, String vfModuleId) {
-        return this.getAaiResourcesClient()
-                .get(VfModule.class, AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId))
-                .orElseGet(() -> {
-                    logger.debug("No Vf Module found in A&AI VnfId: {}" + ", VfModuleId: {}", vnfId, vfModuleId);
-                    return null;
-                });
-    }
-
-    public GenericVnf getGenericVnf(String vnfId) {
-        return this.getAaiResourcesClient()
-                .get(GenericVnf.class, AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId))
-                .orElseGet(() -> {
-                    logger.debug("No Generic VNF found in A&AI VnfId: {}", vnfId);
-                    return null;
-                });
-    }
-
-    public VolumeGroup getVolumeGroup(String vnfId, String volumeGroupId) throws AAIEntityNotFound {
-        GenericVnf vnf = getGenericVnf(vnfId);
-        AAIResultWrapper wrapper = new AAIResultWrapper(vnf);
-        List<AAIResourceUri> listVserverWrapper;
-        Optional<AAIResourceUri> volumeGroupURI;
-        if (wrapper.getRelationships().isPresent()) {
-            listVserverWrapper = wrapper.getRelationships().get().getRelatedUris(AAIObjectType.VOLUME_GROUP);
-            volumeGroupURI = listVserverWrapper.stream()
-                    .filter(resourceURI -> resourceURI.getURIKeys().get("volume-group-id").equals(volumeGroupId))
-                    .findFirst();
-        } else {
-            throw new AAIEntityNotFound(
-                    VF_MODULE_NOT_FOUND_IN_INVENTORY_VNF_ID + vnfId + " volumeGroupId: " + volumeGroupId);
-        }
-        return this.getAaiResourcesClient().get(VolumeGroup.class, volumeGroupURI.get()).orElseGet(() -> {
-            logger.debug("No VolumeGroup in A&AI found: {}", vnfId);
-            return null;
-        });
-    }
-
-    public ServiceInstance getServiceInstance(String serviceInstanceId) {
-        return this.getAaiResourcesClient()
-                .get(ServiceInstance.class,
-                        AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId))
-                .orElseGet(() -> {
-                    logger.debug("No Service Instance found in A&AI ServiceInstanceId: {}", serviceInstanceId);
-                    return null;
-                });
-    }
-
-    public L3Network getNetwork(String networkId) {
-        return this.getAaiResourcesClient()
-                .get(L3Network.class, AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId))
-                .orElseGet(() -> {
-                    logger.debug("No Network found in A&AI NetworkId: {}", networkId);
-                    return null;
-                });
-    }
-
-    public AAIResourcesClient getAaiResourcesClient() {
-        if (aaiResourcesClient == null) {
-            aaiResourcesClient = new AAIResourcesClient();
-        }
-        return aaiResourcesClient;
-    }
-
-    public void setAaiResourcesClient(AAIResourcesClient aaiResourcesClient) {
-        this.aaiResourcesClient = aaiResourcesClient;
-    }
 
 }

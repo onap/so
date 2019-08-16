@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.common.listener;
+package org.onap.so.listener;
 
 import java.lang.annotation.Annotation;
 import java.util.Comparator;
@@ -27,7 +27,6 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.annotation.Priority;
-import org.onap.so.client.exception.ExceptionBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
@@ -36,10 +35,7 @@ public abstract class ListenerRunner {
     @Autowired
     protected ApplicationContext context;
 
-    @Autowired
-    protected ExceptionBuilder exceptionBuilder;
-
-    protected <T> List<T> filterListeners(List<T> validators, Predicate<T> predicate) {
+    public <T> List<T> filterListeners(List<T> validators, Predicate<T> predicate) {
         return validators.stream().filter(item -> {
             return !item.getClass().isAnnotationPresent(Skip.class) && predicate.test(item);
         }).sorted(Comparator.comparing(item -> {

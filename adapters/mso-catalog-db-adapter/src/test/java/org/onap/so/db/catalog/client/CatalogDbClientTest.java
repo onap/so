@@ -22,15 +22,14 @@ package org.onap.so.db.catalog.client;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import java.util.List;
 import java.util.UUID;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.onap.so.adapters.catalogdb.CatalogDBApplication;
 import org.onap.so.adapters.catalogdb.CatalogDbAdapterBaseTest;
 import org.onap.so.db.catalog.beans.AuthenticationType;
 import org.onap.so.db.catalog.beans.CloudIdentity;
@@ -56,10 +55,7 @@ import org.onap.so.db.catalog.beans.macro.NorthBoundRequest;
 import org.onap.so.db.catalog.beans.macro.RainyDayHandlerStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 
 public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
 
@@ -73,6 +69,8 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
 
     @Autowired
     CatalogDbClientPortChanger client;
+
+
 
     @Before
     public void initialize() {
@@ -88,7 +86,7 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
     public void testGetRainyDayHandler_Regex() {
         RainyDayHandlerStatus rainyDayHandlerStatus = client.getRainyDayHandlerStatus("AssignServiceInstanceBB", "*",
                 "*", "*", "*", "The Flavor ID (nd.c6r16d20) could not be found.", "*");
-        Assert.assertEquals("Rollback", rainyDayHandlerStatus.getPolicy());
+        assertEquals("Rollback", rainyDayHandlerStatus.getPolicy());
     }
 
     @Test
@@ -97,105 +95,105 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
                 "*", "*", "*",
                 "resources.lba_0_dmz_vmi_0: Unknown id: Error: oper 1 url /fqname-to-id body {\"fq_name\": [\"zrdm6bvota05-dmz_sec_group\"], \"type\": \"security-group\"} response Name ['zrdm6bvota05-dmz_sec_group'] not found",
                 "*");
-        Assert.assertEquals("Rollback", rainyDayHandlerStatus.getPolicy());
+        assertEquals("Rollback", rainyDayHandlerStatus.getPolicy());
     }
 
     @Test
     public void testGetCloudSiteHappyPath() throws Exception {
         CloudSite cloudSite = client.getCloudSite(MTN13);
-        Assert.assertNotNull(cloudSite);
-        Assert.assertNotNull(cloudSite.getIdentityService());
-        Assert.assertEquals("MDT13", cloudSite.getClli());
-        Assert.assertEquals("mtn13", cloudSite.getRegionId());
-        Assert.assertEquals("MTN13", cloudSite.getIdentityServiceId());
+        assertNotNull(cloudSite);
+        assertNotNull(cloudSite.getIdentityService());
+        assertEquals("MDT13", cloudSite.getClli());
+        assertEquals("mtn13", cloudSite.getRegionId());
+        assertEquals("MTN13", cloudSite.getIdentityServiceId());
     }
 
     @Test
     public void testGetCloudSiteNotFound() throws Exception {
         CloudSite cloudSite = client.getCloudSite(UUID.randomUUID().toString());
-        Assert.assertNull(cloudSite);
+        assertNull(cloudSite);
     }
 
     @Test
     public void testGetCloudifyManagerHappyPath() throws Exception {
         CloudifyManager cloudifyManager = client.getCloudifyManager("mtn13");
-        Assert.assertNotNull(cloudifyManager);
-        Assert.assertEquals("http://localhost:28090/v2.0", cloudifyManager.getCloudifyUrl());
+        assertNotNull(cloudifyManager);
+        assertEquals("http://localhost:28090/v2.0", cloudifyManager.getCloudifyUrl());
 
     }
 
     @Test
     public void testGetCloudifyManagerNotFound() throws Exception {
         CloudifyManager cloudifyManager = client.getCloudifyManager(UUID.randomUUID().toString());
-        Assert.assertNull(cloudifyManager);
+        assertNull(cloudifyManager);
     }
 
 
     @Test
     public void testGetCloudSiteByClliAndAicVersionHappyPath() throws Exception {
         CloudSite cloudSite = client.getCloudSiteByClliAndAicVersion("MDT13", "2.5");
-        Assert.assertNotNull(cloudSite);
+        assertNotNull(cloudSite);
     }
 
     @Test
     public void testGetCloudSiteByClliAndAicVersionNotFound() throws Exception {
         CloudSite cloudSite = client.getCloudSiteByClliAndAicVersion("MDT13", "232496239746328");
-        Assert.assertNull(cloudSite);
+        assertNull(cloudSite);
     }
 
     @Test
     public void testGetServiceByID() throws Exception {
         Service serviceByID = client.getServiceByID("5df8b6de-2083-11e7-93ae-92361f002671");
-        Assert.assertNotNull(serviceByID);
-        Assert.assertEquals("MSOTADevInfra_vSAMP10a_Service", serviceByID.getModelName());
-        Assert.assertEquals("NA", serviceByID.getServiceType());
-        Assert.assertEquals("NA", serviceByID.getServiceRole());
+        assertNotNull(serviceByID);
+        assertEquals("MSOTADevInfra_vSAMP10a_Service", serviceByID.getModelName());
+        assertEquals("NA", serviceByID.getServiceType());
+        assertEquals("NA", serviceByID.getServiceRole());
     }
 
     @Test
     public void testGetServiceByIDNotFound() throws Exception {
         Service serviceByID = client.getServiceByID(UUID.randomUUID().toString());
-        Assert.assertNull(serviceByID);
+        assertNull(serviceByID);
     }
 
     @Test
     public void testGetVfModuleByModelUUID() throws Exception {
         VfModule vfModule = client.getVfModuleByModelUUID("20c4431c-246d-11e7-93ae-92361f002671");
-        Assert.assertNotNull(vfModule);
-        Assert.assertNotNull(vfModule.getVfModuleCustomization());
-        Assert.assertEquals("78ca26d0-246d-11e7-93ae-92361f002671", vfModule.getModelInvariantUUID());
-        Assert.assertEquals("vSAMP10aDEV::base::module-0", vfModule.getModelName());
+        assertNotNull(vfModule);
+        assertNotNull(vfModule.getVfModuleCustomization());
+        assertEquals("78ca26d0-246d-11e7-93ae-92361f002671", vfModule.getModelInvariantUUID());
+        assertEquals("vSAMP10aDEV::base::module-0", vfModule.getModelName());
     }
 
     @Test
     public void testGetVfModuleByModelUUIDNotFound() throws Exception {
         VfModule vfModule = client.getVfModuleByModelUUID(UUID.randomUUID().toString());
-        Assert.assertNull(vfModule);
+        assertNull(vfModule);
     }
 
     @Test
     public void testGetVnfResourceByModelUUID() throws Exception {
         VnfResource vnfResource = client.getVnfResourceByModelUUID("ff2ae348-214a-11e7-93ae-92361f002671");
-        Assert.assertNotNull(vnfResource);
-        Assert.assertEquals("vSAMP10a", vnfResource.getModelName());
+        assertNotNull(vnfResource);
+        assertEquals("vSAMP10a", vnfResource.getModelName());
     }
 
     @Test
     public void testGetVnfResourceByModelUUIDNotFound() throws Exception {
         VnfResource vnfResource = client.getVnfResourceByModelUUID(UUID.randomUUID().toString());
-        Assert.assertNull(vnfResource);
+        assertNull(vnfResource);
     }
 
     @Test
     public void testGetVnfResourceCustomizationByModelCustomizationUUID() {
         VnfResourceCustomization vnfResourceCustomization =
                 client.getVnfResourceCustomizationByModelCustomizationUUID("68dc9a92-214c-11e7-93ae-92361f002671");
-        Assert.assertNotNull(vnfResourceCustomization);
-        Assert.assertEquals("vSAMP", vnfResourceCustomization.getNfRole());
-        Assert.assertNotNull(vnfResourceCustomization.getModelCustomizationUUID());
-        Assert.assertNotNull(vnfResourceCustomization.getVnfResources());
-        Assert.assertNotNull(vnfResourceCustomization.getVfModuleCustomizations());
-        Assert.assertEquals("vSAMP10a", vnfResourceCustomization.getVnfResources().getModelName());
+        assertNotNull(vnfResourceCustomization);
+        assertEquals("vSAMP", vnfResourceCustomization.getNfRole());
+        assertNotNull(vnfResourceCustomization.getModelCustomizationUUID());
+        assertNotNull(vnfResourceCustomization.getVnfResources());
+        assertNotNull(vnfResourceCustomization.getVfModuleCustomizations());
+        assertEquals("vSAMP10a", vnfResourceCustomization.getVnfResources().getModelName());
         assertTrue("skip post instantiation configuration", vnfResourceCustomization.isSkipPostInstConf());
     }
 
@@ -203,15 +201,15 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
     public void testGetVnfResourceCustomizationByModelCustomizationUUINotFound() {
         VnfResourceCustomization vnfResourceCustomization =
                 client.getVnfResourceCustomizationByModelCustomizationUUID(UUID.randomUUID().toString());
-        Assert.assertNull(vnfResourceCustomization);
+        assertNull(vnfResourceCustomization);
     }
 
     @Test
     public void testGetInstanceGroupByModelUUID() {
         InstanceGroup instanceGroup = client.getInstanceGroupByModelUUID("0c8692ef-b9c0-435d-a738-edf31e71f38b");
-        Assert.assertNotNull(instanceGroup);
-        Assert.assertEquals("network_collection_resource_1806..NetworkCollection..0", instanceGroup.getModelName());
-        Assert.assertEquals("org.openecomp.resource.cr.NetworkCollectionResource1806",
+        assertNotNull(instanceGroup);
+        assertEquals("network_collection_resource_1806..NetworkCollection..0", instanceGroup.getModelName());
+        assertEquals("org.openecomp.resource.cr.NetworkCollectionResource1806",
                 instanceGroup.getToscaNodeType().toString());
     }
 
@@ -219,33 +217,33 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
     public void testGetVfModuleCustomizationByModelCuztomizationUUID() {
         VfModuleCustomization vfModuleCustomization =
                 client.getVfModuleCustomizationByModelCuztomizationUUID("cb82ffd8-252a-11e7-93ae-92361f002671");
-        Assert.assertNotNull(vfModuleCustomization);
-        Assert.assertNotNull(vfModuleCustomization.getModelCustomizationUUID());
-        Assert.assertEquals("base", vfModuleCustomization.getLabel());
+        assertNotNull(vfModuleCustomization);
+        assertNotNull(vfModuleCustomization.getModelCustomizationUUID());
+        assertEquals("base", vfModuleCustomization.getLabel());
     }
 
     @Test
     public void testGetVfModuleCustomizationByModelCuztomizationUUIDNotFound() {
         VfModuleCustomization vfModuleCustomization =
                 client.getVfModuleCustomizationByModelCuztomizationUUID(UUID.randomUUID().toString());
-        Assert.assertNull(vfModuleCustomization);
+        assertNull(vfModuleCustomization);
     }
 
     @Test
     public void testGetNetworkResourceCustomizationByModelCustomizationUUID() {
         NetworkResourceCustomization networkResourceCustomization =
                 client.getNetworkResourceCustomizationByModelCustomizationUUID("3bdbb104-476c-483e-9f8b-c095b3d308ac");
-        Assert.assertNotNull(networkResourceCustomization);
-        Assert.assertNotNull(networkResourceCustomization.getModelCustomizationUUID());
-        Assert.assertEquals("CONTRAIL30_GNDIRECT 9", networkResourceCustomization.getModelInstanceName());
-        Assert.assertNotNull(networkResourceCustomization.getNetworkResource());
+        assertNotNull(networkResourceCustomization);
+        assertNotNull(networkResourceCustomization.getModelCustomizationUUID());
+        assertEquals("CONTRAIL30_GNDIRECT 9", networkResourceCustomization.getModelInstanceName());
+        assertNotNull(networkResourceCustomization.getNetworkResource());
     }
 
     @Test
     public void testGetNetworkResourceCustomizationByModelCustomizationUUIDNotFound() {
         NetworkResourceCustomization networkResourceCustomization =
                 client.getNetworkResourceCustomizationByModelCustomizationUUID(UUID.randomUUID().toString());
-        Assert.assertNull(networkResourceCustomization);
+        assertNull(networkResourceCustomization);
     }
 
     @Test
@@ -253,10 +251,10 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         VfModuleCustomization vfModuleCustomization =
                 client.getVfModuleCustomizationByModelCustomizationUUIDAndVfModuleModelUUID(
                         "cb82ffd8-252a-11e7-93ae-92361f002672", "20c4431c-246d-11e7-93ae-92361f002672");
-        Assert.assertNotNull(vfModuleCustomization);
-        Assert.assertNotNull(vfModuleCustomization.getModelCustomizationUUID());
-        Assert.assertNotNull(vfModuleCustomization.getVfModule());
-        Assert.assertEquals("base", vfModuleCustomization.getLabel());
+        assertNotNull(vfModuleCustomization);
+        assertNotNull(vfModuleCustomization.getModelCustomizationUUID());
+        assertNotNull(vfModuleCustomization.getVfModule());
+        assertEquals("base", vfModuleCustomization.getLabel());
     }
 
     @Test
@@ -264,44 +262,43 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         VfModuleCustomization vfModuleCustomization =
                 client.getVfModuleCustomizationByModelCustomizationUUIDAndVfModuleModelUUID(
                         "cb82ffd8-252a-11e7-93ae-92361f002672", UUID.randomUUID().toString());
-        Assert.assertNull(vfModuleCustomization);
+        assertNull(vfModuleCustomization);
     }
 
     @Test
     public void testGetFirstByServiceModelUUIDAndAction() {
         ServiceRecipe serviceRecipe =
                 client.getFirstByServiceModelUUIDAndAction("4694a55f-58b3-4f17-92a5-796d6f5ffd0d", "createInstance");
-        Assert.assertNotNull(serviceRecipe);
-        Assert.assertNotNull(serviceRecipe.getServiceModelUUID());
-        Assert.assertNotNull(serviceRecipe.getAction());
-        Assert.assertEquals("/mso/async/services/CreateGenericALaCarteServiceInstance",
-                serviceRecipe.getOrchestrationUri());
-        Assert.assertEquals("MSOTADevInfra aLaCarte", serviceRecipe.getDescription());
+        assertNotNull(serviceRecipe);
+        assertNotNull(serviceRecipe.getServiceModelUUID());
+        assertNotNull(serviceRecipe.getAction());
+        assertEquals("/mso/async/services/CreateGenericALaCarteServiceInstance", serviceRecipe.getOrchestrationUri());
+        assertEquals("MSOTADevInfra aLaCarte", serviceRecipe.getDescription());
     }
 
     @Test
     public void testGetFirstByServiceModelUUIDAndActionNotFound() {
         ServiceRecipe serviceRecipe = client.getFirstByServiceModelUUIDAndAction("5df8b6de-2083-11e7-93ae-92361f002671",
                 UUID.randomUUID().toString());
-        Assert.assertNull(serviceRecipe);
+        assertNull(serviceRecipe);
     }
 
     @Test
     public void testGetFirstVnfResourceByModelInvariantUUIDAndModelVersion() {
         VnfResource vnfResource = client
                 .getFirstVnfResourceByModelInvariantUUIDAndModelVersion("2fff5b20-214b-11e7-93ae-92361f002671", "2.0");
-        Assert.assertNotNull(vnfResource);
-        Assert.assertNotNull(vnfResource.getModelInvariantId());
-        Assert.assertNotNull(vnfResource.getModelVersion());
-        Assert.assertNotNull(vnfResource.getHeatTemplates());
-        Assert.assertEquals("vSAMP10a", vnfResource.getModelName());
+        assertNotNull(vnfResource);
+        assertNotNull(vnfResource.getModelInvariantId());
+        assertNotNull(vnfResource.getModelVersion());
+        assertNotNull(vnfResource.getHeatTemplates());
+        assertEquals("vSAMP10a", vnfResource.getModelName());
     }
 
     @Test
     public void testGetFirstVnfResourceByModelInvariantUUIDAndModelVersionNotFound() {
         VnfResource vnfResource = client.getFirstVnfResourceByModelInvariantUUIDAndModelVersion(
                 "2fff5b20-214b-11e7-93ae-92361f002671", UUID.randomUUID().toString());
-        Assert.assertNull(vnfResource);
+        assertNull(vnfResource);
     }
 
     @Test
@@ -310,29 +307,28 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         vnfr.setModelUUID("ff2ae348-214a-11e7-93ae-92361f002671");
         VnfResourceCustomization firstVnfResourceCustomizationByModelInstanceNameAndVnfResources =
                 client.getFirstVnfResourceCustomizationByModelInstanceNameAndVnfResources("vSAMP10a 1", vnfr);
-        Assert.assertNotNull(firstVnfResourceCustomizationByModelInstanceNameAndVnfResources);
-        Assert.assertEquals("vSAMP", firstVnfResourceCustomizationByModelInstanceNameAndVnfResources.getNfRole());
-        Assert.assertEquals("vSAMP10a 1",
+        assertNotNull(firstVnfResourceCustomizationByModelInstanceNameAndVnfResources);
+        assertEquals("vSAMP", firstVnfResourceCustomizationByModelInstanceNameAndVnfResources.getNfRole());
+        assertEquals("vSAMP10a 1",
                 firstVnfResourceCustomizationByModelInstanceNameAndVnfResources.getModelInstanceName());
-        Assert.assertNotNull(firstVnfResourceCustomizationByModelInstanceNameAndVnfResources.getVnfResources());
-        Assert.assertNotNull(
-                firstVnfResourceCustomizationByModelInstanceNameAndVnfResources.getVfModuleCustomizations());
+        assertNotNull(firstVnfResourceCustomizationByModelInstanceNameAndVnfResources.getVnfResources());
+        assertNotNull(firstVnfResourceCustomizationByModelInstanceNameAndVnfResources.getVfModuleCustomizations());
     }
 
     @Test
     public void testGetFirstVnfRecipeByNfRoleAndAction() {
         VnfRecipe vnfRecipe = client.getFirstVnfRecipeByNfRoleAndAction("GR-API-DEFAULT", "createInstance");
-        Assert.assertNotNull(vnfRecipe);
-        Assert.assertNotNull(vnfRecipe.getNfRole());
-        Assert.assertNotNull(vnfRecipe.getAction());
-        Assert.assertEquals("Gr api recipe to create vnf", vnfRecipe.getDescription());
-        Assert.assertEquals("/mso/async/services/WorkflowActionBB", vnfRecipe.getOrchestrationUri());
+        assertNotNull(vnfRecipe);
+        assertNotNull(vnfRecipe.getNfRole());
+        assertNotNull(vnfRecipe.getAction());
+        assertEquals("Gr api recipe to create vnf", vnfRecipe.getDescription());
+        assertEquals("/mso/async/services/WorkflowActionBB", vnfRecipe.getOrchestrationUri());
     }
 
     @Test
     public void testGetFirstVnfRecipeByNfRoleAndActionNotFound() {
         VnfRecipe vnfRecipe = client.getFirstVnfRecipeByNfRoleAndAction(UUID.randomUUID().toString(), "createInstance");
-        Assert.assertNull(vnfRecipe);
+        assertNull(vnfRecipe);
     }
 
     @Test
@@ -340,12 +336,12 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         VnfComponentsRecipe vnfComponentsRecipe =
                 client.getFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction(
                         "20c4431c-246d-11e7-93ae-92361f002671", "volumeGroup", "createInstance");
-        Assert.assertNotNull(vnfComponentsRecipe);
-        Assert.assertNotNull(vnfComponentsRecipe.getAction());
-        Assert.assertNotNull(vnfComponentsRecipe.getVfModuleModelUUID());
-        Assert.assertNotNull(vnfComponentsRecipe.getVnfComponentType());
-        Assert.assertEquals("Gr api recipe to create volume-group", vnfComponentsRecipe.getDescription());
-        Assert.assertEquals("/mso/async/services/WorkflowActionBB", vnfComponentsRecipe.getOrchestrationUri());
+        assertNotNull(vnfComponentsRecipe);
+        assertNotNull(vnfComponentsRecipe.getAction());
+        assertNotNull(vnfComponentsRecipe.getVfModuleModelUUID());
+        assertNotNull(vnfComponentsRecipe.getVnfComponentType());
+        assertEquals("Gr api recipe to create volume-group", vnfComponentsRecipe.getDescription());
+        assertEquals("/mso/async/services/WorkflowActionBB", vnfComponentsRecipe.getOrchestrationUri());
 
     }
 
@@ -355,80 +351,79 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         VnfComponentsRecipe vnfComponentsRecipe =
                 client.getFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction(
                         UUID.randomUUID().toString(), "volumeGroup", "createInstance");
-        Assert.assertNull(vnfComponentsRecipe);
+        assertNull(vnfComponentsRecipe);
     }
 
     @Test
     public void testGetFirstVnfComponentsRecipeByVnfComponentTypeAndAction() {
         VnfComponentsRecipe vnfComponentsRecipe =
                 client.getFirstVnfComponentsRecipeByVnfComponentTypeAndAction("volumeGroup", "createInstance");
-        Assert.assertNotNull(vnfComponentsRecipe);
-        Assert.assertNotNull(vnfComponentsRecipe.getAction());
-        Assert.assertNotNull(vnfComponentsRecipe.getVnfComponentType());
-        Assert.assertEquals("VID_DEFAULT recipe t", vnfComponentsRecipe.getDescription());
-        Assert.assertEquals("/mso/async/services/CreateVfModuleVolumeInfraV1",
-                vnfComponentsRecipe.getOrchestrationUri());
+        assertNotNull(vnfComponentsRecipe);
+        assertNotNull(vnfComponentsRecipe.getAction());
+        assertNotNull(vnfComponentsRecipe.getVnfComponentType());
+        assertEquals("VID_DEFAULT recipe t", vnfComponentsRecipe.getDescription());
+        assertEquals("/mso/async/services/CreateVfModuleVolumeInfraV1", vnfComponentsRecipe.getOrchestrationUri());
     }
 
     @Test
     public void testGetServiceByModelVersionAndModelInvariantUUID() {
         Service service =
                 client.getServiceByModelVersionAndModelInvariantUUID("2.0", "9647dfc4-2083-11e7-93ae-92361f002671");
-        Assert.assertNotNull(service);
-        Assert.assertNotNull(service.getModelVersion());
-        Assert.assertNotNull(service.getModelInvariantUUID());
-        Assert.assertEquals("MSOTADevInfra_vSAMP10a_Service", service.getModelName());
-        Assert.assertEquals("NA", service.getServiceRole());
+        assertNotNull(service);
+        assertNotNull(service.getModelVersion());
+        assertNotNull(service.getModelInvariantUUID());
+        assertEquals("MSOTADevInfra_vSAMP10a_Service", service.getModelName());
+        assertEquals("NA", service.getServiceRole());
     }
 
     @Test
     public void testGetServiceByModelVersionAndModelInvariantUUIDNotFound() {
         Service service = client.getServiceByModelVersionAndModelInvariantUUID("2.0", UUID.randomUUID().toString());
-        Assert.assertNull(service);
+        assertNull(service);
     }
 
     @Test
     public void testGetVfModuleByModelInvariantUUIDAndModelVersion() {
         VfModule vfModule =
                 client.getVfModuleByModelInvariantUUIDAndModelVersion("78ca26d0-246d-11e7-93ae-92361f002671", "2");
-        Assert.assertNotNull(vfModule);
-        Assert.assertNotNull(vfModule.getModelVersion());
-        Assert.assertNotNull(vfModule.getModelInvariantUUID());
-        Assert.assertEquals("vSAMP10aDEV::base::module-0", vfModule.getModelName());
-        Assert.assertEquals("vSAMP10a DEV Base", vfModule.getDescription());
+        assertNotNull(vfModule);
+        assertNotNull(vfModule.getModelVersion());
+        assertNotNull(vfModule.getModelInvariantUUID());
+        assertEquals("vSAMP10aDEV::base::module-0", vfModule.getModelName());
+        assertEquals("vSAMP10a DEV Base", vfModule.getDescription());
     }
 
     @Test
     public void testGetVfModuleByModelInvariantUUIDAndModelVersionNotFound() {
         VfModule vfModule = client.getVfModuleByModelInvariantUUIDAndModelVersion(UUID.randomUUID().toString(), "2");
-        Assert.assertNull(vfModule);
+        assertNull(vfModule);
     }
 
     @Test
     public void testGetServiceByModelInvariantUUIDOrderByModelVersionDesc() {
         List<Service> serviceList =
                 client.getServiceByModelInvariantUUIDOrderByModelVersionDesc("9647dfc4-2083-11e7-93ae-92361f002671");
-        Assert.assertFalse(serviceList.isEmpty());
-        Assert.assertEquals(2, serviceList.size());
+        assertFalse(serviceList.isEmpty());
+        assertEquals(2, serviceList.size());
         Service service = serviceList.get(0);
-        Assert.assertEquals("2.0", service.getModelVersion());
+        assertEquals("2.0", service.getModelVersion());
     }
 
     @Test
     public void testGetServiceByModelInvariantUUIDOrderByModelVersionDescNotFound() {
         List<Service> serviceList =
                 client.getServiceByModelInvariantUUIDOrderByModelVersionDesc(UUID.randomUUID().toString());
-        Assert.assertTrue(serviceList.isEmpty());
+        assertTrue(serviceList.isEmpty());
     }
 
     @Test
     public void testGetVfModuleByModelInvariantUUIDOrderByModelVersionDesc() {
         List<VfModule> moduleList =
                 client.getVfModuleByModelInvariantUUIDOrderByModelVersionDesc("78ca26d0-246d-11e7-93ae-92361f002671");
-        Assert.assertFalse(moduleList.isEmpty());
-        Assert.assertEquals(2, moduleList.size());
+        assertFalse(moduleList.isEmpty());
+        assertEquals(2, moduleList.size());
         VfModule module = moduleList.get(0);
-        Assert.assertEquals("vSAMP10a DEV Base", module.getDescription());
+        assertEquals("vSAMP10a DEV Base", module.getDescription());
     }
 
     @Test
@@ -454,20 +449,20 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         cloudSite.setIdentityService(cloudIdentity);
         localClient.postCloudSite(cloudSite);
         CloudSite getCloudSite = this.client.getCloudSite("MTN6");
-        Assert.assertNotNull(getCloudSite);
-        Assert.assertNotNull(getCloudSite.getIdentityService());
-        Assert.assertEquals("TESTCLLI", getCloudSite.getClli());
-        Assert.assertEquals("regionId", getCloudSite.getRegionId());
-        Assert.assertEquals("RANDOMID", getCloudSite.getIdentityServiceId());
+        assertNotNull(getCloudSite);
+        assertNotNull(getCloudSite.getIdentityService());
+        assertEquals("TESTCLLI", getCloudSite.getClli());
+        assertEquals("regionId", getCloudSite.getRegionId());
+        assertEquals("RANDOMID", getCloudSite.getIdentityServiceId());
     }
 
     @Test
     public void testGetHomingInstance() {
         HomingInstance homingInstance = client.getHomingInstance("5df8b6de-2083-11e7-93ae-92361f232671");
-        Assert.assertNotNull(homingInstance);
-        Assert.assertNotNull(homingInstance.getCloudOwner());
-        Assert.assertNotNull(homingInstance.getCloudRegionId());
-        Assert.assertNotNull(homingInstance.getOofDirectives());
+        assertNotNull(homingInstance);
+        assertNotNull(homingInstance.getCloudOwner());
+        assertNotNull(homingInstance.getCloudRegionId());
+        assertNotNull(homingInstance.getOofDirectives());
     }
 
     @Test
@@ -491,43 +486,43 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
                 + "\"id\": \"vsink\"\n" + "}\n" + "]\n" + "}");
         localClient.postHomingInstance(homingInstance);
         HomingInstance getHomingInstance = this.client.getHomingInstance("5df8d6be-2083-11e7-93ae-92361f232671");
-        Assert.assertNotNull(getHomingInstance);
-        Assert.assertNotNull(getHomingInstance.getCloudRegionId());
-        Assert.assertNotNull(getHomingInstance.getCloudOwner());
-        Assert.assertEquals("CloudOwner-1", getHomingInstance.getCloudOwner());
-        Assert.assertEquals("CloudRegionOne", getHomingInstance.getCloudRegionId());
+        assertNotNull(getHomingInstance);
+        assertNotNull(getHomingInstance.getCloudRegionId());
+        assertNotNull(getHomingInstance.getCloudOwner());
+        assertEquals("CloudOwner-1", getHomingInstance.getCloudOwner());
+        assertEquals("CloudRegionOne", getHomingInstance.getCloudRegionId());
     }
 
     @Test
     public void testGetServiceByModelName() {
         Service service = client.getServiceByModelName("MSOTADevInfra_Test_Service");
-        Assert.assertNotNull(service);
-        Assert.assertNotNull(service.getModelVersion());
-        Assert.assertNotNull(service.getModelInvariantUUID());
-        Assert.assertEquals("MSOTADevInfra_Test_Service", service.getModelName());
-        Assert.assertEquals("NA", service.getServiceRole());
+        assertNotNull(service);
+        assertNotNull(service.getModelVersion());
+        assertNotNull(service.getModelInvariantUUID());
+        assertEquals("MSOTADevInfra_Test_Service", service.getModelName());
+        assertEquals("NA", service.getServiceRole());
     }
 
     @Test
     public void testGetServiceByModelNameNotFound() {
         Service service = client.getServiceByModelName("Not_Found");
-        Assert.assertNull(service);
+        assertNull(service);
     }
 
     @Test
     public void testGetServiceByModelUUID() {
         Service service = client.getServiceByModelUUID("5df8b6de-2083-11e7-93ae-92361f002679");
-        Assert.assertNotNull(service);
-        Assert.assertNotNull(service.getModelVersion());
-        Assert.assertNotNull(service.getModelInvariantUUID());
-        Assert.assertEquals("5df8b6de-2083-11e7-93ae-92361f002679", service.getModelUUID());
-        Assert.assertEquals("NA", service.getServiceRole());
+        assertNotNull(service);
+        assertNotNull(service.getModelVersion());
+        assertNotNull(service.getModelInvariantUUID());
+        assertEquals("5df8b6de-2083-11e7-93ae-92361f002679", service.getModelUUID());
+        assertEquals("NA", service.getServiceRole());
     }
 
     @Test
     public void testGetServiceByModelUUIDNotFound() {
         Service service = client.getServiceByModelUUID("Not_Found");
-        Assert.assertNull(service);
+        assertNull(service);
     }
 
     @Test
@@ -539,53 +534,52 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         northBoundRequest.setCloudOwner("my-custom-cloud-owner");
         client.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner("createService", "service", true,
                 "my-custom-cloud-owner");
-        Assert.assertNotNull(northBoundRequest);
-        Assert.assertEquals("createService", northBoundRequest.getAction());
-        Assert.assertEquals("service", northBoundRequest.getRequestScope());
-        Assert.assertEquals(true, northBoundRequest.getIsAlacarte());
-        Assert.assertEquals("my-custom-cloud-owner", northBoundRequest.getCloudOwner());
+        assertNotNull(northBoundRequest);
+        assertEquals("createService", northBoundRequest.getAction());
+        assertEquals("service", northBoundRequest.getRequestScope());
+        assertEquals(true, northBoundRequest.getIsAlacarte());
+        assertEquals("my-custom-cloud-owner", northBoundRequest.getCloudOwner());
     }
 
     @Test
     public void testFindServiceRecipeByActionAndServiceModelUUID() {
         ServiceRecipe serviceRecipe = client.findServiceRecipeByActionAndServiceModelUUID("createInstance",
                 "4694a55f-58b3-4f17-92a5-796d6f5ffd0d");
-        Assert.assertNotNull(serviceRecipe);
-        Assert.assertNotNull(serviceRecipe.getServiceModelUUID());
-        Assert.assertNotNull(serviceRecipe.getAction());
-        Assert.assertEquals("/mso/async/services/CreateGenericALaCarteServiceInstance",
-                serviceRecipe.getOrchestrationUri());
-        Assert.assertEquals("MSOTADevInfra aLaCarte", serviceRecipe.getDescription());
+        assertNotNull(serviceRecipe);
+        assertNotNull(serviceRecipe.getServiceModelUUID());
+        assertNotNull(serviceRecipe.getAction());
+        assertEquals("/mso/async/services/CreateGenericALaCarteServiceInstance", serviceRecipe.getOrchestrationUri());
+        assertEquals("MSOTADevInfra aLaCarte", serviceRecipe.getDescription());
     }
 
     @Test
     public void testFindServiceRecipeByActionAndServiceModelUUIDNotFound() {
         ServiceRecipe serviceRecipe =
                 client.findServiceRecipeByActionAndServiceModelUUID("not_found", "5df8b6de-2083-11e7-93ae-test");
-        Assert.assertNull(serviceRecipe);
+        assertNull(serviceRecipe);
     }
 
     @Test
     public void testFindExternalToInternalServiceByServiceName() {
         ExternalServiceToInternalService externalServiceToInternalService =
                 client.findExternalToInternalServiceByServiceName("MySpecialServiceName");
-        Assert.assertNotNull(externalServiceToInternalService);
-        Assert.assertNotNull(externalServiceToInternalService.getServiceName());
-        Assert.assertNotNull(externalServiceToInternalService.getServiceModelUUID());
-        Assert.assertEquals("MySpecialServiceName", externalServiceToInternalService.getServiceName());
+        assertNotNull(externalServiceToInternalService);
+        assertNotNull(externalServiceToInternalService.getServiceName());
+        assertNotNull(externalServiceToInternalService.getServiceModelUUID());
+        assertEquals("MySpecialServiceName", externalServiceToInternalService.getServiceName());
     }
 
     @Test
     public void testFindExternalToInternalServiceByServiceNameNotFound() {
         ExternalServiceToInternalService externalServiceToInternalService =
                 client.findExternalToInternalServiceByServiceName("Not_Found");
-        Assert.assertNull(externalServiceToInternalService);
+        assertNull(externalServiceToInternalService);
     }
 
     @Test
     public void getPnfResourceByModelUUID_validUuid_expectedOutput() {
         PnfResource pnfResource = client.getPnfResourceByModelUUID("ff2ae348-214a-11e7-93ae-92361f002680");
-        Assert.assertNotNull(pnfResource);
+        assertNotNull(pnfResource);
         assertEquals("PNFResource modelUUID", "ff2ae348-214a-11e7-93ae-92361f002680", pnfResource.getModelUUID());
         assertEquals("PNFResource modelInvariantUUID", "2fff5b20-214b-11e7-93ae-92361f002680",
                 pnfResource.getModelInvariantUUID());
@@ -596,7 +590,7 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
     @Test
     public void getPnfResourceByModelUUID_invalidUuid_NullOutput() {
         PnfResource pnfResource = client.getPnfResourceByModelUUID(UUID.randomUUID().toString());
-        Assert.assertNull(pnfResource);
+        assertNull(pnfResource);
     }
 
     @Test
@@ -620,7 +614,7 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
     public void getPnfResourceCustomizationByModelCustomizationUUID_invalidUuid_nullOutput() {
         PnfResourceCustomization pnfResourceCustomization =
                 client.getPnfResourceCustomizationByModelCustomizationUUID(UUID.randomUUID().toString());
-        Assert.assertNull(pnfResourceCustomization);
+        assertNull(pnfResourceCustomization);
     }
 
     @Test
@@ -651,6 +645,53 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
     }
 
     @Test
+    public void testGetServiceTopologyById() throws Exception {
+        org.onap.so.rest.catalog.beans.Service serviceByID =
+                client.getServiceModelInformation("5df8b6de-2083-11e7-93ae-92361f002671", "2");
+        assertNotNull(serviceByID);
+        assertEquals("MSOTADevInfra_vSAMP10a_Service", serviceByID.getModelName());
+        assertEquals("NA", serviceByID.getServiceType());
+        assertEquals("NA", serviceByID.getServiceRole());
+    }
+
+    @Test
+    public void testGetServices() throws Exception {
+        List<org.onap.so.rest.catalog.beans.Service> services = client.getServices();
+        assertEquals(false, services.isEmpty());
+    }
+
+    @Test
+    public void testVnf() throws Exception {
+        org.onap.so.rest.catalog.beans.Vnf vnf = client.getVnfModelInformation("5df8b6de-2083-11e7-93ae-92361f002671",
+                "68dc9a92-214c-11e7-93ae-92361f002671", "0");
+        assertNotNull(vnf);
+        assertEquals("vSAMP10a", vnf.getModelName());
+        assertEquals(false, vnf.getNfDataValid());
+        assertEquals("vSAMP", vnf.getNfFunction());
+        assertEquals("vSAMP", vnf.getNfNamingCode());
+        assertEquals("vSAMP", vnf.getNfRole());
+        assertEquals("vSAMP", vnf.getNfType());
+
+        vnf.setNfDataValid(true);
+        vnf.setNfFunction("nfFunction");
+        vnf.setNfRole("nfRole");
+        vnf.setNfType("nfType");
+        vnf.setNfNamingCode("nfNamingCode");
+
+        client.updateVnf("5df8b6de-2083-11e7-93ae-92361f002671", vnf);
+        vnf = client.getVnfModelInformation("5df8b6de-2083-11e7-93ae-92361f002671",
+                "68dc9a92-214c-11e7-93ae-92361f002671", "0");
+        assertEquals("vSAMP10a", vnf.getModelName());
+        assertEquals(true, vnf.getNfDataValid());
+        assertEquals("nfFunction", vnf.getNfFunction());
+        assertEquals("nfNamingCode", vnf.getNfNamingCode());
+        assertEquals("nfRole", vnf.getNfRole());
+        assertEquals("nfType", vnf.getNfType());
+
+
+    }
+
+    @Test
     public void getWorkflowByArtifactUUID_validUuid_expectedOutput() {
         Workflow workflow = client.findWorkflowByArtifactUUID("5b0c4322-643d-4c9f-b184-4516049e99b1");
         assertEquals("artifactName", "testingWorkflow.bpmn", workflow.getArtifactName());
@@ -659,7 +700,7 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
     @Test
     public void getWorkflowByArtifactUUID_invalidUuid_nullOutput() {
         Workflow workflow = client.findWorkflowByArtifactUUID(UUID.randomUUID().toString());
-        Assert.assertNull(workflow);
+        assertNull(workflow);
     }
 
     @Test
@@ -674,7 +715,7 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
     @Test
     public void getWorkflowByModelUUID_invalidUuid_nullOutput() {
         Workflow workflow = client.findWorkflowByArtifactUUID(UUID.randomUUID().toString());
-        Assert.assertNull(workflow);
+        assertNull(workflow);
     }
 
     @Test
@@ -689,7 +730,7 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
     @Test
     public void getWorkflowBySource_invalidSource_nullOutput() {
         List<Workflow> workflow = client.findWorkflowBySource("abc");
-        Assert.assertNull(workflow);
+        assertNull(workflow);
     }
 
 }

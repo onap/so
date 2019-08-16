@@ -23,9 +23,7 @@ package org.onap.so.db.catalog.beans;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,7 +32,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
@@ -123,6 +120,9 @@ public class VnfResourceCustomization implements Serializable {
 
     @Column(name = "VNFCINSTANCEGROUP_ORDER")
     private String vnfcInstanceGroupOrder;
+
+    @Column(name = "NF_DATA_VALID")
+    private Boolean nfDataValid;
 
     @Override
     public boolean equals(final Object other) {
@@ -336,4 +336,14 @@ public class VnfResourceCustomization implements Serializable {
     public void setVnfcInstanceGroupOrder(String vnfcInstanceGroupOrder) {
         this.vnfcInstanceGroupOrder = vnfcInstanceGroupOrder;
     }
+
+    public Boolean getNfDataValid() {
+        return nfDataValid;
+    }
+
+    public void setNfDataValid(Boolean nfDataValid) {
+        this.nfDataValid = nfDataValid;
+    }
+
+
 }

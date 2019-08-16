@@ -38,7 +38,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@Api(value = "/v1/services", tags = "model")
+@Api(value = "/v1", tags = "model")
 @Path("/v1/services")
 @Component
 public class ServiceRestImpl {
@@ -49,18 +49,21 @@ public class ServiceRestImpl {
     @Autowired
     private ServiceMapper serviceMapper;
 
+
     @GET
     @Path("/{modelUUID}")
     @Produces({MediaType.APPLICATION_JSON})
     @Transactional(readOnly = true)
     public Service findService(@PathParam("modelUUID") String modelUUID, @QueryParam("depth") int depth) {
         org.onap.so.db.catalog.beans.Service service = serviceRepo.findOneByModelUUID(modelUUID);
+        if (service == null) {
+            new CatalogEntityNotFoundException("Unable to find Service " + modelUUID);
+        }
         return serviceMapper.mapService(service, depth);
     }
 
     @GET
-    @ApiOperation(value = "Find Service Models", response = Service.class, responseContainer = "List",
-            notes = "If no query parameters are sent an empty list will be returned")
+    @ApiOperation(value = "Find Service Models", response = Service.class, responseContainer = "List")
     @Produces({MediaType.APPLICATION_JSON})
     @Transactional(readOnly = true)
     public List<Service> queryServices(
@@ -74,6 +77,8 @@ public class ServiceRestImpl {
             serviceFromDB = serviceRepo.findByModelNameAndDistrobutionStatus(modelName, distributionStatus);
         } else if (!Strings.isNullOrEmpty(modelName)) {
             serviceFromDB = serviceRepo.findByModelName(modelName);
+        } else {
+            serviceFromDB = serviceRepo.findAll();
         }
         serviceFromDB.stream().forEach(serviceDB -> services.add(serviceMapper.mapService(serviceDB, depth)));
         return services;

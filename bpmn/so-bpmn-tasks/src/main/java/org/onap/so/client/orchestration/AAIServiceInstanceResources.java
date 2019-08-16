@@ -22,7 +22,9 @@
 
 package org.onap.so.client.orchestration;
 
+import java.util.List;
 import java.util.Optional;
+import org.onap.aai.domain.yang.OwningEntities;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.OwningEntity;
@@ -118,6 +120,25 @@ public class AAIServiceInstanceResources {
                 .queryParam("owning-entity-name", owningEntityName);
         AAIResourcesClient aaiRC = injectionHelper.getAaiClient();
         return aaiRC.exists(owningEntityUri);
+    }
+
+    public org.onap.aai.domain.yang.OwningEntity getOwningEntityByName(String owningEntityName)
+            throws AAIEntityNotFoundException {
+        AAIResourceUri owningEntityUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.OWNING_ENTITY)
+                .queryParam("owning-entity-name", owningEntityName);
+        AAIResourcesClient aaiRC = injectionHelper.getAaiClient();
+        Optional<OwningEntities> owningEntities = aaiRC.get(OwningEntities.class, owningEntityUri);
+        if (owningEntities.isPresent()) {
+            List<org.onap.aai.domain.yang.OwningEntity> owningEntityList = owningEntities.get().getOwningEntity();
+            if (owningEntityList.size() > 1) {
+                throw new AAIEntityNotFoundException(
+                        "Non unique result returned for owning entity name: " + owningEntityName);
+            } else {
+                return owningEntityList.get(0);
+            }
+        } else {
+            throw new AAIEntityNotFoundException("No result returned for owning entity name: " + owningEntityName);
+        }
     }
 
     public void connectOwningEntityandServiceInstance(OwningEntity owningEntity, ServiceInstance serviceInstance) {

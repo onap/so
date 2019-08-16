@@ -101,7 +101,7 @@
 					},
 					{
 						"relationship-key": "volume-group.volume-group-id",
-						"relationship-value": "18b220c8-af84-4b82-a8c0-41bbea6328a6"
+						"relationship-value": "volumeGroupId"
 					}
 				]
 			},

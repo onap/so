@@ -27,7 +27,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityNotFoundException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
+import org.apache.http.HttpStatus;
 import org.onap.so.db.catalog.beans.BuildingBlockDetail;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.CloudifyManager;
@@ -67,13 +69,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import com.google.common.base.Strings;
 import uk.co.blackpepper.bowman.Client;
 import uk.co.blackpepper.bowman.ClientFactory;
 import uk.co.blackpepper.bowman.Configuration;
@@ -888,6 +895,90 @@ public class CatalogDbClient {
                     "Unable to find CvnfcConfigurationCustomization ModelCustomizationUUID:" + cvnfcCustomizationUuid);
     }
 
+    public org.onap.so.rest.catalog.beans.Service getServiceModelInformation(String serviceModelUUID, String depth) {
+        if (Strings.isNullOrEmpty(serviceModelUUID)) {
+            throw new EntityNotFoundException("Service Model UUID passed as Null or Empty String");
+        }
+        try {
+            HttpEntity<?> entity = getHttpEntity();
+            return restTemplate.exchange(
+                    UriComponentsBuilder.fromUriString(endpoint + "/ecomp/mso/catalog/v1/services/" + serviceModelUUID)
+                            .queryParam("depth", depth).build().encode().toString(),
+                    HttpMethod.GET, entity, org.onap.so.rest.catalog.beans.Service.class).getBody();
+        } catch (HttpClientErrorException e) {
+            logger.warn("Entity Not found in DLP", e);
+            if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
+                throw new EntityNotFoundException("Unable to find Service with ServiceModelUUID:" + serviceModelUUID);
+            }
+            throw e;
+        }
+    }
+
+    public List<org.onap.so.rest.catalog.beans.Service> getServices() {
+        try {
+            HttpEntity<?> entity = getHttpEntity();
+            return restTemplate
+                    .exchange(
+                            UriComponentsBuilder.fromUriString(endpoint + "/ecomp/mso/catalog/v1/services").build()
+                                    .encode().toString(),
+                            HttpMethod.GET, entity,
+                            new ParameterizedTypeReference<List<org.onap.so.rest.catalog.beans.Service>>() {})
+                    .getBody();
+        } catch (HttpClientErrorException e) {
+            logger.error("Error Calling catalog database", e);
+            throw e;
+        }
+    }
+
+    public org.onap.so.rest.catalog.beans.Vnf getVnfModelInformation(String serviceModelUUID,
+            String vnfCustomizationUUID, String depth) {
+        if (Strings.isNullOrEmpty(serviceModelUUID)) {
+            throw new EntityNotFoundException("Service Model UUID passed as Null or Empty String");
+        }
+        if (Strings.isNullOrEmpty(vnfCustomizationUUID)) {
+            throw new EntityNotFoundException("Vnf Customization UUID passed as Null or Empty String");
+        }
+        try {
+            HttpEntity<?> entity = getHttpEntity();
+            return restTemplate
+                    .exchange(
+                            UriComponentsBuilder
+                                    .fromUriString(endpoint + "/ecomp/mso/catalog/v1/services/" + serviceModelUUID
+                                            + "/vnfs/" + vnfCustomizationUUID)
+                                    .queryParam("depth", depth).build().encode().toString(),
+                            HttpMethod.GET, entity, org.onap.so.rest.catalog.beans.Vnf.class)
+                    .getBody();
+        } catch (HttpClientErrorException e) {
+            if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
+                throw new EntityNotFoundException(
+                        "Unable to find Vnf with Vnf Customization UUID:" + vnfCustomizationUUID);
+            }
+            throw e;
+        }
+    }
+
+    public void updateVnf(String serviceModelUUID, org.onap.so.rest.catalog.beans.Vnf vnf) {
+        if (vnf == null) {
+            throw new EntityNotFoundException("Vnf passed as null");
+        }
+        try {
+            HttpHeaders headers = getHttpHeaders();
+            HttpEntity<org.onap.so.rest.catalog.beans.Vnf> entity = new HttpEntity<>(vnf, headers);
+
+            restTemplate.exchange(
+                    UriComponentsBuilder.fromUriString(endpoint + "/ecomp/mso/catalog/v1/services/" + serviceModelUUID
+                            + "/vnfs/" + vnf.getModelCustomizationId()).build().encode().toString(),
+                    HttpMethod.PUT, entity, org.onap.so.rest.catalog.beans.Vnf.class).getBody();
+        } catch (HttpClientErrorException e) {
+            if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
+                throw new EntityNotFoundException(
+                        "Unable to find Vnf with Vnf Customization UUID:" + vnf.getModelCustomizationId());
+            }
+            throw e;
+        }
+    }
+
+
     public Workflow findWorkflowByArtifactUUID(String artifactUUID) {
         return this.getSingleResource(workflowClient, getUri(UriBuilder.fromUri(findWorkflowByArtifactUUID)
                 .queryParam(ARTIFACT_UUID, artifactUUID).build().toString()));
@@ -909,5 +1000,19 @@ public class CatalogDbClient {
 
     public void setEndpoint(String endpoint) {
         this.endpoint = endpoint;
+    }
+
+    private HttpHeaders getHttpHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.AUTHORIZATION, msoAdaptersAuth);
+        headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
+        headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
+        headers.set(LogConstants.TARGET_ENTITY_HEADER, TARGET_ENTITY);
+        return headers;
+    }
+
+    private HttpEntity<?> getHttpEntity() {
+        HttpHeaders headers = getHttpHeaders();
+        return new HttpEntity<>(headers);
     }
 }

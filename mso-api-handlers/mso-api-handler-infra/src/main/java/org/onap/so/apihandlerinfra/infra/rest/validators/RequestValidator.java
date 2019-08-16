@@ -18,12 +18,23 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.common.listener;
+package org.onap.so.apihandlerinfra.infra.rest.validators;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import java.util.Map;
+import java.util.Optional;
+import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Skip {
+public interface RequestValidator {
 
+
+    /**
+     * Should this validator run for given request
+     * 
+     * @return
+     */
+    public boolean shouldRunFor(String uri, ServiceInstancesRequest request);
+
+
+    public Optional<String> validate(Map<String, String> instanceIdMap, ServiceInstancesRequest request,
+            Map<String, String> queryParams);
 }

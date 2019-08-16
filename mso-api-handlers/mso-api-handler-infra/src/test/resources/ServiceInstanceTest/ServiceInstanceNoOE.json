@@ -1,0 +1,33 @@
+{
+	"serviceInstanceId":"1882939",
+	"vnfInstanceId":"1882938",
+	"networkInstanceId":"1882937",
+	"volumeGroupInstanceId":"1882935",
+	"vfModuleInstanceId":"1882934",
+	"requestDetails": {
+		"requestInfo": {
+			"source": "VID", 
+			"requestorId": "xxxxxx",
+			"instanceName": "testService9"
+		},
+		"requestParameters": {
+			"aLaCarte": true,
+			"autoBuildVfModules": false,
+			"subscriptionServiceType": "test",
+			"disableOwningEntityProject": true
+		},
+		"modelInfo":{
+			"modelInvariantId": "f7ce78bb-423b-11e7-93f8-0050569a7965",
+			"modelVersion":"1", 
+			"modelVersionId":"10", 
+			"modelType":"service",
+			"modelName":"serviceModel",
+			"modelInstanceName":"modelInstanceName",
+			"modelCustomizationId":"f7ce78bb-423b-11e7-93f8-0050569a796"
+		},
+	 	"subscriberInfo": {
+		"globalSubscriberId": "someTestId", 
+		"subscriberName": "someTestId"
+    	}
+  	}
+}

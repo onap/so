@@ -45,7 +45,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {ValidationConfig.class})
-public class WorkflowValidatorRunnerTest {
+public class WorkflowValidatorRunnerTest extends WorkflowValidatorRunner {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
