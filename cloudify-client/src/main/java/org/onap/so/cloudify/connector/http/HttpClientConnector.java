@@ -232,8 +232,12 @@ public class HttpClientConnector implements CloudifyClientConnector {
         }
 
         // Get here on an error response (4XX-5XX)
-        throw new CloudifyResponseException(httpResponse.getStatusLine().getReasonPhrase(),
-                httpResponse.getStatusLine().getStatusCode(), httpClientResponse);
+        if (httpResponse != null) {
+            throw new CloudifyResponseException(httpResponse.getStatusLine().getReasonPhrase(),
+                    httpResponse.getStatusLine().getStatusCode(), httpClientResponse);
+        } else {
+            throw new CloudifyResponseException("Null httpResponse", 0, httpClientResponse);
+        }
     }
 
 }
