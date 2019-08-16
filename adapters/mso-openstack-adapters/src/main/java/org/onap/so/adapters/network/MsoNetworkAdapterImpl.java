@@ -1477,13 +1477,19 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             }
 
             if (subnet.getAllocationPools() != null) {
-                curR = curR + "      allocation_pools:\n";
+                StringBuilder tempBuf = new StringBuilder();
+                tempBuf.append(curR);
+                tempBuf.append("      allocation_pools:\n");
                 for (Pool pool : subnet.getAllocationPools()) {
                     if (!commonUtils.isNullOrEmpty(pool.getStart()) && !commonUtils.isNullOrEmpty(pool.getEnd())) {
-                        curR = curR + "       - start: " + pool.getStart() + "\n";
-                        curR = curR + "         end: " + pool.getEnd() + "\n";
+                        tempBuf.append("       - start: ");
+                        tempBuf.append(pool.getStart());
+                        tempBuf.append("\n         end: ");
+                        tempBuf.append(pool.getEnd());
+                        tempBuf.append("\n");
                     }
                 }
+                curR = tempBuf.toString();
             }
 
             resourcesBuf.append(curR);
@@ -1492,7 +1498,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             curO = curO.replace("%subnetId%", subnet.getSubnetId());
 
             outputsBuf.append(curO);
-
         }
         // append resources and outputs in heatTemplate
         logger.debug("Tempate initial:{}", heatTemplate);
