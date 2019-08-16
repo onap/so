@@ -1,0 +1,434 @@
+{
+  "vnf-id": "example-vnf-id-val-90603",
+  "vnf-name": "example-vnf-name-val-56838",
+  "vnf-name2": "example-vnf-name2-val-56319",
+  "vnf-type": "example-vnf-type-val-30533",
+  "service-id": "example-service-id-val-28290",
+  "regional-resource-zone": "example-regional-resource-zone-val-11059",
+  "prov-status": "example-prov-status-val-59777",
+  "operational-status": "example-operational-status-val-22513",
+  "in-maint": true,
+ 
+  "equipment-role": "example-equipment-role-val-23396",
+  "orchestration-status": "example-orchestration-status-val-59435",
+  "heat-stack-id": "example-heat-stack-id-val-96869",
+  "mso-catalog-key": "example-mso-catalog-key-val-30721",
+  "management-option": "example-management-option-val-61927",
+  "ipv4-oam-address": "192.168.10.14",
+  "ipv4-loopback0-address": "example-ipv4-loopback0-address-val-87072",
+  "nm-lan-v6-address": "example-nm-lan-v6-address-val-91063",
+  "management-v6-address": "example-management-v6-address-val-80466",
+  "vcpu": 45837298,
+  "vcpu-units": "example-vcpu-units-val-86249",
+  "vmemory": 57288956,
+  "vmemory-units": "example-vmemory-units-val-13291",
+  "vdisk": 16937143,
+  "vdisk-units": "example-vdisk-units-val-73197",
+  
+  "is-closed-loop-disabled": true,
+  "summary-status": "example-summary-status-val-86438",
+  "encrypted-access-flag": true,
+  
+  
+  
+  
+  "model-invariant-id": "example-model-invariant-id-val-14704",
+  "model-version-id": "example-model-version-id-val-47847",
+  "model-customization-id": "example-model-customization-id-val-52688",
+  "widget-model-id": "example-widget-model-id-val-20939",
+  "widget-model-version": "example-widget-model-version-val-72210",
+  "as-number": "example-as-number-val-68358",
+  "regional-resource-subzone": "example-regional-resource-subzone-val-34391",
+  "nf-type": "example-nf-type-val-54866",
+  "nf-function": "example-nf-function-val-24790",
+  "nf-role": "example-nf-role-val-4780",
+  "nf-naming-code": "example-nf-naming-code-val-25118",
+  "selflink": "example-selflink-val-68404",
+  
+  "relationship-list": {"relationship":    [
+            {
+         "related-to": "service-instance",
+         "relationship-label": "org.onap.relationships.inventory.ComposedOf",
+         "related-link": "/aai/v12/business/customers/customer/e433710f-9217-458d-a79d-1c7aff376d89/service-subscriptions/service-subscription/VIRTUAL%20USP/service-instances/service-instance/2c323333-af4f-4849-af03-c862c0e93e3b",
+         "relationship-data":          [
+                        {
+               "relationship-key": "customer.global-customer-id",
+               "relationship-value": "e433710f-9217-458d-a79d-1c7aff376d89"
+            },
+                        {
+               "relationship-key": "service-subscription.service-type",
+               "relationship-value": "VIRTUAL USP"
+            },
+                        {
+               "relationship-key": "service-instance.service-instance-id",
+               "relationship-value": "2c323333-af4f-4849-af03-c862c0e93e3b"
+            }
+         ],
+         "related-to-property": [         {
+            "property-key": "service-instance.service-instance-name",
+            "property-value": "kjhgfd1"
+         }]
+      },
+            {
+         "related-to": "vserver",
+         "relationship-label": "tosca.relationships.HostedOn",
+         "related-link": "/aai/v12/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/mtn23a/tenants/tenant/e6beab145f6b49098277ac163ac1b4f3/vservers/vserver/1b3f44e5-d96d-4aac-bd9a-310e8cfb0af5",
+         "relationship-data":          [
+                        {
+               "relationship-key": "cloud-region.cloud-owner",
+               "relationship-value": "CloudOwner"
+            },
+                        {
+               "relationship-key": "cloud-region.cloud-region-id",
+               "relationship-value": "mtn23a"
+            },
+                        {
+               "relationship-key": "tenant.tenant-id",
+               "relationship-value": "e6beab145f6b49098277ac163ac1b4f3"
+            },
+                        {
+               "relationship-key": "vserver.vserver-id",
+               "relationship-value": "1b3f44e5-d96d-4aac-bd9a-310e8cfb0af5"
+            }
+         ],
+         "related-to-property": [         {
+            "property-key": "vserver.vserver-name",
+            "property-value": "comx5000vm003"
+         }]
+      },
+            {
+         "related-to": "vserver",
+         "relationship-label": "tosca.relationships.HostedOn",
+         "related-link": "/aai/v12/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/mtn23a/tenants/tenant/e6beab145f6b49098277ac163ac1b4f3/vservers/vserver/14551849-1e70-45cd-bc5d-a256d49548a2",
+         "relationship-data":          [
+                        {
+               "relationship-key": "cloud-region.cloud-owner",
+               "relationship-value": "CloudOwner"
+            },
+                        {
+               "relationship-key": "cloud-region.cloud-region-id",
+               "relationship-value": "mtn23a"
+            },
+                        {
+               "relationship-key": "tenant.tenant-id",
+               "relationship-value": "e6beab145f6b49098277ac163ac1b4f3"
+            },
+                        {
+               "relationship-key": "vserver.vserver-id",
+               "relationship-value": "14551849-1e70-45cd-bc5d-a256d49548a2"
+            }
+         ],
+         "related-to-property": [         {
+            "property-key": "vserver.vserver-name",
+            "property-value": "comx5000vm002"
+         }]
+      },
+            {
+         "related-to": "vserver",
+         "relationship-label": "tosca.relationships.HostedOn",
+         "related-link": "/aai/v12/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/mtn23a/tenants/tenant/e6beab145f6b49098277ac163ac1b4f3/vservers/vserver/48bd7f11-408f-417c-b834-b41c1b98f7d7",
+         "relationship-data":          [
+                        {
+               "relationship-key": "cloud-region.cloud-owner",
+               "relationship-value": "CloudOwner"
+            },
+                        {
+               "relationship-key": "cloud-region.cloud-region-id",
+               "relationship-value": "mtn23a"
+            },
+                        {
+               "relationship-key": "tenant.tenant-id",
+               "relationship-value": "e6beab145f6b49098277ac163ac1b4f3"
+            },
+                        {
+               "relationship-key": "vserver.vserver-id",
+               "relationship-value": "48bd7f11-408f-417c-b834-b41c1b98f7d7"
+            }
+         ],
+         "related-to-property": [         {
+            "property-key": "vserver.vserver-name",
+            "property-value": "comx5000vm001"
+         }]
+      }
+   ]},  
+ 
+ 
+  "l-interfaces": {
+    "l-interface": [
+      {
+        "interface-name": "example-interface-name-val-50593",
+        "interface-role": "example-interface-role-val-23375",
+        "v6-wan-link-ip": "example-v6-wan-link-ip-val-5921",
+        "selflink": "example-selflink-val-75663",
+        "interface-id": "example-interface-id-val-37465",
+        "macaddr": "example-macaddr-val-62657",
+        "network-name": "example-network-name-val-7252",
+        "management-option": "example-management-option-val-32963",
+        "interface-description": "example-interface-description-val-89453",
+        "is-port-mirrored": true,
+        "vlans": {
+          "vlan": [
+            {
+              "vlan-interface": "example-vlan-interface-val-16684",
+              "vlan-id-inner": 8602916,
+              "vlan-id-outer": 97348542,
+              "speed-value": "example-speed-value-val-90330",
+              "speed-units": "example-speed-units-val-15849",
+              "vlan-description": "example-vlan-description-val-46942",
+              "backdoor-connection": "example-backdoor-connection-val-78445",
+              
+              "orchestration-status": "example-orchestration-status-val-44994",
+              
+             
+             
+              "l3-interface-ipv4-address-list": [
+                {
+                  "l3-interface-ipv4-address": "example-l3-interface-ipv4-address-val-90277",
+                  "l3-interface-ipv4-prefix-length": 3364150,
+                  "vlan-id-inner": 44021171,
+                  "vlan-id-outer": 55708677,
+                  "is-floating": true,
+                  "neutron-network-id": "example-neutron-network-id-val-43267",
+                  "neutron-subnet-id": "example-neutron-subnet-id-val-62870"
+                }
+              ],
+              "l3-interface-ipv6-address-list": [
+                {
+                  "l3-interface-ipv6-address": "example-l3-interface-ipv6-address-val-45323",
+                  "l3-interface-ipv6-prefix-length": 56688923,
+                  "vlan-id-inner": 5703071,
+                  "vlan-id-outer": 86682265,
+                  "is-floating": true,
+                  "neutron-network-id": "example-neutron-network-id-val-28366",
+                  "neutron-subnet-id": "example-neutron-subnet-id-val-53034"
+                }
+              ]
+            }
+          ]
+        },
+        "sriov-vfs": {
+          "sriov-vf": [
+            {
+              "pci-id": "example-pci-id-val-4720",
+              "vf-vlan-filter": "example-vf-vlan-filter-val-42594",
+              "vf-mac-filter": "example-vf-mac-filter-val-13375",
+              "vf-vlan-strip": true,
+              "vf-vlan-anti-spoof-check": true,
+              "vf-mac-anti-spoof-check": true,
+              "vf-mirrors": "example-vf-mirrors-val-6057",
+              "vf-broadcast-allow": true,
+              "vf-unknown-multicast-allow": true,
+              "vf-unknown-unicast-allow": true,
+              "vf-insert-stag": true,
+              "vf-link-status": "example-vf-link-status-val-81448",
+              "neutron-network-id": "example-neutron-network-id-val-9504"
+            }
+          ]
+        },
+        "l-interfaces": {
+          "l-interface": [
+            {
+              "interface-name": "example-interface-name-val-16738",
+              "interface-role": "example-interface-role-val-13943",
+              "v6-wan-link-ip": "example-v6-wan-link-ip-val-63173",
+              "selflink": "example-selflink-val-43085",
+              "interface-id": "example-interface-id-val-51379",
+              "macaddr": "example-macaddr-val-16195",
+              "network-name": "example-network-name-val-45683",
+              "management-option": "example-management-option-val-78983",
+              "interface-description": "example-interface-description-val-34414",
+              "is-port-mirrored": true
+            }
+          ]
+        },
+        "l3-interface-ipv4-address-list": [
+          {
+            "l3-interface-ipv4-address": "example-l3-interface-ipv4-address-val-99078",
+            "l3-interface-ipv4-prefix-length": 55755841,
+            "vlan-id-inner": 81525473,
+            "vlan-id-outer": 90908072,
+            "is-floating": true,
+            "neutron-network-id": "example-neutron-network-id-val-47919",
+            "neutron-subnet-id": "example-neutron-subnet-id-val-84236"
+          }
+        ],
+        "l3-interface-ipv6-address-list": [
+          {
+            "l3-interface-ipv6-address": "example-l3-interface-ipv6-address-val-21939",
+            "l3-interface-ipv6-prefix-length": 50057584,
+            "vlan-id-inner": 75774660,
+            "vlan-id-outer": 4421090,
+            "is-floating": true,
+            "neutron-network-id": "example-neutron-network-id-val-46377",
+            "neutron-subnet-id": "example-neutron-subnet-id-val-16585"
+          }
+        ]
+      }
+    ]
+  },
+  "lag-interfaces": {
+    "lag-interface": [
+      {
+        "interface-name": "example-interface-name-val-39234",
+        "interface-description": "example-interface-description-val-1037",
+        "speed-value": "example-speed-value-val-1929",
+        "speed-units": "example-speed-units-val-74937",
+        "interface-id": "example-interface-id-val-91265",
+        "interface-role": "example-interface-role-val-19613",
+       
+       
+        "l-interfaces": {
+          "l-interface": [
+            {
+              "interface-name": "example-interface-name-val-10722",
+              "interface-role": "example-interface-role-val-95194",
+              "v6-wan-link-ip": "example-v6-wan-link-ip-val-24328",
+              "selflink": "example-selflink-val-24987",
+              "interface-id": "example-interface-id-val-75726",
+              "macaddr": "example-macaddr-val-36940",
+              "network-name": "example-network-name-val-65359",
+              "management-option": "example-management-option-val-49521",
+              "interface-description": "example-interface-description-val-70528",
+              "is-port-mirrored": true,
+              "vlans": {
+                "vlan": [
+                  {
+                    "vlan-interface": "example-vlan-interface-val-70827",
+                    "vlan-id-inner": 55659612,
+                    "vlan-id-outer": 90335612,
+                    "speed-value": "example-speed-value-val-54761",
+                    "speed-units": "example-speed-units-val-91398",
+                    "vlan-description": "example-vlan-description-val-17018",
+                    "backdoor-connection": "example-backdoor-connection-val-4021",
+                    
+                    "orchestration-status": "example-orchestration-status-val-18315",
+                    
+                  
+                    "l3-interface-ipv4-address-list": [
+                      {
+                        "l3-interface-ipv4-address": "example-l3-interface-ipv4-address-val-59336",
+                        "l3-interface-ipv4-prefix-length": 57636053,
+                        "vlan-id-inner": 34068397,
+                        "vlan-id-outer": 48570286,
+                        "is-floating": true,
+                        "neutron-network-id": "example-neutron-network-id-val-69862",
+                        "neutron-subnet-id": "example-neutron-subnet-id-val-75795"
+                      }
+                    ],
+                    "l3-interface-ipv6-address-list": [
+                      {
+                        "l3-interface-ipv6-address": "example-l3-interface-ipv6-address-val-15038",
+                        "l3-interface-ipv6-prefix-length": 42694503,
+                        "vlan-id-inner": 15929806,
+                        "vlan-id-outer": 87413856,
+                        "is-floating": true,
+                        "neutron-network-id": "example-neutron-network-id-val-52519",
+                        "neutron-subnet-id": "example-neutron-subnet-id-val-24471"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "sriov-vfs": {
+                "sriov-vf": [
+                  {
+                    "pci-id": "example-pci-id-val-44669",
+                    "vf-vlan-filter": "example-vf-vlan-filter-val-53436",
+                    "vf-mac-filter": "example-vf-mac-filter-val-71902",
+                    "vf-vlan-strip": true,
+                    "vf-vlan-anti-spoof-check": true,
+                    "vf-mac-anti-spoof-check": true,
+                    "vf-mirrors": "example-vf-mirrors-val-54963",
+                    "vf-broadcast-allow": true,
+                    "vf-unknown-multicast-allow": true,
+                    "vf-unknown-unicast-allow": true,
+                    "vf-insert-stag": true,
+                    "vf-link-status": "example-vf-link-status-val-1546",
+                    "neutron-network-id": "example-neutron-network-id-val-92159"
+                  }
+                ]
+              },
+              "l-interfaces": {
+                "l-interface": [
+                  {
+                    "interface-name": "example-interface-name-val-9327",
+                    "interface-role": "example-interface-role-val-21859",
+                    "v6-wan-link-ip": "example-v6-wan-link-ip-val-21445",
+                    "selflink": "example-selflink-val-6085",
+                    "interface-id": "example-interface-id-val-39854",
+                    "macaddr": "example-macaddr-val-14433",
+                    "network-name": "example-network-name-val-3722",
+                    "management-option": "example-management-option-val-64739",
+                    "interface-description": "example-interface-description-val-5814",
+                    "is-port-mirrored": true
+                    
+                   
+                    
+                  }
+                ]
+              },
+              "l3-interface-ipv4-address-list": [
+                {
+                  "l3-interface-ipv4-address": "example-l3-interface-ipv4-address-val-64531",
+                  "l3-interface-ipv4-prefix-length": 66545882,
+                  "vlan-id-inner": 12194134,
+                  "vlan-id-outer": 29589286,
+                  "is-floating": true,
+                  "neutron-network-id": "example-neutron-network-id-val-91108",
+                  "neutron-subnet-id": "example-neutron-subnet-id-val-56984"
+                }
+              ],
+              "l3-interface-ipv6-address-list": [
+                {
+                  "l3-interface-ipv6-address": "example-l3-interface-ipv6-address-val-37408",
+                  "l3-interface-ipv6-prefix-length": 5116459,
+                  "vlan-id-inner": 39229896,
+                  "vlan-id-outer": 15091934,
+                  "is-floating": true,
+                  "neutron-network-id": "example-neutron-network-id-val-87700",
+                  "neutron-subnet-id": "example-neutron-subnet-id-val-37352"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "vf-modules": {
+    "vf-module": [
+      {
+        "vf-module-id": "example-vf-module-id-val-56249",
+        "vf-module-name": "example-vf-module-name-val-18987",
+        "heat-stack-id": "example-heat-stack-id-val-80110",
+        "orchestration-status": "example-orchestration-status-val-8226",
+        "is-base-vf-module": true,
+        "model-invariant-id": "example-model-invariant-id-val-5071",
+        "model-version-id": "example-model-version-id-val-80793",
+        "model-customization-id": "example-model-customization-id-val-83277",
+        "widget-model-id": "example-widget-model-id-val-99814",
+        "widget-model-version": "example-widget-model-version-val-22799",
+        "contrail-service-instance-fqdn": "example-contrail-service-instance-fqdn-val-52133",
+        "module-index": 1933,
+        "selflink": "example-selflink-val-69992"
+      }
+    ]
+  },
+  "licenses": {
+    "license": [
+      {
+        "group-uuid": "example-group-uuid-val-73012",
+        "resource-uuid": "example-resource-uuid-val-80045"
+      }
+    ]
+  },
+  "entitlements": {
+    "entitlement": [
+      {
+        "group-uuid": "example-group-uuid-val-14874",
+        "resource-uuid": "example-resource-uuid-val-49146"
+      }
+    ]
+  }
+
+}

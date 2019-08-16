@@ -24,6 +24,7 @@ package org.onap.so.client.orchestration;
 
 import java.io.IOException;
 import java.util.Optional;
+import org.onap.aai.domain.yang.Vserver;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
@@ -37,9 +38,8 @@ import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
+import org.onap.so.client.graphinventory.entities.uri.Depth;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -159,5 +159,15 @@ public class AAIVnfResources {
         AAIResourceUri vnfUri =
                 AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", vnfName);
         return injectionHelper.getAaiClient().exists(vnfUri);
+    }
+
+    public AAIResultWrapper queryVnfWrapperById(GenericVnf vnf) {
+        AAIResourceUri uri =
+                AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnf.getVnfId()).depth(Depth.ALL);
+        return injectionHelper.getAaiClient().get(uri);
+    }
+
+    public Optional<Vserver> getVserver(AAIResourceUri uri) {
+        return injectionHelper.getAaiClient().get(uri).asBean(Vserver.class);
     }
 }
