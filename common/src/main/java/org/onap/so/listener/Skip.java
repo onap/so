@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 - 2019 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,28 +18,12 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.common.listener.validation;
+package org.onap.so.listener;
 
-import java.util.Collections;
-import java.util.Optional;
-import org.onap.so.bpmn.common.BuildingBlockExecution;
-import org.onap.so.bpmn.common.listener.validation.PreBuildingBlockValidator;
-import org.onap.so.listener.Skip;
-import org.springframework.stereotype.Component;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-@Component
-@Skip
-public class MyDisabledValidator implements PreBuildingBlockValidator {
-
-    @Override
-    public boolean shouldRunFor(String bbName) {
-
-        return Collections.singleton("test").contains(bbName);
-    }
-
-    @Override
-    public Optional<String> validate(BuildingBlockExecution exeuction) {
-        return Optional.of("my-disabled-validator");
-    }
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Skip {
 
 }

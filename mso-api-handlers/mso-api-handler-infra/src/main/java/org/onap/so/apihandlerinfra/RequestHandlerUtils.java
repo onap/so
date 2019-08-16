@@ -479,24 +479,11 @@ public class RequestHandlerUtils extends AbstractRestHandler {
             boolean isAlaCarte, Actions action) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(Include.NON_NULL);
-        if (msoRawRequest != null) {
-            ServiceInstancesRequest sir = mapper.readValue(msoRawRequest, ServiceInstancesRequest.class);
-            if (serviceInstRequest != null && serviceInstRequest.getRequestDetails() != null
-                    && serviceInstRequest.getRequestDetails().getRequestParameters() != null) {
-                if (!isAlaCarte && Action.createInstance.equals(action)) {
-                    sir.getRequestDetails()
-                            .setCloudConfiguration(serviceInstRequest.getRequestDetails().getCloudConfiguration());
-                    sir.getRequestDetails().getRequestParameters().setUserParams(
-                            serviceInstRequest.getRequestDetails().getRequestParameters().getUserParams());
-                }
-                sir.getRequestDetails().getRequestParameters()
-                        .setUsePreload(serviceInstRequest.getRequestDetails().getRequestParameters().getUsePreload());
-            }
-
-            logger.debug("Value as string: {}", mapper.writeValueAsString(sir));
-            return mapper.writeValueAsString(sir);
+        if (serviceInstRequest != null) {
+            return mapper.writeValueAsString(serviceInstRequest);
+        } else {
+            return msoRawRequest;
         }
-        return null;
     }
 
     public Optional<String> retrieveModelName(RequestParameters requestParams) {

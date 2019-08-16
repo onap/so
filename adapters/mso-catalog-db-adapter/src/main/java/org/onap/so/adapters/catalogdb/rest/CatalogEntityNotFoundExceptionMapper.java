@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 - 2019 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,28 +18,21 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.common.listener.validation;
+package org.onap.so.adapters.catalogdb.rest;
 
-import java.util.Collections;
-import java.util.Optional;
-import org.onap.so.bpmn.common.BuildingBlockExecution;
-import org.onap.so.bpmn.common.listener.validation.PreBuildingBlockValidator;
-import org.onap.so.listener.Skip;
-import org.springframework.stereotype.Component;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Component
-@Skip
-public class MyDisabledValidator implements PreBuildingBlockValidator {
+@Provider
+public class CatalogEntityNotFoundExceptionMapper implements ExceptionMapper<CatalogEntityNotFoundException> {
 
-    @Override
-    public boolean shouldRunFor(String bbName) {
-
-        return Collections.singleton("test").contains(bbName);
-    }
+    private static final Logger logger = LoggerFactory.getLogger(CatalogEntityNotFoundExceptionMapper.class);
 
     @Override
-    public Optional<String> validate(BuildingBlockExecution exeuction) {
-        return Optional.of("my-disabled-validator");
+    public Response toResponse(CatalogEntityNotFoundException e) {
+        return Response.status(Response.Status.NOT_FOUND).entity(e).build();
     }
-
 }

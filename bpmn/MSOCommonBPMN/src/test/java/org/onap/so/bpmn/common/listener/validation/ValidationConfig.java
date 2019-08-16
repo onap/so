@@ -21,13 +21,13 @@
 package org.onap.so.bpmn.common.listener.validation;
 
 import org.onap.so.bpmn.common.DefaultToShortClassNameBeanNameGenerator;
-import org.onap.so.bpmn.common.listener.ListenerRunner;
 import org.onap.so.client.exception.ExceptionBuilder;
+import org.onap.so.listener.ListenerRunner;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan(basePackageClasses = {ExceptionBuilder.class, ListenerRunner.class},
+@ComponentScan(basePackageClasses = {ExceptionBuilder.class, ListenerRunner.class, WorkflowValidatorRunner.class},
         nameGenerator = DefaultToShortClassNameBeanNameGenerator.class)
 public class ValidationConfig {
 

@@ -2934,15 +2934,5 @@ public class ServiceInstancesTest extends BaseTest {
         Actions action = servInstances.handleReplaceInstance(Action.replaceInstance, sir);
         assertEquals(Action.replaceInstanceRetainAssignments, action);
     }
-    /*
-     * @Test public void buildSelfLinkUrlTest() throws Exception { // v - version String incomingUrl =
-     * "http://localhost:8080/onap/infra/so/serviceInstantiation/v7/serviceInstances"; String expectedSelfLink =
-     * "http://localhost:8080/orchestrationRequests/v7/efce3167-5e45-4666-9d4d-22e23648e5d1"; String requestId =
-     * "efce3167-5e45-4666-9d4d-22e23648e5d1"; Optional<URL> actualSelfLinkUrl = buildSelfLinkUrl(incomingUrl,
-     * requestId); assertEquals(expectedSelfLink, actualSelfLinkUrl.get().toString()); // V - Version String
-     * incomingUrlV = "http://localhost:8080/onap/infra/so/serviceInstantiation/V7/serviceInstances"; String
-     * expectedSelfLinkV = "http://localhost:8080/orchestrationRequests/V7/efce3167-5e45-4666-9d4d-22e23648e5d1";
-     * Optional<URL> actualSelfLinkUrlV = buildSelfLinkUrl(incomingUrlV, requestId); assertEquals(expectedSelfLinkV,
-     * actualSelfLinkUrlV.get().toString()); }
-     */
 }
+

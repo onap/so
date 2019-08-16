@@ -28,9 +28,11 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.javatuples.Pair;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.common.DelegateExecutionImpl;
-import org.onap.so.bpmn.common.listener.ListenerRunner;
+import org.onap.so.client.exception.ExceptionBuilder;
+import org.onap.so.listener.ListenerRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 
@@ -46,6 +48,9 @@ import org.springframework.stereotype.Component;
 public abstract class FlowValidatorRunner<S extends FlowValidator, E extends FlowValidator> extends ListenerRunner {
 
     private static Logger logger = LoggerFactory.getLogger(FlowValidatorRunner.class);
+
+    @Autowired
+    protected ExceptionBuilder exceptionBuilder;
 
     protected List<S> preFlowValidators;
     protected List<E> postFlowValidators;

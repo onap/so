@@ -25,6 +25,7 @@ import javax.ws.rs.ApplicationPath;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.onap.so.adapters.catalogdb.rest.CatalogDbAdapterRest;
 import org.onap.so.adapters.catalogdb.rest.ServiceRestImpl;
+import org.onap.so.adapters.catalogdb.rest.VnfRestImpl;
 import org.onap.so.logging.jaxrs.filter.JaxRsFilterLogging;
 import org.springframework.context.annotation.Configuration;
 import io.swagger.jaxrs.config.BeanConfig;
@@ -42,6 +43,7 @@ public class JerseyConfiguration extends ResourceConfig {
         register(SwaggerSerializers.class);
         register(JaxRsFilterLogging.class);
         register(ServiceRestImpl.class);
+        register(VnfRestImpl.class);
         BeanConfig beanConfig = new BeanConfig();
         beanConfig.setVersion("1.0.2");
         beanConfig.setSchemes(new String[] {"https"});
