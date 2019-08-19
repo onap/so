@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "90695bd6_7699097b",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/java/org/onap/so/bpmn/infrastructure/MSOInfrastructureApplication.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 2493
+      },
+      "writtenOn": "2019-08-19T06:56:49Z",
+      "side": 1,
+      "message": "To Fix \"Either log or rethrow this exception\" sonar issue, please log exception using following method:\npublic void warn(String msg, Throwable t)",
+      "revId": "b325e1f311ec7696f57e834ab7b9a52f89bd367d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ff2fd318_451c0357",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/java/org/onap/so/bpmn/infrastructure/MSOInfrastructureApplication.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 2493
+      },
+      "writtenOn": "2019-08-19T06:56:49Z",
+      "side": 1,
+      "message": "To Fix \"Either log or rethrow this exception\" sonar issue, please log exception using following method:\npublic void warn(String msg, Throwable t)",
+      "revId": "b325e1f311ec7696f57e834ab7b9a52f89bd367d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
