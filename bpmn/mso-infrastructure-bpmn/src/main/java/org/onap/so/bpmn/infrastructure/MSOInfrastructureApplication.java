@@ -99,7 +99,7 @@ public class MSOInfrastructureApplication {
             DeploymentBuilder deploymentBuilder = processEngine.getRepositoryService().createDeployment();
             deployCustomWorkflows(deploymentBuilder);
         } catch (Exception e) {
-            logger.warn("Unable to invoke deploymentBuilder: " + e.getMessage());
+            logger.warn("Unable to invoke deploymentBuilder ", e);
         }
     }
 
@@ -140,7 +140,7 @@ public class MSOInfrastructureApplication {
                 }
             }
         } catch (Exception e) {
-            logger.warn("Unable to deploy custom workflows, " + e.getMessage());
+            logger.warn("Unable to deploy custom workflows ", e);
         }
     }
 }
