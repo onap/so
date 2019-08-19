@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d3f8c3e1_c80aa4f6",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/common/resource/ResourceRequestBuilder.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 374,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-08-19T11:02:50Z",
+      "side": 1,
+      "message": "remove \u0027{}\u0027, it is redundant",
+      "range": {
+        "startLine": 374,
+        "startChar": 56,
+        "endLine": 374,
+        "endChar": 58
+      },
+      "revId": "d4c8188d85572fd288e90d670f60dc315d0a9b13",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa0136ae_dbc7ce0d",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/java/org/onap/so/bpmn/infrastructure/MSOInfrastructureApplication.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-08-19T11:02:50Z",
+      "side": 1,
+      "message": "remove \u0027{}\u0027, it is redundant",
+      "range": {
+        "startLine": 102,
+        "startChar": 61,
+        "endLine": 102,
+        "endChar": 63
+      },
+      "revId": "d4c8188d85572fd288e90d670f60dc315d0a9b13",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b6340d76_c64ed6ce",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/java/org/onap/so/bpmn/infrastructure/MSOInfrastructureApplication.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-08-19T11:02:50Z",
+      "side": 1,
+      "message": "remove \u0027{}\u0027, it is redundant",
+      "range": {
+        "startLine": 143,
+        "startChar": 59,
+        "endLine": 143,
+        "endChar": 61
+      },
+      "revId": "d4c8188d85572fd288e90d670f60dc315d0a9b13",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
