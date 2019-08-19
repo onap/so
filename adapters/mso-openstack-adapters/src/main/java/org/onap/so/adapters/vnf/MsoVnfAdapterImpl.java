@@ -640,7 +640,11 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
         StackInfo heatStack = null;
         try {
-            heatStack = heat.queryStack(cloudSiteId, cloudOwner, tenantId, vfModuleName);
+            if (heat != null) {
+                heatStack = heat.queryStack(cloudSiteId, cloudOwner, tenantId, vfModuleName);
+            } else {
+                throw new MsoHeatNotFoundException();
+            }
         } catch (MsoException me) {
             String error = "Create VF Module: Query " + vfModuleName + " in " + cloudOwner + "/" + cloudSiteId + "/"
                     + tenantId + ": " + me;
