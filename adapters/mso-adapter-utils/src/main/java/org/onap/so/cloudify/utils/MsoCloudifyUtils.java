@@ -478,12 +478,14 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin {
             boolean timedOut = false;
             int cancelTimeout = timeout; // TODO: For now, just use same timeout
 
-            String status = cancelExecution.getStatus();
-
+            String status = null;
+            if (cancelExecution != null) {
+                status = cancelExecution.getStatus();
+            }
             // Poll for completion. Create a reusable cloudify query request
             GetExecution queryExecution = cloudify.executions().byId(executionId);
 
-            while (!timedOut && !status.equals(CANCELLED)) {
+            while (!timedOut && !CANCELLED.equals(status)) {
                 // workflow is still running; check for timeout
                 if (cancelTimeout <= 0) {
                     logger.debug("Cancel timeout for workflow {} on deployment {}", workflowId, deploymentId);
@@ -497,11 +499,13 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin {
                 logger.debug("pollTimeout remaining: {}", cancelTimeout);
 
                 execution = queryExecution.execute();
-                status = execution.getStatus();
+                if (execution != null) {
+                    status = execution.getStatus();
+                }
             }
 
             // Broke the loop. Check again for a terminal state
-            if (status.equals(CANCELLED)) {
+            if (CANCELLED.equals(status)) {
                 // Finished cancelling. Return the original exception
                 logger.debug("Cancel workflow {} completed on deployment {}", workflowId, deploymentId);
                 throw new MsoCloudifyException(-1, "", "", savedException);
