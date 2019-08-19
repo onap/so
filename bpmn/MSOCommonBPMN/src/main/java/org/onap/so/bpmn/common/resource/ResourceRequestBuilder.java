@@ -118,7 +118,7 @@ public class ResourceRequestBuilder {
                     logger.info("resource resolved using model uuid");
                     String uuid = (String) JsonUtils.getJsonValue(eachResource, "resourceUuid");
                     if ((null != uuid) && uuid.equals(resource.getModelInfo().getModelUuid())) {
-                        logger.info("found resource uuid" + uuid);
+                        logger.info("found resource uuid {}", uuid);
                         String resourceParameters = JsonUtils.getJsonValue(eachResource, "parameters");
                         locationConstraints = JsonUtils.getJsonValue(resourceParameters, "locationConstraints");
                     }
@@ -133,7 +133,7 @@ public class ResourceRequestBuilder {
         Map<String, Object> uuiRequestInputs = null;
         if (JsonUtils.getJsonValue(uuiServiceParameters, "requestInputs") != null) {
             String uuiRequestInputStr = JsonUtils.getJsonValue(uuiServiceParameters, "requestInputs");
-            logger.info("resource input from UUI: " + uuiRequestInputStr);
+            logger.info("resource input from UUI:{} ", uuiRequestInputStr);
             if (uuiRequestInputStr == null || uuiRequestInputStr.isEmpty()) {
                 uuiRequestInputStr = "{}";
             }
