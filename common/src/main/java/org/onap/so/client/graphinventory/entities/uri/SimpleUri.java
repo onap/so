@@ -29,6 +29,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.onap.so.client.graphinventory.Format;
@@ -61,7 +62,7 @@ public class SimpleUri implements GraphInventoryResourceUri, Serializable {
     protected SimpleUri(GraphInventoryObjectType type, URI uri) {
         this.type = type;
         this.pluralType = null;
-        this.internalURI = UriBuilder.fromPath(uri.getRawPath().replaceAll("/aai/v\\d+", ""));
+        this.internalURI = UriBuilder.fromPath(uri.getRawPath().replaceAll(getPrefixPattern().toString(), ""));
         this.values = new Object[0];
     }
 
@@ -172,6 +173,10 @@ public class SimpleUri implements GraphInventoryResourceUri, Serializable {
     @Override
     public URI build() {
         return build(this.values);
+    }
+
+    protected Pattern getPrefixPattern() {
+        return Pattern.compile("/.*?/v\\d+");
     }
 
     protected URI build(Object... values) {
