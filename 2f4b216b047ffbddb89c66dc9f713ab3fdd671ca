@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d9161c4f_b41463d8",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/cloudify/utils/MsoCloudifyUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 488,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-08-20T11:44:26Z",
+      "side": 1,
+      "message": "Here can null pointer occur if status is null. You have two options:\n\n1. while (!timedOut \u0026\u0026 !CANCELLED.equals(status)) {...\n\nhere we enter the while loop if status is null\n\n2. while (!timedOut \u0026\u0026 status!\u003dnull \u0026\u0026 !status.equals(CANCELLED) { ...\n\nhere we do not enter the while loop if status is null\n\nPlease analyse the code and decide. I think that the author of the original code assumes that status can be null in the loop, so I would choose first option.",
+      "range": {
+        "startLine": 488,
+        "startChar": 32,
+        "endLine": 488,
+        "endChar": 56
+      },
+      "revId": "2f4b216b047ffbddb89c66dc9f713ab3fdd671ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "449666ee_afc14627",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/cloudify/utils/MsoCloudifyUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 508,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-08-20T11:44:26Z",
+      "side": 1,
+      "message": "in this case, just make it shorter:\nif (CANCELLED.equals(status)) {...",
+      "range": {
+        "startLine": 508,
+        "startChar": 16,
+        "endLine": 508,
+        "endChar": 58
+      },
+      "revId": "2f4b216b047ffbddb89c66dc9f713ab3fdd671ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
