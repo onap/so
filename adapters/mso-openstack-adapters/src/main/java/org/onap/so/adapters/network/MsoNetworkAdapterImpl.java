@@ -1521,23 +1521,28 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             logger.debug("Subnet_Ipam Output JSON String:{} {}", obj.getClass(), jStr);
 
             JsonNode rootNode = mapper.readTree(jStr);
-            for (JsonNode sNode : rootNode.path("ipam_subnets")) {
-                logger.debug("Output Subnet Node {}", sNode.toString());
-                String name = sNode.path("subnet_name").textValue();
-                String uuid = sNode.path("subnet_uuid").textValue();
-                String aaiId = name; // default
-                // try to find aaiId for name in input subnetList
-                if (subnets != null) {
-                    for (Subnet subnet : subnets) {
-                        if (subnet != null && !commonUtils.isNullOrEmpty(subnet.getSubnetName())) {
-                            if (subnet.getSubnetName().equals(name)) {
-                                aaiId = subnet.getSubnetId();
-                                break;
+            if (rootNode != null) {
+                for (JsonNode sNode : rootNode.path("ipam_subnets")) {
+                    logger.debug("Output Subnet Node {}", sNode.toString());
+                    String name = sNode.path("subnet_name").textValue();
+                    String uuid = sNode.path("subnet_uuid").textValue();
+                    String aaiId = name; // default
+                    // try to find aaiId for name in input subnetList
+                    if (subnets != null) {
+                        for (Subnet subnet : subnets) {
+                            if (subnet != null && !commonUtils.isNullOrEmpty(subnet.getSubnetName())) {
+                                if (subnet.getSubnetName().equals(name)) {
+                                    aaiId = subnet.getSubnetId();
+                                    break;
+                                }
                             }
                         }
                     }
+                    sMap.put(aaiId, uuid); // bpmn needs aaid to uuid map
                 }
-                sMap.put(aaiId, uuid); // bpmn needs aaid to uuid map
+            } else {
+                logger.error("{} {} null rootNode - cannot get subnet-uuids", MessageEnum.RA_MARSHING_ERROR,
+                        ErrorCode.DataError.getValue());
             }
         } catch (Exception e) {
             logger.error("{} {} Exception getting subnet-uuids ", MessageEnum.RA_MARSHING_ERROR,
