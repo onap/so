@@ -244,9 +244,9 @@ public class ExceptionBuilder {
     public void processAuditException(DelegateExecutionImpl execution, boolean flowShouldContinue) {
         logger.debug("Processing Audit Results");
         String auditListString = (String) execution.getVariable("auditInventoryResult");
+        String processKey = getProcessKey(execution.getDelegateExecution());
         if (auditListString != null) {
             StringBuilder errorMessage = new StringBuilder();
-            String processKey = getProcessKey(execution.getDelegateExecution());
             try {
                 ExtractPojosForBB extractPojosForBB = getExtractPojosForBB();
                 VfModule module = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
@@ -302,7 +302,13 @@ public class ExceptionBuilder {
             }
 
         } else {
-            logger.debug("Unable to process audit results due to auditInventoryResult being null");
+            String errorMessage = "Unable to process audit results due to auditInventoryResult being null";
+            WorkflowException exception = new WorkflowException(processKey, 400, errorMessage, TargetEntity.SO);
+            execution.setVariable("WorkflowException", exception);
+            execution.setVariable("WorkflowExceptionErrorMessage", errorMessage);
+            logger.info("Outgoing WorkflowException is {}", exception);
+            logger.info("Throwing MSOWorkflowException");
+            throw new BpmnError("AAIInventoryFailure");
         }
     }
 
