@@ -330,17 +330,22 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
         Stack latestStack = null;
         while (true) {
             latestStack = queryHeatStack(heatClient, stack.getStackName() + "/" + stack.getId());
-            statusHandler.updateStackStatus(latestStack);
-            logger.debug("Polling: {} ({})", latestStack.getStackStatus(), latestStack.getStackName());
-            if (stackStatus.equals(latestStack.getStackStatus())) {
-                if (numberOfPollingAttempts <= 0) {
-                    logger.error("Polling of stack timed out with Status: {}", latestStack.getStackStatus());
+            if (latestStack != null) {
+                statusHandler.updateStackStatus(latestStack);
+                logger.debug("Polling: {} ({})", latestStack.getStackStatus(), latestStack.getStackName());
+                if (stackStatus.equals(latestStack.getStackStatus())) {
+                    if (numberOfPollingAttempts <= 0) {
+                        logger.error("Polling of stack timed out with Status: {}", latestStack.getStackStatus());
+                        return latestStack;
+                    }
+                    sleep(pollingFrequency * 1000L);
+                    numberOfPollingAttempts -= 1;
+                } else {
                     return latestStack;
                 }
-                sleep(pollingFrequency * 1000L);
-                numberOfPollingAttempts -= 1;
             } else {
-                return latestStack;
+                logger.error("latestStack is null");
+                return null;
             }
         }
     }
