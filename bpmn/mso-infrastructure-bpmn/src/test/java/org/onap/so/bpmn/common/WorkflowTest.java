@@ -1472,6 +1472,9 @@ public abstract class WorkflowTest {
             if (messageType.equalsIgnoreCase("SNIROResponse")) {
                 ServiceDecomposition decomp =
                         (ServiceDecomposition) getProcessVariable("Homing", "serviceDecomposition", timeout);
+                if (decomp == null) {
+                    return false;
+                }
                 List<Resource> resourceList = decomp.getServiceResources();
                 if (resourceList.size() == 1) {
                     String resourceId = "";
