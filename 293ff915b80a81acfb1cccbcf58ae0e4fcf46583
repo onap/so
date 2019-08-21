@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c115113f_ab22edb6",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/openstack/utils/MsoHeatUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 330,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-08-21T13:04:46Z",
+      "side": 1,
+      "message": "remove this line ...",
+      "range": {
+        "startLine": 330,
+        "startChar": 8,
+        "endLine": 330,
+        "endChar": 33
+      },
+      "revId": "293ff915b80a81acfb1cccbcf58ae0e4fcf46583",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7bbfe4f_23ed90d7",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/openstack/utils/MsoHeatUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-08-21T13:04:46Z",
+      "side": 1,
+      "message": "...and add here:\n Stack latestStack ...",
+      "range": {
+        "startLine": 332,
+        "startChar": 12,
+        "endLine": 332,
+        "endChar": 23
+      },
+      "revId": "293ff915b80a81acfb1cccbcf58ae0e4fcf46583",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
