@@ -93,6 +93,7 @@ public class WorkflowAction {
 
     private static final String WORKFLOW_ACTION_ERROR_MESSAGE = "WorkflowActionErrorMessage";
     private static final String SERVICE_INSTANCES = "serviceInstances";
+    private static final String SERVICE_INSTANCE = "serviceInstance";
     private static final String VF_MODULES = "vfModules";
     private static final String WORKFLOW_ACTION_WAS_UNABLE_TO_VERIFY_IF_THE_INSTANCE_NAME_ALREADY_EXIST_IN_AAI =
             "WorkflowAction was unable to verify if the instance name already exist in AAI.";
@@ -107,7 +108,7 @@ public class WorkflowAction {
     private static final String ASSIGNINSTANCE = "assignInstance";
     private static final String CREATEINSTANCE = "createInstance";
     private static final String USERPARAMSERVICE = "service";
-    private static final String supportedTypes =
+    private static final String SUPPORTEDTYPES =
             "vnfs|vfModules|networks|networkCollections|volumeGroups|serviceInstances|instanceGroups";
     private static final String HOMINGSOLUTION = "Homing_Solution";
     private static final String FABRIC_CONFIGURATION = "FabricConfiguration";
@@ -123,6 +124,8 @@ public class WorkflowAction {
     private static final String NAME_EXISTS_WITH_DIFF_CUSTOMIZATION_ID =
             "(%s), same parent and different customization id (%s)";
     private static final String NAME_EXISTS_WITH_DIFF_PARENT = "(%s) id (%s) and different parent relationship";
+    private static final String CREATENETWORKBB = "CreateNetworkBB";
+    private static final String ACTIVATENETWORKBB = "ActivateNetworkBB";
 
     @Autowired
     protected BBInputSetup bbInputSetup;
@@ -183,12 +186,14 @@ public class WorkflowAction {
             try {
                 cloudOwner = requestDetails.getCloudConfiguration().getCloudOwner();
             } catch (Exception ex) {
+                logger.error("Exception in getCloundOwner", ex);
                 cloudOwner = environment.getProperty(defaultCloudOwner);
             }
             boolean suppressRollback = false;
             try {
                 suppressRollback = requestDetails.getRequestInfo().getSuppressRollback();
             } catch (Exception ex) {
+                logger.error("Exception in getSuppressRollback", ex);
                 suppressRollback = false;
             }
             execution.setVariable("suppressRollback", suppressRollback);
@@ -209,7 +214,7 @@ public class WorkflowAction {
             } else {
                 resourceId = resource.getResourceId();
             }
-            if ((serviceInstanceId == null || serviceInstanceId.equals("")) && resourceType == WorkflowType.SERVICE) {
+            if ((serviceInstanceId == null || serviceInstanceId.isEmpty()) && resourceType == WorkflowType.SERVICE) {
                 serviceInstanceId = resourceId;
             }
             execution.setVariable("resourceId", resourceId);
@@ -300,9 +305,9 @@ public class WorkflowAction {
                             traverseCatalogDbService(execution, sIRequest, resourceCounter, aaiResourceIds);
                         }
                     } else if (resourceType == WorkflowType.SERVICE
-                            && (requestAction.equalsIgnoreCase("activateInstance")
-                                    || requestAction.equalsIgnoreCase("unassignInstance")
-                                    || requestAction.equalsIgnoreCase("deleteInstance")
+                            && ("activateInstance".equalsIgnoreCase(requestAction)
+                                    || "unassignInstance".equalsIgnoreCase(requestAction)
+                                    || "deleteInstance".equalsIgnoreCase(requestAction)
                                     || requestAction.equalsIgnoreCase("activate" + FABRIC_CONFIGURATION))) {
                         // SERVICE-MACRO-ACTIVATE, SERVICE-MACRO-UNASSIGN, and
                         // SERVICE-MACRO-DELETE
@@ -310,10 +315,10 @@ public class WorkflowAction {
                         // to query the SI in AAI to find related instances.
                         traverseAAIService(execution, resourceCounter, resourceId, aaiResourceIds);
                     } else if (resourceType == WorkflowType.SERVICE
-                            && requestAction.equalsIgnoreCase("deactivateInstance")) {
+                            && "deactivateInstance".equalsIgnoreCase(requestAction)) {
                         resourceCounter.add(new Resource(WorkflowType.SERVICE, "", false));
-                    } else if (resourceType == WorkflowType.VNF && (requestAction.equalsIgnoreCase("replaceInstance")
-                            || (requestAction.equalsIgnoreCase("recreateInstance")))) {
+                    } else if (resourceType == WorkflowType.VNF && ("replaceInstance".equalsIgnoreCase(requestAction)
+                            || ("recreateInstance".equalsIgnoreCase(requestAction)))) {
                         traverseAAIVnf(execution, resourceCounter, workflowResourceIds.getServiceInstanceId(),
                                 workflowResourceIds.getVnfId(), aaiResourceIds);
                     } else {
@@ -363,7 +368,7 @@ public class WorkflowAction {
                         sIRequest.getRequestDetails().getRequestParameters().getUserParams();
                 for (Map<String, Object> params : userParams) {
                     if (params.containsKey(HOMINGSOLUTION)) {
-                        if (params.get(HOMINGSOLUTION).equals("none")) {
+                        if ("none".equals(params.get(HOMINGSOLUTION))) {
                             execution.setVariable("homing", false);
                         } else {
                             execution.setVariable("homing", true);
@@ -447,7 +452,7 @@ public class WorkflowAction {
 
     protected boolean isConfiguration(List<OrchestrationFlow> orchFlows) {
         for (OrchestrationFlow flow : orchFlows) {
-            if (flow.getFlowName().contains("Configuration") && !flow.getFlowName().equals("ConfigurationScaleOutBB")) {
+            if (flow.getFlowName().contains(CONFIGURATION) && !"ConfigurationScaleOutBB".equals(flow.getFlowName())) {
                 return true;
             }
         }
@@ -715,7 +720,7 @@ public class WorkflowAction {
 
     protected boolean vrfConfigurationAlreadyExists(RelatedInstance relatedVpnBinding, Configuration vrfConfiguration,
             AAIResultWrapper configWrapper) throws VrfBondingServiceException {
-        if (vrfConfiguration.getConfigurationType().equalsIgnoreCase("VRF-ENTRY")) {
+        if ("VRF-ENTRY".equalsIgnoreCase(vrfConfiguration.getConfigurationType())) {
             Optional<Relationships> relationshipsConfigOp = configWrapper.getRelationships();
             if (relationshipsConfigOp.isPresent()) {
                 Optional<VpnBinding> relatedInfraVpnBindingOp =
@@ -752,7 +757,7 @@ public class WorkflowAction {
                         if (collectionResourceCustomization.getCollectionResource().getInstanceGroup() != null) {
                             String toscaNodeType = collectionResourceCustomization.getCollectionResource()
                                     .getInstanceGroup().getToscaNodeType();
-                            if (toscaNodeType != null && toscaNodeType.contains("NetworkCollection")) {
+                            if (toscaNodeType != null && toscaNodeType.contains(NETWORKCOLLECTION)) {
                                 int minNetworks = 0;
                                 org.onap.so.db.catalog.beans.InstanceGroup instanceGroup =
                                         collectionResourceCustomization.getCollectionResource().getInstanceGroup();
@@ -885,6 +890,7 @@ public class WorkflowAction {
                 }
             }
         } catch (Exception ex) {
+            logger.error("Exception in traverseAAIService", ex);
             buildAndThrowException(execution,
                     "Could not find existing Service Instance or related Instances to execute the request on.");
         }
@@ -926,6 +932,7 @@ public class WorkflowAction {
                 }
             }
         } catch (Exception ex) {
+            logger.error("Exception in traverseAAIVnf", ex);
             buildAndThrowException(execution,
                     "Could not find existing Vnf or related Instances to execute the request on.");
         }
@@ -953,6 +960,7 @@ public class WorkflowAction {
                 }
             }
         } catch (Exception ex) {
+            logger.error("Exception in findConfigurationsInsideVfModule", ex);
             buildAndThrowException(execution, "Failed to find Configuration object from the vfModule.");
         }
     }
@@ -1015,8 +1023,8 @@ public class WorkflowAction {
                                                 vfModuleCustomizationUUID =
                                                         vfModule.getModelInfo().getModelCustomizationUuid();
                                             }
-                                            if (!vnfCustomizationUUID.equals("")
-                                                    && !vfModuleCustomizationUUID.equals("")) {
+                                            if (!vnfCustomizationUUID.isEmpty()
+                                                    && !vfModuleCustomizationUUID.isEmpty()) {
                                                 List<CvnfcConfigurationCustomization> configs =
                                                         traverseCatalogDbForConfiguration(
                                                                 validate.getModelInfo().getModelVersionId(),
@@ -1110,7 +1118,7 @@ public class WorkflowAction {
 
     protected Resource extractResourceIdAndTypeFromUri(String uri) {
         Pattern patt = Pattern.compile(
-                "[vV]\\d+.*?(?:(?:/(?<type>" + supportedTypes + ")(?:/(?<id>[^/]+))?)(?:/(?<action>[^/]+))?)?$");
+                "[vV]\\d+.*?(?:(?:/(?<type>" + SUPPORTEDTYPES + ")(?:/(?<id>[^/]+))?)(?:/(?<action>[^/]+))?)?$");
         Matcher m = patt.matcher(uri);
         Boolean generated = false;
 
@@ -1123,15 +1131,15 @@ public class WorkflowAction {
                 throw new IllegalArgumentException("Uri could not be parsed. No type found. " + uri);
             }
             if (action == null) {
-                if (type.equals(SERVICE_INSTANCES) && (id == null || id.equals("assign"))) {
+                if (type.equals(SERVICE_INSTANCES) && (id == null || "assign".equals(id))) {
                     id = UUID.randomUUID().toString();
                     generated = true;
-                } else if (type.equals(VF_MODULES) && id.equals("scaleOut")) {
+                } else if (type.equals(VF_MODULES) && "scaleOut".equals(id)) {
                     id = UUID.randomUUID().toString();
                     generated = true;
                 }
             } else {
-                if (action.matches(supportedTypes)) {
+                if (action.matches(SUPPORTEDTYPES)) {
                     id = UUID.randomUUID().toString();
                     generated = true;
                     type = action;
@@ -1159,7 +1167,7 @@ public class WorkflowAction {
                                 .equalsIgnoreCase(reqDetails.getModelInfo().getModelVersionId())) {
                             return serviceInstanceAAI.get().getServiceInstanceId();
                         } else {
-                            throw new DuplicateNameException("serviceInstance",
+                            throw new DuplicateNameException(SERVICE_INSTANCE,
                                     String.format(NAME_EXISTS_WITH_DIFF_VERSION_ID, instanceName,
                                             reqDetails.getModelInfo().getModelVersionId()));
                         }
@@ -1170,7 +1178,7 @@ public class WorkflowAction {
                             if (aaiServiceInstances.getServiceInstance() != null
                                     && !aaiServiceInstances.getServiceInstance().isEmpty()) {
                                 if (aaiServiceInstances.getServiceInstance().size() > 1) {
-                                    throw new DuplicateNameException("serviceInstance",
+                                    throw new DuplicateNameException(SERVICE_INSTANCE,
                                             String.format(NAME_EXISTS_MULTIPLE, instanceName));
                                 } else {
                                     ServiceInstance si =
@@ -1178,7 +1186,7 @@ public class WorkflowAction {
                                     Map<String, String> keys =
                                             bbInputSetupUtils.getURIKeysFromServiceInstance(si.getServiceInstanceId());
 
-                                    throw new DuplicateNameException("serviceInstance",
+                                    throw new DuplicateNameException(SERVICE_INSTANCE,
                                             String.format(NAME_EXISTS_WITH_DIFF_COMBINATION, instanceName,
                                                     keys.get("global-customer-id"), keys.get("service-type"),
                                                     si.getModelVersionId()));
@@ -1295,7 +1303,7 @@ public class WorkflowAction {
     }
 
     protected String convertTypeFromPlural(String type) {
-        if (!type.matches(supportedTypes)) {
+        if (!type.matches(SUPPORTEDTYPES)) {
             return type;
         } else {
             if (type.equals(SERVICE_INSTANCES)) {
@@ -1317,31 +1325,31 @@ public class WorkflowAction {
                     String virtualLinkKey = ebb.getBuildingBlock().getVirtualLinkKey();
                     sortedOrchFlows.add(ebb);
                     for (ExecuteBuildingBlock ebb2 : orchFlows) {
-                        if (!isVirtualLink && ebb2.getBuildingBlock().getBpmnFlowName().equals("CreateNetworkBB")
+                        if (!isVirtualLink && ebb2.getBuildingBlock().getBpmnFlowName().equals(CREATENETWORKBB)
                                 && ebb2.getBuildingBlock().getKey().equalsIgnoreCase(key)) {
                             sortedOrchFlows.add(ebb2);
                             break;
                         }
-                        if (isVirtualLink && ebb2.getBuildingBlock().getBpmnFlowName().equals("CreateNetworkBB")
+                        if (isVirtualLink && ebb2.getBuildingBlock().getBpmnFlowName().equals(CREATENETWORKBB)
                                 && ebb2.getBuildingBlock().getVirtualLinkKey().equalsIgnoreCase(virtualLinkKey)) {
                             sortedOrchFlows.add(ebb2);
                             break;
                         }
                     }
                     for (ExecuteBuildingBlock ebb2 : orchFlows) {
-                        if (!isVirtualLink && ebb2.getBuildingBlock().getBpmnFlowName().equals("ActivateNetworkBB")
+                        if (!isVirtualLink && ebb2.getBuildingBlock().getBpmnFlowName().equals(ACTIVATENETWORKBB)
                                 && ebb2.getBuildingBlock().getKey().equalsIgnoreCase(key)) {
                             sortedOrchFlows.add(ebb2);
                             break;
                         }
-                        if (isVirtualLink && ebb2.getBuildingBlock().getBpmnFlowName().equals("ActivateNetworkBB")
+                        if (isVirtualLink && ebb2.getBuildingBlock().getBpmnFlowName().equals(ACTIVATENETWORKBB)
                                 && ebb2.getBuildingBlock().getVirtualLinkKey().equalsIgnoreCase(virtualLinkKey)) {
                             sortedOrchFlows.add(ebb2);
                             break;
                         }
                     }
-                } else if (ebb.getBuildingBlock().getBpmnFlowName().equals("CreateNetworkBB")
-                        || ebb.getBuildingBlock().getBpmnFlowName().equals("ActivateNetworkBB")) {
+                } else if (ebb.getBuildingBlock().getBpmnFlowName().equals(CREATENETWORKBB)
+                        || ebb.getBuildingBlock().getBpmnFlowName().equals(ACTIVATENETWORKBB)) {
                     continue;
                 } else if (!ebb.getBuildingBlock().getBpmnFlowName().equals("")) {
                     sortedOrchFlows.add(ebb);
@@ -1424,7 +1432,7 @@ public class WorkflowAction {
                 }
             } else if (orchFlow.getFlowName().contains(VFMODULE)) {
                 List<Resource> vfModuleResourcesSorted = null;
-                if (requestAction.equals("createInstance") || requestAction.equals("assignInstance")
+                if (requestAction.equals(CREATEINSTANCE) || requestAction.equals(ASSIGNINSTANCE)
                         || requestAction.equals("activateInstance")) {
                     vfModuleResourcesSorted = sortVfModulesByBaseFirst(resourceCounter.stream()
                             .filter(x -> WorkflowType.VFMODULE == x.getResourceType()).collect(Collectors.toList()));
