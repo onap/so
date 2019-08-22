@@ -40,7 +40,6 @@ import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
-import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
@@ -65,6 +64,9 @@ public class WorkflowActionBBTasks {
     private static final String FABRIC_CONFIGURATION = "FabricConfiguration";
     private static final String ASSIGN_FABRIC_CONFIGURATION_BB = "AssignFabricConfigurationBB";
     private static final String ACTIVATE_FABRIC_CONFIGURATION_BB = "ActivateFabricConfigurationBB";
+    private static final String COMPLETED = "completed";
+    private static final String HANDLINGCODE = "handlingCode";
+    private static final String ROLLBACKTOCREATED = "RollbackToCreated";
     protected String maxRetries = "mso.rainyDay.maxRetries";
     private static final Logger logger = LoggerFactory.getLogger(WorkflowActionBBTasks.class);
 
@@ -98,9 +100,9 @@ public class WorkflowActionBBTasks {
         execution.setVariable("buildingBlock", ebb);
         currentSequence++;
         if (currentSequence >= flowsToExecute.size()) {
-            execution.setVariable("completed", true);
+            execution.setVariable(COMPLETED, true);
         } else {
-            execution.setVariable("completed", false);
+            execution.setVariable(COMPLETED, false);
         }
         execution.setVariable(G_CURRENT_SEQUENCE, currentSequence);
     }
@@ -114,7 +116,8 @@ public class WorkflowActionBBTasks {
             }
         } catch (Exception ex) {
             logger.warn(
-                    "Bpmn Flow Statistics was unable to update Request Db with the new completion percentage. Competion percentage may be invalid.");
+                    "Bpmn Flow Statistics was unable to update Request Db with the new completion percentage. Competion percentage may be invalid.",
+                    ex);
         }
     }
 
@@ -236,7 +239,7 @@ public class WorkflowActionBBTasks {
     }
 
     public void checkRetryStatus(DelegateExecution execution) {
-        String handlingCode = (String) execution.getVariable("handlingCode");
+        String handlingCode = (String) execution.getVariable(HANDLINGCODE);
         String requestId = (String) execution.getVariable(G_REQUEST_ID);
         String retryDuration = (String) execution.getVariable("RetryDuration");
         int retryCount = (int) execution.getVariable(RETRY_COUNT);
@@ -244,11 +247,11 @@ public class WorkflowActionBBTasks {
         try {
             envMaxRetries = Integer.parseInt(this.environment.getProperty(maxRetries));
         } catch (Exception ex) {
-            logger.error("Could not read maxRetries from config file. Setting max to 5 retries");
+            logger.error("Could not read maxRetries from config file. Setting max to 5 retries", ex);
             envMaxRetries = 5;
         }
         int nextCount = retryCount + 1;
-        if (handlingCode.equals("Retry")) {
+        if ("Retry".equals(handlingCode)) {
             workflowActionBBFailure.updateRequestErrorStatusMessage(execution);
             try {
                 InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
@@ -259,8 +262,8 @@ public class WorkflowActionBBTasks {
                 logger.warn("Failed to update Request Db Infra Active Requests with Retry Status", ex);
             }
             if (retryCount < envMaxRetries) {
-                int currSequence = (int) execution.getVariable("gCurrentSequence");
-                execution.setVariable("gCurrentSequence", currSequence - 1);
+                int currSequence = (int) execution.getVariable(G_CURRENT_SEQUENCE);
+                execution.setVariable(G_CURRENT_SEQUENCE, currSequence - 1);
                 execution.setVariable(RETRY_COUNT, nextCount);
             } else {
                 workflowAction.buildAndThrowException(execution,
@@ -301,15 +304,15 @@ public class WorkflowActionBBTasks {
                 }
             }
 
-            String handlingCode = (String) execution.getVariable("handlingCode");
+            String handlingCode = (String) execution.getVariable(HANDLINGCODE);
             List<ExecuteBuildingBlock> rollbackFlowsFiltered = new ArrayList<>();
             rollbackFlowsFiltered.addAll(rollbackFlows);
-            if (handlingCode.equals("RollbackToAssigned") || handlingCode.equals("RollbackToCreated")) {
+            if ("RollbackToAssigned".equals(handlingCode) || handlingCode.equals(ROLLBACKTOCREATED)) {
                 for (int i = 0; i < rollbackFlows.size(); i++) {
                     if (rollbackFlows.get(i).getBuildingBlock().getBpmnFlowName().contains("Unassign")) {
                         rollbackFlowsFiltered.remove(rollbackFlows.get(i));
                     } else if (rollbackFlows.get(i).getBuildingBlock().getBpmnFlowName().contains("Delete")
-                            && handlingCode.equals("RollbackToCreated")) {
+                            && handlingCode.equals(ROLLBACKTOCREATED)) {
                         rollbackFlowsFiltered.remove(rollbackFlows.get(i));
                     }
                 }
@@ -321,9 +324,9 @@ public class WorkflowActionBBTasks {
             else
                 execution.setVariable("isRollbackNeeded", true);
             execution.setVariable("flowsToExecute", rollbackFlowsFiltered);
-            execution.setVariable("handlingCode", "PreformingRollback");
+            execution.setVariable(HANDLINGCODE, "PreformingRollback");
             execution.setVariable("isRollback", true);
-            execution.setVariable("gCurrentSequence", 0);
+            execution.setVariable(G_CURRENT_SEQUENCE, 0);
             execution.setVariable(RETRY_COUNT, 0);
         } else {
             workflowAction.buildAndThrowException(execution,
@@ -354,6 +357,7 @@ public class WorkflowActionBBTasks {
             }
             requestDbclient.updateInfraActiveRequests(request);
         } catch (Exception ex) {
+            logger.error("Exception in updateInstanceId", ex);
             workflowAction.buildAndThrowException(execution, "Failed to update Request db with instanceId");
         }
     }
@@ -361,12 +365,12 @@ public class WorkflowActionBBTasks {
     public void postProcessingExecuteBB(DelegateExecution execution) {
         List<ExecuteBuildingBlock> flowsToExecute =
                 (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
-        String handlingCode = (String) execution.getVariable("handlingCode");
+        String handlingCode = (String) execution.getVariable(HANDLINGCODE);
         final boolean aLaCarte = (boolean) execution.getVariable(G_ALACARTE);
         int currentSequence = (int) execution.getVariable(G_CURRENT_SEQUENCE);
         ExecuteBuildingBlock ebb = flowsToExecute.get(currentSequence - 1);
         String bbFlowName = ebb.getBuildingBlock().getBpmnFlowName();
-        if (bbFlowName.equalsIgnoreCase("ActivateVfModuleBB") && aLaCarte && handlingCode.equalsIgnoreCase("Success")) {
+        if ("ActivateVfModuleBB".equalsIgnoreCase(bbFlowName) && aLaCarte && "Success".equalsIgnoreCase(handlingCode)) {
             postProcessingExecuteBBActivateVfModule(execution, ebb, flowsToExecute);
         }
     }
@@ -410,16 +414,16 @@ public class WorkflowActionBBTasks {
                             .forEach(executeBB -> logger.info("Flows to Execute After Post Processing: {}",
                                     executeBB.getBuildingBlock().getBpmnFlowName()));
                     execution.setVariable("flowsToExecute", flowsToExecute);
-                    execution.setVariable("completed", false);
+                    execution.setVariable(COMPLETED, false);
                 } else {
-                    logger.debug("No cvnfcCustomization found for customizationId: " + modelCustomizationId);
+                    logger.debug("No cvnfcCustomization found for customizationId: {}", modelCustomizationId);
                 }
             }
         } catch (EntityNotFoundException e) {
-            logger.debug(e.getMessage() + " Will not be running Fabric Config Building Blocks");
+            logger.debug("Will not be running Fabric Config Building Blocks", e);
         } catch (Exception e) {
             String errorMessage = "Error occurred in post processing of Vf Module create";
-            execution.setVariable("handlingCode", "RollbackToCreated");
+            execution.setVariable(HANDLINGCODE, ROLLBACKTOCREATED);
             execution.setVariable("WorkflowActionErrorMessage", errorMessage);
             logger.error(errorMessage, e);
         }
