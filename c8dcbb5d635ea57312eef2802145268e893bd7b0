@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f84bbbda_78a32aa9",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowActionBBTasks.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 310,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-08-22T10:32:01Z",
+      "side": 1,
+      "message": "Change the sides please:\nROLLBACKTOCREATED.equals(handlingCode)",
+      "range": {
+        "startLine": 310,
+        "startChar": 61,
+        "endLine": 310,
+        "endChar": 99
+      },
+      "revId": "c8dcbb5d635ea57312eef2802145268e893bd7b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
