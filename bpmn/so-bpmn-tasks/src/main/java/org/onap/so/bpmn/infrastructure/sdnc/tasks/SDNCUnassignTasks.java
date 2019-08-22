@@ -53,6 +53,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class SDNCUnassignTasks extends AbstractSDNCTask {
 
+    private static final Logger logger = LoggerFactory.getLogger(SDNCUnassignTasks.class);
     public static final String SDNC_REQUEST = "SDNCRequest";
     @Autowired
     private SDNCServiceInstanceResources sdncSIResources;
@@ -69,6 +70,13 @@ public class SDNCUnassignTasks extends AbstractSDNCTask {
     @Autowired
     private Environment env;
 
+    /**
+     * This method is used to prepare a SDNC request and set it to the execution Object.
+     *
+     * Which is used for unassign the ServiceInstance.
+     *
+     * @param execution
+     */
     public void unassignServiceInstance(BuildingBlockExecution execution) {
         try {
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
@@ -83,10 +91,18 @@ public class SDNCUnassignTasks extends AbstractSDNCTask {
             sdncRequest.setTopology(SDNCTopology.SERVICE);
             execution.setVariable(SDNC_REQUEST, sdncRequest);
         } catch (Exception ex) {
+            logger.error("Exception occurred in  SDNCUnassignTasks unassignServiceInstance", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
 
+    /**
+     * This method is used to prepare a SDNC request and set it to the execution Object.
+     *
+     * Which is used for unassign the VfModule.
+     *
+     * @param execution
+     */
     public void unassignVfModule(BuildingBlockExecution execution) {
         try {
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
@@ -102,10 +118,18 @@ public class SDNCUnassignTasks extends AbstractSDNCTask {
             sdncRequest.setTopology(SDNCTopology.VFMODULE);
             execution.setVariable(SDNC_REQUEST, sdncRequest);
         } catch (Exception ex) {
+            logger.error("Exception occurred in  SDNCUnassignTasks unassignVfModule", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
 
+    /**
+     * This method is used to prepare a SDNC request and set it to the execution Object.
+     *
+     * Which is used for unassign the Vnf.
+     *
+     * @param execution
+     */
     public void unassignVnf(BuildingBlockExecution execution) {
         try {
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
@@ -122,10 +146,18 @@ public class SDNCUnassignTasks extends AbstractSDNCTask {
             sdncRequest.setTopology(SDNCTopology.VNF);
             execution.setVariable(SDNC_REQUEST, sdncRequest);
         } catch (Exception ex) {
+            logger.error("Exception occurred in  SDNCUnassignTasks unassignVnf", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
 
+    /**
+     * This method is used to prepare a SDNC request and set it to the execution Object.
+     *
+     * Which is used for unassign the Network.
+     *
+     * @param execution
+     */
     public void unassignNetwork(BuildingBlockExecution execution) throws Exception {
         try {
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
@@ -144,6 +176,7 @@ public class SDNCUnassignTasks extends AbstractSDNCTask {
             sdncRequest.setTopology(SDNCTopology.NETWORK);
             execution.setVariable(SDNC_REQUEST, sdncRequest);
         } catch (Exception ex) {
+            logger.error("Exception occurred in  SDNCUnassignTasks unassignNetwork", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
