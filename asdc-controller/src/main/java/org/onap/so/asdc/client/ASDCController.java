@@ -723,7 +723,6 @@ public class ASDCController {
         // For each artifact, create a structure describing the VFModule in a ordered flat level
         ResourceStructure resourceStructure = null;
         String msoConfigPath = getMsoConfigPath();
-        boolean hasVFResource = false;
         ToscaResourceStructure toscaResourceStructure = new ToscaResourceStructure(msoConfigPath);
         DistributionStatusEnum deployStatus = DistributionStatusEnum.DEPLOY_OK;
         String errorMessage = null;
@@ -738,7 +737,7 @@ public class ASDCController {
             for (IResourceInstance resource : iNotif.getResources()) {
 
                 String resourceType = resource.getResourceType();
-
+                boolean hasVFResource = false;
 
                 logger.info("Processing Resource Type: {}, Model UUID: {}", resourceType, resource.getResourceUUID());
 
@@ -802,19 +801,19 @@ public class ASDCController {
                     errorMessage = e.getMessage();
                     logger.error("Exception occurred", e);
                 }
-            }
 
-            if (!hasVFResource) {
+                if (!hasVFResource) {
 
-                logger.debug("No resources found for Service: " + iNotif.getServiceUUID());
+                    logger.debug("No resources found for Service: " + iNotif.getServiceUUID());
 
-                logger.debug("Preparing to deploy Service: {}", iNotif.getServiceUUID());
-                try {
-                    this.deployResourceStructure(resourceStructure, toscaResourceStructure);
-                } catch (ArtifactInstallerException e) {
-                    deployStatus = DistributionStatusEnum.DEPLOY_ERROR;
-                    errorMessage = e.getMessage();
-                    logger.error("Exception occurred", e);
+                    logger.debug("Preparing to deploy Service: {}", iNotif.getServiceUUID());
+                    try {
+                        this.deployResourceStructure(resourceStructure, toscaResourceStructure);
+                    } catch (ArtifactInstallerException e) {
+                        deployStatus = DistributionStatusEnum.DEPLOY_ERROR;
+                        errorMessage = e.getMessage();
+                        logger.error("Exception occurred", e);
+                    }
                 }
             }
 
