@@ -462,13 +462,13 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                         }
                     }
                 }
+                networkRollback.setNeutronNetworkId((String) outputs.get(NETWORK_ID));
             }
             subnetIdMap.value = sMap;
 
             rollback.value = networkRollback;
             // Populate remaining rollback info and response parameters.
             networkRollback.setNetworkStackId(heatStack.getCanonicalName());
-            networkRollback.setNeutronNetworkId((String) heatStack.getOutputs().get(NETWORK_ID));
             networkRollback.setNetworkCreated(true);
             networkRollback.setNetworkType(networkType);
 
