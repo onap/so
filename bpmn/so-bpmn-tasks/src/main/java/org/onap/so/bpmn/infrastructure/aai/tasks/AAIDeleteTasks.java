@@ -79,7 +79,17 @@ public class AAIDeleteTasks {
     private AAIConfigurationResources aaiConfigurationResources;
     @Autowired
     private AAIInstanceGroupResources aaiInstanceGroupResources;
-
+    
+    /**
+     * BPMN access method to delete the VfModule from A&AI.
+     *
+     * It will extract the genericVnf & VfModule from the BBObject.
+     *
+     * Before deleting it set the aaiVfModuleRollback as false & then it will delete the VfModule.
+     *
+     * @param execution
+     * @throws Exception
+     */
     public void deleteVfModule(BuildingBlockExecution execution) throws Exception {
         GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
         VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
@@ -89,10 +99,21 @@ public class AAIDeleteTasks {
             aaiVfModuleResources.deleteVfModule(vfModule, genericVnf);
             execution.setVariable("aaiVfModuleRollback", true);
         } catch (Exception ex) {
+        	logger.error("Exception occurred in  AAIDeleteTasks deleteVfModule process" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
 
+    /**
+     * BPMN access method to delete the Vnf from A&AI.
+     *
+     * It will extract the genericVnf from the BBObject.
+     *
+     * Before deleting it set the aaiVnfRollback as false & then it will delete the Vnf.
+     *
+     * @param execution
+     * @throws Exception
+     */
     public void deleteVnf(BuildingBlockExecution execution) throws Exception {
         GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 
@@ -101,79 +122,154 @@ public class AAIDeleteTasks {
             aaiVnfResources.deleteVnf(genericVnf);
             execution.setVariable("aaiVnfRollback", true);
         } catch (Exception ex) {
+            logger.error("Exception occurred in  AAIDeleteTasks deleteVnf process" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
 
+    /**
+     * BPMN access method to delete the ServiceInstance from A&AI.
+     *
+     * It will extract the serviceInstance from the BBObject.
+     *
+     * @param execution
+     * @throws Exception
+     */
     public void deleteServiceInstance(BuildingBlockExecution execution) throws Exception {
         try {
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
             aaiSIResources.deleteServiceInstance(serviceInstance);
         } catch (Exception ex) {
+            logger.error("Exception occurred in  AAIDeleteTasks deleteServiceInstance process" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
 
     }
 
+    /**
+     * BPMN access method to delete the l3network from A&AI.
+     *
+     * It will extract the l3network from the BBObject.
+     *
+     * After deleting  the l3network it set the isRollbackNeeded as true.
+     *
+     * @param execution
+     * @throws Exception
+     */
     public void deleteNetwork(BuildingBlockExecution execution) throws Exception {
         try {
             L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
             aaiNetworkResources.deleteNetwork(l3network);
             execution.setVariable("isRollbackNeeded", true);
         } catch (Exception ex) {
+            logger.error("Exception occurred in  AAIDeleteTasks deleteNetwork process" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
 
+    /**
+     * BPMN access method to delete the Collection from A&AI.
+     *
+     * It will extract the serviceInstance from the BBObject.
+     *
+     * Then it will get the collection from serviceinstance.
+     *
+     * @param execution
+     * @throws Exception
+     */
     public void deleteCollection(BuildingBlockExecution execution) throws Exception {
         try {
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
             aaiNetworkResources.deleteCollection(serviceInstance.getCollection());
         } catch (Exception ex) {
+            logger.error("Exception occurred in  AAIDeleteTasks deleteCollection process" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
 
+    /**
+     * BPMN access method to delete the InstanceGroup from A&AI.
+     *
+     * It will extract the serviceInstance from the BBObject.
+     * 
+     * Then it will get the Instance group from serviceInstance.
+     *
+     * @param execution
+     * @throws Exception
+     */
     public void deleteInstanceGroup(BuildingBlockExecution execution) throws Exception {
         try {
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
             aaiNetworkResources.deleteNetworkInstanceGroup(serviceInstance.getCollection().getInstanceGroup());
         } catch (Exception ex) {
+            logger.error("Exception occurred in  AAIDeleteTasks deleteInstanceGroup process" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
 
+    /**
+     * BPMN access method to delete the VolumeGroup from A&AI.
+     *
+     * It will extract the volumeGroup from the BBObject and cloudRegion from execution object .
+     * 
+     * Then it will delete from A&AI.
+     *
+     * @param execution
+     * @throws Exception
+     */
     public void deleteVolumeGroup(BuildingBlockExecution execution) {
         try {
             VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID);
             CloudRegion cloudRegion = execution.getGeneralBuildingBlock().getCloudRegion();
             aaiVolumeGroupResources.deleteVolumeGroup(volumeGroup, cloudRegion);
         } catch (Exception ex) {
+            logger.error("Exception occurred in  AAIDeleteTasks deleteVolumeGroup process" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
 
+    /**
+     * BPMN access method to delete the Configuration from A&AI.
+     *
+     * It will extract the configuration from the BBObject.
+     * 
+     * Then it will delete from A&AI.
+     *
+     * @param execution
+     */
     public void deleteConfiguration(BuildingBlockExecution execution) {
         try {
             Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID);
             aaiConfigurationResources.deleteConfiguration(configuration);
         } catch (Exception ex) {
+            logger.error("Exception occurred in  AAIDeleteTasks deleteConfiguration process" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
 
+    /**
+     * BPMN access method to delete the InstanceGroupVnf from A&AI.
+     *
+     * It will extract the instanceGroup from the BBObject.
+     * 
+     * Then it will delete from A&AI.
+     *
+     * @param execution
+     */
     public void deleteInstanceGroupVnf(BuildingBlockExecution execution) {
         try {
             InstanceGroup instanceGroup = extractPojosForBB.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID);
             aaiInstanceGroupResources.deleteInstanceGroup(instanceGroup);
         } catch (Exception ex) {
+            logger.error("Exception occurred in  AAIDeleteTasks deleteInstanceGroupVnf process" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
 
+ 
     public void deleteNetworkPolicies(BuildingBlockExecution execution) {
         try {
             String fqdns = execution.getVariable(contrailNetworkPolicyFqdnList);

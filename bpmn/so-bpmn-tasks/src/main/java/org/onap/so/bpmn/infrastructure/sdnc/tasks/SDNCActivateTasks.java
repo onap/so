@@ -52,6 +52,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class SDNCActivateTasks extends AbstractSDNCTask {
 
+    private static final Logger logger = LoggerFactory.getLogger(SDNCActivateTasks.class);
     public static final String SDNC_REQUEST = "SDNCRequest";
     @Autowired
     private SDNCVnfResources sdncVnfResources;
@@ -66,6 +67,13 @@ public class SDNCActivateTasks extends AbstractSDNCTask {
     @Autowired
     private Environment env;
 
+    /**
+     * This method is used to prepare a SDNC request and set it to the execution Object.
+     *
+     * Which is used for activate the vnf.
+     *
+     * @param execution
+     */
     public void activateVnf(BuildingBlockExecution execution) {
         try {
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
@@ -82,6 +90,7 @@ public class SDNCActivateTasks extends AbstractSDNCTask {
             sdncRequest.setTopology(SDNCTopology.VNF);
             execution.setVariable(SDNC_REQUEST, sdncRequest);
         } catch (Exception ex) {
+            logger.error("Exception occurred in  SDNCActivateTasks activateVnf process" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -112,6 +121,13 @@ public class SDNCActivateTasks extends AbstractSDNCTask {
         }
     }
 
+    /**
+     * This method is used to prepare a SDNC request and set it to the execution Object.
+     * 
+     * Which is used for activate the activateVfModule.
+     *
+     * @param execution
+     */
     public void activateVfModule(BuildingBlockExecution execution) {
         GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
         RequestContext requestContext = gBBInput.getRequestContext();
@@ -131,6 +147,7 @@ public class SDNCActivateTasks extends AbstractSDNCTask {
             sdncRequest.setTopology(SDNCTopology.VFMODULE);
             execution.setVariable(SDNC_REQUEST, sdncRequest);
         } catch (Exception ex) {
+            logger.error("Exception occurred in  SDNCActivateTasks activateVfModule process" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }

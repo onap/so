@@ -92,6 +92,7 @@ public class AAIUpdateTasks {
                     OrchestrationStatus.ASSIGNED);
             execution.setVariable("aaiServiceInstanceRollback", true);
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusAssignedService" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -108,6 +109,7 @@ public class AAIUpdateTasks {
             aaiServiceInstanceResources.updateOrchestrationStatusServiceInstance(serviceInstance,
                     OrchestrationStatus.ACTIVE);
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusActiveService" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -122,6 +124,7 @@ public class AAIUpdateTasks {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
             aaiVnfResources.updateOrchestrationStatusVnf(vnf, OrchestrationStatus.ASSIGNED);
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusAssignedVnf" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -136,6 +139,7 @@ public class AAIUpdateTasks {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
             aaiVnfResources.updateOrchestrationStatusVnf(vnf, OrchestrationStatus.ACTIVE);
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusActiveVnf" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -155,6 +159,7 @@ public class AAIUpdateTasks {
             aaiVolumeGroupResources.updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion,
                     OrchestrationStatus.ASSIGNED);
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusAssignedVolumeGroup" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -174,6 +179,7 @@ public class AAIUpdateTasks {
             aaiVolumeGroupResources.updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion,
                     OrchestrationStatus.ACTIVE);
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusActiveVolumeGroup" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -193,6 +199,7 @@ public class AAIUpdateTasks {
             aaiVolumeGroupResources.updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion,
                     OrchestrationStatus.CREATED);
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusCreatedVolumeGroup" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -215,6 +222,7 @@ public class AAIUpdateTasks {
 
             aaiVolumeGroupResources.updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateHeatStackIdVolumeGroup" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -231,6 +239,7 @@ public class AAIUpdateTasks {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
             aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule, vnf, OrchestrationStatus.ASSIGNED);
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusAssignedVfModule" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -247,6 +256,7 @@ public class AAIUpdateTasks {
             aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule, vnf,
                     OrchestrationStatus.PENDING_ACTIVATION);
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusPendingActivationVfModule" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -273,6 +283,7 @@ public class AAIUpdateTasks {
                 aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule, vnf, OrchestrationStatus.ASSIGNED);
             }
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusAssignedOrPendingActivationVfModule" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -289,6 +300,7 @@ public class AAIUpdateTasks {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
             aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule, vnf, OrchestrationStatus.CREATED);
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusCreatedVfModule" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -307,6 +319,7 @@ public class AAIUpdateTasks {
             aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule, vnf, OrchestrationStatus.CREATED);
             execution.setVariable("aaiDeactivateVfModuleRollback", true);
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusDeactivateVfModule" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -346,6 +359,7 @@ public class AAIUpdateTasks {
             L3Network l3Network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
             updateNetworkAAI(l3Network, status);
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateNetwork" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -386,6 +400,7 @@ public class AAIUpdateTasks {
             aaiCollectionResources.updateCollection(copiedNetworkCollection);
             execution.setVariable("aaiNetworkCollectionActivateRollback", true);
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusActiveNetworkCollection" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -403,6 +418,7 @@ public class AAIUpdateTasks {
             aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule, vnf, OrchestrationStatus.ACTIVE);
             execution.setVariable("aaiActivateVfModuleRollback", true);
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusActivateVfModule" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -423,6 +439,7 @@ public class AAIUpdateTasks {
             vfModule.setHeatStackId(heatStackId);
             aaiVfModuleResources.updateHeatStackIdVfModule(vfModule, vnf);
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateHeatStackIdVfModule" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -466,6 +483,7 @@ public class AAIUpdateTasks {
 
             execution.setVariable("aaiNetworkActivateRollback", true);
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateNetworkCreated" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -495,6 +513,7 @@ public class AAIUpdateTasks {
                 }
             }
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateNetworkUpdated" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -509,6 +528,7 @@ public class AAIUpdateTasks {
             L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
             aaiNetworkResources.updateNetwork(l3network);
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateObjectNetwork" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -524,6 +544,7 @@ public class AAIUpdateTasks {
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
             aaiServiceInstanceResources.updateServiceInstance(serviceInstance);
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateServiceInstance" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -538,6 +559,7 @@ public class AAIUpdateTasks {
             GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
             aaiVnfResources.updateObjectVnf(genericVnf);
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateObjectVnf" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -559,6 +581,7 @@ public class AAIUpdateTasks {
             aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule, vnf, OrchestrationStatus.ASSIGNED);
             execution.setVariable("aaiDeleteVfModuleRollback", true);
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusDeleteVfModule" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -574,6 +597,7 @@ public class AAIUpdateTasks {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
             aaiVfModuleResources.changeAssignVfModule(vfModule, vnf);
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateModelVfModule" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -589,6 +613,7 @@ public class AAIUpdateTasks {
             aaiConfigurationResources.updateOrchestrationStatusConfiguration(configuration,
                     OrchestrationStatus.ASSIGNED);
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusAssignFabricConfiguration" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -603,6 +628,7 @@ public class AAIUpdateTasks {
             Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID);
             aaiConfigurationResources.updateOrchestrationStatusConfiguration(configuration, OrchestrationStatus.ACTIVE);
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusActivateFabricConfiguration" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -618,6 +644,7 @@ public class AAIUpdateTasks {
             aaiConfigurationResources.updateOrchestrationStatusConfiguration(configuration,
                     OrchestrationStatus.ASSIGNED);
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusDeactivateFabricConfiguration" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -640,6 +667,7 @@ public class AAIUpdateTasks {
                 aaiVnfResources.updateObjectVnf(copiedGenericVnf);
             }
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateIpv4OamAddressVnf" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -662,6 +690,7 @@ public class AAIUpdateTasks {
                 aaiVnfResources.updateObjectVnf(copiedGenericVnf);
             }
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateManagementV6AddressVnf" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -681,6 +710,7 @@ public class AAIUpdateTasks {
                 aaiVfModuleResources.updateContrailServiceInstanceFqdnVfModule(vfModule, vnf);
             }
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateContrailServiceInstanceFqdnVfModule" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -695,6 +725,7 @@ public class AAIUpdateTasks {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
             aaiVnfResources.updateOrchestrationStatusVnf(vnf, OrchestrationStatus.CONFIGASSIGNED);
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusConfigAssignedVnf" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -710,6 +741,7 @@ public class AAIUpdateTasks {
             aaiVnfResources.updateOrchestrationStatusVnf(vnf, OrchestrationStatus.CONFIGURE);
 
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStausConfigDeployConfigureVnf" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
 
@@ -726,6 +758,7 @@ public class AAIUpdateTasks {
             aaiVnfResources.updateOrchestrationStatusVnf(vnf, OrchestrationStatus.CONFIGURED);
 
         } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStausConfigDeployConfiguredVnf" ,ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
 

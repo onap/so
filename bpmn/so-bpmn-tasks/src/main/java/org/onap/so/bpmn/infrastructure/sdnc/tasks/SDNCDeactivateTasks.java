@@ -53,6 +53,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class SDNCDeactivateTasks extends AbstractSDNCTask {
 
+    private static final Logger logger = LoggerFactory.getLogger(SDNCDeactivateTasks.class);
     public static final String SDNC_REQUEST = "SDNCRequest";
     @Autowired
     private SDNCNetworkResources sdncNetworkResources;
@@ -69,6 +70,11 @@ public class SDNCDeactivateTasks extends AbstractSDNCTask {
     @Autowired
     private Environment env;
 
+    /**
+     * This method is used to prepare a SDNC request and set it to the execution Object.
+     * Which is used for deactivate VfModule.
+     * @param execution
+     */
     public void deactivateVfModule(BuildingBlockExecution execution) {
         try {
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
@@ -86,6 +92,7 @@ public class SDNCDeactivateTasks extends AbstractSDNCTask {
             sdncRequest.setTopology(SDNCTopology.VFMODULE);
             execution.setVariable(SDNC_REQUEST, sdncRequest);
         } catch (Exception ex) {
+            logger.error("Exception occurred in  SDNCDeactivateTasks deactivateVfModule",ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -113,6 +120,7 @@ public class SDNCDeactivateTasks extends AbstractSDNCTask {
             sdncRequest.setTopology(SDNCTopology.VNF);
             execution.setVariable(SDNC_REQUEST, sdncRequest);
         } catch (Exception ex) {
+            logger.error("Exception occurred in  SDNCDeactivateTasks deactivateVnf",ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -138,6 +146,7 @@ public class SDNCDeactivateTasks extends AbstractSDNCTask {
             sdncRequest.setTopology(SDNCTopology.SERVICE);
             execution.setVariable(SDNC_REQUEST, sdncRequest);
         } catch (Exception ex) {
+            logger.error("Exception occurred in  SDNCDeactivateTasks deactivateServiceInstance",ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
@@ -163,6 +172,7 @@ public class SDNCDeactivateTasks extends AbstractSDNCTask {
             sdncRequest.setTopology(SDNCTopology.NETWORK);
             execution.setVariable(SDNC_REQUEST, sdncRequest);
         } catch (Exception ex) {
+            logger.error("Exception occurred in  SDNCDeactivateTasks deactivateNetwork",ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
