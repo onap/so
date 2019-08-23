@@ -3,7 +3,7 @@
 .. Copyright 2018 Huawei Technologies Co., Ltd.
 
 SO Offered and Consumed APIs
-=====================================
+============================
 
 The list of APIs that SO offers can be found in following table:
 
@@ -22,8 +22,9 @@ The list of APIs that SO offers can be found in following table:
 
    "swagger json file", "html doc", "yaml doc"
    ":download:`link <swagger/swagger.json>`", ":download:`link <swagger/swagger.html>`", ":download:`link <swagger/swagger.yaml>`"
-   
-The list of APIs that SO offerers for monitroing the BPMN flows could be found in the following table:   
+
+The list of APIs that SO offerers for monitoring the BPMN flows
+could be found in the following table:
 
 .. csv-table::
    :header: "|Swagger-icon|", "|yml-icon|"
@@ -33,11 +34,13 @@ The list of APIs that SO offerers for monitroing the BPMN flows could be found i
    ":download:`link <swagger/SO_MONITORING_SWAGGER.json>`", ":download:`link <swagger/SO_MONITORING_SWAGGER.yaml>`"
 
 Further Reading
-----------------------------------------
+---------------
 
 Detailed documentation can be found here:
 
 .. toctree::
    :maxdepth: 1
 
-   apis/SO_Interface.rst
+   apis/serviceInstances-api.rst
+   apis/e2eServiceInstances-api.rst
+   apis/consumed-apis.rst
