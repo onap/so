@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7f92803c_d99703e3",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/aai/tasks/AAIUpdateTasks.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 742,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-08-23T09:53:25Z",
+      "side": 1,
+      "message": "Status",
+      "range": {
+        "startLine": 742,
+        "startChar": 35,
+        "endLine": 742,
+        "endChar": 40
+      },
+      "revId": "adc4668b0bbda3fcbe309a303dd75a267f8de703",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cd184f1d_e6f4ff60",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/aai/tasks/AAIUpdateTasks.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 748,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-08-23T09:53:25Z",
+      "side": 1,
+      "message": "Status",
+      "range": {
+        "startLine": 748,
+        "startChar": 82,
+        "endLine": 748,
+        "endChar": 87
+      },
+      "revId": "adc4668b0bbda3fcbe309a303dd75a267f8de703",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d1fe9d5a_08603a3d",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/aai/tasks/AAIUpdateTasks.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 759,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-08-23T09:53:25Z",
+      "side": 1,
+      "message": "Status",
+      "range": {
+        "startLine": 759,
+        "startChar": 35,
+        "endLine": 759,
+        "endChar": 40
+      },
+      "revId": "adc4668b0bbda3fcbe309a303dd75a267f8de703",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "71fc7d1c_a537cc20",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/aai/tasks/AAIUpdateTasks.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 765,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-08-23T09:53:25Z",
+      "side": 1,
+      "message": "Status",
+      "range": {
+        "startLine": 765,
+        "startChar": 82,
+        "endLine": 765,
+        "endChar": 87
+      },
+      "revId": "adc4668b0bbda3fcbe309a303dd75a267f8de703",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6d6c46bc_94eea620",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/sdnc/tasks/SDNCUnassignTasks.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-08-23T09:53:25Z",
+      "side": 1,
+      "message": "In most error messages after \"occurred in\" is double space. Remove one space please.",
+      "range": {
+        "startLine": 94,
+        "startChar": 47,
+        "endLine": 94,
+        "endChar": 49
+      },
+      "revId": "adc4668b0bbda3fcbe309a303dd75a267f8de703",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
