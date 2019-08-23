@@ -389,8 +389,11 @@ public class BBInputSetup implements JavaDelegate {
             String instanceName, ConfigurationResourceKeys configurationResourceKeys, RequestDetails requestDetails) {
         Configuration configuration = null;
         for (Configuration configurationTemp : serviceInstance.getConfigurations()) {
-            if (lookupKeyMap.get(ResourceKey.CONFIGURATION_ID) != null && configurationTemp.getConfigurationId()
-                    .equalsIgnoreCase(lookupKeyMap.get(ResourceKey.CONFIGURATION_ID))) {
+            if ((bbName.contains("Fabric") && configurationTemp.getConfigurationSubType() != null
+                    && configurationTemp.getConfigurationSubType().equalsIgnoreCase("Fabric Config"))
+                    || (lookupKeyMap.get(ResourceKey.CONFIGURATION_ID) != null && configurationTemp.getConfigurationId()
+                            .equalsIgnoreCase(lookupKeyMap.get(ResourceKey.CONFIGURATION_ID)))) {
+                lookupKeyMap.put(ResourceKey.CONFIGURATION_ID, configurationTemp.getConfigurationId());
                 configuration = configurationTemp;
                 org.onap.aai.domain.yang.Configuration aaiConfiguration =
                         bbInputSetupUtils.getAAIConfiguration(configuration.getConfigurationId());
