@@ -437,20 +437,17 @@ public class ToscaResourceInstaller {
             List<IEntityDetails> vfEntityList = getEntityDetails(toscaResourceStruct,
                     EntityQuery.newBuilder(SdcTypes.VF), TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE), false);
 
-            List<IEntityDetails> arEntityDetails = new ArrayList<IEntityDetails>();
-
             for (IEntityDetails vfEntityDetails : vfEntityList) {
 
                 Metadata metadata = vfEntityDetails.getMetadata();
-                String category = metadata.getValue("category");
+                String category = metadata.getValue(SdcPropertyNames.PROPERTY_NAME_CATEGORY);
 
-                if ("Allotted Resource".equalsIgnoreCase(category)) {
-                    arEntityDetails.add(vfEntityDetails);
+                if (ALLOTTED_RESOURCE.equalsIgnoreCase(category)) {
+                    continue;
                 }
 
                 processVfModules(vfEntityDetails, vfNodeTemplatesList.get(0), toscaResourceStruct, vfResourceStructure,
                         service, metadata);
-
             }
 
             processResourceSequence(toscaResourceStruct, service);
@@ -667,6 +664,8 @@ public class ToscaResourceInstaller {
                 } else {
                     NetworkResourceCustomization networkCustomization =
                             createNetwork(vlEntity, toscaResourceStruct, null, null, null, service);
+                    networkCustomization.setResourceInput(
+                            getResourceInput(toscaResourceStruct, networkCustomization.getModelCustomizationUUID()));
                     service.getNetworkCustomizations().add(networkCustomization);
                     logger.debug("No NetworkResourceName found in TempNetworkHeatTemplateLookup for "
                             + networkResourceModelName);
@@ -677,11 +676,14 @@ public class ToscaResourceInstaller {
     }
 
     protected void processAllottedResources(ToscaResourceStructure toscaResourceStruct, Service service,
-            List<NodeTemplate> allottedResourceList) {
+            List<NodeTemplate> allottedResourceList) throws ArtifactInstallerException {
         if (allottedResourceList != null) {
             for (NodeTemplate allottedNode : allottedResourceList) {
-                service.getAllottedCustomizations()
-                        .add(createAllottedResource(allottedNode, toscaResourceStruct, service));
+                AllottedResourceCustomization allottedResource =
+                        createAllottedResource(allottedNode, toscaResourceStruct, service);
+                allottedResource.setResourceInput(
+                        getResourceInput(toscaResourceStruct, allottedResource.getModelCustomizationUUID()));
+                service.getAllottedCustomizations().add(allottedResource);
             }
         }
     }
@@ -1370,7 +1372,14 @@ public class ToscaResourceInstaller {
 
         Metadata serviceMetadata = toscaResourceStructure.getServiceMetadata();
 
-        Service service = new Service();
+        List<Service> services =
+                serviceRepo.findByModelUUID(serviceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
+        Service service;
+        if (!services.isEmpty() && services.size() > 0) {
+            service = services.get(0);
+        } else {
+            service = new Service();
+        }
 
         if (serviceMetadata != null) {
 
@@ -1482,7 +1491,14 @@ public class ToscaResourceInstaller {
     }
 
     protected void createToscaCsar(ToscaResourceStructure toscaResourceStructure) {
-        ToscaCsar toscaCsar = new ToscaCsar();
+        Optional<ToscaCsar> toscaCsarOpt =
+                toscaCsarRepo.findById(toscaResourceStructure.getToscaArtifact().getArtifactUUID());
+        ToscaCsar toscaCsar;
+        if (toscaCsarOpt.isPresent()) {
+            toscaCsar = toscaCsarOpt.get();
+        } else {
+            toscaCsar = new ToscaCsar();
+        }
         if (toscaResourceStructure.getToscaArtifact().getArtifactChecksum() != null) {
             toscaCsar.setArtifactChecksum(toscaResourceStructure.getToscaArtifact().getArtifactChecksum());
         } else {
@@ -2789,8 +2805,10 @@ public class ToscaResourceInstaller {
         if (!services.isEmpty()) {
             // service exist in db
             Service existingService = services.get(0);
-            List<VnfResourceCustomization> vnfCustomizations = existingService.getVnfCustomizations();
-            vnfCustomizations.forEach(e -> service.getVnfCustomizations().add(e));
+            List<VnfResourceCustomization> existingVnfCustomizations = existingService.getVnfCustomizations();
+            if (existingService != null) {
+                service.getVnfCustomizations().addAll(existingVnfCustomizations);
+            }
         }
         service.getVnfCustomizations().add(vnfResourceCustomization);
     }
