@@ -21,6 +21,7 @@
 package org.onap.so.client.aai.entities.uri;
 
 import java.net.URI;
+import java.util.regex.Pattern;
 import javax.ws.rs.core.UriBuilder;
 import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
@@ -137,5 +138,10 @@ public class AAISimpleUri extends SimpleUri implements AAIResourceUri {
     @Override
     public AAISimpleUri format(Format format) {
         return (AAISimpleUri) super.format(format);
+    }
+
+    @Override
+    protected Pattern getPrefixPattern() {
+        return Pattern.compile("/aai/v\\d+");
     }
 }
