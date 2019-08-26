@@ -20,6 +20,7 @@
 
 package org.onap.so.client.graphinventory.entities;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -49,8 +50,24 @@ public class DSLQueryBuilder<S, E> implements QueryStep {
     }
 
     public DSLQueryBuilder<S, E> output() {
-        if (steps.get(steps.size() - 1) instanceof DSLNode) {
+        Object obj = steps.get(steps.size() - 1);
+        if (obj instanceof DSLNode) {
             ((DSLNode) steps.get(steps.size() - 1)).output();
+        } else if (obj.getClass().getName().contains("$$Lambda$")) {
+            // process lambda expressions
+            for (Field f : obj.getClass().getDeclaredFields()) {
+                f.setAccessible(true);
+                Object o;
+                try {
+                    o = f.get(obj);
+                    if (o instanceof DSLQueryBuilder && ((DSLQueryBuilder) o).steps.get(0) instanceof DSLNode) {
+                        ((DSLNode) ((DSLQueryBuilder) o).steps.get(0)).output();
+                    }
+                } catch (IllegalArgumentException | IllegalAccessException e) {
+                }
+                f.setAccessible(false);
+                break;
+            }
         }
         return this;
     }

@@ -24,6 +24,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.onap.so.client.graphinventory.entities.DSLNode;
+import org.onap.so.client.graphinventory.entities.DSLNodeKey;
 import org.onap.so.client.graphinventory.entities.DSLQueryBuilder;
 import org.onap.so.client.graphinventory.entities.__;
 
@@ -117,5 +118,31 @@ public class DSLQueryBuilderTest {
         builder.to(__.node(AAIObjectType.VLAN_TAG, __.key("vlan-id-outer", 167), __.key("my-boolean", true)).output());
         assertTrue(builder.equals(
                 "cloud-region('cloud-owner', 'owner')('cloud-region-id', 'id') > vlan-tag*('vlan-id-outer', 167)('my-boolean', true)"));
+    }
+
+    @Test
+    public void outputOnNodeLambdasTest() {
+        DSLQueryBuilder<DSLNode, DSLNode> builder =
+                new DSLQueryBuilder<>(new DSLNode(AAIObjectType.L_INTERFACE, new DSLNodeKey("interface-id", "myId")));
+
+        builder.to(AAIObjectType.VSERVER, __.key("vserver-name", "myName")).output().to(AAIObjectType.P_INTERFACE)
+                .output();
+        assertEquals("l-interface('interface-id', 'myId') > vserver*('vserver-name', 'myName') > p-interface*",
+                builder.build());
+    }
+
+    @Test
+    public void skipOutputOnUnionTest() {
+        DSLQueryBuilder<DSLNode, DSLNode> builder =
+                new DSLQueryBuilder<>(new DSLNode(AAIObjectType.GENERIC_VNF, __.key("vnf-id", "vnfId")).output());
+
+        builder.union(__.node(AAIObjectType.PSERVER).output().to(__.node(AAIObjectType.COMPLEX).output()),
+                __.node(AAIObjectType.VSERVER)
+                        .to(__.node(AAIObjectType.PSERVER).output().to(__.node(AAIObjectType.COMPLEX).output())))
+                .output();
+
+        assertEquals(
+                "generic-vnf*('vnf-id', 'vnfId') > " + "[ pserver* > complex*, " + "vserver > pserver* > complex* ]",
+                builder.build());
     }
 }
