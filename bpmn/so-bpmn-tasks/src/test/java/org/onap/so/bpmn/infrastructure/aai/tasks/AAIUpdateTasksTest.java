@@ -733,7 +733,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
         doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
                 OrchestrationStatus.CONFIGURE);
 
-        aaiUpdateTasks.updateOrchestrationStausConfigDeployConfigureVnf(execution);
+        aaiUpdateTasks.updateOrchestrationStatusConfigDeployConfigureVnf(execution);
     }
 
     @Test
@@ -741,6 +741,6 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
         doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
                 OrchestrationStatus.CONFIGURED);
 
-        aaiUpdateTasks.updateOrchestrationStausConfigDeployConfiguredVnf(execution);
+        aaiUpdateTasks.updateOrchestrationStatusConfigDeployConfiguredVnf(execution);
     }
 }

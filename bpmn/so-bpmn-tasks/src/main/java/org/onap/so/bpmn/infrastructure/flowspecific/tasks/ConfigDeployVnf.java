@@ -62,7 +62,7 @@ public class ConfigDeployVnf {
      * @param execution
      */
     public void updateAAIConfigure(BuildingBlockExecution execution) {
-        aaiUpdateTask.updateOrchestrationStausConfigDeployConfigureVnf(execution);
+        aaiUpdateTask.updateOrchestrationStatusConfigDeployConfigureVnf(execution);
 
     }
 
@@ -129,7 +129,7 @@ public class ConfigDeployVnf {
      * @param execution
      */
     public void updateAAIConfigured(BuildingBlockExecution execution) {
-        aaiUpdateTask.updateOrchestrationStausConfigDeployConfiguredVnf(execution);
+        aaiUpdateTask.updateOrchestrationStatusConfigDeployConfiguredVnf(execution);
 
     }
 }
