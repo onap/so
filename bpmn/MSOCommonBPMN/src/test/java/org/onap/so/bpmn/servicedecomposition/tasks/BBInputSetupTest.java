@@ -1294,6 +1294,7 @@ public class BBInputSetupTest {
         Configuration configuration = new Configuration();
         configuration.setConfigurationId("configurationId");
         configuration.setConfigurationName("configurationName");
+        configuration.setConfigurationSubType("Fabric Config");
         serviceInstance.getConfigurations().add(configuration);
         String resourceId = "configurationId";
         String vnfcName = "vnfcName";
