@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -285,14 +285,13 @@ public class ServiceInstancesTest extends BaseTest {
         requestReferences.setInstanceId("1882939");
         requestReferences.setRequestSelfLink(createExpectedSelfLink("v5", "32807a28-1a14-4b88-b7b3-2950918aa76d"));
         expectedResponse.setRequestReferences(requestReferences);
-        uri = servInstanceUriPrev7 + "v5";
+        uri = servInstanceuri + "v5";
         ResponseEntity<String> response =
                 sendRequest(inputStream("/ServiceInstancePrev7.json"), uri, HttpMethod.POST, headers);
 
         // then
-        assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
+        assertEquals(404, response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
 
     @Test
@@ -896,7 +895,7 @@ public class ServiceInstancesTest extends BaseTest {
         ResponseEntity<String> response =
                 sendRequest(inputStream("/VnfWithServiceRelatedInstanceFail.json"), uri, HttpMethod.POST);
 
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
+        assertEquals(404, response.getStatusCode().value());
     }
 
     @Test
@@ -2248,14 +2247,12 @@ public class ServiceInstancesTest extends BaseTest {
         requestReferences.setInstanceId("1882939");
         requestReferences.setRequestSelfLink(createExpectedSelfLink("v5", "32807a28-1a14-4b88-b7b3-2950918aa76d"));
         expectedResponse.setRequestReferences(requestReferences);
-        uri = servInstanceUriPrev7 + "v5";
+        uri = servInstanceuri + "v5";
         ResponseEntity<String> response =
                 sendRequest(inputStream("/MacroServiceInstance.json"), uri, HttpMethod.POST, headers);
 
         // then
-        assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
-        ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertEquals(404, response.getStatusCode().value());
     }
 
     @Test
