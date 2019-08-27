@@ -291,30 +291,6 @@ public class ASDCRestInterfaceTest extends BaseTest {
         assertEquals("Generic NeutronNet", networkResource.get().getModelName());
     }
 
-    @Test
-    public void test_CCVPN_Distribution() throws Exception {
-        wireMockServer.stubFor(post(urlPathMatching("/aai/.*"))
-                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")));
-
-        wireMockServer.stubFor(post(urlPathMatching("/v1.0/activity-spec"))
-                .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withStatus(org.springframework.http.HttpStatus.ACCEPTED.value())));
-
-        String resourceLocation = "src/test/resources/resource-examples/ccvpn/";
-        ObjectMapper mapper = new ObjectMapper();
-        NotificationDataImpl request = mapper.readValue(new File(resourceLocation + "demo-ccvpn-notification.json"),
-                NotificationDataImpl.class);
-        headers.add("resource-location", resourceLocation);
-        HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("test/treatNotification/v1"),
-                HttpMethod.POST, entity, String.class);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-
-        Optional<Service> service = serviceRepo.findById("5c4d4793-67fb-4155-b7d8-60ec011138c9");
-        assertTrue(service.isPresent());
-        assertEquals("SDWAN", service.get().getModelName());
-    }
-
     protected String createURLWithPort(String uri) {
         return "http://localhost:" + port + uri;
     }
