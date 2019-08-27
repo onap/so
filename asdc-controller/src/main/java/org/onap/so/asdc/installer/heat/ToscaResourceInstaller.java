@@ -2154,39 +2154,49 @@ public class ToscaResourceInstaller {
                         cvnfcCustomization.setNfcNamingCode(getLeafPropertyValue(cvfcEntity, "nfc_naming_code"));
 
                         cvnfcCustomization.setVfModuleCustomization(vfModuleCustomization);
+
                         // *****************************************************************************************************************************************
                         // * Extract Fabric Configuration
                         // *****************************************************************************************************************************************
 
-                        List<IEntityDetails> fabricEntityList =
-                                getEntityDetails(toscaResourceStructure, EntityQuery.newBuilder(SdcTypes.CONFIGURATION),
-                                        TopologyTemplateQuery.newBuilder(SdcTypes.VF), false);
+                        List<NodeTemplate> fabricConfigList = toscaResourceStructure.getSdcCsarHelper()
+                                .getNodeTemplateBySdcType(vfTemplate, SdcTypes.CONFIGURATION);
 
+                        for (NodeTemplate fabricTemplate : fabricConfigList) {
 
-                        for (IEntityDetails fabricEntity : fabricEntityList) {
+                            List<RequirementAssignment> requirementList = toscaResourceStructure.getSdcCsarHelper()
+                                    .getRequirementsOf(fabricTemplate).getAll();
 
-                            ConfigurationResource fabricConfig = null;
+                            for (RequirementAssignment requirement : requirementList) {
 
-                            ConfigurationResource existingConfig =
-                                    findExistingConfiguration(existingCvnfcConfigurationCustom,
-                                            fabricEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
+                                if (requirement.getNodeTemplateName().equals(cvfcTemplate.getName())) {
 
-                            if (existingConfig == null) {
+                                    ConfigurationResource fabricConfig = null;
 
-                                fabricConfig = createFabricConfiguration(fabricEntity, toscaResourceStructure);
+                                    ConfigurationResource existingConfig = findExistingConfiguration(
+                                            existingCvnfcConfigurationCustom,
+                                            fabricTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
 
-                            } else {
-                                fabricConfig = existingConfig;
+                                    if (existingConfig == null) {
+
+                                        fabricConfig =
+                                                createFabricConfiguration(fabricTemplate, toscaResourceStructure);
+
+                                    } else {
+                                        fabricConfig = existingConfig;
+                                    }
+
+                                    CvnfcConfigurationCustomization cvnfcConfigurationCustomization =
+                                            createCvnfcConfigurationCustomization(fabricTemplate,
+                                                    toscaResourceStructure, vnfResource, vfModuleCustomization,
+                                                    cvnfcCustomization, fabricConfig, vfModuleMemberName);
+
+                                    cvnfcConfigurationCustomizations.add(cvnfcConfigurationCustomization);
+
+                                    existingCvnfcConfigurationCustom.add(cvnfcConfigurationCustomization);
+
+                                }
                             }
-
-                            CvnfcConfigurationCustomization cvnfcConfigurationCustomization =
-                                    createCvnfcConfigurationCustomization(fabricEntity, toscaResourceStructure,
-                                            vnfResource, vfModuleCustomization, cvnfcCustomization, fabricConfig,
-                                            vfModuleMemberName);
-
-                            cvnfcConfigurationCustomizations.add(cvnfcConfigurationCustomization);
-
-                            existingCvnfcConfigurationCustom.add(cvnfcConfigurationCustomization);
 
                         }
                         cvnfcCustomization.setCvnfcConfigurationCustomization(cvnfcConfigurationCustomizations);
