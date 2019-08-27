@@ -43,6 +43,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.onap.so.asdc.BaseTest;
 import org.onap.so.asdc.client.test.emulators.DistributionClientEmulator;
@@ -67,6 +69,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.test.util.ReflectionTestUtils;
 
 public class ASDCRestInterfaceTest extends BaseTest {
 
@@ -107,6 +110,7 @@ public class ASDCRestInterfaceTest extends BaseTest {
     public void setUp() {
         // ASDC Controller writes to this path
         System.setProperty("mso.config.path", folder.getRoot().toString());
+        ReflectionTestUtils.setField(toscaInstaller, "toscaCsarRepo", toscaCsarRepo);
     }
 
     @Test
@@ -310,9 +314,9 @@ public class ASDCRestInterfaceTest extends BaseTest {
                 HttpMethod.POST, entity, String.class);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
 
-        Optional<Service> service = serviceRepo.findById("5c4d4793-67fb-4155-b7d8-60ec011138c9");
+        Optional<Service> service = serviceRepo.findById("317887d3-a4e4-45cb-8971-2a78426fefac");
         assertTrue(service.isPresent());
-        assertEquals("SDWAN", service.get().getModelName());
+        assertEquals("CCVPNService", service.get().getModelName());
     }
 
     protected String createURLWithPort(String uri) {
