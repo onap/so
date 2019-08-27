@@ -50,11 +50,18 @@ public class SDCClientHelper {
     private static Logger logger = LoggerFactory.getLogger(SDCClientHelper.class);
     private static final String SDC_CONTENT_TYPE = "application/json";
     private static final String SDC_ACCEPT_TYPE = "application/json";
-    private static String PARTIAL_SDC_URI = "/sdc/v1/catalog/services/";
+    private static final String PARTIAL_SDC_URI = "/sdc/v1/catalog/services/";
 
-    private static String MESSAGE_UNDEFINED_ERROR = "Undefined Error Message!";
-    private static String MESSAGE_UNEXPECTED_FORMAT = "Unexpected response format from SDC.";
+    private static final String MESSAGE_UNDEFINED_ERROR = "Undefined Error Message!";
+    private static final String MESSAGE_UNEXPECTED_FORMAT = "Unexpected response format from SDC.";
     private final HttpClientFactory httpClientFactory = new HttpClientFactory();
+
+    private static final String STATUS_CODE = "statusCode";
+    private static final String MESSAGE = "message";
+    private static final String MESSAGE_ID = "messageId";
+    private static final String REQUEST_ERROR = "requestError";
+    private static final String SERVICE_EXCEPTION = "serviceException";
+    private static final String POLICY_EXCEPTION = "policyException";
 
     @Value("${mso.sdc.endpoint}")
     private String sdcEndpoint;
@@ -89,12 +96,11 @@ public class SDCClientHelper {
                 ErrorLoggerInfo errorLoggerInfo =
                         new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.BusinessProcesssError)
                                 .build();
-                ValidateException validateException = new ValidateException.Builder(
+
+                throw new ValidateException.Builder(
                         " SDC credentials 'mso.sdc.client.auth' not setup in properties file!",
                         HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo)
                                 .build();
-
-                throw validateException;
             }
 
             URL url = new URL(urlString);
@@ -114,12 +120,12 @@ public class SDCClientHelper {
             sdcResponseJsonObj = enhanceJsonResponse(new JSONObject(responseData), statusCode);
 
         } catch (Exception ex) {
-            logger.debug("calling SDC Exception message: {}", ex.getMessage());
+            logger.debug("calling SDC Exception message:", ex);
             String errorMessage = " Encountered Error while calling SDC POST Activate. " + ex.getMessage();
             logger.debug(errorMessage);
-            sdcResponseJsonObj.put("statusCode", String.valueOf(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()));
-            sdcResponseJsonObj.put("messageId", "");
-            sdcResponseJsonObj.put("message", errorMessage);
+            sdcResponseJsonObj.put(STATUS_CODE, String.valueOf(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()));
+            sdcResponseJsonObj.put(MESSAGE_ID, "");
+            sdcResponseJsonObj.put(MESSAGE, errorMessage);
 
         }
         return sdcResponseJsonObj;
@@ -139,11 +145,9 @@ public class SDCClientHelper {
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.BusinessProcesssError)
                             .build();
-            ValidateException validateException =
-                    new ValidateException.Builder("Bad request could not post payload", HttpStatus.SC_BAD_REQUEST,
-                            ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(ex).errorInfo(errorLoggerInfo).build();
 
-            throw validateException;
+            throw new ValidateException.Builder("Bad request could not post payload", HttpStatus.SC_BAD_REQUEST,
+                    ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(ex).errorInfo(errorLoggerInfo).build();
         }
     }
 
@@ -154,7 +158,7 @@ public class SDCClientHelper {
      * @param statusCode - int
      * @return enhancedAsdcResponseJsonObj - JSONObject object
      */
-    public JSONObject enhanceJsonResponse(JSONObject sdcResponseJsonObj, int statusCode) throws JSONException {
+    public JSONObject enhanceJsonResponse(JSONObject sdcResponseJsonObj, int statusCode) {
 
         JSONObject enhancedAsdcResponseJsonObj = new JSONObject();
 
@@ -163,31 +167,31 @@ public class SDCClientHelper {
 
         if (statusCode == Response.Status.ACCEPTED.getStatusCode()) { // Accepted
             enhancedAsdcResponseJsonObj.put("distributionId", sdcResponseJsonObj.get("distributionId"));
-            enhancedAsdcResponseJsonObj.put("statusCode", Integer.toString(statusCode));
-            enhancedAsdcResponseJsonObj.put("messageId", "");
-            enhancedAsdcResponseJsonObj.put("message", "Success");
+            enhancedAsdcResponseJsonObj.put(STATUS_CODE, Integer.toString(statusCode));
+            enhancedAsdcResponseJsonObj.put(MESSAGE_ID, "");
+            enhancedAsdcResponseJsonObj.put(MESSAGE, "Success");
 
         } else { // error
-            if (sdcResponseJsonObj.has("requestError")) {
-                JSONObject requestErrorObj = sdcResponseJsonObj.getJSONObject("requestError");
-                if (sdcResponseJsonObj.getJSONObject("requestError").has("serviceException")) {
-                    message = requestErrorObj.getJSONObject("serviceException").getString("text");
-                    messageId = requestErrorObj.getJSONObject("serviceException").getString("messageId");
+            if (sdcResponseJsonObj.has(REQUEST_ERROR)) {
+                JSONObject requestErrorObj = sdcResponseJsonObj.getJSONObject(REQUEST_ERROR);
+                if (sdcResponseJsonObj.getJSONObject(REQUEST_ERROR).has(SERVICE_EXCEPTION)) {
+                    message = requestErrorObj.getJSONObject(SERVICE_EXCEPTION).getString("text");
+                    messageId = requestErrorObj.getJSONObject(SERVICE_EXCEPTION).getString(MESSAGE_ID);
                 }
-                if (sdcResponseJsonObj.getJSONObject("requestError").has("policyException")) {
-                    message = requestErrorObj.getJSONObject("policyException").getString("text");
-                    messageId = requestErrorObj.getJSONObject("policyException").getString("messageId");
+                if (sdcResponseJsonObj.getJSONObject(REQUEST_ERROR).has(POLICY_EXCEPTION)) {
+                    message = requestErrorObj.getJSONObject(POLICY_EXCEPTION).getString("text");
+                    messageId = requestErrorObj.getJSONObject(POLICY_EXCEPTION).getString(MESSAGE_ID);
                 }
-                enhancedAsdcResponseJsonObj.put("statusCode", Integer.toString(statusCode));
-                enhancedAsdcResponseJsonObj.put("messageId", messageId);
-                enhancedAsdcResponseJsonObj.put("message", message);
+                enhancedAsdcResponseJsonObj.put(STATUS_CODE, Integer.toString(statusCode));
+                enhancedAsdcResponseJsonObj.put(MESSAGE_ID, messageId);
+                enhancedAsdcResponseJsonObj.put(MESSAGE, message);
 
             } else {
                 // unexpected format
-                enhancedAsdcResponseJsonObj.put("statusCode",
+                enhancedAsdcResponseJsonObj.put(STATUS_CODE,
                         String.valueOf(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()));
-                enhancedAsdcResponseJsonObj.put("messageId", MESSAGE_UNDEFINED_ERROR);
-                enhancedAsdcResponseJsonObj.put("message", MESSAGE_UNEXPECTED_FORMAT);
+                enhancedAsdcResponseJsonObj.put(MESSAGE_ID, MESSAGE_UNDEFINED_ERROR);
+                enhancedAsdcResponseJsonObj.put(MESSAGE, MESSAGE_UNEXPECTED_FORMAT);
             }
         }
         return enhancedAsdcResponseJsonObj;
@@ -214,7 +218,7 @@ public class SDCClientHelper {
      * @return String json
      * @throws JSONException
      */
-    public String buildJsonWorkloadContext(String workloadContext) throws JSONException {
+    public String buildJsonWorkloadContext(String workloadContext) {
         return new JSONObject().put("workloadContext", workloadContext).toString();
 
     }

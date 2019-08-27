@@ -92,6 +92,7 @@ public class TenantIsolationRequest {
             requestJSON = mapper.writeValueAsString(request.getRequestDetails());
 
         } catch (JsonProcessingException e) {
+            logger.error("Exception in JSON processing", e);
             throw new ValidationException("Parse ServiceInstanceRequest to JSON string", true);
         }
 
@@ -325,6 +326,7 @@ public class TenantIsolationRequest {
                     orchestrationFilterParams.put(queryParam, value);
                 }
             } catch (Exception e) {
+                logger.error("Exception in getOrchestrationFilters", e);
                 throw new ValidationException(e.getMessage(), true);
             }
         }
