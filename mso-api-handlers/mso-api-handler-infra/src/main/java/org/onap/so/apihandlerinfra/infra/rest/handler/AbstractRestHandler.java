@@ -111,7 +111,7 @@ public abstract class AbstractRestHandler {
             String instanceName, String requestScope, InfraActiveRequests currentActiveReq) throws ApiException {
         InfraActiveRequests dup = null;
         try {
-            if (!(instanceName == null && requestScope.equals("service") && (action == Action.createInstance
+            if (!(instanceName == null && "service".equals(requestScope) && (action == Action.createInstance
                     || action == Action.activateInstance || action == Action.assignInstance))) {
                 dup = infraActiveRequestsClient.checkInstanceNameDuplicate(instanceIdMap, instanceName, requestScope);
             }
@@ -175,7 +175,7 @@ public abstract class AbstractRestHandler {
             selfLinkUrl = Optional.of(new URL(aUrl.getProtocol(), aUrl.getHost(), aUrl.getPort(), selfLinkPath));
         } catch (Exception e) {
             selfLinkUrl = Optional.empty(); // ignore
-            logger.error(e.getMessage());
+            logger.error("Exception in buildSelfLinkUrl", e);
         }
         return selfLinkUrl;
     }
