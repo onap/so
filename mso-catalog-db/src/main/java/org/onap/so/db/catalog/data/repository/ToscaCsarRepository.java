@@ -23,8 +23,9 @@ package org.onap.so.db.catalog.data.repository;
 import org.onap.so.db.catalog.beans.ToscaCsar;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import java.util.List;
 
 @RepositoryRestResource(collectionResourceRel = "toscaCsar", path = "toscaCsar")
 public interface ToscaCsarRepository extends JpaRepository<ToscaCsar, String> {
-
+    List<ToscaCsar> findByArtifactUUID(String artifactId);
 }
