@@ -310,9 +310,9 @@ public class ASDCRestInterfaceTest extends BaseTest {
                 HttpMethod.POST, entity, String.class);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
 
-        Optional<Service> service = serviceRepo.findById("5c4d4793-67fb-4155-b7d8-60ec011138c9");
+        Optional<Service> service = serviceRepo.findById("317887d3-a4e4-45cb-8971-2a78426fefac");
         assertTrue(service.isPresent());
-        assertEquals("SDWAN", service.get().getModelName());
+        assertEquals("CCVPNService", service.get().getModelName());
     }
 
     protected String createURLWithPort(String uri) {
