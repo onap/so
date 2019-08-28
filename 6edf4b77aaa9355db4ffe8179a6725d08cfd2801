@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "61f2ce26_e9cc6fb7",
+        "filename": "docs/api/apis/SO_Interface.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2019-08-28T12:58:44Z",
+      "side": 1,
+      "message": "We do not have any building running on dublin now, this changes would not reflect in the readthedocs.\nThis seems to be due to a merge issue please recheck.",
+      "revId": "6edf4b77aaa9355db4ffe8179a6725d08cfd2801",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
