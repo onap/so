@@ -5,6 +5,7 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
+ * Modifications Copyright (c) 2019 Nokia
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,26 +45,15 @@ public class ExtractPojosForBB {
     private static final Logger logger = LoggerFactory.getLogger(ExtractPojosForBB.class);
 
     public <T> T extractByKey(BuildingBlockExecution execution, ResourceKey key) throws BBObjectNotFoundException {
-        return extractByKey(execution, key, execution.getLookupMap().get(key));
-    }
-
-    protected <T> T extractByKey(BuildingBlockExecution execution, ResourceKey key, String value)
-            throws BBObjectNotFoundException {
-
         Optional<T> result = Optional.empty();
         GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
+        String value = execution.getLookupMap().get(key);
         try {
             ServiceInstance serviceInstance;
             GenericVnf vnf;
             switch (key) {
                 case SERVICE_INSTANCE_ID:
-                    if (gBBInput.getCustomer().getServiceSubscription() == null
-                            && gBBInput.getServiceInstance() != null) {
-                        result = Optional.of((T) gBBInput.getServiceInstance());
-                    } else if (gBBInput.getCustomer().getServiceSubscription() != null) {
-                        result = lookupObjectInList(
-                                gBBInput.getCustomer().getServiceSubscription().getServiceInstances(), value);
-                    }
+                    result = getServiceInstance(gBBInput, value);
                     break;
                 case GENERIC_VNF_ID:
                     serviceInstance = extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
@@ -100,26 +90,26 @@ public class ExtractPojosForBB {
                     serviceInstance = extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
                     result = lookupObjectInList(serviceInstance.getInstanceGroups(), value);
                     break;
-                default:
-                    throw new BBObjectNotFoundException(key, value);
             }
-        } catch (BBObjectNotFoundException e) { // re-throw parent object not found
-            throw e;
         } catch (Exception e) { // convert all other exceptions to object not found
             logger.warn(
                     "BBObjectNotFoundException in ExtractPojosForBB, BBObject {} was not found in gBBInput using reference value: {} {}",
                     key, value, e);
             throw new BBObjectNotFoundException(key, value);
         }
-
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new BBObjectNotFoundException(key, value);
-        }
+        return result.orElseThrow(() -> new BBObjectNotFoundException(key, value));
     }
 
-    protected <T> Optional<T> lookupObjectInList(List<?> list, String value)
+    private <T> Optional<T> getServiceInstance(GeneralBuildingBlock gBBInput, String value) throws Exception {
+        if (gBBInput.getCustomer().getServiceSubscription() == null && gBBInput.getServiceInstance() != null) {
+            return Optional.of((T) gBBInput.getServiceInstance());
+        } else if (gBBInput.getCustomer().getServiceSubscription() != null) {
+            return lookupObjectInList(gBBInput.getCustomer().getServiceSubscription().getServiceInstances(), value);
+        }
+        return Optional.empty();
+    }
+
+    private <T> Optional<T> lookupObjectInList(List<?> list, String value)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         Optional<T> result = Optional.empty();
         for (Object obj : list) {
@@ -129,10 +119,9 @@ public class ExtractPojosForBB {
             }
         }
         return result;
-
     }
 
-    protected <T> Optional<T> findValue(Object obj, String value)
+    private <T> Optional<T> findValue(Object obj, String value)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         for (Field field : obj.getClass().getDeclaredFields()) {
             if (field.isAnnotationPresent(Id.class)) {
@@ -144,7 +133,6 @@ public class ExtractPojosForBB {
                 }
             }
         }
-
         return Optional.empty();
     }
 }
