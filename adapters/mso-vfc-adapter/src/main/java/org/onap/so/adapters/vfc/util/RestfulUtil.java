@@ -39,7 +39,6 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.onap.so.adapters.vfc.model.RestfulResponse;
 import org.onap.so.logger.ErrorCode;
@@ -82,6 +81,11 @@ public class RestfulUtil {
 
     @Autowired
     private HttpClient client;
+    
+    private RestfulUtil() {
+
+    }
+
 
     public String getMsbHost() {
         // MSB_IP will be set as ONAP_IP environment parameter in install flow.
@@ -96,10 +100,6 @@ public class RestfulUtil {
         logger.debug("msbEndpoint in vfc adapter: {}", msbEndpoint);
 
         return msbEndpoint;
-    }
-
-    private RestfulUtil() {
-
     }
 
     public RestfulResponse send(String url, String methodType, String content) {
