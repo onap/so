@@ -298,12 +298,12 @@ public class WorkflowActionBBTasks {
                     flowsToExecute.remove(i);
                 } else {
                     String flowName = flowsToExecute.get(i).getBuildingBlock().getBpmnFlowName();
-                    if (flowName.contains("Assign")) {
-                        flowName = "Unassign" + flowName.substring(6, flowName.length());
-                    } else if (flowName.contains("Create")) {
-                        flowName = "Delete" + flowName.substring(6, flowName.length());
-                    } else if (flowName.contains("Activate")) {
-                        flowName = "Deactivate" + flowName.substring(8, flowName.length());
+                    if (flowName.startsWith("Assign")) {
+                        flowName = flowName.replaceFirst("Assign", "Unassign");
+                    } else if (flowName.startsWith("Create")) {
+                        flowName = flowName.replaceFirst("Create", "Delete");
+                    } else if (flowName.startsWith("Activate")) {
+                        flowName = flowName.replaceFirst("Activate", "Deactivate");
                     } else {
                         continue;
                     }
