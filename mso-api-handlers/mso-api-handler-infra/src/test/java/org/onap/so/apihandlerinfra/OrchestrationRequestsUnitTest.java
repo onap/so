@@ -25,6 +25,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
@@ -229,6 +230,21 @@ public class OrchestrationRequestsUnitTest {
                 OrchestrationRequestFormat.DETAIL.toString());
 
         assertThat(actual, sameBeanAs(expected));
+    }
+
+    @Test
+    public void mapRequestStatusAndExtSysErrSrcToRequestErrorMessageTest() throws ApiException {
+        InstanceReferences instanceReferences = new InstanceReferences();
+        instanceReferences.setServiceInstanceId(SERVICE_INSTANCE_ID);
+        iar.setExtSystemErrorSource(ROLLBACK_EXT_SYSTEM_ERROR_SOURCE);
+        iar.setFlowStatus(null);
+        iar.setStatusMessage("Error retrieving cloud region from AAI");
+
+        Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
+                OrchestrationRequestFormat.DETAIL.toString());
+
+        assertTrue(actual.getRequestStatus().getStatusMessage()
+                .contains("Error Source: " + ROLLBACK_EXT_SYSTEM_ERROR_SOURCE));
     }
 
     @Test

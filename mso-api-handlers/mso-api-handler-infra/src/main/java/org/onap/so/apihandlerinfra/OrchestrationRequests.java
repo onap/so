@@ -83,6 +83,7 @@ import io.swagger.annotations.ApiOperation;
 public class OrchestrationRequests {
 
     private static Logger logger = LoggerFactory.getLogger(OrchestrationRequests.class);
+    private static final String ERROR_MESSAGE_PREFIX = "Error Source: %s, Error Message: %s";
 
     @Autowired
     private RequestsDbClient requestsDbClient;
@@ -449,7 +450,12 @@ public class OrchestrationRequests {
 
         String statusMessages = null;
         if (iar.getStatusMessage() != null) {
-            statusMessages = "STATUS: " + iar.getStatusMessage();
+            if (StringUtils.isNotBlank(iar.getExtSystemErrorSource())) {
+                statusMessages = "STATUS: "
+                        + String.format(ERROR_MESSAGE_PREFIX, iar.getExtSystemErrorSource(), iar.getStatusMessage());
+            } else {
+                statusMessages = "STATUS: " + iar.getStatusMessage();
+            }
         }
 
         if (OrchestrationRequestFormat.STATUSDETAIL.toString().equalsIgnoreCase(format)) {
