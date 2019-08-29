@@ -33,6 +33,7 @@ import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.camunda.bpm.engine.runtime.ProcessInstanceWithVariables;
 import org.camunda.bpm.engine.variable.VariableMap;
 import org.onap.so.bpmn.core.WorkflowException;
+import org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionBBFailure;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionBBTasks;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
@@ -78,6 +79,8 @@ public class ExecuteActivity implements JavaDelegate {
     private RuntimeService runtimeService;
     @Autowired
     private ExceptionBuilder exceptionBuilder;
+    @Autowired
+    private WorkflowActionBBFailure workflowActionBBFailure;
     @Autowired
     private WorkflowActionBBTasks workflowActionBBTasks;
 
@@ -178,13 +181,15 @@ public class ExecuteActivity implements JavaDelegate {
     protected void buildAndThrowException(DelegateExecution execution, String msg, Exception ex) {
         logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
                 ErrorCode.UnknownError.getValue(), msg, ex);
-        execution.setVariable("ExecuteActivityErrorMessage", msg);
+        execution.setVariable(EXECUTE_ACTIVITY_ERROR_MESSAGE, msg);
+        workflowActionBBFailure.updateRequestStatusToFailed(execution);
         exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, msg);
     }
 
     protected void buildAndThrowException(DelegateExecution execution, String msg) {
         logger.error(msg);
         execution.setVariable(EXECUTE_ACTIVITY_ERROR_MESSAGE, msg);
+        workflowActionBBFailure.updateRequestStatusToFailed(execution);
         exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, msg);
     }
 }

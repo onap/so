@@ -22,21 +22,40 @@ package org.onap.so.bpmn.infrastructure.activity;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
 import org.onap.so.bpmn.BaseTaskTest;
+import org.onap.so.bpmn.core.WorkflowException;
+import org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionBBFailure;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.onap.so.client.exception.ExceptionBuilder;
 
 public class ExecuteActivityTest extends BaseTaskTest {
     @InjectMocks
     protected ExecuteActivity executeActivity = new ExecuteActivity();
+
+    @InjectMocks
+    @Spy
+    private ExceptionBuilder exceptionBuilder;
+
+    @Mock
+    private WorkflowActionBBFailure workflowActionBBFailure;
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     private DelegateExecution execution;
 
@@ -70,6 +89,19 @@ public class ExecuteActivityTest extends BaseTaskTest {
         assertEquals(ebb.getWorkflowResourceIds().getVnfId(), "testVnfId");
         assertEquals(ebb.getWorkflowResourceIds().getServiceInstanceId(), "testServiceInstanceId");
         assertEquals(ebb.getBuildingBlock(), bb);
+    }
+
+    @Test
+    public void buildAndThrowException_Test() throws Exception {
+        doNothing().when(workflowActionBBFailure).updateRequestStatusToFailed(execution);
+        doReturn("Process key").when(exceptionBuilder).getProcessKey(execution);
+        thrown.expect(BpmnError.class);
+        executeActivity.buildAndThrowException(execution, "TEST EXCEPTION MSG");
+        String errorMessage = (String) execution.getVariable("ExecuteActivityErrorMessage");
+        assertEquals(errorMessage, "TEST EXCEPTION MSG");
+        WorkflowException workflowException = (WorkflowException) execution.getVariable("WorkflowException");
+        assertEquals(workflowException.getErrorMessage(), "TEST EXCEPTION MSG");
+        assertEquals(workflowException.getErrorCode(), 7000);
     }
 
 }
