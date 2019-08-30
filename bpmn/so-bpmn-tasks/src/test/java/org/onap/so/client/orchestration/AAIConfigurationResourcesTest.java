@@ -96,14 +96,12 @@ public class AAIConfigurationResourcesTest extends TestDataSetup {
     public void createConfigurationTest() {
         doReturn(new org.onap.aai.domain.yang.Configuration()).when(MOCK_aaiObjectMapper)
                 .mapConfiguration(configuration);
-        doNothing().when(MOCK_aaiResourcesClient).create(isA(AAIResourceUri.class),
-                isA(org.onap.aai.domain.yang.Configuration.class));
-
+        doReturn(MOCK_aaiResourcesClient).when(MOCK_aaiResourcesClient).createIfNotExists(isA(AAIResourceUri.class),
+                any(Optional.class));
         aaiConfigurationResources.createConfiguration(configuration);
 
         assertEquals(OrchestrationStatus.INVENTORIED, configuration.getOrchestrationStatus());
-        verify(MOCK_aaiResourcesClient, times(1)).create(any(AAIResourceUri.class),
-                isA(org.onap.aai.domain.yang.Configuration.class));
+        verify(MOCK_aaiResourcesClient, times(1)).createIfNotExists(any(AAIResourceUri.class), any(Optional.class));
     }
 
     @Test
