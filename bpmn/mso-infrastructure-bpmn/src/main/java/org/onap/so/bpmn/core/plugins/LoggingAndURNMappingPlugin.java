@@ -37,8 +37,10 @@ import org.camunda.bpm.engine.impl.pvm.process.ScopeImpl;
 import org.camunda.bpm.engine.impl.pvm.process.TransitionImpl;
 import org.camunda.bpm.engine.impl.util.xml.Element;
 import org.camunda.bpm.engine.impl.variable.VariableDeclaration;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -49,6 +51,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
+
+    public static final String SERVICE_INSTANCE_ID = "ServiceInstanceId";
+    public static final String SERVICE_NAME = "ServiceName";
 
     @Autowired
     private LoggingParseListener loggingParseListener;
@@ -294,6 +299,13 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 
                         String requestId = (String) execution.getVariable("mso-request-id");
                         String svcid = (String) execution.getVariable("mso-service-instance-id");
+                        try {
+                            MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, requestId);
+                            MDC.put(SERVICE_INSTANCE_ID, svcid);
+                            MDC.put(SERVICE_NAME, processName);
+                        } catch (Exception e) {
+                            logger.error("Error trying to add variables to MDC", e);
+                        }
                     }
                 } catch (Exception e) {
                     logger.error("Exception occurred", e);
