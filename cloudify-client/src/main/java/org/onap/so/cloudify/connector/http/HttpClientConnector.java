@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -94,7 +94,7 @@ public class HttpClientConnector implements CloudifyClientConnector {
 
     public <T> CloudifyResponse request(CloudifyRequest<T> request) {
 
-        CloseableHttpClient httpClient = null; // HttpClients.createDefault();
+        CloseableHttpClient httpClient = null;
 
         if (request.isBasicAuth()) {
             // Use Basic Auth for this request.
@@ -211,11 +211,14 @@ public class HttpClientConnector implements CloudifyClientConnector {
         } catch (HttpResponseException e) {
             // What exactly does this mean? It does not appear to get thrown for
             // non-2XX responses as documented.
+            logger.error("Client HttpResponseException", e);
             throw new CloudifyResponseException(e.getMessage(), e.getStatusCode());
         } catch (UnknownHostException e) {
+            logger.error("Client UnknownHostException", e);
             throw new CloudifyConnectException("Unknown Host: " + e.getMessage());
         } catch (IOException e) {
             // Catch all other IOExceptions and throw as OpenStackConnectException
+            logger.error("Client IOException", e);
             throw new CloudifyConnectException(e.getMessage());
         } catch (Exception e) {
             // Catchall for anything else, must throw as a RuntimeException
@@ -227,7 +230,7 @@ public class HttpClientConnector implements CloudifyClientConnector {
                 try {
                     httpResponse.close();
                 } catch (IOException e) {
-                    logger.debug("Unable to close HTTP Response: " + e);
+                    logger.debug("Unable to close HTTP Response: ", e);
                 }
         }
 
