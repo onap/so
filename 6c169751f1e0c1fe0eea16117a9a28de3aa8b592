@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4ddaa9e9_d3045a4b",
+        "filename": "cloudify-client/src/main/java/org/onap/so/cloudify/base/client/CloudifyResponseException.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-09-02T08:43:28Z",
+      "side": 1,
+      "message": "Make all fields private please.",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 33,
+        "endChar": 46
+      },
+      "revId": "6c169751f1e0c1fe0eea16117a9a28de3aa8b592",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
