@@ -4,6 +4,7 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
+ * Modifications Copyright (C) 2019 IBM.
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
@@ -563,7 +564,7 @@ public class MsoRequest {
     }
 
     public String getRequestJSON(ServiceInstancesRequest sir)
-            throws JsonGenerationException, JsonMappingException, IOException {
+            throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(Include.NON_NULL);
 
