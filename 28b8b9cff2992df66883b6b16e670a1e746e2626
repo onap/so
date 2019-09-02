@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "71ec81a7_d841d4f0",
+        "filename": "common/src/main/java/org/onap/so/client/graphinventory/entities/DSLQueryBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-09-02T09:47:12Z",
+      "side": 1,
+      "message": "Your change is good, however all this method is very tricky. What is more it is not used anywhere in production code. I think it should be removed.",
+      "range": {
+        "startLine": 55,
+        "startChar": 4,
+        "endLine": 55,
+        "endChar": 43
+      },
+      "revId": "28b8b9cff2992df66883b6b16e670a1e746e2626",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
