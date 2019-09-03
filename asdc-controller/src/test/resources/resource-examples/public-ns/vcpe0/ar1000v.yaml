@@ -1,0 +1,103 @@
+##########################################################################
+#
+#==================LICENSE_START==========================================
+#
+#
+# Copyright 2017 Huawei Technologies Co., Ltd. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#        http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#==================LICENSE_END============================================
+
+heat_template_version: 2013-05-23
+
+description: Heat template to deploy Huawei AR1000V vCPE
+
+##############
+#            #
+# PARAMETERS #
+#            #
+##############
+
+parameters:
+  vcpe_name:
+    type: string
+    label: name
+    description: name to be used for compute instance
+  vcpe_image_name:
+    type: string
+    label: Image name or ID
+    description: Image to be used for compute instance
+  vcpe_flavor_name:
+    type: string
+    label: Flavor
+    description: Type of instance (flavor) to be used
+  private_net_id:
+    type: string
+    label: Private oam network name or ID
+    description: Private network that enables remote connection to VNF
+  private_subnet_wan_id:
+    type: string
+    label: Private wan sub-network name or ID
+    description: Private wan sub-network that enables remote connection to VNF
+  private_subnet_lan_id:
+    type: string
+    label: Private lan sub-network name or ID
+    description: Private lan sub-network that enables remote connection to VNF   
+  vcpe_private_ip_lan:
+    type: string
+    label: vCPE lan private IP address
+    description: Private IP address that is assigned to the vCPE lan port
+  vnf_id:
+    type: string
+    label: VNF ID
+    description: The VNF ID is provided by ECOMP
+  vf_module_id:
+    type: string
+    label: VF module id
+    description: the vf module id is provided by ECOMP
+#############
+#           #
+# RESOURCES #
+#           #
+#############
+
+resources:
+# For the floating IP in Public cloud , floating_network_id is not needed
+  vCPE_oam_floating_ip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network_id: { get_param: private_net_id}
+      port_id: { get_resource: vcpe_private_wan_port}
+
+  vcpe_private_wan_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: private_net_id }
+      fixed_ips: [{"subnet": { get_param: private_subnet_wan_id }}]
+      
+  vcpe_private_lan_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: private_net_id }
+      fixed_ips: [{"subnet": { get_param: private_subnet_lan_id }, "ip_address": { get_param: vcpe_private_ip_lan }}]
+
+  ar_1000v:
+    type: OS::Nova::Server
+    properties:
+      image: { get_param: vcpe_image_name }
+      flavor: { get_param: vcpe_flavor_name }
+      name: { get_param: vcpe_name }
+      networks:
+        - port: { get_resource: vcpe_private_wan_port }
+        - port: { get_resource: vcpe_private_lan_port }
+      metadata: { vnf_id: { get_param: vnf_id }, vf_module_id: { get_param: vf_module_id }}
