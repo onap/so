@@ -6,6 +6,7 @@
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
+ * Modifications Copyright (C) 2019 IBM.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -423,12 +424,10 @@ public class RequestHandlerUtils extends AbstractRestHandler {
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.SchemaError)
                             .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
-            ValidateException validateException =
-                    new ValidateException.Builder("Request Id " + requestId + " is not a valid UUID",
-                            HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_BAD_PARAMETER)
-                                    .errorInfo(errorLoggerInfo).build();
 
-            throw validateException;
+            throw new ValidateException.Builder("Request Id " + requestId + " is not a valid UUID",
+                    HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_BAD_PARAMETER)
+            .errorInfo(errorLoggerInfo).build();;
         }
     }
 
