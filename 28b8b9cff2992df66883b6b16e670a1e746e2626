@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "0217c057_88c5317b",
+        "filename": "common/src/main/java/org/onap/so/client/graphinventory/entities/DSLQueryBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-09-03T07:51:51Z",
+      "side": 1,
+      "message": "Make it private.",
+      "range": {
+        "startLine": 39,
+        "startChar": 4,
+        "endLine": 39,
+        "endChar": 13
+      },
+      "revId": "28b8b9cff2992df66883b6b16e670a1e746e2626",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "71ec81a7_d841d4f0",
         "filename": "common/src/main/java/org/onap/so/client/graphinventory/entities/DSLQueryBuilder.java",
         "patchSetId": 1
@@ -37,6 +60,30 @@
       "side": 1,
       "message": "Hello Lukasz, are you suggesting to remove this entire method?",
       "parentUuid": "71ec81a7_d841d4f0",
+      "range": {
+        "startLine": 55,
+        "startChar": 4,
+        "endLine": 55,
+        "endChar": 43
+      },
+      "revId": "28b8b9cff2992df66883b6b16e670a1e746e2626",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5eed9314_6f5d8e3c",
+        "filename": "common/src/main/java/org/onap/so/client/graphinventory/entities/DSLQueryBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-09-03T07:51:51Z",
+      "side": 1,
+      "message": "Hello Arindam. I do not like the code in production that is not used, but I see that it was pushed quite recently, so maybe the author is going to use it soon.\nAnyway, let\u0027s leave this for now.",
+      "parentUuid": "c3e6da11_0774f5f7",
       "range": {
         "startLine": 55,
         "startChar": 4,
