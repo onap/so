@@ -533,8 +533,7 @@ public class MsoRequest {
             if (source != null) {
                 t.transform(source, sr);
 
-                String s = sw.toString();
-                return s;
+                return sw.toString();
             }
 
             return null;
