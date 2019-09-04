@@ -52,7 +52,7 @@ public class AAIConfigurationResources {
                 AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configuration.getConfigurationId());
         configuration.setOrchestrationStatus(OrchestrationStatus.INVENTORIED);
         org.onap.aai.domain.yang.Configuration aaiConfiguration = aaiObjectMapper.mapConfiguration(configuration);
-        injectionHelper.getAaiClient().create(configurationURI, aaiConfiguration);
+        injectionHelper.getAaiClient().createIfNotExists(configurationURI, Optional.of(aaiConfiguration));
     }
 
     /**
