@@ -65,7 +65,7 @@ public class ConfigCheckerDelegate implements JavaDelegate {
             delegateExecution.setVariable(MODEL_UUID, serviceModelUuid);
             List<PnfResourceCustomization> pnfCustomizations =
                     catalogDbClient.getPnfResourceCustomizationByModelUuid(serviceModelUuid);
-            if (pnfCustomizations != null && pnfCustomizations.size() >= 1) {
+            if (pnfCustomizations != null && !pnfCustomizations.isEmpty()) {
                 PnfResourceCustomization pnfResourceCustomization = pnfCustomizations.get(0);
                 boolean skipPostInstantiationConfiguration = pnfResourceCustomization.isSkipPostInstConf();
                 delegateExecution.setVariable(SKIP_POST_INSTANTIATION_CONFIGURATION,

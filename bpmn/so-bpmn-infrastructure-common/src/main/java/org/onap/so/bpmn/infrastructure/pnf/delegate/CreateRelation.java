@@ -48,6 +48,7 @@ public class CreateRelation implements JavaDelegate {
         try {
             pnfManagementImpl.createRelation(serviceInstanceId, pnfName);
         } catch (Exception e) {
+            logger.error("An exception occurred when making service and pnf relation. Exception:", e);
             new ExceptionUtil().buildAndThrowWorkflowException(delegateExecution, 9999,
                     "An exception occurred when making service and pnf relation. Exception: " + e.getMessage());
         }

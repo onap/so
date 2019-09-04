@@ -62,6 +62,7 @@ public class CheckAaiForPnfCorrelationIdDelegate implements JavaDelegate {
             logger.debug("AAI entry is found for pnf correlation id {}: {}", PNF_CORRELATION_ID, isEntry);
             execution.setVariableLocal(AAI_CONTAINS_INFO_ABOUT_PNF, isEntry);
         } catch (IOException e) {
+            logger.error("Exception in check AAI for pnf_correlation_id execution", e);
             new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, e.getMessage());
         }
     }
