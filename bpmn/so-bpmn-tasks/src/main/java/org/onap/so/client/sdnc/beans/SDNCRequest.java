@@ -36,7 +36,7 @@ public class SDNCRequest implements Serializable {
     private SDNCTopology topology;
     private String correlationValue = UUID.randomUUID().toString();
     private String correlationName = "SDNCCallback";
-    private Object sdncPayload;
+    private transient Object sdncPayload;
 
 
     public String getTimeOut() {

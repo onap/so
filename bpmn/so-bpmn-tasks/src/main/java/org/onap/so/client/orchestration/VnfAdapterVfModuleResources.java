@@ -34,8 +34,6 @@ import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.client.adapter.vnf.mapper.VnfAdapterVfModuleObjectMapper;
 import org.onap.so.client.adapter.vnf.mapper.exceptions.MissingValueTagException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
