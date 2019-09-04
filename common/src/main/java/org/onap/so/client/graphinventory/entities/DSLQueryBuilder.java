@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.onap.so.client.aai.entities.QueryStep;
 import org.onap.so.client.graphinventory.GraphInventoryObjectName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.google.common.base.Joiner;
 
 
@@ -34,6 +36,7 @@ public class DSLQueryBuilder<S, E> implements QueryStep {
 
     private List<QueryStep> steps = new ArrayList<>();
     private String suffix = "";
+    private static final Logger logger = LoggerFactory.getLogger(DSLQueryBuilder.class);
 
     public DSLQueryBuilder() {
 
@@ -64,6 +67,7 @@ public class DSLQueryBuilder<S, E> implements QueryStep {
                         ((DSLNode) ((DSLQueryBuilder) o).steps.get(0)).output();
                     }
                 } catch (IllegalArgumentException | IllegalAccessException e) {
+                    logger.error("Exception occured", e);
                 }
                 f.setAccessible(false);
                 break;
