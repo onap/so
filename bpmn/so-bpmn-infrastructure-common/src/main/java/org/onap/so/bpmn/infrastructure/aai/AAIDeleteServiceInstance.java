@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,12 +24,17 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.onap.so.bpmn.common.scripts.ExceptionUtil;
 import org.onap.so.client.aai.AAIObjectType;
-import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
-import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class AAIDeleteServiceInstance extends AAIResource implements JavaDelegate {
+
+    private static final Logger logger = LoggerFactory.getLogger(AAIDeleteServiceInstance.class);
+
+    private static final String ERROR_MESSAGE = "Exception in Delete Serivce Instance. Service Instance could not be deleted in AAI.";
 
     ExceptionUtil exceptionUtil = new ExceptionUtil();
 
@@ -41,9 +46,8 @@ public class AAIDeleteServiceInstance extends AAIResource implements JavaDelegat
             getAaiClient().delete(serviceInstanceURI);
             execution.setVariable("GENDS_SuccessIndicator", true);
         } catch (Exception ex) {
-            String msg = "Exception in Delete Serivce Instance. Service Instance could not be deleted in AAI."
-                    + ex.getMessage();
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg);
+            logger.error(ERROR_MESSAGE, ex);
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ERROR_MESSAGE + ex.getMessage());
         }
 
     }
