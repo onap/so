@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "166ee090_a3627324",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/aai/AAIDeleteServiceInstance.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-09-04T12:32:39Z",
+      "side": 1,
+      "message": "add field:\nprivate static final String ERROR_MESSAGE \u003d \"Exception in Delete Serivce Instance. Service Instance could not be deleted in AAI.\";",
+      "revId": "80a15d15d194d553a8bdacc28c79eb6fb7f4b502",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f1026bc8_70fa34bf",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/aai/AAIDeleteServiceInstance.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-09-04T12:32:39Z",
+      "side": 1,
+      "message": "make it simpler:\nlogger.error(ERROR_MESSAGE, ex);\nexceptionUtil.buildAndThrowWorkflowException(execution, 7000, ERROR_MESSAGE + ex.getMessage());",
+      "range": {
+        "startLine": 47,
+        "startChar": 12,
+        "endLine": 50,
+        "endChar": 79
+      },
+      "revId": "80a15d15d194d553a8bdacc28c79eb6fb7f4b502",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
