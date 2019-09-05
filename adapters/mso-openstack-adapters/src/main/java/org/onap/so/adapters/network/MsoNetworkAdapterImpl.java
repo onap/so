@@ -91,6 +91,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     private static final String CREATE_NETWORK_CONTEXT = "CreateNetwork";
     private static final String NEUTRON_MODE = "NEUTRON";
     private static final String CLOUD_OWNER = "CloudOwner";
+    private static final String LOG_DEBUG_MSG = "Got Network definition from Catalog";
 
     private static final Logger logger = LoggerFactory.getLogger(MsoNetworkAdapterImpl.class);
 
@@ -292,7 +293,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 throw new NetworkException(error, MsoExceptionCategory.INTERNAL);
             }
 
-            logger.debug("Got HEAT Template from DB: {}", heatTemplate.toString());
+            logger.debug("Got HEAT Template from DB: {}", heatTemplate);
 
             // "Fix" the template if it has CR/LF (getting this from Oracle)
             String template = heatTemplate.getHeatTemplate();
@@ -656,7 +657,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 throw new NetworkException(error, MsoExceptionCategory.INTERNAL);
             }
 
-            logger.debug("Got HEAT Template from DB: {}", heatTemplate.toString());
+            logger.debug("Got HEAT Template from DB: {}", heatTemplate);
 
             // "Fix" the template if it has CR/LF (getting this from Oracle)
             String template = heatTemplate.getHeatTemplate();
@@ -798,12 +799,12 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             }
         }
         if (networkCust != null) {
-            logger.debug("Got Network Customization definition from Catalog: {}", networkCust.toString());
+            logger.debug("Got Network Customization definition from Catalog: {}", networkCust);
 
             networkResource = networkCust.getNetworkResource();
         } else if (collectionNetworkCust != null) {
             logger.debug("Retrieved Collection Network Resource Customization from Catalog: {}",
-                    collectionNetworkCust.toString());
+                    collectionNetworkCust);
             networkResource = collectionNetworkCust.getNetworkResource();
         }
         if (networkResource == null) {
@@ -814,7 +815,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
             throw new NetworkException(error, MsoExceptionCategory.USERDATA);
         }
-        logger.debug("Got Network definition from Catalog: {}", networkResource.toString());
+        logger.debug(LOG_DEBUG_MSG, networkResource);
 
         String mode = networkResource.getOrchestrationMode();
         NetworkType neutronNetworkType = NetworkType.valueOf(networkResource.getNeutronNetworkType());
@@ -1045,7 +1046,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         }
         String mode = "";
         if (networkResource != null) {
-            logger.debug("Got Network definition from Catalog: {}", networkResource.toString());
+            logger.debug(LOG_DEBUG_MSG, networkResource);
 
             mode = networkResource.getOrchestrationMode();
         }
@@ -1132,7 +1133,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         String mode = "";
         if (networkResource != null) {
 
-            logger.debug("Got Network definition from Catalog: {}", networkResource.toString());
+            logger.debug(LOG_DEBUG_MSG, networkResource);
 
             mode = networkResource.getOrchestrationMode();
         }
@@ -1388,9 +1389,9 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         // Resource Property
         List<ContrailSubnet> cslist = new ArrayList<>();
         for (Subnet subnet : subnets) {
-            logger.debug("Input Subnet:{}", subnet.toString());
+            logger.debug("Input Subnet:{}", subnet);
             ContrailSubnet cs = new ContrailSubnetMapper(subnet).map();
-            logger.debug("Contrail Subnet:{}", cs.toString());
+            logger.debug("Contrail Subnet:{}", cs);
             cslist.add(cs);
         }
 
@@ -1523,18 +1524,17 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             JsonNode rootNode = mapper.readTree(jStr);
             if (rootNode != null) {
                 for (JsonNode sNode : rootNode.path("ipam_subnets")) {
-                    logger.debug("Output Subnet Node {}", sNode.toString());
+                    logger.debug("Output Subnet Node {}", sNode);
                     String name = sNode.path("subnet_name").textValue();
                     String uuid = sNode.path("subnet_uuid").textValue();
                     String aaiId = name; // default
                     // try to find aaiId for name in input subnetList
                     if (subnets != null) {
                         for (Subnet subnet : subnets) {
-                            if (subnet != null && !commonUtils.isNullOrEmpty(subnet.getSubnetName())) {
-                                if (subnet.getSubnetName().equals(name)) {
-                                    aaiId = subnet.getSubnetId();
-                                    break;
-                                }
+                            if (subnet != null && !commonUtils.isNullOrEmpty(subnet.getSubnetName())
+                                    && subnet.getSubnetName().equals(name)) {
+                                aaiId = subnet.getSubnetId();
+                                break;
                             }
                         }
                     }
@@ -1549,7 +1549,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                     ErrorCode.DataError.getValue(), e);
         }
 
-        logger.debug("Return sMap {}", sMap.toString());
+        logger.debug("Return sMap {}", sMap);
         return sMap;
     }
 

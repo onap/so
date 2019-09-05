@@ -84,7 +84,7 @@ public class AuditVServer extends AbstractAudit {
             try {
                 logger.debug("Vserver to Audit: {}", objectMapper.getMapper().writeValueAsString(vserver));
             } catch (JsonProcessingException e) {
-                logger.error("Json parse exception: {}", e.getMessage());
+                logger.error("Json parse exception: ", e);
             }
 
         });
