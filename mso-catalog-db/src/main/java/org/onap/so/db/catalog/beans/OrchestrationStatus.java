@@ -22,6 +22,7 @@ package org.onap.so.db.catalog.beans;
 
 public enum OrchestrationStatus {
     ACTIVE("Active", "active"),
+    ACTIVATED("Activated", "activated"),
     ASSIGNED("Assigned", "assigned"),
     CREATED("Created", "created"),
     INVENTORIED("Inventoried", "inventoried"),
