@@ -656,7 +656,10 @@ public class ToscaResourceInstaller {
                         NetworkResourceCustomization networkCustomization = createNetwork(vlEntity, toscaResourceStruct,
                                 heatTemplate, tempNetworkLookUp.getAicVersionMax(),
                                 tempNetworkLookUp.getAicVersionMin(), service);
-                        service.getNetworkCustomizations().add(networkCustomization);
+                        // only insert unique entries
+                        if (!service.getNetworkCustomizations().contains(networkCustomization)) {
+                            service.getNetworkCustomizations().add(networkCustomization);
+                        }
                     } else {
                         throw new ArtifactInstallerException("No HeatTemplate found for artifactUUID: "
                                 + tempNetworkLookUp.getHeatTemplateArtifactUuid());
@@ -2499,7 +2502,6 @@ public class ToscaResourceInstaller {
             // setting resource input for vnf customization
             vnfResourceCustomization.setResourceInput(
                     getResourceInput(toscaResourceStructure, vnfResourceCustomization.getModelCustomizationUUID()));
-            service.getVnfCustomizations().add(vnfResourceCustomization);
 
         }
         return vnfResourceCustomization;
@@ -2815,10 +2817,16 @@ public class ToscaResourceInstaller {
             Service existingService = services.get(0);
             List<VnfResourceCustomization> existingVnfCustomizations = existingService.getVnfCustomizations();
             if (existingService != null) {
-                service.getVnfCustomizations().addAll(existingVnfCustomizations);
+                // it is duplicating entries, so added a check
+                for (VnfResourceCustomization existingVnfResourceCustomization : existingVnfCustomizations) {
+                    if (!service.getVnfCustomizations().contains(existingVnfResourceCustomization)) {
+                        service.getVnfCustomizations().add(existingVnfResourceCustomization);
+                    }
+                }
             }
         }
         service.getVnfCustomizations().add(vnfResourceCustomization);
+
     }
 
 

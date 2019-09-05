@@ -1,0 +1,25 @@
+[
+  {
+    "vfModuleModelName": "Vcpe..ar1000v..module-0",
+    "vfModuleModelInvariantUUID": "d7719964-c045-4ed3-84d6-20a01db7612f",
+    "vfModuleModelVersion": "1",
+    "vfModuleModelUUID": "c84ade8a-6e4b-49c7-86e8-0e4fc009f4cd",
+    "vfModuleModelCustomizationUUID": "8caeefbd-ab71-40c9-9387-8729d7d9c2de",
+    "isBase": true,
+    "artifacts": [
+      "12dcc618-20f2-4f15-ab00-c549b96b3910",
+      "5821b043-ba50-49ef-b739-61b0896050f2"
+    ],
+    "properties": {
+      "min_vf_module_instances": "1",
+      "vf_module_label": "ar1000v",
+      "max_vf_module_instances": "1",
+      "vfc_list": "",
+      "vf_module_description": "",
+      "vf_module_type": "Base",
+      "availability_zone_count": "",
+      "volume_group": "false",
+      "initial_count": "1"
+    }
+  }
+]

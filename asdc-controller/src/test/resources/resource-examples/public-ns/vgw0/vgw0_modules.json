@@ -1,0 +1,25 @@
+[
+  {
+    "vfModuleModelName": "Vgw..gateway..module-0",
+    "vfModuleModelInvariantUUID": "8c8c936c-e71c-4bc4-94f7-c5680c9dbc00",
+    "vfModuleModelVersion": "1",
+    "vfModuleModelUUID": "ddda7e87-8113-463f-aa27-a60112a4e438",
+    "vfModuleModelCustomizationUUID": "ea551d60-f9c9-48f2-9757-b01eb2d26d13",
+    "isBase": true,
+    "artifacts": [
+      "60d55796-212c-4c66-8af5-63964d636ae4",
+      "9df0452f-826c-4287-9a2d-ca0095339866"
+    ],
+    "properties": {
+      "min_vf_module_instances": "1",
+      "vf_module_label": "gateway",
+      "max_vf_module_instances": "1",
+      "vfc_list": "",
+      "vf_module_description": "",
+      "vf_module_type": "Base",
+      "availability_zone_count": "",
+      "volume_group": "false",
+      "initial_count": "1"
+    }
+  }
+]

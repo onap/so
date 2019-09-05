@@ -1,0 +1,173 @@
+{
+  "distributionID": "2d6c5aa8-b644-4f30-a632-5577801ef954",
+  "serviceName": "PublicNS",
+  "serviceVersion": "1.0",
+  "serviceUUID": "da28696e-d4c9-4df4-9f91-465c6c09a81e",
+  "serviceDescription": "PUblic NS",
+  "serviceInvariantUUID": "e907ce73-7e4d-4bf8-b94a-21bd1a7c7592",
+  "resources": [
+    {
+      "resourceInstanceName": "vCPE 0",
+      "resourceName": "vCPE",
+      "resourceVersion": "1.0",
+      "resoucreType": "VF",
+      "resourceUUID": "a67562cf-1bf3-4450-8b69-3bb1cff43089",
+      "resourceInvariantUUID": "e0b3088d-9ca8-482a-aa5a-a1e6906b2d22",
+      "resourceCustomizationUUID": "ae70c293-8db3-40cd-8cd0-30cde194bea5",
+      "category": "Generic",
+      "subcategory": "Infrastructure",
+      "artifacts": [
+        {
+          "artifactName": "vf-license-model.xml",
+          "artifactType": "VF_LICENSE",
+          "artifactURL": "/vcpe0/vf-license-model.xml",
+          "artifactChecksum": "YjYyYWNiMzUxM2YzMWYxYWVhN2Y5MTM3N2E5YzNhNmU\u003d",
+          "artifactDescription": "VF license file",
+          "artifactTimeout": 120,
+          "artifactUUID": "5c29e823-7114-4988-824f-f670ba9d7b21",
+          "artifactVersion": "1"
+        },
+        {
+          "artifactName": "vcpe0_modules.json",
+          "artifactType": "VF_MODULES_METADATA",
+          "artifactURL": "/vcpe0/vcpe0_modules.json",
+          "artifactChecksum": "MDJkYjNmNjEzM2Y1ZDgzNzZiZWUxMjZkMzA3YzkwZDI\u003d",
+          "artifactDescription": "Auto-generated VF Modules information artifact",
+          "artifactTimeout": 120,
+          "artifactUUID": "128e4e77-21a4-49c3-ac7a-7ca3b187bddc",
+          "artifactVersion": "1"
+        },
+        {
+          "artifactName": "ar1000v.yaml",
+          "artifactType": "HEAT",
+          "artifactURL": "/vcpe0/ar1000v.yaml",
+          "artifactChecksum": "NWU2NGUwNmNkMGEzYjAxMTAyODkzNTc5YzFmZDBmMzM\u003d",
+          "artifactDescription": "created from csar",
+          "artifactTimeout": 120,
+          "artifactUUID": "12dcc618-20f2-4f15-ab00-c549b96b3910",
+          "artifactVersion": "2"
+        },
+        {
+          "artifactName": "vendor-license-model.xml",
+          "artifactType": "VENDOR_LICENSE",
+          "artifactURL": "/vcpe0/vendor-license-model.xml",
+          "artifactChecksum": "OTRkOTY3YjdjM2ZlNDM3NjNlZjBjODU4YTJmNGZhNGE\u003d",
+          "artifactDescription": " Vendor license file",
+          "artifactTimeout": 120,
+          "artifactUUID": "74c4d1bd-1779-421f-8c9d-774ac4567031",
+          "artifactVersion": "1"
+        },
+        {
+          "artifactName": "ar1000v.env",
+          "artifactType": "HEAT_ENV",
+          "artifactURL": "/vcpe0/ar1000v.env",
+          "artifactChecksum": "YzI4MjlkODk4YzcyOTgzZTg2YjAyM2ZiNWU1N2FmMjI\u003d",
+          "artifactDescription": "Auto-generated HEAT Environment deployment artifact",
+          "artifactTimeout": 120,
+          "artifactUUID": "5821b043-ba50-49ef-b739-61b0896050f2",
+          "artifactVersion": "2",
+          "generatedFromUUID": "12dcc618-20f2-4f15-ab00-c549b96b3910"
+        }
+      ]
+    },
+    {
+      "resourceInstanceName": "vGW 0",
+      "resourceName": "vGW",
+      "resourceVersion": "1.0",
+      "resoucreType": "VF",
+      "resourceUUID": "cd82e255-56cf-4644-858e-36cfc45ef754",
+      "resourceInvariantUUID": "52905e03-0632-43f9-93f2-2ab7d959f633",
+      "resourceCustomizationUUID": "fd8595de-1081-4e39-a401-24ffebaa9ed8",
+      "category": "Generic",
+      "subcategory": "Infrastructure",
+      "artifacts": [
+        {
+          "artifactName": "vf-license-model.xml",
+          "artifactType": "VF_LICENSE",
+          "artifactURL": "/vgw0/vf-license-model.xml",
+          "artifactChecksum": "YTdlMDhmYjMzODg5NmI3ODgwNjA0MmUyOWU2N2I2MGM\u003d",
+          "artifactDescription": "VF license file",
+          "artifactTimeout": 120,
+          "artifactUUID": "f2db3ba5-190f-4214-90fd-93407caf10c1",
+          "artifactVersion": "1"
+        },
+        {
+          "artifactName": "vgw0_modules.json",
+          "artifactType": "VF_MODULES_METADATA",
+          "artifactURL": "/vgw0/vgw0_modules.json",
+          "artifactChecksum": "OTQwY2ZlZThjMjNlYjAyNzU4NDUyZDVhY2VjNTIwZTk\u003d",
+          "artifactDescription": "Auto-generated VF Modules information artifact",
+          "artifactTimeout": 120,
+          "artifactUUID": "8730baa0-1b8c-4ac3-bc5c-d49c5b88f111",
+          "artifactVersion": "1"
+        },
+        {
+          "artifactName": "gateway.yaml",
+          "artifactType": "HEAT",
+          "artifactURL": "/vgw0/gateway.yaml",
+          "artifactChecksum": "NGNiMGRjMWViNGRkMGQzM2ZjNDNjMjQ5OGMwMjI2MjM\u003d",
+          "artifactDescription": "created from csar",
+          "artifactTimeout": 120,
+          "artifactUUID": "60d55796-212c-4c66-8af5-63964d636ae4",
+          "artifactVersion": "2"
+        },
+        {
+          "artifactName": "vendor-license-model.xml",
+          "artifactType": "VENDOR_LICENSE",
+          "artifactURL": "/vgw0/vendor-license-model.xml",
+          "artifactChecksum": "OTRkOTY3YjdjM2ZlNDM3NjNlZjBjODU4YTJmNGZhNGE\u003d",
+          "artifactDescription": " Vendor license file",
+          "artifactTimeout": 120,
+          "artifactUUID": "019bdcbf-03fc-4ec2-8d39-c09f808722e9",
+          "artifactVersion": "1"
+        },
+        {
+          "artifactName": "gateway.env",
+          "artifactType": "HEAT_ENV",
+          "artifactURL": "/vgw0/gateway.env",
+          "artifactChecksum": "Y2Y4ZDgzMDg3NDBiMDhkODZiMmE1MGUyYjU2ZGFlZDU\u003d",
+          "artifactDescription": "Auto-generated HEAT Environment deployment artifact",
+          "artifactTimeout": 120,
+          "artifactUUID": "9df0452f-826c-4287-9a2d-ca0095339866",
+          "artifactVersion": "2",
+          "generatedFromUUID": "60d55796-212c-4c66-8af5-63964d636ae4"
+        }
+      ]
+    },
+    {
+      "resourceInstanceName": "Generic NeutronNet 0",
+      "resourceName": "Generic NeutronNet",
+      "resourceVersion": "1.0",
+      "resoucreType": "VL",
+      "resourceUUID": "4069be99-5d9a-427b-a427-04fe16ccbf38",
+      "resourceInvariantUUID": "f3ed1133-c1bb-4735-82d4-8e041265fad6",
+      "resourceCustomizationUUID": "c8a1a81d-d836-4f33-9d0e-91e9417f812a",
+      "category": "Generic",
+      "subcategory": "Network Elements",
+      "artifacts": []
+    }
+  ],
+  "serviceArtifacts": [
+    {
+      "artifactName": "service-Publicns-template.yml",
+      "artifactType": "TOSCA_TEMPLATE",
+      "artifactURL": "/service-Publicns-template.yml",
+      "artifactChecksum": "NTUzMDU5YzM3MTk4OGNiNjQ2OGRlMWY2YjU3MjE2YjM\u003d",
+      "artifactDescription": "TOSCA representation of the asset",
+      "artifactTimeout": 0,
+      "artifactUUID": "2617d0ca-54f0-4222-b659-c12e292d94dd",
+      "artifactVersion": "1"
+    },
+    {
+      "artifactName": "service-Publicns-csar.csar",
+      "artifactType": "TOSCA_CSAR",
+      "artifactURL": "/service-Publicns-csar.csar",
+      "artifactChecksum": "ZTRhOGI0M2UxN2ZhYjQ0ODI5ZDZhZTExZTFkMGU3N2Y\u003d",
+      "artifactDescription": "TOSCA definition package of the asset",
+      "artifactTimeout": 0,
+      "artifactUUID": "26a323ff-b97b-4b86-96b1-25a80c0876e5",
+      "artifactVersion": "1"
+    }
+  ],
+  "workloadContext": "Production"
+}

@@ -1,0 +1,1186 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+metadata:
+  invariantUUID: e907ce73-7e4d-4bf8-b94a-21bd1a7c7592
+  UUID: da28696e-d4c9-4df4-9f91-465c6c09a81e
+  name: PublicNS
+  description: PUblic NS
+  type: Service
+  category: E2E Service
+  serviceType: ''
+  serviceRole: ''
+  instantiationType: A-la-carte
+  serviceEcompNaming: true
+  ecompGeneratedNaming: true
+  namingPolicy: ''
+  environmentContext: General_Revenue-Bearing
+imports:
+- nodes:
+    file: nodes.yml
+- datatypes:
+    file: data.yml
+- capabilities:
+    file: capabilities.yml
+- relationships:
+    file: relationships.yml
+- groups:
+    file: groups.yml
+- policies:
+    file: policies.yml
+- annotations:
+    file: annotations.yml
+- service-PublicNS-interface:
+    file: service-Publicns-template-interface.yml
+- resource-vCPE:
+    file: resource-Vcpe-template.yml
+- resource-vCPE-interface:
+    file: resource-Vcpe-template-interface.yml
+- resource-vGW:
+    file: resource-Vgw-template.yml
+- resource-vGW-interface:
+    file: resource-Vgw-template-interface.yml
+- resource-Generic NeutronNet:
+    file: resource-GenericNeutronnet-template.yml
+topology_template:
+  node_templates:
+    vCPE 0:
+      type: org.openecomp.resource.vf.Vcpe
+      metadata:
+        invariantUUID: e0b3088d-9ca8-482a-aa5a-a1e6906b2d22
+        UUID: 32edc5e6-34f7-4d62-92f8-c38817280eb9
+        customizationUUID: ae70c293-8db3-40cd-8cd0-30cde194bea5
+        version: '1.0'
+        name: vCPE
+        description: vCPE
+        type: VF
+        category: Generic
+        subcategory: Infrastructure
+        resourceVendor: huawei
+        resourceVendorRelease: '1.0'
+        resourceVendorModelNumber: ''
+      properties:
+        vf_module_id: vCPEAR1000V
+        private_subnet_lan_id: 265e1457-8eb7-4fe8-a580-fb547656aad1
+        vcpe_image_name: vCPE_images
+        skip_post_instantiation_configuration: true
+        nf_naming:
+          ecomp_generated_naming: true
+        multi_stage_design: 'false'
+        availability_zone_max_count: 1
+        private_net_id: 1ecdeb3d-5d6d-45c4-a3d2-6cc53372fa8d
+        vcpe_name: ar1000v
+        private_subnet_wan_id: 86048e4e-861e-47c9-ae55-a5531b747e36
+        vnf_id: vCPE_huaweicloud
+        vcpe_flavor_name: vCPE_flavor
+        vcpe_private_ip_lan: 192.168.10.250
+      requirements:
+      - abstract_vcpe.link_vcpe_vcpe_private_lan_port:
+          capability: virtual_linkable
+          node: Generic NeutronNet 0
+      - abstract_vcpe.link_vcpe_vcpe_private_wan_port:
+          capability: virtual_linkable
+          node: Generic NeutronNet 0
+      capabilities:
+        abstract_vcpe.network.outgoing.bytes.rate_vcpe_vcpe_private_lan_port:
+          properties:
+            unit: B/s
+            description: Average rate of outgoing bytes
+            type: Gauge
+            category: network
+        abstract_vcpe.scalable_vcpe:
+          properties:
+            max_instances: 1
+            min_instances: 1
+        abstract_vcpe.network.outgoing.bytes_vcpe_vcpe_private_lan_port:
+          properties:
+            unit: B
+            description: Number of outgoing bytes
+            type: Cumulative
+            category: network
+        abstract_vcpe.disk.read.requests_vcpe:
+          properties:
+            unit: request
+            description: Number of read requests
+            type: Cumulative
+            category: compute
+        abstract_vcpe.disk.device.write.requests.rate_vcpe:
+          properties:
+            unit: request/s
+            description: Average rate of write requests
+            type: Gauge
+            category: disk
+        abstract_vcpe.disk.read.bytes.rate_vcpe:
+          properties:
+            unit: B/s
+            description: Average rate of reads
+            type: Gauge
+            category: compute
+        abstract_vcpe.network.outgoing.bytes.rate_vcpe_vcpe_private_wan_port:
+          properties:
+            unit: B/s
+            description: Average rate of outgoing bytes
+            type: Gauge
+            category: network
+        abstract_vcpe.disk.device.read.requests_vcpe:
+          properties:
+            unit: request
+            description: Number of read requests
+            type: Cumulative
+            category: disk
+        abstract_vcpe.disk.device.capacity_vcpe:
+          properties:
+            unit: B
+            description: The amount of disk per device that the instance can see
+            type: Gauge
+            category: disk
+        abstract_vcpe.cpu.delta_vcpe:
+          properties:
+            unit: ns
+            description: CPU time used since previous datapoint
+            type: Delta
+            category: compute
+        abstract_vcpe.port_mirroring_vcpe_vcpe_private_lan_port:
+          properties:
+            connection_point:
+              network_role:
+                get_input: port_vcpe_private_lan_port_network_role
+              nfc_naming_code: vcpe
+        abstract_vcpe.network.incoming.bytes.rate_vcpe_vcpe_private_lan_port:
+          properties:
+            unit: B/s
+            description: Average rate of incoming bytes
+            type: Gauge
+            category: network
+        abstract_vcpe.network.incoming.packets.rate_vcpe_vcpe_private_lan_port:
+          properties:
+            unit: packet/s
+            description: Average rate of incoming packets
+            type: Gauge
+            category: network
+        abstract_vcpe.port_mirroring_vcpe_vcpe_private_wan_port:
+          properties:
+            connection_point:
+              network_role:
+                get_input: port_vcpe_private_wan_port_network_role
+              nfc_naming_code: vcpe
+        abstract_vcpe.cpu_vcpe:
+          properties:
+            unit: ns
+            description: CPU time used
+            type: Cumulative
+            category: compute
+        abstract_vcpe.disk.latency_vcpe:
+          properties:
+            unit: ms
+            description: Average disk latency
+            type: Gauge
+            category: disk
+        abstract_vcpe.disk.device.read.bytes_vcpe:
+          properties:
+            unit: B
+            description: Volume of reads
+            type: Cumulative
+            category: disk
+        abstract_vcpe.disk.write.bytes_vcpe:
+          properties:
+            unit: B
+            description: Volume of writes
+            type: Cumulative
+            category: compute
+        abstract_vcpe.disk.device.read.requests.rate_vcpe:
+          properties:
+            unit: request/s
+            description: Average rate of read requests
+            type: Gauge
+            category: disk
+        abstract_vcpe.network.outgoing.bytes_vcpe_vcpe_private_wan_port:
+          properties:
+            unit: B
+            description: Number of outgoing bytes
+            type: Cumulative
+            category: network
+        abstract_vcpe.disk.root.size_vcpe:
+          properties:
+            unit: GB
+            description: Size of root disk
+            type: Gauge
+            category: compute
+        abstract_vcpe.network.incoming.bytes_vcpe_vcpe_private_lan_port:
+          properties:
+            unit: B
+            description: Number of incoming bytes
+            type: Cumulative
+            category: network
+        abstract_vcpe.disk.iops_vcpe:
+          properties:
+            unit: count/s
+            description: Average disk iops
+            type: Gauge
+            category: disk
+        abstract_vcpe.endpoint_vcpe:
+          properties:
+            secure: true
+        abstract_vcpe.network.outpoing.packets_vcpe_vcpe_private_lan_port:
+          properties:
+            unit: packet
+            description: Number of outgoing packets
+            type: Cumulative
+            category: network
+        abstract_vcpe.disk.device.write.requests_vcpe:
+          properties:
+            unit: request
+            description: Number of write requests
+            type: Cumulative
+            category: disk
+        abstract_vcpe.disk.write.bytes.rate_vcpe:
+          properties:
+            unit: B/s
+            description: Average rate of writes
+            type: Gauge
+            category: compute
+        abstract_vcpe.network.outgoing.packets.rate_vcpe_vcpe_private_wan_port:
+          properties:
+            unit: packet/s
+            description: Average rate of outgoing packets
+            type: Gauge
+            category: network
+        abstract_vcpe.disk.capacity_vcpe:
+          properties:
+            unit: B
+            description: The amount of disk that the instance can see
+            type: Gauge
+            category: disk
+        abstract_vcpe.cpu_util_vcpe:
+          properties:
+            unit: '%'
+            description: Average CPU utilization
+            type: Gauge
+            category: compute
+        abstract_vcpe.disk.write.requests_vcpe:
+          properties:
+            unit: request
+            description: Number of write requests
+            type: Cumulative
+            category: compute
+        abstract_vcpe.disk.read.bytes_vcpe:
+          properties:
+            unit: B
+            description: Volume of reads
+            type: Cumulative
+            category: compute
+        abstract_vcpe.disk.device.write.bytes_vcpe:
+          properties:
+            unit: B
+            description: Volume of writes
+            type: Cumulative
+            category: disk
+        abstract_vcpe.disk.device.write.bytes.rate_vcpe:
+          properties:
+            unit: B/s
+            description: Average rate of writes
+            type: Gauge
+            category: disk
+        abstract_vcpe.vcpus_vcpe:
+          properties:
+            unit: vcpu
+            description: Number of virtual CPUs allocated to the instance
+            type: Gauge
+            category: compute
+        abstract_vcpe.disk.allocation_vcpe:
+          properties:
+            unit: B
+            description: The amount of disk occupied by the instance on the host machine
+            type: Gauge
+            category: disk
+        abstract_vcpe.network.incoming.packets_vcpe_vcpe_private_wan_port:
+          properties:
+            unit: packet
+            description: Number of incoming packets
+            type: Cumulative
+            category: network
+        abstract_vcpe.network.incoming.bytes.rate_vcpe_vcpe_private_wan_port:
+          properties:
+            unit: B/s
+            description: Average rate of incoming bytes
+            type: Gauge
+            category: network
+        abstract_vcpe.memory_vcpe:
+          properties:
+            unit: MB
+            description: Volume of RAM allocated to the instance
+            type: Gauge
+            category: compute
+        abstract_vcpe.network.incoming.packets_vcpe_vcpe_private_lan_port:
+          properties:
+            unit: packet
+            description: Number of incoming packets
+            type: Cumulative
+            category: network
+        abstract_vcpe.network.incoming.packets.rate_vcpe_vcpe_private_wan_port:
+          properties:
+            unit: packet/s
+            description: Average rate of incoming packets
+            type: Gauge
+            category: network
+        abstract_vcpe.disk.device.read.bytes.rate_vcpe:
+          properties:
+            unit: B/s
+            description: Average rate of reads
+            type: Gauge
+            category: disk
+        abstract_vcpe.memory.usage_vcpe:
+          properties:
+            unit: MB
+            description: Volume of RAM used by the instance from the amount of its allocated memory
+            type: Gauge
+            category: compute
+        abstract_vcpe.disk.device.iops_vcpe:
+          properties:
+            unit: count/s
+            description: Average disk iops per device
+            type: Gauge
+            category: disk
+        abstract_vcpe.disk.device.allocation_vcpe:
+          properties:
+            unit: B
+            description: The amount of disk per device occupied by the instance on the host machine
+            type: Gauge
+            category: disk
+        abstract_vcpe.disk.usage_vcpe:
+          properties:
+            unit: B
+            description: The physical size in bytes of the image container on the host
+            type: Gauge
+            category: disk
+        abstract_vcpe.disk.device.latency_vcpe:
+          properties:
+            unit: ms
+            description: Average disk latency per device
+            type: Gauge
+            category: disk
+        abstract_vcpe.network.outpoing.packets_vcpe_vcpe_private_wan_port:
+          properties:
+            unit: packet
+            description: Number of outgoing packets
+            type: Cumulative
+            category: network
+        abstract_vcpe.disk.write.requests.rate_vcpe:
+          properties:
+            unit: request/s
+            description: Average rate of write requests
+            type: Gauge
+            category: compute
+        abstract_vcpe.instance_vcpe:
+          properties:
+            unit: instance
+            description: Existence of instance
+            type: Gauge
+            category: compute
+        abstract_vcpe.disk.device.usage_vcpe:
+          properties:
+            unit: B
+            description: The physical size in bytes of the image container on the host per device
+            type: Gauge
+            category: disk
+        abstract_vcpe.network.incoming.bytes_vcpe_vcpe_private_wan_port:
+          properties:
+            unit: B
+            description: Number of incoming bytes
+            type: Cumulative
+            category: network
+        abstract_vcpe.disk.ephemeral.size_vcpe:
+          properties:
+            unit: GB
+            description: Size of ephemeral disk
+            type: Gauge
+            category: compute
+        abstract_vcpe.memory.resident_vcpe:
+          properties:
+            unit: MB
+            description: Volume of RAM used by the instance on the physical machine
+            type: Gauge
+            category: compute
+        abstract_vcpe.network.outgoing.packets.rate_vcpe_vcpe_private_lan_port:
+          properties:
+            unit: packet/s
+            description: Average rate of outgoing packets
+            type: Gauge
+            category: network
+    Generic NeutronNet 0:
+      type: org.openecomp.resource.vl.GenericNeutronNet
+      metadata:
+        invariantUUID: f3ed1133-c1bb-4735-82d4-8e041265fad6
+        UUID: 24ec2ed8-a072-4f86-9a58-3a4fe220862e
+        customizationUUID: c8a1a81d-d836-4f33-9d0e-91e9417f812a
+        version: '1.0'
+        name: Generic NeutronNet
+        description: Generic NeutronNet
+        type: VL
+        category: Generic
+        subcategory: Network Elements
+        resourceVendor: ONAP (Tosca)
+        resourceVendorRelease: 1.0.0.wd03
+        resourceVendorModelNumber: ''
+      properties:
+        network_assignments:
+          is_external_network: false
+          is_trunked: false
+          ipv4_subnet_default_assignment:
+            min_subnets_count: 1
+          ecomp_generated_network_assignment: false
+          ipv6_subnet_default_assignment:
+            min_subnets_count: 1
+        exVL_naming:
+          ecomp_generated_naming: true
+        network_flows:
+          is_network_policy: false
+          is_bound_to_vpn: false
+        network_ecomp_naming:
+          ecomp_generated_naming: true
+        network_type: NEUTRON
+        network_technology: NEUTRON
+        network_homing:
+          ecomp_selected_instance_node_target: false
+    vGW 0:
+      type: org.openecomp.resource.vf.Vgw
+      metadata:
+        invariantUUID: 52905e03-0632-43f9-93f2-2ab7d959f633
+        UUID: 4f442b9c-237d-4d2d-b549-ee1bdb9842b3
+        customizationUUID: fd8595de-1081-4e39-a401-24ffebaa9ed8
+        version: '1.0'
+        name: vGW
+        description: vGW
+        type: VF
+        category: Generic
+        subcategory: Infrastructure
+        resourceVendor: huawei
+        resourceVendorRelease: '1.0'
+        resourceVendorModelNumber: ''
+      properties:
+        vf_module_id: CCVPNvGW
+        gateway_image_name: gateway_image
+        private_subnet_lan_id: 265e1457-8eb7-4fe8-a580-fb547656aad1
+        skip_post_instantiation_configuration: true
+        nf_naming:
+          ecomp_generated_naming: true
+        multi_stage_design: 'false'
+        availability_zone_max_count: 1
+        vnf_id: vGW_huaweicloud
+        private_net_id: 1ecdeb3d-5d6d-45c4-a3d2-6cc53372fa8d
+        gateway_flavor_name: s3.large.4
+        gateway_private_ip_lan: 192.168.10.200
+        gateway_name: gateway-vm
+      requirements:
+      - abstract_gateway.link_gateway_gateway_private_lan_port:
+          capability: virtual_linkable
+          node: Generic NeutronNet 0
+      capabilities:
+        abstract_gateway.network.incoming.bytes.rate_gateway_gateway_private_lan_port:
+          properties:
+            unit: B/s
+            description: Average rate of incoming bytes
+            type: Gauge
+            category: network
+        abstract_gateway.disk.device.read.bytes.rate_gateway:
+          properties:
+            unit: B/s
+            description: Average rate of reads
+            type: Gauge
+            category: disk
+        abstract_gateway.disk.capacity_gateway:
+          properties:
+            unit: B
+            description: The amount of disk that the instance can see
+            type: Gauge
+            category: disk
+        abstract_gateway.scalable_gateway:
+          properties:
+            max_instances: 1
+            min_instances: 1
+        abstract_gateway.disk.read.bytes_gateway:
+          properties:
+            unit: B
+            description: Volume of reads
+            type: Cumulative
+            category: compute
+        abstract_gateway.disk.allocation_gateway:
+          properties:
+            unit: B
+            description: The amount of disk occupied by the instance on the host machine
+            type: Gauge
+            category: disk
+        abstract_gateway.disk.device.write.requests_gateway:
+          properties:
+            unit: request
+            description: Number of write requests
+            type: Cumulative
+            category: disk
+        abstract_gateway.disk.device.read.bytes_gateway:
+          properties:
+            unit: B
+            description: Volume of reads
+            type: Cumulative
+            category: disk
+        abstract_gateway.cpu.delta_gateway:
+          properties:
+            unit: ns
+            description: CPU time used since previous datapoint
+            type: Delta
+            category: compute
+        abstract_gateway.network.outgoing.packets.rate_gateway_gateway_private_lan_port:
+          properties:
+            unit: packet/s
+            description: Average rate of outgoing packets
+            type: Gauge
+            category: network
+        abstract_gateway.cpu_gateway:
+          properties:
+            unit: ns
+            description: CPU time used
+            type: Cumulative
+            category: compute
+        abstract_gateway.disk.device.allocation_gateway:
+          properties:
+            unit: B
+            description: The amount of disk per device occupied by the instance on the host machine
+            type: Gauge
+            category: disk
+        abstract_gateway.disk.latency_gateway:
+          properties:
+            unit: ms
+            description: Average disk latency
+            type: Gauge
+            category: disk
+        abstract_gateway.disk.device.read.requests_gateway:
+          properties:
+            unit: request
+            description: Number of read requests
+            type: Cumulative
+            category: disk
+        abstract_gateway.disk.device.read.requests.rate_gateway:
+          properties:
+            unit: request/s
+            description: Average rate of read requests
+            type: Gauge
+            category: disk
+        abstract_gateway.disk.write.requests.rate_gateway:
+          properties:
+            unit: request/s
+            description: Average rate of write requests
+            type: Gauge
+            category: compute
+        abstract_gateway.disk.device.write.bytes.rate_gateway:
+          properties:
+            unit: B/s
+            description: Average rate of writes
+            type: Gauge
+            category: disk
+        abstract_gateway.cpu_util_gateway:
+          properties:
+            unit: '%'
+            description: Average CPU utilization
+            type: Gauge
+            category: compute
+        abstract_gateway.instance_gateway:
+          properties:
+            unit: instance
+            description: Existence of instance
+            type: Gauge
+            category: compute
+        abstract_gateway.network.outpoing.packets_gateway_gateway_private_lan_port:
+          properties:
+            unit: packet
+            description: Number of outgoing packets
+            type: Cumulative
+            category: network
+        abstract_gateway.disk.root.size_gateway:
+          properties:
+            unit: GB
+            description: Size of root disk
+            type: Gauge
+            category: compute
+        abstract_gateway.memory.usage_gateway:
+          properties:
+            unit: MB
+            description: Volume of RAM used by the instance from the amount of its allocated memory
+            type: Gauge
+            category: compute
+        abstract_gateway.network.outgoing.bytes_gateway_gateway_private_lan_port:
+          properties:
+            unit: B
+            description: Number of outgoing bytes
+            type: Cumulative
+            category: network
+        abstract_gateway.network.outgoing.bytes.rate_gateway_gateway_private_lan_port:
+          properties:
+            unit: B/s
+            description: Average rate of outgoing bytes
+            type: Gauge
+            category: network
+        abstract_gateway.disk.device.capacity_gateway:
+          properties:
+            unit: B
+            description: The amount of disk per device that the instance can see
+            type: Gauge
+            category: disk
+        abstract_gateway.disk.iops_gateway:
+          properties:
+            unit: count/s
+            description: Average disk iops
+            type: Gauge
+            category: disk
+        abstract_gateway.disk.write.requests_gateway:
+          properties:
+            unit: request
+            description: Number of write requests
+            type: Cumulative
+            category: compute
+        abstract_gateway.disk.device.write.bytes_gateway:
+          properties:
+            unit: B
+            description: Volume of writes
+            type: Cumulative
+            category: disk
+        abstract_gateway.disk.ephemeral.size_gateway:
+          properties:
+            unit: GB
+            description: Size of ephemeral disk
+            type: Gauge
+            category: compute
+        abstract_gateway.disk.device.write.requests.rate_gateway:
+          properties:
+            unit: request/s
+            description: Average rate of write requests
+            type: Gauge
+            category: disk
+        abstract_gateway.network.incoming.packets.rate_gateway_gateway_private_lan_port:
+          properties:
+            unit: packet/s
+            description: Average rate of incoming packets
+            type: Gauge
+            category: network
+        abstract_gateway.disk.device.iops_gateway:
+          properties:
+            unit: count/s
+            description: Average disk iops per device
+            type: Gauge
+            category: disk
+        abstract_gateway.endpoint_gateway:
+          properties:
+            secure: true
+        abstract_gateway.disk.device.latency_gateway:
+          properties:
+            unit: ms
+            description: Average disk latency per device
+            type: Gauge
+            category: disk
+        abstract_gateway.vcpus_gateway:
+          properties:
+            unit: vcpu
+            description: Number of virtual CPUs allocated to the instance
+            type: Gauge
+            category: compute
+        abstract_gateway.memory_gateway:
+          properties:
+            unit: MB
+            description: Volume of RAM allocated to the instance
+            type: Gauge
+            category: compute
+        abstract_gateway.network.incoming.bytes_gateway_gateway_private_lan_port:
+          properties:
+            unit: B
+            description: Number of incoming bytes
+            type: Cumulative
+            category: network
+        abstract_gateway.disk.read.bytes.rate_gateway:
+          properties:
+            unit: B/s
+            description: Average rate of reads
+            type: Gauge
+            category: compute
+        abstract_gateway.disk.read.requests_gateway:
+          properties:
+            unit: request
+            description: Number of read requests
+            type: Cumulative
+            category: compute
+        abstract_gateway.port_mirroring_gateway_gateway_private_lan_port:
+          properties:
+            connection_point:
+              network_role:
+                get_input: port_gateway_private_lan_port_network_role
+              nfc_naming_code: gateway
+        abstract_gateway.disk.device.usage_gateway:
+          properties:
+            unit: B
+            description: The physical size in bytes of the image container on the host per device
+            type: Gauge
+            category: disk
+        abstract_gateway.disk.write.bytes.rate_gateway:
+          properties:
+            unit: B/s
+            description: Average rate of writes
+            type: Gauge
+            category: compute
+        abstract_gateway.network.incoming.packets_gateway_gateway_private_lan_port:
+          properties:
+            unit: packet
+            description: Number of incoming packets
+            type: Cumulative
+            category: network
+        abstract_gateway.memory.resident_gateway:
+          properties:
+            unit: MB
+            description: Volume of RAM used by the instance on the physical machine
+            type: Gauge
+            category: compute
+        abstract_gateway.disk.usage_gateway:
+          properties:
+            unit: B
+            description: The physical size in bytes of the image container on the host
+            type: Gauge
+            category: disk
+        abstract_gateway.disk.write.bytes_gateway:
+          properties:
+            unit: B
+            description: Volume of writes
+            type: Cumulative
+            category: compute
+  groups:
+    vcpe0..Vcpe..ar1000v..module-0:
+      type: org.openecomp.groups.VfModule
+      metadata:
+        vfModuleModelName: Vcpe..ar1000v..module-0
+        vfModuleModelInvariantUUID: d7719964-c045-4ed3-84d6-20a01db7612f
+        vfModuleModelUUID: c84ade8a-6e4b-49c7-86e8-0e4fc009f4cd
+        vfModuleModelVersion: '1'
+        vfModuleModelCustomizationUUID: 8caeefbd-ab71-40c9-9387-8729d7d9c2de
+      properties:
+        min_vf_module_instances: 1
+        vf_module_label: ar1000v
+        max_vf_module_instances: 1
+        vf_module_type: Base
+        isBase: true
+        initial_count: 1
+        volume_group: false
+    vgw0..Vgw..gateway..module-0:
+      type: org.openecomp.groups.VfModule
+      metadata:
+        vfModuleModelName: Vgw..gateway..module-0
+        vfModuleModelInvariantUUID: 8c8c936c-e71c-4bc4-94f7-c5680c9dbc00
+        vfModuleModelUUID: ddda7e87-8113-463f-aa27-a60112a4e438
+        vfModuleModelVersion: '1'
+        vfModuleModelCustomizationUUID: ea551d60-f9c9-48f2-9757-b01eb2d26d13
+      properties:
+        min_vf_module_instances: 1
+        vf_module_label: gateway
+        max_vf_module_instances: 1
+        vf_module_type: Base
+        isBase: true
+        initial_count: 1
+        volume_group: false
+  substitution_mappings:
+    node_type: org.openecomp.service.Publicns
+    capabilities:
+      vgw0.abstract_gateway.disk.allocation_gateway:
+      - vGW 0
+      - abstract_gateway.disk.allocation_gateway
+      vgw0.abstract_gateway.memory.usage_gateway:
+      - vGW 0
+      - abstract_gateway.memory.usage_gateway
+      vcpe0.abstract_vcpe.network.outgoing.bytes.rate_vcpe_vcpe_private_wan_port:
+      - vCPE 0
+      - abstract_vcpe.network.outgoing.bytes.rate_vcpe_vcpe_private_wan_port
+      vgw0.abstract_gateway.disk.device.write.bytes.rate_gateway:
+      - vGW 0
+      - abstract_gateway.disk.device.write.bytes.rate_gateway
+      vgw0.abstract_gateway.disk.device.latency_gateway:
+      - vGW 0
+      - abstract_gateway.disk.device.latency_gateway
+      vgw0.abstract_gateway.network.incoming.bytes.rate_gateway_gateway_private_lan_port:
+      - vGW 0
+      - abstract_gateway.network.incoming.bytes.rate_gateway_gateway_private_lan_port
+      vgw0.abstract_gateway.scalable_gateway:
+      - vGW 0
+      - abstract_gateway.scalable_gateway
+      vcpe0.abstract_vcpe.host_vcpe:
+      - vCPE 0
+      - abstract_vcpe.host_vcpe
+      vcpe0.abstract_vcpe.disk.latency_vcpe:
+      - vCPE 0
+      - abstract_vcpe.disk.latency_vcpe
+      vcpe0.abstract_vcpe.scalable_vcpe:
+      - vCPE 0
+      - abstract_vcpe.scalable_vcpe
+      vcpe0.abstract_vcpe.disk.device.write.bytes.rate_vcpe:
+      - vCPE 0
+      - abstract_vcpe.disk.device.write.bytes.rate_vcpe
+      vgw0.abstract_gateway.disk.write.requests.rate_gateway:
+      - vGW 0
+      - abstract_gateway.disk.write.requests.rate_gateway
+      vcpe0.abstract_vcpe.feature_vcpe_vcpe_private_wan_port:
+      - vCPE 0
+      - abstract_vcpe.feature_vcpe_vcpe_private_wan_port
+      vcpe0.abstract_vcpe.network.incoming.bytes.rate_vcpe_vcpe_private_lan_port:
+      - vCPE 0
+      - abstract_vcpe.network.incoming.bytes.rate_vcpe_vcpe_private_lan_port
+      vcpe0.abstract_vcpe.disk.iops_vcpe:
+      - vCPE 0
+      - abstract_vcpe.disk.iops_vcpe
+      vcpe0.abstract_vcpe.network.outgoing.packets.rate_vcpe_vcpe_private_wan_port:
+      - vCPE 0
+      - abstract_vcpe.network.outgoing.packets.rate_vcpe_vcpe_private_wan_port
+      vcpe0.abstract_vcpe.feature_vcpe_vcpe_private_lan_port:
+      - vCPE 0
+      - abstract_vcpe.feature_vcpe_vcpe_private_lan_port
+      vgw0.abstract_gateway.host_gateway:
+      - vGW 0
+      - abstract_gateway.host_gateway
+      vgw0.abstract_gateway.disk.device.write.requests.rate_gateway:
+      - vGW 0
+      - abstract_gateway.disk.device.write.requests.rate_gateway
+      vcpe0.abstract_vcpe.port_mirroring_vcpe_vcpe_private_lan_port:
+      - vCPE 0
+      - abstract_vcpe.port_mirroring_vcpe_vcpe_private_lan_port
+      vcpe0.abstract_vcpe.network.incoming.bytes_vcpe_vcpe_private_lan_port:
+      - vCPE 0
+      - abstract_vcpe.network.incoming.bytes_vcpe_vcpe_private_lan_port
+      vcpe0.abstract_vcpe.disk.device.capacity_vcpe:
+      - vCPE 0
+      - abstract_vcpe.disk.device.capacity_vcpe
+      vcpe0.abstract_vcpe.network.outgoing.bytes_vcpe_vcpe_private_wan_port:
+      - vCPE 0
+      - abstract_vcpe.network.outgoing.bytes_vcpe_vcpe_private_wan_port
+      vcpe0.abstract_vcpe.os_vcpe:
+      - vCPE 0
+      - abstract_vcpe.os_vcpe
+      vgw0.abstract_gateway.disk.usage_gateway:
+      - vGW 0
+      - abstract_gateway.disk.usage_gateway
+      vcpe0.abstract_vcpe.binding_vcpe:
+      - vCPE 0
+      - abstract_vcpe.binding_vcpe
+      vgw0.abstract_gateway.network.outgoing.bytes_gateway_gateway_private_lan_port:
+      - vGW 0
+      - abstract_gateway.network.outgoing.bytes_gateway_gateway_private_lan_port
+      vcpe0.abstract_vcpe.binding_vcpe_vcpe_private_wan_port:
+      - vCPE 0
+      - abstract_vcpe.binding_vcpe_vcpe_private_wan_port
+      vcpe0.abstract_vcpe.memory.resident_vcpe:
+      - vCPE 0
+      - abstract_vcpe.memory.resident_vcpe
+      vgw0.abstract_gateway.disk.write.bytes_gateway:
+      - vGW 0
+      - abstract_gateway.disk.write.bytes_gateway
+      vgw0.abstract_gateway.disk.read.bytes.rate_gateway:
+      - vGW 0
+      - abstract_gateway.disk.read.bytes.rate_gateway
+      vcpe0.abstract_vcpe.network.incoming.packets.rate_vcpe_vcpe_private_lan_port:
+      - vCPE 0
+      - abstract_vcpe.network.incoming.packets.rate_vcpe_vcpe_private_lan_port
+      vgw0.abstract_gateway.disk.root.size_gateway:
+      - vGW 0
+      - abstract_gateway.disk.root.size_gateway
+      vcpe0.abstract_vcpe.disk.write.requests_vcpe:
+      - vCPE 0
+      - abstract_vcpe.disk.write.requests_vcpe
+      vcpe0.abstract_vcpe.disk.device.write.bytes_vcpe:
+      - vCPE 0
+      - abstract_vcpe.disk.device.write.bytes_vcpe
+      vcpe0.abstract_vcpe.feature_vcpe:
+      - vCPE 0
+      - abstract_vcpe.feature_vcpe
+      vcpe0.abstract_vcpe.disk.device.latency_vcpe:
+      - vCPE 0
+      - abstract_vcpe.disk.device.latency_vcpe
+      vgw0.abstract_gateway.cpu_util_gateway:
+      - vGW 0
+      - abstract_gateway.cpu_util_gateway
+      vgw0.abstract_gateway.network.incoming.packets_gateway_gateway_private_lan_port:
+      - vGW 0
+      - abstract_gateway.network.incoming.packets_gateway_gateway_private_lan_port
+      vgw0.abstract_gateway.disk.device.read.requests.rate_gateway:
+      - vGW 0
+      - abstract_gateway.disk.device.read.requests.rate_gateway
+      vgw0.abstract_gateway.network.incoming.packets.rate_gateway_gateway_private_lan_port:
+      - vGW 0
+      - abstract_gateway.network.incoming.packets.rate_gateway_gateway_private_lan_port
+      vcpe0.abstract_vcpe.port_mirroring_vcpe_vcpe_private_wan_port:
+      - vCPE 0
+      - abstract_vcpe.port_mirroring_vcpe_vcpe_private_wan_port
+      vcpe0.abstract_vcpe.disk.write.bytes_vcpe:
+      - vCPE 0
+      - abstract_vcpe.disk.write.bytes_vcpe
+      vgw0.abstract_gateway.disk.capacity_gateway:
+      - vGW 0
+      - abstract_gateway.disk.capacity_gateway
+      vgw0.abstract_gateway.memory_gateway:
+      - vGW 0
+      - abstract_gateway.memory_gateway
+      vcpe0.abstract_vcpe.cpu_util_vcpe:
+      - vCPE 0
+      - abstract_vcpe.cpu_util_vcpe
+      vgw0.abstract_gateway.disk.device.write.requests_gateway:
+      - vGW 0
+      - abstract_gateway.disk.device.write.requests_gateway
+      vgw0.abstract_gateway.vcpus_gateway:
+      - vGW 0
+      - abstract_gateway.vcpus_gateway
+      vcpe0.abstract_vcpe.disk.ephemeral.size_vcpe:
+      - vCPE 0
+      - abstract_vcpe.disk.ephemeral.size_vcpe
+      vgw0.abstract_gateway.disk.device.read.bytes_gateway:
+      - vGW 0
+      - abstract_gateway.disk.device.read.bytes_gateway
+      vgw0.abstract_gateway.disk.device.allocation_gateway:
+      - vGW 0
+      - abstract_gateway.disk.device.allocation_gateway
+      vgw0.abstract_gateway.disk.device.capacity_gateway:
+      - vGW 0
+      - abstract_gateway.disk.device.capacity_gateway
+      vcpe0.abstract_vcpe.disk.write.requests.rate_vcpe:
+      - vCPE 0
+      - abstract_vcpe.disk.write.requests.rate_vcpe
+      vcpe0.abstract_vcpe.disk.usage_vcpe:
+      - vCPE 0
+      - abstract_vcpe.disk.usage_vcpe
+      vgw0.abstract_gateway.disk.device.iops_gateway:
+      - vGW 0
+      - abstract_gateway.disk.device.iops_gateway
+      vcpe0.abstract_vcpe.network.outgoing.packets.rate_vcpe_vcpe_private_lan_port:
+      - vCPE 0
+      - abstract_vcpe.network.outgoing.packets.rate_vcpe_vcpe_private_lan_port
+      vgw0.abstract_gateway.endpoint_gateway:
+      - vGW 0
+      - abstract_gateway.endpoint_gateway
+      vcpe0.abstract_vcpe.disk.device.read.bytes.rate_vcpe:
+      - vCPE 0
+      - abstract_vcpe.disk.device.read.bytes.rate_vcpe
+      vcpe0.abstract_vcpe.disk.read.requests_vcpe:
+      - vCPE 0
+      - abstract_vcpe.disk.read.requests_vcpe
+      vcpe0.abstract_vcpe.disk.read.bytes.rate_vcpe:
+      - vCPE 0
+      - abstract_vcpe.disk.read.bytes.rate_vcpe
+      vcpe0.abstract_vcpe.disk.device.read.bytes_vcpe:
+      - vCPE 0
+      - abstract_vcpe.disk.device.read.bytes_vcpe
+      vgw0.abstract_gateway.binding_gateway:
+      - vGW 0
+      - abstract_gateway.binding_gateway
+      vcpe0.abstract_vcpe.network.incoming.packets.rate_vcpe_vcpe_private_wan_port:
+      - vCPE 0
+      - abstract_vcpe.network.incoming.packets.rate_vcpe_vcpe_private_wan_port
+      vcpe0.abstract_vcpe.network.outgoing.bytes_vcpe_vcpe_private_lan_port:
+      - vCPE 0
+      - abstract_vcpe.network.outgoing.bytes_vcpe_vcpe_private_lan_port
+      vcpe0.abstract_vcpe.cpu.delta_vcpe:
+      - vCPE 0
+      - abstract_vcpe.cpu.delta_vcpe
+      vcpe0.abstract_vcpe.disk.device.write.requests.rate_vcpe:
+      - vCPE 0
+      - abstract_vcpe.disk.device.write.requests.rate_vcpe
+      vgw0.abstract_gateway.instance_gateway:
+      - vGW 0
+      - abstract_gateway.instance_gateway
+      vgw0.abstract_gateway.memory.resident_gateway:
+      - vGW 0
+      - abstract_gateway.memory.resident_gateway
+      vcpe0.abstract_vcpe.network.incoming.packets_vcpe_vcpe_private_wan_port:
+      - vCPE 0
+      - abstract_vcpe.network.incoming.packets_vcpe_vcpe_private_wan_port
+      vgw0.abstract_gateway.disk.read.bytes_gateway:
+      - vGW 0
+      - abstract_gateway.disk.read.bytes_gateway
+      vcpe0.abstract_vcpe.disk.device.iops_vcpe:
+      - vCPE 0
+      - abstract_vcpe.disk.device.iops_vcpe
+      vgw0.abstract_gateway.binding_gateway_gateway_private_lan_port:
+      - vGW 0
+      - abstract_gateway.binding_gateway_gateway_private_lan_port
+      vgw0.abstract_gateway.disk.ephemeral.size_gateway:
+      - vGW 0
+      - abstract_gateway.disk.ephemeral.size_gateway
+      vgw0.abstract_gateway.feature_gateway:
+      - vGW 0
+      - abstract_gateway.feature_gateway
+      vcpe0.abstract_vcpe.forwarder_vcpe_vcpe_private_wan_port:
+      - vCPE 0
+      - abstract_vcpe.forwarder_vcpe_vcpe_private_wan_port
+      vcpe0.abstract_vcpe.disk.device.allocation_vcpe:
+      - vCPE 0
+      - abstract_vcpe.disk.device.allocation_vcpe
+      vgw0.abstract_gateway.disk.read.requests_gateway:
+      - vGW 0
+      - abstract_gateway.disk.read.requests_gateway
+      vcpe0.abstract_vcpe.disk.device.write.requests_vcpe:
+      - vCPE 0
+      - abstract_vcpe.disk.device.write.requests_vcpe
+      vgw0.abstract_gateway.disk.device.usage_gateway:
+      - vGW 0
+      - abstract_gateway.disk.device.usage_gateway
+      vgw0.abstract_gateway.cpu.delta_gateway:
+      - vGW 0
+      - abstract_gateway.cpu.delta_gateway
+      vgw0.abstract_gateway.network.outgoing.packets.rate_gateway_gateway_private_lan_port:
+      - vGW 0
+      - abstract_gateway.network.outgoing.packets.rate_gateway_gateway_private_lan_port
+      vgw0.abstract_gateway.port_mirroring_gateway_gateway_private_lan_port:
+      - vGW 0
+      - abstract_gateway.port_mirroring_gateway_gateway_private_lan_port
+      vcpe0.abstract_vcpe.forwarder_vcpe_vcpe_private_lan_port:
+      - vCPE 0
+      - abstract_vcpe.forwarder_vcpe_vcpe_private_lan_port
+      vcpe0.abstract_vcpe.network.outpoing.packets_vcpe_vcpe_private_lan_port:
+      - vCPE 0
+      - abstract_vcpe.network.outpoing.packets_vcpe_vcpe_private_lan_port
+      vcpe0.abstract_vcpe.network.incoming.packets_vcpe_vcpe_private_lan_port:
+      - vCPE 0
+      - abstract_vcpe.network.incoming.packets_vcpe_vcpe_private_lan_port
+      vgw0.abstract_gateway.disk.latency_gateway:
+      - vGW 0
+      - abstract_gateway.disk.latency_gateway
+      vcpe0.abstract_vcpe.disk.read.bytes_vcpe:
+      - vCPE 0
+      - abstract_vcpe.disk.read.bytes_vcpe
+      vcpe0.abstract_vcpe.attachment_vcpe_vcpe_private_wan_port:
+      - vCPE 0
+      - abstract_vcpe.attachment_vcpe_vcpe_private_wan_port
+      vgw0.abstract_gateway.cpu_gateway:
+      - vGW 0
+      - abstract_gateway.cpu_gateway
+      vcpe0.abstract_vcpe.instance_vcpe:
+      - vCPE 0
+      - abstract_vcpe.instance_vcpe
+      vcpe0.abstract_vcpe.memory_vcpe:
+      - vCPE 0
+      - abstract_vcpe.memory_vcpe
+      vgw0.abstract_gateway.feature_gateway_gateway_private_lan_port:
+      - vGW 0
+      - abstract_gateway.feature_gateway_gateway_private_lan_port
+      vgw0.abstract_gateway.disk.device.write.bytes_gateway:
+      - vGW 0
+      - abstract_gateway.disk.device.write.bytes_gateway
+      vcpe0.abstract_vcpe.network.outpoing.packets_vcpe_vcpe_private_wan_port:
+      - vCPE 0
+      - abstract_vcpe.network.outpoing.packets_vcpe_vcpe_private_wan_port
+      vgw0.abstract_gateway.disk.device.read.requests_gateway:
+      - vGW 0
+      - abstract_gateway.disk.device.read.requests_gateway
+      vgw0.abstract_gateway.disk.write.requests_gateway:
+      - vGW 0
+      - abstract_gateway.disk.write.requests_gateway
+      vgw0.abstract_gateway.os_gateway:
+      - vGW 0
+      - abstract_gateway.os_gateway
+      vgw0.abstract_gateway.network.outgoing.bytes.rate_gateway_gateway_private_lan_port:
+      - vGW 0
+      - abstract_gateway.network.outgoing.bytes.rate_gateway_gateway_private_lan_port
+      vgw0.abstract_gateway.network.outpoing.packets_gateway_gateway_private_lan_port:
+      - vGW 0
+      - abstract_gateway.network.outpoing.packets_gateway_gateway_private_lan_port
+      vcpe0.abstract_vcpe.disk.write.bytes.rate_vcpe:
+      - vCPE 0
+      - abstract_vcpe.disk.write.bytes.rate_vcpe
+      vgw0.abstract_gateway.disk.write.bytes.rate_gateway:
+      - vGW 0
+      - abstract_gateway.disk.write.bytes.rate_gateway
+      vcpe0.abstract_vcpe.network.incoming.bytes.rate_vcpe_vcpe_private_wan_port:
+      - vCPE 0
+      - abstract_vcpe.network.incoming.bytes.rate_vcpe_vcpe_private_wan_port
+      vcpe0.abstract_vcpe.cpu_vcpe:
+      - vCPE 0
+      - abstract_vcpe.cpu_vcpe
+      vcpe0.abstract_vcpe.disk.allocation_vcpe:
+      - vCPE 0
+      - abstract_vcpe.disk.allocation_vcpe
+      vcpe0.abstract_vcpe.disk.device.read.requests.rate_vcpe:
+      - vCPE 0
+      - abstract_vcpe.disk.device.read.requests.rate_vcpe
+      vgw0.abstract_gateway.network.incoming.bytes_gateway_gateway_private_lan_port:
+      - vGW 0
+      - abstract_gateway.network.incoming.bytes_gateway_gateway_private_lan_port
+      vcpe0.abstract_vcpe.disk.device.read.requests_vcpe:
+      - vCPE 0
+      - abstract_vcpe.disk.device.read.requests_vcpe
+      vgw0.abstract_gateway.disk.device.read.bytes.rate_gateway:
+      - vGW 0
+      - abstract_gateway.disk.device.read.bytes.rate_gateway
+      vcpe0.abstract_vcpe.binding_vcpe_vcpe_private_lan_port:
+      - vCPE 0
+      - abstract_vcpe.binding_vcpe_vcpe_private_lan_port
+      vgw0.abstract_gateway.forwarder_gateway_gateway_private_lan_port:
+      - vGW 0
+      - abstract_gateway.forwarder_gateway_gateway_private_lan_port
+      genericneutronnet0.virtual_linkable:
+      - Generic NeutronNet 0
+      - virtual_linkable
+      vcpe0.abstract_vcpe.network.incoming.bytes_vcpe_vcpe_private_wan_port:
+      - vCPE 0
+      - abstract_vcpe.network.incoming.bytes_vcpe_vcpe_private_wan_port
+      vcpe0.abstract_vcpe.disk.device.usage_vcpe:
+      - vCPE 0
+      - abstract_vcpe.disk.device.usage_vcpe
+      genericneutronnet0.feature:
+      - Generic NeutronNet 0
+      - feature
+      vcpe0.abstract_vcpe.network.outgoing.bytes.rate_vcpe_vcpe_private_lan_port:
+      - vCPE 0
+      - abstract_vcpe.network.outgoing.bytes.rate_vcpe_vcpe_private_lan_port
+      vcpe0.abstract_vcpe.disk.root.size_vcpe:
+      - vCPE 0
+      - abstract_vcpe.disk.root.size_vcpe
+      vcpe0.abstract_vcpe.vcpus_vcpe:
+      - vCPE 0
+      - abstract_vcpe.vcpus_vcpe
+      vcpe0.abstract_vcpe.endpoint_vcpe:
+      - vCPE 0
+      - abstract_vcpe.endpoint_vcpe
+      vgw0.abstract_gateway.attachment_gateway_gateway_private_lan_port:
+      - vGW 0
+      - abstract_gateway.attachment_gateway_gateway_private_lan_port
+      vcpe0.abstract_vcpe.attachment_vcpe_vcpe_private_lan_port:
+      - vCPE 0
+      - abstract_vcpe.attachment_vcpe_vcpe_private_lan_port
+      vcpe0.abstract_vcpe.memory.usage_vcpe:
+      - vCPE 0
+      - abstract_vcpe.memory.usage_vcpe
+      vcpe0.abstract_vcpe.disk.capacity_vcpe:
+      - vCPE 0
+      - abstract_vcpe.disk.capacity_vcpe
+      vgw0.abstract_gateway.disk.iops_gateway:
+      - vGW 0
+      - abstract_gateway.disk.iops_gateway
+    requirements:
+      vcpe0.abstract_vcpe.dependency_vcpe_vcpe_private_wan_port:
+      - vCPE 0
+      - abstract_vcpe.dependency_vcpe_vcpe_private_wan_port
+      vcpe0.abstract_vcpe.link_vcpe_vcpe_private_lan_port:
+      - vCPE 0
+      - abstract_vcpe.link_vcpe_vcpe_private_lan_port
+      vgw0.abstract_gateway.local_storage_gateway:
+      - vGW 0
+      - abstract_gateway.local_storage_gateway
+      genericneutronnet0.dependency:
+      - Generic NeutronNet 0
+      - dependency
+      vcpe0.abstract_vcpe.local_storage_vcpe:
+      - vCPE 0
+      - abstract_vcpe.local_storage_vcpe
+      vcpe0.abstract_vcpe.dependency_vcpe_vcpe_private_lan_port:
+      - vCPE 0
+      - abstract_vcpe.dependency_vcpe_vcpe_private_lan_port
+      vgw0.abstract_gateway.dependency_gateway:
+      - vGW 0
+      - abstract_gateway.dependency_gateway
+      vcpe0.abstract_vcpe.dependency_vcpe:
+      - vCPE 0
+      - abstract_vcpe.dependency_vcpe
+      vgw0.abstract_gateway.dependency_gateway_gateway_private_lan_port:
+      - vGW 0
+      - abstract_gateway.dependency_gateway_gateway_private_lan_port
+      vcpe0.abstract_vcpe.link_vcpe_vcpe_private_wan_port:
+      - vCPE 0
+      - abstract_vcpe.link_vcpe_vcpe_private_wan_port
+      vgw0.abstract_gateway.link_gateway_gateway_private_lan_port:
+      - vGW 0
+      - abstract_gateway.link_gateway_gateway_private_lan_port
