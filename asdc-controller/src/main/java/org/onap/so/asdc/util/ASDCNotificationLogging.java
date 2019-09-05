@@ -724,6 +724,9 @@ public class ASDCNotificationLogging {
                 buffer.append("Model Subcategory:");
                 buffer.append(allottedNode.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_SUBCATEGORY));
                 buffer.append(System.lineSeparator());
+                buffer.append("Model Category:");
+                buffer.append(allottedNode.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CATEGORY));
+                buffer.append(System.lineSeparator());
                 buffer.append("Model Description:");
                 buffer.append(allottedNode.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION));
                 buffer.append(System.lineSeparator());
