@@ -71,11 +71,18 @@ export class LoginComponent implements OnInit {
     this.authenticationService.login(this.f.username.value, this.f.password.value)
     .subscribe(
        next => {
-           this.router.navigate([this.returnUrl]);
+           if (next === null) {
+             this.error = "Invalid Login";
+             this.loading = false;
+             this.authenticationService.logout();
+           } else {
+             this.router.navigate([this.returnUrl]);
+           }
          },
          error => {
-           this.error = error;
+           this.error = "Invalid Login";
            this.loading = false;
+           this.authenticationService.logout();
          });
   }
 }

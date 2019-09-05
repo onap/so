@@ -31,7 +31,7 @@ export class BasicAuthInterceptor implements HttpInterceptor {
     let auth = localStorage.getItem('authdata');
     if (auth) {
         const authReq = request.clone({
-          headers: request.headers.set('Authorization', 'Basic Z3VpOnBhc3N3b3JkMSQ=')
+          headers: request.headers.set('Authorization', 'Basic ' + auth)
         });
 
         // send cloned request with header to the next handler.
