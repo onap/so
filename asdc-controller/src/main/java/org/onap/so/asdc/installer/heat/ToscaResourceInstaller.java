@@ -821,13 +821,13 @@ public class ToscaResourceInstaller {
 
     protected void processNetworkCollections(ToscaResourceStructure toscaResourceStruct, Service service) {
 
-        List<NodeTemplate> networkCollectionList =
-                toscaResourceStruct.getSdcCsarHelper().getServiceNodeTemplateBySdcType(SdcTypes.CR);
+        List<IEntityDetails> crEntityList = getEntityDetails(toscaResourceStruct, EntityQuery.newBuilder(SdcTypes.CR),
+                TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE), false);
 
-        if (networkCollectionList != null) {
-            for (NodeTemplate crNode : networkCollectionList) {
+        if (crEntityList != null) {
+            for (IEntityDetails ncEntity : crEntityList) {
 
-                createNetworkCollection(crNode, toscaResourceStruct, service);
+                createNetworkCollection(ncEntity, toscaResourceStruct, service);
                 collectionRepo.saveAndFlush(toscaResourceStruct.getCatalogCollectionResource());
 
                 List<NetworkInstanceGroup> networkInstanceGroupList =
@@ -1658,7 +1658,7 @@ public class ToscaResourceInstaller {
         return networkResource;
     }
 
-    protected CollectionNetworkResourceCustomization createNetworkCollection(NodeTemplate networkNodeTemplate,
+    protected CollectionNetworkResourceCustomization createNetworkCollection(IEntityDetails cnrEntity,
             ToscaResourceStructure toscaResourceStructure, Service service) {
 
         CollectionNetworkResourceCustomization collectionNetworkResourceCustomization =
@@ -1667,33 +1667,26 @@ public class ToscaResourceInstaller {
         // **** Build Object to populate Collection_Resource table
         CollectionResource collectionResource = new CollectionResource();
 
+        collectionResource.setModelName(cnrEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
         collectionResource
-                .setModelName(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
-        collectionResource.setModelInvariantUUID(
-                networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID));
-        collectionResource
-                .setModelUUID(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
-        collectionResource
-                .setModelVersion(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_VERSION));
-        collectionResource
-                .setDescription(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION));
-        collectionResource.setToscaNodeType(networkNodeTemplate.getType());
+                .setModelInvariantUUID(cnrEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID));
+        collectionResource.setModelUUID(cnrEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
+        collectionResource.setModelVersion(cnrEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_VERSION));
+        collectionResource.setDescription(cnrEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION));
+        collectionResource.setToscaNodeType(cnrEntity.getToscaType());
 
         toscaResourceStructure.setCatalogCollectionResource(collectionResource);
 
         // **** Build object to populate Collection_Resource_Customization table
         NetworkCollectionResourceCustomization ncfc = new NetworkCollectionResourceCustomization();
 
-        ncfc.setFunction(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(networkNodeTemplate,
-                "cr_function"));
-        ncfc.setRole(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(networkNodeTemplate,
-                "cr_role"));
-        ncfc.setType(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(networkNodeTemplate,
-                "cr_type"));
+        ncfc.setFunction(getLeafPropertyValue(cnrEntity, "cr_function"));
+        ncfc.setRole(getLeafPropertyValue(cnrEntity, "cr_role"));
+        ncfc.setType(getLeafPropertyValue(cnrEntity, "cr_type"));
 
-        ncfc.setModelInstanceName(networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
+        ncfc.setModelInstanceName(cnrEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
         ncfc.setModelCustomizationUUID(
-                networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
+                cnrEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
 
         Set<CollectionNetworkResourceCustomization> networkResourceCustomizationSet = new HashSet<>();
         networkResourceCustomizationSet.add(collectionNetworkResourceCustomization);
@@ -1704,25 +1697,28 @@ public class ToscaResourceInstaller {
         toscaResourceStructure.setCatalogCollectionResourceCustomization(ncfc);
 
         // *** Build object to populate the Instance_Group table
-        List<Group> groupList =
-                toscaResourceStructure.getSdcCsarHelper().getGroupsOfOriginOfNodeTemplateByToscaGroupType(
-                        networkNodeTemplate, "org.openecomp.groups.NetworkCollection");
+        List<IEntityDetails> ncEntityList =
+                getEntityDetails(toscaResourceStructure,
+                        EntityQuery.newBuilder("org.openecomp.groups.NetworkCollection"),
+                        TopologyTemplateQuery.newBuilder(SdcTypes.CR).customizationUUID(
+                                cnrEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID)),
+                        false);
 
         List<NetworkInstanceGroup> networkInstanceGroupList = new ArrayList<>();
 
         List<CollectionResourceInstanceGroupCustomization> collectionResourceInstanceGroupCustomizationList =
                 new ArrayList<>();
 
-        for (Group group : groupList) {
+        for (IEntityDetails ncGroupEntity : ncEntityList) {
 
             NetworkInstanceGroup networkInstanceGroup = new NetworkInstanceGroup();
-            Metadata instanceMetadata = group.getMetadata();
+            Metadata instanceMetadata = ncGroupEntity.getMetadata();
             networkInstanceGroup.setModelName(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
             networkInstanceGroup
                     .setModelInvariantUUID(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID));
             networkInstanceGroup.setModelUUID(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
             networkInstanceGroup.setModelVersion(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_VERSION));
-            networkInstanceGroup.setToscaNodeType(group.getType());
+            networkInstanceGroup.setToscaNodeType(ncGroupEntity.getToscaType());
             networkInstanceGroup.setRole(SubType.SUB_INTERFACE.toString()); // Set
             // Role
             networkInstanceGroup.setType(InstanceGroupType.L3_NETWORK); // Set
@@ -1736,27 +1732,26 @@ public class ToscaResourceInstaller {
             crInstanceGroupCustomization.setInstanceGroup(networkInstanceGroup);
             crInstanceGroupCustomization.setModelUUID(instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
             crInstanceGroupCustomization.setModelCustomizationUUID(
-                    networkNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
+                    cnrEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
 
             // Loop through the template policy to find the subinterface_network_quantity property name. Then extract
             // the value for it.
-            List<Policy> policyList =
-                    toscaResourceStructure.getSdcCsarHelper().getPoliciesOfOriginOfNodeTemplateByToscaPolicyType(
-                            networkNodeTemplate, "org.openecomp.policies.scaling.Fixed");
+            List<IEntityDetails> policyEntityList = getEntityDetails(toscaResourceStructure,
+                    EntityQuery.newBuilder("org.openecomp.policies.scaling.Fixed"),
+                    TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE), true);
 
-            if (policyList != null) {
-                for (Policy policy : policyList) {
-                    for (String policyNetworkCollection : policy.getTargets()) {
+            if (policyEntityList != null) {
+                for (IEntityDetails policyEntity : policyEntityList) {
+                    for (String policyNetworkCollection : policyEntity.getTargets()) {
 
-                        if (policyNetworkCollection.equalsIgnoreCase(group.getName())) {
+                        if (policyNetworkCollection.equalsIgnoreCase(ncGroupEntity.getName())) {
 
-                            Map<String, Object> propMap = policy.getPolicyProperties();
+                            Map<String, Property> propMap = policyEntity.getProperties();
 
                             if (propMap.get("quantity") != null) {
 
-                                String quantity = toscaResourceStructure.getSdcCsarHelper()
-                                        .getNodeTemplatePropertyLeafValue(networkNodeTemplate,
-                                                getPropertyInput(propMap.get("quantity").toString()));
+                                String quantity = getLeafPropertyValue(cnrEntity,
+                                        getPropertyInput(propMap.get("quantity").toString()));
 
                                 if (quantity != null) {
                                     crInstanceGroupCustomization
@@ -1771,13 +1766,12 @@ public class ToscaResourceInstaller {
             }
 
             crInstanceGroupCustomization.setDescription(
-                    toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(networkNodeTemplate,
-                            instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_NAME)
-                                    + "_network_collection_description"));
-            crInstanceGroupCustomization.setFunction(
-                    toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(networkNodeTemplate,
-                            instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_NAME)
-                                    + "_network_collection_function"));
+                    getLeafPropertyValue(cnrEntity, instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_NAME)
+                            + "_network_collection_description"));
+
+            crInstanceGroupCustomization.setFunction(getLeafPropertyValue(cnrEntity,
+                    instanceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_NAME) + "_network_collection_function"));
+
             crInstanceGroupCustomization.setCollectionResourceCust(ncfc);
             collectionResourceInstanceGroupCustomizationList.add(crInstanceGroupCustomization);
 
@@ -1789,18 +1783,21 @@ public class ToscaResourceInstaller {
 
             toscaResourceStructure.setCatalogNetworkInstanceGroup(networkInstanceGroupList);
 
-            List<NodeTemplate> vlNodeList = toscaResourceStructure.getSdcCsarHelper()
-                    .getNodeTemplateBySdcType(networkNodeTemplate, SdcTypes.VL);
+            List<IEntityDetails> networkEntityList =
+                    getEntityDetails(toscaResourceStructure, EntityQuery.newBuilder(SdcTypes.VL),
+                            TopologyTemplateQuery.newBuilder(SdcTypes.CR).customizationUUID(
+                                    cnrEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID)),
+                            false);
 
             List<CollectionNetworkResourceCustomization> collectionNetworkResourceCustomizationList = new ArrayList<>();
 
             // *****Build object to populate the NetworkResource table
             NetworkResource networkResource = new NetworkResource();
 
-            for (NodeTemplate vlNodeTemplate : vlNodeList) {
+            for (IEntityDetails networkEntity : networkEntityList) {
 
-                String providerNetwork = toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(
-                        vlNodeTemplate, SdcPropertyNames.PROPERTY_NAME_PROVIDERNETWORK_ISPROVIDERNETWORK);
+                String providerNetwork = getLeafPropertyValue(networkEntity,
+                        SdcPropertyNames.PROPERTY_NAME_PROVIDERNETWORK_ISPROVIDERNETWORK);
 
                 if ("true".equalsIgnoreCase(providerNetwork)) {
                     networkResource.setNeutronNetworkType(PROVIDER);
@@ -1808,22 +1805,20 @@ public class ToscaResourceInstaller {
                     networkResource.setNeutronNetworkType(BASIC);
                 }
 
-                networkResource
-                        .setModelName(vlNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
+                networkResource.setModelName(networkEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
 
                 networkResource.setModelInvariantUUID(
-                        vlNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID));
+                        networkEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID));
+                networkResource.setModelUUID(networkEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
                 networkResource
-                        .setModelUUID(vlNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
-                networkResource
-                        .setModelVersion(vlNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_VERSION));
+                        .setModelVersion(networkEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_VERSION));
 
                 networkResource.setAicVersionMax(
-                        vlNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_MAXINSTANCES));
+                        networkEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_MAXINSTANCES));
 
                 TempNetworkHeatTemplateLookup tempNetworkLookUp =
                         tempNetworkLookupRepo.findFirstBynetworkResourceModelName(
-                                vlNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
+                                networkEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
 
                 if (tempNetworkLookUp != null) {
 
@@ -1835,29 +1830,28 @@ public class ToscaResourceInstaller {
 
                 }
 
-                networkResource.setToscaNodeType(vlNodeTemplate.getType());
+                networkResource.setToscaNodeType(networkEntity.getToscaType());
                 networkResource.setDescription(
-                        vlNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION));
+                        networkEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION));
                 networkResource.setOrchestrationMode(HEAT);
 
                 // Build object to populate the
                 // Collection_Network_Resource_Customization table
-                for (NodeTemplate memberNode : group.getMemberNodes()) {
-                    collectionNetworkResourceCustomization.setModelInstanceName(memberNode.getName());
+                for (IEntityDetails networkMemberEntity : ncGroupEntity.getMemberNodes()) {
+                    collectionNetworkResourceCustomization.setModelInstanceName(networkMemberEntity.getName());
                 }
 
                 collectionNetworkResourceCustomization.setModelCustomizationUUID(
-                        vlNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
+                        networkEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
 
                 collectionNetworkResourceCustomization.setNetworkTechnology(
-                        toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(vlNodeTemplate,
-                                SdcPropertyNames.PROPERTY_NAME_NETWORKTECHNOLOGY));
-                collectionNetworkResourceCustomization.setNetworkType(toscaResourceStructure.getSdcCsarHelper()
-                        .getNodeTemplatePropertyLeafValue(vlNodeTemplate, SdcPropertyNames.PROPERTY_NAME_NETWORKTYPE));
-                collectionNetworkResourceCustomization.setNetworkRole(toscaResourceStructure.getSdcCsarHelper()
-                        .getNodeTemplatePropertyLeafValue(vlNodeTemplate, SdcPropertyNames.PROPERTY_NAME_NETWORKROLE));
-                collectionNetworkResourceCustomization.setNetworkScope(toscaResourceStructure.getSdcCsarHelper()
-                        .getNodeTemplatePropertyLeafValue(vlNodeTemplate, SdcPropertyNames.PROPERTY_NAME_NETWORKSCOPE));
+                        getLeafPropertyValue(networkEntity, SdcPropertyNames.PROPERTY_NAME_NETWORKTECHNOLOGY));
+                collectionNetworkResourceCustomization.setNetworkType(
+                        getLeafPropertyValue(networkEntity, SdcPropertyNames.PROPERTY_NAME_NETWORKTYPE));
+                collectionNetworkResourceCustomization.setNetworkRole(
+                        getLeafPropertyValue(networkEntity, SdcPropertyNames.PROPERTY_NAME_NETWORKROLE));
+                collectionNetworkResourceCustomization.setNetworkScope(
+                        getLeafPropertyValue(networkEntity, SdcPropertyNames.PROPERTY_NAME_NETWORKSCOPE));
                 collectionNetworkResourceCustomization.setInstanceGroup(networkInstanceGroup);
                 collectionNetworkResourceCustomization.setNetworkResource(networkResource);
                 collectionNetworkResourceCustomization.setNetworkResourceCustomization(ncfc);
@@ -2800,8 +2794,9 @@ public class ToscaResourceInstaller {
 
         if (propertyName != null) {
             int getInputIndex = propertyName.indexOf("{get_input=");
+            int getClosingIndex = propertyName.indexOf("}");
             if (getInputIndex > -1) {
-                inputName = propertyName.substring(getInputIndex + 11, propertyName.length() - 1);
+                inputName = propertyName.substring(getInputIndex + 11, getClosingIndex);
             }
         }
 
