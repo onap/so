@@ -437,13 +437,15 @@ public class ToscaResourceInstaller {
             List<IEntityDetails> vfEntityList = getEntityDetails(toscaResourceStruct,
                     EntityQuery.newBuilder(SdcTypes.VF), TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE), false);
 
+            List<IEntityDetails> arEntityDetails = new ArrayList<IEntityDetails>();
+
             for (IEntityDetails vfEntityDetails : vfEntityList) {
 
                 Metadata metadata = vfEntityDetails.getMetadata();
                 String category = metadata.getValue(SdcPropertyNames.PROPERTY_NAME_CATEGORY);
 
                 if (ALLOTTED_RESOURCE.equalsIgnoreCase(category)) {
-                    continue;
+                    arEntityDetails.add(vfEntityDetails);
                 }
 
                 processVfModules(vfEntityDetails, vfNodeTemplatesList.get(0), toscaResourceStruct, vfResourceStructure,
@@ -451,8 +453,7 @@ public class ToscaResourceInstaller {
             }
 
             processResourceSequence(toscaResourceStruct, service);
-            List<NodeTemplate> allottedResourceList = toscaResourceStruct.getSdcCsarHelper().getAllottedResources();
-            processAllottedResources(toscaResourceStruct, service, allottedResourceList);
+            processAllottedResources(arEntityDetails, toscaResourceStruct, service);
             processNetworks(toscaResourceStruct, service);
             // process Network Collections
             processNetworkCollections(toscaResourceStruct, service);
@@ -678,14 +679,31 @@ public class ToscaResourceInstaller {
         }
     }
 
-    protected void processAllottedResources(ToscaResourceStructure toscaResourceStruct, Service service,
-            List<NodeTemplate> allottedResourceList) throws ArtifactInstallerException {
-        if (allottedResourceList != null) {
-            for (NodeTemplate allottedNode : allottedResourceList) {
+    protected void processAllottedResources(List<IEntityDetails> arEntityDetails,
+            ToscaResourceStructure toscaResourceStruct, Service service) throws ArtifactInstallerException {
+
+        List<IEntityDetails> pnfAREntityList = getEntityDetails(toscaResourceStruct,
+                EntityQuery.newBuilder(SdcTypes.PNF), TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE), false);
+
+        for (IEntityDetails pnfEntity : pnfAREntityList) {
+
+            Metadata metadata = pnfEntity.getMetadata();
+            String category = metadata.getValue(SdcPropertyNames.PROPERTY_NAME_CATEGORY);
+            if (ALLOTTED_RESOURCE.equalsIgnoreCase(category)) {
+                arEntityDetails.add(pnfEntity);
+            }
+
+        }
+
+        if (arEntityDetails != null) {
+            for (IEntityDetails arEntity : arEntityDetails) {
                 AllottedResourceCustomization allottedResource =
-                        createAllottedResource(allottedNode, toscaResourceStruct, service);
-                allottedResource.setResourceInput(
-                        getResourceInput(toscaResourceStruct, allottedResource.getModelCustomizationUUID()));
+                        createAllottedResource(arEntity, toscaResourceStruct, service);
+                String resourceInput =
+                        getResourceInput(toscaResourceStruct, allottedResource.getModelCustomizationUUID());
+                if (!"{}".equals(resourceInput)) {
+                    allottedResource.setResourceInput(resourceInput);
+                }
                 service.getAllottedCustomizations().add(allottedResource);
             }
         }
@@ -2601,21 +2619,21 @@ public class ToscaResourceInstaller {
         return vnfResource;
     }
 
-    protected AllottedResourceCustomization createAllottedResource(NodeTemplate nodeTemplate,
+    protected AllottedResourceCustomization createAllottedResource(IEntityDetails arEntity,
             ToscaResourceStructure toscaResourceStructure, Service service) {
         AllottedResourceCustomization allottedResourceCustomization =
                 allottedCustomizationRepo.findOneByModelCustomizationUUID(
-                        nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
+                        arEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
 
         if (allottedResourceCustomization == null) {
             AllottedResource allottedResource = findExistingAllottedResource(service,
-                    nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
+                    arEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
 
             if (allottedResource == null)
-                allottedResource = createAR(nodeTemplate);
+                allottedResource = createAR(arEntity);
 
             toscaResourceStructure.setAllottedResource(allottedResource);
-            allottedResourceCustomization = createAllottedResourceCustomization(nodeTemplate, toscaResourceStructure);
+            allottedResourceCustomization = createAllottedResourceCustomization(arEntity, toscaResourceStructure);
             allottedResourceCustomization.setAllottedResource(allottedResource);
             allottedResource.getAllotedResourceCustomization().add(allottedResourceCustomization);
         }
@@ -2636,73 +2654,81 @@ public class ToscaResourceInstaller {
         return allottedResource;
     }
 
-    protected AllottedResourceCustomization createAllottedResourceCustomization(NodeTemplate nodeTemplate,
+    protected AllottedResourceCustomization createAllottedResourceCustomization(IEntityDetails arEntity,
             ToscaResourceStructure toscaResourceStructure) {
         AllottedResourceCustomization allottedResourceCustomization = new AllottedResourceCustomization();
         allottedResourceCustomization.setModelCustomizationUUID(
-                testNull(nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID)));
-        allottedResourceCustomization.setModelInstanceName(nodeTemplate.getName());
+                testNull(arEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID)));
+        allottedResourceCustomization.setModelInstanceName(arEntity.getName());
+
+        allottedResourceCustomization
+                .setNfFunction(getLeafPropertyValue(arEntity, SdcPropertyNames.PROPERTY_NAME_NFFUNCTION));
+        allottedResourceCustomization.setNfNamingCode(getLeafPropertyValue(arEntity, "nf_naming_code"));
+        allottedResourceCustomization.setNfRole(getLeafPropertyValue(arEntity, SdcPropertyNames.PROPERTY_NAME_NFROLE));
+        allottedResourceCustomization.setNfType(getLeafPropertyValue(arEntity, SdcPropertyNames.PROPERTY_NAME_NFTYPE));
+
+        EntityQuery entityQuery = EntityQuery.newBuilder(SdcTypes.VFC).build();
+
+        TopologyTemplateQuery topologyTemplateQuery = TopologyTemplateQuery.newBuilder(SdcTypes.VF)
+                .customizationUUID(allottedResourceCustomization.getModelCustomizationUUID()).build();
+
+        List<IEntityDetails> vfcEntities =
+                toscaResourceStructure.getSdcCsarHelper().getEntity(entityQuery, topologyTemplateQuery, false);
 
 
-        allottedResourceCustomization.setNfFunction(testNull(toscaResourceStructure.getSdcCsarHelper()
-                .getNodeTemplatePropertyLeafValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFFUNCTION)));
-        allottedResourceCustomization.setNfNamingCode(testNull(toscaResourceStructure.getSdcCsarHelper()
-                .getNodeTemplatePropertyLeafValue(nodeTemplate, "nf_naming_code")));
-        allottedResourceCustomization.setNfRole(testNull(toscaResourceStructure.getSdcCsarHelper()
-                .getNodeTemplatePropertyLeafValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFROLE)));
-        allottedResourceCustomization.setNfType(testNull(toscaResourceStructure.getSdcCsarHelper()
-                .getNodeTemplatePropertyLeafValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFTYPE)));
+        if (vfcEntities != null) {
+            for (IEntityDetails vfcEntity : vfcEntities) {
 
-        List<NodeTemplate> vfcNodes = toscaResourceStructure.getSdcCsarHelper()
-                .getVfcListByVf(allottedResourceCustomization.getModelCustomizationUUID());
-
-        if (vfcNodes != null) {
-            for (NodeTemplate vfcNode : vfcNodes) {
-
-                allottedResourceCustomization.setProvidingServiceModelUUID(toscaResourceStructure.getSdcCsarHelper()
-                        .getNodeTemplatePropertyLeafValue(vfcNode, "providing_service_uuid"));
                 allottedResourceCustomization
-                        .setProvidingServiceModelInvariantUUID(toscaResourceStructure.getSdcCsarHelper()
-                                .getNodeTemplatePropertyLeafValue(vfcNode, "providing_service_invariant_uuid"));
-                allottedResourceCustomization.setProvidingServiceModelName(toscaResourceStructure.getSdcCsarHelper()
-                        .getNodeTemplatePropertyLeafValue(vfcNode, "providing_service_name"));
+                        .setProvidingServiceModelUUID(getLeafPropertyValue(vfcEntity, "providing_service_uuid"));
+                allottedResourceCustomization.setProvidingServiceModelInvariantUUID(
+                        getLeafPropertyValue(vfcEntity, "providing_service_invariant_uuid"));
+                allottedResourceCustomization
+                        .setProvidingServiceModelName(getLeafPropertyValue(vfcEntity, "providing_service_name"));
             }
         }
 
+        Map<String, CapabilityAssignment> capAssignmentList = arEntity.getCapabilities();
 
-        CapabilityAssignments arCustomizationCapability =
-                toscaResourceStructure.getSdcCsarHelper().getCapabilitiesOf(nodeTemplate);
+        if (capAssignmentList != null) {
 
-        if (arCustomizationCapability != null) {
-            CapabilityAssignment capAssign = arCustomizationCapability.getCapabilityByName(SCALABLE);
+            for (Map.Entry<String, CapabilityAssignment> entry : capAssignmentList.entrySet()) {
+                CapabilityAssignment arCapability = entry.getValue();
 
-            if (capAssign != null) {
-                allottedResourceCustomization.setMinInstances(
-                        Integer.getInteger(toscaResourceStructure.getSdcCsarHelper().getCapabilityPropertyLeafValue(
-                                capAssign, SdcPropertyNames.PROPERTY_NAME_MININSTANCES)));
-                allottedResourceCustomization.setMaxInstances(
-                        Integer.getInteger(toscaResourceStructure.getSdcCsarHelper().getCapabilityPropertyLeafValue(
-                                capAssign, SdcPropertyNames.PROPERTY_NAME_MAXINSTANCES)));
+                if (arCapability != null) {
+
+                    String capabilityName = arCapability.getName();
+
+                    if (capabilityName.equals(SCALABLE)) {
+
+                        allottedResourceCustomization
+                                .setMinInstances(Integer.getInteger(getCapabilityLeafPropertyValue(arCapability,
+                                        SdcPropertyNames.PROPERTY_NAME_MININSTANCES)));
+                        allottedResourceCustomization
+                                .setMinInstances(Integer.getInteger(getCapabilityLeafPropertyValue(arCapability,
+                                        SdcPropertyNames.PROPERTY_NAME_MAXINSTANCES)));
+
+                    }
+                }
+
             }
         }
+
         return allottedResourceCustomization;
     }
 
-    protected AllottedResource createAR(NodeTemplate nodeTemplate) {
+    protected AllottedResource createAR(IEntityDetails arEntity) {
         AllottedResource allottedResource = new AllottedResource();
-        allottedResource
-                .setModelUUID(testNull(nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID)));
+        allottedResource.setModelUUID(testNull(arEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_UUID)));
         allottedResource.setModelInvariantUUID(
-                testNull(nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID)));
+                testNull(arEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID)));
+        allottedResource.setModelName(testNull(arEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_NAME)));
         allottedResource
-                .setModelName(testNull(nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME)));
+                .setModelVersion(testNull(arEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_VERSION)));
+        allottedResource.setToscaNodeType(testNull(arEntity.getToscaType()));
         allottedResource
-                .setModelVersion(testNull(nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_VERSION)));
-        allottedResource.setToscaNodeType(testNull(nodeTemplate.getType()));
-        allottedResource.setSubcategory(
-                testNull(nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_SUBCATEGORY)));
-        allottedResource
-                .setDescription(nodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION));
+                .setSubcategory(testNull(arEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_SUBCATEGORY)));
+        allottedResource.setDescription(arEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION));
         return allottedResource;
     }
 
@@ -2786,6 +2812,17 @@ public class ToscaResourceInstaller {
     protected String getLeafPropertyValue(IEntityDetails entityDetails, String propName) {
 
         Property leafProperty = entityDetails.getProperties().get(propName);
+
+        if (leafProperty != null && leafProperty.getValue() != null) {
+            return leafProperty.getValue().toString();
+        }
+
+        return null;
+    }
+
+    protected String getCapabilityLeafPropertyValue(CapabilityAssignment capAssign, String propName) {
+
+        Property leafProperty = capAssign.getProperties().get(propName);
 
         if (leafProperty != null && leafProperty.getValue() != null) {
             return leafProperty.getValue().toString();

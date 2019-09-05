@@ -51,11 +51,13 @@ import org.onap.so.asdc.client.test.emulators.DistributionClientEmulator;
 import org.onap.so.asdc.client.test.emulators.NotificationDataImpl;
 import org.onap.so.db.catalog.beans.AllottedResource;
 import org.onap.so.db.catalog.beans.AllottedResourceCustomization;
+import org.onap.so.db.catalog.beans.ConfigurationResourceCustomization;
 import org.onap.so.db.catalog.beans.NetworkResource;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ToscaCsar;
 import org.onap.so.db.catalog.beans.Workflow;
+import org.onap.so.db.catalog.data.repository.AllottedResourceCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.AllottedResourceRepository;
 import org.onap.so.db.catalog.data.repository.NetworkResourceRepository;
 import org.onap.so.db.catalog.data.repository.ServiceRepository;
@@ -75,6 +77,9 @@ public class ASDCRestInterfaceTest extends BaseTest {
 
     @Autowired
     private AllottedResourceRepository allottedRepo;
+
+    @Autowired
+    private AllottedResourceCustomizationRepository allottedCustomRepo;
 
     @Autowired
     private ServiceRepository serviceRepo;
@@ -148,7 +153,6 @@ public class ASDCRestInterfaceTest extends BaseTest {
         AllottedResourceCustomization arCustomization = new AllottedResourceCustomization();
         arCustomization.setModelCustomizationUUID("f62bb612-c5d4-4406-865c-0abec30631ba");
         arCustomization.setModelInstanceName("rege1802pnf 0");
-        arCustomization.setResourceInput("{}");
         arCustomizationSet.add(arCustomization);
 
         arCustomization.setAllottedResource(expectedService);
