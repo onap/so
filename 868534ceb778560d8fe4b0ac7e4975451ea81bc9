@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fd33f02a_86257eb9",
+        "filename": "so-monitoring/so-monitoring-ui/src/main/frontend/src/app/basic-auth.interceptor.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-09-06T09:57:24Z",
+      "side": 1,
+      "message": "Shouldn\u0027t add user credential in local storage. It is a security breach. And, try not to create dummy endpoint (https://gerrit.onap.org/r/gitweb?p\u003dso.git;a\u003dblob;f\u003dso-monitoring/so-monitoring-service/src/main/java/org/onap/so/monitoring/rest/api/UserController.java;h\u003d3959631f94cc1582f0c6ef424bebc2a9e77f2035;hb\u003drefs/changes/52/95052/1) to achieve authentication .  \n\nI would suggest use of token mechanism or single sign on or AAF for authentication, similar to what VID has implemented. In my opinion this login change should be reverted until one of the above solutions could be implemented.",
+      "range": {
+        "startLine": 31,
+        "startChar": 4,
+        "endLine": 31,
+        "endChar": 48
+      },
+      "revId": "868534ceb778560d8fe4b0ac7e4975451ea81bc9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
