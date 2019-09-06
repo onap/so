@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1o9fv0e" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.2.1">
+  <bpmn:process id="Cloudify_task" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>SequenceFlow_0cqo7nk</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0cqo7nk" sourceRef="StartEvent_1" targetRef="Task_installBlueprint" />
+    <bpmn:endEvent id="EndEvent_0027any">
+      <bpmn:incoming>SequenceFlow_19k6ttn</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_19k6ttn" sourceRef="Task_installBlueprint" targetRef="EndEvent_0027any" />
+    <bpmn:serviceTask id="Task_installBlueprint" name="cloudify_task" camunda:class="co.cloudify.bpmn.CloudifyInstallBlueprintDelegate">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="InputCfy_credentials">
+            <camunda:map>
+              <camunda:entry key="tenant">default_tenant</camunda:entry>
+              <camunda:entry key="username">admin</camunda:entry>
+              <camunda:entry key="password">admin</camunda:entry>
+              <camunda:entry key="url">http://localhost:80</camunda:entry>
+            </camunda:map>
+          </camunda:inputParameter>
+          <camunda:inputParameter name="InputCfy_blueprint">tosca_definitions_version: cloudify_dsl_1_3
+imports:
+   - http://www.getcloudify.org/spec/cloudify/4.5/types.yaml
+node_templates:
+  node:
+    type: cloudify.nodes.Root</camunda:inputParameter>
+          <camunda:inputParameter name="InputCfy_blueprint_yaml">blueprint.yaml</camunda:inputParameter>
+          <camunda:inputParameter name="InputCfy_blueprint_name">test</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0cqo7nk</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_19k6ttn</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Cloudify_task">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="103" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="143" y="146" width="54" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0cqo7nk_di" bpmnElement="SequenceFlow_0cqo7nk">
+        <di:waypoint x="188" y="121" />
+        <di:waypoint x="239" y="121" />
+        <di:waypoint x="239" y="130" />
+        <di:waypoint x="290" y="130" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0027any_di" bpmnElement="EndEvent_0027any">
+        <dc:Bounds x="482" y="112" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="477" y="155" width="46" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_19k6ttn_di" bpmnElement="SequenceFlow_19k6ttn">
+        <di:waypoint x="390" y="130" />
+        <di:waypoint x="482" y="130" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1y4zfb5_di" bpmnElement="Task_installBlueprint">
+        <dc:Bounds x="290" y="90" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
