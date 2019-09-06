@@ -53,6 +53,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
+import org.onap.so.client.aai.AAIRestClientImpl;
 import org.onap.so.client.aai.AAIValidatorImpl;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
@@ -234,6 +235,7 @@ public class AAIVnfResourcesTest extends TestDataSetup {
         boolean isVnfPserversLockedFlag = aaiVnfResources.checkVnfPserversLockedFlag("vnfId");
         verify(MOCK_aaiResourcesClient, times(1)).get(eq(org.onap.aai.domain.yang.GenericVnf.class),
                 isA(AAIResourceUri.class));
+        verify(MOCK_aaiValidatorImpl, times(1)).setClient(isA(AAIRestClientImpl.class));
         verify(MOCK_aaiValidatorImpl, times(1)).isPhysicalServerLocked(isA(String.class));
         assertTrue(isVnfPserversLockedFlag);
     }
