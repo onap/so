@@ -23,7 +23,6 @@
 
 package org.onap.so.adapters.vnf;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,11 +36,12 @@ import com.woorea.openstack.heat.Heat;
 import org.onap.so.adapters.vnf.exceptions.VnfAlreadyExists;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
 import org.onap.so.cloud.CloudConfig;
-import org.onap.so.db.catalog.beans.CloudSite;
-import org.onap.so.cloudify.beans.DeploymentInfo;
-import org.onap.so.cloudify.beans.DeploymentStatus;
-import org.onap.so.cloudify.exceptions.MsoCloudifyManagerNotFound;
+import org.onap.so.cloudify.client.DeploymentV31;
 import org.onap.so.cloudify.utils.MsoCloudifyUtils;
+import org.onap.so.cloudify.utils.MsoCloudifyUtils.DeploymentAction;
+import org.onap.so.cloudify.utils.MsoCloudifyUtils.DeploymentState;
+import org.onap.so.cloudify.utils.MsoCloudifyUtils.DeploymentStatus;
+import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.HeatEnvironment;
 import org.onap.so.db.catalog.beans.HeatFiles;
 import org.onap.so.db.catalog.beans.HeatTemplate;
@@ -68,10 +68,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
@@ -176,14 +176,10 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
             Holder<Map<String, String>> outputs) throws VnfException {
         logger.debug("Querying VNF {} in {}", vnfName, cloudSiteId + "/" + tenantId);
 
-        DeploymentInfo deployment = null;
+        DeploymentV31 deployment;
 
         try {
-            deployment = cloudifyUtils.queryDeployment(cloudSiteId, tenantId, vnfName);
-        } catch (MsoCloudifyManagerNotFound e) {
-            // This site does not have a Cloudify Manager.
-            // This isn't an error, just means we won't find the VNF here.
-            deployment = null;
+            deployment = cloudifyUtils.queryDeployment(cloudSiteId, vnfName);
         } catch (MsoException me) {
             // Failed to query the Deployment due to a cloudify exception.
             logger.debug("Failed to query the Deployment due to a cloudify exception");
@@ -197,9 +193,18 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
             throw new VnfException(me);
         }
 
-        if (deployment != null && deployment.getStatus() != DeploymentStatus.NOTFOUND) {
+        DeploymentStatus dstatus = null;
+        DeploymentState dstate = null;
+        try {
+            dstate = cloudifyUtils.getDeploymentStatus(cloudSiteId, deployment);
+        } catch (MsoException me) {
+            logger.error(BRACKETS, MessageEnum.RA_QUERY_VNF_ERR, vnfName, cloudOwner, cloudSiteId, tenantId, CLOUDIFY,
+                    "getDeploymentStatus", ErrorCode.DataError.getValue(), "Exception - getDeploymentStatus()", me);
+        }
+        if (deployment != null && dstatus != DeploymentStatus.DELETED) {
+            dstatus = dstate.getStatus();
             vnfExists.value = Boolean.TRUE;
-            status.value = deploymentStatusToVnfStatus(deployment);
+            status.value = deploymentStateToVnfStatus(dstate);
             vnfId.value = deployment.getId();
             outputs.value = copyStringOutputs(deployment.getOutputs());
 
@@ -213,7 +218,6 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
             logger.debug("VNF {} not found", vnfName);
         }
     }
-
 
     /**
      * This is the "Delete VNF" web service implementation. This function is now unsupported and will return an error.
@@ -256,7 +260,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
 
         logger.debug("Rolling Back VF Module {} in {}", vfModuleId, cloudOwner + "/" + cloudSiteId + "/" + tenantId);
 
-        DeploymentInfo deployment = null;
+        DeploymentV31 deployment = null;
 
         // Use the MsoCloudifyUtils to delete the deployment. Set the polling flag to true.
         // The possible outcomes of deleteStack are a StackInfo object with status
@@ -284,30 +288,6 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
             logger.debug(error);
             throw new VnfException(me);
         }
-    }
-
-
-    private VnfStatus deploymentStatusToVnfStatus(DeploymentInfo deployment) {
-        // Determine the status based on last action & status
-        // DeploymentInfo object should be enhanced to report a better status internally.
-        DeploymentStatus status = deployment.getStatus();
-        String lastAction = deployment.getLastAction();
-
-        if (status == null || lastAction == null) {
-            return VnfStatus.UNKNOWN;
-        } else if (status == DeploymentStatus.NOTFOUND) {
-            return VnfStatus.NOTFOUND;
-        } else if (status == DeploymentStatus.INSTALLED) {
-            return VnfStatus.ACTIVE;
-        } else if (status == DeploymentStatus.CREATED) {
-            // Should have an INACTIVE status for this case. Shouldn't really happen, but
-            // Install was never run, or Uninstall was done but deployment didn't get deleted.
-            return VnfStatus.UNKNOWN;
-        } else if (status == DeploymentStatus.FAILED) {
-            return VnfStatus.FAILED;
-        }
-
-        return VnfStatus.UNKNOWN;
     }
 
     private Map<String, String> copyStringOutputs(Map<String, Object> stackOutputs) {
@@ -348,7 +328,6 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
         }
         return stringOutputs;
     }
-
 
     private void sendMapToDebug(Map<String, Object> inputs, String optionalName) {
         int i = 0;
@@ -607,13 +586,12 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
         }
         // End Version check
 
-
-        DeploymentInfo cloudifyDeployment = null;
+        DeploymentV31 cloudifyDeployment = null;
 
         // First, look up to see if the VF already exists.
 
         try {
-            cloudifyDeployment = cloudifyUtils.queryDeployment(cloudSiteId, tenantId, vfModuleName);
+            cloudifyDeployment = cloudifyUtils.queryDeployment(cloudSiteId, vfModuleName);
         } catch (MsoException me) {
             // Failed to query the Deployment due to a cloudify exception.
             String error = "Create VF Module: Query " + vfModuleName + " in " + cloudOwner + "/" + cloudSiteId + "/"
@@ -629,9 +607,16 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
         }
 
         // More precise handling/messaging if the Module already exists
-        if (cloudifyDeployment != null && !(cloudifyDeployment.getStatus() == DeploymentStatus.NOTFOUND)) {
+        DeploymentStatus status = null;
+        try {
+            status = cloudifyUtils.getDeploymentStatus(cloudSiteId, cloudifyDeployment).getStatus();
+        } catch (MsoException me) {
+            logger.error(BRACKETS, MessageEnum.RA_QUERY_VNF_ERR, baseVfModuleId, cloudOwner, cloudSiteId, tenantId,
+                    CLOUDIFY, "getDeploymentStatus", ErrorCode.DataError.getValue(),
+                    "Exception - getDeploymentStatus()", me);
+        }
+        if (cloudifyDeployment != null && !(status == DeploymentStatus.DELETED)) {
             // CREATED, INSTALLED, INSTALLING, FAILED, UNINSTALLING, UNKNOWN
-            DeploymentStatus status = cloudifyDeployment.getStatus();
             logger.debug("Found Existing Deployment, status=" + status);
 
             if (status == DeploymentStatus.INSTALLED) {
@@ -698,16 +683,16 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
             }
         }
 
-
         // Collect outputs from Base Modules and Volume Modules
         Map<String, Object> baseModuleOutputs = null;
         Map<String, Object> volumeGroupOutputs = null;
 
         // If a Volume Group was provided, query its outputs for inclusion in Module input parameters
         if (volumeGroupId != null) {
-            DeploymentInfo volumeDeployment = null;
+            long subStartTime2 = System.currentTimeMillis();
+            DeploymentV31 volumeDeployment = null;
             try {
-                volumeDeployment = cloudifyUtils.queryDeployment(cloudSiteId, tenantId, volumeGroupId);
+                volumeDeployment = cloudifyUtils.queryDeployment(cloudSiteId, volumeGroupId);
             } catch (MsoException me) {
                 // Failed to query the Volume GroupDeployment due to a cloudify exception.
                 String error = "Create VF Module: Query Volume Group " + volumeGroupId + " in " + cloudOwner + "/"
@@ -721,7 +706,15 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                 throw new VnfException(me);
             }
 
-            if (volumeDeployment == null || volumeDeployment.getStatus() == DeploymentStatus.NOTFOUND) {
+            DeploymentStatus volStatus = null;
+            try {
+                volStatus = cloudifyUtils.getDeploymentStatus(cloudSiteId, cloudifyDeployment).getStatus();
+            } catch (MsoException me) {
+                logger.error(BRACKETS, MessageEnum.RA_QUERY_VNF_ERR, baseVfModuleId, cloudOwner, cloudSiteId, tenantId,
+                        CLOUDIFY, "getDeploymentStatus", ErrorCode.DataError.getValue(),
+                        "Exception - getDeploymentStatus()", me);
+            }
+            if (volumeDeployment == null || volStatus == DeploymentStatus.DELETED) {
                 String error = "Create VFModule: Attached Volume Group DOES NOT EXIST " + volumeGroupId + " in "
                         + cloudSiteId + "/" + tenantId + " USER ERROR";
                 logger.error(BRACKETS, MessageEnum.RA_QUERY_VNF_ERR.toString(), volumeGroupId, cloudSiteId, tenantId,
@@ -753,9 +746,9 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
             }
 
             if (baseVfModuleId != null) {
-                DeploymentInfo baseDeployment = null;
+                DeploymentV31 baseDeployment = null;
                 try {
-                    baseDeployment = cloudifyUtils.queryDeployment(cloudSiteId, tenantId, baseVfModuleId);
+                    baseDeployment = cloudifyUtils.queryDeployment(cloudSiteId, baseVfModuleId);
                 } catch (MsoException me) {
                     // Failed to query the Volume GroupDeployment due to a cloudify exception.
                     String error = "Create VF Module: Query Base " + baseVfModuleId + " in " + cloudOwner + "/"
@@ -769,7 +762,15 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                     throw new VnfException(me);
                 }
 
-                if (baseDeployment == null || baseDeployment.getStatus() == DeploymentStatus.NOTFOUND) {
+                DeploymentStatus baseStatus = null;
+                try {
+                    baseStatus = cloudifyUtils.getDeploymentStatus(cloudSiteId, baseDeployment).getStatus();
+                } catch (MsoException me) {
+                    logger.error(BRACKETS, MessageEnum.RA_QUERY_VNF_ERR, baseVfModuleId, cloudOwner, cloudSiteId,
+                            tenantId, CLOUDIFY, "getDeploymentStatus", ErrorCode.DataError.getValue(),
+                            "Exception - getDeploymentStatus()", me);
+                }
+                if (baseDeployment == null || baseStatus == DeploymentStatus.DELETED) {
                     String error = "Create VFModule: Base Module DOES NOT EXIST " + baseVfModuleId + " in "
                             + cloudSiteId + "/" + tenantId + " USER ERROR";
                     logger.error(BRACKETS, MessageEnum.RA_QUERY_VNF_ERR.toString(), baseVfModuleId, cloudSiteId,
@@ -786,13 +787,11 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
             }
         }
 
-
         // Ready to deploy the new VNF
 
         // NOTE: For this section, heatTemplate is used for both HEAT templates and Cloudify blueprints.
         // In final implementation (post-POC), the template object would either be generic or there would
         // be a separate DB Table/Object for Blueprints.
-
 
         // NOTE: The template is fixed for the VF Module. The environment is part of the customization.
         HeatTemplate heatTemplate = null;
@@ -807,7 +806,6 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
 
         if (heatTemplate == null) {
             String error = "UpdateVF: No Heat Template ID defined in catalog database for " + vfModuleType
-                    + ", modelCustomizationUuid=" + modelCustomizationUuid + ", vfModuleUuid=" + vf.getModelUUID()
                     + ", reqType=" + requestType;
             logger.error(LoggingAnchor.SIX, MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(), "Heat Template ID",
                     vfModuleType, OPENSTACK, ErrorCode.DataError.getValue(), error);
@@ -817,16 +815,14 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
         }
 
         if (heatEnvironment == null) {
-            String error = "Update VNF: undefined Heat Environment. VF=" + vfModuleType + ", modelCustomizationUuid="
-                    + modelCustomizationUuid + ", vfModuleUuid=" + vf.getModelUUID() + ", reqType=" + requestType;
-            logger.error(LoggingAnchor.FIVE, MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(), "Heat Environment ID",
+            String error = "Update VNF: undefined Heat Environment. VF=" + vfModuleType;
+            logger.error("{} {} {} {} {}", MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(), "Heat Environment ID",
                     OPENSTACK, ErrorCode.DataError.getValue(), error);
             // Alarm on this error, configuration must be fixed
             throw new VnfException(error, MsoExceptionCategory.INTERNAL);
         } else {
             logger.debug("Got Heat Environment from DB: {}", heatEnvironment.getEnvironment());
         }
-
 
         try {
             // All variables converted to their native object types
@@ -854,7 +850,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
 
                     // Include aliases.
                     String alias = htp.getParamAlias();
-                    if (alias != null && !"".equals(alias) && !params.containsKey(alias)) {
+                    if (alias != null && !alias.equals("") && !params.containsKey(alias)) {
                         params.put(alias, htp);
                     }
                 }
@@ -862,7 +858,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                 // First, convert all inputs to their "template" type
                 for (String key : inputs.keySet()) {
                     if (params.containsKey(key)) {
-                        Object value = cloudifyUtils.convertInputValue(inputs.get(key), params.get(key));
+                        String value = params.get(key).toString();
                         if (value != null) {
                             goldenInputs.put(key, value);
                         } else {
@@ -909,7 +905,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                         // If this is a template input, copy to golden inputs
                         String envKey = envParam.getName();
                         if (params.containsKey(envKey) && !goldenInputs.containsKey(envKey)) {
-                            Object value = cloudifyUtils.convertInputValue(envParam.getValue(), params.get(envKey));
+                            String value = params.get(envKey).toString();
                             if (value != null) {
                                 goldenInputs.put(envKey, value);
                             } else {
@@ -921,7 +917,6 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                 }
 
                 this.sendMapToDebug(goldenInputs, "Final inputs sent to Cloudify");
-
 
                 // Check that required parameters have been supplied from any of the sources
                 String missingParams = null;
@@ -938,7 +933,6 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                     logger.error("An exception occured trying to get property {}",
                             MsoVnfCloudifyAdapterImpl.CHECK_REQD_PARAMS, e);
                 }
-
 
                 for (HeatTemplateParam parm : heatTemplate.getParameters()) {
                     if (parm.isRequired() && (!goldenInputs.containsKey(parm.getParamName()))) {
@@ -1010,7 +1004,8 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                     }
 
                     // Upload the blueprint package
-                    cloudifyUtils.uploadBlueprint(cloudSiteId, blueprintId, blueprintName, blueprintFiles, false);
+                    cloudifyUtils.uploadBlueprint(cloudSiteId, blueprintId, blueprintName,
+                            blueprintFiles.get("archive"));
 
                 }
             }
@@ -1087,9 +1082,9 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
 
         // 1702 capture the output parameters on a delete
         // so we'll need to query first
-        DeploymentInfo deployment = null;
+        DeploymentV31 deployment = null;
         try {
-            deployment = cloudifyUtils.queryDeployment(cloudSiteId, tenantId, vnfName);
+            deployment = cloudifyUtils.queryDeployment(cloudSiteId, vnfName);
         } catch (MsoException me) {
             // Failed to query the deployment. Convert to a generic VnfException
             me.addContext("DeleteVFModule");
@@ -1138,4 +1133,26 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
         throw new VnfException("UpdateVfModule:  Unsupported command", MsoExceptionCategory.USERDATA);
     }
 
+    private VnfStatus deploymentStateToVnfStatus(DeploymentState state) {
+        // Determine the status based on last action & status
+        // DeploymentInfo object should be enhanced to report a better status internally.
+        DeploymentStatus status = state.getStatus();
+        DeploymentAction lastAction = state.getAction();
+
+        if (status == null || lastAction == null) {
+            return VnfStatus.UNKNOWN;
+        } else if (status == DeploymentStatus.DELETED) {
+            return VnfStatus.NOTFOUND;
+        } else if (status == DeploymentStatus.INSTALLED) {
+            return VnfStatus.ACTIVE;
+        } else if (status == DeploymentStatus.CREATED) {
+            // Should have an INACTIVE status for this case. Shouldn't really happen, but
+            // Install was never run, or Uninstall was done but deployment didn't get deleted.
+            return VnfStatus.UNKNOWN;
+        } else if (status == DeploymentStatus.FAILED) {
+            return VnfStatus.FAILED;
+        }
+
+        return VnfStatus.UNKNOWN;
+    }
 }
