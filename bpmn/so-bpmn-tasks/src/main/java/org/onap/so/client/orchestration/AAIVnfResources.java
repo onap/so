@@ -33,6 +33,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.Platform;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
+import org.onap.so.client.aai.AAIRestClientImpl;
 import org.onap.so.client.aai.AAIValidatorImpl;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
@@ -151,6 +152,8 @@ public class AAIVnfResources {
                 .get(org.onap.aai.domain.yang.GenericVnf.class,
                         AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId))
                 .orElse(new org.onap.aai.domain.yang.GenericVnf());
+        AAIRestClientImpl client = new AAIRestClientImpl();
+        aaiValidatorImpl.setClient(client);
         return aaiValidatorImpl.isPhysicalServerLocked(vnf.getVnfId());
 
     }
