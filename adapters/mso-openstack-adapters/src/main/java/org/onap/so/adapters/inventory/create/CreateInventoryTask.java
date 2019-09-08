@@ -27,15 +27,14 @@ import org.camunda.bpm.client.task.ExternalTaskService;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
 import org.onap.so.objects.audit.AAIObjectAuditList;
+import org.onap.so.utils.ExternalTaskUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CreateInventoryTask {
+public class CreateInventoryTask extends ExternalTaskUtils {
 
     private static final String UNABLE_TO_WRITE_ALL_INVENTORY_TO_A_AI = "Unable to write all inventory to A&AI";
 
@@ -45,9 +44,6 @@ public class CreateInventoryTask {
 
     @Autowired
     CreateAAIInventory createInventory;
-
-    @Autowired
-    public Environment env;
 
     protected void executeExternalTask(ExternalTask externalTask, ExternalTaskService externalTaskService) {
         setupMDC(externalTask);
@@ -107,25 +103,5 @@ public class CreateInventoryTask {
         }
     }
 
-    private void setupMDC(ExternalTask externalTask) {
-        try {
-            logger.info(ONAPLogConstants.Markers.ENTRY, "Entering");
-            MDC.put(ONAPLogConstants.MDCs.SERVICE_NAME, externalTask.getTopicName());
-            String msoRequestId = externalTask.getVariable("mso-request-id");
-            if (msoRequestId != null && !msoRequestId.isEmpty())
-                MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, msoRequestId);
-        } catch (Exception e) {
-            logger.error("Error in setting up MDC", e);
-        }
-    }
 
-    protected long calculateRetryDelay(int currentRetries) {
-        int retrySequence = getRetrySequence().length - currentRetries;
-        long retryMultiplier = Long.parseLong(env.getProperty("mso.workflow.topics.retryMultiplier", "6000"));
-        return Integer.parseInt(getRetrySequence()[retrySequence]) * retryMultiplier;
-    }
-
-    public String[] getRetrySequence() {
-        return env.getProperty("mso.workflow.topics.retrySequence", String[].class);
-    }
 }

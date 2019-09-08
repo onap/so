@@ -170,47 +170,6 @@ public class AuditStackServiceDataTest extends AuditCreateStackService {
     }
 
     @Test
-    public void retry_sequence_calculation_Test() {
-        long firstRetry = auditStackService.calculateRetryDelay(8);
-        assertEquals(6000L, firstRetry);
-        long secondRetry = auditStackService.calculateRetryDelay(7);
-        assertEquals(6000L, secondRetry);
-        long thirdRetry = auditStackService.calculateRetryDelay(6);
-        assertEquals(12000L, thirdRetry);
-        long fourthRetry = auditStackService.calculateRetryDelay(5);
-        assertEquals(18000L, fourthRetry);
-        long fifthRetry = auditStackService.calculateRetryDelay(4);
-        assertEquals(30000L, fifthRetry);
-        long sixRetry = auditStackService.calculateRetryDelay(3);
-        assertEquals(48000L, sixRetry);
-        long seventhRetry = auditStackService.calculateRetryDelay(2);
-        assertEquals(78000L, seventhRetry);
-        long eigthRetry = auditStackService.calculateRetryDelay(1);
-        assertEquals(120000L, eigthRetry);
-    }
-
-    @Test
-    public void retry_sequence_Test() {
-        long firstRetry = auditStackService.calculateRetryDelay(8);
-        assertEquals(6000L, firstRetry);
-        long secondRetry = auditStackService.calculateRetryDelay(7);
-        assertEquals(6000L, secondRetry);
-        long thirdRetry = auditStackService.calculateRetryDelay(6);
-        assertEquals(12000L, thirdRetry);
-        long fourthRetry = auditStackService.calculateRetryDelay(5);
-        assertEquals(18000L, fourthRetry);
-        long fifthRetry = auditStackService.calculateRetryDelay(4);
-        assertEquals(30000L, fifthRetry);
-        long sixRetry = auditStackService.calculateRetryDelay(3);
-        assertEquals(48000L, sixRetry);
-        long seventhRetry = auditStackService.calculateRetryDelay(2);
-        assertEquals(78000L, seventhRetry);
-        long eigthRetry = auditStackService.calculateRetryDelay(1);
-        assertEquals(120000L, eigthRetry);
-    }
-
-
-    @Test
     public void determineAuditResult_Test() throws Exception {
         boolean actual = auditStackService.didCreateAuditFail(auditListOptSuccess);
         assertEquals(false, actual);
