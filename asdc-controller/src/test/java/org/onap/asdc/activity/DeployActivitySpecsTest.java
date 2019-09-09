@@ -30,6 +30,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.asdc.activity.ActivitySpecsActions;
 import org.onap.so.asdc.activity.DeployActivitySpecs;
@@ -54,6 +55,7 @@ public class DeployActivitySpecsTest {
     protected ActivitySpecsActions activitySpecsActions;
 
     @InjectMocks
+    @Spy
     private DeployActivitySpecs deployActivitySpecs;
 
     @Test
@@ -68,7 +70,8 @@ public class DeployActivitySpecsTest {
         List<org.onap.so.db.catalog.beans.ActivitySpec> catalogActivitySpecList =
                 new ArrayList<org.onap.so.db.catalog.beans.ActivitySpec>();
         catalogActivitySpecList.add(catalogActivitySpec);
-        when(env.getProperty("mso.asdc.config.activity.endpoint")).thenReturn("testEndpoint");
+        when(env.getProperty("mso.asdc.config.activity.endpoint")).thenReturn("http://testEndpoint");
+        doReturn(true).when(deployActivitySpecs).checkHttpOk("http://testEndpoint");
         when(activitySpecRepository.findAll()).thenReturn(catalogActivitySpecList);
         doReturn("testActivityId").when(activitySpecsActions).createActivitySpec(Mockito.any(), Mockito.any());
         doReturn(true).when(activitySpecsActions).certifyActivitySpec(Mockito.any(), Mockito.any());
