@@ -57,11 +57,17 @@ import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @Path("onap/so/infra/orchestrationRequests")
-@Api(value = "onap/so/infra/orchestrationRequests")
+@OpenAPIDefinition(info = @Info(title = "onap/so/infra/orchestrationRequests"))
+
 @Component
 public class ResumeOrchestrationRequest {
     private static Logger logger = LoggerFactory.getLogger(ResumeOrchestrationRequest.class);
@@ -84,7 +90,8 @@ public class ResumeOrchestrationRequest {
     @Path("/{version:[vV][7]}/{requestId}/resume")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Resume request for a given requestId", response = Response.class)
+    @Operation(description = "Resume request for a given requestId", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response resumeOrchestrationRequest(@PathParam("requestId") String requestId,
             @PathParam("version") String version, @Context ContainerRequestContext requestContext) throws ApiException {

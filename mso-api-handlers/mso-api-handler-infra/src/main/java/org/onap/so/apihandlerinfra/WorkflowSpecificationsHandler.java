@@ -59,11 +59,17 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @Path("onap/so/infra/workflowSpecifications")
-@Api(value = "onap/so/infra/workflowSpecifications", description = "Queries of Workflow Specifications")
+@OpenAPIDefinition(info = @Info(title = "onap/so/infra/workflowSpecifications",
+        description = "Queries of Workflow Specifications"))
 @Component
 public class WorkflowSpecificationsHandler {
 
@@ -79,7 +85,8 @@ public class WorkflowSpecificationsHandler {
 
     @Path("/{version:[vV]1}/workflows")
     @GET
-    @ApiOperation(value = "Finds Workflow Specifications", response = Response.class)
+    @Operation(description = "Finds Workflow Specifications", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
 
     public Response queryWorkflowSpecifications(@QueryParam("vnfModelVersionId") String vnfModelVersionId,
