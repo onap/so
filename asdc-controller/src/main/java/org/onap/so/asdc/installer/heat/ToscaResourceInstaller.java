@@ -26,6 +26,7 @@ package org.onap.so.asdc.installer.heat;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -579,7 +580,8 @@ public class ToscaResourceInstaller {
         String outInput;
         String defaultValue = null;
         if (value instanceof Map) {
-            outInput = ((LinkedHashMap) value).values().toArray()[0].toString();
+            Collection values = ((LinkedHashMap) value).values();
+            outInput = (values.size() > 0) ? values.toArray()[0].toString() : "";
         } else if (value instanceof GetInput) {
             String inputName = ((GetInput) value).getInputName();
             Optional<Input> inputOptional =
