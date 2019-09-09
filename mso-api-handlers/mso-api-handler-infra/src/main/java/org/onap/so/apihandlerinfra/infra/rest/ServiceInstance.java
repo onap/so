@@ -44,7 +44,11 @@ import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @Component
 @Path("/onap/so/infra/serviceInstantiation")
@@ -61,7 +65,8 @@ public class ServiceInstance {
     @Path("/{version:[vV][8]}/serviceInstances/{serviceInstanceId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Delete a Service instance", response = ServiceInstancesResponse.class)
+    @Operation(description = "Delete a Service instance", responses = @ApiResponse(content = @Content(
+            array = @ArraySchema(schema = @Schema(implementation = ServiceInstancesResponse.class)))))
     @Transactional
     public Response deleteServiceInstance(@PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)

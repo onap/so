@@ -61,12 +61,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @Component
 @Path("/onap/so/infra/cloudResources")
-@Api(value = "/onap/so/infra/cloudResources", description = "API Requests for cloud resources - Tenant Isolation")
+@OpenAPIDefinition(info = @Info(title = "/onap/so/infra/cloudResources",
+        description = "API Requests for cloud resources - Tenant Isolation"))
 public class CloudOrchestration {
 
     private static Logger logger = LoggerFactory.getLogger(CloudOrchestration.class);
@@ -85,7 +91,8 @@ public class CloudOrchestration {
     @Path("/{version:[vV][1]}/operationalEnvironments")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Create an Operational Environment", response = Response.class)
+    @Operation(description = "Create an Operational Environment", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response createOperationEnvironment(String request, @PathParam("version") String version,
             @Context ContainerRequestContext requestContext) throws ApiException {
@@ -97,7 +104,8 @@ public class CloudOrchestration {
     @Path("/{version:[vV][1]}/operationalEnvironments/{operationalEnvironmentId}/activate")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Activate an Operational Environment", response = Response.class)
+    @Operation(description = "Activate an Operational Environment", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response activateOperationEnvironment(String request, @PathParam("version") String version,
             @PathParam("operationalEnvironmentId") String operationalEnvironmentId,
@@ -112,7 +120,8 @@ public class CloudOrchestration {
     @Path("/{version:[vV][1]}/operationalEnvironments/{operationalEnvironmentId}/deactivate")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Deactivate an Operational Environment", response = Response.class)
+    @Operation(description = "Deactivate an Operational Environment", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response deactivateOperationEnvironment(String request, @PathParam("version") String version,
             @PathParam("operationalEnvironmentId") String operationalEnvironmentId,
