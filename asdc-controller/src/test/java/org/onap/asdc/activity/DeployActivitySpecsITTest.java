@@ -22,7 +22,10 @@ package org.onap.asdc.activity;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
+import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 import org.junit.Test;
@@ -73,4 +76,32 @@ public class DeployActivitySpecsITTest extends BaseTest {
         deployActivitySpecs.deployActivities();
         assertTrue(activitySpecCreateResponse.getId().equals("testActivityId"));
     }
+
+    @Test
+    public void deployActivitySpecsIT_SDCEndpointDown_Test() throws Exception {
+        ActivitySpecCreateResponse activitySpecCreateResponse = new ActivitySpecCreateResponse();
+        activitySpecCreateResponse.setId("testActivityId");
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Accept", MediaType.APPLICATION_JSON);
+        headers.set("Content-Type", MediaType.APPLICATION_JSON);
+
+        ObjectMapper mapper = new ObjectMapper();
+        String body = mapper.writeValueAsString(activitySpecCreateResponse);
+
+        wireMockServer.stubFor(post(urlPathMatching("/v1.0/activity-spec"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withStatus(org.springframework.http.HttpStatus.OK.value()).withBody(body)));
+
+        when(env.getProperty("mso.asdc.config.activity.endpoint")).thenReturn("http://localhost:8090");
+
+        String urlPath = "/v1.0/activity-spec/testActivityId/versions/latest/actions";
+
+        wireMockServer.stubFor(
+                put(urlPathMatching(urlPath)).willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withStatus(org.springframework.http.HttpStatus.OK.value())));
+
+        deployActivitySpecs.deployActivities();
+        verify(0, putRequestedFor(urlEqualTo(urlPath)));
+    }
+
 }

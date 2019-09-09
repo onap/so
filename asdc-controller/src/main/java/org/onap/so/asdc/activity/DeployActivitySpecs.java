@@ -20,6 +20,8 @@
 
 package org.onap.so.asdc.activity;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import org.onap.so.logger.LoggingAnchor;
@@ -27,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.apache.http.HttpStatus;
 import org.onap.so.asdc.activity.beans.ActivitySpec;
 import org.onap.so.asdc.activity.beans.Input;
 import org.onap.so.asdc.activity.beans.Output;
@@ -59,6 +62,11 @@ public class DeployActivitySpecs {
         String hostname = env.getProperty(SDC_ENDPOINT);
         logger.debug("{} {}", "SDC ActivitySpec endpoint: ", hostname);
         if (hostname == null || hostname.isEmpty()) {
+            logger.warn("The hostname for SDC activities deployment is not configured in SO");
+            return;
+        }
+        if (!checkHttpOk(hostname)) {
+            logger.warn("The sdc end point is not alive");
             return;
         }
         List<org.onap.so.db.catalog.beans.ActivitySpec> activitySpecsFromCatalog = activitySpecRepository.findAll();
@@ -134,5 +142,23 @@ public class DeployActivitySpecs {
         activitySpec.setInputs(inputs);
         activitySpec.setOutputs(outputs);
         return;
+    }
+
+    public boolean checkHttpOk(String host) {
+        URL url = null;
+        boolean isOk = false;
+
+        int responseCode = 0;
+        try {
+            url = new URL(host);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            responseCode = connection.getResponseCode();
+        } catch (Exception e) {
+            logger.warn("Exception on connecting to SDC WFD endpoint: " + e.getMessage());
+        }
+        if (responseCode == HttpStatus.SC_OK) {
+            isOk = true;
+        }
+        return isOk;
     }
 }
