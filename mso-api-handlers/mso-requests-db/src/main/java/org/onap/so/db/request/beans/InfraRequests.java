@@ -117,7 +117,7 @@ public abstract class InfraRequests implements java.io.Serializable {
     private String vfModuleModelName;
     @Column(name = "AAI_SERVICE_ID", length = 50)
     private String aaiServiceId;
-    @Column(name = "AIC_CLOUD_REGION", length = 11)
+    @Column(name = "CLOUD_REGION", length = 11)
     private String aicCloudRegion;
     @Column(name = "CALLBACK_URL", length = 200)
     private String callBackUrl;
