@@ -32,7 +32,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 
 @IdClass(ControllerSelectionReferenceId.class)
 @Entity
-@Table(name = "CONTROLLER_SELECTION_REFERENCE")
+@Table(name = "controller_selection_reference")
 public class ControllerSelectionReference implements Serializable {
 
     private static final long serialVersionUID = -608098800737567188L;

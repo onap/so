@@ -17,7 +17,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.openpojo.business.annotation.BusinessKey;
 
 @Entity
-@Table(name = "USER_PARAMETERS")
+@Table(name = "user_parameters")
 public class UserParameters implements Serializable {
 
     private static final long serialVersionUID = -5036895978102778877L;
