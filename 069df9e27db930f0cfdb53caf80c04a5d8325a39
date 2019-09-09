@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "49ca509c_17beca34",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/network/MsoNetworkAdapterImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 818,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-09-09T10:57:57Z",
+      "side": 1,
+      "message": "The value of networkResource will not be printed, you have to add \u0027{}\u0027 to LOG_DEBUG_MSG.",
+      "range": {
+        "startLine": 818,
+        "startChar": 8,
+        "endLine": 818,
+        "endChar": 53
+      },
+      "revId": "069df9e27db930f0cfdb53caf80c04a5d8325a39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "05a3e60d_7f12670b",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/network/MsoNetworkAdapterImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1049,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-09-09T10:57:57Z",
+      "side": 1,
+      "message": "as above",
+      "range": {
+        "startLine": 1049,
+        "startChar": 12,
+        "endLine": 1049,
+        "endChar": 57
+      },
+      "revId": "069df9e27db930f0cfdb53caf80c04a5d8325a39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "46879ef4_1f0932e8",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/network/MsoNetworkAdapterImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1136,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-09-09T10:57:57Z",
+      "side": 1,
+      "message": "as above",
+      "range": {
+        "startLine": 1136,
+        "startChar": 12,
+        "endLine": 1136,
+        "endChar": 57
+      },
+      "revId": "069df9e27db930f0cfdb53caf80c04a5d8325a39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
