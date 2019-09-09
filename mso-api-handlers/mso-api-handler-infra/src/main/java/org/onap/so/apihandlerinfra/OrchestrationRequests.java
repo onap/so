@@ -73,12 +73,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 
 @Path("onap/so/infra/orchestrationRequests")
-@Api(value = "onap/so/infra/orchestrationRequests", description = "API Requests for Orchestration requests")
+@OpenAPIDefinition(info = @Info(title = "onap/so/infra/orchestrationRequests",
+        description = "API Requests for Orchestration requests"))
+
 @Component
 public class OrchestrationRequests {
 
@@ -99,7 +106,8 @@ public class OrchestrationRequests {
 
     @GET
     @Path("/{version:[vV][4-7]}/{requestId}")
-    @ApiOperation(value = "Find Orchestrated Requests for a given requestId", response = Response.class)
+    @Operation(description = "Find Orchestrated Requests for a given requestId", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response getOrchestrationRequest(@PathParam("requestId") String requestId,
@@ -164,7 +172,8 @@ public class OrchestrationRequests {
 
     @GET
     @Path("/{version:[vV][4-7]}")
-    @ApiOperation(value = "Find Orchestrated Requests for a URI Information", response = Response.class)
+    @Operation(description = "Find Orchestrated Requests for a URI Information", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response getOrchestrationRequest(@Context UriInfo ui, @PathParam("version") String version,
@@ -221,7 +230,8 @@ public class OrchestrationRequests {
     @Path("/{version: [vV][4-7]}/{requestId}/unlock")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Unlock Orchestrated Requests for a given requestId", response = Response.class)
+    @Operation(description = "Unlock Orchestrated Requests for a given requestId", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response unlockOrchestrationRequest(String requestJSON, @PathParam("requestId") String requestId,
             @PathParam("version") String version) throws ApiException {

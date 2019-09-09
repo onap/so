@@ -23,8 +23,6 @@
 
 package org.onap.so.apihandlerinfra;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.apache.http.HttpStatus;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandler.common.RequestClientParameter;
@@ -61,10 +59,18 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.HashMap;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @Component
 @Path("/onap/so/infra/instanceManagement")
-@Api(value = "/onap/so/infra/instanceManagement", description = "Infrastructure API Requests for Instance Management")
+@OpenAPIDefinition(info = @Info(title = "/onap/so/infra/instanceManagement",
+        description = "Infrastructure API Requests for Instance Management"))
 public class InstanceManagement {
 
     private static Logger logger = LoggerFactory.getLogger(InstanceManagement.class);
@@ -87,7 +93,8 @@ public class InstanceManagement {
     @Path("/{version:[vV][1]}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/workflows/{workflowUuid}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Execute custom workflow", response = Response.class)
+    @Operation(description = "Execute custom workflow", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response executeCustomWorkflow(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,

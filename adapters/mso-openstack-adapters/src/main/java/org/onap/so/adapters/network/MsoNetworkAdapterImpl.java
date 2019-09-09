@@ -803,8 +803,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
             networkResource = networkCust.getNetworkResource();
         } else if (collectionNetworkCust != null) {
-            logger.debug("Retrieved Collection Network Resource Customization from Catalog: {}",
-                    collectionNetworkCust);
+            logger.debug("Retrieved Collection Network Resource Customization from Catalog: {}", collectionNetworkCust);
             networkResource = collectionNetworkCust.getNetworkResource();
         }
         if (networkResource == null) {

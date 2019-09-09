@@ -90,12 +90,18 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @Component
 @Path("/onap/so/infra/serviceInstantiation")
-@Api(value = "/onap/so/infra/serviceInstantiation", description = "Infrastructure API Requests for Service Instances")
+@OpenAPIDefinition(info = @Info(title = "/onap/so/infra/serviceInstantiation",
+        description = "Infrastructure API Requests for Service Instances"))
 public class ServiceInstances extends AbstractRestHandler {
 
     private static Logger logger = LoggerFactory.getLogger(MsoRequest.class);
@@ -129,7 +135,8 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][5-7]}/serviceInstances")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Create a Service Instance on a version provided", response = Response.class)
+    @Operation(description = "Create a Service Instance on a version provided", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response createServiceInstance(String request, @PathParam("version") String version,
             @Context ContainerRequestContext requestContext) throws ApiException {
@@ -142,7 +149,8 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/activate")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Activate provided Service Instance", response = Response.class)
+    @Operation(description = "Activate provided Service Instance", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response activateServiceInstance(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
@@ -158,7 +166,8 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/deactivate")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Deactivate provided Service Instance", response = Response.class)
+    @Operation(description = "Deactivate provided Service Instance", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response deactivateServiceInstance(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
@@ -174,7 +183,8 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Delete provided Service Instance", response = Response.class)
+    @Operation(description = "Delete provided Service Instance", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response deleteServiceInstance(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
@@ -190,7 +200,8 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][7]}/serviceInstances/assign")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Assign Service Instance", response = Response.class)
+    @Operation(description = "Assign Service Instance", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response assignServiceInstance(String request, @PathParam("version") String version,
             @Context ContainerRequestContext requestContext) throws ApiException {
@@ -203,7 +214,8 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][7]}/serviceInstances/{serviceInstanceId}/unassign")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Unassign Service Instance", response = Response.class)
+    @Operation(description = "Unassign Service Instance", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response unassignServiceInstance(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
@@ -219,7 +231,8 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/configurations")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Create Port Mirroring Configuration", response = Response.class)
+    @Operation(description = "Create Port Mirroring Configuration", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response createPortConfiguration(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
@@ -235,7 +248,8 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/configurations/{configurationInstanceId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Delete provided Port", response = Response.class)
+    @Operation(description = "Delete provided Port", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response deletePortConfiguration(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId,
@@ -253,7 +267,8 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/configurations/{configurationInstanceId}/enablePort")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Enable Port Mirroring", response = Response.class)
+    @Operation(description = "Enable Port Mirroring", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response enablePort(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId,
@@ -271,7 +286,8 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/configurations/{configurationInstanceId}/disablePort")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Disable Port Mirroring", response = Response.class)
+    @Operation(description = "Disable Port Mirroring", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response disablePort(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId,
@@ -289,7 +305,8 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/configurations/{configurationInstanceId}/activate")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Activate Port Mirroring", response = Response.class)
+    @Operation(description = "Activate Port Mirroring", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response activatePort(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId,
@@ -307,7 +324,8 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/configurations/{configurationInstanceId}/deactivate")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Deactivate Port Mirroring", response = Response.class)
+    @Operation(description = "Deactivate Port Mirroring", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response deactivatePort(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId,
@@ -325,7 +343,8 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][6-7]}/serviceInstances/{serviceInstanceId}/addRelationships")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Add Relationships to a Service Instance", response = Response.class)
+    @Operation(description = "Add Relationships to a Service Instance", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response addRelationships(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
@@ -341,7 +360,8 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][6-7]}/serviceInstances/{serviceInstanceId}/removeRelationships")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Remove Relationships from Service Instance", response = Response.class)
+    @Operation(description = "Remove Relationships from Service Instance", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response removeRelationships(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
@@ -357,7 +377,8 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/vnfs")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Create VNF on a specified version and serviceInstance", response = Response.class)
+    @Operation(description = "Create VNF on a specified version and serviceInstance", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response createVnfInstance(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
@@ -378,7 +399,8 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/replace")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Replace provided VNF instance", response = Response.class)
+    @Operation(description = "Replace provided VNF instance", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response replaceVnfInstance(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
@@ -395,8 +417,9 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Update VNF on a specified version, serviceInstance and vnfInstance",
-            response = Response.class)
+    @Operation(description = "Update VNF on a specified version, serviceInstance and vnfInstance",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response updateVnfInstance(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
@@ -413,7 +436,8 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][6-7]}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/applyUpdatedConfig")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Apply updated configuration", response = Response.class)
+    @Operation(description = "Apply updated configuration", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     public Response applyUpdatedConfig(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
             @Context ContainerRequestContext requestContext) throws ApiException {
@@ -429,7 +453,8 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][7]}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/recreate")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Recreate VNF Instance", response = Response.class)
+    @Operation(description = "Recreate VNF Instance", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     public Response recreateVnfInstance(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
             @Context ContainerRequestContext requestContext) throws ApiException {
@@ -445,7 +470,8 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Delete provided VNF instance", response = Response.class)
+    @Operation(description = "Delete provided VNF instance", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response deleteVnfInstance(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
@@ -462,8 +488,9 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Create VfModule on a specified version, serviceInstance and vnfInstance",
-            response = Response.class)
+    @Operation(description = "Create VfModule on a specified version, serviceInstance and vnfInstance",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response createVfModuleInstance(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
@@ -480,8 +507,9 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules/{vfmoduleInstanceId}/replace")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Create VfModule on a specified version, serviceInstance and vnfInstance",
-            response = Response.class)
+    @Operation(description = "Create VfModule on a specified version, serviceInstance and vnfInstance",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response replaceVfModuleInstance(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
@@ -500,8 +528,9 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules/{vfmoduleInstanceId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Update VfModule on a specified version, serviceInstance, vnfInstance and vfModule",
-            response = Response.class)
+    @Operation(description = "Update VfModule on a specified version, serviceInstance, vnfInstance and vfModule",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response updateVfModuleInstance(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
@@ -520,7 +549,8 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][6-7]}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/inPlaceSoftwareUpdate")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Perform VNF software update", response = Response.class)
+    @Operation(description = "Perform VNF software update", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response inPlaceSoftwareUpdate(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
@@ -537,7 +567,8 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules/{vfmoduleInstanceId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Delete provided VfModule instance", response = Response.class)
+    @Operation(description = "Delete provided VfModule instance", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response deleteVfModuleInstance(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
@@ -556,7 +587,8 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][7]}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules/{vfmoduleInstanceId}/deactivateAndCloudDelete")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Deactivate and Cloud Delete VfModule instance", response = Response.class)
+    @Operation(description = "Deactivate and Cloud Delete VfModule instance", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response deactivateAndCloudDeleteVfModuleInstance(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
@@ -576,7 +608,8 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][7]}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/vfModules/scaleOut")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "VF Auto Scale Out", response = Response.class)
+    @Operation(description = "VF Auto Scale Out", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response scaleOutVfModule(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
@@ -593,8 +626,9 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/volumeGroups")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Create VolumeGroup on a specified version, serviceInstance, vnfInstance",
-            response = Response.class)
+    @Operation(description = "Create VolumeGroup on a specified version, serviceInstance, vnfInstance",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response createVolumeGroupInstance(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
@@ -611,8 +645,9 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/volumeGroups/{volumeGroupInstanceId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Update VolumeGroup on a specified version, serviceInstance, vnfInstance and volumeGroup",
-            response = Response.class)
+    @Operation(description = "Update VolumeGroup on a specified version, serviceInstance, vnfInstance and volumeGroup",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response updateVolumeGroupInstance(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
@@ -631,7 +666,8 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/volumeGroups/{volumeGroupInstanceId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Delete provided VolumeGroup instance", response = Response.class)
+    @Operation(description = "Delete provided VolumeGroup instance", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response deleteVolumeGroupInstance(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
@@ -650,8 +686,9 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/networks")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Create NetworkInstance on a specified version and serviceInstance ",
-            response = Response.class)
+    @Operation(description = "Create NetworkInstance on a specified version and serviceInstance ",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response createNetworkInstance(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
@@ -667,8 +704,9 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/networks/{networkInstanceId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Update VolumeGroup on a specified version, serviceInstance, networkInstance",
-            response = Response.class)
+    @Operation(description = "Update VolumeGroup on a specified version, serviceInstance, networkInstance",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response updateNetworkInstance(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId,
@@ -686,7 +724,8 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][5-7]}/serviceInstances/{serviceInstanceId}/networks/{networkInstanceId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Delete provided Network instance", response = Response.class)
+    @Operation(description = "Delete provided Network instance", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response deleteNetworkInstance(String request, @PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId,
@@ -704,7 +743,8 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][7]}/instanceGroups")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Create instanceGroups", response = Response.class)
+    @Operation(description = "Create instanceGroups", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response createInstanceGroups(String request, @PathParam("version") String version,
             @Context ContainerRequestContext requestContext) throws ApiException {
@@ -717,7 +757,8 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][7]}/instanceGroups/{instanceGroupId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Delete instanceGroup", response = Response.class)
+    @Operation(description = "Delete instanceGroup", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response deleteInstanceGroups(@PathParam("version") String version,
             @PathParam("instanceGroupId") String instanceGroupId, @Context ContainerRequestContext requestContext)
@@ -733,7 +774,8 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][7]}/instanceGroups/{instanceGroupId}/addMembers")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Add instanceGroup members", response = Response.class)
+    @Operation(description = "Add instanceGroup members", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response addInstanceGroupMembers(String request, @PathParam("version") String version,
             @PathParam("instanceGroupId") String instanceGroupId, @Context ContainerRequestContext requestContext)
@@ -749,7 +791,8 @@ public class ServiceInstances extends AbstractRestHandler {
     @Path("/{version:[vV][7]}/instanceGroups/{instanceGroupId}/removeMembers")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Remove instanceGroup members", response = Response.class)
+    @Operation(description = "Remove instanceGroup members", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response removeInstanceGroupMembers(String request, @PathParam("version") String version,
             @PathParam("instanceGroupId") String instanceGroupId, @Context ContainerRequestContext requestContext)

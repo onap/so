@@ -62,13 +62,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @Component
 @Path("onap/so/infra/cloudResourcesRequests")
-@Api(value = "onap/so/infra/cloudResourcesRequests",
-        description = "API GET Requests for cloud resources - Tenant Isolation")
+@OpenAPIDefinition(info = @Info(title = "onap/so/infra/cloudResourcesRequests",
+        description = "API GET Requests for cloud resources - Tenant Isolation"))
 public class CloudResourcesOrchestration {
 
     private static Logger logger = LoggerFactory.getLogger(CloudResourcesOrchestration.class);
@@ -83,7 +88,7 @@ public class CloudResourcesOrchestration {
     @Path("/{version: [vV][1]}/{requestId}/unlock")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Unlock CloudOrchestration requests for a specified requestId")
+    @Operation(description = "Unlock CloudOrchestration requests for a specified requestId")
     @Transactional
     public Response unlockOrchestrationRequest(String requestJSON, @PathParam("requestId") String requestId,
             @PathParam("version") String version) throws ApiException {
@@ -167,8 +172,9 @@ public class CloudResourcesOrchestration {
     @Path("/{version:[vV][1]}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Get status of an Operational Environment based on filter criteria",
-            response = Response.class)
+    @Operation(description = "Get status of an Operational Environment based on filter criteria",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response getOperationEnvironmentStatusFilter(@Context UriInfo ui, @PathParam("version") String version)
             throws ApiException {
