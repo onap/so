@@ -46,7 +46,11 @@ import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @Component("VolumesV8")
 @Path("/onap/so/infra/serviceInstantiation")
@@ -66,7 +70,8 @@ public class Volumes {
     @Path("/{version:[vV][8]}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/volumeGroups/{volumeGroupInstanceId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Delete a VfModule instance", response = ServiceInstancesResponse.class)
+    @Operation(description = "Delete a VfModule instance", responses = @ApiResponse(content = @Content(
+            array = @ArraySchema(schema = @Schema(implementation = ServiceInstancesResponse.class)))))
     @Transactional
     public Response deleteVfModuleInstance(@PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,

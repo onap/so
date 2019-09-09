@@ -76,13 +76,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @Component
 @Path("/onap/so/infra/e2eServiceInstances")
-@Api(value = "/onap/so/infra/e2eServiceInstances", description = "API Requests for E2E Service Instances")
+@OpenAPIDefinition(info = @Info(title = "/onap/so/infra/e2eServiceInstances",
+        description = "API Requests for E2E Service Instances"))
+
 public class E2EServiceInstances {
 
     private HashMap<String, String> instanceIdMap = new HashMap<>();
@@ -119,7 +125,8 @@ public class E2EServiceInstances {
     @Path("/{version:[vV][3-5]}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Create an E2E Service Instance on a version provided", response = Response.class)
+    @Operation(description = "Create an E2E Service Instance on a version provided", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     public Response createE2EServiceInstance(String request, @PathParam("version") String version) throws ApiException {
 
         return processE2EserviceInstances(request, Action.createInstance, null, version);
@@ -135,8 +142,9 @@ public class E2EServiceInstances {
     @Path("/{version:[vV][3-5]}/{serviceId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Update an E2E Service Instance on a version provided and serviceId",
-            response = Response.class)
+    @Operation(description = "Update an E2E Service Instance on a version provided and serviceId",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     public Response updateE2EServiceInstance(String request, @PathParam("version") String version,
             @PathParam("serviceId") String serviceId) throws ApiException {
 
@@ -155,7 +163,9 @@ public class E2EServiceInstances {
     @Path("/{version:[vV][3-5]}/{serviceId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Delete E2E Service Instance on a specified version and serviceId", response = Response.class)
+    @Operation(description = "Delete E2E Service Instance on a specified version and serviceId",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     public Response deleteE2EServiceInstance(String request, @PathParam("version") String version,
             @PathParam(SERVICE_ID) String serviceId) throws ApiException {
 
@@ -166,8 +176,9 @@ public class E2EServiceInstances {
 
     @GET
     @Path("/{version:[vV][3-5]}/{serviceId}/operations/{operationId}")
-    @ApiOperation(value = "Find e2eServiceInstances Requests for a given serviceId and operationId",
-            response = Response.class)
+    @Operation(description = "Find e2eServiceInstances Requests for a given serviceId and operationId",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Produces(MediaType.APPLICATION_JSON)
     public Response getE2EServiceInstances(@PathParam(SERVICE_ID) String serviceId,
             @PathParam("version") String version, @PathParam("operationId") String operationId) {
@@ -184,7 +195,8 @@ public class E2EServiceInstances {
     @Path("/{version:[vV][3-5]}/{serviceId}/scale")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Scale E2E Service Instance on a specified version", response = Response.class)
+    @Operation(description = "Scale E2E Service Instance on a specified version", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     public Response scaleE2EServiceInstance(String request, @PathParam("version") String version,
             @PathParam(SERVICE_ID) String serviceId) throws ApiException {
 
@@ -203,9 +215,10 @@ public class E2EServiceInstances {
     @Path("/{version:[vV][3-5]}/{serviceId}/modeldifferences")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(
-            value = "Find added and deleted resources of target model for the e2eserviceInstance on a given serviceId ",
-            response = Response.class)
+    @Operation(
+            description = "Find added and deleted resources of target model for the e2eserviceInstance on a given serviceId ",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     public Response compareModelwithTargetVersion(String request, @PathParam("serviceId") String serviceId,
             @PathParam("version") String version) throws ApiException {
 

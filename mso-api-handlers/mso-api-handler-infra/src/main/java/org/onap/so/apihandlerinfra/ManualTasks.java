@@ -34,7 +34,6 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.onap.so.logger.LoggingAnchor;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.onap.so.apihandler.common.ErrorNumbers;
@@ -52,6 +51,7 @@ import org.onap.so.apihandlerinfra.tasksbeans.Value;
 import org.onap.so.apihandlerinfra.tasksbeans.Variables;
 import org.onap.so.exceptions.ValidationException;
 import org.onap.so.logger.ErrorCode;
+import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,8 +60,11 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import io.swagger.annotations.ApiOperation;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @Path("/tasks")
 @Component
@@ -85,7 +88,8 @@ public class ManualTasks {
     @Path("/{version:[vV]1}/{taskId}/complete")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Complete specified task", response = Response.class)
+    @Operation(description = "Complete specified task", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response completeTask(String request, @PathParam("version") String version,
             @PathParam("taskId") String taskId, @Context ContainerRequestContext requestContext) throws ApiException {

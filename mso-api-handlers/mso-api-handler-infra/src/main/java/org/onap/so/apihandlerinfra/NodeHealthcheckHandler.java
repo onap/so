@@ -22,7 +22,19 @@
 
 package org.onap.so.apihandlerinfra;
 
-import java.net.UnknownHostException;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.apache.http.HttpStatus;
+import org.onap.so.logger.LoggingAnchor;
+import org.onap.so.logger.MessageEnum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import javax.transaction.Transactional;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -30,17 +42,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import org.onap.so.logger.LoggingAnchor;
-import org.apache.http.HttpStatus;
-import org.onap.so.logger.MessageEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import java.net.UnknownHostException;
 
 @Path("/nodehealthcheck")
-@Api(value = "/nodehealthcheck", description = "API Handler Infra Node Health Check")
+@OpenAPIDefinition(info = @Info(title = "/nodehealthcheck", description = "API Handler Infra Node Health Check"))
 @Component
 public class NodeHealthcheckHandler {
 
@@ -53,7 +58,8 @@ public class NodeHealthcheckHandler {
 
     @GET
     @Produces("text/html")
-    @ApiOperation(value = "Performing node health check", response = Response.class)
+    @Operation(description = "Performing node health check", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response nodeHealthcheck(@Context ContainerRequestContext requestContext) throws UnknownHostException {
         // Generated RequestId
