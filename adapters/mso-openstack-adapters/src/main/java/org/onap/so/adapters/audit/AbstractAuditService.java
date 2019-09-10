@@ -22,19 +22,17 @@
 package org.onap.so.adapters.audit;
 
 import java.util.Optional;
-import org.camunda.bpm.client.task.ExternalTask;
-import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.objects.audit.AAIObjectAudit;
 import org.onap.so.objects.audit.AAIObjectAuditList;
+import org.onap.so.utils.ExternalTaskUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 @Component
-public abstract class AbstractAuditService {
+public abstract class AbstractAuditService extends ExternalTaskUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractAuditService.class);
 
@@ -82,22 +80,4 @@ public abstract class AbstractAuditService {
         }
     }
 
-    protected String[] getRetrySequence() {
-        return env.getProperty("mso.workflow.topics.retrySequence", String[].class);
-    }
-
-    protected void setupMDC(ExternalTask externalTask) {
-        logger.info(ONAPLogConstants.Markers.ENTRY, "Entering");
-        String msoRequestId = externalTask.getVariable("mso-request-id");
-        if (msoRequestId != null && !msoRequestId.isEmpty()) {
-            MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, msoRequestId);
-        }
-        MDC.put(ONAPLogConstants.MDCs.SERVICE_NAME, externalTask.getTopicName());
-    }
-
-    protected long calculateRetryDelay(int currentRetries) {
-        int retrySequence = getRetrySequence().length - currentRetries;
-        long retryMultiplier = Long.parseLong(env.getProperty("mso.workflow.topics.retryMultiplier", "6000"));
-        return Integer.parseInt(getRetrySequence()[retrySequence]) * retryMultiplier;
-    }
 }

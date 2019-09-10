@@ -20,13 +20,9 @@
 
 package org.onap.so.adapters.audit;
 
-import java.security.GeneralSecurityException;
 import javax.annotation.PostConstruct;
 import org.camunda.bpm.client.ExternalTaskClient;
-import org.camunda.bpm.client.backoff.ExponentialBackoffStrategy;
-import org.camunda.bpm.client.interceptor.ClientRequestInterceptor;
-import org.camunda.bpm.client.interceptor.auth.BasicAuthProvider;
-import org.onap.so.utils.CryptoUtils;
+import org.onap.so.utils.ExternalTaskServiceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,10 +52,13 @@ public class AuditStackService {
     @Autowired
     private AuditQueryStackService auditQueryStack;
 
+    @Autowired
+    private ExternalTaskServiceUtils externalTaskServiceUtils;
+
     @PostConstruct
-    public void auditAddAAIInventory() {
-        for (int i = 0; i < getMaxClients(); i++) {
-            ExternalTaskClient client = createExternalTaskClient();
+    public void auditAddAAIInventory() throws Exception {
+        for (int i = 0; i < externalTaskServiceUtils.getMaxClients(); i++) {
+            ExternalTaskClient client = externalTaskServiceUtils.createExternalTaskClient();
             client.subscribe("InventoryAddAudit")
                     .lockDuration(Long.parseLong(env.getProperty("mso.audit.lock-time", DEFAULT_AUDIT_LOCK_TIME)))
                     .handler(auditCreateStack::executeExternalTask).open();
@@ -67,9 +66,9 @@ public class AuditStackService {
     }
 
     @PostConstruct
-    public void auditDeleteAAIInventory() {
-        for (int i = 0; i < getMaxClients(); i++) {
-            ExternalTaskClient client = createExternalTaskClient();
+    public void auditDeleteAAIInventory() throws Exception {
+        for (int i = 0; i < externalTaskServiceUtils.getMaxClients(); i++) {
+            ExternalTaskClient client = externalTaskServiceUtils.createExternalTaskClient();
             client.subscribe("InventoryDeleteAudit")
                     .lockDuration(Long.parseLong(env.getProperty("mso.audit.lock-time", DEFAULT_AUDIT_LOCK_TIME)))
                     .handler(auditDeleteStack::executeExternalTask).open();
@@ -77,35 +76,13 @@ public class AuditStackService {
     }
 
     @PostConstruct
-    public void auditQueryInventory() {
-        for (int i = 0; i < getMaxClients(); i++) {
-            ExternalTaskClient client = createExternalTaskClient();
+    public void auditQueryInventory() throws Exception {
+        for (int i = 0; i < externalTaskServiceUtils.getMaxClients(); i++) {
+            ExternalTaskClient client = externalTaskServiceUtils.createExternalTaskClient();
             client.subscribe("InventoryQueryAudit")
                     .lockDuration(Long.parseLong(env.getProperty("mso.audit.lock-time", DEFAULT_AUDIT_LOCK_TIME)))
                     .handler(auditQueryStack::executeExternalTask).open();
         }
     }
-
-    protected ExternalTaskClient createExternalTaskClient() {
-        ClientRequestInterceptor interceptor = createClientRequestInterceptor();
-        return ExternalTaskClient.create().baseUrl(env.getRequiredProperty("mso.workflow.endpoint")).maxTasks(1)
-                .addInterceptor(interceptor).asyncResponseTimeout(120000)
-                .backoffStrategy(new ExponentialBackoffStrategy(0, 0, 0)).build();
-    }
-
-    protected ClientRequestInterceptor createClientRequestInterceptor() {
-        String auth = "";
-        try {
-            auth = CryptoUtils.decrypt(env.getRequiredProperty("mso.auth"), env.getRequiredProperty("mso.msoKey"));
-        } catch (IllegalStateException | GeneralSecurityException e) {
-            logger.error("Error Decrypting Password", e);
-        }
-        return new BasicAuthProvider(env.getRequiredProperty("mso.config.cadi.aafId"), auth);
-    }
-
-    protected int getMaxClients() {
-        return Integer.parseInt(env.getProperty("workflow.topics.maxClients", DEFAULT_MAX_CLIENTS_FOR_TOPIC));
-    }
-
 
 }

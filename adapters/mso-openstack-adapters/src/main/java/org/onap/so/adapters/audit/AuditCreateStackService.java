@@ -34,7 +34,6 @@ import org.onap.so.objects.audit.AAIObjectAuditList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -44,9 +43,6 @@ public class AuditCreateStackService extends AbstractAuditService {
 
     @Autowired
     public HeatStackAudit heatStackAudit;
-
-    @Autowired
-    public Environment environment;
 
     protected void executeExternalTask(ExternalTask externalTask, ExternalTaskService externalTaskService) {
         setupMDC(externalTask);

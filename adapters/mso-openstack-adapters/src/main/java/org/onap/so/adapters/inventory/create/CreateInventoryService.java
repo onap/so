@@ -20,13 +20,9 @@
 
 package org.onap.so.adapters.inventory.create;
 
-import java.security.GeneralSecurityException;
 import javax.annotation.PostConstruct;
 import org.camunda.bpm.client.ExternalTaskClient;
-import org.camunda.bpm.client.backoff.ExponentialBackoffStrategy;
-import org.camunda.bpm.client.interceptor.ClientRequestInterceptor;
-import org.camunda.bpm.client.interceptor.auth.BasicAuthProvider;
-import org.onap.so.utils.CryptoUtils;
+import org.onap.so.utils.ExternalTaskServiceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,19 +42,13 @@ public class CreateInventoryService {
     @Autowired
     private CreateInventoryTask createInventory;
 
+    @Autowired
+    private ExternalTaskServiceUtils externalTaskServiceUtils;
+
     @PostConstruct
-    public void auditAAIInventory() {
-        String auth = "";
-        try {
-            auth = CryptoUtils.decrypt(env.getRequiredProperty("mso.auth"), env.getRequiredProperty("mso.msoKey"));
-        } catch (IllegalStateException | GeneralSecurityException e) {
-            logger.error("Error Decrypting Password", e);
-        }
-        ClientRequestInterceptor interceptor =
-                new BasicAuthProvider(env.getRequiredProperty("mso.config.cadi.aafId"), auth);
-        ExternalTaskClient client = ExternalTaskClient.create()
-                .baseUrl(env.getRequiredProperty("mso.workflow.endpoint")).maxTasks(1).addInterceptor(interceptor)
-                .asyncResponseTimeout(120000).backoffStrategy(new ExponentialBackoffStrategy(0, 0, 0)).build();
+    public void auditAAIInventory() throws Exception {
+
+        ExternalTaskClient client = externalTaskServiceUtils.createExternalTaskClient();
         client.subscribe("InventoryCreate")
                 .lockDuration(Long.parseLong(env.getProperty("mso.audit.lock-time", "60000")))
                 .handler(createInventory::executeExternalTask).open();
