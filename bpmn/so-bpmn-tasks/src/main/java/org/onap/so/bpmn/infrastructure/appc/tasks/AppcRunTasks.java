@@ -60,6 +60,7 @@ public class AppcRunTasks {
     public static final String ROLLBACK_VNF_STOP = "rollbackVnfStop";
     public static final String ROLLBACK_VNF_LOCK = "rollbackVnfLock";
     public static final String ROLLBACK_QUIESCE_TRAFFIC = "rollbackQuiesceTraffic";
+    public static final String CONTROLLER_TYPE_DEFAULT = "APPC";
     @Autowired
     private ExceptionBuilder exceptionUtil;
     @Autowired
@@ -139,7 +140,12 @@ public class AppcRunTasks {
 
             ControllerSelectionReference controllerSelectionReference = catalogDbClient
                     .getControllerSelectionReferenceByVnfTypeAndActionCategory(vnfType, action.toString());
-            String controllerType = controllerSelectionReference.getControllerName();
+            String controllerType = null;
+            if (controllerSelectionReference != null) {
+                controllerType = controllerSelectionReference.getControllerName();
+            } else {
+                controllerType = CONTROLLER_TYPE_DEFAULT;
+            }
 
             String vfModuleId = null;
             VfModule vfModule = null;
