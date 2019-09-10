@@ -21,6 +21,7 @@
 package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -50,7 +51,6 @@ import org.onap.so.db.catalog.beans.OrchestrationStatusValidationDirective;
 import org.onap.so.db.catalog.beans.ResourceType;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Ignore
 public class OrchestrationStatusValidatorTest extends BaseTaskTest {
     @InjectMocks
     protected OrchestrationStatusValidator orchestrationStatusValidator = new OrchestrationStatusValidator();
@@ -71,6 +71,13 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
         buildingBlockDetail.setTargetAction(OrchestrationAction.ASSIGN);
 
         doReturn(buildingBlockDetail).when(catalogDbClient).getBuildingBlockDetail(flowToBeCalled);
+
+        org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstance =
+                new org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance();
+        serviceInstance.setServiceInstanceId("serviceInstanceId");
+        serviceInstance.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID)))
+                .thenReturn(serviceInstance);
 
         OrchestrationStatusStateTransitionDirective orchestrationStatusStateTransitionDirective =
                 new OrchestrationStatusStateTransitionDirective();
@@ -115,6 +122,13 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
 
         doReturn(buildingBlockDetail).when(catalogDbClient).getBuildingBlockDetail(flowToBeCalled);
 
+        org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration configuration =
+                new org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration();
+        configuration.setConfigurationId("configurationId");
+        configuration.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.CONFIGURATION_ID)))
+                .thenReturn(configuration);
+
         OrchestrationStatusStateTransitionDirective orchestrationStatusStateTransitionDirective =
                 new OrchestrationStatusStateTransitionDirective();
         orchestrationStatusStateTransitionDirective
@@ -134,6 +148,7 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
                 execution.getVariable("orchestrationStatusValidationResult"));
     }
 
+    @Ignore
     @Test
     public void test_validateOrchestrationStatus_buildingBlockDetailNotFound() throws Exception {
         expectedException.expect(BpmnError.class);
@@ -147,6 +162,7 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
         orchestrationStatusValidator.validateOrchestrationStatus(execution);
     }
 
+    @Ignore
     @Test
     public void test_validateOrchestrationStatus_orchestrationValidationFail() throws Exception {
         expectedException.expect(BpmnError.class);
@@ -178,6 +194,7 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
         orchestrationStatusValidator.validateOrchestrationStatus(execution);
     }
 
+    @Ignore
     @Test
     public void test_validateOrchestrationStatus_orchestrationValidationNotFound() throws Exception {
         expectedException.expect(BpmnError.class);
@@ -228,8 +245,7 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
 
         orchestrationStatusValidator.validateOrchestrationStatus(execution);
 
-        assertEquals(OrchestrationStatusValidationDirective.SILENT_SUCCESS,
-                execution.getVariable("orchestrationStatusValidationResult"));
+        assertNull(execution.getVariable("orchestrationStatusValidationResult"));
     }
 
     @Test
@@ -247,6 +263,12 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
         setGenericVnf().setModelInfoGenericVnf(modelInfoGenericVnf);
         setVfModule().setOrchestrationStatus(OrchestrationStatus.PENDING_ACTIVATION);
 
+        org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule =
+                new org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule();
+        vfModule.setVfModuleId("vfModuleId");
+        vfModule.setOrchestrationStatus(OrchestrationStatus.PENDING_ACTIVATION);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
+
         BuildingBlockDetail buildingBlockDetail = new BuildingBlockDetail();
         buildingBlockDetail.setBuildingBlockName("CreateVfModuleBB");
         buildingBlockDetail.setId(1);
@@ -257,7 +279,7 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
 
         OrchestrationStatusStateTransitionDirective orchestrationStatusStateTransitionDirective =
                 new OrchestrationStatusStateTransitionDirective();
-        orchestrationStatusStateTransitionDirective.setFlowDirective(OrchestrationStatusValidationDirective.FAIL);
+        orchestrationStatusStateTransitionDirective.setFlowDirective(OrchestrationStatusValidationDirective.CONTINUE);
         orchestrationStatusStateTransitionDirective.setId(1);
         orchestrationStatusStateTransitionDirective.setOrchestrationStatus(OrchestrationStatus.PENDING_ACTIVATION);
         orchestrationStatusStateTransitionDirective.setResourceType(ResourceType.VF_MODULE);
@@ -287,6 +309,12 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
         modelInfoGenericVnf.setMultiStageDesign("true");
         setGenericVnf().setModelInfoGenericVnf(modelInfoGenericVnf);
         setVfModule().setOrchestrationStatus(OrchestrationStatus.PENDING_ACTIVATION);
+
+        org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule =
+                new org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule();
+        vfModule.setVfModuleId("vfModuleId");
+        vfModule.setOrchestrationStatus(OrchestrationStatus.PENDING_ACTIVATION);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
 
         BuildingBlockDetail buildingBlockDetail = new BuildingBlockDetail();
         buildingBlockDetail.setBuildingBlockName("CreateVfModuleBB");
@@ -338,6 +366,12 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
 
         doReturn(buildingBlockDetail).when(catalogDbClient).getBuildingBlockDetail(flowToBeCalled);
 
+        org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule =
+                new org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule();
+        vfModule.setVfModuleId("vfModuleId");
+        vfModule.setOrchestrationStatus(OrchestrationStatus.PENDING_ACTIVATION);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
+
         OrchestrationStatusStateTransitionDirective orchestrationStatusStateTransitionDirective =
                 new OrchestrationStatusStateTransitionDirective();
         orchestrationStatusStateTransitionDirective
@@ -379,6 +413,12 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
         buildingBlockDetail.setTargetAction(OrchestrationAction.CREATE);
 
         doReturn(buildingBlockDetail).when(catalogDbClient).getBuildingBlockDetail(flowToBeCalled);
+
+        org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule =
+                new org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule();
+        vfModule.setVfModuleId("vfModuleId");
+        vfModule.setOrchestrationStatus(OrchestrationStatus.ASSIGNED);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
 
         OrchestrationStatusStateTransitionDirective orchestrationStatusStateTransitionDirective =
                 new OrchestrationStatusStateTransitionDirective();
@@ -422,6 +462,12 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
 
         doReturn(buildingBlockDetail).when(catalogDbClient).getBuildingBlockDetail(flowToBeCalled);
 
+        org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule =
+                new org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule();
+        vfModule.setVfModuleId("vfModuleId");
+        vfModule.setOrchestrationStatus(OrchestrationStatus.PENDING_ACTIVATION);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
+
         OrchestrationStatusStateTransitionDirective orchestrationStatusStateTransitionDirective =
                 new OrchestrationStatusStateTransitionDirective();
         orchestrationStatusStateTransitionDirective
@@ -464,6 +510,12 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
 
         doReturn(buildingBlockDetail).when(catalogDbClient).getBuildingBlockDetail(flowToBeCalled);
 
+        org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule =
+                new org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule();
+        vfModule.setVfModuleId("vfModuleId");
+        vfModule.setOrchestrationStatus(OrchestrationStatus.PENDING_ACTIVATION);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
+
         OrchestrationStatusStateTransitionDirective orchestrationStatusStateTransitionDirective =
                 new OrchestrationStatusStateTransitionDirective();
         orchestrationStatusStateTransitionDirective
@@ -480,6 +532,41 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
         orchestrationStatusValidator.validateOrchestrationStatus(execution);
 
         assertEquals(OrchestrationStatusValidationDirective.SILENT_SUCCESS,
+                execution.getVariable("orchestrationStatusValidationResult"));
+    }
+
+    @Test
+    public void continueValidationActivatedTest() throws Exception {
+        String flowToBeCalled = "DeactivateVnfBB";
+        BuildingBlockDetail buildingBlockDetail = new BuildingBlockDetail();
+        buildingBlockDetail.setBuildingBlockName(flowToBeCalled);
+        buildingBlockDetail.setId(1);
+        buildingBlockDetail.setResourceType(ResourceType.VF_MODULE);
+        buildingBlockDetail.setTargetAction(OrchestrationAction.DEACTIVATE);
+        when(catalogDbClient.getBuildingBlockDetail(flowToBeCalled)).thenReturn(buildingBlockDetail);
+
+        org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule =
+                new org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule();
+        vfModule.setVfModuleId("vfModuleId");
+        vfModule.setOrchestrationStatus(OrchestrationStatus.ACTIVATED);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
+
+        OrchestrationStatusStateTransitionDirective orchestrationStatusStateTransitionDirective =
+                new OrchestrationStatusStateTransitionDirective();
+        orchestrationStatusStateTransitionDirective.setFlowDirective(OrchestrationStatusValidationDirective.CONTINUE);
+        orchestrationStatusStateTransitionDirective.setId(1);
+        orchestrationStatusStateTransitionDirective.setOrchestrationStatus(OrchestrationStatus.ACTIVATED);
+        orchestrationStatusStateTransitionDirective.setResourceType(ResourceType.VF_MODULE);
+        orchestrationStatusStateTransitionDirective.setTargetAction(OrchestrationAction.DEACTIVATE);
+        doReturn(orchestrationStatusStateTransitionDirective).when(catalogDbClient)
+                .getOrchestrationStatusStateTransitionDirective(ResourceType.VF_MODULE, OrchestrationStatus.ACTIVATED,
+                        OrchestrationAction.DEACTIVATE);
+
+        execution.setVariable("aLaCarte", true);
+        execution.setVariable("flowToBeCalled", flowToBeCalled);
+        orchestrationStatusValidator.validateOrchestrationStatus(execution);
+
+        assertEquals(OrchestrationStatusValidationDirective.CONTINUE,
                 execution.getVariable("orchestrationStatusValidationResult"));
     }
 }

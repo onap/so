@@ -153,16 +153,6 @@ public class OrchestrationStatusValidator {
                     .getOrchestrationStatusStateTransitionDirective(buildingBlockDetail.getResourceType(),
                             orchestrationStatus, buildingBlockDetail.getTargetAction());
 
-            if (aLaCarte && ResourceType.VF_MODULE.equals(buildingBlockDetail.getResourceType())
-                    && OrchestrationAction.CREATE.equals(buildingBlockDetail.getTargetAction())
-                    && OrchestrationStatus.PENDING_ACTIVATION.equals(orchestrationStatus)) {
-                org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf genericVnf =
-                        extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
-                orchestrationStatusStateTransitionDirective = processPossibleSecondStageofVfModuleCreate(execution,
-                        previousOrchestrationStatusValidationResult, genericVnf,
-                        orchestrationStatusStateTransitionDirective);
-            }
-
             if (orchestrationStatusStateTransitionDirective
                     .getFlowDirective() == OrchestrationStatusValidationDirective.FAIL) {
                 throw new OrchestrationStatusValidationException(
@@ -186,24 +176,5 @@ public class OrchestrationStatusValidator {
             logger.error("Exception occurred", e);
             exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, e);
         }
-    }
-
-    private OrchestrationStatusStateTransitionDirective processPossibleSecondStageofVfModuleCreate(
-            BuildingBlockExecution execution,
-            OrchestrationStatusValidationDirective previousOrchestrationStatusValidationResult,
-            org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf genericVnf,
-            OrchestrationStatusStateTransitionDirective orchestrationStatusStateTransitionDirective) {
-        if (previousOrchestrationStatusValidationResult != null && previousOrchestrationStatusValidationResult
-                .equals(OrchestrationStatusValidationDirective.SILENT_SUCCESS)) {
-            String multiStageDesign = MULTI_STAGE_DESIGN_OFF;
-            if (genericVnf.getModelInfoGenericVnf() != null) {
-                multiStageDesign = genericVnf.getModelInfoGenericVnf().getMultiStageDesign();
-            }
-            if (multiStageDesign != null && multiStageDesign.equalsIgnoreCase(MULTI_STAGE_DESIGN_ON)) {
-                orchestrationStatusStateTransitionDirective
-                        .setFlowDirective(OrchestrationStatusValidationDirective.CONTINUE);
-            }
-        }
-        return orchestrationStatusStateTransitionDirective;
     }
 }
