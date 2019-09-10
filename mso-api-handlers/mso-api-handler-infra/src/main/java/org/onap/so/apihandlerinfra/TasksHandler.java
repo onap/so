@@ -36,7 +36,6 @@ import javax.ws.rs.core.UriBuilder;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandler.common.RequestClient;
