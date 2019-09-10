@@ -20,8 +20,12 @@
 
 package org.onap.so.apihandlerinfra;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.PostConstruct;
+import javax.servlet.ServletConfig;
 import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.core.Context;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.onap.so.apihandler.filters.RequestIdFilter;
@@ -42,9 +46,13 @@ import org.onap.so.apihandlerinfra.tenantisolation.ModelDistributionRequest;
 import org.onap.so.logging.jaxrs.filter.JaxRsFilterLogging;
 import org.onap.so.web.exceptions.RuntimeExceptionMapper;
 import org.springframework.context.annotation.Configuration;
-import io.swagger.jaxrs.config.BeanConfig;
-import io.swagger.jaxrs.listing.ApiListingResource;
-import io.swagger.jaxrs.listing.SwaggerSerializers;
+import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
+import io.swagger.v3.jaxrs2.integration.resources.AcceptHeaderOpenApiResource;
+import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
+import io.swagger.v3.oas.integration.OpenApiConfigurationException;
+import io.swagger.v3.oas.integration.SwaggerConfiguration;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
 
 @Configuration
 @ApplicationPath("/")
@@ -67,8 +75,8 @@ public class JerseyConfiguration extends ResourceConfig {
         register(JaxRsFilterLogging.class);
         register(ManualTasks.class);
         register(TasksHandler.class);
-        register(ApiListingResource.class);
-        register(SwaggerSerializers.class);
+        register(OpenApiResource.class);
+        register(AcceptHeaderOpenApiResource.class);
         register(ApiExceptionMapper.class);
         register(RuntimeExceptionMapper.class);
         register(RequestIdFilter.class);
@@ -86,12 +94,21 @@ public class JerseyConfiguration extends ResourceConfig {
         register(com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider.class);
         register(ModelDistributionRequest.class);
         property(ServletProperties.FILTER_FORWARD_ON_404, true);
-        BeanConfig beanConfig = new BeanConfig();
-        beanConfig.setVersion("1.0.2");
-        beanConfig.setSchemes(new String[] {"https"});
-        beanConfig.setResourcePackage("org.onap.so.apihandlerinfra");
-        beanConfig.setPrettyPrint(true);
-        beanConfig.setScan(true);
+
+        OpenAPI oas = new OpenAPI();
+        Info info = new Info();
+        info.title("Swagger apihandlerinfra bootstrap code");
+        info.setVersion("1.0.2");
+
+        SwaggerConfiguration oasConfig = new SwaggerConfiguration().openAPI(oas).prettyPrint(true)
+                .resourcePackages(Stream.of("org.onap.so.apihandlerinfra").collect(Collectors.toSet()));
+
+        try {
+            new JaxrsOpenApiContextBuilder().application(this).openApiConfiguration(oasConfig).buildContext(true);
+        } catch (OpenApiConfigurationException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+
     }
 
 }

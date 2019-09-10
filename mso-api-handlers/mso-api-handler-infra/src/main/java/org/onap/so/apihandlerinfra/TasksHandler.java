@@ -59,11 +59,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @Path("onap/so/infra/tasks")
-@Api(value = "onap/so/infra/tasks", description = "Queries of Manual Tasks")
+@OpenAPIDefinition(info = @Info(title = "onap/so/infra/tasks", description = "Queries of Manual Tasks"))
 @Component
 public class TasksHandler {
 
@@ -81,7 +86,8 @@ public class TasksHandler {
 
     @Path("/{version:[vV]1}")
     @GET
-    @ApiOperation(value = "Finds Manual Tasks", response = Response.class)
+    @Operation(description = "Finds Manual Tasks", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response queryFilters(@QueryParam("taskId") String taskId,
             @QueryParam("originalRequestId") String originalRequestId,

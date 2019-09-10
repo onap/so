@@ -55,12 +55,18 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @Component
 @Path("/onap/so/infra/modelDistributions")
-@Api(value = "/onap/so/infra/modelDistributions", description = "API Requests for Model Distributions")
+@OpenAPIDefinition(
+        info = @Info(title = "/onap/so/infra/modelDistributions", description = "API Requests for Model Distributions"))
 public class ModelDistributionRequest {
 
     private static Logger logger = LoggerFactory.getLogger(ModelDistributionRequest.class);
@@ -71,7 +77,8 @@ public class ModelDistributionRequest {
     @Path("/{version:[vV][1]}/distributions/{distributionId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Update model distribution status", response = Response.class)
+    @Operation(description = "Update model distribution status", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response updateModelDistributionStatus(String requestJSON, @PathParam("version") String version,
             @PathParam("distributionId") String distributionId) throws ApiException {

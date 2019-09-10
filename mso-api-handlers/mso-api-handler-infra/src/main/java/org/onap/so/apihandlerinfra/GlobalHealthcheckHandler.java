@@ -53,13 +53,18 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 
 @Component
 @Path("/globalhealthcheck")
-@Api(value = "/globalhealthcheck", description = "APIH Infra Global Health Check")
+@OpenAPIDefinition(info = @Info(title = "/globalhealthcheck", description = "APIH Infra Global Health Check"))
 public class GlobalHealthcheckHandler {
     private static Logger logger = LoggerFactory.getLogger(GlobalHealthcheckHandler.class);
     protected static final String CONTEXTPATH_PROPERTY = "management.endpoints.web.base-path";
@@ -98,7 +103,8 @@ public class GlobalHealthcheckHandler {
 
     @GET
     @Produces("application/json")
-    @ApiOperation(value = "Performing global health check", response = Response.class)
+    @Operation(description = "Performing global health check", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response globalHealthcheck(@DefaultValue("true") @QueryParam("enableBpmn") boolean enableBpmn,
             @Context ContainerRequestContext requestContext) {
