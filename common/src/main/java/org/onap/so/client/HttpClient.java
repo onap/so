@@ -24,22 +24,22 @@ import java.net.URL;
 import java.util.Map;
 import java.util.Optional;
 import static org.apache.commons.lang3.StringUtils.*;
-import org.onap.so.utils.TargetEntity;
+import org.onap.logging.filter.base.ONAPComponents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HttpClient extends RestClient {
 
     protected final Logger log = LoggerFactory.getLogger(HttpClient.class);
-    private TargetEntity targetEntity;
+    private ONAPComponents targetEntity;
 
-    HttpClient(URL host, String contentType, TargetEntity targetEntity) {
+    HttpClient(URL host, String contentType, ONAPComponents targetEntity) {
         super(host, contentType);
         this.targetEntity = targetEntity;
     }
 
     @Override
-    public TargetEntity getTargetEntity() {
+    public ONAPComponents getTargetEntity() {
         return targetEntity;
     }
 

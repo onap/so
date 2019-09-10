@@ -54,7 +54,7 @@ import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.onap.so.utils.TargetEntity
+import org.onap.logging.filter.base.ONAPComponents;
 import org.springframework.web.util.UriUtils
 
 import javax.ws.rs.NotFoundException
@@ -388,7 +388,7 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
 		String serviceAaiPath = "${aai_endpoint}${urlLink}"
 
 		URL url = new URL(serviceAaiPath)
-		HttpClient client = new HttpClientFactory().newXmlClient(url, TargetEntity.AAI)
+		HttpClient client = new HttpClientFactory().newXmlClient(url, ONAPComponents.AAI)
         client.addBasicAuthHeader(UrnPropertiesReader.getVariable("aai.auth", execution), UrnPropertiesReader.getVariable("mso.msoKey", execution))
         client.addAdditionalHeader("X-FromAppId", "MSO")
         client.addAdditionalHeader("X-TransactionId", utils.getRequestID())

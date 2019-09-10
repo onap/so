@@ -51,7 +51,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 import org.springframework.web.util.UriUtils
-import org.onap.so.utils.TargetEntity
+import org.onap.logging.filter.base.ONAPComponents;
 
 import groovy.json.JsonOutput
 import javax.ws.rs.core.Response
@@ -455,7 +455,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			String vnfAdapterRequest = execution.getVariable(Prefix + "deleteNetworkRequest")
 
 			URL url = new URL(vnfAdapterUrl)
-			HttpClient httpClient = new HttpClientFactory().newXmlClient(url, TargetEntity.OPENSTACK_ADAPTER)
+			HttpClient httpClient = new HttpClientFactory().newXmlClient(url, ONAPComponents.OPENSTACK_ADAPTER)
 			httpClient.accept = "application/xml"
 			httpClient.addAdditionalHeader("Authorization", execution.getVariable("BasicAuthHeaderValuePO"))
 			Response response = httpClient.delete(vnfAdapterRequest)

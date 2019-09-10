@@ -51,7 +51,7 @@ import org.onap.so.bpmn.infrastructure.vfcmodel.LocationConstraint
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.onap.so.utils.TargetEntity
+import org.onap.logging.filter.base.ONAPComponents;
 
 
 
@@ -209,7 +209,7 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
         try{
 			URL url = new URL(urlString);
 
-            HttpClient httpClient = new HttpClientFactory().newJsonClient(url, TargetEntity.VNF_ADAPTER)
+            HttpClient httpClient = new HttpClientFactory().newJsonClient(url, ONAPComponents.VNF_ADAPTER)
 			httpClient.addAdditionalHeader("Authorization", "Basic QlBFTENsaWVudDpwYXNzd29yZDEk")
 
 			apiResponse = httpClient.post(requestBody)

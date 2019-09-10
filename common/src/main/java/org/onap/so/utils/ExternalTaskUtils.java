@@ -33,14 +33,4 @@ public abstract class ExternalTaskUtils {
         }
         return seq;
     }
-
-    protected void setupMDC(ExternalTask externalTask) {
-        logger.info(ONAPLogConstants.Markers.ENTRY, "Entering");
-        String msoRequestId = externalTask.getVariable("mso-request-id");
-        if (msoRequestId != null && !msoRequestId.isEmpty()) {
-            MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, msoRequestId);
-        }
-        MDC.put(ONAPLogConstants.MDCs.SERVICE_NAME, externalTask.getTopicName());
-    }
-
 }

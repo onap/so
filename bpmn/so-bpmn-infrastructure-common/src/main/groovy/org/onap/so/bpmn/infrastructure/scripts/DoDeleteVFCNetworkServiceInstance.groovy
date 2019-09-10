@@ -34,7 +34,7 @@ import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.onap.so.utils.TargetEntity
+import org.onap.logging.filter.base.ONAPComponents;
 import org.onap.so.bpmn.core.UrnPropertiesReader
 
 import javax.ws.rs.core.Response
@@ -226,7 +226,7 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
 			// Get the Basic Auth credentials for the VFCAdapter, username is 'bpel', auth is '07a7159d3bf51a0e53be7a8f89699be7'
             // user 'bepl' authHeader is the same with mso.db.auth
             String basicAuthValuedb =  UrnPropertiesReader.getVariable("mso.db.auth", execution)
-            HttpClient httpClient = httpClientFactory.newJsonClient(url, TargetEntity.VNF_ADAPTER)
+            HttpClient httpClient = httpClientFactory.newJsonClient(url, ONAPComponents.VNF_ADAPTER)
             httpClient.addAdditionalHeader("Accept", "application/json")
             httpClient.addAdditionalHeader("Authorization", basicAuthValuedb)
 
@@ -257,7 +257,7 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
             // Get the Basic Auth credentials for the VFCAdapter, username is 'bpel', auth is '07a7159d3bf51a0e53be7a8f89699be7'
             // user 'bepl' authHeader is the same with mso.db.auth
             String basicAuthValuedb =  UrnPropertiesReader.getVariable("mso.db.auth", execution)
-            HttpClient httpClient = httpClientFactory.newJsonClient(url, TargetEntity.VNF_ADAPTER)
+            HttpClient httpClient = httpClientFactory.newJsonClient(url, ONAPComponents.VNF_ADAPTER)
             httpClient.addAdditionalHeader("Accept", "application/json")
             httpClient.addAdditionalHeader("Authorization", basicAuthValuedb)
             httpClient.addAdditionalHeader("Content-Type", "application/json")

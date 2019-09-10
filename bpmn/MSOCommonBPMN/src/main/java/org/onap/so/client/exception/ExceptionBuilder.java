@@ -43,8 +43,8 @@ import org.onap.so.client.graphinventory.GraphInventoryCommonObjectMapperProvide
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.objects.audit.AAIObjectAudit;
 import org.onap.so.objects.audit.AAIObjectAuditList;
-import org.onap.so.utils.TargetEntities;
-import org.onap.so.utils.TargetEntity;
+import org.onap.logging.filter.base.ONAPComponentsList;
+import org.onap.logging.filter.base.ONAPComponents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -92,7 +92,7 @@ public class ExceptionBuilder {
     }
 
     public void buildAndThrowWorkflowException(BuildingBlockExecution execution, int errorCode, Exception exception,
-            TargetEntities extSystemErrorSource) {
+            ONAPComponentsList extSystemErrorSource) {
         String msg = "Exception in %s.%s ";
         try {
             logger.error("Exception occurred", exception);
@@ -156,7 +156,7 @@ public class ExceptionBuilder {
     }
 
     public void buildAndThrowWorkflowException(DelegateExecution execution, int errorCode, Exception exception,
-            TargetEntities extSystemErrorSource) {
+            ONAPComponentsList extSystemErrorSource) {
         String msg = "Exception in %s.%s ";
         try {
             logger.error("Exception occurred", exception);
@@ -195,7 +195,7 @@ public class ExceptionBuilder {
     }
 
     public void buildAndThrowWorkflowException(BuildingBlockExecution execution, int errorCode, String errorMessage,
-            TargetEntities extSystemErrorSource) {
+            ONAPComponentsList extSystemErrorSource) {
         if (execution instanceof DelegateExecutionImpl) {
             buildAndThrowWorkflowException(((DelegateExecutionImpl) execution).getDelegateExecution(), errorCode,
                     errorMessage, extSystemErrorSource);
@@ -215,7 +215,7 @@ public class ExceptionBuilder {
     }
 
     public void buildAndThrowWorkflowException(DelegateExecution execution, int errorCode, String errorMessage,
-            TargetEntities extSystemErrorSource) {
+            ONAPComponentsList extSystemErrorSource) {
         String processKey = getProcessKey(execution);
         logger.info("Building a WorkflowException for Subflow");
 
@@ -293,7 +293,7 @@ public class ExceptionBuilder {
                 execution.setVariable("StatusMessage", errorMessage.toString());
             } else {
                 WorkflowException exception =
-                        new WorkflowException(processKey, 400, errorMessage.toString(), TargetEntity.SO);
+                        new WorkflowException(processKey, 400, errorMessage.toString(), ONAPComponents.SO);
                 execution.setVariable("WorkflowException", exception);
                 execution.setVariable("WorkflowExceptionErrorMessage", errorMessage.toString());
                 logger.info("Outgoing WorkflowException is {}", exception);
@@ -303,7 +303,7 @@ public class ExceptionBuilder {
 
         } else {
             String errorMessage = "Unable to process audit results due to auditInventoryResult being null";
-            WorkflowException exception = new WorkflowException(processKey, 400, errorMessage, TargetEntity.SO);
+            WorkflowException exception = new WorkflowException(processKey, 400, errorMessage, ONAPComponents.SO);
             execution.setVariable("WorkflowException", exception);
             execution.setVariable("WorkflowExceptionErrorMessage", errorMessage);
             logger.info("Outgoing WorkflowException is {}", exception);

@@ -22,13 +22,13 @@ package org.onap.so.adapters.catalogdb.catalogrest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.onap.so.logger.MdcConstants.ENDTIME;
-import static org.onap.so.logger.MdcConstants.INVOCATION_ID;
-import static org.onap.so.logger.MdcConstants.PARTNERNAME;
-import static org.onap.so.logger.MdcConstants.RESPONSECODE;
-import static org.onap.so.logger.MdcConstants.RESPONSEDESC;
-import static org.onap.so.logger.MdcConstants.SERVICE_NAME;
-import static org.onap.so.logger.MdcConstants.STATUSCODE;
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.MDCs.INVOCATION_ID;
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.MDCs.LOG_TIMESTAMP;
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.MDCs.PARTNER_NAME;
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.MDCs.RESPONSE_CODE;
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.MDCs.RESPONSE_DESCRIPTION;
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE;
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.MDCs.SERVICE_NAME;
 import java.io.IOException;
 import java.util.Map;
 import javax.ws.rs.core.MediaType;
@@ -815,27 +815,27 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
 
 
         for (ILoggingEvent logEvent : TestAppender.events)
-            if (logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.jersey.JaxRsFilterLogging")
+            if (logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.SOAuditLogContainerFilter")
                     && logEvent.getMarker().getName().equals("ENTRY")) {
                 Map<String, String> mdc = logEvent.getMDCPropertyMap();
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP));
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
                 assertNotNull(mdc.get(INVOCATION_ID));
-                assertEquals("UNKNOWN", mdc.get(PARTNERNAME));
+                assertEquals("UNKNOWN", mdc.get(PARTNER_NAME));
                 assertEquals("v2/vfModules", mdc.get(SERVICE_NAME));
-                assertEquals("INPROGRESS", mdc.get(STATUSCODE));
-            } else if (logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.jersey.JaxRsFilterLogging")
+                assertEquals("INPROGRESS", mdc.get(RESPONSE_STATUS_CODE));
+            } else if (logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.SOAuditLogContainerFilter")
                     && logEvent.getMarker().getName().equals("EXIT")) {
                 Map<String, String> mdc = logEvent.getMDCPropertyMap();
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP));
-                assertNotNull(mdc.get(ENDTIME));
+                assertNotNull(mdc.get(LOG_TIMESTAMP));
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
                 assertNotNull(mdc.get(INVOCATION_ID));
-                assertEquals("500", mdc.get(RESPONSECODE));
-                assertEquals("UNKNOWN", mdc.get(PARTNERNAME));
+                assertEquals("500", mdc.get(RESPONSE_CODE));
+                assertEquals("UNKNOWN", mdc.get(PARTNER_NAME));
                 assertEquals("v2/vfModules", mdc.get(SERVICE_NAME));
-                assertEquals("ERROR", mdc.get(STATUSCODE));
-                assertNotNull(mdc.get(RESPONSEDESC));
+                assertEquals("ERROR", mdc.get(RESPONSE_STATUS_CODE));
+                assertNotNull(mdc.get(RESPONSE_DESCRIPTION));
             }
     }
 

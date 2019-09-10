@@ -38,11 +38,12 @@ import org.onap.so.adapters.nwrest.UpdateNetworkRequest;
 import org.onap.so.adapters.nwrest.UpdateNetworkResponse;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.NetworkAdapterResources;
-import org.onap.so.utils.TargetEntity;
+import org.onap.logging.filter.base.ONAPComponents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.onap.so.utils.Components;
 
 @Component
 public class NetworkAdapterRestV1 {
@@ -94,7 +95,7 @@ public class NetworkAdapterRestV1 {
                 throw new Exception("No Network Request was created. networkAdapterRequest was null.");
             }
         } catch (Exception ex) {
-            exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SO);
+            exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, ex, ONAPComponents.SO);
         }
     }
 
@@ -139,7 +140,7 @@ public class NetworkAdapterRestV1 {
             }
         } catch (Exception e) {
             logger.error("Error in Openstack Adapter callback", e);
-            exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, e.getMessage(), TargetEntity.OPENSTACK);
+            exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, e.getMessage(), Components.OPENSTACK);
         }
     }
 
@@ -152,7 +153,7 @@ public class NetworkAdapterRestV1 {
 
     public void handleTimeOutException(DelegateExecution execution) {
         exceptionBuilder.buildAndThrowWorkflowException(execution, 7000,
-                "Error timed out waiting on Openstack Async-Response", TargetEntity.SO);
+                "Error timed out waiting on Openstack Async-Response", ONAPComponents.SO);
     }
 
     public void handleSyncError(DelegateExecution execution) {
@@ -160,6 +161,6 @@ public class NetworkAdapterRestV1 {
         String responseString = (String) execution.getVariable(NETWORK_SYNC_RESPONSE);
         String errorMessage = "Error with Openstack Adapter Sync Request: StatusCode = " + statusCode + " Response = "
                 + responseString;
-        exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, errorMessage, TargetEntity.OPENSTACK);
+        exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, errorMessage, Components.OPENSTACK);
     }
 }

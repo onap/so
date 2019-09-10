@@ -32,7 +32,7 @@ import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
-import org.onap.so.utils.TargetEntity
+import org.onap.logging.filter.base.ONAPComponents;
 import org.skyscreamer.jsonassert.JSONAssert
 import org.skyscreamer.jsonassert.JSONCompareMode
 import org.springframework.core.env.Environment
@@ -127,7 +127,7 @@ class CatalogDbUtilsTest {
     private void mockGetResponseFromCatalogDb(String queryEndpoint) {
         Environment environmentMock = createEnvironmentMock()
         when(environmentMock.getProperty("mso.catalog.db.endpoint")).thenReturn("http://testUrl")
-        when(httpClientFactoryMock.newJsonClient(new URL(queryEndpoint), TargetEntity.CATALOG_DB)).thenReturn(httpClientMock)
+        when(httpClientFactoryMock.newJsonClient(new URL(queryEndpoint), ONAPComponents.CATALOG_DB)).thenReturn(httpClientMock)
 
         Response responseMock = mock(Response.class)
         when(httpClientMock.get()).thenReturn(responseMock)

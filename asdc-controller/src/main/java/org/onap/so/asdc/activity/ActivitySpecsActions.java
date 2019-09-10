@@ -29,7 +29,8 @@ import org.onap.so.asdc.activity.beans.ActivitySpec;
 import org.onap.so.asdc.activity.beans.ActivitySpecCreateResponse;
 import org.onap.so.client.HttpClient;
 import org.onap.so.client.HttpClientFactory;
-import org.onap.so.utils.TargetEntity;
+import org.onap.so.logger.LoggingAnchor;
+import org.onap.logging.filter.base.ONAPComponents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -62,7 +63,7 @@ public class ActivitySpecsActions {
             String urlString = UriBuilder.fromUri(hostname).path(ACTIVITY_SPEC_URI).build().toString();
             URL url = new URL(urlString);
 
-            HttpClient httpClient = httpClientFactory.newJsonClient(url, TargetEntity.SDC);
+            HttpClient httpClient = httpClientFactory.newJsonClient(url, ONAPComponents.SDC);
             httpClient.addAdditionalHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
 
             Response response = httpClient.post(payload);
@@ -104,7 +105,7 @@ public class ActivitySpecsActions {
             String urlString = UriBuilder.fromUri(hostname).path(path).build().toString();
             URL url = new URL(urlString);
 
-            HttpClient httpClient = httpClientFactory.newJsonClient(url, TargetEntity.SDC);
+            HttpClient httpClient = httpClientFactory.newJsonClient(url, ONAPComponents.SDC);
             httpClient.addAdditionalHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
 
             Response response = httpClient.put(CERTIFY_ACTIVITY_PAYLOAD);

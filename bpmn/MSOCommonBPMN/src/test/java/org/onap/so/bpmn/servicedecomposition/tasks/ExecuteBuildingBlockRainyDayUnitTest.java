@@ -33,10 +33,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.logging.filter.base.ONAPComponents;
 import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
-import org.onap.so.utils.TargetEntity;
+import org.onap.so.utils.Components;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExecuteBuildingBlockRainyDayUnitTest {
@@ -57,7 +58,7 @@ public class ExecuteBuildingBlockRainyDayUnitTest {
 
     @Before
     public void setup() {
-        exception = new WorkflowException("Test exception", 7000, "", "", TargetEntity.SDNC);
+        exception = new WorkflowException("Test exception", 7000, "", "", ONAPComponents.SDNC);
         noExtSystemErrorSourceException =
                 new WorkflowException("Test exception without extsystemErrorSource", 7000, "", "");
 
@@ -75,7 +76,7 @@ public class ExecuteBuildingBlockRainyDayUnitTest {
         execution.setVariable("isRollback", false);
         execution.setVariable("WorkflowException", exception);
         executeBuildingBlockRainyDay.updateExtSystemErrorSource(execution);
-        request.setExtSystemErrorSource(TargetEntity.SDNC.toString());
+        request.setExtSystemErrorSource(ONAPComponents.SDNC.toString());
 
         verify(requestsDbClient, Mockito.times(1)).updateInfraActiveRequests(request);
     }
@@ -87,42 +88,42 @@ public class ExecuteBuildingBlockRainyDayUnitTest {
         execution.setVariable("isRollback", true);
         execution.setVariable("WorkflowException", exception);
         executeBuildingBlockRainyDay.updateExtSystemErrorSource(execution);
-        request.setExtSystemErrorSource(TargetEntity.SDNC.toString());
+        request.setExtSystemErrorSource(ONAPComponents.SDNC.toString());
 
         verify(requestsDbClient, Mockito.times(1)).updateInfraActiveRequests(request);
     }
 
     @Test
-    public void updateExtSystemErrorSourceisRollbackTargetEntityNullTest() {
+    public void updateExtSystemErrorSourceisRollbackONAPComponentsNullTest() {
         doReturn(request).when(requestsDbClient).getInfraActiveRequestbyRequestId(msoRequestId);
         doNothing().when(requestsDbClient).updateInfraActiveRequests(request);
         execution.setVariable("isRollback", true);
         execution.setVariable("WorkflowException", noExtSystemErrorSourceException);
         executeBuildingBlockRainyDay.updateExtSystemErrorSource(execution);
-        request.setExtSystemErrorSource(TargetEntity.UNKNOWN.toString());
+        request.setExtSystemErrorSource(Components.UNKNOWN.toString());
 
         verify(requestsDbClient, Mockito.times(1)).updateInfraActiveRequests(request);
     }
 
     @Test
-    public void updateExtSystemErrorSourceTargetEntityNullTest() {
+    public void updateExtSystemErrorSourceONAPComponentsNullTest() {
         doReturn(request).when(requestsDbClient).getInfraActiveRequestbyRequestId(msoRequestId);
         doNothing().when(requestsDbClient).updateInfraActiveRequests(request);
         execution.setVariable("isRollback", false);
         execution.setVariable("WorkflowException", noExtSystemErrorSourceException);
         executeBuildingBlockRainyDay.updateExtSystemErrorSource(execution);
-        request.setExtSystemErrorSource(TargetEntity.UNKNOWN.toString());
+        request.setExtSystemErrorSource(Components.UNKNOWN.toString());
 
         verify(requestsDbClient, Mockito.times(1)).updateInfraActiveRequests(request);
     }
 
     @Test
-    public void updateExtSystemErrorSourceTargetEntityisRollbackNullTest() {
+    public void updateExtSystemErrorSourceONAPComponentsisRollbackNullTest() {
         doReturn(request).when(requestsDbClient).getInfraActiveRequestbyRequestId(msoRequestId);
         doNothing().when(requestsDbClient).updateInfraActiveRequests(request);
         executionNullisRollback.setVariable("WorkflowException", exception);
         executeBuildingBlockRainyDay.updateExtSystemErrorSource(executionNullisRollback);
-        request.setExtSystemErrorSource(TargetEntity.SDNC.toString());
+        request.setExtSystemErrorSource(ONAPComponents.SDNC.toString());
 
         verify(requestsDbClient, Mockito.times(1)).updateInfraActiveRequests(request);
     }

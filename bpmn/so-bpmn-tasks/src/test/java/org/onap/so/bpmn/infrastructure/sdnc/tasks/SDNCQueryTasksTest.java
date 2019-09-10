@@ -44,8 +44,8 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.client.exception.BadResponseException;
-import org.onap.so.utils.TargetEntities;
-import org.onap.so.utils.TargetEntity;
+import org.onap.logging.filter.base.ONAPComponentsList;
+import org.onap.logging.filter.base.ONAPComponents;
 
 public class SDNCQueryTasksTest extends BaseTaskTest {
     @InjectMocks
@@ -65,7 +65,7 @@ public class SDNCQueryTasksTest extends BaseTaskTest {
         vfModule = setVfModule();
 
         doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(
-                any(BuildingBlockExecution.class), eq(7000), any(Exception.class), any(TargetEntities.class));
+                any(BuildingBlockExecution.class), eq(7000), any(Exception.class), any(ONAPComponentsList.class));
         when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID)))
                 .thenReturn(serviceInstance);
 
@@ -98,7 +98,7 @@ public class SDNCQueryTasksTest extends BaseTaskTest {
         expectedException.expect(BpmnError.class);
         sdncQueryTasks.queryVfModule(execution);
 
-        verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(execution, 700, exception, TargetEntity.SDNC);
+        verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(execution, 700, exception, ONAPComponents.SDNC);
     }
 
     @Test
@@ -109,7 +109,7 @@ public class SDNCQueryTasksTest extends BaseTaskTest {
         expectedException.expect(BpmnError.class);
         sdncQueryTasks.queryVfModule(execution);
 
-        verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(execution, 700, exception, TargetEntity.SO);
+        verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(execution, 700, exception, ONAPComponents.SO);
     }
 
     @Test
@@ -133,7 +133,7 @@ public class SDNCQueryTasksTest extends BaseTaskTest {
         expectedException.expect(BpmnError.class);
         sdncQueryTasks.queryVnf(execution);
 
-        verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(execution, 700, exception, TargetEntity.SDNC);
+        verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(execution, 700, exception, ONAPComponents.SDNC);
     }
 
     @Test
@@ -144,7 +144,7 @@ public class SDNCQueryTasksTest extends BaseTaskTest {
         expectedException.expect(BpmnError.class);
         sdncQueryTasks.queryVnf(execution);
 
-        verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(execution, 700, exception, TargetEntity.SO);
+        verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(execution, 700, exception, ONAPComponents.SO);
     }
 
     @Test
@@ -169,7 +169,7 @@ public class SDNCQueryTasksTest extends BaseTaskTest {
         expectedException.expect(BpmnError.class);
         sdncQueryTasks.queryVfModuleForVolumeGroup(execution);
 
-        verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(execution, 700, exception, TargetEntity.SDNC);
+        verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(execution, 700, exception, ONAPComponents.SDNC);
     }
 
     @Test
@@ -180,7 +180,7 @@ public class SDNCQueryTasksTest extends BaseTaskTest {
         expectedException.expect(BpmnError.class);
         sdncQueryTasks.queryVfModuleForVolumeGroup(execution);
 
-        verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(execution, 700, exception, TargetEntity.SO);
+        verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(execution, 700, exception, ONAPComponents.SO);
     }
 
     @Test

@@ -34,7 +34,7 @@ import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.logger.MessageEnum
-import org.onap.so.utils.TargetEntities
+import org.onap.logging.filter.base.ONAPComponentsList
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -285,7 +285,7 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 		logger.debug("Outgoing WorkflowException is " + exception)
 	}
 	
-	public void buildWorkflowException(DelegateExecution execution, int errorCode, String errorMessage, TargetEntities extSystemErrorSource) {
+	public void buildWorkflowException(DelegateExecution execution, int errorCode, String errorMessage, ONAPComponentsList extSystemErrorSource) {
 		MsoUtils utils = new MsoUtils()
 		String processKey = getProcessKey(execution);
 		logger.debug("Building a WorkflowException for " + processKey)

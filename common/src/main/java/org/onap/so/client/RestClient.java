@@ -44,11 +44,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
+import org.onap.logging.filter.base.MDCSetup;
+import org.onap.logging.filter.base.ONAPComponentsList;
+import org.onap.logging.filter.base.PayloadLoggingClientFilter;
 import org.onap.so.client.policy.CommonObjectMapperProvider;
-import org.onap.so.logging.jaxrs.filter.JaxRsClientLogging;
-import org.onap.so.logging.jaxrs.filter.PayloadLoggingFilter;
+import org.onap.so.logging.jaxrs.filter.SOMetricLogClientFilter;
 import org.onap.so.utils.CryptoUtils;
-import org.onap.so.utils.TargetEntity;
+import org.onap.logging.filter.base.ONAPComponents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
@@ -71,7 +73,8 @@ public abstract class RestClient {
     protected String accept;
     protected String contentType;
     protected String requestId = "";
-    protected JaxRsClientLogging jaxRsClientLogging;
+    protected SOMetricLogClientFilter metricLogClientFilter;
+    protected MDCSetup mdcSetup = new MDCSetup();
     protected RestProperties props;
 
     protected RestClient(RestProperties props, Optional<URI> path) {
@@ -179,18 +182,18 @@ public abstract class RestClient {
         return ClientBuilder.newBuilder().build();
     }
 
-    protected abstract TargetEntity getTargetEntity();
+    protected abstract ONAPComponentsList getTargetEntity();
 
     protected void initializeClient(Client client) {
         if (this.enableLogging()) {
-            client.register(new PayloadLoggingFilter(this.getMaxPayloadSize()));
+            client.register(new PayloadLoggingClientFilter(this.getMaxPayloadSize()));
         }
         CommonObjectMapperProvider provider = this.getCommonObjectMapperProvider();
         client.register(new JacksonJsonProvider(provider.getMapper()));
 
-        jaxRsClientLogging = new JaxRsClientLogging();
-        jaxRsClientLogging.setTargetService(getTargetEntity());
-        client.register(jaxRsClientLogging);
+        metricLogClientFilter = new SOMetricLogClientFilter();
+        mdcSetup.setTargetEntity(getTargetEntity());
+        client.register(metricLogClientFilter);
 
         if (!path.isPresent()) {
             webTarget = client.target(host.toString());

@@ -28,7 +28,8 @@ import org.onap.so.client.ResponseExceptionMapper;
 import org.onap.so.client.RestClientSSL;
 import org.onap.so.client.RestProperties;
 import org.onap.so.client.policy.CommonObjectMapperProvider;
-import org.onap.so.utils.TargetEntity;
+import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.logging.filter.base.ONAPComponentsList;
 
 public abstract class GraphInventoryRestClient extends RestClientSSL {
 
@@ -42,7 +43,7 @@ public abstract class GraphInventoryRestClient extends RestClientSSL {
     }
 
     @Override
-    public abstract TargetEntity getTargetEntity();
+    public abstract ONAPComponentsList getTargetEntity();
 
     @Override
     protected abstract void initializeHeaderMap(Map<String, String> headerMap);

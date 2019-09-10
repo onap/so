@@ -22,7 +22,7 @@ package org.onap.so.client;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.onap.so.logging.jaxrs.filter.SpringClientFilter;
+import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -80,7 +80,7 @@ public class BaseClient<I, O> {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate
                 .setRequestFactory(new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory()));
-        restTemplate.getInterceptors().add(new SpringClientFilter());
+        restTemplate.getInterceptors().add(new SOSpringClientFilter());
         ResponseEntity<O> responseEntity =
                 restTemplate.exchange(getTargetUrl(), method, requestEntity, typeRef, uriVariables);
         return responseEntity.getBody();

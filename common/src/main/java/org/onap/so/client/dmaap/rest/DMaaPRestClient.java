@@ -22,11 +22,15 @@ package org.onap.so.client.dmaap.rest;
 
 import java.net.URL;
 import java.util.Map;
+import java.util.UUID;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.client.RestClient;
-import org.onap.so.utils.TargetEntity;
+import org.onap.logging.filter.base.ONAPComponents;
+import org.slf4j.MDC;
 
 public class DMaaPRestClient extends RestClient {
 
+    private static final String SO = "SO";
     private final String auth;
     private final String key;
 
@@ -37,8 +41,8 @@ public class DMaaPRestClient extends RestClient {
     }
 
     @Override
-    public TargetEntity getTargetEntity() {
-        return TargetEntity.DMAAP;
+    public ONAPComponents getTargetEntity() {
+        return ONAPComponents.DMAAP;
     }
 
     @Override
@@ -46,6 +50,8 @@ public class DMaaPRestClient extends RestClient {
         if (auth != null && !auth.isEmpty() && key != null && !key.isEmpty()) {
             addBasicAuthHeader(auth, key);
         }
+        String onapRequestId = UUID.randomUUID().toString();
+        headerMap.put(ONAPLogConstants.Headers.REQUEST_ID, onapRequestId);
+        headerMap.put(ONAPLogConstants.Headers.INVOCATION_ID, MDC.get(ONAPLogConstants.MDCs.REQUEST_ID));
     }
-
 }

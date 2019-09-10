@@ -75,7 +75,7 @@ public class SOAPLoggingInInterceptor extends AbstractSoapInterceptor {
 
     // CXF Appears to flatten headers to lower case
     private void setMDCPartnerName(Map<String, List<String>> headers) {
-        String partnerName = getValueOrDefault(headers, ONAPLogConstants.Headers.PARTNER_NAME.toLowerCase(), "");
+        String partnerName = getValueOrDefault(headers, ONAPLogConstants.Headers.PARTNER_NAME.toLowerCase(), "UNKNOWN");
         MDC.put(ONAPLogConstants.MDCs.PARTNER_NAME, partnerName);
     }
 

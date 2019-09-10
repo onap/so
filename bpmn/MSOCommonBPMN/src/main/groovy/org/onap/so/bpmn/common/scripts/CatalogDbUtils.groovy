@@ -37,7 +37,7 @@ import org.onap.so.logger.MessageEnum
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.onap.so.utils.TargetEntity
+import org.onap.logging.filter.base.ONAPComponents;
 import org.springframework.web.util.UriUtils
 
 import javax.ws.rs.core.MediaType
@@ -442,7 +442,7 @@ class CatalogDbUtils {
 			String catalogDbEndpoint = UrnPropertiesReader.getVariable("mso.catalog.db.endpoint",execution)
 			String queryEndpoint = catalogDbEndpoint + "/" + defaultDbAdapterVersion + endPoint
 			def responseData = ''
-			HttpClient client = httpClientFactory.newJsonClient(new URL(queryEndpoint), TargetEntity.CATALOG_DB)
+			HttpClient client = httpClientFactory.newJsonClient(new URL(queryEndpoint), ONAPComponents.CATALOG_DB)
 			client.addAdditionalHeader(ONAPLogConstants.Headers.REQUEST_ID, UUID.randomUUID().toString())
 			client.addAdditionalHeader('X-FromAppId', "BPMN")
 			client.addAdditionalHeader('Accept', MediaType.APPLICATION_JSON)

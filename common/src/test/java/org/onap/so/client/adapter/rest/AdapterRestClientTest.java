@@ -34,7 +34,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onap.so.client.policy.JettisonStyleMapperProvider;
 import org.onap.so.utils.CryptoUtils;
-import org.onap.so.utils.TargetEntity;
+import org.onap.logging.filter.base.ONAPComponents;
 
 public class AdapterRestClientTest {
 
@@ -88,9 +88,9 @@ public class AdapterRestClientTest {
     }
 
     @Test
-    public void getTargetEntity_success() throws URISyntaxException {
+    public void getONAPComponents_success() throws URISyntaxException {
         AdapterRestClient testedObject = new AdapterRestClient(adapterRestPropertiesMock, new URI(""));
-        assertThat(testedObject.getTargetEntity()).isEqualTo(TargetEntity.OPENSTACK_ADAPTER);
+        assertThat(testedObject.getTargetEntity()).isEqualTo(ONAPComponents.OPENSTACK_ADAPTER);
     }
 
     @Test

@@ -26,7 +26,7 @@ import org.junit.Test
 import org.onap.logging.ref.slf4j.ONAPLogConstants
 import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
-import org.onap.so.utils.TargetEntity
+import org.onap.logging.filter.base.ONAPComponents;
 import org.springframework.http.HttpStatus
 
 import javax.ws.rs.core.MediaType
@@ -53,7 +53,7 @@ class ExternalAPIUtilTest {
         HttpClient httpClient = mock(HttpClient.class)
         given(httpClient.get()).willReturn(expectedResponse)
         HttpClientFactory httpClientFactory = mock(HttpClientFactory.class)
-        given(httpClientFactory.newJsonClient(new URL(URL), TargetEntity.EXTERNAL)).willReturn(httpClient)
+        given(httpClientFactory.newJsonClient(new URL(URL), ONAPComponents.EXTERNAL)).willReturn(httpClient)
 
         // WHEN
         ExternalAPIUtil externalAPIUtil = new ExternalAPIUtil(httpClientFactory, new DummyMsoUtils(UUID_STR), new ExceptionUtil())
@@ -75,7 +75,7 @@ class ExternalAPIUtilTest {
         HttpClient httpClient = mock(HttpClient.class)
         willThrow(new RuntimeException("error occurred")).given(httpClient).get()
         HttpClientFactory httpClientFactory = mock(HttpClientFactory.class)
-        given(httpClientFactory.newJsonClient(new URL(URL), TargetEntity.EXTERNAL)).willReturn(httpClient)
+        given(httpClientFactory.newJsonClient(new URL(URL), ONAPComponents.EXTERNAL)).willReturn(httpClient)
         DelegateExecution delegateExecution = createDelegateExecution()
         DummyExceptionUtil exceptionUtil = new DummyExceptionUtil()
 
@@ -97,7 +97,7 @@ class ExternalAPIUtilTest {
         HttpClient httpClient = mock(HttpClient.class)
         willThrow(new RuntimeException("error occurred")).given(httpClient).post(BODY_PAYLOAD)
         HttpClientFactory httpClientFactory = mock(HttpClientFactory.class)
-        given(httpClientFactory.newJsonClient(new URL(URL), TargetEntity.AAI)).willReturn(httpClient)
+        given(httpClientFactory.newJsonClient(new URL(URL), ONAPComponents.AAI)).willReturn(httpClient)
         DelegateExecution delegateExecution = createDelegateExecution()
         DummyExceptionUtil exceptionUtil = new DummyExceptionUtil()
 
@@ -120,7 +120,7 @@ class ExternalAPIUtilTest {
         HttpClient httpClient = mock(HttpClient.class)
         given(httpClient.post(BODY_PAYLOAD)).willReturn(expectedResponse)
         HttpClientFactory httpClientFactory = mock(HttpClientFactory.class)
-        given(httpClientFactory.newJsonClient(new URL(URL), TargetEntity.AAI)).willReturn(httpClient)
+        given(httpClientFactory.newJsonClient(new URL(URL), ONAPComponents.AAI)).willReturn(httpClient)
 
         // WHEN
         ExternalAPIUtil externalAPIUtil = new ExternalAPIUtil(httpClientFactory, new DummyMsoUtils(UUID_STR), new ExceptionUtil())

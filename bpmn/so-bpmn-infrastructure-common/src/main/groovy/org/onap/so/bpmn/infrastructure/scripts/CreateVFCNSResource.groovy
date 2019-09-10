@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory
 import org.onap.so.bpmn.core.UrnPropertiesReader
 
 import javax.ws.rs.core.Response
-import org.onap.so.utils.TargetEntity
+import org.onap.logging.filter.base.ONAPComponents;
 
 /**
  * This groovy class supports the <class>DoCreateVFCNetworkServiceInstance.bpmn</class> process.
@@ -273,7 +273,7 @@ public class CreateVFCNSResource extends AbstractServiceTaskProcessor {
             // Get the Basic Auth credentials for the VFCAdapter, username is 'bpel', auth is '07a7159d3bf51a0e53be7a8f89699be7'
             // user 'bepl' authHeader is the same with mso.db.auth
             String basicAuthValuedb =  UrnPropertiesReader.getVariable("mso.db.auth", execution)
-            HttpClient httpClient = new HttpClientFactory().newJsonClient(url, TargetEntity.VNF_ADAPTER)
+            HttpClient httpClient = new HttpClientFactory().newJsonClient(url, ONAPComponents.VNF_ADAPTER)
             httpClient.addAdditionalHeader("Accept", "application/json")
             httpClient.addAdditionalHeader("Authorization", basicAuthValuedb)
 

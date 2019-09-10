@@ -47,7 +47,7 @@ import org.onap.so.client.HttpClient
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.onap.so.utils.TargetEntity
+import org.onap.logging.filter.base.ONAPComponents;
 
 
 
@@ -223,7 +223,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 
 			URL url = new URL(sdncAdapterUrl)
 
-			HttpClient httpClient = new HttpClientFactory().newJsonClient(url, TargetEntity.SDNC_ADAPTER)
+			HttpClient httpClient = new HttpClientFactory().newJsonClient(url, ONAPComponents.SDNC_ADAPTER)
 			httpClient.addAdditionalHeader("X-ONAP-RequestID", execution.getVariable("mso-request-id"))
 			httpClient.addAdditionalHeader("X-ONAP-InvocationID", UUID.randomUUID().toString())
 			httpClient.addAdditionalHeader("X-ONAP-PartnerName", "SO-SDNCAdapter")

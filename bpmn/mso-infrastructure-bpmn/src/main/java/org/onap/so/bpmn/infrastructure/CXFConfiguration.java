@@ -38,9 +38,7 @@ import org.onap.so.bpmn.common.workflow.service.WorkflowMessageResource;
 import org.onap.so.bpmn.common.workflow.service.WorkflowResource;
 import org.onap.so.logging.cxf.interceptor.SOAPLoggingInInterceptor;
 import org.onap.so.logging.cxf.interceptor.SOAPLoggingOutInterceptor;
-import org.onap.so.logging.jaxrs.filter.JaxRsFilterLogging;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.onap.so.logging.jaxrs.filter.SOAuditLogContainerFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -65,7 +63,7 @@ public class CXFConfiguration {
     private WorkflowAsyncResource workflowAsyncResource;
 
     @Autowired
-    private JaxRsFilterLogging jaxRsFilterLogging;
+    private SOAuditLogContainerFilter soAuditLogContainerFilter;
 
     @Autowired
     private ObjectMapper mapper;
@@ -108,7 +106,7 @@ public class CXFConfiguration {
         endpoint.setServiceBeans(Arrays.<Object>asList(wmr, workflowResource, workflowAsyncResource));
         endpoint.setAddress("/");
         endpoint.setFeatures(Arrays.asList(createSwaggerFeature(), new LoggingFeature()));
-        endpoint.setProviders(Arrays.asList(new JacksonJsonProvider(mapper), jaxRsFilterLogging));
+        endpoint.setProviders(Arrays.asList(new JacksonJsonProvider(mapper), soAuditLogContainerFilter));
 
         return endpoint.create();
     }

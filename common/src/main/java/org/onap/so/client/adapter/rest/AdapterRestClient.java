@@ -29,7 +29,7 @@ import org.onap.so.client.RestClient;
 import org.onap.so.client.policy.CommonObjectMapperProvider;
 import org.onap.so.client.policy.JettisonStyleMapperProvider;
 import org.onap.so.utils.CryptoUtils;
-import org.onap.so.utils.TargetEntity;
+import org.onap.logging.filter.base.ONAPComponents;
 
 public class AdapterRestClient extends RestClient {
 
@@ -46,8 +46,8 @@ public class AdapterRestClient extends RestClient {
     }
 
     @Override
-    public TargetEntity getTargetEntity() {
-        return TargetEntity.OPENSTACK_ADAPTER;
+    public ONAPComponents getTargetEntity() {
+        return ONAPComponents.OPENSTACK_ADAPTER;
     }
 
     @Override
