@@ -17,12 +17,23 @@ See the License for the specific language governing permissions and
 SPDX-License-Identifier: Apache-2.0
 ============LICENSE_END=========================================================
 
-@authors: ronan.kenny@ericsson.com, waqas.ikram@ericsson.com
+@authors: ronan.kenny@est.tech, waqas.ikram@est.tech
 -->
 
 <div class="completeForm">
   <div class="topCanvas">
-    <section class="canvas" id="canvas"></section>
+    <div class="navigation">
+      <button class="zoomButton" mat-icon-button title="zoom in" (click)="zoomIn()">
+        <mat-icon>zoom_in</mat-icon>
+      </button>
+      <button class="zoomButton" mat-icon-button title="zoom out" (click)="zoomOut()">
+        <mat-icon>zoom_out</mat-icon>
+      </button>
+      <button class="zoomButton" mat-icon-button title="reset zoom" (click)="resetZoom()">
+        <mat-icon>all_out</mat-icon>
+      </button>
+    </div>
+    <div #canvas class="canvas" id="canvas"></div>
     <mat-card class="besideCanvas" id="besideCanvas">
       <mat-card-title>Process Information</mat-card-title>
       <br />

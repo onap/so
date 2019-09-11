@@ -19,7 +19,7 @@ See the License for the specific language governing permissions and
 SPDX-License-Identifier: Apache-2.0
 ============LICENSE_END=========================================================
 
-@authors: ronan.kenny@ericsson.com, waqas.ikram@ericsson.com
+@authors: ronan.kenny@est.tech, waqas.ikram@est.tech
 */
 
 import { BrowserModule } from '@angular/platform-browser';
@@ -35,13 +35,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DetailsComponent } from './details/details.component';
 import { ToastrNotificationService } from './toastr-notification-service.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatFormFieldModule, MatInputModule, MatTableModule, MatTabsModule, MatSelectModule, MatNativeDateModule, MatDatepickerModule, MatCardModule, MatPaginatorModule, MatSortModule } from '@angular/material';
+import { MatFormFieldModule, MatInputModule, MatTableModule, MatTabsModule, MatSelectModule, MatNativeDateModule, MatDatepickerModule, MatCardModule, MatPaginatorModule, MatSortModule, MatIconModule } from '@angular/material';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { RouterModule, Routes } from '@angular/router';
 import { APP_BASE_HREF } from '@angular/common';
 import { LoginComponent } from './login/login.component';
-import {BasicAuthInterceptor} from "./basic-auth.interceptor";
-import {ErrorInterceptor} from "./error.interceptor";
+import { BasicAuthInterceptor } from "./basic-auth.interceptor";
+import { ErrorInterceptor } from "./error.interceptor";
 
 @NgModule({
   declarations: [
@@ -70,6 +70,7 @@ import {ErrorInterceptor} from "./error.interceptor";
     RouterModule,
     MatPaginatorModule,
     MatSortModule,
+    MatIconModule,
     RouterModule.forRoot([]),
     ReactiveFormsModule
   ],

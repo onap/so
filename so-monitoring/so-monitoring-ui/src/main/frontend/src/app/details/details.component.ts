@@ -17,7 +17,7 @@ See the License for the specific language governing permissions and
 SPDX-License-Identifier: Apache-2.0
 ============LICENSE_END=========================================================
 
-@authors: ronan.kenny@ericsson.com, waqas.ikram@ericsson.com
+@authors: ronan.kenny@est.tech, waqas.ikram@est.tech
 */
 
 import { Component, OnInit } from '@angular/core';
@@ -34,6 +34,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { VariableInstance } from '../model/variableInstance.model';
 import { ToastrNotificationService } from '../toastr-notification-service.service';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { ElementRef, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-details',
@@ -43,6 +44,9 @@ import { NgxSpinnerService } from 'ngx-spinner';
 })
 
 export class DetailsComponent implements OnInit {
+
+  @ViewChild("canvas") elementReference: ElementRef;
+
   bpmnViewer: any;
 
   processInstanceID: string;
@@ -82,7 +86,8 @@ export class DetailsComponent implements OnInit {
       async (data: ProcessDefinitionDetail) => {
         this.processDefinition = data;
         console.log(data);
-        await this.displayCamundaflow(this.processDefinition.processDefinitionXml, this.activityInstance, this.router);
+        await this.displayCamundaflow(this.processDefinition.processDefinitionXml, this.activityInstance,
+          this.router, this.spinner, this.popup);
       }, error => {
         console.log(error);
         this.popup.error("Unable to get process definition for id: " + procDefId + " Error code:" + error.status);
@@ -104,35 +109,78 @@ export class DetailsComponent implements OnInit {
       });
   }
 
-  displayCamundaflow(bpmnXml, activities: ActivityInstance[], r: Router) {
-    this.spinner.show();
+  displayCamundaflow(bpmnXml, activities: ActivityInstance[], router: Router,
+    spinner: NgxSpinnerService, popup: ToastrNotificationService) {
+    spinner.show();
 
     this.bpmnViewer.importXML(bpmnXml, (error) => {
       if (error) {
         console.error('Unable to load BPMN flow ', error);
-        this.popup.error('Unable to load BPMN flow ');
-        this.spinner.hide();
+        popup.error('Unable to load BPMN flow ');
+        spinner.hide();
       } else {
-        this.spinner.hide();
-        var canvas = this.bpmnViewer.get('canvas');
+        spinner.hide();
+        let canvas = this.bpmnViewer.get('canvas');
         var eventBus = this.bpmnViewer.get('eventBus');
-        eventBus.on('element.click', function(e) {
+        var elementRegistry = this.bpmnViewer.get('elementRegistry');
+        var overlays = this.bpmnViewer.get('overlays');
 
-          activities.forEach(a => {
-            if (a.activityId == e.element.id && a.calledProcessInstanceId !== null) {
-              console.log("will drill down to : " + a.calledProcessInstanceId);
-              r.navigate(['/details/' + a.calledProcessInstanceId]);
-              this.spinner.show();
-            }
-          });
+        activities.forEach(a => {
+          if (a.calledProcessInstanceId !== null) {
+            var element = elementRegistry.get(a.activityId);
+            let newNode = document.createElement('div');
+            newNode.className = 'highlight-overlay';
+            newNode.id = element.id;
+            newNode.style.width = element.width + "px";
+            newNode.style.height = element.height + "px";
+            newNode.style.cursor = "pointer";
+
+            overlays.add(a.activityId, {
+              position: {
+                top: -5,
+                left: -5
+              },
+              html: newNode
+            });
+
+            newNode.addEventListener('click', function(e) {
+              console.log("clicked on: " + e.srcElement.id)
+              activities.forEach(a => {
+                if (a.activityId == e.srcElement.id && a.calledProcessInstanceId !== null) {
+                  console.log("will drill down to : " + a.calledProcessInstanceId);
+                  router.navigate(['/details/' + a.calledProcessInstanceId]);
+                }
+              });
+            });
+          }
         });
         // zoom to fit full viewport
-        canvas.zoom('fit-viewport');
+        canvas.zoom('fit-viewport', 'auto');
         activities.forEach(a => {
           canvas.addMarker(a.activityId, 'highlight');
         });
       }
     });
+  }
+
+  zoomIn() {
+    this.bpmnViewer.get('zoomScroll').zoom(1, {
+      x: this.elementReference.nativeElement.offsetWidth / 2,
+      y: this.elementReference.nativeElement.offsetHeight / 2
+    });
+  }
+
+  zoomOut() {
+    this.bpmnViewer.get('zoomScroll').zoom(-1, {
+      x: this.elementReference.nativeElement.offsetWidth / 2,
+      y: this.elementReference.nativeElement.offsetHeight / 2
+    });
+  }
+  resetZoom() {
+    let canvas = this.bpmnViewer.get('canvas');
+    canvas.resized();
+    canvas.zoom('fit-viewport', 'auto');
+
   }
 
   getVarInst(procInstId: string) {
