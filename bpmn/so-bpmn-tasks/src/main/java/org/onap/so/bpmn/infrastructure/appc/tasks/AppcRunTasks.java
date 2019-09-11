@@ -61,6 +61,7 @@ public class AppcRunTasks {
     public static final String ROLLBACK_VNF_LOCK = "rollbackVnfLock";
     public static final String ROLLBACK_QUIESCE_TRAFFIC = "rollbackQuiesceTraffic";
     public static final String CONTROLLER_TYPE_DEFAULT = "APPC";
+    public static final String GENERIC_APPC_ERROR_CODE = "1002";
     @Autowired
     private ExceptionBuilder exceptionUtil;
     @Autowired
@@ -159,7 +160,7 @@ public class AppcRunTasks {
 
             HashMap<String, String> payloadInfo = buildPayloadInfo(vnfName, aicIdentity, vnfHostIpAddress, vmIdList,
                     vserverIdList, identityUrl, vfModuleId);
-            Optional<String> payload = null;
+            Optional<String> payload = Optional.empty();
             RequestParameters requestParameters = gBBInput.getRequestContext().getRequestParameters();
             if (requestParameters != null) {
                 String pay = requestParameters.getPayload();
@@ -175,7 +176,9 @@ public class AppcRunTasks {
             mapRollbackVariables(execution, action, appcCode);
         } catch (Exception e) {
             logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION.toString(),
-                    "Caught exception in runAppcCommand", "BPMN", ErrorCode.UnknownError.getValue(), "APPC Error", e);
+                    "Caught exception in runAppcCommand", "BPMN", ErrorCode.UnknownError.getValue(),
+                    "Error on request to APPC", e);
+            appcCode = GENERIC_APPC_ERROR_CODE;
             appcMessage = e.getMessage();
         }
 
