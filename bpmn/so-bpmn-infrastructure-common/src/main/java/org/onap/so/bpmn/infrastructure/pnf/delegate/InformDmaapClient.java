@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2019 Nokia.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,17 +21,13 @@
 
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
+import java.util.Map;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
-import org.camunda.bpm.engine.runtime.Execution;
-import org.onap.aai.domain.yang.v13.Metadatum;
 import org.onap.so.bpmn.common.recipe.ResourceInput;
 import org.onap.so.bpmn.common.resource.ResourceRequestBuilder;
-import org.onap.so.bpmn.core.json.JsonUtils;
 import org.onap.so.bpmn.infrastructure.pnf.dmaap.DmaapClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.HashMap;
@@ -39,7 +36,6 @@ import java.util.Optional;
 @Component
 public class InformDmaapClient implements JavaDelegate {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
     private DmaapClient dmaapClient;
 
     @Override
@@ -47,25 +43,31 @@ public class InformDmaapClient implements JavaDelegate {
         String pnfCorrelationId = (String) execution.getVariable(ExecutionVariableNames.PNF_CORRELATION_ID);
         RuntimeService runtimeService = execution.getProcessEngineServices().getRuntimeService();
         String processBusinessKey = execution.getProcessBusinessKey();
-        HashMap<String, String> updateInfo = createUpdateInfo(execution);
-        updateInfo.put("pnfCorrelationId", pnfCorrelationId);
-        dmaapClient
-                .registerForUpdate(pnfCorrelationId,
-                        () -> runtimeService.createMessageCorrelation("WorkflowMessage")
-                                .processInstanceBusinessKey(processBusinessKey).correlateWithResult(),
-                        Optional.of(updateInfo));
+        dmaapClient.registerForUpdate(pnfCorrelationId,
+                () -> runtimeService.createMessageCorrelation("WorkflowMessage")
+                        .processInstanceBusinessKey(processBusinessKey).correlateWithResult(),
+                createUpdateInfoMap(execution));
     }
 
-    private HashMap<String, String> createUpdateInfo(DelegateExecution execution) {
-        HashMap<String, String> map = new HashMap();
+    private Map<String, String> createUpdateInfoMap(DelegateExecution execution) {
+        Map<String, String> updateInfoMap = new HashMap();
+        updateInfoMap.put("pnfCorrelationId",
+                (String) execution.getVariable(ExecutionVariableNames.PNF_CORRELATION_ID));
+        getResourceInput(execution).ifPresent(resourceInput -> {
+            updateInfoMap.put("globalSubscriberID", resourceInput.getGlobalSubscriberId());
+            updateInfoMap.put("serviceType", resourceInput.getServiceType());
+            updateInfoMap.put("serviceInstanceId", resourceInput.getServiceInstanceId());
+        });
+        return updateInfoMap;
+    }
 
-        ResourceInput resourceInputObj = ResourceRequestBuilder
-
-                .getJsonObject((String) execution.getVariable("resourceInput"), ResourceInput.class);
-        map.put("globalSubscriberID", resourceInputObj.getGlobalSubscriberId());
-        map.put("serviceType", resourceInputObj.getServiceType());
-        map.put("serviceInstanceId", resourceInputObj.getServiceInstanceId());
-        return map;
+    private Optional<ResourceInput> getResourceInput(DelegateExecution execution) {
+        ResourceInput resourceInput = null;
+        if (execution.getVariable("resourceInput") != null) {
+            resourceInput = ResourceRequestBuilder.getJsonObject((String) execution.getVariable("resourceInput"),
+                    ResourceInput.class);
+        }
+        return Optional.ofNullable(resourceInput);
     }
 
     @Autowired
