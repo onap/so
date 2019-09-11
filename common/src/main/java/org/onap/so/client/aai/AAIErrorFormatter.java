@@ -50,6 +50,8 @@ public class AAIErrorFormatter {
     }
 
     protected String format(String s, List<String> variables) {
-        return String.format(s.replaceAll("%(\\d+)", "%$1\\$s"), variables.toArray());
+        s = s.replaceAll("%(\\d(?!\\d))", "%$1\\$s");
+        s = s.replaceAll("%(\\d{2})", "%%$1");
+        return String.format(s, variables.toArray());
     }
 }

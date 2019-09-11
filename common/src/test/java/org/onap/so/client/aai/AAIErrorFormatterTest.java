@@ -79,6 +79,22 @@ public class AAIErrorFormatterTest {
     }
 
     @Test
+    public void errorMessageOnPercentEncodedTest() {
+        ServiceException svcException = new ServiceException();
+        svcException.setText("test my%20Test %1 message - %2");
+        svcException.setVariables(Arrays.asList("error", "service exception %1 test"));
+
+        RequestError requestError = new RequestError();
+        requestError.setServiceException(svcException);
+
+        doReturn(requestError).when(errorObj).getRequestError();
+
+        AAIErrorFormatter formatter = new AAIErrorFormatter(errorObj);
+        String result = formatter.getMessage();
+        assertEquals("equal", "test my%20Test error message - service exception error test", result);
+    }
+
+    @Test
     public void testGetMessageNoParsable() {
         errorObj.setRequestError(null);
         AAIErrorFormatter formatter = new AAIErrorFormatter(errorObj);
