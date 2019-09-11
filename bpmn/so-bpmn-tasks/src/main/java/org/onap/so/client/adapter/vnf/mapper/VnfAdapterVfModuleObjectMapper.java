@@ -33,7 +33,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import javax.annotation.PostConstruct;
 import org.apache.commons.lang3.StringUtils;
@@ -76,10 +75,10 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
+import org.onap.so.client.adapter.vnf.mapper.exceptions.MissingValueTagException;
 import org.onap.so.entity.MsoRequest;
 import org.onap.so.jsonpath.JsonPathUtil;
 import org.onap.so.openstack.utils.MsoMulticloudUtils;
-import org.onap.so.client.adapter.vnf.mapper.exceptions.MissingValueTagException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -481,7 +480,7 @@ public class VnfAdapterVfModuleObjectMapper {
                     }
                 }
                 sbInterfaceRoutePrefixes.append("]");
-                if (interfaceRoutePrefixesList.size() > 0) {
+                if (!interfaceRoutePrefixesList.isEmpty()) {
                     paramsMap.put(key + UNDERSCORE + networkKey + "_route_prefixes",
                             sbInterfaceRoutePrefixes.toString());
                 }
@@ -508,7 +507,7 @@ public class VnfAdapterVfModuleObjectMapper {
                             sriovFilterBuf.append(heatVlanFilterValue);
                         }
                     }
-                    if (heatVlanFiltersList.size() > 0) {
+                    if (!heatVlanFiltersList.isEmpty()) {
                         paramsMap.put(networkKey + "_ATT_VF_VLAN_FILTER", sriovFilterBuf.toString());
                     }
                 }
@@ -540,7 +539,7 @@ public class VnfAdapterVfModuleObjectMapper {
                                 String ipVersion = ipAddress.getIpVersion();
                                 for (int b = 0; b < ipsList.size(); b++) {
                                     String ipAddressValue = ipsList.get(b);
-                                    if (ipVersion.equals("ipv4")) {
+                                    if ("ipv4".equals(ipVersion)) {
                                         if (b != ipsList.size() - 1) {
                                             sbIpv4Ips.append(ipAddressValue + ",");
                                         } else {
@@ -548,7 +547,7 @@ public class VnfAdapterVfModuleObjectMapper {
                                         }
                                         paramsMap.put(key + UNDERSCORE + networkKey + IP + UNDERSCORE + b,
                                                 ipAddressValue);
-                                    } else if (ipVersion.equals("ipv6")) {
+                                    } else if ("ipv6".equals(ipVersion)) {
                                         if (b != ipsList.size() - 1) {
                                             sbIpv6Ips.append(ipAddressValue + ",");
                                         } else {
@@ -897,6 +896,7 @@ public class VnfAdapterVfModuleObjectMapper {
         try {
             json = mapper.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
+            logger.error("JsonProcessingException in convertToString", e);
             json = "{}";
         }
 

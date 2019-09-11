@@ -23,10 +23,10 @@ package org.onap.so.client.adapter.vnf.mapper;
 import java.io.Serializable;
 
 public class AttributeNameValue implements Serializable {
-    private final static long serialVersionUID = -5215028275587848311L;
+    private static final long serialVersionUID = -5215028275587848311L;
 
     private String attributeName;
-    private Object attributeValue;
+    private transient Object attributeValue;
 
     public AttributeNameValue(String attributeName, Object attributeValue) {
         this.attributeName = attributeName;
@@ -51,7 +51,7 @@ public class AttributeNameValue implements Serializable {
 
     @Override
     public String toString() {
-        return new StringBuilder().append("{\"attribute_name\": \"").append(attributeName.toString())
+        return new StringBuilder().append("{\"attribute_name\": \"").append(attributeName)
                 .append("\", \"attribute_value\": \"").append(attributeValue.toString()).append("\"}").toString();
     }
 }
