@@ -104,7 +104,7 @@ public class ExecuteBuildingBlockRainyDay {
                     }
                 } catch (Exception ex) {
                     // keep default serviceType value
-                    logger.error("Exception in serviceType retrivel", ex);
+                    logger.error("Exception in serviceType retrieval", ex);
                 }
                 String vnfType = ASTERISK;
                 try {
@@ -116,22 +116,26 @@ public class ExecuteBuildingBlockRainyDay {
                     }
                 } catch (Exception ex) {
                     // keep default vnfType value
-                    logger.error("Exception in vnfType retrivel", ex);
+                    logger.error("Exception in vnfType retrieval", ex);
                 }
 
                 String errorCode = ASTERISK;
                 try {
-                    errorCode = "" + workflowException.getErrorCode();
+                    if (workflowException != null) {
+                        errorCode = "" + workflowException.getErrorCode();
+                    } else {
+                        logger.debug("WorkflowException is null, unable to get error code");
+                    }
                 } catch (Exception ex) {
                     // keep default errorCode value
-                    logger.error("Exception in errorCode retrivel", ex);
+                    logger.error("Exception in errorCode retrieval", ex);
                 }
 
                 try {
                     errorCode = "" + (String) execution.getVariable("WorkflowExceptionCode");
                 } catch (Exception ex) {
                     // keep default errorCode value
-                    logger.error("Exception in errorCode retrivel", ex);
+                    logger.error("Exception in errorCode retrieval", ex);
                 }
 
                 String workStep = ASTERISK;
@@ -139,7 +143,7 @@ public class ExecuteBuildingBlockRainyDay {
                     workStep = workflowException.getWorkStep();
                 } catch (Exception ex) {
                     // keep default workStep value
-                    logger.error("Exception in workStep retrivel", ex);
+                    logger.error("Exception in workStep retrieval", ex);
                 }
 
                 String errorMessage = ASTERISK;
@@ -147,7 +151,7 @@ public class ExecuteBuildingBlockRainyDay {
                     errorMessage = workflowException.getErrorMessage();
                 } catch (Exception ex) {
                     // keep default workStep value
-                    logger.error("Exception in errorMessage retrivel", ex);
+                    logger.error("Exception in errorMessage retrieval", ex);
                 }
 
                 String serviceRole = ASTERISK;
