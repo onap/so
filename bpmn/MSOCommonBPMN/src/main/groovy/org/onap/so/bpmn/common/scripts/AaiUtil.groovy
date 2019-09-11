@@ -44,7 +44,7 @@ import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.onap.so.openpojo.rules.HasToStringRule
-import org.onap.so.utils.TargetEntity
+import org.onap.logging.filter.base.ONAPComponents;
 
 @Deprecated
 class AaiUtil {
@@ -96,7 +96,7 @@ class AaiUtil {
 		String regionId = ""
 		try{
 			URL Url = new URL(url)
-			HttpClient client = new HttpClientFactory().newXmlClient(Url, TargetEntity.AAI)
+			HttpClient client = new HttpClientFactory().newXmlClient(Url, ONAPComponents.AAI)
 			client.addBasicAuthHeader(UrnPropertiesReader.getVariable("aai.auth", execution), UrnPropertiesReader.getVariable("mso.msoKey", execution))
 			client.addAdditionalHeader("X-FromAppId", "MSO")
 			client.addAdditionalHeader("X-TransactionId", utils.getRequestID())

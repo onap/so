@@ -21,7 +21,7 @@
 package org.onap.so.bpmn.core;
 
 import java.io.Serializable;
-import org.onap.so.utils.TargetEntities;
+import org.onap.logging.filter.base.ONAPComponentsList;
 
 /**
  * An object that represents a workflow exception.
@@ -33,7 +33,7 @@ public class WorkflowException implements Serializable {
     private final int errorCode;
     private final String errorMessage;
     private final String workStep;
-    private TargetEntities extSystemErrorSource;
+    private ONAPComponentsList extSystemErrorSource;
 
     /**
      * Constructor
@@ -50,7 +50,7 @@ public class WorkflowException implements Serializable {
     }
 
     public WorkflowException(String processKey, int errorCode, String errorMessage,
-            TargetEntities extSystemErrorSource) {
+            ONAPComponentsList extSystemErrorSource) {
         this.processKey = processKey;
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
@@ -66,7 +66,7 @@ public class WorkflowException implements Serializable {
     }
 
     public WorkflowException(String processKey, int errorCode, String errorMessage, String workStep,
-            TargetEntities extSystemErrorSource) {
+            ONAPComponentsList extSystemErrorSource) {
         this.processKey = processKey;
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
@@ -102,7 +102,7 @@ public class WorkflowException implements Serializable {
         return workStep;
     }
 
-    public TargetEntities getExtSystemErrorSource() {
+    public ONAPComponentsList getExtSystemErrorSource() {
         return extSystemErrorSource;
     }
 

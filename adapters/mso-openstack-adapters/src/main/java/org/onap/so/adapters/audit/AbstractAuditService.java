@@ -25,6 +25,7 @@ import java.util.Optional;
 import org.onap.so.objects.audit.AAIObjectAudit;
 import org.onap.so.objects.audit.AAIObjectAuditList;
 import org.onap.so.utils.ExternalTaskUtils;
+import org.onap.logging.filter.base.ONAPComponents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,5 +80,4 @@ public abstract class AbstractAuditService extends ExternalTaskUtils {
             return false;
         }
     }
-
 }

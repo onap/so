@@ -38,7 +38,7 @@ import org.onap.so.client.HttpClientFactory;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.utils.CryptoUtils;
-import org.onap.so.utils.TargetEntity;
+import org.onap.logging.filter.base.ONAPComponents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -105,7 +105,7 @@ public class SDCClientHelper {
 
             URL url = new URL(urlString);
 
-            HttpClient httpClient = httpClientFactory.newJsonClient(url, TargetEntity.SDC);
+            HttpClient httpClient = httpClientFactory.newJsonClient(url, ONAPComponents.SDC);
             httpClient.addBasicAuthHeader(sdcClientAuth, msoKey);
             httpClient.addAdditionalHeader("X-ECOMP-InstanceID", sdcActivateInstanceId);
             httpClient.addAdditionalHeader("X-ECOMP-RequestID", UUID.randomUUID().toString());

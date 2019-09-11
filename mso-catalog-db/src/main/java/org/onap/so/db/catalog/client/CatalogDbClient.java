@@ -30,6 +30,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.http.HttpStatus;
+import org.onap.logging.filter.base.Constants;
 import org.onap.so.db.catalog.beans.BuildingBlockDetail;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.CloudifyManager;
@@ -64,7 +65,7 @@ import org.onap.so.db.catalog.beans.macro.NorthBoundRequest;
 import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
 import org.onap.so.db.catalog.beans.macro.RainyDayHandlerStatus;
 import org.onap.so.logger.LogConstants;
-import org.onap.so.logging.jaxrs.filter.SpringClientFilter;
+import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -366,12 +367,12 @@ public class CatalogDbClient {
 
         ClientFactory clientFactory =
                 Configuration.builder().setClientHttpRequestFactory(factory).setRestTemplateConfigurer(restTemplate -> {
-                    restTemplate.getInterceptors().add((new SpringClientFilter()));
+                    restTemplate.getInterceptors().add((new SOSpringClientFilter()));
 
                     restTemplate.getInterceptors().add((request, body, execution) -> {
 
                         request.getHeaders().add(HttpHeaders.AUTHORIZATION, msoAdaptersAuth);
-                        request.getHeaders().add(LogConstants.TARGET_ENTITY_HEADER, TARGET_ENTITY);
+                        request.getHeaders().add(Constants.HttpHeaders.TARGET_ENTITY_HEADER, TARGET_ENTITY);
                         return execution.execute(request, body);
                     });
                 }).build().buildClientFactory();
@@ -415,12 +416,12 @@ public class CatalogDbClient {
 
         ClientFactory clientFactory = Configuration.builder().setBaseUri(baseUri).setClientHttpRequestFactory(factory)
                 .setRestTemplateConfigurer(restTemplate -> {
-                    restTemplate.getInterceptors().add((new SpringClientFilter()));
+                    restTemplate.getInterceptors().add((new SOSpringClientFilter()));
 
                     restTemplate.getInterceptors().add((request, body, execution) -> {
 
                         request.getHeaders().add(HttpHeaders.AUTHORIZATION, auth);
-                        request.getHeaders().add(LogConstants.TARGET_ENTITY_HEADER, TARGET_ENTITY);
+                        request.getHeaders().add(Constants.HttpHeaders.TARGET_ENTITY_HEADER, TARGET_ENTITY);
                         return execution.execute(request, body);
                     });
                 }).build().buildClientFactory();
@@ -1007,7 +1008,7 @@ public class CatalogDbClient {
         headers.set(HttpHeaders.AUTHORIZATION, msoAdaptersAuth);
         headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
         headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
-        headers.set(LogConstants.TARGET_ENTITY_HEADER, TARGET_ENTITY);
+        headers.set(Constants.HttpHeaders.TARGET_ENTITY_HEADER, TARGET_ENTITY);
         return headers;
     }
 

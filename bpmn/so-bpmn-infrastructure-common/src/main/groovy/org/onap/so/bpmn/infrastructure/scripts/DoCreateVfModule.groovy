@@ -67,7 +67,7 @@ import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import org.onap.so.utils.TargetEntity
+import org.onap.logging.filter.base.ONAPComponents;
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.NamedNodeMap
@@ -698,7 +698,7 @@ public class DoCreateVfModule extends VfModuleBase {
 			String endPoint = aaiUriUtil.createAaiUri(uri)
 
 			try {
-				HttpClient client = httpClientFactory.newXmlClient(new URL(endPoint), TargetEntity.AAI)
+				HttpClient client = httpClientFactory.newXmlClient(new URL(endPoint), ONAPComponents.AAI)
 				client.addAdditionalHeader('X-TransactionId', UUID.randomUUID().toString())
 				client.addAdditionalHeader('X-FromAppId', 'MSO')
 				client.addAdditionalHeader('Content-Type', MediaType.APPLICATION_XML)
@@ -781,7 +781,7 @@ public class DoCreateVfModule extends VfModuleBase {
 			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VF_MODULE, vnfId).queryParam("vf-module-name",vfModuleName)
 			String endPoint = aaiUriUtil.createAaiUri(uri)
 
-			HttpClient client = httpClientFactory.newXmlClient(new URL(endPoint), TargetEntity.AAI)
+			HttpClient client = httpClientFactory.newXmlClient(new URL(endPoint), ONAPComponents.AAI)
 			client.addAdditionalHeader('X-TransactionId', UUID.randomUUID().toString())
 			client.addAdditionalHeader('X-FromAppId', 'MSO')
 			client.addAdditionalHeader('Content-Type', MediaType.APPLICATION_XML)

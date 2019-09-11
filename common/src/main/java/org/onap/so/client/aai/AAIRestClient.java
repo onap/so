@@ -26,7 +26,7 @@ import java.util.Optional;
 import org.onap.so.client.ResponseExceptionMapper;
 import org.onap.so.client.graphinventory.GraphInventoryPatchConverter;
 import org.onap.so.client.graphinventory.GraphInventoryRestClient;
-import org.onap.so.utils.TargetEntity;
+import org.onap.logging.filter.base.ONAPComponents;
 
 public class AAIRestClient extends GraphInventoryRestClient {
 
@@ -38,8 +38,8 @@ public class AAIRestClient extends GraphInventoryRestClient {
     }
 
     @Override
-    public TargetEntity getTargetEntity() {
-        return TargetEntity.AAI;
+    public ONAPComponents getTargetEntity() {
+        return ONAPComponents.AAI;
     }
 
     @Override

@@ -449,7 +449,7 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.INSTANCE_UUID));
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.INVOCATION_ID));
-                assertEquals("", mdc.get(ONAPLogConstants.MDCs.PARTNER_NAME));
+                assertEquals("UNKNOWN", mdc.get(ONAPLogConstants.MDCs.PARTNER_NAME));
                 assertEquals("/services/RequestsDbAdapter", mdc.get(ONAPLogConstants.MDCs.SERVICE_NAME));
                 assertEquals("INPROGRESS", mdc.get(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE));
             } else if (logEvent.getLoggerName().equals("org.onap.so.logging.cxf.interceptor.SOAPLoggingOutInterceptor")
@@ -458,9 +458,9 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.INVOCATION_ID));
                 assertEquals(null, mdc.get(ONAPLogConstants.MDCs.RESPONSE_CODE));
-                assertEquals("", mdc.get(ONAPLogConstants.MDCs.PARTNER_NAME));
+                assertEquals("UNKNOWN", mdc.get(ONAPLogConstants.MDCs.PARTNER_NAME));
                 assertEquals("/services/RequestsDbAdapter", mdc.get(ONAPLogConstants.MDCs.SERVICE_NAME));
-                assertEquals("COMPLETED", mdc.get(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE));
+                assertEquals("COMPLETE", mdc.get(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE));
             }
     }
 

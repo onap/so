@@ -26,7 +26,7 @@ import java.util.Optional;
 import javax.ws.rs.core.UriBuilder;
 import org.onap.so.client.RestClient;
 import org.onap.so.client.policy.entities.PolicyServiceType;
-import org.onap.so.utils.TargetEntity;
+import org.onap.logging.filter.base.ONAPComponents;
 
 public class PolicyRestClient extends RestClient {
 
@@ -38,8 +38,8 @@ public class PolicyRestClient extends RestClient {
     }
 
     @Override
-    public TargetEntity getTargetEntity() {
-        return TargetEntity.POLICY;
+    public ONAPComponents getTargetEntity() {
+        return ONAPComponents.POLICY;
     }
 
     @Override

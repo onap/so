@@ -28,6 +28,7 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Context;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletProperties;
+import org.onap.logging.filter.base.Constants;
 import org.onap.so.apihandler.filters.RequestIdFilter;
 import org.onap.so.apihandlerinfra.exceptions.ApiExceptionMapper;
 import org.onap.so.apihandlerinfra.infra.rest.Network;
@@ -43,7 +44,7 @@ import org.onap.so.apihandlerinfra.infra.rest.exception.mapper.WorkflowEngineCon
 import org.onap.so.apihandlerinfra.tenantisolation.CloudOrchestration;
 import org.onap.so.apihandlerinfra.tenantisolation.CloudResourcesOrchestration;
 import org.onap.so.apihandlerinfra.tenantisolation.ModelDistributionRequest;
-import org.onap.so.logging.jaxrs.filter.JaxRsFilterLogging;
+import org.onap.so.logging.jaxrs.filter.SOAuditLogContainerFilter;
 import org.onap.so.web.exceptions.RuntimeExceptionMapper;
 import org.springframework.context.annotation.Configuration;
 import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
@@ -60,6 +61,7 @@ public class JerseyConfiguration extends ResourceConfig {
 
     @PostConstruct
     public void setUp() {
+        System.setProperty(Constants.Property.PARTNER_NAME, "SO.APIH");
         register(GlobalHealthcheckHandler.class);
         register(NodeHealthcheckHandler.class);
         register(ServiceInstances.class);
@@ -72,7 +74,7 @@ public class JerseyConfiguration extends ResourceConfig {
         register(Network.class);
         register(Volumes.class);
         register(ServiceInstance.class);
-        register(JaxRsFilterLogging.class);
+        register(SOAuditLogContainerFilter.class);
         register(ManualTasks.class);
         register(TasksHandler.class);
         register(OpenApiResource.class);

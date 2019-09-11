@@ -30,6 +30,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -43,6 +44,7 @@ import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.aai.domain.yang.EsrVnfm;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.JSON;
 import org.onap.so.configuration.rest.BasicHttpHeadersProvider;
+import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
 import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.onap.so.rest.service.HttpRestServiceProviderImpl;
 import org.slf4j.Logger;
@@ -53,6 +55,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
@@ -164,6 +167,15 @@ public class VnfmServiceProviderConfiguration {
         } catch (KeyManagementException | NoSuchAlgorithmException | KeyStoreException | CertificateException
                 | IOException | UnrecoverableKeyException exception) {
             logger.error("Error reading truststore, TLS connection to VNFM will fail.", exception);
+        }
+    }
+
+    private void removeSpringClientFilter(final RestTemplate restTemplate) {
+        ListIterator<ClientHttpRequestInterceptor> interceptorIterator = restTemplate.getInterceptors().listIterator();
+        while (interceptorIterator.hasNext()) {
+            if (interceptorIterator.next() instanceof SOSpringClientFilter) {
+                interceptorIterator.remove();
+            }
         }
     }
 

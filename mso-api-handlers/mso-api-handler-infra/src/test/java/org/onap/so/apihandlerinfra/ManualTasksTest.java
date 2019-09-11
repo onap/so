@@ -28,15 +28,15 @@ import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static org.onap.so.logger.MdcConstants.ECOMP_REQUEST_ID;
-import static org.onap.so.logger.MdcConstants.ENDTIME;
-import static org.onap.so.logger.MdcConstants.INVOCATION_ID;
-import static org.onap.so.logger.MdcConstants.PARTNERNAME;
-import static org.onap.so.logger.MdcConstants.RESPONSECODE;
-import static org.onap.so.logger.MdcConstants.RESPONSEDESC;
-import static org.onap.so.logger.MdcConstants.SERVICE_NAME;
-import static org.onap.so.logger.MdcConstants.STATUSCODE;
-import static org.onap.so.logger.MdcConstants.CLIENT_ID;
+import static org.onap.logging.filter.base.Constants.HttpHeaders.ECOMP_REQUEST_ID;
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.MDCs.INVOCATION_ID;
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.MDCs.PARTNER_NAME;
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.MDCs.RESPONSE_CODE;
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.MDCs.RESPONSE_DESCRIPTION;
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.MDCs.LOG_TIMESTAMP;
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.MDCs.SERVICE_NAME;
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE;
+import static org.onap.logging.filter.base.Constants.HttpHeaders.CLIENT_ID;
 import java.io.IOException;
 import java.util.Map;
 import javax.ws.rs.core.MediaType;
@@ -110,27 +110,27 @@ public class ManualTasksTest extends BaseTest {
         assertThat(realResponse, sameBeanAs(expectedResponse));
 
         for (ILoggingEvent logEvent : TestAppender.events)
-            if (logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.jersey.JaxRsFilterLogging")
+            if (logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.SOAuditLogContainerFilter")
                     && logEvent.getMarker() != null && logEvent.getMarker().getName().equals("ENTRY")) {
                 Map<String, String> mdc = logEvent.getMDCPropertyMap();
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP));
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
                 assertNotNull(mdc.get(INVOCATION_ID));
-                assertEquals("UNKNOWN", mdc.get(PARTNERNAME));
+                assertEquals("UNKNOWN", mdc.get(PARTNER_NAME));
                 assertEquals("tasks/v1/55/complete", mdc.get(SERVICE_NAME));
-                assertEquals("INPROGRESS", mdc.get(STATUSCODE));
-            } else if (logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.jersey.JaxRsFilterLogging")
+                assertEquals("INPROGRESS", mdc.get(RESPONSE_STATUS_CODE));
+            } else if (logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.SOAuditLogContainerFilter")
                     && logEvent.getMarker() != null && logEvent.getMarker().getName().equals("EXIT")) {
                 Map<String, String> mdc = logEvent.getMDCPropertyMap();
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP));
-                assertNotNull(mdc.get(ENDTIME));
+                assertNotNull(mdc.get(LOG_TIMESTAMP));
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
                 assertNotNull(mdc.get(INVOCATION_ID));
-                assertEquals("202", mdc.get(RESPONSECODE));
-                assertEquals("UNKNOWN", mdc.get(PARTNERNAME));
+                assertEquals("202", mdc.get(RESPONSE_CODE));
+                assertEquals("UNKNOWN", mdc.get(PARTNER_NAME));
                 assertEquals("tasks/v1/55/complete", mdc.get(SERVICE_NAME));
-                assertEquals("COMPLETE", mdc.get(STATUSCODE));
-                assertNotNull(mdc.get(RESPONSEDESC));
+                assertEquals("COMPLETE", mdc.get(RESPONSE_STATUS_CODE));
+                assertNotNull(mdc.get(RESPONSE_DESCRIPTION));
                 assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
                 assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
                 assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));

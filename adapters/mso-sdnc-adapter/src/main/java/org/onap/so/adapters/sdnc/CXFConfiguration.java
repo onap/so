@@ -32,7 +32,7 @@ import org.apache.cxf.transport.servlet.CXFServlet;
 import org.onap.so.adapters.sdnc.sdncrest.SNIROResponse;
 import org.onap.so.logging.cxf.interceptor.SOAPLoggingInInterceptor;
 import org.onap.so.logging.cxf.interceptor.SOAPLoggingOutInterceptor;
-import org.onap.so.logging.jaxrs.filter.JaxRsFilterLogging;
+import org.onap.so.logging.jaxrs.filter.SOAuditLogContainerFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -51,7 +51,7 @@ public class CXFConfiguration {
     private Bus bus;
 
     @Autowired
-    private JaxRsFilterLogging jaxRsFilterLogging;
+    private SOAuditLogContainerFilter soAuditLogContainerFilter;
 
     @Autowired
     private SDNCAdapterPortType sdncAdapterPortImpl;
@@ -70,7 +70,7 @@ public class CXFConfiguration {
         endpoint.setServiceBeans(Arrays.<Object>asList(sniroResponse));
         endpoint.setAddress("/rest");
         endpoint.setFeatures(Arrays.asList(createSwaggerFeature(), new LoggingFeature()));
-        endpoint.setProviders(Arrays.asList(new JacksonJsonProvider(mapper), jaxRsFilterLogging));
+        endpoint.setProviders(Arrays.asList(new JacksonJsonProvider(mapper), soAuditLogContainerFilter));
         return endpoint.create();
     }
 

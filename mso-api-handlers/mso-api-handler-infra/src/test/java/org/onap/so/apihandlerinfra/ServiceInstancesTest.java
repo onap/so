@@ -33,17 +33,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.onap.so.logger.HttpHeadersConstants.ONAP_REQUEST_ID;
+import static org.onap.logging.filter.base.Constants.HttpHeaders.ONAP_REQUEST_ID;
 import static org.onap.so.logger.HttpHeadersConstants.REQUESTOR_ID;
-import static org.onap.so.logger.HttpHeadersConstants.TRANSACTION_ID;
-import static org.onap.so.logger.MdcConstants.CLIENT_ID;
-import static org.onap.so.logger.MdcConstants.ENDTIME;
-import static org.onap.so.logger.MdcConstants.INVOCATION_ID;
-import static org.onap.so.logger.MdcConstants.PARTNERNAME;
-import static org.onap.so.logger.MdcConstants.RESPONSECODE;
-import static org.onap.so.logger.MdcConstants.RESPONSEDESC;
-import static org.onap.so.logger.MdcConstants.SERVICE_NAME;
-import static org.onap.so.logger.MdcConstants.STATUSCODE;
+import static org.onap.logging.filter.base.Constants.HttpHeaders.TRANSACTION_ID;
+import static org.onap.logging.filter.base.Constants.HttpHeaders.CLIENT_ID;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -64,7 +57,6 @@ import org.onap.so.apihandlerinfra.exceptions.RequestDbFailureException;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ServiceRecipe;
 import org.onap.so.db.request.beans.InfraActiveRequests;
-import org.onap.so.logger.HttpHeadersConstants;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.ModelType;
@@ -121,7 +113,7 @@ public class ServiceInstancesTest extends BaseTest {
         // set headers
         headers = new HttpHeaders();
         headers.set(ONAPLogConstants.Headers.PARTNER_NAME, "test_name");
-        headers.set(HttpHeadersConstants.TRANSACTION_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
+        headers.set(TRANSACTION_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
         headers.set(ONAP_REQUEST_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
         headers.set(ONAPLogConstants.MDCs.REQUEST_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
         headers.set(CLIENT_ID, "VID");
@@ -229,27 +221,29 @@ public class ServiceInstancesTest extends BaseTest {
 
 
         for (ILoggingEvent logEvent : TestAppender.events)
-            if (logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.jersey.JaxRsFilterLogging")
+            if (logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.SOAuditLogContainerFilter")
                     && logEvent.getMarker() != null && logEvent.getMarker().getName().equals("ENTRY")) {
                 Map<String, String> mdc = logEvent.getMDCPropertyMap();
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP));
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
-                assertNotNull(mdc.get(INVOCATION_ID));
-                assertEquals("UNKNOWN", mdc.get(PARTNERNAME));
-                assertEquals("onap/so/infra/serviceInstantiation/v5/serviceInstances", mdc.get(SERVICE_NAME));
-                assertEquals("INPROGRESS", mdc.get(STATUSCODE));
-            } else if (logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.jersey.JaxRsFilterLogging")
+                assertNotNull(mdc.get(ONAPLogConstants.MDCs.INVOCATION_ID));
+                assertEquals("UNKNOWN", mdc.get(ONAPLogConstants.MDCs.PARTNER_NAME));
+                assertEquals("onap/so/infra/serviceInstantiation/v5/serviceInstances",
+                        mdc.get(ONAPLogConstants.MDCs.SERVICE_NAME));
+                assertEquals("INPROGRESS", mdc.get(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE));
+            } else if (logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.SOAuditLogContainerFilter")
                     && logEvent.getMarker() != null && logEvent.getMarker().getName().equals("EXIT")) {
                 Map<String, String> mdc = logEvent.getMDCPropertyMap();
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP));
-                assertNotNull(mdc.get(ENDTIME));
+                assertNotNull(mdc.get(ONAPLogConstants.MDCs.LOG_TIMESTAMP));
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
-                assertNotNull(mdc.get(INVOCATION_ID));
-                assertEquals("202", mdc.get(RESPONSECODE));
-                assertEquals("UNKNOWN", mdc.get(PARTNERNAME));
-                assertEquals("onap/so/infra/serviceInstantiation/v5/serviceInstances", mdc.get(SERVICE_NAME));
-                assertEquals("COMPLETE", mdc.get(STATUSCODE));
-                assertNotNull(mdc.get(RESPONSEDESC));
+                assertNotNull(mdc.get(ONAPLogConstants.MDCs.INVOCATION_ID));
+                assertEquals("202", mdc.get(ONAPLogConstants.MDCs.RESPONSE_CODE));
+                assertEquals("UNKNOWN", mdc.get(ONAPLogConstants.MDCs.PARTNER_NAME));
+                assertEquals("onap/so/infra/serviceInstantiation/v5/serviceInstances",
+                        mdc.get(ONAPLogConstants.MDCs.SERVICE_NAME));
+                assertEquals("COMPLETE", mdc.get(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE));
+                assertNotNull(mdc.get(ONAPLogConstants.MDCs.RESPONSE_DESCRIPTION));
                 assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
                 assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
                 assertEquals("5.0.0", response.getHeaders().get("X-LatestVersion").get(0));
@@ -406,6 +400,15 @@ public class ServiceInstancesTest extends BaseTest {
                                 .withStatus(HttpStatus.SC_NOT_FOUND)));
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatusCode().value());
+
+        for (ILoggingEvent logEvent : TestAppender.events) {
+            if (logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.SOAuditLogContainerFilter")
+                    && logEvent.getMarker() != null && logEvent.getMarker().getName().equals("ENTRY")) {
+                Map<String, String> mdc = logEvent.getMDCPropertyMap();
+                assertEquals("32807a28-1a14-4b88-b7b3-2950918aa76d", mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
+                assertNotNull(mdc.get("PartnerName"));
+            }
+        }
     }
 
     @Test
@@ -2571,11 +2574,11 @@ public class ServiceInstancesTest extends BaseTest {
         assertEquals(response.getHeaders().get(TRANSACTION_ID).get(0), "32807a28-1a14-4b88-b7b3-2950918aa76d");
 
         for (ILoggingEvent logEvent : TestAppender.events) {
-            if (logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.JaxRsFilterLogging")
+            if (logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.SOAuditLogContainerFilter")
                     && logEvent.getMarker() != null && logEvent.getMarker().getName().equals("ENTRY")) {
                 Map<String, String> mdc = logEvent.getMDCPropertyMap();
                 assertEquals("32807a28-1a14-4b88-b7b3-2950918aa76d", mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
-                assertEquals("VID", mdc.get(PARTNERNAME));
+                assertEquals("VID", mdc.get(ONAPLogConstants.MDCs.PARTNER_NAME));
             }
         }
     }

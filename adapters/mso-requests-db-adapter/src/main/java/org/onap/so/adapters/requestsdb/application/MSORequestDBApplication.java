@@ -24,6 +24,8 @@ package org.onap.so.adapters.requestsdb.application;
 
 import java.time.Duration;
 import javax.sql.DataSource;
+import org.onap.logging.filter.base.Constants;
+import org.onap.logging.filter.base.ONAPComponents;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -40,7 +42,7 @@ import net.javacrumbs.shedlock.spring.ScheduledLockConfigurationBuilder;
  *
  */
 
-@SpringBootApplication(scanBasePackages = {"org.onap.so"})
+@SpringBootApplication(scanBasePackages = {"org.onap.so", "org.onap.logging.filter"})
 @EnableScheduling
 @EnableMBeanExport(registration = RegistrationPolicy.IGNORE_EXISTING)
 public class MSORequestDBApplication {
@@ -54,6 +56,7 @@ public class MSORequestDBApplication {
     }
 
     public static void main(String... args) {
+        System.setProperty(Constants.Property.PARTNER_NAME, ONAPComponents.REQUEST_DB.toString());
         SpringApplication.run(MSORequestDBApplication.class, args);
         java.security.Security.setProperty("networkaddress.cache.ttl", "10");
         setLogsDir();

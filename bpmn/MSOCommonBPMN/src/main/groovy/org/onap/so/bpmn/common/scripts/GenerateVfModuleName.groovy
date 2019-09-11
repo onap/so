@@ -42,7 +42,7 @@ import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.client.graphinventory.entities.uri.Depth
-import org.onap.so.utils.TargetEntity
+import org.onap.logging.filter.base.ONAPComponents;
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -92,7 +92,7 @@ public class GenerateVfModuleName extends AbstractServiceTaskProcessor{
 			logger.debug("AAI endPoint: " + endPoint)
 
 			try {
-				HttpClient client = new HttpClientFactory().newXmlClient(new URL(endPoint), TargetEntity.AAI)
+				HttpClient client = new HttpClientFactory().newXmlClient(new URL(endPoint), ONAPComponents.AAI)
 
 				client.addAdditionalHeader('X-TransactionId', UUID.randomUUID().toString())
 				client.addAdditionalHeader('X-FromAppId', 'MSO')

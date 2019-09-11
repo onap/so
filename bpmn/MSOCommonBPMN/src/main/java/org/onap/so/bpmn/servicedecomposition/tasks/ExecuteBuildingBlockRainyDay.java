@@ -25,6 +25,7 @@ package org.onap.so.bpmn.servicedecomposition.tasks;
 import java.util.Map;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.onap.logging.filter.base.ONAPComponentsList;
 import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
@@ -35,8 +36,7 @@ import org.onap.so.db.catalog.beans.macro.RainyDayHandlerStatus;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
-import org.onap.so.utils.TargetEntities;
-import org.onap.so.utils.TargetEntity;
+import org.onap.so.utils.Components;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -223,7 +223,7 @@ public class ExecuteBuildingBlockRainyDay {
         try {
             String requestId = (String) execution.getVariable("mso-request-id");
             WorkflowException exception = (WorkflowException) execution.getVariable("WorkflowException");
-            TargetEntities extSystemErrorSource = exception.getExtSystemErrorSource();
+            ONAPComponentsList extSystemErrorSource = exception.getExtSystemErrorSource();
             InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
             Boolean isRollbackFailure = (Boolean) execution.getVariable("isRollback");
             if (isRollbackFailure == null) {
@@ -244,10 +244,10 @@ public class ExecuteBuildingBlockRainyDay {
             } else if (isRollbackFailure) {
                 logger.debug(
                         "rollbackExtSystemErrorSource is null for isRollbackFailure. Setting rollbackExtSystemErrorSource to UNKNOWN");
-                request.setRollbackExtSystemErrorSource(TargetEntity.UNKNOWN.toString());
+                request.setRollbackExtSystemErrorSource(Components.UNKNOWN.toString());
             } else {
                 logger.debug("extSystemErrorSource is null. Setting extSystemErrorSource to UNKNOWN");
-                request.setExtSystemErrorSource(TargetEntity.UNKNOWN.toString());
+                request.setExtSystemErrorSource(Components.UNKNOWN.toString());
             }
 
             request.setLastModifiedBy("CamundaBPMN");

@@ -44,7 +44,7 @@ import org.onap.so.bpmn.core.domain.VnfResource;
 import org.onap.so.bpmn.core.json.JsonUtils;
 import org.onap.so.client.HttpClient;
 import org.onap.so.client.HttpClientFactory;
-import org.onap.so.utils.TargetEntity;
+import org.onap.logging.filter.base.ONAPComponents;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -383,7 +383,7 @@ public class ResourceRequestBuilder {
 
         HttpClient client = new HttpClientFactory().newJsonClient(UriBuilder.fromUri(catalogEndPoint)
                 .path(SERVICE_URL_SERVICE_INSTANCE).queryParam("serviceModelUuid", uuid).build().toURL(),
-                TargetEntity.CATALOG_DB);
+                ONAPComponents.CATALOG_DB);
 
         client.addAdditionalHeader("Accept", "application/json");
         client.addAdditionalHeader("Authorization", UrnPropertiesReader.getVariable("mso.db.auth"));

@@ -32,7 +32,7 @@ import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.SDNCVnfResources;
-import org.onap.so.utils.TargetEntity;
+import org.onap.logging.filter.base.ONAPComponents;
 import org.onap.so.client.orchestration.SDNCVfModuleResources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,13 +80,13 @@ public class SDNCQueryTasks {
         } catch (BadResponseException ex) {
             logger.error("Exception occurred", ex);
             if (!ex.getMessage().equals(NO_RESPONSE_FROM_SDNC)) {
-                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SDNC);
+                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, ONAPComponents.SDNC);
             } else {
-                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SO);
+                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, ONAPComponents.SO);
             }
         } catch (Exception ex) {
             logger.error("Exception occurred", ex);
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SO);
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, ONAPComponents.SO);
         }
     }
 
@@ -121,9 +121,9 @@ public class SDNCQueryTasks {
         } catch (BadResponseException ex) {
             logger.error("Exception occurred for BadResponse ", ex);
             if (!ex.getMessage().equals(NO_RESPONSE_FROM_SDNC)) {
-                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SDNC);
+                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, ONAPComponents.SDNC);
             } else {
-                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SO);
+                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, ONAPComponents.SO);
             }
         } catch (Exception ex) {
             logger.error("Exception occurred", ex);
@@ -158,18 +158,18 @@ public class SDNCQueryTasks {
             // module id, then we should throw
             // the error as normal
             if (!ResourceKey.VF_MODULE_ID.equals(bbException.getResourceKey())) {
-                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, bbException, TargetEntity.SO);
+                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, bbException, ONAPComponents.SO);
             }
         } catch (BadResponseException ex) {
             logger.error("Error occurred for BadResponseException in SDNCQueryTasks queryVfModuleForVolumeGroup ", ex);
             if (!ex.getMessage().equals(NO_RESPONSE_FROM_SDNC)) {
-                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SDNC);
+                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, ONAPComponents.SDNC);
             } else {
-                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SO);
+                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, ONAPComponents.SO);
             }
         } catch (Exception ex) {
             logger.error("Exception occurred", ex);
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, TargetEntity.SO);
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex, ONAPComponents.SO);
         }
     }
 }

@@ -28,7 +28,7 @@ import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.swagger.Swagger2Feature;
 import org.apache.cxf.transport.servlet.CXFServlet;
 import org.onap.so.adapters.vfc.rest.VfcAdapterRest;
-import org.onap.so.logging.jaxrs.filter.JaxRsFilterLogging;
+import org.onap.so.logging.jaxrs.filter.SOAuditLogContainerFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -47,7 +47,7 @@ public class CXFConfiguration {
     private VfcAdapterRest vfcAdapterRest;
 
     @Autowired
-    private JaxRsFilterLogging jaxRsFilterLogging;
+    private SOAuditLogContainerFilter soAuditLogContainerFilter;
 
     @Autowired
     private ObjectMapper mapper;
@@ -64,7 +64,7 @@ public class CXFConfiguration {
         endpoint.setServiceBeans(Arrays.<Object>asList(vfcAdapterRest));
         endpoint.setAddress("/");
         endpoint.setFeatures(Arrays.asList(createSwaggerFeature(), new LoggingFeature()));
-        endpoint.setProviders(Arrays.asList(new JacksonJsonProvider(mapper), jaxRsFilterLogging));
+        endpoint.setProviders(Arrays.asList(new JacksonJsonProvider(mapper), soAuditLogContainerFilter));
         return endpoint.create();
     }
 

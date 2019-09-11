@@ -29,7 +29,7 @@ import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.onap.so.utils.TargetEntity
+import org.onap.logging.filter.base.ONAPComponents;
 
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
@@ -145,7 +145,7 @@ class ExternalAPIUtil {
 			logger.debug( "URL to be used is: " + url)
 			logger.debug("URL to be passed in header is: " + execution.getVariable("SPPartnerUrl"))
 
-			HttpClient client = httpClientFactory.newJsonClient(new URL(url), TargetEntity.EXTERNAL)
+			HttpClient client = httpClientFactory.newJsonClient(new URL(url), ONAPComponents.EXTERNAL)
 			client.addBasicAuthHeader(execution.getVariable("URN_externalapi_auth"), execution.getVariable("URN_mso_msoKey"))
 			client.addAdditionalHeader("X-FromAppId", "MSO")
 			client.addAdditionalHeader(ONAPLogConstants.Headers.REQUEST_ID, uuid)
@@ -183,7 +183,7 @@ class ExternalAPIUtil {
 			logger.debug( "URL to be used is: " + url)
 			logger.debug("URL to be passed in header is: " + execution.getVariable("SPPartnerUrl"))
 
-			HttpClient httpClient = httpClientFactory.newJsonClient(new URL(url), TargetEntity.AAI)
+			HttpClient httpClient = httpClientFactory.newJsonClient(new URL(url), ONAPComponents.AAI)
 			httpClient.addBasicAuthHeader(execution.getVariable("URN_externalapi_auth"), execution.getVariable("URN_mso_msoKey"))
 			httpClient.addAdditionalHeader("X-FromAppId", "MSO")
 			httpClient.addAdditionalHeader("X-TransactionId", uuid)

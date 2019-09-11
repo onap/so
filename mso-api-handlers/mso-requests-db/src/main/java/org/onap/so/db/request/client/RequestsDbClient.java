@@ -44,7 +44,7 @@ import org.onap.so.db.request.beans.WatchdogComponentDistributionStatus;
 import org.onap.so.db.request.beans.WatchdogDistributionStatus;
 import org.onap.so.db.request.beans.WatchdogServiceModVerIdLookup;
 import org.onap.so.db.request.data.controller.InstanceNameDuplicateCheckRequest;
-import org.onap.so.logging.jaxrs.filter.SpringClientFilter;
+import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
@@ -157,7 +157,7 @@ public class RequestsDbClient {
 
         return Configuration.builder().setBaseUri(baseUri).setClientHttpRequestFactory(factory)
                 .setRestTemplateConfigurer(restTemplate -> {
-                    restTemplate.getInterceptors().add((new SpringClientFilter()));
+                    restTemplate.getInterceptors().add((new SOSpringClientFilter()));
 
                     restTemplate.getInterceptors().add((request, body, execution) -> {
 

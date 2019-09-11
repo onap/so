@@ -82,15 +82,15 @@ public class GRMClientTest extends BaseTest {
         boolean foundInvoke = false;
         boolean foundInvokeReturn = false;
         for (ILoggingEvent logEvent : TestAppender.events)
-            if (logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.JaxRsClientLogging")
+            if (logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.SOMetricLogClientFilter")
                     && logEvent.getMarker() != null && logEvent.getMarker().getName().equals("INVOKE")) {
                 Map<String, String> mdc = logEvent.getMDCPropertyMap();
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.INVOCATION_ID));
                 assertEquals("GRM", mdc.get("TargetEntity"));
                 assertEquals("INPROGRESS", mdc.get(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE));
                 foundInvoke = true;
-            } else if (logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.JaxRsClientLogging")
-                    && logEvent.getMarker() != null && logEvent.getMarker().getName().equals("INVOKE_RETURN")) {
+            } else if (logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.SOMetricLogClientFilter")
+                    && logEvent.getMarker() != null && logEvent.getMarker().getName().equals("INVOKE-RETURN")) {
                 Map<String, String> mdc = logEvent.getMDCPropertyMap();
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.INVOCATION_ID));
                 assertEquals("200", mdc.get(ONAPLogConstants.MDCs.RESPONSE_CODE));

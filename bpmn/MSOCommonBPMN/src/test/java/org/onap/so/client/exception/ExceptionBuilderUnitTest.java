@@ -39,7 +39,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
-import org.onap.so.utils.TargetEntity;
+import org.onap.logging.filter.base.ONAPComponents;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExceptionBuilderUnitTest {
@@ -67,12 +67,12 @@ public class ExceptionBuilderUnitTest {
         String expectedErrorMessage =
                 "Exception in org.onap.so.client.exception.ExceptionBuilder.buildAndThrowWorkflowException failure message";
         doNothing().when(exceptionBuilder).buildAndThrowWorkflowException(execution, 7000, expectedErrorMessage,
-                TargetEntity.SDNC);
+                ONAPComponents.SDNC);
 
-        exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, e, TargetEntity.SDNC);
+        exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, e, ONAPComponents.SDNC);
 
         verify(exceptionBuilder, times(1)).buildAndThrowWorkflowException(execution, 7000, expectedErrorMessage,
-                TargetEntity.SDNC);
+                ONAPComponents.SDNC);
     }
 
     @Test
@@ -80,12 +80,12 @@ public class ExceptionBuilderUnitTest {
         String expectedErrorMessage =
                 "Exception in org.onap.so.client.exception.ExceptionBuilder.buildAndThrowWorkflowException failure message";
         doNothing().when(exceptionBuilder).buildAndThrowWorkflowException(buildingBlockExecution, 7000,
-                expectedErrorMessage, TargetEntity.SDNC);
+                expectedErrorMessage, ONAPComponents.SDNC);
 
-        exceptionBuilder.buildAndThrowWorkflowException(buildingBlockExecution, 7000, e, TargetEntity.SDNC);
+        exceptionBuilder.buildAndThrowWorkflowException(buildingBlockExecution, 7000, e, ONAPComponents.SDNC);
 
         verify(exceptionBuilder, times(1)).buildAndThrowWorkflowException(buildingBlockExecution, 7000,
-                expectedErrorMessage, TargetEntity.SDNC);
+                expectedErrorMessage, ONAPComponents.SDNC);
     }
 
     @Test
@@ -93,6 +93,6 @@ public class ExceptionBuilderUnitTest {
         doReturn("Process key").when(exceptionBuilder).getProcessKey(execution);
 
         thrown.expect(BpmnError.class);
-        exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, e.getMessage(), TargetEntity.SDNC);
+        exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, e.getMessage(), ONAPComponents.SDNC);
     }
 }

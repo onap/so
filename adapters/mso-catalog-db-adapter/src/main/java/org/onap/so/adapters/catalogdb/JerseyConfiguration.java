@@ -23,10 +23,12 @@ package org.onap.so.adapters.catalogdb;
 import javax.annotation.PostConstruct;
 import javax.ws.rs.ApplicationPath;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.onap.logging.filter.base.Constants;
+import org.onap.logging.filter.base.ONAPComponents;
 import org.onap.so.adapters.catalogdb.rest.CatalogDbAdapterRest;
 import org.onap.so.adapters.catalogdb.rest.ServiceRestImpl;
 import org.onap.so.adapters.catalogdb.rest.VnfRestImpl;
-import org.onap.so.logging.jaxrs.filter.JaxRsFilterLogging;
+import org.onap.so.logging.jaxrs.filter.SOAuditLogContainerFilter;
 import org.springframework.context.annotation.Configuration;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.jaxrs.listing.ApiListingResource;
@@ -38,10 +40,11 @@ public class JerseyConfiguration extends ResourceConfig {
 
     @PostConstruct
     public void setUp() {
+        System.setProperty(Constants.Property.PARTNER_NAME, ONAPComponents.CATALOG_DB.toString());
         register(CatalogDbAdapterRest.class);
         register(ApiListingResource.class);
         register(SwaggerSerializers.class);
-        register(JaxRsFilterLogging.class);
+        register(SOAuditLogContainerFilter.class);
         register(ServiceRestImpl.class);
         register(VnfRestImpl.class);
         BeanConfig beanConfig = new BeanConfig();

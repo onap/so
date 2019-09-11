@@ -41,7 +41,7 @@ import org.onap.so.db.catalog.beans.CloudIdentity
 import org.onap.so.db.catalog.beans.CloudSite
 import org.onap.so.db.catalog.beans.HomingInstance
 import org.onap.so.db.catalog.beans.ServerType
-import org.onap.so.utils.TargetEntity
+import org.onap.logging.filter.base.ONAPComponents;
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -165,7 +165,7 @@ class OofHoming extends AbstractServiceTaskProcessor {
 
 
                 URL url = new URL(urlString)
-                HttpClient httpClient = new HttpClientFactory().newJsonClient(url, TargetEntity.OOF)
+                HttpClient httpClient = new HttpClientFactory().newJsonClient(url, ONAPComponents.OOF)
                 httpClient.addAdditionalHeader("Authorization", authHeader)
                 Response httpResponse = httpClient.post(oofRequest)
 

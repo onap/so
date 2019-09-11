@@ -39,7 +39,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.onap.so.utils.TargetEntity;
+import org.onap.logging.filter.base.ONAPComponents;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RestClientTest {
@@ -82,7 +82,7 @@ public class RestClientTest {
 
     private RestClient buildSpy() throws MalformedURLException, IllegalArgumentException, UriBuilderException {
         RestClient client = httpClientFactory.newJsonClient(UriBuilder.fromUri("http://localhost/test").build().toURL(),
-                TargetEntity.BPMN);
+                ONAPComponents.BPMN);
 
         return spy(client);
     }

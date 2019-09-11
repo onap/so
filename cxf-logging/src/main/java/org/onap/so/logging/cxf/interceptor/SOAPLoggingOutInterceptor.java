@@ -51,7 +51,7 @@ public class SOAPLoggingOutInterceptor extends AbstractSoapInterceptor {
             Exception ex = message.getContent(Exception.class);
             if (ex == null) {
                 MDC.put(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE,
-                        ONAPLogConstants.ResponseStatus.COMPLETED.toString());
+                        ONAPLogConstants.ResponseStatus.COMPLETE.toString());
             } else {
                 int responseCode = 0;
                 responseCode = (int) message.get(Message.RESPONSE_CODE);

@@ -29,9 +29,10 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.onap.so.logger.HttpHeadersConstants.ONAP_REQUEST_ID;
+import static org.onap.logging.filter.base.Constants.HttpHeaders.ONAP_REQUEST_ID;
 import static org.onap.so.logger.HttpHeadersConstants.REQUESTOR_ID;
-import static org.onap.so.logger.MdcConstants.CLIENT_ID;
+import static org.onap.logging.filter.base.Constants.HttpHeaders.CLIENT_ID;
+import static org.onap.logging.filter.base.Constants.HttpHeaders.TRANSACTION_ID;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -81,7 +82,7 @@ public class InstanceManagementTest extends BaseTest {
         // set headers
         headers = new HttpHeaders();
         headers.set(ONAPLogConstants.Headers.PARTNER_NAME, "test_name");
-        headers.set(HttpHeadersConstants.TRANSACTION_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
+        headers.set(TRANSACTION_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
         headers.set(ONAP_REQUEST_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
         headers.set(ONAPLogConstants.MDCs.REQUEST_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
         headers.set(CLIENT_ID, "VID");

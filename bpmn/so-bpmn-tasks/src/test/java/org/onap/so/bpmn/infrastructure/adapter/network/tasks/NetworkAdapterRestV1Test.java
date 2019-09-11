@@ -39,7 +39,8 @@ import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.exception.MapperException;
-import org.onap.so.utils.TargetEntity;
+import org.onap.so.utils.Components;
+import org.onap.logging.filter.base.ONAPComponents;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -113,7 +114,7 @@ public class NetworkAdapterRestV1Test extends BaseTaskTest {
         delegateExecution.setVariable("NetworkAResponse_MESSAGE", updateNetworkResponse.toXmlString());
 
         doThrow(new BpmnError("MSOWorkflowException")).when(exceptionBuilder).buildAndThrowWorkflowException(
-                any(DelegateExecution.class), anyInt(), any(String.class), any(TargetEntity.class));
+                any(DelegateExecution.class), anyInt(), any(String.class), any(ONAPComponents.class));
 
         try {
             networkAdapterRestV1Tasks.processCallback(delegateExecution);
@@ -122,6 +123,6 @@ public class NetworkAdapterRestV1Test extends BaseTaskTest {
         }
         assertNull(delegateExecution.getVariable("updateNetworkResponse"));
         verify(exceptionBuilder, times(1)).buildAndThrowWorkflowException(any(DelegateExecution.class), eq(7000),
-                eq("test error message"), eq(TargetEntity.OPENSTACK));
+                eq("test error message"), eq(Components.OPENSTACK));
     }
 }

@@ -25,7 +25,7 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Optional;
 import org.onap.so.client.RestClient;
-import org.onap.so.utils.TargetEntity;
+import org.onap.logging.filter.base.ONAPComponents;
 
 public class GRMRestClient extends RestClient {
 
@@ -37,8 +37,8 @@ public class GRMRestClient extends RestClient {
     }
 
     @Override
-    public TargetEntity getTargetEntity() {
-        return TargetEntity.GRM;
+    public ONAPComponents getTargetEntity() {
+        return ONAPComponents.GRM;
     }
 
     @Override

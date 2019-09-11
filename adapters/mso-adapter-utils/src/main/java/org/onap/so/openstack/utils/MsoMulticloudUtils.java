@@ -51,7 +51,7 @@ import org.onap.so.openstack.exceptions.MsoAdapterException;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.exceptions.MsoOpenstackException;
 import org.onap.so.openstack.mappers.StackInfoMapper;
-import org.onap.so.utils.TargetEntity;
+import org.onap.logging.filter.base.ONAPComponents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -821,7 +821,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
     private RestClient getMulticloudClient(String endpoint, String tenantId) {
         HttpClient client = null;
         try {
-            client = httpClientFactory.newJsonClient(new URL(endpoint), TargetEntity.MULTICLOUD);
+            client = httpClientFactory.newJsonClient(new URL(endpoint), ONAPComponents.MULTICLOUD);
             if (tenantId != null && !tenantId.isEmpty()) {
                 client.addAdditionalHeader("Project", tenantId);
             }

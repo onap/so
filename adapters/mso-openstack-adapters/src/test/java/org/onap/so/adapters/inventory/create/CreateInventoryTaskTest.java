@@ -31,6 +31,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.onap.so.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
+import org.onap.so.externaltasks.logging.AuditMDCSetup;
 import org.onap.so.objects.audit.AAIObjectAudit;
 import org.onap.so.objects.audit.AAIObjectAuditList;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -45,6 +46,9 @@ public class CreateInventoryTaskTest {
 
     @Mock
     ExternalTaskService externalTaskService;
+
+    @Mock
+    private AuditMDCSetup mdcSetup;
 
     @InjectMocks
     CreateInventoryTask inventoryTask;
