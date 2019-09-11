@@ -34,14 +34,20 @@ import javax.ws.rs.core.Response;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.data.repository.ServiceRepository;
 import org.onap.so.db.catalog.data.repository.VnfCustomizationRepository;
+import org.onap.so.rest.catalog.beans.Service;
 import org.onap.so.rest.catalog.beans.Vnf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
-@Api(value = "/v1/services/{modelUUID}/vnfs", tags = "model")
+@OpenAPIDefinition(info = @Info(title = "/v1/services/{modelUUID}/vnfs", description = "model"))
 @Path("/v1/services/{modelUUID}/vnfs")
 @Component
 public class VnfRestImpl {
@@ -59,7 +65,8 @@ public class VnfRestImpl {
     private VnfCustomizationRepository vnfCustRepo;
 
     @GET
-    @ApiOperation(value = "Find a VNF model contained within a service", response = Vnf.class)
+    @Operation(description = "Find a VNF model contained within a service", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Vnf.class)))))
     @Path("/{modelCustomizationUUID}")
     @Produces({MediaType.APPLICATION_JSON})
     @Transactional(readOnly = true)
@@ -82,7 +89,8 @@ public class VnfRestImpl {
     }
 
     @PUT
-    @ApiOperation(value = "Update a VNF model contained within a service", response = Vnf.class)
+    @Operation(description = "Update a VNF model contained within a service", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Vnf.class)))))
     @Path("/{modelCustomizationUUID}")
     @Produces({MediaType.APPLICATION_JSON})
     @Transactional

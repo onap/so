@@ -34,11 +34,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Strings;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
-@Api(value = "/v1", tags = "model")
+
+@OpenAPIDefinition(info = @Info(title = "/v1", description = "model"))
 @Path("/v1/services")
 @Component
 public class ServiceRestImpl {
@@ -63,14 +69,15 @@ public class ServiceRestImpl {
     }
 
     @GET
-    @ApiOperation(value = "Find Service Models", response = Service.class, responseContainer = "List")
+    @Operation(description = "Find Service Models", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))))
     @Produces({MediaType.APPLICATION_JSON})
     @Transactional(readOnly = true)
     public List<Service> queryServices(
-            @ApiParam(value = "modelName", required = false) @QueryParam("modelName") String modelName,
-            @ApiParam(value = "distributionStatus",
+            @Parameter(description = "modelName", required = false) @QueryParam("modelName") String modelName,
+            @Parameter(description = "distributionStatus",
                     required = false) @QueryParam("distributionStatus") String distributionStatus,
-            @ApiParam(value = "depth", required = false) @QueryParam("depth") int depth) {
+            @Parameter(description = "depth", required = false) @QueryParam("depth") int depth) {
         List<Service> services = new ArrayList<>();
         List<org.onap.so.db.catalog.beans.Service> serviceFromDB = new ArrayList<>();
         if (!Strings.isNullOrEmpty(modelName) && !Strings.isNullOrEmpty(distributionStatus)) {
