@@ -72,7 +72,7 @@ public class VnfRestImpl {
         List<VnfResourceCustomization> vnfCustom = service.getVnfCustomizations().stream()
                 .filter(vnfCust -> vnfCust.getModelCustomizationUUID().equals(modelCustomizationUUID))
                 .collect(Collectors.toList());
-        if (vnfCustom.isEmpty() || vnfCustom == null) {
+        if (vnfCustom.isEmpty()) {
             return null;
         } else if (vnfCustom.size() > 1) {
             throw new RuntimeException(
@@ -92,7 +92,7 @@ public class VnfRestImpl {
         List<VnfResourceCustomization> vnfCustom = service.getVnfCustomizations().stream()
                 .filter(vnfCust -> vnfCust.getModelCustomizationUUID().equals(modelCustomizationUUID))
                 .collect(Collectors.toList());
-        if (vnfCustom.isEmpty() || vnfCustom == null) {
+        if (vnfCustom.isEmpty()) {
             throw new RuntimeException("No Vnf Found");
         } else if (vnfCustom.size() > 1) {
             throw new RuntimeException(
