@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2019 Nokia.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +21,9 @@
 
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
+import java.util.Map;
 import org.onap.so.bpmn.infrastructure.pnf.dmaap.DmaapClient;
-import java.util.HashMap;
 import java.util.Objects;
-import java.util.Optional;
 
 public class DmaapClientTestImpl implements DmaapClient {
 
@@ -31,8 +31,7 @@ public class DmaapClientTestImpl implements DmaapClient {
     private Runnable informConsumer;
 
     @Override
-    public void registerForUpdate(String pnfCorrelationId, Runnable informConsumer,
-            Optional<HashMap<String, String>> updateInfo) {
+    public void registerForUpdate(String pnfCorrelationId, Runnable informConsumer, Map<String, String> updateInfo) {
         this.pnfCorrelationId = pnfCorrelationId;
         this.informConsumer = informConsumer;
     }

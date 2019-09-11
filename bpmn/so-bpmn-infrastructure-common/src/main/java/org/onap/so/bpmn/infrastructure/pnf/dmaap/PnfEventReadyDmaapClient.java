@@ -54,8 +54,7 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
     private int topicListenerDelayInSeconds;
     private volatile ScheduledThreadPoolExecutor executor;
     private volatile boolean dmaapThreadListenerIsRunning;
-
-    public volatile List<HashMap<String, String>> updateInfoMap;
+    private volatile List<Map<String, String>> listOfUpdateInfoMap;
 
     @Autowired
     public PnfEventReadyDmaapClient(Environment env) {
@@ -68,18 +67,15 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
                 .port(env.getProperty("pnf.dmaap.port", Integer.class)).path(env.getProperty("pnf.dmaap.topicName"))
                 .path(env.getProperty("pnf.dmaap.consumerGroup")).path(env.getProperty("pnf.dmaap.consumerId"))
                 .build());
-        updateInfoMap = new ArrayList<>();
+        listOfUpdateInfoMap = new ArrayList<>();
     }
 
     @Override
     public synchronized void registerForUpdate(String pnfCorrelationId, Runnable informConsumer,
-            Optional<HashMap<String, String>> updateInfo) {
+            Map<String, String> updateInfo) {
         logger.debug("registering for pnf ready dmaap event for pnf correlation id: {}", pnfCorrelationId);
-        HashMap<String, String> map = updateInfo.get();
-        if (map != null && map.size() > 0) {
-            synchronized (updateInfoMap) {
-                updateInfoMap.add(map);
-            }
+        synchronized (listOfUpdateInfoMap) {
+            listOfUpdateInfoMap.add(updateInfo);
         }
         pnfCorrelationIdToThreadMap.put(pnfCorrelationId, informConsumer);
         if (!dmaapThreadListenerIsRunning) {
@@ -91,14 +87,14 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
     public synchronized Runnable unregister(String pnfCorrelationId) {
         logger.debug("unregistering from pnf ready dmaap event for pnf correlation id: {}", pnfCorrelationId);
         Runnable runnable = pnfCorrelationIdToThreadMap.remove(pnfCorrelationId);
-        synchronized (updateInfoMap) {
-            for (int i = updateInfoMap.size() - 1; i >= 0; i--) {
-                if (!updateInfoMap.get(i).containsKey("pnfCorrelationId"))
+        synchronized (listOfUpdateInfoMap) {
+            for (int i = listOfUpdateInfoMap.size() - 1; i >= 0; i--) {
+                if (!listOfUpdateInfoMap.get(i).containsKey("pnfCorrelationId"))
                     continue;
-                String id = updateInfoMap.get(i).get("pnfCorrelationId");
+                String id = listOfUpdateInfoMap.get(i).get("pnfCorrelationId");
                 if (id != pnfCorrelationId)
                     continue;
-                updateInfoMap.remove(i);
+                listOfUpdateInfoMap.remove(i);
             }
         }
         if (pnfCorrelationIdToThreadMap.isEmpty()) {
@@ -174,8 +170,8 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
             String customerId = null;
             String serviceType = null;
             String serId = null;
-            synchronized (updateInfoMap) {
-                for (HashMap<String, String> map : updateInfoMap) {
+            synchronized (listOfUpdateInfoMap) {
+                for (Map<String, String> map : listOfUpdateInfoMap) {
                     if (!map.containsKey("pnfCorrelationId"))
                         continue;
                     if (pnfCorrelationId != map.get("pnfCorrelationId"))
