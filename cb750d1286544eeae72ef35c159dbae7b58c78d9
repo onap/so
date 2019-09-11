@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3b4be5b9_8b390486",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/ExecuteBuildingBlockRainyDay.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-09-11T13:18:28Z",
+      "side": 1,
+      "message": "remove this try..catch statement, it is completely unnecessary",
+      "range": {
+        "startLine": 129,
+        "startChar": 16,
+        "endLine": 132,
+        "endChar": 17
+      },
+      "revId": "cb750d1286544eeae72ef35c159dbae7b58c78d9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
