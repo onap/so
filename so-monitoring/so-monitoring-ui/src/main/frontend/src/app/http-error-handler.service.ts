@@ -17,7 +17,7 @@ See the License for the specific language governing permissions and
 SPDX-License-Identifier: Apache-2.0
 ============LICENSE_END=========================================================
 
-@authors: ronan.kenny@ericsson.com, waqas.ikram@ericsson.com
+@authors: ronan.kenny@est.tech, waqas.ikram@est.tech
 */
 
 import { Injectable } from '@angular/core';
@@ -44,9 +44,9 @@ export class HttpErrorHandlerService {
         this.popup.error("Internal Service Error occured for operation: " + operation + " please check backend service log. status code: " + error.status);
       }
       console.error(
-        'Backend returned code ${error.status}, ' +
-        'body was: ${error.error}');
-      return throwError(error.error || "Internal Service Error occured for operation: " + operation + " please check backend service log. status code: " + error.status);
+        'Backend returned status code: ', error.status + ' from URL ' + url);
+      return throwError(error.error || "Internal Service Error occured for operation: " +
+        operation + ". Please check backend service log. Status code: " + error.status);
     };
 
   }

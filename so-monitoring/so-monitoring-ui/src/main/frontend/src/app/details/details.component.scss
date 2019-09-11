@@ -17,23 +17,39 @@ See the License for the specific language governing permissions and
 SPDX-License-Identifier: Apache-2.0
 ============LICENSE_END=========================================================
 
-@authors: ronan.kenny@ericsson.com, waqas.ikram@ericsson.com
+@authors: ronan.kenny@est.tech, waqas.ikram@est.tech
 */
 #canvas {
   background: white;
   padding: 0;
-  margin: 0;
+  margin-left: -43px;
   width: 70%;
   height: 470px;
   margin-top: 0;
-  box-shadow: 0 5px 5px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
+  box-shadow: 0 8px 10px 1px rgba(0,0,0,.2);
+}
+
+.navigation {
+  background: #e6e6e6;
+  width: 40px;
+  box-shadow: -5px 8px 10px 1px rgba(0,0,0,.2);
+  height: 470px;
+  border: 1px;
+  border-color: black;
+  position: relative;
+}
+
+.zoomButton {
+  padding-top: 8px;
+  background: none;
+  border: none;
 }
 
 #besideCanvas {
   background: white;
   padding-left: 20px;
   margin: 0;
-  width: 28%;
+  width: 25%;
   height: 470px;
   margin-top: 0;
   box-shadow: 0 5px 5px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
