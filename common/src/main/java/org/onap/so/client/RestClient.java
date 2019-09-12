@@ -182,7 +182,7 @@ public abstract class RestClient {
         return ClientBuilder.newBuilder().build();
     }
 
-    protected abstract ONAPComponentsList getTargetEntity();
+    protected abstract ONAPComponents getTargetEntity();
 
     protected void initializeClient(Client client) {
         if (this.enableLogging()) {
