@@ -84,11 +84,13 @@ public class AaiHelper {
         relationships.add(vfModuleRelationship);
 
         // vserver to image relationship
-        Relationship imageRel = buildRelationship(HeatBridgeConstants.AAI_IMAGE,
-                ImmutableMap.<String, String>builder().put(HeatBridgeConstants.AAI_CLOUD_OWNER, cloudOwner)
-                        .put(HeatBridgeConstants.AAI_CLOUD_REGION_ID, cloudRegionId)
-                        .put(HeatBridgeConstants.AAI_IMAGE_ID, server.getImage().getId()).build());
-        relationships.add(imageRel);
+        if (server.getImage() != null) {
+            Relationship imageRel = buildRelationship(HeatBridgeConstants.AAI_IMAGE,
+                    ImmutableMap.<String, String>builder().put(HeatBridgeConstants.AAI_CLOUD_OWNER, cloudOwner)
+                            .put(HeatBridgeConstants.AAI_CLOUD_REGION_ID, cloudRegionId)
+                            .put(HeatBridgeConstants.AAI_IMAGE_ID, server.getImage().getId()).build());
+            relationships.add(imageRel);
+        }
 
         // vserver to flavor relationship
         Relationship flavorRel = buildRelationship(HeatBridgeConstants.AAI_FLAVOR,
