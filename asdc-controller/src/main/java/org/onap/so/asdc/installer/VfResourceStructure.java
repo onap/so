@@ -117,7 +117,6 @@ public class VfResourceStructure extends ResourceStructure {
             case ASDCConfiguration.HEAT_ARTIFACT:
             case ASDCConfiguration.HEAT_NET:
             case ASDCConfiguration.OTHER:
-            case ASDCConfiguration.CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT:
                 artifactsMapByUUID.put(artifactinfo.getArtifactUUID(), vfModuleArtifact);
                 break;
             case ASDCConfiguration.VF_MODULES_METADATA:

@@ -1216,7 +1216,6 @@ public class ToscaResourceInstaller {
                     break;
                 case ASDCConfiguration.HEAT_NET:
                 case ASDCConfiguration.OTHER:
-                case ASDCConfiguration.CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT:
                     logger.warn(LoggingAnchor.FOUR, MessageEnum.ASDC_ARTIFACT_TYPE_NOT_SUPPORT.toString(),
                             vfModuleArtifact.getArtifactInfo().getArtifactType() + "(Artifact Name:"
                                     + vfModuleArtifact.getArtifactInfo().getArtifactName() + ")",
