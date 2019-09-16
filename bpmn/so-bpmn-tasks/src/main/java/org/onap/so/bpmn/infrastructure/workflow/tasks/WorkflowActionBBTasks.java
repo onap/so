@@ -38,6 +38,7 @@ import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
 import org.onap.so.client.aai.AAIObjectType;
+import org.onap.so.client.aai.entities.Configuration;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.client.CatalogDbClient;
@@ -398,7 +399,7 @@ public class WorkflowActionBBTasks {
                 if (fabricConfig != null && fabricConfig.getConfigurationResource() != null
                         && fabricConfig.getConfigurationResource().getToscaNodeType() != null
                         && fabricConfig.getConfigurationResource().getToscaNodeType().contains(FABRIC_CONFIGURATION)) {
-                    String configurationId = UUID.randomUUID().toString();
+                    String configurationId = getConfigurationId(vnfc);
                     ConfigurationResourceKeys configurationResourceKeys = new ConfigurationResourceKeys();
                     configurationResourceKeys.setCvnfcCustomizationUUID(modelCustomizationId);
                     configurationResourceKeys.setVfModuleCustomizationUUID(vfModuleCustomizationUUID);
@@ -426,6 +427,17 @@ public class WorkflowActionBBTasks {
             execution.setVariable(HANDLINGCODE, ROLLBACKTOCREATED);
             execution.setVariable("WorkflowActionErrorMessage", errorMessage);
             logger.error(errorMessage, e);
+        }
+    }
+
+    protected String getConfigurationId(Vnfc vnfc) {
+        List<Configuration> configurations =
+                workflowAction.getRelatedResourcesInVnfc(vnfc, Configuration.class, AAIObjectType.CONFIGURATION);
+        if (!configurations.isEmpty()) {
+            Configuration configuration = configurations.get(0);
+            return configuration.getConfigurationId();
+        } else {
+            return UUID.randomUUID().toString();
         }
     }
 

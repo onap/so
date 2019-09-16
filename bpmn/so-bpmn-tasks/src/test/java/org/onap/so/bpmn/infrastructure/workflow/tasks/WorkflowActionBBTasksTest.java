@@ -417,4 +417,22 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         workflowActionBBTasks.updateInstanceId(execution);
         Mockito.verify(reqMock, Mockito.times(1)).setServiceInstanceId(instanceId);
     }
+
+    @Test
+    public void getConfigurationId() {
+        org.onap.aai.domain.yang.Vnfc vnfc = new org.onap.aai.domain.yang.Vnfc();
+        vnfc.setModelInvariantId("modelInvariantId");
+        vnfc.setVnfcName("testVnfcName");
+        List<org.onap.aai.domain.yang.Configuration> configurations =
+                new ArrayList<org.onap.aai.domain.yang.Configuration>();
+        org.onap.aai.domain.yang.Configuration configuration = new org.onap.aai.domain.yang.Configuration();
+        configuration.setConfigurationId("configurationId");
+        configuration.setModelCustomizationId("modelCustimizationId");
+        configuration.setConfigurationName("testConfigurationName");
+        configurations.add(configuration);
+        doReturn(configurations.get(0).getConfigurationId()).when(workflowActionBBTasks).getConfigurationId(vnfc);
+        assertEquals(workflowActionBBTasks.getConfigurationId(vnfc), "configurationId");
+    }
+
+
 }
