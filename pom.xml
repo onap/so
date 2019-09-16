@@ -34,6 +34,7 @@
     <module>so-monitoring</module>
     <module>vnfm-simulator</module>
     <module>packages</module>
+    <module>so-simulator</module>
   </modules>
   <properties>
     <project.mso.base.folder>.</project.mso.base.folder>
