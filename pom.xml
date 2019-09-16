@@ -33,6 +33,7 @@
     <module>cxf-logging</module>
     <module>so-monitoring</module>
     <module>packages</module>
+    <module>so-simulator</module>
   </modules>
   <properties>
     <project.mso.base.folder>.</project.mso.base.folder>
