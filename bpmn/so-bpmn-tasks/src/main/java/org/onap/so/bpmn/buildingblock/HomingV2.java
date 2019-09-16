@@ -20,7 +20,6 @@
 
 package org.onap.so.bpmn.buildingblock;
 
-import java.util.Map;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,37 +27,41 @@ import org.springframework.stereotype.Component;
 @Component
 public class HomingV2 {
 
-    @Autowired
-    private OofHomingV2 oofHomingV2;
-    @Autowired
-    private SniroHomingV2 sniroHomingV2;
+    static final String HOMING_SNIRO = "sniro";
+    static final String HOMING_OOF = "oof";
+    static final String HOMING_SOLUTION = "Homing_Solution";
 
-    private static final String HOMINGSOLUTION = "Homing_Solution";
+    private SniroHomingV2 sniroHomingV2;
+    private OofHomingV2 oofHomingV2;
+
+    @Autowired
+    public HomingV2(OofHomingV2 oofHomingV2, SniroHomingV2 sniroHomingV2) {
+        this.oofHomingV2 = oofHomingV2;
+        this.sniroHomingV2 = sniroHomingV2;
+    }
 
     public void callHoming(BuildingBlockExecution execution) {
-        if (isOof(execution)) {
-            oofHomingV2.callOof(execution);
-        } else {
+        if (isSniro(execution)) {
             sniroHomingV2.callSniro(execution);
+        } else {
+            oofHomingV2.callOof(execution);
         }
     }
 
     public void processSolution(BuildingBlockExecution execution, String asyncResponse) {
-        if (isOof(execution)) {
-            oofHomingV2.processSolution(execution, asyncResponse);
-        } else {
+        if (isSniro(execution)) {
             sniroHomingV2.processSolution(execution, asyncResponse);
+        } else {
+            oofHomingV2.processSolution(execution, asyncResponse);
         }
     }
 
-    // Default solution is SNIRO. OOF gets called only if specified.
-    private boolean isOof(BuildingBlockExecution execution) {
-        for (Map<String, Object> params : execution.getGeneralBuildingBlock().getRequestContext().getRequestParameters()
-                .getUserParams()) {
-            if (params.containsKey(HOMINGSOLUTION) && ("oof").equals(params.get(HOMINGSOLUTION))) {
-                return true;
-            }
-        }
-        return false;
+    private boolean isSniro(BuildingBlockExecution execution) {
+        return execution.getGeneralBuildingBlock()
+            .getRequestContext()
+            .getRequestParameters()
+            .getUserParams()
+            .stream()
+            .anyMatch(params -> HOMING_SNIRO.equals(params.get(HOMING_SOLUTION)));
     }
 }
