@@ -24,6 +24,7 @@ package org.onap.so.bpmn.infrastructure.appc.tasks;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.onap.so.logger.LoggingAnchor;
 import org.json.JSONArray;
@@ -31,6 +32,7 @@ import org.json.JSONObject;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.appc.client.lcm.model.Action;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.onap.so.bpmn.core.json.JsonUtils;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
@@ -166,6 +168,10 @@ public class AppcRunTasks {
                 String pay = requestParameters.getPayload();
                 if (pay != null) {
                     payload = Optional.of(pay);
+                } else {
+                    String payloadFromUserParams =
+                            buildPayloadFromUserParams(gBBInput.getRequestContext().getUserParams());
+                    payload = Optional.of(payloadFromUserParams);
                 }
             }
             logger.debug("Running APP-C action: {}", action.toString());
@@ -219,6 +225,21 @@ public class AppcRunTasks {
         payloadInfo.put("identityUrl", identityUrl);
         payloadInfo.put("vfModuleId", vfModuleId);
         return payloadInfo;
+    }
+
+    protected String buildPayloadFromUserParams(Map<String, Object> userParams) {
+        if (userParams == null || userParams.size() == 0) {
+            return null;
+        }
+
+        String payload = "{}";
+        for (Map.Entry<String, Object> entry : userParams.entrySet()) {
+            payload = JsonUtils.addJsonValue(payload, entry.getKey(), (String) entry.getValue());
+        }
+
+        payload = payload.replaceAll("\"", "\\\\\"");
+        payload = payload.replaceAll("\n", "");
+        return payload;
     }
 
     protected void getVserversForAppc(BuildingBlockExecution execution, GenericVnf vnf) throws Exception {

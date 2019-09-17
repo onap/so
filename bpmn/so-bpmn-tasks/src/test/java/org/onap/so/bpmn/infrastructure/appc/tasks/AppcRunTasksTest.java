@@ -33,6 +33,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -166,6 +168,21 @@ public class AppcRunTasksTest extends BaseTaskTest {
 
         assertEquals(vserverIdList, expectedVserverIdList);
         assertEquals(vmIdList, expectedVmIdList);
+    }
+
+    @Test
+    public void testUserParams() throws Exception {
+        Map<String, Object> userParams = new HashMap<String, Object>();
+        userParams.put("existing_software_version", "3.1");
+        userParams.put("new_software_version", "3.2");
+        userParams.put("operations_timeout", "150000");
+
+        String actualPayload = appcRunTasks.buildPayloadFromUserParams(userParams);
+        System.out.println(actualPayload);
+        String expectedPayload =
+                "{\\\"operations_timeout\\\":\\\"150000\\\",\\\"existing_software_version\\\":\\\"3.1\\\",\\\"new_software_version\\\":\\\"3.2\\\"}";
+        assertEquals(expectedPayload, actualPayload.replaceAll(" ", ""));
+
     }
 
     private void mockReferenceResponse() {
