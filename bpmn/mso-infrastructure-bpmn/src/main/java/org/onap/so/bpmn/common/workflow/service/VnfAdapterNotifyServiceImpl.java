@@ -82,7 +82,7 @@ public class VnfAdapterNotifyServiceImpl extends ProcessEngineAwareService imple
         String correlationValue = messageId;
 
         callback.handleCallback(method, message, messageEventName, messageVariable, correlationVariable,
-                correlationValue, logMarker);
+                correlationValue, logMarker, null);
     }
 
     @WebMethod(operationName = "queryVnfNotification")
@@ -117,7 +117,7 @@ public class VnfAdapterNotifyServiceImpl extends ProcessEngineAwareService imple
         message.setOutputs(outputs);
 
         callback.handleCallback(method, message, messageEventName, messageVariable, correlationVariable,
-                correlationValue, logMarker);
+                correlationValue, logMarker, null);
     }
 
     @WebMethod(operationName = "createVnfNotification")
@@ -150,7 +150,7 @@ public class VnfAdapterNotifyServiceImpl extends ProcessEngineAwareService imple
         message.setRollback(rollback);
 
         callback.handleCallback(method, message, messageEventName, messageVariable, correlationVariable,
-                correlationValue, logMarker);
+                correlationValue, logMarker, null);
     }
 
     @WebMethod(operationName = "updateVnfNotification")
@@ -181,7 +181,7 @@ public class VnfAdapterNotifyServiceImpl extends ProcessEngineAwareService imple
         message.setRollback(rollback);
 
         callback.handleCallback(method, message, messageEventName, messageVariable, correlationVariable,
-                correlationValue, logMarker);
+                correlationValue, logMarker, null);
     }
 
     @WebMethod(operationName = "deleteVnfNotification")
@@ -208,6 +208,6 @@ public class VnfAdapterNotifyServiceImpl extends ProcessEngineAwareService imple
         message.setErrorMessage(errorMessage);
 
         callback.handleCallback(method, message, messageEventName, messageVariable, correlationVariable,
-                correlationValue, logMarker);
+                correlationValue, logMarker, null);
     }
 }
