@@ -2792,7 +2792,7 @@ public class ToscaResourceInstaller {
                 + vfModuleStructure.getVfModuleMetadata().getVfModuleModelName();
     }
 
-    protected List<IEntityDetails> getEntityDetails(ToscaResourceStructure toscaResourceStruct,
+    public List<IEntityDetails> getEntityDetails(ToscaResourceStructure toscaResourceStruct,
             EntityQueryBuilder entityType, TopologyTemplateQueryBuilder topologyTemplateBuilder, boolean nestedSearch) {
 
         EntityQuery entityQuery = entityType.build();
@@ -2804,7 +2804,7 @@ public class ToscaResourceInstaller {
 
     }
 
-    protected String getLeafPropertyValue(IEntityDetails entityDetails, String propName) {
+    public String getLeafPropertyValue(IEntityDetails entityDetails, String propName) {
 
         Property leafProperty = entityDetails.getProperties().get(propName);
 
