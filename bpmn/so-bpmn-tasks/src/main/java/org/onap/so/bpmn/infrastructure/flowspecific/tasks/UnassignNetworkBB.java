@@ -24,19 +24,22 @@ package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 
 import java.util.Optional;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.onap.so.bpmn.infrastructure.flowspecific.exceptions.UnassignNetworkException;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.AAINetworkResources;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class UnassignNetworkBB {
 
-
+    private static final Logger logger = LoggerFactory.getLogger(UnassignNetworkBB.class);
     private static String messageCannotPerformUnassign =
             "Cannot perform Unassign Network. Network is still related to ";
     private static String messageErrorRollback = " Rollback is not possible. Please restore data manually.";
@@ -71,7 +74,8 @@ public class UnassignNetworkBB {
             if (networkBBUtils.isRelationshipRelatedToExists(network, relatedToValue)) {
                 String msg = messageCannotPerformUnassign + relatedToValue;
                 execution.setVariable("ErrorUnassignNetworkBB", msg);
-                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg);
+                logger.error("ErrorUnassignNetworkBB: {}", msg);
+                throw new UnassignNetworkException(msg);
             }
         } catch (Exception ex) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
