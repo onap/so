@@ -40,9 +40,7 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
-import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class UnassignNetworkBBTest extends BaseTaskTest {
 
@@ -81,6 +79,15 @@ public class UnassignNetworkBBTest extends BaseTaskTest {
 
         unassignNetworkBB.checkRelationshipRelatedTo(execution, "vf-module");
         assertThat(execution.getVariable("ErrorUnassignNetworkBB"), notNullValue());
+    }
+
+    @Test
+    public void checkRelationshipRelatedToUnassignNetworkExceptionTest() throws Exception {
+        String msg = "Cannot perform Unassign Network. Network is still related to vf-module";
+        expectedException.expect(BpmnError.class);
+        doReturn(true).when(networkBBUtils).isRelationshipRelatedToExists(any(Optional.class), eq("vf-module"));
+        unassignNetworkBB.checkRelationshipRelatedTo(execution, "vf-module");
+        assertEquals(execution.getVariable("ErrorUnassignNetworkBB"), msg);
     }
 
     @Test
