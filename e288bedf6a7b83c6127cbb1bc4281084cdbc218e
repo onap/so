@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bfbc8ca5_e6690323",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClient.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 5337
+      },
+      "writtenOn": "2019-09-18T14:35:45Z",
+      "side": 0,
+      "message": "@MariosIakovidis\u003cmarios.iakovidis@huawei.com\u003e - could you explain why this is executed only for the first PNF ready event from the batch? Is that intened behaviour?",
+      "range": {
+        "startLine": 137,
+        "startChar": 43,
+        "endLine": 137,
+        "endChar": 56
+      },
+      "revId": "e288bedf6a7b83c6127cbb1bc4281084cdbc218e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
