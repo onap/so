@@ -23,12 +23,14 @@
 package org.onap.so.bpmn.infrastructure.pnf.dmaap;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -42,6 +44,7 @@ import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.AAIObjectType;
+import static org.onap.so.bpmn.infrastructure.pnf.dmaap.JsonUtilForPnfCorrelationId.*;
 
 @Component
 public class PnfEventReadyDmaapClient implements DmaapClient {
@@ -129,15 +132,10 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
             try {
                 logger.debug("dmaap listener starts listening pnf ready dmaap topic");
                 HttpResponse response = httpClient.execute(getRequest);
-                List<String> idList = getPnfCorrelationIdListFromResponse(response);
-
-                // idList is never null
-                if (!idList.isEmpty()) {
-                    // send only body of response
-                    registerClientResponse(idList.get(0), EntityUtils.toString(response.getEntity(), "UTF-8"));
-                }
-
-                if (idList != null) {
+                if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                    String responseString = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+                    List<String> idList = parseJsonToGelAllPnfCorrelationId(responseString);
+                    idList.stream().findFirst().ifPresent(id -> registerClientResponse(id, responseString));
                     idList.forEach(this::informAboutPnfReadyIfPnfCorrelationIdFound);
                 }
             } catch (IOException e) {
@@ -145,16 +143,6 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
             } finally {
                 getRequest.reset();
             }
-        }
-
-        private List<String> getPnfCorrelationIdListFromResponse(HttpResponse response) throws IOException {
-            if (response.getStatusLine().getStatusCode() == 200) {
-                String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
-                if (responseString != null) {
-                    return JsonUtilForPnfCorrelationId.parseJsonToGelAllPnfCorrelationId(responseString);
-                }
-            }
-            return Collections.emptyList();
         }
 
         private void informAboutPnfReadyIfPnfCorrelationIdFound(String pnfCorrelationId) {

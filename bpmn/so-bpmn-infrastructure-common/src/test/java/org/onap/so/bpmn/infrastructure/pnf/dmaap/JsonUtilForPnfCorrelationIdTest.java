@@ -63,4 +63,13 @@ public class JsonUtilForPnfCorrelationIdTest {
         assertThat(expectedResult).isEmpty();
     }
 
+    @Test
+    public void shouldReturnEmptyListWhenInputIsNull() {
+        assertThat(JsonUtilForPnfCorrelationId.parseJsonToGelAllPnfCorrelationId(null)).isEmpty();
+    }
+
+    @Test
+    public void shouldReturnEmptyListWhenInputIsEmpty() {
+        assertThat(JsonUtilForPnfCorrelationId.parseJsonToGelAllPnfCorrelationId("")).isEmpty();
+    }
 }
