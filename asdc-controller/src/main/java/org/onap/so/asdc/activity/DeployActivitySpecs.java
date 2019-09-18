@@ -65,7 +65,7 @@ public class DeployActivitySpecs {
             logger.warn("The hostname for SDC activities deployment is not configured in SO");
             return;
         }
-        if (!checkHttpOk(hostname)) {
+        if (!checkHttpServerUp(hostname)) {
             logger.warn("The sdc end point is not alive");
             return;
         }
@@ -144,21 +144,22 @@ public class DeployActivitySpecs {
         return;
     }
 
-    public boolean checkHttpOk(String host) {
+    public boolean checkHttpServerUp(String host) {
         URL url = null;
-        boolean isOk = false;
+        boolean isUp = false;
 
         int responseCode = 0;
         try {
             url = new URL(host);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setConnectTimeout(5000);
             responseCode = connection.getResponseCode();
         } catch (Exception e) {
             logger.warn("Exception on connecting to SDC WFD endpoint: " + e.getMessage());
         }
-        if (responseCode == HttpStatus.SC_OK) {
-            isOk = true;
+        if (responseCode == HttpStatus.SC_OK || responseCode == HttpStatus.SC_NOT_FOUND) {
+            isUp = true;
         }
-        return isOk;
+        return isUp;
     }
 }

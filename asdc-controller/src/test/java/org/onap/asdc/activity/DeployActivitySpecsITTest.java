@@ -29,7 +29,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.onap.so.asdc.BaseTest;
 import org.onap.so.asdc.activity.DeployActivitySpecs;
 import org.onap.so.asdc.activity.beans.ActivitySpecCreateResponse;
@@ -49,6 +51,10 @@ public class DeployActivitySpecsITTest extends BaseTest {
 
     @Autowired
     private DeployActivitySpecs deployActivitySpecs;
+
+    @InjectMocks
+    @Spy
+    DeployActivitySpecs deployActivitySpecsM;
 
     @Test
     public void deployActivitySpecsIT_Test() throws Exception {
@@ -100,7 +106,9 @@ public class DeployActivitySpecsITTest extends BaseTest {
                 put(urlPathMatching(urlPath)).willReturn(aResponse().withHeader("Content-Type", "application/json")
                         .withStatus(org.springframework.http.HttpStatus.OK.value())));
 
-        deployActivitySpecs.deployActivities();
+        String host = "http://localhost:8090";
+        when(deployActivitySpecsM.checkHttpServerUp(host)).thenReturn(false);
+        deployActivitySpecsM.deployActivities();
         verify(0, putRequestedFor(urlEqualTo(urlPath)));
     }
 

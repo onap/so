@@ -71,7 +71,7 @@ public class DeployActivitySpecsTest {
                 new ArrayList<org.onap.so.db.catalog.beans.ActivitySpec>();
         catalogActivitySpecList.add(catalogActivitySpec);
         when(env.getProperty("mso.asdc.config.activity.endpoint")).thenReturn("http://testEndpoint");
-        doReturn(true).when(deployActivitySpecs).checkHttpOk("http://testEndpoint");
+        doReturn(true).when(deployActivitySpecs).checkHttpServerUp("http://testEndpoint");
         when(activitySpecRepository.findAll()).thenReturn(catalogActivitySpecList);
         doReturn("testActivityId").when(activitySpecsActions).createActivitySpec(Mockito.any(), Mockito.any());
         doReturn(true).when(activitySpecsActions).certifyActivitySpec(Mockito.any(), Mockito.any());
