@@ -21,16 +21,20 @@
 package org.onap.svnfm.simulator.services;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model.GrantRequest;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model.GrantsAddResources;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model.InlineResponse201;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model.InlineResponse201AddResources;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model.InlineResponse201VimConnections;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200.OperationEnum;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201InstantiatedVnfInfoVnfcResourceInfo;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRequest;
 import org.onap.svnfm.simulator.config.ApplicationConfig;
@@ -60,6 +64,7 @@ public class InstantiateOperatorProgressorTest {
         svnfmServiceMock = mock(SvnfmService.class);
         VnfOperation vnfOperation = new VnfOperation();
         vnfOperation.setVnfInstanceId(VNF_INSTANCE_ID);
+        vnfOperation.setOperation(OperationEnum.OPERATE);
         testedObject = new InstantiateOperationProgressor(vnfOperation, svnfmServiceMock, null, new ApplicationConfig(),
                 createVnfds(), createSubscriptionService());
     }
@@ -115,6 +120,13 @@ public class InstantiateOperatorProgressorTest {
     @Test
     public void getRemoveResourcesShouldReturnEmptyList() {
         assertThat(testedObject.getRemoveResources("anyVnfId")).isEmpty();
+    }
+
+    @Test
+    public void test_buildGrantRequest_usingValidVnfInstanceId_grantRequestRetrievedSuccessfully() {
+        when(svnfmServiceMock.getVnf(Mockito.eq(VNF_INSTANCE_ID))).thenReturn(createInlineResponse201());
+        GrantRequest grantRequest = testedObject.buildGrantRequest();
+        assertThat(grantRequest.getVnfdId().equals(VNF_ID));
     }
 
     private Vnfds createVnfds() {
