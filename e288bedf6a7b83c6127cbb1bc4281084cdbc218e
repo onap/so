@@ -22,6 +22,52 @@
       "revId": "e288bedf6a7b83c6127cbb1bc4281084cdbc218e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e187acba_4d94b541",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClient.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 5337
+      },
+      "writtenOn": "2019-09-19T10:27:37Z",
+      "side": 0,
+      "message": "@MariosIakovidis\u003cmarios.iakovidis@huawei.com\u003e - due to an attempt to match pnfCorrelationId by refference the below code is NEVER executed",
+      "range": {
+        "startLine": 177,
+        "startChar": 41,
+        "endLine": 177,
+        "endChar": 43
+      },
+      "revId": "e288bedf6a7b83c6127cbb1bc4281084cdbc218e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2cd9877f_d195ea74",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClient.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 5337
+      },
+      "writtenOn": "2019-09-19T10:27:37Z",
+      "side": 0,
+      "message": "@MariosIakovidis\u003cmarios.iakovidis@huawei.com\u003e - if the above attempt to compare pnfCorrelationIds in line 177 is fixed and the execution gets to this URI creation (having some non-null \u0027globalSubscriberID\u0027, \u0027serviceType\u0027 and \u0027serviceInstanceId\u0027) \nthe URI creation fails with:\n\norg.onap.so.client.graphinventory.exceptions.IncorrectNumberOfUriKeys: Expected 0 variables: []\n\tat org.onap.so.client.graphinventory.entities.uri.SimpleUri.validateValuesSize(SimpleUri.java:264)\n\tat org.onap.so.client.graphinventory.entities.uri.SimpleUri.\u003cinit\u003e(SimpleUri.java:59)\n\tat org.onap.so.client.aai.entities.uri.AAISimpleUri.\u003cinit\u003e(AAISimpleUri.java:37)\n\tat org.onap.so.client.aai.entities.uri.AAIUriFactory.createResourceUri(AAIUriFactory.java:46)\n\tat org.onap.so.bpmn.infrastructure.pnf.dmaap.PnfEventReadyDmaapClient$DmaapTopicListenerThread.registerClientResponse(PnfEventReadyDmaapClient.java:193)\n(...)",
+      "range": {
+        "startLine": 193,
+        "startChar": 33,
+        "endLine": 194,
+        "endChar": 40
+      },
+      "revId": "e288bedf6a7b83c6127cbb1bc4281084cdbc218e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
