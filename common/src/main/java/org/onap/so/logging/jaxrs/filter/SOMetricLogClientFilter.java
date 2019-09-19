@@ -2,7 +2,6 @@ package org.onap.so.logging.jaxrs.filter;
 
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientResponseContext;
-import org.onap.logging.filter.base.MDCSetup;
 import org.onap.logging.filter.base.MetricLogClientFilter;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.logger.MdcConstants;
@@ -15,21 +14,19 @@ import org.slf4j.MarkerFactory;
 
 public class SOMetricLogClientFilter extends MetricLogClientFilter {
 
-    protected static Logger logger = LoggerFactory.getLogger(MDCSetup.class);
+    protected static Logger logger = LoggerFactory.getLogger(SOMetricLogClientFilter.class);
     private static final Marker INVOKE_RETURN = MarkerFactory.getMarker("INVOKE-RETURN");
-
-    private MDCSetup mdcSetup = new MDCSetup();
 
     @Override
     public void filter(ClientRequestContext requestContext, ClientResponseContext responseContext) {
         try {
-            mdcSetup.setLogTimestamp();
-            mdcSetup.setElapsedTimeInvokeTimestamp();
-            mdcSetup.setResponseStatusCode(responseContext.getStatus());
-            mdcSetup.setResponseDescription(responseContext.getStatus());
+            setLogTimestamp();
+            setElapsedTimeInvokeTimestamp();
+            setResponseStatusCode(responseContext.getStatus());
+            setResponseDescription(responseContext.getStatus());
             MDC.put(ONAPLogConstants.MDCs.RESPONSE_CODE, String.valueOf(responseContext.getStatus()));
             logger.info(INVOKE_RETURN, "InvokeReturn");
-            mdcSetup.clearClientMDCs();
+            clearClientMDCs();
             setOpenStackResponseCode();
         } catch (Exception e) {
             logger.warn("Error in JAX-RS request,response client filter", e);

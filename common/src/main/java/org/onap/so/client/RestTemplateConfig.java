@@ -20,6 +20,7 @@
 
 package org.onap.so.client;
 
+import org.onap.logging.filter.spring.SpringClientPayloadFilter;
 import org.onap.so.configuration.rest.HttpComponentsClientConfiguration;
 import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,7 @@ public class RestTemplateConfig {
         restTemplate
                 .setRequestFactory(new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory()));
         restTemplate.getInterceptors().add(new SOSpringClientFilter());
+        restTemplate.getInterceptors().add((new SpringClientPayloadFilter()));
         return restTemplate;
     }
 
@@ -57,6 +59,7 @@ public class RestTemplateConfig {
         final RestTemplate restTemplate =
                 new RestTemplate(new BufferingClientHttpRequestFactory(clientHttpRequestFactory));
         restTemplate.getInterceptors().add(new SOSpringClientFilter());
+        restTemplate.getInterceptors().add((new SpringClientPayloadFilter()));
         return restTemplate;
     }
 }

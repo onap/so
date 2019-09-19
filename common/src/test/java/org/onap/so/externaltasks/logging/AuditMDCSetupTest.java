@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.logging.filter.base.MDCSetup;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.logger.MdcConstants;
 import org.slf4j.MDC;
@@ -21,6 +22,9 @@ public class AuditMDCSetupTest {
 
     @Mock
     private ExternalTask externalTask;
+
+    @Mock
+    private MDCSetup mdcSet;
 
     @Spy
     @InjectMocks

@@ -41,7 +41,6 @@ import net.javacrumbs.shedlock.spring.ScheduledLockConfigurationBuilder;
  * @since Version 1.0
  *
  */
-
 @SpringBootApplication(scanBasePackages = {"org.onap.so", "org.onap.logging.filter"})
 @EnableScheduling
 @EnableMBeanExport(registration = RegistrationPolicy.IGNORE_EXISTING)

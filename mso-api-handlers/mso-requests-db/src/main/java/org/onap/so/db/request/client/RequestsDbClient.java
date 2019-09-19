@@ -32,6 +32,7 @@ import javax.annotation.PostConstruct;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.http.HttpStatus;
+import org.onap.logging.filter.spring.SpringClientPayloadFilter;
 import org.onap.so.db.request.beans.ArchivedInfraRequests;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.beans.OperationStatus;
@@ -158,6 +159,7 @@ public class RequestsDbClient {
         return Configuration.builder().setBaseUri(baseUri).setClientHttpRequestFactory(factory)
                 .setRestTemplateConfigurer(restTemplate -> {
                     restTemplate.getInterceptors().add((new SOSpringClientFilter()));
+                    restTemplate.getInterceptors().add((new SpringClientPayloadFilter()));
 
                     restTemplate.getInterceptors().add((request, body, execution) -> {
 

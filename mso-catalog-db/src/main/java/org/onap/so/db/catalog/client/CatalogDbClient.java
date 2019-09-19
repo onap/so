@@ -31,6 +31,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.http.HttpStatus;
 import org.onap.logging.filter.base.Constants;
+import org.onap.logging.filter.spring.SpringClientPayloadFilter;
 import org.onap.so.db.catalog.beans.BuildingBlockDetail;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.CloudifyManager;
@@ -368,6 +369,7 @@ public class CatalogDbClient {
         ClientFactory clientFactory =
                 Configuration.builder().setClientHttpRequestFactory(factory).setRestTemplateConfigurer(restTemplate -> {
                     restTemplate.getInterceptors().add((new SOSpringClientFilter()));
+                    restTemplate.getInterceptors().add((new SpringClientPayloadFilter()));
 
                     restTemplate.getInterceptors().add((request, body, execution) -> {
 
@@ -417,6 +419,7 @@ public class CatalogDbClient {
         ClientFactory clientFactory = Configuration.builder().setBaseUri(baseUri).setClientHttpRequestFactory(factory)
                 .setRestTemplateConfigurer(restTemplate -> {
                     restTemplate.getInterceptors().add((new SOSpringClientFilter()));
+                    restTemplate.getInterceptors().add((new SpringClientPayloadFilter()));
 
                     restTemplate.getInterceptors().add((request, body, execution) -> {
 

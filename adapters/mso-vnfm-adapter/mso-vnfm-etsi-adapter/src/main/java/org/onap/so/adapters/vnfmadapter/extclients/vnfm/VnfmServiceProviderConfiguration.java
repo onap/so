@@ -42,6 +42,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.aai.domain.yang.EsrVnfm;
+import org.onap.logging.filter.spring.SpringClientPayloadFilter;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.JSON;
 import org.onap.so.configuration.rest.BasicHttpHeadersProvider;
 import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
@@ -173,7 +174,8 @@ public class VnfmServiceProviderConfiguration {
     private void removeSpringClientFilter(final RestTemplate restTemplate) {
         ListIterator<ClientHttpRequestInterceptor> interceptorIterator = restTemplate.getInterceptors().listIterator();
         while (interceptorIterator.hasNext()) {
-            if (interceptorIterator.next() instanceof SOSpringClientFilter) {
+            ClientHttpRequestInterceptor interceptor = interceptorIterator.next();
+            if (interceptor instanceof SOSpringClientFilter || interceptor instanceof SpringClientPayloadFilter) {
                 interceptorIterator.remove();
             }
         }

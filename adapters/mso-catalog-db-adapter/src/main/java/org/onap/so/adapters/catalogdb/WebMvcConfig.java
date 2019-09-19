@@ -22,6 +22,7 @@ package org.onap.so.adapters.catalogdb;
 
 
 import org.onap.logging.filter.spring.LoggingInterceptor;
+import org.onap.logging.filter.spring.StatusLoggingInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -34,11 +35,18 @@ import org.springframework.web.servlet.handler.MappedInterceptor;
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
     @Autowired
-    LoggingInterceptor loggingInterceptor;
+    private LoggingInterceptor loggingInterceptor;
+
+    @Autowired
+    private StatusLoggingInterceptor statusLoggingInterceptor;
 
     @Bean
     public MappedInterceptor mappedLoggingInterceptor() {
         return new MappedInterceptor(new String[] {"/**"}, loggingInterceptor);
     }
 
+    @Bean
+    public MappedInterceptor mappedStatusLoggingInterceptor() {
+        return new MappedInterceptor(new String[] {"/**"}, statusLoggingInterceptor);
+    }
 }

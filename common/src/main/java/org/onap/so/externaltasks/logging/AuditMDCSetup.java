@@ -16,9 +16,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuditMDCSetup {
 
-    private MDCSetup mdcSetup = new MDCSetup();
-
     private static final Logger logger = LoggerFactory.getLogger(AuditMDCSetup.class);
+
+    private MDCSetup mdcSetup = new MDCSetup();
 
     public void setupMDC(ExternalTask externalTask) {
         MDC.put(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP,

@@ -50,7 +50,6 @@ import org.onap.logging.filter.base.PayloadLoggingClientFilter;
 import org.onap.so.client.policy.CommonObjectMapperProvider;
 import org.onap.so.logging.jaxrs.filter.SOMetricLogClientFilter;
 import org.onap.so.utils.CryptoUtils;
-import org.onap.logging.filter.base.ONAPComponents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
