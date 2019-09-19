@@ -72,12 +72,22 @@ public interface AaiServiceProvider {
     EsrVnfm invokeGetVnfm(final String vnfmId);
 
     /**
-     * Invoke a PUT request for a generic vnf.
+     * Invoke a PATCH request for a generic vnf.
      *
      * @param vnf the generic vnf
      * @return
      */
-    void invokePutGenericVnf(GenericVnf vnf);
+    void invokePatchGenericVnf(GenericVnf vnf);
+
+    /**
+     * Invoke a PUT request for a relationship from a generic vnf to a VNFM.
+     *
+     * @param vnf the generic vnf
+     * @param vnfmId the ID of the VNFM
+     * @return
+     */
+    void invokePutGenericVnfToVnfmRelationship(GenericVnf vnf, final String vnfmId);
+
 
     /**
      * Invoke a PUT request for a vserver.
@@ -90,6 +100,19 @@ public interface AaiServiceProvider {
      */
     void invokePutVserver(final String cloudOwner, final String cloudRegion, final String tenantId,
             final Vserver vserver);
+
+    /**
+     * Invoke a PUT request for a relationship from a vserver to a generic vnf.
+     *
+     * @param cloudOwner the cloud owner
+     * @param cloudRegion the cloud region the vserver is deployed on
+     * @param tenantId the ID of the tenant the vserver is deployed on
+     * @param vserver the vserver
+     * @param vnfId the ID of the generic vnf
+     * @return
+     */
+    void invokePutVserverToVnfRelationship(final String cloudOwner, final String cloudRegion, final String tenantId,
+            final Vserver vserver, final String vnfId);
 
     /**
      * Invoke a DELETE request for a vserver.

@@ -98,9 +98,15 @@ public class AaiServiceProviderImpl implements AaiServiceProvider {
     }
 
     @Override
-    public void invokePutGenericVnf(final GenericVnf vnf) {
+    public void invokePatchGenericVnf(final GenericVnf vnf) {
         aaiClientProvider.getAaiClient()
                 .update(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnf.getVnfId()), vnf);
+    }
+
+    @Override
+    public void invokePutGenericVnfToVnfmRelationship(final GenericVnf vnf, final String vnfmId) {
+        aaiClientProvider.getAaiClient().connect(AAIUriFactory.createResourceUri(AAIObjectType.VNFM, vnfmId),
+                AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnf.getVnfId()));
     }
 
     @Override
@@ -108,6 +114,16 @@ public class AaiServiceProviderImpl implements AaiServiceProvider {
             final Vserver vserver) {
         aaiClientProvider.getAaiClient().create(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, cloudOwner,
                 cloudRegion, tenant, vserver.getVserverId()), vserver);
+    }
+
+    @Override
+    public void invokePutVserverToVnfRelationship(final String cloudOwner, final String cloudRegion,
+            final String tenant, final Vserver vserver, final String vnfId) {
+        aaiClientProvider.getAaiClient()
+                .connect(
+                        AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, cloudOwner, cloudRegion, tenant,
+                                vserver.getVserverId()),
+                        AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId));
     }
 
     @Override
