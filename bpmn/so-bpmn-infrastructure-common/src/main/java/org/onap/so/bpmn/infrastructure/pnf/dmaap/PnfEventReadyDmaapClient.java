@@ -28,6 +28,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import javax.annotation.PreDestroy;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -51,18 +52,21 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
 
     private static final Logger logger = LoggerFactory.getLogger(PnfEventReadyDmaapClient.class);
 
-    private HttpClient httpClient;
-    private Map<String, Runnable> pnfCorrelationIdToThreadMap;
-    private HttpGet getRequest;
-    private int topicListenerDelayInSeconds;
+    private final HttpClient httpClient;
+    private final Map<String, Runnable> pnfCorrelationIdToThreadMap = new ConcurrentHashMap<>();
+    private final HttpGet getRequest;
+    private final int topicListenerDelayInSeconds;
     private volatile ScheduledThreadPoolExecutor executor;
     private volatile boolean dmaapThreadListenerIsRunning;
     private volatile List<Map<String, String>> listOfUpdateInfoMap;
 
     @Autowired
     public PnfEventReadyDmaapClient(Environment env) {
-        httpClient = HttpClientBuilder.create().build();
-        pnfCorrelationIdToThreadMap = new ConcurrentHashMap<>();
+        this(env, HttpClientBuilder.create().build());
+    }
+
+    PnfEventReadyDmaapClient(Environment env, HttpClient httpClient) {
+        this.httpClient = httpClient;
         topicListenerDelayInSeconds = env.getProperty("pnf.dmaap.topicListenerDelayInSeconds", Integer.class);
         executor = null;
         getRequest = new HttpGet(UriBuilder.fromUri(env.getProperty("pnf.dmaap.uriPathPrefix"))
@@ -117,7 +121,8 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
         }
     }
 
-    private synchronized void stopDmaapThreadListener() {
+    @PreDestroy
+    synchronized void stopDmaapThreadListener() {
         if (dmaapThreadListenerIsRunning) {
             executor.shutdown();
             dmaapThreadListenerIsRunning = false;
