@@ -52,6 +52,8 @@ public class DMaaPRestClient extends RestClient {
         }
         String onapRequestId = UUID.randomUUID().toString();
         headerMap.put(ONAPLogConstants.Headers.REQUEST_ID, onapRequestId);
-        headerMap.put(ONAPLogConstants.Headers.INVOCATION_ID, MDC.get(ONAPLogConstants.MDCs.REQUEST_ID));
+        if (MDC.get(ONAPLogConstants.MDCs.REQUEST_ID) != null) {
+            headerMap.put(ONAPLogConstants.Headers.INVOCATION_ID, MDC.get(ONAPLogConstants.MDCs.REQUEST_ID));
+        }
     }
 }
