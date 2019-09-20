@@ -1,5 +1,9 @@
 The following describes how to configure authentication for the VNFM adapter.
 
+TLS should always be configured to ensure secure communication between the VNFM-adapter <-> BPMN infra and VNFM-adapter <-> VNFM
+If two-way TLS is configured then there is no need for any further authentication (i.e. no need for token or basic auth).
+If two-way TLS is NOT configured then authentication is REQUIRED. Oauth token based authentication must be used for requests, while for notifications either oauth tokens or basic auth can be used.
+
 
 ==========================================
 To confgure TLS
@@ -12,8 +16,8 @@ The following parameters can be set to configure the certificate for the VNFM ad
 server:
   ssl:
     key-alias: so@so.onap.org
-    key--store-password: 'I,re7WWEJR$e]x370wRgx?qE'
-    key-store: classpath:org.onap.so.p12
+    key--store-password: 'ywsqCy:EEo#j}HJHM7z^Rk[L'
+    key-store: classpath:so-vnfm-adapter.p12
     key-store-type: PKCS12
 The values shown above relate to the certificate included in the VNFM adapter jar which has been generated from AAF. If a different certificate is to be used then these values should be changed accordingly.
 
@@ -21,8 +25,8 @@ The following paramters can be set to configure the trust store for the VNFM ada
 http:
   client:
     ssl:
-      trust-store: org.onap.so.trust.jks
-      trust-store-password: NyRD](z:EJJNIt?},QgM3o7H
+      trust-store: classpath:org.onap.so.trust.jks
+      trust-store-password: ',sx#.C*W)]wVgJC6ccFHI#:H'
 The values shown above relate to the trust store included in the VNFM adapter jar which has been generated from AAI. If a different trust store is to be used then these values should be changed accordingly.
 
 Ensure the value for the below parameter uses https instead of http
