@@ -22,7 +22,6 @@
 
 package org.onap.so.apihandler.common;
 
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -53,6 +52,7 @@ public class PathResourceResolver implements LSResourceResolver {
             stream = new FileInputStream(path + systemId);
         } catch (FileNotFoundException e) {
             logger.debug("Could not resolve resource based on file: ", e);
+            return null;
         }
 
         input.setPublicId(publicId);
