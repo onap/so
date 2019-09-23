@@ -53,6 +53,7 @@ public class PathResourceResolver implements LSResourceResolver {
             stream = new FileInputStream(path + systemId);
         } catch (FileNotFoundException e) {
             logger.debug("Could not resolve resource based on file: ", e);
+            return null;
         }
 
         input.setPublicId(publicId);
