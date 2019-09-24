@@ -86,7 +86,8 @@ public class SDNCRequest implements Serializable {
         }
         SDNCRequest castOther = (SDNCRequest) other;
         return new EqualsBuilder().append(correlationValue, castOther.correlationValue)
-                .append(correlationName, castOther.correlationName).isEquals();
+                .append(correlationName, castOther.correlationName)
+                .isEquals();
     }
 
     @Override

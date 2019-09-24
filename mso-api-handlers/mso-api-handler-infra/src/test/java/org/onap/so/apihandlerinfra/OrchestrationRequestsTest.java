@@ -130,8 +130,10 @@ public class OrchestrationRequestsTest extends BaseTest {
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, GetOrchestrationResponse.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-        assertThat(response.getBody(), sameBeanAs(testResponse).ignoring("request.startTime")
-                .ignoring("request.finishTime").ignoring("request.requestStatus.timeStamp"));
+        assertThat(response.getBody(),
+                sameBeanAs(testResponse).ignoring("request.startTime")
+                        .ignoring("request.finishTime")
+                        .ignoring("request.requestStatus.timeStamp"));
         assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
         assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
         assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
@@ -161,8 +163,10 @@ public class OrchestrationRequestsTest extends BaseTest {
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, GetOrchestrationResponse.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-        assertThat(response.getBody(), sameBeanAs(testResponse).ignoring("request.startTime")
-                .ignoring("request.finishTime").ignoring("request.requestStatus.timeStamp"));
+        assertThat(response.getBody(),
+                sameBeanAs(testResponse).ignoring("request.startTime")
+                        .ignoring("request.finishTime")
+                        .ignoring("request.requestStatus.timeStamp"));
     }
 
     @Test
@@ -198,8 +202,10 @@ public class OrchestrationRequestsTest extends BaseTest {
         System.out.println("Response :" + response.getBody().toString());
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
 
-        assertThat(response.getBody(), sameBeanAs(testResponse).ignoring("request.startTime")
-                .ignoring("request.finishTime").ignoring("request.requestStatus.timeStamp"));
+        assertThat(response.getBody(),
+                sameBeanAs(testResponse).ignoring("request.startTime")
+                        .ignoring("request.finishTime")
+                        .ignoring("request.requestStatus.timeStamp"));
         assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
         assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
         assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
@@ -270,8 +276,10 @@ public class OrchestrationRequestsTest extends BaseTest {
 
         ResponseEntity<GetOrchestrationListResponse> response = restTemplate.exchange(builder.toUriString(),
                 HttpMethod.GET, entity, GetOrchestrationListResponse.class);
-        assertThat(response.getBody(), sameBeanAs(testResponse).ignoring("requestList.request.startTime")
-                .ignoring("requestList.request.finishTime").ignoring("requestList.request.requestStatus.timeStamp"));
+        assertThat(response.getBody(),
+                sameBeanAs(testResponse).ignoring("requestList.request.startTime")
+                        .ignoring("requestList.request.finishTime")
+                        .ignoring("requestList.request.requestStatus.timeStamp"));
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         assertEquals(requests.size(), response.getBody().getRequestList().size());
 
@@ -459,23 +467,27 @@ public class OrchestrationRequestsTest extends BaseTest {
     private void setupTestUnlockOrchestrationRequest(String requestId, String status) {
         wireMockServer.stubFor(get(urlPathEqualTo(getTestUrl(requestId)))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(String.format(getResponseTemplate, requestId, status)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(String.format(getResponseTemplate, requestId, status))
+                        .withStatus(HttpStatus.SC_OK)));
     }
 
     private void setupTestUnlockOrchestrationRequest_invalid_Json() {
-        wireMockServer.stubFor(get(urlPathEqualTo(getTestUrl(INVALID_REQUEST_ID))).willReturn(aResponse()
-                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).withStatus(HttpStatus.SC_NOT_FOUND)));
+        wireMockServer.stubFor(get(urlPathEqualTo(getTestUrl(INVALID_REQUEST_ID)))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withStatus(HttpStatus.SC_NOT_FOUND)));
 
     }
 
     private void setupTestUnlockOrchestrationRequest_Valid_Status(String requestID, String status) {
         wireMockServer.stubFor(get(urlPathEqualTo(getTestUrl(requestID)))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(String.format(getResponseTemplate, requestID, status)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(String.format(getResponseTemplate, requestID, status))
+                        .withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(post(urlPathEqualTo(getTestUrl("")))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(String.format(infraActivePost, requestID)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(String.format(infraActivePost, requestID))
+                        .withStatus(HttpStatus.SC_OK)));
     }
 
     private void setupTestGetOrchestrationRequestFilter() throws Exception {

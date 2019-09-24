@@ -38,8 +38,12 @@ public class RestPublisher implements Publisher {
 
     private URL createURL(PropertiesBean properties) {
         try {
-            return UriBuilder.fromUri(properties.getHost()).path("events").path(properties.getTopic())
-                    .queryParam("timeout", properties.getTimeout()).build().toURL();
+            return UriBuilder.fromUri(properties.getHost())
+                    .path("events")
+                    .path(properties.getTopic())
+                    .queryParam("timeout", properties.getTimeout())
+                    .build()
+                    .toURL();
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }

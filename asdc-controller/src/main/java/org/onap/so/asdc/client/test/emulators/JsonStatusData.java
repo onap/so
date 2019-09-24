@@ -93,7 +93,8 @@ public class JsonStatusData implements IStatusData {
      */
     public static JsonStatusData instantiateNotifFromJsonFile(String notifFilePath) throws IOException {
 
-        InputStream is = Thread.currentThread().getContextClassLoader()
+        InputStream is = Thread.currentThread()
+                .getContextClassLoader()
                 .getResourceAsStream(notifFilePath + "status-structure.json");
 
         // String fileLocation = System.getProperty("mso.config.path") + "notif-structure.json";

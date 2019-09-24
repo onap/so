@@ -95,21 +95,27 @@ public class MsoVnfMulticloudAdapterImplTest extends BaseRestTestUtils {
                 aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_NOT_FOUND)));
 
         wireMockServer.stubFor(get(urlPathEqualTo(MULTICLOUD_GET_PATH_BY_ID)).inScenario("CREATE")
-                .whenScenarioStateIs("CREATING").willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBody(GET_CREATE_STACK_RESPONSE).withStatus(HttpStatus.SC_OK)));
+                .whenScenarioStateIs("CREATING")
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody(GET_CREATE_STACK_RESPONSE)
+                        .withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlPathEqualTo(MULTICLOUD_GET_PATH_BY_ID)).inScenario("CREATE")
-                .whenScenarioStateIs("UPDATING").willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBody(GET_UPDATE_STACK_RESPONSE).withStatus(HttpStatus.SC_OK)));
+                .whenScenarioStateIs("UPDATING")
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody(GET_UPDATE_STACK_RESPONSE)
+                        .withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(post(urlPathEqualTo(MULTICLOUD_CREATE_PATH)).inScenario("CREATE")
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBodyFile("MulticloudResponse_Stack_Create.json").withStatus(HttpStatus.SC_CREATED))
+                        .withBodyFile("MulticloudResponse_Stack_Create.json")
+                        .withStatus(HttpStatus.SC_CREATED))
                 .willSetStateTo("CREATING"));
 
-        wireMockServer.stubFor(post(urlPathEqualTo(MULTICLOUD_UPDATE_PATH))
-                .inScenario("CREATE").willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBody(UPDATE_STACK_RESPONSE).withStatus(HttpStatus.SC_ACCEPTED))
+        wireMockServer.stubFor(post(urlPathEqualTo(MULTICLOUD_UPDATE_PATH)).inScenario("CREATE")
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody(UPDATE_STACK_RESPONSE)
+                        .withStatus(HttpStatus.SC_ACCEPTED))
                 .willSetStateTo("UPDATING"));
 
         try {
@@ -140,21 +146,27 @@ public class MsoVnfMulticloudAdapterImplTest extends BaseRestTestUtils {
                 aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_NOT_FOUND)));
 
         wireMockServer.stubFor(get(urlPathEqualTo(MULTICLOUD_GET_PATH_BY_ID)).inScenario("CREATE")
-                .whenScenarioStateIs("CREATING").willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBody(GET_CREATE_STACK_RESPONSE).withStatus(HttpStatus.SC_OK)));
+                .whenScenarioStateIs("CREATING")
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody(GET_CREATE_STACK_RESPONSE)
+                        .withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlPathEqualTo(MULTICLOUD_GET_PATH_BY_ID)).inScenario("CREATE")
-                .whenScenarioStateIs("UPDATING").willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBody(GET_UPDATE_STACK_RESPONSE).withStatus(HttpStatus.SC_OK)));
+                .whenScenarioStateIs("UPDATING")
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody(GET_UPDATE_STACK_RESPONSE)
+                        .withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(post(urlPathEqualTo(MULTICLOUD_CREATE_PATH)).inScenario("CREATE")
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBodyFile("MulticloudResponse_Stack_Create2.json").withStatus(HttpStatus.SC_CREATED))
+                        .withBodyFile("MulticloudResponse_Stack_Create2.json")
+                        .withStatus(HttpStatus.SC_CREATED))
                 .willSetStateTo("CREATING"));
 
-        wireMockServer.stubFor(post(urlPathEqualTo(MULTICLOUD_UPDATE_PATH))
-                .inScenario("CREATE").willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBody(UPDATE_STACK_RESPONSE).withStatus(HttpStatus.SC_ACCEPTED))
+        wireMockServer.stubFor(post(urlPathEqualTo(MULTICLOUD_UPDATE_PATH)).inScenario("CREATE")
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody(UPDATE_STACK_RESPONSE)
+                        .withStatus(HttpStatus.SC_ACCEPTED))
                 .willSetStateTo("UPDATING"));
 
         try {
@@ -184,15 +196,17 @@ public class MsoVnfMulticloudAdapterImplTest extends BaseRestTestUtils {
         wireMockServer.stubFor(
                 get(urlEqualTo("/api/multicloud/v1/CloudOwner/MTN13/infra_workload?name=vfname")).willReturn(aResponse()
                         // .withHeader()
-                        .withBodyFile("MulticloudGetStackExists.json").withStatus(HttpStatus.SC_OK)));
+                        .withBodyFile("MulticloudGetStackExists.json")
+                        .withStatus(HttpStatus.SC_OK)));
 
         try {
             instance.createVfModule("MTN13", "CloudOwner", "123", "vf", "v1", "genericVnfId", "vfname", "vfModuleId",
                     "create", null, "234", "9b339a61-69ca-465f-86b8-1c72c582b8e8", stackInputs, true, true, true,
                     msoRequest, new Holder<>(), new Holder<>(), new Holder<>());
         } catch (VnfException e) {
-            assertTrue(e.toString().contains(
-                    "Resource vfname already exists in owner/cloud/tenant CloudOwner/MTN13/123 with ID vfname/vfname"));
+            assertTrue(e.toString()
+                    .contains(
+                            "Resource vfname already exists in owner/cloud/tenant CloudOwner/MTN13/123 with ID vfname/vfname"));
             return;
         }
         fail("VnfAlreadyExists Exception expected!");

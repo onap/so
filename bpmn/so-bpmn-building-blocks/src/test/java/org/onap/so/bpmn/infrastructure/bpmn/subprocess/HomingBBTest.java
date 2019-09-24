@@ -37,8 +37,8 @@ public class HomingBBTest extends BaseBPMNTest {
         mockSubprocess("ReceiveWorkflowMessage", "Mock ReceiveWorkflowMessage", "GenericStub");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("HomingBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("start", "callHoming", "receiveAsyncCallback",
-                "processHomingSolution", "end");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("start", "callHoming", "receiveAsyncCallback", "processHomingSolution", "end");
         assertThat(pi).isEnded();
     }
 
@@ -47,8 +47,10 @@ public class HomingBBTest extends BaseBPMNTest {
         doThrow(new BpmnError("MSOWorkflowException")).when(homing).callHoming(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("HomingBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassed("start", "callHoming", "startBpmnError", "bpmnErrorSubprocess",
-                "processMsoWorkflowException", "endBpmnError").hasNotPassed("callReceiveAsync");
+        assertThat(pi).isStarted()
+                .hasPassed("start", "callHoming", "startBpmnError", "bpmnErrorSubprocess",
+                        "processMsoWorkflowException", "endBpmnError")
+                .hasNotPassed("callReceiveAsync");
         assertThat(pi).isEnded();
     }
 
@@ -57,8 +59,10 @@ public class HomingBBTest extends BaseBPMNTest {
         doThrow(new RuntimeException("Test")).when(homing).callHoming(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("HomingBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassed("start", "callHoming", "startJavaError", "processJavaException",
-                "javaExceptionSubProcess", "endJavaError").hasNotPassed("callReceiveAsync");
+        assertThat(pi).isStarted()
+                .hasPassed("start", "callHoming", "startJavaError", "processJavaException", "javaExceptionSubProcess",
+                        "endJavaError")
+                .hasNotPassed("callReceiveAsync");
         assertThat(pi).isEnded();
     }
 

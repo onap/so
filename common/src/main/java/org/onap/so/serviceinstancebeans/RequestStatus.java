@@ -121,11 +121,15 @@ public class RequestStatus {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("requestState", requestState).append("statusMessage", statusMessage)
-                .append("percentProgress", percentProgress).append("timestamp", timeStamp)
+        return new ToStringBuilder(this).append("requestState", requestState)
+                .append("statusMessage", statusMessage)
+                .append("percentProgress", percentProgress)
+                .append("timestamp", timeStamp)
                 .append("extSystemErrorSource", extSystemErrorSource)
-                .append("rollbackExtSystemErrorSource", rollbackExtSystemErrorSource).append("flowStatus", flowStatus)
-                .append("retryStatusMessage", retryStatusMessage).append("rollbackStatusMessage", rollbackStatusMessage)
+                .append("rollbackExtSystemErrorSource", rollbackExtSystemErrorSource)
+                .append("flowStatus", flowStatus)
+                .append("retryStatusMessage", retryStatusMessage)
+                .append("rollbackStatusMessage", rollbackStatusMessage)
                 .toString();
     }
 }

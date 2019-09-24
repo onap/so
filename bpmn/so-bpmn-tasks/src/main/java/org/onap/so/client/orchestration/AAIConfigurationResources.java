@@ -217,8 +217,9 @@ public class AAIConfigurationResources {
      * @return AAI Configuration object
      */
     public Optional<org.onap.aai.domain.yang.Configuration> getConfigurationFromRelatedLink(String relatedLink) {
-        return injectionHelper.getAaiClient().get(org.onap.aai.domain.yang.Configuration.class, AAIUriFactory
-                .createResourceFromExistingURI(AAIObjectType.CONFIGURATION, UriBuilder.fromPath(relatedLink).build()));
+        return injectionHelper.getAaiClient()
+                .get(org.onap.aai.domain.yang.Configuration.class, AAIUriFactory.createResourceFromExistingURI(
+                        AAIObjectType.CONFIGURATION, UriBuilder.fromPath(relatedLink).build()));
     }
 
     public void updateOrchestrationStatusConfiguration(Configuration configuration,

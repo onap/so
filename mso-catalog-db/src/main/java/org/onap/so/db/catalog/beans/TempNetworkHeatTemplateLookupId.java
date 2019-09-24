@@ -40,7 +40,8 @@ public class TempNetworkHeatTemplateLookupId implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("networkResourceModelName", networkResourceModelName)
-                .append("heatTemplateArtifactUuid", heatTemplateArtifactUuid).toString();
+                .append("heatTemplateArtifactUuid", heatTemplateArtifactUuid)
+                .toString();
     }
 
     public String getNetworkResourceModelName() {
@@ -66,7 +67,8 @@ public class TempNetworkHeatTemplateLookupId implements Serializable {
         }
         TempNetworkHeatTemplateLookupId castOther = (TempNetworkHeatTemplateLookupId) other;
         return new EqualsBuilder().append(networkResourceModelName, castOther.networkResourceModelName)
-                .append(heatTemplateArtifactUuid, castOther.heatTemplateArtifactUuid).isEquals();
+                .append(heatTemplateArtifactUuid, castOther.heatTemplateArtifactUuid)
+                .isEquals();
     }
 
     @Override

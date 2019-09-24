@@ -124,8 +124,9 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
                 restTemplate.exchange(createURLWithPort("/services/rest/v2/vnfs/" + AAI_VNF_ID + "/vf-modules"),
                         HttpMethod.POST, entity, CreateVfModuleResponse.class);
 
-        CreateVfModuleResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
-                new File("src/test/resources/__files/CreateVfModuleResponse.json"), CreateVfModuleResponse.class);
+        CreateVfModuleResponse expectedResponse = jettisonTypeObjectMapper.getMapper()
+                .readValue(new File("src/test/resources/__files/CreateVfModuleResponse.json"),
+                        CreateVfModuleResponse.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         assertThat(response.getBody(), sameBeanAs(expectedResponse));
@@ -151,8 +152,9 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
                 restTemplate.exchange(createURLWithPort("/services/rest/v1/vnfs/" + AAI_VNF_ID + "/vf-modules"),
                         HttpMethod.POST, entity, CreateVfModuleResponse.class);
 
-        CreateVfModuleResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
-                new File("src/test/resources/__files/CreateVfModuleResponse.json"), CreateVfModuleResponse.class);
+        CreateVfModuleResponse expectedResponse = jettisonTypeObjectMapper.getMapper()
+                .readValue(new File("src/test/resources/__files/CreateVfModuleResponse.json"),
+                        CreateVfModuleResponse.class);
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
     }
@@ -218,8 +220,9 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
                 restTemplate.exchange(createURLWithPort("/services/rest/v1/vnfs/" + AAI_VNF_ID + "/vf-modules"),
                         HttpMethod.POST, entity, CreateVfModuleResponse.class);
 
-        CreateVfModuleResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
-                new File("src/test/resources/__files/CreateVfModuleResponse.json"), CreateVfModuleResponse.class);
+        CreateVfModuleResponse expectedResponse = jettisonTypeObjectMapper.getMapper()
+                .readValue(new File("src/test/resources/__files/CreateVfModuleResponse.json"),
+                        CreateVfModuleResponse.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         assertThat(response.getBody(), sameBeanAs(expectedResponse));
@@ -358,8 +361,9 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
                 HttpMethod.DELETE, entity, DeleteVfModuleResponse.class);
 
 
-        DeleteVfModuleResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
-                new File("src/test/resources/__files/DeleteVfModuleResponse.json"), DeleteVfModuleResponse.class);
+        DeleteVfModuleResponse expectedResponse = jettisonTypeObjectMapper.getMapper()
+                .readValue(new File("src/test/resources/__files/DeleteVfModuleResponse.json"),
+                        DeleteVfModuleResponse.class);
 
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
@@ -412,8 +416,9 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
 
         mockOpenStackPutStacks_200(wireMockServer);
 
-        UpdateVfModuleResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
-                new File("src/test/resources/__files/UpdateVfModuleResponse.json"), UpdateVfModuleResponse.class);
+        UpdateVfModuleResponse expectedResponse = jettisonTypeObjectMapper.getMapper()
+                .readValue(new File("src/test/resources/__files/UpdateVfModuleResponse.json"),
+                        UpdateVfModuleResponse.class);
         expectedResponse.setVfModuleOutputs(vfModuleOutputs);
 
         headers.add("Accept", MediaType.APPLICATION_JSON);
@@ -464,8 +469,9 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
                 createURLWithPort("/services/rest/v1/vnfs/" + AAI_VNF_ID + "/vf-modules/" + VF_MODULE_ID + "/rollback"),
                 HttpMethod.DELETE, entity, RollbackVfModuleResponse.class);
 
-        RollbackVfModuleResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
-                new File("src/test/resources/__files/RollbackVfModuleResponse.json"), RollbackVfModuleResponse.class);
+        RollbackVfModuleResponse expectedResponse = jettisonTypeObjectMapper.getMapper()
+                .readValue(new File("src/test/resources/__files/RollbackVfModuleResponse.json"),
+                        RollbackVfModuleResponse.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         assertThat(response.getBody(), sameBeanAs(expectedResponse));
@@ -478,9 +484,12 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
 
         String testUrl = createURLWithPort("/services/rest/v1/vnfs/" + AAI_VNF_ID + "/vf-modules/" + VF_MODULE_ID);
         String testUri = UriBuilder.fromPath("/services/rest/v1/vnfs/" + AAI_VNF_ID + "/vf-modules/" + VF_MODULE_ID)
-                .host("localhost").port(wireMockPort).scheme("http")
+                .host("localhost")
+                .port(wireMockPort)
+                .scheme("http")
                 // .queryParam("cloudSiteId", CLOUDSITE_ID).queryParam("tenantId", TENANT_ID)
-                .build().toString();
+                .build()
+                .toString();
         System.out.println(testUri);
 
         mockOpenStackResponseAccess(wireMockServer, wireMockPort);
@@ -492,8 +501,9 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
                 restTemplate.getForEntity(testUri, QueryVfModuleResponse.class);
         // System.out.println(response);
 
-        QueryVfModuleResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
-                new File("src/test/resources/__files/QueryVfModuleResponse.json"), QueryVfModuleResponse.class);
+        QueryVfModuleResponse expectedResponse = jettisonTypeObjectMapper.getMapper()
+                .readValue(new File("src/test/resources/__files/QueryVfModuleResponse.json"),
+                        QueryVfModuleResponse.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         assertThat(response.getBody(), sameBeanAs(expectedResponse));

@@ -34,8 +34,9 @@ public class DeleteInstanceGroupBBTest extends BaseBPMNTest {
     public void sunnyDay() throws InterruptedException, IOException {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeleteInstanceGroupBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("DeleteInstanceGroupBB_Start", "DeleteInstanceGroupNaming",
-                "DeleteInstanceGroupAAI", "DeleteInstanceGroupBB_End");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("DeleteInstanceGroupBB_Start", "DeleteInstanceGroupNaming", "DeleteInstanceGroupAAI",
+                        "DeleteInstanceGroupBB_End");
         assertThat(pi).isEnded();
     }
 

@@ -120,8 +120,8 @@ public class AAINetworkResourcesTest extends TestDataSetup {
         network.setOrchestrationStatus(OrchestrationStatus.ASSIGNED);
 
         doReturn(new org.onap.aai.domain.yang.L3Network()).when(MOCK_aaiObjectMapper).mapNetwork(network);
-        doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class),
-                isA(org.onap.aai.domain.yang.L3Network.class));
+        doNothing().when(MOCK_aaiResourcesClient)
+                .update(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.L3Network.class));
 
         aaiNetworkResources.updateNetwork(network);
 
@@ -136,8 +136,8 @@ public class AAINetworkResourcesTest extends TestDataSetup {
         network.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
 
         doReturn(new org.onap.aai.domain.yang.L3Network()).when(MOCK_aaiObjectMapper).mapNetwork(network);
-        doReturn(MOCK_aaiResourcesClient).when(MOCK_aaiResourcesClient).createIfNotExists(any(AAIResourceUri.class),
-                any(Optional.class));
+        doReturn(MOCK_aaiResourcesClient).when(MOCK_aaiResourcesClient)
+                .createIfNotExists(any(AAIResourceUri.class), any(Optional.class));
         doNothing().when(MOCK_aaiResourcesClient).connect(isA(AAIResourceUri.class), any(AAIResourceUri.class));
 
         aaiNetworkResources.createNetworkConnectToServiceInstance(network, serviceInstance);
@@ -283,8 +283,8 @@ public class AAINetworkResourcesTest extends TestDataSetup {
     @Test
     public void createNetworkCollectionTest() throws Exception {
 
-        doNothing().when(MOCK_aaiResourcesClient).create(isA(AAIResourceUri.class),
-                isA(org.onap.aai.domain.yang.Collection.class));
+        doNothing().when(MOCK_aaiResourcesClient)
+                .create(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.Collection.class));
         doReturn(new org.onap.aai.domain.yang.Collection()).when(MOCK_aaiObjectMapper).mapCollection(collection);
         collection.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
 
@@ -298,8 +298,8 @@ public class AAINetworkResourcesTest extends TestDataSetup {
     public void createNetworkInstanceGroupTest() throws Exception {
         doReturn(new org.onap.aai.domain.yang.InstanceGroup()).when(MOCK_aaiObjectMapper)
                 .mapInstanceGroup(instanceGroup);
-        doNothing().when(MOCK_aaiResourcesClient).create(isA(AAIResourceUri.class),
-                isA(org.onap.aai.domain.yang.InstanceGroup.class));
+        doNothing().when(MOCK_aaiResourcesClient)
+                .create(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.InstanceGroup.class));
         aaiNetworkResources.createNetworkInstanceGroup(instanceGroup);
         verify(MOCK_aaiResourcesClient, times(1)).create(any(AAIResourceUri.class),
                 isA(org.onap.aai.domain.yang.InstanceGroup.class));
@@ -370,8 +370,8 @@ public class AAINetworkResourcesTest extends TestDataSetup {
     public void updateSubnetTest() throws Exception {
 
         doReturn(new org.onap.aai.domain.yang.Subnet()).when(MOCK_aaiObjectMapper).mapSubnet(subnet);
-        doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class),
-                isA(org.onap.aai.domain.yang.Subnet.class));
+        doNothing().when(MOCK_aaiResourcesClient)
+                .update(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.Subnet.class));
 
         aaiNetworkResources.updateSubnet(network, subnet);
 
@@ -410,8 +410,8 @@ public class AAINetworkResourcesTest extends TestDataSetup {
 
     @Test
     public void createNetworkPolicyTest() throws Exception {
-        doNothing().when(MOCK_aaiResourcesClient).create(isA(AAIResourceUri.class),
-                isA(org.onap.aai.domain.yang.NetworkPolicy.class));
+        doNothing().when(MOCK_aaiResourcesClient)
+                .create(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.NetworkPolicy.class));
         doReturn(new org.onap.aai.domain.yang.NetworkPolicy()).when(MOCK_aaiObjectMapper)
                 .mapNetworkPolicy(networkPolicy);
         aaiNetworkResources.createNetworkPolicy(networkPolicy);

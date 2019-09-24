@@ -53,7 +53,9 @@ public class BeansTest {
 
 
 
-                .with(new SetterTester()).with(new GetterTester()).with(new ToStringTester())
+                .with(new SetterTester())
+                .with(new GetterTester())
+                .with(new ToStringTester())
 
                 .build();
 

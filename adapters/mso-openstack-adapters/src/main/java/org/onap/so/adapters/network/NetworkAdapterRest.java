@@ -269,8 +269,10 @@ public class NetworkAdapterRest {
             @ApiParam(value = "details of network being deleted", required = true) DeleteNetworkRequest req) {
         logger.debug("deleteNetwork enter: {}", req.toJsonString());
         if (aaiNetworkId == null || !aaiNetworkId.equals(req.getNetworkId())) {
-            return Response.status(HttpStatus.SC_BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(
-                    "A&AI NetworkId in URL (" + aaiNetworkId + ") does not match content (" + req.getNetworkId() + ")")
+            return Response.status(HttpStatus.SC_BAD_REQUEST)
+                    .type(MediaType.TEXT_PLAIN)
+                    .entity("A&AI NetworkId in URL (" + aaiNetworkId + ") does not match content (" + req.getNetworkId()
+                            + ")")
                     .build();
         }
         DeleteNetworkTask task = new DeleteNetworkTask(req);
@@ -408,7 +410,8 @@ public class NetworkAdapterRest {
             err.setMessage(e.getMessage());
             err.setCategory(MsoExceptionCategory.INTERNAL);
             return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-                    .entity(new GenericEntity<QueryNetworkError>(err) {}).build();
+                    .entity(new GenericEntity<QueryNetworkError>(err) {})
+                    .build();
         }
     }
 
@@ -512,8 +515,10 @@ public class NetworkAdapterRest {
             @ApiParam(value = "UpdateNetworkRequest in JSON format", required = true) UpdateNetworkRequest req) {
         logger.debug("updateNetwork enter: {}", req.toJsonString());
         if (aaiNetworkId == null || !aaiNetworkId.equals(req.getNetworkId())) {
-            return Response.status(HttpStatus.SC_BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(
-                    "A&AI NetworkId in URL (" + aaiNetworkId + ") does not match content (" + req.getNetworkId() + ")")
+            return Response.status(HttpStatus.SC_BAD_REQUEST)
+                    .type(MediaType.TEXT_PLAIN)
+                    .entity("A&AI NetworkId in URL (" + aaiNetworkId + ") does not match content (" + req.getNetworkId()
+                            + ")")
                     .build();
         }
         UpdateNetworkTask task = new UpdateNetworkTask(req);

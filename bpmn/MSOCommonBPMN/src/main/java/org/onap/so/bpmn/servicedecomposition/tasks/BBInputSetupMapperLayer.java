@@ -286,7 +286,8 @@ public class BBInputSetupMapperLayer {
             L3Network network) {
         if (aaiL3Network.getSegmentationAssignments() != null) {
             for (org.onap.aai.domain.yang.SegmentationAssignment aaiSegmentationAssignment : aaiL3Network
-                    .getSegmentationAssignments().getSegmentationAssignment()) {
+                    .getSegmentationAssignments()
+                    .getSegmentationAssignment()) {
                 network.getSegmentationAssignments().add(mapAAISegmentationAssignment(aaiSegmentationAssignment));
             }
         }
@@ -361,8 +362,10 @@ public class BBInputSetupMapperLayer {
 
     public OrchestrationStatus mapOrchestrationStatusFromAAI(String orchestrationStatus) {
 
-        Optional<OrchestrationStatus> result = Arrays.asList(OrchestrationStatus.values()).stream()
-                .filter(item -> item.fuzzyMap(orchestrationStatus)).findFirst();
+        Optional<OrchestrationStatus> result = Arrays.asList(OrchestrationStatus.values())
+                .stream()
+                .filter(item -> item.fuzzyMap(orchestrationStatus))
+                .findFirst();
 
         return result.orElse(null);
 

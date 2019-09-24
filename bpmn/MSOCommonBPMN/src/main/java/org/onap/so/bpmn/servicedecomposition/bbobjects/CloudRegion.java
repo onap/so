@@ -113,7 +113,8 @@ public class CloudRegion implements Serializable, ShallowCopy<CloudRegion> {
         }
         CloudRegion castOther = (CloudRegion) other;
         return new EqualsBuilder().append(lcpCloudRegionId, castOther.lcpCloudRegionId)
-                .append(cloudOwner, castOther.cloudOwner).isEquals();
+                .append(cloudOwner, castOther.cloudOwner)
+                .isEquals();
     }
 
     @Override

@@ -71,20 +71,27 @@ public class ExternalServiceToInternalService implements Serializable {
         return new EqualsBuilder().append(serviceName, castOther.serviceName)
                 .append(productFlavor, castOther.productFlavor)
                 .append(subscriptionServiceType, castOther.subscriptionServiceType)
-                .append(serviceModelUUID, castOther.serviceModelUUID).isEquals();
+                .append(serviceModelUUID, castOther.serviceModelUUID)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(serviceName).append(productFlavor).append(subscriptionServiceType)
-                .append(serviceModelUUID).toHashCode();
+        return new HashCodeBuilder().append(serviceName)
+                .append(productFlavor)
+                .append(subscriptionServiceType)
+                .append(serviceModelUUID)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("id", id).append("serviceName", serviceName)
-                .append("productFlavor", productFlavor).append("subscriptionServiceType", subscriptionServiceType)
-                .append("serviceModelUUID", serviceModelUUID).toString();
+        return new ToStringBuilder(this).append("id", id)
+                .append("serviceName", serviceName)
+                .append("productFlavor", productFlavor)
+                .append("subscriptionServiceType", subscriptionServiceType)
+                .append("serviceModelUUID", serviceModelUUID)
+                .toString();
     }
 
     public Integer getId() {

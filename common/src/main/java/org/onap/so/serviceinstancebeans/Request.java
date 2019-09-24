@@ -134,11 +134,17 @@ public class Request {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("requestId", requestId).append("startTime", startTime)
-                .append("finishTime", finishTime).append("requestScope", requestScope)
-                .append("requestType", requestType).append("requestDetails", requestDetails)
-                .append("instanceReferences", instanceReferences).append("requestStatus", requestStatus)
-                .append("requestProcessingData", requestProcessingData).append("cloudRequestData", cloudRequestData)
-                .append("originalRequestId", originalRequestId).toString();
+        return new ToStringBuilder(this).append("requestId", requestId)
+                .append("startTime", startTime)
+                .append("finishTime", finishTime)
+                .append("requestScope", requestScope)
+                .append("requestType", requestType)
+                .append("requestDetails", requestDetails)
+                .append("instanceReferences", instanceReferences)
+                .append("requestStatus", requestStatus)
+                .append("requestProcessingData", requestProcessingData)
+                .append("cloudRequestData", cloudRequestData)
+                .append("originalRequestId", originalRequestId)
+                .toString();
     }
 }

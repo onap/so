@@ -101,12 +101,18 @@ public class InstanceGroup implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("modelUUID", modelUUID).append("modelName", modelName)
-                .append("modelInvariantUUID", modelInvariantUUID).append("modelVersion", modelVersion)
-                .append("role", role).append("toscaNodeType", toscaNodeType).append("type", type)
-                .append("created", created).append("collectionResource", collectionResource)
+        return new ToStringBuilder(this).append("modelUUID", modelUUID)
+                .append("modelName", modelName)
+                .append("modelInvariantUUID", modelInvariantUUID)
+                .append("modelVersion", modelVersion)
+                .append("role", role)
+                .append("toscaNodeType", toscaNodeType)
+                .append("type", type)
+                .append("created", created)
+                .append("collectionResource", collectionResource)
                 .append("collectionInstanceGroupCustomizations", collectionInstanceGroupCustomizations)
-                .append("vnfcInstanceGroupCustomizations", vnfcInstanceGroupCustomizations).toString();
+                .append("vnfcInstanceGroupCustomizations", vnfcInstanceGroupCustomizations)
+                .toString();
     }
 
     @Override

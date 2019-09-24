@@ -33,8 +33,12 @@ public class VfcModelPojoTest {
 
     @Test
     public void validate() {
-        Validator validator = ValidatorBuilder.create().with(new NoNestedClassRule()).with(new NoPublicFieldsRule())
-                .with(new SetterTester()).with(new GetterTester()).build();
+        Validator validator = ValidatorBuilder.create()
+                .with(new NoNestedClassRule())
+                .with(new NoPublicFieldsRule())
+                .with(new SetterTester())
+                .with(new GetterTester())
+                .build();
         validator.validate(packageName);
     }
 }

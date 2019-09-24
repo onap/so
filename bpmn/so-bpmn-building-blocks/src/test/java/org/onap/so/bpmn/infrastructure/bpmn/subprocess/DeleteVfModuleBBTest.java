@@ -46,22 +46,27 @@ public class DeleteVfModuleBBTest extends BaseBPMNTest {
         mockSubprocess("VnfAdapter", "Mocked VnfAdapter", "GenericStub");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeleteVfModuleBB", variables);
         List<LockedExternalTask> tasks = externalTaskService.fetchAndLock(100, "externalWorkerId")
-                .topic("InventoryDeleteAudit", 60L * 1000L).topic("InventoryQueryAudit", 60L * 1000L).execute();
+                .topic("InventoryDeleteAudit", 60L * 1000L)
+                .topic("InventoryQueryAudit", 60L * 1000L)
+                .execute();
         while (!tasks.isEmpty()) {
             for (LockedExternalTask task : tasks) {
                 externalTaskService.complete(task.getId(), "externalWorkerId");
             }
-            tasks = externalTaskService.fetchAndLock(100, "externalWorkerId").topic("InventoryDeleteAudit", 60L * 1000L)
-                    .topic("InventoryQueryAudit", 60L * 1000L).execute();
+            tasks = externalTaskService.fetchAndLock(100, "externalWorkerId")
+                    .topic("InventoryDeleteAudit", 60L * 1000L)
+                    .topic("InventoryQueryAudit", 60L * 1000L)
+                    .execute();
         }
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassed("DeleteVfModuleBB_Start", "Check_Audit", "auditEnabledCheck",
-                "Setup_Audit_Variable", "Setup_Audit_Variable", "aicQueryStack", "ExclusiveGateway_1t9q2jl",
-                "ExclusiveGateway_1naduhl", "ExclusiveGateway_13fhmpf", "DeleteVfModuleVnfAdapter", "VnfAdapter",
-                "Audit_Inventory", "ExclusiveGateway_1yvh16a", "auditSuccessfulCheck", "ExclusiveGateway_01wvywu",
-                "ExclusiveGateway_1yvh16a", "DeleteNetworkPolicies", "UpdateVnfIpv4OamAddress",
-                "UpdateVnfManagementV6Address", "UpdateVfModuleContrailServiceInstanceFqdn",
-                "UpdateVfModuleHeatStackId", "UpdateVfModuleDeleteStatus", "DeleteVfModuleBB_End");
+        assertThat(pi).isStarted()
+                .hasPassed("DeleteVfModuleBB_Start", "Check_Audit", "auditEnabledCheck", "Setup_Audit_Variable",
+                        "Setup_Audit_Variable", "aicQueryStack", "ExclusiveGateway_1t9q2jl", "ExclusiveGateway_1naduhl",
+                        "ExclusiveGateway_13fhmpf", "DeleteVfModuleVnfAdapter", "VnfAdapter", "Audit_Inventory",
+                        "ExclusiveGateway_1yvh16a", "auditSuccessfulCheck", "ExclusiveGateway_01wvywu",
+                        "ExclusiveGateway_1yvh16a", "DeleteNetworkPolicies", "UpdateVnfIpv4OamAddress",
+                        "UpdateVnfManagementV6Address", "UpdateVfModuleContrailServiceInstanceFqdn",
+                        "UpdateVfModuleHeatStackId", "UpdateVfModuleDeleteStatus", "DeleteVfModuleBB_End");
         assertThat(pi).isEnded();
     }
 
@@ -70,13 +75,17 @@ public class DeleteVfModuleBBTest extends BaseBPMNTest {
         doThrow(BpmnError.class).when(vnfAdapterDeleteTasks).deleteVfModule(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeleteVfModuleBB", variables);
         List<LockedExternalTask> tasks = externalTaskService.fetchAndLock(100, "externalWorkerId")
-                .topic("InventoryDeleteAudit", 60L * 1000L).topic("InventoryQueryAudit", 60L * 1000L).execute();
+                .topic("InventoryDeleteAudit", 60L * 1000L)
+                .topic("InventoryQueryAudit", 60L * 1000L)
+                .execute();
         while (!tasks.isEmpty()) {
             for (LockedExternalTask task : tasks) {
                 externalTaskService.complete(task.getId(), "externalWorkerId");
             }
-            tasks = externalTaskService.fetchAndLock(100, "externalWorkerId").topic("InventoryDeleteAudit", 60L * 1000L)
-                    .topic("InventoryQueryAudit", 60L * 1000L).execute();
+            tasks = externalTaskService.fetchAndLock(100, "externalWorkerId")
+                    .topic("InventoryDeleteAudit", 60L * 1000L)
+                    .topic("InventoryQueryAudit", 60L * 1000L)
+                    .execute();
         }
         assertThat(pi).isNotNull();
         assertThat(pi).isStarted()

@@ -55,10 +55,9 @@ public class RequestValidatorListenerRunner extends ListenerRunner {
         List<Pair<String, Optional<String>>> results =
                 runValidations(requestValidators, instanceIdMap, request, queryParams, requestURI);
         if (!results.isEmpty()) {
-            throw new ValidateException("Failed Validations:\n"
-                    + results.stream().map(item -> String.format("%s: %s", item.getValue0(), item.getValue1().get()))
-                            .collect(Collectors.joining("\n")),
-                    400);
+            throw new ValidateException("Failed Validations:\n" + results.stream()
+                    .map(item -> String.format("%s: %s", item.getValue0(), item.getValue1().get()))
+                    .collect(Collectors.joining("\n")), 400);
         }
 
         return true;

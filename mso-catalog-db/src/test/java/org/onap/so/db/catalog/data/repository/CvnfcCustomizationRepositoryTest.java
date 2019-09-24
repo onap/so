@@ -88,7 +88,8 @@ public class CvnfcCustomizationRepositoryTest extends BaseTest {
             if (foundCvnfcCustomization.getDescription().equalsIgnoreCase(cvnfcCustomization.getDescription())) {
 
                 assertThat(cvnfcCustomization,
-                        sameBeanAs(foundCvnfcCustomization).ignoring("id").ignoring("created")
+                        sameBeanAs(foundCvnfcCustomization).ignoring("id")
+                                .ignoring("created")
                                 .ignoring("vnfVfmoduleCvnfcConfigurationCustomization")
                                 .ignoring("vnfResourceCusteModelCustomizationUUID"));
 
@@ -140,7 +141,8 @@ public class CvnfcCustomizationRepositoryTest extends BaseTest {
             if (foundCvnfcCustomization.getDescription().equalsIgnoreCase(cvnfcCustomization.getDescription())) {
 
                 assertThat(cvnfcCustomization,
-                        sameBeanAs(foundCvnfcCustomization).ignoring("id").ignoring("created")
+                        sameBeanAs(foundCvnfcCustomization).ignoring("id")
+                                .ignoring("created")
                                 .ignoring("vnfVfmoduleCvnfcConfigurationCustomization")
                                 .ignoring("vnfResourceCusteModelCustomizationUUID"));
 
@@ -188,7 +190,8 @@ public class CvnfcCustomizationRepositoryTest extends BaseTest {
                 cvnfcCustomizationRepository.findOneByModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
 
         assertThat(cvnfcCustomization,
-                sameBeanAs(cvnfcCustomizationList).ignoring("id").ignoring("created")
+                sameBeanAs(cvnfcCustomizationList).ignoring("id")
+                        .ignoring("created")
                         .ignoring("vnfVfmoduleCvnfcConfigurationCustomization")
                         .ignoring("vnfResourceCusteModelCustomizationUUID"));
 

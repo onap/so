@@ -94,8 +94,9 @@ public class VfModuleRestHandlerTest {
     public void test_find_vf_module_recipe_default_recipe() throws MalformedURLException, NoRecipeException {
         VnfComponentsRecipe expected = new VnfComponentsRecipe();
         expected.setAction("createInstance");
-        doReturn(null).when(catalogDbClient).getFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction(
-                "testModelId", ModelType.vfModule.toString(), Action.createInstance.toString());
+        doReturn(null).when(catalogDbClient)
+                .getFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction("testModelId",
+                        ModelType.vfModule.toString(), Action.createInstance.toString());
         doReturn(expected).when(catalogDbClient)
                 .getFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction("GR-API-DEFAULT",
                         ModelType.vfModule.toString(), Action.createInstance.toString());
@@ -121,8 +122,9 @@ public class VfModuleRestHandlerTest {
     public void test_checkDuplicateRequest() throws MalformedURLException, NoRecipeException {
         ArgumentCaptor<HashMap> instanceIdCaptor = ArgumentCaptor.forClass(HashMap.class);
         restHandler.checkDuplicateRequest("serviceInstanceId", "vnfId", "vfModuleId", "instanceName", "requestId");
-        Mockito.verify(infraActiveRequestsClient, Mockito.times(1)).checkInstanceNameDuplicate(
-                instanceIdCaptor.capture(), eq("instanceName"), eq(ModelType.vfModule.toString()));
+        Mockito.verify(infraActiveRequestsClient, Mockito.times(1))
+                .checkInstanceNameDuplicate(instanceIdCaptor.capture(), eq("instanceName"),
+                        eq(ModelType.vfModule.toString()));
         Map actualMap = instanceIdCaptor.getValue();
         assertEquals("ServiceInstanceID should exist in map", "serviceInstanceId", actualMap.get("serviceInstanceId"));
         assertEquals("VnfId should exit in map", "vnfId", actualMap.get("vnfInstanceId"));
@@ -141,10 +143,15 @@ public class VfModuleRestHandlerTest {
     @Test
     public void test_buildRequestParams() throws Exception {
         RequestClientParameter expected = new RequestClientParameter.Builder().setRequestId("requestId")
-                .setServiceInstanceId("serviceInstanceId").setVnfId("vnfId").setVfModuleId("vfModuleId")
-                .setALaCarte(true).setRequestDetails(mapper.writeValueAsString(createTestRequest()))
+                .setServiceInstanceId("serviceInstanceId")
+                .setVnfId("vnfId")
+                .setVfModuleId("vfModuleId")
+                .setALaCarte(true)
+                .setRequestDetails(mapper.writeValueAsString(createTestRequest()))
                 .setRequestAction(Action.deleteInstance.toString())
-                .setRequestUri("http://localhost:8080/serviceInstances").setApiVersion("v8").build();
+                .setRequestUri("http://localhost:8080/serviceInstances")
+                .setApiVersion("v8")
+                .build();
         RequestClientParameter actual = restHandler.buildRequestParams(createTestRequest(),
                 "http://localhost:8080/serviceInstances", "requestId", "serviceInstanceId", "vnfId", "vfModuleId");
         assertThat(actual, sameBeanAs(expected));

@@ -93,8 +93,9 @@ public class InstanceManagementTest extends BaseTest {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-        wireMockServer.stubFor(post(urlMatching(".*/infraActiveRequests.*")).willReturn(aResponse()
-                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).withStatus(HttpStatus.SC_OK)));
+        wireMockServer.stubFor(post(urlMatching(".*/infraActiveRequests.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withStatus(HttpStatus.SC_OK)));
     }
 
     public String inputStream(String JsonInput) throws IOException {
@@ -149,7 +150,8 @@ public class InstanceManagementTest extends BaseTest {
     public void executeCustomWorkflow() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/testingWorkflow"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
                 ".*/workflow/search/findByArtifactUUID[?]artifactUUID=71526781-e55c-4cb7-adb3-97e09d9c76be"))

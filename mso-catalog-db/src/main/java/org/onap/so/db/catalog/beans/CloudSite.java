@@ -255,9 +255,13 @@ public class CloudSite {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("regionId", getRegionId())
-                .append("identityServiceId", getIdentityServiceId()).append("cloudVersion", getCloudVersion())
-                .append("clli", getClli()).append("cloudifyId", getCloudifyId()).append("platform", getPlatform())
-                .append("orchestrator", getOrchestrator()).toString();
+                .append("identityServiceId", getIdentityServiceId())
+                .append("cloudVersion", getCloudVersion())
+                .append("clli", getClli())
+                .append("cloudifyId", getCloudifyId())
+                .append("platform", getPlatform())
+                .append("orchestrator", getOrchestrator())
+                .toString();
     }
 
     @Override
@@ -271,13 +275,17 @@ public class CloudSite {
         CloudSite castOther = (CloudSite) other;
         return new EqualsBuilder().append(getRegionId(), castOther.getRegionId())
                 .append(getIdentityServiceId(), castOther.getIdentityServiceId())
-                .append(getCloudVersion(), castOther.getCloudVersion()).append(getClli(), castOther.getClli())
+                .append(getCloudVersion(), castOther.getCloudVersion())
+                .append(getClli(), castOther.getClli())
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(1, 31).append(getRegionId()).append(getIdentityServiceId()).append(getCloudVersion())
-                .append(getClli()).toHashCode();
+        return new HashCodeBuilder(1, 31).append(getRegionId())
+                .append(getIdentityServiceId())
+                .append(getCloudVersion())
+                .append(getClli())
+                .toHashCode();
     }
 }

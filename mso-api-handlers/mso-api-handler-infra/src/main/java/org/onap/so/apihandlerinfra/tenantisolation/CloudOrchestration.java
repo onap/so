@@ -151,7 +151,8 @@ public class CloudOrchestration {
 
 
             throw new ValidateException.Builder("Mapping of request to JSON object failed.  " + e.getMessage(),
-                    HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo)
+                    HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
+                            .errorInfo(errorLoggerInfo)
                             .build();
         }
 
@@ -179,7 +180,8 @@ public class CloudOrchestration {
 
             throw new DuplicateRequestException.Builder(resourceType, instance, dup.getRequestStatus(),
                     dup.getRequestId(), HttpStatus.SC_CONFLICT, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR)
-                            .errorInfo(errorLoggerInfo).build();
+                            .errorInfo(errorLoggerInfo)
+                            .build();
         }
 
         String instanceId = null;
@@ -209,7 +211,8 @@ public class CloudOrchestration {
 
 
             throw new ValidateException.Builder("Could not encode instanceID" + ex.getMessage(),
-                    HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(ex).errorInfo(errorLoggerInfo)
+                    HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(ex)
+                            .errorInfo(errorLoggerInfo)
                             .build();
         }
 
@@ -229,7 +232,8 @@ public class CloudOrchestration {
         } catch (Exception e) {
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_DUPLICATE_CHECK_EXC, ErrorCode.DataError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                            .build();
 
 
             throw new ValidateException.Builder("Duplicate Check Request", HttpStatus.SC_INTERNAL_SERVER_ERROR,
@@ -253,7 +257,8 @@ public class CloudOrchestration {
             ValidateException validateException =
                     new ValidateException.Builder("Mapping of request to JSON object failed.  " + e.getMessage(),
                             HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
-                                    .errorInfo(errorLoggerInfo).build();
+                                    .errorInfo(errorLoggerInfo)
+                                    .build();
             if (tenantIsolationRequest.getRequestId() != null) {
                 tenantIsolationRequest.createRequestRecord(Status.FAILED, action);
             }

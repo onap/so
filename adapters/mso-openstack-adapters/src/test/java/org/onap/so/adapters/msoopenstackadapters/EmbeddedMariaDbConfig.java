@@ -50,7 +50,11 @@ public class EmbeddedMariaDbConfig {
 
         DBConfigurationBuilder config = mariaDB4jSpringService.getConfiguration();
 
-        return DataSourceBuilder.create().username(datasourceUsername).password(datasourcePassword)
-                .url(config.getURL(databaseName)).driverClassName(datasourceDriver).build();
+        return DataSourceBuilder.create()
+                .username(datasourceUsername)
+                .password(datasourcePassword)
+                .url(config.getURL(databaseName))
+                .driverClassName(datasourceDriver)
+                .build();
     }
 }

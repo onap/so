@@ -35,8 +35,9 @@ public class DistributeTrafficActivityTest extends BaseBPMNTest {
     public void sunnyDayDistributeTrafficActivity_Test() throws InterruptedException {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("DistributeTrafficActivity", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("DistributeTrafficActivity_Start", "TaskPreProcessActivity",
-                "TaskDistributeTraffic", "DistributeTrafficActivity_End");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("DistributeTrafficActivity_Start", "TaskPreProcessActivity", "TaskDistributeTraffic",
+                        "DistributeTrafficActivity_End");
         assertThat(pi).isEnded();
     }
 
@@ -46,7 +47,8 @@ public class DistributeTrafficActivityTest extends BaseBPMNTest {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(appcRunTasks)
                 .runAppcCommand(any(BuildingBlockExecution.class), any(Action.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("DistributeTrafficActivity", variables);
-        assertThat(pi).isNotNull().isStarted()
+        assertThat(pi).isNotNull()
+                .isStarted()
                 .hasPassedInOrder("DistributeTrafficActivity_Start", "TaskPreProcessActivity", "TaskDistributeTraffic")
                 .hasNotPassed("DistributeTrafficActivity_End");
     }

@@ -98,8 +98,10 @@ public class VnfcInstanceGroupCustomization implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("function", function).append("description", description)
-                .append("created", created).toString();
+        return new ToStringBuilder(this).append("function", function)
+                .append("description", description)
+                .append("created", created)
+                .toString();
     }
 
     public Integer getId() {

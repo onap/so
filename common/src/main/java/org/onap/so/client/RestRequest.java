@@ -51,21 +51,27 @@ public class RestRequest implements CheckedSupplier<Response> {
         if ("GET".equals(method)) {
             response = this.client.getBuilder().accept(this.client.getAccept()).get();
         } else if ("POST".equals(method)) {
-            response = this.client.getBuilder().accept(this.client.getAccept())
+            response = this.client.getBuilder()
+                    .accept(this.client.getAccept())
                     .post(Entity.entity(entity, this.client.getContentType()));
         } else if ("PATCH".equals(method)) {
-            response = this.client.getBuilder().header("X-HTTP-Method-Override", "PATCH")
-                    .accept(this.client.getAccept()).post(Entity.entity(entity, this.client.getMergeContentType()));
+            response = this.client.getBuilder()
+                    .header("X-HTTP-Method-Override", "PATCH")
+                    .accept(this.client.getAccept())
+                    .post(Entity.entity(entity, this.client.getMergeContentType()));
         } else if ("DELETE".equals(method)) {
             if (entity == null) {
                 response = this.client.getBuilder().accept(this.client.getAccept()).delete();
 
             } else {
-                response = this.client.getBuilder().accept(this.client.getAccept())
-                        .build(HttpMethod.DELETE, Entity.entity(entity, this.client.getContentType())).invoke();
+                response = this.client.getBuilder()
+                        .accept(this.client.getAccept())
+                        .build(HttpMethod.DELETE, Entity.entity(entity, this.client.getContentType()))
+                        .invoke();
             }
         } else if ("PUT".equals(method)) {
-            response = this.client.getBuilder().accept(this.client.getAccept())
+            response = this.client.getBuilder()
+                    .accept(this.client.getAccept())
                     .put(Entity.entity(entity, this.client.getContentType()));
         } else {
             response = Response.serverError().entity(method + " not valid").build();

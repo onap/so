@@ -48,7 +48,8 @@ public class SDNCRestClientTest extends BaseTest {
 
         wireMockServer.stubFor(
                 post(urlPathEqualTo("/sdnc")).willReturn(aResponse().withHeader("Content-Type", "application/xml")
-                        .withBody("").withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)));
+                        .withBody("")
+                        .withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)));
 
         SDNCResponse response = sdncClient.getSdncResp("", rt);
         assertNotNull(response);

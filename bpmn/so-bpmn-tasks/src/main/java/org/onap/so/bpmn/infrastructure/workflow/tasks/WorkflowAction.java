@@ -243,16 +243,24 @@ public class WorkflowAction {
                     boolean isConfiguration = isConfiguration(orchFlows);
                     Resource resourceKey = new Resource(resourceType, key, aLaCarte);
                     if (isConfiguration && !requestAction.equalsIgnoreCase(CREATEINSTANCE)) {
-                        List<ExecuteBuildingBlock> configBuildingBlocks = getConfigBuildingBlocks(
-                                new ConfigBuildingBlocksDataObject().setsIRequest(sIRequest).setOrchFlows(orchFlows)
-                                        .setRequestId(requestId).setResourceKey(resourceKey).setApiVersion(apiVersion)
-                                        .setResourceId(resourceId).setRequestAction(requestAction).setaLaCarte(aLaCarte)
-                                        .setVnfType(vnfType).setWorkflowResourceIds(workflowResourceIds)
-                                        .setRequestDetails(requestDetails).setExecution(execution));
+                        List<ExecuteBuildingBlock> configBuildingBlocks =
+                                getConfigBuildingBlocks(new ConfigBuildingBlocksDataObject().setsIRequest(sIRequest)
+                                        .setOrchFlows(orchFlows)
+                                        .setRequestId(requestId)
+                                        .setResourceKey(resourceKey)
+                                        .setApiVersion(apiVersion)
+                                        .setResourceId(resourceId)
+                                        .setRequestAction(requestAction)
+                                        .setaLaCarte(aLaCarte)
+                                        .setVnfType(vnfType)
+                                        .setWorkflowResourceIds(workflowResourceIds)
+                                        .setRequestDetails(requestDetails)
+                                        .setExecution(execution));
 
                         flowsToExecute.addAll(configBuildingBlocks);
                     }
-                    orchFlows = orchFlows.stream().filter(item -> !item.getFlowName().contains(FABRIC_CONFIGURATION))
+                    orchFlows = orchFlows.stream()
+                            .filter(item -> !item.getFlowName().contains(FABRIC_CONFIGURATION))
                             .collect(Collectors.toList());
                     for (OrchestrationFlow orchFlow : orchFlows) {
                         ExecuteBuildingBlock ebb = buildExecuteBuildingBlock(orchFlow, requestId, resourceKey,
@@ -326,8 +334,11 @@ public class WorkflowAction {
                     }
                     String foundObjects = "";
                     for (WorkflowType type : WorkflowType.values()) {
-                        foundObjects = foundObjects + type + " - " + resourceCounter.stream()
-                                .filter(x -> type.equals(x.getResourceType())).collect(Collectors.toList()).size()
+                        foundObjects = foundObjects + type + " - "
+                                + resourceCounter.stream()
+                                        .filter(x -> type.equals(x.getResourceType()))
+                                        .collect(Collectors.toList())
+                                        .size()
                                 + "    ";
                     }
                     logger.info("Found {}", foundObjects);
@@ -338,16 +349,20 @@ public class WorkflowAction {
                     }
                     flowsToExecute = buildExecuteBuildingBlockList(orchFlows, resourceCounter, requestId, apiVersion,
                             resourceId, requestAction, aLaCarte, vnfType, workflowResourceIds, requestDetails);
-                    if (!resourceCounter.stream().filter(x -> WorkflowType.NETWORKCOLLECTION == x.getResourceType())
-                            .collect(Collectors.toList()).isEmpty()) {
+                    if (!resourceCounter.stream()
+                            .filter(x -> WorkflowType.NETWORKCOLLECTION == x.getResourceType())
+                            .collect(Collectors.toList())
+                            .isEmpty()) {
                         logger.info("Sorting for Vlan Tagging");
                         flowsToExecute = sortExecutionPathByObjectForVlanTagging(flowsToExecute, requestAction);
                     }
                     // By default, enable homing at VNF level for CREATEINSTANCE and ASSIGNINSTANCE
                     if (resourceType == WorkflowType.SERVICE
                             && (requestAction.equals(CREATEINSTANCE) || requestAction.equals(ASSIGNINSTANCE))
-                            && !resourceCounter.stream().filter(x -> WorkflowType.VNF.equals(x.getResourceType()))
-                                    .collect(Collectors.toList()).isEmpty()) {
+                            && !resourceCounter.stream()
+                                    .filter(x -> WorkflowType.VNF.equals(x.getResourceType()))
+                                    .collect(Collectors.toList())
+                                    .isEmpty()) {
                         execution.setVariable("homing", true);
                         execution.setVariable("calledHoming", false);
                     }
@@ -462,8 +477,10 @@ public class WorkflowAction {
     protected List<ExecuteBuildingBlock> getConfigBuildingBlocks(ConfigBuildingBlocksDataObject dataObj) {
 
         List<ExecuteBuildingBlock> flowsToExecuteConfigs = new ArrayList<>();
-        List<OrchestrationFlow> result = dataObj.getOrchFlows().stream()
-                .filter(item -> item.getFlowName().contains(FABRIC_CONFIGURATION)).collect(Collectors.toList());
+        List<OrchestrationFlow> result = dataObj.getOrchFlows()
+                .stream()
+                .filter(item -> item.getFlowName().contains(FABRIC_CONFIGURATION))
+                .collect(Collectors.toList());
         String vnfId = dataObj.getWorkflowResourceIds().getVnfId();
         String vfModuleId = dataObj.getWorkflowResourceIds().getVfModuleId();
 
@@ -585,8 +602,10 @@ public class WorkflowAction {
             List<Resource> resources =
                     resourceCounter.stream().filter(x -> type.equals(x.getResourceType())).collect(Collectors.toList());
             for (int i = 0; i < resources.size(); i++) {
-                Resource resource = resourceCounter.stream().filter(x -> type.equals(x.getResourceType()))
-                        .collect(Collectors.toList()).get(i);
+                Resource resource = resourceCounter.stream()
+                        .filter(x -> type.equals(x.getResourceType()))
+                        .collect(Collectors.toList())
+                        .get(i);
                 updateWorkflowResourceIds(flowsToExecute, type, resource.getResourceId(), null,
                         resource.getVirtualLinkKey(), serviceInstanceId);
             }
@@ -756,7 +775,8 @@ public class WorkflowAction {
                     if (collectionResourceCustomization.getCollectionResource() != null) {
                         if (collectionResourceCustomization.getCollectionResource().getInstanceGroup() != null) {
                             String toscaNodeType = collectionResourceCustomization.getCollectionResource()
-                                    .getInstanceGroup().getToscaNodeType();
+                                    .getInstanceGroup()
+                                    .getToscaNodeType();
                             if (toscaNodeType != null && toscaNodeType.contains(NETWORKCOLLECTION)) {
                                 int minNetworks = 0;
                                 org.onap.so.db.catalog.beans.InstanceGroup instanceGroup =
@@ -765,8 +785,9 @@ public class WorkflowAction {
                                 if (!instanceGroup.getCollectionInstanceGroupCustomizations().isEmpty()) {
                                     for (CollectionResourceInstanceGroupCustomization collectionInstanceGroupTemp : instanceGroup
                                             .getCollectionInstanceGroupCustomizations()) {
-                                        if (collectionInstanceGroupTemp.getModelCustomizationUUID().equalsIgnoreCase(
-                                                collectionResourceCustomization.getModelCustomizationUUID())) {
+                                        if (collectionInstanceGroupTemp.getModelCustomizationUUID()
+                                                .equalsIgnoreCase(
+                                                        collectionResourceCustomization.getModelCustomizationUUID())) {
                                             collectionInstCust = collectionInstanceGroupTemp;
                                             break;
                                         }
@@ -781,7 +802,8 @@ public class WorkflowAction {
                                 for (CollectionNetworkResourceCustomization collectionNetworkTemp : instanceGroup
                                         .getCollectionNetworkResourceCustomizations()) {
                                     if (collectionNetworkTemp.getNetworkResourceCustomization()
-                                            .getModelCustomizationUUID().equalsIgnoreCase(
+                                            .getModelCustomizationUUID()
+                                            .equalsIgnoreCase(
                                                     collectionResourceCustomization.getModelCustomizationUUID())) {
                                         collectionNetworkResourceCust = collectionNetworkTemp;
                                         break;
@@ -809,8 +831,10 @@ public class WorkflowAction {
                     logger.debug("No Network Collection Customization found");
                 }
             }
-            if (resourceCounter.stream().filter(x -> WorkflowType.NETWORKCOLLECTION == x.getResourceType())
-                    .collect(Collectors.toList()).isEmpty()) {
+            if (resourceCounter.stream()
+                    .filter(x -> WorkflowType.NETWORKCOLLECTION == x.getResourceType())
+                    .collect(Collectors.toList())
+                    .isEmpty()) {
                 if (service.getNetworkCustomizations() == null) {
                     logger.debug("No networks were found on this service model");
                 } else {
@@ -1163,7 +1187,8 @@ public class WorkflowAction {
                     Optional<ServiceInstance> serviceInstanceAAI =
                             bbInputSetupUtils.getAAIServiceInstanceByName(globalCustomerId, serviceType, instanceName);
                     if (serviceInstanceAAI.isPresent()) {
-                        if (serviceInstanceAAI.get().getModelVersionId()
+                        if (serviceInstanceAAI.get()
+                                .getModelVersionId()
                                 .equalsIgnoreCase(reqDetails.getModelInfo().getModelVersionId())) {
                             return serviceInstanceAAI.get().getServiceInstanceId();
                         } else {
@@ -1199,7 +1224,8 @@ public class WorkflowAction {
                 Optional<L3Network> network = bbInputSetupUtils.getRelatedNetworkByNameFromServiceInstance(
                         workflowResourceIds.getServiceInstanceId(), instanceName);
                 if (network.isPresent()) {
-                    if (network.get().getModelCustomizationId()
+                    if (network.get()
+                            .getModelCustomizationId()
                             .equalsIgnoreCase(reqDetails.getModelInfo().getModelCustomizationId())) {
                         return network.get().getNetworkId();
                     } else {
@@ -1218,7 +1244,8 @@ public class WorkflowAction {
                 Optional<GenericVnf> vnf = bbInputSetupUtils.getRelatedVnfByNameFromServiceInstance(
                         workflowResourceIds.getServiceInstanceId(), instanceName);
                 if (vnf.isPresent()) {
-                    if (vnf.get().getModelCustomizationId()
+                    if (vnf.get()
+                            .getModelCustomizationId()
                             .equalsIgnoreCase(reqDetails.getModelInfo().getModelCustomizationId())) {
                         return vnf.get().getVnfId();
                     } else {
@@ -1282,7 +1309,8 @@ public class WorkflowAction {
                         bbInputSetupUtils.getRelatedConfigurationByNameFromServiceInstance(
                                 workflowResourceIds.getServiceInstanceId(), instanceName);
                 if (configuration.isPresent()) {
-                    if (configuration.get().getModelCustomizationId()
+                    if (configuration.get()
+                            .getModelCustomizationId()
                             .equalsIgnoreCase(reqDetails.getModelInfo().getModelCustomizationId())) {
                         return configuration.get().getConfigurationId();
                     } else {
@@ -1392,40 +1420,54 @@ public class WorkflowAction {
         List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
         for (OrchestrationFlow orchFlow : orchFlows) {
             if (orchFlow.getFlowName().contains(SERVICE)) {
-                for (int i = 0; i < resourceCounter.stream().filter(x -> WorkflowType.SERVICE == x.getResourceType())
-                        .collect(Collectors.toList()).size(); i++) {
+                for (int i = 0; i < resourceCounter.stream()
+                        .filter(x -> WorkflowType.SERVICE == x.getResourceType())
+                        .collect(Collectors.toList())
+                        .size(); i++) {
                     workflowResourceIds.setServiceInstanceId(resourceId);
                     flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId,
-                            resourceCounter.stream().filter(x -> WorkflowType.SERVICE == x.getResourceType())
-                                    .collect(Collectors.toList()).get(i),
+                            resourceCounter.stream()
+                                    .filter(x -> WorkflowType.SERVICE == x.getResourceType())
+                                    .collect(Collectors.toList())
+                                    .get(i),
                             apiVersion, resourceId, requestAction, aLaCarte, vnfType, workflowResourceIds,
                             requestDetails, false, null, false));
                 }
             } else if (orchFlow.getFlowName().contains(VNF)) {
-                for (int i = 0; i < resourceCounter.stream().filter(x -> WorkflowType.VNF == x.getResourceType())
-                        .collect(Collectors.toList()).size(); i++) {
+                for (int i = 0; i < resourceCounter.stream()
+                        .filter(x -> WorkflowType.VNF == x.getResourceType())
+                        .collect(Collectors.toList())
+                        .size(); i++) {
                     flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId,
-                            resourceCounter.stream().filter(x -> WorkflowType.VNF == x.getResourceType())
-                                    .collect(Collectors.toList()).get(i),
+                            resourceCounter.stream()
+                                    .filter(x -> WorkflowType.VNF == x.getResourceType())
+                                    .collect(Collectors.toList())
+                                    .get(i),
                             apiVersion, resourceId, requestAction, aLaCarte, vnfType, workflowResourceIds,
                             requestDetails, false, null, false));
                 }
             } else if (orchFlow.getFlowName().contains(NETWORK)
                     && !orchFlow.getFlowName().contains(NETWORKCOLLECTION)) {
-                for (int i = 0; i < resourceCounter.stream().filter(x -> WorkflowType.NETWORK == x.getResourceType())
-                        .collect(Collectors.toList()).size(); i++) {
+                for (int i = 0; i < resourceCounter.stream()
+                        .filter(x -> WorkflowType.NETWORK == x.getResourceType())
+                        .collect(Collectors.toList())
+                        .size(); i++) {
                     flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId,
-                            resourceCounter.stream().filter(x -> WorkflowType.NETWORK == x.getResourceType())
-                                    .collect(Collectors.toList()).get(i),
+                            resourceCounter.stream()
+                                    .filter(x -> WorkflowType.NETWORK == x.getResourceType())
+                                    .collect(Collectors.toList())
+                                    .get(i),
                             apiVersion, resourceId, requestAction, aLaCarte, vnfType, workflowResourceIds,
                             requestDetails, false, null, false));
                 }
                 for (int i = 0; i < resourceCounter.stream()
-                        .filter(x -> WorkflowType.VIRTUAL_LINK == x.getResourceType()).collect(Collectors.toList())
+                        .filter(x -> WorkflowType.VIRTUAL_LINK == x.getResourceType())
+                        .collect(Collectors.toList())
                         .size(); i++) {
-                    Resource resource =
-                            resourceCounter.stream().filter(x -> WorkflowType.VIRTUAL_LINK == x.getResourceType())
-                                    .collect(Collectors.toList()).get(i);
+                    Resource resource = resourceCounter.stream()
+                            .filter(x -> WorkflowType.VIRTUAL_LINK == x.getResourceType())
+                            .collect(Collectors.toList())
+                            .get(i);
                     flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId, resource, apiVersion, resourceId,
                             requestAction, aLaCarte, vnfType, workflowResourceIds, requestDetails, true,
                             resource.getVirtualLinkKey(), false));
@@ -1435,10 +1477,12 @@ public class WorkflowAction {
                 if (requestAction.equals(CREATEINSTANCE) || requestAction.equals(ASSIGNINSTANCE)
                         || requestAction.equals("activateInstance")) {
                     vfModuleResourcesSorted = sortVfModulesByBaseFirst(resourceCounter.stream()
-                            .filter(x -> WorkflowType.VFMODULE == x.getResourceType()).collect(Collectors.toList()));
+                            .filter(x -> WorkflowType.VFMODULE == x.getResourceType())
+                            .collect(Collectors.toList()));
                 } else {
                     vfModuleResourcesSorted = sortVfModulesByBaseLast(resourceCounter.stream()
-                            .filter(x -> WorkflowType.VFMODULE == x.getResourceType()).collect(Collectors.toList()));
+                            .filter(x -> WorkflowType.VFMODULE == x.getResourceType())
+                            .collect(Collectors.toList()));
                 }
                 for (int i = 0; i < vfModuleResourcesSorted.size(); i++) {
                     flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId, vfModuleResourcesSorted.get(i),
@@ -1447,31 +1491,40 @@ public class WorkflowAction {
                 }
             } else if (orchFlow.getFlowName().contains(VOLUMEGROUP)) {
                 for (int i = 0; i < resourceCounter.stream()
-                        .filter(x -> WorkflowType.VOLUMEGROUP == x.getResourceType()).collect(Collectors.toList())
+                        .filter(x -> WorkflowType.VOLUMEGROUP == x.getResourceType())
+                        .collect(Collectors.toList())
                         .size(); i++) {
                     flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId,
-                            resourceCounter.stream().filter(x -> WorkflowType.VOLUMEGROUP == x.getResourceType())
-                                    .collect(Collectors.toList()).get(i),
+                            resourceCounter.stream()
+                                    .filter(x -> WorkflowType.VOLUMEGROUP == x.getResourceType())
+                                    .collect(Collectors.toList())
+                                    .get(i),
                             apiVersion, resourceId, requestAction, aLaCarte, vnfType, workflowResourceIds,
                             requestDetails, false, null, false));
                 }
             } else if (orchFlow.getFlowName().contains(NETWORKCOLLECTION)) {
                 for (int i = 0; i < resourceCounter.stream()
-                        .filter(x -> WorkflowType.NETWORKCOLLECTION == x.getResourceType()).collect(Collectors.toList())
+                        .filter(x -> WorkflowType.NETWORKCOLLECTION == x.getResourceType())
+                        .collect(Collectors.toList())
                         .size(); i++) {
                     flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId,
-                            resourceCounter.stream().filter(x -> WorkflowType.NETWORKCOLLECTION == x.getResourceType())
-                                    .collect(Collectors.toList()).get(i),
+                            resourceCounter.stream()
+                                    .filter(x -> WorkflowType.NETWORKCOLLECTION == x.getResourceType())
+                                    .collect(Collectors.toList())
+                                    .get(i),
                             apiVersion, resourceId, requestAction, aLaCarte, vnfType, workflowResourceIds,
                             requestDetails, false, null, false));
                 }
             } else if (orchFlow.getFlowName().contains(CONFIGURATION)) {
                 for (int i = 0; i < resourceCounter.stream()
-                        .filter(x -> WorkflowType.CONFIGURATION == x.getResourceType()).collect(Collectors.toList())
+                        .filter(x -> WorkflowType.CONFIGURATION == x.getResourceType())
+                        .collect(Collectors.toList())
                         .size(); i++) {
                     flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId,
-                            resourceCounter.stream().filter(x -> WorkflowType.CONFIGURATION == x.getResourceType())
-                                    .collect(Collectors.toList()).get(i),
+                            resourceCounter.stream()
+                                    .filter(x -> WorkflowType.CONFIGURATION == x.getResourceType())
+                                    .collect(Collectors.toList())
+                                    .get(i),
                             apiVersion, resourceId, requestAction, aLaCarte, vnfType, workflowResourceIds,
                             requestDetails, false, null, true));
                 }

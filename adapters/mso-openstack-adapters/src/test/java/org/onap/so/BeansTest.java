@@ -56,9 +56,13 @@ public class BeansTest {
     }
 
     private void test(String pojoPackage) {
-        Validator validator = ValidatorBuilder.create().with(new NoStaticExceptFinalRule())
-                .with(new SerializableMustHaveSerialVersionUIDRule()).with(new NoPublicFieldsExceptStaticFinalRule())
-                .with(new SetterTester()).with(new GetterTester()).with(new ToStringTester())
+        Validator validator = ValidatorBuilder.create()
+                .with(new NoStaticExceptFinalRule())
+                .with(new SerializableMustHaveSerialVersionUIDRule())
+                .with(new NoPublicFieldsExceptStaticFinalRule())
+                .with(new SetterTester())
+                .with(new GetterTester())
+                .with(new ToStringTester())
 
                 .build();
 

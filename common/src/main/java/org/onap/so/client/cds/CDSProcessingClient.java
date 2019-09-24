@@ -76,7 +76,9 @@ public class CDSProcessingClient implements AutoCloseable {
         this.channel = NettyChannelBuilder.forAddress(props.getHost(), props.getPort())
                 .nameResolverFactory(new DnsNameResolverProvider())
                 .loadBalancerFactory(new PickFirstLoadBalancerProvider())
-                .intercept(new BasicAuthClientInterceptor(props)).usePlaintext().build();
+                .intercept(new BasicAuthClientInterceptor(props))
+                .usePlaintext()
+                .build();
         this.handler = new CDSProcessingHandler(listener);
         log.info("CDSProcessingClient started");
     }

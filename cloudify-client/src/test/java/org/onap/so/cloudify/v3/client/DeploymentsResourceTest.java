@@ -55,7 +55,8 @@ public class DeploymentsResourceTest {
     @Test
     public void cloudifyDeploymentsCreate() {
         wireMockRule.stubFor(put(urlPathEqualTo("/api/v3/deployments/123"))
-                .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody("{ \"id\": \"123\" }")
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody("{ \"id\": \"123\" }")
                         .withStatus(HttpStatus.SC_OK)));
 
         int port = wireMockRule.port();
@@ -76,7 +77,8 @@ public class DeploymentsResourceTest {
     public void cloudifyDeploymentsList() {
         wireMockRule.stubFor(get(urlPathEqualTo("/api/v3/deployments"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBody("{ \"items\": {\"id\": \"123\" } } ").withStatus(HttpStatus.SC_OK)));
+                        .withBody("{ \"items\": {\"id\": \"123\" } } ")
+                        .withStatus(HttpStatus.SC_OK)));
 
         int port = wireMockRule.port();
 
@@ -90,7 +92,8 @@ public class DeploymentsResourceTest {
     @Test
     public void cloudifyDeploymentsGet() {
         wireMockRule.stubFor(get(urlPathEqualTo("/api/v3/deployments/123"))
-                .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody("{ \"id\": \"123\" }")
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody("{ \"id\": \"123\" }")
                         .withStatus(HttpStatus.SC_OK)));
 
         int port = wireMockRule.port();
@@ -106,7 +109,8 @@ public class DeploymentsResourceTest {
     public void cloudifyDeploymentsGetOutputs() {
         wireMockRule.stubFor(get(urlPathEqualTo("/api/v3/deployments/123/outputs"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBody("{ \"deployment_id\": \"123\" }").withStatus(HttpStatus.SC_OK)));
+                        .withBody("{ \"deployment_id\": \"123\" }")
+                        .withStatus(HttpStatus.SC_OK)));
 
         int port = wireMockRule.port();
 
@@ -130,7 +134,8 @@ public class DeploymentsResourceTest {
     @Test
     public void cloudifyDeploymentsDelete() {
         wireMockRule.stubFor(delete(urlPathEqualTo("/api/v3/deployments/name"))
-                .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody("{ \"id\": \"123\" }")
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody("{ \"id\": \"123\" }")
                         .withStatus(HttpStatus.SC_OK)));
 
         int port = wireMockRule.port();

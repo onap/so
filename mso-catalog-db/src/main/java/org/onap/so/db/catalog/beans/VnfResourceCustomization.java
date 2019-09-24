@@ -145,14 +145,21 @@ public class VnfResourceCustomization implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
-                .append("modelInstanceName", modelInstanceName).append("created", created)
-                .append("minInstances", minInstances).append("maxInstances", maxInstances)
-                .append("availabilityZoneMaxCount", availabilityZoneMaxCount).append("nfFunction", nfFunction)
-                .append("nfType", nfType).append("nfRole", nfRole).append("nfNamingCode", nfNamingCode)
-                .append("multiStageDesign", multiStageDesign).append("vnfResources", vnfResources)
+                .append("modelInstanceName", modelInstanceName)
+                .append("created", created)
+                .append("minInstances", minInstances)
+                .append("maxInstances", maxInstances)
+                .append("availabilityZoneMaxCount", availabilityZoneMaxCount)
+                .append("nfFunction", nfFunction)
+                .append("nfType", nfType)
+                .append("nfRole", nfRole)
+                .append("nfNamingCode", nfNamingCode)
+                .append("multiStageDesign", multiStageDesign)
+                .append("vnfResources", vnfResources)
                 .append("vfModuleCustomizations", vfModuleCustomizations)
                 .append("vnfcInstanceGroupOrder", vnfcInstanceGroupOrder)
-                .append("vnfcInstanceGroupCustomizations", vnfcInstanceGroupCustomizations).toString();
+                .append("vnfcInstanceGroupCustomizations", vnfcInstanceGroupCustomizations)
+                .toString();
     }
 
     @PrePersist

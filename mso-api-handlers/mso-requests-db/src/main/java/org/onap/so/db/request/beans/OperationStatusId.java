@@ -79,7 +79,8 @@ public class OperationStatusId implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("serviceId", getServiceId()).append("operationId", getOperationId())
+        return new ToStringBuilder(this).append("serviceId", getServiceId())
+                .append("operationId", getOperationId())
                 .toString();
     }
 

@@ -35,8 +35,9 @@ public class ChangeModelVnfBBTest extends BaseBPMNTest {
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("ChangeModelVnfBB", variables);
         assertThat(processInstance).isNotNull();
-        assertThat(processInstance).isStarted().hasPassedInOrder("ChangeModelVnf_Start", "SDNCChangeModel",
-                "CallActivity_sdncHandlerCall", "AAIUpdateModel", "ChangeModelVnf_End");
+        assertThat(processInstance).isStarted()
+                .hasPassedInOrder("ChangeModelVnf_Start", "SDNCChangeModel", "CallActivity_sdncHandlerCall",
+                        "AAIUpdateModel", "ChangeModelVnf_End");
         assertThat(processInstance).isEnded();
     }
 
@@ -47,7 +48,8 @@ public class ChangeModelVnfBBTest extends BaseBPMNTest {
 
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("ChangeModelVnfBB", variables);
         assertThat(processInstance).isNotNull();
-        assertThat(processInstance).isStarted().hasPassedInOrder("ChangeModelVnf_Start", "SDNCChangeModel")
+        assertThat(processInstance).isStarted()
+                .hasPassedInOrder("ChangeModelVnf_Start", "SDNCChangeModel")
                 .hasNotPassed("AAIUpdateModel", "ChangeModelVnf_End");
         assertThat(processInstance).isEnded();
     }

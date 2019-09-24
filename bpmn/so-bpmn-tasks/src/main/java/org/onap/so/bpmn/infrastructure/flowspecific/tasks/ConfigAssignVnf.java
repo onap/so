@@ -122,7 +122,9 @@ public class ConfigAssignVnf {
     }
 
     private Service getServiceFromRequestUserParams(List<Map<String, Object>> userParams) throws Exception {
-        Map<String, Object> serviceMap = userParams.stream().filter(key -> key.containsKey("service")).findFirst()
+        Map<String, Object> serviceMap = userParams.stream()
+                .filter(key -> key.containsKey("service"))
+                .findFirst()
                 .orElseThrow(() -> new Exception("Can not find service in userParams section in generalBuildingBlock"));
         return convertServiceFromJsonToServiceObject((String) serviceMap.get("service"));
     }
@@ -140,7 +142,9 @@ public class ConfigAssignVnf {
 
     private List<Map<String, String>> getInstanceParamForVnf(Service service, String genericVnfModelCustomizationUuid)
             throws Exception {
-        Optional<Vnfs> foundedVnf = service.getResources().getVnfs().stream()
+        Optional<Vnfs> foundedVnf = service.getResources()
+                .getVnfs()
+                .stream()
                 .filter(vnfs -> vnfs.getModelInfo().getModelCustomizationId().equals(genericVnfModelCustomizationUuid))
                 .findFirst();
         if (foundedVnf.isPresent()) {

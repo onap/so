@@ -72,7 +72,8 @@ public class RouteTarget implements Serializable, ShallowCopy<RouteTarget> {
         }
         RouteTarget castOther = (RouteTarget) other;
         return new EqualsBuilder().append(globalRouteTarget, castOther.globalRouteTarget)
-                .append(routeTargetRole, castOther.routeTargetRole).isEquals();
+                .append(routeTargetRole, castOther.routeTargetRole)
+                .isEquals();
     }
 
     @Override

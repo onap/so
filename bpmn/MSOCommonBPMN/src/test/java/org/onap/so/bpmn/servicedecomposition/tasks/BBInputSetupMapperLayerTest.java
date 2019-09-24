@@ -720,7 +720,8 @@ public class BBInputSetupMapperLayerTest {
                 bbInputSetupMapperLayer.mapNameValueUserParams(requestDetails.getRequestParameters());
 
         assertTrue(actual.containsKey("mns_vfw_protected_route_prefixes"));
-        assertTrue(actual.get("mns_vfw_protected_route_prefixes").toString()
+        assertTrue(actual.get("mns_vfw_protected_route_prefixes")
+                .toString()
                 .contains("interface_route_table_routes_route"));
         assertTrue(actual.get("mns_vfw_protected_route_prefixes").toString().contains("1.1.1.1/32"));
         assertTrue(actual.get("mns_vfw_protected_route_prefixes").toString().contains("0::1/128"));

@@ -87,10 +87,11 @@ public class SDNCVnfResourcesTest extends TestDataSetup {
 
     @Test
     public void assignVnfTest() {
-        doReturn(sdncReq).when(MOCK_vnfTopologyOperationRequestMapper).reqMapper(isA(SDNCSvcOperation.class),
-                isA(SDNCSvcAction.class), isA(GenericResourceApiRequestActionEnumeration.class), isA(GenericVnf.class),
-                isA(ServiceInstance.class), isA(Customer.class), isA(CloudRegion.class), isA(RequestContext.class),
-                anyBoolean(), any(URI.class));
+        doReturn(sdncReq).when(MOCK_vnfTopologyOperationRequestMapper)
+                .reqMapper(isA(SDNCSvcOperation.class), isA(SDNCSvcAction.class),
+                        isA(GenericResourceApiRequestActionEnumeration.class), isA(GenericVnf.class),
+                        isA(ServiceInstance.class), isA(Customer.class), isA(CloudRegion.class),
+                        isA(RequestContext.class), anyBoolean(), any(URI.class));
         sdncVnfResources.assignVnf(genericVnf, serviceInstance, customer, cloudRegion, requestContext, false, testURI);
         verify(MOCK_vnfTopologyOperationRequestMapper, times(1)).reqMapper(isA(SDNCSvcOperation.class),
                 isA(SDNCSvcAction.class), isA(GenericResourceApiRequestActionEnumeration.class), isA(GenericVnf.class),
@@ -100,10 +101,11 @@ public class SDNCVnfResourcesTest extends TestDataSetup {
 
     @Test
     public void activateVnfTest() {
-        doReturn(sdncReq).when(MOCK_vnfTopologyOperationRequestMapper).reqMapper(isA(SDNCSvcOperation.class),
-                isA(SDNCSvcAction.class), isA(GenericResourceApiRequestActionEnumeration.class), isA(GenericVnf.class),
-                isA(ServiceInstance.class), isA(Customer.class), isA(CloudRegion.class), isA(RequestContext.class),
-                anyBoolean(), any(URI.class));
+        doReturn(sdncReq).when(MOCK_vnfTopologyOperationRequestMapper)
+                .reqMapper(isA(SDNCSvcOperation.class), isA(SDNCSvcAction.class),
+                        isA(GenericResourceApiRequestActionEnumeration.class), isA(GenericVnf.class),
+                        isA(ServiceInstance.class), isA(Customer.class), isA(CloudRegion.class),
+                        isA(RequestContext.class), anyBoolean(), any(URI.class));
         sdncVnfResources.activateVnf(genericVnf, serviceInstance, customer, cloudRegion, requestContext, testURI);
         verify(MOCK_vnfTopologyOperationRequestMapper, times(1)).reqMapper(isA(SDNCSvcOperation.class),
                 isA(SDNCSvcAction.class), isA(GenericResourceApiRequestActionEnumeration.class), isA(GenericVnf.class),
@@ -113,10 +115,11 @@ public class SDNCVnfResourcesTest extends TestDataSetup {
 
     @Test
     public void deleteVnfTest() {
-        doReturn(sdncReq).when(MOCK_vnfTopologyOperationRequestMapper).reqMapper(isA(SDNCSvcOperation.class),
-                isA(SDNCSvcAction.class), isA(GenericResourceApiRequestActionEnumeration.class), isA(GenericVnf.class),
-                isA(ServiceInstance.class), isA(Customer.class), isA(CloudRegion.class), isA(RequestContext.class),
-                anyBoolean(), any(URI.class));
+        doReturn(sdncReq).when(MOCK_vnfTopologyOperationRequestMapper)
+                .reqMapper(isA(SDNCSvcOperation.class), isA(SDNCSvcAction.class),
+                        isA(GenericResourceApiRequestActionEnumeration.class), isA(GenericVnf.class),
+                        isA(ServiceInstance.class), isA(Customer.class), isA(CloudRegion.class),
+                        isA(RequestContext.class), anyBoolean(), any(URI.class));
         sdncVnfResources.deleteVnf(genericVnf, serviceInstance, customer, cloudRegion, requestContext, testURI);
         verify(MOCK_vnfTopologyOperationRequestMapper, times(1)).reqMapper(isA(SDNCSvcOperation.class),
                 isA(SDNCSvcAction.class), isA(GenericResourceApiRequestActionEnumeration.class), isA(GenericVnf.class),
@@ -142,10 +145,11 @@ public class SDNCVnfResourcesTest extends TestDataSetup {
 
     @Test
     public void changeModelVnfTest() {
-        doReturn(sdncReq).when(MOCK_vnfTopologyOperationRequestMapper).reqMapper(isA(SDNCSvcOperation.class),
-                isA(SDNCSvcAction.class), isA(GenericResourceApiRequestActionEnumeration.class), isA(GenericVnf.class),
-                isA(ServiceInstance.class), isA(Customer.class), isA(CloudRegion.class), isA(RequestContext.class),
-                anyBoolean(), any(URI.class));
+        doReturn(sdncReq).when(MOCK_vnfTopologyOperationRequestMapper)
+                .reqMapper(isA(SDNCSvcOperation.class), isA(SDNCSvcAction.class),
+                        isA(GenericResourceApiRequestActionEnumeration.class), isA(GenericVnf.class),
+                        isA(ServiceInstance.class), isA(Customer.class), isA(CloudRegion.class),
+                        isA(RequestContext.class), anyBoolean(), any(URI.class));
         sdncVnfResources.changeModelVnf(genericVnf, serviceInstance, customer, cloudRegion, requestContext, testURI);
         verify(MOCK_vnfTopologyOperationRequestMapper, times(1)).reqMapper(eq(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION),
                 eq(SDNCSvcAction.CHANGE_ASSIGN), eq(GenericResourceApiRequestActionEnumeration.CREATEVNFINSTANCE),
@@ -155,11 +159,11 @@ public class SDNCVnfResourcesTest extends TestDataSetup {
 
     @Test
     public void deactivateVnfSuccessTest() {
-        doReturn(sdncReq).when(MOCK_vnfTopologyOperationRequestMapper).reqMapper(
-                eq(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION), eq(SDNCSvcAction.DEACTIVATE),
-                isA(GenericResourceApiRequestActionEnumeration.class), any(GenericVnf.class),
-                any(ServiceInstance.class), any(Customer.class), any(CloudRegion.class), any(RequestContext.class),
-                anyBoolean(), any(URI.class));
+        doReturn(sdncReq).when(MOCK_vnfTopologyOperationRequestMapper)
+                .reqMapper(eq(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION), eq(SDNCSvcAction.DEACTIVATE),
+                        isA(GenericResourceApiRequestActionEnumeration.class), any(GenericVnf.class),
+                        any(ServiceInstance.class), any(Customer.class), any(CloudRegion.class),
+                        any(RequestContext.class), anyBoolean(), any(URI.class));
         sdncVnfResources.deactivateVnf(genericVnf, serviceInstance, customer, cloudRegion, requestContext, testURI);
         verify(MOCK_vnfTopologyOperationRequestMapper, times(1)).reqMapper(eq(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION),
                 eq(SDNCSvcAction.DEACTIVATE), isA(GenericResourceApiRequestActionEnumeration.class),
@@ -171,21 +175,21 @@ public class SDNCVnfResourcesTest extends TestDataSetup {
     @Test
     public void deactivateVnfExceptionTest() {
         expectedException.expect(Exception.class);
-        doThrow(Exception.class).when(MOCK_vnfTopologyOperationRequestMapper).reqMapper(
-                eq(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION), eq(SDNCSvcAction.DEACTIVATE),
-                isA(GenericResourceApiRequestActionEnumeration.class), any(GenericVnf.class),
-                any(ServiceInstance.class), any(Customer.class), any(CloudRegion.class), any(RequestContext.class),
-                anyBoolean(), any(URI.class));
+        doThrow(Exception.class).when(MOCK_vnfTopologyOperationRequestMapper)
+                .reqMapper(eq(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION), eq(SDNCSvcAction.DEACTIVATE),
+                        isA(GenericResourceApiRequestActionEnumeration.class), any(GenericVnf.class),
+                        any(ServiceInstance.class), any(Customer.class), any(CloudRegion.class),
+                        any(RequestContext.class), anyBoolean(), any(URI.class));
         sdncVnfResources.deactivateVnf(genericVnf, serviceInstance, customer, cloudRegion, requestContext, testURI);
     }
 
     @Test
     public void unassignVnfSuccessTest() throws Exception {
-        doReturn(sdncReq).when(MOCK_vnfTopologyOperationRequestMapper).reqMapper(
-                eq(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION), eq(SDNCSvcAction.UNASSIGN),
-                isA(GenericResourceApiRequestActionEnumeration.class), any(GenericVnf.class),
-                any(ServiceInstance.class), any(Customer.class), any(CloudRegion.class), any(RequestContext.class),
-                anyBoolean(), any(URI.class));
+        doReturn(sdncReq).when(MOCK_vnfTopologyOperationRequestMapper)
+                .reqMapper(eq(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION), eq(SDNCSvcAction.UNASSIGN),
+                        isA(GenericResourceApiRequestActionEnumeration.class), any(GenericVnf.class),
+                        any(ServiceInstance.class), any(Customer.class), any(CloudRegion.class),
+                        any(RequestContext.class), anyBoolean(), any(URI.class));
         sdncVnfResources.unassignVnf(genericVnf, serviceInstance, customer, cloudRegion, requestContext, testURI);
         verify(MOCK_vnfTopologyOperationRequestMapper, times(1)).reqMapper(eq(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION),
                 eq(SDNCSvcAction.UNASSIGN), isA(GenericResourceApiRequestActionEnumeration.class),
@@ -196,11 +200,11 @@ public class SDNCVnfResourcesTest extends TestDataSetup {
     @Test
     public void unassignVnfExceptionTest() throws Exception {
         expectedException.expect(Exception.class);
-        doThrow(Exception.class).when(MOCK_vnfTopologyOperationRequestMapper).reqMapper(
-                eq(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION), eq(SDNCSvcAction.UNASSIGN),
-                isA(GenericResourceApiRequestActionEnumeration.class), any(GenericVnf.class),
-                any(ServiceInstance.class), any(Customer.class), any(CloudRegion.class), any(RequestContext.class),
-                anyBoolean(), any(URI.class));
+        doThrow(Exception.class).when(MOCK_vnfTopologyOperationRequestMapper)
+                .reqMapper(eq(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION), eq(SDNCSvcAction.UNASSIGN),
+                        isA(GenericResourceApiRequestActionEnumeration.class), any(GenericVnf.class),
+                        any(ServiceInstance.class), any(Customer.class), any(CloudRegion.class),
+                        any(RequestContext.class), anyBoolean(), any(URI.class));
         sdncVnfResources.unassignVnf(genericVnf, serviceInstance, customer, cloudRegion, requestContext, testURI);
     }
 }

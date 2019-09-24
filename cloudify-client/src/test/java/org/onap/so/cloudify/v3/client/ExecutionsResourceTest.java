@@ -104,7 +104,8 @@ public class ExecutionsResourceTest {
     @Test
     public void cloudifyClientExecutionById() {
         wireMockRule.stubFor(get(urlPathEqualTo("/api/v3/executions/123"))
-                .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody("{ \"id\": \"123\" }")
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody("{ \"id\": \"123\" }")
                         .withStatus(HttpStatus.SC_OK)));
 
         int port = wireMockRule.port();
@@ -119,7 +120,8 @@ public class ExecutionsResourceTest {
     @Test
     public void cloudifyClientStartExecution() {
         wireMockRule.stubFor(post(urlPathEqualTo("/api/v3/executions"))
-                .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody("{ \"id\": \"123\" }")
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody("{ \"id\": \"123\" }")
                         .withStatus(HttpStatus.SC_OK)));
 
         int port = wireMockRule.port();
@@ -139,7 +141,8 @@ public class ExecutionsResourceTest {
         thrown.expectMessage("Unrecognized HTTP Method: PATCH");
 
         wireMockRule.stubFor(patch(urlPathEqualTo("/api/v3/executions"))
-                .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody("{ \"id\": \"123\" }")
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody("{ \"id\": \"123\" }")
                         .withStatus(HttpStatus.SC_OK)));
 
         int port = wireMockRule.port();
@@ -155,7 +158,8 @@ public class ExecutionsResourceTest {
     @Test
     public void cloudifyClientCancelExecution() {
         wireMockRule.stubFor(post(urlPathEqualTo("/api/v3/executions/123"))
-                .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody("{ \"id\": \"123\" }")
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody("{ \"id\": \"123\" }")
                         .withStatus(HttpStatus.SC_OK)));
 
         int port = wireMockRule.port();

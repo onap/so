@@ -94,14 +94,16 @@ public class ServiceInstanceRestHandlerTest {
         expected.setAction("createInstance");
         doReturn(null).when(catalogDbClient)
                 .findServiceRecipeByActionAndServiceModelUUID(Action.createInstance.toString(), "testModelId");
-        doReturn(expected).when(catalogDbClient).findServiceRecipeByActionAndServiceModelUUID(
-                Action.createInstance.toString(), "d88da85c-d9e8-4f73-b837-3a72a431622b");
+        doReturn(expected).when(catalogDbClient)
+                .findServiceRecipeByActionAndServiceModelUUID(Action.createInstance.toString(),
+                        "d88da85c-d9e8-4f73-b837-3a72a431622b");
         Recipe actual = restHandler.findServiceRecipe("testModelId", Action.createInstance.toString());
         assertThat(actual, sameBeanAs(expected));
         Mockito.verify(catalogDbClient, Mockito.times(1))
                 .findServiceRecipeByActionAndServiceModelUUID(Action.createInstance.toString(), "testModelId");
-        Mockito.verify(catalogDbClient, Mockito.times(1)).findServiceRecipeByActionAndServiceModelUUID(
-                Action.createInstance.toString(), "d88da85c-d9e8-4f73-b837-3a72a431622b");
+        Mockito.verify(catalogDbClient, Mockito.times(1))
+                .findServiceRecipeByActionAndServiceModelUUID(Action.createInstance.toString(),
+                        "d88da85c-d9e8-4f73-b837-3a72a431622b");
     }
 
     @Test
@@ -110,8 +112,9 @@ public class ServiceInstanceRestHandlerTest {
         expected.setAction("createInstance");
         doReturn(null).when(catalogDbClient)
                 .findServiceRecipeByActionAndServiceModelUUID(Action.createInstance.toString(), "testModelId");
-        doReturn(null).when(catalogDbClient).findServiceRecipeByActionAndServiceModelUUID(
-                Action.createInstance.toString(), "d88da85c-d9e8-4f73-b837-3a72a431622b");
+        doReturn(null).when(catalogDbClient)
+                .findServiceRecipeByActionAndServiceModelUUID(Action.createInstance.toString(),
+                        "d88da85c-d9e8-4f73-b837-3a72a431622b");
         exceptionRule.expect(NoRecipeException.class);
         exceptionRule.expectMessage(
                 "Unable to locate custom or default recipe for, Action: createInstance, Model UUID: testModelId");
@@ -123,8 +126,9 @@ public class ServiceInstanceRestHandlerTest {
             throws MalformedURLException, NoRecipeException, RequestConflictedException {
         ArgumentCaptor<HashMap> instanceIdCaptor = ArgumentCaptor.forClass(HashMap.class);
         restHandler.checkDuplicateRequest("serviceInstanceId", "instanceName", "requestId");
-        Mockito.verify(infraActiveRequestsClient, Mockito.times(1)).checkInstanceNameDuplicate(
-                instanceIdCaptor.capture(), eq("instanceName"), eq(ModelType.service.toString()));
+        Mockito.verify(infraActiveRequestsClient, Mockito.times(1))
+                .checkInstanceNameDuplicate(instanceIdCaptor.capture(), eq("instanceName"),
+                        eq(ModelType.service.toString()));
         Map actualMap = instanceIdCaptor.getValue();
         assertEquals("serviceInstanceId", actualMap.get("serviceInstanceId"));
     }
@@ -140,11 +144,14 @@ public class ServiceInstanceRestHandlerTest {
 
     @Test
     public void test_buildRequestParams() throws Exception {
-        RequestClientParameter expected =
-                new RequestClientParameter.Builder().setRequestId("requestId").setServiceInstanceId("serviceInstanceId")
-                        .setALaCarte(true).setRequestDetails(mapper.writeValueAsString(createTestRequest()))
-                        .setRequestAction(Action.deleteInstance.toString())
-                        .setRequestUri("http://localhost:8080/serviceInstances").setApiVersion("v8").build();
+        RequestClientParameter expected = new RequestClientParameter.Builder().setRequestId("requestId")
+                .setServiceInstanceId("serviceInstanceId")
+                .setALaCarte(true)
+                .setRequestDetails(mapper.writeValueAsString(createTestRequest()))
+                .setRequestAction(Action.deleteInstance.toString())
+                .setRequestUri("http://localhost:8080/serviceInstances")
+                .setApiVersion("v8")
+                .build();
         RequestClientParameter actual = restHandler.buildRequestParams(createTestRequest(),
                 "http://localhost:8080/serviceInstances", "requestId", "serviceInstanceId");
         assertThat(actual, sameBeanAs(expected));

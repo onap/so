@@ -63,11 +63,17 @@ public class RequestParameters implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("subscriptionServiceType", subscriptionServiceType)
-                .append("userParams", userParams).append("aLaCarte", aLaCarte).append("payload", payload)
-                .append("usePreload", usePreload).append("autoBuildVfModules", autoBuildVfModules)
-                .append("cascadeDelete", cascadeDelete).append("testApi", testApi)
-                .append("retainAssignments", retainAssignments).append("rebuildVolumeGroups", rebuildVolumeGroups)
-                .append("enforceValidNfValues", enforceValidNfValues).toString();
+                .append("userParams", userParams)
+                .append("aLaCarte", aLaCarte)
+                .append("payload", payload)
+                .append("usePreload", usePreload)
+                .append("autoBuildVfModules", autoBuildVfModules)
+                .append("cascadeDelete", cascadeDelete)
+                .append("testApi", testApi)
+                .append("retainAssignments", retainAssignments)
+                .append("rebuildVolumeGroups", rebuildVolumeGroups)
+                .append("enforceValidNfValues", enforceValidNfValues)
+                .toString();
     }
 
     public Boolean getEnforceValidNfValues() {

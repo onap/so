@@ -1480,7 +1480,8 @@ public abstract class WorkflowTest {
      */
     protected boolean isProcessEnded(String businessKey) {
         HistoricProcessInstance processInstance = historyService.createHistoricProcessInstanceQuery()
-                .processInstanceBusinessKey(businessKey).singleResult();
+                .processInstanceBusinessKey(businessKey)
+                .singleResult();
         return processInstance != null && processInstance.getEndTime() != null;
     }
 
@@ -1504,7 +1505,9 @@ public abstract class WorkflowTest {
     // TODO combine into 1
     private boolean isProcessEnded(String businessKey, String processName) {
         HistoricProcessInstance processInstance = historyService.createHistoricProcessInstanceQuery()
-                .processInstanceBusinessKey(businessKey).processDefinitionName(processName).singleResult();
+                .processInstanceBusinessKey(businessKey)
+                .processDefinitionName(processName)
+                .singleResult();
         return processInstance != null && processInstance.getEndTime() != null;
     }
 
@@ -1518,14 +1521,17 @@ public abstract class WorkflowTest {
     protected Object getVariableFromHistory(String businessKey, String variableName) {
         try {
             HistoricProcessInstance processInstance = historyService.createHistoricProcessInstanceQuery()
-                    .processInstanceBusinessKey(businessKey).singleResult();
+                    .processInstanceBusinessKey(businessKey)
+                    .singleResult();
 
             if (processInstance == null) {
                 return null;
             }
 
             HistoricVariableInstance v = historyService.createHistoricVariableInstanceQuery()
-                    .processInstanceId(processInstance.getId()).variableName(variableName).singleResult();
+                    .processInstanceId(processInstance.getId())
+                    .variableName(variableName)
+                    .singleResult();
             return v == null ? null : v.getValue();
         } catch (Exception e) {
             logger.debug("Error retrieving variable {} from historical process with business key {}: ", variableName,
@@ -1548,13 +1554,17 @@ public abstract class WorkflowTest {
     protected Object getVariableFromHistory(String businessKey, String processName, String variableName) {
         try {
             HistoricProcessInstance processInstance = historyService.createHistoricProcessInstanceQuery()
-                    .processInstanceBusinessKey(businessKey).processDefinitionName(processName).singleResult();
+                    .processInstanceBusinessKey(businessKey)
+                    .processDefinitionName(processName)
+                    .singleResult();
 
             if (processInstance == null) {
                 return null;
             }
             HistoricVariableInstance variable = historyService.createHistoricVariableInstanceQuery()
-                    .processInstanceId(processInstance.getId()).variableName(variableName).singleResult();
+                    .processInstanceId(processInstance.getId())
+                    .variableName(variableName)
+                    .singleResult();
 
             return variable == null ? null : variable.getValue();
         } catch (ProcessEngineException e) {
@@ -1586,7 +1596,9 @@ public abstract class WorkflowTest {
             String variableName) {
         try {
             List<HistoricProcessInstance> processInstanceList = historyService.createHistoricProcessInstanceQuery()
-                    .processInstanceBusinessKey(businessKey).processDefinitionName(processName).list();
+                    .processInstanceBusinessKey(businessKey)
+                    .processDefinitionName(processName)
+                    .list();
 
             if (processInstanceList == null) {
                 return null;
@@ -1595,7 +1607,9 @@ public abstract class WorkflowTest {
 
             HistoricProcessInstance processInstance = processInstanceList.get(subflowInstanceIndex);
             HistoricVariableInstance variable = historyService.createHistoricVariableInstanceQuery()
-                    .processInstanceId(processInstance.getId()).variableName(variableName).singleResult();
+                    .processInstanceId(processInstance.getId())
+                    .variableName(variableName)
+                    .singleResult();
 
             return variable == null ? null : variable.getValue();
         } catch (Exception e) {
@@ -1632,7 +1646,9 @@ public abstract class WorkflowTest {
             HistoricProcessInstance processInstance = processInstanceList.get(0);
 
             HistoricVariableInstance v = historyService.createHistoricVariableInstanceQuery()
-                    .processInstanceId(processInstance.getId()).variableName(variableName).singleResult();
+                    .processInstanceId(processInstance.getId())
+                    .variableName(variableName)
+                    .singleResult();
             return v == null ? null : v.getValue();
         } catch (Exception e) {
             logger.debug("Error retrieving variable {} from sub flow: {}, Exception is: ", variableName, subflowName,
@@ -1669,7 +1685,9 @@ public abstract class WorkflowTest {
             HistoricProcessInstance processInstance = processInstanceList.get(subflowInstanceIndex);
 
             HistoricVariableInstance v = historyService.createHistoricVariableInstanceQuery()
-                    .processInstanceId(processInstance.getId()).variableName(variableName).singleResult();
+                    .processInstanceId(processInstance.getId())
+                    .variableName(variableName)
+                    .singleResult();
             return v == null ? null : v.getValue();
         } catch (Exception e) {
             logger.debug("Error retrieving variable {} from {} instance index of sub flow: {}, Exception is: ",

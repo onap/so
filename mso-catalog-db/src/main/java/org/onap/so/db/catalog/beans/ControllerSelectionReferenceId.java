@@ -44,8 +44,10 @@ public class ControllerSelectionReferenceId implements Serializable {
             return false;
         }
         ControllerSelectionReferenceId castOther = (ControllerSelectionReferenceId) other;
-        return new EqualsBuilder().append(vnfType, castOther.vnfType).append(controllerName, castOther.controllerName)
-                .append(actionCategory, castOther.actionCategory).isEquals();
+        return new EqualsBuilder().append(vnfType, castOther.vnfType)
+                .append(controllerName, castOther.controllerName)
+                .append(actionCategory, castOther.actionCategory)
+                .isEquals();
     }
 
     @Override
@@ -55,8 +57,10 @@ public class ControllerSelectionReferenceId implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("vnfType", vnfType).append("controllerName", controllerName)
-                .append("actionCategory", actionCategory).toString();
+        return new ToStringBuilder(this).append("vnfType", vnfType)
+                .append("controllerName", controllerName)
+                .append("actionCategory", actionCategory)
+                .toString();
     }
 
     public String getVnfType() {

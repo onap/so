@@ -86,10 +86,17 @@ public class VnfRecipe implements Serializable, Recipe {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("id", id).append("vnfType", nfRole).append("paramXsd", paramXsd)
-                .append("vfModuleId", vfModuleId).append("action", action).append("description", description)
-                .append("orchestrationUri", orchestrationUri).append("recipeTimeout", recipeTimeout)
-                .append("serviceType", serviceType).append("created", created).toString();
+        return new ToStringBuilder(this).append("id", id)
+                .append("vnfType", nfRole)
+                .append("paramXsd", paramXsd)
+                .append("vfModuleId", vfModuleId)
+                .append("action", action)
+                .append("description", description)
+                .append("orchestrationUri", orchestrationUri)
+                .append("recipeTimeout", recipeTimeout)
+                .append("serviceType", serviceType)
+                .append("created", created)
+                .toString();
     }
 
     @Override
@@ -98,14 +105,19 @@ public class VnfRecipe implements Serializable, Recipe {
             return false;
         }
         VnfRecipe castOther = (VnfRecipe) other;
-        return new EqualsBuilder().append(nfRole, castOther.nfRole).append(action, castOther.action)
-                .append(orchestrationUri, castOther.orchestrationUri).append(serviceType, castOther.serviceType)
+        return new EqualsBuilder().append(nfRole, castOther.nfRole)
+                .append(action, castOther.action)
+                .append(orchestrationUri, castOther.orchestrationUri)
+                .append(serviceType, castOther.serviceType)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(nfRole).append(action).append(orchestrationUri).append(serviceType)
+        return new HashCodeBuilder().append(nfRole)
+                .append(action)
+                .append(orchestrationUri)
+                .append(serviceType)
                 .toHashCode();
     }
 

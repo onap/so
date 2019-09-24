@@ -35,8 +35,9 @@ public class ChangeModelVfModuleBBTest extends BaseBPMNTest {
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("ChangeModelVfModuleBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("ChangeModelVfModuleBB_Start", "ChangeModelVfModule",
-                "CallActivity_sdncHandler", "UpdateVfModuleModel", "ChangeModelVfModuleBB_End");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("ChangeModelVfModuleBB_Start", "ChangeModelVfModule", "CallActivity_sdncHandler",
+                        "UpdateVfModuleModel", "ChangeModelVfModuleBB_End");
         assertThat(pi).isEnded();
     }
 
@@ -46,7 +47,8 @@ public class ChangeModelVfModuleBBTest extends BaseBPMNTest {
                 .changeAssignModelVfModule(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("ChangeModelVfModuleBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("ChangeModelVfModuleBB_Start", "ChangeModelVfModule")
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("ChangeModelVfModuleBB_Start", "ChangeModelVfModule")
                 .hasNotPassed("ChangeModelVfModuleBB_End");
         assertThat(pi).isEnded();
     }

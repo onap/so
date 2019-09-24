@@ -35,8 +35,9 @@ public class VNFResumeTrafficActivityTest extends BaseBPMNTest {
     public void sunnyDayVNFResumeTrafficActivity_Test() throws InterruptedException {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFResumeTrafficActivity", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("VNFResumeTrafficActivity_Start", "TaskPreProcessActivity",
-                "TaskResumeTraffic", "VNFResumeTrafficActivity_End");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("VNFResumeTrafficActivity_Start", "TaskPreProcessActivity", "TaskResumeTraffic",
+                        "VNFResumeTrafficActivity_End");
         assertThat(pi).isEnded();
     }
 
@@ -46,7 +47,8 @@ public class VNFResumeTrafficActivityTest extends BaseBPMNTest {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(appcRunTasks)
                 .runAppcCommand(any(BuildingBlockExecution.class), any(Action.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFResumeTrafficActivity", variables);
-        assertThat(pi).isNotNull().isStarted()
+        assertThat(pi).isNotNull()
+                .isStarted()
                 .hasPassedInOrder("VNFResumeTrafficActivity_Start", "TaskPreProcessActivity", "TaskResumeTraffic")
                 .hasNotPassed("VNFResumeTrafficActivity_End");
 

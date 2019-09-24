@@ -136,8 +136,8 @@ public class AAIServiceInstanceResourcesTest extends TestDataSetup {
 
     @Test
     public void createProjectandConnectServiceInstanceTest() {
-        doReturn(MOCK_aaiResourcesClient).when(MOCK_aaiResourcesClient).createIfNotExists(any(AAIResourceUri.class),
-                any(Optional.class));
+        doReturn(MOCK_aaiResourcesClient).when(MOCK_aaiResourcesClient)
+                .createIfNotExists(any(AAIResourceUri.class), any(Optional.class));
         doNothing().when(MOCK_aaiResourcesClient).connect(any(AAIResourceUri.class), any(AAIResourceUri.class));
         doReturn(new org.onap.aai.domain.yang.Project()).when(MOCK_aaiObjectMapper).mapProject(project);
         aaiServiceInstanceResources.createProjectandConnectServiceInstance(project, serviceInstance);
@@ -166,8 +166,8 @@ public class AAIServiceInstanceResourcesTest extends TestDataSetup {
 
     @Test
     public void createOwningEntityandConnectServiceInstanceTest() {
-        doReturn(MOCK_aaiResourcesClient).when(MOCK_aaiResourcesClient).createIfNotExists(any(AAIResourceUri.class),
-                any(Optional.class));
+        doReturn(MOCK_aaiResourcesClient).when(MOCK_aaiResourcesClient)
+                .createIfNotExists(any(AAIResourceUri.class), any(Optional.class));
         doNothing().when(MOCK_aaiResourcesClient).connect(any(AAIResourceUri.class), any(AAIResourceUri.class));
         doReturn(new org.onap.aai.domain.yang.OwningEntity()).when(MOCK_aaiObjectMapper).mapOwningEntity(owningEntity);
         aaiServiceInstanceResources.createOwningEntityandConnectServiceInstance(owningEntity, serviceInstance);

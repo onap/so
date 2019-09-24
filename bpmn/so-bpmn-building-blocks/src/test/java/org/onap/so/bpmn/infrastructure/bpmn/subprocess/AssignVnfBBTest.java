@@ -37,10 +37,11 @@ public class AssignVnfBBTest extends BaseBPMNTest {
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("AssignVnfBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("Start_AssignVnfBB", "Task_CreateVnf",
-                "ServiceTask_ConnectVnfToCloudRegion", "ServiceTask_ConnectVnfToTenant", "Task_createPlatform",
-                "Task_createLineOfBusiness", "Task_createInstanceGroups", "Task_callHoming", "Task_SDNCCreateRequest",
-                "CallActivity_SDNCAssignVnf", "Task_UpdateVnfOrchestrationStatusAssigned", "End_AssignVnfBB");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("Start_AssignVnfBB", "Task_CreateVnf", "ServiceTask_ConnectVnfToCloudRegion",
+                        "ServiceTask_ConnectVnfToTenant", "Task_createPlatform", "Task_createLineOfBusiness",
+                        "Task_createInstanceGroups", "Task_callHoming", "Task_SDNCCreateRequest",
+                        "CallActivity_SDNCAssignVnf", "Task_UpdateVnfOrchestrationStatusAssigned", "End_AssignVnfBB");
         assertThat(pi).isEnded();
     }
 
@@ -50,9 +51,11 @@ public class AssignVnfBBTest extends BaseBPMNTest {
                 .createVnf(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("AssignVnfBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("Start_AssignVnfBB", "Task_CreateVnf").hasNotPassed(
-                "Task_createPlatform", "Task_createLineOfBusiness", "Task_createInstanceGroups",
-                "Task_SDNCAdapterVnfTopologyAssign", "Task_UpdateVnfOrchestrationStatusAssigned", "End_AssignVnfBB");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("Start_AssignVnfBB", "Task_CreateVnf")
+                .hasNotPassed("Task_createPlatform", "Task_createLineOfBusiness", "Task_createInstanceGroups",
+                        "Task_SDNCAdapterVnfTopologyAssign", "Task_UpdateVnfOrchestrationStatusAssigned",
+                        "End_AssignVnfBB");
         assertThat(pi).isEnded();
     }
 }

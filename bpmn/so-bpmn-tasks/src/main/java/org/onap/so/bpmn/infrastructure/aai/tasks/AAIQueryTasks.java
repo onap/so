@@ -175,8 +175,9 @@ public class AAIQueryTasks {
                 for (AAIResourceUri netPolicyUri : netPoliciesUriList) {
                     Optional<NetworkPolicy> oNetPolicy = aaiNetworkResources.getNetworkPolicy(netPolicyUri);
                     if (oNetPolicy.isPresent()) {
-                        l3network.getNetworkPolicies().add(modelMapper.map(oNetPolicy.get(),
-                                org.onap.so.bpmn.servicedecomposition.bbobjects.NetworkPolicy.class));
+                        l3network.getNetworkPolicies()
+                                .add(modelMapper.map(oNetPolicy.get(),
+                                        org.onap.so.bpmn.servicedecomposition.bbobjects.NetworkPolicy.class));
                     }
                 }
             }
@@ -247,8 +248,9 @@ public class AAIQueryTasks {
                 for (AAIResourceUri subnetUri : subnetsUriList) {
                     Optional<Subnet> oSubnet = aaiNetworkResources.getSubnet(subnetUri);
                     if (oSubnet.isPresent()) {
-                        l3network.getSubnets().add(modelMapper.map(oSubnet.get(),
-                                org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet.class));
+                        l3network.getSubnets()
+                                .add(modelMapper.map(oSubnet.get(),
+                                        org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet.class));
                     }
                 }
             }

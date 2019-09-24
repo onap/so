@@ -112,7 +112,8 @@ public class RequestError {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("policyException", policyException)
-                .append("serviceException", serviceException).toString();
+                .append("serviceException", serviceException)
+                .toString();
     }
 
 }

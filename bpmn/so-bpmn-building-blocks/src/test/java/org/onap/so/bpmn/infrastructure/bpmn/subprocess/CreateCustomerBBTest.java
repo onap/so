@@ -34,8 +34,8 @@ public class CreateCustomerBBTest extends BaseBPMNTest {
     public void createCustomerBBTest() throws InterruptedException {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("CreateCustomerBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("CreateCustomerBB_Start", "CreateCustomerAAI",
-                "CreateCustomerBB_End");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("CreateCustomerBB_Start", "CreateCustomerAAI", "CreateCustomerBB_End");
         assertThat(pi).isEnded();
     }
 
@@ -45,7 +45,8 @@ public class CreateCustomerBBTest extends BaseBPMNTest {
                 .createCustomer(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("CreateCustomerBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("CreateCustomerBB_Start", "CreateCustomerAAI")
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("CreateCustomerBB_Start", "CreateCustomerAAI")
                 .hasNotPassed("CreateCustomer_End");
         assertThat(pi).isEnded();
     }

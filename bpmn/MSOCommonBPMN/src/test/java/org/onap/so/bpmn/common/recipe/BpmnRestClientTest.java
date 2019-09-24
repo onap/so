@@ -41,7 +41,8 @@ public class BpmnRestClientTest extends BaseTest {
     public void postTest() throws IOException, Exception {
         wireMockServer.stubFor(post(urlPathMatching("/testRecipeUri"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withStatus(org.springframework.http.HttpStatus.OK.value()).withBody("{}")));
+                        .withStatus(org.springframework.http.HttpStatus.OK.value())
+                        .withBody("{}")));
 
         HttpResponse httpResponse =
                 bpmnRestClient.post("http://localhost:" + wireMockPort + "/testRecipeUri", "test-req-id", 1000,

@@ -82,7 +82,8 @@ public class ApiExceptionTest {
         thrown.expect(hasProperty("cause", sameBeanAs(ioException)));
         ClientConnectionException testException =
                 new ClientConnectionException.Builder("test", HttpStatus.SC_NOT_FOUND, ErrorNumbers.SVC_BAD_PARAMETER)
-                        .cause(ioException).build();
+                        .cause(ioException)
+                        .build();
         throw testException;
     }
 
@@ -91,7 +92,8 @@ public class ApiExceptionTest {
     public void testDuplicateRequestException() throws ApiException {
         ErrorLoggerInfo testLog =
                 new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, ErrorCode.DataError)
-                        .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                        .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                        .build();
         thrown.expect(DuplicateRequestException.class);
         thrown.expectMessage(startsWith("Error: Locked instance"));
         thrown.expect(hasProperty("httpResponseCode", is(HttpStatus.SC_NOT_FOUND)));
@@ -112,7 +114,8 @@ public class ApiExceptionTest {
 
         ValidateException testException =
                 new ValidateException.Builder("Test Message", HttpStatus.SC_NOT_FOUND, ErrorNumbers.SVC_BAD_PARAMETER)
-                        .messageID(ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).build();
+                        .messageID(ErrorNumbers.SVC_DETAILED_SERVICE_ERROR)
+                        .build();
         throw testException;
     }
 

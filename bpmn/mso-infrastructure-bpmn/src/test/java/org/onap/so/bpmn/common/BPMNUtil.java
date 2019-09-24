@@ -65,9 +65,11 @@ public class BPMNUtil {
     public static String getVariable(ProcessEngineServices processEngineServices, String processDefinitionID,
             String name, String processInstanceId) {
         assertProcessInstanceFinished(processEngineServices, processInstanceId);
-        HistoricVariableInstance responseData =
-                processEngineServices.getHistoryService().createHistoricVariableInstanceQuery()
-                        .processInstanceId(processInstanceId).variableName(name).singleResult();
+        HistoricVariableInstance responseData = processEngineServices.getHistoryService()
+                .createHistoricVariableInstanceQuery()
+                .processInstanceId(processInstanceId)
+                .variableName(name)
+                .singleResult();
 
         if (responseData != null) {
             return (responseData.getValue() != null ? responseData.getValue().toString() : null);
@@ -94,8 +96,12 @@ public class BPMNUtil {
     public static <T> T getRawVariable(ProcessEngineServices processEngineServices, String processDefinitionID,
             String name, String processInstanceId) {
         assertProcessInstanceFinished(processEngineServices, processInstanceId);
-        Object responseData = processEngineServices.getHistoryService().createHistoricVariableInstanceQuery()
-                .processInstanceId(processInstanceId).variableName(name).singleResult().getValue();
+        Object responseData = processEngineServices.getHistoryService()
+                .createHistoricVariableInstanceQuery()
+                .processInstanceId(processInstanceId)
+                .variableName(name)
+                .singleResult()
+                .getValue();
         return (T) responseData;
     }
 
@@ -104,8 +110,11 @@ public class BPMNUtil {
             String processDefinitionID) {
         String pID = getProcessInstanceId(processEngineServices, processDefinitionID);
         assertNotNull(pID);
-        assertTrue(processEngineServices.getHistoryService().createHistoricProcessInstanceQuery().processInstanceId(pID)
-                .finished().count() > 0);
+        assertTrue(processEngineServices.getHistoryService()
+                .createHistoricProcessInstanceQuery()
+                .processInstanceId(pID)
+                .finished()
+                .count() > 0);
     }
 
     public static void assertNoProcessInstance(ProcessEngineServices processEngineServices,
@@ -118,15 +127,23 @@ public class BPMNUtil {
     }
 
     public static void assertProcessInstanceFinished(ProcessEngineServices processEngineServices, String pid) {
-        assertEquals(1, processEngineServices.getHistoryService().createHistoricProcessInstanceQuery()
-                .processInstanceId(pid).finished().count());
+        assertEquals(1,
+                processEngineServices.getHistoryService()
+                        .createHistoricProcessInstanceQuery()
+                        .processInstanceId(pid)
+                        .finished()
+                        .count());
     }
 
     public static void assertProcessInstanceNotFinished(ProcessEngineServices processEngineServices,
             String processDefinitionID) {
         String pID = getProcessInstanceId(processEngineServices, processDefinitionID);
-        assertEquals(0, processEngineServices.getHistoryService().createHistoricProcessInstanceQuery()
-                .processInstanceId(pID).finished().count());
+        assertEquals(0,
+                processEngineServices.getHistoryService()
+                        .createHistoricProcessInstanceQuery()
+                        .processInstanceId(pID)
+                        .finished()
+                        .count());
     }
 
     private static String getProcessInstanceId(ProcessEngineServices processEngineServices,
@@ -168,8 +185,11 @@ public class BPMNUtil {
     }
 
     public static boolean isProcessInstanceFinished(ProcessEngineServices processEngineServices, String pid) {
-        return processEngineServices.getHistoryService().createHistoricProcessInstanceQuery().processInstanceId(pid)
-                .finished().count() == 1 ? true : false;
+        return processEngineServices.getHistoryService()
+                .createHistoricProcessInstanceQuery()
+                .processInstanceId(pid)
+                .finished()
+                .count() == 1 ? true : false;
     }
 
 
@@ -223,7 +243,9 @@ public class BPMNUtil {
         long endTime = System.currentTimeMillis() + waitTime;
 
         while (true) {
-            if (processEngineServices.getRuntimeService().createProcessInstanceQuery().processInstanceId(pid)
+            if (processEngineServices.getRuntimeService()
+                    .createProcessInstanceQuery()
+                    .processInstanceId(pid)
                     .singleResult() == null) {
                 break;
             }

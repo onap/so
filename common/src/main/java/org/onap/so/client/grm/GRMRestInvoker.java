@@ -36,8 +36,11 @@ public class GRMRestInvoker {
     }
 
     private URI createURI(GRMAction action) {
-        return UriBuilder.fromUri("/GRMLWPService").path(this.properties.getDefaultVersion()).path("serviceEndPoint")
-                .path(action.getAction()).build();
+        return UriBuilder.fromUri("/GRMLWPService")
+                .path(this.properties.getDefaultVersion())
+                .path("serviceEndPoint")
+                .path(action.getAction())
+                .build();
     }
 
     private RestClient getClient() {

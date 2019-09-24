@@ -36,10 +36,11 @@ public class UpdateNetworkBBTest extends BaseBPMNTest {
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("UpdateNetworkBB", variables);
         assertThat(processInstance).isNotNull();
-        assertThat(processInstance).isStarted().hasPassedInOrder("UpdateNetworkBB_Start", "SDNCChangeAssignNetwork",
-                "CallActivity_sdncHandlerCallChangeAssign", "QueryVpnBindingAAI", "QueryNetworkPolicyAAI",
-                "QueryNetworkTableRefAAI", "Create_Network_ServiceTask", "CallActivity_NetworkAdapterRestV1",
-                "ServiceTask_ProcessResponse", "Update_Network_AAI_ServiceTask", "UpdateNetworkBB_End");
+        assertThat(processInstance).isStarted()
+                .hasPassedInOrder("UpdateNetworkBB_Start", "SDNCChangeAssignNetwork",
+                        "CallActivity_sdncHandlerCallChangeAssign", "QueryVpnBindingAAI", "QueryNetworkPolicyAAI",
+                        "QueryNetworkTableRefAAI", "Create_Network_ServiceTask", "CallActivity_NetworkAdapterRestV1",
+                        "ServiceTask_ProcessResponse", "Update_Network_AAI_ServiceTask", "UpdateNetworkBB_End");
         assertThat(processInstance).isEnded();
     }
 

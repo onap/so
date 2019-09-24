@@ -119,73 +119,77 @@ public class OofHomingIT extends BaseIntegrationTest {
         VnfResource vnf = new VnfResource();
         vnf.setResourceId("testResourceIdVNF");
         vnf.setNfFunction("testVnfFunctionName");
-        vnf.getHomingSolution().setOofDirectives("{ \n" + "      \"directives\":[ \n" + "         { \n"
-                + "            \"vnfc_directives\":[ \n" + "               { \n"
-                + "                  \"vnfc_id\":\"<ID of VNFC>\",\n" + "                  \"directives\":[ \n"
-                + "                     { \n"
-                + "                        \"directive_name\":\"<Name of directive,example flavor_directive>\",\n"
-                + "                        \"attributes\":[ \n" + "                           { \n"
-                + "                              \"attribute_name\":\"<name of attribute, such as flavor label>\",\n"
-                + "                              \"attribute_value\":\"<value such as cloud specific flavor>\"\n"
-                + "                           }\n" + "                        ]\n" + "                     },\n"
-                + "                     { \n"
-                + "                        \"directive_name\":\"<Name of directive,example vnic-info>\",\n"
-                + "                        \"attributes\":[ \n" + "                           { \n"
-                + "                              \"attribute_name\":\"<name of attribute, such as vnic-type>\",\n"
-                + "                              \"attribute_value\":\"<value such as direct/normal>\"\n"
-                + "                           },\n" + "                           { \n"
-                + "                              \"attribute_name\":\"<name of attribute, such as provider netweork>\",\n"
-                + "                              \"attribute_value\":\"<value such as physnet>\"\n"
-                + "                           }\n" + "                        ]\n" + "                     }\n"
-                + "                  ]\n" + "               }\n" + "            ]\n" + "         },\n" + "         { \n"
-                + "            \"vnf_directives\":{ \n" + "               \"directives\":[ \n"
-                + "                  { \n" + "                     \"directive_name\":\"<Name of directive>\",\n"
-                + "                     \"attributes\":[ \n" + "                        { \n"
-                + "                           \"attribute_name\":\"<name of attribute>\",\n"
-                + "                           \"attribute_value\":\"<value>\"\n" + "                        }\n"
-                + "                     ]\n" + "                  },\n" + "                  { \n"
-                + "                     \"directive_name\":\"<Name of directive>\",\n"
-                + "                     \"attributes\":[ \n" + "                        { \n"
-                + "                           \"attribute_name\":\"<name of attribute>\",\n"
-                + "                           \"attribute_value\":\"<value >\"\n" + "                        },\n"
-                + "                        { \n"
-                + "                           \"attribute_name\":\"<name of attribute>\",\n"
-                + "                           \"attribute_value\":\"<value >\"\n" + "                        }\n"
-                + "                     ]\n" + "                  }\n" + "               ]\n" + "            }\n"
-                + "         }\n" + "      ]\n" + "   },\n" + "   \"sdnc_directives\":{ \n" + "      \"directives\":[ \n"
-                + "         { \n" + "            \"vnfc_directives\":[ \n" + "               { \n"
-                + "                  \"vnfc_id\":\"<ID of VNFC>\",\n" + "                  \"directives\":[ \n"
-                + "                     { \n"
-                + "                        \"directive_name\":\"<Name of directive,example flavor_directive>\",\n"
-                + "                        \"attributes\":[ \n" + "                           { \n"
-                + "                              \"attribute_name\":\"<name of attribute, such as flavor label>\",\n"
-                + "                              \"attribute_value\":\"<value such as cloud specific flavor>\"\n"
-                + "                           }\n" + "                        ]\n" + "                     },\n"
-                + "                     { \n"
-                + "                        \"directive_name\":\"<Name of directive,example vnic-info>\",\n"
-                + "                        \"attributes\":[ \n" + "                           { \n"
-                + "                              \"attribute_name\":\"<name of attribute, such as vnic-type>\",\n"
-                + "                              \"attribute_value\":\"<value such as direct/normal>\"\n"
-                + "                           },\n" + "                           { \n"
-                + "                              \"attribute_name\":\"<name of attribute, such as provider netweork>\",\n"
-                + "                              \"attribute_value\":\"<value such as physnet>\"\n"
-                + "                           }\n" + "                        ]\n" + "                     }\n"
-                + "                  ]\n" + "               }\n" + "            ]\n" + "         },\n" + "         { \n"
-                + "            \"vnf_directives\":{ \n" + "               \"directives\":[ \n"
-                + "                  { \n" + "                     \"directive_name\":\"<Name of directive>\",\n"
-                + "                     \"attributes\":[ \n" + "                        { \n"
-                + "                           \"attribute_name\":\"<name of attribute>\",\n"
-                + "                           \"attribute_value\":\"<value>\"\n" + "                        }\n"
-                + "                     ]\n" + "                  },\n" + "                  { \n"
-                + "                     \"directive_name\":\"<Name of directive>\",\n"
-                + "                     \"attributes\":[ \n" + "                        { \n"
-                + "                           \"attribute_name\":\"<name of attribute>\",\n"
-                + "                           \"attribute_value\":\"<value >\"\n" + "                        },\n"
-                + "                        { \n"
-                + "                           \"attribute_name\":\"<name of attribute>\",\n"
-                + "                           \"attribute_value\":\"<value >\"\n" + "                        }\n"
-                + "                     ]\n" + "                  }\n" + "               ]\n" + "            }\n"
-                + "         }\n" + "      ]\n" + "   }");
+        vnf.getHomingSolution()
+                .setOofDirectives("{ \n" + "      \"directives\":[ \n" + "         { \n"
+                        + "            \"vnfc_directives\":[ \n" + "               { \n"
+                        + "                  \"vnfc_id\":\"<ID of VNFC>\",\n" + "                  \"directives\":[ \n"
+                        + "                     { \n"
+                        + "                        \"directive_name\":\"<Name of directive,example flavor_directive>\",\n"
+                        + "                        \"attributes\":[ \n" + "                           { \n"
+                        + "                              \"attribute_name\":\"<name of attribute, such as flavor label>\",\n"
+                        + "                              \"attribute_value\":\"<value such as cloud specific flavor>\"\n"
+                        + "                           }\n" + "                        ]\n" + "                     },\n"
+                        + "                     { \n"
+                        + "                        \"directive_name\":\"<Name of directive,example vnic-info>\",\n"
+                        + "                        \"attributes\":[ \n" + "                           { \n"
+                        + "                              \"attribute_name\":\"<name of attribute, such as vnic-type>\",\n"
+                        + "                              \"attribute_value\":\"<value such as direct/normal>\"\n"
+                        + "                           },\n" + "                           { \n"
+                        + "                              \"attribute_name\":\"<name of attribute, such as provider netweork>\",\n"
+                        + "                              \"attribute_value\":\"<value such as physnet>\"\n"
+                        + "                           }\n" + "                        ]\n" + "                     }\n"
+                        + "                  ]\n" + "               }\n" + "            ]\n" + "         },\n"
+                        + "         { \n" + "            \"vnf_directives\":{ \n" + "               \"directives\":[ \n"
+                        + "                  { \n"
+                        + "                     \"directive_name\":\"<Name of directive>\",\n"
+                        + "                     \"attributes\":[ \n" + "                        { \n"
+                        + "                           \"attribute_name\":\"<name of attribute>\",\n"
+                        + "                           \"attribute_value\":\"<value>\"\n" + "                        }\n"
+                        + "                     ]\n" + "                  },\n" + "                  { \n"
+                        + "                     \"directive_name\":\"<Name of directive>\",\n"
+                        + "                     \"attributes\":[ \n" + "                        { \n"
+                        + "                           \"attribute_name\":\"<name of attribute>\",\n"
+                        + "                           \"attribute_value\":\"<value >\"\n"
+                        + "                        },\n" + "                        { \n"
+                        + "                           \"attribute_name\":\"<name of attribute>\",\n"
+                        + "                           \"attribute_value\":\"<value >\"\n"
+                        + "                        }\n" + "                     ]\n" + "                  }\n"
+                        + "               ]\n" + "            }\n" + "         }\n" + "      ]\n" + "   },\n"
+                        + "   \"sdnc_directives\":{ \n" + "      \"directives\":[ \n" + "         { \n"
+                        + "            \"vnfc_directives\":[ \n" + "               { \n"
+                        + "                  \"vnfc_id\":\"<ID of VNFC>\",\n" + "                  \"directives\":[ \n"
+                        + "                     { \n"
+                        + "                        \"directive_name\":\"<Name of directive,example flavor_directive>\",\n"
+                        + "                        \"attributes\":[ \n" + "                           { \n"
+                        + "                              \"attribute_name\":\"<name of attribute, such as flavor label>\",\n"
+                        + "                              \"attribute_value\":\"<value such as cloud specific flavor>\"\n"
+                        + "                           }\n" + "                        ]\n" + "                     },\n"
+                        + "                     { \n"
+                        + "                        \"directive_name\":\"<Name of directive,example vnic-info>\",\n"
+                        + "                        \"attributes\":[ \n" + "                           { \n"
+                        + "                              \"attribute_name\":\"<name of attribute, such as vnic-type>\",\n"
+                        + "                              \"attribute_value\":\"<value such as direct/normal>\"\n"
+                        + "                           },\n" + "                           { \n"
+                        + "                              \"attribute_name\":\"<name of attribute, such as provider netweork>\",\n"
+                        + "                              \"attribute_value\":\"<value such as physnet>\"\n"
+                        + "                           }\n" + "                        ]\n" + "                     }\n"
+                        + "                  ]\n" + "               }\n" + "            ]\n" + "         },\n"
+                        + "         { \n" + "            \"vnf_directives\":{ \n" + "               \"directives\":[ \n"
+                        + "                  { \n"
+                        + "                     \"directive_name\":\"<Name of directive>\",\n"
+                        + "                     \"attributes\":[ \n" + "                        { \n"
+                        + "                           \"attribute_name\":\"<name of attribute>\",\n"
+                        + "                           \"attribute_value\":\"<value>\"\n" + "                        }\n"
+                        + "                     ]\n" + "                  },\n" + "                  { \n"
+                        + "                     \"directive_name\":\"<Name of directive>\",\n"
+                        + "                     \"attributes\":[ \n" + "                        { \n"
+                        + "                           \"attribute_name\":\"<name of attribute>\",\n"
+                        + "                           \"attribute_value\":\"<value >\"\n"
+                        + "                        },\n" + "                        { \n"
+                        + "                           \"attribute_name\":\"<name of attribute>\",\n"
+                        + "                           \"attribute_value\":\"<value >\"\n"
+                        + "                        }\n" + "                     ]\n" + "                  }\n"
+                        + "               ]\n" + "            }\n" + "         }\n" + "      ]\n" + "   }");
         ModelInfo vnfModel = new ModelInfo();
         vnfModel.setModelCustomizationUuid("testModelCustomizationUuidVNF");
         vnfModel.setModelInvariantUuid("testModelInvariantIdVNF");
@@ -399,8 +403,10 @@ public class OofHomingIT extends BaseIntegrationTest {
         String oofRequest = (String) getVariableFromHistory(businessKey, "oofRequest");
         System.out.println("oofRequest is: " + oofRequest);
         assertEquals(
-                FileUtil.readResourceFile("__files/BuildingBlocks/oofRequest_infravnf").replaceAll("\n", "")
-                        .replaceAll("\r", "").replaceAll("\t", ""),
+                FileUtil.readResourceFile("__files/BuildingBlocks/oofRequest_infravnf")
+                        .replaceAll("\n", "")
+                        .replaceAll("\r", "")
+                        .replaceAll("\t", ""),
                 oofRequest.replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", ""));
 
         // System.out.println("resourceVnfHoming.getVnf().getResourceId() is: " +
@@ -672,14 +678,26 @@ public class OofHomingIT extends BaseIntegrationTest {
     private void setVariablesExistingLicense(Map<String, Object> variables) {
         HomingSolution currentHomingSolution = new HomingSolution();
         serviceDecomposition.getVnfResources().get(0).setCurrentHomingSolution(currentHomingSolution);
-        serviceDecomposition.getVnfResources().get(0).getCurrentHomingSolution().getLicense()
+        serviceDecomposition.getVnfResources()
+                .get(0)
+                .getCurrentHomingSolution()
+                .getLicense()
                 .addEntitlementPool("testEntitlementPoolId1");
-        serviceDecomposition.getVnfResources().get(0).getCurrentHomingSolution().getLicense()
+        serviceDecomposition.getVnfResources()
+                .get(0)
+                .getCurrentHomingSolution()
+                .getLicense()
                 .addEntitlementPool("testEntitlementPoolId2");
 
-        serviceDecomposition.getVnfResources().get(0).getCurrentHomingSolution().getLicense()
+        serviceDecomposition.getVnfResources()
+                .get(0)
+                .getCurrentHomingSolution()
+                .getLicense()
                 .addLicenseKeyGroup("testLicenseKeyGroupId1");
-        serviceDecomposition.getVnfResources().get(0).getCurrentHomingSolution().getLicense()
+        serviceDecomposition.getVnfResources()
+                .get(0)
+                .getCurrentHomingSolution()
+                .getLicense()
                 .addLicenseKeyGroup("testLicenseKeyGroupId2");
 
         variables.put("isDebugLogEnabled", "true");

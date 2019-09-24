@@ -40,8 +40,9 @@ public class JsonSerializerConfiguration {
     public HttpMessageConverters customConverters() {
         final Collection<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
 
-        final Gson gson = new GsonBuilder()
-                .registerTypeHierarchyAdapter(OAuth2AccessToken.class, new OAuth2AccessTokenAdapter()).create();
+        final Gson gson =
+                new GsonBuilder().registerTypeHierarchyAdapter(OAuth2AccessToken.class, new OAuth2AccessTokenAdapter())
+                        .create();
         final GsonHttpMessageConverter gsonHttpMessageConverter = new GsonHttpMessageConverter(gson);
         messageConverters.add(gsonHttpMessageConverter);
         return new HttpMessageConverters(true, messageConverters);

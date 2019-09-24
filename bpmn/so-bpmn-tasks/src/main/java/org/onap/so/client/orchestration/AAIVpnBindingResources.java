@@ -86,8 +86,9 @@ public class AAIVpnBindingResources {
      * @return AAI VPN Binding
      */
     public Optional<org.onap.aai.domain.yang.VpnBinding> getVpnBinding(String vpnId) {
-        return injectionHelper.getAaiClient().get(org.onap.aai.domain.yang.VpnBinding.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.VPN_BINDING, vpnId));
+        return injectionHelper.getAaiClient()
+                .get(org.onap.aai.domain.yang.VpnBinding.class,
+                        AAIUriFactory.createResourceUri(AAIObjectType.VPN_BINDING, vpnId));
     }
 
 

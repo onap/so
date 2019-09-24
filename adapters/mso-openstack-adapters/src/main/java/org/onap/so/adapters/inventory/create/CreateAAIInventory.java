@@ -38,7 +38,8 @@ public class CreateAAIInventory {
         if (didAuditFailVserverLInterfaces(auditList)) {
             throw new InventoryException("Audit failed for VServer or LInterface cannot write Sub-Interfaces");
         }
-        auditList.getAuditList().parallelStream()
+        auditList.getAuditList()
+                .parallelStream()
                 .filter(auditObject -> !auditObject.isDoesObjectExist()
                         && AAIObjectType.SUB_L_INTERFACE.typeName().equals(auditObject.getAaiObjectType()))
                 .forEach(auditObject -> getAaiClient().createIfNotExists(AAIUriFactory.createResourceFromExistingURI(
@@ -53,7 +54,8 @@ public class CreateAAIInventory {
      * @return
      */
     protected boolean didAuditFailVserverLInterfaces(AAIObjectAuditList auditList) {
-        Stream<AAIObjectAudit> issue = auditList.getAuditList().stream()
+        Stream<AAIObjectAudit> issue = auditList.getAuditList()
+                .stream()
                 .filter(auditObject -> auditObject.getAaiObjectType().equals(AAIObjectType.VSERVER.typeName())
                         || auditObject.getAaiObjectType().equals(AAIObjectType.L_INTERFACE.typeName()));
 

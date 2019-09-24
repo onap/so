@@ -85,13 +85,19 @@ public class NetworkRecipe implements Serializable, Recipe {
             return false;
         }
         NetworkRecipe castOther = (NetworkRecipe) other;
-        return new EqualsBuilder().append(action, castOther.action).append(orchestrationUri, castOther.orchestrationUri)
-                .append(serviceType, castOther.serviceType).append(modelName, castOther.modelName).isEquals();
+        return new EqualsBuilder().append(action, castOther.action)
+                .append(orchestrationUri, castOther.orchestrationUri)
+                .append(serviceType, castOther.serviceType)
+                .append(modelName, castOther.modelName)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(action).append(orchestrationUri).append(serviceType).append(modelName)
+        return new HashCodeBuilder().append(action)
+                .append(orchestrationUri)
+                .append(serviceType)
+                .append(modelName)
                 .toHashCode();
     }
 

@@ -49,7 +49,8 @@ public class SDNCHandlerTest extends BaseBPMNTest {
         Map<String, Object> startVariables = new HashMap<>();
         startVariables.put("SDNCRequest", createSDNCRequest());
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("SDNCHandler", startVariables);
-        assertThat(pi).isNotNull().isStarted()
+        assertThat(pi).isNotNull()
+                .isStarted()
                 .hasPassedInOrder("SDNC_Start", "SNDC_SetupCallback", "Call_SDNC", "isAsync_Gateway", "SDNC_End")
                 .isEnded();
     }

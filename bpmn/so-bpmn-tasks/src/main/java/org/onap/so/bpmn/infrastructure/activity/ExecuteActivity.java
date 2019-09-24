@@ -124,7 +124,8 @@ public class ExecuteActivity implements JavaDelegate {
             variables.put(SUPPRESS_ROLLBACK, true);
 
             ProcessInstanceWithVariables buildingBlockResult =
-                    runtimeService.createProcessInstanceByKey(EXECUTE_BUILDING_BLOCK).setVariables(variables)
+                    runtimeService.createProcessInstanceByKey(EXECUTE_BUILDING_BLOCK)
+                            .setVariables(variables)
                             .executeWithVariablesInReturn();
             VariableMap variableMap = buildingBlockResult.getVariables();
 

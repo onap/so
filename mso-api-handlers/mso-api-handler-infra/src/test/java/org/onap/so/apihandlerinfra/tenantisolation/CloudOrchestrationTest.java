@@ -102,9 +102,10 @@ public class CloudOrchestrationTest extends BaseTest {
     public void testCreateOpEnvReqRecordDuplicateCheck() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo(getTestUrl("checkInstanceNameDuplicate"))).withRequestBody(equalTo(
                 "{\"instanceIdMap\":null,\"instanceName\":\"myOpEnv\",\"requestScope\":\"operationalEnvironment\"}"))
-                .willReturn(aResponse()
-                        .withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(String.format(getResponseTemplate, "123", "PENDING")).withStatus(HttpStatus.SC_OK)));
+                .willReturn(
+                        aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                                .withBody(String.format(getResponseTemplate, "123", "PENDING"))
+                                .withStatus(HttpStatus.SC_OK)));
         ObjectMapper mapper = new ObjectMapper();
         TenantIsolationRequest request =
                 mapper.readValue(new File("src/test/resources/TenantIsolation/ECOMPOperationEnvironmentCreate.json"),

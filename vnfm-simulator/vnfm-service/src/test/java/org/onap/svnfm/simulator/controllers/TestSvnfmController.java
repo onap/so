@@ -77,8 +77,10 @@ public class TestSvnfmController {
         final String body = (new ObjectMapper()).valueToTree(createVnfRequest).toString();
         this.mockMvc
                 .perform(post(Constant.BASE_URL + "/vnf_instances").content(body)
-                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated()).andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 }
 

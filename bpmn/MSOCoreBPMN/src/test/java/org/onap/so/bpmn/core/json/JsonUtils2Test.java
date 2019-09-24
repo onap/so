@@ -134,8 +134,12 @@ public class JsonUtils2Test {
         String json = JsonUtils.xml2json(XML_REQ_NO_ATTRS);
         String xmlOut = JsonUtils.json2xml(json);
         // then
-        Diff diffXml = DiffBuilder.compare(xmlIn).withTest(xmlOut).ignoreWhitespace()
-                .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byName)).checkForSimilar().build();
+        Diff diffXml = DiffBuilder.compare(xmlIn)
+                .withTest(xmlOut)
+                .ignoreWhitespace()
+                .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byName))
+                .checkForSimilar()
+                .build();
 
         assertFalse(diffXml.hasDifferences());
     }
@@ -266,8 +270,12 @@ public class JsonUtils2Test {
         String json = JsonUtils.xml2json(xmlReq);
         String xmlOut = JsonUtils.json2xml(json);
         // then
-        Diff diffXml = DiffBuilder.compare(xmlReq).withTest(xmlOut).ignoreWhitespace()
-                .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byName)).checkForSimilar().build();
+        Diff diffXml = DiffBuilder.compare(xmlReq)
+                .withTest(xmlOut)
+                .ignoreWhitespace()
+                .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byName))
+                .checkForSimilar()
+                .build();
         assertFalse(diffXml.hasDifferences());
     }
 
@@ -277,8 +285,12 @@ public class JsonUtils2Test {
         String jsonParm = JsonUtils.getJsonNodeValue(jsonReqArray, "requestDetails.requestParameters.ucpeInfo");
         String xmlOut = JsonUtils.json2xml(jsonParm);
         // then
-        Diff diffXml = DiffBuilder.compare(XML_ARRAY_REQ).withTest(xmlOut).ignoreWhitespace()
-                .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byName)).checkForSimilar().build();
+        Diff diffXml = DiffBuilder.compare(XML_ARRAY_REQ)
+                .withTest(xmlOut)
+                .ignoreWhitespace()
+                .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byName))
+                .checkForSimilar()
+                .build();
         assertFalse(diffXml.hasDifferences());
     }
 

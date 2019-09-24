@@ -254,8 +254,10 @@ public class VolumeAdapterRest {
             @ApiParam(value = "DeleteVolumeGroupRequest", required = true) final DeleteVolumeGroupRequest req) {
         logger.debug("deleteVNFVolumes enter: {}", req.toJsonString());
         if (aaiVolumeGroupId == null || !aaiVolumeGroupId.equals(req.getVolumeGroupId())) {
-            return Response.status(HttpStatus.SC_BAD_REQUEST).type(MediaType.TEXT_PLAIN)
-                    .entity(VOLUME_GROUPID_IN_URL_DOESNT_MATCH_CONTENT).build();
+            return Response.status(HttpStatus.SC_BAD_REQUEST)
+                    .type(MediaType.TEXT_PLAIN)
+                    .entity(VOLUME_GROUPID_IN_URL_DOESNT_MATCH_CONTENT)
+                    .build();
         }
         DeleteVNFVolumesTask task = new DeleteVNFVolumesTask(req);
         if (req.isSynchronous()) {
@@ -351,8 +353,10 @@ public class VolumeAdapterRest {
         logger.debug("rollbackVNFVolumes enter: {}", req.toJsonString());
         if (aaiVolumeGroupId == null || req.getVolumeGroupRollback() == null
                 || !aaiVolumeGroupId.equals(req.getVolumeGroupRollback().getVolumeGroupId())) {
-            return Response.status(HttpStatus.SC_BAD_REQUEST).type(MediaType.TEXT_PLAIN)
-                    .entity(VOLUME_GROUPID_IN_URL_DOESNT_MATCH_CONTENT).build();
+            return Response.status(HttpStatus.SC_BAD_REQUEST)
+                    .type(MediaType.TEXT_PLAIN)
+                    .entity(VOLUME_GROUPID_IN_URL_DOESNT_MATCH_CONTENT)
+                    .build();
         }
         RollbackVNFVolumesTask task = new RollbackVNFVolumesTask(req);
         if (req.isSynchronous()) {
@@ -447,8 +451,10 @@ public class VolumeAdapterRest {
             @ApiParam(value = "UpdateVolumeGroupRequest", required = true) final UpdateVolumeGroupRequest req) {
         logger.debug("updateVNFVolumes enter: {}", req.toJsonString());
         if (aaiVolumeGroupId == null || !aaiVolumeGroupId.equals(req.getVolumeGroupId())) {
-            return Response.status(HttpStatus.SC_BAD_REQUEST).type(MediaType.TEXT_PLAIN)
-                    .entity(VOLUME_GROUPID_IN_URL_DOESNT_MATCH_CONTENT).build();
+            return Response.status(HttpStatus.SC_BAD_REQUEST)
+                    .type(MediaType.TEXT_PLAIN)
+                    .entity(VOLUME_GROUPID_IN_URL_DOESNT_MATCH_CONTENT)
+                    .build();
         }
         UpdateVNFVolumesTask task = new UpdateVNFVolumesTask(req);
         if (req.isSynchronous()) {
@@ -612,7 +618,8 @@ public class VolumeAdapterRest {
                     MsoExceptionCategory.INTERNAL, Boolean.FALSE, null);
             logger.debug("Query queryVNFVolumes exit");
             return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-                    .entity(new GenericEntity<VolumeGroupExceptionResponse>(excResp) {}).build();
+                    .entity(new GenericEntity<VolumeGroupExceptionResponse>(excResp) {})
+                    .build();
         }
     }
 

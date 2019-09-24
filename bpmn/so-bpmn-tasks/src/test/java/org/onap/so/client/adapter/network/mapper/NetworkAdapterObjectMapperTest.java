@@ -141,8 +141,12 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup {
                 SPY_networkAdapterObjectMapper.createNetworkRequestMapper(requestContext, cloudRegion,
                         orchestrationContext, serviceInstance, l3Network, userInput, cloudRegionPo, customer);
 
-        assertThat(createNetworkRequest, sameBeanAs(expectedCreateNetworkRequest).ignoring("contrailRequest")
-                .ignoring("contrailNetwork").ignoring("providerVlanNetwork").ignoring("subnets").ignoring("messageId"));
+        assertThat(createNetworkRequest,
+                sameBeanAs(expectedCreateNetworkRequest).ignoring("contrailRequest")
+                        .ignoring("contrailNetwork")
+                        .ignoring("providerVlanNetwork")
+                        .ignoring("subnets")
+                        .ignoring("messageId"));
     }
 
     @Test
@@ -168,8 +172,12 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup {
                 .createNetworkRollbackRequestMapper(requestContext, cloudRegion, orchestrationContext, serviceInstance,
                         l3Network, userInput, cloudRegionPo, createNetworkResponse);
 
-        assertThat(rollbackNetworkRequest, sameBeanAs(expectedRollbackNetworkRequest).ignoring("contrailNetwork")
-                .ignoring("providerVlanNetwork").ignoring("subnets").ignoring("networkParams").ignoring("messageId"));
+        assertThat(rollbackNetworkRequest,
+                sameBeanAs(expectedRollbackNetworkRequest).ignoring("contrailNetwork")
+                        .ignoring("providerVlanNetwork")
+                        .ignoring("subnets")
+                        .ignoring("networkParams")
+                        .ignoring("messageId"));
     }
 
     @Test
@@ -380,8 +388,10 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup {
                 SPY_networkAdapterObjectMapper.createNetworkRequestMapper(requestContext, cloudRegion,
                         orchestrationContext, serviceInstance, myNetwork, userInput, cloudRegionPo, customer);
         // ignoring dynamic fields and networkParams that throws parsing exception on json file load
-        assertThat(createNetworkRequest, sameBeanAs(expectedCreateNetworkRequest).ignoring("messageId")
-                .ignoring("msoRequest.requestId").ignoring("networkParams"));
+        assertThat(createNetworkRequest,
+                sameBeanAs(expectedCreateNetworkRequest).ignoring("messageId")
+                        .ignoring("msoRequest.requestId")
+                        .ignoring("networkParams"));
     }
 
     @Test

@@ -37,10 +37,11 @@ public class JsonPathUtil {
     private final Configuration pathListConf;
 
     private JsonPathUtil() {
-        conf = Configuration.defaultConfiguration().jsonProvider(new JacksonJsonNodeJsonProvider())
+        conf = Configuration.defaultConfiguration()
+                .jsonProvider(new JacksonJsonNodeJsonProvider())
                 .addOptions(Option.ALWAYS_RETURN_LIST, Option.SUPPRESS_EXCEPTIONS);
-        pathListConf = Configuration.defaultConfiguration().addOptions(Option.AS_PATH_LIST, Option.SUPPRESS_EXCEPTIONS,
-                Option.ALWAYS_RETURN_LIST);
+        pathListConf = Configuration.defaultConfiguration()
+                .addOptions(Option.AS_PATH_LIST, Option.SUPPRESS_EXCEPTIONS, Option.ALWAYS_RETURN_LIST);
     }
 
     private static class Helper {

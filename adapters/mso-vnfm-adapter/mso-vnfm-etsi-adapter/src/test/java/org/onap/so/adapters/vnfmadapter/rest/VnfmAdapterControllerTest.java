@@ -269,8 +269,10 @@ public class VnfmAdapterControllerTest {
 
         final RequestEntity<CreateVnfRequest> request =
                 RequestEntity.post(new URI("http://localhost:" + port + "/so/vnfm-adapter/v1/vnfs/myVnfId"))
-                        .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)
-                        .header("X-ONAP-RequestId", "myRequestId").header("X-ONAP-InvocationID", "myInvocationId")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-ONAP-RequestId", "myRequestId")
+                        .header("X-ONAP-InvocationID", "myInvocationId")
                         .body(createVnfRequest);
         final ResponseEntity<CreateVnfResponse> response =
                 restTemplateWrongPassword.exchange(request, CreateVnfResponse.class);
@@ -302,10 +304,13 @@ public class VnfmAdapterControllerTest {
         mockRestServer.expect(requestTo("http://vnfm1:8080/vnf_lcm_op_occs/1234567"))
                 .andRespond(withSuccess(gson.toJson(secondOperationQueryReponse), MediaType.APPLICATION_JSON));
 
-        final RequestEntity<Void> request = RequestEntity
-                .delete(new URI("http://localhost:" + port + "/so/vnfm-adapter/v1/vnfs/myTestVnfId"))
-                .accept(MediaType.APPLICATION_JSON).header("X-ONAP-RequestId", "myRequestId")
-                .header("X-ONAP-InvocationID", "myInvocationId").header("Content-Type", "application/json").build();
+        final RequestEntity<Void> request =
+                RequestEntity.delete(new URI("http://localhost:" + port + "/so/vnfm-adapter/v1/vnfs/myTestVnfId"))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header("X-ONAP-RequestId", "myRequestId")
+                        .header("X-ONAP-InvocationID", "myInvocationId")
+                        .header("Content-Type", "application/json")
+                        .build();
         final ResponseEntity<DeleteVnfResponse> deleteVnfResponse =
                 restTemplate.exchange(request, DeleteVnfResponse.class);
         assertEquals(202, deleteVnfResponse.getStatusCode().value());
@@ -332,8 +337,11 @@ public class VnfmAdapterControllerTest {
 
         final RequestEntity<Void> request = RequestEntity
                 .delete(new URI("http://localhost:" + port + "/so/vnfm-adapter/v1/vnfs/myNonExistingVnfId"))
-                .accept(MediaType.APPLICATION_JSON).header("X-ONAP-RequestId", "myRequestId")
-                .header("X-ONAP-InvocationID", "myInvocationId").header("Content-Type", "application/json").build();
+                .accept(MediaType.APPLICATION_JSON)
+                .header("X-ONAP-RequestId", "myRequestId")
+                .header("X-ONAP-InvocationID", "myInvocationId")
+                .header("Content-Type", "application/json")
+                .build();
         final ResponseEntity<DeleteVnfResponse> deleteVnfResponse =
                 restTemplate.exchange(request, DeleteVnfResponse.class);
         assertEquals(404, deleteVnfResponse.getStatusCode().value());
@@ -346,10 +354,13 @@ public class VnfmAdapterControllerTest {
 
         setUpGenericVnfInMockAai("vnfmType");
 
-        final RequestEntity<Void> request = RequestEntity
-                .delete(new URI("http://localhost:" + port + "/so/vnfm-adapter/v1/vnfs/myTestVnfId"))
-                .accept(MediaType.APPLICATION_JSON).header("X-ONAP-RequestId", "myRequestId")
-                .header("X-ONAP-InvocationID", "myInvocationId").header("Content-Type", "application/json").build();
+        final RequestEntity<Void> request =
+                RequestEntity.delete(new URI("http://localhost:" + port + "/so/vnfm-adapter/v1/vnfs/myTestVnfId"))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header("X-ONAP-RequestId", "myRequestId")
+                        .header("X-ONAP-InvocationID", "myInvocationId")
+                        .header("Content-Type", "application/json")
+                        .build();
         final ResponseEntity<DeleteVnfResponse> deleteVnfResponse =
                 restTemplate.exchange(request, DeleteVnfResponse.class);
         assertEquals(400, deleteVnfResponse.getStatusCode().value());
@@ -368,10 +379,13 @@ public class VnfmAdapterControllerTest {
         mockRestServer.expect(requestTo("http://vnfm:8080/vnfs/myTestVnfIdOnVnfm/terminate"))
                 .andRespond(withStatus(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON));
 
-        final RequestEntity<Void> request = RequestEntity
-                .delete(new URI("http://localhost:" + port + "/so/vnfm-adapter/v1/vnfs/myTestVnfId"))
-                .accept(MediaType.APPLICATION_JSON).header("X-ONAP-RequestId", "myRequestId")
-                .header("X-ONAP-InvocationID", "myInvocationId").header("Content-Type", "application/json").build();
+        final RequestEntity<Void> request =
+                RequestEntity.delete(new URI("http://localhost:" + port + "/so/vnfm-adapter/v1/vnfs/myTestVnfId"))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header("X-ONAP-RequestId", "myRequestId")
+                        .header("X-ONAP-InvocationID", "myInvocationId")
+                        .header("Content-Type", "application/json")
+                        .build();
         final ResponseEntity<DeleteVnfResponse> deleteVnfResponse =
                 restTemplate.exchange(request, DeleteVnfResponse.class);
         assertEquals(500, deleteVnfResponse.getStatusCode().value());
@@ -402,8 +416,9 @@ public class VnfmAdapterControllerTest {
     private GenericVnf setUpGenericVnfInMockAai(final String type) {
         final GenericVnf genericVnf = createGenericVnf(type);
 
-        doReturn(Optional.of(genericVnf)).when(aaiResourcesClient).get(eq(GenericVnf.class),
-                MockitoHamcrest.argThat(new AaiResourceUriMatcher("/network/generic-vnfs/generic-vnf/myTestVnfId")));
+        doReturn(Optional.of(genericVnf)).when(aaiResourcesClient)
+                .get(eq(GenericVnf.class), MockitoHamcrest
+                        .argThat(new AaiResourceUriMatcher("/network/generic-vnfs/generic-vnf/myTestVnfId")));
         return genericVnf;
     }
 
@@ -454,20 +469,23 @@ public class VnfmAdapterControllerTest {
         esrVnfmList.getEsrVnfm().add(esrVnfm1);
         esrVnfmList.getEsrVnfm().add(esrVnfm2);
 
-        doReturn(Optional.of(esrVnfm1)).when(aaiResourcesClient).get(eq(EsrVnfm.class), MockitoHamcrest
-                .argThat(new AaiResourceUriMatcher("/external-system/esr-vnfm-list/esr-vnfm/vnfm1?depth=1")));
+        doReturn(Optional.of(esrVnfm1)).when(aaiResourcesClient)
+                .get(eq(EsrVnfm.class), MockitoHamcrest
+                        .argThat(new AaiResourceUriMatcher("/external-system/esr-vnfm-list/esr-vnfm/vnfm1?depth=1")));
 
-        doReturn(Optional.of(esrVnfm2)).when(aaiResourcesClient).get(eq(EsrVnfm.class), MockitoHamcrest
-                .argThat(new AaiResourceUriMatcher("/external-system/esr-vnfm-list/esr-vnfm/vnfm2?depth=1")));
+        doReturn(Optional.of(esrVnfm2)).when(aaiResourcesClient)
+                .get(eq(EsrVnfm.class), MockitoHamcrest
+                        .argThat(new AaiResourceUriMatcher("/external-system/esr-vnfm-list/esr-vnfm/vnfm2?depth=1")));
 
-        doReturn(Optional.of(esrVnfmList)).when(aaiResourcesClient).get(eq(EsrVnfmList.class),
-                MockitoHamcrest.argThat(new AaiResourceUriMatcher("/external-system/esr-vnfm-list")));
+        doReturn(Optional.of(esrVnfmList)).when(aaiResourcesClient)
+                .get(eq(EsrVnfmList.class),
+                        MockitoHamcrest.argThat(new AaiResourceUriMatcher("/external-system/esr-vnfm-list")));
 
-        doReturn(Optional.of(esrSystemInfoList1)).when(aaiResourcesClient).get(eq(EsrSystemInfoList.class),
-                MockitoHamcrest.argThat(new AaiResourceUriMatcher(
+        doReturn(Optional.of(esrSystemInfoList1)).when(aaiResourcesClient)
+                .get(eq(EsrSystemInfoList.class), MockitoHamcrest.argThat(new AaiResourceUriMatcher(
                         "/external-system/esr-vnfm-list/esr-vnfm/vnfm1/esr-system-info-list")));
-        doReturn(Optional.of(esrSystemInfoList2)).when(aaiResourcesClient).get(eq(EsrSystemInfoList.class),
-                MockitoHamcrest.argThat(new AaiResourceUriMatcher(
+        doReturn(Optional.of(esrSystemInfoList2)).when(aaiResourcesClient)
+                .get(eq(EsrSystemInfoList.class), MockitoHamcrest.argThat(new AaiResourceUriMatcher(
                         "/external-system/esr-vnfm-list/esr-vnfm/vnfm2/esr-system-info-list")));
     }
 
@@ -483,9 +501,11 @@ public class VnfmAdapterControllerTest {
         final EsrSystemInfoList esrSystemInfoList = new EsrSystemInfoList();
         esrSystemInfoList.getEsrSystemInfo().add(esrSystemInfo);
 
-        doReturn(Optional.of(esrSystemInfoList)).when(aaiResourcesClient).get(eq(EsrSystemInfoList.class),
-                MockitoHamcrest.argThat(new AaiResourceUriMatcher("/cloud-infrastructure/cloud-regions/cloud-region/"
-                        + CLOUD_OWNER + "/" + REGION + "/esr-system-info-list")));
+        doReturn(Optional.of(esrSystemInfoList)).when(aaiResourcesClient)
+                .get(eq(EsrSystemInfoList.class),
+                        MockitoHamcrest
+                                .argThat(new AaiResourceUriMatcher("/cloud-infrastructure/cloud-regions/cloud-region/"
+                                        + CLOUD_OWNER + "/" + REGION + "/esr-system-info-list")));
     }
 
     private InlineResponse201 createCreateResponse() {
@@ -513,7 +533,8 @@ public class VnfmAdapterControllerTest {
         public boolean matches(final Object item) {
             if (item instanceof AAIResourceUri) {
                 if (uriAsString.endsWith("...")) {
-                    return ((AAIResourceUri) item).build().toString()
+                    return ((AAIResourceUri) item).build()
+                            .toString()
                             .startsWith(uriAsString.substring(0, uriAsString.indexOf("...")));
                 }
                 return ((AAIResourceUri) item).build().toString().equals(uriAsString);

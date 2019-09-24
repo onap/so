@@ -248,7 +248,8 @@ public class CreateAAIVfModuleIT extends BaseIntegrationTest {
                 .willReturn(aResponse().withStatus(201)));
         wireMockServer.stubFor(put(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/.*"))
                 .withRequestBody(containing("<service-id>99999999-9999-9999-9999-999999999999</service-id>"))
-                .willReturn(aResponse().withStatus(500).withHeader("Content-Type", "text/xml")
+                .willReturn(aResponse().withStatus(500)
+                        .withHeader("Content-Type", "text/xml")
                         .withBodyFile("aaiFault.xml")));
     }
 
@@ -256,11 +257,14 @@ public class CreateAAIVfModuleIT extends BaseIntegrationTest {
     public static void MockAAIVfModulePUT(WireMockServer wireMockServer, boolean isCreate) {
         wireMockServer
                 .stubFor(put(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/.*/vf-modules/vf-module/.*"))
-                        .withRequestBody(containing("MMSC")).willReturn(aResponse().withStatus(isCreate ? 201 : 200)));
+                        .withRequestBody(containing("MMSC"))
+                        .willReturn(aResponse().withStatus(isCreate ? 201 : 200)));
         wireMockServer
                 .stubFor(put(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/.*/vf-modules/vf-module/.*"))
-                        .withRequestBody(containing("PCRF")).willReturn(aResponse().withStatus(500)
-                                .withHeader("Content-Type", "text/xml").withBodyFile("aaiFault.xml")));
+                        .withRequestBody(containing("PCRF"))
+                        .willReturn(aResponse().withStatus(500)
+                                .withHeader("Content-Type", "text/xml")
+                                .withBodyFile("aaiFault.xml")));
         wireMockServer.stubFor(
                 put(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/a27ce5a9-29c4-4c22-a017-6615ac73c721"))
                         .willReturn(aResponse().withStatus(200)));

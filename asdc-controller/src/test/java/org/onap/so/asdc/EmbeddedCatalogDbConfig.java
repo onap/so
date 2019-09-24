@@ -63,8 +63,12 @@ public class EmbeddedCatalogDbConfig {
 
         DBConfigurationBuilder config = mariaDB4jSpringService.getConfiguration();
 
-        return DataSourceBuilder.create().username(datasourceUsername).password(datasourcePassword)
-                .url(config.getURL(databaseName)).driverClassName(datasourceDriver).build();
+        return DataSourceBuilder.create()
+                .username(datasourceUsername)
+                .password(datasourcePassword)
+                .url(config.getURL(databaseName))
+                .driverClassName(datasourceDriver)
+                .build();
     }
 
 
@@ -72,7 +76,9 @@ public class EmbeddedCatalogDbConfig {
     @Bean(name = "entityManagerFactory")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder,
             @Qualifier("dataSource") DataSource dataSource) {
-        return builder.dataSource(dataSource).packages("org.onap.so.db.catalog.beans").persistenceUnit("catalogDB")
+        return builder.dataSource(dataSource)
+                .packages("org.onap.so.db.catalog.beans")
+                .persistenceUnit("catalogDB")
                 .build();
     }
 

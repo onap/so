@@ -133,8 +133,9 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
     public void delete(Uri uri) {
         GraphInventoryResourceUri clone = uri.clone();
         RestClient giRC = client.createClient(clone);
-        Map<String, Object> result = giRC.get(new GenericType<Map<String, Object>>() {}).orElseThrow(
-                () -> new NotFoundException(clone.build() + " does not exist in " + client.getGraphDBName()));
+        Map<String, Object> result = giRC.get(new GenericType<Map<String, Object>>() {})
+                .orElseThrow(
+                        () -> new NotFoundException(clone.build() + " does not exist in " + client.getGraphDBName()));
         String resourceVersion = (String) result.get("resource-version");
         giRC = client.createClient(clone.resourceVersion(resourceVersion));
         giRC.delete();
@@ -236,8 +237,10 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
     public Wrapper get(Uri uri, Class<? extends RuntimeException> c) {
         String json;
         try {
-            json = client.createClient(uri).get(String.class).orElseThrow(() -> createException(c,
-                    uri.build() + " not found in " + client.getGraphDBName(), Optional.empty()));
+            json = client.createClient(uri)
+                    .get(String.class)
+                    .orElseThrow(() -> createException(c, uri.build() + " not found in " + client.getGraphDBName(),
+                            Optional.empty()));
         } catch (NotFoundException e) {
             throw createException(c, "could not construct uri for use with " + client.getGraphDBName(), Optional.of(e));
         }

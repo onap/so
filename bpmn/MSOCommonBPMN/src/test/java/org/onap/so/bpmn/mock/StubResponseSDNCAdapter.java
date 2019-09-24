@@ -62,8 +62,10 @@ public class StubResponseSDNCAdapter {
 
     public static void mockSDNCAdapter(WireMockServer wireMockServer, String endpoint, String requestContaining,
             int statusCode, String responseFile) {
-        wireMockServer.stubFor(post(urlEqualTo(endpoint)).withRequestBody(containing(requestContaining)).willReturn(
-                aResponse().withStatus(statusCode).withHeader("Content-Type", "text/xml").withBodyFile(responseFile)));
+        wireMockServer.stubFor(post(urlEqualTo(endpoint)).withRequestBody(containing(requestContaining))
+                .willReturn(aResponse().withStatus(statusCode)
+                        .withHeader("Content-Type", "text/xml")
+                        .withBodyFile(responseFile)));
     }
 
     public static void mockSDNCAdapterRest(WireMockServer wireMockServer) {

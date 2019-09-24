@@ -95,8 +95,11 @@ public class RequestProcessingData implements Serializable {
             return false;
         }
         RequestProcessingData castOther = (RequestProcessingData) other;
-        return new EqualsBuilder().append(soRequestId, castOther.soRequestId).append(groupingId, castOther.groupingId)
-                .append(name, castOther.name).append(tag, castOther.tag).isEquals();
+        return new EqualsBuilder().append(soRequestId, castOther.soRequestId)
+                .append(groupingId, castOther.groupingId)
+                .append(name, castOther.name)
+                .append(tag, castOther.tag)
+                .isEquals();
     }
 
     @Override
@@ -106,9 +109,14 @@ public class RequestProcessingData implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("id", id).append("soRequestId", soRequestId)
-                .append("groupingId", groupingId).append("name", name).append("value", value).append("tag", tag)
-                .append("isDataInternal", isDataInternal).toString();
+        return new ToStringBuilder(this).append("id", id)
+                .append("soRequestId", soRequestId)
+                .append("groupingId", groupingId)
+                .append("name", name)
+                .append("value", value)
+                .append("tag", tag)
+                .append("isDataInternal", isDataInternal)
+                .toString();
     }
 
     @PrePersist

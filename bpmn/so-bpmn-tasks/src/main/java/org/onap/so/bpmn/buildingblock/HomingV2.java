@@ -58,7 +58,11 @@ public class HomingV2 {
     }
 
     private boolean isSniro(BuildingBlockExecution execution) {
-        return execution.getGeneralBuildingBlock().getRequestContext().getRequestParameters().getUserParams().stream()
+        return execution.getGeneralBuildingBlock()
+                .getRequestContext()
+                .getRequestParameters()
+                .getUserParams()
+                .stream()
                 .anyMatch(params -> HOMING_SNIRO.equals(params.get(HOMING_SOLUTION)));
     }
 }

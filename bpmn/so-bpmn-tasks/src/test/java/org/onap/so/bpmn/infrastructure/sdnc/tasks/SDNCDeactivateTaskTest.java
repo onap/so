@@ -87,9 +87,9 @@ public class SDNCDeactivateTaskTest extends BaseTaskTest {
 
     @Test
     public void deactivateVfModuleTest() throws Exception {
-        doReturn(new GenericResourceApiVfModuleOperationInformation()).when(sdncVfModuleResources).deactivateVfModule(
-                eq(vfModule), eq(genericVnf), eq(serviceInstance), eq(customer), eq(cloudRegion), eq(requestContext),
-                any(URI.class));
+        doReturn(new GenericResourceApiVfModuleOperationInformation()).when(sdncVfModuleResources)
+                .deactivateVfModule(eq(vfModule), eq(genericVnf), eq(serviceInstance), eq(customer), eq(cloudRegion),
+                        eq(requestContext), any(URI.class));
         sdncDeactivateTasks.deactivateVfModule(execution);
         verify(sdncVfModuleResources, times(1)).deactivateVfModule(eq(vfModule), eq(genericVnf), eq(serviceInstance),
                 eq(customer), eq(cloudRegion), eq(requestContext), any(URI.class));
@@ -100,15 +100,17 @@ public class SDNCDeactivateTaskTest extends BaseTaskTest {
     @Test
     public void deactivateVfModuleExceptionTest() throws Exception {
         expectedException.expect(BpmnError.class);
-        doThrow(RuntimeException.class).when(sdncVfModuleResources).deactivateVfModule(eq(vfModule), eq(genericVnf),
-                eq(serviceInstance), eq(customer), eq(cloudRegion), eq(requestContext), any(URI.class));
+        doThrow(RuntimeException.class).when(sdncVfModuleResources)
+                .deactivateVfModule(eq(vfModule), eq(genericVnf), eq(serviceInstance), eq(customer), eq(cloudRegion),
+                        eq(requestContext), any(URI.class));
         sdncDeactivateTasks.deactivateVfModule(execution);
     }
 
     @Test
     public void deactivateVnfTest() throws Exception {
-        doReturn(new GenericResourceApiVnfOperationInformation()).when(sdncVnfResources).deactivateVnf(eq(genericVnf),
-                eq(serviceInstance), eq(customer), eq(cloudRegion), eq(requestContext), any(URI.class));
+        doReturn(new GenericResourceApiVnfOperationInformation()).when(sdncVnfResources)
+                .deactivateVnf(eq(genericVnf), eq(serviceInstance), eq(customer), eq(cloudRegion), eq(requestContext),
+                        any(URI.class));
         sdncDeactivateTasks.deactivateVnf(execution);
         verify(sdncVnfResources, times(1)).deactivateVnf(eq(genericVnf), eq(serviceInstance), eq(customer),
                 eq(cloudRegion), eq(requestContext), any(URI.class));
@@ -118,8 +120,9 @@ public class SDNCDeactivateTaskTest extends BaseTaskTest {
 
     @Test
     public void deactivateVnfExceptionTest() throws Exception {
-        doThrow(RuntimeException.class).when(sdncVnfResources).deactivateVnf(eq(genericVnf), eq(serviceInstance),
-                eq(customer), eq(cloudRegion), eq(requestContext), any(URI.class));
+        doThrow(RuntimeException.class).when(sdncVnfResources)
+                .deactivateVnf(eq(genericVnf), eq(serviceInstance), eq(customer), eq(cloudRegion), eq(requestContext),
+                        any(URI.class));
         expectedException.expect(BpmnError.class);
         sdncDeactivateTasks.deactivateVnf(execution);
     }
@@ -137,8 +140,8 @@ public class SDNCDeactivateTaskTest extends BaseTaskTest {
 
     @Test
     public void deactivateServiceInstanceExceptionTest() throws Exception {
-        doThrow(RuntimeException.class).when(sdncServiceInstanceResources).deactivateServiceInstance(serviceInstance,
-                customer, requestContext);
+        doThrow(RuntimeException.class).when(sdncServiceInstanceResources)
+                .deactivateServiceInstance(serviceInstance, customer, requestContext);
         expectedException.expect(BpmnError.class);
         sdncDeactivateTasks.deactivateServiceInstance(execution);
     }
@@ -157,8 +160,8 @@ public class SDNCDeactivateTaskTest extends BaseTaskTest {
     @Test
     public void test_deactivateNetwork_exception() throws Exception {
         expectedException.expect(BpmnError.class);
-        doThrow(RuntimeException.class).when(extractPojosForBB).extractByKey(any(),
-                ArgumentMatchers.eq(ResourceKey.NETWORK_ID));
+        doThrow(RuntimeException.class).when(extractPojosForBB)
+                .extractByKey(any(), ArgumentMatchers.eq(ResourceKey.NETWORK_ID));
         sdncDeactivateTasks.deactivateNetwork(execution);
         verify(sdncNetworkResources, times(0)).deactivateNetwork(network, serviceInstance, customer, requestContext,
                 cloudRegion);

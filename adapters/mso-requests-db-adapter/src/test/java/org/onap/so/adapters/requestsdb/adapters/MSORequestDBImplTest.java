@@ -134,8 +134,11 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
             fail("Null infraRequest");
 
         // Then
-        assertThat(infraRequest, sameBeanAs(testRequest).ignoring("requestBody").ignoring("endTime")
-                .ignoring("startTime").ignoring("modifyTime"));
+        assertThat(infraRequest,
+                sameBeanAs(testRequest).ignoring("requestBody")
+                        .ignoring("endTime")
+                        .ignoring("startTime")
+                        .ignoring("modifyTime"));
     }
 
 
@@ -216,8 +219,11 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
                 serviceInstanceName, configurationId, configurationName, vfModuleName);
         InfraActiveRequests infraRequest = dbAdapter.getInfraRequest(clientRequestId);
         // Then
-        assertThat(infraRequest, sameBeanAs(testRequest).ignoring("requestBody").ignoring("endTime")
-                .ignoring("startTime").ignoring("modifyTime"));
+        assertThat(infraRequest,
+                sameBeanAs(testRequest).ignoring("requestBody")
+                        .ignoring("endTime")
+                        .ignoring("startTime")
+                        .ignoring("modifyTime"));
 
 
     }
@@ -248,8 +254,11 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
                 null, null, null, null, null, null, null, null, null, null, null);
         InfraActiveRequests infraRequest = dbAdapter.getInfraRequest(clientRequestId);
         // Then
-        assertThat(infraRequest, sameBeanAs(testRequest).ignoring("requestBody").ignoring("endTime")
-                .ignoring("startTime").ignoring("modifyTime"));
+        assertThat(infraRequest,
+                sameBeanAs(testRequest).ignoring("requestBody")
+                        .ignoring("endTime")
+                        .ignoring("startTime")
+                        .ignoring("modifyTime"));
     }
 
     @Test

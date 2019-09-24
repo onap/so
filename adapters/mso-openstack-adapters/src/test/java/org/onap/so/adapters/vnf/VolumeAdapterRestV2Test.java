@@ -127,8 +127,10 @@ public class VolumeAdapterRestV2Test extends VolumeGroupAdapterCommon {
         mockOpenStackResponseAccess(wireMockServer, wireMockPort);
         mockOpenStackGetStacksWithBody_200(wireMockServer, "UPDATE_COMPLETE");
         javax.ws.rs.core.UriBuilder builder = UriBuilder.fromPath("/services/rest/v2/volume-groups/" + VOLUME_GROUP_ID);
-        builder.queryParam("cloudSiteId", CLOUDSITE_ID).queryParam("tenantId", TENANT_ID)
-                .queryParam("volumeGroupStackId", VOUME_GROUP_NAME).queryParam("skipAAI", true)
+        builder.queryParam("cloudSiteId", CLOUDSITE_ID)
+                .queryParam("tenantId", TENANT_ID)
+                .queryParam("volumeGroupStackId", VOUME_GROUP_NAME)
+                .queryParam("skipAAI", true)
                 .queryParam("msoRequest.requestId", MSO_REQUEST_ID)
                 .queryParam("msoRequest.serviceInstanceId", MSO_SERVICE_INSTANCE_ID);
 
@@ -142,8 +144,10 @@ public class VolumeAdapterRestV2Test extends VolumeGroupAdapterCommon {
         mockOpenStackResponseAccess(wireMockServer, wireMockPort);
         mockOpenStackGetStacksWithBody_200(wireMockServer, "UPDATE_COMPLETE");
         javax.ws.rs.core.UriBuilder builder = UriBuilder.fromPath("/services/rest/v2/volume-groups/" + VOLUME_GROUP_ID);
-        builder.queryParam("tenantId", TENANT_ID).queryParam("volumeGroupStackId", VOUME_GROUP_NAME)
-                .queryParam("skipAAI", true).queryParam("msoRequest.requestId", MSO_REQUEST_ID)
+        builder.queryParam("tenantId", TENANT_ID)
+                .queryParam("volumeGroupStackId", VOUME_GROUP_NAME)
+                .queryParam("skipAAI", true)
+                .queryParam("msoRequest.requestId", MSO_REQUEST_ID)
                 .queryParam("msoRequest.serviceInstanceId", MSO_SERVICE_INSTANCE_ID);
 
         ResponseEntity<VolumeGroupExceptionResponse> response =

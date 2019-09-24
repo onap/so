@@ -169,9 +169,13 @@ public class CollectionResource implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("modelUUID", modelUUID).append("modelName", modelName)
-                .append("modelInvariantUUID", modelInvariantUUID).append("modelVersion", modelVersion)
-                .append("toscaNodeType", toscaNodeType).append("description", description).append("created", created)
+        return new ToStringBuilder(this).append("modelUUID", modelUUID)
+                .append("modelName", modelName)
+                .append("modelInvariantUUID", modelInvariantUUID)
+                .append("modelVersion", modelVersion)
+                .append("toscaNodeType", toscaNodeType)
+                .append("description", description)
+                .append("created", created)
                 .toString();
     }
 }

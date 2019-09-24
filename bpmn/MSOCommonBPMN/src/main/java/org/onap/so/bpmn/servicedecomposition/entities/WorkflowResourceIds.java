@@ -40,9 +40,13 @@ public class WorkflowResourceIds implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("serviceInstanceId", serviceInstanceId).append("vnfId", vnfId)
-                .append("networkId", networkId).append("volumeGroupId", volumeGroupId).append("vfModuleId", vfModuleId)
-                .append("networkCollectionId", networkCollectionId).append("configurationId", configurationId)
+        return new ToStringBuilder(this).append("serviceInstanceId", serviceInstanceId)
+                .append("vnfId", vnfId)
+                .append("networkId", networkId)
+                .append("volumeGroupId", volumeGroupId)
+                .append("vfModuleId", vfModuleId)
+                .append("networkCollectionId", networkCollectionId)
+                .append("configurationId", configurationId)
                 .toString();
     }
 

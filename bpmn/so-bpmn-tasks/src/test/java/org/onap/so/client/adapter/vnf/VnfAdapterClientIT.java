@@ -70,7 +70,8 @@ public class VnfAdapterClientIT extends BaseIntegrationTest {
         mockResponse.setVfModuleCreated(true);
         wireMockServer.stubFor(post(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_VNF_ID + "/vf-modules"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBody(mapper.writeValueAsString(mockResponse)).withStatus(200)));
+                        .withBody(mapper.writeValueAsString(mockResponse))
+                        .withStatus(200)));
 
         CreateVfModuleResponse response = client.createVfModule(AAI_VNF_ID, request);
         assertEquals("Testing CreateVfModule response", true, response.getVfModuleCreated());
@@ -85,7 +86,8 @@ public class VnfAdapterClientIT extends BaseIntegrationTest {
         mockResponse.setMessage("Error in create Vf module");
         wireMockServer.stubFor(post(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_VNF_ID + "/vf-modules"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBody(mapper.writeValueAsString(mockResponse)).withStatus(500)));
+                        .withBody(mapper.writeValueAsString(mockResponse))
+                        .withStatus(500)));
 
         client.createVfModule(AAI_VNF_ID, request);
     }
@@ -102,7 +104,8 @@ public class VnfAdapterClientIT extends BaseIntegrationTest {
         wireMockServer.stubFor(delete(
                 urlPathEqualTo(REST_ENDPOINT + "/" + AAI_VNF_ID + "/vf-modules/" + AAI_VF_MODULE_ID + "/rollback"))
                         .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                                .withBody(mapper.writeValueAsString(mockResponse)).withStatus(200)));
+                                .withBody(mapper.writeValueAsString(mockResponse))
+                                .withStatus(200)));
 
         RollbackVfModuleResponse response = client.rollbackVfModule(AAI_VNF_ID, AAI_VF_MODULE_ID, request);
         assertEquals("Testing RollbackVfModule response", true, response.getVfModuleRolledback());
@@ -120,7 +123,8 @@ public class VnfAdapterClientIT extends BaseIntegrationTest {
         wireMockServer.stubFor(delete(
                 urlPathEqualTo(REST_ENDPOINT + "/" + AAI_VNF_ID + "/vf-modules/" + AAI_VF_MODULE_ID + "/rollback"))
                         .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                                .withBody(mapper.writeValueAsString(mockResponse)).withStatus(500)));
+                                .withBody(mapper.writeValueAsString(mockResponse))
+                                .withStatus(500)));
 
         client.rollbackVfModule(AAI_VNF_ID, AAI_VF_MODULE_ID, request);
     }
@@ -135,7 +139,8 @@ public class VnfAdapterClientIT extends BaseIntegrationTest {
         wireMockServer
                 .stubFor(delete(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_VNF_ID + "/vf-modules/" + AAI_VF_MODULE_ID))
                         .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                                .withBody(mapper.writeValueAsString(mockResponse)).withStatus(200)));
+                                .withBody(mapper.writeValueAsString(mockResponse))
+                                .withStatus(200)));
 
         DeleteVfModuleResponse response = client.deleteVfModule(AAI_VNF_ID, AAI_VF_MODULE_ID, request);
         assertEquals("Testing DeleteVfModule response", true, response.getVfModuleDeleted());
@@ -151,7 +156,8 @@ public class VnfAdapterClientIT extends BaseIntegrationTest {
         wireMockServer
                 .stubFor(delete(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_VNF_ID + "/vf-modules/" + AAI_VF_MODULE_ID))
                         .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                                .withBody(mapper.writeValueAsString(mockResponse)).withStatus(500)));
+                                .withBody(mapper.writeValueAsString(mockResponse))
+                                .withStatus(500)));
 
         client.deleteVfModule(AAI_VNF_ID, AAI_VF_MODULE_ID, request);
     }
@@ -166,7 +172,8 @@ public class VnfAdapterClientIT extends BaseIntegrationTest {
         mockResponse.setVfModuleId("test1");
         wireMockServer.stubFor(put(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_VNF_ID + "/vf-modules/" + AAI_VF_MODULE_ID))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBody(mapper.writeValueAsString(mockResponse)).withStatus(200)));
+                        .withBody(mapper.writeValueAsString(mockResponse))
+                        .withStatus(200)));
 
         UpdateVfModuleResponse response = client.updateVfModule(AAI_VNF_ID, AAI_VF_MODULE_ID, request);
         assertEquals("Testing UpdateVfModule response", "test1", response.getVfModuleId());
@@ -182,7 +189,8 @@ public class VnfAdapterClientIT extends BaseIntegrationTest {
         mockResponse.setMessage("Error in update Vf module");
         wireMockServer.stubFor(put(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_VNF_ID + "/vf-modules/" + AAI_VF_MODULE_ID))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBody(mapper.writeValueAsString(mockResponse)).withStatus(500)));
+                        .withBody(mapper.writeValueAsString(mockResponse))
+                        .withStatus(500)));
 
         client.updateVfModule(AAI_VNF_ID, AAI_VF_MODULE_ID, request);
     }
@@ -193,12 +201,15 @@ public class VnfAdapterClientIT extends BaseIntegrationTest {
         mockResponse.setVnfId(AAI_VNF_ID);
         mockResponse.setVfModuleId(AAI_VF_MODULE_ID);
         wireMockServer.stubFor(get(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_VNF_ID + "/vf-modules/" + AAI_VF_MODULE_ID))
-                .withQueryParam("cloudSiteId", equalTo(TESTING_ID)).withQueryParam("tenantId", equalTo(TESTING_ID))
-                .withQueryParam("vfModuleName", equalTo("someName")).withQueryParam("skipAAI", equalTo("true"))
+                .withQueryParam("cloudSiteId", equalTo(TESTING_ID))
+                .withQueryParam("tenantId", equalTo(TESTING_ID))
+                .withQueryParam("vfModuleName", equalTo("someName"))
+                .withQueryParam("skipAAI", equalTo("true"))
                 .withQueryParam("msoRequest.requestId", equalTo("testRequestId"))
                 .withQueryParam("msoRequest.serviceInstanceId", equalTo("serviceInstanceId"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBody(mapper.writeValueAsString(mockResponse)).withStatus(200)));
+                        .withBody(mapper.writeValueAsString(mockResponse))
+                        .withStatus(200)));
         QueryVfModuleResponse response = client.queryVfModule(AAI_VNF_ID, AAI_VF_MODULE_ID, TESTING_ID, TESTING_ID,
                 "someName", true, "testRequestId", "serviceInstanceId");
         assertEquals("Testing QueryVfModule response", AAI_VF_MODULE_ID, response.getVfModuleId());
@@ -209,12 +220,15 @@ public class VnfAdapterClientIT extends BaseIntegrationTest {
         VfModuleExceptionResponse mockResponse = new VfModuleExceptionResponse();
         mockResponse.setMessage("Error in update Vf module");
         wireMockServer.stubFor(get(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_VNF_ID + "/vf-modules/" + AAI_VF_MODULE_ID))
-                .withQueryParam("cloudSiteId", equalTo(TESTING_ID)).withQueryParam("tenantId", equalTo(TESTING_ID))
-                .withQueryParam("vfModuleName", equalTo("someName")).withQueryParam("skipAAI", equalTo("true"))
+                .withQueryParam("cloudSiteId", equalTo(TESTING_ID))
+                .withQueryParam("tenantId", equalTo(TESTING_ID))
+                .withQueryParam("vfModuleName", equalTo("someName"))
+                .withQueryParam("skipAAI", equalTo("true"))
                 .withQueryParam("msoRequest.requestId", equalTo("testRequestId"))
                 .withQueryParam("msoRequest.serviceInstanceId", equalTo("serviceInstanceId"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBody(mapper.writeValueAsString(mockResponse)).withStatus(500)));
+                        .withBody(mapper.writeValueAsString(mockResponse))
+                        .withStatus(500)));
         client.queryVfModule(AAI_VNF_ID, AAI_VF_MODULE_ID, TESTING_ID, TESTING_ID, "someName", true, "testRequestId",
                 "serviceInstanceId");
     }

@@ -100,8 +100,8 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
 
     @Test
     public void updateOrchestrationStatusAssignedServiceTest() throws Exception {
-        doNothing().when(aaiServiceInstanceResources).updateOrchestrationStatusServiceInstance(serviceInstance,
-                OrchestrationStatus.ASSIGNED);
+        doNothing().when(aaiServiceInstanceResources)
+                .updateOrchestrationStatusServiceInstance(serviceInstance, OrchestrationStatus.ASSIGNED);
 
         aaiUpdateTasks.updateOrchestrationStatusAssignedService(execution);
 
@@ -121,8 +121,8 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
 
     @Test
     public void updateOrchestrationStatusActiveServiceTest() throws Exception {
-        doNothing().when(aaiServiceInstanceResources).updateOrchestrationStatusServiceInstance(serviceInstance,
-                OrchestrationStatus.ACTIVE);
+        doNothing().when(aaiServiceInstanceResources)
+                .updateOrchestrationStatusServiceInstance(serviceInstance, OrchestrationStatus.ACTIVE);
 
         aaiUpdateTasks.updateOrchestrationStatusActiveService(execution);
 
@@ -153,8 +153,8 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     public void updateOrchestrationStatusAssignedVnfExceptionTest() throws Exception {
         expectedException.expect(BpmnError.class);
 
-        doThrow(RuntimeException.class).when(aaiVnfResources).updateOrchestrationStatusVnf(genericVnf,
-                OrchestrationStatus.ASSIGNED);
+        doThrow(RuntimeException.class).when(aaiVnfResources)
+                .updateOrchestrationStatusVnf(genericVnf, OrchestrationStatus.ASSIGNED);
 
         aaiUpdateTasks.updateOrchestrationStatusAssignedVnf(execution);
     }
@@ -172,16 +172,16 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     public void updateOrchestrationStatusActiveVnfExceptionTest() throws Exception {
         expectedException.expect(BpmnError.class);
 
-        doThrow(RuntimeException.class).when(aaiVnfResources).updateOrchestrationStatusVnf(genericVnf,
-                OrchestrationStatus.ACTIVE);
+        doThrow(RuntimeException.class).when(aaiVnfResources)
+                .updateOrchestrationStatusVnf(genericVnf, OrchestrationStatus.ACTIVE);
 
         aaiUpdateTasks.updateOrchestrationStatusActiveVnf(execution);
     }
 
     @Test
     public void updateOrchestrationStatusAssignVfModuleTest() throws Exception {
-        doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
-                OrchestrationStatus.ASSIGNED);
+        doNothing().when(aaiVfModuleResources)
+                .updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.ASSIGNED);
         aaiUpdateTasks.updateOrchestrationStatusAssignedVfModule(execution);
         verify(aaiVfModuleResources, times(1)).updateOrchestrationStatusVfModule(vfModule, genericVnf,
                 OrchestrationStatus.ASSIGNED);
@@ -190,8 +190,8 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
 
     @Test
     public void updateOrchestrationStatusAssignVfModuleExceptionTest() throws Exception {
-        doThrow(RuntimeException.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule,
-                genericVnf, OrchestrationStatus.ASSIGNED);
+        doThrow(RuntimeException.class).when(aaiVfModuleResources)
+                .updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.ASSIGNED);
 
         expectedException.expect(BpmnError.class);
 
@@ -204,8 +204,8 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
         ModelInfoGenericVnf modelInfoGenericVnf = new ModelInfoGenericVnf();
         modelInfoGenericVnf.setMultiStageDesign("false");
         genericVnf.setModelInfoGenericVnf(modelInfoGenericVnf);
-        doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
-                OrchestrationStatus.ASSIGNED);
+        doNothing().when(aaiVfModuleResources)
+                .updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.ASSIGNED);
         aaiUpdateTasks.updateOrchestrationStatusAssignedOrPendingActivationVfModule(execution);
         verify(aaiVfModuleResources, times(1)).updateOrchestrationStatusVfModule(vfModule, genericVnf,
                 OrchestrationStatus.ASSIGNED);
@@ -219,8 +219,8 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
         ModelInfoGenericVnf modelInfoGenericVnf = new ModelInfoGenericVnf();
         modelInfoGenericVnf.setMultiStageDesign("true");
         genericVnf.setModelInfoGenericVnf(modelInfoGenericVnf);
-        doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
-                OrchestrationStatus.ASSIGNED);
+        doNothing().when(aaiVfModuleResources)
+                .updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.ASSIGNED);
         aaiUpdateTasks.updateOrchestrationStatusAssignedOrPendingActivationVfModule(execution);
         verify(aaiVfModuleResources, times(1)).updateOrchestrationStatusVfModule(vfModule, genericVnf,
                 OrchestrationStatus.ASSIGNED);
@@ -233,8 +233,8 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
         ModelInfoGenericVnf modelInfoGenericVnf = new ModelInfoGenericVnf();
         modelInfoGenericVnf.setMultiStageDesign("true");
         genericVnf.setModelInfoGenericVnf(modelInfoGenericVnf);
-        doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
-                OrchestrationStatus.PENDING_ACTIVATION);
+        doNothing().when(aaiVfModuleResources)
+                .updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.PENDING_ACTIVATION);
         aaiUpdateTasks.updateOrchestrationStatusAssignedOrPendingActivationVfModule(execution);
         verify(aaiVfModuleResources, times(1)).updateOrchestrationStatusVfModule(vfModule, genericVnf,
                 OrchestrationStatus.PENDING_ACTIVATION);
@@ -244,8 +244,8 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     @Test
     public void updateOrchestrationStatusAssignedOrPendingActivationVfModuleExceptionTest() throws Exception {
         execution.setVariable("aLaCarte", true);
-        doThrow(RuntimeException.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule,
-                genericVnf, OrchestrationStatus.ASSIGNED);
+        doThrow(RuntimeException.class).when(aaiVfModuleResources)
+                .updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.ASSIGNED);
 
         expectedException.expect(BpmnError.class);
 
@@ -254,8 +254,8 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
 
     @Test
     public void updateOrchestrationStatusCreatedVfModuleTest() throws Exception {
-        doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
-                OrchestrationStatus.CREATED);
+        doNothing().when(aaiVfModuleResources)
+                .updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.CREATED);
         aaiUpdateTasks.updateOrchestrationStatusCreatedVfModule(execution);
         verify(aaiVfModuleResources, times(1)).updateOrchestrationStatusVfModule(vfModule, genericVnf,
                 OrchestrationStatus.CREATED);
@@ -263,8 +263,8 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
 
     @Test
     public void updateOrchestrationStatusCreatedVfModuleExceptionTest() throws Exception {
-        doThrow(RuntimeException.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule,
-                genericVnf, OrchestrationStatus.CREATED);
+        doThrow(RuntimeException.class).when(aaiVfModuleResources)
+                .updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.CREATED);
 
         expectedException.expect(BpmnError.class);
 
@@ -273,8 +273,8 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
 
     @Test
     public void updateOrchestrationStatusPendingActivatefModuleTest() throws Exception {
-        doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
-                OrchestrationStatus.PENDING_ACTIVATION);
+        doNothing().when(aaiVfModuleResources)
+                .updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.PENDING_ACTIVATION);
 
         aaiUpdateTasks.updateOrchestrationStatusPendingActivationVfModule(execution);
 
@@ -284,8 +284,8 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
 
     @Test
     public void updateOrchestrationStatusPendingActivatefModuleExceptionTest() throws Exception {
-        doThrow(RuntimeException.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule,
-                genericVnf, OrchestrationStatus.PENDING_ACTIVATION);
+        doThrow(RuntimeException.class).when(aaiVfModuleResources)
+                .updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.PENDING_ACTIVATION);
 
         expectedException.expect(BpmnError.class);
 
@@ -294,8 +294,8 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
 
     @Test
     public void updateOrchestrationStatusDectivateVfModuleTest() throws Exception {
-        doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
-                OrchestrationStatus.CREATED);
+        doNothing().when(aaiVfModuleResources)
+                .updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.CREATED);
 
         aaiUpdateTasks.updateOrchestrationStatusDeactivateVfModule(execution);
 
@@ -305,8 +305,8 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
 
     @Test
     public void updateOrchestrationStatusDectivateVfModuleExceptionTest() throws Exception {
-        doThrow(RuntimeException.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule,
-                genericVnf, OrchestrationStatus.CREATED);
+        doThrow(RuntimeException.class).when(aaiVfModuleResources)
+                .updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.CREATED);
 
         expectedException.expect(BpmnError.class);
 
@@ -346,8 +346,8 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
 
     @Test
     public void updateOrchestrationStatusActiveVolumeGroupTest() throws Exception {
-        doNothing().when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion,
-                OrchestrationStatus.ACTIVE);
+        doNothing().when(aaiVolumeGroupResources)
+                .updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion, OrchestrationStatus.ACTIVE);
 
         aaiUpdateTasks.updateOrchestrationStatusActiveVolumeGroup(execution);
 
@@ -358,15 +358,15 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     @Test
     public void updateOrchestrationStatusActiveVolumeGroupExceptionTest() throws Exception {
         expectedException.expect(BpmnError.class);
-        doThrow(RuntimeException.class).when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup,
-                cloudRegion, OrchestrationStatus.ACTIVE);
+        doThrow(RuntimeException.class).when(aaiVolumeGroupResources)
+                .updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion, OrchestrationStatus.ACTIVE);
         aaiUpdateTasks.updateOrchestrationStatusActiveVolumeGroup(execution);
     }
 
     @Test
     public void updateOrchestrationStatusCreatedVolumeGroupTest() throws Exception {
-        doNothing().when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion,
-                OrchestrationStatus.CREATED);
+        doNothing().when(aaiVolumeGroupResources)
+                .updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion, OrchestrationStatus.CREATED);
 
         aaiUpdateTasks.updateOrchestrationStatusCreatedVolumeGroup(execution);
 
@@ -377,15 +377,15 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     @Test
     public void updateOrchestrationStatusCreatedVolumeGroupExceptionTest() throws Exception {
         expectedException.expect(BpmnError.class);
-        doThrow(RuntimeException.class).when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup,
-                cloudRegion, OrchestrationStatus.CREATED);
+        doThrow(RuntimeException.class).when(aaiVolumeGroupResources)
+                .updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion, OrchestrationStatus.CREATED);
         aaiUpdateTasks.updateOrchestrationStatusCreatedVolumeGroup(execution);
     }
 
     @Test
     public void test_updateOrchestrationStatusAssignedVolumeGroup() throws Exception {
-        doNothing().when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion,
-                OrchestrationStatus.ASSIGNED);
+        doNothing().when(aaiVolumeGroupResources)
+                .updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion, OrchestrationStatus.ASSIGNED);
 
         aaiUpdateTasks.updateOrchestrationStatusAssignedVolumeGroup(execution);
 
@@ -397,8 +397,8 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     @Test
     public void test_updateOrchestrationStatusAssignedVolumeGroup_exception() throws Exception {
         expectedException.expect(BpmnError.class);
-        doThrow(RuntimeException.class).when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup,
-                cloudRegion, OrchestrationStatus.ASSIGNED);
+        doThrow(RuntimeException.class).when(aaiVolumeGroupResources)
+                .updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion, OrchestrationStatus.ASSIGNED);
         aaiUpdateTasks.updateOrchestrationStatusAssignedVolumeGroup(execution);
     }
 
@@ -427,8 +427,8 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     @Test
     public void updateHeatStackIdVolumeGroupExceptionTest() throws Exception {
         expectedException.expect(BpmnError.class);
-        doThrow(RuntimeException.class).when(aaiVolumeGroupResources).updateHeatStackIdVolumeGroup(volumeGroup,
-                cloudRegion);
+        doThrow(RuntimeException.class).when(aaiVolumeGroupResources)
+                .updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
         aaiUpdateTasks.updateHeatStackIdVolumeGroup(execution);
     }
 
@@ -457,8 +457,8 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
 
     @Test
     public void updateOrchestrationStatusActivateVfModuleTest() throws Exception {
-        doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
-                OrchestrationStatus.ACTIVE);
+        doNothing().when(aaiVfModuleResources)
+                .updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.ACTIVE);
 
         aaiUpdateTasks.updateOrchestrationStatusActivateVfModule(execution);
 
@@ -468,8 +468,8 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
 
     @Test
     public void updateOrchestrationStatusActivateVfModuleExceptionTest() throws Exception {
-        doThrow(RuntimeException.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule,
-                genericVnf, OrchestrationStatus.ACTIVE);
+        doThrow(RuntimeException.class).when(aaiVfModuleResources)
+                .updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.ACTIVE);
 
         expectedException.expect(BpmnError.class);
 
@@ -617,8 +617,8 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
 
     @Test
     public void updateOrchestrationStatusDeleteVfModuleTest() throws Exception {
-        doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
-                OrchestrationStatus.ASSIGNED);
+        doNothing().when(aaiVfModuleResources)
+                .updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.ASSIGNED);
 
         aaiUpdateTasks.updateOrchestrationStatusDeleteVfModule(execution);
 
@@ -644,8 +644,8 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     @Test
     public void updateOrchestrationStatusDeactivateFabricConfigurationTest() throws Exception {
         gBBInput = execution.getGeneralBuildingBlock();
-        doNothing().when(aaiConfigurationResources).updateOrchestrationStatusConfiguration(configuration,
-                OrchestrationStatus.ASSIGNED);
+        doNothing().when(aaiConfigurationResources)
+                .updateOrchestrationStatusConfiguration(configuration, OrchestrationStatus.ASSIGNED);
 
         aaiUpdateTasks.updateOrchestrationStatusDeactivateFabricConfiguration(execution);
 
@@ -656,8 +656,8 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     @Test
     public void updateOrchestrationStatusActivateFabricConfigurationTest() throws Exception {
         gBBInput = execution.getGeneralBuildingBlock();
-        doNothing().when(aaiConfigurationResources).updateOrchestrationStatusConfiguration(configuration,
-                OrchestrationStatus.ACTIVE);
+        doNothing().when(aaiConfigurationResources)
+                .updateOrchestrationStatusConfiguration(configuration, OrchestrationStatus.ACTIVE);
 
         aaiUpdateTasks.updateOrchestrationStatusActivateFabricConfiguration(execution);
 
@@ -668,8 +668,8 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     @Test
     public void updateOrchestrationStatusAssignedFabricConfigurationTest() throws Exception {
         gBBInput = execution.getGeneralBuildingBlock();
-        doNothing().when(aaiConfigurationResources).updateOrchestrationStatusConfiguration(configuration,
-                OrchestrationStatus.ASSIGNED);
+        doNothing().when(aaiConfigurationResources)
+                .updateOrchestrationStatusConfiguration(configuration, OrchestrationStatus.ASSIGNED);
 
         aaiUpdateTasks.updateOrchestrationStatusAssignFabricConfiguration(execution);
 
@@ -730,16 +730,16 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
 
     @Test
     public void updateOrchestrationStatusVnfConfigureTest() throws Exception {
-        doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
-                OrchestrationStatus.CONFIGURE);
+        doNothing().when(aaiVfModuleResources)
+                .updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.CONFIGURE);
 
         aaiUpdateTasks.updateOrchestrationStatusConfigDeployConfigureVnf(execution);
     }
 
     @Test
     public void updateOrchestrationStatusVnfConfiguredTest() throws Exception {
-        doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
-                OrchestrationStatus.CONFIGURED);
+        doNothing().when(aaiVfModuleResources)
+                .updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.CONFIGURED);
 
         aaiUpdateTasks.updateOrchestrationStatusConfigDeployConfiguredVnf(execution);
     }

@@ -282,9 +282,9 @@ public abstract class RestClient {
 
         Predicate<Throwable> pred = items.stream().reduce(Predicate::or).orElse(x -> false);
 
-        RetryPolicy<Object> policy =
-                new RetryPolicy<>().handleIf(pred).withDelay(Duration.ofMillis(this.props.getDelayBetweenRetries()))
-                        .withMaxRetries(this.props.getRetries());
+        RetryPolicy<Object> policy = new RetryPolicy<>().handleIf(pred)
+                .withDelay(Duration.ofMillis(this.props.getDelayBetweenRetries()))
+                .withMaxRetries(this.props.getRetries());
 
         return Failsafe.with(policy).get(() -> buildRequest(method, entity));
     }

@@ -57,8 +57,12 @@ public class InstanceResourceList {
         Map<String, String> map = gson.fromJson(resourceInput, type);
 
         if (map != null) {
-            Optional<String> pkOpt = map.values().stream().filter(e -> e.contains("[")).map(e -> e.replace("[", ""))
-                    .map(e -> e.split(",")[0]).findFirst();
+            Optional<String> pkOpt = map.values()
+                    .stream()
+                    .filter(e -> e.contains("["))
+                    .map(e -> e.replace("[", ""))
+                    .map(e -> e.split(",")[0])
+                    .findFirst();
 
             return pkOpt.isPresent() ? pkOpt.get() : "";
         } else {
@@ -71,7 +75,8 @@ public class InstanceResourceList {
         List<Resource> sequencedResourceList = new ArrayList<>();
         Gson gson = new Gson();
         JsonObject servJsonObject = gson.fromJson(uuiRequest, JsonObject.class);
-        JsonObject reqInputJsonObj = servJsonObject.getAsJsonObject("service").getAsJsonObject("parameters")
+        JsonObject reqInputJsonObj = servJsonObject.getAsJsonObject("service")
+                .getAsJsonObject("parameters")
                 .getAsJsonObject("requestInputs");
 
         String pk = getPrimaryKey(vnfResource);

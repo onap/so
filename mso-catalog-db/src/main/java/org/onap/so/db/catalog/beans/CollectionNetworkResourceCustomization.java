@@ -101,24 +101,36 @@ public class CollectionNetworkResourceCustomization implements Serializable {
         }
         CollectionNetworkResourceCustomization castOther = (CollectionNetworkResourceCustomization) other;
         return new EqualsBuilder().append(modelCustomizationUUID, castOther.modelCustomizationUUID)
-                .append(networkTechnology, castOther.networkTechnology).append(networkType, castOther.networkType)
-                .append(networkScope, castOther.networkScope).append(networkRole, castOther.networkRole)
-                .append(networkResourceCustomization, castOther.networkResourceCustomization).isEquals();
+                .append(networkTechnology, castOther.networkTechnology)
+                .append(networkType, castOther.networkType)
+                .append(networkScope, castOther.networkScope)
+                .append(networkRole, castOther.networkRole)
+                .append(networkResourceCustomization, castOther.networkResourceCustomization)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(modelCustomizationUUID).append(networkTechnology).append(networkType)
-                .append(networkScope).append(networkRole).append(networkResourceCustomization).toHashCode();
+        return new HashCodeBuilder().append(modelCustomizationUUID)
+                .append(networkTechnology)
+                .append(networkType)
+                .append(networkScope)
+                .append(networkRole)
+                .append(networkResourceCustomization)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
-                .append("modelInstanceName", modelInstanceName).append("created", created)
-                .append("networkTechnology", networkTechnology).append("networkType", networkType)
-                .append("networkScope", networkScope).append("networkRole", networkRole)
-                .append("networkResource", networkResource).append("collectionResource", networkResourceCustomization)
+                .append("modelInstanceName", modelInstanceName)
+                .append("created", created)
+                .append("networkTechnology", networkTechnology)
+                .append("networkType", networkType)
+                .append("networkScope", networkScope)
+                .append("networkRole", networkRole)
+                .append("networkResource", networkResource)
+                .append("collectionResource", networkResourceCustomization)
                 .toString();
     }
 

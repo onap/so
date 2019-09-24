@@ -79,8 +79,8 @@ public class NamingServiceCreateTasksTest extends BaseTaskTest {
         String generatedName = "generatedInstanceGroupName";
         execution.setVariable(policyInstanceName, policyInstanceName);
         execution.setVariable(nfNamingCode, nfNamingCode);
-        doReturn(generatedName).when(namingServiceResources).generateInstanceGroupName(instanceGroup,
-                policyInstanceName, nfNamingCode);
+        doReturn(generatedName).when(namingServiceResources)
+                .generateInstanceGroupName(instanceGroup, policyInstanceName, nfNamingCode);
 
         namingServiceCreateTasks.createInstanceGroupName(execution);
         verify(namingServiceResources, times(1)).generateInstanceGroupName(instanceGroup, policyInstanceName,
@@ -92,14 +92,14 @@ public class NamingServiceCreateTasksTest extends BaseTaskTest {
     public void createInstanceGroupExceptionTest() throws Exception {
         expectedException.expect(BBObjectNotFoundException.class);
         lookupKeyMap.put(ResourceKey.INSTANCE_GROUP_ID, "notfound");
-        doThrow(BBObjectNotFoundException.class).when(extractPojosForBB).extractByKey(any(),
-                ArgumentMatchers.eq(ResourceKey.INSTANCE_GROUP_ID));
+        doThrow(BBObjectNotFoundException.class).when(extractPojosForBB)
+                .extractByKey(any(), ArgumentMatchers.eq(ResourceKey.INSTANCE_GROUP_ID));
         String policyInstanceName = "policyInstanceName";
         String nfNamingCode = "nfNamingCode";
         execution.setVariable(policyInstanceName, policyInstanceName);
         execution.setVariable(nfNamingCode, nfNamingCode);
-        doReturn("").when(namingServiceResources).generateInstanceGroupName(instanceGroup, policyInstanceName,
-                nfNamingCode);
+        doReturn("").when(namingServiceResources)
+                .generateInstanceGroupName(instanceGroup, policyInstanceName, nfNamingCode);
         namingServiceCreateTasks.createInstanceGroupName(execution);
         verify(namingServiceResources, times(1)).generateInstanceGroupName(instanceGroup, policyInstanceName,
                 nfNamingCode);

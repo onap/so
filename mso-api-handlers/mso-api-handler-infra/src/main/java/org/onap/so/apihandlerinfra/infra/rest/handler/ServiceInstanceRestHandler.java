@@ -79,9 +79,13 @@ public class ServiceInstanceRestHandler extends AbstractRestHandler {
     public RequestClientParameter buildRequestParams(ServiceInstancesRequest request, String requestURI,
             String requestId, String serviceInstanceId) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        return new RequestClientParameter.Builder().setRequestId(requestId).setServiceInstanceId(serviceInstanceId)
-                .setALaCarte(true).setRequestDetails(mapper.writeValueAsString(request))
-                .setRequestAction(Action.deleteInstance.toString()).setRequestUri(requestURI).setApiVersion("v8")
+        return new RequestClientParameter.Builder().setRequestId(requestId)
+                .setServiceInstanceId(serviceInstanceId)
+                .setALaCarte(true)
+                .setRequestDetails(mapper.writeValueAsString(request))
+                .setRequestAction(Action.deleteInstance.toString())
+                .setRequestUri(requestURI)
+                .setApiVersion("v8")
                 .build();
     }
 

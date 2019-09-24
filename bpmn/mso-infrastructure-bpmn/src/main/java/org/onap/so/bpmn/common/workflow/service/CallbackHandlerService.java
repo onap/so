@@ -163,9 +163,10 @@ public class CallbackHandlerService {
             while (true) {
                 try {
                     ++queryCount;
-                    waitingProcesses =
-                            runtimeService.createExecutionQuery().messageEventSubscriptionName(messageEventName)
-                                    .processVariableValueEquals(correlationVariable, correlationValue).list();
+                    waitingProcesses = runtimeService.createExecutionQuery()
+                            .messageEventSubscriptionName(messageEventName)
+                            .processVariableValueEquals(correlationVariable, correlationValue)
+                            .list();
                 } catch (Exception e) {
                     ++queryFailCount;
                     queryException = e;
@@ -234,7 +235,8 @@ public class CallbackHandlerService {
 
                 @SuppressWarnings("unused")
                 MessageCorrelationResult result = runtimeService.createMessageCorrelation(messageEventName)
-                        .setVariables(variables).processInstanceVariableEquals(correlationVariable, correlationValue)
+                        .setVariables(variables)
+                        .processInstanceVariableEquals(correlationVariable, correlationValue)
                         .correlateWithResult();
 
             } catch (MismatchingMessageCorrelationException e) {
@@ -268,10 +270,10 @@ public class CallbackHandlerService {
                         Thread.sleep(SLOW_POLL_INT_MS);
 
                         @SuppressWarnings("unused")
-                        MessageCorrelationResult result =
-                                runtimeService.createMessageCorrelation(messageEventName).setVariables(variables)
-                                        .processInstanceVariableEquals(correlationVariable, correlationValue)
-                                        .correlateWithResult();
+                        MessageCorrelationResult result = runtimeService.createMessageCorrelation(messageEventName)
+                                .setVariables(variables)
+                                .processInstanceVariableEquals(correlationVariable, correlationValue)
+                                .correlateWithResult();
                         retryCount = 0;
                         logger.debug("OptimisticLockingException retry was successful, seting retryCount: {}",
                                 retryCount);

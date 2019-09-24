@@ -103,12 +103,19 @@ public class VnfResource implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("modelUUID", modelUUID).append("modelInvariantUUID", modelInvariantUUID)
-                .append("modelName", modelName).append("modelVersion", modelVersion)
-                .append("toscaNodeType", toscaNodeType).append("description", description)
-                .append("orchestrationMode", orchestrationMode).append("aicVersionMin", aicVersionMin)
-                .append("aicVersionMax", aicVersionMax).append("created", created)
-                .append("heatTemplates", heatTemplates).append("vnfResourceWorkflow", vnfResourceWorkflow).toString();
+        return new ToStringBuilder(this).append("modelUUID", modelUUID)
+                .append("modelInvariantUUID", modelInvariantUUID)
+                .append("modelName", modelName)
+                .append("modelVersion", modelVersion)
+                .append("toscaNodeType", toscaNodeType)
+                .append("description", description)
+                .append("orchestrationMode", orchestrationMode)
+                .append("aicVersionMin", aicVersionMin)
+                .append("aicVersionMax", aicVersionMax)
+                .append("created", created)
+                .append("heatTemplates", heatTemplates)
+                .append("vnfResourceWorkflow", vnfResourceWorkflow)
+                .toString();
     }
 
     @Override

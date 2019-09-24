@@ -50,7 +50,8 @@ public class NodeInstancesResourceTest {
     public void nodeInstanceGet() {
         wireMockRule.stubFor(get(urlPathEqualTo("/api/v3/node-instances/123"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBody("{ \"node_instance\": { \"id\": \"123\" } }").withStatus(HttpStatus.SC_OK)));
+                        .withBody("{ \"node_instance\": { \"id\": \"123\" } }")
+                        .withStatus(HttpStatus.SC_OK)));
 
         int port = wireMockRule.port();
 
@@ -66,7 +67,8 @@ public class NodeInstancesResourceTest {
         wireMockRule.stubFor(get(urlPathEqualTo("/api/v3/node-instances"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                         // .withBody(" { \"items\": [ { \"node_instance\": { \"id\": \"123\" } } ] } ")
-                        .withBody(" { \"items\": [ { \"id\": \"123\" } ] } ").withStatus(HttpStatus.SC_OK)));
+                        .withBody(" { \"items\": [ { \"id\": \"123\" } ] } ")
+                        .withStatus(HttpStatus.SC_OK)));
 
         int port = wireMockRule.port();
 
@@ -81,7 +83,8 @@ public class NodeInstancesResourceTest {
     public void nodeInstanceUpdate() {
         wireMockRule.stubFor(patch(urlPathEqualTo("/api/v3/node-instances/"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBody("{ \"node_instance\": { \"id\": \"123\" } }").withStatus(HttpStatus.SC_OK)));
+                        .withBody("{ \"node_instance\": { \"id\": \"123\" } }")
+                        .withStatus(HttpStatus.SC_OK)));
 
         int port = wireMockRule.port();
 

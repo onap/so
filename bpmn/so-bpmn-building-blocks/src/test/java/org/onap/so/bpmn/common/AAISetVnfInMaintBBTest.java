@@ -36,8 +36,9 @@ public class AAISetVnfInMaintBBTest extends BaseBPMNTest {
     @Test
     public void sunnyDayAAISetVnfInMaintBBTest() throws InterruptedException, IOException {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("AAISetVnfInMaintBB", variables);
-        assertThat(pi).isNotNull().isStarted().hasPassedInOrder("Start_AAISetVnfInMaintBB", "Task_SetInMaint",
-                "End_AAISetVnfInMaintBB");
+        assertThat(pi).isNotNull()
+                .isStarted()
+                .hasPassedInOrder("Start_AAISetVnfInMaintBB", "Task_SetInMaint", "End_AAISetVnfInMaintBB");
     }
 
     @Test
@@ -47,7 +48,8 @@ public class AAISetVnfInMaintBBTest extends BaseBPMNTest {
 
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("AAISetVnfInMaintBB", variables);
         assertThat(processInstance).isNotNull();
-        assertThat(processInstance).isStarted().hasPassedInOrder("Start_AAISetVnfInMaintBB", "Task_SetInMaint")
+        assertThat(processInstance).isStarted()
+                .hasPassedInOrder("Start_AAISetVnfInMaintBB", "Task_SetInMaint")
                 .hasNotPassed("End_AAISetVnfInMaintBB");
         assertThat(processInstance).isEnded();
     }

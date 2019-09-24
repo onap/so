@@ -156,10 +156,14 @@ public class NetworkResourceCustomization implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
-                .append("modelInstanceName", modelInstanceName).append("created", created)
-                .append("networkTechnology", networkTechnology).append("networkType", networkType)
-                .append("networkScope", networkScope).append("networkRole", networkRole)
-                .append("networkResource", networkResource).toString();
+                .append("modelInstanceName", modelInstanceName)
+                .append("created", created)
+                .append("networkTechnology", networkTechnology)
+                .append("networkType", networkType)
+                .append("networkScope", networkScope)
+                .append("networkRole", networkRole)
+                .append("networkResource", networkResource)
+                .toString();
     }
 
     @Override

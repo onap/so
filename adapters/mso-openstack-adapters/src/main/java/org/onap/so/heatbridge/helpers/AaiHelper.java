@@ -72,29 +72,36 @@ public class AaiHelper {
         List<Relationship> relationships = relationshipList.getRelationship();
 
         // vserver to pserver relationship
-        Relationship pserverRelationship =
-                buildRelationship(HeatBridgeConstants.AAI_PSERVER, ImmutableMap.<String, String>builder()
-                        .put(HeatBridgeConstants.AAI_PSERVER_HOSTNAME, server.getHypervisorHostname()).build());
+        Relationship pserverRelationship = buildRelationship(HeatBridgeConstants.AAI_PSERVER,
+                ImmutableMap.<String, String>builder()
+                        .put(HeatBridgeConstants.AAI_PSERVER_HOSTNAME, server.getHypervisorHostname())
+                        .build());
         relationships.add(pserverRelationship);
 
         // vserver to vf-module relationship
         Relationship vfModuleRelationship = buildRelationship(HeatBridgeConstants.AAI_VF_MODULE,
-                ImmutableMap.<String, String>builder().put(HeatBridgeConstants.AAI_GENERIC_VNF_ID, genericVnfId)
-                        .put(HeatBridgeConstants.AAI_VF_MODULE_ID, vfModuleId).build());
+                ImmutableMap.<String, String>builder()
+                        .put(HeatBridgeConstants.AAI_GENERIC_VNF_ID, genericVnfId)
+                        .put(HeatBridgeConstants.AAI_VF_MODULE_ID, vfModuleId)
+                        .build());
         relationships.add(vfModuleRelationship);
 
         // vserver to image relationship
         Relationship imageRel = buildRelationship(HeatBridgeConstants.AAI_IMAGE,
-                ImmutableMap.<String, String>builder().put(HeatBridgeConstants.AAI_CLOUD_OWNER, cloudOwner)
+                ImmutableMap.<String, String>builder()
+                        .put(HeatBridgeConstants.AAI_CLOUD_OWNER, cloudOwner)
                         .put(HeatBridgeConstants.AAI_CLOUD_REGION_ID, cloudRegionId)
-                        .put(HeatBridgeConstants.AAI_IMAGE_ID, server.getImage().getId()).build());
+                        .put(HeatBridgeConstants.AAI_IMAGE_ID, server.getImage().getId())
+                        .build());
         relationships.add(imageRel);
 
         // vserver to flavor relationship
         Relationship flavorRel = buildRelationship(HeatBridgeConstants.AAI_FLAVOR,
-                ImmutableMap.<String, String>builder().put(HeatBridgeConstants.AAI_CLOUD_OWNER, cloudOwner)
+                ImmutableMap.<String, String>builder()
+                        .put(HeatBridgeConstants.AAI_CLOUD_OWNER, cloudOwner)
                         .put(HeatBridgeConstants.AAI_CLOUD_REGION_ID, cloudRegionId)
-                        .put(HeatBridgeConstants.AAI_FLAVOR_ID, server.getFlavor().getId()).build());
+                        .put(HeatBridgeConstants.AAI_FLAVOR_ID, server.getFlavor().getId())
+                        .build());
         relationships.add(flavorRel);
         return relationshipList;
     }
@@ -106,9 +113,11 @@ public class AaiHelper {
 
         // sriov-vf to sriov-pf relationship
         Relationship sriovPfRelationship = buildRelationship(HeatBridgeConstants.AAI_SRIOV_PF,
-                ImmutableMap.<String, String>builder().put(HeatBridgeConstants.AAI_PSERVER_HOSTNAME, pserverName)
+                ImmutableMap.<String, String>builder()
+                        .put(HeatBridgeConstants.AAI_PSERVER_HOSTNAME, pserverName)
                         .put(HeatBridgeConstants.AAI_P_INTERFACE_NAME, pIfName)
-                        .put(HeatBridgeConstants.AAI_SRIOV_PF_PCI_ID, pfPciId).build());
+                        .put(HeatBridgeConstants.AAI_SRIOV_PF_PCI_ID, pfPciId)
+                        .build());
         relationships.add(sriovPfRelationship);
 
         return relationshipList;
@@ -129,8 +138,11 @@ public class AaiHelper {
         vserver.setVserverName(server.getName());
         vserver.setVserverName2(server.getName());
         vserver.setProvStatus(server.getStatus().value());
-        server.getLinks().stream().filter(link -> link.getRel().equals(HeatBridgeConstants.OS_RESOURCES_SELF_LINK_KEY))
-                .findFirst().ifPresent(link -> vserver.setVserverSelflink(link.getHref()));
+        server.getLinks()
+                .stream()
+                .filter(link -> link.getRel().equals(HeatBridgeConstants.OS_RESOURCES_SELF_LINK_KEY))
+                .findFirst()
+                .ifPresent(link -> vserver.setVserverSelflink(link.getHref()));
         return vserver;
     }
 
@@ -146,8 +158,11 @@ public class AaiHelper {
         aaiImage.setImageName(image.getName());
         aaiImage.setImageOsDistro(HeatBridgeConstants.OS_UNKNOWN_KEY);
         aaiImage.setImageOsVersion(HeatBridgeConstants.OS_UNKNOWN_KEY);
-        image.getLinks().stream().filter(link -> link.getRel().equals(HeatBridgeConstants.OS_RESOURCES_SELF_LINK_KEY))
-                .findFirst().ifPresent(link -> aaiImage.setImageSelflink(link.getHref()));
+        image.getLinks()
+                .stream()
+                .filter(link -> link.getRel().equals(HeatBridgeConstants.OS_RESOURCES_SELF_LINK_KEY))
+                .findFirst()
+                .ifPresent(link -> aaiImage.setImageSelflink(link.getHref()));
         return aaiImage;
     }
 
@@ -161,8 +176,11 @@ public class AaiHelper {
         Flavor aaiFlavor = new Flavor();
         aaiFlavor.setFlavorId(flavor.getId());
         aaiFlavor.setFlavorName(flavor.getName());
-        flavor.getLinks().stream().filter(link -> link.getRel().equals(HeatBridgeConstants.OS_RESOURCES_SELF_LINK_KEY))
-                .findFirst().ifPresent(link -> aaiFlavor.setFlavorSelflink(link.getHref()));
+        flavor.getLinks()
+                .stream()
+                .filter(link -> link.getRel().equals(HeatBridgeConstants.OS_RESOURCES_SELF_LINK_KEY))
+                .findFirst()
+                .ifPresent(link -> aaiFlavor.setFlavorSelflink(link.getHref()));
         return aaiFlavor;
     }
 
@@ -202,10 +220,13 @@ public class AaiHelper {
         Map<String, List<String>> pserverToPciIdMap = new HashMap<>();
         for (Vserver vserver : vservers) {
             if (vserver.getLInterfaces() != null) {
-                List<String> pciIds = vserver.getLInterfaces().getLInterface().stream()
+                List<String> pciIds = vserver.getLInterfaces()
+                        .getLInterface()
+                        .stream()
                         .filter(lInterface -> lInterface.getSriovVfs() != null
                                 && CollectionUtils.isNotEmpty(lInterface.getSriovVfs().getSriovVf()))
-                        .flatMap(lInterface -> lInterface.getSriovVfs().getSriovVf().stream()).map(SriovVf::getPciId)
+                        .flatMap(lInterface -> lInterface.getSriovVfs().getSriovVf().stream())
+                        .map(SriovVf::getPciId)
                         .collect(Collectors.toList());
                 if (CollectionUtils.isNotEmpty(pciIds)) {
                     List<String> matchingPservers = extractRelationshipDataValue(vserver.getRelationshipList(),
@@ -231,12 +252,15 @@ public class AaiHelper {
     private List<String> extractRelationshipDataValue(final RelationshipList relationshipListObj,
             final String relatedToProperty, final String relationshipKey) {
         if (relationshipListObj != null && relationshipListObj.getRelationship() != null) {
-            return relationshipListObj.getRelationship().stream()
+            return relationshipListObj.getRelationship()
+                    .stream()
                     .filter(relationship -> relationship.getRelatedTo().equals(relatedToProperty))
-                    .map(Relationship::getRelationshipData).flatMap(Collection::stream)
+                    .map(Relationship::getRelationshipData)
+                    .flatMap(Collection::stream)
                     .filter(data -> data.getRelationshipKey() != null
                             && relationshipKey.equals(data.getRelationshipKey()))
-                    .map(RelationshipData::getRelationshipValue).collect(Collectors.toList());
+                    .map(RelationshipData::getRelationshipValue)
+                    .collect(Collectors.toList());
         }
         return new ArrayList<>();
     }
@@ -251,9 +275,11 @@ public class AaiHelper {
     private List<String> filterRelatedLinksByRelatedToProperty(final RelationshipList relationshipListObj,
             final String relatedToProperty) {
         if (relationshipListObj != null && relationshipListObj.getRelationship() != null) {
-            return relationshipListObj.getRelationship().stream()
+            return relationshipListObj.getRelationship()
+                    .stream()
                     .filter(relationship -> relationship.getRelatedTo().equals(relatedToProperty))
-                    .map(Relationship::getRelatedLink).collect(Collectors.toList());
+                    .map(Relationship::getRelatedLink)
+                    .collect(Collectors.toList());
         }
         return new ArrayList<>();
     }

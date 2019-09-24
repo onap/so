@@ -98,8 +98,11 @@ public class CloudApiRequests implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("id", id).append("cloudIdentifier", cloudIdentifier)
-                .append("requestBody", requestBody).append("created", created).toString();
+        return new ToStringBuilder(this).append("id", id)
+                .append("cloudIdentifier", cloudIdentifier)
+                .append("requestBody", requestBody)
+                .append("created", created)
+                .toString();
     }
 
     @PrePersist

@@ -66,9 +66,12 @@ public class OrchestrationStatusStateTransitionDirective implements Serializable
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("id", id).append("resourceType", resourceType)
-                .append("orchestrationStatus", orchestrationStatus).append("targetAction", targetAction)
-                .append("flowDirective", flowDirective).toString();
+        return new ToStringBuilder(this).append("id", id)
+                .append("resourceType", resourceType)
+                .append("orchestrationStatus", orchestrationStatus)
+                .append("targetAction", targetAction)
+                .append("flowDirective", flowDirective)
+                .toString();
     }
 
     public Integer getId() {
@@ -120,12 +123,16 @@ public class OrchestrationStatusStateTransitionDirective implements Serializable
         return new EqualsBuilder().append(getResourceType(), castOther.getResourceType())
                 .append(getOrchestrationStatus(), castOther.getOrchestrationStatus())
                 .append(getTargetAction(), castOther.getTargetAction())
-                .append(getFlowDirective(), castOther.getFlowDirective()).isEquals();
+                .append(getFlowDirective(), castOther.getFlowDirective())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(getResourceType()).append(getOrchestrationStatus())
-                .append(getTargetAction()).append(getFlowDirective()).toHashCode();
+        return new HashCodeBuilder().append(getResourceType())
+                .append(getOrchestrationStatus())
+                .append(getTargetAction())
+                .append(getFlowDirective())
+                .toHashCode();
     }
 }

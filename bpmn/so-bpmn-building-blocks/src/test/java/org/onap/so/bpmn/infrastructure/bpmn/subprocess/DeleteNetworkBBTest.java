@@ -34,8 +34,9 @@ public class DeleteNetworkBBTest extends BaseBPMNTest {
     public void sunnyDayDeleteNetwork_Test() throws InterruptedException {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeleteNetworkBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("deleteNetwork_startEvent", "deleteNetworkAIC", "updateNetworkAAI",
-                "deleteNetwork_endEvent");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("deleteNetwork_startEvent", "deleteNetworkAIC", "updateNetworkAAI",
+                        "deleteNetwork_endEvent");
         assertThat(pi).isEnded();
     }
 
@@ -45,7 +46,8 @@ public class DeleteNetworkBBTest extends BaseBPMNTest {
                 .deleteNetwork(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeleteNetworkBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("deleteNetwork_startEvent", "deleteNetworkAIC")
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("deleteNetwork_startEvent", "deleteNetworkAIC")
                 .hasNotPassed("updateNetworkAAI", "deleteNetwork_endEvent");
         assertThat(pi).isEnded();
     }

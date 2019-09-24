@@ -83,10 +83,17 @@ public class RainyDayHandlerStatus implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("id", id).append("flowName", flowName)
-                .append("serviceType", serviceType).append("vnfType", vnfType).append("errorCode", errorCode)
-                .append("errorMessage", errorMessage).append("workStep", workStep).append("policy", policy)
-                .append("secondaryPolicy", secondaryPolicy).append("serviceRole", serviceRole).toString();
+        return new ToStringBuilder(this).append("id", id)
+                .append("flowName", flowName)
+                .append("serviceType", serviceType)
+                .append("vnfType", vnfType)
+                .append("errorCode", errorCode)
+                .append("errorMessage", errorMessage)
+                .append("workStep", workStep)
+                .append("policy", policy)
+                .append("secondaryPolicy", secondaryPolicy)
+                .append("serviceRole", serviceRole)
+                .toString();
     }
 
     @Override
@@ -95,16 +102,26 @@ public class RainyDayHandlerStatus implements Serializable {
             return false;
         }
         RainyDayHandlerStatus castOther = (RainyDayHandlerStatus) other;
-        return new EqualsBuilder().append(flowName, castOther.flowName).append(serviceType, castOther.serviceType)
-                .append(vnfType, castOther.vnfType).append(errorCode, castOther.errorCode)
-                .append(workStep, castOther.workStep).append(policy, castOther.policy)
-                .append(serviceRole, castOther.serviceRole).isEquals();
+        return new EqualsBuilder().append(flowName, castOther.flowName)
+                .append(serviceType, castOther.serviceType)
+                .append(vnfType, castOther.vnfType)
+                .append(errorCode, castOther.errorCode)
+                .append(workStep, castOther.workStep)
+                .append(policy, castOther.policy)
+                .append(serviceRole, castOther.serviceRole)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(flowName).append(serviceType).append(vnfType).append(errorCode)
-                .append(workStep).append(policy).append(serviceRole).toHashCode();
+        return new HashCodeBuilder().append(flowName)
+                .append(serviceType)
+                .append(vnfType)
+                .append(errorCode)
+                .append(workStep)
+                .append(policy)
+                .append(serviceRole)
+                .toHashCode();
     }
 
     public Integer getId() {

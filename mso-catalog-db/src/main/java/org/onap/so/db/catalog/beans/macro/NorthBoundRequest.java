@@ -92,10 +92,16 @@ public class NorthBoundRequest implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("id", id).append("action", action).append("requestScope", requestScope)
-                .append("isAlacarte", isAlacarte).append("isToplevelflow", isToplevelflow)
-                .append("minApiVersion", minApiVersion).append("maxApiVersion", maxApiVersion)
-                .append("cloudOwner", cloudOwner).append("serviceType", serviceType).toString();
+        return new ToStringBuilder(this).append("id", id)
+                .append("action", action)
+                .append("requestScope", requestScope)
+                .append("isAlacarte", isAlacarte)
+                .append("isToplevelflow", isToplevelflow)
+                .append("minApiVersion", minApiVersion)
+                .append("maxApiVersion", maxApiVersion)
+                .append("cloudOwner", cloudOwner)
+                .append("serviceType", serviceType)
+                .toString();
     }
 
     @Override
@@ -104,16 +110,28 @@ public class NorthBoundRequest implements Serializable {
             return false;
         }
         NorthBoundRequest castOther = (NorthBoundRequest) other;
-        return new EqualsBuilder().append(action, castOther.action).append(requestScope, castOther.requestScope)
-                .append(isAlacarte, castOther.isAlacarte).append(isToplevelflow, castOther.isToplevelflow)
-                .append(minApiVersion, castOther.minApiVersion).append(maxApiVersion, castOther.maxApiVersion)
-                .append(cloudOwner, castOther.cloudOwner).append(serviceType, castOther.serviceType).isEquals();
+        return new EqualsBuilder().append(action, castOther.action)
+                .append(requestScope, castOther.requestScope)
+                .append(isAlacarte, castOther.isAlacarte)
+                .append(isToplevelflow, castOther.isToplevelflow)
+                .append(minApiVersion, castOther.minApiVersion)
+                .append(maxApiVersion, castOther.maxApiVersion)
+                .append(cloudOwner, castOther.cloudOwner)
+                .append(serviceType, castOther.serviceType)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(action).append(requestScope).append(isAlacarte).append(isToplevelflow)
-                .append(minApiVersion).append(maxApiVersion).append(cloudOwner).append(serviceType).toHashCode();
+        return new HashCodeBuilder().append(action)
+                .append(requestScope)
+                .append(isAlacarte)
+                .append(isToplevelflow)
+                .append(minApiVersion)
+                .append(maxApiVersion)
+                .append(cloudOwner)
+                .append(serviceType)
+                .toHashCode();
     }
 
     public Integer getId() {

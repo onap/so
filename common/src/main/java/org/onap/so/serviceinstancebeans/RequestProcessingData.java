@@ -55,8 +55,10 @@ public class RequestProcessingData {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("groupingId", groupingId).append("tag", tag)
-                .append("dataPairs", dataPairs).toString();
+        return new ToStringBuilder(this).append("groupingId", groupingId)
+                .append("tag", tag)
+                .append("dataPairs", dataPairs)
+                .toString();
     }
 
 

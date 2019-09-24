@@ -43,10 +43,10 @@ public class VnfAdapterNotifyServiceImplTest {
 
     @Test
     public void rollbackVnfNotificationTest() {
-        doReturn(callbackResult).when(callbackHandlerService).handleCallback(eq("rollbackVnfNotification"),
-                any(RollbackVnfNotification.class), eq("rollbackVnfNotificationCallback"),
-                eq("rollbackVnfNotificationCallback"), eq("VNFRB_messageId"), eq("messageId"), eq("[VNF-NOTIFY]"),
-                eq(null));
+        doReturn(callbackResult).when(callbackHandlerService)
+                .handleCallback(eq("rollbackVnfNotification"), any(RollbackVnfNotification.class),
+                        eq("rollbackVnfNotificationCallback"), eq("rollbackVnfNotificationCallback"),
+                        eq("VNFRB_messageId"), eq("messageId"), eq("[VNF-NOTIFY]"), eq(null));
 
         vnfAdapterNotifyServiceImpl.rollbackVnfNotification("messageId", true, MsoExceptionCategory.OPENSTACK,
                 "Error creating stack");
@@ -59,9 +59,10 @@ public class VnfAdapterNotifyServiceImplTest {
 
     @Test
     public void queryVnfNotificationTest() {
-        doReturn(callbackResult).when(callbackHandlerService).handleCallback(eq("queryVnfNotification"),
-                any(QueryVnfNotification.class), eq("queryVnfNotificationCallback"), eq("queryVnfNotificationCallback"),
-                eq("VNFQ_messageId"), eq("messageId"), eq("[VNF-NOTIFY]"), eq(null));
+        doReturn(callbackResult).when(callbackHandlerService)
+                .handleCallback(eq("queryVnfNotification"), any(QueryVnfNotification.class),
+                        eq("queryVnfNotificationCallback"), eq("queryVnfNotificationCallback"), eq("VNFQ_messageId"),
+                        eq("messageId"), eq("[VNF-NOTIFY]"), eq(null));
 
         vnfAdapterNotifyServiceImpl.queryVnfNotification("messageId", true, MsoExceptionCategory.OPENSTACK, "",
                 Boolean.TRUE, "vnfid", VnfStatus.ACTIVE, queryOutputs);
@@ -73,10 +74,10 @@ public class VnfAdapterNotifyServiceImplTest {
 
     @Test
     public void createVnfNotificationTest() {
-        doReturn(callbackResult).when(callbackHandlerService).handleCallback(eq("createVnfNotification"),
-                any(CreateVnfNotification.class), eq("createVnfNotificationCallback"),
-                eq("createVnfNotificationCallback"), eq("VNFC_messageId"), eq("messageId"), eq("[VNF-NOTIFY]"),
-                eq(null));
+        doReturn(callbackResult).when(callbackHandlerService)
+                .handleCallback(eq("createVnfNotification"), any(CreateVnfNotification.class),
+                        eq("createVnfNotificationCallback"), eq("createVnfNotificationCallback"), eq("VNFC_messageId"),
+                        eq("messageId"), eq("[VNF-NOTIFY]"), eq(null));
 
         vnfAdapterNotifyServiceImpl.createVnfNotification("messageId", true, MsoExceptionCategory.OPENSTACK, "",
                 "vnfId", outputs, vnfRollback);
@@ -89,10 +90,10 @@ public class VnfAdapterNotifyServiceImplTest {
 
     @Test
     public void updateVnfNotificationTest() {
-        doReturn(callbackResult).when(callbackHandlerService).handleCallback(eq("updateVnfNotification"),
-                any(UpdateVnfNotification.class), eq("updateVnfNotificationCallback"),
-                eq("updateVnfNotificationCallback"), eq("VNFU_messageId"), eq("messageId"), eq("[VNF-NOTIFY]"),
-                eq(null));
+        doReturn(callbackResult).when(callbackHandlerService)
+                .handleCallback(eq("updateVnfNotification"), any(UpdateVnfNotification.class),
+                        eq("updateVnfNotificationCallback"), eq("updateVnfNotificationCallback"), eq("VNFU_messageId"),
+                        eq("messageId"), eq("[VNF-NOTIFY]"), eq(null));
 
         vnfAdapterNotifyServiceImpl.updateVnfNotification("messageId", true, MsoExceptionCategory.OPENSTACK, "",
                 updateOutputs, vnfRollback);
@@ -105,9 +106,9 @@ public class VnfAdapterNotifyServiceImplTest {
 
     @Test
     public void deleteVnfNotificationTest() {
-        doReturn(callbackResult).when(callbackHandlerService).handleCallback(eq("deleteVnfNotification"),
-                any(DeleteVnfNotification.class), eq("deleteVnfACallback"), eq("deleteVnfACallback"), eq("VNFDEL_uuid"),
-                eq("messageId"), eq("[VNF-NOTIFY]"), eq(null));
+        doReturn(callbackResult).when(callbackHandlerService)
+                .handleCallback(eq("deleteVnfNotification"), any(DeleteVnfNotification.class), eq("deleteVnfACallback"),
+                        eq("deleteVnfACallback"), eq("VNFDEL_uuid"), eq("messageId"), eq("[VNF-NOTIFY]"), eq(null));
 
         vnfAdapterNotifyServiceImpl.deleteVnfNotification("messageId", true, MsoExceptionCategory.OPENSTACK, "");
 

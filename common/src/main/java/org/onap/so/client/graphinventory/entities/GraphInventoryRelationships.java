@@ -123,8 +123,8 @@ public abstract class GraphInventoryRelationships<Wrapper extends GraphInventory
         if (type.isPresent()) {
             matcher = "[?(@.related-to=='" + type.get().typeName() + "')]";
         }
-        return JsonPathUtil.getInstance().locateResultList(this.jsonBody,
-                String.format("$.relationship%s.related-link", matcher));
+        return JsonPathUtil.getInstance()
+                .locateResultList(this.jsonBody, String.format("$.relationship%s.related-link", matcher));
     }
 
     public String getJson() {

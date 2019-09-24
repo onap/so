@@ -50,7 +50,7 @@ public class ValidationException extends Exception {
     }
 
     public ValidationException(String firstElement, String secondElement) {
-        super(UNMATCHED_ELEMENTS.replaceAll(REPLACE_ELEMENT_KEY, firstElement).replaceAll(REPLACE_SECOND_ELEMENT_KEY,
-                secondElement));
+        super(UNMATCHED_ELEMENTS.replaceAll(REPLACE_ELEMENT_KEY, firstElement)
+                .replaceAll(REPLACE_SECOND_ELEMENT_KEY, secondElement));
     }
 }

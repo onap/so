@@ -86,11 +86,17 @@ public class PnfResourceCustomization implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
-                .append("modelInstanceName", modelInstanceName).append("created", created)
-                .append("nfFunction", nfFunction).append("nfType", nfType).append("nfRole", nfRole)
-                .append("nfNamingCode", nfNamingCode).append("multiStageDesign", multiStageDesign)
-                .append("pnfResources", pnfResources).append("blueprintName", blueprintName)
-                .append("blueprintVersion", blueprintVersion).toString();
+                .append("modelInstanceName", modelInstanceName)
+                .append("created", created)
+                .append("nfFunction", nfFunction)
+                .append("nfType", nfType)
+                .append("nfRole", nfRole)
+                .append("nfNamingCode", nfNamingCode)
+                .append("multiStageDesign", multiStageDesign)
+                .append("pnfResources", pnfResources)
+                .append("blueprintName", blueprintName)
+                .append("blueprintVersion", blueprintVersion)
+                .toString();
     }
 
     @Override

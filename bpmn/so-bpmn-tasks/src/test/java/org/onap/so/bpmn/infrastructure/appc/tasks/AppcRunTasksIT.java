@@ -67,23 +67,27 @@ public class AppcRunTasksIT extends BaseIntegrationTest {
     public void preProcessActivityWithVserversTest() throws Exception {
         final String aaiVnfJson =
                 new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "aaiGenericVnfWithVservers.json")));
-        wireMockServer.stubFor(
-                get(urlEqualTo("/aai/v15/network/generic-vnfs/generic-vnf/testVnfId1?depth=all")).willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json").withBody(aaiVnfJson).withStatus(200)));
+        wireMockServer.stubFor(get(urlEqualTo("/aai/v15/network/generic-vnfs/generic-vnf/testVnfId1?depth=all"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody(aaiVnfJson)
+                        .withStatus(200)));
 
         final String aaiVserverJson =
                 new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "aaiVserverFullQueryResponse.json")));
         wireMockServer.stubFor(get(urlEqualTo(
                 "/aai/v15/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/mtn23a/tenants/tenant/e6beab145f6b49098277ac163ac1b4f3/vservers/vserver/48bd7f11-408f-417c-b834-b41c1b98f7d7"))
-                        .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(aaiVserverJson)
+                        .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                                .withBody(aaiVserverJson)
                                 .withStatus(200)));
         wireMockServer.stubFor(get(urlEqualTo(
                 "/aai/v15/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/mtn23a/tenants/tenant/e6beab145f6b49098277ac163ac1b4f3/vservers/vserver/1b3f44e5-d96d-4aac-bd9a-310e8cfb0af5"))
-                        .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(aaiVserverJson)
+                        .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                                .withBody(aaiVserverJson)
                                 .withStatus(200)));
         wireMockServer.stubFor(get(urlEqualTo(
                 "/aai/v15/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/mtn23a/tenants/tenant/e6beab145f6b49098277ac163ac1b4f3/vservers/vserver/14551849-1e70-45cd-bc5d-a256d49548a2"))
-                        .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(aaiVserverJson)
+                        .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                                .withBody(aaiVserverJson)
                                 .withStatus(200)));
 
         appcRunTasks.preProcessActivity(execution);
@@ -103,9 +107,10 @@ public class AppcRunTasksIT extends BaseIntegrationTest {
     @Test
     public void preProcessActivityNoVserversTest() throws Exception {
         final String aaiVnfJson = new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "aaiGenericVnf.json")));
-        wireMockServer.stubFor(
-                get(urlEqualTo("/aai/v15/network/generic-vnfs/generic-vnf/testVnfId1?depth=all")).willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json").withBody(aaiVnfJson).withStatus(200)));
+        wireMockServer.stubFor(get(urlEqualTo("/aai/v15/network/generic-vnfs/generic-vnf/testVnfId1?depth=all"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody(aaiVnfJson)
+                        .withStatus(200)));
         appcRunTasks.preProcessActivity(execution);
         assertNull(execution.getVariable("vmIdList"));
         assertNull(execution.getVariable("vServerIdList"));
@@ -144,8 +149,8 @@ public class AppcRunTasksIT extends BaseIntegrationTest {
         payloadInfo.put("identityUrl", null);
         payloadInfo.put("vmIdList", null);
 
-        doNothing().when(appCClient).runAppCCommand(action, msoRequestId, vnfId, Optional.of(payload), payloadInfo,
-                controllerType);
+        doNothing().when(appCClient)
+                .runAppCCommand(action, msoRequestId, vnfId, Optional.of(payload), payloadInfo, controllerType);
 
         appcRunTasks.runAppcCommand(execution, action);
         verify(appCClient, times(1)).runAppCCommand(action, msoRequestId, vnfId, Optional.of(payload), payloadInfo,

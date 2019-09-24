@@ -35,8 +35,11 @@ public class DatabaseUrlProvider {
     }
 
     public String getSearchUrl(final long from, final long to, final Integer maxResult) {
-        final UriComponentsBuilder builder = UriComponentsBuilder.fromUri(baseUri).pathSegment("v1")
-                .pathSegment("getInfraActiveRequests").queryParam("from", from).queryParam("to", to);
+        final UriComponentsBuilder builder = UriComponentsBuilder.fromUri(baseUri)
+                .pathSegment("v1")
+                .pathSegment("getInfraActiveRequests")
+                .queryParam("from", from)
+                .queryParam("to", to);
         if (maxResult != null) {
             return builder.queryParam("maxResult", maxResult).build().toString();
         }

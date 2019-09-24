@@ -71,9 +71,12 @@ public class OrchestrationFlow implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("id", id).append("action", action)
-                .append("sequenceNumber", sequenceNumber).append("flowName", flowName)
-                .append("flowVersion", flowVersion).toString();
+        return new ToStringBuilder(this).append("id", id)
+                .append("action", action)
+                .append("sequenceNumber", sequenceNumber)
+                .append("flowName", flowName)
+                .append("flowVersion", flowVersion)
+                .toString();
     }
 
     @Override
@@ -82,13 +85,19 @@ public class OrchestrationFlow implements Serializable {
             return false;
         }
         OrchestrationFlow castOther = (OrchestrationFlow) other;
-        return new EqualsBuilder().append(action, castOther.action).append(sequenceNumber, castOther.sequenceNumber)
-                .append(flowName, castOther.flowName).append(flowVersion, castOther.flowVersion).isEquals();
+        return new EqualsBuilder().append(action, castOther.action)
+                .append(sequenceNumber, castOther.sequenceNumber)
+                .append(flowName, castOther.flowName)
+                .append(flowVersion, castOther.flowVersion)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(action).append(sequenceNumber).append(flowName).append(flowVersion)
+        return new HashCodeBuilder().append(action)
+                .append(sequenceNumber)
+                .append(flowName)
+                .append(flowVersion)
                 .toHashCode();
     }
 

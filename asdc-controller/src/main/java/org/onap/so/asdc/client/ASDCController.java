@@ -393,7 +393,8 @@ public class ASDCController {
 
         String filePath =
                 Paths.get(getMsoConfigPath(), "ASDC", artifact.getArtifactVersion(), artifact.getArtifactName())
-                        .normalize().toString();
+                        .normalize()
+                        .toString();
 
         logger.info("Trying to write artifact UUID: {}, URL: {} to file: {}", artifact.getArtifactUUID(),
                 artifact.getArtifactURL(), filePath);
@@ -432,7 +433,8 @@ public class ASDCController {
                     && !resourceStructure.isAlreadyDeployed())
                     // This could be NULL if the artifact is a VF module artifact, this won't be present in the MAP
                     && resourceStructure.getArtifactsMapByUUID().get(artifactInfo.getArtifactUUID()) != null
-                    && resourceStructure.getArtifactsMapByUUID().get(artifactInfo.getArtifactUUID())
+                    && resourceStructure.getArtifactsMapByUUID()
+                            .get(artifactInfo.getArtifactUUID())
                             .getDeployedInDb() == 0) {
                 this.sendASDCNotification(NotificationType.DEPLOY, artifactInfo.getArtifactURL(),
                         asdcConfig.getConsumerID(), resourceStructure.getNotification().getDistributionID(),

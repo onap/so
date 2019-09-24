@@ -179,15 +179,25 @@ public class ArtifactInfoImpl implements IArtifactInfo {
         }
         ArtifactInfoImpl castOther = (ArtifactInfoImpl) other;
         return new EqualsBuilder().append(artifactUUID, castOther.artifactUUID)
-                .append(artifactVersion, castOther.artifactVersion).isEquals();
+                .append(artifactVersion, castOther.artifactVersion)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(artifactName).append(artifactType).append(artifactURL)
-                .append(artifactChecksum).append(artifactDescription).append(artifactTimeout).append(artifactVersion)
-                .append(artifactUUID).append(generatedFromUUID).append(generatedArtifact).append(relatedArtifactsInfo)
-                .append(relatedArtifactsImpl).toHashCode();
+        return new HashCodeBuilder().append(artifactName)
+                .append(artifactType)
+                .append(artifactURL)
+                .append(artifactChecksum)
+                .append(artifactDescription)
+                .append(artifactTimeout)
+                .append(artifactVersion)
+                .append(artifactUUID)
+                .append(generatedFromUUID)
+                .append(generatedArtifact)
+                .append(relatedArtifactsInfo)
+                .append(relatedArtifactsImpl)
+                .toHashCode();
     }
 
 }

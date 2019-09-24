@@ -83,7 +83,8 @@ public class OperationalEnvServiceModelStatusId implements Serializable {
     public String toString() {
         return new ToStringBuilder(this).append("requestId", getRequestId())
                 .append("operationalEnvId", getOperationalEnvId())
-                .append("serviceModelVersionId", getServiceModelVersionId()).toString();
+                .append("serviceModelVersionId", getServiceModelVersionId())
+                .toString();
     }
 
 }

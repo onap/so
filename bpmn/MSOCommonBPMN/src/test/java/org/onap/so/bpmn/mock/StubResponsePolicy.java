@@ -39,23 +39,28 @@ public class StubResponsePolicy {
     // start of Policy mocks
     public static void MockPolicyAbort(WireMockServer wireMockServer) {
         wireMockServer.stubFor(post(urlEqualTo("/pdp/api/getDecision")).withRequestBody(containing("BB1"))
-                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                .willReturn(aResponse().withStatus(200)
+                        .withHeader("Content-Type", "application/json")
                         .withBodyFile("policyAbortResponse.json")));
 
         wireMockServer.stubFor(post(urlEqualTo("/pdp/api/getDecision")).withRequestBody(containing("UPDVnfI"))
-                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                .willReturn(aResponse().withStatus(200)
+                        .withHeader("Content-Type", "application/json")
                         .withBodyFile("policyAbortResponse.json")));
 
         wireMockServer.stubFor(post(urlEqualTo("/pdp/api/getDecision")).withRequestBody(containing("RPLVnfI"))
-                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                .willReturn(aResponse().withStatus(200)
+                        .withHeader("Content-Type", "application/json")
                         .withBodyFile("policyAbortResponse.json")));
 
         wireMockServer.stubFor(post(urlEqualTo("/pdp/api/getDecision")).withRequestBody(containing("VnfIPU"))
-                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                .willReturn(aResponse().withStatus(200)
+                        .withHeader("Content-Type", "application/json")
                         .withBodyFile("policyAbortResponse.json")));
 
         wireMockServer.stubFor(post(urlEqualTo("/pdp/api/getDecision")).withRequestBody(containing("VnfCU"))
-                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                .willReturn(aResponse().withStatus(200)
+                        .withHeader("Content-Type", "application/json")
                         .withBodyFile("policyAbortResponse.json")));
 
 
@@ -64,23 +69,28 @@ public class StubResponsePolicy {
 
     public static void MockPolicySkip(WireMockServer wireMockServer) {
         wireMockServer.stubFor(post(urlEqualTo("/pdp/api/getDecision")).withRequestBody(containing("BB1"))
-                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                .willReturn(aResponse().withStatus(200)
+                        .withHeader("Content-Type", "application/json")
                         .withBodyFile("Policy/policySkipResponse.json")));
 
         wireMockServer.stubFor(post(urlEqualTo("/pdp/api/getDecision")).withRequestBody(containing("UPDVnfI"))
-                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                .willReturn(aResponse().withStatus(200)
+                        .withHeader("Content-Type", "application/json")
                         .withBodyFile("Policy/policySkipResponse.json")));
 
         wireMockServer.stubFor(post(urlEqualTo("/pdp/api/getDecision")).withRequestBody(containing("RPLVnfI"))
-                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                .willReturn(aResponse().withStatus(200)
+                        .withHeader("Content-Type", "application/json")
                         .withBodyFile("Policy/policySkipResponse.json")));
 
         wireMockServer.stubFor(post(urlEqualTo("/pdp/api/getDecision")).withRequestBody(containing("VnfIPU"))
-                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                .willReturn(aResponse().withStatus(200)
+                        .withHeader("Content-Type", "application/json")
                         .withBodyFile("Policy/policySkipResponse.json")));
 
         wireMockServer.stubFor(post(urlEqualTo("/pdp/api/getDecision")).withRequestBody(containing("VnfCU"))
-                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                .willReturn(aResponse().withStatus(200)
+                        .withHeader("Content-Type", "application/json")
                         .withBodyFile("Policy/policySkipResponse.json")));
 
 

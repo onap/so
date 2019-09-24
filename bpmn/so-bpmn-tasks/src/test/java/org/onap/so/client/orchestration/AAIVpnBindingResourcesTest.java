@@ -59,8 +59,8 @@ public class AAIVpnBindingResourcesTest extends BaseTaskTest {
         mappedCustomer.setGlobalCustomerId(customer.getGlobalCustomerId());
 
         doReturn(mappedCustomer).when(MOCK_aaiObjectMapper).mapCustomer(customer);
-        doNothing().when(MOCK_aaiResourcesClient).create(isA(AAIResourceUri.class),
-                isA(org.onap.aai.domain.yang.Customer.class));
+        doNothing().when(MOCK_aaiResourcesClient)
+                .create(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.Customer.class));
 
         aaiVpnBindingResources.createCustomer(customer);
 
@@ -100,8 +100,8 @@ public class AAIVpnBindingResourcesTest extends BaseTaskTest {
 
     @Test
     public void createVpnBindingTest() {
-        doNothing().when(MOCK_aaiResourcesClient).create(isA(AAIResourceUri.class),
-                isA(org.onap.aai.domain.yang.VpnBinding.class));
+        doNothing().when(MOCK_aaiResourcesClient)
+                .create(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.VpnBinding.class));
         org.onap.aai.domain.yang.VpnBinding mappedVpnBinding = new org.onap.aai.domain.yang.VpnBinding();
         mappedVpnBinding.setVpnName("test");
 

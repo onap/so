@@ -176,15 +176,16 @@ public class Sol003LcnControllerTest {
         listOfGenericVnfs.add(genericVnf);
         final GenericVnfs genericVnfs = new GenericVnfs();
         genericVnfs.getGenericVnf().addAll(listOfGenericVnfs);
-        doReturn(Optional.of(genericVnfs)).when(aaiResourcesClient).get(eq(GenericVnfs.class),
-                MockitoHamcrest.argThat(new AaiResourceUriMatcher(
+        doReturn(Optional.of(genericVnfs)).when(aaiResourcesClient)
+                .get(eq(GenericVnfs.class), MockitoHamcrest.argThat(new AaiResourceUriMatcher(
                         "/network/generic-vnfs?selflink=http%3A%2F%2Fvnfm%3A8080%2Fvnfs%2FmyTestVnfIdOnVnfm")));
         EsrVnfm vnfm = new EsrVnfm();
         vnfm.setVnfmId("vnfm1");
         final EsrSystemInfoList esrSystemInfoList = new EsrSystemInfoList();
         vnfm.setEsrSystemInfoList(esrSystemInfoList);
-        doReturn(Optional.of(vnfm)).when(aaiResourcesClient).get(eq(EsrVnfm.class), MockitoHamcrest
-                .argThat(new AaiResourceUriMatcher("/external-system/esr-vnfm-list/esr-vnfm/vnfm1?depth=1")));
+        doReturn(Optional.of(vnfm)).when(aaiResourcesClient)
+                .get(eq(EsrVnfm.class), MockitoHamcrest
+                        .argThat(new AaiResourceUriMatcher("/external-system/esr-vnfm-list/esr-vnfm/vnfm1?depth=1")));
 
         final ResponseEntity<Void> response =
                 controller.lcnVnfLcmOperationOccurrenceNotificationPost(vnfLcmOperationOccurrenceNotification);
@@ -243,15 +244,16 @@ public class Sol003LcnControllerTest {
         genericVnfs.getGenericVnf().addAll(listOfGenericVnfs);
         addRelationshipFromGenericVnfToVserver(genericVnf, "myVnfc1");
 
-        doReturn(Optional.of(genericVnfs)).when(aaiResourcesClient).get(eq(GenericVnfs.class),
-                MockitoHamcrest.argThat(new AaiResourceUriMatcher(
+        doReturn(Optional.of(genericVnfs)).when(aaiResourcesClient)
+                .get(eq(GenericVnfs.class), MockitoHamcrest.argThat(new AaiResourceUriMatcher(
                         "/network/generic-vnfs?selflink=http%3A%2F%2Fvnfm%3A8080%2Fvnfs%2FmyTestVnfIdOnVnfm")));
         EsrVnfm vnfm = new EsrVnfm();
         vnfm.setVnfmId("vnfm1");
         final EsrSystemInfoList esrSystemInfoList = new EsrSystemInfoList();
         vnfm.setEsrSystemInfoList(esrSystemInfoList);
-        doReturn(Optional.of(vnfm)).when(aaiResourcesClient).get(eq(EsrVnfm.class), MockitoHamcrest
-                .argThat(new AaiResourceUriMatcher("/external-system/esr-vnfm-list/esr-vnfm/vnfm1?depth=1")));
+        doReturn(Optional.of(vnfm)).when(aaiResourcesClient)
+                .get(eq(EsrVnfm.class), MockitoHamcrest
+                        .argThat(new AaiResourceUriMatcher("/external-system/esr-vnfm-list/esr-vnfm/vnfm1?depth=1")));
 
         final ResponseEntity<Void> response =
                 controller.lcnVnfLcmOperationOccurrenceNotificationPost(vnfLcmOperationOccurrenceNotification);
@@ -394,7 +396,8 @@ public class Sol003LcnControllerTest {
         public boolean matches(final Object item) {
             if (item instanceof AAIResourceUri) {
                 if (uriAsString.endsWith("...")) {
-                    return ((AAIResourceUri) item).build().toString()
+                    return ((AAIResourceUri) item).build()
+                            .toString()
                             .startsWith(uriAsString.substring(0, uriAsString.indexOf("...")));
                 }
                 return ((AAIResourceUri) item).build().toString().equals(uriAsString);

@@ -73,8 +73,12 @@ public class NeutronClientImpl extends MsoCommonUtils {
             throws MsoCloudSiteNotFound, NeutronClientException {
         try {
             Quantum neutronClient = getNeutronClient(cloudSiteId, tenantId);
-            OpenStackRequest<Networks> request = neutronClient.networks().list().queryParam("id", id)
-                    .queryParam("limit", limit).queryParam("marker", marker).queryParam("name", name);
+            OpenStackRequest<Networks> request = neutronClient.networks()
+                    .list()
+                    .queryParam("id", id)
+                    .queryParam("limit", limit)
+                    .queryParam("marker", marker)
+                    .queryParam("name", name);
             return executeAndRecordOpenstackRequest(request, false);
         } catch (MsoException e) {
             logger.error("Error building Neutron Client", e);
@@ -101,8 +105,12 @@ public class NeutronClientImpl extends MsoCommonUtils {
             throws MsoCloudSiteNotFound, NeutronClientException {
         try {
             Quantum neutronClient = getNeutronClient(cloudSiteId, tenantId);
-            OpenStackRequest<Subnets> request = neutronClient.subnets().list().queryParam("id", id)
-                    .queryParam("limit", limit).queryParam("marker", marker).queryParam("name", name);
+            OpenStackRequest<Subnets> request = neutronClient.subnets()
+                    .list()
+                    .queryParam("id", id)
+                    .queryParam("limit", limit)
+                    .queryParam("marker", marker)
+                    .queryParam("name", name);
             return executeAndRecordOpenstackRequest(request, false);
         } catch (MsoException e) {
             logger.error("Error building Neutron Client", e);

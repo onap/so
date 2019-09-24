@@ -65,15 +65,21 @@ public class EmbeddedMariaDbConfig {
 
         DBConfigurationBuilder config = mariaDB4jSpringService.getConfiguration();
 
-        return DataSourceBuilder.create().username(datasourceUsername).password(datasourcePassword)
-                .url(config.getURL(databaseName)).driverClassName(datasourceDriver).build();
+        return DataSourceBuilder.create()
+                .username(datasourceUsername)
+                .password(datasourcePassword)
+                .url(config.getURL(databaseName))
+                .driverClassName(datasourceDriver)
+                .build();
     }
 
     @Primary
     @Bean(name = "requestEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder,
             @Qualifier("requestDataSource") DataSource dataSource) {
-        return builder.dataSource(dataSource).packages("org.onap.so.db.request.beans").persistenceUnit("requestDB")
+        return builder.dataSource(dataSource)
+                .packages("org.onap.so.db.request.beans")
+                .persistenceUnit("requestDB")
                 .build();
     }
 

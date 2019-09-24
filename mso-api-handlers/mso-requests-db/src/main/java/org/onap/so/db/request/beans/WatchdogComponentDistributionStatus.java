@@ -133,7 +133,9 @@ public class WatchdogComponentDistributionStatus implements Serializable {
         return new ToStringBuilder(this).append("distributionId", getDistributionId())
                 .append("componentName", getComponentName())
                 .append("componentDistributionStatus", getComponentDistributionStatus())
-                .append("createTime", getCreateTime()).append("modifyTime", getModifyTime()).toString();
+                .append("createTime", getCreateTime())
+                .append("modifyTime", getModifyTime())
+                .toString();
     }
 
 }

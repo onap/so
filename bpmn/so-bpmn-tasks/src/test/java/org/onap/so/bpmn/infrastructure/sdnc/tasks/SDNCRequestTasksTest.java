@@ -106,8 +106,8 @@ public class SDNCRequestTasksTest extends SDNCRequestTasks {
 
     @Test
     public void callSDNC_Error_Test() throws MapperException, BadResponseException {
-        doThrow(MapperException.class).when(sdncClient).post(createSDNCRequest().getSDNCPayload(),
-                SDNCTopology.CONFIGURATION);
+        doThrow(MapperException.class).when(sdncClient)
+                .post(createSDNCRequest().getSDNCPayload(), SDNCTopology.CONFIGURATION);
         doReturn("processKey").when(exceptionBuilder).getProcessKey(delegateExecution);
         expectedException.expect(BpmnError.class);
         sndcRequestTasks.callSDNC(delegateExecution);

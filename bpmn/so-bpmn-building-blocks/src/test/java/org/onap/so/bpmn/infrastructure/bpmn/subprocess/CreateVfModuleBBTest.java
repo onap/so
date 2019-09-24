@@ -35,10 +35,11 @@ public class CreateVfModuleBBTest extends BaseBPMNTest {
         mockSubprocess("VnfAdapter", "Mocked VnfAdapter", "GenericStub");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("CreateVfModuleBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("CreateVfModuleBB_Start", "QueryVnf", "QueryVfModule",
-                "CreateVfModule", "VnfAdapter", "CreateNetworkPolicies", "UpdateVnfIpv4OamAddress",
-                "UpdateVnfManagementV6Address", "UpdateVfModuleContrailServiceInstanceFqdn",
-                "UpdateVfModuleHeatStackId", "UpdateVfModuleStatus", "CreateVfModuleBB_End");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("CreateVfModuleBB_Start", "QueryVnf", "QueryVfModule", "CreateVfModule", "VnfAdapter",
+                        "CreateNetworkPolicies", "UpdateVnfIpv4OamAddress", "UpdateVnfManagementV6Address",
+                        "UpdateVfModuleContrailServiceInstanceFqdn", "UpdateVfModuleHeatStackId",
+                        "UpdateVfModuleStatus", "CreateVfModuleBB_End");
         assertThat(pi).isEnded();
     }
 
@@ -48,10 +49,12 @@ public class CreateVfModuleBBTest extends BaseBPMNTest {
                 .queryVnf(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("CreateVfModuleBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("CreateVfModuleBB_Start", "QueryVnf").hasNotPassed("QueryVfModule",
-                "CreateVfModule", "VnfAdapter", "CreateNetworkPolicies", "UpdateVnfIpv4OamAddress",
-                "UpdateVnfManagementV6Address", "UpdateVfModuleContrailServiceInstanceFqdn",
-                "UpdateVfModuleHeatStackId", "UpdateVfModuleStatus", "CreateVfModuleBB_End");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("CreateVfModuleBB_Start", "QueryVnf")
+                .hasNotPassed("QueryVfModule", "CreateVfModule", "VnfAdapter", "CreateNetworkPolicies",
+                        "UpdateVnfIpv4OamAddress", "UpdateVnfManagementV6Address",
+                        "UpdateVfModuleContrailServiceInstanceFqdn", "UpdateVfModuleHeatStackId",
+                        "UpdateVfModuleStatus", "CreateVfModuleBB_End");
         assertThat(pi).isEnded();
     }
 
@@ -61,10 +64,11 @@ public class CreateVfModuleBBTest extends BaseBPMNTest {
                 .queryVfModule(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("CreateVfModuleBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("CreateVfModuleBB_Start", "QueryVnf", "QueryVfModule").hasNotPassed(
-                "CreateVfModule", "VnfAdapter", "CreateNetworkPolicies", "UpdateVnfIpv4OamAddress",
-                "UpdateVnfManagementV6Address", "UpdateVfModuleContrailServiceInstanceFqdn",
-                "UpdateVfModuleHeatStackId", "UpdateVfModuleStatus", "CreateVfModuleBB_End");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("CreateVfModuleBB_Start", "QueryVnf", "QueryVfModule")
+                .hasNotPassed("CreateVfModule", "VnfAdapter", "CreateNetworkPolicies", "UpdateVnfIpv4OamAddress",
+                        "UpdateVnfManagementV6Address", "UpdateVfModuleContrailServiceInstanceFqdn",
+                        "UpdateVfModuleHeatStackId", "UpdateVfModuleStatus", "CreateVfModuleBB_End");
         assertThat(pi).isEnded();
     }
 

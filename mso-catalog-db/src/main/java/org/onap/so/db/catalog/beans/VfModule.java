@@ -98,12 +98,19 @@ public class VfModule implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("modelUUID", modelUUID).append("modelInvariantUUID", modelInvariantUUID)
-                .append("modelName", modelName).append("modelVersion", modelVersion).append("description", description)
-                .append("isBase", isBase).append("volumeHeatTemplate", volumeHeatTemplate)
-                .append("moduleHeatTemplate", moduleHeatTemplate).append("created", created)
-                .append("heatFiles", heatFiles).append("vfModuleCustomization", vfModuleCustomization)
-                .append("vnfResources", vnfResources).toString();
+        return new ToStringBuilder(this).append("modelUUID", modelUUID)
+                .append("modelInvariantUUID", modelInvariantUUID)
+                .append("modelName", modelName)
+                .append("modelVersion", modelVersion)
+                .append("description", description)
+                .append("isBase", isBase)
+                .append("volumeHeatTemplate", volumeHeatTemplate)
+                .append("moduleHeatTemplate", moduleHeatTemplate)
+                .append("created", created)
+                .append("heatFiles", heatFiles)
+                .append("vfModuleCustomization", vfModuleCustomization)
+                .append("vnfResources", vnfResources)
+                .toString();
     }
 
     @Override

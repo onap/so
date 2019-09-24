@@ -21,8 +21,12 @@ public class ExternalTaskServiceUtils {
     public ExternalTaskClient createExternalTaskClient() throws Exception {
         String auth = getAuth();
         ClientRequestInterceptor interceptor = createClientInterceptor(auth);
-        return ExternalTaskClient.create().baseUrl(env.getRequiredProperty("mso.workflow.endpoint")).maxTasks(1)
-                .addInterceptor(interceptor).asyncResponseTimeout(120000).build();
+        return ExternalTaskClient.create()
+                .baseUrl(env.getRequiredProperty("mso.workflow.endpoint"))
+                .maxTasks(1)
+                .addInterceptor(interceptor)
+                .asyncResponseTimeout(120000)
+                .build();
     }
 
     protected ClientRequestInterceptor createClientInterceptor(String auth) {

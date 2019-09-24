@@ -49,8 +49,13 @@ public class AVPNDmaapBeansTest extends BaseTest {
 
     @Test
     public void testPojoStructureAndBehavior() {
-        Validator validator = ValidatorBuilder.create().with(new GetterMustExistRule()).with(new SetterMustExistRule())
-                .with(new SetterTester()).with(new GetterTester()).with(new ToStringTester()).build();
+        Validator validator = ValidatorBuilder.create()
+                .with(new GetterMustExistRule())
+                .with(new SetterMustExistRule())
+                .with(new SetterTester())
+                .with(new GetterTester())
+                .with(new ToStringTester())
+                .build();
 
         validator.validate(POJO_PACKAGE, new FilterPackageInfo());
     }

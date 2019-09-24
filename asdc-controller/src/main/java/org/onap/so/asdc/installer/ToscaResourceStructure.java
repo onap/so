@@ -138,7 +138,8 @@ public class ToscaResourceStructure {
 
             String filePath =
                     Paths.get(msoConfigPath, "ASDC", artifact.getArtifactVersion(), artifact.getArtifactName())
-                            .normalize().toString();
+                            .normalize()
+                            .toString();
 
             File spoolFile = new File(filePath);
 

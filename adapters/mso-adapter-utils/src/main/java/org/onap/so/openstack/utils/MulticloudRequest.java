@@ -159,13 +159,17 @@ public class MulticloudRequest implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("genericVnfId", genericVnfId).append("vfModuleId", vfModuleId)
+        return new ToStringBuilder(this).append("genericVnfId", genericVnfId)
+                .append("vfModuleId", vfModuleId)
                 .append("vfModuleModelInvariantId", vfModuleModelInvariantId)
                 .append("vfModuleModelVersionId", vfModuleModelVersionId)
                 .append("vfModuleModelCustomizationId", vfModuleModelCustomizationId)
-                .append("oofDirectives", oofDirectives).append("sdncDirectives", sdncDirectives)
-                .append("userDirectives", userDirectives).append("templateType", templateType)
-                .append("templateData", templateData).toString();
+                .append("oofDirectives", oofDirectives)
+                .append("sdncDirectives", sdncDirectives)
+                .append("userDirectives", userDirectives)
+                .append("templateType", templateType)
+                .append("templateData", templateData)
+                .toString();
     }
 
 }

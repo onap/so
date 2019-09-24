@@ -93,8 +93,11 @@ public class CloudConfigTest extends CatalogDbAdapterBaseTest {
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
         System.out.println(cloudSiteString.getBody());
         assertEquals(Response.Status.OK.getStatusCode(), actualCloudSite.getStatusCode().value());
-        assertThat(actualCloudSite.getBody(), sameBeanAs(cloudSite).ignoring("created").ignoring("updated")
-                .ignoring("identityService.created").ignoring("identityService.updated"));
+        assertThat(actualCloudSite.getBody(),
+                sameBeanAs(cloudSite).ignoring("created")
+                        .ignoring("updated")
+                        .ignoring("identityService.created")
+                        .ignoring("identityService.updated"));
 
     }
 

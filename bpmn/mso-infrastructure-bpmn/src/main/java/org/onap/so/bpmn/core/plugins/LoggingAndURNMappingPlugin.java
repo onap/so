@@ -294,7 +294,9 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
                         RepositoryService repositoryService =
                                 execution.getProcessEngineServices().getRepositoryService();
                         String processName = repositoryService.createProcessDefinitionQuery()
-                                .processDefinitionId(execution.getProcessDefinitionId()).singleResult().getName();
+                                .processDefinitionId(execution.getProcessDefinitionId())
+                                .singleResult()
+                                .getName();
 
 
                         String requestId = (String) execution.getVariable("mso-request-id");

@@ -90,8 +90,12 @@ public class DeleteVolumeGroupRequest extends VfRequestCommon {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).appendSuper(super.toString()).append("cloudSiteId", cloudSiteId)
-                .append("tenantId", tenantId).append("volumeGroupId", volumeGroupId)
-                .append("volumeGroupStackId", volumeGroupStackId).append("msoRequest", msoRequest).toString();
+        return new ToStringBuilder(this).appendSuper(super.toString())
+                .append("cloudSiteId", cloudSiteId)
+                .append("tenantId", tenantId)
+                .append("volumeGroupId", volumeGroupId)
+                .append("volumeGroupStackId", volumeGroupStackId)
+                .append("msoRequest", msoRequest)
+                .toString();
     }
 }

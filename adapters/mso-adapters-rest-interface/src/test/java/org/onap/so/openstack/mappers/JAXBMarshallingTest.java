@@ -42,8 +42,9 @@ public class JAXBMarshallingTest {
     public void xmlUnMarshalTest() throws IOException, JAXBException {
         JAXBContext context = JAXBContext.newInstance(CreateVfModuleRequest.class);
 
-        CreateVfModuleRequest request = (CreateVfModuleRequest) context.createUnmarshaller().unmarshal(
-                Files.newBufferedReader(Paths.get("src/test/resources/createVfModuleRequest-with-params.xml")));
+        CreateVfModuleRequest request = (CreateVfModuleRequest) context.createUnmarshaller()
+                .unmarshal(
+                        Files.newBufferedReader(Paths.get("src/test/resources/createVfModuleRequest-with-params.xml")));
 
         assertEquals("ubuntu-16-04-cloud-amd64", request.getVfModuleParams().get("vcpe_image_name"));
         assertEquals("10.2.0.0/24", request.getVfModuleParams().get("cpe_public_net_cidr"));

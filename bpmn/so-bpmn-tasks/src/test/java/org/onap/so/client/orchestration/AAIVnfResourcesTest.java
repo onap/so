@@ -99,8 +99,8 @@ public class AAIVnfResourcesTest extends TestDataSetup {
     @Test
     public void createVnfandConnectServiceInstanceTest() {
         doReturn(new org.onap.aai.domain.yang.GenericVnf()).when(MOCK_aaiObjectMapper).mapVnf(genericVnf);
-        doReturn(MOCK_aaiResourcesClient).when(MOCK_aaiResourcesClient).createIfNotExists(isA(AAIResourceUri.class),
-                any(Optional.class));
+        doReturn(MOCK_aaiResourcesClient).when(MOCK_aaiResourcesClient)
+                .createIfNotExists(isA(AAIResourceUri.class), any(Optional.class));
         doNothing().when(MOCK_aaiResourcesClient).connect(any(AAIResourceUri.class), any(AAIResourceUri.class));
         genericVnf.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
 
@@ -117,8 +117,8 @@ public class AAIVnfResourcesTest extends TestDataSetup {
         Platform platform = new Platform();
         platform.setPlatformName("a123");
         doNothing().when(MOCK_aaiResourcesClient).connect(isA(AAIResourceUri.class), isA(AAIResourceUri.class));
-        doReturn(MOCK_aaiResourcesClient).when(MOCK_aaiResourcesClient).createIfNotExists(isA(AAIResourceUri.class),
-                any(Optional.class));
+        doReturn(MOCK_aaiResourcesClient).when(MOCK_aaiResourcesClient)
+                .createIfNotExists(isA(AAIResourceUri.class), any(Optional.class));
         aaiVnfResources.createPlatformandConnectVnf(platform, genericVnf);
         verify(MOCK_aaiResourcesClient, times(1)).connect(any(AAIResourceUri.class), isA(AAIResourceUri.class));
     }
@@ -128,8 +128,8 @@ public class AAIVnfResourcesTest extends TestDataSetup {
         LineOfBusiness lob = new LineOfBusiness();
         lob.setLineOfBusinessName("a123");
         doNothing().when(MOCK_aaiResourcesClient).connect(isA(AAIResourceUri.class), isA(AAIResourceUri.class));
-        doReturn(MOCK_aaiResourcesClient).when(MOCK_aaiResourcesClient).createIfNotExists(isA(AAIResourceUri.class),
-                any(Optional.class));
+        doReturn(MOCK_aaiResourcesClient).when(MOCK_aaiResourcesClient)
+                .createIfNotExists(isA(AAIResourceUri.class), any(Optional.class));
         aaiVnfResources.createLineOfBusinessandConnectVnf(lob, genericVnf);
         verify(MOCK_aaiResourcesClient, times(1)).connect(any(AAIResourceUri.class), isA(AAIResourceUri.class));
     }
@@ -145,8 +145,8 @@ public class AAIVnfResourcesTest extends TestDataSetup {
 
     @Test
     public void updateOrchestrationStatusVnfTest() {
-        doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class),
-                isA(org.onap.aai.domain.yang.Vnf.class));
+        doNothing().when(MOCK_aaiResourcesClient)
+                .update(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.Vnf.class));
 
         aaiVnfResources.updateOrchestrationStatusVnf(genericVnf, OrchestrationStatus.ACTIVE);
 
@@ -158,8 +158,8 @@ public class AAIVnfResourcesTest extends TestDataSetup {
     @Test
     public void updateObjectVnfTest() {
         doReturn(new org.onap.aai.domain.yang.GenericVnf()).when(MOCK_aaiObjectMapper).mapVnf(genericVnf);
-        doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class),
-                isA(org.onap.aai.domain.yang.GenericVnf.class));
+        doNothing().when(MOCK_aaiResourcesClient)
+                .update(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.GenericVnf.class));
 
         aaiVnfResources.updateObjectVnf(genericVnf);
 
@@ -172,8 +172,8 @@ public class AAIVnfResourcesTest extends TestDataSetup {
     public void getGenericVnfTest() {
         Optional<org.onap.aai.domain.yang.GenericVnf> vnf = Optional.of(new org.onap.aai.domain.yang.GenericVnf());
         vnf.get().setVnfId("vnfId");
-        doReturn(vnf).when(MOCK_aaiResourcesClient).get(eq(org.onap.aai.domain.yang.GenericVnf.class),
-                isA(AAIResourceUri.class));
+        doReturn(vnf).when(MOCK_aaiResourcesClient)
+                .get(eq(org.onap.aai.domain.yang.GenericVnf.class), isA(AAIResourceUri.class));
         aaiVnfResources.getGenericVnf("vnfId");
         verify(MOCK_aaiResourcesClient, times(1)).get(eq(org.onap.aai.domain.yang.GenericVnf.class),
                 isA(AAIResourceUri.class));
@@ -184,8 +184,8 @@ public class AAIVnfResourcesTest extends TestDataSetup {
         Optional<org.onap.aai.domain.yang.GenericVnf> vnf = Optional.of(new org.onap.aai.domain.yang.GenericVnf());
         vnf.get().setVnfId("vnfId");
         vnf.get().setInMaint(true);
-        doReturn(vnf).when(MOCK_aaiResourcesClient).get(eq(org.onap.aai.domain.yang.GenericVnf.class),
-                isA(AAIResourceUri.class));
+        doReturn(vnf).when(MOCK_aaiResourcesClient)
+                .get(eq(org.onap.aai.domain.yang.GenericVnf.class), isA(AAIResourceUri.class));
         boolean inMaintFlag = aaiVnfResources.checkInMaintFlag("vnfId");
         verify(MOCK_aaiResourcesClient, times(1)).get(eq(org.onap.aai.domain.yang.GenericVnf.class),
                 isA(AAIResourceUri.class));
@@ -216,8 +216,8 @@ public class AAIVnfResourcesTest extends TestDataSetup {
         Optional<org.onap.aai.domain.yang.GenericVnf> vnf = Optional.of(new org.onap.aai.domain.yang.GenericVnf());
         vnf.get().setVnfId("vnfId");
         vnf.get().setIsClosedLoopDisabled(true);
-        doReturn(vnf).when(MOCK_aaiResourcesClient).get(eq(org.onap.aai.domain.yang.GenericVnf.class),
-                isA(AAIResourceUri.class));
+        doReturn(vnf).when(MOCK_aaiResourcesClient)
+                .get(eq(org.onap.aai.domain.yang.GenericVnf.class), isA(AAIResourceUri.class));
         boolean isCheckVnfClosedLoopDisabledFlag = aaiVnfResources.checkVnfClosedLoopDisabledFlag("vnfId");
         verify(MOCK_aaiResourcesClient, times(1)).get(eq(org.onap.aai.domain.yang.GenericVnf.class),
                 isA(AAIResourceUri.class));
@@ -229,8 +229,8 @@ public class AAIVnfResourcesTest extends TestDataSetup {
 
         Optional<org.onap.aai.domain.yang.GenericVnf> vnf = Optional.of(new org.onap.aai.domain.yang.GenericVnf());
         vnf.get().setVnfId("vnfId");
-        doReturn(vnf).when(MOCK_aaiResourcesClient).get(eq(org.onap.aai.domain.yang.GenericVnf.class),
-                isA(AAIResourceUri.class));
+        doReturn(vnf).when(MOCK_aaiResourcesClient)
+                .get(eq(org.onap.aai.domain.yang.GenericVnf.class), isA(AAIResourceUri.class));
         doReturn(true).when(MOCK_aaiValidatorImpl).isPhysicalServerLocked("vnfId");
         boolean isVnfPserversLockedFlag = aaiVnfResources.checkVnfPserversLockedFlag("vnfId");
         verify(MOCK_aaiResourcesClient, times(1)).get(eq(org.onap.aai.domain.yang.GenericVnf.class),

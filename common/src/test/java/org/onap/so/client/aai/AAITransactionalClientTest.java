@@ -102,8 +102,13 @@ public class AAITransactionalClientTest {
         map.put("resource-version", "1234");
         doReturn(Optional.of(map)).when(aaiClient).get(any(GenericType.class), eq(uriG));
         AAIResourceUri uriAClone = uriA.clone();
-        AAITransactionalClient transactions = aaiClient.beginTransaction().connect(uriA, uris).connect(uriC, uriD)
-                .beginNewTransaction().connect(uriE, uriF).beginNewTransaction().delete(uriG);
+        AAITransactionalClient transactions = aaiClient.beginTransaction()
+                .connect(uriA, uris)
+                .connect(uriC, uriD)
+                .beginNewTransaction()
+                .connect(uriE, uriF)
+                .beginNewTransaction()
+                .delete(uriG);
 
         String serializedTransactions = mapper.writeValueAsString(transactions.getTransactions());
         Map<String, Object> actual =

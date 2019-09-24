@@ -113,8 +113,9 @@ public class NetworkAdapterRestV1Test extends BaseTaskTest {
         delegateExecution.setVariable("networkAdapterRequest", updateNetworkRequest);
         delegateExecution.setVariable("NetworkAResponse_MESSAGE", updateNetworkResponse.toXmlString());
 
-        doThrow(new BpmnError("MSOWorkflowException")).when(exceptionBuilder).buildAndThrowWorkflowException(
-                any(DelegateExecution.class), anyInt(), any(String.class), any(ONAPComponents.class));
+        doThrow(new BpmnError("MSOWorkflowException")).when(exceptionBuilder)
+                .buildAndThrowWorkflowException(any(DelegateExecution.class), anyInt(), any(String.class),
+                        any(ONAPComponents.class));
 
         try {
             networkAdapterRestV1Tasks.processCallback(delegateExecution);

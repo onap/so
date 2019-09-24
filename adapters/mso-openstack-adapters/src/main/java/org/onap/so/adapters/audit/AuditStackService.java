@@ -61,7 +61,8 @@ public class AuditStackService {
             ExternalTaskClient client = externalTaskServiceUtils.createExternalTaskClient();
             client.subscribe("InventoryAddAudit")
                     .lockDuration(Long.parseLong(env.getProperty("mso.audit.lock-time", DEFAULT_AUDIT_LOCK_TIME)))
-                    .handler(auditCreateStack::executeExternalTask).open();
+                    .handler(auditCreateStack::executeExternalTask)
+                    .open();
         }
     }
 
@@ -71,7 +72,8 @@ public class AuditStackService {
             ExternalTaskClient client = externalTaskServiceUtils.createExternalTaskClient();
             client.subscribe("InventoryDeleteAudit")
                     .lockDuration(Long.parseLong(env.getProperty("mso.audit.lock-time", DEFAULT_AUDIT_LOCK_TIME)))
-                    .handler(auditDeleteStack::executeExternalTask).open();
+                    .handler(auditDeleteStack::executeExternalTask)
+                    .open();
         }
     }
 
@@ -81,7 +83,8 @@ public class AuditStackService {
             ExternalTaskClient client = externalTaskServiceUtils.createExternalTaskClient();
             client.subscribe("InventoryQueryAudit")
                     .lockDuration(Long.parseLong(env.getProperty("mso.audit.lock-time", DEFAULT_AUDIT_LOCK_TIME)))
-                    .handler(auditQueryStack::executeExternalTask).open();
+                    .handler(auditQueryStack::executeExternalTask)
+                    .open();
         }
     }
 

@@ -55,7 +55,9 @@ public class RequestDBConfig {
     @Bean(name = "requestEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder,
             @Qualifier("requestDataSource") DataSource dataSource) {
-        return builder.dataSource(dataSource).packages("org.onap.so.db.request.beans").persistenceUnit("requestDB")
+        return builder.dataSource(dataSource)
+                .packages("org.onap.so.db.request.beans")
+                .persistenceUnit("requestDB")
                 .build();
     }
 

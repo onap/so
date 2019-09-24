@@ -45,8 +45,12 @@ public class CamundaRestUrlProvider {
      * @return URL
      */
     public String getHistoryProcessInstanceUrl(final String requestId) {
-        return UriComponentsBuilder.fromUri(baseUri).pathSegment(HISTORY_PATH).pathSegment("process-instance")
-                .query("variables=requestId_eq_{requestID}").buildAndExpand(requestId).toString();
+        return UriComponentsBuilder.fromUri(baseUri)
+                .pathSegment(HISTORY_PATH)
+                .pathSegment("process-instance")
+                .query("variables=requestId_eq_{requestID}")
+                .buildAndExpand(requestId)
+                .toString();
     }
 
     /**
@@ -58,8 +62,12 @@ public class CamundaRestUrlProvider {
      * @return URL
      */
     public String getSingleProcessInstanceUrl(final String processInstanceId) {
-        return UriComponentsBuilder.fromUri(baseUri).pathSegment(HISTORY_PATH).pathSegment("process-instance")
-                .pathSegment(processInstanceId).build().toString();
+        return UriComponentsBuilder.fromUri(baseUri)
+                .pathSegment(HISTORY_PATH)
+                .pathSegment("process-instance")
+                .pathSegment(processInstanceId)
+                .build()
+                .toString();
     }
 
     /**
@@ -70,8 +78,12 @@ public class CamundaRestUrlProvider {
      * @return URL
      */
     public String getProcessDefinitionUrl(final String processDefinitionId) {
-        return UriComponentsBuilder.fromUri(baseUri).pathSegment("process-definition").pathSegment(processDefinitionId)
-                .pathSegment("xml").build().toString();
+        return UriComponentsBuilder.fromUri(baseUri)
+                .pathSegment("process-definition")
+                .pathSegment(processDefinitionId)
+                .pathSegment("xml")
+                .build()
+                .toString();
     }
 
     /**
@@ -83,9 +95,14 @@ public class CamundaRestUrlProvider {
      * @return URL
      */
     public String getActivityInstanceUrl(final String processInstanceId) {
-        return UriComponentsBuilder.fromUri(baseUri).pathSegment(HISTORY_PATH).pathSegment("activity-instance")
-                .query("processInstanceId={processInstanceId}").queryParam("sortBy", "startTime")
-                .queryParam("sortOrder", "asc").buildAndExpand(processInstanceId).toString();
+        return UriComponentsBuilder.fromUri(baseUri)
+                .pathSegment(HISTORY_PATH)
+                .pathSegment("activity-instance")
+                .query("processInstanceId={processInstanceId}")
+                .queryParam("sortBy", "startTime")
+                .queryParam("sortOrder", "asc")
+                .buildAndExpand(processInstanceId)
+                .toString();
     }
 
     /**
@@ -97,8 +114,12 @@ public class CamundaRestUrlProvider {
      * @return URL
      */
     public String getProcessInstanceVariablesUrl(final String processInstanceId) {
-        return UriComponentsBuilder.fromUri(baseUri).pathSegment(HISTORY_PATH).pathSegment("variable-instance")
-                .query("processInstanceId={processInstanceId}").buildAndExpand(processInstanceId).toString();
+        return UriComponentsBuilder.fromUri(baseUri)
+                .pathSegment(HISTORY_PATH)
+                .pathSegment("variable-instance")
+                .query("processInstanceId={processInstanceId}")
+                .buildAndExpand(processInstanceId)
+                .toString();
     }
 
 }

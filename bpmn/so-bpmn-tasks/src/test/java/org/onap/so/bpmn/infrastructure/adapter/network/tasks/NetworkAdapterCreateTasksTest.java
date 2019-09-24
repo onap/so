@@ -82,10 +82,10 @@ public class NetworkAdapterCreateTasksTest extends BaseTaskTest {
         CreateNetworkRequest createNetworkRequest = new CreateNetworkRequest();
         execution.setVariable("cloudRegionPo", cloudRegionPo);
 
-        doReturn(createNetworkRequest).when(networkAdapterObjectMapper).createNetworkRequestMapper(
-                isA(RequestContext.class), isA(CloudRegion.class), isA(OrchestrationContext.class),
-                isA(ServiceInstance.class), isA(L3Network.class), isA(Map.class), isA(String.class),
-                isA(Customer.class));
+        doReturn(createNetworkRequest).when(networkAdapterObjectMapper)
+                .createNetworkRequestMapper(isA(RequestContext.class), isA(CloudRegion.class),
+                        isA(OrchestrationContext.class), isA(ServiceInstance.class), isA(L3Network.class),
+                        isA(Map.class), isA(String.class), isA(Customer.class));
         networkAdapterCreateTasks.createNetwork(execution);
         verify(networkAdapterObjectMapper, times(1)).createNetworkRequestMapper(requestContext, cloudRegion,
                 orchestrationContext, serviceInstance, l3Network, userInput, cloudRegionPo, customer);
@@ -103,9 +103,9 @@ public class NetworkAdapterCreateTasksTest extends BaseTaskTest {
         String cloudRegionPo = "cloudRegionPo";
         execution.setVariable("cloudRegionPo", cloudRegionPo);
 
-        doReturn(oCreateNetworkResponse).when(networkAdapterResources).rollbackCreateNetwork(requestContext,
-                cloudRegion, orchestrationContext, serviceInstance, l3Network, userInput, cloudRegionPo,
-                createNetworkResponse);
+        doReturn(oCreateNetworkResponse).when(networkAdapterResources)
+                .rollbackCreateNetwork(requestContext, cloudRegion, orchestrationContext, serviceInstance, l3Network,
+                        userInput, cloudRegionPo, createNetworkResponse);
         networkAdapterCreateTasks.rollbackCreateNetwork(execution);
         verify(networkAdapterResources, times(1)).rollbackCreateNetwork(requestContext, cloudRegion,
                 orchestrationContext, serviceInstance, l3Network, userInput, cloudRegionPo, createNetworkResponse);

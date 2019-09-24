@@ -48,7 +48,8 @@ public class InformDmaapClient implements JavaDelegate {
         String processBusinessKey = execution.getProcessBusinessKey();
         dmaapClient.registerForUpdate(pnfCorrelationId,
                 () -> runtimeService.createMessageCorrelation("WorkflowMessage")
-                        .processInstanceBusinessKey(processBusinessKey).correlateWithResult(),
+                        .processInstanceBusinessKey(processBusinessKey)
+                        .correlateWithResult(),
                 createUpdateInfoMap(execution));
     }
 

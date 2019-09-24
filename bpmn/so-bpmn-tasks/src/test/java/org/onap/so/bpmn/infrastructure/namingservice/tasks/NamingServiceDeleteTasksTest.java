@@ -65,8 +65,8 @@ public class NamingServiceDeleteTasksTest extends BaseTaskTest {
     public void deleteInstanceGroupExceptionTest() throws Exception {
         expectedException.expect(BBObjectNotFoundException.class);
         lookupKeyMap.put(ResourceKey.INSTANCE_GROUP_ID, "notfound");
-        doThrow(BBObjectNotFoundException.class).when(extractPojosForBB).extractByKey(any(),
-                ArgumentMatchers.eq(ResourceKey.INSTANCE_GROUP_ID));
+        doThrow(BBObjectNotFoundException.class).when(extractPojosForBB)
+                .extractByKey(any(), ArgumentMatchers.eq(ResourceKey.INSTANCE_GROUP_ID));
         doReturn("").when(namingServiceResources).deleteInstanceGroupName(instanceGroup);
         namingServiceDeleteTasks.deleteInstanceGroupName(execution);
         verify(namingServiceResources, times(1)).deleteInstanceGroupName(instanceGroup);

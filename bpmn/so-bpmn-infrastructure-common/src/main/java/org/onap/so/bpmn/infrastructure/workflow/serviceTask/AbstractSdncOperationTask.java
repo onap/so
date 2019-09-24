@@ -353,7 +353,9 @@ public abstract class AbstractSdncOperationTask implements JavaDelegate {
     }
 
     public String getProcessKey(DelegateExecution execution) {
-        return execution.getProcessEngineServices().getRepositoryService()
-                .getProcessDefinition(execution.getProcessDefinitionId()).getKey();
+        return execution.getProcessEngineServices()
+                .getRepositoryService()
+                .getProcessDefinition(execution.getProcessDefinitionId())
+                .getKey();
     }
 }

@@ -53,7 +53,8 @@ public class CloudRequestData {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("cloudRequest", cloudRequest).append("cloudIdentifier", cloudIdentifier)
+        return new ToStringBuilder(this).append("cloudRequest", cloudRequest)
+                .append("cloudIdentifier", cloudIdentifier)
                 .toString();
     }
 }

@@ -45,7 +45,8 @@ public class BPRestCallbackTest extends BaseTest {
 
         wireMockServer.stubFor(
                 post(urlPathEqualTo("/sdnc")).willReturn(aResponse().withHeader("Content-Type", "application/xml")
-                        .withBody(response).withStatus(HttpStatus.SC_MULTIPLE_CHOICES)));
+                        .withBody(response)
+                        .withStatus(HttpStatus.SC_MULTIPLE_CHOICES)));
 
         boolean responseCommon = bpRestCallback.send("http://localhost:" + wireMockPort + "/sdnc", "Test");
         assertNotNull(responseCommon);

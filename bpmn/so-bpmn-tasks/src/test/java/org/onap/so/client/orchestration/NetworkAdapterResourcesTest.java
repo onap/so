@@ -141,10 +141,10 @@ public class NetworkAdapterResourcesTest extends TestDataSetup {
         doReturn(expectedCreateNetworkResponse).when(MOCK_networkAdapterClient)
                 .createNetwork(isA(CreateNetworkRequest.class));
 
-        doReturn(createNetworkRequest).when(MOCK_networkAdapterObjectMapper).createNetworkRequestMapper(
-                isA(RequestContext.class), isA(CloudRegion.class), isA(OrchestrationContext.class),
-                isA(ServiceInstance.class), isA(L3Network.class), isA(Map.class), isA(String.class),
-                isA(Customer.class));
+        doReturn(createNetworkRequest).when(MOCK_networkAdapterObjectMapper)
+                .createNetworkRequestMapper(isA(RequestContext.class), isA(CloudRegion.class),
+                        isA(OrchestrationContext.class), isA(ServiceInstance.class), isA(L3Network.class),
+                        isA(Map.class), isA(String.class), isA(Customer.class));
 
         CreateNetworkResponse actualCreateNetwrokResponse =
                 (networkAdapterResources.createNetwork(requestContext, cloudRegion, orchestrationContext,
@@ -175,13 +175,13 @@ public class NetworkAdapterResourcesTest extends TestDataSetup {
         CreateNetworkResponse createNetworkResponse = new CreateNetworkResponse();
         createNetworkResponse.setMessageId("messageId");
 
-        doReturn(rollbackNetworkResponse).when(MOCK_networkAdapterClient).rollbackNetwork(isA(String.class),
-                isA(RollbackNetworkRequest.class));
+        doReturn(rollbackNetworkResponse).when(MOCK_networkAdapterClient)
+                .rollbackNetwork(isA(String.class), isA(RollbackNetworkRequest.class));
 
-        doReturn(rollbackNetworkRequest).when(MOCK_networkAdapterObjectMapper).createNetworkRollbackRequestMapper(
-                isA(RequestContext.class), isA(CloudRegion.class), isA(OrchestrationContext.class),
-                isA(ServiceInstance.class), isA(L3Network.class), isA(Map.class), isA(String.class),
-                isA(CreateNetworkResponse.class));
+        doReturn(rollbackNetworkRequest).when(MOCK_networkAdapterObjectMapper)
+                .createNetworkRollbackRequestMapper(isA(RequestContext.class), isA(CloudRegion.class),
+                        isA(OrchestrationContext.class), isA(ServiceInstance.class), isA(L3Network.class),
+                        isA(Map.class), isA(String.class), isA(CreateNetworkResponse.class));
 
         RollbackNetworkResponse actualRollbackCreateNetwrokResponse =
                 (networkAdapterResources.rollbackCreateNetwork(requestContext, cloudRegion, orchestrationContext,
@@ -199,12 +199,13 @@ public class NetworkAdapterResourcesTest extends TestDataSetup {
     @Test
     public void updateNetworkTest() throws UnsupportedEncodingException, NetworkAdapterClientException {
 
-        doReturn(new UpdateNetworkRequest()).when(MOCK_networkAdapterObjectMapper).createNetworkUpdateRequestMapper(
-                isA(RequestContext.class), isA(CloudRegion.class), isA(OrchestrationContext.class),
-                isA(ServiceInstance.class), isA(L3Network.class), isA(Map.class), isA(Customer.class));
+        doReturn(new UpdateNetworkRequest()).when(MOCK_networkAdapterObjectMapper)
+                .createNetworkUpdateRequestMapper(isA(RequestContext.class), isA(CloudRegion.class),
+                        isA(OrchestrationContext.class), isA(ServiceInstance.class), isA(L3Network.class),
+                        isA(Map.class), isA(Customer.class));
 
-        doReturn(new UpdateNetworkResponse()).when(MOCK_networkAdapterClient).updateNetwork(isA(String.class),
-                isA(UpdateNetworkRequest.class));
+        doReturn(new UpdateNetworkResponse()).when(MOCK_networkAdapterClient)
+                .updateNetwork(isA(String.class), isA(UpdateNetworkRequest.class));
 
         Optional<UpdateNetworkResponse> actualUpdateNetworkResponse = networkAdapterResources.updateNetwork(
                 requestContext, cloudRegion, orchestrationContext, serviceInstance, l3Network, userInput, customer);
@@ -220,13 +221,13 @@ public class NetworkAdapterResourcesTest extends TestDataSetup {
     public void deleteNetwork_DeleteAction_Test() throws UnsupportedEncodingException, NetworkAdapterClientException {
 
         DeleteNetworkRequest deleteNetworkRequest = new DeleteNetworkRequest();
-        doReturn(deleteNetworkRequest).when(MOCK_networkAdapterObjectMapper).deleteNetworkRequestMapper(requestContext,
-                cloudRegion, serviceInstance, l3Network);
+        doReturn(deleteNetworkRequest).when(MOCK_networkAdapterObjectMapper)
+                .deleteNetworkRequestMapper(requestContext, cloudRegion, serviceInstance, l3Network);
 
         DeleteNetworkResponse expectedDeleteNetworkResponse = new DeleteNetworkResponse();
 
-        doReturn(expectedDeleteNetworkResponse).when(MOCK_networkAdapterClient).deleteNetwork(l3Network.getNetworkId(),
-                deleteNetworkRequest);
+        doReturn(expectedDeleteNetworkResponse).when(MOCK_networkAdapterClient)
+                .deleteNetwork(l3Network.getNetworkId(), deleteNetworkRequest);
 
         Optional<DeleteNetworkResponse> actualODeleteNetworkResponse =
                 networkAdapterResources.deleteNetwork(requestContext, cloudRegion, serviceInstance, l3Network);

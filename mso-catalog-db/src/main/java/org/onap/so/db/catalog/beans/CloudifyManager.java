@@ -177,8 +177,11 @@ public class CloudifyManager {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("id", getId())
-                .append("cloudifyUrl", getCloudifyUrl()).append("username", getUsername())
-                .append("password", getPassword()).append("version", getVersion()).toString();
+                .append("cloudifyUrl", getCloudifyUrl())
+                .append("username", getUsername())
+                .append("password", getPassword())
+                .append("version", getVersion())
+                .toString();
     }
 
     @Override
@@ -191,13 +194,20 @@ public class CloudifyManager {
         }
         CloudifyManager castOther = (CloudifyManager) other;
         return new EqualsBuilder().append(getId(), castOther.getId())
-                .append(getCloudifyUrl(), castOther.getCloudifyUrl()).append(getUsername(), castOther.getUsername())
-                .append(getPassword(), castOther.getPassword()).append(getVersion(), castOther.getVersion()).isEquals();
+                .append(getCloudifyUrl(), castOther.getCloudifyUrl())
+                .append(getUsername(), castOther.getUsername())
+                .append(getPassword(), castOther.getPassword())
+                .append(getVersion(), castOther.getVersion())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(1, 31).append(getId()).append(getCloudifyUrl()).append(getUsername())
-                .append(getPassword()).append(getVersion()).toHashCode();
+        return new HashCodeBuilder(1, 31).append(getId())
+                .append(getCloudifyUrl())
+                .append(getUsername())
+                .append(getPassword())
+                .append(getVersion())
+                .toHashCode();
     }
 }

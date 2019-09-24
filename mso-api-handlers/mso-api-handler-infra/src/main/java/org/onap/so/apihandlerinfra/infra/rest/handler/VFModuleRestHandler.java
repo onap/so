@@ -80,10 +80,15 @@ public class VFModuleRestHandler extends AbstractRestHandler {
             String requestId, String serviceInstanceId, String vnfId, String vfModuleId)
             throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        return new RequestClientParameter.Builder().setRequestId(requestId).setServiceInstanceId(serviceInstanceId)
-                .setVnfId(vnfId).setVfModuleId(vfModuleId).setALaCarte(true)
+        return new RequestClientParameter.Builder().setRequestId(requestId)
+                .setServiceInstanceId(serviceInstanceId)
+                .setVnfId(vnfId)
+                .setVfModuleId(vfModuleId)
+                .setALaCarte(true)
                 .setRequestDetails(mapper.writeValueAsString(request))
-                .setRequestAction(Action.deleteInstance.toString()).setRequestUri(requestURI).setApiVersion("v8")
+                .setRequestAction(Action.deleteInstance.toString())
+                .setRequestUri(requestURI)
+                .setApiVersion("v8")
                 .build();
     }
 

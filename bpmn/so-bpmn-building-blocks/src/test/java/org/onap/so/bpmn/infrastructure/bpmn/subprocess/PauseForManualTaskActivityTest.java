@@ -61,9 +61,9 @@ public class PauseForManualTaskActivityTest extends BaseBPMNTest {
         assertNotNull(job);
         managementService.executeJob(job.getId());
 
-        assertThat(pi).isStarted().hasPassedInOrder("PauseForManualTaskActivity_Start",
-                "UpdateDbStatusToPendingManualTask", "CreateExternalTicket", "ManualTaskTimer",
-                "UpdateDBStatusToTimeout", "ThrowTimeoutError");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("PauseForManualTaskActivity_Start", "UpdateDbStatusToPendingManualTask",
+                        "CreateExternalTicket", "ManualTaskTimer", "UpdateDBStatusToTimeout", "ThrowTimeoutError");
     }
 
     @Test
@@ -77,9 +77,10 @@ public class PauseForManualTaskActivityTest extends BaseBPMNTest {
         assertNotNull(task);
         taskService.complete(task.getId());
 
-        assertThat(pi).isStarted().hasPassedInOrder("PauseForManualTaskActivity_Start",
-                "UpdateDbStatusToPendingManualTask", "CreateExternalTicket", "ManualUserTask",
-                "UpdateDbStatusToInProgress", "PauseForManualTaskActivity_End");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("PauseForManualTaskActivity_Start", "UpdateDbStatusToPendingManualTask",
+                        "CreateExternalTicket", "ManualUserTask", "UpdateDbStatusToInProgress",
+                        "PauseForManualTaskActivity_End");
         assertThat(pi).isEnded();
     }
 
@@ -88,7 +89,8 @@ public class PauseForManualTaskActivityTest extends BaseBPMNTest {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(manualHandlingTasks)
                 .createExternalTicket((any(BuildingBlockExecution.class)));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("PauseForManualTaskActivity", variables);
-        assertThat(pi).isNotNull().isStarted()
+        assertThat(pi).isNotNull()
+                .isStarted()
                 .hasPassedInOrder("PauseForManualTaskActivity_Start", "UpdateDbStatusToPendingManualTask",
                         "CreateExternalTicket")
                 .hasNotPassed("ManualUserTask", "UpdateDbStatusToInProgress", "PauseForManualTaskActivity_End");

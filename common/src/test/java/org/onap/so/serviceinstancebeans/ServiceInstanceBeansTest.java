@@ -60,9 +60,14 @@ public class ServiceInstanceBeansTest {
     }
 
     private void test(String pojoPackage) {
-        Validator validator = ValidatorBuilder.create().with(new GetterMustExistRule()).with(new SetterMustExistRule())
-                .with(new HasToStringRule()).with(new SetterTester()).with(new GetterTester())
-                .with(new ToStringTester()).build();
+        Validator validator = ValidatorBuilder.create()
+                .with(new GetterMustExistRule())
+                .with(new SetterMustExistRule())
+                .with(new HasToStringRule())
+                .with(new SetterTester())
+                .with(new GetterTester())
+                .with(new ToStringTester())
+                .build();
         validator.validate(pojoPackage, new FilterPackageInfo(), new FilterEnum(), filterTestClasses);
     }
 

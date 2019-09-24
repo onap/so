@@ -110,10 +110,12 @@ public class ApplicationControllerClientV2 {
         Object requestObject = appCSupport.getInput(action.name());
         try {
             CommonHeader commonHeader = buildCommonHeader(requestId);
-            requestObject.getClass().getDeclaredMethod("setCommonHeader", CommonHeader.class).invoke(requestObject,
-                    commonHeader);
+            requestObject.getClass()
+                    .getDeclaredMethod("setCommonHeader", CommonHeader.class)
+                    .invoke(requestObject, commonHeader);
             requestObject.getClass().getDeclaredMethod("setAction", Action.class).invoke(requestObject, action);
-            requestObject.getClass().getDeclaredMethod("setActionIdentifiers", ActionIdentifiers.class)
+            requestObject.getClass()
+                    .getDeclaredMethod("setActionIdentifiers", ActionIdentifiers.class)
                     .invoke(requestObject, identifier);
             if (payload != null) {
                 requestObject.getClass().getDeclaredMethod("setPayload", Payload.class).invoke(requestObject, payload);

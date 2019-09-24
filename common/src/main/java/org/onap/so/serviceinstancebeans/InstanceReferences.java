@@ -149,13 +149,18 @@ public class InstanceReferences {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("serviceInstanceId", serviceInstanceId)
-                .append("serviceInstanceName", serviceInstanceName).append("vnfInstanceId", vnfInstanceId)
-                .append("vnfInstanceName", vnfInstanceName).append("vfModuleInstanceId", vfModuleInstanceId)
+                .append("serviceInstanceName", serviceInstanceName)
+                .append("vnfInstanceId", vnfInstanceId)
+                .append("vnfInstanceName", vnfInstanceName)
+                .append("vfModuleInstanceId", vfModuleInstanceId)
                 .append("vfModuleInstanceName", vfModuleInstanceName)
                 .append("volumeGroupInstanceId", volumeGroupInstanceId)
                 .append("volumeGroupInstanceName", volumeGroupInstanceName)
-                .append("networkInstanceId", networkInstanceId).append("networkInstanceName", networkInstanceName)
-                .append("requestorId", requestorId).append("instanceGroupId", instanceGroupId)
-                .append("instanceGroupName", instanceGroupName).toString();
+                .append("networkInstanceId", networkInstanceId)
+                .append("networkInstanceName", networkInstanceName)
+                .append("requestorId", requestorId)
+                .append("instanceGroupId", instanceGroupId)
+                .append("instanceGroupName", instanceGroupName)
+                .toString();
     }
 }

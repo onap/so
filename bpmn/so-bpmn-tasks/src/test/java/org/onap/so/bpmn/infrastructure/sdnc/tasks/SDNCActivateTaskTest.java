@@ -94,8 +94,9 @@ public class SDNCActivateTaskTest extends BaseTaskTest {
 
     @Test
     public void activateVnfTest() throws Exception {
-        doReturn(new GenericResourceApiVnfOperationInformation()).when(sdncVnfResources).activateVnf(eq(genericVnf),
-                eq(serviceInstance), eq(customer), eq(cloudRegion), eq(requestContext), any(URI.class));
+        doReturn(new GenericResourceApiVnfOperationInformation()).when(sdncVnfResources)
+                .activateVnf(eq(genericVnf), eq(serviceInstance), eq(customer), eq(cloudRegion), eq(requestContext),
+                        any(URI.class));
         sdncActivateTasks.activateVnf(execution);
         verify(sdncVnfResources, times(1)).activateVnf(eq(genericVnf), eq(serviceInstance), eq(customer),
                 eq(cloudRegion), eq(requestContext), any(URI.class));
@@ -106,16 +107,17 @@ public class SDNCActivateTaskTest extends BaseTaskTest {
     @Test
     public void activateVnfTestException() throws Exception {
         expectedException.expect(BpmnError.class);
-        doThrow(RuntimeException.class).when(sdncVnfResources).activateVnf(eq(genericVnf), eq(serviceInstance),
-                eq(customer), eq(cloudRegion), eq(requestContext), any(URI.class));
+        doThrow(RuntimeException.class).when(sdncVnfResources)
+                .activateVnf(eq(genericVnf), eq(serviceInstance), eq(customer), eq(cloudRegion), eq(requestContext),
+                        any(URI.class));
         sdncActivateTasks.activateVnf(execution);
     }
 
     @Test
     public void activateNetworkTest() throws Exception {
-        doReturn(new GenericResourceApiNetworkOperationInformation()).when(sdncNetworkResources).activateNetwork(
-                isA(L3Network.class), isA(ServiceInstance.class), isA(Customer.class), isA(RequestContext.class),
-                isA(CloudRegion.class));
+        doReturn(new GenericResourceApiNetworkOperationInformation()).when(sdncNetworkResources)
+                .activateNetwork(isA(L3Network.class), isA(ServiceInstance.class), isA(Customer.class),
+                        isA(RequestContext.class), isA(CloudRegion.class));
         sdncActivateTasks.activateNetwork(execution);
         verify(sdncNetworkResources, times(1)).activateNetwork(network, serviceInstance, customer, requestContext,
                 cloudRegion);
@@ -126,16 +128,17 @@ public class SDNCActivateTaskTest extends BaseTaskTest {
     @Test
     public void activateNetworkExceptionTest() throws Exception {
         expectedException.expect(BpmnError.class);
-        doThrow(RuntimeException.class).when(sdncNetworkResources).activateNetwork(isA(L3Network.class),
-                isA(ServiceInstance.class), isA(Customer.class), isA(RequestContext.class), isA(CloudRegion.class));
+        doThrow(RuntimeException.class).when(sdncNetworkResources)
+                .activateNetwork(isA(L3Network.class), isA(ServiceInstance.class), isA(Customer.class),
+                        isA(RequestContext.class), isA(CloudRegion.class));
         sdncActivateTasks.activateNetwork(execution);
     }
 
     @Test
     public void activateVfModuleTest() throws Exception {
-        doReturn(new GenericResourceApiVfModuleOperationInformation()).when(sdncVfModuleResources).activateVfModule(
-                eq(vfModule), eq(genericVnf), eq(serviceInstance), eq(customer), eq(cloudRegion), eq(requestContext),
-                any(URI.class));
+        doReturn(new GenericResourceApiVfModuleOperationInformation()).when(sdncVfModuleResources)
+                .activateVfModule(eq(vfModule), eq(genericVnf), eq(serviceInstance), eq(customer), eq(cloudRegion),
+                        eq(requestContext), any(URI.class));
         sdncActivateTasks.activateVfModule(execution);
         verify(sdncVfModuleResources, times(1)).activateVfModule(eq(vfModule), eq(genericVnf), eq(serviceInstance),
                 eq(customer), eq(cloudRegion), eq(requestContext), any(URI.class));
@@ -146,8 +149,9 @@ public class SDNCActivateTaskTest extends BaseTaskTest {
     @Test
     public void activateVfModuleTestException() throws Exception {
         expectedException.expect(BpmnError.class);
-        doThrow(RuntimeException.class).when(sdncVfModuleResources).activateVfModule(eq(vfModule), eq(genericVnf),
-                eq(serviceInstance), eq(customer), eq(cloudRegion), eq(requestContext), any(URI.class));
+        doThrow(RuntimeException.class).when(sdncVfModuleResources)
+                .activateVfModule(eq(vfModule), eq(genericVnf), eq(serviceInstance), eq(customer), eq(cloudRegion),
+                        eq(requestContext), any(URI.class));
         sdncActivateTasks.activateVfModule(execution);
     }
 }

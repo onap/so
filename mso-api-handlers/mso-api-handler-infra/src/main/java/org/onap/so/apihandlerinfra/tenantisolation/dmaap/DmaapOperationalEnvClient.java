@@ -46,8 +46,10 @@ public class DmaapOperationalEnvClient {
         final CreateEcompOperationEnvironmentBean operationalEnv = new CreateEcompOperationEnvironmentBean();
         operationalEnv.withOperationalEnvironmentId(operationalEnvironmentId)
                 .withOperationalEnvironmentName(operationalEnvironmentName)
-                .withOperationalEnvironmentType(operationalEnvironmentType).withTenantContext(tenantContext)
-                .withWorkloadContext(workloadContext).withaction(action);
+                .withOperationalEnvironmentType(operationalEnvironmentType)
+                .withTenantContext(tenantContext)
+                .withWorkloadContext(workloadContext)
+                .withaction(action);
         try {
             return this.getJson(operationalEnv);
         } catch (JsonProcessingException ex) {
@@ -57,7 +59,8 @@ public class DmaapOperationalEnvClient {
             ValidateException validateException =
                     new ValidateException.Builder("Mapping of request to JSON object failed : " + ex.getMessage(),
                             HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(ex)
-                                    .errorInfo(errorLoggerInfo).build();
+                                    .errorInfo(errorLoggerInfo)
+                                    .build();
 
             throw validateException;
         }

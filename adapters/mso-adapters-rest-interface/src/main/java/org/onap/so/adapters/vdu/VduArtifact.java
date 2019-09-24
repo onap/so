@@ -53,8 +53,10 @@ public class VduArtifact {
             return false;
         }
         VduArtifact castOther = (VduArtifact) other;
-        return new EqualsBuilder().append(name, castOther.name).append(content, castOther.content)
-                .append(type, castOther.type).isEquals();
+        return new EqualsBuilder().append(name, castOther.name)
+                .append(content, castOther.content)
+                .append(type, castOther.type)
+                .isEquals();
     }
 
     @Override

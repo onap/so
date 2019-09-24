@@ -89,8 +89,9 @@ public class AuditVServer extends AbstractAudit {
 
         });
         AAIObjectAuditList auditList = new AAIObjectAuditList();
-        vServersToAudit.stream().forEach(vServer -> auditList.getAuditList()
-                .addAll(doesVServerExistInAAI(vServer, tenantId, cloudOwner, cloudRegion).getAuditList()));
+        vServersToAudit.stream()
+                .forEach(vServer -> auditList.getAuditList()
+                        .addAll(doesVServerExistInAAI(vServer, tenantId, cloudOwner, cloudRegion).getAuditList()));
         return Optional.of(auditList);
     }
 
@@ -110,9 +111,12 @@ public class AuditVServer extends AbstractAudit {
         vServerAudit.setAaiObjectType(AAIObjectType.VSERVER.typeName());
         auditList.getAuditList().add(vServerAudit);
         if (vServer.getLInterfaces() != null) {
-            vServer.getLInterfaces().getLInterface().stream().forEach(lInterface -> auditList.getAuditList().addAll(
-                    doesLinterfaceExistinAAI(lInterface, vServer.getVserverId(), tenantId, cloudOwner, cloudRegion)
-                            .getAuditList()));
+            vServer.getLInterfaces()
+                    .getLInterface()
+                    .stream()
+                    .forEach(lInterface -> auditList.getAuditList()
+                            .addAll(doesLinterfaceExistinAAI(lInterface, vServer.getVserverId(), tenantId, cloudOwner,
+                                    cloudRegion).getAuditList()));
         }
         return auditList;
     }
@@ -136,9 +140,12 @@ public class AuditVServer extends AbstractAudit {
                 lInterface.getInterfaceName(), lInterfaceAudit.isDoesObjectExist());
 
         if (lInterface.getLInterfaces() != null) {
-            lInterface.getLInterfaces().getLInterface().stream()
-                    .forEach(subInterface -> auditList.getAuditList().add(doesSubInterfaceExistinAAI(subInterface,
-                            lInterface.getInterfaceName(), vServerId, tenantId, cloudOwner, cloudRegion)));
+            lInterface.getLInterfaces()
+                    .getLInterface()
+                    .stream()
+                    .forEach(subInterface -> auditList.getAuditList()
+                            .add(doesSubInterfaceExistinAAI(subInterface, lInterface.getInterfaceName(), vServerId,
+                                    tenantId, cloudOwner, cloudRegion)));
         }
         logger.debug("l-interface {} does not contain any sub-iterfaces, skipping audit of sub-interfaces",
                 lInterface.getInterfaceId());

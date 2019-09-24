@@ -67,8 +67,11 @@ public class CDSProcessingClientTest {
     @Before
     public void setUp() throws Exception {
         String serverName = InProcessServerBuilder.generateName();
-        grpcCleanup.register(InProcessServerBuilder.forName(serverName).fallbackHandlerRegistry(serviceRegistry)
-                .directExecutor().build().start());
+        grpcCleanup.register(InProcessServerBuilder.forName(serverName)
+                .fallbackHandlerRegistry(serviceRegistry)
+                .directExecutor()
+                .build()
+                .start());
 
         handler = new CDSProcessingHandler(listener);
 
@@ -120,7 +123,8 @@ public class CDSProcessingClientTest {
     public void testSendMessageFail() throws Exception {
 
         ExecutionServiceInput fakeRequest1 = ExecutionServiceInput.newBuilder()
-                .setActionIdentifiers(ActionIdentifiers.newBuilder().setActionName("request1").build()).build();
+                .setActionIdentifiers(ActionIdentifiers.newBuilder().setActionName("request1").build())
+                .build();
 
         CountDownLatch finishLatch = client.sendRequest(fakeRequest1);
 
@@ -134,13 +138,16 @@ public class CDSProcessingClientTest {
     public void testSendMessage() throws Exception {
 
         ExecutionServiceInput fakeRequest1 = ExecutionServiceInput.newBuilder()
-                .setActionIdentifiers(ActionIdentifiers.newBuilder().setActionName("request1").build()).build();
+                .setActionIdentifiers(ActionIdentifiers.newBuilder().setActionName("request1").build())
+                .build();
 
         ExecutionServiceOutput fakeResponse1 = ExecutionServiceOutput.newBuilder()
-                .setActionIdentifiers(ActionIdentifiers.newBuilder().setActionName("response1").build()).build();
+                .setActionIdentifiers(ActionIdentifiers.newBuilder().setActionName("response1").build())
+                .build();
 
         ExecutionServiceOutput fakeResponse2 = ExecutionServiceOutput.newBuilder()
-                .setActionIdentifiers(ActionIdentifiers.newBuilder().setActionName("response2").build()).build();
+                .setActionIdentifiers(ActionIdentifiers.newBuilder().setActionName("response2").build())
+                .build();
 
         CountDownLatch finishLatch = client.sendRequest(fakeRequest1);
 

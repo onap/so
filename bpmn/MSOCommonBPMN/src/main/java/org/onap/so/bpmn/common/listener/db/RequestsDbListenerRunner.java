@@ -47,7 +47,8 @@ public class RequestsDbListenerRunner extends ListenerRunner {
 
         postListeners =
                 new ArrayList<>(Optional.ofNullable(context.getBeansOfType(PostCompletionRequestsDbListener.class))
-                        .orElse(new HashMap<>()).values());
+                        .orElse(new HashMap<>())
+                        .values());
 
     }
 

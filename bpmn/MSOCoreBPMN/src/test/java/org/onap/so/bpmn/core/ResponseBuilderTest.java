@@ -53,7 +53,8 @@ public class ResponseBuilderTest {
         mockExecution = mock(DelegateExecution.class);
         when(mockExecution.getId()).thenReturn(definitionId);
         when(mockExecution.getProcessEngineServices()).thenReturn(mockProcessEngineServices);
-        when(mockExecution.getProcessEngineServices().getRepositoryService()
+        when(mockExecution.getProcessEngineServices()
+                .getRepositoryService()
                 .getProcessDefinition(mockExecution.getProcessDefinitionId())).thenReturn(mockProcessDefinition);
         when(mockExecution.getVariable("prefix")).thenReturn(prefix);
         when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true");

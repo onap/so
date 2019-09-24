@@ -119,7 +119,8 @@ public class MsoVnfPluginAdapterImplTest extends BaseRestTestUtils {
         mockOpenStackGetStackVfModule_404(wireMockServer);
         wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/volumeGroupHeatStackId"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBodyFile("OpenstackResponse_Stack_Created_VfModule.json").withStatus(HttpStatus.SC_OK)));
+                        .withBodyFile("OpenstackResponse_Stack_Created_VfModule.json")
+                        .withStatus(HttpStatus.SC_OK)));
         MsoRequest msoRequest = getMsoRequest();
         Map<String, Object> map = new HashMap<>();
         map.put("key1", "value1");
@@ -144,7 +145,8 @@ public class MsoVnfPluginAdapterImplTest extends BaseRestTestUtils {
         mockOpenStackGetStackVfModule_200(wireMockServer);
         wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/vSAMP12"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBodyFile("OpenstackResponse_Stack_Created_VfModule.json").withStatus(HttpStatus.SC_OK)));
+                        .withBodyFile("OpenstackResponse_Stack_Created_VfModule.json")
+                        .withStatus(HttpStatus.SC_OK)));
         wireMockServer.stubFor(delete(
                 urlPathEqualTo("/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/stackId"))
                         .willReturn(aResponse().withHeader("Content-Type", "application/json")

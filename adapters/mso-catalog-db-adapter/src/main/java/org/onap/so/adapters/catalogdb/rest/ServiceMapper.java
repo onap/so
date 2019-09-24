@@ -104,7 +104,8 @@ public class ServiceMapper {
 
     private List<VfModule> mapVfModules(VnfResourceCustomization vnfResourceCustomization, int depth) {
         List<VfModule> vfModules = new ArrayList<>();
-        vnfResourceCustomization.getVfModuleCustomizations().parallelStream()
+        vnfResourceCustomization.getVfModuleCustomizations()
+                .parallelStream()
                 .forEach(vfModule -> vfModules.add(mapVfModule(vfModule, depth)));
         return vfModules;
     }
@@ -133,7 +134,8 @@ public class ServiceMapper {
 
     private List<Cvnfc> mapCvnfcs(VfModuleCustomization vfModuleCustomization) {
         List<Cvnfc> cvnfcs = new ArrayList<>();
-        vfModuleCustomization.getCvnfcCustomization().parallelStream()
+        vfModuleCustomization.getCvnfcCustomization()
+                .parallelStream()
                 .forEach(cvnfcCust -> cvnfcs.add(mapCvnfcCus(cvnfcCust)));
         return cvnfcs;
     }

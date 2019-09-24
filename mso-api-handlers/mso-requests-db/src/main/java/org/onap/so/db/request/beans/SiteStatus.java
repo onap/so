@@ -96,7 +96,9 @@ public class SiteStatus {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("status", getStatus()).append("siteName", getSiteName())
-                .append("created", getCreated()).toString();
+        return new ToStringBuilder(this).append("status", getStatus())
+                .append("siteName", getSiteName())
+                .append("created", getCreated())
+                .toString();
     }
 }

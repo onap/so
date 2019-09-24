@@ -119,13 +119,20 @@ public class CvnfcCustomization implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("id", id).append("modelCustomizationUUID", modelCustomizationUUID)
-                .append("modelInstanceName", modelInstanceName).append("modelUUID", modelUUID)
-                .append("modelInvariantUUID", modelInvariantUUID).append("modelVersion", modelVersion)
-                .append("modelName", modelName).append("toscaNodeType", toscaNodeType)
-                .append("description", description).append("nfcFunction", nfcFunction)
-                .append("nfcNamingCode", nfcNamingCode).append("created", created)
-                .append("vnfVfmoduleCvnfcConfigurationCustomization", cvnfcConfigurationCustomization).toString();
+        return new ToStringBuilder(this).append("id", id)
+                .append("modelCustomizationUUID", modelCustomizationUUID)
+                .append("modelInstanceName", modelInstanceName)
+                .append("modelUUID", modelUUID)
+                .append("modelInvariantUUID", modelInvariantUUID)
+                .append("modelVersion", modelVersion)
+                .append("modelName", modelName)
+                .append("toscaNodeType", toscaNodeType)
+                .append("description", description)
+                .append("nfcFunction", nfcFunction)
+                .append("nfcNamingCode", nfcNamingCode)
+                .append("created", created)
+                .append("vnfVfmoduleCvnfcConfigurationCustomization", cvnfcConfigurationCustomization)
+                .toString();
     }
 
     @LinkedResource

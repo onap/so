@@ -267,8 +267,9 @@ public class AAICreateTasks {
                     logger.debug("PlatformName is null in input. Skipping create platform...");
                 } else {
                     List<String> platforms = splitCDL(platform.getPlatformName());
-                    platforms.stream().forEach(platformName -> aaiVnfResources
-                            .createPlatformandConnectVnf(new Platform(platformName), vnf));
+                    platforms.stream()
+                            .forEach(platformName -> aaiVnfResources
+                                    .createPlatformandConnectVnf(new Platform(platformName), vnf));
                 }
             }
         } catch (Exception ex) {
@@ -303,8 +304,9 @@ public class AAICreateTasks {
                     logger.info("lineOfBusiness is null in input. Skipping create lineOfBusiness...");
                 } else {
                     List<String> lineOfBussinesses = splitCDL(lineOfBusiness.getLineOfBusinessName());
-                    lineOfBussinesses.stream().forEach(lobName -> aaiVnfResources
-                            .createLineOfBusinessandConnectVnf(new LineOfBusiness(lobName), vnf));
+                    lineOfBussinesses.stream()
+                            .forEach(lobName -> aaiVnfResources
+                                    .createLineOfBusinessandConnectVnf(new LineOfBusiness(lobName), vnf));
                 }
             }
         } catch (Exception ex) {
@@ -649,7 +651,8 @@ public class AAICreateTasks {
 
 
         if (genericVnf != null && genericVnf.getVfModules() != null && !genericVnf.getVfModules().isEmpty()) {
-            List<VfModule> modules = genericVnf.getVfModules().stream()
+            List<VfModule> modules = genericVnf.getVfModules()
+                    .stream()
                     .filter(item -> !item.getVfModuleId().equals(newVfModule.getVfModuleId()))
                     .collect(Collectors.toList());
             TreeSet<Integer> moduleIndices = new TreeSet<>();

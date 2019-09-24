@@ -202,14 +202,22 @@ public class NotificationDataImpl implements INotificationData {
         }
         NotificationDataImpl castOther = (NotificationDataImpl) other;
         return new EqualsBuilder().append(serviceUUID, castOther.serviceUUID)
-                .append(serviceVersion, castOther.serviceVersion).isEquals();
+                .append(serviceVersion, castOther.serviceVersion)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(distributionID).append(serviceName).append(serviceVersion)
-                .append(serviceUUID).append(serviceDescription).append(serviceInvariantUUID).append(resources)
-                .append(serviceArtifacts).append(workloadContext).toHashCode();
+        return new HashCodeBuilder().append(distributionID)
+                .append(serviceName)
+                .append(serviceVersion)
+                .append(serviceUUID)
+                .append(serviceDescription)
+                .append(serviceInvariantUUID)
+                .append(resources)
+                .append(serviceArtifacts)
+                .append(workloadContext)
+                .toHashCode();
     }
 
 }

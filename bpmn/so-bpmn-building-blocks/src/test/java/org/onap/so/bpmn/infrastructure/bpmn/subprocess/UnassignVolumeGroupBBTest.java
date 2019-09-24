@@ -34,8 +34,8 @@ public class UnassignVolumeGroupBBTest extends BaseBPMNTest {
     public void sunnyDayUnassignVolumeGroup_Test() throws InterruptedException {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignVolumeGroupBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("UnassignVolumeGroupBB_Start", "UnassignVolumeGroup",
-                "UnassignVolumeGroupBB_End");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("UnassignVolumeGroupBB_Start", "UnassignVolumeGroup", "UnassignVolumeGroupBB_End");
         assertThat(pi).isEnded();
     }
 
@@ -45,7 +45,8 @@ public class UnassignVolumeGroupBBTest extends BaseBPMNTest {
                 .deleteVolumeGroup(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignVolumeGroupBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("UnassignVolumeGroupBB_Start", "UnassignVolumeGroup")
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("UnassignVolumeGroupBB_Start", "UnassignVolumeGroup")
                 .hasNotPassed("UnassignVolumeGroupBB_End");
         assertThat(pi).isEnded();
     }

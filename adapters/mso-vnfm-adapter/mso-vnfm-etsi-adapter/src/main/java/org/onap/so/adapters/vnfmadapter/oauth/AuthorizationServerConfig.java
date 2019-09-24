@@ -47,8 +47,12 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     public void configure(final ClientDetailsServiceConfigurer clients) throws Exception {
         final String[] decrypedAuth = CryptoUtils.decrypt(vnfmAdapterAuth, msoEncryptionKey).split(":");
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        clients.inMemory().withClient(decrypedAuth[0]).secret(passwordEncoder.encode(decrypedAuth[1]))
-                .authorizedGrantTypes("client_credentials").scopes("write").accessTokenValiditySeconds(ONE_DAY)
+        clients.inMemory()
+                .withClient(decrypedAuth[0])
+                .secret(passwordEncoder.encode(decrypedAuth[1]))
+                .authorizedGrantTypes("client_credentials")
+                .scopes("write")
+                .accessTokenValiditySeconds(ONE_DAY)
                 .refreshTokenValiditySeconds(ONE_DAY);
     }
 

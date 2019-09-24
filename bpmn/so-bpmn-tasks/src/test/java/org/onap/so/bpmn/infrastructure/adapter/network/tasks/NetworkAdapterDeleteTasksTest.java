@@ -74,8 +74,8 @@ public class NetworkAdapterDeleteTasksTest extends BaseTaskTest {
     @Test
     public void test_deleteNetwork() throws UnsupportedEncodingException, NetworkAdapterClientException {
         DeleteNetworkRequest deleteNetworkRequest = new DeleteNetworkRequest();
-        doReturn(deleteNetworkRequest).when(networkAdapterObjectMapper).deleteNetworkRequestMapper(requestContext,
-                cloudRegion, serviceInstance, l3Network);
+        doReturn(deleteNetworkRequest).when(networkAdapterObjectMapper)
+                .deleteNetworkRequestMapper(requestContext, cloudRegion, serviceInstance, l3Network);
 
         networkAdapterDeleteTasks.deleteNetwork(execution);
         verify(networkAdapterObjectMapper, times(1)).deleteNetworkRequestMapper(requestContext, cloudRegion,
@@ -86,8 +86,9 @@ public class NetworkAdapterDeleteTasksTest extends BaseTaskTest {
     public void test_deleteNetwork_exception() throws UnsupportedEncodingException, NetworkAdapterClientException {
         expectedException.expect(BpmnError.class);
 
-        doThrow(RuntimeException.class).when(networkAdapterObjectMapper).deleteNetworkRequestMapper(
-                any(RequestContext.class), any(CloudRegion.class), any(ServiceInstance.class), eq(l3Network));
+        doThrow(RuntimeException.class).when(networkAdapterObjectMapper)
+                .deleteNetworkRequestMapper(any(RequestContext.class), any(CloudRegion.class),
+                        any(ServiceInstance.class), eq(l3Network));
         networkAdapterDeleteTasks.deleteNetwork(execution);
     }
 }

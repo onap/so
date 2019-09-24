@@ -143,8 +143,10 @@ public class JobManager {
             final boolean notificationProcessingWasSuccessful) {
         logger.debug("Notification processed for operation ID {} success?: {}", operationId,
                 notificationProcessingWasSuccessful);
-        final java.util.Optional<VnfmOperation> relatedOperation = mapOfJobIdToVnfmOperation.values().stream()
-                .filter(operation -> operation.getOperationId().equals(operationId)).findFirst();
+        final java.util.Optional<VnfmOperation> relatedOperation = mapOfJobIdToVnfmOperation.values()
+                .stream()
+                .filter(operation -> operation.getOperationId().equals(operationId))
+                .findFirst();
         if (relatedOperation.isPresent()) {
             relatedOperation.get().setNotificationProcessed(notificationProcessingWasSuccessful);
         } else {
@@ -155,8 +157,10 @@ public class JobManager {
 
     public void vnfDeleted(final String operationId) {
         logger.debug("VNF deleyed for operation ID {}", operationId);
-        final java.util.Optional<VnfmOperation> relatedOperation = mapOfJobIdToVnfmOperation.values().stream()
-                .filter(operation -> operation.getOperationId().equals(operationId)).findFirst();
+        final java.util.Optional<VnfmOperation> relatedOperation = mapOfJobIdToVnfmOperation.values()
+                .stream()
+                .filter(operation -> operation.getOperationId().equals(operationId))
+                .findFirst();
         if (relatedOperation.isPresent()) {
             relatedOperation.get().setVnfDeleted();
         } else {

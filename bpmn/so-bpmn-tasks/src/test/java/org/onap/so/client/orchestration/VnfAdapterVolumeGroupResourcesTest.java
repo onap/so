@@ -94,9 +94,9 @@ public class VnfAdapterVolumeGroupResourcesTest extends TestDataSetup {
 
         String sdncVfModuleQueryResponse = "sdncVfModuleQueryResponse";
 
-        doReturn(createVolumeGroupRequest).when(MOCK_vnfAdapterObjectMapper).createVolumeGroupRequestMapper(
-                requestContext, cloudRegion, orchestrationContext, serviceInstance, genericVnf, volumeGroup,
-                sdncVfModuleQueryResponse);
+        doReturn(createVolumeGroupRequest).when(MOCK_vnfAdapterObjectMapper)
+                .createVolumeGroupRequestMapper(requestContext, cloudRegion, orchestrationContext, serviceInstance,
+                        genericVnf, volumeGroup, sdncVfModuleQueryResponse);
 
         CreateVolumeGroupRequest actualCreateVolumeGroupResponse =
                 vnfAdapterVolumeGroupResources.createVolumeGroupRequest(requestContext, cloudRegion,

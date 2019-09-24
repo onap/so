@@ -144,18 +144,29 @@ public class Service implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("modelName", modelName).append("description", description)
-                .append("modelUUID", modelUUID).append("modelInvariantUUID", modelInvariantUUID)
-                .append("created", created).append("modelVersion", modelVersion).append("serviceType", serviceType)
-                .append("serviceRole", serviceRole).append("environmentContext", environmentContext)
-                .append("workloadContext", workloadContext).append("category", category)
-                .append("networkCustomizations", networkCustomizations).append("vnfCustomizations", vnfCustomizations)
+        return new ToStringBuilder(this).append("modelName", modelName)
+                .append("description", description)
+                .append("modelUUID", modelUUID)
+                .append("modelInvariantUUID", modelInvariantUUID)
+                .append("created", created)
+                .append("modelVersion", modelVersion)
+                .append("serviceType", serviceType)
+                .append("serviceRole", serviceRole)
+                .append("environmentContext", environmentContext)
+                .append("workloadContext", workloadContext)
+                .append("category", category)
+                .append("networkCustomizations", networkCustomizations)
+                .append("vnfCustomizations", vnfCustomizations)
                 .append("allottedCustomizations", allottedCustomizations)
                 .append("collectionResourceCustomizations", collectionResourceCustomizations)
                 .append("serviceProxyCustomizations", serviceProxyCustomizations)
                 .append("configurationCustomizations", configurationCustomizations)
-                .append("pnfCustomizations", pnfCustomizations).append("recipes", recipes).append("csar", csar)
-                .append("namingPolicy", namingPolicy).append("onapGeneratedNaming", onapGeneratedNaming).toString();
+                .append("pnfCustomizations", pnfCustomizations)
+                .append("recipes", recipes)
+                .append("csar", csar)
+                .append("namingPolicy", namingPolicy)
+                .append("onapGeneratedNaming", onapGeneratedNaming)
+                .toString();
     }
 
     @PrePersist

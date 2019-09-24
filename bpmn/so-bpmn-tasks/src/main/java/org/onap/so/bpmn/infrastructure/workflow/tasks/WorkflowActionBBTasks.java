@@ -173,10 +173,12 @@ public class WorkflowActionBBTasks {
         callbackResponse.setStatusCode(200);
         callbackResponse.setMessage("Success");
         callbackResponse.setResponse(jsonRequest);
-        String processKey = execution.getProcessEngineServices().getRepositoryService()
-                .getProcessDefinition(execution.getProcessDefinitionId()).getKey();
-        WorkflowContextHolder.getInstance().processCallback(processKey, execution.getProcessInstanceId(), requestId,
-                callbackResponse);
+        String processKey = execution.getProcessEngineServices()
+                .getRepositoryService()
+                .getProcessDefinition(execution.getProcessDefinitionId())
+                .getKey();
+        WorkflowContextHolder.getInstance()
+                .processCallback(processKey, execution.getProcessInstanceId(), requestId, callbackResponse);
         logger.info("Successfully sent sync ack.");
         updateInstanceId(execution);
     }
@@ -198,8 +200,8 @@ public class WorkflowActionBBTasks {
             callbackResponse.setStatusCode(500);
             callbackResponse.setMessage("Fail");
             callbackResponse.setResponse(buildworkflowException);
-            WorkflowContextHolder.getInstance().processCallback(processKey, execution.getProcessInstanceId(), requestId,
-                    callbackResponse);
+            WorkflowContextHolder.getInstance()
+                    .processCallback(processKey, execution.getProcessInstanceId(), requestId, callbackResponse);
             execution.setVariable("sentSyncResponse", true);
         } catch (Exception ex) {
             logger.error(" Sending Sync Error Activity Failed. {}", ex.getMessage(), ex);

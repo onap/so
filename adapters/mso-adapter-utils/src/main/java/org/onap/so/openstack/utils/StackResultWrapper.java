@@ -33,9 +33,12 @@ public class StackResultWrapper {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("stack", stack).append("stackTimedOutPolling", stackTimedOutPolling)
-                .append("stackNotFound", stackNotFound).append("errorMessage", errorMessage)
-                .append("errorCode", errorCode).toString();
+        return new ToStringBuilder(this).append("stack", stack)
+                .append("stackTimedOutPolling", stackTimedOutPolling)
+                .append("stackNotFound", stackNotFound)
+                .append("errorMessage", errorMessage)
+                .append("errorCode", errorCode)
+                .toString();
     }
 
     public Stack getStack() {

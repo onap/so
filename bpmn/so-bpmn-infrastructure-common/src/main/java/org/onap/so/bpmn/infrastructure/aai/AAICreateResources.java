@@ -49,8 +49,8 @@ public class AAICreateResources extends AAIResource {
                 AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstance);
         Map<String, String> hashMap = new HashMap<>();
         hashMap.put("owning-entity-name", owningEntityName);
-        getAaiClient().createIfNotExists(owningEntityURI, Optional.of(hashMap)).connect(owningEntityURI,
-                serviceInstanceURI);
+        getAaiClient().createIfNotExists(owningEntityURI, Optional.of(hashMap))
+                .connect(owningEntityURI, serviceInstanceURI);
     }
 
     public boolean existsOwningEntity(String owningEntityId) {

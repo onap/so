@@ -156,7 +156,9 @@ public class WorkflowAsyncResource extends ProcessEngineAwareService {
 
     protected boolean isProcessEnded(String processInstanceId) {
         ProcessEngineServices pes = getProcessEngineServices();
-        return pes.getRuntimeService().createProcessInstanceQuery().processInstanceId(processInstanceId)
+        return pes.getRuntimeService()
+                .createProcessInstanceQuery()
+                .processInstanceId(processInstanceId)
                 .singleResult() == null;
     }
 

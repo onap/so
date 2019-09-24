@@ -109,13 +109,17 @@ public class VnfAdapterRest {
         logger.debug("Delete VfModule enter: " + req.toJsonString());
         if (aaiVnfId == null || !aaiVnfId.equals(req.getVnfId())) {
             logger.debug("Req rejected - aaiVnfId not provided or doesn't match URL");
-            return Response.status(HttpStatus.SC_BAD_REQUEST).type(MediaType.TEXT_PLAIN)
-                    .entity("vnfid in URL does not match content").build();
+            return Response.status(HttpStatus.SC_BAD_REQUEST)
+                    .type(MediaType.TEXT_PLAIN)
+                    .entity("vnfid in URL does not match content")
+                    .build();
         }
         if (aaiVfModuleId == null || !aaiVfModuleId.equals(req.getVfModuleId())) {
             logger.debug("Req rejected - aaiVfModuleId not provided or doesn't match URL");
-            return Response.status(HttpStatus.SC_BAD_REQUEST).type(MediaType.TEXT_PLAIN)
-                    .entity("vfModuleId in URL does not match content").build();
+            return Response.status(HttpStatus.SC_BAD_REQUEST)
+                    .type(MediaType.TEXT_PLAIN)
+                    .entity("vfModuleId in URL does not match content")
+                    .build();
         }
         DeleteVfModuleTask task = new DeleteVfModuleTask(req);
         if (req.isSynchronous()) {
@@ -247,7 +251,8 @@ public class VnfAdapterRest {
             VfModuleExceptionResponse excResp =
                     new VfModuleExceptionResponse(e.getMessage(), MsoExceptionCategory.INTERNAL, Boolean.FALSE, null);
             return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-                    .entity(new GenericEntity<VfModuleExceptionResponse>(excResp) {}).build();
+                    .entity(new GenericEntity<VfModuleExceptionResponse>(excResp) {})
+                    .build();
         }
     }
 
@@ -274,8 +279,10 @@ public class VnfAdapterRest {
         logger.debug("Create VfModule enter inside VnfAdapterRest: " + req.toJsonString());
         if (aaiVnfId == null || !aaiVnfId.equals(req.getVnfId())) {
             logger.debug("Req rejected - aaiVnfId not provided or doesn't match URL");
-            return Response.status(HttpStatus.SC_BAD_REQUEST).type(MediaType.TEXT_PLAIN)
-                    .entity("vnfid in URL does not match content").build();
+            return Response.status(HttpStatus.SC_BAD_REQUEST)
+                    .type(MediaType.TEXT_PLAIN)
+                    .entity("vnfid in URL does not match content")
+                    .build();
         }
         CreateVfModuleTask task = new CreateVfModuleTask(req);
         if (req.isSynchronous()) {

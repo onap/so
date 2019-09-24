@@ -81,9 +81,9 @@ public class DmaapPropertiesClientTest extends BaseTest {
         AVPNDmaapBean mockedDmaapBean = Mockito.mock(AVPNDmaapBean.class);
         String request = "test";
 
-        doReturn(mockedDmaapBean).when(client).buildRequestJson(requestId, clientSource, correlator, serviceInstanceId,
-                startTime, finishTime, requestScope, requestType, timestamp, requestState, statusMessage,
-                percentProgress, false);
+        doReturn(mockedDmaapBean).when(client)
+                .buildRequestJson(requestId, clientSource, correlator, serviceInstanceId, startTime, finishTime,
+                        requestScope, requestType, timestamp, requestState, statusMessage, percentProgress, false);
 
         AVPNDmaapBean actualDmaapBean =
                 client.buildRequestJson(requestId, clientSource, correlator, serviceInstanceId, startTime, finishTime,

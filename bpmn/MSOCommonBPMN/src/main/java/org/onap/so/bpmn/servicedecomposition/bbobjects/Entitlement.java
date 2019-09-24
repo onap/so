@@ -62,7 +62,8 @@ public class Entitlement implements Serializable, ShallowCopy<Entitlement> {
             return false;
         }
         Entitlement castOther = (Entitlement) other;
-        return new EqualsBuilder().append(groupUuid, castOther.groupUuid).append(resourceUuid, castOther.resourceUuid)
+        return new EqualsBuilder().append(groupUuid, castOther.groupUuid)
+                .append(resourceUuid, castOther.resourceUuid)
                 .isEquals();
     }
 

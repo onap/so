@@ -48,19 +48,22 @@ public class ActivateVfModuleBBTest extends BaseBPMNTest {
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("ActivateVfModuleBB", variables);
         List<LockedExternalTask> tasks = externalTaskService.fetchAndLock(100, "externalWorkerId")
-                .topic("InventoryAddAudit", 60L * 1000L).execute();
+                .topic("InventoryAddAudit", 60L * 1000L)
+                .execute();
         while (!tasks.isEmpty()) {
             for (LockedExternalTask task : tasks) {
                 externalTaskService.complete(task.getId(), "externalWorkerId");
             }
-            tasks = externalTaskService.fetchAndLock(100, "externalWorkerId").topic("InventoryAddAudit", 60L * 1000L)
+            tasks = externalTaskService.fetchAndLock(100, "externalWorkerId")
+                    .topic("InventoryAddAudit", 60L * 1000L)
                     .execute();
         }
 
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("ActivateVfModuleBB_Start", "ExclusiveGateway_1v8bmbu",
-                "Setup_AAI_Inventory_Audit", "Audit_AAI_Inventory", "ActivateVfModule", "CallActivity_sdncHandler",
-                "UpdateVfModuleActiveStatus", "ActivateVfModuleBB_End");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("ActivateVfModuleBB_Start", "ExclusiveGateway_1v8bmbu", "Setup_AAI_Inventory_Audit",
+                        "Audit_AAI_Inventory", "ActivateVfModule", "CallActivity_sdncHandler",
+                        "UpdateVfModuleActiveStatus", "ActivateVfModuleBB_End");
         assertThat(pi).isEnded();
     }
 
@@ -71,16 +74,19 @@ public class ActivateVfModuleBBTest extends BaseBPMNTest {
                 .updateOrchestrationStatusActivateVfModule(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("ActivateVfModuleBB", variables);
         List<LockedExternalTask> tasks = externalTaskService.fetchAndLock(100, "externalWorkerId")
-                .topic("InventoryAddAudit", 60L * 1000L).execute();
+                .topic("InventoryAddAudit", 60L * 1000L)
+                .execute();
         while (!tasks.isEmpty()) {
             for (LockedExternalTask task : tasks) {
                 externalTaskService.complete(task.getId(), "externalWorkerId");
             }
-            tasks = externalTaskService.fetchAndLock(100, "externalWorkerId").topic("InventoryAddAudit", 60L * 1000L)
+            tasks = externalTaskService.fetchAndLock(100, "externalWorkerId")
+                    .topic("InventoryAddAudit", 60L * 1000L)
                     .execute();
         }
 
-        assertThat(pi).isNotNull().isStarted()
+        assertThat(pi).isNotNull()
+                .isStarted()
                 .hasPassedInOrder("ActivateVfModuleBB_Start", "ExclusiveGateway_1v8bmbu", "Setup_AAI_Inventory_Audit",
                         "Audit_AAI_Inventory", "ActivateVfModule", "UpdateVfModuleActiveStatus")
                 .hasNotPassed("ActivateVfModuleBB_End");

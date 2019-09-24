@@ -67,8 +67,11 @@ public class AAICreateResources {
     protected OwningEntities getOwningEntityName(String owningEntityName) {
 
         AAIResourcesClient aaiRC = new AAIResourcesClient();
-        return aaiRC.get(OwningEntities.class, AAIUriFactory.createResourceUri(AAIObjectPlurals.OWNING_ENTITY)
-                .queryParam("owning-entity-name", owningEntityName)).orElseGet(() -> {
+        return aaiRC
+                .get(OwningEntities.class,
+                        AAIUriFactory.createResourceUri(AAIObjectPlurals.OWNING_ENTITY)
+                                .queryParam("owning-entity-name", owningEntityName))
+                .orElseGet(() -> {
                     logger.debug("No Owning Entity matched by name");
                     return null;
                 });

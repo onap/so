@@ -60,9 +60,16 @@ public class ClientEntityPojoTest {
     }
 
     private void test(PojoClass pojoClass) {
-        Validator validator = ValidatorBuilder.create().with(new GetterMustExistRule()).with(new SetterMustExistRule())
-                .with(new NoNestedClassRule()).with(new NoPrimitivesRule()).with(new NoPublicFieldsRule())
-                .with(new SetterTester()).with(new GetterTester()).with(new DefaultValuesNullTester()).build();
+        Validator validator = ValidatorBuilder.create()
+                .with(new GetterMustExistRule())
+                .with(new SetterMustExistRule())
+                .with(new NoNestedClassRule())
+                .with(new NoPrimitivesRule())
+                .with(new NoPublicFieldsRule())
+                .with(new SetterTester())
+                .with(new GetterTester())
+                .with(new DefaultValuesNullTester())
+                .build();
         validator.validate(pojoClass);
     }
 }

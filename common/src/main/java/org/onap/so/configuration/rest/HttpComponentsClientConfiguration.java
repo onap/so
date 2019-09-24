@@ -52,10 +52,12 @@ public class HttpComponentsClientConfiguration {
 
     @Bean
     public CloseableHttpClient httpClient() {
-        return HttpClientBuilder.create().setConnectionManager(poolingHttpClientConnectionManager())
+        return HttpClientBuilder.create()
+                .setConnectionManager(poolingHttpClientConnectionManager())
                 .setMaxConnPerRoute(clientConnectionConfiguration.getMaxConnectionsPerRoute())
                 .setMaxConnTotal(clientConnectionConfiguration.getMaxConnections())
-                .setDefaultRequestConfig(requestConfig()).build();
+                .setDefaultRequestConfig(requestConfig())
+                .build();
     }
 
     @Bean
@@ -66,7 +68,9 @@ public class HttpComponentsClientConfiguration {
 
     @Bean
     public RequestConfig requestConfig() {
-        return RequestConfig.custom().setSocketTimeout(clientConnectionConfiguration.getSocketTimeOutInMiliSeconds())
-                .setConnectTimeout(clientConnectionConfiguration.getConnectionTimeOutInMilliSeconds()).build();
+        return RequestConfig.custom()
+                .setSocketTimeout(clientConnectionConfiguration.getSocketTimeOutInMiliSeconds())
+                .setConnectTimeout(clientConnectionConfiguration.getConnectionTimeOutInMilliSeconds())
+                .build();
     }
 }

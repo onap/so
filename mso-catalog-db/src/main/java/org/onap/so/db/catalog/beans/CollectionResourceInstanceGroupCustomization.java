@@ -84,9 +84,13 @@ public class CollectionResourceInstanceGroupCustomization implements Serializabl
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
-                .append("modelUUID", modelUUID).append("collectionResourceCust", collectionResourceCust)
-                .append("instanceGroup", instanceGroup).append("function", function).append("description", description)
-                .append("created", created).append("subInterfaceNetworkQuantity", subInterfaceNetworkQuantity)
+                .append("modelUUID", modelUUID)
+                .append("collectionResourceCust", collectionResourceCust)
+                .append("instanceGroup", instanceGroup)
+                .append("function", function)
+                .append("description", description)
+                .append("created", created)
+                .append("subInterfaceNetworkQuantity", subInterfaceNetworkQuantity)
                 .toString();
     }
 
@@ -97,14 +101,19 @@ public class CollectionResourceInstanceGroupCustomization implements Serializabl
         }
         CollectionResourceInstanceGroupCustomization castOther = (CollectionResourceInstanceGroupCustomization) other;
         return new EqualsBuilder().append(modelCustomizationUUID, castOther.modelCustomizationUUID)
-                .append(modelUUID, castOther.modelUUID).append(collectionResourceCust, castOther.collectionResourceCust)
-                .append(instanceGroup, castOther.instanceGroup).isEquals();
+                .append(modelUUID, castOther.modelUUID)
+                .append(collectionResourceCust, castOther.collectionResourceCust)
+                .append(instanceGroup, castOther.instanceGroup)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(modelCustomizationUUID).append(modelUUID).append(collectionResourceCust)
-                .append(instanceGroup).toHashCode();
+        return new HashCodeBuilder().append(modelCustomizationUUID)
+                .append(modelUUID)
+                .append(collectionResourceCust)
+                .append(instanceGroup)
+                .toHashCode();
     }
 
     @PrePersist

@@ -96,7 +96,8 @@ public class ModelDistributionRequest {
             ValidateException validateException =
                     new ValidateException.Builder("Mapping of request to JSON object failed.  " + e.getMessage(),
                             HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
-                                    .errorInfo(errorLoggerInfo).build();
+                                    .errorInfo(errorLoggerInfo)
+                                    .build();
             throw validateException;
 
         }
@@ -164,7 +165,8 @@ public class ModelDistributionRequest {
             ValidateException validateException =
                     new ValidateException.Builder("Mapping of request to JSON object failed.  " + e.getMessage(),
                             HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
-                                    .errorInfo(errorLoggerInfo).build();
+                                    .errorInfo(errorLoggerInfo)
+                                    .build();
             throw validateException;
         }
 

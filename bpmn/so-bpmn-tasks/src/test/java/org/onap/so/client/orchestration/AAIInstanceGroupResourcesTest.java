@@ -123,8 +123,8 @@ public class AAIInstanceGroupResourcesTest extends TestDataSetup {
     public void createInstanceGroupandConnectServiceInstanceTest() {
         doReturn(new org.onap.aai.domain.yang.InstanceGroup()).when(MOCK_aaiObjectMapper)
                 .mapInstanceGroup(instanceGroup);
-        doReturn(MOCK_aaiResourcesClient).when(MOCK_aaiResourcesClient).createIfNotExists(isA(AAIResourceUri.class),
-                any(Optional.class));
+        doReturn(MOCK_aaiResourcesClient).when(MOCK_aaiResourcesClient)
+                .createIfNotExists(isA(AAIResourceUri.class), any(Optional.class));
         doNothing().when(MOCK_aaiResourcesClient).connect(any(AAIResourceUri.class), any(AAIResourceUri.class));
 
         aaiInstanceGroupResources.createInstanceGroupandConnectServiceInstance(instanceGroup, serviceInstance);

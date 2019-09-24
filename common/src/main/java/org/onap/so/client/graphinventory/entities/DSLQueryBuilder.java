@@ -82,8 +82,9 @@ public class DSLQueryBuilder<S, E> implements QueryStep {
         steps.add(() -> {
             StringBuilder query = new StringBuilder();
 
-            query.append("> [ ").append(
-                    Joiner.on(", ").join(unions.stream().map(item -> item.build()).collect(Collectors.toList())))
+            query.append("> [ ")
+                    .append(Joiner.on(", ")
+                            .join(unions.stream().map(item -> item.build()).collect(Collectors.toList())))
                     .append(" ]");
             return query.toString();
         });

@@ -111,8 +111,9 @@ public class NetworkAdapterRestTest extends BaseRestTestUtils {
         ResponseEntity<CreateNetworkResponse> response = restTemplate.exchange(
                 createURLWithPort("/services/rest/v1/networks"), HttpMethod.POST, entity, CreateNetworkResponse.class);
 
-        CreateNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
-                new File("src/test/resources/__files/CreateNetworkResponse.json"), CreateNetworkResponse.class);
+        CreateNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper()
+                .readValue(new File("src/test/resources/__files/CreateNetworkResponse.json"),
+                        CreateNetworkResponse.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         assertThat(response.getBody(), sameBeanAs(expectedResponse));
@@ -140,8 +141,9 @@ public class NetworkAdapterRestTest extends BaseRestTestUtils {
         ResponseEntity<CreateNetworkResponse> response = restTemplate.exchange(
                 createURLWithPort("/services/rest/v1/networks"), HttpMethod.POST, entity, CreateNetworkResponse.class);
 
-        CreateNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
-                new File("src/test/resources/__files/CreateNetworkResponse2.json"), CreateNetworkResponse.class);
+        CreateNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper()
+                .readValue(new File("src/test/resources/__files/CreateNetworkResponse2.json"),
+                        CreateNetworkResponse.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         assertThat(response.getBody(), sameBeanAs(expectedResponse));
@@ -182,8 +184,9 @@ public class NetworkAdapterRestTest extends BaseRestTestUtils {
                 createURLWithPort("/services/rest/v1/networks/da886914-efb2-4917-b335-c8381528d90b"), HttpMethod.DELETE,
                 entity, DeleteNetworkResponse.class);
 
-        DeleteNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
-                new File("src/test/resources/__files/DeleteNetworkResponse.json"), DeleteNetworkResponse.class);
+        DeleteNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper()
+                .readValue(new File("src/test/resources/__files/DeleteNetworkResponse.json"),
+                        DeleteNetworkResponse.class);
 
         assertThat(response.getBody(), sameBeanAs(expectedResponse));
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
@@ -216,8 +219,9 @@ public class NetworkAdapterRestTest extends BaseRestTestUtils {
                 createURLWithPort("/services/rest/v1/networks/da886914-efb2-4917-b335-c8381528d90b/rollback"),
                 HttpMethod.DELETE, entity, RollbackNetworkResponse.class);
 
-        RollbackNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
-                new File("src/test/resources/__files/RollbackNetworkResponse.json"), RollbackNetworkResponse.class);
+        RollbackNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper()
+                .readValue(new File("src/test/resources/__files/RollbackNetworkResponse.json"),
+                        RollbackNetworkResponse.class);
 
         assertThat(response.getBody(), sameBeanAs(expectedResponse));
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
@@ -295,8 +299,9 @@ public class NetworkAdapterRestTest extends BaseRestTestUtils {
                 createURLWithPort("/services/rest/v1/networks/da886914-efb2-4917-b335-c8381528d90b"), HttpMethod.PUT,
                 entity, UpdateNetworkResponse.class);
 
-        UpdateNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
-                new File("src/test/resources/__files/UpdateNetworkResponse.json"), UpdateNetworkResponse.class);
+        UpdateNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper()
+                .readValue(new File("src/test/resources/__files/UpdateNetworkResponse.json"),
+                        UpdateNetworkResponse.class);
 
         assertThat(response.getBody(), sameBeanAs(expectedResponse));
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
@@ -323,8 +328,9 @@ public class NetworkAdapterRestTest extends BaseRestTestUtils {
         ResponseEntity<CreateNetworkResponse> response = restTemplate.exchange(
                 createURLWithPort("/services/rest/v1/networks"), HttpMethod.POST, entity, CreateNetworkResponse.class);
 
-        CreateNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
-                new File("src/test/resources/__files/CreateNetworkResponse3.json"), CreateNetworkResponse.class);
+        CreateNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper()
+                .readValue(new File("src/test/resources/__files/CreateNetworkResponse3.json"),
+                        CreateNetworkResponse.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         assertThat(response.getBody(), sameBeanAs(expectedResponse));
@@ -351,8 +357,9 @@ public class NetworkAdapterRestTest extends BaseRestTestUtils {
         ResponseEntity<CreateNetworkResponse> response = restTemplate.exchange(
                 createURLWithPort("/services/rest/v1/networks"), HttpMethod.POST, entity, CreateNetworkResponse.class);
 
-        CreateNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
-                new File("src/test/resources/__files/CreateNetworkResponse4.json"), CreateNetworkResponse.class);
+        CreateNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper()
+                .readValue(new File("src/test/resources/__files/CreateNetworkResponse4.json"),
+                        CreateNetworkResponse.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         assertThat(response.getBody(), sameBeanAs(expectedResponse));

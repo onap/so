@@ -128,7 +128,8 @@ public class RequestHandlerUtils extends AbstractRestHandler {
 
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, ErrorCode.AvailabilityError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                            .build();
             String url = requestClient != null ? requestClient.getUrl() : "";
             ClientConnectionException clientException =
                     new ClientConnectionException.Builder(url, HttpStatus.SC_BAD_GATEWAY,
@@ -159,11 +160,13 @@ public class RequestHandlerUtils extends AbstractRestHandler {
             logger.error("Exception occurred", e);
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.SchemaError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                            .build();
             ValidateException validateException =
                     new ValidateException.Builder("Exception caught mapping Camunda JSON response to object",
                             HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
-                                    .errorInfo(errorLoggerInfo).build();
+                                    .errorInfo(errorLoggerInfo)
+                                    .build();
             updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
             throw validateException;
         }
@@ -189,11 +192,13 @@ public class RequestHandlerUtils extends AbstractRestHandler {
                     logger.error("Exception occurred", e);
                     ErrorLoggerInfo errorLoggerInfo =
                             new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.SchemaError)
-                                    .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                                    .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                                    .build();
                     ValidateException validateException =
                             new ValidateException.Builder("Exception caught mapping Camunda JSON response to object",
                                     HttpStatus.SC_NOT_ACCEPTABLE, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
-                                            .errorInfo(errorLoggerInfo).build();
+                                            .errorInfo(errorLoggerInfo)
+                                            .build();
                     updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
                     throw validateException;
                 }
@@ -209,7 +214,8 @@ public class RequestHandlerUtils extends AbstractRestHandler {
 
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.BusinessProcesssError)
-                            .errorSource(requestClient.getUrl()).build();
+                            .errorSource(requestClient.getUrl())
+                            .build();
             BPMNFailureException bpmnException =
                     new BPMNFailureException.Builder(String.valueOf(bpelStatus) + camundaJSONResponseBody, bpelStatus,
                             ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
@@ -221,7 +227,8 @@ public class RequestHandlerUtils extends AbstractRestHandler {
 
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.BusinessProcesssError)
-                            .errorSource(requestClient.getUrl()).build();
+                            .errorSource(requestClient.getUrl())
+                            .build();
 
 
             BPMNFailureException servException = new BPMNFailureException.Builder(String.valueOf(bpelStatus),
@@ -245,10 +252,12 @@ public class RequestHandlerUtils extends AbstractRestHandler {
             } catch (Exception e) {
                 ErrorLoggerInfo errorLoggerInfo =
                         new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.DataError)
-                                .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                                .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                                .build();
                 throw new RequestDbFailureException.Builder(SAVE_TO_DB, e.toString(),
                         HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e)
-                                .errorInfo(errorLoggerInfo).build();
+                                .errorInfo(errorLoggerInfo)
+                                .build();
             }
         }
     }
@@ -302,11 +311,13 @@ public class RequestHandlerUtils extends AbstractRestHandler {
         } catch (Exception e) {
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_DUPLICATE_CHECK_EXC, ErrorCode.DataError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                            .build();
             RequestDbFailureException requestDbFailureException =
                     new RequestDbFailureException.Builder("check for duplicate instance", e.toString(),
                             HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e)
-                                    .errorInfo(errorLoggerInfo).build();
+                                    .errorInfo(errorLoggerInfo)
+                                    .build();
             updateStatus(currentActiveReq, Status.FAILED, requestDbFailureException.getMessage());
             throw requestDbFailureException;
         }
@@ -353,7 +364,8 @@ public class RequestHandlerUtils extends AbstractRestHandler {
 
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                            .build();
 
             ValidateException validateException =
                     new ValidateException.Builder("Error mapping request: " + e.getMessage(), HttpStatus.SC_BAD_REQUEST,
@@ -377,7 +389,8 @@ public class RequestHandlerUtils extends AbstractRestHandler {
             logger.error("failed to parse request", e);
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                            .build();
             ValidateException validateException =
                     new ValidateException.Builder("Error parsing request: " + e.getMessage(), HttpStatus.SC_BAD_REQUEST,
                             ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
@@ -400,12 +413,14 @@ public class RequestHandlerUtils extends AbstractRestHandler {
         }
         ErrorLoggerInfo errorLoggerInfo =
                 new ErrorLoggerInfo.Builder(MessageEnum.APIH_DUPLICATE_FOUND, ErrorCode.SchemaError)
-                        .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                        .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                        .build();
 
         DuplicateRequestException dupException =
                 new DuplicateRequestException.Builder(requestScope, instance, dup.getRequestStatus(),
                         dup.getRequestId(), HttpStatus.SC_CONFLICT, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR)
-                                .errorInfo(errorLoggerInfo).build();
+                                .errorInfo(errorLoggerInfo)
+                                .build();
 
         updateStatus(currentActiveReq, Status.FAILED, dupException.getMessage());
 
@@ -422,11 +437,13 @@ public class RequestHandlerUtils extends AbstractRestHandler {
         } else {
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.SchemaError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                            .build();
             ValidateException validateException =
                     new ValidateException.Builder("Request Id " + requestId + " is not a valid UUID",
                             HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_BAD_PARAMETER)
-                                    .errorInfo(errorLoggerInfo).build();
+                                    .errorInfo(errorLoggerInfo)
+                                    .build();
 
             throw validateException;
         }
@@ -661,7 +678,8 @@ public class RequestHandlerUtils extends AbstractRestHandler {
                     + serviceVersionText + " not found in MSO Catalog DB";
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, ErrorCode.DataError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                            .build();
             VfModuleNotFoundException vfModuleException = new VfModuleNotFoundException.Builder(errorMessage,
                     HttpStatus.SC_NOT_FOUND, ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo).build();
             updateStatus(currentActiveReq, Status.FAILED, vfModuleException.getMessage());

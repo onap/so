@@ -37,8 +37,8 @@ public class SDNOHealthCheckBBTest extends BaseBPMNTest {
     public void sunnyDaySDNOHealthCheckTest() throws InterruptedException, IOException {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("SDNOVnfHealthCheckBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("Start_SDNOHealthCheckBB", "Task_SDNOHealthCheck",
-                "End_SDNOHealthCheckBB");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("Start_SDNOHealthCheckBB", "Task_SDNOHealthCheck", "End_SDNOHealthCheckBB");
         assertThat(pi).isEnded();
     }
 
@@ -49,7 +49,8 @@ public class SDNOHealthCheckBBTest extends BaseBPMNTest {
 
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("SDNOVnfHealthCheckBB", variables);
         assertThat(processInstance).isNotNull();
-        assertThat(processInstance).isStarted().hasPassedInOrder("Start_SDNOHealthCheckBB", "Task_SDNOHealthCheck")
+        assertThat(processInstance).isStarted()
+                .hasPassedInOrder("Start_SDNOHealthCheckBB", "Task_SDNOHealthCheck")
                 .hasNotPassed("End_SDNOHealthCheckBB");
         assertThat(processInstance).isEnded();
     }

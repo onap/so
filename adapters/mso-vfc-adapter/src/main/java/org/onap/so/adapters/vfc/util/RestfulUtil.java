@@ -112,8 +112,11 @@ public class RestfulUtil {
         try {
             int timeout = DEFAULT_TIME_OUT;
 
-            RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(timeout).setConnectTimeout(timeout)
-                    .setConnectionRequestTimeout(timeout).build();
+            RequestConfig requestConfig = RequestConfig.custom()
+                    .setSocketTimeout(timeout)
+                    .setConnectTimeout(timeout)
+                    .setConnectionRequestTimeout(timeout)
+                    .build();
 
             if ("POST".equalsIgnoreCase(methodType)) {
                 HttpPost httpPost = new HttpPost(msbUrl);

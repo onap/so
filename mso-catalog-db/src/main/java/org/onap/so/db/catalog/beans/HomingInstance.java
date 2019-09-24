@@ -130,8 +130,10 @@ public class HomingInstance {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("serviceInstanceId", serviceInstanceId)
-                .append("cloudRegionId", cloudRegionId).append("cloudOwner", cloudOwner)
-                .append("oofDirectives", oofDirectives).toString();
+                .append("cloudRegionId", cloudRegionId)
+                .append("cloudOwner", cloudOwner)
+                .append("oofDirectives", oofDirectives)
+                .toString();
     }
 
     @Override

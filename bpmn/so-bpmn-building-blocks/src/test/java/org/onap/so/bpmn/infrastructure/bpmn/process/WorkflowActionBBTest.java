@@ -48,10 +48,12 @@ public class WorkflowActionBBTest extends BaseBPMNTest {
         mockSubprocess("ExecuteBuildingBlock", "Mocked ExecuteBuildingBlock", "GenericStub", map);
 
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("WorkflowActionBB", variables);
-        assertThat(pi).isNotNull().isStarted().hasPassedInOrder("Start_WorkflowActionBB",
-                "Task_RetrieveBBExectuionList", "ExclusiveGateway_isTopLevelFlow", "Task_SendSync", "Task_SelectBB",
-                "Call_ExecuteBB", "ExclusiveGateway_Finished", "ExclusiveGateway_isTopLevelFlowCompleted",
-                "Task_UpdateRequestComplete", "End_WorkflowActionBB");
+        assertThat(pi).isNotNull()
+                .isStarted()
+                .hasPassedInOrder("Start_WorkflowActionBB", "Task_RetrieveBBExectuionList",
+                        "ExclusiveGateway_isTopLevelFlow", "Task_SendSync", "Task_SelectBB", "Call_ExecuteBB",
+                        "ExclusiveGateway_Finished", "ExclusiveGateway_isTopLevelFlowCompleted",
+                        "Task_UpdateRequestComplete", "End_WorkflowActionBB");
 
     }
 
@@ -65,9 +67,12 @@ public class WorkflowActionBBTest extends BaseBPMNTest {
         mockSubprocess("ExecuteBuildingBlock", "Mocked ExecuteBuildingBlock", "GenericStub", map);
 
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("WorkflowActionBB", variables);
-        assertThat(pi).isNotNull().isStarted().hasPassedInOrder("Start_WorkflowActionBB",
-                "Task_RetrieveBBExectuionList", "ExclusiveGateway_isTopLevelFlow", "Task_SelectBB", "Call_ExecuteBB",
-                "ExclusiveGateway_Finished", "ExclusiveGateway_isTopLevelFlowCompleted", "End_WorkflowActionBB");
+        assertThat(pi).isNotNull()
+                .isStarted()
+                .hasPassedInOrder("Start_WorkflowActionBB", "Task_RetrieveBBExectuionList",
+                        "ExclusiveGateway_isTopLevelFlow", "Task_SelectBB", "Call_ExecuteBB",
+                        "ExclusiveGateway_Finished", "ExclusiveGateway_isTopLevelFlowCompleted",
+                        "End_WorkflowActionBB");
     }
 
     @Test
@@ -80,10 +85,12 @@ public class WorkflowActionBBTest extends BaseBPMNTest {
         mockSubprocess("ExecuteBuildingBlock", "Mocked ExecuteBuildingBlock", "GenericStub", map);
 
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("WorkflowActionBB", variables);
-        assertThat(pi).isNotNull().isStarted().hasPassedInOrder("Start_WorkflowActionBB",
-                "Task_RetrieveBBExectuionList", "ExclusiveGateway_isTopLevelFlow", "Task_SelectBB", "Call_ExecuteBB",
-                "ExclusiveGateway_Finished", "Task_RollbackExecutionPath", "Task_UpdateRequestToFailed",
-                "End_RollbackFailed");
+        assertThat(pi).isNotNull()
+                .isStarted()
+                .hasPassedInOrder("Start_WorkflowActionBB", "Task_RetrieveBBExectuionList",
+                        "ExclusiveGateway_isTopLevelFlow", "Task_SelectBB", "Call_ExecuteBB",
+                        "ExclusiveGateway_Finished", "Task_RollbackExecutionPath", "Task_UpdateRequestToFailed",
+                        "End_RollbackFailed");
 
     }
 
@@ -99,10 +106,12 @@ public class WorkflowActionBBTest extends BaseBPMNTest {
         mockSubprocess("ExecuteBuildingBlock", "Mocked ExecuteBuildingBlock", "GenericStub", map);
 
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("WorkflowActionBB", variables);
-        assertThat(pi).isNotNull().isStarted().hasPassedInOrder("Start_WorkflowActionBB",
-                "Task_RetrieveBBExectuionList", "ExclusiveGateway_isTopLevelFlow", "Task_SendSync", "Task_SelectBB",
-                "Call_ExecuteBB", "ExclusiveGateway_Finished", "ExclusiveGateway_isTopLevelFlowAbort",
-                "Task_AbortAndCallErrorHandling", "ErrorStart", "Task_UpdateDb", "ErrorEnd");
+        assertThat(pi).isNotNull()
+                .isStarted()
+                .hasPassedInOrder("Start_WorkflowActionBB", "Task_RetrieveBBExectuionList",
+                        "ExclusiveGateway_isTopLevelFlow", "Task_SendSync", "Task_SelectBB", "Call_ExecuteBB",
+                        "ExclusiveGateway_Finished", "ExclusiveGateway_isTopLevelFlowAbort",
+                        "Task_AbortAndCallErrorHandling", "ErrorStart", "Task_UpdateDb", "ErrorEnd");
 
     }
 
@@ -114,9 +123,9 @@ public class WorkflowActionBBTest extends BaseBPMNTest {
                 .selectExecutionList(any(DelegateExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("WorkflowActionBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("Start_WorkflowActionBB", "Task_RetrieveBBExectuionList",
-                "StartEvent_runtimeError", "ServiceTask_HandleRuntimeError", "EndEvent__runtimeError",
-                "SubProcess_0rze15o");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("Start_WorkflowActionBB", "Task_RetrieveBBExectuionList", "StartEvent_runtimeError",
+                        "ServiceTask_HandleRuntimeError", "EndEvent__runtimeError", "SubProcess_0rze15o");
 
     }
 
@@ -129,10 +138,12 @@ public class WorkflowActionBBTest extends BaseBPMNTest {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(workflowAction)
                 .handleRuntimeException(any(DelegateExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("WorkflowActionBB", variables);
-        assertThat(pi).isNotNull().isStarted().hasPassedInOrder("Start_WorkflowActionBB",
-                "Task_RetrieveBBExectuionList", "StartEvent_runtimeError", "ServiceTask_HandleRuntimeError",
-                "SubProcess_0fuugr9", "ErrorStart", "ExclusiveGateway_10q79b6", "Task_SendSyncAckError",
-                "Task_UpdateDb", "ErrorEnd", "SubProcess_18226x4");
+        assertThat(pi).isNotNull()
+                .isStarted()
+                .hasPassedInOrder("Start_WorkflowActionBB", "Task_RetrieveBBExectuionList", "StartEvent_runtimeError",
+                        "ServiceTask_HandleRuntimeError", "SubProcess_0fuugr9", "ErrorStart",
+                        "ExclusiveGateway_10q79b6", "Task_SendSyncAckError", "Task_UpdateDb", "ErrorEnd",
+                        "SubProcess_18226x4");
 
     }
 
@@ -143,10 +154,12 @@ public class WorkflowActionBBTest extends BaseBPMNTest {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(workflowActionBBTasks)
                 .selectBB(any(DelegateExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("WorkflowActionBB", variables);
-        assertThat(pi).isNotNull().isStarted().hasPassedInOrder("Start_WorkflowActionBB",
-                "Task_RetrieveBBExectuionList", "ExclusiveGateway_isTopLevelFlow", "Task_SendSync", "Task_SelectBB",
-                "ErrorStart", "ExclusiveGateway_10q79b6", "Task_SendSyncAckError", "Task_UpdateDb", "ErrorEnd",
-                "SubProcess_18226x4");
+        assertThat(pi).isNotNull()
+                .isStarted()
+                .hasPassedInOrder("Start_WorkflowActionBB", "Task_RetrieveBBExectuionList",
+                        "ExclusiveGateway_isTopLevelFlow", "Task_SendSync", "Task_SelectBB", "ErrorStart",
+                        "ExclusiveGateway_10q79b6", "Task_SendSyncAckError", "Task_UpdateDb", "ErrorEnd",
+                        "SubProcess_18226x4");
 
     }
 }

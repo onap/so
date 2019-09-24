@@ -86,10 +86,14 @@ public class CollectionResourceCustomization implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
-                .append("modelInstanceName", modelInstanceName).append("type", type).append("role", role)
-                .append("function", function).append("created", created)
+                .append("modelInstanceName", modelInstanceName)
+                .append("type", type)
+                .append("role", role)
+                .append("function", function)
+                .append("created", created)
                 .append("collectionResource", collectionResource)
-                .append("collectionInstanceGroupCustomizations", collectionInstanceGroupCustomizations).toString();
+                .append("collectionInstanceGroupCustomizations", collectionInstanceGroupCustomizations)
+                .toString();
     }
 
     @Override

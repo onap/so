@@ -45,9 +45,12 @@ public class BuildingBlockValidatorRunner
     protected void init() {
 
         preFlowValidators = new ArrayList<>(Optional.ofNullable(context.getBeansOfType(PreBuildingBlockValidator.class))
-                .orElse(new HashMap<>()).values());
-        postFlowValidators = new ArrayList<>(Optional
-                .ofNullable(context.getBeansOfType(PostBuildingBlockValidator.class)).orElse(new HashMap<>()).values());
+                .orElse(new HashMap<>())
+                .values());
+        postFlowValidators =
+                new ArrayList<>(Optional.ofNullable(context.getBeansOfType(PostBuildingBlockValidator.class))
+                        .orElse(new HashMap<>())
+                        .values());
     }
 
     protected List<PreBuildingBlockValidator> getPreFlowValidators() {

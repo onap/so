@@ -42,7 +42,8 @@ public class BaseClientTest extends BaseTest {
         String response = "{\"hello\" : \"world\"}";
         client.setTargetUrl(
                 UriBuilder.fromUri("http://localhost/test").port(Integer.parseInt(wireMockPort)).build().toString());
-        wireMockServer.stubFor(get(urlEqualTo("/test")).willReturn(aResponse().withStatus(200).withBody(response)
+        wireMockServer.stubFor(get(urlEqualTo("/test")).willReturn(aResponse().withStatus(200)
+                .withBody(response)
                 .withHeader("Content-Type", ContentType.APPLICATION_JSON.toString())));
 
         String result = client.get("", new ParameterizedTypeReference<String>() {});
@@ -55,7 +56,8 @@ public class BaseClientTest extends BaseTest {
         String response = "{\"hello\" : \"world\"}";
         client.setTargetUrl(
                 UriBuilder.fromUri("http://localhost/test").port(Integer.parseInt(wireMockPort)).build().toString());
-        wireMockServer.stubFor(get(urlEqualTo("/test")).willReturn(aResponse().withStatus(200).withBody(response)
+        wireMockServer.stubFor(get(urlEqualTo("/test")).willReturn(aResponse().withStatus(200)
+                .withBody(response)
                 .withHeader("Content-Type", ContentType.APPLICATION_JSON.toString())));
 
         Map<String, Object> result = client.get("", new ParameterizedTypeReference<Map<String, Object>>() {});

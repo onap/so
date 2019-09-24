@@ -253,7 +253,8 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin {
                 return new DeploymentInfoBuilder().withId(deployment.getId())
                         .withDeploymentInputs(deployment.getInputs())
                         .withDeploymentOutputs(getDeploymentOutputs(cloudify, deploymentId).get())
-                        .fromExecution(installWorkflow).build();
+                        .fromExecution(installWorkflow)
+                        .build();
             } else {
                 // The workflow completed with errors. Must try to back it out.
                 if (!backout) {
@@ -564,12 +565,14 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin {
             // If no executions, does this give NOT_FOUND or empty set?
             if (executions.getItems().isEmpty()) {
                 return new DeploymentInfoBuilder().withId(deployment.getId())
-                        .withDeploymentInputs(deployment.getInputs()).build();
+                        .withDeploymentInputs(deployment.getInputs())
+                        .build();
             } else {
                 return new DeploymentInfoBuilder().withId(deployment.getId())
                         .withDeploymentInputs(deployment.getInputs())
                         .withDeploymentOutputs(getDeploymentOutputs(cloudify, deploymentId).get())
-                        .fromExecution(executions.getItems().get(0)).build();
+                        .fromExecution(executions.getItems().get(0))
+                        .build();
             }
         } catch (CloudifyConnectException ce) {
             // Couldn't connect to Cloudify
@@ -583,7 +586,8 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin {
                     // Got NOT_FOUND on the executions. Assume this is a valid "empty" set
                     return new DeploymentInfoBuilder().withId(deployment.getId())
                             .withDeploymentInputs(deployment.getInputs())
-                            .withDeploymentOutputs(getDeploymentOutputs(cloudify, deploymentId).get()).build();
+                            .withDeploymentOutputs(getDeploymentOutputs(cloudify, deploymentId).get())
+                            .build();
                 } else {
                     // Deployment not found. Default status of a DeploymentInfo object is NOTFOUND
                     return new DeploymentInfoBuilder().withId(deploymentId).build();
@@ -726,9 +730,11 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin {
         }
 
         // Return the deleted deployment info (with runtime outputs) along with the completed uninstall workflow status
-        return new DeploymentInfoBuilder().withId(deployment.getId()).withDeploymentInputs(deployment.getInputs())
+        return new DeploymentInfoBuilder().withId(deployment.getId())
+                .withDeploymentInputs(deployment.getInputs())
                 .withDeploymentOutputs(getDeploymentOutputs(cloudify, deploymentId).get())
-                .fromExecution(uninstallWorkflow).build();
+                .fromExecution(uninstallWorkflow)
+                .build();
     }
 
 

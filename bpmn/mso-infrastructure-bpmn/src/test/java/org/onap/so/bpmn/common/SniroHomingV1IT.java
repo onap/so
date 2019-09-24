@@ -314,8 +314,10 @@ public class SniroHomingV1IT extends BaseIntegrationTest {
         // Verify request
         String sniroRequest = (String) getVariableFromHistory(businessKey, "sniroRequest");
         assertEquals(
-                FileUtil.readResourceFile("__files/BuildingBlocks/sniroRequest_infravnf").replaceAll("\n", "")
-                        .replaceAll("\r", "").replaceAll("\t", ""),
+                FileUtil.readResourceFile("__files/BuildingBlocks/sniroRequest_infravnf")
+                        .replaceAll("\n", "")
+                        .replaceAll("\r", "")
+                        .replaceAll("\t", ""),
                 sniroRequest.replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", ""));
 
         assertEquals(homingSolutionService("service", "service-instance-01234", "MDTNJ01", "CloudOwner", "mtmnj1a",
@@ -552,14 +554,26 @@ public class SniroHomingV1IT extends BaseIntegrationTest {
     private void setVariablesExistingLicense(Map<String, Object> variables) {
         HomingSolution currentHomingSolution = new HomingSolution();
         serviceDecomposition.getVnfResources().get(0).setCurrentHomingSolution(currentHomingSolution);
-        serviceDecomposition.getVnfResources().get(0).getCurrentHomingSolution().getLicense()
+        serviceDecomposition.getVnfResources()
+                .get(0)
+                .getCurrentHomingSolution()
+                .getLicense()
                 .addEntitlementPool("testEntitlementPoolId1");
-        serviceDecomposition.getVnfResources().get(0).getCurrentHomingSolution().getLicense()
+        serviceDecomposition.getVnfResources()
+                .get(0)
+                .getCurrentHomingSolution()
+                .getLicense()
                 .addEntitlementPool("testEntitlementPoolId2");
 
-        serviceDecomposition.getVnfResources().get(0).getCurrentHomingSolution().getLicense()
+        serviceDecomposition.getVnfResources()
+                .get(0)
+                .getCurrentHomingSolution()
+                .getLicense()
                 .addLicenseKeyGroup("testLicenseKeyGroupId1");
-        serviceDecomposition.getVnfResources().get(0).getCurrentHomingSolution().getLicense()
+        serviceDecomposition.getVnfResources()
+                .get(0)
+                .getCurrentHomingSolution()
+                .getLicense()
                 .addLicenseKeyGroup("testLicenseKeyGroupId2");
 
         variables.put("isDebugLogEnabled", "true");

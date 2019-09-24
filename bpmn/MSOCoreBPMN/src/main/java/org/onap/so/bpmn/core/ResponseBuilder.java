@@ -238,8 +238,10 @@ public class ResponseBuilder implements java.io.Serializable {
             return (String) testKey;
         }
 
-        return execution.getProcessEngineServices().getRepositoryService()
-                .getProcessDefinition(execution.getProcessDefinitionId()).getKey();
+        return execution.getProcessEngineServices()
+                .getRepositoryService()
+                .getProcessDefinition(execution.getProcessDefinitionId())
+                .getKey();
     }
 
     /**

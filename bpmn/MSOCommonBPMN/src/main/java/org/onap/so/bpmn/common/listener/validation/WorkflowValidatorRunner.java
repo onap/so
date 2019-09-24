@@ -44,9 +44,11 @@ public class WorkflowValidatorRunner extends FlowValidatorRunner<PreWorkflowVali
     protected void init() {
 
         preFlowValidators = new ArrayList<>(Optional.ofNullable(context.getBeansOfType(PreWorkflowValidator.class))
-                .orElse(new HashMap<>()).values());
+                .orElse(new HashMap<>())
+                .values());
         postFlowValidators = new ArrayList<>(Optional.ofNullable(context.getBeansOfType(PostWorkflowValidator.class))
-                .orElse(new HashMap<>()).values());
+                .orElse(new HashMap<>())
+                .values());
     }
 
     protected List<PreWorkflowValidator> getPreFlowValidators() {

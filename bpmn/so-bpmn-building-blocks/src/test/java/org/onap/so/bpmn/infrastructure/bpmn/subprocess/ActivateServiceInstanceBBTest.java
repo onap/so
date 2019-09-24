@@ -32,8 +32,9 @@ public class ActivateServiceInstanceBBTest extends BaseBPMNTest {
     public void sunnyDaySDNC() throws InterruptedException, IOException {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("ActivateServiceInstanceBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("Start_ActivateServiceInstanceBB", "Task_NoOpServiceInstance",
-                "Task_UpdateServiceOrchestrationStatusToActive", "End_ActivateServiceInstanceBB");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("Start_ActivateServiceInstanceBB", "Task_NoOpServiceInstance",
+                        "Task_UpdateServiceOrchestrationStatusToActive", "End_ActivateServiceInstanceBB");
         assertThat(pi).isEnded();
     }
 }

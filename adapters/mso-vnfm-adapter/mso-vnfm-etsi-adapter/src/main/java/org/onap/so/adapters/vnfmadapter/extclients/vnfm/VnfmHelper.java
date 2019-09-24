@@ -113,7 +113,9 @@ public class VnfmHelper {
     private VnfInstancesvnfInstanceIdinstantiateVimConnectionInfo getVimConnectionInfo(final Tenant tenant) {
         final EsrSystemInfo esrSystemInfo =
                 aaiServiceProvider.invokeGetCloudRegionEsrSystemInfoList(tenant.getCloudOwner(), tenant.getRegionName())
-                        .getEsrSystemInfo().iterator().next();
+                        .getEsrSystemInfo()
+                        .iterator()
+                        .next();
 
         final VnfInstancesvnfInstanceIdinstantiateVimConnectionInfo vnfInstancesVimConnectionInfo =
                 new VnfInstancesvnfInstanceIdinstantiateVimConnectionInfo();
@@ -152,7 +154,8 @@ public class VnfmHelper {
         final JsonObject additionalParametersJsonObject = new JsonObject();
         if (additionalParameters != null) {
             for (final Map.Entry<String, JsonElement> item : new Gson().toJsonTree(additionalParameters)
-                    .getAsJsonObject().entrySet()) {
+                    .getAsJsonObject()
+                    .entrySet()) {
                 additionalParametersJsonObject.add(item.getKey(), item.getValue());
             }
         } else {
@@ -226,7 +229,9 @@ public class VnfmHelper {
     public InlineResponse201VimConnections getVimConnections(final Tenant tenant) {
         final EsrSystemInfo esrSystemInfo =
                 aaiServiceProvider.invokeGetCloudRegionEsrSystemInfoList(tenant.getCloudOwner(), tenant.getRegionName())
-                        .getEsrSystemInfo().iterator().next();
+                        .getEsrSystemInfo()
+                        .iterator()
+                        .next();
 
         final InlineResponse201VimConnections vimConnection = new InlineResponse201VimConnections();
         vimConnection.setId(createVimId(tenant.getCloudOwner(), tenant.getRegionName()));

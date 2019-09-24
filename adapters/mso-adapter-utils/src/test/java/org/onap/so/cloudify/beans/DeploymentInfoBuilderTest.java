@@ -27,9 +27,13 @@ public class DeploymentInfoBuilderTest {
 
     @Test
     public void shouldConstructDeploymentInfo_withBasicValues() {
-        DeploymentInfo deploymentInfo = new DeploymentInfoBuilder().withId("id").withStatus(DeploymentStatus.CREATED)
-                .withDeploymentOutputs(ImmutableMap.of()).withDeploymentInputs(ImmutableMap.of())
-                .withActionStatus("started").withLastAction(INSTALL_WORKFLOW_ID).withErrorMessage(ERROR_MESSAGE)
+        DeploymentInfo deploymentInfo = new DeploymentInfoBuilder().withId("id")
+                .withStatus(DeploymentStatus.CREATED)
+                .withDeploymentOutputs(ImmutableMap.of())
+                .withDeploymentInputs(ImmutableMap.of())
+                .withActionStatus("started")
+                .withLastAction(INSTALL_WORKFLOW_ID)
+                .withErrorMessage(ERROR_MESSAGE)
                 .build();
 
         assertThat(deploymentInfo.getId()).isEqualTo("id");

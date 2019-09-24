@@ -33,9 +33,10 @@ public class AssignServiceInstanceBBTest extends BaseBPMNTest {
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("AssignServiceInstanceBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("Start_AssignServiceInstanceBB", "Task_CreateServiceInstance",
-                "Task_CreateProject", "Task_CreateOwningEntity", "Task_AssignServiceInstance",
-                "CallActivity_sdncHandler", "Task_UpdateServiceOstatusToAssigned", "End_AssignServiceInstanceBB");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("Start_AssignServiceInstanceBB", "Task_CreateServiceInstance", "Task_CreateProject",
+                        "Task_CreateOwningEntity", "Task_AssignServiceInstance", "CallActivity_sdncHandler",
+                        "Task_UpdateServiceOstatusToAssigned", "End_AssignServiceInstanceBB");
         assertThat(pi).isEnded();
     }
 }

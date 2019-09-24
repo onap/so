@@ -82,8 +82,10 @@ public class ControllerSelectionReference implements Serializable {
      */
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("vnfType", vnfType).append("controllerName", controllerName)
-                .append("actionCategory", actionCategory).toString();
+        return new ToStringBuilder(this).append("vnfType", vnfType)
+                .append("controllerName", controllerName)
+                .append("actionCategory", actionCategory)
+                .toString();
     }
 
     /**
@@ -95,8 +97,10 @@ public class ControllerSelectionReference implements Serializable {
             return false;
         }
         ControllerSelectionReference castOther = (ControllerSelectionReference) other;
-        return new EqualsBuilder().append(vnfType, castOther.vnfType).append(controllerName, castOther.controllerName)
-                .append(actionCategory, castOther.actionCategory).isEquals();
+        return new EqualsBuilder().append(vnfType, castOther.vnfType)
+                .append(controllerName, castOther.controllerName)
+                .append(actionCategory, castOther.actionCategory)
+                .isEquals();
     }
 
     /**

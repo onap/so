@@ -146,7 +146,9 @@ public class ExceptionType {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("messageId", messageId).append("text", text)
-                .append("variables", variables).toString();
+        return new ToStringBuilder(this).append("messageId", messageId)
+                .append("text", text)
+                .append("variables", variables)
+                .toString();
     }
 }

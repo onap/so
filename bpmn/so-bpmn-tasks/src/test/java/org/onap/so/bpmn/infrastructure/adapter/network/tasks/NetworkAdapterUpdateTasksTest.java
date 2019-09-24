@@ -89,9 +89,10 @@ public class NetworkAdapterUpdateTasksTest extends BaseTaskTest {
         UpdateNetworkRequest updateNetworkRequest = new UpdateNetworkRequest();
         execution.setVariable("cloudRegionPo", cloudRegionPo);
 
-        doReturn(updateNetworkRequest).when(networkAdapterObjectMapper).createNetworkUpdateRequestMapper(
-                isA(RequestContext.class), isA(CloudRegion.class), isA(OrchestrationContext.class),
-                isA(ServiceInstance.class), isA(L3Network.class), isA(Map.class), isA(Customer.class));
+        doReturn(updateNetworkRequest).when(networkAdapterObjectMapper)
+                .createNetworkUpdateRequestMapper(isA(RequestContext.class), isA(CloudRegion.class),
+                        isA(OrchestrationContext.class), isA(ServiceInstance.class), isA(L3Network.class),
+                        isA(Map.class), isA(Customer.class));
         networkAdapterUpdateTasks.updateNetwork(execution);
         verify(networkAdapterObjectMapper, times(1)).createNetworkUpdateRequestMapper(requestContext, cloudRegion,
                 orchestrationContext, serviceInstance, network, userInput, customer);

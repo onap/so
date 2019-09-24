@@ -554,27 +554,33 @@ public class WorkflowActionTest extends BaseTaskTest {
         assertEquals("Network id not empty", !ebbs.get(3).getWorkflowResourceIds().getNetworkId().isEmpty(), true);
         assertEquals("Network id not empty", !ebbs.get(4).getWorkflowResourceIds().getNetworkId().isEmpty(), true);
         assertEquals("Network id same for AssignNetworkBB CreateNetworkBB ActivateNetworkBB",
-                ebbs.get(2).getWorkflowResourceIds().getNetworkId() == ebbs.get(3).getWorkflowResourceIds()
+                ebbs.get(2).getWorkflowResourceIds().getNetworkId() == ebbs.get(3)
+                        .getWorkflowResourceIds()
                         .getNetworkId()
-                        && ebbs.get(3).getWorkflowResourceIds().getNetworkId() == ebbs.get(4).getWorkflowResourceIds()
+                        && ebbs.get(3).getWorkflowResourceIds().getNetworkId() == ebbs.get(4)
+                                .getWorkflowResourceIds()
                                 .getNetworkId(),
                 true);
         assertEquals("Network id not empty", !ebbs.get(5).getWorkflowResourceIds().getNetworkId().isEmpty(), true);
         assertEquals("Network id not empty", !ebbs.get(6).getWorkflowResourceIds().getNetworkId().isEmpty(), true);
         assertEquals("Network id not empty", !ebbs.get(7).getWorkflowResourceIds().getNetworkId().isEmpty(), true);
         assertEquals("Network id same for AssignNetworkBB CreateNetworkBB ActivateNetworkBB",
-                ebbs.get(5).getWorkflowResourceIds().getNetworkId() == ebbs.get(6).getWorkflowResourceIds()
+                ebbs.get(5).getWorkflowResourceIds().getNetworkId() == ebbs.get(6)
+                        .getWorkflowResourceIds()
                         .getNetworkId()
-                        && ebbs.get(6).getWorkflowResourceIds().getNetworkId() == ebbs.get(7).getWorkflowResourceIds()
+                        && ebbs.get(6).getWorkflowResourceIds().getNetworkId() == ebbs.get(7)
+                                .getWorkflowResourceIds()
                                 .getNetworkId(),
                 true);
         assertEquals("Network id not empty", !ebbs.get(8).getWorkflowResourceIds().getNetworkId().isEmpty(), true);
         assertEquals("Network id not empty", !ebbs.get(9).getWorkflowResourceIds().getNetworkId().isEmpty(), true);
         assertEquals("Network id not empty", !ebbs.get(10).getWorkflowResourceIds().getNetworkId().isEmpty(), true);
         assertEquals("Network id same for AssignNetworkBB CreateNetworkBB ActivateNetworkBB",
-                ebbs.get(8).getWorkflowResourceIds().getNetworkId() == ebbs.get(9).getWorkflowResourceIds()
+                ebbs.get(8).getWorkflowResourceIds().getNetworkId() == ebbs.get(9)
+                        .getWorkflowResourceIds()
                         .getNetworkId()
-                        && ebbs.get(9).getWorkflowResourceIds().getNetworkId() == ebbs.get(10).getWorkflowResourceIds()
+                        && ebbs.get(9).getWorkflowResourceIds().getNetworkId() == ebbs.get(10)
+                                .getWorkflowResourceIds()
                                 .getNetworkId(),
                 true);
     }
@@ -1130,8 +1136,8 @@ public class WorkflowActionTest extends BaseTaskTest {
         vnfc.setModelInvariantId("modelInvariantId");
         vnfc.setVnfcName("testVnfcName");
         vnfcs.add(vnfc);
-        doReturn(vnfcs).when(SPY_workflowAction).getRelatedResourcesInVfModule(anyObject(), anyObject(), anyObject(),
-                anyObject());
+        doReturn(vnfcs).when(SPY_workflowAction)
+                .getRelatedResourcesInVfModule(anyObject(), anyObject(), anyObject(), anyObject());
 
         List<org.onap.aai.domain.yang.Configuration> configurations =
                 new ArrayList<org.onap.aai.domain.yang.Configuration>();
@@ -1140,8 +1146,8 @@ public class WorkflowActionTest extends BaseTaskTest {
         configuration.setModelCustomizationId("modelCustimizationId");
         configuration.setConfigurationName("testConfigurationName");
         configurations.add(configuration);
-        doReturn(configurations).when(SPY_workflowAction).getRelatedResourcesInVnfc(anyObject(), anyObject(),
-                anyObject());
+        doReturn(configurations).when(SPY_workflowAction)
+                .getRelatedResourcesInVnfc(anyObject(), anyObject(), anyObject());
 
         doReturn("testName").when(SPY_workflowAction).getVnfcNameForConfiguration(anyObject());
 
@@ -1187,14 +1193,14 @@ public class WorkflowActionTest extends BaseTaskTest {
         vnfc.setModelInvariantId("modelInvariantId");
         vnfc.setVnfcName("testVnfcName");
         vnfcs.add(vnfc);
-        doReturn(vnfcs).when(SPY_workflowAction).getRelatedResourcesInVfModule(anyObject(), anyObject(), anyObject(),
-                anyObject());
+        doReturn(vnfcs).when(SPY_workflowAction)
+                .getRelatedResourcesInVfModule(anyObject(), anyObject(), anyObject(), anyObject());
 
         List<org.onap.aai.domain.yang.Configuration> configurations =
                 new ArrayList<org.onap.aai.domain.yang.Configuration>();
         org.onap.aai.domain.yang.Configuration configuration = new org.onap.aai.domain.yang.Configuration();
-        doReturn(configurations).when(SPY_workflowAction).getRelatedResourcesInVnfc(anyObject(), anyObject(),
-                anyObject());
+        doReturn(configurations).when(SPY_workflowAction)
+                .getRelatedResourcesInVnfc(anyObject(), anyObject(), anyObject());
 
         doReturn("testName").when(SPY_workflowAction).getVnfcNameForConfiguration(anyObject());
 
@@ -1265,8 +1271,8 @@ public class WorkflowActionTest extends BaseTaskTest {
         AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VNFC, vnfc.getVnfcName());
         when(bbSetupUtils.getAAIResourceDepthOne(uri)).thenReturn(vfncWrapper);
 
-        doReturn(configurationResultWrappers).when(SPY_workflowAction).getResultWrappersFromRelationships(anyObject(),
-                anyObject());
+        doReturn(configurationResultWrappers).when(SPY_workflowAction)
+                .getResultWrappersFromRelationships(anyObject(), anyObject());
         List<org.onap.aai.domain.yang.Configuration> configurationsList = SPY_workflowAction.getRelatedResourcesInVnfc(
                 vnfc, org.onap.aai.domain.yang.Configuration.class, AAIObjectType.CONFIGURATION);
         assertEquals(1, configurationsList.size());

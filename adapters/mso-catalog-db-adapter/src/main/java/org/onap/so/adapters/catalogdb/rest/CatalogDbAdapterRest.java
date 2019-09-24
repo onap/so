@@ -129,8 +129,10 @@ public class CatalogDbAdapterRest {
     private static final String NO_MATCHING_PARAMETERS = "no matching parameters";
 
     public Response respond(String version, int respStatus, boolean isArray, CatalogQuery qryResp) {
-        return Response.status(respStatus).entity(qryResp.toJsonString(version, isArray))
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).build();
+        return Response.status(respStatus)
+                .entity(qryResp.toJsonString(version, isArray))
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                .build();
     }
 
     @GET
@@ -193,7 +195,8 @@ public class CatalogDbAdapterRest {
             CatalogQueryException excResp = new CatalogQueryException(e.getMessage(),
                     CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
             return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-                    .entity(new GenericEntity<CatalogQueryException>(excResp) {}).build();
+                    .entity(new GenericEntity<CatalogQueryException>(excResp) {})
+                    .build();
         }
     }
 
@@ -273,7 +276,8 @@ public class CatalogDbAdapterRest {
             CatalogQueryException excResp = new CatalogQueryException(e.getMessage(),
                     CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
             return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-                    .entity(new GenericEntity<CatalogQueryException>(excResp) {}).build();
+                    .entity(new GenericEntity<CatalogQueryException>(excResp) {})
+                    .build();
         }
     }
 
@@ -337,7 +341,8 @@ public class CatalogDbAdapterRest {
             CatalogQueryException excResp = new CatalogQueryException(e.getMessage(),
                     CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
             return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-                    .entity(new GenericEntity<CatalogQueryException>(excResp) {}).build();
+                    .entity(new GenericEntity<CatalogQueryException>(excResp) {})
+                    .build();
         }
     }
 
@@ -403,7 +408,8 @@ public class CatalogDbAdapterRest {
             CatalogQueryException excResp = new CatalogQueryException(e.getMessage(),
                     CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
             return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-                    .entity(new GenericEntity<CatalogQueryException>(excResp) {}).build();
+                    .entity(new GenericEntity<CatalogQueryException>(excResp) {})
+                    .build();
         }
     }
 
@@ -433,14 +439,17 @@ public class CatalogDbAdapterRest {
                 if (logger.isDebugEnabled())
                     logger.debug("vfModules tojsonstring is: {}", qryResp.JSON2(false, false));
             }
-            return Response.status(respStatus).entity(qryResp.JSON2(false, false))
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).build();
+            return Response.status(respStatus)
+                    .entity(qryResp.JSON2(false, false))
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                    .build();
         } catch (Exception e) {
             logger.error("Exception during query VfModules by vfModuleModuleName: ", e);
             CatalogQueryException excResp = new CatalogQueryException(e.getMessage(),
                     CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
             return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-                    .entity(new GenericEntity<CatalogQueryException>(excResp) {}).build();
+                    .entity(new GenericEntity<CatalogQueryException>(excResp) {})
+                    .build();
         }
     }
 
@@ -478,14 +487,17 @@ public class CatalogDbAdapterRest {
             } else {
                 throw (new Exception("Incoming parameter is null or blank"));
             }
-            return Response.status(respStatus).entity(entity)
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).build();
+            return Response.status(respStatus)
+                    .entity(entity)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                    .build();
         } catch (Exception e) {
             logger.error("Exception during query csar by service model uuid: ", e);
             CatalogQueryException excResp = new CatalogQueryException(e.getMessage(),
                     CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
             return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-                    .entity(new GenericEntity<CatalogQueryException>(excResp) {}).build();
+                    .entity(new GenericEntity<CatalogQueryException>(excResp) {})
+                    .build();
         }
     }
 
@@ -561,14 +573,17 @@ public class CatalogDbAdapterRest {
             } else {
                 throw new Exception("Incoming parameter is null or blank");
             }
-            return Response.status(respStatus).entity(entity)
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).build();
+            return Response.status(respStatus)
+                    .entity(entity)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                    .build();
         } catch (Exception e) {
             logger.error("Exception during query recipe by resource model uuid: ", e);
             CatalogQueryException excResp = new CatalogQueryException(e.getMessage(),
                     CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
             return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-                    .entity(new GenericEntity<CatalogQueryException>(excResp) {}).build();
+                    .entity(new GenericEntity<CatalogQueryException>(excResp) {})
+                    .build();
         }
     }
 }

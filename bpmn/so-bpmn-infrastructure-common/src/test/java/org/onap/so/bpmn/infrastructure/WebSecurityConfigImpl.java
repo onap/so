@@ -35,10 +35,16 @@ public class WebSecurityConfigImpl extends WebSecurityConfig {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests().antMatchers("/manage/health", "/manage/info").permitAll()
+        http.csrf()
+                .disable()
+                .authorizeRequests()
+                .antMatchers("/manage/health", "/manage/info")
+                .permitAll()
                 .antMatchers("/async/services/**", "/workflow/services/*", "/SDNCAdapterCallbackService",
                         "/WorkflowMessage", "/vnfAdapterNotify", "/vnfAdapterRestNotify")
-                .hasAnyRole(StringUtils.collectionToDelimitedString(getRoles(), ",")).and().httpBasic();
+                .hasAnyRole(StringUtils.collectionToDelimitedString(getRoles(), ","))
+                .and()
+                .httpBasic();
     }
 
     @Override

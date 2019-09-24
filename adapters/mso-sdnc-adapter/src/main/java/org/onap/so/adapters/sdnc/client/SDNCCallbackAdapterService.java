@@ -55,7 +55,8 @@ public class SDNCCallbackAdapterService extends Service {
     static {
         URL wsdlUrl = null;
         try {
-            wsdlUrl = Thread.currentThread().getContextClassLoader()
+            wsdlUrl = Thread.currentThread()
+                    .getContextClassLoader()
                     .getResource("main/resources/SDNCCallbackAdapter.wsdl");
         } catch (Exception e) {
             logger.error(LoggingAnchor.FIVE, MessageEnum.RA_WSDL_NOT_FOUND.toString(), SDNC_CALLBACK_ADAPTER_WSDL,

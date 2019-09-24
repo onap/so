@@ -53,7 +53,8 @@ public class NamingClientTest extends BaseIntegrationTest {
     public void assignNameGenRequest() throws BadResponseException, IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/web/service/v1/genNetworkElementName"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBodyFile("NamingClient/AssignResponse.json").withStatus(HttpStatus.SC_ACCEPTED)));
+                        .withBodyFile("NamingClient/AssignResponse.json")
+                        .withStatus(HttpStatus.SC_ACCEPTED)));
 
         NameGenRequest request = assignSetup();
         String response = client.postNameGenRequest(request);
@@ -62,9 +63,10 @@ public class NamingClientTest extends BaseIntegrationTest {
 
     @Test
     public void assignNameGenRequestError() throws BadResponseException, IOException {
-        wireMockServer.stubFor(post(urlPathEqualTo("/web/service/v1/genNetworkElementName")).willReturn(aResponse()
-                .withHeader("Content-Type", "application/json").withBodyFile("NamingClient/ErrorResponse.json")
-                .withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)));
+        wireMockServer.stubFor(post(urlPathEqualTo("/web/service/v1/genNetworkElementName"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBodyFile("NamingClient/ErrorResponse.json")
+                        .withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)));
 
         thrown.expect(BadResponseException.class);
         thrown.expectMessage("Error from Naming Service: External Key is required and must be unique");
@@ -76,7 +78,8 @@ public class NamingClientTest extends BaseIntegrationTest {
     public void unassignNameGenRequest() throws BadResponseException, IOException {
         wireMockServer.stubFor(delete(urlPathEqualTo("/web/service/v1/genNetworkElementName"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBodyFile("NamingClient/UnassignResponse.json").withStatus(HttpStatus.SC_ACCEPTED)));
+                        .withBodyFile("NamingClient/UnassignResponse.json")
+                        .withStatus(HttpStatus.SC_ACCEPTED)));
 
         String response = client.deleteNameGenRequest(unassignSetup());
         assertTrue(response.equals(""));
@@ -84,9 +87,10 @@ public class NamingClientTest extends BaseIntegrationTest {
 
     @Test
     public void unassignNameGenRequestError() throws BadResponseException, IOException {
-        wireMockServer.stubFor(delete(urlPathEqualTo("/web/service/v1/genNetworkElementName")).willReturn(aResponse()
-                .withHeader("Content-Type", "application/json").withBodyFile("NamingClient/ErrorResponse.json")
-                .withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)));
+        wireMockServer.stubFor(delete(urlPathEqualTo("/web/service/v1/genNetworkElementName"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBodyFile("NamingClient/ErrorResponse.json")
+                        .withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)));
 
         thrown.expect(BadResponseException.class);
         thrown.expectMessage("Error from Naming Service: External Key is required and must be unique");

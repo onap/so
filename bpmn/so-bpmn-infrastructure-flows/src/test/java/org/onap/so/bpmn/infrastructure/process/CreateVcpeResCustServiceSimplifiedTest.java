@@ -122,11 +122,13 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
             waitCount--;
         }
 
-        assertThat(pi).isEnded().hasPassedInOrder("createVCPE_startEvent", "preProcessRequest_ScriptTask",
-                "sendSyncAckResponse_ScriptTask", "ScriptTask_0cdtchu", "DecomposeService", "ScriptTask_0lpv2da",
-                "ScriptTask_1y241p8", "CallActivity_1vc4jeh", "ScriptTask_1y5lvl7", "GeneratePnfUuid", "Task_14l19kv",
-                "Pnf_Con", "setPONR_ScriptTask", "postProcessAndCompletionRequest_ScriptTask",
-                "callCompleteMsoProcess_CallActivity", "ScriptTask_2", "CreateVCPE_EndEvent");
+        assertThat(pi).isEnded()
+                .hasPassedInOrder("createVCPE_startEvent", "preProcessRequest_ScriptTask",
+                        "sendSyncAckResponse_ScriptTask", "ScriptTask_0cdtchu", "DecomposeService",
+                        "ScriptTask_0lpv2da", "ScriptTask_1y241p8", "CallActivity_1vc4jeh", "ScriptTask_1y5lvl7",
+                        "GeneratePnfUuid", "Task_14l19kv", "Pnf_Con", "setPONR_ScriptTask",
+                        "postProcessAndCompletionRequest_ScriptTask", "callCompleteMsoProcess_CallActivity",
+                        "ScriptTask_2", "CreateVCPE_EndEvent");
 
         List<ExecutionServiceInput> detailedMessages = grpcNettyServer.getDetailedMessages();
         assertThat(detailedMessages).hasSize(2);
@@ -140,7 +142,8 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
     }
 
     private boolean isProcessInstanceEnded() {
-        return runtimeService.createProcessInstanceQuery().processDefinitionKey(TEST_PROCESSINSTANCE_KEY)
+        return runtimeService.createProcessInstanceQuery()
+                .processDefinitionKey(TEST_PROCESSINSTANCE_KEY)
                 .singleResult() == null;
     }
 

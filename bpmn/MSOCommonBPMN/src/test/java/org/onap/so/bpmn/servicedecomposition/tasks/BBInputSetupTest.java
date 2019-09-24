@@ -165,8 +165,8 @@ public class BBInputSetupTest {
         lookupKeyMap.put(ResourceKey.VOLUME_GROUP_ID, null);
         org.onap.aai.domain.yang.VolumeGroup aaiVolumeGroup = new org.onap.aai.domain.yang.VolumeGroup();
         aaiVolumeGroup.setModelCustomizationId(modelCustomizationId);
-        doReturn(aaiVolumeGroup).when(SPY_bbInputSetupUtils).getAAIVolumeGroup(cloudOwner, cloudRegionId,
-                volumeGroupId);
+        doReturn(aaiVolumeGroup).when(SPY_bbInputSetupUtils)
+                .getAAIVolumeGroup(cloudOwner, cloudRegionId, volumeGroupId);
 
         Optional<String> actual = SPY_bbInputSetup.getVolumeGroupIdRelatedToVfModule(vnf, modelInfo, cloudOwner,
                 cloudRegionId, lookupKeyMap);
@@ -198,8 +198,9 @@ public class BBInputSetupTest {
         Service differentService = new Service();
         differentService.setModelUUID("modelUUIDDifferent");
 
-        doReturn(expected).when(SPY_bbInputSetup).getServiceInstanceHelper(requestDetails, customer, null, null,
-                lookupKeyMap, serviceInstanceId, aLaCarte, service, bbName);
+        doReturn(expected).when(SPY_bbInputSetup)
+                .getServiceInstanceHelper(requestDetails, customer, null, null, lookupKeyMap, serviceInstanceId,
+                        aLaCarte, service, bbName);
         doReturn(serviceInstanceAAI).when(SPY_bbInputSetupUtils).getAAIServiceInstanceById(serviceInstanceId);
         doReturn(differentService).when(SPY_bbInputSetupUtils)
                 .getCatalogServiceByModelUUID(serviceInstanceAAI.getModelVersionId());
@@ -235,8 +236,9 @@ public class BBInputSetupTest {
         Service differentService = new Service();
         differentService.setModelUUID("modelUUIDDifferent");
 
-        doReturn(expected).when(SPY_bbInputSetup).getServiceInstanceHelper(requestDetails, customer, null, null,
-                lookupKeyMap, serviceInstanceId, aLaCarte, service, bbName);
+        doReturn(expected).when(SPY_bbInputSetup)
+                .getServiceInstanceHelper(requestDetails, customer, null, null, lookupKeyMap, serviceInstanceId,
+                        aLaCarte, service, bbName);
         doReturn(serviceInstanceAAI).when(SPY_bbInputSetupUtils).getAAIServiceInstanceById(serviceInstanceId);
         doReturn(null).when(SPY_bbInputSetupUtils).getCatalogServiceByModelUUID(serviceInstanceAAI.getModelVersionId());
 
@@ -328,10 +330,10 @@ public class BBInputSetupTest {
         Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
         String resourceId = "123";
         String requestAction = "createInstance";
-        doReturn(expected).when(SPY_bbInputSetup).getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap,
-                requestAction, resourceId);
-        doNothing().when(SPY_bbInputSetup).populateLookupKeyMapWithIds(executeBB.getWorkflowResourceIds(),
-                lookupKeyMap);
+        doReturn(expected).when(SPY_bbInputSetup)
+                .getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId);
+        doNothing().when(SPY_bbInputSetup)
+                .populateLookupKeyMapWithIds(executeBB.getWorkflowResourceIds(), lookupKeyMap);
         boolean aLaCarte = true;
         GeneralBuildingBlock actual =
                 SPY_bbInputSetup.getGBB(executeBB, lookupKeyMap, requestAction, aLaCarte, resourceId, null);
@@ -441,11 +443,12 @@ public class BBInputSetupTest {
                 .getCatalogServiceByModelUUID(aaiServiceInstance.getModelVersionId());
         doReturn(aaiServiceInstance).when(SPY_bbInputSetupUtils).getAAIServiceInstanceById("instanceId");
 
-        doNothing().when(SPY_bbInputSetup).populateObjectsOnAssignAndCreateFlows(requestDetails, service, "bbName",
-                serviceInstance, lookupKeyMap, resourceId, vnfType, null, null);
+        doNothing().when(SPY_bbInputSetup)
+                .populateObjectsOnAssignAndCreateFlows(requestDetails, service, "bbName", serviceInstance, lookupKeyMap,
+                        resourceId, vnfType, null, null);
         doReturn(serviceInstance).when(SPY_bbInputSetup).getExistingServiceInstance(aaiServiceInstance);
-        doReturn(expected).when(SPY_bbInputSetup).populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance,
-                executeBB, requestAction, null);
+        doReturn(expected).when(SPY_bbInputSetup)
+                .populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance, executeBB, requestAction, null);
 
         GeneralBuildingBlock actual = SPY_bbInputSetup.getGBBALaCarteNonService(executeBB, requestDetails, lookupKeyMap,
                 requestAction, resourceId, vnfType);
@@ -492,12 +495,13 @@ public class BBInputSetupTest {
                 .getCatalogServiceByModelUUID(aaiServiceInstance.getModelVersionId());
         doReturn(aaiServiceInstance).when(SPY_bbInputSetupUtils).getAAIServiceInstanceById("instanceId");
 
-        doNothing().when(SPY_bbInputSetup).populateObjectsOnAssignAndCreateFlows(requestDetails, service, "bbName",
-                serviceInstance, lookupKeyMap, resourceId, vnfType, null, null);
+        doNothing().when(SPY_bbInputSetup)
+                .populateObjectsOnAssignAndCreateFlows(requestDetails, service, "bbName", serviceInstance, lookupKeyMap,
+                        resourceId, vnfType, null, null);
 
         doReturn(serviceInstance).when(SPY_bbInputSetup).getExistingServiceInstance(aaiServiceInstance);
-        doReturn(expected).when(SPY_bbInputSetup).populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance,
-                executeBB, requestAction, null);
+        doReturn(expected).when(SPY_bbInputSetup)
+                .populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance, executeBB, requestAction, null);
 
         GeneralBuildingBlock actual = SPY_bbInputSetup.getGBBALaCarteNonService(executeBB, requestDetails, lookupKeyMap,
                 requestAction, resourceId, vnfType);
@@ -539,11 +543,13 @@ public class BBInputSetupTest {
         doReturn(owningEntity).when(bbInputSetupMapperLayer).mapRequestOwningEntity(requestDetails.getOwningEntity());
 
         doReturn(customer).when(SPY_bbInputSetup).getCustomerAndServiceSubscription(requestDetails, resourceId);
-        doReturn(serviceInstance).when(SPY_bbInputSetup).getALaCarteServiceInstance(service, requestDetails, customer,
-                project, owningEntity, lookupKeyMap, resourceId, Boolean.TRUE.equals(executeBB.isaLaCarte()),
-                executeBB.getBuildingBlock().getBpmnFlowName());
-        doReturn(expected).when(SPY_bbInputSetup).populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance,
-                executeBB, requestAction, customer);
+        doReturn(serviceInstance).when(SPY_bbInputSetup)
+                .getALaCarteServiceInstance(service, requestDetails, customer, project, owningEntity, lookupKeyMap,
+                        resourceId, Boolean.TRUE.equals(executeBB.isaLaCarte()),
+                        executeBB.getBuildingBlock().getBpmnFlowName());
+        doReturn(expected).when(SPY_bbInputSetup)
+                .populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance, executeBB, requestAction,
+                        customer);
 
         GeneralBuildingBlock actual = SPY_bbInputSetup.getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap,
                 requestAction, resourceId);
@@ -581,17 +587,20 @@ public class BBInputSetupTest {
 
         doReturn(null).when(SPY_bbInputSetupUtils)
                 .getCatalogServiceByModelUUID(requestDetails.getModelInfo().getModelVersionId());
-        doReturn(service).when(SPY_bbInputSetupUtils).getCatalogServiceByModelVersionAndModelInvariantUUID(
-                requestDetails.getModelInfo().getModelVersion(), requestDetails.getModelInfo().getModelInvariantId());
+        doReturn(service).when(SPY_bbInputSetupUtils)
+                .getCatalogServiceByModelVersionAndModelInvariantUUID(requestDetails.getModelInfo().getModelVersion(),
+                        requestDetails.getModelInfo().getModelInvariantId());
         doReturn(project).when(bbInputSetupMapperLayer).mapRequestProject(requestDetails.getProject());
         doReturn(owningEntity).when(bbInputSetupMapperLayer).mapRequestOwningEntity(requestDetails.getOwningEntity());
 
         doReturn(customer).when(SPY_bbInputSetup).getCustomerAndServiceSubscription(requestDetails, resourceId);
-        doReturn(serviceInstance).when(SPY_bbInputSetup).getALaCarteServiceInstance(service, requestDetails, customer,
-                project, owningEntity, lookupKeyMap, resourceId, Boolean.TRUE.equals(executeBB.isaLaCarte()),
-                executeBB.getBuildingBlock().getBpmnFlowName());
-        doReturn(expected).when(SPY_bbInputSetup).populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance,
-                executeBB, requestAction, customer);
+        doReturn(serviceInstance).when(SPY_bbInputSetup)
+                .getALaCarteServiceInstance(service, requestDetails, customer, project, owningEntity, lookupKeyMap,
+                        resourceId, Boolean.TRUE.equals(executeBB.isaLaCarte()),
+                        executeBB.getBuildingBlock().getBpmnFlowName());
+        doReturn(expected).when(SPY_bbInputSetup)
+                .populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance, executeBB, requestAction,
+                        customer);
 
         GeneralBuildingBlock actual = SPY_bbInputSetup.getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap,
                 requestAction, resourceId);
@@ -628,11 +637,12 @@ public class BBInputSetupTest {
 
         doReturn(customer).when(SPY_bbInputSetup).getCustomerAndServiceSubscription(requestDetails, resourceId);
 
-        doReturn(serviceInstance).when(SPY_bbInputSetup).getALaCarteServiceInstance(service, requestDetails, customer,
-                null, null, lookupKeyMap, resourceId, Boolean.TRUE.equals(executeBB.isaLaCarte()),
-                executeBB.getBuildingBlock().getBpmnFlowName());
-        doReturn(expected).when(SPY_bbInputSetup).populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance,
-                executeBB, requestAction, customer);
+        doReturn(serviceInstance).when(SPY_bbInputSetup)
+                .getALaCarteServiceInstance(service, requestDetails, customer, null, null, lookupKeyMap, resourceId,
+                        Boolean.TRUE.equals(executeBB.isaLaCarte()), executeBB.getBuildingBlock().getBpmnFlowName());
+        doReturn(expected).when(SPY_bbInputSetup)
+                .populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance, executeBB, requestAction,
+                        customer);
 
         GeneralBuildingBlock actual = SPY_bbInputSetup.getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap,
                 requestAction, resourceId);
@@ -659,8 +669,8 @@ public class BBInputSetupTest {
         doReturn(null).when(SPY_bbInputSetupUtils).getAAIServiceInstanceById(serviceInstanceId);
 
 
-        doReturn(expected).when(SPY_bbInputSetup).createServiceInstance(requestDetails, null, null, lookupKeyMap,
-                serviceInstanceId);
+        doReturn(expected).when(SPY_bbInputSetup)
+                .createServiceInstance(requestDetails, null, null, lookupKeyMap, serviceInstanceId);
 
         ServiceInstance actual = SPY_bbInputSetup.getServiceInstanceHelper(requestDetails, customer, null, null,
                 lookupKeyMap, serviceInstanceId, aLaCarte, service, bbName);
@@ -783,8 +793,9 @@ public class BBInputSetupTest {
                 Mockito.mock(org.onap.so.serviceinstancebeans.LineOfBusiness.class);
         Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
 
-        doNothing().when(SPY_bbInputSetup).populateL3Network(instanceName, modelInfo, service, bbName, serviceInstance,
-                lookupKeyMap, resourceId, null);
+        doNothing().when(SPY_bbInputSetup)
+                .populateL3Network(instanceName, modelInfo, service, bbName, serviceInstance, lookupKeyMap, resourceId,
+                        null);
         doReturn(modelInfo).when(requestDetails).getModelInfo();
         doReturn(productFamilyId).when(requestInfo).getProductFamilyId();
         doReturn(requestInfo).when(requestDetails).getRequestInfo();
@@ -804,9 +815,9 @@ public class BBInputSetupTest {
 
         doReturn(ModelType.vnf).when(modelInfo).getModelType();
         resourceId = "vnfId";
-        doNothing().when(SPY_bbInputSetup).populateGenericVnf(modelInfo, instanceName, platform, lineOfBusiness,
-                service, bbName, serviceInstance, lookupKeyMap, relatedInstanceList, resourceId, vnfType, null,
-                productFamilyId);
+        doNothing().when(SPY_bbInputSetup)
+                .populateGenericVnf(modelInfo, instanceName, platform, lineOfBusiness, service, bbName, serviceInstance,
+                        lookupKeyMap, relatedInstanceList, resourceId, vnfType, null, productFamilyId);
         SPY_bbInputSetup.populateObjectsOnAssignAndCreateFlows(requestDetails, service, bbName, serviceInstance,
                 lookupKeyMap, resourceId, vnfType, null, null);
         verify(SPY_bbInputSetup, times(1)).populateGenericVnf(modelInfo, instanceName, platform, lineOfBusiness,
@@ -817,8 +828,9 @@ public class BBInputSetupTest {
 
         doReturn(ModelType.volumeGroup).when(modelInfo).getModelType();
         resourceId = "volumeGroupId";
-        doNothing().when(SPY_bbInputSetup).populateVolumeGroup(modelInfo, service, bbName, serviceInstance,
-                lookupKeyMap, resourceId, relatedInstanceList, instanceName, vnfType, null);
+        doNothing().when(SPY_bbInputSetup)
+                .populateVolumeGroup(modelInfo, service, bbName, serviceInstance, lookupKeyMap, resourceId,
+                        relatedInstanceList, instanceName, vnfType, null);
         SPY_bbInputSetup.populateObjectsOnAssignAndCreateFlows(requestDetails, service, bbName, serviceInstance,
                 lookupKeyMap, resourceId, vnfType, null, null);
         verify(SPY_bbInputSetup, times(1)).populateVolumeGroup(modelInfo, service, bbName, serviceInstance,
@@ -828,8 +840,9 @@ public class BBInputSetupTest {
 
         doReturn(ModelType.vfModule).when(modelInfo).getModelType();
         resourceId = "vfModuleId";
-        doNothing().when(SPY_bbInputSetup).populateVfModule(modelInfo, service, bbName, serviceInstance, lookupKeyMap,
-                resourceId, relatedInstanceList, instanceName, null, cloudConfiguration);
+        doNothing().when(SPY_bbInputSetup)
+                .populateVfModule(modelInfo, service, bbName, serviceInstance, lookupKeyMap, resourceId,
+                        relatedInstanceList, instanceName, null, cloudConfiguration);
         SPY_bbInputSetup.populateObjectsOnAssignAndCreateFlows(requestDetails, service, bbName, serviceInstance,
                 lookupKeyMap, resourceId, vnfType, null, null);
         verify(SPY_bbInputSetup, times(1)).populateVfModule(modelInfo, service, bbName, serviceInstance, lookupKeyMap,
@@ -893,13 +906,13 @@ public class BBInputSetupTest {
 
         doReturn(uriKeys).when(SPY_bbInputSetupUtils)
                 .getURIKeysFromServiceInstance(serviceInstance.getServiceInstanceId());
-        doReturn(customer).when(SPY_bbInputSetup).mapCustomer(uriKeys.get("global-customer-id"),
-                uriKeys.get("service-type"));
+        doReturn(customer).when(SPY_bbInputSetup)
+                .mapCustomer(uriKeys.get("global-customer-id"), uriKeys.get("service-type"));
         doReturn(aaiCloudRegion).when(SPY_bbInputSetupUtils).getCloudRegion(requestDetails.getCloudConfiguration());
         doReturn(orchestrationContext).when(bbInputSetupMapperLayer).mapOrchestrationContext(requestDetails);
         doReturn(requestContext).when(bbInputSetupMapperLayer).mapRequestContext(requestDetails);
-        doReturn(cloudRegion).when(bbInputSetupMapperLayer).mapCloudRegion(requestDetails.getCloudConfiguration(),
-                aaiCloudRegion);
+        doReturn(cloudRegion).when(bbInputSetupMapperLayer)
+                .mapCloudRegion(requestDetails.getCloudConfiguration(), aaiCloudRegion);
         doReturn(tenant).when(bbInputSetupMapperLayer).mapTenant(aaiTenant);
         doReturn(aaiTenants).when(aaiCloudRegion).getTenants();
         doReturn(tenants).when(aaiTenants).getTenant();
@@ -960,8 +973,9 @@ public class BBInputSetupTest {
                 new org.onap.aai.domain.yang.ServiceSubscription();
         Customer customer = new Customer();
         customer.setGlobalCustomerId("globalCustomerId");
-        doReturn(aaiServiceSubscription).when(SPY_bbInputSetupUtils).getAAIServiceSubscription(
-                customer.getGlobalCustomerId(), requestDetails.getRequestParameters().getSubscriptionServiceType());
+        doReturn(aaiServiceSubscription).when(SPY_bbInputSetupUtils)
+                .getAAIServiceSubscription(customer.getGlobalCustomerId(),
+                        requestDetails.getRequestParameters().getSubscriptionServiceType());
         doReturn(expected).when(bbInputSetupMapperLayer).mapAAIServiceSubscription(aaiServiceSubscription);
 
         ServiceSubscription actual = SPY_bbInputSetup.getServiceSubscription(requestDetails, customer);
@@ -1018,7 +1032,8 @@ public class BBInputSetupTest {
         networkCollection.getCollectionResource().setInstanceGroup(new org.onap.so.db.catalog.beans.InstanceGroup());
         networkCollection.getCollectionResource().getInstanceGroup().setToscaNodeType("NetworkCollectionResource");
         networkCollection.getCollectionResource().getInstanceGroup().setType(InstanceGroupType.L3_NETWORK);
-        networkCollection.getCollectionResource().getInstanceGroup()
+        networkCollection.getCollectionResource()
+                .getInstanceGroup()
                 .setCollectionInstanceGroupCustomizations(new ArrayList<>());
         List<CollectionResourceCustomization> customizations = new ArrayList<>();
         customizations.add(networkCollection);
@@ -1061,7 +1076,8 @@ public class BBInputSetupTest {
         networkCollection.setModelCustomizationUUID(key);
         networkCollection.setCollectionResource(new CollectionResource());
         networkCollection.getCollectionResource().setInstanceGroup(new org.onap.so.db.catalog.beans.InstanceGroup());
-        networkCollection.getCollectionResource().getInstanceGroup()
+        networkCollection.getCollectionResource()
+                .getInstanceGroup()
                 .setToscaNodeType("org.openecomp.resource.cr.NetworkCollectionResource1806");
         List<CollectionResourceCustomization> customizations = new ArrayList<>();
         customizations.add(networkCollection);
@@ -1107,8 +1123,9 @@ public class BBInputSetupTest {
 
         String bbName = AssignFlows.VOLUME_GROUP.toString();
         String resourceId = "123";
-        doNothing().when(SPY_bbInputSetup).mapCatalogVolumeGroup(isA(VolumeGroup.class), eq(modelInfo), eq(service),
-                eq("vnfModelCustomizationUUID"));
+        doNothing().when(SPY_bbInputSetup)
+                .mapCatalogVolumeGroup(isA(VolumeGroup.class), eq(modelInfo), eq(service),
+                        eq("vnfModelCustomizationUUID"));
         org.onap.aai.domain.yang.GenericVnf aaiGenericVnf = new org.onap.aai.domain.yang.GenericVnf();
         aaiGenericVnf.setModelCustomizationId("vnfModelCustomizationUUID");
         doReturn(aaiGenericVnf).when(SPY_bbInputSetupUtils).getAAIGenericVnf(vnf.getVnfId());
@@ -1235,8 +1252,8 @@ public class BBInputSetupTest {
         Vnfc vnfc = new Vnfc();
         vnfc.setVnfcName(vnfcName);
         RequestDetails requestDetails = new RequestDetails();
-        doNothing().when(SPY_bbInputSetup).mapCatalogConfiguration(configuration, modelInfo, service,
-                configResourceKeys);
+        doNothing().when(SPY_bbInputSetup)
+                .mapCatalogConfiguration(configuration, modelInfo, service, configResourceKeys);
         doReturn(vnfc).when(SPY_bbInputSetup).getVnfcToConfiguration(vnfcName);
         SPY_bbInputSetup.populateConfiguration(modelInfo, service, bbName, serviceInstance, lookupKeyMap, resourceId,
                 instanceName, configResourceKeys, requestDetails);
@@ -1255,8 +1272,8 @@ public class BBInputSetupTest {
         lookupKeyMap.put(ResourceKey.CONFIGURATION_ID, "configurationId2");
         Configuration configuration2 = SPY_bbInputSetup.createConfiguration(lookupKeyMap, instanceName, resourceId);
         doReturn(configuration2).when(SPY_bbInputSetup).createConfiguration(lookupKeyMap, instanceName, resourceId);
-        doNothing().when(SPY_bbInputSetup).mapCatalogConfiguration(configuration2, modelInfo, service,
-                configResourceKeys);
+        doNothing().when(SPY_bbInputSetup)
+                .mapCatalogConfiguration(configuration2, modelInfo, service, configResourceKeys);
         SPY_bbInputSetup.populateConfiguration(modelInfo, service, bbName, serviceInstance, lookupKeyMap, resourceId,
                 instanceName, configResourceKeys, requestDetails);
         verify(SPY_bbInputSetup, times(1)).mapCatalogConfiguration(configuration2, modelInfo, service,
@@ -1382,8 +1399,9 @@ public class BBInputSetupTest {
         instanceName = "vnfName2";
         GenericVnf vnf2 = SPY_bbInputSetup.createGenericVnf(lookupKeyMap, instanceName, platform, lineOfBusiness,
                 resourceId, vnfType, null, requestDetails.getRequestInfo().getProductFamilyId());
-        doReturn(vnf2).when(SPY_bbInputSetup).createGenericVnf(lookupKeyMap, instanceName, platform, lineOfBusiness,
-                resourceId, vnfType, null, requestDetails.getRequestInfo().getProductFamilyId());
+        doReturn(vnf2).when(SPY_bbInputSetup)
+                .createGenericVnf(lookupKeyMap, instanceName, platform, lineOfBusiness, resourceId, vnfType, null,
+                        requestDetails.getRequestInfo().getProductFamilyId());
         doNothing().when(SPY_bbInputSetup).mapNetworkCollectionInstanceGroup(vnf2, "{instanceGroupId}");
         doNothing().when(SPY_bbInputSetup).mapVnfcCollectionInstanceGroup(vnf2, modelInfo, service);
 
@@ -1417,8 +1435,8 @@ public class BBInputSetupTest {
         doReturn(vnfResourceCust).when(SPY_bbInputSetup).getVnfResourceCustomizationFromService(modelInfo, service);
         doReturn(vnfcInstanceGroups).when(vnfResourceCust).getVnfcInstanceGroupCustomizations();
         doReturn(instanceGroup).when(SPY_bbInputSetupUtils).getCatalogInstanceGroup("modelUUID");
-        doReturn(modelInfoInstanceGroup).when(bbInputSetupMapperLayer).mapCatalogInstanceGroupToInstanceGroup(null,
-                instanceGroup);
+        doReturn(modelInfoInstanceGroup).when(bbInputSetupMapperLayer)
+                .mapCatalogInstanceGroupToInstanceGroup(null, instanceGroup);
 
         SPY_bbInputSetup.mapVnfcCollectionInstanceGroup(genericVnf, modelInfo, service);
 
@@ -1557,8 +1575,8 @@ public class BBInputSetupTest {
         instanceGroupCust.setFunction("function");
         instanceGroupCust.setDescription("description");
 
-        doReturn(modelInfoCollection).when(bbInputSetupMapperLayer).mapCatalogCollectionToCollection(collectionCust,
-                collectionResource);
+        doReturn(modelInfoCollection).when(bbInputSetupMapperLayer)
+                .mapCatalogCollectionToCollection(collectionCust, collectionResource);
 
         doReturn(modelInfoInstanceGroup).when(bbInputSetupMapperLayer)
                 .mapCatalogInstanceGroupToInstanceGroup(collectionCust, catalogInstanceGroup);
@@ -1772,8 +1790,8 @@ public class BBInputSetupTest {
         doReturn(l3NetworksWrapper).when(SPY_bbInputSetupUtils).getAAIResourceDepthTwo(aaiResourceUri);
         doReturn(expected).when(bbInputSetupMapperLayer).mapAAIL3Network(isA(org.onap.aai.domain.yang.L3Network.class));
         doNothing().when(SPY_bbInputSetup).mapNetworkPolicies(any(), eq(expected.getNetworkPolicies()));
-        doNothing().when(SPY_bbInputSetup).mapRouteTableReferences(any(),
-                eq(expected.getContrailNetworkRouteTableReferences()));
+        doNothing().when(SPY_bbInputSetup)
+                .mapRouteTableReferences(any(), eq(expected.getContrailNetworkRouteTableReferences()));
 
         SPY_bbInputSetup.mapL3Networks(Arrays.asList(new AAIResourceUri[] {aaiResourceUri}), l3Networks);
 
@@ -1792,8 +1810,9 @@ public class BBInputSetupTest {
         AAIResultWrapper vnfWrapper =
                 new AAIResultWrapper(new AAICommonObjectMapperProvider().getMapper().writeValueAsString(expectedAAI));
 
-        doReturn(expected).when(bbInputSetupMapperLayer).mapAAIRouteTableReferenceIntoRouteTableReference(
-                isA(org.onap.aai.domain.yang.RouteTableReference.class));
+        doReturn(expected).when(bbInputSetupMapperLayer)
+                .mapAAIRouteTableReferenceIntoRouteTableReference(
+                        isA(org.onap.aai.domain.yang.RouteTableReference.class));
 
         SPY_bbInputSetup.mapRouteTableReferences(Arrays.asList(new AAIResultWrapper[] {vnfWrapper}),
                 contrailNetworkRouteTableReferences);
@@ -1849,8 +1868,8 @@ public class BBInputSetupTest {
         String subscriptionServiceType = "subscriptionServiceType";
 
         doReturn(customerAAI).when(SPY_bbInputSetupUtils).getAAICustomer(globalCustomerId);
-        doReturn(serviceSubscriptionAAI).when(SPY_bbInputSetupUtils).getAAIServiceSubscription(globalCustomerId,
-                subscriptionServiceType);
+        doReturn(serviceSubscriptionAAI).when(SPY_bbInputSetupUtils)
+                .getAAIServiceSubscription(globalCustomerId, subscriptionServiceType);
         doReturn(expected).when(bbInputSetupMapperLayer).mapAAICustomer(isA(org.onap.aai.domain.yang.Customer.class));
         doReturn(serviceSubscription).when(bbInputSetupMapperLayer)
                 .mapAAIServiceSubscription(isA(org.onap.aai.domain.yang.ServiceSubscription.class));
@@ -1925,13 +1944,14 @@ public class BBInputSetupTest {
         executeBB.setConfigurationResourceKeys(configResourceKeys);
 
         executeBB.setRequestDetails(requestDetails);
-        doReturn(gBB).when(SPY_bbInputSetup).getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap,
-                requestAction, lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID));
+        doReturn(gBB).when(SPY_bbInputSetup)
+                .getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap, requestAction,
+                        lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID));
         doReturn(request).when(SPY_bbInputSetupUtils).getInfraActiveRequest(executeBB.getRequestId());
         doReturn(service).when(SPY_bbInputSetupUtils)
                 .getCatalogServiceByModelUUID(gBB.getServiceInstance().getModelInfoServiceInstance().getModelUuid());
-        doNothing().when(SPY_bbInputSetupUtils).updateInfraActiveRequestVnfId(request,
-                lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID));
+        doNothing().when(SPY_bbInputSetupUtils)
+                .updateInfraActiveRequestVnfId(request, lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID));
         doReturn("vnfId").when(SPY_bbInputSetup).getVnfId(executeBB, lookupKeyMap);
         doReturn(aaiVnf).when(SPY_bbInputSetupUtils).getAAIGenericVnf(any(String.class));
 
@@ -1975,9 +1995,10 @@ public class BBInputSetupTest {
         configurationCust.setModelCustomizationUUID("72d9d1cd-f46d-447a-abdb-451d6fb05fa9");
         doReturn(configurationCustList).when(service).getConfigurationCustomizations();
         configurationCustList.add(configurationCust);
-        doNothing().when(SPY_bbInputSetup).populateConfiguration(isA(ModelInfo.class), isA(Service.class),
-                any(String.class), isA(ServiceInstance.class), any(), any(String.class), ArgumentMatchers.isNull(),
-                isA(ConfigurationResourceKeys.class), isA(RequestDetails.class));
+        doNothing().when(SPY_bbInputSetup)
+                .populateConfiguration(isA(ModelInfo.class), isA(Service.class), any(String.class),
+                        isA(ServiceInstance.class), any(), any(String.class), ArgumentMatchers.isNull(),
+                        isA(ConfigurationResourceKeys.class), isA(RequestDetails.class));
 
         executeBB.getBuildingBlock().setBpmnFlowName("AssignFabricConfigurationBB");
         executeBB.getBuildingBlock().setKey("72d9d1cd-f46d-447a-abdb-451d6fb05fa9");
@@ -2013,8 +2034,9 @@ public class BBInputSetupTest {
         executeBB.setConfigurationResourceKeys(configResourceKeys);
 
         executeBB.setRequestDetails(requestDetails);
-        doReturn(gBB).when(SPY_bbInputSetup).getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap,
-                requestAction, lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID));
+        doReturn(gBB).when(SPY_bbInputSetup)
+                .getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap, requestAction,
+                        lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID));
         doReturn(service).when(SPY_bbInputSetupUtils)
                 .getCatalogServiceByModelUUID(gBB.getServiceInstance().getModelInfoServiceInstance().getModelUuid());
 
@@ -2034,10 +2056,10 @@ public class BBInputSetupTest {
         proxy.setServiceInstance(new ServiceInstance());
         proxy.getServiceInstance().setModelInfoServiceInstance(new ModelInfoServiceInstance());
         proxy.getServiceInstance().getModelInfoServiceInstance().setModelUuid("sourceServiceModelUUID");
-        doReturn(relatedVpnBinding).when(SPY_bbInputSetupUtils).getRelatedInstanceByType(requestDetails,
-                ModelType.vpnBinding);
-        doReturn(relatedLocalNetwork).when(SPY_bbInputSetupUtils).getRelatedInstanceByType(requestDetails,
-                ModelType.network);
+        doReturn(relatedVpnBinding).when(SPY_bbInputSetupUtils)
+                .getRelatedInstanceByType(requestDetails, ModelType.vpnBinding);
+        doReturn(relatedLocalNetwork).when(SPY_bbInputSetupUtils)
+                .getRelatedInstanceByType(requestDetails, ModelType.network);
         doReturn(aaiVpnBinding).when(SPY_bbInputSetupUtils).getAAIVpnBinding(relatedVpnBinding.getInstanceId());
         doReturn(aaiLocalNetwork).when(SPY_bbInputSetupUtils).getAAIL3Network(relatedLocalNetwork.getInstanceId());
         doReturn(aaiAICVpnBindingOp).when(SPY_bbInputSetupUtils).getAICVpnBindingFromNetwork(aaiLocalNetwork);
@@ -2050,9 +2072,10 @@ public class BBInputSetupTest {
         ConfigurationResourceCustomization configurationCust = new ConfigurationResourceCustomization();
         configurationCust.setModelCustomizationUUID("72d9d1cd-f46d-447a-abdb-451d6fb05fa9");
         configurationCustList.add(configurationCust);
-        doNothing().when(SPY_bbInputSetup).populateConfiguration(isA(ModelInfo.class), isA(Service.class),
-                any(String.class), isA(ServiceInstance.class), any(), any(String.class), ArgumentMatchers.isNull(),
-                isA(ConfigurationResourceKeys.class), isA(RequestDetails.class));
+        doNothing().when(SPY_bbInputSetup)
+                .populateConfiguration(isA(ModelInfo.class), isA(Service.class), any(String.class),
+                        isA(ServiceInstance.class), any(), any(String.class), ArgumentMatchers.isNull(),
+                        isA(ConfigurationResourceKeys.class), isA(RequestDetails.class));
 
         executeBB.getBuildingBlock().setBpmnFlowName("AssignVrfConfigurationBB");
         executeBB.getBuildingBlock().setKey("72d9d1cd-f46d-447a-abdb-451d6fb05fa9");
@@ -2154,8 +2177,9 @@ public class BBInputSetupTest {
         Service service = Mockito.mock(Service.class);
         String requestAction = "createInstance";
 
-        doReturn(gBB).when(SPY_bbInputSetup).getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap,
-                requestAction, lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID));
+        doReturn(gBB).when(SPY_bbInputSetup)
+                .getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap, requestAction,
+                        lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID));
         doReturn(service).when(SPY_bbInputSetupUtils)
                 .getCatalogServiceByModelUUID(gBB.getServiceInstance().getModelInfoServiceInstance().getModelUuid());
 
@@ -2210,13 +2234,14 @@ public class BBInputSetupTest {
 
 
         executeBB.setRequestDetails(requestDetails);
-        doReturn(gBB).when(SPY_bbInputSetup).getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap,
-                requestAction, lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID));
+        doReturn(gBB).when(SPY_bbInputSetup)
+                .getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap, requestAction,
+                        lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID));
         doReturn(request).when(SPY_bbInputSetupUtils).getInfraActiveRequest(executeBB.getRequestId());
         doReturn(service).when(SPY_bbInputSetupUtils)
                 .getCatalogServiceByModelUUID(gBB.getServiceInstance().getModelInfoServiceInstance().getModelUuid());
-        doNothing().when(SPY_bbInputSetupUtils).updateInfraActiveRequestVnfId(request,
-                lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID));
+        doNothing().when(SPY_bbInputSetupUtils)
+                .updateInfraActiveRequestVnfId(request, lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID));
         doReturn("vnfId").when(SPY_bbInputSetup).getVnfId(executeBB, lookupKeyMap);
         doReturn(aaiVnf).when(SPY_bbInputSetupUtils).getAAIGenericVnf(any(String.class));
 
@@ -2275,13 +2300,14 @@ public class BBInputSetupTest {
         String requestAction = "createInstance";
 
         executeBB.setRequestDetails(requestDetails);
-        doReturn(gBB).when(SPY_bbInputSetup).getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap,
-                requestAction, lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID));
+        doReturn(gBB).when(SPY_bbInputSetup)
+                .getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap, requestAction,
+                        lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID));
         doReturn(request).when(SPY_bbInputSetupUtils).getInfraActiveRequest(executeBB.getRequestId());
         doReturn(service).when(SPY_bbInputSetupUtils)
                 .getCatalogServiceByModelUUID(gBB.getServiceInstance().getModelInfoServiceInstance().getModelUuid());
-        doNothing().when(SPY_bbInputSetupUtils).updateInfraActiveRequestVnfId(request,
-                lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID));
+        doNothing().when(SPY_bbInputSetupUtils)
+                .updateInfraActiveRequestVnfId(request, lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID));
         doReturn("vnfId").when(SPY_bbInputSetup).getVnfId(executeBB, lookupKeyMap);
         doReturn(aaiVnf).when(SPY_bbInputSetupUtils).getAAIGenericVnf(any(String.class));
 
@@ -2338,8 +2364,9 @@ public class BBInputSetupTest {
         String vnfType = "vnfType";
         Service service = Mockito.mock(Service.class);
         String requestAction = "deactivateInstance";
-        doReturn(gBB).when(SPY_bbInputSetup).getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap,
-                requestAction, lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID));
+        doReturn(gBB).when(SPY_bbInputSetup)
+                .getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap, requestAction,
+                        lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID));
         doReturn(service).when(SPY_bbInputSetupUtils)
                 .getCatalogServiceByModelUUID(gBB.getServiceInstance().getModelInfoServiceInstance().getModelUuid());
         String generatedId = "12131";
@@ -2381,8 +2408,9 @@ public class BBInputSetupTest {
         String vnfType = "vnfType";
         Service service = Mockito.mock(Service.class);
         String requestAction = "createInstance";
-        doReturn(gBB).when(SPY_bbInputSetup).getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap,
-                requestAction, lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID));
+        doReturn(gBB).when(SPY_bbInputSetup)
+                .getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap, requestAction,
+                        lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID));
 
 
         doReturn(service).when(SPY_bbInputSetupUtils)
@@ -2392,8 +2420,9 @@ public class BBInputSetupTest {
         doReturn("ab153b6e-c364-44c0-bef6-1f2982117f04").when(networkCust).getModelCustomizationUUID();
         networkCustList.add(networkCust);
         doReturn(networkCustList).when(service).getNetworkCustomizations();
-        doNothing().when(SPY_bbInputSetup).populateL3Network(any(), isA(ModelInfo.class), isA(Service.class),
-                any(String.class), isA(ServiceInstance.class), any(), any(String.class), any());
+        doNothing().when(SPY_bbInputSetup)
+                .populateL3Network(any(), isA(ModelInfo.class), isA(Service.class), any(String.class),
+                        isA(ServiceInstance.class), any(), any(String.class), any());
 
         executeBB.getBuildingBlock().setBpmnFlowName(AssignFlows.NETWORK_MACRO.toString());
         executeBB.getBuildingBlock().setKey("ab153b6e-c364-44c0-bef6-1f2982117f04");
@@ -2459,8 +2488,8 @@ public class BBInputSetupTest {
         doReturn(aaiServiceInstance).when(SPY_bbInputSetupUtils)
                 .getAAIServiceInstanceById(lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID));
         doReturn(serviceInstance).when(SPY_bbInputSetup).getExistingServiceInstance(aaiServiceInstance);
-        doReturn(gBB).when(SPY_bbInputSetup).populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance,
-                executeBB, requestAction, null);
+        doReturn(gBB).when(SPY_bbInputSetup)
+                .populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance, executeBB, requestAction, null);
 
         CloudConfiguration cloudConfig = new CloudConfiguration();
         cloudConfig.setLcpCloudRegionId("lcpCloudRegionId");
@@ -2474,8 +2503,8 @@ public class BBInputSetupTest {
                 any(String.class), isA(String.class), isA(CloudConfiguration.class));
 
         requestAction = "activateInstance";
-        doReturn(gBB).when(SPY_bbInputSetup).populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance,
-                executeBB, requestAction, null);
+        doReturn(gBB).when(SPY_bbInputSetup)
+                .populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance, executeBB, requestAction, null);
         executeBB.getBuildingBlock().setBpmnFlowName("ActivateNetworkBB");
         executeBB.getBuildingBlock().setKey("ab153b6e-c364-44c0-bef6-1f2982117f04");
         SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
@@ -2483,8 +2512,8 @@ public class BBInputSetupTest {
                 any(String.class), isA(String.class), isA(CloudConfiguration.class));
 
         requestAction = "unassignInstance";
-        doReturn(gBB).when(SPY_bbInputSetup).populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance,
-                executeBB, requestAction, null);
+        doReturn(gBB).when(SPY_bbInputSetup)
+                .populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance, executeBB, requestAction, null);
         executeBB.getBuildingBlock().setBpmnFlowName("UnassignNetworkBB");
         executeBB.getBuildingBlock().setKey("ab153b6e-c364-44c0-bef6-1f2982117f04");
         SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
@@ -2492,8 +2521,8 @@ public class BBInputSetupTest {
                 any(String.class), isA(String.class), isA(CloudConfiguration.class));
 
         requestAction = "activateFabricConfiguration";
-        doReturn(gBB).when(SPY_bbInputSetup).populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance,
-                executeBB, requestAction, null);
+        doReturn(gBB).when(SPY_bbInputSetup)
+                .populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance, executeBB, requestAction, null);
         executeBB.getBuildingBlock().setBpmnFlowName("ActivateFabricConfigurationBB");
         executeBB.getBuildingBlock().setKey("ab153b6e-c364-44c0-bef6-134534656234");
         SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
@@ -2522,8 +2551,9 @@ public class BBInputSetupTest {
         String vnfType = "vnfType";
         Service service = Mockito.mock(Service.class);
         String requestAction = "assignInstance";
-        doReturn(gBB).when(SPY_bbInputSetup).getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap,
-                requestAction, lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID));
+        doReturn(gBB).when(SPY_bbInputSetup)
+                .getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap, requestAction,
+                        lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID));
         doReturn(service).when(SPY_bbInputSetupUtils)
                 .getCatalogServiceByModelUUID(gBB.getServiceInstance().getModelInfoServiceInstance().getModelUuid());
         String generatedId = "12131";
@@ -2568,8 +2598,8 @@ public class BBInputSetupTest {
         doReturn(aaiServiceInstance).when(SPY_bbInputSetupUtils)
                 .getAAIServiceInstanceById(lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID));
         doReturn(serviceInstance).when(SPY_bbInputSetup).getExistingServiceInstance(aaiServiceInstance);
-        doReturn(gBB).when(SPY_bbInputSetup).populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance,
-                executeBB, requestAction, null);
+        doReturn(gBB).when(SPY_bbInputSetup)
+                .populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance, executeBB, requestAction, null);
 
         L3Network network = new L3Network();
         network.setNetworkId("networkId");
@@ -2577,8 +2607,8 @@ public class BBInputSetupTest {
         org.onap.aai.domain.yang.L3Network aaiNetwork = new org.onap.aai.domain.yang.L3Network();
         aaiNetwork.setModelCustomizationId("modelCustId");
         doReturn(aaiNetwork).when(SPY_bbInputSetupUtils).getAAIL3Network(network.getNetworkId());
-        doNothing().when(SPY_bbInputSetup).mapCatalogNetwork(any(L3Network.class), any(ModelInfo.class),
-                any(Service.class));
+        doNothing().when(SPY_bbInputSetup)
+                .mapCatalogNetwork(any(L3Network.class), any(ModelInfo.class), any(Service.class));
 
         executeBB.getBuildingBlock().setBpmnFlowName("DeleteNetworkBB");
         executeBB.getBuildingBlock().setKey("ab153b6e-c364-44c0-bef6-1f2982117f04");
@@ -2593,8 +2623,8 @@ public class BBInputSetupTest {
         org.onap.aai.domain.yang.GenericVnf aaiVnf = new org.onap.aai.domain.yang.GenericVnf();
         aaiVnf.setModelCustomizationId("modelCustId");
         doReturn(aaiVnf).when(SPY_bbInputSetupUtils).getAAIGenericVnf(vnf.getVnfId());
-        doNothing().when(SPY_bbInputSetup).mapCatalogVnf(any(GenericVnf.class), any(ModelInfo.class),
-                any(Service.class));
+        doNothing().when(SPY_bbInputSetup)
+                .mapCatalogVnf(any(GenericVnf.class), any(ModelInfo.class), any(Service.class));
 
         executeBB.getBuildingBlock().setBpmnFlowName("ActivateVnfBB");
         executeBB.getBuildingBlock().setKey("ab153b6e-c364-44c0-bef6-1f2982117f04");
@@ -2628,8 +2658,9 @@ public class BBInputSetupTest {
         gBB.getServiceInstance().getVnfs().get(0).getVolumeGroups().add(volumeGroup);
         org.onap.aai.domain.yang.VolumeGroup aaiVolumeGroup = new org.onap.aai.domain.yang.VolumeGroup();
         aaiVolumeGroup.setModelCustomizationId("modelCustId");
-        doReturn(aaiVolumeGroup).when(SPY_bbInputSetupUtils).getAAIVolumeGroup(cloudRegion.getCloudOwner(),
-                cloudRegion.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId());
+        doReturn(aaiVolumeGroup).when(SPY_bbInputSetupUtils)
+                .getAAIVolumeGroup(cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId(),
+                        volumeGroup.getVolumeGroupId());
 
         executeBB.getBuildingBlock().setBpmnFlowName("UnassignVolumeGroupBB");
         executeBB.getBuildingBlock().setKey("72d9d1cd-f46d-447a-abdb-451d6fb05fa8");
@@ -2646,8 +2677,9 @@ public class BBInputSetupTest {
         org.onap.aai.domain.yang.Configuration aaiConfiguration = new org.onap.aai.domain.yang.Configuration();
         aaiConfiguration.setModelCustomizationId("modelCustId");
         doReturn(aaiConfiguration).when(SPY_bbInputSetupUtils).getAAIConfiguration(configuration.getConfigurationId());
-        doNothing().when(SPY_bbInputSetup).mapCatalogConfiguration(isA(Configuration.class), isA(ModelInfo.class),
-                isA(Service.class), isA(ConfigurationResourceKeys.class));
+        doNothing().when(SPY_bbInputSetup)
+                .mapCatalogConfiguration(isA(Configuration.class), isA(ModelInfo.class), isA(Service.class),
+                        isA(ConfigurationResourceKeys.class));
 
         executeBB.getBuildingBlock().setBpmnFlowName("ActivateFabricConfigurationBB");
         executeBB.getBuildingBlock().setKey("72d9d1cd-f46d-447a-abdb-451d6fb05fa9");
@@ -2866,13 +2898,14 @@ public class BBInputSetupTest {
         vfModuleAAI.setModelCustomizationId(vfModuleCustomizationId);
 
         doReturn(vnfAAI).when(SPY_bbInputSetupUtils).getAAIGenericVnf(vnf.getVnfId());
-        doReturn(volumeGroupAAI).when(SPY_bbInputSetupUtils).getAAIVolumeGroup(CLOUD_OWNER,
-                cloudConfiguration.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId());
+        doReturn(volumeGroupAAI).when(SPY_bbInputSetupUtils)
+                .getAAIVolumeGroup(CLOUD_OWNER, cloudConfiguration.getLcpCloudRegionId(),
+                        volumeGroup.getVolumeGroupId());
         doReturn(vfModuleAAI).when(SPY_bbInputSetupUtils).getAAIVfModule(isA(String.class), isA(String.class));
-        doNothing().when(SPY_bbInputSetup).mapCatalogVnf(isA(GenericVnf.class), isA(ModelInfo.class),
-                isA(Service.class));
-        doNothing().when(SPY_bbInputSetup).mapCatalogVfModule(isA(VfModule.class), isA(ModelInfo.class),
-                isA(Service.class), isA(String.class));
+        doNothing().when(SPY_bbInputSetup)
+                .mapCatalogVnf(isA(GenericVnf.class), isA(ModelInfo.class), isA(Service.class));
+        doNothing().when(SPY_bbInputSetup)
+                .mapCatalogVfModule(isA(VfModule.class), isA(ModelInfo.class), isA(Service.class), isA(String.class));
 
         SPY_bbInputSetup.populateVfModule(modelInfo, service, bbName, serviceInstance, lookupKeyMap, resourceId,
                 relatedInstanceList, instanceName, instanceParams, cloudConfiguration);

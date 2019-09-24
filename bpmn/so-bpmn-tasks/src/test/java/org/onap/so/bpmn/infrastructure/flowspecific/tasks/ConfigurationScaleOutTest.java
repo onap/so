@@ -135,8 +135,8 @@ public class ConfigurationScaleOutTest extends BaseTaskTest {
         execution.setVariable("vfModuleId", "testVfModuleId");
         execution.setVariable("payload", payload);
 
-        doNothing().when(appCClient).runAppCCommand(action, msoRequestId, vnfId, Optional.of(payload), payloadInfo,
-                controllerType);
+        doNothing().when(appCClient)
+                .runAppCCommand(action, msoRequestId, vnfId, Optional.of(payload), payloadInfo, controllerType);
 
         configurationScaleOut.callAppcClient(execution);
         verify(appCClient, times(1)).runAppCCommand(action, msoRequestId, vnfId, Optional.of(payload), payloadInfo,
@@ -195,8 +195,8 @@ public class ConfigurationScaleOutTest extends BaseTaskTest {
 
         doThrow(new BpmnError("BPMN Error")).when(exceptionUtil)
                 .buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1002), eq("APPC Client Failed"));
-        doThrow(new RuntimeException("APPC Client Failed")).when(appCClient).runAppCCommand(action, msoRequestId, vnfId,
-                Optional.of(payload), payloadInfo, controllerType);
+        doThrow(new RuntimeException("APPC Client Failed")).when(appCClient)
+                .runAppCCommand(action, msoRequestId, vnfId, Optional.of(payload), payloadInfo, controllerType);
         configurationScaleOut.callAppcClient(execution);
         verify(appCClient, times(1)).runAppCCommand(action, msoRequestId, vnfId, Optional.of(payload), payloadInfo,
                 controllerType);

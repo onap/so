@@ -45,8 +45,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         for (int i = 0; usercredentials != null && i < usercredentials.size(); i++) {
             if (usercredentials.get(i).getUsername().equals(username)) {
-                return User.withUsername(username).password(usercredentials.get(i).getPassword())
-                        .roles(usercredentials.get(i).getRole()).build();
+                return User.withUsername(username)
+                        .password(usercredentials.get(i).getPassword())
+                        .roles(usercredentials.get(i).getRole())
+                        .build();
             }
         }
 

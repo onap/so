@@ -35,8 +35,9 @@ public class VNFUnsetClosedLoopDisabledFlagActivityTest extends BaseBPMNTest {
         ProcessInstance pi =
                 runtimeService.startProcessInstanceByKey("VNFUnsetClosedLoopDisabledFlagActivity", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("VNFUnsetClosedLoopDisabledFlagActivity_Start",
-                "TaskVNFUnsetClosedLoopDisabledFlagActivity", "VNFUnsetClosedLoopDisabledFlagActivity_End");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("VNFUnsetClosedLoopDisabledFlagActivity_Start",
+                        "TaskVNFUnsetClosedLoopDisabledFlagActivity", "VNFUnsetClosedLoopDisabledFlagActivity_End");
         assertThat(pi).isEnded();
     }
 

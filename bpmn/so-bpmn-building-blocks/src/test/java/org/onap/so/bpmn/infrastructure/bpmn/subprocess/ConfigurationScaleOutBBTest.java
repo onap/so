@@ -38,8 +38,9 @@ public class ConfigurationScaleOutBBTest extends BaseBPMNTest {
     public void sunnyDayConfigurationScaleOutBBTest() throws InterruptedException, IOException {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("ConfigurationScaleOutBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("Start_ConfigScaleOutBB", "QueryVfModule",
-                "GetConfigScaleOutParams", "Call-AppC-ConfigScaleOut", "End_ConfigScaleOutBB");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("Start_ConfigScaleOutBB", "QueryVfModule", "GetConfigScaleOutParams",
+                        "Call-AppC-ConfigScaleOut", "End_ConfigScaleOutBB");
         assertThat(pi).isEnded();
     }
 
@@ -49,7 +50,8 @@ public class ConfigurationScaleOutBBTest extends BaseBPMNTest {
                 .queryVfModule(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("ConfigurationScaleOutBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("Start_ConfigScaleOutBB", "QueryVfModule")
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("Start_ConfigScaleOutBB", "QueryVfModule")
                 .hasNotPassed("GetConfigScaleOutParams", "Call-AppC-ConfigScaleOut", "End_ConfigScaleOutBB");
         assertThat(pi).isEnded();
     }

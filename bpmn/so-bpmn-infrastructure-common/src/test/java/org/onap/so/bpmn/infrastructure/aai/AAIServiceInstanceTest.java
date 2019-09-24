@@ -26,11 +26,16 @@ import org.junit.Test;
 
 public class AAIServiceInstanceTest {
 
-    AAIServiceInstance test = new AAIServiceInstance.AAIServiceInstanceBuilder()
-            .setServiceInstanceName("serviceInstanceName").setServiceType("serviceType").setServiceRole("serviceRole")
-            .setOrchestrationStatus("orchestrationStatus").setModelInvariantUuid("modelInvariantUuid")
-            .setModelVersionId("modelVersionId").setEnvironmentContext("environmentContext")
-            .setWorkloadContext("workloadContext").createAAIServiceInstance();
+    AAIServiceInstance test =
+            new AAIServiceInstance.AAIServiceInstanceBuilder().setServiceInstanceName("serviceInstanceName")
+                    .setServiceType("serviceType")
+                    .setServiceRole("serviceRole")
+                    .setOrchestrationStatus("orchestrationStatus")
+                    .setModelInvariantUuid("modelInvariantUuid")
+                    .setModelVersionId("modelVersionId")
+                    .setEnvironmentContext("environmentContext")
+                    .setWorkloadContext("workloadContext")
+                    .createAAIServiceInstance();
 
     @Test
     public void getServiceInstanceNameTest() throws Exception {

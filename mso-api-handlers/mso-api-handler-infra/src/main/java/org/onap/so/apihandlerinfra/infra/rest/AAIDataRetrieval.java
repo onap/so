@@ -54,8 +54,8 @@ public class AAIDataRetrieval {
     }
 
     public VolumeGroup getVolumeGroup(String vnfId, String volumeGroupId) throws AAIEntityNotFound {
-        AAIResultWrapper wrapper =
-                this.getAaiResourcesClient().get(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+        AAIResultWrapper wrapper = this.getAaiResourcesClient()
+                .get(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
                         .relatedTo(AAIObjectType.VOLUME_GROUP, volumeGroupId));
         Optional<VolumeGroup> volume = wrapper.asBean(VolumeGroup.class);
         if (volume.isPresent()) {

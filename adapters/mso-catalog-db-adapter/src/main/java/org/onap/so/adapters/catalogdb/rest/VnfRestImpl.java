@@ -69,7 +69,8 @@ public class VnfRestImpl {
         if (service.getVnfCustomizations() == null || service.getVnfCustomizations().isEmpty()) {
             throw new WebApplicationException("Vnf Not Found", 404);
         }
-        List<VnfResourceCustomization> vnfCustom = service.getVnfCustomizations().stream()
+        List<VnfResourceCustomization> vnfCustom = service.getVnfCustomizations()
+                .stream()
                 .filter(vnfCust -> vnfCust.getModelCustomizationUUID().equals(modelCustomizationUUID))
                 .collect(Collectors.toList());
         if (vnfCustom.isEmpty()) {
@@ -89,7 +90,8 @@ public class VnfRestImpl {
     public Response findService(@PathParam("modelUUID") String serviceModelUUID,
             @PathParam("modelCustomizationUUID") String modelCustomizationUUID, Vnf vnf) {
         org.onap.so.db.catalog.beans.Service service = serviceRepo.findOneByModelUUID(serviceModelUUID);
-        List<VnfResourceCustomization> vnfCustom = service.getVnfCustomizations().stream()
+        List<VnfResourceCustomization> vnfCustom = service.getVnfCustomizations()
+                .stream()
                 .filter(vnfCust -> vnfCust.getModelCustomizationUUID().equals(modelCustomizationUUID))
                 .collect(Collectors.toList());
         if (vnfCustom.isEmpty()) {

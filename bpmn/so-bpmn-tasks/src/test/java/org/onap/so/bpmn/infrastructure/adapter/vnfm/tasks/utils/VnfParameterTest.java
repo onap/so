@@ -30,7 +30,8 @@ import nl.jqno.equalsverifier.Warning;
 public class VnfParameterTest {
     @Test
     public void testVnfParameter_equalAndHasCode() throws ClassNotFoundException {
-        EqualsVerifier.forClass(VnfParameter.class).suppress(Warning.STRICT_INHERITANCE, Warning.NONFINAL_FIELDS)
+        EqualsVerifier.forClass(VnfParameter.class)
+                .suppress(Warning.STRICT_INHERITANCE, Warning.NONFINAL_FIELDS)
                 .verify();
     }
 

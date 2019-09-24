@@ -97,8 +97,8 @@ public class BpmnRequestBuilderTest {
     public void test_buildVnfDeleteRequest() throws Exception {
         GenericVnf vnf = provider.getMapper().readValue(new File(RESOURCE_PATH + "Vnf.json"), GenericVnf.class);
 
-        doReturn(Optional.of(vnf)).when(aaiResourcesClient).get(GenericVnf.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "vnfId"));
+        doReturn(Optional.of(vnf)).when(aaiResourcesClient)
+                .get(GenericVnf.class, AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "vnfId"));
 
         ServiceInstancesRequest expectedRequest =
                 mapper.readValue(new File(RESOURCE_PATH + "ExpectedVnfRequest.json"), ServiceInstancesRequest.class);
@@ -110,12 +110,12 @@ public class BpmnRequestBuilderTest {
     public void test_buildVFModuleDeleteRequest() throws Exception {
         GenericVnf vnf = provider.getMapper().readValue(new File(RESOURCE_PATH + "Vnf.json"), GenericVnf.class);
 
-        doReturn(Optional.of(vnf)).when(aaiResourcesClient).get(GenericVnf.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "vnfId"));
+        doReturn(Optional.of(vnf)).when(aaiResourcesClient)
+                .get(GenericVnf.class, AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "vnfId"));
         VfModule vfModule = provider.getMapper().readValue(new File(RESOURCE_PATH + "VfModule.json"), VfModule.class);
 
-        doReturn(Optional.of(vfModule)).when(aaiResourcesClient).get(VfModule.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, "vnfId", "vfModuleId"));
+        doReturn(Optional.of(vfModule)).when(aaiResourcesClient)
+                .get(VfModule.class, AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, "vnfId", "vfModuleId"));
 
         ServiceInstancesRequest expectedRequest = mapper
                 .readValue(new File(RESOURCE_PATH + "ExpectedVfModuleRequest.json"), ServiceInstancesRequest.class);
@@ -128,8 +128,8 @@ public class BpmnRequestBuilderTest {
     public void test_buildVolumeGroupDeleteRequest() throws Exception {
         GenericVnf vnf = provider.getMapper().readValue(new File(RESOURCE_PATH + "Vnf.json"), GenericVnf.class);
 
-        doReturn(Optional.of(vnf)).when(aaiResourcesClient).get(GenericVnf.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "vnfId"));
+        doReturn(Optional.of(vnf)).when(aaiResourcesClient)
+                .get(GenericVnf.class, AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "vnfId"));
         VolumeGroup volumeGroup =
                 provider.getMapper().readValue(new File(RESOURCE_PATH + "VolumeGroup.json"), VolumeGroup.class);
         AAIResultWrapper wrapper = new AAIResultWrapper(volumeGroup);

@@ -88,11 +88,16 @@ public class ServiceRecipe implements Serializable, Recipe {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("id", id).append("serviceModelUUID", serviceModelUUID)
-                .append("action", action).append("description", description)
-                .append("orchestrationUri", orchestrationUri).append("serviceParamXSD", paramXsd)
-                .append("recipeTimeout", recipeTimeout).append("serviceTimeoutInterim", serviceTimeoutInterim)
-                .append("created", created).toString();
+        return new ToStringBuilder(this).append("id", id)
+                .append("serviceModelUUID", serviceModelUUID)
+                .append("action", action)
+                .append("description", description)
+                .append("orchestrationUri", orchestrationUri)
+                .append("serviceParamXSD", paramXsd)
+                .append("recipeTimeout", recipeTimeout)
+                .append("serviceTimeoutInterim", serviceTimeoutInterim)
+                .append("created", created)
+                .toString();
     }
 
     @Override
@@ -101,8 +106,10 @@ public class ServiceRecipe implements Serializable, Recipe {
             return false;
         }
         ServiceRecipe castOther = (ServiceRecipe) other;
-        return new EqualsBuilder().append(serviceModelUUID, castOther.serviceModelUUID).append(action, castOther.action)
-                .append(orchestrationUri, castOther.orchestrationUri).isEquals();
+        return new EqualsBuilder().append(serviceModelUUID, castOther.serviceModelUUID)
+                .append(action, castOther.action)
+                .append(orchestrationUri, castOther.orchestrationUri)
+                .isEquals();
     }
 
     @Override

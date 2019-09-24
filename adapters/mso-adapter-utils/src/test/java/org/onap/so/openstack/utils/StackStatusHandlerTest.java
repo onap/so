@@ -68,8 +68,8 @@ public class StackStatusHandlerTest {
     @Test
     public final void record_Not_Exists_Test() throws MsoException, IOException {
         ArgumentCaptor<RequestProcessingData> requestCaptor = ArgumentCaptor.forClass(RequestProcessingData.class);
-        doReturn(null).when(requestDBClient).getRequestProcessingDataBySoRequestIdAndNameAndGrouping(null, "stackName",
-                "id");
+        doReturn(null).when(requestDBClient)
+                .getRequestProcessingDataBySoRequestIdAndNameAndGrouping(null, "stackName", "id");
         Stack latestStack = new Stack();
         latestStack.setId("id");
         latestStack.setStackName("stackName");

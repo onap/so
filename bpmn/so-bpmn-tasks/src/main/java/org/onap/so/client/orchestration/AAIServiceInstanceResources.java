@@ -98,8 +98,9 @@ public class AAIServiceInstanceResources {
         AAIResourceUri serviceInstanceURI =
                 AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstance.getServiceInstanceId());
         org.onap.aai.domain.yang.Project aaiProject = aaiObjectMapper.mapProject(project);
-        injectionHelper.getAaiClient().createIfNotExists(projectURI, Optional.of(aaiProject)).connect(projectURI,
-                serviceInstanceURI);
+        injectionHelper.getAaiClient()
+                .createIfNotExists(projectURI, Optional.of(aaiProject))
+                .connect(projectURI, serviceInstanceURI);
     }
 
     public void createOwningEntity(OwningEntity owningEntity) {
@@ -156,7 +157,8 @@ public class AAIServiceInstanceResources {
         AAIResourceUri serviceInstanceURI =
                 AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstance.getServiceInstanceId());
         org.onap.aai.domain.yang.OwningEntity aaiOwningEntity = aaiObjectMapper.mapOwningEntity(owningEntity);
-        injectionHelper.getAaiClient().createIfNotExists(owningEntityURI, Optional.of(aaiOwningEntity))
+        injectionHelper.getAaiClient()
+                .createIfNotExists(owningEntityURI, Optional.of(aaiOwningEntity))
                 .connect(owningEntityURI, serviceInstanceURI);
     }
 

@@ -127,8 +127,10 @@ public class WatchdogDistributionStatus implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("distributionId", getDistributionId())
-                .append("distributionIdStatus", getDistributionIdStatus()).append("createTime", getCreateTime())
-                .append("modifyTime", getModifyTime()).toString();
+                .append("distributionIdStatus", getDistributionIdStatus())
+                .append("createTime", getCreateTime())
+                .append("modifyTime", getModifyTime())
+                .toString();
     }
 
 }

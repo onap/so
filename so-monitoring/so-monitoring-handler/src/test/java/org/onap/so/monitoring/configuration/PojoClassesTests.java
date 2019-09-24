@@ -71,8 +71,11 @@ public class PojoClassesTests {
     }
 
     private void test(final String pojoPackage) {
-        final Validator validator = ValidatorBuilder.create().with(new SetterTester()).with(new GetterTester())
-                .with(new ToStringTester()).build();
+        final Validator validator = ValidatorBuilder.create()
+                .with(new SetterTester())
+                .with(new GetterTester())
+                .with(new ToStringTester())
+                .build();
         validator.validate(pojoPackage, new FilterPackageInfo());
     }
 }

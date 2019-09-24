@@ -35,9 +35,10 @@ public class AssignVfModuleBBTest extends BaseBPMNTest {
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("AssignVfModuleBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("AssignVfModuleBB_Start", "CreateVfModule",
-                "ConnectVfModuleToVolumeGroup", "AssignVfModule", "CallActivity_sdncHandlerCall",
-                "UpdateVfModuleStatus", "AssignVfModuleBB_End");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("AssignVfModuleBB_Start", "CreateVfModule", "ConnectVfModuleToVolumeGroup",
+                        "AssignVfModule", "CallActivity_sdncHandlerCall", "UpdateVfModuleStatus",
+                        "AssignVfModuleBB_End");
         assertThat(pi).isEnded();
     }
 
@@ -47,8 +48,10 @@ public class AssignVfModuleBBTest extends BaseBPMNTest {
                 .createVfModule(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("AssignVfModuleBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("AssignVfModuleBB_Start", "CreateVfModule").hasNotPassed(
-                "ConnectVfModuleToVolumeGroup", "AssignVfModule", "UpdateVfModuleStatus", "AssignVfModuleBB_End");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("AssignVfModuleBB_Start", "CreateVfModule")
+                .hasNotPassed("ConnectVfModuleToVolumeGroup", "AssignVfModule", "UpdateVfModuleStatus",
+                        "AssignVfModuleBB_End");
         assertThat(pi).isEnded();
     }
 }

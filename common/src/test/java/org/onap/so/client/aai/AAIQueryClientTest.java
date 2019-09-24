@@ -110,8 +110,8 @@ public class AAIQueryClientTest {
 
     @Test
     public void querySingleResourceTest() throws IOException {
-        doReturn(getJson("single-query-result.json")).when(aaiQueryClient).query(eq(Format.RESOURCE_AND_URL),
-                any(CustomQuery.class));
+        doReturn(getJson("single-query-result.json")).when(aaiQueryClient)
+                .query(eq(Format.RESOURCE_AND_URL), any(CustomQuery.class));
         List<Complex> result = aaiQueryClient.querySingleResource(
                 new CustomQuery(Arrays.asList(AAIUriFactory.createNodesUri(AAIObjectType.COMPLEX, "test"))),
                 Complex.class);
@@ -121,8 +121,8 @@ public class AAIQueryClientTest {
 
     @Test
     public void getResourceAndUrlTest() throws IOException {
-        doReturn(getJson("single-query-result.json")).when(aaiQueryClient).query(eq(Format.RESOURCE_AND_URL),
-                any(CustomQuery.class));
+        doReturn(getJson("single-query-result.json")).when(aaiQueryClient)
+                .query(eq(Format.RESOURCE_AND_URL), any(CustomQuery.class));
         List<ResourceAndUrl<AAIResultWrapper>> result = aaiQueryClient.getResourceAndUrl(
                 new CustomQuery(Arrays.asList(AAIUriFactory.createNodesUri(AAIObjectType.COMPLEX, "test"))));
         assertEquals(2, result.size());

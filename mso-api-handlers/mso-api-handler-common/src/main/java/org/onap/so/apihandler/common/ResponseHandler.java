@@ -78,7 +78,8 @@ public class ResponseHandler {
         } catch (IOException e) {
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_VALIDATION_ERROR, ErrorCode.SchemaError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                            .build();
 
             throw new ValidateException.Builder("IOException getting Camunda response body", HttpStatus.SC_BAD_REQUEST,
                     ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
@@ -90,7 +91,8 @@ public class ResponseHandler {
         } catch (IOException e) {
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                            .build();
 
             throw new ValidateException.Builder("Cannot parse Camunda Response", HttpStatus.SC_BAD_REQUEST,
                     ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
@@ -102,7 +104,8 @@ public class ResponseHandler {
                     ErrorCode.BusinessProcesssError).targetEntity("Camunda").targetServiceName("parseCamunda").build();
             BPMNFailureException bpmnFailureException =
                     new BPMNFailureException.Builder(String.valueOf(status), status, ErrorNumbers.ERROR_FROM_BPEL)
-                            .errorInfo(errorLoggerInfo).build();
+                            .errorInfo(errorLoggerInfo)
+                            .build();
         }
     }
 
@@ -127,7 +130,8 @@ public class ResponseHandler {
                     ErrorCode.BusinessProcesssError).targetEntity("BPEL").targetServiceName("parseBpel").build();
 
             throw new BPMNFailureException.Builder(String.valueOf(status), status, ErrorNumbers.ERROR_FROM_BPEL)
-                    .errorInfo(errorLoggerInfo).build();
+                    .errorInfo(errorLoggerInfo)
+                    .build();
         }
 
     }
@@ -145,16 +149,19 @@ public class ResponseHandler {
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.DataError).build();
 
             throw new ValidateException.Builder("Could not convert CamundaTask response to string",
-                    HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo)
+                    HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
+                            .errorInfo(errorLoggerInfo)
                             .build();
         }
         if (status != HttpStatus.SC_NO_CONTENT && status != HttpStatus.SC_ACCEPTED) {
             ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_ERROR_FROM_BPEL_SERVER,
-                    ErrorCode.BusinessProcesssError).targetEntity("CAMUNDATASK").targetServiceName("parseCamundaTask")
+                    ErrorCode.BusinessProcesssError).targetEntity("CAMUNDATASK")
+                            .targetServiceName("parseCamundaTask")
                             .build();
 
             throw new BPMNFailureException.Builder(String.valueOf(status), status, ErrorNumbers.ERROR_FROM_BPEL)
-                    .errorInfo(errorLoggerInfo).build();
+                    .errorInfo(errorLoggerInfo)
+                    .build();
         }
 
     }

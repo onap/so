@@ -58,11 +58,13 @@ public class TasksHandlerTest extends BaseTest {
             throws ParseException, JSONException, JsonParseException, JsonMappingException, IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/sobpmnengine/task"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBodyFile("Camunda/GetTaskResponse.json").withStatus(HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/GetTaskResponse.json")
+                        .withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlPathEqualTo("/sobpmnengine/task/b5fa707a-f55a-11e7-a796-005056856d52/variables"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBodyFile("Camunda/GetTaskVariablesResponse.json").withStatus(HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/GetTaskVariablesResponse.json")
+                        .withStatus(HttpStatus.SC_OK)));
 
         String requestId = "4f6fe9ac-800c-4540-a93e-10d179fa1b0a";
 

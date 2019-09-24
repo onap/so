@@ -95,7 +95,8 @@ public class MsoHeatUtilsITTest extends BaseTest {
 
         wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/stackname/stackId"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBodyFile("OpenstackResponse_StackId.json").withStatus(HttpStatus.SC_OK)));
+                        .withBodyFile("OpenstackResponse_StackId.json")
+                        .withStatus(HttpStatus.SC_OK)));
 
         VduInstance actual = heatUtils.instantiateVdu(cloudInfo, instanceName, inputs, vduModel, rollbackOnFailure);
 
@@ -123,7 +124,8 @@ public class MsoHeatUtilsITTest extends BaseTest {
 
         wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/instanceId"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBodyFile("OpenstackResponse_StackId.json").withStatus(HttpStatus.SC_OK)));
+                        .withBodyFile("OpenstackResponse_StackId.json")
+                        .withStatus(HttpStatus.SC_OK)));
 
         VduInstance actual = heatUtils.queryVdu(cloudInfo, instanceId);
 

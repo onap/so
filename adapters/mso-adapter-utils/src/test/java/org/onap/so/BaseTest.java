@@ -76,15 +76,18 @@ public abstract class BaseTest extends TestDataSetup {
     }
 
     private void mockCloud(CloudIdentity identity, CloudSite cloudSite) throws IOException {
-        wireMockServer.stubFor(get(urlPathEqualTo("/cloudSite/MTN13")).willReturn(aResponse()
-                .withBody(getBody(mapper.writeValueAsString(cloudSite), wireMockPort, ""))
-                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).withStatus(HttpStatus.SC_OK)));
-        wireMockServer.stubFor(get(urlPathEqualTo("/cloudSite/DEFAULT")).willReturn(aResponse()
-                .withBody(getBody(mapper.writeValueAsString(cloudSite), wireMockPort, ""))
-                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).withStatus(HttpStatus.SC_OK)));
-        wireMockServer.stubFor(get(urlPathEqualTo("/cloudIdentity/mtn13")).willReturn(aResponse()
-                .withBody(getBody(mapper.writeValueAsString(identity), wireMockPort, ""))
-                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).withStatus(HttpStatus.SC_OK)));
+        wireMockServer.stubFor(get(urlPathEqualTo("/cloudSite/MTN13"))
+                .willReturn(aResponse().withBody(getBody(mapper.writeValueAsString(cloudSite), wireMockPort, ""))
+                        .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withStatus(HttpStatus.SC_OK)));
+        wireMockServer.stubFor(get(urlPathEqualTo("/cloudSite/DEFAULT"))
+                .willReturn(aResponse().withBody(getBody(mapper.writeValueAsString(cloudSite), wireMockPort, ""))
+                        .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withStatus(HttpStatus.SC_OK)));
+        wireMockServer.stubFor(get(urlPathEqualTo("/cloudIdentity/mtn13"))
+                .willReturn(aResponse().withBody(getBody(mapper.writeValueAsString(identity), wireMockPort, ""))
+                        .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withStatus(HttpStatus.SC_OK)));
     }
 
     protected CloudIdentity getCloudIdentity() {

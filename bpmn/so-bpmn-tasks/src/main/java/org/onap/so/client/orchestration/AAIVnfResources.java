@@ -60,7 +60,8 @@ public class AAIVnfResources {
         vnf.setOrchestrationStatus(OrchestrationStatus.INVENTORIED);
         AAIResourceUri serviceInstanceURI =
                 AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstance.getServiceInstanceId());
-        injectionHelper.getAaiClient().createIfNotExists(vnfURI, Optional.of(aaiObjectMapper.mapVnf(vnf)))
+        injectionHelper.getAaiClient()
+                .createIfNotExists(vnfURI, Optional.of(aaiObjectMapper.mapVnf(vnf)))
                 .connect(vnfURI, serviceInstanceURI);
     }
 
@@ -68,16 +69,18 @@ public class AAIVnfResources {
         AAIResourceUri platformURI =
                 AAIUriFactory.createResourceUri(AAIObjectType.PLATFORM, platform.getPlatformName());
         AAIResourceUri vnfURI = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnf.getVnfId());
-        injectionHelper.getAaiClient().createIfNotExists(platformURI, Optional.of(platform)).connect(vnfURI,
-                platformURI);
+        injectionHelper.getAaiClient()
+                .createIfNotExists(platformURI, Optional.of(platform))
+                .connect(vnfURI, platformURI);
     }
 
     public void createLineOfBusinessandConnectVnf(LineOfBusiness lineOfBusiness, GenericVnf vnf) {
         AAIResourceUri lineOfBusinessURI =
                 AAIUriFactory.createResourceUri(AAIObjectType.LINE_OF_BUSINESS, lineOfBusiness.getLineOfBusinessName());
         AAIResourceUri vnfURI = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnf.getVnfId());
-        injectionHelper.getAaiClient().createIfNotExists(lineOfBusinessURI, Optional.of(lineOfBusiness)).connect(vnfURI,
-                lineOfBusinessURI);
+        injectionHelper.getAaiClient()
+                .createIfNotExists(lineOfBusinessURI, Optional.of(lineOfBusiness))
+                .connect(vnfURI, lineOfBusinessURI);
     }
 
     public void deleteVnf(GenericVnf vnf) {
@@ -107,8 +110,9 @@ public class AAIVnfResources {
      * @return AAI Generic Vnf
      */
     public Optional<org.onap.aai.domain.yang.GenericVnf> getGenericVnf(String vnfId) {
-        return injectionHelper.getAaiClient().get(org.onap.aai.domain.yang.GenericVnf.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId));
+        return injectionHelper.getAaiClient()
+                .get(org.onap.aai.domain.yang.GenericVnf.class,
+                        AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId));
     }
 
     /**

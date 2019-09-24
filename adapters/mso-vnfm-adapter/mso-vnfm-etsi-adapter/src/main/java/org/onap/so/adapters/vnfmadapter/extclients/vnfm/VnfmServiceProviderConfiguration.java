@@ -154,10 +154,12 @@ public class VnfmServiceProviderConfiguration {
                 keystore.load(keyStoreResource.getInputStream(), keyStorePassword.toCharArray());
                 sslContext =
                         new SSLContextBuilder().loadTrustMaterial(trustStore.getURL(), trustStorePassword.toCharArray())
-                                .loadKeyMaterial(keystore, keyStorePassword.toCharArray()).build();
+                                .loadKeyMaterial(keystore, keyStorePassword.toCharArray())
+                                .build();
             } else {
-                sslContext = new SSLContextBuilder()
-                        .loadTrustMaterial(trustStore.getURL(), trustStorePassword.toCharArray()).build();
+                sslContext =
+                        new SSLContextBuilder().loadTrustMaterial(trustStore.getURL(), trustStorePassword.toCharArray())
+                                .build();
             }
             logger.info("Setting truststore: {}", trustStore.getURL());
             final SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(sslContext);

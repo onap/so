@@ -90,9 +90,11 @@ public class AAIResourcesClientTest {
         AAIResourceUri path = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test2");
         wireMockRule.stubFor(get(urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build()))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBodyFile("aai/resources/mockObject.json").withStatus(200)));
+                        .withBodyFile("aai/resources/mockObject.json")
+                        .withStatus(200)));
         wireMockRule.stubFor(delete(urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build()))
-                .withQueryParam("resource-version", equalTo("1234")).willReturn(aResponse().withStatus(204)));
+                .withQueryParam("resource-version", equalTo("1234"))
+                .willReturn(aResponse().withStatus(204)));
         AAIResourcesClient client = aaiClient;
         client.delete(path);
     }
@@ -103,7 +105,8 @@ public class AAIResourcesClientTest {
         wireMockRule.stubFor(get(urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build().toString()))
                 .withHeader("Authorization", equalTo("Basic dGVzdDp0ZXN0"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBodyFile("aai/resources/mockObject.json").withStatus(200)));
+                        .withBodyFile("aai/resources/mockObject.json")
+                        .withStatus(200)));
         AAIResourcesClient client = aaiClient;
         client.get(path);
     }
@@ -173,8 +176,10 @@ public class AAIResourcesClientTest {
     @Test
     public void verifyFailedCallException() {
         AAIResourceUri path = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test");
-        wireMockRule.stubFor(get(urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build())).willReturn(aResponse()
-                .withHeader("Content-Type", "text/plain").withBodyFile("aai/error-message.json").withStatus(400)));
+        wireMockRule.stubFor(get(urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build()))
+                .willReturn(aResponse().withHeader("Content-Type", "text/plain")
+                        .withBodyFile("aai/error-message.json")
+                        .withStatus(400)));
         AAIResourcesClient client = aaiClient;
 
         thrown.expect(BadRequestException.class);

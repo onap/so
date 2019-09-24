@@ -78,10 +78,10 @@ public class SDNCServiceInstanceResourcesTest extends TestDataSetup {
     @Test
     public void assignServiceInstanceExceptionTest() throws Exception {
         expectedException.expect(Exception.class);
-        doThrow(Exception.class).when(MOCK_serviceTopologyOperationMapper).reqMapper(
-                eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.ASSIGN),
-                eq(GenericResourceApiRequestActionEnumeration.CREATESERVICEINSTANCE), any(ServiceInstance.class),
-                any(Customer.class), any(RequestContext.class));
+        doThrow(Exception.class).when(MOCK_serviceTopologyOperationMapper)
+                .reqMapper(eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.ASSIGN),
+                        eq(GenericResourceApiRequestActionEnumeration.CREATESERVICEINSTANCE),
+                        any(ServiceInstance.class), any(Customer.class), any(RequestContext.class));
         sdncServiceInstanceResources.assignServiceInstance(serviceInstance, customer, requestContext);
     }
 
@@ -100,10 +100,10 @@ public class SDNCServiceInstanceResourcesTest extends TestDataSetup {
     @Test
     public void deleteServiceInstanceExceptionTest() throws Exception {
         expectedException.expect(Exception.class);
-        doThrow(Exception.class).when(MOCK_serviceTopologyOperationMapper).reqMapper(
-                eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.DELETE),
-                eq(GenericResourceApiRequestActionEnumeration.DELETESERVICEINSTANCE), any(ServiceInstance.class),
-                any(Customer.class), any(RequestContext.class));
+        doThrow(Exception.class).when(MOCK_serviceTopologyOperationMapper)
+                .reqMapper(eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.DELETE),
+                        eq(GenericResourceApiRequestActionEnumeration.DELETESERVICEINSTANCE),
+                        any(ServiceInstance.class), any(Customer.class), any(RequestContext.class));
         sdncServiceInstanceResources.deleteServiceInstance(serviceInstance, customer, requestContext);
     }
 
@@ -122,10 +122,10 @@ public class SDNCServiceInstanceResourcesTest extends TestDataSetup {
     @Test
     public void unassignServiceInstanceExceptionTest() throws Exception {
         expectedException.expect(Exception.class);
-        doThrow(Exception.class).when(MOCK_serviceTopologyOperationMapper).reqMapper(
-                eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.DELETE),
-                eq(GenericResourceApiRequestActionEnumeration.DELETESERVICEINSTANCE), any(ServiceInstance.class),
-                any(Customer.class), any(RequestContext.class));
+        doThrow(Exception.class).when(MOCK_serviceTopologyOperationMapper)
+                .reqMapper(eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.DELETE),
+                        eq(GenericResourceApiRequestActionEnumeration.DELETESERVICEINSTANCE),
+                        any(ServiceInstance.class), any(Customer.class), any(RequestContext.class));
         sdncServiceInstanceResources.unassignServiceInstance(serviceInstance, customer, requestContext);
     }
 
@@ -144,10 +144,10 @@ public class SDNCServiceInstanceResourcesTest extends TestDataSetup {
     @Test
     public void deactivateServiceInstanceExceptionTest() throws Exception {
         expectedException.expect(Exception.class);
-        doThrow(Exception.class).when(MOCK_serviceTopologyOperationMapper).reqMapper(
-                eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.DEACTIVATE),
-                eq(GenericResourceApiRequestActionEnumeration.DELETESERVICEINSTANCE), any(ServiceInstance.class),
-                any(Customer.class), any(RequestContext.class));
+        doThrow(Exception.class).when(MOCK_serviceTopologyOperationMapper)
+                .reqMapper(eq(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION), eq(SDNCSvcAction.DEACTIVATE),
+                        eq(GenericResourceApiRequestActionEnumeration.DELETESERVICEINSTANCE),
+                        any(ServiceInstance.class), any(Customer.class), any(RequestContext.class));
         sdncServiceInstanceResources.deactivateServiceInstance(serviceInstance, customer, requestContext);
     }
 

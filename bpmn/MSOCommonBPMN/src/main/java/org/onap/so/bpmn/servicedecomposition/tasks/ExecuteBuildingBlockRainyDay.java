@@ -97,8 +97,12 @@ public class ExecuteBuildingBlockRainyDay {
                 handlingCode = "Abort";
             } else {
                 try {
-                    serviceType = gBBInput.getCustomer().getServiceSubscription().getServiceInstances().get(0)
-                            .getModelInfoServiceInstance().getServiceType();
+                    serviceType = gBBInput.getCustomer()
+                            .getServiceSubscription()
+                            .getServiceInstances()
+                            .get(0)
+                            .getModelInfoServiceInstance()
+                            .getServiceType();
                     if (serviceType == null || serviceType.isEmpty()) {
                         serviceType = ASTERISK;
                     }
@@ -108,7 +112,10 @@ public class ExecuteBuildingBlockRainyDay {
                 }
                 String vnfType = ASTERISK;
                 try {
-                    for (GenericVnf vnf : gBBInput.getCustomer().getServiceSubscription().getServiceInstances().get(0)
+                    for (GenericVnf vnf : gBBInput.getCustomer()
+                            .getServiceSubscription()
+                            .getServiceInstances()
+                            .get(0)
                             .getVnfs()) {
                         if (vnf.getVnfId().equalsIgnoreCase(lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID))) {
                             vnfType = vnf.getVnfType();
@@ -151,8 +158,12 @@ public class ExecuteBuildingBlockRainyDay {
 
                 String serviceRole = ASTERISK;
                 try {
-                    serviceRole = gBBInput.getCustomer().getServiceSubscription().getServiceInstances().get(0)
-                            .getModelInfoServiceInstance().getServiceRole();
+                    serviceRole = gBBInput.getCustomer()
+                            .getServiceSubscription()
+                            .getServiceInstances()
+                            .get(0)
+                            .getModelInfoServiceInstance()
+                            .getServiceRole();
                     if (serviceRole == null || serviceRole.isEmpty()) {
                         serviceRole = ASTERISK;
                     }

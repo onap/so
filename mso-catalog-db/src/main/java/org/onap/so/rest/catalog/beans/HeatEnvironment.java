@@ -78,7 +78,8 @@ public class HeatEnvironment implements Serializable {
             return false;
         }
         HeatEnvironment castOther = (HeatEnvironment) other;
-        return new EqualsBuilder().append(artifactUuid, castOther.artifactUuid).append(version, castOther.version)
+        return new EqualsBuilder().append(artifactUuid, castOther.artifactUuid)
+                .append(version, castOther.version)
                 .isEquals();
     }
 

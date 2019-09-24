@@ -107,11 +107,16 @@ public class CvnfcConfigurationCustomization implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("id", id).append("modelCustomizationUUID", modelCustomizationUUID)
-                .append("modelInstanceName", modelInstanceName).append("configurationType", configurationType)
-                .append("configurationRole", configurationRole).append("configurationFunction", configurationFunction)
-                .append("policyName", policyName).append("created", created)
-                .append("configurationResource", configurationResource).append("cvnfcCustomization", cvnfcCustomization)
+        return new ToStringBuilder(this).append("id", id)
+                .append("modelCustomizationUUID", modelCustomizationUUID)
+                .append("modelInstanceName", modelInstanceName)
+                .append("configurationType", configurationType)
+                .append("configurationRole", configurationRole)
+                .append("configurationFunction", configurationFunction)
+                .append("policyName", policyName)
+                .append("created", created)
+                .append("configurationResource", configurationResource)
+                .append("cvnfcCustomization", cvnfcCustomization)
                 .toString();
     }
 

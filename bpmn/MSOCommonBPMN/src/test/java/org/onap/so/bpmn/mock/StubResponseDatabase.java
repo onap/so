@@ -49,7 +49,8 @@ public class StubResponseDatabase {
             String modelInvariantId, String responseFile) {
         wireMockServer
                 .stubFor(get(urlEqualTo("/v1/serviceAllottedResources?serviceModelInvariantUuid=" + modelInvariantId))
-                        .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                        .willReturn(aResponse().withStatus(200)
+                                .withHeader("Content-Type", "application/json")
                                 .withBodyFile(responseFile)));
     }
 
@@ -63,7 +64,8 @@ public class StubResponseDatabase {
     public static void MockGetVnfCatalogDataCustomizationUuid(WireMockServer wireMockServer,
             String vnfModelCustomizationUuid, String responseFile) {
         wireMockServer.stubFor(get(urlEqualTo("/v2/serviceVnfs?vnfModelCustomizationUuid=" + vnfModelCustomizationUuid))
-                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                .willReturn(aResponse().withStatus(200)
+                        .withHeader("Content-Type", "application/json")
                         .withBodyFile(responseFile)));
     }
 
@@ -77,7 +79,8 @@ public class StubResponseDatabase {
             String serviceModelInvariantUuid, String serviceModelVersion, String responseFile) {
         wireMockServer.stubFor(get(urlEqualTo("/ecomp/mso/catalog/v2/serviceResources?serviceModelInvariantUuid="
                 + serviceModelInvariantUuid + "&serviceModelVersion=" + serviceModelVersion))
-                        .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                        .willReturn(aResponse().withStatus(200)
+                                .withHeader("Content-Type", "application/json")
                                 .withBodyFile(responseFile)));
     }
 
@@ -85,7 +88,8 @@ public class StubResponseDatabase {
             String serviceModelInvariantUuid, String responseFile) {
         wireMockServer.stubFor(get(urlEqualTo(
                 "/ecomp/mso/catalog/v2/serviceResources?serviceModelInvariantUuid=" + serviceModelInvariantUuid))
-                        .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                        .willReturn(aResponse().withStatus(200)
+                                .withHeader("Content-Type", "application/json")
                                 .withBodyFile(responseFile)));
     }
 

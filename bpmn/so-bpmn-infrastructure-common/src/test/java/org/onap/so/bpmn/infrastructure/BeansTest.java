@@ -48,9 +48,14 @@ public class BeansTest {
     }
 
     private void test(String pojoPackage) {
-        Validator validator = ValidatorBuilder.create().with(new GetterMustExistRule()).with(new SetterMustExistRule())
+        Validator validator = ValidatorBuilder.create()
+                .with(new GetterMustExistRule())
+                .with(new SetterMustExistRule())
 
-                .with(new SetterTester()).with(new GetterTester()).with(new SetterTester()).with(new GetterTester())
+                .with(new SetterTester())
+                .with(new GetterTester())
+                .with(new SetterTester())
+                .with(new GetterTester())
 
                 .build();
 

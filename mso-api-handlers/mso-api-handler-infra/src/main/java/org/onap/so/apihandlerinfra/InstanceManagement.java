@@ -130,7 +130,8 @@ public class InstanceManagement {
             logger.error("Exception occurred", e);
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_VALIDATION_ERROR, ErrorCode.SchemaError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                            .build();
             ValidateException validateException =
                     new ValidateException.Builder(e.getMessage(), HttpStatus.SC_BAD_REQUEST,
                             ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
@@ -192,7 +193,8 @@ public class InstanceManagement {
         } catch (Exception e) {
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.DataError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                            .build();
             throw new RequestDbFailureException.Builder(SAVE_TO_DB, e.toString(), HttpStatus.SC_INTERNAL_SERVER_ERROR,
                     ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e).errorInfo(errorLoggerInfo).build();
         }
@@ -200,15 +202,23 @@ public class InstanceManagement {
         RequestClientParameter requestClientParameter = null;
         try {
             requestClientParameter = new RequestClientParameter.Builder().setRequestId(requestId)
-                    .setBaseVfModule(isBaseVfModule).setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
-                    .setRequestAction(action.toString()).setServiceInstanceId(serviceInstanceId).setVnfId(vnfId)
-                    .setServiceType(serviceInstanceType).setVnfType(vnfType)
+                    .setBaseVfModule(isBaseVfModule)
+                    .setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
+                    .setRequestAction(action.toString())
+                    .setServiceInstanceId(serviceInstanceId)
+                    .setVnfId(vnfId)
+                    .setServiceType(serviceInstanceType)
+                    .setVnfType(vnfType)
                     .setRequestDetails(requestHandlerUtils.mapJSONtoMSOStyle(requestJSON, null, aLaCarte, action))
-                    .setApiVersion(apiVersion).setALaCarte(aLaCarte).setRequestUri(requestUri).build();
+                    .setApiVersion(apiVersion)
+                    .setALaCarte(aLaCarte)
+                    .setRequestUri(requestUri)
+                    .build();
         } catch (IOException e) {
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.SchemaError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                            .build();
             throw new ValidateException.Builder("Unable to generate RequestClientParamter object" + e.getMessage(),
                     HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo)
                             .build();
@@ -226,7 +236,8 @@ public class InstanceManagement {
         } catch (Exception e) {
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                            .build();
             ValidateException validateException =
                     new ValidateException.Builder(e.getMessage(), HttpStatus.SC_BAD_REQUEST,
                             ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
@@ -237,7 +248,8 @@ public class InstanceManagement {
         if (recipeLookupResult == null) {
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.DataError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                            .build();
             RecipeNotFoundException recipeNotFoundExceptionException =
                     new RecipeNotFoundException.Builder("Recipe could not be retrieved from catalog DB.",
                             HttpStatus.SC_NOT_FOUND, ErrorNumbers.SVC_GENERAL_SERVICE_ERROR).errorInfo(errorLoggerInfo)

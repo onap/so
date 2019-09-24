@@ -152,11 +152,16 @@ public class ArRecipe implements Recipe, Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("modelName", getModelName()).append("action", getAction())
-                .append("version", getVersion()).append("serviceType", getServiceType())
-                .append("description", getDescription()).append("orchestrationUri", getOrchestrationUri())
-                .append("paramXSD", getParamXsd()).append("recipeTimeout", getRecipeTimeout())
-                .append("created", getCreated()).toString();
+        return new ToStringBuilder(this).append("modelName", getModelName())
+                .append("action", getAction())
+                .append("version", getVersion())
+                .append("serviceType", getServiceType())
+                .append("description", getDescription())
+                .append("orchestrationUri", getOrchestrationUri())
+                .append("paramXSD", getParamXsd())
+                .append("recipeTimeout", getRecipeTimeout())
+                .append("created", getCreated())
+                .toString();
     }
 
     @Override
@@ -168,14 +173,21 @@ public class ArRecipe implements Recipe, Serializable {
             return false;
         }
         ArRecipe castOther = (ArRecipe) other;
-        return new EqualsBuilder().append(getId(), castOther.getId()).append(getModelName(), castOther.getModelName())
-                .append(getAction(), castOther.getAction()).append(getServiceType(), castOther.getServiceType())
-                .append(getOrchestrationUri(), castOther.getOrchestrationUri()).isEquals();
+        return new EqualsBuilder().append(getId(), castOther.getId())
+                .append(getModelName(), castOther.getModelName())
+                .append(getAction(), castOther.getAction())
+                .append(getServiceType(), castOther.getServiceType())
+                .append(getOrchestrationUri(), castOther.getOrchestrationUri())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(getId()).append(getModelName()).append(getAction()).append(getServiceType())
-                .append(getOrchestrationUri()).toHashCode();
+        return new HashCodeBuilder().append(getId())
+                .append(getModelName())
+                .append(getAction())
+                .append(getServiceType())
+                .append(getOrchestrationUri())
+                .toHashCode();
     }
 }

@@ -333,8 +333,8 @@ public class RequestHandlerUtilsUnitTest {
         modelInfo.setModelName(MODEL_NAME);
         Boolean expected = false;
 
-        doReturn(null).when(catDbClient).getVfModuleByModelInvariantUUIDAndModelVersion(MODEL_INVARIANT_ID,
-                MODEL_VERSION);
+        doReturn(null).when(catDbClient)
+                .getVfModuleByModelInvariantUUIDAndModelVersion(MODEL_INVARIANT_ID, MODEL_VERSION);
 
         Boolean result = requestHandler.getIsBaseVfModule(modelInfo, Action.deleteInstance, vnfType,
                 sdcServiceModelVersion, currentActiveRequest);

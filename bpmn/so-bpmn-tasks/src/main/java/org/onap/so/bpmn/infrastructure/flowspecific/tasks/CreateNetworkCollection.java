@@ -62,7 +62,8 @@ public class CreateNetworkCollection {
                 // Build collection name assembling SI name and IG function
                 if (serviceInstance.getServiceInstanceName() != null
                         && instanceGroup.getModelInfoInstanceGroup().getFunction() != null) {
-                    String networkCollectionName = serviceInstance.getServiceInstanceName().concat(UNDERSCORE)
+                    String networkCollectionName = serviceInstance.getServiceInstanceName()
+                            .concat(UNDERSCORE)
                             .concat(instanceGroup.getModelInfoInstanceGroup().getFunction());
                     // set networkCollectionName object on execution to be re-used within current BB
                     execution.setVariable(NETWORK_COLLECTION_NAME, networkCollectionName);

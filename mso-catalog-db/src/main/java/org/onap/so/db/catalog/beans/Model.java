@@ -206,7 +206,8 @@ public class Model implements Serializable {
         }
         Model castOther = (Model) other;
         return new EqualsBuilder().append(getModelType(), castOther.getModelType())
-                .append(getModelVersionId(), castOther.getModelVersionId()).isEquals();
+                .append(getModelVersionId(), castOther.getModelVersionId())
+                .isEquals();
     }
 
     @Override
@@ -216,12 +217,17 @@ public class Model implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("id", getId()).append("modelCustomizationId", getModelCustomizationId())
+        return new ToStringBuilder(this).append("id", getId())
+                .append("modelCustomizationId", getModelCustomizationId())
                 .append("modelCustomizationName", getModelCustomizationName())
-                .append("modelInvariantId", getModelInvariantId()).append("modelName", getModelName())
-                .append("modelType", getModelType()).append("modelVersion", getModelVersion())
-                .append("modelVersionId", getModelVersionId()).append("created", getCreated())
-                .append("recipes", getRecipes()).toString();
+                .append("modelInvariantId", getModelInvariantId())
+                .append("modelName", getModelName())
+                .append("modelType", getModelType())
+                .append("modelVersion", getModelVersion())
+                .append("modelVersionId", getModelVersionId())
+                .append("created", getCreated())
+                .append("recipes", getRecipes())
+                .toString();
     }
 
 }

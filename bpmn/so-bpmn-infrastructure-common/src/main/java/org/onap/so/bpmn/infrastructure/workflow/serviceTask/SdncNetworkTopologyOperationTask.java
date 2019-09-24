@@ -60,7 +60,8 @@ public class SdncNetworkTopologyOperationTask extends AbstractSdncOperationTask 
         RpcNetworkTopologyOperationOutputEntity outputEntity;
         if (!isSend2SdncDirectly()) {
             outputEntity = genericResourceApiClient.postNetworkTopologyOperation(HeaderUtil.DefaulAuth, inputEntity)
-                    .execute().body();
+                    .execute()
+                    .body();
             updateProgress(execution, null, null, "90", "sendRestrequestAndHandleResponse finished!");
             saveOutput(execution, outputEntity);
         } else {

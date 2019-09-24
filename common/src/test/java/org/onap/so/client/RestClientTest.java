@@ -55,8 +55,8 @@ public class RestClientTest {
     @Test
     public void retries() throws Exception {
         RestClient spy = buildSpy();
-        doThrow(new WebApplicationException(new SocketTimeoutException())).when(spy).buildRequest(any(String.class),
-                ArgumentMatchers.isNull());
+        doThrow(new WebApplicationException(new SocketTimeoutException())).when(spy)
+                .buildRequest(any(String.class), ArgumentMatchers.isNull());
         try {
             spy.get();
         } catch (Exception e) {
@@ -69,8 +69,8 @@ public class RestClientTest {
     @Test
     public void exceptionDoNotRetry() throws Exception {
         RestClient spy = buildSpy();
-        doThrow(new WebApplicationException(new NotFoundException())).when(spy).buildRequest(any(String.class),
-                ArgumentMatchers.isNull());
+        doThrow(new WebApplicationException(new NotFoundException())).when(spy)
+                .buildRequest(any(String.class), ArgumentMatchers.isNull());
         try {
             spy.get();
         } catch (Exception e) {

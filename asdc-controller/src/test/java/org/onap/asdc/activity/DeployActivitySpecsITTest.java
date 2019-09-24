@@ -69,7 +69,8 @@ public class DeployActivitySpecsITTest extends BaseTest {
 
         wireMockServer.stubFor(post(urlPathMatching("/v1.0/activity-spec"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withStatus(org.springframework.http.HttpStatus.OK.value()).withBody(body)));
+                        .withStatus(org.springframework.http.HttpStatus.OK.value())
+                        .withBody(body)));
 
         when(env.getProperty("mso.asdc.config.activity.endpoint")).thenReturn("http://localhost:8090");
 
@@ -96,7 +97,8 @@ public class DeployActivitySpecsITTest extends BaseTest {
 
         wireMockServer.stubFor(post(urlPathMatching("/v1.0/activity-spec"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withStatus(org.springframework.http.HttpStatus.OK.value()).withBody(body)));
+                        .withStatus(org.springframework.http.HttpStatus.OK.value())
+                        .withBody(body)));
 
         when(env.getProperty("mso.asdc.config.activity.endpoint")).thenReturn("http://localhost:8090");
 

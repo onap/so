@@ -72,8 +72,9 @@ public class AAINetworkResources {
         AAIResourceUri serviceInstanceURI =
                 AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstance.getServiceInstanceId());
         org.onap.aai.domain.yang.L3Network aaiL3Network = aaiObjectMapper.mapNetwork(network);
-        injectionHelper.getAaiClient().createIfNotExists(networkURI, Optional.of(aaiL3Network)).connect(networkURI,
-                serviceInstanceURI);
+        injectionHelper.getAaiClient()
+                .createIfNotExists(networkURI, Optional.of(aaiL3Network))
+                .connect(networkURI, serviceInstanceURI);
     }
 
     public void deleteNetwork(L3Network network) {

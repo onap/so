@@ -188,9 +188,16 @@ public abstract class BaseTest extends BuildingBlockTestDataSetup {
      * @param fileName file name without extension
      */
     protected void mockSubprocess(String origProcessKey, String mockProcessName, String fileName) {
-        BpmnModelInstance modelInstance = Bpmn.createExecutableProcess(origProcessKey).name(mockProcessName)
-                .startEvent().name("Start Point").serviceTask().name("Log Something for Test")
-                .camundaClass(MockLoggerDelegate.class.getName()).endEvent().name("End Point").done();
+        BpmnModelInstance modelInstance = Bpmn.createExecutableProcess(origProcessKey)
+                .name(mockProcessName)
+                .startEvent()
+                .name("Start Point")
+                .serviceTask()
+                .name("Log Something for Test")
+                .camundaClass(MockLoggerDelegate.class.getName())
+                .endEvent()
+                .name("End Point")
+                .done();
         repositoryService.createDeployment().addModelInstance(fileName + ".bpmn", modelInstance).deploy();
     }
 

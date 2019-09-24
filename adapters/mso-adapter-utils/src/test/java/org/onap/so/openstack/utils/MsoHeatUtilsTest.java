@@ -228,11 +228,11 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
 
         CreateStackParam createStackParam = new CreateStackParam();
         createStackParam.setStackName("stackName");
-        doReturn(createdStack).when(heatUtils).handleKeyPairConflict(cloudSiteId, tenantId, createStackParam, 120, true,
-                stack);
+        doReturn(createdStack).when(heatUtils)
+                .handleKeyPairConflict(cloudSiteId, tenantId, createStackParam, 120, true, stack);
         heatUtils.postProcessStackCreate(stack, true, 120, true, cloudSiteId, tenantId, createStackParam);
-        Mockito.verify(heatUtils, times(1)).handleKeyPairConflict(cloudSiteId, tenantId, createStackParam, 120, true,
-                stack);
+        Mockito.verify(heatUtils, times(1))
+                .handleKeyPairConflict(cloudSiteId, tenantId, createStackParam, 120, true, stack);
     }
 
     @Test
@@ -258,8 +258,8 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
         doReturn(null).when(heatUtils).executeAndRecordOpenstackRequest(mockDeleteStack);
         doReturn(stackResource).when(heatClient).getStacks();
         doReturn(mockDeleteStack).when(stackResource).deleteByName("stackName/id");
-        doReturn(deletedStack).when(heatUtils).pollStackForStatus(120, stack, "DELETE_IN_PROGRESS", cloudSiteId,
-                tenantId);
+        doReturn(deletedStack).when(heatUtils)
+                .pollStackForStatus(120, stack, "DELETE_IN_PROGRESS", cloudSiteId, tenantId);
 
         heatUtils.handleUnknownCreateStackFailure(stack, 120, cloudSiteId, tenantId);
         Mockito.verify(heatUtils, times(1)).executeAndRecordOpenstackRequest(mockDeleteStack);
@@ -326,15 +326,15 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
         // doNothing().when(novaClient).deleteKeyPair(cloudSiteId, tenantId, "KeypairName");
         doReturn(null).when(heatUtils).handleUnknownCreateStackFailure(stack, 120, cloudSiteId, tenantId);
         doReturn(createdStack).when(heatUtils).createStack(createStackParam, cloudSiteId, tenantId);
-        doReturn(createdStack).when(heatUtils).processCreateStack(cloudSiteId, tenantId, 120, true, createdStack,
-                createStackParam, false);
+        doReturn(createdStack).when(heatUtils)
+                .processCreateStack(cloudSiteId, tenantId, 120, true, createdStack, createStackParam, false);
 
         heatUtils.handleKeyPairConflict(cloudSiteId, tenantId, createStackParam, 120, true, stack);
         Mockito.verify(novaClient, times(1)).deleteKeyPair(cloudSiteId, tenantId, "hst3bbfnm0011vm001");
         Mockito.verify(heatUtils, times(1)).handleUnknownCreateStackFailure(stack, 120, cloudSiteId, tenantId);
         Mockito.verify(heatUtils, times(1)).createStack(createStackParam, cloudSiteId, tenantId);
-        Mockito.verify(heatUtils, times(1)).processCreateStack(cloudSiteId, tenantId, 120, true, createdStack,
-                createStackParam, false);
+        Mockito.verify(heatUtils, times(1))
+                .processCreateStack(cloudSiteId, tenantId, 120, true, createdStack, createStackParam, false);
     }
 
     @Test
@@ -356,15 +356,15 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
         CreateStackParam createStackParam = new CreateStackParam();
         createStackParam.setStackName("stackName");
 
-        doReturn(createdStack).when(heatUtils).pollStackForStatus(120, stack, "CREATE_IN_PROGRESS", cloudSiteId,
-                tenantId);
-        doReturn(createdStack).when(heatUtils).postProcessStackCreate(createdStack, true, 120, true, cloudSiteId,
-                tenantId, createStackParam);
+        doReturn(createdStack).when(heatUtils)
+                .pollStackForStatus(120, stack, "CREATE_IN_PROGRESS", cloudSiteId, tenantId);
+        doReturn(createdStack).when(heatUtils)
+                .postProcessStackCreate(createdStack, true, 120, true, cloudSiteId, tenantId, createStackParam);
 
         heatUtils.processCreateStack(cloudSiteId, tenantId, 120, true, stack, createStackParam, true);
         Mockito.verify(heatUtils, times(1)).pollStackForStatus(120, stack, "CREATE_IN_PROGRESS", cloudSiteId, tenantId);
-        Mockito.verify(heatUtils, times(1)).postProcessStackCreate(createdStack, true, 120, true, cloudSiteId, tenantId,
-                createStackParam);
+        Mockito.verify(heatUtils, times(1))
+                .postProcessStackCreate(createdStack, true, 120, true, cloudSiteId, tenantId, createStackParam);
     }
 
     @Test
@@ -386,14 +386,14 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
         CreateStackParam createStackParam = new CreateStackParam();
         createStackParam.setStackName("stackName");
 
-        doThrow(new StackCreationException("Error")).when(heatUtils).pollStackForStatus(120, stack,
-                "CREATE_IN_PROGRESS", cloudSiteId, tenantId);
+        doThrow(new StackCreationException("Error")).when(heatUtils)
+                .pollStackForStatus(120, stack, "CREATE_IN_PROGRESS", cloudSiteId, tenantId);
         exceptionRule.expect(MsoException.class);
         exceptionRule.expectMessage("Error");
         heatUtils.processCreateStack(cloudSiteId, tenantId, 120, true, stack, createStackParam, true);
         Mockito.verify(heatUtils, times(1)).pollStackForStatus(120, stack, "CREATE_IN_PROGRESS", cloudSiteId, tenantId);
-        Mockito.verify(heatUtils, times(1)).postProcessStackCreate(stack, true, 120, true, cloudSiteId, tenantId,
-                createStackParam);
+        Mockito.verify(heatUtils, times(1))
+                .postProcessStackCreate(stack, true, 120, true, cloudSiteId, tenantId, createStackParam);
     }
 
 
@@ -526,8 +526,8 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
         CreateStackParam createStackParam = new CreateStackParam();
         createStackParam.setStackName("stackName");
 
-        doThrow(new StackCreationException("Error")).when(heatUtils).pollStackForStatus(120, stack,
-                "CREATE_IN_PROGRESS", cloudSiteId, tenantId);
+        doThrow(new StackCreationException("Error")).when(heatUtils)
+                .pollStackForStatus(120, stack, "CREATE_IN_PROGRESS", cloudSiteId, tenantId);
 
         exceptionRule.expect(MsoException.class);
         exceptionRule.expectMessage("Error");

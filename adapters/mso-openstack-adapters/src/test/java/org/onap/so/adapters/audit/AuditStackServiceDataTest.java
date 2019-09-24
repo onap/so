@@ -111,8 +111,8 @@ public class AuditStackServiceDataTest extends AuditCreateStackService {
 
     @Test
     public void execute_external_task_audit_success_Test() {
-        doReturn(auditListOptSuccess).when(heatStackAuditMock).auditHeatStack("cloudRegion", "cloudOwner", "tenantId",
-                "stackName");
+        doReturn(auditListOptSuccess).when(heatStackAuditMock)
+                .auditHeatStack("cloudRegion", "cloudOwner", "tenantId", "stackName");
         auditStackService.executeExternalTask(mockExternalTask, mockExternalTaskService);
         ArgumentCaptor<Map> captor = ArgumentCaptor.forClass(Map.class);
         ArgumentCaptor<ExternalTask> taskCaptor = ArgumentCaptor.forClass(ExternalTask.class);
@@ -124,45 +124,46 @@ public class AuditStackServiceDataTest extends AuditCreateStackService {
 
     @Test
     public void executeExternalTaskQueryAuditTest() throws JsonProcessingException {
-        doReturn(auditListOptSuccess).when(heatStackAuditMock).queryHeatStack("cloudOwner", "cloudRegion", "tenantId",
-                "stackName");
-        Mockito.doNothing().when(auditDataService).writeStackDataToRequestDb(Mockito.any(AuditInventory.class),
-                Mockito.any(AAIObjectAuditList.class));
+        doReturn(auditListOptSuccess).when(heatStackAuditMock)
+                .queryHeatStack("cloudOwner", "cloudRegion", "tenantId", "stackName");
+        Mockito.doNothing()
+                .when(auditDataService)
+                .writeStackDataToRequestDb(Mockito.any(AuditInventory.class), Mockito.any(AAIObjectAuditList.class));
         auditQueryStackService.executeExternalTask(mockExternalTask, mockExternalTaskService);
         ArgumentCaptor<Map> captor = ArgumentCaptor.forClass(Map.class);
         ArgumentCaptor<ExternalTask> taskCaptor = ArgumentCaptor.forClass(ExternalTask.class);
         Mockito.verify(mockExternalTaskService).complete(taskCaptor.capture(), captor.capture());
-        Mockito.verify(auditDataService).writeStackDataToRequestDb(Mockito.any(AuditInventory.class),
-                Mockito.any(AAIObjectAuditList.class));
+        Mockito.verify(auditDataService)
+                .writeStackDataToRequestDb(Mockito.any(AuditInventory.class), Mockito.any(AAIObjectAuditList.class));
     }
 
     @Test
     public void execute_external_task_audit_first_failure_Test() {
-        doReturn(auditListOptFailure).when(heatStackAuditMock).auditHeatStack("cloudRegion", "cloudOwner", "tenantId",
-                "stackName");
+        doReturn(auditListOptFailure).when(heatStackAuditMock)
+                .auditHeatStack("cloudRegion", "cloudOwner", "tenantId", "stackName");
         doReturn(null).when(mockExternalTask).getRetries();
         auditStackService.executeExternalTask(mockExternalTask, mockExternalTaskService);
-        Mockito.verify(mockExternalTaskService).handleFailure(mockExternalTask,
-                "Unable to find all VServers and L-Interaces in A&AI",
-                "Unable to find all VServers and L-Interaces in A&AI", 8, 10000L);
+        Mockito.verify(mockExternalTaskService)
+                .handleFailure(mockExternalTask, "Unable to find all VServers and L-Interaces in A&AI",
+                        "Unable to find all VServers and L-Interaces in A&AI", 8, 10000L);
     }
 
     @Test
     public void execute_external_task_audit_intermediate_failure_Test() {
-        doReturn(auditListOptFailure).when(heatStackAuditMock).auditHeatStack("cloudRegion", "cloudOwner", "tenantId",
-                "stackName");
+        doReturn(auditListOptFailure).when(heatStackAuditMock)
+                .auditHeatStack("cloudRegion", "cloudOwner", "tenantId", "stackName");
         doReturn(6).when(mockExternalTask).getRetries();
         auditStackService.executeExternalTask(mockExternalTask, mockExternalTaskService);
-        Mockito.verify(mockExternalTaskService).handleFailure(mockExternalTask,
-                "Unable to find all VServers and L-Interaces in A&AI",
-                "Unable to find all VServers and L-Interaces in A&AI", 5, 12000L);
+        Mockito.verify(mockExternalTaskService)
+                .handleFailure(mockExternalTask, "Unable to find all VServers and L-Interaces in A&AI",
+                        "Unable to find all VServers and L-Interaces in A&AI", 5, 12000L);
 
     }
 
     @Test
     public void execute_external_task_audit_final_failure_Test() {
-        doReturn(auditListOptFailure).when(heatStackAuditMock).auditHeatStack("cloudRegion", "cloudOwner", "tenantId",
-                "stackName");
+        doReturn(auditListOptFailure).when(heatStackAuditMock)
+                .auditHeatStack("cloudRegion", "cloudOwner", "tenantId", "stackName");
         doReturn(1).when(mockExternalTask).getRetries();
         auditStackService.executeExternalTask(mockExternalTask, mockExternalTaskService);
         ArgumentCaptor<Map> captor = ArgumentCaptor.forClass(Map.class);

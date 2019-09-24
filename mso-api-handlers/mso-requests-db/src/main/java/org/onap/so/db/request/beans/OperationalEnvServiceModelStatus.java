@@ -191,9 +191,12 @@ public class OperationalEnvServiceModelStatus implements Serializable {
                 .append("operationalEnvId", getOperationalEnvId())
                 .append("serviceModelVersionId", getServiceModelVersionId())
                 .append("serviceModelVersionDistrStatus", getServiceModelVersionDistrStatus())
-                .append("recoveryAction", getRecoveryAction()).append("retryCount", getRetryCount())
-                .append("workloadContext", getWorkloadContext()).append("createTime", getCreateTime())
-                .append("modifyTime", getModifyTime()).append("vnfOperationalEnvId", getVnfOperationalEnvId())
+                .append("recoveryAction", getRecoveryAction())
+                .append("retryCount", getRetryCount())
+                .append("workloadContext", getWorkloadContext())
+                .append("createTime", getCreateTime())
+                .append("modifyTime", getModifyTime())
+                .append("vnfOperationalEnvId", getVnfOperationalEnvId())
                 .toString();
     }
 

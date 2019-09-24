@@ -158,10 +158,15 @@ public class ConfigurationResource implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("modelUUID", modelUUID).append("modelInvariantUUID", modelInvariantUUID)
-                .append("modelVersion", modelVersion).append("modelName", modelName)
-                .append("toscaNodeType", toscaNodeType).append("description", description).append("created", created)
-                .append("configurationResourceCustomization", configurationResourceCustomization).toString();
+        return new ToStringBuilder(this).append("modelUUID", modelUUID)
+                .append("modelInvariantUUID", modelInvariantUUID)
+                .append("modelVersion", modelVersion)
+                .append("modelName", modelName)
+                .append("toscaNodeType", toscaNodeType)
+                .append("description", description)
+                .append("created", created)
+                .append("configurationResourceCustomization", configurationResourceCustomization)
+                .toString();
     }
 
     @Override

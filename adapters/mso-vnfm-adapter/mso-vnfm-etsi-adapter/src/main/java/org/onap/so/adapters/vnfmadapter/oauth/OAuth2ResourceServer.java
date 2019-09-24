@@ -37,8 +37,10 @@ public class OAuth2ResourceServer extends ResourceServerConfigurerAdapter {
 
     @Override
     public void configure(final HttpSecurity http) throws Exception {
-        http.requestMatcher(new OAuth2ResourceServerRequestMatcher()).authorizeRequests()
-                .antMatchers(Constants.BASE_URL + "/grants/**", Constants.BASE_URL + "/lcn/**").authenticated();
+        http.requestMatcher(new OAuth2ResourceServerRequestMatcher())
+                .authorizeRequests()
+                .antMatchers(Constants.BASE_URL + "/grants/**", Constants.BASE_URL + "/lcn/**")
+                .authenticated();
     }
 
     private static class OAuth2ResourceServerRequestMatcher implements RequestMatcher {

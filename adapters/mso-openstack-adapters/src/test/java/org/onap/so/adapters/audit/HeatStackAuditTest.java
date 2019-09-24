@@ -80,8 +80,9 @@ public class HeatStackAuditTest extends HeatStackAudit {
             new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                     .setSerializationInclusion(Include.NON_NULL);
 
-    private ObjectMapper stackObjectMapper = new ObjectMapper()
-            .configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true).setSerializationInclusion(Include.NON_NULL);
+    private ObjectMapper stackObjectMapper =
+            new ObjectMapper().configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true)
+                    .setSerializationInclusion(Include.NON_NULL);
 
     private List<Optional<Port>> portList = new ArrayList<>();
 
@@ -140,69 +141,83 @@ public class HeatStackAuditTest extends HeatStackAudit {
 
     @Test
     public void createVserverSet_Test() throws Exception {
-        List<Resource> novaResources = resources.getList().stream().filter(p -> "OS::Nova::Server".equals(p.getType()))
+        List<Resource> novaResources = resources.getList()
+                .stream()
+                .filter(p -> "OS::Nova::Server".equals(p.getType()))
                 .collect(Collectors.toList());
 
-        List<Resource> resourceGroups = resources.getList().stream()
-                .filter(p -> "OS::Heat::ResourceGroup".equals(p.getType())).collect(Collectors.toList());
+        List<Resource> resourceGroups = resources.getList()
+                .stream()
+                .filter(p -> "OS::Heat::ResourceGroup".equals(p.getType()))
+                .collect(Collectors.toList());
 
         Resources service1QueryResponse = objectMapper
                 .readValue(new File("src/test/resources/Service1ResourceGroupResponse.json"), Resources.class);
-        doReturn(service1QueryResponse).when(msoHeatUtilsMock).executeHeatClientRequest(
-                "/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz/31d0647a-6043-49a4-81b6-ccab29380672/resources",
-                cloudRegion, tenantId, Resources.class);
+        doReturn(service1QueryResponse).when(msoHeatUtilsMock)
+                .executeHeatClientRequest(
+                        "/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz/31d0647a-6043-49a4-81b6-ccab29380672/resources",
+                        cloudRegion, tenantId, Resources.class);
 
         Resources service2QueryResponse = objectMapper
                 .readValue(new File("src/test/resources/Service2ResourceGroupResponse.json"), Resources.class);
-        doReturn(service2QueryResponse).when(msoHeatUtilsMock).executeHeatClientRequest(
-                "/stacks/tsbc0005vm002ssc001-ssc_1_subint_service2_port_0_subinterfaces-hlzdigtimzst/447a9b41-714e-434b-b1d0-6cce8d9f0f0c/resources",
-                cloudRegion, tenantId, Resources.class);
+        doReturn(service2QueryResponse).when(msoHeatUtilsMock)
+                .executeHeatClientRequest(
+                        "/stacks/tsbc0005vm002ssc001-ssc_1_subint_service2_port_0_subinterfaces-hlzdigtimzst/447a9b41-714e-434b-b1d0-6cce8d9f0f0c/resources",
+                        cloudRegion, tenantId, Resources.class);
 
 
         Stack service2StackQuerySubInt =
                 stackObjectMapper.readValue(new File("src/test/resources/Service2SubInterface0.json"), Stack.class);
-        doReturn(service2StackQuerySubInt).when(msoHeatUtilsMock).executeHeatClientRequest(
-                "/stacks/tsbc0005vm002ssc001-ssc_1_subint_service2_port_0_subinterfaces-hlzdigtimzst-0-upfi5nhurk7y/f711be16-2654-4a09-b89d-0511fda20e81",
-                cloudRegion, tenantId, Stack.class);
+        doReturn(service2StackQuerySubInt).when(msoHeatUtilsMock)
+                .executeHeatClientRequest(
+                        "/stacks/tsbc0005vm002ssc001-ssc_1_subint_service2_port_0_subinterfaces-hlzdigtimzst-0-upfi5nhurk7y/f711be16-2654-4a09-b89d-0511fda20e81",
+                        cloudRegion, tenantId, Stack.class);
         Resources service2ResourceQuerySubInt = objectMapper
                 .readValue(new File("src/test/resources/Service2SubInterface1Resources.json"), Resources.class);
-        doReturn(service2ResourceQuerySubInt).when(msoHeatUtilsMock).executeHeatClientRequest(
-                "/stacks/tsbc0005vm002ssc001-ssc_1_subint_service2_port_0_subinterfaces-hlzdigtimzst-0-upfi5nhurk7y/f711be16-2654-4a09-b89d-0511fda20e81/resources",
-                cloudRegion, tenantId, Resources.class);
+        doReturn(service2ResourceQuerySubInt).when(msoHeatUtilsMock)
+                .executeHeatClientRequest(
+                        "/stacks/tsbc0005vm002ssc001-ssc_1_subint_service2_port_0_subinterfaces-hlzdigtimzst-0-upfi5nhurk7y/f711be16-2654-4a09-b89d-0511fda20e81/resources",
+                        cloudRegion, tenantId, Resources.class);
 
         Stack service1StackQuerySubInt1 =
                 stackObjectMapper.readValue(new File("src/test/resources/Service1SubInterface0.json"), Stack.class);
-        doReturn(service1StackQuerySubInt1).when(msoHeatUtilsMock).executeHeatClientRequest(
-                "/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz-1-fmn5laetg5cs/0d9cd813-2ae1-46c0-9ebb-48081f6cffbb",
-                cloudRegion, tenantId, Stack.class);
+        doReturn(service1StackQuerySubInt1).when(msoHeatUtilsMock)
+                .executeHeatClientRequest(
+                        "/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz-1-fmn5laetg5cs/0d9cd813-2ae1-46c0-9ebb-48081f6cffbb",
+                        cloudRegion, tenantId, Stack.class);
         Resources service1ResourceQuerySubInt1 = objectMapper
                 .readValue(new File("src/test/resources/Service1SubInterface0Resources.json"), Resources.class);
-        doReturn(service1ResourceQuerySubInt1).when(msoHeatUtilsMock).executeHeatClientRequest(
-                "/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz-1-fmn5laetg5cs/0d9cd813-2ae1-46c0-9ebb-48081f6cffbb/resources",
-                cloudRegion, tenantId, Resources.class);
+        doReturn(service1ResourceQuerySubInt1).when(msoHeatUtilsMock)
+                .executeHeatClientRequest(
+                        "/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz-1-fmn5laetg5cs/0d9cd813-2ae1-46c0-9ebb-48081f6cffbb/resources",
+                        cloudRegion, tenantId, Resources.class);
 
 
         Stack service1StackQuerySubInt2 =
                 stackObjectMapper.readValue(new File("src/test/resources/Service1SubInterface1.json"), Stack.class);
-        doReturn(service1StackQuerySubInt2).when(msoHeatUtilsMock).executeHeatClientRequest(
-                "/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz-0-yghihziaf36m/b7019dd0-2ee9-4447-bdef-ac25676b205a",
-                cloudRegion, tenantId, Stack.class);
+        doReturn(service1StackQuerySubInt2).when(msoHeatUtilsMock)
+                .executeHeatClientRequest(
+                        "/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz-0-yghihziaf36m/b7019dd0-2ee9-4447-bdef-ac25676b205a",
+                        cloudRegion, tenantId, Stack.class);
         Resources service1ResourceQuerySubInt2 = objectMapper
                 .readValue(new File("src/test/resources/Service1SubInterface1Resources.json"), Resources.class);
-        doReturn(service1ResourceQuerySubInt2).when(msoHeatUtilsMock).executeHeatClientRequest(
-                "/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz-0-yghihziaf36m/b7019dd0-2ee9-4447-bdef-ac25676b205a/resources",
-                cloudRegion, tenantId, Resources.class);
+        doReturn(service1ResourceQuerySubInt2).when(msoHeatUtilsMock)
+                .executeHeatClientRequest(
+                        "/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz-0-yghihziaf36m/b7019dd0-2ee9-4447-bdef-ac25676b205a/resources",
+                        cloudRegion, tenantId, Resources.class);
 
         Stack service1StackQuerySubInt3 =
                 stackObjectMapper.readValue(new File("src/test/resources/Service1SubInterface2.json"), Stack.class);
-        doReturn(service1StackQuerySubInt3).when(msoHeatUtilsMock).executeHeatClientRequest(
-                "/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz-2-y3ndsavmsymv/bd0fc728-cbde-4301-a581-db56f494675c",
-                cloudRegion, tenantId, Stack.class);
+        doReturn(service1StackQuerySubInt3).when(msoHeatUtilsMock)
+                .executeHeatClientRequest(
+                        "/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz-2-y3ndsavmsymv/bd0fc728-cbde-4301-a581-db56f494675c",
+                        cloudRegion, tenantId, Stack.class);
         Resources service1ResourceQuerySubInt3 = objectMapper
                 .readValue(new File("src/test/resources/Service1SubInterface2Resources.json"), Resources.class);
-        doReturn(service1ResourceQuerySubInt3).when(msoHeatUtilsMock).executeHeatClientRequest(
-                "/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz-2-y3ndsavmsymv/bd0fc728-cbde-4301-a581-db56f494675c/resources",
-                cloudRegion, tenantId, Resources.class);
+        doReturn(service1ResourceQuerySubInt3).when(msoHeatUtilsMock)
+                .executeHeatClientRequest(
+                        "/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz-2-y3ndsavmsymv/bd0fc728-cbde-4301-a581-db56f494675c/resources",
+                        cloudRegion, tenantId, Resources.class);
 
         Set<Vserver> vServersToAudit = heatStackAudit.createVserverSet(resources, novaResources, portList);
         Set<Vserver> vserversWithSubInterfaces =
@@ -228,10 +243,14 @@ public class HeatStackAuditTest extends HeatStackAudit {
     public void auditHeatStackNestedServers_Test() throws Exception {
         Resources getResource =
                 objectMapper.readValue(new File("src/test/resources/GetNestedResources.json"), Resources.class);
-        List<Resource> novaResources = getResource.getList().stream()
-                .filter(p -> "OS::Nova::Server".equals(p.getType())).collect(Collectors.toList());
-        List<Resource> resourceGroups = getResource.getList().stream()
-                .filter(p -> "OS::Heat::ResourceGroup".equals(p.getType())).collect(Collectors.toList());
+        List<Resource> novaResources = getResource.getList()
+                .stream()
+                .filter(p -> "OS::Nova::Server".equals(p.getType()))
+                .collect(Collectors.toList());
+        List<Resource> resourceGroups = getResource.getList()
+                .stream()
+                .filter(p -> "OS::Heat::ResourceGroup".equals(p.getType()))
+                .collect(Collectors.toList());
 
         doReturn(getResource).when(msoHeatUtilsMock).queryStackResources(cloudRegion, tenantId, "heatStackName", 3);
         Set<Vserver> vServersToAudit = heatStackAudit.createVserverSet(resources, novaResources, portList);
@@ -245,7 +264,9 @@ public class HeatStackAuditTest extends HeatStackAudit {
 
     @Test
     public void findInterfaceInformation_Test() {
-        List<Resource> novaResources = resources.getList().stream().filter(p -> "OS::Nova::Server".equals(p.getType()))
+        List<Resource> novaResources = resources.getList()
+                .stream()
+                .filter(p -> "OS::Nova::Server".equals(p.getType()))
                 .collect(Collectors.toList());
         Set<Vserver> expectedVservers = new HashSet<>();
         Vserver vServer1 = new Vserver();

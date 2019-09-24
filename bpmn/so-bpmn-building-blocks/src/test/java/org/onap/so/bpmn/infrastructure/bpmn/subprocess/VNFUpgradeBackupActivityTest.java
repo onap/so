@@ -35,8 +35,9 @@ public class VNFUpgradeBackupActivityTest extends BaseBPMNTest {
     public void sunnyDayVNFUpgradeBackupActivity_Test() throws InterruptedException {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFUpgradeBackupActivity", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("VNFUpgradeBackupActivity_Start", "TaskPreProcessActivity",
-                "TaskUpgradeBackup", "VNFUpgradeBackupActivity_End");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("VNFUpgradeBackupActivity_Start", "TaskPreProcessActivity", "TaskUpgradeBackup",
+                        "VNFUpgradeBackupActivity_End");
         assertThat(pi).isEnded();
     }
 

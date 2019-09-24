@@ -33,8 +33,10 @@ public class AAIClientObjectBuilder {
         env.setOperationalEnvironmentId(cloudOrchestrationRequest.getOperationalEnvironmentId());
         env.setOperationalEnvironmentName(
                 cloudOrchestrationRequest.getRequestDetails().getRequestInfo().getInstanceName());
-        env.setOperationalEnvironmentType(cloudOrchestrationRequest.getRequestDetails().getRequestParameters()
-                .getOperationalEnvironmentType().toString());
+        env.setOperationalEnvironmentType(cloudOrchestrationRequest.getRequestDetails()
+                .getRequestParameters()
+                .getOperationalEnvironmentType()
+                .toString());
         env.setOperationalEnvironmentStatus(status);
         env.setTenantContext(cloudOrchestrationRequest.getRequestDetails().getRequestParameters().getTenantContext());
         env.setWorkloadContext(

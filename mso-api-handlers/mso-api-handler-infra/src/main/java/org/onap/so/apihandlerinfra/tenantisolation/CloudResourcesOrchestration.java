@@ -110,7 +110,8 @@ public class CloudResourcesOrchestration {
             ValidateException validateException =
                     new ValidateException.Builder("Mapping of request to JSON object failed.  " + e.getMessage(),
                             HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
-                                    .errorInfo(errorLoggerInfo).build();
+                                    .errorInfo(errorLoggerInfo)
+                                    .build();
             throw validateException;
         }
 
@@ -139,7 +140,8 @@ public class CloudResourcesOrchestration {
             ValidateException validateException =
                     new ValidateException.Builder("Orchestration RequestId " + requestId + " is not found in DB",
                             HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR)
-                                    .errorInfo(errorLoggerInfo).build();
+                                    .errorInfo(errorLoggerInfo)
+                                    .build();
 
             throw validateException;
 
@@ -207,7 +209,8 @@ public class CloudResourcesOrchestration {
                 ValidateException validateException =
                         new ValidateException.Builder("Orchestration RequestId " + requestId + " is not found in DB",
                                 HttpStatus.SC_NO_CONTENT, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR)
-                                        .errorInfo(errorLoggerInfo).build();
+                                        .errorInfo(errorLoggerInfo)
+                                        .build();
 
                 throw validateException;
             }
@@ -283,7 +286,8 @@ public class CloudResourcesOrchestration {
                 ValidateException validateException =
                         new ValidateException.Builder("Mapping of request to JSON object failed.  " + e.getMessage(),
                                 HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
-                                        .errorInfo(errorLoggerInfo).build();
+                                        .errorInfo(errorLoggerInfo)
+                                        .build();
                 throw validateException;
             }
         }

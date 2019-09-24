@@ -36,8 +36,9 @@ public class DeactivateVfModuleBBTest extends BaseBPMNTest {
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeactivateVfModuleBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("DeactivateVfModuleBB_Start", "DeactivateVfModule",
-                "CallActivity_sdncHandler", "UpdateVfModuleDeactivateStatus", "DeactivateVfModuleBB_End");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("DeactivateVfModuleBB_Start", "DeactivateVfModule", "CallActivity_sdncHandler",
+                        "UpdateVfModuleDeactivateStatus", "DeactivateVfModuleBB_End");
         assertThat(pi).isEnded();
     }
 

@@ -102,7 +102,8 @@ public class JerseyConfiguration extends ResourceConfig {
         info.title("Swagger apihandlerinfra bootstrap code");
         info.setVersion("1.0.2");
 
-        SwaggerConfiguration oasConfig = new SwaggerConfiguration().openAPI(oas).prettyPrint(true)
+        SwaggerConfiguration oasConfig = new SwaggerConfiguration().openAPI(oas)
+                .prettyPrint(true)
                 .resourcePackages(Stream.of("org.onap.so.apihandlerinfra").collect(Collectors.toSet()));
 
         try {

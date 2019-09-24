@@ -35,8 +35,9 @@ public class VNFUpgradeSoftwareActivityTest extends BaseBPMNTest {
     public void sunnyDayVNFUpgradeSoftwareActivity_Test() throws InterruptedException {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFUpgradeSoftwareActivity", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("VNFUpgradeSoftwareActivity_Start", "TaskPreProcessActivity",
-                "TaskUpgradeSoftware", "VNFUpgradeSoftwareActivity_End");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("VNFUpgradeSoftwareActivity_Start", "TaskPreProcessActivity", "TaskUpgradeSoftware",
+                        "VNFUpgradeSoftwareActivity_End");
         assertThat(pi).isEnded();
     }
 
@@ -46,7 +47,8 @@ public class VNFUpgradeSoftwareActivityTest extends BaseBPMNTest {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(appcRunTasks)
                 .runAppcCommand(any(BuildingBlockExecution.class), any(Action.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFUpgradeSoftwareActivity", variables);
-        assertThat(pi).isNotNull().isStarted()
+        assertThat(pi).isNotNull()
+                .isStarted()
                 .hasPassedInOrder("VNFUpgradeSoftwareActivity_Start", "TaskPreProcessActivity", "TaskUpgradeSoftware")
                 .hasNotPassed("VNFUpgradeSoftwareActivity_End");
     }

@@ -161,8 +161,8 @@ public class ApplicationControllerActionTest extends BaseTest {
         // Prepare mocks
         Status status = new Status();
         Optional<String> modifiedPayload = PayloadClient.quiesceTrafficFormat(payload, payloadInfo.get("vnfName"));
-        doReturn(status).when(client).vnfCommand(action, msoRequestId, vnfId, vserverId, modifiedPayload,
-                controllerType);
+        doReturn(status).when(client)
+                .vnfCommand(action, msoRequestId, vnfId, vserverId, modifiedPayload, controllerType);
 
         // Run method
         appCAction.runAppCCommand(action, msoRequestId, vnfId, payload, payloadInfo, controllerType);
@@ -251,10 +251,10 @@ public class ApplicationControllerActionTest extends BaseTest {
         Status status = new Status();
         Optional<String> otherPayloadVm1 = PayloadClient.snapshotFormat(vmId1, payloadInfo.get("identityUrl"));
         Optional<String> otherPayloadVm2 = PayloadClient.snapshotFormat(vmId2, payloadInfo.get("identityUrl"));
-        doReturn(status).when(client).vnfCommand(action, msoRequestId, vnfId, vserverIdString1, otherPayloadVm1,
-                controllerType);
-        doReturn(status).when(client).vnfCommand(action, msoRequestId, vnfId, vserverIdString2, otherPayloadVm2,
-                controllerType);
+        doReturn(status).when(client)
+                .vnfCommand(action, msoRequestId, vnfId, vserverIdString1, otherPayloadVm1, controllerType);
+        doReturn(status).when(client)
+                .vnfCommand(action, msoRequestId, vnfId, vserverIdString2, otherPayloadVm2, controllerType);
 
         // Run method
         appCAction.runAppCCommand(action, msoRequestId, vnfId, payload, payloadInfo, controllerType);
@@ -344,8 +344,8 @@ public class ApplicationControllerActionTest extends BaseTest {
         // Prepare mocks
         Status status = new Status();
         Optional<String> modifiedPayload = PayloadClient.upgradeFormat(payload, payloadInfo.get("vnfName"));
-        doReturn(status).when(client).vnfCommand(action, msoRequestId, vnfId, vserverId, modifiedPayload,
-                controllerType);
+        doReturn(status).when(client)
+                .vnfCommand(action, msoRequestId, vnfId, vserverId, modifiedPayload, controllerType);
 
         // Run method
         appCAction.runAppCCommand(action, msoRequestId, vnfId, payload, payloadInfo, controllerType);
@@ -469,8 +469,8 @@ public class ApplicationControllerActionTest extends BaseTest {
         // Prepare mocks
         Optional<String> otherPayload = PayloadClient.startStopFormat(payloadInfo.get("vnfName"));
         String expectedErrorMessage = "Test appc orchestrator error message";
-        doThrow(new ApplicationControllerOrchestratorException(expectedErrorMessage, 0)).when(client).vnfCommand(action,
-                msoRequestId, vnfId, vserverId, otherPayload, controllerType);
+        doThrow(new ApplicationControllerOrchestratorException(expectedErrorMessage, 0)).when(client)
+                .vnfCommand(action, msoRequestId, vnfId, vserverId, otherPayload, controllerType);
 
         // Run method
         appCAction.runAppCCommand(action, msoRequestId, vnfId, payload, payloadInfo, controllerType);

@@ -61,9 +61,10 @@ public class ExecuteBuildingBlockTest extends BaseBPMNTest {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("ExecuteBuildingBlock", variables);
 
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("Start_ExecuteBuildingBlock", "Task_BBInputSetup", "StatusPolicy",
-                "CheckOrchestrationStatusValidationResults", "Task_PreValidate", "Call_BBToExecute",
-                "Task_PostValidate", "Task_setHandlingCodeSuccess", "End_ExecuteBuildingBlock");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("Start_ExecuteBuildingBlock", "Task_BBInputSetup", "StatusPolicy",
+                        "CheckOrchestrationStatusValidationResults", "Task_PreValidate", "Call_BBToExecute",
+                        "Task_PostValidate", "Task_setHandlingCodeSuccess", "End_ExecuteBuildingBlock");
         assertThat(pi).isEnded();
 
 
@@ -75,8 +76,10 @@ public class ExecuteBuildingBlockTest extends BaseBPMNTest {
 
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("ExecuteBuildingBlock", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("Start_ExecuteBuildingBlock", "Task_BBInputSetup", "StatusPolicy",
-                "CheckOrchestrationStatusValidationResults", "Task_setHandlingCodeSuccess", "End_ExecuteBuildingBlock")
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("Start_ExecuteBuildingBlock", "Task_BBInputSetup", "StatusPolicy",
+                        "CheckOrchestrationStatusValidationResults", "Task_setHandlingCodeSuccess",
+                        "End_ExecuteBuildingBlock")
                 .hasNotPassed("Call_BBToExecute", "ErrorStart", "Task_QueryRainyDayTable", "ExclusiveGateway_1aonzik",
                         "ExclusiveGateway_1aonzik", "ErrorEnd2", "Task_SetRetryTimer");
         assertThat(pi).isEnded();

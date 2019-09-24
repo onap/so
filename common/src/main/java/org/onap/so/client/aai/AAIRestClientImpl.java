@@ -73,7 +73,8 @@ public class AAIRestClientImpl implements AAIRestClientI {
     @Override
     public GenericVnf getVnfByName(String vnfId) {
         return new AAIResourcesClient()
-                .get(GenericVnf.class, AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)).orElse(null);
+                .get(GenericVnf.class, AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId))
+                .orElse(null);
     }
 
     @Override

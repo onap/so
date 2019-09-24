@@ -73,9 +73,13 @@ public class HeatFiles implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("artifactUuid", artifactUuid).append("description", description)
-                .append("fileName", fileName).append("fileBody", fileBody).append("created", created)
-                .append("artifactChecksum", artifactChecksum).toString();
+        return new ToStringBuilder(this).append("artifactUuid", artifactUuid)
+                .append("description", description)
+                .append("fileName", fileName)
+                .append("fileBody", fileBody)
+                .append("created", created)
+                .append("artifactChecksum", artifactChecksum)
+                .toString();
     }
 
     @Override

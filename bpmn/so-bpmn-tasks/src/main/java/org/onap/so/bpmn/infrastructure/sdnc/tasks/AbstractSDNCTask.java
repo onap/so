@@ -16,7 +16,8 @@ public class AbstractSDNCTask {
 
     public URI buildCallbackURI(SDNCRequest sdncRequest) {
         UriBuilder builder = UriBuilder.fromPath(env.getRequiredProperty("mso.workflow.message.endpoint"))
-                .path(sdncRequest.getCorrelationName()).path(sdncRequest.getCorrelationValue());
+                .path(sdncRequest.getCorrelationName())
+                .path(sdncRequest.getCorrelationValue());
         return builder.build();
     }
 }

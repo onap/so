@@ -54,8 +54,8 @@ public class AAIVfModuleResources {
         AAIResourceUri vfModuleURI =
                 AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnf.getVnfId(), vfModule.getVfModuleId());
         vfModule.setOrchestrationStatus(OrchestrationStatus.INVENTORIED);
-        injectionHelper.getAaiClient().createIfNotExists(vfModuleURI,
-                Optional.of(aaiObjectMapper.mapVfModule(vfModule)));
+        injectionHelper.getAaiClient()
+                .createIfNotExists(vfModuleURI, Optional.of(aaiObjectMapper.mapVfModule(vfModule)));
     }
 
     public void deleteVfModule(VfModule vfModule, GenericVnf vnf) {
@@ -116,8 +116,8 @@ public class AAIVfModuleResources {
         boolean nameInUse = false;
         AAIResourceUri vfModuleUri = AAIUriFactory.createNodesUri(AAIObjectPlurals.VF_MODULE)
                 .queryParam("vf-module-name", vfModule.getVfModuleName());
-        AAIResourceUri vfModuleUriWithCustomization = vfModuleUri.clone().queryParam("model-customization-id",
-                vfModule.getModelInfoVfModule().getModelCustomizationUUID());
+        AAIResourceUri vfModuleUriWithCustomization = vfModuleUri.clone()
+                .queryParam("model-customization-id", vfModule.getModelInfoVfModule().getModelCustomizationUUID());
         if (injectionHelper.getAaiClient().exists(vfModuleUriWithCustomization)) {
             // assume it's a resume case and return false
             nameInUse = false;

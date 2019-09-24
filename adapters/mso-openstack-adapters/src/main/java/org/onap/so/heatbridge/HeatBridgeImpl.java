@@ -142,8 +142,10 @@ public class HeatBridgeImpl implements HeatBridgeApi {
     @Override
     public List<String> extractStackResourceIdsByResourceType(final List<Resource> stackResources,
             final String resourceType) {
-        return stackResources.stream().filter(stackResource -> stackResource.getType().equals(resourceType))
-                .map(Resource::getPhysicalResourceId).collect(Collectors.toList());
+        return stackResources.stream()
+                .filter(stackResource -> stackResource.getType().equals(resourceType))
+                .map(Resource::getPhysicalResourceId)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -153,7 +155,8 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                 .map(netName -> osClient
                         .listNetworksByFilter(ImmutableMap.of(HeatBridgeConstants.OS_NAME_KEY, netName)))
                 .filter(nets -> nets != null && nets.size() == 1) // extract network-id only if network-name is unique
-                .map(nets -> nets.get(0).getId()).collect(Collectors.toList());
+                .map(nets -> nets.get(0).getId())
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -169,15 +172,19 @@ public class HeatBridgeImpl implements HeatBridgeApi {
     @Override
     public List<org.openstack4j.model.compute.Image> extractOpenstackImagesFromServers(final List<Server> servers) {
         Objects.requireNonNull(osClient, ERR_MSG_NULL_OS_CLIENT);
-        return servers.stream().map(Server::getImage)
-                .filter(distinctByProperty(org.openstack4j.model.compute.Image::getId)).collect(Collectors.toList());
+        return servers.stream()
+                .map(Server::getImage)
+                .filter(distinctByProperty(org.openstack4j.model.compute.Image::getId))
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<org.openstack4j.model.compute.Flavor> extractOpenstackFlavorsFromServers(final List<Server> servers) {
         Objects.requireNonNull(osClient, ERR_MSG_NULL_OS_CLIENT);
-        return servers.stream().map(Server::getFlavor)
-                .filter(distinctByProperty(org.openstack4j.model.compute.Flavor::getId)).collect(Collectors.toList());
+        return servers.stream()
+                .map(Server::getFlavor)
+                .filter(distinctByProperty(org.openstack4j.model.compute.Flavor::getId))
+                .collect(Collectors.toList());
     }
 
     @Override

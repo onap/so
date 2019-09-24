@@ -179,10 +179,17 @@ public class TypedRequestTunables {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("reqId", reqId).append("myUrlSuffix", myUrlSuffix).append("key", key)
-                .append("error", error).append("reqMethod", reqMethod).append("timeout", timeout)
-                .append("sdncUrl", sdncUrl).append("headerName", headerName).append("namespace", namespace)
-                .append("myUrl", myUrl).toString();
+        return new ToStringBuilder(this).append("reqId", reqId)
+                .append("myUrlSuffix", myUrlSuffix)
+                .append("key", key)
+                .append("error", error)
+                .append("reqMethod", reqMethod)
+                .append("timeout", timeout)
+                .append("sdncUrl", sdncUrl)
+                .append("headerName", headerName)
+                .append("namespace", namespace)
+                .append("myUrl", myUrl)
+                .toString();
     }
 
 }

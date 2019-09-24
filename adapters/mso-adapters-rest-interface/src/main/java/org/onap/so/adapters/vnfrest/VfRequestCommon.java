@@ -53,7 +53,8 @@ public abstract class VfRequestCommon extends VfResponseCommon {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("skipAAI", skipAAI).append("notificationUrl", notificationUrl)
+        return new ToStringBuilder(this).append("skipAAI", skipAAI)
+                .append("notificationUrl", notificationUrl)
                 .toString();
     }
 

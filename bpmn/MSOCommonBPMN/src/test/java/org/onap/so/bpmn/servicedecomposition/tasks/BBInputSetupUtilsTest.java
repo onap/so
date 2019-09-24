@@ -185,12 +185,18 @@ public class BBInputSetupUtilsTest {
                 Optional.of(new org.onap.aai.domain.yang.CloudRegion());
         expected.get().setCloudOwner("cloudOwner");
         expected.get().setCloudRegionId("lcpCloudRegionId");
-        doReturn(expected).when(MOCK_aaiResourcesClient).get(org.onap.aai.domain.yang.CloudRegion.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, cloudConfig.getCloudOwner(),
-                        cloudConfig.getLcpCloudRegionId()).depth(Depth.TWO));
+        doReturn(expected).when(MOCK_aaiResourcesClient)
+                .get(org.onap.aai.domain.yang.CloudRegion.class,
+                        AAIUriFactory
+                                .createResourceUri(AAIObjectType.CLOUD_REGION, cloudConfig.getCloudOwner(),
+                                        cloudConfig.getLcpCloudRegionId())
+                                .depth(Depth.TWO));
 
-        AAIResourceUri expectedUri = AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION,
-                cloudConfig.getCloudOwner(), cloudConfig.getLcpCloudRegionId()).depth(Depth.TWO);
+        AAIResourceUri expectedUri =
+                AAIUriFactory
+                        .createResourceUri(AAIObjectType.CLOUD_REGION, cloudConfig.getCloudOwner(),
+                                cloudConfig.getLcpCloudRegionId())
+                        .depth(Depth.TWO);
         bbInputSetupUtils.getCloudRegion(cloudConfig);
 
         verify(MOCK_aaiResourcesClient, times(1)).get(CloudRegion.class, expectedUri);
@@ -240,8 +246,9 @@ public class BBInputSetupUtilsTest {
                 Optional.of(new org.onap.aai.domain.yang.InstanceGroup());
         String instanceGroupId = "instanceGroupId";
         expected.get().setId(instanceGroupId);
-        doReturn(expected).when(MOCK_aaiResourcesClient).get(org.onap.aai.domain.yang.InstanceGroup.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroupId));
+        doReturn(expected).when(MOCK_aaiResourcesClient)
+                .get(org.onap.aai.domain.yang.InstanceGroup.class,
+                        AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroupId));
         AAIResourceUri expectedUri = AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroupId);
 
         bbInputSetupUtils.getAAIInstanceGroup(instanceGroupId);
@@ -252,8 +259,9 @@ public class BBInputSetupUtilsTest {
     public void testGetAAIInstanceGroupThrowNotFound() {
         String instanceGroupId = "instanceGroupId";
         doReturn(MOCK_aaiResourcesClient).when(MOCK_injectionHelper).getAaiClient();
-        doReturn(Optional.empty()).when(MOCK_aaiResourcesClient).get(org.onap.aai.domain.yang.InstanceGroup.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroupId));
+        doReturn(Optional.empty()).when(MOCK_aaiResourcesClient)
+                .get(org.onap.aai.domain.yang.InstanceGroup.class,
+                        AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroupId));
 
         org.onap.aai.domain.yang.InstanceGroup actual = bbInputSetupUtils.getAAIInstanceGroup(instanceGroupId);
 
@@ -265,8 +273,9 @@ public class BBInputSetupUtilsTest {
         Optional<org.onap.aai.domain.yang.Customer> expected = Optional.of(new org.onap.aai.domain.yang.Customer());
         String globalSubscriberId = "globalSubscriberId";
         expected.get().setGlobalCustomerId(globalSubscriberId);
-        doReturn(expected).when(MOCK_aaiResourcesClient).get(org.onap.aai.domain.yang.Customer.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.CUSTOMER, globalSubscriberId));
+        doReturn(expected).when(MOCK_aaiResourcesClient)
+                .get(org.onap.aai.domain.yang.Customer.class,
+                        AAIUriFactory.createResourceUri(AAIObjectType.CUSTOMER, globalSubscriberId));
         AAIResourceUri expectedUri = AAIUriFactory.createResourceUri(AAIObjectType.CUSTOMER, globalSubscriberId);
 
         bbInputSetupUtils.getAAICustomer(globalSubscriberId);
@@ -277,8 +286,9 @@ public class BBInputSetupUtilsTest {
     public void testGetAAICustomerThrowNotFound() {
         String globalSubscriberId = "globalSubscriberId";
         doReturn(MOCK_aaiResourcesClient).when(MOCK_injectionHelper).getAaiClient();
-        doReturn(Optional.empty()).when(MOCK_aaiResourcesClient).get(org.onap.aai.domain.yang.Customer.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.CUSTOMER, globalSubscriberId));
+        doReturn(Optional.empty()).when(MOCK_aaiResourcesClient)
+                .get(org.onap.aai.domain.yang.Customer.class,
+                        AAIUriFactory.createResourceUri(AAIObjectType.CUSTOMER, globalSubscriberId));
 
         org.onap.aai.domain.yang.Customer actual = bbInputSetupUtils.getAAICustomer(globalSubscriberId);
 
@@ -292,9 +302,9 @@ public class BBInputSetupUtilsTest {
         String globalSubscriberId = "globalSubscriberId";
         String subscriptionServiceType = "subscriptionServiceType";
         expected.get().setServiceType(subscriptionServiceType);
-        doReturn(expected).when(MOCK_aaiResourcesClient).get(org.onap.aai.domain.yang.ServiceSubscription.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_SUBSCRIPTION, globalSubscriberId,
-                        subscriptionServiceType));
+        doReturn(expected).when(MOCK_aaiResourcesClient)
+                .get(org.onap.aai.domain.yang.ServiceSubscription.class, AAIUriFactory.createResourceUri(
+                        AAIObjectType.SERVICE_SUBSCRIPTION, globalSubscriberId, subscriptionServiceType));
         AAIResourceUri expectedUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_SUBSCRIPTION,
                 globalSubscriberId, subscriptionServiceType);
 
@@ -334,9 +344,9 @@ public class BBInputSetupUtilsTest {
         String globalSubscriberId = "globalSubscriberId";
         String subscriptionServiceType = "subscriptionServiceType";
         doReturn(MOCK_aaiResourcesClient).when(MOCK_injectionHelper).getAaiClient();
-        doReturn(Optional.empty()).when(MOCK_aaiResourcesClient).get(org.onap.aai.domain.yang.ServiceSubscription.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_SUBSCRIPTION, globalSubscriberId,
-                        subscriptionServiceType));
+        doReturn(Optional.empty()).when(MOCK_aaiResourcesClient)
+                .get(org.onap.aai.domain.yang.ServiceSubscription.class, AAIUriFactory.createResourceUri(
+                        AAIObjectType.SERVICE_SUBSCRIPTION, globalSubscriberId, subscriptionServiceType));
         org.onap.aai.domain.yang.ServiceSubscription actual =
                 bbInputSetupUtils.getAAIServiceSubscription(globalSubscriberId, subscriptionServiceType);
         assertNull(actual);
@@ -348,8 +358,8 @@ public class BBInputSetupUtilsTest {
 
         ServiceInstance expectedServiceInstance = new ServiceInstance();
 
-        doReturn(Optional.of(expectedServiceInstance)).when(MOCK_aaiResourcesClient).get(isA(Class.class),
-                isA(AAIResourceUri.class));
+        doReturn(Optional.of(expectedServiceInstance)).when(MOCK_aaiResourcesClient)
+                .get(isA(Class.class), isA(AAIResourceUri.class));
 
         ServiceInstance actualServiceInstance = bbInputSetupUtils.getAAIServiceInstanceById(serviceInstanceId);
 
@@ -415,12 +425,13 @@ public class BBInputSetupUtilsTest {
         ServiceInstances serviceInstances = new ServiceInstances();
         serviceInstances.getServiceInstance().add(expectedServiceInstance);
 
-        doReturn(Optional.of(serviceInstances)).when(MOCK_aaiResourcesClient).get(isA(Class.class),
-                isA(AAIResourceUri.class));
+        doReturn(Optional.of(serviceInstances)).when(MOCK_aaiResourcesClient)
+                .get(isA(Class.class), isA(AAIResourceUri.class));
         AAIResourceUri expectedUri = AAIUriFactory
                 .createResourceUri(AAIObjectPlurals.SERVICE_INSTANCE, customer.getGlobalCustomerId(),
                         customer.getServiceSubscription().getServiceType())
-                .queryParam("service-instance-name", serviceInstanceName).depth(Depth.TWO);
+                .queryParam("service-instance-name", serviceInstanceName)
+                .depth(Depth.TWO);
         bbInputSetupUtils.getAAIServiceInstanceByName(serviceInstanceName, customer);
 
         verify(MOCK_aaiResourcesClient, times(1)).get(org.onap.aai.domain.yang.ServiceInstances.class, expectedUri);
@@ -446,8 +457,8 @@ public class BBInputSetupUtilsTest {
         serviceInstances.getServiceInstance().add(serviceInstance);
         serviceInstances.getServiceInstance().add(serviceInstance);
 
-        doReturn(Optional.of(serviceInstances)).when(MOCK_aaiResourcesClient).get(isA(Class.class),
-                isA(AAIResourceUri.class));
+        doReturn(Optional.of(serviceInstances)).when(MOCK_aaiResourcesClient)
+                .get(isA(Class.class), isA(AAIResourceUri.class));
 
         bbInputSetupUtils.getAAIServiceInstanceByName(serviceInstanceName, customer);
     }
@@ -495,8 +506,8 @@ public class BBInputSetupUtilsTest {
         serviceInstances.getServiceInstance().add(serviceInstance);
         serviceInstances.getServiceInstance().add(serviceInstance);
 
-        doReturn(Optional.of(serviceInstances)).when(MOCK_aaiResourcesClient).get(isA(Class.class),
-                isA(AAIResourceUri.class));
+        doReturn(Optional.of(serviceInstances)).when(MOCK_aaiResourcesClient)
+                .get(isA(Class.class), isA(AAIResourceUri.class));
 
         bbInputSetupUtils.getAAIServiceInstanceByName(globalCustomerId, serviceType, serviceInstanceId);
     }
@@ -552,8 +563,8 @@ public class BBInputSetupUtilsTest {
         GenericVnf expectedAaiVnf =
                 mapper.readValue(new File(RESOURCE_PATH + "aaiGenericVnfInput.json"), GenericVnf.class);
 
-        doReturn(Optional.of(expectedAaiVnf)).when(MOCK_aaiResourcesClient).get(isA(Class.class),
-                isA(AAIResourceUri.class));
+        doReturn(Optional.of(expectedAaiVnf)).when(MOCK_aaiResourcesClient)
+                .get(isA(Class.class), isA(AAIResourceUri.class));
         AAIResourceUri expectedUri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId).depth(Depth.ONE);
         GenericVnf actualAaiVnf = bbInputSetupUtils.getAAIGenericVnf(vnfId);
 
@@ -569,8 +580,8 @@ public class BBInputSetupUtilsTest {
         Configuration expectedAaiConfiguration =
                 mapper.readValue(new File(RESOURCE_PATH + "ConfigurationInput.json"), Configuration.class);
 
-        doReturn(Optional.of(expectedAaiConfiguration)).when(MOCK_aaiResourcesClient).get(isA(Class.class),
-                isA(AAIResourceUri.class));
+        doReturn(Optional.of(expectedAaiConfiguration)).when(MOCK_aaiResourcesClient)
+                .get(isA(Class.class), isA(AAIResourceUri.class));
         AAIResourceUri expectedUri =
                 AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configurationId).depth(Depth.ONE);
         bbInputSetupUtils.getAAIConfiguration(configurationId);
@@ -682,8 +693,8 @@ public class BBInputSetupUtilsTest {
         serviceInstances.get().getServiceInstance().add(si1);
         serviceInstances.get().getServiceInstance().add(si2);
 
-        doReturn(serviceInstances).when(MOCK_aaiResourcesClient).get(eq(ServiceInstances.class),
-                any(AAIResourceUri.class));
+        doReturn(serviceInstances).when(MOCK_aaiResourcesClient)
+                .get(eq(ServiceInstances.class), any(AAIResourceUri.class));
         this.bbInputSetupUtils.getRelatedServiceInstanceFromInstanceGroup("ig-001");
     }
 
@@ -692,8 +703,8 @@ public class BBInputSetupUtilsTest {
         expectedException.expect(NoServiceInstanceFoundException.class);
         Optional<ServiceInstances> serviceInstances = Optional.of(new ServiceInstances());
 
-        doReturn(serviceInstances).when(MOCK_aaiResourcesClient).get(eq(ServiceInstances.class),
-                any(AAIResourceUri.class));
+        doReturn(serviceInstances).when(MOCK_aaiResourcesClient)
+                .get(eq(ServiceInstances.class), any(AAIResourceUri.class));
         this.bbInputSetupUtils.getRelatedServiceInstanceFromInstanceGroup("ig-001");
     }
 
@@ -769,8 +780,8 @@ public class BBInputSetupUtilsTest {
         expectedVolumeGroup.getVolumeGroup().add(volumeGroup);
         expectedVolumeGroup.getVolumeGroup().add(volumeGroup);
 
-        doReturn(expectedVolumeGroup).when(MOCK_aaiResourcesClient).get(eq(VolumeGroups.class),
-                any(AAIResourceUri.class));
+        doReturn(expectedVolumeGroup).when(MOCK_aaiResourcesClient)
+                .get(eq(VolumeGroups.class), any(AAIResourceUri.class));
 
         bbInputSetupUtils.getRelatedVolumeGroupByNameFromVnf(vnfId, volumeGroupName);
     }
@@ -817,8 +828,8 @@ public class BBInputSetupUtilsTest {
         expectedVolumeGroup.getVolumeGroup().add(volumeGroup);
         expectedVolumeGroup.getVolumeGroup().add(volumeGroup);
 
-        doReturn(expectedVolumeGroup).when(MOCK_aaiResourcesClient).get(eq(VolumeGroups.class),
-                any(AAIResourceUri.class));
+        doReturn(expectedVolumeGroup).when(MOCK_aaiResourcesClient)
+                .get(eq(VolumeGroups.class), any(AAIResourceUri.class));
 
         bbInputSetupUtils.getRelatedVolumeGroupByNameFromVfModule(vnfId, volumeGroupId, volumeGroupName);
     }
@@ -859,8 +870,8 @@ public class BBInputSetupUtilsTest {
         doReturn(request).when(MOCK_requestsDbClient).getInfraActiveRequestbyRequestId(anyString());
         RequestProcessingData rpd = new RequestProcessingData();
         rpd.setValue(flowsToExecuteString);
-        doReturn(rpd).when(MOCK_requestsDbClient).getRequestProcessingDataBySoRequestIdAndName(anyString(),
-                anyString());
+        doReturn(rpd).when(MOCK_requestsDbClient)
+                .getRequestProcessingDataBySoRequestIdAndName(anyString(), anyString());
 
         List<ExecuteBuildingBlock> flowsToExecute = bbInputSetupUtils.loadOriginalFlowExecutionPath(requestId);
         assertEquals(expectedFlowsToExecute.size(), flowsToExecute.size());

@@ -204,12 +204,11 @@ public class CloudResourcesOrchestrationTest extends BaseTest {
 
     @Test
     public void testGetOperationalEnvSuccess() throws ParseException {
-        wireMockServer
-                .stubFor(get(urlPathEqualTo(getTestUrl("90c56827-1c78-4827-bc4d-6afcdb37a51f"))).willReturn(
-                        aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                                .withBody(String.format(getResponseTemplateNoBody,
-                                        "90c56827-1c78-4827-bc4d-6afcdb37a51f", "COMPLETE"))
-                                .withStatus(HttpStatus.SC_OK)));
+        wireMockServer.stubFor(get(urlPathEqualTo(getTestUrl("90c56827-1c78-4827-bc4d-6afcdb37a51f"))).willReturn(
+                aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(String.format(getResponseTemplateNoBody, "90c56827-1c78-4827-bc4d-6afcdb37a51f",
+                                "COMPLETE"))
+                        .withStatus(HttpStatus.SC_OK)));
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<>("", headers);

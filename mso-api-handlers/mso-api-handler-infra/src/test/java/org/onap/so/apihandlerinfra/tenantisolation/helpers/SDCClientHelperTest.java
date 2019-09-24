@@ -51,7 +51,8 @@ public class SDCClientHelperTest extends BaseTest {
         jsonObject.put("distributionId", "TEST_distributionId");
 
         wireMockServer.stubFor(post(urlPathMatching("/sdc/v1/catalog/services/TEST_uuid1/distr.*"))
-                .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonObject.toString())
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody(jsonObject.toString())
                         .withStatus(HttpStatus.SC_ACCEPTED)));
 
         JSONObject jsonResponse = sdcClientUtils.postActivateOperationalEnvironment(serviceModelVersionId,
@@ -71,7 +72,8 @@ public class SDCClientHelperTest extends BaseTest {
 
         wireMockServer.stubFor(post(urlPathMatching("/sdc/v1/catalog/services/TEST_uuid1/distr.*"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBody(jsonErrorResponse.toString()).withStatus(HttpStatus.SC_BAD_REQUEST)));
+                        .withBody(jsonErrorResponse.toString())
+                        .withStatus(HttpStatus.SC_BAD_REQUEST)));
 
         JSONObject jsonResponse = sdcClientUtils.postActivateOperationalEnvironment(serviceModelVersionId,
                 operationalEnvironmentId, workloadContext);

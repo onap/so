@@ -91,8 +91,11 @@ public class GrpcNettyServer extends BluePrintProcessingServiceImplBase {
                 return requestObserver;
             }
         };
-        grpcCleanup.register(ServerBuilder.forPort(Integer.valueOf(port)).directExecutor()
-                .addService(blueprintPrcessorImpl).build().start());
+        grpcCleanup.register(ServerBuilder.forPort(Integer.valueOf(port))
+                .directExecutor()
+                .addService(blueprintPrcessorImpl)
+                .build()
+                .start());
 
     }
 

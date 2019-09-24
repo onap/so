@@ -35,8 +35,9 @@ public class ActivateNetworkCollectionBBTest extends BaseBPMNTest {
     public void sunnyDayActivateNetworkCollection_Test() throws InterruptedException {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("ActivateNetworkCollectionBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("activateNetworkCollection_startEvent",
-                "Activate_Network_Collection_AAI_ServiceTask", "activateNetworkCollection_EndEvent");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("activateNetworkCollection_startEvent", "Activate_Network_Collection_AAI_ServiceTask",
+                        "activateNetworkCollection_EndEvent");
         assertThat(pi).isEnded();
     }
 
@@ -46,7 +47,9 @@ public class ActivateNetworkCollectionBBTest extends BaseBPMNTest {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiUpdateTasks)
                 .updateOrchestrationStatusActiveNetworkCollection(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("ActivateNetworkCollectionBB", variables);
-        assertThat(pi).isNotNull().isStarted().hasPassedInOrder("activateNetworkCollection_startEvent")
+        assertThat(pi).isNotNull()
+                .isStarted()
+                .hasPassedInOrder("activateNetworkCollection_startEvent")
                 .hasNotPassed("activateNetworkCollection_EndEvent");
     }
 }

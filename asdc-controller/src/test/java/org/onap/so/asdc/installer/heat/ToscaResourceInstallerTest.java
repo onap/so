@@ -379,16 +379,16 @@ public class ToscaResourceInstallerTest extends BaseTest {
 
         // doReturn(csarHelper).when(toscaResourceStructure).getSdcCsarHelper();
         toscaResourceStructObj.setSdcCsarHelper(csarHelper);
-        doReturn(null).when(csarHelper).getNodeTemplatePropertyLeafValue(nodeTemplate,
-                SdcPropertyNames.PROPERTY_NAME_NFFUNCTION);
-        doReturn(null).when(csarHelper).getNodeTemplatePropertyLeafValue(nodeTemplate,
-                SdcPropertyNames.PROPERTY_NAME_NFROLE);
-        doReturn(null).when(csarHelper).getNodeTemplatePropertyLeafValue(nodeTemplate,
-                SdcPropertyNames.PROPERTY_NAME_NFTYPE);
-        doReturn(resourceCustomizationUUID).when(csarHelper).getMetadataPropertyValue(metadata,
-                SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
-        doReturn(uuid).when(csarHelper).getMetadataPropertyValue(metadata,
-                SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELUUID);
+        doReturn(null).when(csarHelper)
+                .getNodeTemplatePropertyLeafValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFFUNCTION);
+        doReturn(null).when(csarHelper)
+                .getNodeTemplatePropertyLeafValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFROLE);
+        doReturn(null).when(csarHelper)
+                .getNodeTemplatePropertyLeafValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFTYPE);
+        doReturn(resourceCustomizationUUID).when(csarHelper)
+                .getMetadataPropertyValue(metadata, SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
+        doReturn(uuid).when(csarHelper)
+                .getMetadataPropertyValue(metadata, SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELUUID);
 
 
         // vnfc instance group list
@@ -409,8 +409,8 @@ public class ToscaResourceInstallerTest extends BaseTest {
         doReturn(new ArrayList<Input>()).when(submappings).getInputs();
         doReturn(submappings).when(nodeTemplate).getSubMappingToscaTemplate();
 
-        doReturn(vnfcInstanceGroupList).when(csarHelper).getGroupsOfOriginOfNodeTemplateByToscaGroupType(nodeTemplate,
-                "org.openecomp.groups.VfcInstanceGroup");
+        doReturn(vnfcInstanceGroupList).when(csarHelper)
+                .getGroupsOfOriginOfNodeTemplateByToscaGroupType(nodeTemplate, "org.openecomp.groups.VfcInstanceGroup");
 
 
         doReturn(notificationData).when(vfResourceStruct).getNotification();
@@ -655,12 +655,12 @@ public class ToscaResourceInstallerTest extends BaseTest {
         doReturn(MockConstants.MODEL_CUSTOMIZATIONUUID).when(metadata)
                 .getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
         doReturn(csarHelper).when(toscaResourceStructure).getSdcCsarHelper();
-        doReturn(null).when(csarHelper).getNodeTemplatePropertyLeafValue(nodeTemplate,
-                SdcPropertyNames.PROPERTY_NAME_NFFUNCTION);
-        doReturn(null).when(csarHelper).getNodeTemplatePropertyLeafValue(nodeTemplate,
-                SdcPropertyNames.PROPERTY_NAME_NFROLE);
-        doReturn(null).when(csarHelper).getNodeTemplatePropertyLeafValue(nodeTemplate,
-                SdcPropertyNames.PROPERTY_NAME_NFTYPE);
+        doReturn(null).when(csarHelper)
+                .getNodeTemplatePropertyLeafValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFFUNCTION);
+        doReturn(null).when(csarHelper)
+                .getNodeTemplatePropertyLeafValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFROLE);
+        doReturn(null).when(csarHelper)
+                .getNodeTemplatePropertyLeafValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFTYPE);
         doReturn(MockConstants.MODEL_CUSTOMIZATIONUUID).when(spResourceCustomization).getModelCustomizationUUID();
     }
 

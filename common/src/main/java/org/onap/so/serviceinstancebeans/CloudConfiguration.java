@@ -101,8 +101,11 @@ public class CloudConfiguration implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("aicNodeClli", getAicNodeClli()).append("tenantId", getTenantId())
-                .append("cloudOwner", getCloudOwner()).append("lcpCloudRegionId", getLcpCloudRegionId()).toString();
+        return new ToStringBuilder(this).append("aicNodeClli", getAicNodeClli())
+                .append("tenantId", getTenantId())
+                .append("cloudOwner", getCloudOwner())
+                .append("lcpCloudRegionId", getLcpCloudRegionId())
+                .toString();
     }
 
 

@@ -126,13 +126,15 @@ public class ManualTasks {
             ValidateException validateException =
                     new ValidateException.Builder("Mapping of request to JSON object failed: " + e.getMessage(),
                             HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
-                                    .errorInfo(errorLoggerInfo).build();
+                                    .errorInfo(errorLoggerInfo)
+                                    .build();
 
             throw validateException;
         } catch (ValidationException e) {
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                            .build();
 
 
             ValidateException validateException =
@@ -164,13 +166,15 @@ public class ManualTasks {
 
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.UnknownError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                            .build();
 
 
             ValidateException validateException =
                     new ValidateException.Builder("Mapping of JSON object to Camunda request failed",
                             HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_GENERAL_SERVICE_ERROR)
-                                    .errorInfo(errorLoggerInfo).build();
+                                    .errorInfo(errorLoggerInfo)
+                                    .build();
             throw validateException;
         }
 
@@ -187,7 +191,8 @@ public class ManualTasks {
 
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, ErrorCode.AvailabilityError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                            .build();
 
 
 

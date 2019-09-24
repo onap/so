@@ -64,8 +64,9 @@ public class SDNCQueryTasksTest extends BaseTaskTest {
         genericVnf = setGenericVnf();
         vfModule = setVfModule();
 
-        doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(
-                any(BuildingBlockExecution.class), eq(7000), any(Exception.class), any(ONAPComponentsList.class));
+        doThrow(new BpmnError("BPMN Error")).when(exceptionUtil)
+                .buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class),
+                        any(ONAPComponentsList.class));
         when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID)))
                 .thenReturn(serviceInstance);
 
@@ -195,8 +196,8 @@ public class SDNCQueryTasksTest extends BaseTaskTest {
     @Test
     public void queryVfModuleForVolumeGroupVfObjectExceptionTest() throws Exception {
         expectedException.expect(BpmnError.class);
-        doThrow(RuntimeException.class).when(extractPojosForBB).extractByKey(any(),
-                ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID));
+        doThrow(RuntimeException.class).when(extractPojosForBB)
+                .extractByKey(any(), ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID));
         sdncQueryTasks.queryVfModuleForVolumeGroup(execution);
 
         verify(sdncVfModuleResources, times(0)).queryVfModule(any(VfModule.class));

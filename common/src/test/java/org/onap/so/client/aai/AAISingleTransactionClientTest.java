@@ -89,8 +89,11 @@ public class AAISingleTransactionClientTest {
         Map<String, Object> map = new HashMap<>();
         map.put("resource-version", "1234");
         doReturn(Optional.of(map)).when(aaiClient).get(any(GenericType.class), eq(uriC));
-        AAISingleTransactionClient singleTransaction = aaiClient.beginSingleTransaction().create(uriA, pserver)
-                .update(uriA, pserver2).create(uriB, complex).delete(uriC);
+        AAISingleTransactionClient singleTransaction = aaiClient.beginSingleTransaction()
+                .create(uriA, pserver)
+                .update(uriA, pserver2)
+                .create(uriB, complex)
+                .delete(uriC);
 
         SingleTransactionRequest actual = singleTransaction.getRequest();
 

@@ -77,7 +77,10 @@ public class RelatedInstance implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("instanceName", instanceName).append("instanceId", instanceId)
-                .append("modelInfo", modelInfo).append("instanceDirection", instanceDirection).toString();
+        return new ToStringBuilder(this).append("instanceName", instanceName)
+                .append("instanceId", instanceId)
+                .append("modelInfo", modelInfo)
+                .append("instanceDirection", instanceDirection)
+                .toString();
     }
 }

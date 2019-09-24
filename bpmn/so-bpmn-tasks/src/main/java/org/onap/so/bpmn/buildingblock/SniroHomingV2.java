@@ -184,8 +184,11 @@ public class SniroHomingV2 {
         try {
             // TODO improve handling multiple solutions but is dependent on sniro enhancing api + work with sniro
             validateSolution(asyncResponse);
-            ServiceInstance serviceInstance = execution.getGeneralBuildingBlock().getCustomer().getServiceSubscription()
-                    .getServiceInstances().get(0);
+            ServiceInstance serviceInstance = execution.getGeneralBuildingBlock()
+                    .getCustomer()
+                    .getServiceSubscription()
+                    .getServiceInstances()
+                    .get(0);
 
             logger.debug("Processing sniro manager asyncronous response");
             JSONObject response = new JSONObject(asyncResponse);
@@ -502,7 +505,8 @@ public class SniroHomingV2 {
                                     vblNew.setVpnBondingLinkId(UUID.randomUUID().toString());
                                     links.add(vblNew);
                                 }
-                                links.get(links.size() - 1).getServiceProxy(sp.getId())
+                                links.get(links.size() - 1)
+                                        .getServiceProxy(sp.getId())
                                         .setServiceInstance(setSolution(solutionInfo, placement));
                             } else {
                                 sp.setServiceInstance(setSolution(solutionInfo, placement));

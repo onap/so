@@ -95,8 +95,10 @@ public class NotificationHandler implements Runnable {
     }
 
     private void handleVnfInstantiateCompleted() {
-        final GenericVnf genericVnf = aaiServiceProvider
-                .invokeQueryGenericVnf(vnfInstance.getLinks().getSelf().getHref()).getGenericVnf().get(0);
+        final GenericVnf genericVnf =
+                aaiServiceProvider.invokeQueryGenericVnf(vnfInstance.getLinks().getSelf().getHref())
+                        .getGenericVnf()
+                        .get(0);
         setOamIpAddress(genericVnf, vnfInstance);
         genericVnf.setOrchestrationStatus("Created");
 
@@ -143,15 +145,19 @@ public class NotificationHandler implements Runnable {
     }
 
     private void handleVnfTerminateFailed() {
-        final GenericVnf genericVnf = aaiServiceProvider
-                .invokeQueryGenericVnf(vnfInstance.getLinks().getSelf().getHref()).getGenericVnf().get(0);
+        final GenericVnf genericVnf =
+                aaiServiceProvider.invokeQueryGenericVnf(vnfInstance.getLinks().getSelf().getHref())
+                        .getGenericVnf()
+                        .get(0);
         deleteVservers(vnfLcmOperationOccurrenceNotification, genericVnf);
         jobManager.notificationProcessedForOperation(vnfLcmOperationOccurrenceNotification.getVnfLcmOpOccId(), false);
     }
 
     private void handleVnfTerminateCompleted() {
-        final GenericVnf genericVnf = aaiServiceProvider
-                .invokeQueryGenericVnf(vnfInstance.getLinks().getSelf().getHref()).getGenericVnf().get(0);
+        final GenericVnf genericVnf =
+                aaiServiceProvider.invokeQueryGenericVnf(vnfInstance.getLinks().getSelf().getHref())
+                        .getGenericVnf()
+                        .get(0);
         deleteVservers(vnfLcmOperationOccurrenceNotification, genericVnf);
 
         boolean deleteSuccessful = false;

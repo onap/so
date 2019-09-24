@@ -257,8 +257,10 @@ public class BpelRestClient {
         post.setEntity(new StringEntity(toBpelStr, ctype));
 
         // Timeouts
-        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(socketTimeout * 1000)
-                .setConnectTimeout(connectTimeout * 1000).build();
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setSocketTimeout(socketTimeout * 1000)
+                .setConnectTimeout(connectTimeout * 1000)
+                .build();
         post.setConfig(requestConfig);
 
         try (CloseableHttpClient client = HttpClients.createDefault()) {

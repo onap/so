@@ -184,7 +184,8 @@ public class ModelRecipe implements Serializable {
         }
         ModelRecipe castOther = (ModelRecipe) other;
         return new EqualsBuilder().append(getModelId(), castOther.getModelId())
-                .append(getAction(), castOther.getAction()).isEquals();
+                .append(getAction(), castOther.getAction())
+                .isEquals();
     }
 
     @Override
@@ -194,10 +195,15 @@ public class ModelRecipe implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("id", getId()).append("modelId", getModelId())
-                .append("action", getAction()).append("schemaVersion", getSchemaVersion())
-                .append("description", getDescription()).append("orchestrationUri", getOrchestrationUri())
-                .append("modelParamXSD", getModelParamXSD()).append("recipeTimeout", getRecipeTimeout())
-                .append("created", getCreated()).toString();
+        return new ToStringBuilder(this).append("id", getId())
+                .append("modelId", getModelId())
+                .append("action", getAction())
+                .append("schemaVersion", getSchemaVersion())
+                .append("description", getDescription())
+                .append("orchestrationUri", getOrchestrationUri())
+                .append("modelParamXSD", getModelParamXSD())
+                .append("recipeTimeout", getRecipeTimeout())
+                .append("created", getCreated())
+                .toString();
     }
 }

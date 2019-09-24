@@ -93,8 +93,8 @@ public class VnfAdapterDeleteTasksTest extends BaseTaskTest {
         DeleteVfModuleRequest deleteVfModuleRequest = new DeleteVfModuleRequest();
         deleteVfModuleRequest.setVfModuleId("vfModuleId");
 
-        doReturn(deleteVfModuleRequest).when(vnfAdapterVfModuleResources).deleteVfModuleRequest(requestContext,
-                cloudRegion, serviceInstance, genericVnf, vfModule);
+        doReturn(deleteVfModuleRequest).when(vnfAdapterVfModuleResources)
+                .deleteVfModuleRequest(requestContext, cloudRegion, serviceInstance, genericVnf, vfModule);
 
         vnfAdapterDeleteTasks.deleteVfModule(execution);
 
@@ -108,8 +108,8 @@ public class VnfAdapterDeleteTasksTest extends BaseTaskTest {
     public void deleteVfModuleExceptionTest() throws Exception {
         expectedException.expect(BpmnError.class);
 
-        doThrow(RuntimeException.class).when(vnfAdapterVfModuleResources).deleteVfModuleRequest(requestContext,
-                cloudRegion, serviceInstance, genericVnf, vfModule);
+        doThrow(RuntimeException.class).when(vnfAdapterVfModuleResources)
+                .deleteVfModuleRequest(requestContext, cloudRegion, serviceInstance, genericVnf, vfModule);
 
         vnfAdapterDeleteTasks.deleteVfModule(execution);
     }
@@ -119,8 +119,8 @@ public class VnfAdapterDeleteTasksTest extends BaseTaskTest {
         DeleteVolumeGroupRequest deleteVolumeGroupRequest = new DeleteVolumeGroupRequest();
         deleteVolumeGroupRequest.setVolumeGroupId("volumeGroupId");
 
-        doReturn(deleteVolumeGroupRequest).when(vnfAdapterVolumeGroupResources).deleteVolumeGroupRequest(requestContext,
-                cloudRegion, serviceInstance, volumeGroup);
+        doReturn(deleteVolumeGroupRequest).when(vnfAdapterVolumeGroupResources)
+                .deleteVolumeGroupRequest(requestContext, cloudRegion, serviceInstance, volumeGroup);
 
         vnfAdapterDeleteTasks.deleteVolumeGroup(execution);
 
@@ -134,8 +134,8 @@ public class VnfAdapterDeleteTasksTest extends BaseTaskTest {
     public void deleteVolumeGroupExceptionTest() throws Exception {
         expectedException.expect(BpmnError.class);
 
-        doThrow(RuntimeException.class).when(vnfAdapterVolumeGroupResources).deleteVolumeGroupRequest(requestContext,
-                cloudRegion, serviceInstance, volumeGroup);
+        doThrow(RuntimeException.class).when(vnfAdapterVolumeGroupResources)
+                .deleteVolumeGroupRequest(requestContext, cloudRegion, serviceInstance, volumeGroup);
 
         vnfAdapterDeleteTasks.deleteVolumeGroup(execution);
     }

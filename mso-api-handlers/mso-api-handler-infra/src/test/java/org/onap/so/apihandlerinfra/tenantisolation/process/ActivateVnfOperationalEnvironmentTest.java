@@ -107,11 +107,19 @@ public class ActivateVnfOperationalEnvironmentTest extends BaseTest {
         AAIResultWrapper wrapper = clientHelper.getAaiOperationalEnvironment("EMOE-001");
         aaiOpEnv = wrapper.asBean(OperationalEnvironment.class).get();
         assertEquals("EMOE-001", aaiOpEnv.getOperationalEnvironmentId());
-        assertEquals("1dfe7154-eae0-44f2-8e7a-8e5e7882e55d", aaiOpEnv.getRelationshipList().getRelationship().get(0)
-                .getRelationshipData().get(0).getRelationshipValue());
+        assertEquals("1dfe7154-eae0-44f2-8e7a-8e5e7882e55d",
+                aaiOpEnv.getRelationshipList()
+                        .getRelationship()
+                        .get(0)
+                        .getRelationshipData()
+                        .get(0)
+                        .getRelationshipValue());
         assertNotNull(activateVnf.getAAIOperationalEnvironment(operationalEnvironmentId));
-        assertEquals("EMOE-001", activateVnf.getAAIOperationalEnvironment(operationalEnvironmentId)
-                .asBean(OperationalEnvironment.class).get().getOperationalEnvironmentId());
+        assertEquals("EMOE-001",
+                activateVnf.getAAIOperationalEnvironment(operationalEnvironmentId)
+                        .asBean(OperationalEnvironment.class)
+                        .get()
+                        .getOperationalEnvironmentId());
 
     }
 
@@ -146,7 +154,8 @@ public class ActivateVnfOperationalEnvironmentTest extends BaseTest {
                                 .withBodyFile("vnfoperenv/activateOperationalEnvironmentWithRelationship.json")
                                 .withStatus(HttpStatus.SC_ACCEPTED)));
         wireMockServer.stubFor(post(urlPathMatching("/sdc/v1/catalog/services/TEST_serviceModelVersionId/distr.*"))
-                .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonObject.toString())
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody(jsonObject.toString())
                         .withStatus(HttpStatus.SC_ACCEPTED)));
         activateVnf.execute(requestId, request);
     }
@@ -169,7 +178,8 @@ public class ActivateVnfOperationalEnvironmentTest extends BaseTest {
         serviceModelVersionIdList.add(serviceModelList1);
 
         wireMockServer.stubFor(post(urlPathMatching("/sdc/v1/catalog/services/TEST_serviceModelVersionId/distr.*"))
-                .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonObject.toString())
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody(jsonObject.toString())
                         .withStatus(HttpStatus.SC_ACCEPTED)));
 
         activateVnf.processActivateSDCRequest(requestId, operationalEnvironmentId, serviceModelVersionIdList,
@@ -202,10 +212,12 @@ public class ActivateVnfOperationalEnvironmentTest extends BaseTest {
         iar.setRequestStatus("PENDING");
         wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/" + requestId))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(iar)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(iar))
+                        .withStatus(HttpStatus.SC_OK)));
         wireMockServer.stubFor(post(urlPathMatching("/sdc/v1/catalog/services/TEST_serviceModelVersionId/distr.*"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBody(jsonErrorResponse.toString()).withStatus(HttpStatus.SC_CONFLICT)));
+                        .withBody(jsonErrorResponse.toString())
+                        .withStatus(HttpStatus.SC_CONFLICT)));
         wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
                 .withRequestBody(containing("operationalEnvId\":\"1dfe7154-eae0-44f2-8e7a-8e5e7882e55d\""))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)

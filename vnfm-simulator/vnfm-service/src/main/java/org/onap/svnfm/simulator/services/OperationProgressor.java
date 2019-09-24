@@ -274,7 +274,10 @@ public abstract class OperationProgressor implements Runnable {
         try {
 
             final SubscriptionsAuthenticationParamsOauth2ClientCredentials subscriptionAuthentication =
-                    subscriptionService.getSubscriptions().iterator().next().getAuthentication()
+                    subscriptionService.getSubscriptions()
+                            .iterator()
+                            .next()
+                            .getAuthentication()
                             .getParamsOauth2ClientCredentials();
 
             final String authHeader = applicationConfig.getGrantAuth().equals("oauth")

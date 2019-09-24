@@ -37,8 +37,11 @@ public class AAIObjectAudit implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("doesObjectExist", doesObjectExist).append("aaiObject", aaiObject)
-                .append("resourceURI", resourceURI).append("aaiObjectType", aaiObjectType).toString();
+        return new ToStringBuilder(this).append("doesObjectExist", doesObjectExist)
+                .append("aaiObject", aaiObject)
+                .append("resourceURI", resourceURI)
+                .append("aaiObjectType", aaiObjectType)
+                .toString();
     }
 
     public String getAaiObjectType() {

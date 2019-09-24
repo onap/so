@@ -142,10 +142,13 @@ public class ActivitySpec implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("name", name).append("description", description)
-                .append("version", version).append("created", created)
+        return new ToStringBuilder(this).append("name", name)
+                .append("description", description)
+                .append("version", version)
+                .append("created", created)
                 .append("workflowActivitySpecSequence", workflowActivitySpecSequence)
-                .append("activitySpecActivitySpecCategories", activitySpecActivitySpecCategories).toString();
+                .append("activitySpecActivitySpecCategories", activitySpecActivitySpecCategories)
+                .toString();
     }
 
     @Override

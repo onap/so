@@ -109,7 +109,8 @@ public class ServiceInstanceUriTest {
         ServiceInstanceUri spy = spy(instance);
         doReturn(
                 "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3")
-                        .when(spy).getObjectById(any(Object.class));
+                        .when(spy)
+                        .getObjectById(any(Object.class));
 
         final URI result = spy.build();
         final URI expected = UriBuilder.fromPath(
@@ -127,7 +128,8 @@ public class ServiceInstanceUriTest {
         ServiceInstanceUri spy = spy(instance);
         doReturn(
                 "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3")
-                        .when(spy).getObjectById(any(Object.class));
+                        .when(spy)
+                        .getObjectById(any(Object.class));
 
         final URI result = spy.resourceVersion("1234").build();
         final URI expected = UriBuilder.fromUri(
@@ -145,7 +147,8 @@ public class ServiceInstanceUriTest {
         ServiceInstanceUri spy = spy(instance);
         doReturn(
                 "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3%20space")
-                        .when(spy).getObjectById(any(Object.class));
+                        .when(spy)
+                        .getObjectById(any(Object.class));
 
         final URI result = spy.build();
         final URI expected = UriBuilder.fromUri(
@@ -163,7 +166,8 @@ public class ServiceInstanceUriTest {
         ServiceInstanceUri spy = spy(instance);
         doReturn(
                 "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3%28space")
-                        .when(spy).getObjectById(any(Object.class));
+                        .when(spy)
+                        .getObjectById(any(Object.class));
 
         assertThat(spy.getURIKeys().values(), contains("key1", "key2", "key3(space"));
 

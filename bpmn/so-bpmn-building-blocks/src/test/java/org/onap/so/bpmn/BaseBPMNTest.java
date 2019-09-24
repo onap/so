@@ -288,8 +288,13 @@ public abstract class BaseBPMNTest {
      */
     protected void mockSubprocess(String origProcessKey, String mockProcessName, String fileName,
             Map<String, String> outParam) {
-        ServiceTaskBuilder builder = Bpmn.createExecutableProcess(origProcessKey).name(mockProcessName).startEvent()
-                .name("Start_Event").serviceTask().name("Mock_Delegate").camundaClass(FluentJavaDelegateMock.class);
+        ServiceTaskBuilder builder = Bpmn.createExecutableProcess(origProcessKey)
+                .name(mockProcessName)
+                .startEvent()
+                .name("Start_Event")
+                .serviceTask()
+                .name("Mock_Delegate")
+                .camundaClass(FluentJavaDelegateMock.class);
 
         for (String key : outParam.keySet()) {
             builder.camundaOutputParameter(key, outParam.get(key));
@@ -297,6 +302,8 @@ public abstract class BaseBPMNTest {
 
         BpmnModelInstance modelInstance = builder.endEvent().name("End_Event").done();
         mockedSubprocessList.add(repositoryService.createDeployment()
-                .addModelInstance(fileName + ".bpmn", modelInstance).deploy().getId());
+                .addModelInstance(fileName + ".bpmn", modelInstance)
+                .deploy()
+                .getId());
     }
 }

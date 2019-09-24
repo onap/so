@@ -115,8 +115,9 @@ public class GlobalHealthcheckHandlerTest {
         HealthCheckResponse expected = new HealthCheckResponse();
 
         for (Subsystem system : SoSubsystems.values()) {
-            expected.getSubsystems().add(new HealthCheckSubsystem(system,
-                    UriBuilder.fromUri("http://localhost").build(), HealthCheckStatus.UP));
+            expected.getSubsystems()
+                    .add(new HealthCheckSubsystem(system, UriBuilder.fromUri("http://localhost").build(),
+                            HealthCheckStatus.UP));
         }
         expected.setMessage("HttpStatus: 200");
         Response response = globalHealthcheck("UP");
@@ -132,8 +133,9 @@ public class GlobalHealthcheckHandlerTest {
         HealthCheckResponse expected = new HealthCheckResponse();
 
         for (Subsystem system : SoSubsystems.values()) {
-            expected.getSubsystems().add(new HealthCheckSubsystem(system,
-                    UriBuilder.fromUri("http://localhost").build(), HealthCheckStatus.DOWN));
+            expected.getSubsystems()
+                    .add(new HealthCheckSubsystem(system, UriBuilder.fromUri("http://localhost").build(),
+                            HealthCheckStatus.DOWN));
         }
         expected.setMessage("HttpStatus: 200");
         Response response = globalHealthcheck("DOWN");

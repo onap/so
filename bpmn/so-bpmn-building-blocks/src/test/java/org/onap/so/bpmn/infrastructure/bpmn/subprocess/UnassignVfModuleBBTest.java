@@ -35,8 +35,9 @@ public class UnassignVfModuleBBTest extends BaseBPMNTest {
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignVfModuleBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("UnassignVfModuleBB_Start", "UnassignVfModule",
-                "CallActivity_sdncHandler", "DeleteVfModule", "UnassignVfModuleBB_End");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("UnassignVfModuleBB_Start", "UnassignVfModule", "CallActivity_sdncHandler",
+                        "DeleteVfModule", "UnassignVfModuleBB_End");
         assertThat(pi).isEnded();
     }
 
@@ -47,7 +48,8 @@ public class UnassignVfModuleBBTest extends BaseBPMNTest {
                 .deleteVfModule(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignVfModuleBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("UnassignVfModuleBB_Start", "UnassignVfModule", "DeleteVfModule")
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("UnassignVfModuleBB_Start", "UnassignVfModule", "DeleteVfModule")
                 .hasNotPassed("UnassignVfModuleBB_End");
         assertThat(pi).isEnded();
     }
@@ -58,7 +60,8 @@ public class UnassignVfModuleBBTest extends BaseBPMNTest {
                 .unassignVfModule(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignVfModuleBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("UnassignVfModuleBB_Start", "UnassignVfModule")
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("UnassignVfModuleBB_Start", "UnassignVfModule")
                 .hasNotPassed("DeleteVfModule", "UnassignVfModuleBB_End");
         assertThat(pi).isEnded();
     }

@@ -36,16 +36,19 @@ public class MockAAIGenericVnfSearch {
 
         wireMockServer.stubFor(
                 get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/[?]vnf-name=STMTN5MMSC23&depth=1"))
-                        .willReturn(aResponse().withStatus(500).withHeader("Content-Type", "text/xml")
+                        .willReturn(aResponse().withStatus(500)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBodyFile("aaiFault.xml")));
 
         wireMockServer.stubFor(
                 get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/[?]vnf-name=STMTN5MMSC22&depth=1"))
-                        .willReturn(aResponse().withStatus(404).withHeader("Content-Type", "text/xml")
+                        .willReturn(aResponse().withStatus(404)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBody("Generic VNF Not Found")));
         wireMockServer.stubFor(get(urlMatching(
                 "/aai/v[0-9]+/network/generic-vnfs/generic-vnf/768073c7-f41f-4822-9323-b75962763d74[?]depth=1"))
-                        .willReturn(aResponse().withStatus(404).withHeader("Content-Type", "text/xml")
+                        .willReturn(aResponse().withStatus(404)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBody("Generic VNF Not Found")));
 
         body = "<generic-vnf xmlns=\"http://com.aai.inventory/v7\">" + EOL
@@ -108,12 +111,14 @@ public class MockAAIGenericVnfSearch {
 
         wireMockServer.stubFor(get(urlMatching(
                 "/aai/v[0-9]+/network/generic-vnfs/generic-vnf/a27ce5a9-29c4-4c22-a017-6615ac73c723[?]depth=1"))
-                        .willReturn(aResponse().withStatus(500).withHeader("Content-Type", "text/xml")
+                        .willReturn(aResponse().withStatus(500)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBodyFile("aaiFault.xml")));
 
         wireMockServer.stubFor(get(urlMatching(
                 "/aai/v[0-9]+/network/generic-vnfs/generic-vnf/a27ce5a9-29c4-4c22-a017-6615ac73c722[?]depth=1"))
-                        .willReturn(aResponse().withStatus(404).withHeader("Content-Type", "text/xml")
+                        .willReturn(aResponse().withStatus(404)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBody("Generic VNF Not Found")));
 
         body = "<generic-vnf xmlns=\"http://org.openecomp.aai.inventory/v7\">" + EOL

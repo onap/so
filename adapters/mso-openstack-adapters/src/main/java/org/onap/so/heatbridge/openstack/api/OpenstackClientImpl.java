@@ -64,7 +64,11 @@ abstract class OpenstackClientImpl implements OpenstackClient {
 
     @Override
     public List<Resource> getStackBasedResources(String stackId, int nestingDepth) {
-        return getClient().heat().resources().list(stackId, nestingDepth).stream().filter(Objects::nonNull)
+        return getClient().heat()
+                .resources()
+                .list(stackId, nestingDepth)
+                .stream()
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 

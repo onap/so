@@ -238,7 +238,9 @@ public class VolumeAdapterRestV2 {
             @ApiParam(value = "DeleteVolumeGroupRequest", required = true) final DeleteVolumeGroupRequest req) {
         logger.debug("deleteVNFVolumes enter: {}", req.toJsonString());
         if (aaiVolumeGroupId == null || !aaiVolumeGroupId.equals(req.getVolumeGroupId())) {
-            return Response.status(HttpStatus.SC_BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(VOLUME_GROUPID_MISSING)
+            return Response.status(HttpStatus.SC_BAD_REQUEST)
+                    .type(MediaType.TEXT_PLAIN)
+                    .entity(VOLUME_GROUPID_MISSING)
                     .build();
         }
         DeleteVNFVolumesTask task = new DeleteVNFVolumesTask(req, mode);
@@ -340,7 +342,9 @@ public class VolumeAdapterRestV2 {
         logger.debug("rollbackVNFVolumes enter: {}", req.toJsonString());
         if (aaiVolumeGroupId == null || req.getVolumeGroupRollback() == null
                 || !aaiVolumeGroupId.equals(req.getVolumeGroupRollback().getVolumeGroupId())) {
-            return Response.status(HttpStatus.SC_BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(VOLUME_GROUPID_MISSING)
+            return Response.status(HttpStatus.SC_BAD_REQUEST)
+                    .type(MediaType.TEXT_PLAIN)
+                    .entity(VOLUME_GROUPID_MISSING)
                     .build();
         }
         RollbackVNFVolumesTask task = new RollbackVNFVolumesTask(req);
@@ -440,7 +444,9 @@ public class VolumeAdapterRestV2 {
             @ApiParam(value = "UpdateVolumeGroupRequest", required = true) final UpdateVolumeGroupRequest req) {
         logger.debug("updateVNFVolumes enter: {}", req.toJsonString());
         if (aaiVolumeGroupId == null || !aaiVolumeGroupId.equals(req.getVolumeGroupId())) {
-            return Response.status(HttpStatus.SC_BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(VOLUME_GROUPID_MISSING)
+            return Response.status(HttpStatus.SC_BAD_REQUEST)
+                    .type(MediaType.TEXT_PLAIN)
+                    .entity(VOLUME_GROUPID_MISSING)
                     .build();
         }
         UpdateVNFVolumesTask task = new UpdateVNFVolumesTask(req, mode);
@@ -600,7 +606,8 @@ public class VolumeAdapterRestV2 {
                     MsoExceptionCategory.INTERNAL, Boolean.FALSE, null);
             logger.debug("Query queryVNFVolumes exit");
             return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-                    .entity(new GenericEntity<VolumeGroupExceptionResponse>(excResp) {}).build();
+                    .entity(new GenericEntity<VolumeGroupExceptionResponse>(excResp) {})
+                    .build();
         }
     }
 

@@ -114,7 +114,8 @@ public class ResumeOrchestrationRequest {
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.AvailabilityError).build();
             throw new ValidateException.Builder("Exception while performing requestDb lookup by requestId",
                     HttpStatus.SC_NOT_FOUND, ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB).cause(e)
-                            .errorInfo(errorLoggerInfo).build();
+                            .errorInfo(errorLoggerInfo)
+                            .build();
         }
 
         InfraActiveRequests currentActiveRequest = requestHandlerUtils.createNewRecordCopyFromInfraActiveRequest(
@@ -230,7 +231,8 @@ public class ResumeOrchestrationRequest {
             logger.error("Exception while saving request to requestDb", e);
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.DataError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                            .build();
             throw new RequestDbFailureException.Builder(SAVE_TO_DB, e.toString(), HttpStatus.SC_INTERNAL_SERVER_ERROR,
                     ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e).errorInfo(errorLoggerInfo).build();
         }
@@ -252,10 +254,12 @@ public class ResumeOrchestrationRequest {
         try {
             requestClientParameter =
                     new RequestClientParameter.Builder().setRequestId(currentActiveRequest.getRequestId())
-                            .setBaseVfModule(isBaseVfModule).setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
+                            .setBaseVfModule(isBaseVfModule)
+                            .setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
                             .setRequestAction(infraActiveRequest.getRequestAction())
                             .setServiceInstanceId(infraActiveRequest.getServiceInstanceId())
-                            .setPnfCorrelationId(pnfCorrelationId).setVnfId(infraActiveRequest.getVnfId())
+                            .setPnfCorrelationId(pnfCorrelationId)
+                            .setVnfId(infraActiveRequest.getVnfId())
                             .setVfModuleId(infraActiveRequest.getVfModuleId())
                             .setVolumeGroupId(infraActiveRequest.getVolumeGroupId())
                             .setNetworkId(infraActiveRequest.getNetworkId())
@@ -266,14 +270,17 @@ public class ResumeOrchestrationRequest {
                             .setNetworkType(infraActiveRequest.getNetworkType())
                             .setRequestDetails(requestHandlerUtils
                                     .mapJSONtoMSOStyle(infraActiveRequest.getRequestBody(), sir, aLaCarte, action))
-                            .setApiVersion(version).setALaCarte(aLaCarte)
+                            .setApiVersion(version)
+                            .setALaCarte(aLaCarte)
                             .setRequestUri(currentActiveRequest.getRequestUrl())
-                            .setInstanceGroupId(infraActiveRequest.getInstanceGroupId()).build();
+                            .setInstanceGroupId(infraActiveRequest.getInstanceGroupId())
+                            .build();
         } catch (IOException e) {
             logger.error("IOException while generating requestClientParameter to send to BPMN", e);
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.SchemaError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                            .build();
             throw new ValidateException.Builder(
                     "IOException while generating requestClientParameter to send to BPMN: " + e.getMessage(),
                     HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo)

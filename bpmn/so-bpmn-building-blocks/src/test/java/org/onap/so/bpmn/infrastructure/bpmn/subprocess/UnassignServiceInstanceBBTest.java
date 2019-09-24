@@ -36,9 +36,10 @@ public class UnassignServiceInstanceBBTest extends BaseBPMNTest {
         variables.put("gBuildingBlockExecution", bbe);
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignServiceInstanceBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("Start_UnassignServiceInstanceBB",
-                "Task_SdncUnassignServiceInstance", "CallActivity_sdncHandlerCall", "Task_AAIDeleteServiceInstance",
-                "End_UnassignServiceInstanceBB");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("Start_UnassignServiceInstanceBB", "Task_SdncUnassignServiceInstance",
+                        "CallActivity_sdncHandlerCall", "Task_AAIDeleteServiceInstance",
+                        "End_UnassignServiceInstanceBB");
         assertThat(pi).isEnded();
     }
 }

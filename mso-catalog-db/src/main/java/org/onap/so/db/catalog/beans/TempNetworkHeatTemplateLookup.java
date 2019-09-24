@@ -60,7 +60,8 @@ public class TempNetworkHeatTemplateLookup implements Serializable {
         }
         TempNetworkHeatTemplateLookup castOther = (TempNetworkHeatTemplateLookup) other;
         return new EqualsBuilder().append(networkResourceModelName, castOther.networkResourceModelName)
-                .append(heatTemplateArtifactUuid, castOther.heatTemplateArtifactUuid).isEquals();
+                .append(heatTemplateArtifactUuid, castOther.heatTemplateArtifactUuid)
+                .isEquals();
     }
 
     @Override

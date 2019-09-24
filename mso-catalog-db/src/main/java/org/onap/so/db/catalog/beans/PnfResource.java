@@ -82,11 +82,16 @@ public class PnfResource implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("modelUUID", modelUUID).append("modelInvariantUUID", modelInvariantUUID)
-                .append("modelName", modelName).append("modelVersion", modelVersion)
-                .append("toscaNodeType", toscaNodeType).append("description", description)
-                .append("orchestrationMode", orchestrationMode).append("created", created)
-                .append("pnfResourceCustomizations", pnfResourceCustomizations).toString();
+        return new ToStringBuilder(this).append("modelUUID", modelUUID)
+                .append("modelInvariantUUID", modelInvariantUUID)
+                .append("modelName", modelName)
+                .append("modelVersion", modelVersion)
+                .append("toscaNodeType", toscaNodeType)
+                .append("description", description)
+                .append("orchestrationMode", orchestrationMode)
+                .append("created", created)
+                .append("pnfResourceCustomizations", pnfResourceCustomizations)
+                .toString();
     }
 
     @Override

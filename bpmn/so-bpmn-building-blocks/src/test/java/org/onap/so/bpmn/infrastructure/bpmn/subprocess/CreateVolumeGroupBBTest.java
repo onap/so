@@ -35,9 +35,10 @@ public class CreateVolumeGroupBBTest extends BaseBPMNTest {
         mockSubprocess("VnfAdapter", "Mocked VnfAdapter", "GenericStub");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("CreateVolumeGroupBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("CreateVolumeGroupBB_Start", "QueryVfModuleSDNC",
-                "CreateVolumeGroupVnfAdapter", "Vnf_Adapter", "UpdateVolumeGroupHeatStackId", "UpdateVolumeGroupAAI",
-                "CreateVolumeGroupBB_End");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("CreateVolumeGroupBB_Start", "QueryVfModuleSDNC", "CreateVolumeGroupVnfAdapter",
+                        "Vnf_Adapter", "UpdateVolumeGroupHeatStackId", "UpdateVolumeGroupAAI",
+                        "CreateVolumeGroupBB_End");
         assertThat(pi).isEnded();
         assertThat(pi).hasPassedInOrder("CreateVolumeGroupBB_Start", "QueryVfModuleSDNC", "CreateVolumeGroupVnfAdapter",
                 "Vnf_Adapter", "UpdateVolumeGroupAAI", "CreateVolumeGroupBB_End");
@@ -62,9 +63,9 @@ public class CreateVolumeGroupBBTest extends BaseBPMNTest {
                 .updateHeatStackIdVolumeGroup(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("CreateVolumeGroupBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi)
-                .isStarted().hasPassedInOrder("CreateVolumeGroupBB_Start", "QueryVfModuleSDNC",
-                        "CreateVolumeGroupVnfAdapter", "Vnf_Adapter")
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("CreateVolumeGroupBB_Start", "QueryVfModuleSDNC", "CreateVolumeGroupVnfAdapter",
+                        "Vnf_Adapter")
                 .hasNotPassed("UpdateVolumeGroupAAI", "CreateVolumeGroupBB_End");
         assertThat(pi).isEnded();
     }

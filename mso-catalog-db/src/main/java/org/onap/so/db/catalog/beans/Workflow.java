@@ -201,13 +201,22 @@ public class Workflow implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("ID", ID).append("artifactUUID", artifactUUID)
-                .append("artifactName", artifactName).append("name", name).append("operationName", operationName)
-                .append("version", version).append("description", description).append("body", body)
-                .append("resourceTarget", resourceTarget).append("source", source)
-                .append("timeoutMinutes", timeoutMinutes).append("artifactChecksum", artifactChecksum)
-                .append("created", created).append("vnfResourceWorkflow", vnfResourceWorkflow)
-                .append("WorkflowActivitySpecSequence", workflowActivitySpecSequence).toString();
+        return new ToStringBuilder(this).append("ID", ID)
+                .append("artifactUUID", artifactUUID)
+                .append("artifactName", artifactName)
+                .append("name", name)
+                .append("operationName", operationName)
+                .append("version", version)
+                .append("description", description)
+                .append("body", body)
+                .append("resourceTarget", resourceTarget)
+                .append("source", source)
+                .append("timeoutMinutes", timeoutMinutes)
+                .append("artifactChecksum", artifactChecksum)
+                .append("created", created)
+                .append("vnfResourceWorkflow", vnfResourceWorkflow)
+                .append("WorkflowActivitySpecSequence", workflowActivitySpecSequence)
+                .toString();
     }
 
     @Override

@@ -249,7 +249,9 @@ public class WorkflowResource extends ProcessEngineAwareService {
     private boolean isProcessEnded(String processInstanceId) {
         ProcessEngineServices pes = getProcessEngineServices();
         try {
-            return pes.getRuntimeService().createProcessInstanceQuery().processInstanceId(processInstanceId)
+            return pes.getRuntimeService()
+                    .createProcessInstanceQuery()
+                    .processInstanceId(processInstanceId)
                     .singleResult() == null ? true : false;
         } catch (Exception e) {
             logger.debug("Exception :", e);
@@ -360,17 +362,18 @@ public class WorkflowResource extends ProcessEngineAwareService {
             @SuppressWarnings("unchecked")
             Map<String, Object> valueMap = (Map<String, Object>) vMap.get(key); // value, type
             inputVariables.putValueTyped(key,
-                    Variables.objectValue(valueMap.get("value")).serializationDataFormat(SerializationDataFormats.JAVA) // tells
-                                                                                                                        // the
-                                                                                                                        // engine
-                                                                                                                        // to
-                                                                                                                        // use
-                                                                                                                        // java
-                                                                                                                        // serialization
-                                                                                                                        // for
-                                                                                                                        // persisting
-                                                                                                                        // the
-                                                                                                                        // value
+                    Variables.objectValue(valueMap.get("value"))
+                            .serializationDataFormat(SerializationDataFormats.JAVA) // tells
+                                                                                    // the
+                                                                                    // engine
+                                                                                    // to
+                                                                                    // use
+                                                                                    // java
+                                                                                    // serialization
+                                                                                    // for
+                                                                                    // persisting
+                                                                                    // the
+                                                                                    // value
                             .create());
         }
         return inputVariables;
@@ -539,7 +542,9 @@ public class WorkflowResource extends ProcessEngineAwareService {
             String variableName) {
         try {
             HistoricVariableInstance v = historyService.createHistoricVariableInstanceQuery()
-                    .processInstanceId(processInstanceId).variableName(variableName).singleResult();
+                    .processInstanceId(processInstanceId)
+                    .variableName(variableName)
+                    .singleResult();
             return v == null ? null : v.getValue();
         } catch (Exception e) {
             logger.debug("Error retrieving process {} variable {} from history: ", processInstanceId, variableName, e);
@@ -560,8 +565,10 @@ public class WorkflowResource extends ProcessEngineAwareService {
         long startTime = System.currentTimeMillis();
         try {
             ProcessEngineServices engine = getProcessEngineServices();
-            List<HistoricVariableInstance> variables = engine.getHistoryService().createHistoricVariableInstanceQuery()
-                    .processInstanceId(processInstanceId).list();
+            List<HistoricVariableInstance> variables = engine.getHistoryService()
+                    .createHistoricVariableInstanceQuery()
+                    .processInstanceId(processInstanceId)
+                    .list();
             Map<String, String> variablesMap = new HashMap<>();
             for (HistoricVariableInstance variableInstance : variables) {
                 variablesMap.put(variableInstance.getName(), variableInstance.getValue().toString());

@@ -105,8 +105,8 @@ public class ModelDistributionRequestTest extends BaseTest {
 
     @Test
     public void testSuccess() throws ApiException {
-        doNothing().when(runnable).run(any(Action.class), anyString(), any(CloudOrchestrationRequest.class),
-                anyString());
+        doNothing().when(runnable)
+                .run(any(Action.class), anyString(), any(CloudOrchestrationRequest.class), anyString());
 
         Response response = request.updateModelDistributionStatus(requestJSON, null, null);
 

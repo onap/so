@@ -76,9 +76,15 @@ public class ToscaCsar implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("artifactUUID", artifactUUID).append("name", name)
-                .append("artifactChecksum", artifactChecksum).append("url", url).append("description", description)
-                .append("created", created).append("version", version).append("services", services).toString();
+        return new ToStringBuilder(this).append("artifactUUID", artifactUUID)
+                .append("name", name)
+                .append("artifactChecksum", artifactChecksum)
+                .append("url", url)
+                .append("description", description)
+                .append("created", created)
+                .append("version", version)
+                .append("services", services)
+                .toString();
     }
 
     @PrePersist
@@ -92,7 +98,8 @@ public class ToscaCsar implements Serializable {
             return false;
         }
         ToscaCsar castOther = (ToscaCsar) other;
-        return new EqualsBuilder().append(artifactUUID, castOther.artifactUUID).append(version, castOther.version)
+        return new EqualsBuilder().append(artifactUUID, castOther.artifactUUID)
+                .append(version, castOther.version)
                 .isEquals();
     }
 

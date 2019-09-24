@@ -130,12 +130,15 @@ public class CamundaProcessDataServiceProviderImpl implements CamundaProcessData
                 final ActivityInstance activityInstance = activityInstances[index];
 
                 activityInstanceDetails.add(new ActivityInstanceDetail.ActivityInstanceDetailBuilder()
-                        .activityId(activityInstance.getActivityId()).activityName(activityInstance.getActivityName())
+                        .activityId(activityInstance.getActivityId())
+                        .activityName(activityInstance.getActivityName())
                         .activityType(activityInstance.getActivityType())
                         .calledProcessInstanceId(activityInstance.getCalledProcessInstanceId())
-                        .startTime(activityInstance.getStartTime()).endTime(activityInstance.getEndTime())
+                        .startTime(activityInstance.getStartTime())
+                        .endTime(activityInstance.getEndTime())
                         .durationInMilliseconds(activityInstance.getDurationInMillis())
-                        .processInstanceId(activityInstance.getProcessInstanceId()).build());
+                        .processInstanceId(activityInstance.getProcessInstanceId())
+                        .build());
 
             }
             return activityInstanceDetails;

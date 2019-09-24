@@ -34,8 +34,9 @@ public class VNFCheckPserversLockedFlagActivity extends BaseBPMNTest {
     public void sunnyDayVNFCheckInMaintFlagActivity_Test() throws InterruptedException {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFCheckPserversLockedFlagActivity", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("VNFCheckPserversLockedFlagActivity_Start",
-                "TaskCheckPserversLockedFlagActivity", "VNFCheckPserversLockedFlagActivity_End");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("VNFCheckPserversLockedFlagActivity_Start", "TaskCheckPserversLockedFlagActivity",
+                        "VNFCheckPserversLockedFlagActivity_End");
         assertThat(pi).isEnded();
     }
 

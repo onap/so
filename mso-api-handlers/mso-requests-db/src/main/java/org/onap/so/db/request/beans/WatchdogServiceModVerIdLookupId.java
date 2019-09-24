@@ -71,7 +71,8 @@ public class WatchdogServiceModVerIdLookupId implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("distributionId", getDistributionId())
-                .append("serviceModelVersionId", getServiceModelVersionId()).toString();
+                .append("serviceModelVersionId", getServiceModelVersionId())
+                .toString();
     }
 
 

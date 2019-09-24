@@ -45,10 +45,13 @@ public class FalloutHandlerIT extends BaseIntegrationTest {
 
 
     private void setupMocks() {
-        wireMockServer.stubFor(post(urlEqualTo("/dbadapters/AttRequestsDbAdapter")).willReturn(aResponse()
-                .withStatus(200).withHeader("Content-Type", "text/xml").withBody("<DbTag>Notified</DbTag>")));
+        wireMockServer
+                .stubFor(post(urlEqualTo("/dbadapters/AttRequestsDbAdapter")).willReturn(aResponse().withStatus(200)
+                        .withHeader("Content-Type", "text/xml")
+                        .withBody("<DbTag>Notified</DbTag>")));
         wireMockServer.stubFor(post(urlEqualTo("/dbadapters/RequestsDbAdapter")).willReturn(aResponse().withStatus(200)
-                .withHeader("Content-Type", "text/xml").withBody("<DbTag>Notified</DbTag>")));
+                .withHeader("Content-Type", "text/xml")
+                .withBody("<DbTag>Notified</DbTag>")));
     }
 
     private String executeFlow(String inputRequestFile) throws InterruptedException {

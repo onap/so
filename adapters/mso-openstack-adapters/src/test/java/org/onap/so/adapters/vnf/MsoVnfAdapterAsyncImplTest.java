@@ -61,7 +61,8 @@ public class MsoVnfAdapterAsyncImplTest extends BaseRestTestUtils {
         mockOpenStackResponseAccess(wireMockServer, wireMockPort);
         mockOpenStackGetStackVfModule_200(wireMockServer);
         wireMockServer.stubFor(post(urlPathEqualTo("/notify/adapterNotify/updateVnfNotificationRequest"))
-                .withRequestBody(containing("messageId")).willReturn(aResponse().withStatus(HttpStatus.SC_OK)));
+                .withRequestBody(containing("messageId"))
+                .willReturn(aResponse().withStatus(HttpStatus.SC_OK)));
 
         String vnfName = "DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/stackId";
         String notificationUrl =
@@ -94,7 +95,8 @@ public class MsoVnfAdapterAsyncImplTest extends BaseRestTestUtils {
         Map<String, Object> map = new HashMap<>();
         map.put("key1", "value1");
         wireMockServer.stubFor(post(urlPathEqualTo("/notify/adapterNotify/updateVnfNotificationRequest"))
-                .withRequestBody(containing("messageId")).willReturn(aResponse().withStatus(HttpStatus.SC_OK)));
+                .withRequestBody(containing("messageId"))
+                .willReturn(aResponse().withStatus(HttpStatus.SC_OK)));
         String notificationUrl =
                 "http://localhost:" + wireMockPort + "/notify/adapterNotify/updateVnfNotificationRequest";
         instance.updateVnfA("mdt1", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
@@ -110,7 +112,8 @@ public class MsoVnfAdapterAsyncImplTest extends BaseRestTestUtils {
         Map<String, Object> map = new HashMap<>();
         map.put("key1", "value1");
         wireMockServer.stubFor(post(urlPathEqualTo("/notify/adapterNotify/updateVnfNotificationRequest"))
-                .withRequestBody(containing("messageId")).willReturn(aResponse().withStatus(HttpStatus.SC_OK)));
+                .withRequestBody(containing("messageId"))
+                .willReturn(aResponse().withStatus(HttpStatus.SC_OK)));
         String notificationUrl =
                 "http://localhost:" + wireMockPort + "/notify/adapterNotify/updateVnfNotificationRequest";
         instance.updateVnfA("mdt1", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",

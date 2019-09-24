@@ -106,8 +106,9 @@ public class TenantAdapterRestTest extends BaseRestTestUtils {
         ResponseEntity<CreateTenantResponse> response = restTemplate.exchange(
                 createURLWithPort("/services/rest/v1/tenants"), HttpMethod.POST, entity, CreateTenantResponse.class);
 
-        CreateTenantResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
-                new File("src/test/resources/__files/CreateTenantResponse_Created.json"), CreateTenantResponse.class);
+        CreateTenantResponse expectedResponse = jettisonTypeObjectMapper.getMapper()
+                .readValue(new File("src/test/resources/__files/CreateTenantResponse_Created.json"),
+                        CreateTenantResponse.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         assertThat(response.getBody(), sameBeanAs(expectedResponse));
@@ -150,8 +151,9 @@ public class TenantAdapterRestTest extends BaseRestTestUtils {
         ResponseEntity<CreateTenantResponse> response = restTemplate.exchange(
                 createURLWithPort("/services/rest/v1/tenants"), HttpMethod.POST, entity, CreateTenantResponse.class);
 
-        CreateTenantResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
-                new File("src/test/resources/__files/CreateTenantResponse_Exists.json"), CreateTenantResponse.class);
+        CreateTenantResponse expectedResponse = jettisonTypeObjectMapper.getMapper()
+                .readValue(new File("src/test/resources/__files/CreateTenantResponse_Exists.json"),
+                        CreateTenantResponse.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         assertThat(response.getBody(), sameBeanAs(expectedResponse));
@@ -187,8 +189,9 @@ public class TenantAdapterRestTest extends BaseRestTestUtils {
                 restTemplate.exchange(createURLWithPort("/services/rest/v1/tenants/tenantId"), HttpMethod.DELETE,
                         entity, DeleteTenantResponse.class);
 
-        DeleteTenantResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
-                new File("src/test/resources/__files/DeleteTenantResponse_Success.json"), DeleteTenantResponse.class);
+        DeleteTenantResponse expectedResponse = jettisonTypeObjectMapper.getMapper()
+                .readValue(new File("src/test/resources/__files/DeleteTenantResponse_Success.json"),
+                        DeleteTenantResponse.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         assertThat(response.getBody(), sameBeanAs(expectedResponse));
@@ -223,8 +226,9 @@ public class TenantAdapterRestTest extends BaseRestTestUtils {
                 restTemplate.exchange(createURLWithPort("/services/rest/v1/tenants/tenantId"), HttpMethod.DELETE,
                         entity, DeleteTenantResponse.class);
 
-        DeleteTenantResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
-                new File("src/test/resources/__files/DeleteTenantResponse_Failed.json"), DeleteTenantResponse.class);
+        DeleteTenantResponse expectedResponse = jettisonTypeObjectMapper.getMapper()
+                .readValue(new File("src/test/resources/__files/DeleteTenantResponse_Failed.json"),
+                        DeleteTenantResponse.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         assertThat(response.getBody(), sameBeanAs(expectedResponse));

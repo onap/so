@@ -122,10 +122,12 @@ public class Sol003LcnContoller {
             final VnfLcmOperationOccurrenceNotification vnfLcmOperationOccurrenceNotification) {
         GenericVnf vnfInAai = aaiServiceProvider
                 .invokeQueryGenericVnf(vnfLcmOperationOccurrenceNotification.getLinks().getVnfInstance().getHref())
-                .getGenericVnf().get(0);
+                .getGenericVnf()
+                .get(0);
         EsrVnfm vnfm = aaiHelper.getAssignedVnfm(vnfInAai);
         return vnfmServiceProvider
-                .getVnf(vnfm, vnfLcmOperationOccurrenceNotification.getLinks().getVnfInstance().getHref()).get();
+                .getVnf(vnfm, vnfLcmOperationOccurrenceNotification.getLinks().getVnfInstance().getHref())
+                .get();
     }
 
 }

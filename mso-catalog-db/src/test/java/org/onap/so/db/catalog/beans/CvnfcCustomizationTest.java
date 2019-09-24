@@ -71,7 +71,8 @@ public class CvnfcCustomizationTest {
         assertTrue(cvnfcCustomization.getNfcFunction().equals(NFC_FUNCTION));
         assertTrue(cvnfcCustomization.getNfcNamingCode().equals(NFC_NAMING_CODE));
         assertTrue(cvnfcCustomization.getToscaNodeType().equals(TOSCA_NODE_TYPE));
-        assertTrue(cvnfcCustomization.getVfModuleCustomization().getModelCustomizationUUID()
+        assertTrue(cvnfcCustomization.getVfModuleCustomization()
+                .getModelCustomizationUUID()
                 .equals(MODEL_CUSTOMIZATION_UUID));
     }
 

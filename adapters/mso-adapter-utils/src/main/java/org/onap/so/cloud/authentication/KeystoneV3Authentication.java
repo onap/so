@@ -102,7 +102,8 @@ public class KeystoneV3Authentication {
 
         Predicate<Throwable> pred = result.stream().reduce(Predicate::or).orElse(x -> false);
         RetryPolicy<OpenStackResponse> policy = new RetryPolicy<OpenStackResponse>().handleIf(error -> pred.test(error))
-                .withDelay(Duration.ofSeconds(poConfig.getRetryDelay())).withMaxRetries(poConfig.getRetryCount());
+                .withDelay(Duration.ofSeconds(poConfig.getRetryDelay()))
+                .withMaxRetries(poConfig.getRetryCount());
 
         return policy;
     }

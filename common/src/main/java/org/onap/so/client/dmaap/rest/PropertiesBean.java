@@ -35,9 +35,12 @@ public class PropertiesBean {
 
 
     public PropertiesBean(Properties properties) {
-        this.withAuth(properties.getProperty("auth")).withKey(properties.getProperty("key"))
-                .withTopic(properties.getProperty("topic")).withEnvironment(properties.getProperty("environment"))
-                .withHost(properties.getProperty("host")).withTimeout(properties.getProperty("timeout", "20000"))
+        this.withAuth(properties.getProperty("auth"))
+                .withKey(properties.getProperty("key"))
+                .withTopic(properties.getProperty("topic"))
+                .withEnvironment(properties.getProperty("environment"))
+                .withHost(properties.getProperty("host"))
+                .withTimeout(properties.getProperty("timeout", "20000"))
                 .withPartition(properties.getProperty("partition"))
                 .withContentType(properties.getProperty("contentType", "application/json"));
     }

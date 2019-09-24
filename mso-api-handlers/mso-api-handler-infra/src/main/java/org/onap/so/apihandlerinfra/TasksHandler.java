@@ -165,7 +165,8 @@ public class TasksHandler {
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError)
                             .build();
             throw new ValidateException.Builder("Mapping of request to JSON object failed : " + e.getMessage(),
-                    HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo)
+                    HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
+                            .errorInfo(errorLoggerInfo)
                             .build();
 
         } catch (IOException e) {
@@ -218,7 +219,8 @@ public class TasksHandler {
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError)
                             .build();
             throw new ValidateException.Builder("Mapping of request to JSON object failed : " + e.getMessage(),
-                    HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo)
+                    HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
+                            .errorInfo(errorLoggerInfo)
                             .build();
 
         }

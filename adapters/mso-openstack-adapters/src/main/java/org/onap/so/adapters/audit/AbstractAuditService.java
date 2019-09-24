@@ -57,8 +57,13 @@ public abstract class AbstractAuditService extends ExternalTaskUtils {
             if (logger.isInfoEnabled()) {
                 logger.info("Audit Results: {}", auditList.get().toString());
             }
-            return auditList.get().getAuditList().stream().filter(auditObject -> !auditObject.isDoesObjectExist())
-                    .findFirst().map(v -> true).orElse(false);
+            return auditList.get()
+                    .getAuditList()
+                    .stream()
+                    .filter(auditObject -> !auditObject.isDoesObjectExist())
+                    .findFirst()
+                    .map(v -> true)
+                    .orElse(false);
         } else {
             return false;
         }
@@ -74,8 +79,12 @@ public abstract class AbstractAuditService extends ExternalTaskUtils {
             if (logger.isInfoEnabled()) {
                 logger.info("Audit Results: {}", auditList.toString());
             }
-            return auditList.getAuditList().stream().filter(AAIObjectAudit::isDoesObjectExist).findFirst()
-                    .map(v -> true).orElse(false);
+            return auditList.getAuditList()
+                    .stream()
+                    .filter(AAIObjectAudit::isDoesObjectExist)
+                    .findFirst()
+                    .map(v -> true)
+                    .orElse(false);
         } else {
             return false;
         }

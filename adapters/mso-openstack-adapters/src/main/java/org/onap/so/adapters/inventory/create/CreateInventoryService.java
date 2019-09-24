@@ -51,7 +51,8 @@ public class CreateInventoryService {
         ExternalTaskClient client = externalTaskServiceUtils.createExternalTaskClient();
         client.subscribe("InventoryCreate")
                 .lockDuration(Long.parseLong(env.getProperty("mso.audit.lock-time", "60000")))
-                .handler(createInventory::executeExternalTask).open();
+                .handler(createInventory::executeExternalTask)
+                .open();
     }
 
 }

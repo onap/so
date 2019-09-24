@@ -156,7 +156,9 @@ public class RequestsDbClient {
         ClientHttpRequestFactory factory =
                 new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory());
 
-        return Configuration.builder().setBaseUri(baseUri).setClientHttpRequestFactory(factory)
+        return Configuration.builder()
+                .setBaseUri(baseUri)
+                .setClientHttpRequestFactory(factory)
                 .setRestTemplateConfigurer(restTemplate -> {
                     restTemplate.getInterceptors().add((new SOSpringClientFilter()));
                     restTemplate.getInterceptors().add((new SpringClientPayloadFilter()));
@@ -166,7 +168,9 @@ public class RequestsDbClient {
                         request.getHeaders().add(HttpHeaders.AUTHORIZATION, msoAdaptersAuth);
                         return execution.execute(request, body);
                     });
-                }).build().buildClientFactory();
+                })
+                .build()
+                .buildClientFactory();
     }
 
 
@@ -175,8 +179,10 @@ public class RequestsDbClient {
         HttpHeaders headers = getHttpHeaders();
         HttpEntity<Map> entity = new HttpEntity<>(orchestrationMap, headers);
         try {
-            return restTemplate.exchange(uri, HttpMethod.POST, entity,
-                    new ParameterizedTypeReference<List<InfraActiveRequests>>() {}).getBody();
+            return restTemplate
+                    .exchange(uri, HttpMethod.POST, entity,
+                            new ParameterizedTypeReference<List<InfraActiveRequests>>() {})
+                    .getBody();
         } catch (HttpClientErrorException e) {
             if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
                 return null;
@@ -189,8 +195,10 @@ public class RequestsDbClient {
         try {
             HttpEntity<?> entity = getHttpEntity();
             InfraActiveRequests infraActiveRequests =
-                    restTemplate.exchange(getUri(endpoint + "/infraActiveRequests/" + requestId), HttpMethod.GET,
-                            entity, InfraActiveRequests.class).getBody();
+                    restTemplate
+                            .exchange(getUri(endpoint + "/infraActiveRequests/" + requestId), HttpMethod.GET, entity,
+                                    InfraActiveRequests.class)
+                            .getBody();
             if (infraActiveRequests != null) {
                 infraActiveRequests.setRequestId(requestId);
             }
@@ -245,10 +253,12 @@ public class RequestsDbClient {
     public OperationStatus getOneByServiceIdAndOperationId(String serviceId, String operationId) {
         try {
             HttpEntity<?> entity = getHttpEntity();
-            OperationStatus operationStatus = restTemplate.exchange(getUri(
-                    UriBuilder.fromUri(getUri(findOneByServiceIdAndOperationIdURI)).queryParam(SERVICE_ID, serviceId)
-                            .queryParam(OPERATION_ID, operationId).build().toString()),
-                    HttpMethod.GET, entity, OperationStatus.class).getBody();
+            OperationStatus operationStatus =
+                    restTemplate.exchange(getUri(UriBuilder.fromUri(getUri(findOneByServiceIdAndOperationIdURI))
+                            .queryParam(SERVICE_ID, serviceId)
+                            .queryParam(OPERATION_ID, operationId)
+                            .build()
+                            .toString()), HttpMethod.GET, entity, OperationStatus.class).getBody();
             if (operationStatus != null) {
                 operationStatus.setServiceId(serviceId);
                 operationStatus.setOperationId(operationId);
@@ -267,12 +277,16 @@ public class RequestsDbClient {
             String operationalEnvironmentId, String serviceModelVersionId, String requestId) {
         try {
             HttpEntity<?> entity = getHttpEntity();
-            OperationalEnvServiceModelStatus modelStatus = restTemplate.exchange(
-                    getUri(UriBuilder.fromUri(findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestIdURI)
-                            .queryParam(OPERATIONAL_ENVIRONMENT_ID, operationalEnvironmentId)
-                            .queryParam(SERVICE_MODEL_VERSION_ID, serviceModelVersionId)
-                            .queryParam(REQUEST_ID, requestId).build().toString()),
-                    HttpMethod.GET, entity, OperationalEnvServiceModelStatus.class).getBody();
+            OperationalEnvServiceModelStatus modelStatus = restTemplate
+                    .exchange(
+                            getUri(UriBuilder.fromUri(findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestIdURI)
+                                    .queryParam(OPERATIONAL_ENVIRONMENT_ID, operationalEnvironmentId)
+                                    .queryParam(SERVICE_MODEL_VERSION_ID, serviceModelVersionId)
+                                    .queryParam(REQUEST_ID, requestId)
+                                    .build()
+                                    .toString()),
+                            HttpMethod.GET, entity, OperationalEnvServiceModelStatus.class)
+                    .getBody();
             if (null != modelStatus) {
                 modelStatus.setOperationalEnvId(operationalEnvironmentId);
                 modelStatus.setServiceModelVersionId(serviceModelVersionId);
@@ -292,15 +306,19 @@ public class RequestsDbClient {
         return this.getMultipleOperationalEnvServiceModelStatus(
                 getUri(UriBuilder.fromUri(findAllByOperationalEnvIdAndRequestIdURI)
                         .queryParam(OPERATIONAL_ENVIRONMENT_ID, operationalEnvironmentId)
-                        .queryParam(REQUEST_ID, requestId).build().toString()));
+                        .queryParam(REQUEST_ID, requestId)
+                        .build()
+                        .toString()));
     }
 
     public OperationalEnvDistributionStatus getDistributionStatusById(String distributionId) {
         try {
             HttpEntity<?> entity = getHttpEntity();
             OperationalEnvDistributionStatus distributionStatus =
-                    restTemplate.exchange(getUri(operationalEnvDistributionStatusURI + distributionId), HttpMethod.GET,
-                            entity, OperationalEnvDistributionStatus.class).getBody();
+                    restTemplate
+                            .exchange(getUri(operationalEnvDistributionStatusURI + distributionId), HttpMethod.GET,
+                                    entity, OperationalEnvDistributionStatus.class)
+                            .getBody();
             if (null != distributionStatus) {
                 distributionStatus.setDistributionId(distributionId);
             }
@@ -364,15 +382,20 @@ public class RequestsDbClient {
     public List<RequestProcessingData> getRequestProcessingDataBySoRequestId(String soRequestId) {
         return this
                 .getRequestProcessingData(getUri(UriBuilder.fromUri(endpoint + findBySoRequestIdOrderByGroupingIdDesc)
-                        .queryParam(SO_REQUEST_ID, soRequestId).build().toString()));
+                        .queryParam(SO_REQUEST_ID, soRequestId)
+                        .build()
+                        .toString()));
     }
 
     public RequestProcessingData getRequestProcessingDataBySoRequestIdAndNameAndGrouping(String soRequestId,
             String name, String groupingId) {
         return getClientFactory().create(RequestProcessingData.class)
                 .get(getUri(UriBuilder.fromUri(endpoint + findBySoRequestIdAndGroupIdAndName)
-                        .queryParam(SO_REQUEST_ID, soRequestId).queryParam(NAME, name)
-                        .queryParam(GROUPING_ID, groupingId).build().toString()));
+                        .queryParam(SO_REQUEST_ID, soRequestId)
+                        .queryParam(NAME, name)
+                        .queryParam(GROUPING_ID, groupingId)
+                        .build()
+                        .toString()));
     }
 
     public List<RequestProcessingData> getRequestProcessingDataByGroupingIdAndNameAndTag(String groupingId, String name,
@@ -380,7 +403,10 @@ public class RequestsDbClient {
         Iterable<RequestProcessingData> requestProcessingDataListIt =
                 getClientFactory().create(RequestProcessingData.class)
                         .getAll(getUri(UriBuilder.fromUri(endpoint + findByGroupingIdAndNameAndTag)
-                                .queryParam(GROUPING_ID, groupingId).queryParam(NAME, name).queryParam(TAG, tag).build()
+                                .queryParam(GROUPING_ID, groupingId)
+                                .queryParam(NAME, name)
+                                .queryParam(TAG, tag)
+                                .build()
                                 .toString()));
 
         List<RequestProcessingData> requestProcessingDataList =
@@ -392,7 +418,10 @@ public class RequestsDbClient {
     public RequestProcessingData getRequestProcessingDataBySoRequestIdAndName(String soRequestId, String name) {
         return getClientFactory().create(RequestProcessingData.class)
                 .get(getUri(UriBuilder.fromUri(endpoint + findBySoRequestIdAndName)
-                        .queryParam(SO_REQUEST_ID, soRequestId).queryParam(NAME, name).build().toString()));
+                        .queryParam(SO_REQUEST_ID, soRequestId)
+                        .queryParam(NAME, name)
+                        .build()
+                        .toString()));
     }
 
 
@@ -435,8 +464,11 @@ public class RequestsDbClient {
 
     // From and To are defaulted to ignore start/endtime on query to database
     public List<InfraActiveRequests> getRequest(final Map<String, String[]> filters) {
-        String url = UriBuilder.fromUri(getUri(getInfraActiveRequests)).queryParam("from", "0")
-                .queryParam("to", "10000000000000").build().toString();
+        String url = UriBuilder.fromUri(getUri(getInfraActiveRequests))
+                .queryParam("from", "0")
+                .queryParam("to", "10000000000000")
+                .build()
+                .toString();
         HttpHeaders headers = getHttpHeaders();
         HttpEntity<Map> entity = new HttpEntity<>(filters, headers);
         return restTemplate
@@ -462,8 +494,11 @@ public class RequestsDbClient {
         }
 
         <T> String getURI(Class<T> className) {
-            Class actualClass = classURLMap.keySet().stream()
-                    .filter(requestdbClass -> requestdbClass.isAssignableFrom(className)).findFirst().get();
+            Class actualClass = classURLMap.keySet()
+                    .stream()
+                    .filter(requestdbClass -> requestdbClass.isAssignableFrom(className))
+                    .findFirst()
+                    .get();
             return classURLMap.get(actualClass);
         }
     }

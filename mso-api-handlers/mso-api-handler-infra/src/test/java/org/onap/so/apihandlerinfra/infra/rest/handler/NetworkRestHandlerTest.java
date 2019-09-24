@@ -76,8 +76,9 @@ public class NetworkRestHandlerTest {
     public void test_checkDuplicateRequest() throws MalformedURLException, NoRecipeException {
         ArgumentCaptor<HashMap> instanceIdCaptor = ArgumentCaptor.forClass(HashMap.class);
         restHandler.checkDuplicateRequest("serviceInstanceId", "networkId", "instanceName", "requestId");
-        Mockito.verify(infraActiveRequestsClient, Mockito.times(1)).checkInstanceNameDuplicate(
-                instanceIdCaptor.capture(), eq("instanceName"), eq(ModelType.network.toString()));
+        Mockito.verify(infraActiveRequestsClient, Mockito.times(1))
+                .checkInstanceNameDuplicate(instanceIdCaptor.capture(), eq("instanceName"),
+                        eq(ModelType.network.toString()));
         Map actualMap = instanceIdCaptor.getValue();
         assertEquals("ServiceInstanceID should exist in map", "serviceInstanceId", actualMap.get("serviceInstanceId"));
         assertEquals("NetworkId should exit in map", "networkId", actualMap.get("networkInstanceId"));
@@ -95,10 +96,14 @@ public class NetworkRestHandlerTest {
     @Test
     public void test_buildRequestParams() throws Exception {
         RequestClientParameter expected = new RequestClientParameter.Builder().setRequestId("requestId")
-                .setServiceInstanceId("serviceInstanceId").setNetworkId("networkId").setALaCarte(true)
+                .setServiceInstanceId("serviceInstanceId")
+                .setNetworkId("networkId")
+                .setALaCarte(true)
                 .setRequestDetails(mapper.writeValueAsString(createTestRequest()))
                 .setRequestAction(Action.deleteInstance.toString())
-                .setRequestUri("http://localhost:8080/serviceInstances").setApiVersion("v8").build();
+                .setRequestUri("http://localhost:8080/serviceInstances")
+                .setApiVersion("v8")
+                .build();
         RequestClientParameter actual = restHandler.buildRequestParams(createTestRequest(),
                 "http://localhost:8080/serviceInstances", "requestId", "serviceInstanceId", "networkId");
         assertThat(actual, sameBeanAs(expected));

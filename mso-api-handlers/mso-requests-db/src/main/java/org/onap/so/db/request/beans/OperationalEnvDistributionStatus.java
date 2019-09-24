@@ -167,10 +167,13 @@ public class OperationalEnvDistributionStatus implements Serializable {
     public String toString() {
         return new ToStringBuilder(this).append("distributionId", getDistributionId())
                 .append("operationalEnvId", getOperationalEnvId())
-                .append("serviceModelVersionId", getServiceModelVersionId()).append("requestId", getRequestId())
+                .append("serviceModelVersionId", getServiceModelVersionId())
+                .append("requestId", getRequestId())
                 .append("distributionIdStatus", getDistributionIdStatus())
                 .append("distributionIdErrorReason", getDistributionIdErrorReason())
-                .append("createTime", getCreateTime()).append("modifyTime", getModifyTime()).toString();
+                .append("createTime", getCreateTime())
+                .append("modifyTime", getModifyTime())
+                .toString();
     }
 
 }

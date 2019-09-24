@@ -292,8 +292,12 @@ public class AaiHelper {
     private Relationship createRelationshipToTenant(final Tenant tenant) {
         final Relationship relationship = new Relationship();
         relationship.setRelatedTo("tenant");
-        relationship.setRelatedLink("/aai/" + AAIVersion.LATEST + AAIUriFactory.createResourceUri(AAIObjectType.TENANT,
-                tenant.getCloudOwner(), tenant.getRegionName(), tenant.getTenantId()).build().toString());
+        relationship.setRelatedLink("/aai/" + AAIVersion.LATEST
+                + AAIUriFactory
+                        .createResourceUri(AAIObjectType.TENANT, tenant.getCloudOwner(), tenant.getRegionName(),
+                                tenant.getTenantId())
+                        .build()
+                        .toString());
         relationship.getRelationshipData()
                 .add(createRelationshipData("cloud-region.cloud-owner", tenant.getCloudOwner()));
         relationship.getRelationshipData()

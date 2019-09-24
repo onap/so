@@ -502,7 +502,8 @@ public class ServicePluginFactory {
                                 for (Relationship rel : localPnf.getRelationshipList().getRelationship()) {
                                     if (rel.getRelatedTo().equalsIgnoreCase("network-resource")) {
                                         String[] networkRef = rel.getRelatedLink()
-                                                .substring(rel.getRelatedLink().lastIndexOf("/") + 1).split("-");
+                                                .substring(rel.getRelatedLink().lastIndexOf("/") + 1)
+                                                .split("-");
                                         if (networkRef.length == 6) {
                                             tpInfo.put("local-access-provider-id", networkRef[1]);
                                             tpInfo.put("local-access-client-id", networkRef[3]);
@@ -535,7 +536,8 @@ public class ServicePluginFactory {
                                 for (Relationship rel : remotePnf.getRelationshipList().getRelationship()) {
                                     if (rel.getRelatedTo().equalsIgnoreCase("network-resource")) {
                                         String[] networkRef = rel.getRelatedLink()
-                                                .substring(rel.getRelatedLink().lastIndexOf("/") + 1).split("-");
+                                                .substring(rel.getRelatedLink().lastIndexOf("/") + 1)
+                                                .split("-");
                                         if (networkRef.length == 6) {
                                             tpInfo.put("remote-access-provider-id", networkRefRemote[1]);
                                             tpInfo.put("remote-access-client-id", networkRefRemote[3]);
@@ -858,8 +860,11 @@ public class ServicePluginFactory {
         try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
             int timeout = DEFAULT_TIME_OUT;
 
-            RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(timeout).setConnectTimeout(timeout)
-                    .setConnectionRequestTimeout(timeout).build();
+            RequestConfig requestConfig = RequestConfig.custom()
+                    .setSocketTimeout(timeout)
+                    .setConnectTimeout(timeout)
+                    .setConnectionRequestTimeout(timeout)
+                    .build();
 
             if ("POST".equalsIgnoreCase(methodType)) {
                 HttpPost httpPost = new HttpPost(msbUrl);

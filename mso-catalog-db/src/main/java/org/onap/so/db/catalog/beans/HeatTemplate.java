@@ -98,11 +98,17 @@ public class HeatTemplate implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("artifactUuid", artifactUuid).append("templateName", templateName)
-                .append("templateBody", templateBody).append("timeoutMinutes", timeoutMinutes)
-                .append("version", version).append("description", description)
-                .append("artifactChecksum", artifactChecksum).append("created", created)
-                .append("parameters", parameters).append("childTemplates", childTemplates).toString();
+        return new ToStringBuilder(this).append("artifactUuid", artifactUuid)
+                .append("templateName", templateName)
+                .append("templateBody", templateBody)
+                .append("timeoutMinutes", timeoutMinutes)
+                .append("version", version)
+                .append("description", description)
+                .append("artifactChecksum", artifactChecksum)
+                .append("created", created)
+                .append("parameters", parameters)
+                .append("childTemplates", childTemplates)
+                .toString();
     }
 
     @Override
@@ -111,7 +117,8 @@ public class HeatTemplate implements Serializable {
             return false;
         }
         HeatTemplate castOther = (HeatTemplate) other;
-        return new EqualsBuilder().append(artifactUuid, castOther.artifactUuid).append(version, castOther.version)
+        return new EqualsBuilder().append(artifactUuid, castOther.artifactUuid)
+                .append(version, castOther.version)
                 .isEquals();
     }
 

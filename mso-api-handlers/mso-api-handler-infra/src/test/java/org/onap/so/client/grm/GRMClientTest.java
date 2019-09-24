@@ -69,9 +69,10 @@ public class GRMClientTest extends BaseTest {
     public void testFind() throws Exception {
         TestAppender.events.clear();
         String endpoints = getFileContentsAsString("__files/grm/endpoints.json");
-        wireMockServer
-                .stubFor(post(urlPathEqualTo("/GRMLWPService/v1/serviceEndPoint/findRunning")).willReturn(aResponse()
-                        .withStatus(200).withHeader("Content-Type", MediaType.APPLICATION_JSON).withBody(endpoints)));
+        wireMockServer.stubFor(post(urlPathEqualTo("/GRMLWPService/v1/serviceEndPoint/findRunning"))
+                .willReturn(aResponse().withStatus(200)
+                        .withHeader("Content-Type", MediaType.APPLICATION_JSON)
+                        .withBody(endpoints)));
 
         MDC.put(ONAPLogConstants.MDCs.SERVICE_NAME, "/test");
         GRMClient client = new GRMClient();

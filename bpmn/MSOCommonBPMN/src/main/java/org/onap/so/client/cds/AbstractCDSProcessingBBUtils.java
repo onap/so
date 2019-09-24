@@ -84,13 +84,17 @@ public class AbstractCDSProcessingBBUtils implements CDSProcessingListener {
 
             String payload = executionObject.getRequestObject();
 
-            CommonHeader commonHeader = CommonHeader.newBuilder().setOriginatorId(executionObject.getOriginatorId())
-                    .setRequestId(executionObject.getRequestId()).setSubRequestId(executionObject.getSubRequestId())
+            CommonHeader commonHeader = CommonHeader.newBuilder()
+                    .setOriginatorId(executionObject.getOriginatorId())
+                    .setRequestId(executionObject.getRequestId())
+                    .setSubRequestId(executionObject.getSubRequestId())
                     .build();
-            ActionIdentifiers actionIdentifiers =
-                    ActionIdentifiers.newBuilder().setBlueprintName(executionObject.getBlueprintName())
-                            .setBlueprintVersion(executionObject.getBlueprintVersion())
-                            .setActionName(executionObject.getActionName()).setMode(executionObject.getMode()).build();
+            ActionIdentifiers actionIdentifiers = ActionIdentifiers.newBuilder()
+                    .setBlueprintName(executionObject.getBlueprintName())
+                    .setBlueprintVersion(executionObject.getBlueprintVersion())
+                    .setActionName(executionObject.getActionName())
+                    .setMode(executionObject.getMode())
+                    .build();
 
             Builder struct = Struct.newBuilder();
             try {
@@ -101,9 +105,11 @@ public class AbstractCDSProcessingBBUtils implements CDSProcessingListener {
                         executionObject.getActionName(), e);
             }
 
-            ExecutionServiceInput executionServiceInput =
-                    ExecutionServiceInput.newBuilder().setCommonHeader(commonHeader)
-                            .setActionIdentifiers(actionIdentifiers).setPayload(struct.build()).build();
+            ExecutionServiceInput executionServiceInput = ExecutionServiceInput.newBuilder()
+                    .setCommonHeader(commonHeader)
+                    .setActionIdentifiers(actionIdentifiers)
+                    .setPayload(struct.build())
+                    .build();
 
             execution.setVariable("executionServiceInput", executionServiceInput);
 

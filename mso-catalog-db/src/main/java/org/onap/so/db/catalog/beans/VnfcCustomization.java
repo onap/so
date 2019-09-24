@@ -105,11 +105,16 @@ public class VnfcCustomization implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
-                .append("modelInstanceName", modelInstanceName).append("modelUUID", modelUUID)
-                .append("modelInvariantUUID", modelInvariantUUID).append("modelVersion", modelVersion)
-                .append("modelName", modelName).append("toscaNodeType", toscaNodeType)
-                .append("description", description).append("created", created)
-                .append("cvnfcCustomization", cvnfcCustomization).toString();
+                .append("modelInstanceName", modelInstanceName)
+                .append("modelUUID", modelUUID)
+                .append("modelInvariantUUID", modelInvariantUUID)
+                .append("modelVersion", modelVersion)
+                .append("modelName", modelName)
+                .append("toscaNodeType", toscaNodeType)
+                .append("description", description)
+                .append("created", created)
+                .append("cvnfcCustomization", cvnfcCustomization)
+                .toString();
     }
 
     @PrePersist

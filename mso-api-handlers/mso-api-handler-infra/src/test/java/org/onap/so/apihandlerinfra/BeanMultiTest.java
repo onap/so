@@ -40,8 +40,10 @@ public class BeanMultiTest {
     @Before
     public void setup() {
         enumFilter = new FilterEnum();
-        validator = ValidatorBuilder.create().with(new SetterMustExistRule(), new GetterMustExistRule())
-                .with(new SetterTester(), new GetterTester()).build();
+        validator = ValidatorBuilder.create()
+                .with(new SetterMustExistRule(), new GetterMustExistRule())
+                .with(new SetterTester(), new GetterTester())
+                .build();
     }
 
     @Test

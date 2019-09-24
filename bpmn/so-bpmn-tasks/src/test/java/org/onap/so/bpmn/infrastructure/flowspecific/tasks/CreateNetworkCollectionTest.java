@@ -100,8 +100,9 @@ public class CreateNetworkCollectionTest extends BaseTaskTest {
 
     @Test
     public void connectCollectionToInstanceGroupTest() throws Exception {
-        doNothing().when(aaiNetworkResources).connectNetworkCollectionInstanceGroupToNetworkCollection(
-                serviceInstance.getCollection().getInstanceGroup(), serviceInstance.getCollection());
+        doNothing().when(aaiNetworkResources)
+                .connectNetworkCollectionInstanceGroupToNetworkCollection(
+                        serviceInstance.getCollection().getInstanceGroup(), serviceInstance.getCollection());
         createNetworkCollection.connectCollectionToInstanceGroup(execution);
         verify(aaiNetworkResources, times(1)).connectNetworkCollectionInstanceGroupToNetworkCollection(
                 serviceInstance.getCollection().getInstanceGroup(), serviceInstance.getCollection());
@@ -109,8 +110,8 @@ public class CreateNetworkCollectionTest extends BaseTaskTest {
 
     @Test
     public void connectCollectionToServiceInstanceTest() throws Exception {
-        doNothing().when(aaiNetworkResources).connectNetworkCollectionToServiceInstance(serviceInstance.getCollection(),
-                serviceInstance);
+        doNothing().when(aaiNetworkResources)
+                .connectNetworkCollectionToServiceInstance(serviceInstance.getCollection(), serviceInstance);
         createNetworkCollection.connectCollectionToServiceInstance(execution);
         verify(aaiNetworkResources, times(1)).connectNetworkCollectionToServiceInstance(serviceInstance.getCollection(),
                 serviceInstance);

@@ -272,12 +272,24 @@ public class BpmnRequestBuilder {
         String cloudOwner = null;
         String lcpRegionId = null;
         if (relationshipsOpt.isPresent()) {
-            tenantId = relationshipsOpt.get().getRelatedUris(AAIObjectType.TENANT).stream().findFirst()
-                    .map(item -> item.getURIKeys().get(TENANT_ID)).orElse(null);
-            cloudOwner = relationshipsOpt.get().getRelatedUris(AAIObjectType.TENANT).stream().findFirst()
-                    .map(item -> item.getURIKeys().get(CLOUD_OWNER)).orElse(null);
-            lcpRegionId = relationshipsOpt.get().getRelatedUris(AAIObjectType.TENANT).stream().findFirst()
-                    .map(item -> item.getURIKeys().get(CLOUD_REGION_ID)).orElse(null);
+            tenantId = relationshipsOpt.get()
+                    .getRelatedUris(AAIObjectType.TENANT)
+                    .stream()
+                    .findFirst()
+                    .map(item -> item.getURIKeys().get(TENANT_ID))
+                    .orElse(null);
+            cloudOwner = relationshipsOpt.get()
+                    .getRelatedUris(AAIObjectType.TENANT)
+                    .stream()
+                    .findFirst()
+                    .map(item -> item.getURIKeys().get(CLOUD_OWNER))
+                    .orElse(null);
+            lcpRegionId = relationshipsOpt.get()
+                    .getRelatedUris(AAIObjectType.TENANT)
+                    .stream()
+                    .findFirst()
+                    .map(item -> item.getURIKeys().get(CLOUD_REGION_ID))
+                    .orElse(null);
         }
 
         if (tenantId == null || cloudOwner == null || lcpRegionId == null) {
@@ -314,12 +326,24 @@ public class BpmnRequestBuilder {
         String cloudOwner = null;
         String lcpRegionId = null;
         if (relationshipsOpt.isPresent()) {
-            tenantId = relationshipsOpt.get().getRelatedUris(AAIObjectType.TENANT).stream().findFirst()
-                    .map(item -> item.getURIKeys().get(TENANT_ID)).orElse(null);
-            cloudOwner = relationshipsOpt.get().getRelatedUris(AAIObjectType.TENANT).stream().findFirst()
-                    .map(item -> item.getURIKeys().get(CLOUD_OWNER)).orElse(null);
-            lcpRegionId = relationshipsOpt.get().getRelatedUris(AAIObjectType.TENANT).stream().findFirst()
-                    .map(item -> item.getURIKeys().get(CLOUD_REGION_ID)).orElse(null);
+            tenantId = relationshipsOpt.get()
+                    .getRelatedUris(AAIObjectType.TENANT)
+                    .stream()
+                    .findFirst()
+                    .map(item -> item.getURIKeys().get(TENANT_ID))
+                    .orElse(null);
+            cloudOwner = relationshipsOpt.get()
+                    .getRelatedUris(AAIObjectType.TENANT)
+                    .stream()
+                    .findFirst()
+                    .map(item -> item.getURIKeys().get(CLOUD_OWNER))
+                    .orElse(null);
+            lcpRegionId = relationshipsOpt.get()
+                    .getRelatedUris(AAIObjectType.TENANT)
+                    .stream()
+                    .findFirst()
+                    .map(item -> item.getURIKeys().get(CLOUD_REGION_ID))
+                    .orElse(null);
         }
 
         if (tenantId == null || cloudOwner == null || lcpRegionId == null) {

@@ -52,8 +52,11 @@ public class VnfmUrlProvider {
      * @return the URL of the operation
      */
     public String getOperationUrl(final String vnfmId, final String operationId) {
-        final String url = UriComponentsBuilder.fromUri(getBaseUri(vnfmId)).pathSegment("vnf_lcm_op_occs")
-                .pathSegment(operationId).build().toString();
+        final String url = UriComponentsBuilder.fromUri(getBaseUri(vnfmId))
+                .pathSegment("vnf_lcm_op_occs")
+                .pathSegment(operationId)
+                .build()
+                .toString();
         logger.debug("getOperationUrl:" + url);
 
         return url;

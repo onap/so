@@ -76,8 +76,9 @@ public class VolumeRestHandlerTest {
     public void test_checkDuplicateRequest() throws MalformedURLException, NoRecipeException {
         ArgumentCaptor<HashMap> instanceIdCaptor = ArgumentCaptor.forClass(HashMap.class);
         restHandler.checkDuplicateRequest("serviceInstanceId", "vnfId", "volumeGroupId", "instanceName", "requestId");
-        Mockito.verify(infraActiveRequestsClient, Mockito.times(1)).checkInstanceNameDuplicate(
-                instanceIdCaptor.capture(), eq("instanceName"), eq(ModelType.volumeGroup.toString()));
+        Mockito.verify(infraActiveRequestsClient, Mockito.times(1))
+                .checkInstanceNameDuplicate(instanceIdCaptor.capture(), eq("instanceName"),
+                        eq(ModelType.volumeGroup.toString()));
         Map actualMap = instanceIdCaptor.getValue();
         assertEquals("ServiceInstanceID should exist in map", "serviceInstanceId", actualMap.get("serviceInstanceId"));
         assertEquals("VnfId should exit in map", "vnfId", actualMap.get("vnfInstanceId"));
@@ -96,10 +97,15 @@ public class VolumeRestHandlerTest {
     @Test
     public void test_buildRequestParams() throws Exception {
         RequestClientParameter expected = new RequestClientParameter.Builder().setRequestId("requestId")
-                .setServiceInstanceId("serviceInstanceId").setVnfId("vnfId").setVolumeGroupId("volumeGroupId")
-                .setALaCarte(true).setRequestDetails(mapper.writeValueAsString(createTestRequest()))
+                .setServiceInstanceId("serviceInstanceId")
+                .setVnfId("vnfId")
+                .setVolumeGroupId("volumeGroupId")
+                .setALaCarte(true)
+                .setRequestDetails(mapper.writeValueAsString(createTestRequest()))
                 .setRequestAction(Action.deleteInstance.toString())
-                .setRequestUri("http://localhost:8080/serviceInstances").setApiVersion("v8").build();
+                .setRequestUri("http://localhost:8080/serviceInstances")
+                .setApiVersion("v8")
+                .build();
         RequestClientParameter actual = restHandler.buildRequestParams(createTestRequest(),
                 "http://localhost:8080/serviceInstances", "requestId", "serviceInstanceId", "vnfId", "volumeGroupId");
         assertThat(actual, sameBeanAs(expected));

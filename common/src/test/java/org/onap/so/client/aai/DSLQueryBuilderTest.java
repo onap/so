@@ -125,7 +125,9 @@ public class DSLQueryBuilderTest {
         DSLQueryBuilder<DSLNode, DSLNode> builder =
                 new DSLQueryBuilder<>(new DSLNode(AAIObjectType.L_INTERFACE, new DSLNodeKey("interface-id", "myId")));
 
-        builder.to(AAIObjectType.VSERVER, __.key("vserver-name", "myName")).output().to(AAIObjectType.P_INTERFACE)
+        builder.to(AAIObjectType.VSERVER, __.key("vserver-name", "myName"))
+                .output()
+                .to(AAIObjectType.P_INTERFACE)
                 .output();
         assertEquals("l-interface('interface-id', 'myId') > vserver*('vserver-name', 'myName') > p-interface*",
                 builder.build());

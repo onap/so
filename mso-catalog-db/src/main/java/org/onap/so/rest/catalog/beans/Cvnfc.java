@@ -127,10 +127,16 @@ public class Cvnfc {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("modelCustomizationId", modelCustomizationId)
-                .append("modelInstanceName", modelInstanceName).append("modelVersionId", modelVersionId)
-                .append("modelInvariantId", modelInvariantId).append("modelVersion", modelVersion)
-                .append("modelName", modelName).append("description", description).append("nfcFunction", nfcFunction)
-                .append("nfcNamingCode", nfcNamingCode).append("created", created).toString();
+                .append("modelInstanceName", modelInstanceName)
+                .append("modelVersionId", modelVersionId)
+                .append("modelInvariantId", modelInvariantId)
+                .append("modelVersion", modelVersion)
+                .append("modelName", modelName)
+                .append("description", description)
+                .append("nfcFunction", nfcFunction)
+                .append("nfcNamingCode", nfcNamingCode)
+                .append("created", created)
+                .toString();
     }
 
 }

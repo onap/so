@@ -40,7 +40,8 @@ public class CollectionResourceInstanceGroupCustomizationId implements Serializa
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
-                .append("modelUUID", modelUUID).toString();
+                .append("modelUUID", modelUUID)
+                .toString();
     }
 
     @Override
@@ -51,7 +52,8 @@ public class CollectionResourceInstanceGroupCustomizationId implements Serializa
         CollectionResourceInstanceGroupCustomizationId castOther =
                 (CollectionResourceInstanceGroupCustomizationId) other;
         return new EqualsBuilder().append(modelCustomizationUUID, castOther.modelCustomizationUUID)
-                .append(modelUUID, castOther.modelUUID).isEquals();
+                .append(modelUUID, castOther.modelUUID)
+                .isEquals();
     }
 
     @Override

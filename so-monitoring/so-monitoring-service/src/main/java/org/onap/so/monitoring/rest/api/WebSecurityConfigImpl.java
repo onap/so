@@ -33,7 +33,13 @@ public class WebSecurityConfigImpl extends WebSecurityConfig {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().antMatchers("/actuator", "/actuator/*", "/login", "/", "/index.html", "/*.js",
-                "/*.js.map", "/favicon.png").permitAll().anyRequest().authenticated().and().httpBasic();
+        http.authorizeRequests()
+                .antMatchers("/actuator", "/actuator/*", "/login", "/", "/index.html", "/*.js", "/*.js.map",
+                        "/favicon.png")
+                .permitAll()
+                .anyRequest()
+                .authenticated()
+                .and()
+                .httpBasic();
     }
 }

@@ -71,7 +71,8 @@ public class WatchdogComponentDistributionStatusId implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("distributionId", getDistributionId())
-                .append("componentName", getComponentName()).toString();
+                .append("componentName", getComponentName())
+                .toString();
     }
 
 

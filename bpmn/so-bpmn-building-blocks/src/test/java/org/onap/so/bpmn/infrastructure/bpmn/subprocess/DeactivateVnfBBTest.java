@@ -36,8 +36,9 @@ public class DeactivateVnfBBTest extends BaseBPMNTest {
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeactivateVnfBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("Start_DeactivateVnfBB", "Task_SDNCAdapterVnfTopologyDeactivate",
-                "CallActivity_sdncHandler", "Task_DeactivateOrchestrationStatusVnf", "End_DeactivateVnfBB");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("Start_DeactivateVnfBB", "Task_SDNCAdapterVnfTopologyDeactivate",
+                        "CallActivity_sdncHandler", "Task_DeactivateOrchestrationStatusVnf", "End_DeactivateVnfBB");
         assertThat(pi).isEnded();
     }
 
@@ -47,7 +48,8 @@ public class DeactivateVnfBBTest extends BaseBPMNTest {
                 .deactivateVnf(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeactivateVnfBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("Start_DeactivateVnfBB", "Task_SDNCAdapterVnfTopologyDeactivate")
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("Start_DeactivateVnfBB", "Task_SDNCAdapterVnfTopologyDeactivate")
                 .hasNotPassed("Task_DeactivateOrchestrationStatusVnf", "End_DeactivateVnfBB");
         assertThat(pi).isEnded();
     }
@@ -59,8 +61,10 @@ public class DeactivateVnfBBTest extends BaseBPMNTest {
                 .updateOrchestrationStatusAssignedVnf(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeactivateVnfBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("Start_DeactivateVnfBB", "Task_SDNCAdapterVnfTopologyDeactivate",
-                "Task_DeactivateOrchestrationStatusVnf").hasNotPassed("End_DeactivateVnfBB");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("Start_DeactivateVnfBB", "Task_SDNCAdapterVnfTopologyDeactivate",
+                        "Task_DeactivateOrchestrationStatusVnf")
+                .hasNotPassed("End_DeactivateVnfBB");
         assertThat(pi).isEnded();
     }
 }

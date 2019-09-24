@@ -130,13 +130,15 @@ public class SDNOHealthCheckDmaapConsumer extends DmaapConsumer {
     }
 
     protected Optional<String> isAccepted(String json, String uuid) {
-        return JsonPathUtil.getInstance().locateResult(json,
-                String.format("$.result-info[?(@.status=='ACCEPTED' && @.request-id=='%s')].code", uuid));
+        return JsonPathUtil.getInstance()
+                .locateResult(json,
+                        String.format("$.result-info[?(@.status=='ACCEPTED' && @.request-id=='%s')].code", uuid));
     }
 
     protected Optional<String> isFailure(String json, String uuid) {
-        return JsonPathUtil.getInstance().locateResult(json,
-                String.format("$.result-info[?(@.status=='FAILURE' && @.request-id=='%s')].code", uuid));
+        return JsonPathUtil.getInstance()
+                .locateResult(json,
+                        String.format("$.result-info[?(@.status=='FAILURE' && @.request-id=='%s')].code", uuid));
     }
 
     protected boolean isResultInfo(String json) {
@@ -144,13 +146,13 @@ public class SDNOHealthCheckDmaapConsumer extends DmaapConsumer {
     }
 
     protected boolean isHealthDiagnostic(String json, String uuid) {
-        return JsonPathUtil.getInstance().pathExists(json,
-                String.format("$[?(@.result-info.request-id=='%s')].%s", uuid, healthDiagnosticPath));
+        return JsonPathUtil.getInstance()
+                .pathExists(json, String.format("$[?(@.result-info.request-id=='%s')].%s", uuid, healthDiagnosticPath));
     }
 
     protected boolean healthDiagnosticSuccessful(String json) {
-        return JsonPathUtil.getInstance().pathExists(json,
-                "$." + healthDiagnosticPath + "[?(@.response-status=='Success')]");
+        return JsonPathUtil.getInstance()
+                .pathExists(json, "$." + healthDiagnosticPath + "[?(@.response-status=='Success')]");
     }
 
     protected Optional<String> getStatusMessage(String json) {

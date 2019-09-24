@@ -91,7 +91,9 @@ public class RollbackData implements Serializable {
      */
     @Override
     public String toString() {
-        return dictionary.entrySet().stream().map(entry -> entry.getKey() + entry.getValue())
+        return dictionary.entrySet()
+                .stream()
+                .map(entry -> entry.getKey() + entry.getValue())
                 .collect(Collectors.joining(",", "[", "]"));
     }
 }

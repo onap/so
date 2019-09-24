@@ -36,8 +36,9 @@ public class UnassignVnfBBTest extends BaseBPMNTest {
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignVnfBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("UnassignVnfBB_Start", "UnassignVnf",
-                "CallActivity_sdncHandlerCall", "DeleteVnfInstanceGroups", "DeleteVnf", "UnassignVnfBB_End");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("UnassignVnfBB_Start", "UnassignVnf", "CallActivity_sdncHandlerCall",
+                        "DeleteVnfInstanceGroups", "DeleteVnf", "UnassignVnfBB_End");
         assertThat(pi).isEnded();
     }
 
@@ -47,7 +48,8 @@ public class UnassignVnfBBTest extends BaseBPMNTest {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(unassignVnf)
                 .deleteInstanceGroups(any(BuildingBlockExecution.class)); // .deleteVnf(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignVnfBB", variables);
-        assertThat(pi).isNotNull().isStarted()
+        assertThat(pi).isNotNull()
+                .isStarted()
                 .hasPassedInOrder("UnassignVnfBB_Start", "UnassignVnf", "DeleteVnfInstanceGroups")
                 .hasNotPassed("DeleteVnf", "UnassignVnfBB_End");
 
@@ -59,7 +61,8 @@ public class UnassignVnfBBTest extends BaseBPMNTest {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiDeleteTasks)
                 .deleteVnf(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignVnfBB", variables);
-        assertThat(pi).isNotNull().isStarted()
+        assertThat(pi).isNotNull()
+                .isStarted()
                 .hasPassedInOrder("UnassignVnfBB_Start", "UnassignVnf", "DeleteVnfInstanceGroups", "DeleteVnf")
                 .hasNotPassed("UnassignVnfBB_End");
     }
@@ -70,7 +73,8 @@ public class UnassignVnfBBTest extends BaseBPMNTest {
                 .unassignVnf(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignVnfBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("UnassignVnfBB_Start", "UnassignVnf")
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("UnassignVnfBB_Start", "UnassignVnf")
                 .hasNotPassed("DeleteVnfInstanceGroups", "DeleteVnf", "UnassignVnfBB_End");
         assertThat(pi).isEnded();
     }

@@ -276,9 +276,14 @@ public class E2EServiceInstances {
             String serviceId = instanceIdMap.get(SERVICE_ID);
             String serviceType = e2eCompareModelReq.getServiceType();
             RequestClientParameter postParam = new RequestClientParameter.Builder().setRequestId(requestId)
-                    .setBaseVfModule(false).setRecipeTimeout(recipeTimeout).setRequestAction(action.name())
-                    .setServiceInstanceId(serviceId).setServiceType(serviceType).setRequestDetails(bpmnRequest)
-                    .setALaCarte(false).build();
+                    .setBaseVfModule(false)
+                    .setRecipeTimeout(recipeTimeout)
+                    .setRequestAction(action.name())
+                    .setServiceInstanceId(serviceId)
+                    .setServiceType(serviceType)
+                    .setRequestDetails(bpmnRequest)
+                    .setALaCarte(false)
+                    .build();
             response = requestClient.post(postParam);
         } catch (Exception e) {
             Response resp = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_GATEWAY,
@@ -413,10 +418,16 @@ public class E2EServiceInstances {
             String serviceId = instanceIdMap.get(SERVICE_ID);
             String serviceInstanceType = e2eDelReq.getServiceType();
             RequestClientParameter clientParam = new RequestClientParameter.Builder().setRequestId(requestId)
-                    .setBaseVfModule(false).setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
-                    .setRequestAction(action.name()).setServiceInstanceId(serviceId).setServiceType(serviceInstanceType)
-                    .setRequestDetails(bpmnRequest).setApiVersion(version).setALaCarte(false)
-                    .setRecipeParamXsd(recipeLookupResult.getRecipeParamXsd()).build();
+                    .setBaseVfModule(false)
+                    .setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
+                    .setRequestAction(action.name())
+                    .setServiceInstanceId(serviceId)
+                    .setServiceType(serviceInstanceType)
+                    .setRequestDetails(bpmnRequest)
+                    .setApiVersion(version)
+                    .setALaCarte(false)
+                    .setRecipeParamXsd(recipeLookupResult.getRecipeParamXsd())
+                    .build();
             response = requestClient.post(clientParam);
 
         } catch (Exception e) {
@@ -525,10 +536,16 @@ public class E2EServiceInstances {
             // Capture audit event
             logger.debug("MSO API Handler Posting call to BPEL engine for url: " + requestClient.getUrl());
             RequestClientParameter postParam = new RequestClientParameter.Builder().setRequestId(requestId)
-                    .setBaseVfModule(false).setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
-                    .setRequestAction(action.name()).setServiceInstanceId(serviceId).setServiceType(serviceInstanceType)
-                    .setRequestDetails(sirRequestJson).setApiVersion(version).setALaCarte(false)
-                    .setRecipeParamXsd(recipeLookupResult.getRecipeParamXsd()).build();
+                    .setBaseVfModule(false)
+                    .setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
+                    .setRequestAction(action.name())
+                    .setServiceInstanceId(serviceId)
+                    .setServiceType(serviceInstanceType)
+                    .setRequestDetails(sirRequestJson)
+                    .setApiVersion(version)
+                    .setALaCarte(false)
+                    .setRecipeParamXsd(recipeLookupResult.getRecipeParamXsd())
+                    .build();
             response = requestClient.post(postParam);
         } catch (Exception e) {
             logger.debug("Exception while communicate with BPMN engine", e);
@@ -638,10 +655,16 @@ public class E2EServiceInstances {
             // Capture audit event
             logger.debug("MSO API Handler Posting call to BPEL engine for url: " + requestClient.getUrl());
             RequestClientParameter parameter = new RequestClientParameter.Builder().setRequestId(requestId)
-                    .setBaseVfModule(false).setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
-                    .setRequestAction(action.name()).setServiceInstanceId(serviceId).setServiceType(serviceInstanceType)
-                    .setRequestDetails(sirRequestJson).setApiVersion(version).setALaCarte(false)
-                    .setRecipeParamXsd(recipeLookupResult.getRecipeParamXsd()).build();
+                    .setBaseVfModule(false)
+                    .setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
+                    .setRequestAction(action.name())
+                    .setServiceInstanceId(serviceId)
+                    .setServiceType(serviceInstanceType)
+                    .setRequestDetails(sirRequestJson)
+                    .setApiVersion(version)
+                    .setALaCarte(false)
+                    .setRecipeParamXsd(recipeLookupResult.getRecipeParamXsd())
+                    .build();
             response = requestClient.post(parameter);
         } catch (Exception e) {
             Response resp = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_GATEWAY,
@@ -738,10 +761,16 @@ public class E2EServiceInstances {
             String serviceId = instanceIdMap.get(SERVICE_ID);
             String serviceInstanceType = e2eScaleReq.getService().getServiceType();
             RequestClientParameter postParam = new RequestClientParameter.Builder().setRequestId(requestId)
-                    .setBaseVfModule(false).setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
-                    .setRequestAction(action.name()).setServiceInstanceId(serviceId).setServiceType(serviceInstanceType)
-                    .setRequestDetails(bpmnRequest).setApiVersion(version).setALaCarte(false)
-                    .setRecipeParamXsd(recipeLookupResult.getRecipeParamXsd()).build();
+                    .setBaseVfModule(false)
+                    .setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
+                    .setRequestAction(action.name())
+                    .setServiceInstanceId(serviceId)
+                    .setServiceType(serviceInstanceType)
+                    .setRequestDetails(bpmnRequest)
+                    .setApiVersion(version)
+                    .setALaCarte(false)
+                    .setRecipeParamXsd(recipeLookupResult.getRecipeParamXsd())
+                    .build();
             response = requestClient.post(postParam);
         } catch (Exception e) {
             Response resp = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_GATEWAY,
@@ -955,7 +984,8 @@ public class E2EServiceInstances {
         } catch (Exception e) {
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                            .build();
             ValidateException validateException =
                     new ValidateException.Builder("Error parsing request: " + e.getMessage(), HttpStatus.SC_BAD_REQUEST,
                             ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();

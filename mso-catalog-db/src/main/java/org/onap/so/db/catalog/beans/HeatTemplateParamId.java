@@ -41,7 +41,8 @@ public class HeatTemplateParamId implements Serializable {
         }
         HeatTemplateParamId castOther = (HeatTemplateParamId) other;
         return new EqualsBuilder().append(heatTemplateArtifactUuid, castOther.heatTemplateArtifactUuid)
-                .append(paramName, castOther.paramName).isEquals();
+                .append(paramName, castOther.paramName)
+                .isEquals();
     }
 
     @Override
@@ -68,6 +69,7 @@ public class HeatTemplateParamId implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("heatTemplateArtifactUuid", heatTemplateArtifactUuid)
-                .append("paramName", paramName).toString();
+                .append("paramName", paramName)
+                .toString();
     }
 }

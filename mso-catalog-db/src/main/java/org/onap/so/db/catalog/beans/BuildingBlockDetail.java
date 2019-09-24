@@ -59,7 +59,9 @@ public class BuildingBlockDetail implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("buildingBlockName", buildingBlockName)
-                .append("resourceType", resourceType).append("targetAction", targetAction).toString();
+                .append("resourceType", resourceType)
+                .append("targetAction", targetAction)
+                .toString();
     }
 
     @Override

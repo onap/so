@@ -133,7 +133,8 @@ public class CreateVnfOperationalEnvironmentTest extends BaseTest {
                                 .withStatus(HttpStatus.SC_ACCEPTED)));
         wireMockServer.stubFor(post(urlPathMatching("/GRMLWPService/v1/serviceEndPoint/findRunning"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBodyFile("vnfoperenv/endpoints.json").withStatus(HttpStatus.SC_ACCEPTED)));
+                        .withBodyFile("vnfoperenv/endpoints.json")
+                        .withStatus(HttpStatus.SC_ACCEPTED)));
         wireMockServer.stubFor(post(urlPathMatching("/GRMLWPService/v1/serviceEndPoint/add")).willReturn(
                 aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
         wireMockServer.stubFor(
@@ -157,7 +158,8 @@ public class CreateVnfOperationalEnvironmentTest extends BaseTest {
 
         wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/" + requestId))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(iar)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(iar))
+                        .withStatus(HttpStatus.SC_OK)));
         createVnfOpEnv.execute(requestId, request);
     }
 
@@ -170,7 +172,8 @@ public class CreateVnfOperationalEnvironmentTest extends BaseTest {
                                 .withStatus(HttpStatus.SC_ACCEPTED)));
         wireMockServer.stubFor(post(urlPathMatching("/GRMLWPService/v1/serviceEndPoint/findRunning"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBodyFile("vnfoperenv/endpoints2.json").withStatus(HttpStatus.SC_ACCEPTED)));
+                        .withBodyFile("vnfoperenv/endpoints2.json")
+                        .withStatus(HttpStatus.SC_ACCEPTED)));
         wireMockServer.stubFor(post(urlPathMatching("/GRMLWPService/v1/serviceEndPoint/add")).willReturn(
                 aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
         wireMockServer.stubFor(
@@ -194,7 +197,8 @@ public class CreateVnfOperationalEnvironmentTest extends BaseTest {
 
         wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/" + requestId))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(iar)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(iar))
+                        .withStatus(HttpStatus.SC_OK)));
         createVnfOpEnv.execute(requestId, request);
     }
 }

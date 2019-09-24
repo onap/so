@@ -92,8 +92,12 @@ public class ActivitySpec {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("name", name).append("description", description)
-                .append("categoryList", categoryList).append("inputs", inputs).append("outputs", outputs).toString();
+        return new ToStringBuilder(this).append("name", name)
+                .append("description", description)
+                .append("categoryList", categoryList)
+                .append("inputs", inputs)
+                .append("outputs", outputs)
+                .toString();
     }
 
 }

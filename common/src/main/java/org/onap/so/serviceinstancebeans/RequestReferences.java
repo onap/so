@@ -60,8 +60,10 @@ public class RequestReferences {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("requestId", requestId).append("instanceId", instanceId)
-                .append("requestSelfLink", requestSelfLink).toString();
+        return new ToStringBuilder(this).append("requestId", requestId)
+                .append("instanceId", instanceId)
+                .append("requestSelfLink", requestSelfLink)
+                .toString();
     }
 
 

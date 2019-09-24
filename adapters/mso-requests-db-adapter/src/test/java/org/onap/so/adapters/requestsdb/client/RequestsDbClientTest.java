@@ -130,8 +130,11 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
 
 
     private void verifyInfraActiveRequests(InfraActiveRequests infraActiveRequestsResponse) {
-        assertThat(infraActiveRequestsResponse, sameBeanAs(infraActiveRequests).ignoring("modifyTime").ignoring("log")
-                .ignoring("cloudApiRequests.created").ignoring("cloudApiRequests.id"));
+        assertThat(infraActiveRequestsResponse,
+                sameBeanAs(infraActiveRequests).ignoring("modifyTime")
+                        .ignoring("log")
+                        .ignoring("cloudApiRequests.created")
+                        .ignoring("cloudApiRequests.id"));
     }
 
     @Test

@@ -41,9 +41,14 @@ public class RestConsumer implements Consumer {
 
     private URL createURL(PropertiesBean properties) {
         try {
-            return UriBuilder.fromUri(properties.getHost()).path("events").path(properties.getTopic())
-                    .path(properties.getPartition()).path("consumer1").queryParam("timeout", properties.getTimeout())
-                    .build().toURL();
+            return UriBuilder.fromUri(properties.getHost())
+                    .path("events")
+                    .path(properties.getTopic())
+                    .path(properties.getPartition())
+                    .path("consumer1")
+                    .queryParam("timeout", properties.getTimeout())
+                    .build()
+                    .toURL();
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }

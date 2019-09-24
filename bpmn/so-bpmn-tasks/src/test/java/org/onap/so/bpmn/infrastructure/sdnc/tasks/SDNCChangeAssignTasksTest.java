@@ -80,8 +80,9 @@ public class SDNCChangeAssignTasksTest extends BaseTaskTest {
 
     @Test
     public void changeModelVnfTest() throws Exception {
-        doReturn(new GenericResourceApiVnfOperationInformation()).when(sdncVnfResources).changeModelVnf(eq(genericVnf),
-                eq(serviceInstance), eq(customer), eq(cloudRegion), eq(requestContext), any(URI.class));
+        doReturn(new GenericResourceApiVnfOperationInformation()).when(sdncVnfResources)
+                .changeModelVnf(eq(genericVnf), eq(serviceInstance), eq(customer), eq(cloudRegion), eq(requestContext),
+                        any(URI.class));
         sdncChangeAssignTasks.changeModelVnf(execution);
         verify(sdncVnfResources, times(1)).changeModelVnf(eq(genericVnf), eq(serviceInstance), eq(customer),
                 eq(cloudRegion), eq(requestContext), any(URI.class));
@@ -92,16 +93,17 @@ public class SDNCChangeAssignTasksTest extends BaseTaskTest {
     @Test
     public void changeModelVnfExceptionTest() throws Exception {
         expectedException.expect(BpmnError.class);
-        doThrow(RuntimeException.class).when(sdncVnfResources).changeModelVnf(eq(genericVnf), eq(serviceInstance),
-                eq(customer), eq(cloudRegion), eq(requestContext), any(URI.class));
+        doThrow(RuntimeException.class).when(sdncVnfResources)
+                .changeModelVnf(eq(genericVnf), eq(serviceInstance), eq(customer), eq(cloudRegion), eq(requestContext),
+                        any(URI.class));
         sdncChangeAssignTasks.changeModelVnf(execution);
     }
 
     @Test
     public void changeAssignModelVfModuleTest() throws Exception {
-        doReturn(new GenericResourceApiVfModuleOperationInformation()).when(sdncVfModuleResources).changeAssignVfModule(
-                eq(vfModule), eq(genericVnf), eq(serviceInstance), eq(customer), eq(cloudRegion), eq(requestContext),
-                any(URI.class));
+        doReturn(new GenericResourceApiVfModuleOperationInformation()).when(sdncVfModuleResources)
+                .changeAssignVfModule(eq(vfModule), eq(genericVnf), eq(serviceInstance), eq(customer), eq(cloudRegion),
+                        eq(requestContext), any(URI.class));
         sdncChangeAssignTasks.changeAssignModelVfModule(execution);
         verify(sdncVfModuleResources, times(1)).changeAssignVfModule(eq(vfModule), eq(genericVnf), eq(serviceInstance),
                 eq(customer), eq(cloudRegion), eq(requestContext), any(URI.class));
@@ -112,8 +114,9 @@ public class SDNCChangeAssignTasksTest extends BaseTaskTest {
     @Test
     public void changeAssignModelVfModuleExceptionTest() throws Exception {
         expectedException.expect(BpmnError.class);
-        doThrow(RuntimeException.class).when(sdncVfModuleResources).changeAssignVfModule(eq(vfModule), eq(genericVnf),
-                eq(serviceInstance), eq(customer), eq(cloudRegion), eq(requestContext), any(URI.class));
+        doThrow(RuntimeException.class).when(sdncVfModuleResources)
+                .changeAssignVfModule(eq(vfModule), eq(genericVnf), eq(serviceInstance), eq(customer), eq(cloudRegion),
+                        eq(requestContext), any(URI.class));
         sdncChangeAssignTasks.changeAssignModelVfModule(execution);
     }
 }

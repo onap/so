@@ -121,11 +121,17 @@ public class VfModuleCustomization implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID).append("label", label)
-                .append("minInstances", minInstances).append("maxInstances", maxInstances)
-                .append("initialCount", initialCount).append("availabilityZoneCount", availabilityZoneCount)
-                .append("created", created).append("volumeHeatEnv", volumeHeatEnv)
-                .append("heatEnvironment", heatEnvironment).append("vfModule", vfModule).toString();
+        return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
+                .append("label", label)
+                .append("minInstances", minInstances)
+                .append("maxInstances", maxInstances)
+                .append("initialCount", initialCount)
+                .append("availabilityZoneCount", availabilityZoneCount)
+                .append("created", created)
+                .append("volumeHeatEnv", volumeHeatEnv)
+                .append("heatEnvironment", heatEnvironment)
+                .append("vfModule", vfModule)
+                .toString();
     }
 
 

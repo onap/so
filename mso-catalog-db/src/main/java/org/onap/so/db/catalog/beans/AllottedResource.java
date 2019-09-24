@@ -78,11 +78,16 @@ public class AllottedResource implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("modelUUID", modelUUID).append("modelInvariantUUID", modelInvariantUUID)
-                .append("modelVersion", modelVersion).append("modelName", modelName)
-                .append("toscaNodeType", toscaNodeType).append("subcategory", subcategory)
-                .append("description", description).append("created", created)
-                .append("allotedResourceCustomization", allotedResourceCustomization).toString();
+        return new ToStringBuilder(this).append("modelUUID", modelUUID)
+                .append("modelInvariantUUID", modelInvariantUUID)
+                .append("modelVersion", modelVersion)
+                .append("modelName", modelName)
+                .append("toscaNodeType", toscaNodeType)
+                .append("subcategory", subcategory)
+                .append("description", description)
+                .append("created", created)
+                .append("allotedResourceCustomization", allotedResourceCustomization)
+                .toString();
     }
 
     @Override

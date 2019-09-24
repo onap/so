@@ -278,11 +278,13 @@ public class ASDCNotificationLogging {
             buffer.append(System.lineSeparator());
 
 
-            List<IEntityDetails> vfcInstanceEntityList = toscaResourceInstaller.getEntityDetails(toscaResourceStructure,
-                    EntityQuery.newBuilder("org.openecomp.groups.VfcInstanceGroup"),
-                    TopologyTemplateQuery.newBuilder(SdcTypes.VF)
-                            .customizationUUID(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID),
-                    false);
+            List<IEntityDetails> vfcInstanceEntityList =
+                    toscaResourceInstaller
+                            .getEntityDetails(toscaResourceStructure,
+                                    EntityQuery.newBuilder("org.openecomp.groups.VfcInstanceGroup"),
+                                    TopologyTemplateQuery.newBuilder(SdcTypes.VF)
+                                            .customizationUUID(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID),
+                                    false);
 
             if (vfcInstanceEntityList != null) {
                 for (IEntityDetails vfcEntity : vfcInstanceEntityList) {
@@ -309,11 +311,13 @@ public class ASDCNotificationLogging {
 
             }
 
-            List<IEntityDetails> vfModuleEntityList = toscaResourceInstaller.getEntityDetails(toscaResourceStructure,
-                    EntityQuery.newBuilder("org.openecomp.groups.VfModule"),
-                    TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE)
-                            .customizationUUID(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID),
-                    false);
+            List<IEntityDetails> vfModuleEntityList =
+                    toscaResourceInstaller
+                            .getEntityDetails(toscaResourceStructure,
+                                    EntityQuery.newBuilder("org.openecomp.groups.VfModule"),
+                                    TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE)
+                                            .customizationUUID(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID),
+                                    false);
 
 
             for (IEntityDetails vfModuleEntity : vfModuleEntityList) {
@@ -452,11 +456,13 @@ public class ASDCNotificationLogging {
                 buffer.append(testNull(cvnfcEntity.getName()));
                 buffer.append(System.lineSeparator());
 
-                List<IEntityDetails> vfcEntityList = toscaResourceInstaller.getEntityDetails(toscaResourceStructure,
-                        EntityQuery.newBuilder(SdcTypes.VFC),
-                        TopologyTemplateQuery.newBuilder(SdcTypes.CVFC).customizationUUID(
-                                cvnfcEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID)),
-                        false);
+                List<IEntityDetails> vfcEntityList =
+                        toscaResourceInstaller
+                                .getEntityDetails(toscaResourceStructure, EntityQuery.newBuilder(SdcTypes.VFC),
+                                        TopologyTemplateQuery.newBuilder(SdcTypes.CVFC)
+                                                .customizationUUID(cvnfcEntity.getMetadata()
+                                                        .getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID)),
+                                        false);
 
                 for (IEntityDetails vfcEntity : vfcEntityList) {
                     buffer.append(System.lineSeparator());
@@ -598,11 +604,13 @@ public class ASDCNotificationLogging {
                 buffer.append(toscaResourceInstaller.getLeafPropertyValue(crEntity, "cr_type"));
                 buffer.append(System.lineSeparator());
 
-                List<IEntityDetails> networkEntityList = toscaResourceInstaller.getEntityDetails(toscaResourceStructure,
-                        EntityQuery.newBuilder(SdcTypes.VL),
-                        TopologyTemplateQuery.newBuilder(SdcTypes.CR).customizationUUID(
-                                crEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID)),
-                        false);
+                List<IEntityDetails> networkEntityList =
+                        toscaResourceInstaller
+                                .getEntityDetails(toscaResourceStructure, EntityQuery.newBuilder(SdcTypes.VL),
+                                        TopologyTemplateQuery.newBuilder(SdcTypes.CR)
+                                                .customizationUUID(crEntity.getMetadata()
+                                                        .getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID)),
+                                        false);
 
 
                 for (IEntityDetails vlEntity : networkEntityList) {
@@ -638,11 +646,14 @@ public class ASDCNotificationLogging {
 
                 }
 
-                List<IEntityDetails> ncEntityList = toscaResourceInstaller.getEntityDetails(toscaResourceStructure,
-                        EntityQuery.newBuilder("org.openecomp.groups.NetworkCollection"),
-                        TopologyTemplateQuery.newBuilder(SdcTypes.CR).customizationUUID(
-                                crEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID)),
-                        false);
+                List<IEntityDetails> ncEntityList =
+                        toscaResourceInstaller
+                                .getEntityDetails(toscaResourceStructure,
+                                        EntityQuery.newBuilder("org.openecomp.groups.NetworkCollection"),
+                                        TopologyTemplateQuery.newBuilder(SdcTypes.CR)
+                                                .customizationUUID(crEntity.getMetadata()
+                                                        .getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID)),
+                                        false);
 
                 if (ncEntityList != null) {
                     for (IEntityDetails ncEntity : ncEntityList) {

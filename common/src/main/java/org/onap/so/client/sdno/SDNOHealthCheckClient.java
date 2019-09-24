@@ -126,8 +126,12 @@ public class SDNOHealthCheckClient {
             String operationType, List<AAIParamList> paramList) throws JsonProcessingException {
 
         final RequestHdCustom hdCustom = new RequestHdCustom();
-        hdCustom.withRequestUserId(userId).withRequestId(requestId).withRequestClientName(CLIENT_NAME)
-                .withHealthDiagnosticCode(diagnosticCode).withOperationType(operationType).withAaiParamList(paramList);
+        hdCustom.withRequestUserId(userId)
+                .withRequestId(requestId)
+                .withRequestClientName(CLIENT_NAME)
+                .withHealthDiagnosticCode(diagnosticCode)
+                .withOperationType(operationType)
+                .withAaiParamList(paramList);
 
         final Input input = new Input();
         input.setRequestHdCustom(hdCustom);

@@ -939,7 +939,8 @@ public class ServiceInstances extends AbstractRestHandler {
             logger.error("Exception occurred", e);
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.DataError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                            .build();
             throw new RequestDbFailureException.Builder(SAVE_TO_DB, e.toString(), HttpStatus.SC_INTERNAL_SERVER_ERROR,
                     ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e).errorInfo(errorLoggerInfo).build();
         }
@@ -954,19 +955,31 @@ public class ServiceInstances extends AbstractRestHandler {
         RequestClientParameter requestClientParameter = null;
         try {
             requestClientParameter = new RequestClientParameter.Builder().setRequestId(requestId)
-                    .setBaseVfModule(isBaseVfModule).setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
-                    .setRequestAction(action.toString()).setServiceInstanceId(serviceInstanceId)
-                    .setPnfCorrelationId(pnfCorrelationId).setVnfId(vnfId).setVfModuleId(vfModuleId)
-                    .setVolumeGroupId(volumeGroupId).setNetworkId(networkId).setServiceType(serviceInstanceType)
-                    .setVnfType(vnfType).setVfModuleType(vfModuleType).setNetworkType(networkType)
+                    .setBaseVfModule(isBaseVfModule)
+                    .setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
+                    .setRequestAction(action.toString())
+                    .setServiceInstanceId(serviceInstanceId)
+                    .setPnfCorrelationId(pnfCorrelationId)
+                    .setVnfId(vnfId)
+                    .setVfModuleId(vfModuleId)
+                    .setVolumeGroupId(volumeGroupId)
+                    .setNetworkId(networkId)
+                    .setServiceType(serviceInstanceType)
+                    .setVnfType(vnfType)
+                    .setVfModuleType(vfModuleType)
+                    .setNetworkType(networkType)
                     .setRequestDetails(requestHandlerUtils.mapJSONtoMSOStyle(requestJSON, sir, aLaCarte, action))
-                    .setApiVersion(apiVersion).setALaCarte(aLaCarte).setRequestUri(requestUri)
-                    .setInstanceGroupId(instanceGroupId).build();
+                    .setApiVersion(apiVersion)
+                    .setALaCarte(aLaCarte)
+                    .setRequestUri(requestUri)
+                    .setInstanceGroupId(instanceGroupId)
+                    .build();
         } catch (IOException e) {
             logger.error("Exception occurred", e);
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.SchemaError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                            .build();
             throw new ValidateException.Builder("Unable to generate RequestClientParamter object" + e.getMessage(),
                     HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo)
                             .build();
@@ -1022,7 +1035,8 @@ public class ServiceInstances extends AbstractRestHandler {
             logger.error("Exception occurred", e);
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_VALIDATION_ERROR, ErrorCode.SchemaError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                            .build();
             ValidateException validateException =
                     new ValidateException.Builder(e.getMessage(), HttpStatus.SC_BAD_REQUEST,
                             ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
@@ -1060,15 +1074,21 @@ public class ServiceInstances extends AbstractRestHandler {
             logger.error("Exception occurred", e);
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.DataError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                            .build();
             throw new RequestDbFailureException.Builder(SAVE_TO_DB, e.toString(), HttpStatus.SC_INTERNAL_SERVER_ERROR,
                     ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e).errorInfo(errorLoggerInfo).build();
         }
 
         RequestClientParameter requestClientParameter = new RequestClientParameter.Builder().setRequestId(requestId)
-                .setBaseVfModule(isBaseVfModule).setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
-                .setRequestAction(action.toString()).setApiVersion(apiVersion).setALaCarte(aLaCarte)
-                .setRequestUri(requestUri).setInstanceGroupId(instanceGroupId).build();
+                .setBaseVfModule(isBaseVfModule)
+                .setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
+                .setRequestAction(action.toString())
+                .setApiVersion(apiVersion)
+                .setALaCarte(aLaCarte)
+                .setRequestUri(requestUri)
+                .setInstanceGroupId(instanceGroupId)
+                .build();
 
 
         return requestHandlerUtils.postBPELRequest(currentActiveReq, requestClientParameter,
@@ -1076,8 +1096,10 @@ public class ServiceInstances extends AbstractRestHandler {
     }
 
     protected String getPnfCorrelationId(ServiceInstancesRequest sir) {
-        return Optional.of(sir).map(ServiceInstancesRequest::getRequestDetails)
-                .map(RequestDetails::getRequestParameters).map(parameters -> parameters.getUserParamValue("pnfId"))
+        return Optional.of(sir)
+                .map(ServiceInstancesRequest::getRequestDetails)
+                .map(RequestDetails::getRequestParameters)
+                .map(parameters -> parameters.getUserParamValue("pnfId"))
                 .orElse("");
     }
 
@@ -1099,7 +1121,8 @@ public class ServiceInstances extends AbstractRestHandler {
             } catch (IOException e) {
                 ErrorLoggerInfo errorLoggerInfo =
                         new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError)
-                                .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                                .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                                .build();
 
                 ValidateException validateException =
                         new ValidateException.Builder(e.getMessage(), HttpStatus.SC_BAD_REQUEST,
@@ -1117,7 +1140,8 @@ public class ServiceInstances extends AbstractRestHandler {
             } catch (ValidationException e) {
                 ErrorLoggerInfo errorLoggerInfo =
                         new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError)
-                                .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                                .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                                .build();
 
                 ValidateException validateException =
                         new ValidateException.Builder(e.getMessage(), HttpStatus.SC_BAD_REQUEST,
@@ -1134,7 +1158,8 @@ public class ServiceInstances extends AbstractRestHandler {
 
                 ErrorLoggerInfo errorLoggerInfo =
                         new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError)
-                                .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                                .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                                .build();
 
                 ValidateException validateException =
                         new ValidateException.Builder(e.getMessage(), HttpStatus.SC_BAD_REQUEST,
@@ -1150,7 +1175,8 @@ public class ServiceInstances extends AbstractRestHandler {
         if (recipeLookupResult == null) {
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.DataError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                            .build();
 
             RecipeNotFoundException recipeNotFoundExceptionException =
                     new RecipeNotFoundException.Builder("Recipe could not be retrieved from catalog DB.",
@@ -1702,7 +1728,8 @@ public class ServiceInstances extends AbstractRestHandler {
 
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, ErrorCode.DataError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                            .build();
 
             ValidateException validateException = new ValidateException.Builder(error, HttpStatus.SC_NOT_FOUND,
                     ErrorNumbers.SVC_GENERAL_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
@@ -1732,7 +1759,8 @@ public class ServiceInstances extends AbstractRestHandler {
         } catch (Exception e) {
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.DataError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                            .build();
             throw new RequestDbFailureException.Builder(SAVE_TO_DB, e.toString(), HttpStatus.SC_INTERNAL_SERVER_ERROR,
                     ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e).errorInfo(errorLoggerInfo).build();
         }
@@ -1744,16 +1772,23 @@ public class ServiceInstances extends AbstractRestHandler {
         }
         RequestClientParameter requestClientParameter = null;
         try {
-            requestClientParameter = new RequestClientParameter.Builder().setRequestId(requestId).setBaseVfModule(false)
-                    .setRecipeTimeout(Integer.parseInt(timeOut)).setRequestAction(action.toString())
-                    .setServiceInstanceId(serviceInstanceId).setPnfCorrelationId(pnfCorrelationId)
+            requestClientParameter = new RequestClientParameter.Builder().setRequestId(requestId)
+                    .setBaseVfModule(false)
+                    .setRecipeTimeout(Integer.parseInt(timeOut))
+                    .setRequestAction(action.toString())
+                    .setServiceInstanceId(serviceInstanceId)
+                    .setPnfCorrelationId(pnfCorrelationId)
                     .setConfigurationId(configurationId)
                     .setRequestDetails(requestHandlerUtils.mapJSONtoMSOStyle(requestJSON, sir, aLaCarte, action))
-                    .setApiVersion(apiVersion).setALaCarte(aLaCarte).setRequestUri(requestUri).build();
+                    .setApiVersion(apiVersion)
+                    .setALaCarte(aLaCarte)
+                    .setRequestUri(requestUri)
+                    .build();
         } catch (IOException e) {
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.SchemaError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA)
+                            .build();
             throw new ValidateException.Builder("Unable to generate RequestClientParamter object" + e.getMessage(),
                     HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo)
                             .build();

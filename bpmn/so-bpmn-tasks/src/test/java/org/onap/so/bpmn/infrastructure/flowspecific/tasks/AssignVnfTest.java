@@ -89,8 +89,8 @@ public class AssignVnfTest extends BaseTaskTest {
 
 
         doNothing().when(aaiInstanceGroupResources).createInstanceGroup(isA(InstanceGroup.class));
-        doNothing().when(aaiInstanceGroupResources).connectInstanceGroupToVnf(isA(InstanceGroup.class),
-                isA(GenericVnf.class));
+        doNothing().when(aaiInstanceGroupResources)
+                .connectInstanceGroupToVnf(isA(InstanceGroup.class), isA(GenericVnf.class));
         when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID)))
                 .thenReturn(genericVnf);
         doThrow(new BpmnError("BPMN Error")).when(exceptionUtil)

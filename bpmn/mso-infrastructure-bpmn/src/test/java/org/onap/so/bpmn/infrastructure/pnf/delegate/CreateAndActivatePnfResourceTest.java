@@ -76,9 +76,10 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
         dmaapClientTestImpl.sendMessage();
 
         // then
-        assertThat(instance).isEnded().hasPassedInOrder("CreateAndActivatePnf_StartEvent", "CheckInputs",
-                "CheckAiiForPnfCorrelationId", "DoesAaiContainInfoAboutPnf", "AaiEntryExists", "InformDmaapClient",
-                "WaitForDmaapPnfReadyNotification", "CreateRelationId", "AaiEntryUpdated");
+        assertThat(instance).isEnded()
+                .hasPassedInOrder("CreateAndActivatePnf_StartEvent", "CheckInputs", "CheckAiiForPnfCorrelationId",
+                        "DoesAaiContainInfoAboutPnf", "AaiEntryExists", "InformDmaapClient",
+                        "WaitForDmaapPnfReadyNotification", "CreateRelationId", "AaiEntryUpdated");
         Assertions.assertThat(pnfManagementTest.getServiceAndPnfRelationMap())
                 .containsOnly(MapEntry.entry(SERVICE_INSTANCE_ID, PnfManagementTestImpl.ID_WITH_ENTRY));
     }
@@ -100,9 +101,10 @@ public class CreateAndActivatePnfResourceTest extends BaseIntegrationTest {
         dmaapClientTestImpl.sendMessage();
 
         // then
-        assertThat(instance).isEnded().hasPassedInOrder("CreateAndActivatePnf_StartEvent", "CheckInputs",
-                "CheckAiiForPnfCorrelationId", "DoesAaiContainInfoAboutPnf", "CreatePnfEntryInAai", "AaiEntryExists",
-                "InformDmaapClient", "WaitForDmaapPnfReadyNotification", "CreateRelationId", "AaiEntryUpdated");
+        assertThat(instance).isEnded()
+                .hasPassedInOrder("CreateAndActivatePnf_StartEvent", "CheckInputs", "CheckAiiForPnfCorrelationId",
+                        "DoesAaiContainInfoAboutPnf", "CreatePnfEntryInAai", "AaiEntryExists", "InformDmaapClient",
+                        "WaitForDmaapPnfReadyNotification", "CreateRelationId", "AaiEntryUpdated");
         Assertions.assertThat(pnfManagementTest.getCreated()).containsOnlyKeys(PnfManagementTestImpl.ID_WITHOUT_ENTRY);
         Assertions.assertThat(pnfManagementTest.getServiceAndPnfRelationMap())
                 .containsOnly(MapEntry.entry(SERVICE_INSTANCE_ID, PnfManagementTestImpl.ID_WITHOUT_ENTRY));

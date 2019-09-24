@@ -41,8 +41,11 @@ public class RubyClient {
     protected String buildRequest(String requestId, String sourceName, String reason, String workflowId,
             String notification) throws JsonProcessingException {
         final MsoRequest request = new MsoRequest();
-        request.withRequestClientName(REQUEST_CLIENT_NAME).withRequestId(requestId).withSourceName(sourceName)
-                .withWorkflowId(workflowId).withAction(ACTION);
+        request.withRequestClientName(REQUEST_CLIENT_NAME)
+                .withRequestId(requestId)
+                .withSourceName(sourceName)
+                .withWorkflowId(workflowId)
+                .withAction(ACTION);
 
         request.withRequestTime(this.getTime());
 

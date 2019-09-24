@@ -35,8 +35,9 @@ public class ActivateNetworkBBTest extends BaseBPMNTest {
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("ActivateNetworkBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("activateNetwork_startEvent", "Activate_Network_SDNC_ServiceTask",
-                "CallActivity_sdncHandler", "Activate_Network_AAI_ServiceTask", "activateNetwork_EndEvent");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("activateNetwork_startEvent", "Activate_Network_SDNC_ServiceTask",
+                        "CallActivity_sdncHandler", "Activate_Network_AAI_ServiceTask", "activateNetwork_EndEvent");
         assertThat(pi).isEnded();
     }
 
@@ -46,7 +47,10 @@ public class ActivateNetworkBBTest extends BaseBPMNTest {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiUpdateTasks)
                 .updateOrchestrationStatusActiveNetwork(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("ActivateNetworkBB", variables);
-        assertThat(pi).isStarted().hasPassedInOrder("activateNetwork_startEvent", "Activate_Network_SDNC_ServiceTask",
-                "Activate_Network_AAI_ServiceTask").hasNotPassed("activateNetwork_EndEvent").isEnded();
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("activateNetwork_startEvent", "Activate_Network_SDNC_ServiceTask",
+                        "Activate_Network_AAI_ServiceTask")
+                .hasNotPassed("activateNetwork_EndEvent")
+                .isEnded();
     }
 }

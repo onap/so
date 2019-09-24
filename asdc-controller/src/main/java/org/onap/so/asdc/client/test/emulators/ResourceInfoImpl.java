@@ -171,13 +171,22 @@ public class ResourceInfoImpl implements IResourceInstance {
         }
         ResourceInfoImpl castOther = (ResourceInfoImpl) other;
         return new EqualsBuilder().append(resourceUUID, castOther.resourceUUID)
-                .append(resourceVersion, castOther.resourceVersion).isEquals();
+                .append(resourceVersion, castOther.resourceVersion)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(resourceInstanceName).append(resourceCustomizationUUID).append(resourceName)
-                .append(resourceVersion).append(resourceType).append(resourceUUID).append(resourceInvariantUUID)
-                .append(category).append(subcategory).append(artifacts).toHashCode();
+        return new HashCodeBuilder().append(resourceInstanceName)
+                .append(resourceCustomizationUUID)
+                .append(resourceName)
+                .append(resourceVersion)
+                .append(resourceType)
+                .append(resourceUUID)
+                .append(resourceInvariantUUID)
+                .append(category)
+                .append(subcategory)
+                .append(artifacts)
+                .toHashCode();
     }
 }

@@ -174,10 +174,15 @@ public class ServiceProxyResourceCustomization implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
-                .append("modelInstanceName", modelInstanceName).append("toscaNodeType", toscaNodeType)
-                .append("modelUUID", modelUUID).append("modelInvariantUUID", modelInvariantUUID)
-                .append("modelName", modelName).append("description", description).append("created", created)
-                .append("sourceService", sourceService).toString();
+                .append("modelInstanceName", modelInstanceName)
+                .append("toscaNodeType", toscaNodeType)
+                .append("modelUUID", modelUUID)
+                .append("modelInvariantUUID", modelInvariantUUID)
+                .append("modelName", modelName)
+                .append("description", description)
+                .append("created", created)
+                .append("sourceService", sourceService)
+                .toString();
     }
 
     @Override

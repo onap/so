@@ -41,7 +41,8 @@ public class RuntimeExceptionMapper implements ExceptionMapper<RuntimeException>
         } else {
             logger.error("Error occured", exception);
             return Response.status(Status.INTERNAL_SERVER_ERROR)
-                    .entity(new ExceptionResponse("Unexpected Internal Exception")).build();
+                    .entity(new ExceptionResponse("Unexpected Internal Exception"))
+                    .build();
         }
     }
 }

@@ -62,7 +62,9 @@ public class HealthCheck {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("subsystem", subsystem).append("uri", uri).append("status", status)
+        return new ToStringBuilder(this).append("subsystem", subsystem)
+                .append("uri", uri)
+                .append("status", status)
                 .toString();
     }
 
@@ -72,8 +74,10 @@ public class HealthCheck {
             return false;
         }
         HealthCheck castOther = (HealthCheck) other;
-        return new EqualsBuilder().append(subsystem, castOther.subsystem).append(uri, castOther.uri)
-                .append(status, castOther.status).isEquals();
+        return new EqualsBuilder().append(subsystem, castOther.subsystem)
+                .append(uri, castOther.uri)
+                .append(status, castOther.status)
+                .isEquals();
     }
 
     @Override

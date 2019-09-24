@@ -132,7 +132,8 @@ public class InputParametersProviderImpl implements InputParametersProvider {
                 final ObjectMapper mapper = new ObjectMapper();
                 final VnfParameter[] readValue = mapper.readValue(array.toJSONString(), VnfParameter[].class);
                 LOGGER.debug("Vnf parameters: {}", Arrays.asList(readValue));
-                return Arrays.asList(readValue).stream()
+                return Arrays.asList(readValue)
+                        .stream()
                         .filter(vnfParam -> vnfParam.getName() != null && vnfParam.getValue() != null)
                         .collect(Collectors.toMap(VnfParameter::getName, VnfParameter::getValue));
             }

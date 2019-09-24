@@ -273,11 +273,16 @@ public class CloudIdentity {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("id", getId())
-                .append("identityUrl", getIdentityUrl()).append("msoId", getMsoId())
-                .append("projectDomain", getProjectDomainName()).append("userDomain", getUserDomainName())
-                .append("adminTenant", getAdminTenant()).append("memberRole", getMemberRole())
-                .append("tenantMetadata", getTenantMetadata()).append("identityServerType", getIdentityServerType())
-                .append("identityAuthenticationType", getIdentityAuthenticationType()).toString();
+                .append("identityUrl", getIdentityUrl())
+                .append("msoId", getMsoId())
+                .append("projectDomain", getProjectDomainName())
+                .append("userDomain", getUserDomainName())
+                .append("adminTenant", getAdminTenant())
+                .append("memberRole", getMemberRole())
+                .append("tenantMetadata", getTenantMetadata())
+                .append("identityServerType", getIdentityServerType())
+                .append("identityAuthenticationType", getIdentityAuthenticationType())
+                .toString();
     }
 
     @Override
@@ -290,21 +295,32 @@ public class CloudIdentity {
         }
         CloudIdentity castOther = (CloudIdentity) other;
         return new EqualsBuilder().append(getId(), castOther.getId())
-                .append(getIdentityUrl(), castOther.getIdentityUrl()).append(getMsoId(), castOther.getMsoId())
-                .append(getMsoPass(), castOther.getMsoPass()).append(getAdminTenant(), castOther.getAdminTenant())
+                .append(getIdentityUrl(), castOther.getIdentityUrl())
+                .append(getMsoId(), castOther.getMsoId())
+                .append(getMsoPass(), castOther.getMsoPass())
+                .append(getAdminTenant(), castOther.getAdminTenant())
                 .append(getProjectDomainName(), castOther.getProjectDomainName())
                 .append(getUserDomainName(), castOther.getUserDomainName())
                 .append(getMemberRole(), castOther.getMemberRole())
                 .append(getTenantMetadata(), castOther.getTenantMetadata())
                 .append(getIdentityServerType(), castOther.getIdentityServerType())
-                .append(getIdentityAuthenticationType(), castOther.getIdentityAuthenticationType()).isEquals();
+                .append(getIdentityAuthenticationType(), castOther.getIdentityAuthenticationType())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(1, 31).append(getId()).append(getIdentityUrl()).append(getMsoId())
-                .append(getMsoPass()).append(getProjectDomainName()).append(getUserDomainName())
-                .append(getAdminTenant()).append(getMemberRole()).append(getTenantMetadata())
-                .append(getIdentityServerType()).append(getIdentityAuthenticationType()).toHashCode();
+        return new HashCodeBuilder(1, 31).append(getId())
+                .append(getIdentityUrl())
+                .append(getMsoId())
+                .append(getMsoPass())
+                .append(getProjectDomainName())
+                .append(getUserDomainName())
+                .append(getAdminTenant())
+                .append(getMemberRole())
+                .append(getTenantMetadata())
+                .append(getIdentityServerType())
+                .append(getIdentityAuthenticationType())
+                .toHashCode();
     }
 }

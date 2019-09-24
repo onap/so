@@ -77,8 +77,8 @@ public class AAIClientHelperTest extends BaseTest {
 
         try {
             AAIClientHelper clientHelper = mock(AAIClientHelper.class);
-            doNothing().when(clientHelper).updateAaiOperationalEnvironment(any(String.class),
-                    any(OperationalEnvironment.class));
+            doNothing().when(clientHelper)
+                    .updateAaiOperationalEnvironment(any(String.class), any(OperationalEnvironment.class));
             clientHelper.updateAaiOperationalEnvironment("EMOE-001", ecompEnv);
 
             verify(clientHelper, times(1)).updateAaiOperationalEnvironment("EMOE-001", ecompEnv);

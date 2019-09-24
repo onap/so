@@ -197,32 +197,51 @@ public class ResumeOrchestrationRequestTest {
     }
 
     private void setRequestClientParameter() {
-        requestClientParameter =
-                new RequestClientParameter.Builder().setRequestId(CURRENT_REQUEST_ID).setRecipeTimeout(80)
-                        .setRequestAction(Action.createInstance.toString()).setServiceInstanceId(SERVICE_INSTANCE_ID)
-                        .setPnfCorrelationId("pnfCorrelationId").setVnfId(VNF_ID).setVfModuleId(VFMODULE_ID)
-                        .setVolumeGroupId(VOLUME_GROUP_ID).setNetworkId(NETWORK_ID).setServiceType("serviceType")
-                        .setVnfType(null).setNetworkType(null).setRequestDetails(requestBody).setApiVersion(version)
-                        .setALaCarte(aLaCarte).setRequestUri(requestUri).setInstanceGroupId(null).build();
+        requestClientParameter = new RequestClientParameter.Builder().setRequestId(CURRENT_REQUEST_ID)
+                .setRecipeTimeout(80)
+                .setRequestAction(Action.createInstance.toString())
+                .setServiceInstanceId(SERVICE_INSTANCE_ID)
+                .setPnfCorrelationId("pnfCorrelationId")
+                .setVnfId(VNF_ID)
+                .setVfModuleId(VFMODULE_ID)
+                .setVolumeGroupId(VOLUME_GROUP_ID)
+                .setNetworkId(NETWORK_ID)
+                .setServiceType("serviceType")
+                .setVnfType(null)
+                .setNetworkType(null)
+                .setRequestDetails(requestBody)
+                .setApiVersion(version)
+                .setALaCarte(aLaCarte)
+                .setRequestUri(requestUri)
+                .setInstanceGroupId(null)
+                .build();
     }
 
     private void setRequestClientParameterVfModule() {
-        requestClientParameterVfModule =
-                new RequestClientParameter.Builder().setRequestId(CURRENT_REQUEST_ID).setRecipeTimeout(80)
-                        .setRequestAction(Action.createInstance.toString()).setPnfCorrelationId("pnfCorrelationId")
-                        .setVnfId(VNF_ID).setVfModuleId(VFMODULE_ID).setRequestDetails(requestBody)
-                        .setApiVersion(version).setALaCarte(aLaCarte).setRequestUri(requestUri).build();
+        requestClientParameterVfModule = new RequestClientParameter.Builder().setRequestId(CURRENT_REQUEST_ID)
+                .setRecipeTimeout(80)
+                .setRequestAction(Action.createInstance.toString())
+                .setPnfCorrelationId("pnfCorrelationId")
+                .setVnfId(VNF_ID)
+                .setVfModuleId(VFMODULE_ID)
+                .setRequestDetails(requestBody)
+                .setApiVersion(version)
+                .setALaCarte(aLaCarte)
+                .setRequestUri(requestUri)
+                .build();
     }
 
     @Test
     public void resumeOrchestationRequestTest() throws Exception {
         Response response = null;
         when(requestDbClient.getInfraActiveRequestbyRequestId(REQUEST_ID)).thenReturn(infraActiveRequest);
-        doReturn(currentActiveRequest).when(requestHandler).createNewRecordCopyFromInfraActiveRequest(
-                any(InfraActiveRequests.class), nullable(String.class), any(Timestamp.class), nullable(String.class),
-                nullable(String.class), nullable(String.class), anyString());
-        doReturn(response).when(resumeReq).resumeRequest(any(InfraActiveRequests.class), any(InfraActiveRequests.class),
-                anyString(), nullable(String.class));
+        doReturn(currentActiveRequest).when(requestHandler)
+                .createNewRecordCopyFromInfraActiveRequest(any(InfraActiveRequests.class), nullable(String.class),
+                        any(Timestamp.class), nullable(String.class), nullable(String.class), nullable(String.class),
+                        anyString());
+        doReturn(response).when(resumeReq)
+                .resumeRequest(any(InfraActiveRequests.class), any(InfraActiveRequests.class), anyString(),
+                        nullable(String.class));
 
         resumeReq.resumeOrchestrationRequest(REQUEST_ID, "v7", requestContext);
 
@@ -253,20 +272,21 @@ public class ResumeOrchestrationRequestTest {
     public void resumeRequestTest() throws ApiException, IOException {
         Response response = null;
         doReturn(instanceIdMap).when(resumeReq).setInstanceIdMap(infraActiveRequest, ModelType.service.toString());
-        doReturn(SERVICE_INSTANCE_NAME).when(resumeReq).getInstanceName(infraActiveRequest,
-                ModelType.service.toString(), currentActiveRequest);
+        doReturn(SERVICE_INSTANCE_NAME).when(resumeReq)
+                .getInstanceName(infraActiveRequest, ModelType.service.toString(), currentActiveRequest);
         when(requestHandler.convertJsonToServiceInstanceRequest(anyString(), any(Actions.class), anyString(),
                 anyString())).thenReturn(sir);
         when(serviceInstances.getPnfCorrelationId(any(ServiceInstancesRequest.class))).thenReturn("pnfCorrelationId");
-        doReturn(lookupResult).when(serviceInstances).getServiceInstanceOrchestrationURI(sir, action, aLaCarte,
-                currentActiveRequest);
-        doReturn(requestClientParameter).when(resumeReq).setRequestClientParameter(lookupResult, version,
-                infraActiveRequest, currentActiveRequest, "pnfCorrelationId", aLaCarte, sir);
+        doReturn(lookupResult).when(serviceInstances)
+                .getServiceInstanceOrchestrationURI(sir, action, aLaCarte, currentActiveRequest);
+        doReturn(requestClientParameter).when(resumeReq)
+                .setRequestClientParameter(lookupResult, version, infraActiveRequest, currentActiveRequest,
+                        "pnfCorrelationId", aLaCarte, sir);
         doNothing().when(resumeReq).requestDbSave(currentActiveRequest);
         when(requestHandler.postBPELRequest(any(InfraActiveRequests.class), any(RequestClientParameter.class),
                 anyString(), anyString())).thenReturn(response);
-        doNothing().when(resumeReq).checkForInProgressRequest(currentActiveRequest, instanceIdMap, SERVICE,
-                SERVICE_INSTANCE_NAME, action);
+        doNothing().when(resumeReq)
+                .checkForInProgressRequest(currentActiveRequest, instanceIdMap, SERVICE, SERVICE_INSTANCE_NAME, action);
 
         resumeReq.resumeRequest(infraActiveRequest, currentActiveRequest, version,
                 "/onap/so/infra/orchestrationRequests/v7/requests/00032ab7-na18-42e5-965d-8ea592502018/resume");
@@ -305,22 +325,23 @@ public class ResumeOrchestrationRequestTest {
     public void resumeRequestTestALaCarteNull() throws ApiException, IOException {
         Response response = null;
         doReturn(instanceIdMap).when(resumeReq).setInstanceIdMap(infraActiveRequest, ModelType.service.toString());
-        doReturn(SERVICE_INSTANCE_NAME).when(resumeReq).getInstanceName(infraActiveRequest,
-                ModelType.service.toString(), currentActiveRequest);
+        doReturn(SERVICE_INSTANCE_NAME).when(resumeReq)
+                .getInstanceName(infraActiveRequest, ModelType.service.toString(), currentActiveRequest);
         when(requestHandler.convertJsonToServiceInstanceRequest(anyString(), any(Actions.class), anyString(),
                 anyString())).thenReturn(sirNullALaCarte);
         when(serviceInstances.getPnfCorrelationId(any(ServiceInstancesRequest.class))).thenReturn("pnfCorrelationId");
         doReturn(false).when(msoRequest).getAlacarteFlag(sirNullALaCarte);
-        doReturn(lookupResult).when(serviceInstances).getServiceInstanceOrchestrationURI(sirNullALaCarte, action, false,
-                currentActiveRequest);
-        doReturn(requestClientParameter).when(resumeReq).setRequestClientParameter(lookupResult, version,
-                infraActiveRequest, currentActiveRequest, "pnfCorrelationId", aLaCarte, sirNullALaCarte);
+        doReturn(lookupResult).when(serviceInstances)
+                .getServiceInstanceOrchestrationURI(sirNullALaCarte, action, false, currentActiveRequest);
+        doReturn(requestClientParameter).when(resumeReq)
+                .setRequestClientParameter(lookupResult, version, infraActiveRequest, currentActiveRequest,
+                        "pnfCorrelationId", aLaCarte, sirNullALaCarte);
         doReturn(false).when(resumeReq).setALaCarteFlagIfNull(SERVICE, action);
         doNothing().when(resumeReq).requestDbSave(currentActiveRequest);
         when(requestHandler.postBPELRequest(any(InfraActiveRequests.class), any(RequestClientParameter.class),
                 anyString(), anyString())).thenReturn(response);
-        doNothing().when(resumeReq).checkForInProgressRequest(currentActiveRequest, instanceIdMap, SERVICE,
-                SERVICE_INSTANCE_NAME, action);
+        doNothing().when(resumeReq)
+                .checkForInProgressRequest(currentActiveRequest, instanceIdMap, SERVICE, SERVICE_INSTANCE_NAME, action);
 
         resumeReq.resumeRequest(infraActiveRequest, currentActiveRequest, version,
                 "/onap/so/infra/orchestrationRequests/v7/requests/00032ab7-na18-42e5-965d-8ea592502018/resume");
@@ -342,11 +363,12 @@ public class ResumeOrchestrationRequestTest {
 
     @Test
     public void checkForInProgressRequest() throws ApiException {
-        doReturn(infraActiveRequest).when(requestHandler).duplicateCheck(action, instanceIdMap, SERVICE_INSTANCE_NAME,
-                SERVICE, currentActiveRequest);
+        doReturn(infraActiveRequest).when(requestHandler)
+                .duplicateCheck(action, instanceIdMap, SERVICE_INSTANCE_NAME, SERVICE, currentActiveRequest);
         doReturn(true).when(requestHandler).camundaHistoryCheck(infraActiveRequest, currentActiveRequest);
-        doThrow(DuplicateRequestException.class).when(requestHandler).buildErrorOnDuplicateRecord(currentActiveRequest,
-                action, instanceIdMap, SERVICE_INSTANCE_NAME, SERVICE, infraActiveRequest);
+        doThrow(DuplicateRequestException.class).when(requestHandler)
+                .buildErrorOnDuplicateRecord(currentActiveRequest, action, instanceIdMap, SERVICE_INSTANCE_NAME,
+                        SERVICE, infraActiveRequest);
 
         thrown.expect(DuplicateRequestException.class);
         resumeReq.checkForInProgressRequest(currentActiveRequest, instanceIdMap, SERVICE, SERVICE_INSTANCE_NAME,
@@ -355,8 +377,8 @@ public class ResumeOrchestrationRequestTest {
 
     @Test
     public void checkForInProgressRequestNoInProgressRequests() throws ApiException {
-        doReturn(null).when(requestHandler).duplicateCheck(action, instanceIdMap, SERVICE_INSTANCE_NAME, SERVICE,
-                currentActiveRequest);
+        doReturn(null).when(requestHandler)
+                .duplicateCheck(action, instanceIdMap, SERVICE_INSTANCE_NAME, SERVICE, currentActiveRequest);
 
         resumeReq.checkForInProgressRequest(currentActiveRequest, instanceIdMap, SERVICE, SERVICE_INSTANCE_NAME,
                 action);
@@ -366,8 +388,8 @@ public class ResumeOrchestrationRequestTest {
 
     @Test
     public void checkForInProgressRequestCamundaHistoryCheckReturnsNoInProgress() throws ApiException {
-        doReturn(infraActiveRequest).when(requestHandler).duplicateCheck(action, instanceIdMap, SERVICE_INSTANCE_NAME,
-                SERVICE, currentActiveRequest);
+        doReturn(infraActiveRequest).when(requestHandler)
+                .duplicateCheck(action, instanceIdMap, SERVICE_INSTANCE_NAME, SERVICE, currentActiveRequest);
         doReturn(false).when(requestHandler).camundaHistoryCheck(infraActiveRequest, currentActiveRequest);
 
         resumeReq.checkForInProgressRequest(currentActiveRequest, instanceIdMap, SERVICE, SERVICE_INSTANCE_NAME,

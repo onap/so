@@ -49,8 +49,12 @@ public class TenantIsolationBeansTest extends BaseTest {
 
     @Test
     public void testPojoStructureAndBehavior() {
-        Validator validator = ValidatorBuilder.create().with(new GetterMustExistRule()).with(new SetterMustExistRule())
-                .with(new SetterTester()).with(new GetterTester()).build();
+        Validator validator = ValidatorBuilder.create()
+                .with(new GetterMustExistRule())
+                .with(new SetterMustExistRule())
+                .with(new SetterTester())
+                .with(new GetterTester())
+                .build();
 
         validator.validate(POJO_PACKAGE, new FilterPackageInfo());
     }

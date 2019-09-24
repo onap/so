@@ -47,9 +47,13 @@ public class BBPojoTest {
     }
 
     private void test(String pojoPackage) {
-        Validator validator = ValidatorBuilder.create().with(new GetterMustExistRule()).with(new SetterTester())
-                .with(new GetterTester()).with(new NoPrimitivesRule())
-                .with(new SerializableMustHaveSerialVersionUIDRule()).build();
+        Validator validator = ValidatorBuilder.create()
+                .with(new GetterMustExistRule())
+                .with(new SetterTester())
+                .with(new GetterTester())
+                .with(new NoPrimitivesRule())
+                .with(new SerializableMustHaveSerialVersionUIDRule())
+                .build();
         validator.validate(pojoPackage, new FilterPackageInfo(), filterTestClasses, new FilterNonConcrete());
     }
 

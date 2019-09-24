@@ -49,7 +49,8 @@ public class ActivitySpecsActionsTest extends BaseTest {
         String body = mapper.writeValueAsString(activitySpecCreateResponse);
         wireMockServer.stubFor(post(urlPathMatching("/v1.0/activity-spec"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withStatus(org.springframework.http.HttpStatus.OK.value()).withBody(body)));
+                        .withStatus(org.springframework.http.HttpStatus.OK.value())
+                        .withBody(body)));
 
         String activitySpecId = activitySpecsActions.createActivitySpec(HOSTNAME, activitySpec);
         assertEquals("testActivityId", activitySpecId);
@@ -68,7 +69,8 @@ public class ActivitySpecsActionsTest extends BaseTest {
         String body = mapper.writeValueAsString(activitySpecCreateResponse);
         wireMockServer.stubFor(post(urlPathMatching("/v1.0/activity-spec"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withStatus(org.springframework.http.HttpStatus.CREATED.value()).withBody(body)));
+                        .withStatus(org.springframework.http.HttpStatus.CREATED.value())
+                        .withBody(body)));
 
         String activitySpecId = activitySpecsActions.createActivitySpec(HOSTNAME, activitySpec);
         assertEquals("testActivityId", activitySpecId);
@@ -87,7 +89,8 @@ public class ActivitySpecsActionsTest extends BaseTest {
         String body = mapper.writeValueAsString(activitySpecCreateResponse);
         wireMockServer.stubFor(post(urlPathMatching("/v1.0/activity-spec"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withStatus(org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY.value()).withBody(body)));
+                        .withStatus(org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY.value())
+                        .withBody(body)));
 
         String activitySpecId = activitySpecsActions.createActivitySpec(HOSTNAME, activitySpec);
         assertEquals(null, activitySpecId);

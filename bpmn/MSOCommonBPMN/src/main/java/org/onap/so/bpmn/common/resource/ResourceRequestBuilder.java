@@ -214,7 +214,9 @@ public class ResourceRequestBuilder {
                             // if it is next request for same group then increment first level index
                             boolean isSameLevelRequest = resourceInput.values().stream().anyMatch(item -> {
                                 JsonElement tree = parser.parse(((String) item).split("\\|")[0]);
-                                return tree.isJsonArray() && tree.getAsJsonArray().get(0).getAsString()
+                                return tree.isJsonArray() && tree.getAsJsonArray()
+                                        .get(0)
+                                        .getAsString()
                                         .equalsIgnoreCase(lastFirstLevelKey);
                             });
                             if (isSameLevelRequest) {
@@ -237,7 +239,9 @@ public class ResourceRequestBuilder {
                                     boolean isSameSecondLevelRequest =
                                             resourceInput.values().stream().anyMatch(item -> {
                                                 JsonElement tree = parser.parse(((String) item).split("\\|")[0]);
-                                                return tree.isJsonArray() && tree.getAsJsonArray().get(0).getAsString()
+                                                return tree.isJsonArray() && tree.getAsJsonArray()
+                                                        .get(0)
+                                                        .getAsString()
                                                         .equalsIgnoreCase(lastSecondLevelKey);
                                             });
                                     if (isSameSecondLevelRequest) {
@@ -382,8 +386,10 @@ public class ResourceRequestBuilder {
         String catalogEndPoint = UrnPropertiesReader.getVariable("mso.catalog.db.endpoint");
 
         HttpClient client = new HttpClientFactory().newJsonClient(UriBuilder.fromUri(catalogEndPoint)
-                .path(SERVICE_URL_SERVICE_INSTANCE).queryParam("serviceModelUuid", uuid).build().toURL(),
-                ONAPComponents.CATALOG_DB);
+                .path(SERVICE_URL_SERVICE_INSTANCE)
+                .queryParam("serviceModelUuid", uuid)
+                .build()
+                .toURL(), ONAPComponents.CATALOG_DB);
 
         client.addAdditionalHeader("Accept", "application/json");
         client.addAdditionalHeader("Authorization", UrnPropertiesReader.getVariable("mso.db.auth"));

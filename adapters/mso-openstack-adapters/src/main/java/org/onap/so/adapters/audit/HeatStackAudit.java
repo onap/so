@@ -77,15 +77,18 @@ public class HeatStackAudit {
         try {
             logger.debug("Fetching Top Level Stack Information");
             Resources resources = heat.queryStackResources(cloudRegion, tenantId, heatStackName, 3);
-            List<Resource> novaResources = resources.getList().stream()
-                    .filter(p -> "OS::Nova::Server".equals(p.getType())).collect(Collectors.toList());
+            List<Resource> novaResources = resources.getList()
+                    .stream()
+                    .filter(p -> "OS::Nova::Server".equals(p.getType()))
+                    .collect(Collectors.toList());
             if (novaResources.isEmpty())
                 return Optional.of(new AAIObjectAuditList());
             else {
                 Set<Vserver> vserversToAudit = createVserverSet(novaResources);
                 AAIObjectAuditList aaiObjectAuditList = new AAIObjectAuditList();
-                vserversToAudit.stream().forEach(vServer -> aaiObjectAuditList.getAuditList()
-                        .add(createAAIObjectAudit(cloudOwner, cloudRegion, tenantId, vServer)));
+                vserversToAudit.stream()
+                        .forEach(vServer -> aaiObjectAuditList.getAuditList()
+                                .add(createAAIObjectAudit(cloudOwner, cloudRegion, tenantId, vServer)));
                 return Optional.of(aaiObjectAuditList);
             }
         } catch (Exception e) {
@@ -99,9 +102,12 @@ public class HeatStackAudit {
         try {
             logger.debug("Fetching Top Level Stack Information");
             Resources resources = heat.queryStackResources(cloudRegion, tenantId, heatStackName, 3);
-            List<Resource> novaResources = resources.getList().stream()
-                    .filter(p -> "OS::Nova::Server".equals(p.getType())).collect(Collectors.toList());
-            List<Resource> resourceGroups = resources.getList().stream()
+            List<Resource> novaResources = resources.getList()
+                    .stream()
+                    .filter(p -> "OS::Nova::Server".equals(p.getType()))
+                    .collect(Collectors.toList());
+            List<Resource> resourceGroups = resources.getList()
+                    .stream()
                     .filter(p -> "OS::Heat::ResourceGroup".equals(p.getType()) && p.getName().contains("subinterfaces"))
                     .collect(Collectors.toList());
             List<Optional<Port>> neutronPortDetails = retrieveNeutronPortDetails(resources, cloudRegion, tenantId);
@@ -188,9 +194,11 @@ public class HeatStackAudit {
                 if (parentNeutronPortId.equals(lInterface.getInterfaceId())) {
                     logger.debug("Found Parent Port on VServer: {} on Port: {}", auditVserver.getVserverId(),
                             lInterface.getInterfaceId());
-                    Resource contrailVm = subinterfaceResources.getList().stream()
+                    Resource contrailVm = subinterfaceResources.getList()
+                            .stream()
                             .filter(resource -> "OS::ContrailV2::VirtualMachineInterface".equals(resource.getType()))
-                            .findAny().orElse(null);
+                            .findAny()
+                            .orElse(null);
                     if (contrailVm == null) {
                         throw new Exception("Cannnot find Contrail Virtual Machine Interface on Stack: "
                                 + subinterfaceStack.getId());
@@ -288,7 +296,9 @@ public class HeatStackAudit {
      */
     protected List<Optional<Port>> retrieveNeutronPortDetails(Resources resources, String cloudSiteId,
             String tenantId) {
-        return resources.getList().parallelStream().filter(resource -> "OS::Neutron::Port".equals(resource.getType()))
+        return resources.getList()
+                .parallelStream()
+                .filter(resource -> "OS::Neutron::Port".equals(resource.getType()))
                 .map(resource -> neutron.getNeutronPort(resource.getPhysicalResourceId(), tenantId, cloudSiteId))
                 .collect(Collectors.toList());
 

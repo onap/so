@@ -211,10 +211,16 @@ public class ResourceOperationStatus implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("serviceId", getServiceId()).append("operationId", getOperationId())
-                .append("resourceTemplateUUID", getResourceTemplateUUID()).append("operType", getOperType())
-                .append("resourceInstanceID", getResourceInstanceID()).append("jobId", getJobId())
-                .append("status", getStatus()).append("progress", getProgress()).append("errorCode", getErrorCode())
-                .append("statusDescription", getStatusDescription()).toString();
+        return new ToStringBuilder(this).append("serviceId", getServiceId())
+                .append("operationId", getOperationId())
+                .append("resourceTemplateUUID", getResourceTemplateUUID())
+                .append("operType", getOperType())
+                .append("resourceInstanceID", getResourceInstanceID())
+                .append("jobId", getJobId())
+                .append("status", getStatus())
+                .append("progress", getProgress())
+                .append("errorCode", getErrorCode())
+                .append("statusDescription", getStatusDescription())
+                .toString();
     }
 }

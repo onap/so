@@ -59,7 +59,8 @@ public class CvnfcConfigurationCustomizationTest {
                 .equals(MODEL_CUSTOMIZATION_UUID));
         assertTrue(vnfVfmoduleCvnfcConfigurationCustomization.getModelInstanceName().equals(MODEL_INSTANCE_NAME));
         assertTrue(vnfVfmoduleCvnfcConfigurationCustomization.getPolicyName().equals(POLICY_NAME));
-        assertTrue(vnfVfmoduleCvnfcConfigurationCustomization.getCvnfcCustomization().getModelCustomizationUUID()
+        assertTrue(vnfVfmoduleCvnfcConfigurationCustomization.getCvnfcCustomization()
+                .getModelCustomizationUUID()
                 .equals(MODEL_CUSTOMIZATION_UUID));
     }
 

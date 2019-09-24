@@ -34,8 +34,8 @@ public class FlowCompleteActivity extends BaseBPMNTest {
     public void sunnyDayFlowCompleteActivity_Test() throws InterruptedException {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("FlowCompleteActivity", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("FlowCompleteActivity_Start", "TaskUpdateRequestDB",
-                "FlowCompleteActivity_End");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("FlowCompleteActivity_Start", "TaskUpdateRequestDB", "FlowCompleteActivity_End");
         assertThat(pi).isEnded();
     }
 
@@ -45,7 +45,8 @@ public class FlowCompleteActivity extends BaseBPMNTest {
                 .updateRequestDbStatus(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("FlowCompleteActivity", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("FlowCompleteActivity_Start", "TaskUpdateRequestDB")
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("FlowCompleteActivity_Start", "TaskUpdateRequestDB")
                 .hasNotPassed("FlowCompleteActivity_End");
         assertThat(pi).isEnded();
     }

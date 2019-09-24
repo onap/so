@@ -36,8 +36,9 @@ public class VnfAdapterTest extends BaseBPMNTest {
 
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VnfAdapter", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("VnfAdapter_Start", "PreProcessRequest", "Call_vnfAdapterRestV1",
-                "PostProcessResponse", "VnfAdapter_End");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("VnfAdapter_Start", "PreProcessRequest", "Call_vnfAdapterRestV1",
+                        "PostProcessResponse", "VnfAdapter_End");
         assertThat(pi).isEnded();
     }
 
@@ -47,7 +48,8 @@ public class VnfAdapterTest extends BaseBPMNTest {
                 .preProcessVnfAdapter(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VnfAdapter", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("VnfAdapter_Start", "PreProcessRequest")
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("VnfAdapter_Start", "PreProcessRequest")
                 .hasNotPassed("VnfAdapter_End");
     }
 }

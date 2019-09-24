@@ -364,9 +364,10 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder = UriComponentsBuilder
-                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_VNFS))
-                .queryParam("serviceModelName", "MSOTADevInfra_vSAMP10a_Service").queryParam("serviceModelVersion", "");
+        UriComponentsBuilder builder =
+                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_VNFS))
+                        .queryParam("serviceModelName", "MSOTADevInfra_vSAMP10a_Service")
+                        .queryParam("serviceModelVersion", "");
 
         ResponseEntity<String> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
@@ -399,7 +400,8 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
 
         UriComponentsBuilder builder =
                 UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_VNFS))
-                        .queryParam("serviceModelName", "BADNAME").queryParam("serviceModelVersion", "1.0");
+                        .queryParam("serviceModelName", "BADNAME")
+                        .queryParam("serviceModelVersion", "1.0");
 
         ResponseEntity<String> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
@@ -472,7 +474,8 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
 
         UriComponentsBuilder builder =
                 UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_NETWORKS))
-                        .queryParam("serviceModelName", "PROVIDER NETWORK").queryParam("serviceModelVersion", "2.0");
+                        .queryParam("serviceModelName", "PROVIDER NETWORK")
+                        .queryParam("serviceModelVersion", "2.0");
 
         ResponseEntity<String> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
@@ -550,9 +553,10 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder = UriComponentsBuilder
-                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_NETWORKS))
-                .queryParam("serviceModelInvariantUuid", serviceInvariantUUID).queryParam("serviceModelVersion", "2.0");
+        UriComponentsBuilder builder =
+                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_NETWORKS))
+                        .queryParam("serviceModelInvariantUuid", serviceInvariantUUID)
+                        .queryParam("serviceModelVersion", "2.0");
 
         ResponseEntity<String> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
@@ -566,9 +570,10 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder = UriComponentsBuilder
-                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_NETWORKS))
-                .queryParam("serviceModelInvariantUuid", serviceInvariantUUID).queryParam("serviceModelVersion", "");
+        UriComponentsBuilder builder =
+                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_NETWORKS))
+                        .queryParam("serviceModelInvariantUuid", serviceInvariantUUID)
+                        .queryParam("serviceModelVersion", "");
         ResponseEntity<String> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
 
@@ -656,7 +661,8 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
 
         UriComponentsBuilder builder =
                 UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_RESOURCE_RECEIPE))
-                        .queryParam("resourceModelUuid", arResourceUUID).queryParam("action", "createInstance");
+                        .queryParam("resourceModelUuid", arResourceUUID)
+                        .queryParam("action", "createInstance");
 
         ResponseEntity<String> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
@@ -673,7 +679,8 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
 
         UriComponentsBuilder builder =
                 UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_RESOURCE_RECEIPE))
-                        .queryParam("resourceModelUuid", arResourceUUID).queryParam("action", "invalid_action");
+                        .queryParam("resourceModelUuid", arResourceUUID)
+                        .queryParam("action", "invalid_action");
 
         ResponseEntity<String> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
@@ -702,9 +709,10 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder = UriComponentsBuilder
-                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_ALLOTTED_RESOURCES))
-                .queryParam("serviceModelInvariantUuid", serviceInvariantUUID).queryParam("serviceModelVersion", "1.0");
+        UriComponentsBuilder builder =
+                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_ALLOTTED_RESOURCES))
+                        .queryParam("serviceModelInvariantUuid", serviceInvariantUUID)
+                        .queryParam("serviceModelVersion", "1.0");
 
         ResponseEntity<String> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
@@ -718,9 +726,10 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder = UriComponentsBuilder
-                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_ALLOTTED_RESOURCES))
-                .queryParam("serviceModelInvariantUuid", serviceInvariantUUID).queryParam("serviceModelVersion", "1.0");
+        UriComponentsBuilder builder =
+                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_ALLOTTED_RESOURCES))
+                        .queryParam("serviceModelInvariantUuid", serviceInvariantUUID)
+                        .queryParam("serviceModelVersion", "1.0");
 
         ResponseEntity<String> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
@@ -804,8 +813,9 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder = UriComponentsBuilder
-                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_VF_MODULES)).queryParam("ADASD", "NEUTRON_BASIC");
+        UriComponentsBuilder builder =
+                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_VF_MODULES))
+                        .queryParam("ADASD", "NEUTRON_BASIC");
 
         ResponseEntity<String> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);

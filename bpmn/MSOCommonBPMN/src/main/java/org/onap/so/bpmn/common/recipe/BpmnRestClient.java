@@ -95,8 +95,11 @@ public class BpmnRestClient {
         HttpClient client = HttpClientBuilder.create().build();
 
         HttpPost post = new HttpPost(recipeUri);
-        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(recipeTimeout)
-                .setConnectTimeout(recipeTimeout).setConnectionRequestTimeout(recipeTimeout).build();
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setSocketTimeout(recipeTimeout)
+                .setConnectTimeout(recipeTimeout)
+                .setConnectionRequestTimeout(recipeTimeout)
+                .build();
         post.setConfig(requestConfig);
         logger.debug("call the bpmn,  url: {}", recipeUri);
         String jsonReq = wrapResourceRequest(requestId, recipeTimeout, requestAction, serviceInstanceId, serviceType,

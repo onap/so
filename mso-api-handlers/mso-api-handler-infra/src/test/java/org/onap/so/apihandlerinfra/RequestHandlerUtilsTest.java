@@ -107,8 +107,9 @@ public class RequestHandlerUtilsTest extends BaseTest {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-        wireMockServer.stubFor(post(urlMatching(".*/infraActiveRequests.*")).willReturn(aResponse()
-                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).withStatus(HttpStatus.SC_OK)));
+        wireMockServer.stubFor(post(urlMatching(".*/infraActiveRequests.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withStatus(HttpStatus.SC_OK)));
     }
 
     public String inputStream(String JsonInput) throws IOException {
@@ -196,7 +197,8 @@ public class RequestHandlerUtilsTest extends BaseTest {
 
         wireMockServer.stubFor(get(urlMatching(".*/service/search/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
         String serviceType = requestHandlerUtils.getServiceType(requestScope, sir, aLaCarteFlag);
         assertEquals(serviceType, "testServiceTypeALaCarte");
@@ -220,7 +222,8 @@ public class RequestHandlerUtilsTest extends BaseTest {
 
         wireMockServer.stubFor(get(urlMatching(".*/service/0dd91181-49da-446b-b839-cd959a96f04a"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
         String serviceType = requestHandlerUtils.getServiceType(requestScope, sir, aLaCarteFlag);
         assertEquals(serviceType, "testServiceType");
@@ -247,7 +250,8 @@ public class RequestHandlerUtilsTest extends BaseTest {
                         .withStatus(HttpStatus.SC_NOT_FOUND)));
         wireMockServer.stubFor(get(urlMatching(".*/service/search/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
         String serviceType = requestHandlerUtils.getServiceType(requestScope, sir, aLaCarteFlag);
         assertEquals(serviceType, "testServiceType");
@@ -316,7 +320,8 @@ public class RequestHandlerUtilsTest extends BaseTest {
         wireMockServer.stubFor(get(
                 ("/sobpmnengine/history/process-instance?variables=mso-request-id_eq_f0a35706-efc4-4e27-80ea-a995d7a2a40f"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                                .withBody("[]").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                                .withBody("[]")
+                                .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         InfraActiveRequests duplicateRecord = new InfraActiveRequests();
         duplicateRecord.setRequestId("f0a35706-efc4-4e27-80ea-a995d7a2a40f");

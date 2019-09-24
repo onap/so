@@ -37,8 +37,11 @@ public class AuditMDCSetup {
 
     public void setElapsedTime() {
         DateTimeFormatter timeFormatter = DateTimeFormatter.ISO_ZONED_DATE_TIME;
-        MDC.put(ONAPLogConstants.MDCs.ELAPSED_TIME, Long.toString(System.currentTimeMillis() - ZonedDateTime
-                .parse(MDC.get(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP), timeFormatter).toInstant().toEpochMilli()));
+        MDC.put(ONAPLogConstants.MDCs.ELAPSED_TIME,
+                Long.toString(System.currentTimeMillis()
+                        - ZonedDateTime.parse(MDC.get(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP), timeFormatter)
+                                .toInstant()
+                                .toEpochMilli()));
     }
 
     public void setResponseCode(String code) {

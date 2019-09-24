@@ -123,8 +123,10 @@ public class WatchdogServiceModVerIdLookup implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("distributionId", getDistributionId())
-                .append("serviceModelVersionId", getServiceModelVersionId()).append("createTime", getCreateTime())
-                .append("distributionNotification", getDistributionNotification()).append("consumerId", getConsumerId())
+                .append("serviceModelVersionId", getServiceModelVersionId())
+                .append("createTime", getCreateTime())
+                .append("distributionNotification", getDistributionNotification())
+                .append("consumerId", getConsumerId())
                 .toString();
     }
 

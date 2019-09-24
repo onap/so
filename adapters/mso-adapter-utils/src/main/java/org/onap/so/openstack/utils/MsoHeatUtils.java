@@ -361,8 +361,11 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
             cloudReq.setCloudIdentifier(stackName);
             cloudReq.setRequestBody(stackRequest);
             cloudReq.setRequestId(requestId);
-            CloudApiRequests foundCloudReq = foundRequest.getCloudApiRequests().stream()
-                    .filter(cloudReqToFind -> stackName.equals(cloudReq.getCloudIdentifier())).findAny().orElse(null);
+            CloudApiRequests foundCloudReq = foundRequest.getCloudApiRequests()
+                    .stream()
+                    .filter(cloudReqToFind -> stackName.equals(cloudReq.getCloudIdentifier()))
+                    .findAny()
+                    .orElse(null);
             if (foundCloudReq != null) {
                 foundCloudReq.setRequestBody(stackRequest);
             } else {

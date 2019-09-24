@@ -95,8 +95,8 @@ public class SDNOHealthCheckTasksTest extends TestDataSetup {
 
     @Test
     public void sdnoHealthCheckExceptionTest() throws Exception {
-        doThrow(new Exception("Unknown Error")).when(MOCK_sdnoHealthCheckResources).healthCheck(genericVnf,
-                requestContext);
+        doThrow(new Exception("Unknown Error")).when(MOCK_sdnoHealthCheckResources)
+                .healthCheck(genericVnf, requestContext);
         doThrow(new BpmnError("Unknown Error")).when(exceptionUtil)
                 .buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
         try {

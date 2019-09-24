@@ -274,8 +274,10 @@ public class BBInputSetupUtils {
             String cloudRegionId = cloudConfiguration.getLcpCloudRegionId();
             String cloudOwner = cloudConfiguration.getCloudOwner();
             if (cloudRegionId != null && cloudOwner != null && !cloudRegionId.isEmpty() && !cloudOwner.isEmpty()) {
-                return injectionHelper.getAaiClient().get(CloudRegion.class, AAIUriFactory
-                        .createResourceUri(AAIObjectType.CLOUD_REGION, cloudOwner, cloudRegionId).depth(Depth.TWO))
+                return injectionHelper.getAaiClient()
+                        .get(CloudRegion.class,
+                                AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, cloudOwner, cloudRegionId)
+                                        .depth(Depth.TWO))
                         .orElse(null);
 
             } else {
@@ -287,13 +289,17 @@ public class BBInputSetupUtils {
     }
 
     protected InstanceGroup getAAIInstanceGroup(String instanceGroupId) {
-        return injectionHelper.getAaiClient().get(InstanceGroup.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroupId)).orElse(null);
+        return injectionHelper.getAaiClient()
+                .get(InstanceGroup.class,
+                        AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroupId))
+                .orElse(null);
     }
 
     public org.onap.aai.domain.yang.Customer getAAICustomer(String globalSubscriberId) {
-        return injectionHelper.getAaiClient().get(org.onap.aai.domain.yang.Customer.class,
-                AAIUriFactory.createResourceUri(AAIObjectType.CUSTOMER, globalSubscriberId)).orElse(null);
+        return injectionHelper.getAaiClient()
+                .get(org.onap.aai.domain.yang.Customer.class,
+                        AAIUriFactory.createResourceUri(AAIObjectType.CUSTOMER, globalSubscriberId))
+                .orElse(null);
     }
 
     public ServiceSubscription getAAIServiceSubscription(String globalSubscriberId, String subscriptionServiceType) {
@@ -302,8 +308,10 @@ public class BBInputSetupUtils {
                 || subscriptionServiceType.equals("")) {
             return null;
         } else {
-            return injectionHelper.getAaiClient().get(ServiceSubscription.class, AAIUriFactory
-                    .createResourceUri(AAIObjectType.SERVICE_SUBSCRIPTION, globalSubscriberId, subscriptionServiceType))
+            return injectionHelper.getAaiClient()
+                    .get(ServiceSubscription.class,
+                            AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_SUBSCRIPTION, globalSubscriberId,
+                                    subscriptionServiceType))
                     .orElse(null);
         }
 
@@ -311,16 +319,21 @@ public class BBInputSetupUtils {
 
     public ServiceInstance getAAIServiceInstanceById(String serviceInstanceId) {
         return injectionHelper.getAaiClient()
-                .get(ServiceInstance.class, AAIUriFactory
-                        .createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId).depth(Depth.TWO))
+                .get(ServiceInstance.class,
+                        AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
+                                .depth(Depth.TWO))
                 .orElse(null);
     }
 
     protected ServiceInstance getAAIServiceInstanceByIdAndCustomer(String globalCustomerId, String serviceType,
             String serviceInstanceId) {
-        return injectionHelper.getAaiClient().get(ServiceInstance.class, AAIUriFactory
-                .createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalCustomerId, serviceType, serviceInstanceId)
-                .depth(Depth.TWO)).orElse(null);
+        return injectionHelper.getAaiClient()
+                .get(ServiceInstance.class,
+                        AAIUriFactory
+                                .createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalCustomerId, serviceType,
+                                        serviceInstanceId)
+                                .depth(Depth.TWO))
+                .orElse(null);
     }
 
     protected org.onap.aai.domain.yang.ServiceInstances getAAIServiceInstancesByName(String serviceInstanceName,
@@ -331,7 +344,8 @@ public class BBInputSetupUtils {
                         AAIUriFactory
                                 .createResourceUri(AAIObjectPlurals.SERVICE_INSTANCE, customer.getGlobalCustomerId(),
                                         customer.getServiceSubscription().getServiceType())
-                                .queryParam("service-instance-name", serviceInstanceName).depth(Depth.TWO))
+                                .queryParam("service-instance-name", serviceInstanceName)
+                                .depth(Depth.TWO))
                 .orElseGet(() -> {
                     logger.debug("No Service Instance matched by name");
                     return null;
@@ -361,7 +375,8 @@ public class BBInputSetupUtils {
                 .get(ServiceInstances.class,
                         AAIUriFactory
                                 .createResourceUri(AAIObjectPlurals.SERVICE_INSTANCE, globalCustomerId, serviceType)
-                                .queryParam("service-instance-name", serviceInstanceName).depth(Depth.TWO))
+                                .queryParam("service-instance-name", serviceInstanceName)
+                                .depth(Depth.TWO))
                 .orElseGet(() -> {
                     logger.debug("No Service Instance matched by name");
                     return null;
@@ -438,9 +453,11 @@ public class BBInputSetupUtils {
 
     public VolumeGroup getAAIVolumeGroup(String cloudOwnerId, String cloudRegionId, String volumeGroupId) {
         return this.injectionHelper.getAaiClient()
-                .get(VolumeGroup.class, AAIUriFactory
-                        .createResourceUri(AAIObjectType.VOLUME_GROUP, cloudOwnerId, cloudRegionId, volumeGroupId)
-                        .depth(Depth.ONE))
+                .get(VolumeGroup.class,
+                        AAIUriFactory
+                                .createResourceUri(AAIObjectType.VOLUME_GROUP, cloudOwnerId, cloudRegionId,
+                                        volumeGroupId)
+                                .depth(Depth.ONE))
                 .orElseGet(() -> {
                     logger.debug("No Generic Vnf matched by id");
                     return null;
@@ -581,8 +598,9 @@ public class BBInputSetupUtils {
     public ServiceInstances getAAIServiceInstancesGloballyByName(String serviceInstanceName) {
 
         return injectionHelper.getAaiClient()
-                .get(ServiceInstances.class, AAIUriFactory.createNodesUri(AAIObjectPlurals.SERVICE_INSTANCE)
-                        .queryParam("service-instance-name", serviceInstanceName))
+                .get(ServiceInstances.class,
+                        AAIUriFactory.createNodesUri(AAIObjectPlurals.SERVICE_INSTANCE)
+                                .queryParam("service-instance-name", serviceInstanceName))
                 .orElseGet(() -> {
                     logger.debug("No Service Instance matched by name");
                     return null;

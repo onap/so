@@ -70,10 +70,16 @@ public class VnfComponentsRecipe implements Serializable, Recipe {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("id", id).append("action", action).append("description", description)
-                .append("orchestrationUri", orchestrationUri).append("recipeTimeout", recipeTimeout)
-                .append("vnfType", vnfType).append("paramXsd", paramXsd).append("vnfComponentType", vnfComponentType)
-                .append("vfModuleModelUUID", vfModuleModelUUID).toString();
+        return new ToStringBuilder(this).append("id", id)
+                .append("action", action)
+                .append("description", description)
+                .append("orchestrationUri", orchestrationUri)
+                .append("recipeTimeout", recipeTimeout)
+                .append("vnfType", vnfType)
+                .append("paramXsd", paramXsd)
+                .append("vnfComponentType", vnfComponentType)
+                .append("vfModuleModelUUID", vfModuleModelUUID)
+                .toString();
     }
 
     @Override
@@ -82,13 +88,19 @@ public class VnfComponentsRecipe implements Serializable, Recipe {
             return false;
         }
         VnfComponentsRecipe castOther = (VnfComponentsRecipe) other;
-        return new EqualsBuilder().append(action, castOther.action).append(orchestrationUri, castOther.orchestrationUri)
-                .append(vnfType, castOther.vnfType).append(vfModuleModelUUID, castOther.vfModuleModelUUID).isEquals();
+        return new EqualsBuilder().append(action, castOther.action)
+                .append(orchestrationUri, castOther.orchestrationUri)
+                .append(vnfType, castOther.vnfType)
+                .append(vfModuleModelUUID, castOther.vfModuleModelUUID)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(action).append(orchestrationUri).append(vnfType).append(vfModuleModelUUID)
+        return new HashCodeBuilder().append(action)
+                .append(orchestrationUri)
+                .append(vnfType)
+                .append(vfModuleModelUUID)
                 .toHashCode();
     }
 

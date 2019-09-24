@@ -79,9 +79,9 @@ public class CreateNetworkTest extends BaseTaskTest {
 
         CreateNetworkRequest expectedCreateNetworkRequest = new CreateNetworkRequest();
 
-        doReturn(expectedCreateNetworkRequest).when(networkAdapterObjectMapper).createNetworkRequestMapper(
-                requestContext, cloudRegion, orchestrationContext, serviceInstance, network, userInput, cloudRegionPo,
-                customer);
+        doReturn(expectedCreateNetworkRequest).when(networkAdapterObjectMapper)
+                .createNetworkRequestMapper(requestContext, cloudRegion, orchestrationContext, serviceInstance, network,
+                        userInput, cloudRegionPo, customer);
 
         createNetwork.buildCreateNetworkRequest(execution);
 

@@ -67,7 +67,8 @@ public class ActivitySpecActivitySpecCategories implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("activitySpecId", activitySpecId)
-                .append("activitySpecCategoriesId", activitySpecCategoriesId).toString();
+                .append("activitySpecCategoriesId", activitySpecCategoriesId)
+                .toString();
     }
 
     @Override
@@ -77,7 +78,8 @@ public class ActivitySpecActivitySpecCategories implements Serializable {
         }
         ActivitySpecActivitySpecCategories castOther = (ActivitySpecActivitySpecCategories) other;
         return new EqualsBuilder().append(activitySpecId, castOther.activitySpecId)
-                .append(activitySpecCategoriesId, castOther.activitySpecCategoriesId).isEquals();
+                .append(activitySpecCategoriesId, castOther.activitySpecCategoriesId)
+                .isEquals();
     }
 
     @Override

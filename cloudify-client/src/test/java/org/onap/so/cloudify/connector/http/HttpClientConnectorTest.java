@@ -62,8 +62,10 @@ public class HttpClientConnectorTest {
 
     @Test
     public void sunnyDay_POST() {
-        wireMockRule.stubFor(post(urlPathEqualTo("/testUrl")).willReturn(aResponse()
-                .withHeader("Content-Type", "application/json").withBody("TEST").withStatus(HttpStatus.SC_OK)));
+        wireMockRule.stubFor(
+                post(urlPathEqualTo("/testUrl")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody("TEST")
+                        .withStatus(HttpStatus.SC_OK)));
         int port = wireMockRule.port();
         HttpClientConnector conector = new HttpClientConnector();
         CloudifyRequest<Deployment> request = new CloudifyRequest<Deployment>();
@@ -81,8 +83,10 @@ public class HttpClientConnectorTest {
 
     @Test
     public void sunnyDay_GET() {
-        wireMockRule.stubFor(get(urlPathEqualTo("/testUrl")).willReturn(aResponse()
-                .withHeader("Content-Type", "application/json").withBody("TEST").withStatus(HttpStatus.SC_OK)));
+        wireMockRule.stubFor(
+                get(urlPathEqualTo("/testUrl")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody("TEST")
+                        .withStatus(HttpStatus.SC_OK)));
         int port = wireMockRule.port();
         HttpClientConnector conector = new HttpClientConnector();
         CloudifyRequest<Deployment> request = new CloudifyRequest<Deployment>();
@@ -95,8 +99,10 @@ public class HttpClientConnectorTest {
 
     @Test
     public void sunnyDay_PUT() {
-        wireMockRule.stubFor(put(urlPathEqualTo("/testUrl")).willReturn(aResponse()
-                .withHeader("Content-Type", "application/json").withBody("TEST").withStatus(HttpStatus.SC_OK)));
+        wireMockRule.stubFor(
+                put(urlPathEqualTo("/testUrl")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody("TEST")
+                        .withStatus(HttpStatus.SC_OK)));
         int port = wireMockRule.port();
         HttpClientConnector conector = new HttpClientConnector();
         CloudifyRequest<Deployment> request = new CloudifyRequest<Deployment>();
@@ -110,8 +116,10 @@ public class HttpClientConnectorTest {
 
     @Test
     public void sunnyDay_DELETE() {
-        wireMockRule.stubFor(delete(urlPathEqualTo("/testUrl")).willReturn(aResponse()
-                .withHeader("Content-Type", "application/json").withBody("TEST").withStatus(HttpStatus.SC_OK)));
+        wireMockRule.stubFor(
+                delete(urlPathEqualTo("/testUrl")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody("TEST")
+                        .withStatus(HttpStatus.SC_OK)));
         int port = wireMockRule.port();
         HttpClientConnector conector = new HttpClientConnector();
         CloudifyRequest<Deployment> request = new CloudifyRequest<Deployment>();
@@ -153,8 +161,10 @@ public class HttpClientConnectorTest {
 
     @Test
     public void rainyDayBadUri() {
-        wireMockRule.stubFor(post(urlPathEqualTo("/testUrl")).willReturn(aResponse()
-                .withHeader("Content-Type", "application/json").withBody("TEST").withStatus(HttpStatus.SC_OK)));
+        wireMockRule.stubFor(
+                post(urlPathEqualTo("/testUrl")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody("TEST")
+                        .withStatus(HttpStatus.SC_OK)));
         thrown.expect(HttpClientException.class);
         int port = wireMockRule.port();
         HttpClientConnector conector = new HttpClientConnector();
@@ -171,8 +181,10 @@ public class HttpClientConnectorTest {
 
     @Test
     public void sunnyDayWithJsonEntity_POST() {
-        wireMockRule.stubFor(post(urlPathEqualTo("/testUrl")).willReturn(aResponse()
-                .withHeader("Content-Type", "application/json").withBody("TEST").withStatus(HttpStatus.SC_OK)));
+        wireMockRule.stubFor(
+                post(urlPathEqualTo("/testUrl")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody("TEST")
+                        .withStatus(HttpStatus.SC_OK)));
         int port = wireMockRule.port();
         HttpClientConnector conector = new HttpClientConnector();
 
@@ -202,8 +214,10 @@ public class HttpClientConnectorTest {
 
     @Test
     public void sunnyDayWithStreamEntity_POST() {
-        wireMockRule.stubFor(post(urlPathEqualTo("/testUrl")).willReturn(aResponse()
-                .withHeader("Content-Type", "application/json").withBody("TEST").withStatus(HttpStatus.SC_OK)));
+        wireMockRule.stubFor(
+                post(urlPathEqualTo("/testUrl")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody("TEST")
+                        .withStatus(HttpStatus.SC_OK)));
         int port = wireMockRule.port();
         HttpClientConnector conector = new HttpClientConnector();
 
@@ -236,8 +250,10 @@ public class HttpClientConnectorTest {
 
     @Test
     public void rainyDayEmptyResponse() {
-        wireMockRule.stubFor(get(urlPathEqualTo("/testUrl")).willReturn(aResponse()
-                .withHeader("Content-Type", "application/json").withBody("TEST").withStatus(HttpStatus.SC_NOT_FOUND)));
+        wireMockRule.stubFor(
+                get(urlPathEqualTo("/testUrl")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody("TEST")
+                        .withStatus(HttpStatus.SC_NOT_FOUND)));
 
         thrown.expect(HttpClientException.class);
         int port = wireMockRule.port();

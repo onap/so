@@ -198,13 +198,14 @@ public class OofHomingV2IT extends BaseIntegrationTest {
         beforeVpnBondingLink("1");
 
         JSONObject asyncResponse = new JSONObject();
-        asyncResponse.put("transactionId", "transactionId").put("requestId", "testRequestId").put("requestState",
-                "completed");
+        asyncResponse.put("transactionId", "transactionId")
+                .put("requestId", "testRequestId")
+                .put("requestState", "completed");
         JSONArray solution1 = new JSONArray();
         solution1.put(new JSONObject().put("serviceResourceId", "testProxyId1")
                 .put("solution",
-                        new JSONObject().put("identifierType", "serviceInstanceId").put("identifiers",
-                                new JSONArray().put("testServiceInstanceId1")))
+                        new JSONObject().put("identifierType", "serviceInstanceId")
+                                .put("identifiers", new JSONArray().put("testServiceInstanceId1")))
                 .put("assignmentInfo",
                         new JSONArray().put(new JSONObject().put("key", "isRehome").put("value", "False"))
                                 .put(new JSONObject().put("key", "cloudOwner").put("value", "aic"))
@@ -215,16 +216,16 @@ public class OofHomingV2IT extends BaseIntegrationTest {
                                 .put(new JSONObject().put("key", "cloudRegionId").put("value", "testSloudRegionId1"))));
         solution1.put(new JSONObject().put("serviceResourceId", "testProxyId2")
                 .put("solution",
-                        new JSONObject().put("identifierType", "serviceInstanceId").put("identifiers",
-                                new JSONArray().put("testServiceInstanceId2")))
+                        new JSONObject().put("identifierType", "serviceInstanceId")
+                                .put("identifiers", new JSONArray().put("testServiceInstanceId2")))
                 .put("assignmentInfo",
                         new JSONArray().put(new JSONObject().put("key", "isRehome").put("value", "False"))
                                 .put(new JSONObject().put("key", "cloudOwner").put("value", "aic"))
                                 .put(new JSONObject().put("key", "primaryPnfName").put("value", "testPrimaryPnfName2"))
                                 .put(new JSONObject().put("key", "aicClli").put("value", "testAicClli2"))
                                 .put(new JSONObject().put("key", "aicVersion").put("value", "3"))
-                                .put(new JSONObject().put("key", "secondaryPnfName").put("value",
-                                        "testSecondaryPnfName2"))
+                                .put(new JSONObject().put("key", "secondaryPnfName")
+                                        .put("value", "testSecondaryPnfName2"))
                                 .put(new JSONObject().put("key", "cloudRegionId").put("value", "testSloudRegionId2"))));
 
         asyncResponse.put("solutions", new JSONObject().put("placementSolutions", new JSONArray().put(solution1))
@@ -263,13 +264,14 @@ public class OofHomingV2IT extends BaseIntegrationTest {
         beforeVpnBondingLink("1");
 
         JSONObject asyncResponse = new JSONObject();
-        asyncResponse.put("transactionId", "transactionId").put("requestId", "testRequestId").put("requestState",
-                "completed");
+        asyncResponse.put("transactionId", "transactionId")
+                .put("requestId", "testRequestId")
+                .put("requestState", "completed");
         JSONArray solution1 = new JSONArray();
         solution1.put(new JSONObject().put("serviceResourceId", "testProxyId1")
                 .put("solution",
-                        new JSONObject().put("identifierType", "serviceInstanceId").put("identifiers",
-                                new JSONArray().put("testServiceInstanceId1")))
+                        new JSONObject().put("identifierType", "serviceInstanceId")
+                                .put("identifiers", new JSONArray().put("testServiceInstanceId1")))
                 .put("assignmentInfo",
                         new JSONArray().put(new JSONObject().put("key", "isRehome").put("value", "False"))
                                 .put(new JSONObject().put("key", "cloudOwner").put("value", "aic"))
@@ -280,23 +282,23 @@ public class OofHomingV2IT extends BaseIntegrationTest {
                                 .put(new JSONObject().put("key", "cloudRegionId").put("value", "testSloudRegionId1"))));
         solution1.put(new JSONObject().put("serviceResourceId", "testProxyId2")
                 .put("solution",
-                        new JSONObject().put("identifierType", "serviceInstanceId").put("identifiers",
-                                new JSONArray().put("testServiceInstanceId2")))
+                        new JSONObject().put("identifierType", "serviceInstanceId")
+                                .put("identifiers", new JSONArray().put("testServiceInstanceId2")))
                 .put("assignmentInfo",
                         new JSONArray().put(new JSONObject().put("key", "isRehome").put("value", "False"))
                                 .put(new JSONObject().put("key", "cloudOwner").put("value", "aic"))
                                 .put(new JSONObject().put("key", "primaryPnfName").put("value", "testPrimaryPnfName2"))
                                 .put(new JSONObject().put("key", "aicClli").put("value", "testAicClli2"))
                                 .put(new JSONObject().put("key", "aicVersion").put("value", "3"))
-                                .put(new JSONObject().put("key", "secondaryPnfName").put("value",
-                                        "testSecondaryPnfName2"))
+                                .put(new JSONObject().put("key", "secondaryPnfName")
+                                        .put("value", "testSecondaryPnfName2"))
                                 .put(new JSONObject().put("key", "cloudRegionId").put("value", "testSloudRegionId2"))));
 
         JSONArray solution2 = new JSONArray();
         solution2.put(new JSONObject().put("serviceResourceId", "testProxyId1")
                 .put("solution",
-                        new JSONObject().put("identifierType", "serviceInstanceId").put("identifiers",
-                                new JSONArray().put("testServiceInstanceId3")))
+                        new JSONObject().put("identifierType", "serviceInstanceId")
+                                .put("identifiers", new JSONArray().put("testServiceInstanceId3")))
                 .put("assignmentInfo",
                         new JSONArray().put(new JSONObject().put("key", "isRehome").put("value", "False"))
                                 .put(new JSONObject().put("key", "cloudOwner").put("value", "aic"))
@@ -307,16 +309,16 @@ public class OofHomingV2IT extends BaseIntegrationTest {
                                 .put(new JSONObject().put("key", "cloudRegionId").put("value", "testSloudRegionId3"))));
         solution2.put(new JSONObject().put("serviceResourceId", "testProxyId2")
                 .put("solution",
-                        new JSONObject().put("identifierType", "serviceInstanceId").put("identifiers",
-                                new JSONArray().put("testServiceInstanceId4")))
+                        new JSONObject().put("identifierType", "serviceInstanceId")
+                                .put("identifiers", new JSONArray().put("testServiceInstanceId4")))
                 .put("assignmentInfo",
                         new JSONArray().put(new JSONObject().put("key", "isRehome").put("value", "False"))
                                 .put(new JSONObject().put("key", "cloudOwner").put("value", "aic"))
                                 .put(new JSONObject().put("key", "primaryPnfName").put("value", "testPrimaryPnfName4"))
                                 .put(new JSONObject().put("key", "aicClli").put("value", "testAicClli4"))
                                 .put(new JSONObject().put("key", "aicVersion").put("value", "3"))
-                                .put(new JSONObject().put("key", "secondaryPnfName").put("value",
-                                        "testSecondaryPnfName4"))
+                                .put(new JSONObject().put("key", "secondaryPnfName")
+                                        .put("value", "testSecondaryPnfName4"))
                                 .put(new JSONObject().put("key", "cloudRegionId").put("value", "testSloudRegionId4"))));
 
         asyncResponse.put("solutions",
@@ -384,13 +386,14 @@ public class OofHomingV2IT extends BaseIntegrationTest {
         beforeAllottedResource();
 
         JSONObject asyncResponse = new JSONObject();
-        asyncResponse.put("transactionId", "transactionId").put("requestId", "testRequestId").put("requestState",
-                "completed");
+        asyncResponse.put("transactionId", "transactionId")
+                .put("requestId", "testRequestId")
+                .put("requestState", "completed");
         JSONArray solution1 = new JSONArray();
         solution1.put(new JSONObject().put("serviceResourceId", "testAllottedResourceId1")
                 .put("solution",
-                        new JSONObject().put("identifierType", "serviceInstanceId").put("identifiers",
-                                new JSONArray().put("testServiceInstanceId1")))
+                        new JSONObject().put("identifierType", "serviceInstanceId")
+                                .put("identifiers", new JSONArray().put("testServiceInstanceId1")))
                 .put("assignmentInfo",
                         new JSONArray().put(new JSONObject().put("key", "isRehome").put("value", "True"))
                                 .put(new JSONObject().put("key", "cloudOwner").put("value", "aic"))
@@ -401,8 +404,8 @@ public class OofHomingV2IT extends BaseIntegrationTest {
                                 .put(new JSONObject().put("key", "cloudRegionId").put("value", "testCloudRegionId1"))));
         solution1.put(new JSONObject().put("serviceResourceId", "testAllottedResourceId2")
                 .put("solution",
-                        new JSONObject().put("identifierType", "serviceInstanceId").put("identifiers",
-                                new JSONArray().put("testServiceInstanceId2")))
+                        new JSONObject().put("identifierType", "serviceInstanceId")
+                                .put("identifiers", new JSONArray().put("testServiceInstanceId2")))
                 .put("assignmentInfo",
                         new JSONArray().put(new JSONObject().put("key", "isRehome").put("value", "True"))
                                 .put(new JSONObject().put("key", "cloudOwner").put("value", "aic"))
@@ -413,8 +416,8 @@ public class OofHomingV2IT extends BaseIntegrationTest {
                                 .put(new JSONObject().put("key", "cloudRegionId").put("value", "testCloudRegionId2"))));
         solution1.put(new JSONObject().put("serviceResourceId", "testAllottedResourceId3")
                 .put("solution",
-                        new JSONObject().put("identifierType", "cloudRegionId").put("identifiers",
-                                new JSONArray().put("testCloudRegionId3")))
+                        new JSONObject().put("identifierType", "cloudRegionId")
+                                .put("identifiers", new JSONArray().put("testCloudRegionId3")))
                 .put("assignmentInfo",
                         new JSONArray().put(new JSONObject().put("key", "isRehome").put("value", "True"))
                                 .put(new JSONObject().put("key", "cloudOwner").put("value", "aic"))
@@ -455,14 +458,15 @@ public class OofHomingV2IT extends BaseIntegrationTest {
         beforeAllottedResource();
 
         JSONObject asyncResponse = new JSONObject();
-        asyncResponse.put("transactionId", "transactionId").put("requestId", "testRequestId").put("requestState",
-                "completed");
+        asyncResponse.put("transactionId", "transactionId")
+                .put("requestId", "testRequestId")
+                .put("requestState", "completed");
         JSONArray solution1 = new JSONArray();
         JSONArray licenseSolution = new JSONArray();
         solution1.put(new JSONObject().put("serviceResourceId", "testAllottedResourceId1")
                 .put("solution",
-                        new JSONObject().put("identifierType", "serviceInstanceId").put("identifiers",
-                                new JSONArray().put("testServiceInstanceId1")))
+                        new JSONObject().put("identifierType", "serviceInstanceId")
+                                .put("identifiers", new JSONArray().put("testServiceInstanceId1")))
                 .put("assignmentInfo",
                         new JSONArray().put(new JSONObject().put("key", "isRehome").put("value", "True"))
                                 .put(new JSONObject().put("key", "cloudOwner").put("value", "aic"))
@@ -473,8 +477,8 @@ public class OofHomingV2IT extends BaseIntegrationTest {
                                 .put(new JSONObject().put("key", "cloudRegionId").put("value", "testCloudRegionId1"))));
         solution1.put(new JSONObject().put("serviceResourceId", "testAllottedResourceId2")
                 .put("solution",
-                        new JSONObject().put("identifierType", "serviceInstanceId").put("identifiers",
-                                new JSONArray().put("testServiceInstanceId2")))
+                        new JSONObject().put("identifierType", "serviceInstanceId")
+                                .put("identifiers", new JSONArray().put("testServiceInstanceId2")))
                 .put("assignmentInfo",
                         new JSONArray().put(new JSONObject().put("key", "isRehome").put("value", "True"))
                                 .put(new JSONObject().put("key", "cloudOwner").put("value", "aic"))
@@ -485,8 +489,8 @@ public class OofHomingV2IT extends BaseIntegrationTest {
                                 .put(new JSONObject().put("key", "cloudRegionId").put("value", "testCloudRegionId2"))));
         solution1.put(new JSONObject().put("serviceResourceId", "testAllottedResourceId3")
                 .put("solution",
-                        new JSONObject().put("identifierType", "cloudRegionId").put("identifiers",
-                                new JSONArray().put("testCloudRegionId3")))
+                        new JSONObject().put("identifierType", "cloudRegionId")
+                                .put("identifiers", new JSONArray().put("testCloudRegionId3")))
                 .put("assignmentInfo",
                         new JSONArray().put(new JSONObject().put("key", "isRehome").put("value", "True"))
                                 .put(new JSONObject().put("key", "cloudOwner").put("value", "aic"))
@@ -540,8 +544,9 @@ public class OofHomingV2IT extends BaseIntegrationTest {
         beforeVnf();
 
         JSONObject asyncResponse = new JSONObject();
-        asyncResponse.put("transactionId", "transactionId").put("requestId", "testRequestId").put("requestState",
-                "completed");
+        asyncResponse.put("transactionId", "transactionId")
+                .put("requestId", "testRequestId")
+                .put("requestState", "completed");
         JSONArray licenseSolution = new JSONArray();
 
         licenseSolution.put(new JSONObject().put("serviceResourceId", "testVnfId1")

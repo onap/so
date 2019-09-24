@@ -35,8 +35,9 @@ public class DeactivateNetworkBBTest extends BaseBPMNTest {
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeactivateNetworkBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("DeactivateNetworkBB_Start", "DeactivateNetworkSDNC",
-                "CallActivity_sdncHandler", "DeactivateNetworkAAI", "DeactivateNetworkBB_End");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("DeactivateNetworkBB_Start", "DeactivateNetworkSDNC", "CallActivity_sdncHandler",
+                        "DeactivateNetworkAAI", "DeactivateNetworkBB_End");
         assertThat(pi).isEnded();
     }
 
@@ -47,7 +48,8 @@ public class DeactivateNetworkBBTest extends BaseBPMNTest {
                 .deactivateNetwork(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeactivateNetworkBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("DeactivateNetworkBB_Start", "DeactivateNetworkSDNC")
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("DeactivateNetworkBB_Start", "DeactivateNetworkSDNC")
                 .hasNotPassed("DeactivateNetworkAAI", "DeactivateNetworkBB_End");
         assertThat(pi).isEnded();
     }

@@ -87,16 +87,20 @@ public class DeleteVcpeResCustServiceIT extends AbstractTestBase {
         // initially, the SI includes the ARs
         wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/business/customers/customer/" + CUST
                 + "/service-subscriptions/service-subscription/" + SVC + "/service-instances/service-instance/" + INST))
-                        .inScenario("SI retrieval").whenScenarioStateIs(Scenario.STARTED)
-                        .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                        .inScenario("SI retrieval")
+                        .whenScenarioStateIs(Scenario.STARTED)
+                        .willReturn(aResponse().withStatus(200)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBodyFile("VCPE/DeleteVcpeResCustService/getSI.xml"))
                         .willSetStateTo("ARs Deleted"));
 
         // once the ARs have been deleted, the SI should be empty
         wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/business/customers/customer/" + CUST
                 + "/service-subscriptions/service-subscription/" + SVC + "/service-instances/service-instance/" + INST))
-                        .inScenario("SI retrieval").whenScenarioStateIs("ARs Deleted")
-                        .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                        .inScenario("SI retrieval")
+                        .whenScenarioStateIs("ARs Deleted")
+                        .willReturn(aResponse().withStatus(200)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBodyFile("VCPE/DeleteVcpeResCustService/getSIAfterDelArs.xml")));
 
         // for BRG
@@ -115,7 +119,8 @@ public class DeleteVcpeResCustServiceIT extends AbstractTestBase {
 
         // MockGetGenericVnfById("vnfX.*", "GenericFlows/getGenericVnfByNameResponse.xml");
         wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/.*"))
-                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                .willReturn(aResponse().withStatus(200)
+                        .withHeader("Content-Type", "text/xml")
                         .withBodyFile("GenericFlows/getGenericVnfByNameResponse.xml")));
 
 

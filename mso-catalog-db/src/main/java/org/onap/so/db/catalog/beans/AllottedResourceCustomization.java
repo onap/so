@@ -99,14 +99,20 @@ public class AllottedResourceCustomization implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
-                .append("created", created).append("modelInstanceName", modelInstanceName)
+                .append("created", created)
+                .append("modelInstanceName", modelInstanceName)
                 .append("providingServiceModelInvariantUUID", providingServiceModelInvariantUUID)
                 .append("providingServiceModelUUID", providingServiceModelUUID)
                 .append("providingServiceModelName", providingServiceModelName)
-                .append("targetNetworkRole", targetNetworkRole).append("nfFunction", nfFunction)
-                .append("nfType", nfType).append("nfRole", nfRole).append("nfNamingCode", nfNamingCode)
-                .append("minInstances", minInstances).append("maxInstances", maxInstances)
-                .append("allottedResource", allottedResource).toString();
+                .append("targetNetworkRole", targetNetworkRole)
+                .append("nfFunction", nfFunction)
+                .append("nfType", nfType)
+                .append("nfRole", nfRole)
+                .append("nfNamingCode", nfNamingCode)
+                .append("minInstances", minInstances)
+                .append("maxInstances", maxInstances)
+                .append("allottedResource", allottedResource)
+                .toString();
     }
 
     @PrePersist

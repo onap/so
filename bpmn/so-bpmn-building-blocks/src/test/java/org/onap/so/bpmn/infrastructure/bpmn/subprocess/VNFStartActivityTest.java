@@ -35,8 +35,9 @@ public class VNFStartActivityTest extends BaseBPMNTest {
     public void sunnyDayVNFStartActivity_Test() throws InterruptedException {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFStartActivity", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("VNFStartActivity_Start", "TaskPreProcessActivity", "TaskStart",
-                "VNFStartActivity_End");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("VNFStartActivity_Start", "TaskPreProcessActivity", "TaskStart",
+                        "VNFStartActivity_End");
         assertThat(pi).isEnded();
     }
 
@@ -46,7 +47,8 @@ public class VNFStartActivityTest extends BaseBPMNTest {
         doThrow(new BpmnError("7000", "TESTING ERRORS")).when(appcRunTasks)
                 .runAppcCommand(any(BuildingBlockExecution.class), any(Action.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFStartActivity", variables);
-        assertThat(pi).isNotNull().isStarted()
+        assertThat(pi).isNotNull()
+                .isStarted()
                 .hasPassedInOrder("VNFStartActivity_Start", "TaskPreProcessActivity", "TaskStart")
                 .hasNotPassed("VNFStartActivity_End");
     }

@@ -52,20 +52,24 @@ public abstract class GraphInventoryQueryClient<S, I, Wrapper extends GraphInven
     protected abstract GraphInventoryUri getQueryUri();
 
     public String query(Format format, I query) {
-        return client.createClient(setupQueryParams(getQueryUri().queryParam("format", format.toString()))).put(query,
-                String.class);
+        return client.createClient(setupQueryParams(getQueryUri().queryParam("format", format.toString())))
+                .put(query, String.class);
     }
 
     protected <R> List<R> querySingleType(Format format, I query, Class<R> clazz) {
         return client.createClient(setupQueryParams(getQueryUri().queryParam("format", format.toString())))
-                .put(query, new GenericType<Results<Object>>() {}).getResult().stream().map(item -> {
+                .put(query, new GenericType<Results<Object>>() {})
+                .getResult()
+                .stream()
+                .map(item -> {
                     try {
-                        return mapperProvider.getMapper().readValue(mapperProvider.getMapper().writeValueAsString(item),
-                                clazz);
+                        return mapperProvider.getMapper()
+                                .readValue(mapperProvider.getMapper().writeValueAsString(item), clazz);
                     } catch (IOException e) {
                         throw new IllegalArgumentException("could not map values from json", e);
                     }
-                }).collect(Collectors.toList());
+                })
+                .collect(Collectors.toList());
     }
 
     public List<Pathed> queryPathed(I query) {
@@ -78,7 +82,8 @@ public abstract class GraphInventoryQueryClient<S, I, Wrapper extends GraphInven
 
     public <R> List<R> querySingleResource(I query, Class<R> clazz) {
         try {
-            return getResourceAndUrl(query).stream().map(item -> item.getWrapper().asBean(clazz).get())
+            return getResourceAndUrl(query).stream()
+                    .map(item -> item.getWrapper().asBean(clazz).get())
                     .collect(Collectors.toList());
         } catch (IOException e) {
             throw new IllegalArgumentException("could not map values from json", e);

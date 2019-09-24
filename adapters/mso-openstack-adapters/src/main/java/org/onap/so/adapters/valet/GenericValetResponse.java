@@ -47,8 +47,10 @@ public class GenericValetResponse<T> {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("statusCode", statusCode).append("errorMessage", errorMessage)
-                .append("returnObject", returnObject).toString();
+        return new ToStringBuilder(this).append("statusCode", statusCode)
+                .append("errorMessage", errorMessage)
+                .append("returnObject", returnObject)
+                .toString();
     }
 
     public void setErrorMessage(String errorMessage) {

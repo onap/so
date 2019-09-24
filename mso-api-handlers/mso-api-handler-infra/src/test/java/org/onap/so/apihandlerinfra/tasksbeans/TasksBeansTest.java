@@ -33,8 +33,10 @@ import com.openpojo.validation.test.impl.SetterTester;
 public class TasksBeansTest extends BaseTest {
     @Test
     public void validateGettersAndSetters() {
-        Validator validator = ValidatorBuilder.create().with(new SetterMustExistRule(), new GetterMustExistRule())
-                .with(new SetterTester(), new GetterTester()).build();
+        Validator validator = ValidatorBuilder.create()
+                .with(new SetterMustExistRule(), new GetterMustExistRule())
+                .with(new SetterTester(), new GetterTester())
+                .build();
         validator.validate("org.onap.so.apihandlerinfra.tasksbeans", new FilterPackageInfo());
     }
 }

@@ -74,8 +74,8 @@ public class VnfVolumeAdapterClientImpl implements VnfVolumeAdapterClient {
     public RollbackVolumeGroupResponse rollbackVNFVolumes(String aaiVolumeGroupId, RollbackVolumeGroupRequest req)
             throws VnfAdapterClientException {
         try {
-            return this.getAdapterRestClient("/" + aaiVolumeGroupId + "/rollback").delete(req,
-                    RollbackVolumeGroupResponse.class);
+            return this.getAdapterRestClient("/" + aaiVolumeGroupId + "/rollback")
+                    .delete(req, RollbackVolumeGroupResponse.class);
         } catch (InternalServerErrorException e) {
             logger.error("InternalServerErrorException in rollbackVNFVolumes", e);
             throw new VnfAdapterClientException(e.getMessage());
@@ -110,8 +110,10 @@ public class VnfVolumeAdapterClientImpl implements VnfVolumeAdapterClient {
     protected String buildQueryPath(String aaiVolumeGroupId, String cloudSiteId, String tenantId,
             String volumeGroupStackId, Boolean skipAAI, String requestId, String serviceInstanceId) {
         javax.ws.rs.core.UriBuilder builder = this.getUri("/" + aaiVolumeGroupId);
-        builder.queryParam("cloudSiteId", cloudSiteId).queryParam("tenantId", tenantId)
-                .queryParam("volumeGroupStackId", volumeGroupStackId).queryParam("skipAAI", skipAAI)
+        builder.queryParam("cloudSiteId", cloudSiteId)
+                .queryParam("tenantId", tenantId)
+                .queryParam("volumeGroupStackId", volumeGroupStackId)
+                .queryParam("skipAAI", skipAAI)
                 .queryParam("msoRequest.requestId", requestId)
                 .queryParam("msoRequest.serviceInstanceId", serviceInstanceId);
         return builder.build().toString();

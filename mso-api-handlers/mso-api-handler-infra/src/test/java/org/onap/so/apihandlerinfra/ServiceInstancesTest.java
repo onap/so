@@ -124,8 +124,9 @@ public class ServiceInstancesTest extends BaseTest {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-        wireMockServer.stubFor(post(urlMatching(".*/infraActiveRequests.*")).willReturn(aResponse()
-                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).withStatus(HttpStatus.SC_OK)));
+        wireMockServer.stubFor(post(urlMatching(".*/infraActiveRequests.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withStatus(HttpStatus.SC_OK)));
         Mockito.doReturn(null).when(requestsDbClient).getInfraActiveRequestbyRequestId(Mockito.any());
     }
 
@@ -193,15 +194,18 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/service/search/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(serviceRecipe)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(serviceRecipe))
+                        .withStatus(HttpStatus.SC_OK)));
 
         // expect
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
@@ -263,16 +267,19 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/CreateGenericALaCarteServiceInstance"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
 
         wireMockServer.stubFor(get(urlMatching(".*/service/search/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(serviceRecipe)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(serviceRecipe))
+                        .withStatus(HttpStatus.SC_OK)));
         // expect
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -300,18 +307,21 @@ public class ServiceInstancesTest extends BaseTest {
         defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
 
 
-        wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB")).willReturn(aResponse()
-                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_BAD_GATEWAY)));
+        wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_BAD_GATEWAY)));
 
 
         wireMockServer.stubFor(get(urlMatching(".*/service/search/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(serviceRecipe)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(serviceRecipe))
+                        .withStatus(HttpStatus.SC_OK)));
 
         uri = servInstanceuri + "v5/serviceInstances";
         ResponseEntity<String> response =
@@ -336,11 +346,13 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(get(urlMatching(".*/service/search/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(serviceRecipe)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(serviceRecipe))
+                        .withStatus(HttpStatus.SC_OK)));
 
         uri = servInstanceuri + "v5/serviceInstances";
         ResponseEntity<String> response =
@@ -365,11 +377,13 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(get(urlMatching(".*/service/search/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(serviceRecipe)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(serviceRecipe))
+                        .withStatus(HttpStatus.SC_OK)));
 
         uri = servInstanceuri + "v5/serviceInstances";
         ResponseEntity<String> response = sendRequest(inputStream("/ServiceInstanceEmpty.json"), uri, HttpMethod.POST);
@@ -391,7 +405,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(get(urlMatching(".*/service/search/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
 
         wireMockServer.stubFor(get(urlMatching(
@@ -418,10 +433,12 @@ public class ServiceInstancesTest extends BaseTest {
         defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
         wireMockServer.stubFor(get(urlMatching(".*/service/search/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
-        wireMockServer.stubFor(get(urlMatching(".*/serviceRecipe/search/.*")).willReturn(aResponse()
-                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).withStatus(HttpStatus.SC_NOT_FOUND)));
+        wireMockServer.stubFor(get(urlMatching(".*/serviceRecipe/search/.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withStatus(HttpStatus.SC_NOT_FOUND)));
 
         ResponseEntity<String> response =
                 sendRequest(inputStream("/ServiceInstanceNoRecipe.json"), uri, HttpMethod.POST);
@@ -442,15 +459,18 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/service/search/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(serviceRecipe)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(serviceRecipe))
+                        .withStatus(HttpStatus.SC_OK)));
         // expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -480,19 +500,23 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/service/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/service/search/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(serviceRecipe)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(serviceRecipe))
+                        .withStatus(HttpStatus.SC_OK)));
 
         // expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
@@ -522,19 +546,23 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/service/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/service/search/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(serviceRecipe)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(serviceRecipe))
+                        .withStatus(HttpStatus.SC_OK)));
         // expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -563,19 +591,23 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/service/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/service/search/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(serviceRecipe)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(serviceRecipe))
+                        .withStatus(HttpStatus.SC_OK)));
         // expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -604,19 +636,23 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/service/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/service/search/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(serviceRecipe)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(serviceRecipe))
+                        .withStatus(HttpStatus.SC_OK)));
         // expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -636,7 +672,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void createPortConfiguration() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/ALaCarteOrchestrator"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
         // expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -666,7 +703,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void deletePortConfiguration() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/ALaCarteOrchestrator"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         // expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
@@ -688,7 +726,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void enablePort() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/ALaCarteOrchestrator"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
         // expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -709,7 +748,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void disablePort() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/ALaCarteOrchestrator"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
         // expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -730,7 +770,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void activatePort() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/ALaCarteOrchestrator"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
         // expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -751,7 +792,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void deactivatePort() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/ALaCarteOrchestrator"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
         // expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -772,7 +814,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void addRelationships() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/ALaCarteOrchestrator"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
         // expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -792,7 +835,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void removeRelationships() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/ALaCarteOrchestrator"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
         // expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -812,7 +856,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void createVnfInstanceNoALaCarte() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
 
         wireMockServer.stubFor(get(urlMatching(
@@ -852,7 +897,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void createVnfInstance() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/service/5df8b6de-2083-11e7-93ae-92361f002672"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -915,7 +961,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void replaceVnfInstance() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
                 ".*/vnfResourceCustomization/search/findByModelCustomizationUUID[?]MODEL_CUSTOMIZATION_UUID=68dc9a92-214c-11e7-93ae-92361f002671"))
@@ -953,7 +1000,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void replaceVnfRecreateInstance() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/RecreateInfraVce"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
                 ".*/vnfResourceCustomization/search/findByModelCustomizationUUID[?]MODEL_CUSTOMIZATION_UUID=68dc9a92-214c-11e7-93ae-92361f002674"))
@@ -993,7 +1041,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void recreateVnfInstance() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
                 ".*/vnfResourceCustomization/search/findByModelCustomizationUUID[?]MODEL_CUSTOMIZATION_UUID=68dc9a92-214c-11e7-93ae-92361f002674"))
@@ -1032,7 +1081,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void updateVnfInstance() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
                 ".*/vnfResourceCustomization/search/findByModelCustomizationUUID[?]MODEL_CUSTOMIZATION_UUID=68dc9a92-214c-11e7-93ae-92361f002674"))
@@ -1070,7 +1120,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void applyUpdatedConfig() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/VnfConfigUpdate"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
 
         wireMockServer.stubFor(get(urlMatching(".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction"
@@ -1099,7 +1150,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void deleteVnfInstanceV5() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction"
                 + "[?]nfRole=GR-API-DEFAULT&action=deleteInstance"))
@@ -1148,7 +1200,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/CreateVfModuleInfra"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
                 "/vnfComponentsRecipe/search/findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction"
@@ -1177,7 +1230,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void createVfModuleInstanceNoModelCustomization() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/CreateVfModuleInfra"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/vnfResource/fe6478e4-ea33-3346-ac12-ab121484a3fe"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -1244,7 +1298,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void deleteVfModuleInstanceNoMatchingModelUUD() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/vnfResource/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -1348,7 +1403,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void replaceVfModuleInstance() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer
                 .stubFor(get(urlMatching(".*/vfModule/search/findFirstVfModuleByModelInvariantUUIDAndModelVersion[?]"
@@ -1384,7 +1440,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void updateVfModuleInstance() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
                 ".*/vfModuleCustomization/search/findFirstByModelCustomizationUUIDOrderByCreatedDesc[?]MODEL_CUSTOMIZATION_UUID=cb82ffd8-252a-11e7-93ae-92361f002671"))
@@ -1458,7 +1515,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void inPlaceSoftwareUpdate() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/VnfInPlaceUpdate"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction[?]"
                 + "nfRole=GR-API-DEFAULT&action=inPlaceSoftwareUpdate"))
@@ -1486,7 +1544,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void deleteVfModuleInstance() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer
                 .stubFor(get(urlMatching(".*/vfModule/search/findFirstVfModuleByModelInvariantUUIDAndModelVersion[?]"
@@ -1523,7 +1582,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void deleteVfModuleNoModelInvariantId() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
                 ".*/vnfComponentsRecipe/search/findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction"
@@ -1553,7 +1613,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void deactivateAndCloudDeleteVfModuleInstance() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer
                 .stubFor(get(urlMatching(".*/vfModule/search/findFirstVfModuleByModelInvariantUUIDAndModelVersion[?]"
@@ -1590,7 +1651,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void createVolumeGroupInstance() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
                 ".*/vfModuleCustomization/search/findFirstByModelCustomizationUUIDOrderByCreatedDesc[?]MODEL_CUSTOMIZATION_UUID=b4ea86b4-253f-11e7-93ae-92361f002671"))
@@ -1631,7 +1693,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void updateVolumeGroupInstance() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
                 ".*/vfModuleCustomization/search/findFirstByModelCustomizationUUIDOrderByCreatedDesc[?]MODEL_CUSTOMIZATION_UUID=b4ea86b4-253f-11e7-93ae-92361f002671"))
@@ -1672,11 +1735,13 @@ public class ServiceInstancesTest extends BaseTest {
     public void deleteVolumeGroupInstance() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
                 ".*/vfModuleCustomization/search/findFirstByModelCustomizationUUIDOrderByCreatedDesc[?]MODEL_CUSTOMIZATION_UUID=b4ea86b4-253f-11e7-93ae-92361f002671"))
@@ -1717,7 +1782,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void createNetworkInstance() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/networkResourceCustomization/3bdbb104-476c-483e-9f8b-c095b3d308ac"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -1755,7 +1821,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void updateNetworkInstance() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/networkResourceCustomization/3bdbb104-476c-483e-9f8b-c095b3d308ac"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -1793,7 +1860,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void deleteNetworkInstance() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/networkResourceCustomization/3bdbb104-476c-483e-9f8b-c095b3d308ac"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -1832,7 +1900,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void deleteNetworkInstanceNoReqParams() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/networkRecipe/search/findFirstByModelNameAndAction[?]"
                 + "modelName=GR-API-DEFAULT&action=deleteInstance"))
@@ -1893,7 +1962,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void creatServiceInstanceGRTestApiNoCustomRecipeFound() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         ServiceRecipe serviceRecipe = new ServiceRecipe();
         serviceRecipe.setOrchestrationUri("/mso/async/services/WorkflowActionBB");
@@ -1906,11 +1976,13 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(get(urlMatching(".*/service/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(serviceRecipe)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(serviceRecipe))
+                        .withStatus(HttpStatus.SC_OK)));
 
         uri = servInstanceuri + "v7" + "/serviceInstances";
         ResponseEntity<String> response =
@@ -1932,7 +2004,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void createNetworkInstanceTestApiUndefinedUsePropertiesDefault() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/networkResourceCustomization/3bdbb104-476c-483e-9f8b-c095b3d308ac"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -1971,7 +2044,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void createNetworkInstanceTestApiIncorrectUsePropertiesDefault() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         uri = servInstanceuri + "v7" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7969/networks";
         ResponseEntity<String> response =
@@ -1990,7 +2064,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void createNetworkInstanceTestApiGrApi() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/networkResourceCustomization/3bdbb104-476c-483e-9f8b-c095b3d308ac"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -2029,7 +2104,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void createNetworkInstanceTestApiVnfApi() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/CreateNetworkInstance"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/networkResourceCustomization/3bdbb104-476c-483e-9f8b-c095b3d308ac"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -2077,15 +2153,18 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/service/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(serviceRecipe)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(serviceRecipe))
+                        .withStatus(HttpStatus.SC_OK)));
 
         // expect
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
@@ -2127,17 +2206,20 @@ public class ServiceInstancesTest extends BaseTest {
         Service defaultService = new Service();
         defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
 
-        wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB")).willReturn(aResponse()
-                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                .withBodyFile("Camunda/TestResponseInvalid2.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+        wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBodyFile("Camunda/TestResponseInvalid2.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/service/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(serviceRecipe)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(serviceRecipe))
+                        .withStatus(HttpStatus.SC_OK)));
 
         uri = servInstanceuri + "v5/serviceInstances";
         ResponseEntity<String> response =
@@ -2168,11 +2250,13 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(get(urlMatching(".*/service/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(serviceRecipe)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(serviceRecipe))
+                        .withStatus(HttpStatus.SC_OK)));
 
         uri = servInstanceuri + "v5/serviceInstances";
         ResponseEntity<String> response =
@@ -2196,24 +2280,28 @@ public class ServiceInstancesTest extends BaseTest {
         Service defaultService = new Service();
         defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
 
-        wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB")).willReturn(aResponse()
-                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                .withBodyFile("Camunda/TestResponseInvalid.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+        wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBodyFile("Camunda/TestResponseInvalid.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/service/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(serviceRecipe)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(serviceRecipe))
+                        .withStatus(HttpStatus.SC_OK)));
         uri = servInstanceuri + "v5/serviceInstances";
         ResponseEntity<String> response =
                 sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST, headers);
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
-        assertTrue(realResponse.getServiceException().getText()
+        assertTrue(realResponse.getServiceException()
+                .getText()
                 .contains("<aetgt:ErrorMessage>Exception in create execution list 500"));
     }
 
@@ -2230,19 +2318,23 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/CreateMacroServiceNetworkVnf"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
-        wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB")).willReturn(aResponse()
-                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                .withBodyFile("Camunda/TestResponseInvalid.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+        wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBodyFile("Camunda/TestResponseInvalid.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/service/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(serviceRecipe)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(serviceRecipe))
+                        .withStatus(HttpStatus.SC_OK)));
 
         // expect
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
@@ -2302,7 +2394,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void scaleOutVfModule() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
                 ".*/vfModuleCustomization/search/findFirstByModelCustomizationUUIDOrderByCreatedDesc[?]MODEL_CUSTOMIZATION_UUID=cb82ffd8-252a-11e7-93ae-92361f002671"))
@@ -2365,15 +2458,18 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestBadResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestBadResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/service/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(serviceRecipe)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(serviceRecipe))
+                        .withStatus(HttpStatus.SC_OK)));
 
         uri = servInstanceuri + "v5/serviceInstances";
         ResponseEntity<String> response =
@@ -2479,11 +2575,13 @@ public class ServiceInstancesTest extends BaseTest {
                         .withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)));
         wireMockServer.stubFor(get(urlMatching(".*/service/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(serviceRecipe)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(serviceRecipe))
+                        .withStatus(HttpStatus.SC_OK)));
 
         uri = servInstanceuri + "v5/serviceInstances";
         ResponseEntity<String> response =
@@ -2503,7 +2601,8 @@ public class ServiceInstancesTest extends BaseTest {
                         .withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)));
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/ALaCarteOrchestrator"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         uri = servInstanceuri + "v5" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/configurations";
         ResponseEntity<String> response =
@@ -2538,7 +2637,8 @@ public class ServiceInstancesTest extends BaseTest {
         TestAppender.events.clear();
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
                 ".*/vnfResourceCustomization/search/findByModelCustomizationUUID[?]MODEL_CUSTOMIZATION_UUID=2ccae1b4-7d9e-46fa-a452-9180ce008d17"))
@@ -2587,7 +2687,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void createInstanceGroup() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         // expect
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
@@ -2609,7 +2710,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void deleteInstanceGroup() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         // expect
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
@@ -2672,7 +2774,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void addMembers() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
         // expect
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -2692,7 +2795,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void removeMembers() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
         // expect
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
@@ -2713,7 +2817,8 @@ public class ServiceInstancesTest extends BaseTest {
     public void deleteNetworkInstanceNoCustomizationEntry() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                        .withBodyFile("Camunda/TestResponse.json")
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/networkResourceCustomization/3bdbb104-476c-483e-9f8b-c095b3d308ac"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -2772,7 +2877,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(get(urlMatching(".*/service/search/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
         String serviceType = requestHandlerUtils.getServiceType(requestScope, sir, aLaCarteFlag);
         assertEquals(serviceType, "testServiceTypeALaCarte");
@@ -2796,7 +2902,8 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(get(urlMatching(".*/service/0dd91181-49da-446b-b839-cd959a96f04a"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
         String serviceType = requestHandlerUtils.getServiceType(requestScope, sir, aLaCarteFlag);
         assertEquals(serviceType, "testServiceType");
@@ -2823,7 +2930,8 @@ public class ServiceInstancesTest extends BaseTest {
                         .withStatus(HttpStatus.SC_NOT_FOUND)));
         wireMockServer.stubFor(get(urlMatching(".*/service/search/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(defaultService))
+                        .withStatus(HttpStatus.SC_OK)));
 
         String serviceType = requestHandlerUtils.getServiceType(requestScope, sir, aLaCarteFlag);
         assertEquals(serviceType, "testServiceType");
@@ -2892,7 +3000,8 @@ public class ServiceInstancesTest extends BaseTest {
         wireMockServer.stubFor(get(
                 ("/sobpmnengine/history/process-instance?variables=mso-request-id_eq_f0a35706-efc4-4e27-80ea-a995d7a2a40f"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                                .withBody("[]").withStatus(org.apache.http.HttpStatus.SC_OK)));
+                                .withBody("[]")
+                                .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         InfraActiveRequests duplicateRecord = new InfraActiveRequests();
         duplicateRecord.setRequestId("f0a35706-efc4-4e27-80ea-a995d7a2a40f");

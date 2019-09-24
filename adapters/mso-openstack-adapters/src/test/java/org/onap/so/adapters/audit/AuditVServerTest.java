@@ -223,18 +223,18 @@ public class AuditVServerTest extends AuditVServer {
     public void audit_Vserver_Found_Test() throws JsonParseException, JsonMappingException, IOException {
         doReturn(true).when(aaiResourcesMock).exists(vserverURI);
         doReturn(true).when(aaiResourcesMock).exists(vserverURI2);
-        doReturn(Optional.of(ssc_1_trusted_port_0)).when(aaiResourcesMock).get(LInterface.class,
-                ssc_1_trusted_port_0_uri);
-        doReturn(Optional.of(ssc_1_service1_port_0)).when(aaiResourcesMock).get(LInterface.class,
-                ssc_1_service1_port_0_uri);
+        doReturn(Optional.of(ssc_1_trusted_port_0)).when(aaiResourcesMock)
+                .get(LInterface.class, ssc_1_trusted_port_0_uri);
+        doReturn(Optional.of(ssc_1_service1_port_0)).when(aaiResourcesMock)
+                .get(LInterface.class, ssc_1_service1_port_0_uri);
         doReturn(Optional.of(ssc_1_mgmt_port_1)).when(aaiResourcesMock).get(LInterface.class, ssc_1_mgmt_port_1_uri);
         doReturn(Optional.of(ssc_1_mgmt_port_0)).when(aaiResourcesMock).get(LInterface.class, ssc_1_mgmt_port_0_uri);
-        doReturn(Optional.of(ssc_1_service2_port_0)).when(aaiResourcesMock).get(LInterface.class,
-                ssc_1_service2_port_0_uri);
-        doReturn(Optional.of(service2_sub_interface_1)).when(aaiResourcesMock).get(LInterface.class,
-                service1_sub_1_uri);
-        doReturn(Optional.of(ssc_1_int_ha_port_0)).when(aaiResourcesMock).get(LInterface.class,
-                ssc_1_int_ha_port_0_uri);
+        doReturn(Optional.of(ssc_1_service2_port_0)).when(aaiResourcesMock)
+                .get(LInterface.class, ssc_1_service2_port_0_uri);
+        doReturn(Optional.of(service2_sub_interface_1)).when(aaiResourcesMock)
+                .get(LInterface.class, service1_sub_1_uri);
+        doReturn(Optional.of(ssc_1_int_ha_port_0)).when(aaiResourcesMock)
+                .get(LInterface.class, ssc_1_int_ha_port_0_uri);
         doReturn(Optional.of(test_port_1)).when(aaiResourcesMock).get(LInterface.class, test_port_1_uri);
         doReturn(Optional.of(test_port_2)).when(aaiResourcesMock).get(LInterface.class, test_port_2_uri);
 
@@ -254,16 +254,16 @@ public class AuditVServerTest extends AuditVServer {
             throws JsonParseException, JsonMappingException, IOException {
         doReturn(true).when(aaiResourcesMock).exists(vserverURI);
         doReturn(true).when(aaiResourcesMock).exists(vserverURI2);
-        doReturn(Optional.of(ssc_1_trusted_port_0)).when(aaiResourcesMock).get(LInterface.class,
-                ssc_1_trusted_port_0_uri);
-        doReturn(Optional.of(ssc_1_service1_port_0)).when(aaiResourcesMock).get(LInterface.class,
-                ssc_1_service1_port_0_uri);
+        doReturn(Optional.of(ssc_1_trusted_port_0)).when(aaiResourcesMock)
+                .get(LInterface.class, ssc_1_trusted_port_0_uri);
+        doReturn(Optional.of(ssc_1_service1_port_0)).when(aaiResourcesMock)
+                .get(LInterface.class, ssc_1_service1_port_0_uri);
         doReturn(Optional.of(ssc_1_mgmt_port_1)).when(aaiResourcesMock).get(LInterface.class, ssc_1_mgmt_port_1_uri);
         doReturn(Optional.empty()).when(aaiResourcesMock).get(LInterface.class, ssc_1_mgmt_port_0_uri);
-        doReturn(Optional.of(ssc_1_service2_port_0)).when(aaiResourcesMock).get(LInterface.class,
-                ssc_1_service2_port_0_uri);
-        doReturn(Optional.of(ssc_1_int_ha_port_0)).when(aaiResourcesMock).get(LInterface.class,
-                ssc_1_int_ha_port_0_uri);
+        doReturn(Optional.of(ssc_1_service2_port_0)).when(aaiResourcesMock)
+                .get(LInterface.class, ssc_1_service2_port_0_uri);
+        doReturn(Optional.of(ssc_1_int_ha_port_0)).when(aaiResourcesMock)
+                .get(LInterface.class, ssc_1_int_ha_port_0_uri);
         doReturn(Optional.of(test_port_1)).when(aaiResourcesMock).get(LInterface.class, test_port_1_uri);
         doReturn(Optional.of(test_port_2)).when(aaiResourcesMock).get(LInterface.class, test_port_2_uri);
 
@@ -283,16 +283,16 @@ public class AuditVServerTest extends AuditVServer {
             throws JsonParseException, JsonMappingException, IOException {
         doReturn(true).when(aaiResourcesMock).exists(vserverURI);
         doReturn(true).when(aaiResourcesMock).exists(vserverURI2);
-        doReturn(Optional.of(ssc_1_trusted_port_0)).when(aaiResourcesMock).get(LInterface.class,
-                ssc_1_trusted_port_0_uri);
-        doReturn(Optional.of(ssc_1_service1_port_0)).when(aaiResourcesMock).get(LInterface.class,
-                ssc_1_service1_port_0_uri);
+        doReturn(Optional.of(ssc_1_trusted_port_0)).when(aaiResourcesMock)
+                .get(LInterface.class, ssc_1_trusted_port_0_uri);
+        doReturn(Optional.of(ssc_1_service1_port_0)).when(aaiResourcesMock)
+                .get(LInterface.class, ssc_1_service1_port_0_uri);
         doReturn(Optional.of(ssc_1_mgmt_port_1)).when(aaiResourcesMock).get(LInterface.class, ssc_1_mgmt_port_1_uri);
         doReturn(Optional.of(ssc_1_mgmt_port_0)).when(aaiResourcesMock).get(LInterface.class, ssc_1_mgmt_port_0_uri);
-        doReturn(Optional.of(ssc_1_service2_port_0)).when(aaiResourcesMock).get(LInterface.class,
-                ssc_1_service2_port_0_uri);
-        doReturn(Optional.of(ssc_1_int_ha_port_0)).when(aaiResourcesMock).get(LInterface.class,
-                ssc_1_int_ha_port_0_uri);
+        doReturn(Optional.of(ssc_1_service2_port_0)).when(aaiResourcesMock)
+                .get(LInterface.class, ssc_1_service2_port_0_uri);
+        doReturn(Optional.of(ssc_1_int_ha_port_0)).when(aaiResourcesMock)
+                .get(LInterface.class, ssc_1_int_ha_port_0_uri);
         doReturn(Optional.of(test_port_1)).when(aaiResourcesMock).get(LInterface.class, test_port_1_uri);
         doReturn(Optional.empty()).when(aaiResourcesMock).get(LInterface.class, test_port_2_uri);
         doReturn(true).when(aaiResourcesMock).exists(service2_sub_1_uri);
@@ -343,16 +343,16 @@ public class AuditVServerTest extends AuditVServer {
     @Test
     public void audit_Vserver_Second_Not_Found_Test() throws JsonParseException, JsonMappingException, IOException {
         doReturn(true).when(aaiResourcesMock).exists(vserverURI);
-        doReturn(Optional.of(ssc_1_trusted_port_0)).when(aaiResourcesMock).get(LInterface.class,
-                ssc_1_trusted_port_0_uri);
-        doReturn(Optional.of(ssc_1_service1_port_0)).when(aaiResourcesMock).get(LInterface.class,
-                ssc_1_service1_port_0_uri);
+        doReturn(Optional.of(ssc_1_trusted_port_0)).when(aaiResourcesMock)
+                .get(LInterface.class, ssc_1_trusted_port_0_uri);
+        doReturn(Optional.of(ssc_1_service1_port_0)).when(aaiResourcesMock)
+                .get(LInterface.class, ssc_1_service1_port_0_uri);
         doReturn(Optional.of(ssc_1_mgmt_port_1)).when(aaiResourcesMock).get(LInterface.class, ssc_1_mgmt_port_1_uri);
         doReturn(Optional.of(ssc_1_mgmt_port_0)).when(aaiResourcesMock).get(LInterface.class, ssc_1_mgmt_port_0_uri);
-        doReturn(Optional.of(ssc_1_service2_port_0)).when(aaiResourcesMock).get(LInterface.class,
-                ssc_1_service2_port_0_uri);
-        doReturn(Optional.of(ssc_1_int_ha_port_0)).when(aaiResourcesMock).get(LInterface.class,
-                ssc_1_int_ha_port_0_uri);
+        doReturn(Optional.of(ssc_1_service2_port_0)).when(aaiResourcesMock)
+                .get(LInterface.class, ssc_1_service2_port_0_uri);
+        doReturn(Optional.of(ssc_1_int_ha_port_0)).when(aaiResourcesMock)
+                .get(LInterface.class, ssc_1_int_ha_port_0_uri);
         doReturn(Optional.empty()).when(aaiResourcesMock).get(LInterface.class, test_port_1_uri);
         doReturn(Optional.empty()).when(aaiResourcesMock).get(LInterface.class, test_port_2_uri);
         doReturn(true).when(aaiResourcesMock).exists(service2_sub_1_uri);
@@ -377,16 +377,19 @@ public class AuditVServerTest extends AuditVServer {
         vserver.setVserverId("testVserverId");
         obj1.setAaiObject(vserver);
         obj1.setResourceURI(AAIUriFactory
-                .createResourceUri(AAIObjectType.VSERVER, cloudOwner, cloudRegion, tenantId, "testVserverId").build());
+                .createResourceUri(AAIObjectType.VSERVER, cloudOwner, cloudRegion, tenantId, "testVserverId")
+                .build());
         auditList.getAuditList().add(obj1);
 
-        doReturn(false).when(aaiResourcesMock).exists(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, cloudOwner,
-                cloudRegion, tenantId, "testVserverId"));
+        doReturn(false).when(aaiResourcesMock)
+                .exists(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, cloudOwner, cloudRegion, tenantId,
+                        "testVserverId"));
 
         auditNova.auditVservers(auditList);
 
-        Mockito.verify(aaiResourcesMock).exists(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, cloudOwner,
-                cloudRegion, tenantId, "testVserverId"));
+        Mockito.verify(aaiResourcesMock)
+                .exists(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, cloudOwner, cloudRegion, tenantId,
+                        "testVserverId"));
 
         Assert.assertEquals(false, auditList.getAuditList().get(0).isDoesObjectExist());
     }
@@ -421,8 +424,9 @@ public class AuditVServerTest extends AuditVServer {
                 .get(AAIUriFactory.createResourceUri(AAIObjectPlurals.VF_MODULE, "genericVnfId")
                         .queryParam("vf-module-name", "vfModuleName"));
 
-        doReturn(vserverWrapper).when(aaiResourcesMock).get(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER,
-                "cloud-owner", "cloud-region-id", "tenant-id", "VUSCHGA1"));
+        doReturn(vserverWrapper).when(aaiResourcesMock)
+                .get(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, "cloud-owner", "cloud-region-id",
+                        "tenant-id", "VUSCHGA1"));
 
         Optional<AAIObjectAuditList> auditList =
                 auditNova.auditVserversThroughRelationships("genericVnfId", "vfModuleName");

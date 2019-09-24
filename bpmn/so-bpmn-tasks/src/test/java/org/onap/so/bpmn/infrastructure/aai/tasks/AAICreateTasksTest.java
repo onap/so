@@ -133,8 +133,8 @@ public class AAICreateTasksTest extends BaseTaskTest {
         expectedException.expect(BpmnError.class);
 
         lookupKeyMap.put(ResourceKey.SERVICE_INSTANCE_ID, "notfound");
-        doThrow(RuntimeException.class).when(aaiServiceInstanceResources).createServiceInstance(serviceInstance,
-                customer);
+        doThrow(RuntimeException.class).when(aaiServiceInstanceResources)
+                .createServiceInstance(serviceInstance, customer);
         aaiCreateTasks.createServiceInstance(execution);
     }
 
@@ -178,8 +178,8 @@ public class AAICreateTasksTest extends BaseTaskTest {
         aaiCreateTasks.createPlatform(execution);
         ArgumentCaptor<Platform> platformCaptor = ArgumentCaptor.forClass(Platform.class);
         ArgumentCaptor<GenericVnf> genericVnf = ArgumentCaptor.forClass(GenericVnf.class);
-        Mockito.verify(aaiVnfResources, times(4)).createPlatformandConnectVnf(platformCaptor.capture(),
-                genericVnf.capture());
+        Mockito.verify(aaiVnfResources, times(4))
+                .createPlatformandConnectVnf(platformCaptor.capture(), genericVnf.capture());
 
         List<Platform> capturedPlatforms = platformCaptor.getAllValues();
         assertTrue(capturedPlatforms.stream().anyMatch(item -> "testPlatformName".equals(item.getPlatformName())));
@@ -195,8 +195,8 @@ public class AAICreateTasksTest extends BaseTaskTest {
 
         ArgumentCaptor<LineOfBusiness> lobCaptor = ArgumentCaptor.forClass(LineOfBusiness.class);
         ArgumentCaptor<GenericVnf> genericVnf = ArgumentCaptor.forClass(GenericVnf.class);
-        Mockito.verify(aaiVnfResources, times(4)).createLineOfBusinessandConnectVnf(lobCaptor.capture(),
-                genericVnf.capture());
+        Mockito.verify(aaiVnfResources, times(4))
+                .createLineOfBusinessandConnectVnf(lobCaptor.capture(), genericVnf.capture());
 
         List<LineOfBusiness> capturedLOB = lobCaptor.getAllValues();
         assertTrue(
@@ -317,8 +317,8 @@ public class AAICreateTasksTest extends BaseTaskTest {
     public void createVnfExceptionTest() throws Exception {
         expectedException.expect(BpmnError.class);
         lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, "notfound");
-        doThrow(BBObjectNotFoundException.class).when(extractPojosForBB).extractByKey(any(),
-                ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID));
+        doThrow(BBObjectNotFoundException.class).when(extractPojosForBB)
+                .extractByKey(any(), ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID));
         doNothing().when(aaiVnfResources).createVnfandConnectServiceInstance(genericVnf, serviceInstance);
         aaiCreateTasks.createVnf(execution);
         verify(aaiVnfResources, times(1)).createVnfandConnectServiceInstance(genericVnf, serviceInstance);
@@ -373,8 +373,8 @@ public class AAICreateTasksTest extends BaseTaskTest {
 
     @Test
     public void connectVfModuleToVolumeGroupTest() throws Exception {
-        doNothing().when(aaiVfModuleResources).connectVfModuleToVolumeGroup(genericVnf, vfModule, volumeGroup,
-                cloudRegion);
+        doNothing().when(aaiVfModuleResources)
+                .connectVfModuleToVolumeGroup(genericVnf, vfModule, volumeGroup, cloudRegion);
         aaiCreateTasks.connectVfModuleToVolumeGroup(execution);
         verify(aaiVfModuleResources, times(1)).connectVfModuleToVolumeGroup(genericVnf, vfModule, volumeGroup,
                 cloudRegion);
@@ -394,8 +394,8 @@ public class AAICreateTasksTest extends BaseTaskTest {
         expectedException.expect(BpmnError.class);
 
         lookupKeyMap.put(ResourceKey.NETWORK_ID, "notfound");
-        doThrow(RuntimeException.class).when(aaiNetworkResources).createNetworkConnectToServiceInstance(network,
-                serviceInstance);
+        doThrow(RuntimeException.class).when(aaiNetworkResources)
+                .createNetworkConnectToServiceInstance(network, serviceInstance);
         aaiCreateTasks.createNetwork(execution);
     }
 
@@ -437,8 +437,8 @@ public class AAICreateTasksTest extends BaseTaskTest {
 
     @Test
     public void connectNetworkToNetworkCollectionServiceInstanceTest() throws Exception {
-        doNothing().when(aaiNetworkResources).connectNetworkToNetworkCollectionServiceInstance(network,
-                serviceInstance);
+        doNothing().when(aaiNetworkResources)
+                .connectNetworkToNetworkCollectionServiceInstance(network, serviceInstance);
         aaiCreateTasks.connectNetworkToNetworkCollectionServiceInstance(execution);
         verify(aaiNetworkResources, times(1)).connectNetworkToNetworkCollectionServiceInstance(network,
                 serviceInstance);
@@ -446,8 +446,9 @@ public class AAICreateTasksTest extends BaseTaskTest {
 
     @Test
     public void connectNetworkToNetworkCollectionInstanceGroupTest() throws Exception {
-        doNothing().when(aaiNetworkResources).connectNetworkToNetworkCollectionInstanceGroup(network,
-                serviceInstance.getCollection().getInstanceGroup());
+        doNothing().when(aaiNetworkResources)
+                .connectNetworkToNetworkCollectionInstanceGroup(network,
+                        serviceInstance.getCollection().getInstanceGroup());
         aaiCreateTasks.connectNetworkToNetworkCollectionInstanceGroup(execution);
         verify(aaiNetworkResources, times(1)).connectNetworkToNetworkCollectionInstanceGroup(network,
                 serviceInstance.getCollection().getInstanceGroup());
@@ -532,8 +533,8 @@ public class AAICreateTasksTest extends BaseTaskTest {
     public void createInstanceGroupVnfTest() throws Exception {
         doReturn(false).when(aaiInstanceGroupResources)
                 .checkInstanceGroupNameInUse(instanceGroup.getInstanceGroupName());
-        doNothing().when(aaiInstanceGroupResources).createInstanceGroupandConnectServiceInstance(instanceGroup,
-                serviceInstance);
+        doNothing().when(aaiInstanceGroupResources)
+                .createInstanceGroupandConnectServiceInstance(instanceGroup, serviceInstance);
         execution.setVariable("aLaCarte", Boolean.FALSE);
         aaiCreateTasks.createInstanceGroupVnf(execution);
         verify(aaiInstanceGroupResources, times(1)).createInstanceGroupandConnectServiceInstance(instanceGroup,

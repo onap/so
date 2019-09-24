@@ -39,8 +39,9 @@ public class VnfcInstanceGroupCustomizationRepositoryTest extends BaseTest {
                 vnfcInstanceGroupCustomizationRepository.findAll();
         Assert.assertFalse(CollectionUtils.isEmpty(vnfcInstanceGroupCustomizationList));
 
-        VnfcInstanceGroupCustomization vnfcInstanceGroupCustomization = vnfcInstanceGroupCustomizationRepository
-                .findById(1450).orElseThrow(() -> new NoEntityFoundException("Cannot Find Operation"));
+        VnfcInstanceGroupCustomization vnfcInstanceGroupCustomization =
+                vnfcInstanceGroupCustomizationRepository.findById(1450)
+                        .orElseThrow(() -> new NoEntityFoundException("Cannot Find Operation"));
         Assert.assertTrue(vnfcInstanceGroupCustomization.getFunction().equalsIgnoreCase("FUNCTION"));
     }
 }

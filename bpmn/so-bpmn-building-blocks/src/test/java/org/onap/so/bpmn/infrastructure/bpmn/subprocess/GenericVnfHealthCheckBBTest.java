@@ -39,8 +39,9 @@ public class GenericVnfHealthCheckBBTest extends BaseBPMNTest {
 
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("GenericVnfHealthCheckBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("Start_GenericVnfHealthChkBB", "SetParamsHealthCheck",
-                "Call-AppC-HealthCheck", "End_GenericVnfHealthChkBB");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("Start_GenericVnfHealthChkBB", "SetParamsHealthCheck", "Call-AppC-HealthCheck",
+                        "End_GenericVnfHealthChkBB");
         assertThat(pi).isEnded();
     }
 
@@ -50,7 +51,8 @@ public class GenericVnfHealthCheckBBTest extends BaseBPMNTest {
                 .setParamsForGenericVnfHealthCheck(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("GenericVnfHealthCheckBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("Start_GenericVnfHealthChkBB", "SetParamsHealthCheck")
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("Start_GenericVnfHealthChkBB", "SetParamsHealthCheck")
                 .hasNotPassed("Call-AppC-HealthCheck", "End_GenericVnfHealthChkBB");
         assertThat(pi).isEnded();
     }

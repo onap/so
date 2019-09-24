@@ -36,9 +36,10 @@ public class UnassignNetworkBBTest extends BaseBPMNTest {
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignNetworkBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("Start_UnassignNetworkBB", "Task_VfModuleRelatioship",
-                "Task_GetCloudRegionVersion", "Task_SNDCUnAssign", "CallActivity_sdncHandlerCall", "Task_DeleteNetwork",
-                "End_UnassignNetworkBB");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("Start_UnassignNetworkBB", "Task_VfModuleRelatioship", "Task_GetCloudRegionVersion",
+                        "Task_SNDCUnAssign", "CallActivity_sdncHandlerCall", "Task_DeleteNetwork",
+                        "End_UnassignNetworkBB");
         assertThat(pi).isEnded();
     }
 
@@ -49,7 +50,8 @@ public class UnassignNetworkBBTest extends BaseBPMNTest {
                 .checkRelationshipRelatedTo(any(BuildingBlockExecution.class), eq("vf-module"));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignNetworkBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("Start_UnassignNetworkBB", "Task_VfModuleRelatioship")
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("Start_UnassignNetworkBB", "Task_VfModuleRelatioship")
                 .hasNotPassed("End_UnassignNetworkBB");
         assertThat(pi).isEnded();
     }

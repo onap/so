@@ -180,9 +180,11 @@ public class Sol003GrantControllerTest {
         final EsrSystemInfoList esrSystemInfoList = new EsrSystemInfoList();
         esrSystemInfoList.getEsrSystemInfo().add(esrSystemInfo);
 
-        doReturn(Optional.of(esrSystemInfoList)).when(aaiResourcesClient).get(eq(EsrSystemInfoList.class),
-                MockitoHamcrest.argThat(new AaiResourceUriMatcher("/cloud-infrastructure/cloud-regions/cloud-region/"
-                        + CLOUD_OWNER + "/" + REGION + "/esr-system-info-list")));
+        doReturn(Optional.of(esrSystemInfoList)).when(aaiResourcesClient)
+                .get(eq(EsrSystemInfoList.class),
+                        MockitoHamcrest
+                                .argThat(new AaiResourceUriMatcher("/cloud-infrastructure/cloud-regions/cloud-region/"
+                                        + CLOUD_OWNER + "/" + REGION + "/esr-system-info-list")));
     }
 
     private GenericVnf createGenericVnf(final String type) {
@@ -216,15 +218,16 @@ public class Sol003GrantControllerTest {
         relationshipList.getRelationship().add(relationshipToVnfm);
         genericVnf.setRelationshipList(relationshipList);
 
-        doReturn(Optional.of(genericVnf)).when(aaiResourcesClient).get(eq(GenericVnf.class),
-                MockitoHamcrest.argThat(new AaiResourceUriMatcher("/network/generic-vnfs/generic-vnf/myTestVnfId")));
+        doReturn(Optional.of(genericVnf)).when(aaiResourcesClient)
+                .get(eq(GenericVnf.class), MockitoHamcrest
+                        .argThat(new AaiResourceUriMatcher("/network/generic-vnfs/generic-vnf/myTestVnfId")));
 
         final List<GenericVnf> listOfGenericVnfs = new ArrayList<>();
         listOfGenericVnfs.add(genericVnf);
         final GenericVnfs genericVnfs = new GenericVnfs();
         genericVnfs.getGenericVnf().addAll(listOfGenericVnfs);
-        doReturn(Optional.of(genericVnfs)).when(aaiResourcesClient).get(eq(GenericVnfs.class),
-                MockitoHamcrest.argThat(new AaiResourceUriMatcher(
+        doReturn(Optional.of(genericVnfs)).when(aaiResourcesClient)
+                .get(eq(GenericVnfs.class), MockitoHamcrest.argThat(new AaiResourceUriMatcher(
                         "/network/generic-vnfs?selflink=http%3A%2F%2Fvnfm%3A8080%2Fvnfs%2FmyTestVnfIdOnVnfm")));
     }
 
@@ -240,7 +243,8 @@ public class Sol003GrantControllerTest {
         public boolean matches(final Object item) {
             if (item instanceof AAIResourceUri) {
                 if (uriAsString.endsWith("...")) {
-                    return ((AAIResourceUri) item).build().toString()
+                    return ((AAIResourceUri) item).build()
+                            .toString()
                             .startsWith(uriAsString.substring(0, uriAsString.indexOf("...")));
                 }
                 return ((AAIResourceUri) item).build().toString().equals(uriAsString);

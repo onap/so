@@ -54,7 +54,9 @@ public class VrfValidation {
         ConfigurationResourceCustomization configuration = getVrfConfiguration(service);
         if (configuration == null || configuration.getServiceProxyResourceCustomization() == null
                 || configuration.getServiceProxyResourceCustomization().getSourceService() == null
-                || !configuration.getServiceProxyResourceCustomization().getSourceService().getServiceType()
+                || !configuration.getServiceProxyResourceCustomization()
+                        .getSourceService()
+                        .getServiceType()
                         .equalsIgnoreCase("TRANSPORT")) {
             throw new VrfBondingServiceException("Service: " + service.getModelName()
                     + " does not have a configuration of type VRF-ENTRY and role INFRASTRUCTURE-CLOUD-VPN"
@@ -90,8 +92,12 @@ public class VrfValidation {
                 || aaiLocalNetwork.getAggregateRoutes().getAggregateRoute() == null) {
             return;
         }
-        if (aaiLocalNetwork.getAggregateRoutes().getAggregateRoute().size() == 1 && !aaiLocalNetwork
-                .getAggregateRoutes().getAggregateRoute().get(0).getIpVersion().equalsIgnoreCase("4")) {
+        if (aaiLocalNetwork.getAggregateRoutes().getAggregateRoute().size() == 1
+                && !aaiLocalNetwork.getAggregateRoutes()
+                        .getAggregateRoute()
+                        .get(0)
+                        .getIpVersion()
+                        .equalsIgnoreCase("4")) {
             throw new VrfBondingServiceException("LocalNetwork: " + aaiLocalNetwork.getNetworkId()
                     + " has 1 aggregate route but the Ip version of aggregate route is : "
                     + aaiLocalNetwork.getAggregateRoutes().getAggregateRoute().get(0).getIpVersion() + " and is not 4");

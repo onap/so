@@ -40,8 +40,10 @@ public class BBDecompPojoTest {
     }
 
     private void test(String pojoPackage) {
-        Validator validator = ValidatorBuilder.create().with(new EqualsAndHashCodeTester())
-                .with(new HasEqualsAndHashCodeRule()).build();
+        Validator validator = ValidatorBuilder.create()
+                .with(new EqualsAndHashCodeTester())
+                .with(new HasEqualsAndHashCodeRule())
+                .build();
         validator.validate(pojoPackage, new FilterPackageInfo(), filterTestClasses, new FilterNonConcrete());
     }
 

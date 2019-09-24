@@ -108,9 +108,11 @@ public class MulticloudCreateResponse implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("templateType", templateType).append("workloadId", workloadId)
+        return new ToStringBuilder(this).append("templateType", templateType)
+                .append("workloadId", workloadId)
                 .append("templateResponse", templateResponse)
                 .append("workload_status_reason", workloadStatusReason.toString())
-                .append("workload_status", workloadStatus).toString();
+                .append("workload_status", workloadStatus)
+                .toString();
     }
 }

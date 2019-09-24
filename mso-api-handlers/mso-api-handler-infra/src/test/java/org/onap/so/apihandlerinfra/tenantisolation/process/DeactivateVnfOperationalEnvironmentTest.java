@@ -78,7 +78,8 @@ public class DeactivateVnfOperationalEnvironmentTest extends BaseTest {
 
         wireMockServer.stubFor(
                 get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
-                        .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json)
+                        .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                                .withBody(json)
                                 .withStatus(HttpStatus.SC_ACCEPTED)));
         wireMockServer.stubFor(
                 put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
@@ -97,7 +98,8 @@ public class DeactivateVnfOperationalEnvironmentTest extends BaseTest {
         iar.setRequestAction("UNKNOWN");
         wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/" + requestId))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(iar)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(iar))
+                        .withStatus(HttpStatus.SC_OK)));
         deactivate.execute(requestId, request);
     }
 
@@ -110,7 +112,8 @@ public class DeactivateVnfOperationalEnvironmentTest extends BaseTest {
 
         wireMockServer.stubFor(
                 get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
-                        .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json)
+                        .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                                .withBody(json)
                                 .withStatus(HttpStatus.SC_ACCEPTED)));
 
         thrown.expect(ValidateException.class);
@@ -126,7 +129,8 @@ public class DeactivateVnfOperationalEnvironmentTest extends BaseTest {
         iar.setRequestAction("UNKNOWN");
         wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/" + requestId))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(iar)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(iar))
+                        .withStatus(HttpStatus.SC_OK)));
         wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
                 .withRequestBody(containing("{\"requestId\":\"" + requestId
                         + "\",\"clientRequestId\":null,\"action\":null,\"requestStatus\":\"FAILED\",\"statusMessage\":\"FAILURE"))
@@ -145,7 +149,8 @@ public class DeactivateVnfOperationalEnvironmentTest extends BaseTest {
 
         wireMockServer.stubFor(
                 get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
-                        .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json)
+                        .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                                .withBody(json)
                                 .withStatus(HttpStatus.SC_ACCEPTED)));
 
         InfraActiveRequests iar = new InfraActiveRequests();
@@ -156,7 +161,8 @@ public class DeactivateVnfOperationalEnvironmentTest extends BaseTest {
         iar.setRequestAction("UNKNOWN");
         wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/" + requestId))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(iar)).withStatus(HttpStatus.SC_OK)));
+                        .withBody(mapper.writeValueAsString(iar))
+                        .withStatus(HttpStatus.SC_OK)));
 
         deactivate.execute(requestId, request);
     }
@@ -170,7 +176,8 @@ public class DeactivateVnfOperationalEnvironmentTest extends BaseTest {
 
         wireMockServer.stubFor(
                 get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
-                        .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json)
+                        .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                                .withBody(json)
                                 .withStatus(HttpStatus.SC_ACCEPTED)));
 
         thrown.expect(ValidateException.class);

@@ -86,8 +86,11 @@ public abstract class SDNCConnector {
         try {
             int timeout = Integer.parseInt(rt.getTimeout());
 
-            RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(timeout).setConnectTimeout(timeout)
-                    .setConnectionRequestTimeout(timeout).build();
+            RequestConfig requestConfig = RequestConfig.custom()
+                    .setSocketTimeout(timeout)
+                    .setConnectTimeout(timeout)
+                    .setConnectionRequestTimeout(timeout)
+                    .build();
 
             HttpClient client = HttpClientBuilder.create().build();
 

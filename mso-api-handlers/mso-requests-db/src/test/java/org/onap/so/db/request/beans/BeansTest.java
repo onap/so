@@ -48,10 +48,16 @@ public class BeansTest {
     }
 
     private void test(String pojoPackage) {
-        Validator validator = ValidatorBuilder.create().with(new GetterMustExistRule())
+        Validator validator = ValidatorBuilder.create()
+                .with(new GetterMustExistRule())
                 .with(new CustomSetterMustExistRule().exclude(hasAnnotation(Temporal.class)))
-                .with(new HasEqualsAndHashCodeRule()).with(new HasToStringRule()).with(new SetterTester())
-                .with(new GetterTester()).with(new EqualsAndHashCodeTester()).with(new ToStringTester()).build();
+                .with(new HasEqualsAndHashCodeRule())
+                .with(new HasToStringRule())
+                .with(new SetterTester())
+                .with(new GetterTester())
+                .with(new EqualsAndHashCodeTester())
+                .with(new ToStringTester())
+                .build();
         validator.validate(pojoPackage, new FilterPackageInfo(), filterTestClasses, new FilterEnum());
     }
 

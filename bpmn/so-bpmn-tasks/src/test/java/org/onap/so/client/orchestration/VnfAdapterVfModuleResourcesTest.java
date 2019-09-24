@@ -95,9 +95,9 @@ public class VnfAdapterVfModuleResourcesTest extends TestDataSetup {
 
     @Test
     public void test_createVfModule() throws Exception {
-        doReturn(createVfModuleRequest).when(MOCK_vnfAdapterVfModuleObjectMapper).createVfModuleRequestMapper(
-                requestContext, cloudRegion, orchestrationContext, serviceInstance, genericVnf, vfModule, null,
-                sdncVnfQueryResponse, sdncVfModuleQueryResponse);
+        doReturn(createVfModuleRequest).when(MOCK_vnfAdapterVfModuleObjectMapper)
+                .createVfModuleRequestMapper(requestContext, cloudRegion, orchestrationContext, serviceInstance,
+                        genericVnf, vfModule, null, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
 
         CreateVfModuleRequest actualCreateVfModuleRequest =
                 vnfAdapterVfModuleResources.createVfModuleRequest(requestContext, cloudRegion, orchestrationContext,
@@ -115,9 +115,9 @@ public class VnfAdapterVfModuleResourcesTest extends TestDataSetup {
     @Test
     public void test_createVfModuleWithVolumeGroup() throws Exception {
         volumeGroup = buildVolumeGroup();
-        doReturn(createVfModuleRequest).when(MOCK_vnfAdapterVfModuleObjectMapper).createVfModuleRequestMapper(
-                requestContext, cloudRegion, orchestrationContext, serviceInstance, genericVnf, vfModule, volumeGroup,
-                sdncVnfQueryResponse, sdncVfModuleQueryResponse);
+        doReturn(createVfModuleRequest).when(MOCK_vnfAdapterVfModuleObjectMapper)
+                .createVfModuleRequestMapper(requestContext, cloudRegion, orchestrationContext, serviceInstance,
+                        genericVnf, vfModule, volumeGroup, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
 
         CreateVfModuleRequest actualCreateVfModuleRequest = vnfAdapterVfModuleResources.createVfModuleRequest(
                 requestContext, cloudRegion, orchestrationContext, serviceInstance, genericVnf, vfModule, volumeGroup,
@@ -134,9 +134,9 @@ public class VnfAdapterVfModuleResourcesTest extends TestDataSetup {
 
     @Test
     public void test_deleteVfModule() throws Exception {
-        doReturn(deleteVfModuleRequest).when(MOCK_vnfAdapterVfModuleObjectMapper).deleteVfModuleRequestMapper(
-                isA(RequestContext.class), isA(CloudRegion.class), isA(ServiceInstance.class), isA(GenericVnf.class),
-                isA(VfModule.class));
+        doReturn(deleteVfModuleRequest).when(MOCK_vnfAdapterVfModuleObjectMapper)
+                .deleteVfModuleRequestMapper(isA(RequestContext.class), isA(CloudRegion.class),
+                        isA(ServiceInstance.class), isA(GenericVnf.class), isA(VfModule.class));
 
         DeleteVfModuleRequest actualDeleteVfModuleRequest = vnfAdapterVfModuleResources
                 .deleteVfModuleRequest(requestContext, cloudRegion, serviceInstance, genericVnf, vfModule);

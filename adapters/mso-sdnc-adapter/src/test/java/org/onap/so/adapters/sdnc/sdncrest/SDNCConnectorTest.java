@@ -52,7 +52,8 @@ public class SDNCConnectorTest extends BaseTest {
 
         wireMockServer.stubFor(
                 post(urlPathEqualTo("/sdnc")).willReturn(aResponse().withHeader("Content-Type", "application/xml")
-                        .withBody(response).withStatus(HttpStatus.SC_MULTIPLE_CHOICES)));
+                        .withBody(response)
+                        .withStatus(HttpStatus.SC_MULTIPLE_CHOICES)));
 
         SDNCResponseCommon responseCommon = sdncConnector.send(content, rt);
         assertNotNull(responseCommon);

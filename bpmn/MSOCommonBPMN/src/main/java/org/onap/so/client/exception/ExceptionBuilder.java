@@ -237,8 +237,10 @@ public class ExceptionBuilder {
         if (testKey != null) {
             return testKey;
         }
-        return execution.getProcessEngineServices().getRepositoryService()
-                .getProcessDefinition(execution.getProcessDefinitionId()).getKey();
+        return execution.getProcessEngineServices()
+                .getRepositoryService()
+                .getProcessDefinition(execution.getProcessDefinitionId())
+                .getKey();
     }
 
     public void processAuditException(DelegateExecutionImpl execution, boolean flowShouldContinue) {
@@ -262,7 +264,8 @@ public class ExceptionBuilder {
                         + "d in cloud region " + cloudRegionId + ". MSO Audit indicates that the following was not "
                         + auditList.getAuditType() + "d in AAI: ");
 
-                Stream<AAIObjectAudit> vServerLInterfaceAuditStream = auditList.getAuditList().stream()
+                Stream<AAIObjectAudit> vServerLInterfaceAuditStream = auditList.getAuditList()
+                        .stream()
                         .filter(auditObject -> auditObject.getAaiObjectType().equals(AAIObjectType.VSERVER.typeName())
                                 || auditObject.getAaiObjectType().equals(AAIObjectType.L_INTERFACE.typeName()));
                 List<AAIObjectAudit> filteredAuditStream =

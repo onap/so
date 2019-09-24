@@ -102,7 +102,8 @@ public class SoMonitoringController {
     public Response getSingleProcessInstance(final @PathParam("processInstanceId") String processInstanceId) {
         if (processInstanceId == null || processInstanceId.isEmpty()) {
             return Response.status(Status.BAD_REQUEST)
-                    .entity(INVALID_PROCESS_INSTANCE_ERROR_MESSAGE + processInstanceId).build();
+                    .entity(INVALID_PROCESS_INSTANCE_ERROR_MESSAGE + processInstanceId)
+                    .build();
         }
         try {
             final Optional<ProcessInstanceDetail> processInstanceDetail =
@@ -130,7 +131,8 @@ public class SoMonitoringController {
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response getProcessDefinitionXml(final @PathParam("processDefinitionId") String processDefinitionId) {
         if (processDefinitionId == null || processDefinitionId.isEmpty()) {
-            return Response.status(Status.BAD_REQUEST).entity("Invalid process definition id: " + processDefinitionId)
+            return Response.status(Status.BAD_REQUEST)
+                    .entity("Invalid process definition id: " + processDefinitionId)
                     .build();
         }
         try {
@@ -160,7 +162,8 @@ public class SoMonitoringController {
     public Response getActivityInstanceDetail(final @PathParam("processInstanceId") String processInstanceId) {
         if (processInstanceId == null || processInstanceId.isEmpty()) {
             return Response.status(Status.BAD_REQUEST)
-                    .entity(INVALID_PROCESS_INSTANCE_ERROR_MESSAGE + processInstanceId).build();
+                    .entity(INVALID_PROCESS_INSTANCE_ERROR_MESSAGE + processInstanceId)
+                    .build();
         }
         try {
             final List<ActivityInstanceDetail> activityInstanceDetails =
@@ -183,7 +186,8 @@ public class SoMonitoringController {
     public Response getProcessInstanceVariables(final @PathParam("processInstanceId") String processInstanceId) {
         if (processInstanceId == null || processInstanceId.isEmpty()) {
             return Response.status(Status.BAD_REQUEST)
-                    .entity(INVALID_PROCESS_INSTANCE_ERROR_MESSAGE + processInstanceId).build();
+                    .entity(INVALID_PROCESS_INSTANCE_ERROR_MESSAGE + processInstanceId)
+                    .build();
         }
         try {
             final List<ProcessInstanceVariableDetail> processInstanceVariable =

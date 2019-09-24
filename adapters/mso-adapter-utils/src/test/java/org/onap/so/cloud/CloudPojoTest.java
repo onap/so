@@ -45,9 +45,14 @@ public class CloudPojoTest {
     }
 
     private void test(PojoClass pojoClass) {
-        Validator validator = ValidatorBuilder.create().with(new EqualsAndHashCodeMatchRule())
-                .with(new NoPrimitivesRule()).with(new NoPublicFieldsRule()).with(new SetterTester())
-                .with(new GetterTester()).with(new ToStringTester()).build();
+        Validator validator = ValidatorBuilder.create()
+                .with(new EqualsAndHashCodeMatchRule())
+                .with(new NoPrimitivesRule())
+                .with(new NoPublicFieldsRule())
+                .with(new SetterTester())
+                .with(new GetterTester())
+                .with(new ToStringTester())
+                .build();
         validator.validate(pojoClass);
     }
 }

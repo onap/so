@@ -121,8 +121,8 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         GenericVnf genericVnf = new GenericVnf();
         genericVnf.setModelCustomizationId(vnfCustomizationUUID);
         doReturn(vnfResourceCustomizations).when(catalogDbClient).getVnfResourceCustomizationByModelUuid(modelUuid);
-        doReturn(vrc).when(catalogDbClient).findVnfResourceCustomizationInList(vnfCustomizationUUID,
-                vnfResourceCustomizations);
+        doReturn(vrc).when(catalogDbClient)
+                .findVnfResourceCustomizationInList(vnfCustomizationUUID, vnfResourceCustomizations);
 
         execution.setVariable("flowsToExecute", flowsToExecute);
         workflowActionBBTasks.selectBB(execution);
@@ -165,8 +165,8 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         GenericVnf genericVnf = new GenericVnf();
         genericVnf.setModelCustomizationId(vnfCustomizationUUID);
         doReturn(vnfResourceCustomizations).when(catalogDbClient).getVnfResourceCustomizationByModelUuid(modelUuid);
-        doReturn(vrc).when(catalogDbClient).findVnfResourceCustomizationInList(vnfCustomizationUUID,
-                vnfResourceCustomizations);
+        doReturn(vrc).when(catalogDbClient)
+                .findVnfResourceCustomizationInList(vnfCustomizationUUID, vnfResourceCustomizations);
 
         flowsToExecute.add(ebb2);
         execution.setVariable("flowsToExecute", flowsToExecute);

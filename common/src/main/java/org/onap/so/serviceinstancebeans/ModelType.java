@@ -66,8 +66,10 @@ public enum ModelType {
         T result = null;
         if (obj != null) {
             try {
-                result = (T) obj.getClass().getMethod(String.format("%s%s%s", "get",
-                        CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, this.name), field)).invoke(obj);
+                result = (T) obj.getClass()
+                        .getMethod(String.format("%s%s%s", "get",
+                                CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, this.name), field))
+                        .invoke(obj);
             } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
                     | NoSuchMethodException | SecurityException e) {
                 // silent fail

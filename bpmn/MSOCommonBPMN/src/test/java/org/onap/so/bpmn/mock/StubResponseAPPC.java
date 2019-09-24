@@ -40,11 +40,13 @@ public class StubResponseAPPC {
     public static void MockAppcError(WireMockServer wireMockServer) {
         wireMockServer.stubFor(get(urlMatching("/events/.*"))
                 // .withRequestBody(containing("APPC"))
-                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                .willReturn(aResponse().withStatus(200)
+                        .withHeader("Content-Type", "application/json")
                         .withBodyFile("APPC/appc_error.json")));
         wireMockServer.stubFor(put(urlMatching("/events/.*"))
                 // .withRequestBody(containing("APPC"))
-                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                .willReturn(aResponse().withStatus(200)
+                        .withHeader("Content-Type", "application/json")
                         .withBodyFile("APPC/appc_error.json")));
 
 

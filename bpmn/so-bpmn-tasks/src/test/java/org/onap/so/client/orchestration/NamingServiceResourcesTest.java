@@ -73,8 +73,9 @@ public class NamingServiceResourcesTest extends TestDataSetup {
         Element element = new Element();
 
         NameGenRequest req = new NameGenRequest();
-        doReturn(element).when(MOCK_namingRequestObjectBuilder).elementMapper(isA(String.class), isA(String.class),
-                isA(String.class), isA(String.class), isA(String.class));
+        doReturn(element).when(MOCK_namingRequestObjectBuilder)
+                .elementMapper(isA(String.class), isA(String.class), isA(String.class), isA(String.class),
+                        isA(String.class));
         doReturn("generatedInstanceGroupName").when(MOCK_namingClient).postNameGenRequest(isA(NameGenRequest.class));
         doReturn(req).when(MOCK_namingRequestObjectBuilder).nameGenRequestMapper(isA(List.class));
 

@@ -243,7 +243,8 @@ public class OrchestrationRequestsUnitTest {
         Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
                 OrchestrationRequestFormat.DETAIL.toString());
 
-        assertTrue(actual.getRequestStatus().getStatusMessage()
+        assertTrue(actual.getRequestStatus()
+                .getStatusMessage()
                 .contains("Error Source: " + ROLLBACK_EXT_SYSTEM_ERROR_SOURCE));
     }
 

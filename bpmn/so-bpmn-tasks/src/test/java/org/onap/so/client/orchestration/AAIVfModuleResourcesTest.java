@@ -79,8 +79,8 @@ public class AAIVfModuleResourcesTest extends TestDataSetup {
     public void updateOrchestrationStatusVfModuleTest() throws Exception {
         vfModule.setOrchestrationStatus(OrchestrationStatus.ASSIGNED);
 
-        doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class),
-                isA(org.onap.aai.domain.yang.VfModule.class));
+        doNothing().when(MOCK_aaiResourcesClient)
+                .update(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.VfModule.class));
 
         aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule, vnf, OrchestrationStatus.ACTIVE);
 
@@ -94,8 +94,8 @@ public class AAIVfModuleResourcesTest extends TestDataSetup {
         vfModule.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
 
         doReturn(new org.onap.aai.domain.yang.VfModule()).when(MOCK_aaiObjectMapper).mapVfModule(vfModule);
-        doReturn(MOCK_aaiResourcesClient).when(MOCK_aaiResourcesClient).createIfNotExists(isA(AAIResourceUri.class),
-                any(Optional.class));
+        doReturn(MOCK_aaiResourcesClient).when(MOCK_aaiResourcesClient)
+                .createIfNotExists(isA(AAIResourceUri.class), any(Optional.class));
         aaiVfModuleResources.createVfModule(vfModule, vnf);
 
         verify(MOCK_aaiResourcesClient, times(1)).createIfNotExists(any(AAIResourceUri.class), any(Optional.class));
@@ -113,8 +113,8 @@ public class AAIVfModuleResourcesTest extends TestDataSetup {
 
     @Test
     public void changeAssignVfModuleTest() throws Exception {
-        doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class),
-                isA(org.onap.aai.domain.yang.VfModule.class));
+        doNothing().when(MOCK_aaiResourcesClient)
+                .update(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.VfModule.class));
 
         aaiVfModuleResources.changeAssignVfModule(vfModule, vnf);
 
@@ -136,8 +136,8 @@ public class AAIVfModuleResourcesTest extends TestDataSetup {
     public void updateHeatStackIdVfModuleTest() throws Exception {
         vfModule.setHeatStackId("testHeatStackId");
 
-        doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class),
-                isA(org.onap.aai.domain.yang.VfModule.class));
+        doNothing().when(MOCK_aaiResourcesClient)
+                .update(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.VfModule.class));
 
         aaiVfModuleResources.updateHeatStackIdVfModule(vfModule, vnf);
 
@@ -150,8 +150,8 @@ public class AAIVfModuleResourcesTest extends TestDataSetup {
     public void updateContrailServiceInstanceFqdnVfModuleTest() throws Exception {
         vfModule.setContrailServiceInstanceFqdn("testContrailServiceInstanceFqdn");
 
-        doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class),
-                isA(org.onap.aai.domain.yang.VfModule.class));
+        doNothing().when(MOCK_aaiResourcesClient)
+                .update(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.VfModule.class));
 
         aaiVfModuleResources.updateContrailServiceInstanceFqdnVfModule(vfModule, vnf);
 
@@ -164,8 +164,8 @@ public class AAIVfModuleResourcesTest extends TestDataSetup {
     public void checkNameInUseTrueTest() throws Exception {
         AAIResourceUri vfModuleUri = AAIUriFactory.createNodesUri(AAIObjectPlurals.VF_MODULE)
                 .queryParam("vf-module-name", vfModule.getVfModuleName());
-        AAIResourceUri vfModuleUriWithCustomization = vfModuleUri.clone().queryParam("model-customization-id",
-                vfModule.getModelInfoVfModule().getModelCustomizationUUID());
+        AAIResourceUri vfModuleUriWithCustomization = vfModuleUri.clone()
+                .queryParam("model-customization-id", vfModule.getModelInfoVfModule().getModelCustomizationUUID());
         doReturn(false).when(MOCK_aaiResourcesClient).exists(eq(vfModuleUriWithCustomization));
         doReturn(true).when(MOCK_aaiResourcesClient).exists(eq(vfModuleUri));
         boolean nameInUse = aaiVfModuleResources.checkNameInUse(vfModule);
@@ -176,8 +176,8 @@ public class AAIVfModuleResourcesTest extends TestDataSetup {
     public void checkNameInUseFalseIsResumeTest() throws Exception {
         AAIResourceUri vfModuleUri = AAIUriFactory.createNodesUri(AAIObjectPlurals.VF_MODULE)
                 .queryParam("vf-module-name", vfModule.getVfModuleName());
-        AAIResourceUri vfModuleUriWithCustomization = vfModuleUri.clone().queryParam("model-customization-id",
-                vfModule.getModelInfoVfModule().getModelCustomizationUUID());
+        AAIResourceUri vfModuleUriWithCustomization = vfModuleUri.clone()
+                .queryParam("model-customization-id", vfModule.getModelInfoVfModule().getModelCustomizationUUID());
         doReturn(true).when(MOCK_aaiResourcesClient).exists(eq(vfModuleUriWithCustomization));
         boolean nameInUse = aaiVfModuleResources.checkNameInUse(vfModule);
         assertFalse(nameInUse);
@@ -187,8 +187,8 @@ public class AAIVfModuleResourcesTest extends TestDataSetup {
     public void checkNameInUseFalseTest() throws Exception {
         AAIResourceUri vfModuleUri = AAIUriFactory.createNodesUri(AAIObjectPlurals.VF_MODULE)
                 .queryParam("vf-module-name", vfModule.getVfModuleName());
-        AAIResourceUri vfModuleUriWithCustomization = vfModuleUri.clone().queryParam("model-customization-id",
-                vfModule.getModelInfoVfModule().getModelCustomizationUUID());
+        AAIResourceUri vfModuleUriWithCustomization = vfModuleUri.clone()
+                .queryParam("model-customization-id", vfModule.getModelInfoVfModule().getModelCustomizationUUID());
         doReturn(false).when(MOCK_aaiResourcesClient).exists(eq(vfModuleUriWithCustomization));
         doReturn(false).when(MOCK_aaiResourcesClient).exists(eq(vfModuleUri));
         boolean nameInUse = aaiVfModuleResources.checkNameInUse(vfModule);

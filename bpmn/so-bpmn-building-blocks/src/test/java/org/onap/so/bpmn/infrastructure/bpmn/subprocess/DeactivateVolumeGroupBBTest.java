@@ -34,8 +34,9 @@ public class DeactivateVolumeGroupBBTest extends BaseBPMNTest {
     public void sunnyDayAssignVolumeGroup_Test() throws InterruptedException {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeactivateVolumeGroupBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("DeactivateVolumeGroupBB_Start", "DeactivateVolumeGroup",
-                "DeactivateVolumeGroupBB_End");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("DeactivateVolumeGroupBB_Start", "DeactivateVolumeGroup",
+                        "DeactivateVolumeGroupBB_End");
         assertThat(pi).isEnded();
     }
 
@@ -45,7 +46,8 @@ public class DeactivateVolumeGroupBBTest extends BaseBPMNTest {
                 .updateOrchestrationStatusCreatedVolumeGroup(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeactivateVolumeGroupBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("DeactivateVolumeGroupBB_Start", "DeactivateVolumeGroup")
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("DeactivateVolumeGroupBB_Start", "DeactivateVolumeGroup")
                 .hasNotPassed("DeactivateVolumeGroupBB_End");
         assertThat(pi).isEnded();
     }

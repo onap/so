@@ -176,8 +176,11 @@ public class OofHomingV2 {
         logger.trace("Started Oof Homing Process Solution");
         try {
             oofValidator.validateSolution(asyncResponse);
-            ServiceInstance serviceInstance = execution.getGeneralBuildingBlock().getCustomer().getServiceSubscription()
-                    .getServiceInstances().get(0);
+            ServiceInstance serviceInstance = execution.getGeneralBuildingBlock()
+                    .getCustomer()
+                    .getServiceSubscription()
+                    .getServiceInstances()
+                    .get(0);
 
             logger.debug("Processing Oof asyncronous response");
             JSONObject response = new JSONObject(asyncResponse);
@@ -469,7 +472,8 @@ public class OofHomingV2 {
                                     vblNew.setVpnBondingLinkId(UUID.randomUUID().toString());
                                     links.add(vblNew);
                                 }
-                                links.get(links.size() - 1).getServiceProxy(sp.getId())
+                                links.get(links.size() - 1)
+                                        .getServiceProxy(sp.getId())
                                         .setServiceInstance(setSolution(solutionInfo, placement));
                             } else {
                                 sp.setServiceInstance(setSolution(solutionInfo, placement));

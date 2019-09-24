@@ -42,7 +42,8 @@ public class TestRestTemplateFactory {
         List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
         MappingJackson2HttpMessageConverter jsonMessageConverter = new MappingJackson2HttpMessageConverter();
         jsonMessageConverter.setObjectMapper(objectMapper.getMapper());
-        restTemplate.getRestTemplate().getMessageConverters()
+        restTemplate.getRestTemplate()
+                .getMessageConverters()
                 .removeIf(m -> m.getClass().getName().equals(MappingJackson2HttpMessageConverter.class.getName()));
         restTemplate.getRestTemplate().getMessageConverters().add(jsonMessageConverter);
         return restTemplate;

@@ -82,7 +82,8 @@ public class AAIInstanceGroupResources {
         org.onap.aai.domain.yang.InstanceGroup aaiInstanceGroup = aaiObjectMapper.mapInstanceGroup(instanceGroup);
         AAIResourceUri serviceInstanceURI =
                 AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstance.getServiceInstanceId());
-        injectionHelper.getAaiClient().createIfNotExists(instanceGroupUri, Optional.of(aaiInstanceGroup))
+        injectionHelper.getAaiClient()
+                .createIfNotExists(instanceGroupUri, Optional.of(aaiInstanceGroup))
                 .connect(instanceGroupUri, serviceInstanceURI);
     }
 

@@ -35,8 +35,14 @@ public class WebSecurityConfigImpl extends WebSecurityConfig {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests().antMatchers("/manage/health", "/manage/info").permitAll()
-                .antMatchers("/**").hasAnyRole(StringUtils.collectionToDelimitedString(getRoles(), ",")).and()
+        http.csrf()
+                .disable()
+                .authorizeRequests()
+                .antMatchers("/manage/health", "/manage/info")
+                .permitAll()
+                .antMatchers("/**")
+                .hasAnyRole(StringUtils.collectionToDelimitedString(getRoles(), ","))
+                .and()
                 .httpBasic();
     }
 

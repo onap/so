@@ -80,8 +80,8 @@ public class AAIVolumeGroupResourcesTest extends TestDataSetup {
     public void updateOrchestrationStatusVolumeGroupTest() throws Exception {
         volumeGroup.setOrchestrationStatus(OrchestrationStatus.ASSIGNED);
 
-        doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class),
-                isA(org.onap.aai.domain.yang.VolumeGroup.class));
+        doNothing().when(MOCK_aaiResourcesClient)
+                .update(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.VolumeGroup.class));
 
         aaiVolumeGroupResources.updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion,
                 OrchestrationStatus.ACTIVE);
@@ -95,8 +95,8 @@ public class AAIVolumeGroupResourcesTest extends TestDataSetup {
     public void createVolumeGroupTest() throws Exception {
         volumeGroup.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
 
-        doNothing().when(MOCK_aaiResourcesClient).create(isA(AAIResourceUri.class),
-                isA(org.onap.aai.domain.yang.VolumeGroup.class));
+        doNothing().when(MOCK_aaiResourcesClient)
+                .create(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.VolumeGroup.class));
 
         aaiVolumeGroupResources.createVolumeGroup(volumeGroup, cloudRegion);
 
@@ -143,8 +143,8 @@ public class AAIVolumeGroupResourcesTest extends TestDataSetup {
     public void updateHeatStackIdVolumeGroupTest() throws Exception {
         volumeGroup.setHeatStackId("testVolumeHeatStackId");
 
-        doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class),
-                isA(org.onap.aai.domain.yang.VolumeGroup.class));
+        doNothing().when(MOCK_aaiResourcesClient)
+                .update(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.VolumeGroup.class));
 
         aaiVolumeGroupResources.updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
 

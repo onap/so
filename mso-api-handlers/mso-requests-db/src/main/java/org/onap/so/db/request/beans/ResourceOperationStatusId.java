@@ -91,8 +91,10 @@ public class ResourceOperationStatusId implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("serviceId", getServiceId()).append("operationId", getOperationId())
-                .append("resourceTemplateUUID", getResourceTemplateUUID()).toString();
+        return new ToStringBuilder(this).append("serviceId", getServiceId())
+                .append("operationId", getOperationId())
+                .append("resourceTemplateUUID", getResourceTemplateUUID())
+                .toString();
     }
 
 

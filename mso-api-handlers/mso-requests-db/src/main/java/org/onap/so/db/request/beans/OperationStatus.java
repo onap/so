@@ -225,10 +225,16 @@ public class OperationStatus implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("serviceId", getServiceId()).append("operationId", getOperationId())
-                .append("operation", getOperation()).append("userId", getUserId()).append("result", getResult())
-                .append("operationContent", getOperationContent()).append("progress", getProgress())
-                .append("reason", getReason()).append("operateAt", getOperateAt()).append("finishedAt", getFinishedAt())
+        return new ToStringBuilder(this).append("serviceId", getServiceId())
+                .append("operationId", getOperationId())
+                .append("operation", getOperation())
+                .append("userId", getUserId())
+                .append("result", getResult())
+                .append("operationContent", getOperationContent())
+                .append("progress", getProgress())
+                .append("reason", getReason())
+                .append("operateAt", getOperateAt())
+                .append("finishedAt", getFinishedAt())
                 .toString();
     }
 

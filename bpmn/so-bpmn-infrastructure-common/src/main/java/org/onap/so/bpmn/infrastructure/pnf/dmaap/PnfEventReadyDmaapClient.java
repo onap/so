@@ -63,9 +63,12 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
         topicListenerDelayInSeconds = env.getProperty("pnf.dmaap.topicListenerDelayInSeconds", Integer.class);
         executor = null;
         getRequest = new HttpGet(UriBuilder.fromUri(env.getProperty("pnf.dmaap.uriPathPrefix"))
-                .scheme(env.getProperty("pnf.dmaap.protocol")).host(env.getProperty("pnf.dmaap.host"))
-                .port(env.getProperty("pnf.dmaap.port", Integer.class)).path(env.getProperty("pnf.dmaap.topicName"))
-                .path(env.getProperty("pnf.dmaap.consumerGroup")).path(env.getProperty("pnf.dmaap.consumerId"))
+                .scheme(env.getProperty("pnf.dmaap.protocol"))
+                .host(env.getProperty("pnf.dmaap.host"))
+                .port(env.getProperty("pnf.dmaap.port", Integer.class))
+                .path(env.getProperty("pnf.dmaap.topicName"))
+                .path(env.getProperty("pnf.dmaap.consumerGroup"))
+                .path(env.getProperty("pnf.dmaap.consumerId"))
                 .build());
         listOfUpdateInfoMap = new ArrayList<>();
     }

@@ -102,8 +102,10 @@ public class HttpClientConnector implements CloudifyClientConnector {
             credentialsProvider.setCredentials(AuthScope.ANY,
                     new UsernamePasswordCredentials(request.getUser(), request.getPassword()));
 
-            httpClient = HttpClients.custom().setRedirectStrategy(new HttpClientRedirectStrategy())
-                    .setDefaultCredentialsProvider(credentialsProvider).build();
+            httpClient = HttpClients.custom()
+                    .setRedirectStrategy(new HttpClientRedirectStrategy())
+                    .setDefaultCredentialsProvider(credentialsProvider)
+                    .build();
         } else {
             // Don't use basic authentication. The Client will attempt Token-based authentication
             httpClient = HttpClients.custom().setRedirectStrategy(new HttpClientRedirectStrategy()).build();

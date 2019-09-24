@@ -138,10 +138,16 @@ public class VnfTopologyOperationRequestMapperTest {
         assertEquals("vnfModelCustomizationUUID",
                 vnfOpInformation.getVnfInformation().getOnapModelInformation().getModelCustomizationUuid());
         assertEquals(2, vnfOpInformation.getVnfRequestInput().getVnfNetworkInstanceGroupIds().size());
-        assertEquals("l3-network-ig-111", vnfOpInformation.getVnfRequestInput().getVnfNetworkInstanceGroupIds().get(0)
-                .getVnfNetworkInstanceGroupId());
-        assertEquals("l3-network-ig-222", vnfOpInformation.getVnfRequestInput().getVnfNetworkInstanceGroupIds().get(1)
-                .getVnfNetworkInstanceGroupId());
+        assertEquals("l3-network-ig-111",
+                vnfOpInformation.getVnfRequestInput()
+                        .getVnfNetworkInstanceGroupIds()
+                        .get(0)
+                        .getVnfNetworkInstanceGroupId());
+        assertEquals("l3-network-ig-222",
+                vnfOpInformation.getVnfRequestInput()
+                        .getVnfNetworkInstanceGroupIds()
+                        .get(1)
+                        .getVnfNetworkInstanceGroupId());
         assertEquals("entitlementPoolUuid",
                 vnfOpInformation.getVnfRequestInput().getVnfInputParameters().getParam().get(1).getValue());
         assertEquals("licenseKeyGroupUuid",

@@ -67,7 +67,8 @@ public class ActivitySpecActivitySpecParameters implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("activitySpecId", activitySpecId)
-                .append("activitySpecParametersId", activitySpecParametersId).toString();
+                .append("activitySpecParametersId", activitySpecParametersId)
+                .toString();
     }
 
     @Override
@@ -77,7 +78,8 @@ public class ActivitySpecActivitySpecParameters implements Serializable {
         }
         ActivitySpecActivitySpecParameters castOther = (ActivitySpecActivitySpecParameters) other;
         return new EqualsBuilder().append(activitySpecId, castOther.activitySpecId)
-                .append(activitySpecParametersId, castOther.activitySpecParametersId).isEquals();
+                .append(activitySpecParametersId, castOther.activitySpecParametersId)
+                .isEquals();
     }
 
     @Override

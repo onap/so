@@ -82,8 +82,8 @@ public class AAICreateResourcesTest {
 
     @Test
     public void createAAIProjectTest() {
-        doReturn(aaiResourcesClient).when(aaiResourcesClient).createIfNotExists(isA(AAIResourceUri.class),
-                isA(Optional.class));
+        doReturn(aaiResourcesClient).when(aaiResourcesClient)
+                .createIfNotExists(isA(AAIResourceUri.class), isA(Optional.class));
         doNothing().when(aaiResourcesClient).connect(isA(AAIResourceUri.class), isA(AAIResourceUri.class));
 
 
@@ -97,8 +97,8 @@ public class AAICreateResourcesTest {
 
     @Test
     public void createAAIOwningEntityTest() {
-        doReturn(aaiResourcesClient).when(aaiResourcesClient).createIfNotExists(isA(AAIResourceUri.class),
-                isA(Optional.class));
+        doReturn(aaiResourcesClient).when(aaiResourcesClient)
+                .createIfNotExists(isA(AAIResourceUri.class), isA(Optional.class));
         doNothing().when(aaiResourcesClient).connect(isA(AAIResourceUri.class), isA(AAIResourceUri.class));
 
         aaiCreateResources.createAAIOwningEntity(owningEntityId, owningEntityName, serviceInstanceId);
@@ -134,8 +134,8 @@ public class AAICreateResourcesTest {
 
     @Test
     public void createAAIPlatformTest() {
-        doReturn(aaiResourcesClient).when(aaiResourcesClient).createIfNotExists(isA(AAIResourceUri.class),
-                isA(Optional.class));
+        doReturn(aaiResourcesClient).when(aaiResourcesClient)
+                .createIfNotExists(isA(AAIResourceUri.class), isA(Optional.class));
         doNothing().when(aaiResourcesClient).connect(isA(AAIResourceUri.class), isA(AAIResourceUri.class));
 
         aaiCreateResources.createAAIPlatform(platformName, vnfId);
@@ -148,8 +148,8 @@ public class AAICreateResourcesTest {
 
     @Test
     public void createAAILineOfBusinessTest() {
-        doReturn(aaiResourcesClient).when(aaiResourcesClient).createIfNotExists(isA(AAIResourceUri.class),
-                isA(Optional.class));
+        doReturn(aaiResourcesClient).when(aaiResourcesClient)
+                .createIfNotExists(isA(AAIResourceUri.class), isA(Optional.class));
         doNothing().when(aaiResourcesClient).connect(isA(AAIResourceUri.class), isA(AAIResourceUri.class));
 
         aaiCreateResources.createAAILineOfBusiness(lineOfBusiness, vnfId);
@@ -163,8 +163,8 @@ public class AAICreateResourcesTest {
 
     @Test
     public void createAAIServiceInstanceTest() {
-        doReturn(aaiResourcesClient).when(aaiResourcesClient).createIfNotExists(isA(AAIResourceUri.class),
-                isA(Optional.class));
+        doReturn(aaiResourcesClient).when(aaiResourcesClient)
+                .createIfNotExists(isA(AAIResourceUri.class), isA(Optional.class));
 
         aaiCreateResources.createAAIServiceInstance(globalCustomerId, serviceType, serviceInstanceId);
 

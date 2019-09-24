@@ -116,14 +116,16 @@ public class MsoCloudifyUtilsTest {
         boolean rollbackOnFailure = true;
 
         when(config.getCloudSite(cloudInfo.getCloudSiteId())).thenReturn(opSite);
-        doReturn(false).when(cloudify).isBlueprintLoaded(cloudInfo.getCloudSiteId(),
-                vduModel.getModelCustomizationUUID());
+        doReturn(false).when(cloudify)
+                .isBlueprintLoaded(cloudInfo.getCloudSiteId(), vduModel.getModelCustomizationUUID());
         doReturn(cloudifyClient).when(cloudify).getCloudifyClient(site);
-        doReturn(true).when(cloudify).uploadBlueprint(cloudifyClient, vduModel.getModelCustomizationUUID(),
-                artifact.getName(), blueprintFiles);
-        doReturn(deployment).when(cloudify).createAndInstallDeployment(cloudInfo.getCloudSiteId(),
-                cloudInfo.getTenantId(), instanceName, vduModel.getModelCustomizationUUID(), inputs, true,
-                vduModel.getTimeoutMinutes(), rollbackOnFailure);
+        doReturn(true).when(cloudify)
+                .uploadBlueprint(cloudifyClient, vduModel.getModelCustomizationUUID(), artifact.getName(),
+                        blueprintFiles);
+        doReturn(deployment).when(cloudify)
+                .createAndInstallDeployment(cloudInfo.getCloudSiteId(), cloudInfo.getTenantId(), instanceName,
+                        vduModel.getModelCustomizationUUID(), inputs, true, vduModel.getTimeoutMinutes(),
+                        rollbackOnFailure);
 
         VduInstance actual = cloudify.instantiateVdu(cloudInfo, instanceName, inputs, vduModel, rollbackOnFailure);
         assertThat(actual, sameBeanAs(expected));
@@ -148,8 +150,8 @@ public class MsoCloudifyUtilsTest {
 
         MsoCloudifyUtils cloudify = Mockito.spy(MsoCloudifyUtils.class);
 
-        doReturn(deployment).when(cloudify).queryDeployment(cloudInfo.getCloudSiteId(), cloudInfo.getTenantId(),
-                instanceId);
+        doReturn(deployment).when(cloudify)
+                .queryDeployment(cloudInfo.getCloudSiteId(), cloudInfo.getTenantId(), instanceId);
 
         VduInstance actual = cloudify.queryVdu(cloudInfo, instanceId);
 
@@ -171,11 +173,14 @@ public class MsoCloudifyUtilsTest {
         cloudInfo.setTenantId("tenantId");
         String instanceId = "instanceId";
         int timeoutMinutes = 1;
-        DeploymentInfo deploymentInfo = new DeploymentInfoBuilder().withId("id").withStatus(DeploymentStatus.CREATED)
-                .withLastAction("deleting").build();
+        DeploymentInfo deploymentInfo = new DeploymentInfoBuilder().withId("id")
+                .withStatus(DeploymentStatus.CREATED)
+                .withLastAction("deleting")
+                .build();
         MsoCloudifyUtils cloudify = Mockito.spy(MsoCloudifyUtils.class);
-        doReturn(deploymentInfo).when(cloudify).uninstallAndDeleteDeployment(cloudInfo.getCloudSiteId(),
-                cloudInfo.getTenantId(), instanceId, timeoutMinutes);
+        doReturn(deploymentInfo).when(cloudify)
+                .uninstallAndDeleteDeployment(cloudInfo.getCloudSiteId(), cloudInfo.getTenantId(), instanceId,
+                        timeoutMinutes);
 
         VduInstance actual = cloudify.deleteVdu(cloudInfo, instanceId, timeoutMinutes);
 
@@ -192,8 +197,10 @@ public class MsoCloudifyUtilsTest {
         status.setLastAction(new PluginAction("deleting", null, null));
         expected.setStatus(status);
 
-        DeploymentInfo deploymentInfo = new DeploymentInfoBuilder().withId("id").withStatus(DeploymentStatus.CREATED)
-                .withLastAction("deleting").build();
+        DeploymentInfo deploymentInfo = new DeploymentInfoBuilder().withId("id")
+                .withStatus(DeploymentStatus.CREATED)
+                .withLastAction("deleting")
+                .build();
 
         MsoCloudifyUtils cloudify = new MsoCloudifyUtils();
 
@@ -208,8 +215,10 @@ public class MsoCloudifyUtilsTest {
         expected.setState(VduStateType.DELETING);
         expected.setLastAction(new PluginAction("deleting", null, null));
 
-        DeploymentInfo deploymentInfo = new DeploymentInfoBuilder().withId("id").withStatus(DeploymentStatus.CREATED)
-                .withLastAction("deleting").build();
+        DeploymentInfo deploymentInfo = new DeploymentInfoBuilder().withId("id")
+                .withStatus(DeploymentStatus.CREATED)
+                .withLastAction("deleting")
+                .build();
 
         MsoCloudifyUtils cloudify = new MsoCloudifyUtils();
 
@@ -247,8 +256,8 @@ public class MsoCloudifyUtilsTest {
         Map<String, byte[]> blueprints = new HashMap<>();
 
         mockCloudConfig(testedObjectSpy);
-        doReturn(true).when(testedObjectSpy).uploadBlueprint(any(Cloudify.class), eq(BLUEPRINT_ID), eq(FILE_NAME),
-                eq(blueprints));
+        doReturn(true).when(testedObjectSpy)
+                .uploadBlueprint(any(Cloudify.class), eq(BLUEPRINT_ID), eq(FILE_NAME), eq(blueprints));
         // when
         testedObjectSpy.uploadBlueprint(CLOUD_SITE_ID, BLUEPRINT_ID, FILE_NAME, blueprints, true);
         // then
@@ -263,8 +272,8 @@ public class MsoCloudifyUtilsTest {
         Map<String, byte[]> blueprints = new HashMap<>();
 
         mockCloudConfig(testedObjectSpy);
-        doReturn(false).when(testedObjectSpy).uploadBlueprint(any(Cloudify.class), eq(BLUEPRINT_ID), eq(FILE_NAME),
-                eq(blueprints));
+        doReturn(false).when(testedObjectSpy)
+                .uploadBlueprint(any(Cloudify.class), eq(BLUEPRINT_ID), eq(FILE_NAME), eq(blueprints));
         // when
         try {
             testedObjectSpy.uploadBlueprint(CLOUD_SITE_ID, BLUEPRINT_ID, FILE_NAME, blueprints, true);

@@ -61,7 +61,9 @@ public class CatalogDBConfig {
     @Bean(name = "entityManagerFactory")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder,
             @Qualifier("dataSource") DataSource dataSource) {
-        return builder.dataSource(dataSource).packages("org.onap.so.db.catalog.beans").persistenceUnit("catalogDB")
+        return builder.dataSource(dataSource)
+                .packages("org.onap.so.db.catalog.beans")
+                .persistenceUnit("catalogDB")
                 .build();
     }
 

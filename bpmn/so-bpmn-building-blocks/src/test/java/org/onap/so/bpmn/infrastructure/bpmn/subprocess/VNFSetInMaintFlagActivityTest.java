@@ -34,8 +34,8 @@ public class VNFSetInMaintFlagActivityTest extends BaseBPMNTest {
     public void sunnyDayVNFSetInMaintFlagActivity_Test() throws InterruptedException {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFSetInMaintFlagActivity", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("VNFSetInMaintFlagActivity_Start", "TaskSetInMaint",
-                "VNFSetInMaintFlagActivity_End");
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("VNFSetInMaintFlagActivity_Start", "TaskSetInMaint", "VNFSetInMaintFlagActivity_End");
         assertThat(pi).isEnded();
     }
 
@@ -45,7 +45,8 @@ public class VNFSetInMaintFlagActivityTest extends BaseBPMNTest {
                 .modifyVnfInMaintFlag(any(BuildingBlockExecution.class), any(boolean.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFSetInMaintFlagActivity", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("VNFSetInMaintFlagActivity_Start", "TaskSetInMaint")
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("VNFSetInMaintFlagActivity_Start", "TaskSetInMaint")
                 .hasNotPassed("VNFSetInMaintFlagActivity_End");
         assertThat(pi).isEnded();
     }

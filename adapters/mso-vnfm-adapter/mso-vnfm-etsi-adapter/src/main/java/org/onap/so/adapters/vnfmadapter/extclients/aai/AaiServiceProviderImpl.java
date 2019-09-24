@@ -70,7 +70,8 @@ public class AaiServiceProviderImpl implements AaiServiceProvider {
     @Override
     public EsrVnfmList invokeGetVnfms() {
         return aaiClientProvider.getAaiClient()
-                .get(EsrVnfmList.class, AAIUriFactory.createResourceUri(AAIObjectType.VNFM_LIST)).orElseGet(() -> {
+                .get(EsrVnfmList.class, AAIUriFactory.createResourceUri(AAIObjectType.VNFM_LIST))
+                .orElseGet(() -> {
                     logger.debug("No VNFMs in AAI");
                     return null;
                 });
@@ -106,15 +107,17 @@ public class AaiServiceProviderImpl implements AaiServiceProvider {
     @Override
     public void invokePutVserver(final String cloudOwner, final String cloudRegion, final String tenant,
             final Vserver vserver) {
-        aaiClientProvider.getAaiClient().create(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, cloudOwner,
-                cloudRegion, tenant, vserver.getVserverId()), vserver);
+        aaiClientProvider.getAaiClient()
+                .create(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, cloudOwner, cloudRegion, tenant,
+                        vserver.getVserverId()), vserver);
     }
 
     @Override
     public void invokeDeleteVserver(final String cloudOwner, final String cloudRegion, final String tenant,
             final String vserverId) {
-        aaiClientProvider.getAaiClient().delete(
-                AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, cloudOwner, cloudRegion, tenant, vserverId));
+        aaiClientProvider.getAaiClient()
+                .delete(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, cloudOwner, cloudRegion, tenant,
+                        vserverId));
     }
 
     @Override
@@ -130,9 +133,10 @@ public class AaiServiceProviderImpl implements AaiServiceProvider {
 
     @Override
     public EsrSystemInfoList invokeGetCloudRegionEsrSystemInfoList(final String cloudOwner, final String cloudRegion) {
-        return aaiClientProvider
-                .getAaiClient().get(EsrSystemInfoList.class, AAIUriFactory
-                        .createResourceUri(AAIObjectType.CLOUD_ESR_SYSTEM_INFO_LIST, cloudOwner, cloudRegion))
+        return aaiClientProvider.getAaiClient()
+                .get(EsrSystemInfoList.class,
+                        AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_ESR_SYSTEM_INFO_LIST, cloudOwner,
+                                cloudRegion))
                 .orElseGet(() -> {
                     logger.debug("Cloud esr system info list not found in AAI");
                     return null;

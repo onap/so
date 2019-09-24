@@ -43,8 +43,14 @@ public class WebSecurityConfigImpl extends WebSecurityConfig {
         if (("need").equalsIgnoreCase(clientAuth)) {
             http.csrf().disable().authorizeRequests().anyRequest().permitAll();
         } else {
-            http.csrf().disable().authorizeRequests().antMatchers("/manage/health", "/manage/info").permitAll()
-                    .antMatchers("/**").hasAnyRole(StringUtils.collectionToDelimitedString(getRoles(), ",")).and()
+            http.csrf()
+                    .disable()
+                    .authorizeRequests()
+                    .antMatchers("/manage/health", "/manage/info")
+                    .permitAll()
+                    .antMatchers("/**")
+                    .hasAnyRole(StringUtils.collectionToDelimitedString(getRoles(), ","))
+                    .and()
                     .httpBasic();
         }
     }

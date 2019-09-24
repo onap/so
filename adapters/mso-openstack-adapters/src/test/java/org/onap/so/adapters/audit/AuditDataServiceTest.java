@@ -44,7 +44,8 @@ public class AuditDataServiceTest {
 
     @Test
     public void testWriteStackDataToRequestDb() throws Exception {
-        Mockito.doReturn(new ArrayList<RequestProcessingData>()).when(requestsDbClient)
+        Mockito.doReturn(new ArrayList<RequestProcessingData>())
+                .when(requestsDbClient)
                 .getRequestProcessingDataByGroupingIdAndNameAndTag(Mockito.any(), Mockito.any(), Mockito.any());
         Mockito.doNothing().when(requestsDbClient).saveRequestProcessingData(Mockito.any());
 
@@ -91,11 +92,13 @@ public class AuditDataServiceTest {
         requestProcessingData.setValue(auditListString);
         list.add(requestProcessingData);
 
-        Mockito.doReturn(list).when(requestsDbClient).getRequestProcessingDataByGroupingIdAndNameAndTag(Mockito.any(),
-                Mockito.any(), Mockito.any());
+        Mockito.doReturn(list)
+                .when(requestsDbClient)
+                .getRequestProcessingDataByGroupingIdAndNameAndTag(Mockito.any(), Mockito.any(), Mockito.any());
         auditDataService.getStackDataFromRequestDb(auditInventory);
-        Mockito.verify(requestsDbClient, Mockito.times(1)).getRequestProcessingDataByGroupingIdAndNameAndTag(
-                "testVnfModuleId", "testVfModuleName1", "AuditStackData");
+        Mockito.verify(requestsDbClient, Mockito.times(1))
+                .getRequestProcessingDataByGroupingIdAndNameAndTag("testVnfModuleId", "testVfModuleName1",
+                        "AuditStackData");
     }
 
 }

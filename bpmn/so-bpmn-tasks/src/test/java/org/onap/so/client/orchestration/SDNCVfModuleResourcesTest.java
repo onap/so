@@ -85,9 +85,9 @@ public class SDNCVfModuleResourcesTest extends TestDataSetup {
 
     @Test
     public void assignVfModuleTest() throws MapperException {
-        doReturn(sdncReq).when(vfModuleTopologyMapper).reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION,
-                SDNCSvcAction.ASSIGN, vfModule, volumeGroup, vnf, serviceInstance, customer, cloudRegion,
-                requestContext, null, testURI);
+        doReturn(sdncReq).when(vfModuleTopologyMapper)
+                .reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN, vfModule, volumeGroup,
+                        vnf, serviceInstance, customer, cloudRegion, requestContext, null, testURI);
         sdncVfModuleResources.assignVfModule(vfModule, volumeGroup, vnf, serviceInstance, customer, cloudRegion,
                 requestContext, testURI);
         verify(vfModuleTopologyMapper, times(1)).reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION,
@@ -97,9 +97,9 @@ public class SDNCVfModuleResourcesTest extends TestDataSetup {
 
     @Test
     public void unassignVfModuleTest() throws MapperException {
-        doReturn(sdncReq).when(vfModuleTopologyMapper).reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION,
-                SDNCSvcAction.UNASSIGN, vfModule, null, vnf, serviceInstance, null, null, requestContext, null,
-                testURI);
+        doReturn(sdncReq).when(vfModuleTopologyMapper)
+                .reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.UNASSIGN, vfModule, null, vnf,
+                        serviceInstance, null, null, requestContext, null, testURI);
         sdncVfModuleResources.unassignVfModule(vfModule, vnf, serviceInstance, requestContext, testURI);
         verify(vfModuleTopologyMapper, times(1)).reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION,
                 SDNCSvcAction.UNASSIGN, vfModule, null, vnf, serviceInstance, null, null, requestContext, null,
@@ -108,9 +108,9 @@ public class SDNCVfModuleResourcesTest extends TestDataSetup {
 
     @Test
     public void activateVfModuleTest() throws MapperException {
-        doReturn(sdncReq).when(vfModuleTopologyMapper).reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION,
-                SDNCSvcAction.ACTIVATE, vfModule, null, vnf, serviceInstance, customer, cloudRegion, requestContext,
-                null, testURI);
+        doReturn(sdncReq).when(vfModuleTopologyMapper)
+                .reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.ACTIVATE, vfModule, null, vnf,
+                        serviceInstance, customer, cloudRegion, requestContext, null, testURI);
         sdncVfModuleResources.activateVfModule(vfModule, vnf, serviceInstance, customer, cloudRegion, requestContext,
                 testURI);
         verify(vfModuleTopologyMapper, times(1)).reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION,
@@ -120,9 +120,9 @@ public class SDNCVfModuleResourcesTest extends TestDataSetup {
 
     @Test
     public void deactivateVfModuleTest() throws MapperException {
-        doReturn(sdncReq).when(vfModuleTopologyMapper).reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION,
-                SDNCSvcAction.DEACTIVATE, vfModule, null, vnf, serviceInstance, customer, cloudRegion, requestContext,
-                null, testURI);
+        doReturn(sdncReq).when(vfModuleTopologyMapper)
+                .reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.DEACTIVATE, vfModule, null, vnf,
+                        serviceInstance, customer, cloudRegion, requestContext, null, testURI);
         sdncVfModuleResources.deactivateVfModule(vfModule, vnf, serviceInstance, customer, cloudRegion, requestContext,
                 testURI);
         verify(vfModuleTopologyMapper, times(1)).reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION,
@@ -132,9 +132,9 @@ public class SDNCVfModuleResourcesTest extends TestDataSetup {
 
     @Test
     public void changeAssignVfModuleTest() throws MapperException, BadResponseException {
-        doReturn(sdncReq).when(vfModuleTopologyMapper).reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION,
-                SDNCSvcAction.CHANGE_ASSIGN, vfModule, null, vnf, serviceInstance, customer, cloudRegion,
-                requestContext, null, testURI);
+        doReturn(sdncReq).when(vfModuleTopologyMapper)
+                .reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.CHANGE_ASSIGN, vfModule, null,
+                        vnf, serviceInstance, customer, cloudRegion, requestContext, null, testURI);
         sdncVfModuleResources.changeAssignVfModule(vfModule, vnf, serviceInstance, customer, cloudRegion,
                 requestContext, testURI);
         verify(vfModuleTopologyMapper, times(1)).reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION,

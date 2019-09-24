@@ -57,7 +57,9 @@ public class VnfcCustomizationTest {
         assertTrue(vnfcCustomization.getModelUUID().equals(MODEL_UUID));
         assertTrue(vnfcCustomization.getModelVersion().equals(MODEL_VERSION));
         assertTrue(vnfcCustomization.getToscaNodeType().equals(TOSCA_NODE_TYPE));
-        assertTrue(vnfcCustomization.getCvnfcCustomization().get(0).getModelCustomizationUUID()
+        assertTrue(vnfcCustomization.getCvnfcCustomization()
+                .get(0)
+                .getModelCustomizationUUID()
                 .equals(MODEL_CUSTOMIZATION_UUID));
     }
 

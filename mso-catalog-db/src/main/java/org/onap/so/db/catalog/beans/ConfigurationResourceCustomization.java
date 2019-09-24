@@ -188,12 +188,18 @@ public class ConfigurationResourceCustomization implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("id", id).append("modelCustomizationUUID", modelCustomizationUUID)
-                .append("modelInstanceName", modelInstanceName).append("function", function).append("type", type)
-                .append("role", role).append("created", created)
+        return new ToStringBuilder(this).append("id", id)
+                .append("modelCustomizationUUID", modelCustomizationUUID)
+                .append("modelInstanceName", modelInstanceName)
+                .append("function", function)
+                .append("type", type)
+                .append("role", role)
+                .append("created", created)
                 // .append("serviceProxyResourceCustomization", serviceProxyResourceCustomization)
                 .append("configResourceCustomization", configResourceCustomization)
-                .append("configurationResource", configurationResource).append("service", service).toString();
+                .append("configurationResource", configurationResource)
+                .append("service", service)
+                .toString();
     }
 
     @Override

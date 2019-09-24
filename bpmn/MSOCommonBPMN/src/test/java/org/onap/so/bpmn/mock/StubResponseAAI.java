@@ -94,7 +94,8 @@ public class StubResponseAAI {
         wireMockServer.stubFor(get(
                 urlMatching("/aai/v[0-9]+/search/nodes-query[?]search-node-type=allotted-resource[&]filter=id:EQUALS:"
                         + allottedResourceId))
-                                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                                .willReturn(aResponse().withStatus(200)
+                                        .withHeader("Content-Type", "text/xml")
                                         .withBodyFile(responseFile)));
     }
 
@@ -142,7 +143,8 @@ public class StubResponseAAI {
         wireMockServer.stubFor(get(urlMatching(
                 "/aai/v[0-9]+/business/customers/customer/" + customer + "/service-subscriptions/service-subscription/"
                         + serviceSubscription + "/service-instances/service-instance/" + serviceInstanceId))
-                                .willReturn(aResponse().withStatus(500).withHeader("Content-Type", "text/xml")
+                                .willReturn(aResponse().withStatus(500)
+                                        .withHeader("Content-Type", "text/xml")
                                         .withBodyFile(responseFile)));
     }
 
@@ -151,7 +153,8 @@ public class StubResponseAAI {
         wireMockServer.stubFor(get(urlMatching(
                 "/aai/v[0-9]+/search/nodes-query[?]search-node-type=service-instance[&]filter=service-instance-name:EQUALS:"
                         + serviceInstanceName))
-                                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                                .willReturn(aResponse().withStatus(200)
+                                        .withHeader("Content-Type", "text/xml")
                                         .withBodyFile(responseFile)));
     }
 
@@ -174,7 +177,8 @@ public class StubResponseAAI {
         wireMockServer.stubFor(get(urlMatching(
                 "/aai/v[0-9]+/search/nodes-query[?]search-node-type=service-instance[&]filter=service-instance-id:EQUALS:"
                         + serviceInstanceId))
-                                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                                .willReturn(aResponse().withStatus(200)
+                                        .withHeader("Content-Type", "text/xml")
                                         .withBodyFile(responseFile)));
     }
 
@@ -340,7 +344,8 @@ public class StubResponseAAI {
     public static void MockGetGenericVnfByIdWithPriority(WireMockServer wireMockServer, String vnfId, int statusCode,
             String responseFile) {
         wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf" + vnfId)).atPriority(1)
-                .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "text/xml")
+                .willReturn(aResponse().withStatus(statusCode)
+                        .withHeader("Content-Type", "text/xml")
                         .withBodyFile(responseFile)));
     }
 
@@ -348,16 +353,17 @@ public class StubResponseAAI {
             int statusCode, String responseFile, int priority) {
         wireMockServer.stubFor(get(urlMatching(
                 "/aai/v[0-9]+/network/generic-vnfs/generic-vnf/" + vnfId + "/vf-modules/vf-module/" + vfModuleId))
-                        .atPriority(priority).willReturn(aResponse().withStatus(statusCode)
-                                .withHeader("Content-Type", "text/xml").withBodyFile(responseFile)));
+                        .atPriority(priority)
+                        .willReturn(aResponse().withStatus(statusCode)
+                                .withHeader("Content-Type", "text/xml")
+                                .withBodyFile(responseFile)));
     }
 
     public static void MockGetGenericVnfByIdWithDepth(WireMockServer wireMockServer, String vnfId, int depth,
             String responseFile) {
-        wireMockServer.stubFor(
-                get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/" + vnfId + "[?]depth=" + depth))
-                        .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
-                                .withBodyFile(responseFile)));
+        wireMockServer.stubFor(get(
+                urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/" + vnfId + "[?]depth=" + depth)).willReturn(
+                        aResponse().withStatus(200).withHeader("Content-Type", "text/xml").withBodyFile(responseFile)));
     }
 
     public static void MockGetGenericVnfById_404(WireMockServer wireMockServer, String vnfId) {
@@ -367,7 +373,8 @@ public class StubResponseAAI {
 
     public static void MockGetGenericVnfById_500(WireMockServer wireMockServer, String vnfId) {
         wireMockServer.stubFor(get(urlMatching("/aai/v9/network/generic-vnfs/generic-vnf/" + vnfId + "[?]depth=1"))
-                .withQueryParam("depth", equalTo("1")).willReturn(aResponse().withStatus(500)));
+                .withQueryParam("depth", equalTo("1"))
+                .willReturn(aResponse().withStatus(500)));
     }
 
     public static void MockGetGenericVnfByName(WireMockServer wireMockServer, String vnfName, String responseFile) {
@@ -380,7 +387,8 @@ public class StubResponseAAI {
             String responseFile) {
         wireMockServer.stubFor(get(urlMatching(
                 "/aai/v[0-9]+/network/generic-vnfs/generic-vnf[?]vnf-name=" + vnfName + "[&]depth=" + depth))
-                        .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                        .willReturn(aResponse().withStatus(200)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBodyFile(responseFile)));
     }
 
@@ -416,7 +424,8 @@ public class StubResponseAAI {
     public static void MockPutGenericVnf(WireMockServer wireMockServer, String vnfId, String requestBodyContaining,
             int statusCode) {
         wireMockServer.stubFor(put(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf" + vnfId))
-                .withRequestBody(containing(requestBodyContaining)).willReturn(aResponse().withStatus(statusCode)));
+                .withRequestBody(containing(requestBodyContaining))
+                .willReturn(aResponse().withStatus(statusCode)));
     }
 
     public static void MockPutGenericVnf(WireMockServer wireMockServer, String vnfId, int statusCode) {
@@ -461,10 +470,9 @@ public class StubResponseAAI {
 
     public static void MockGetGenericVceByNameWithDepth(WireMockServer wireMockServer, String vnfName, int depth,
             String responseFile) {
-        wireMockServer
-                .stubFor(get(urlMatching("/aai/v[0-9]+/network/vces/vce[?]vnf-name=" + vnfName + "[&]depth=" + depth))
-                        .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
-                                .withBodyFile(responseFile)));
+        wireMockServer.stubFor(get(
+                urlMatching("/aai/v[0-9]+/network/vces/vce[?]vnf-name=" + vnfName + "[&]depth=" + depth)).willReturn(
+                        aResponse().withStatus(200).withHeader("Content-Type", "text/xml").withBodyFile(responseFile)));
     }
 
     public static void MockGetVceGenericQuery(WireMockServer wireMockServer, String serviceInstanceName, int depth,
@@ -472,7 +480,8 @@ public class StubResponseAAI {
         wireMockServer.stubFor(
                 get(urlMatching("/aai/v[0-9]+/search/generic-query[?]key=service-instance.service-instance-name:"
                         + serviceInstanceName + "[&]start-node-type=service-instance[&]include=vce[&]depth=" + depth))
-                                .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "text/xml")
+                                .willReturn(aResponse().withStatus(statusCode)
+                                        .withHeader("Content-Type", "text/xml")
                                         .withBodyFile(responseFile)));
     }
 
@@ -484,7 +493,8 @@ public class StubResponseAAI {
         wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/search/generic-query[?]key=customer.global-customer-id:"
                 + customer + "&key=service-subscription.service-type:" + serviceType
                 + "&start-node-type=service-subscription&include=tenant&include=service-subscription&depth=1"))
-                        .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                        .willReturn(aResponse().withStatus(200)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBodyFile(responseFile)));
     }
 
@@ -506,7 +516,8 @@ public class StubResponseAAI {
             String depth) {
         wireMockServer.stubFor(
                 get(urlMatching("/aai/v[0-9]+/network/l3-networks/l3-network/" + networkId + "[?]depth=" + depth))
-                        .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                        .willReturn(aResponse().withStatus(200)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBodyFile(responseFile)));
     }
 
@@ -514,23 +525,22 @@ public class StubResponseAAI {
             String cloudRegion) {
         wireMockServer.stubFor(get(
                 urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/" + cloudRegion))
-                        .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                        .willReturn(aResponse().withStatus(200)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBodyFile(responseFile)));
     }
 
     public static void MockGetNetworkByName(WireMockServer wireMockServer, String networkName, String responseFile) {
-        wireMockServer
-                .stubFor(get(urlMatching("/aai/v[0-9]+/network/l3-networks/l3-network[?]network-name=" + networkName))
-                        .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
-                                .withBodyFile(responseFile)));
+        wireMockServer.stubFor(get(
+                urlMatching("/aai/v[0-9]+/network/l3-networks/l3-network[?]network-name=" + networkName)).willReturn(
+                        aResponse().withStatus(200).withHeader("Content-Type", "text/xml").withBodyFile(responseFile)));
     }
 
     public static void MockGetNetworkByName_404(WireMockServer wireMockServer, String responseFile,
             String networkName) {
-        wireMockServer
-                .stubFor(get(urlMatching("/aai/v[0-9]+/network/l3-networks/l3-network[?]network-name=" + networkName))
-                        .willReturn(aResponse().withStatus(404).withHeader("Content-Type", "text/xml")
-                                .withBodyFile(responseFile)));
+        wireMockServer.stubFor(get(
+                urlMatching("/aai/v[0-9]+/network/l3-networks/l3-network[?]network-name=" + networkName)).willReturn(
+                        aResponse().withStatus(404).withHeader("Content-Type", "text/xml").withBodyFile(responseFile)));
     }
 
     public static void MockGetNetworkCloudRegion_404(WireMockServer wireMockServer, String cloudRegion) {
@@ -549,7 +559,8 @@ public class StubResponseAAI {
             int statusCode) {
         wireMockServer
                 .stubFor(put(urlMatching("/aai/v[0-9]+/network/network-policies/network-policy/" + networkPolicyId))
-                        .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "text/xml")
+                        .willReturn(aResponse().withStatus(statusCode)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBodyFile(responseFile)));
     }
 
@@ -568,7 +579,8 @@ public class StubResponseAAI {
             int statusCode) {
         wireMockServer.stubFor(
                 get(urlMatching("/aai/v[0-9]+/network/l3-networks/l3-network[?]network-name=" + networkPolicyName))
-                        .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "text/xml")
+                        .willReturn(aResponse().withStatus(statusCode)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBodyFile(responseFile)));
     }
 
@@ -580,28 +592,32 @@ public class StubResponseAAI {
             String vpnBinding, String depth) {
         wireMockServer.stubFor(
                 get(urlMatching("/aai/v[0-9]+/network/vpn-bindings/vpn-binding/" + vpnBinding + "[?]depth=" + depth))
-                        .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                        .willReturn(aResponse().withStatus(200)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBodyFile(responseFile)));
     }
 
     public static void MockGetNetworkPolicy(WireMockServer wireMockServer, String responseFile, String policy) {
         wireMockServer.stubFor(
                 get(urlMatching("/aai/v[0-9]+/network/network-policies/network-policy/" + policy + "[?]depth=all"))
-                        .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                        .willReturn(aResponse().withStatus(200)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBodyFile(responseFile)));
     }
 
     public static void MockGetNetworkVpnBinding(WireMockServer wireMockServer, String networkBindingId,
             String responseFile, int statusCode) {
         wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/network/vpn-bindings/vpn-binding/" + networkBindingId))
-                .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "text/xml")
+                .willReturn(aResponse().withStatus(statusCode)
+                        .withHeader("Content-Type", "text/xml")
                         .withBodyFile(responseFile)));
     }
 
     public static void MockGetNetworkPolicy(WireMockServer wireMockServer, String networkPolicy, String responseFile,
             int statusCode) {
         wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/network/network-policies/network-policy/" + networkPolicy))
-                .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "text/xml")
+                .willReturn(aResponse().withStatus(statusCode)
+                        .withHeader("Content-Type", "text/xml")
                         .withBodyFile(responseFile)));
     }
 
@@ -609,7 +625,8 @@ public class StubResponseAAI {
             String tableReference) {
         wireMockServer.stubFor(get(urlMatching(
                 "/aai/v[0-9]+/network/route-table-references/route-table-reference/" + tableReference + "[?]depth=all"))
-                        .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                        .willReturn(aResponse().withStatus(200)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBodyFile(responseFile)));
     }
 
@@ -617,7 +634,8 @@ public class StubResponseAAI {
             String depth) {
         wireMockServer.stubFor(
                 put(urlMatching("/aai/v[0-9]+/network/l3-networks/l3-network/" + networkId + "[?]depth=" + depth))
-                        .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                        .willReturn(aResponse().withStatus(200)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBodyFile(responseFile)));
     }
 
@@ -625,7 +643,8 @@ public class StubResponseAAI {
             String responseFile, int statusCode) {
         wireMockServer.stubFor(get(urlMatching(
                 "/aai/v[0-9]+/network/network-policies/network-policy[?]network-policy-fqdn=" + networkPolicy))
-                        .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "text/xml")
+                        .willReturn(aResponse().withStatus(statusCode)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBodyFile(responseFile)));
     }
 
@@ -633,7 +652,8 @@ public class StubResponseAAI {
             String responseFile, int statusCode) {
         wireMockServer.stubFor(
                 get(urlMatching("/aai/v[0-9]+/network/route-table-references/route-table-reference/" + networkRouteId))
-                        .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "text/xml")
+                        .willReturn(aResponse().withStatus(statusCode)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBodyFile(responseFile)));
     }
 
@@ -658,7 +678,8 @@ public class StubResponseAAI {
 
     public static void MockDBUpdateVfModule(WireMockServer wireMockServer) {
         wireMockServer.stubFor(post(urlEqualTo("/dbadapters/RequestsDbAdapter")).willReturn(aResponse().withStatus(200)
-                .withHeader("Content-Type", "text/xml").withBodyFile("VfModularity/DBUpdateResponse.xml")));
+                .withHeader("Content-Type", "text/xml")
+                .withBodyFile("VfModularity/DBUpdateResponse.xml")));
     }
 
     // start of mocks used locally and by other VF Module unit tests
@@ -666,7 +687,8 @@ public class StubResponseAAI {
         // simplified the implementation to return "success" for all requests
         wireMockServer.stubFor(post(urlEqualTo("/SDNCAdapter"))
                 // .withRequestBody(containing("SvcInstanceId><"))
-                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                .willReturn(aResponse().withStatus(200)
+                        .withHeader("Content-Type", "text/xml")
                         .withBodyFile("VfModularity/StandardSDNCSynchResponse.xml")));
 
     }
@@ -675,18 +697,25 @@ public class StubResponseAAI {
     public static void MockAAIVfModule(WireMockServer wireMockServer) {
         wireMockServer.stubFor(
                 get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/skask/vf-modules/vf-module/supercool"))
-                        .atPriority(1).willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                        .atPriority(1)
+                        .willReturn(aResponse().withStatus(200)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBodyFile("VfModularity/VfModule-supercool.xml")));
         wireMockServer.stubFor(
                 get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/skask/vf-modules/vf-module/lukewarm"))
-                        .atPriority(2).willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                        .atPriority(2)
+                        .willReturn(aResponse().withStatus(200)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBodyFile("VfModularity/VfModule-lukewarm.xml")));
         wireMockServer
                 .stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/skask/vf-modules/vf-module/.*"))
-                        .atPriority(5).willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                        .atPriority(5)
+                        .willReturn(aResponse().withStatus(200)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBodyFile("VfModularity/VfModule-new.xml")));
         wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/skask[?]depth=1"))
-                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                .willReturn(aResponse().withStatus(200)
+                        .withHeader("Content-Type", "text/xml")
                         .withBodyFile("VfModularity/GenericVnf.xml")));
         wireMockServer.stubFor(
                 patch(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/skask/vf-modules/vf-module/supercool"))
@@ -699,37 +728,46 @@ public class StubResponseAAI {
         // HTTP PUT stub still used by CreateAAIvfModuleVolumeGroup
         wireMockServer
                 .stubFor(put(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/skask/vf-modules/vf-module/.*"))
-                        .withRequestBody(containing("PCRF")).willReturn(aResponse().withStatus(200)));
+                        .withRequestBody(containing("PCRF"))
+                        .willReturn(aResponse().withStatus(200)));
         // HTTP PUT stub still used by DoCreateVfModuleTest
         wireMockServer
                 .stubFor(put(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/skask/vf-modules/vf-module/.*"))
-                        .withRequestBody(containing("MODULELABEL")).willReturn(aResponse().withStatus(200)));
+                        .withRequestBody(containing("MODULELABEL"))
+                        .willReturn(aResponse().withStatus(200)));
         wireMockServer.stubFor(
                 get(urlMatching("/aai/v[0-9]+/cloud-infrastructure/volume-groups/volume-group[?]volume-group-id=78987"))
-                        .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                        .willReturn(aResponse().withStatus(200)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBodyFile("VfModularity/ConfirmVolumeGroupTenantResponse.xml")));
         wireMockServer.stubFor(
                 get(urlMatching("/aai/v[0-9]+/cloud-infrastructure/volume-groups/volume-group[?]volume-group-id=78987"))
-                        .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                        .willReturn(aResponse().withStatus(200)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBodyFile("VfModularity/ConfirmVolumeGroupTenantResponse.xml")));
         wireMockServer.stubFor(get(urlMatching(
                 "/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/MDTWNJ21/volume-groups/volume-group/78987"))
-                        .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                        .willReturn(aResponse().withStatus(200)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBodyFile("VfModularity/VolumeGroup.xml")));
         wireMockServer.stubFor(get(urlMatching(
                 "/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/AAIAIC25/volume-groups/volume-group/78987"))
-                        .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                        .willReturn(aResponse().withStatus(200)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBodyFile("VfModularity/VolumeGroup.xml")));
         wireMockServer.stubFor(delete(urlMatching(
                 "/aai/v[0-9]+/cloud-infrastructure/volume-groups/volume-group/78987[?]resource-version=0000020"))
-                        .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                        .willReturn(aResponse().withStatus(200)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBodyFile("DeleteCinderVolumeV1/DeleteVolumeId_AAIResponse_Success.xml")));
         wireMockServer.stubFor(put(urlMatching("/aai/v[0-9]+/network/network-policies/network-policy/.*"))
-                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                .willReturn(aResponse().withStatus(200)
+                        .withHeader("Content-Type", "text/xml")
                         .withBodyFile("VfModularity/AddNetworkPolicy_AAIResponse_Success.xml")));
         wireMockServer.stubFor(patch(
                 urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/skask/vf-modules/vf-module/NEWvBNGModuleId"))
-                        .withRequestBody(containing("NEWvBNGModuleId")).willReturn(aResponse().withStatus(200)));
+                        .withRequestBody(containing("NEWvBNGModuleId"))
+                        .willReturn(aResponse().withStatus(200)));
     }
 
 
@@ -744,7 +782,8 @@ public class StubResponseAAI {
             String responseFile) {
         wireMockServer.stubFor(get(
                 urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/" + cloudRegionId))
-                        .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "text/xml")
+                        .willReturn(aResponse().withStatus(statusCode)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBodyFile(responseFile)));
     }
 
@@ -761,7 +800,8 @@ public class StubResponseAAI {
         wireMockServer
                 .stubFor(get(urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/"
                         + cloudRegionId + "/volume-groups/volume-group/" + volumeGroupId))
-                                .willReturn(aResponse().withStatus(responseCode).withHeader("Content-Type", "text/xml")
+                                .willReturn(aResponse().withStatus(responseCode)
+                                        .withHeader("Content-Type", "text/xml")
                                         .withBodyFile(responseFile)));
     }
 
@@ -770,7 +810,8 @@ public class StubResponseAAI {
         wireMockServer
                 .stubFor(put(urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/"
                         + cloudRegionId + "/volume-groups/volume-group/" + volumeGroupId))
-                                .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "text/xml")
+                                .willReturn(aResponse().withStatus(statusCode)
+                                        .withHeader("Content-Type", "text/xml")
                                         .withBodyFile(responseFile)));
     }
 
@@ -779,7 +820,8 @@ public class StubResponseAAI {
         wireMockServer
                 .stubFor(get(urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/"
                         + cloudRegionId + "/volume-groups[?]volume-group-name=" + volumeGroupName))
-                                .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "text/xml")
+                                .willReturn(aResponse().withStatus(statusCode)
+                                        .withHeader("Content-Type", "text/xml")
                                         .withBodyFile(responseFile)));
     }
 
@@ -815,7 +857,8 @@ public class StubResponseAAI {
             String responseFile, int statusCode) {
         wireMockServer.stubFor(get(urlMatching(
                 "/aai/v[0-9]+/network/generic-vnfs/generic-vnf/" + vnfId + "/vf-modules/vf-module/" + vfModuleId))
-                        .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "text/xml")
+                        .willReturn(aResponse().withStatus(statusCode)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBodyFile(responseFile)));
     }
 
@@ -823,7 +866,8 @@ public class StubResponseAAI {
             int depth, String responseFile, int statusCode) {
         wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/" + vnfId
                 + "/vf-modules/vf-module[?]vf-module-name=" + vfModuleName + "[?]depth=" + depth))
-                        .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "text/xml")
+                        .willReturn(aResponse().withStatus(statusCode)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBodyFile(responseFile)));
     }
 
@@ -831,7 +875,8 @@ public class StubResponseAAI {
             String responseFile, int statusCode) {
         wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/" + vnfId
                 + "/vf-modules/vf-module[?]vf-module-name=" + vfModuleName))
-                        .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "text/xml")
+                        .willReturn(aResponse().withStatus(statusCode)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBodyFile(responseFile)));
     }
 
@@ -847,7 +892,8 @@ public class StubResponseAAI {
             String requestContaining, String vfModuleId) {
         wireMockServer.stubFor(put(urlMatching(
                 "/aai/v[0-9]+/network/generic-vnfs/generic-vnf/" + vnfId + "/vf-modules/vf-module/" + vfModuleId))
-                        .withRequestBody(containing(requestContaining)).willReturn(aResponse().withStatus(200)));
+                        .withRequestBody(containing(requestContaining))
+                        .willReturn(aResponse().withStatus(200)));
     }
 
     public static void MockPutVfModuleId(WireMockServer wireMockServer, String vnfId, String vfModuleId) {
@@ -878,14 +924,16 @@ public class StubResponseAAI {
     public static void MockGetPserverByVnfId(WireMockServer wireMockServer, String vnfId, String responseFile,
             int statusCode) {
         wireMockServer.stubFor(put(urlMatching("/aai/v1[0-9]/query.*")).willReturn(aResponse().withStatus(statusCode)
-                .withHeader("Content-Type", "application/json").withBodyFile(responseFile)));
+                .withHeader("Content-Type", "application/json")
+                .withBodyFile(responseFile)));
     }
 
     public static void MockGetGenericVnfsByVnfId(WireMockServer wireMockServer, String vnfId, String responseFile,
             int statusCode) {
         wireMockServer.stubFor(
                 get(urlMatching("/aai/v1[0-9]/network/generic-vnfs/.*")).willReturn(aResponse().withStatus(statusCode)
-                        .withHeader("Content-Type", "application/json; charset=utf-8").withBodyFile(responseFile)));
+                        .withHeader("Content-Type", "application/json; charset=utf-8")
+                        .withBodyFile(responseFile)));
     }
 
     public static void MockSetInMaintFlagByVnfId(WireMockServer wireMockServer, String vnfId, int statusCode) {
@@ -913,14 +961,16 @@ public class StubResponseAAI {
     @Deprecated
     public static void MockGetVceById(WireMockServer wireMockServer) {
         wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/network/vces/vce/testVnfId123?depth=1"))
-                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                .willReturn(aResponse().withStatus(200)
+                        .withHeader("Content-Type", "text/xml")
                         .withBodyFile("GenericFlows/getVceResponse.xml")));
     }
 
     @Deprecated
     public static void MockGetVceByName(WireMockServer wireMockServer) {
         wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/network/vces/vce[?]vnf-name=testVnfName123"))
-                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                .willReturn(aResponse().withStatus(200)
+                        .withHeader("Content-Type", "text/xml")
                         .withBodyFile("GenericFlows/getVceByNameResponse.xml")));
     }
 
@@ -955,7 +1005,8 @@ public class StubResponseAAI {
     public static void MockGetServiceSubscription(WireMockServer wireMockServer) {
         wireMockServer.stubFor(get(urlMatching(
                 "/aai/v[0-9]+/business/customers/customer/1604-MVM-26/service-subscriptions/service-subscription/SDN-ETHERNET-INTERNET"))
-                        .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                        .willReturn(aResponse().withStatus(200)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBodyFile("GenericFlows/getServiceSubscription.xml")));
     }
 
@@ -976,7 +1027,8 @@ public class StubResponseAAI {
     @Deprecated
     public static void MockGetGenericVnfById(WireMockServer wireMockServer) {
         wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/testVnfId123"))
-                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                .willReturn(aResponse().withStatus(200)
+                        .withHeader("Content-Type", "text/xml")
                         .withBodyFile("GenericFlows/getGenericVnfByNameResponse.xml")));
     }
 
@@ -990,7 +1042,8 @@ public class StubResponseAAI {
     public static void MockGetGenericVnfByName(WireMockServer wireMockServer) {
         wireMockServer
                 .stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf[?]vnf-name=testVnfName123"))
-                        .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                        .willReturn(aResponse().withStatus(200)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBodyFile("GenericFlows/getGenericVnfResponse.xml")));
     }
 
@@ -998,14 +1051,16 @@ public class StubResponseAAI {
     public static void MockGetGenericVnfByName_hasRelationships(WireMockServer wireMockServer) {
         wireMockServer
                 .stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf[?]vnf-name=testVnfName123"))
-                        .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                        .willReturn(aResponse().withStatus(200)
+                                .withHeader("Content-Type", "text/xml")
                                 .withBodyFile("GenericFlows/getGenericVnfResponse_hasRelationships.xml")));
     }
 
     @Deprecated
     public static void MockGetGenericVnfById_hasRelationships(WireMockServer wireMockServer) {
         wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/testVnfId123"))
-                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml")
+                .willReturn(aResponse().withStatus(200)
+                        .withHeader("Content-Type", "text/xml")
                         .withBodyFile("GenericFlows/getGenericVnfResponse_hasRelationships.xml")));
     }
 

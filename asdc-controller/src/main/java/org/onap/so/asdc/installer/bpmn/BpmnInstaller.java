@@ -133,8 +133,11 @@ public class BpmnInstaller {
         HttpClient client = HttpClientBuilder.create().build();
         URI deploymentUri = new URI(this.env.getProperty(CAMUNDA_URL) + CREATE_DEPLOYMENT_PATH);
         HttpPost post = new HttpPost(deploymentUri);
-        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(1000000).setConnectTimeout(1000)
-                .setConnectionRequestTimeout(1000).build();
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setSocketTimeout(1000000)
+                .setConnectTimeout(1000)
+                .setConnectionRequestTimeout(1000)
+                .build();
         post.setConfig(requestConfig);
         HttpEntity requestEntity = buildMimeMultipart(bpmnFileName, version);
         post.setEntity(requestEntity);
@@ -146,37 +149,36 @@ public class BpmnInstaller {
                 Paths.get(getMsoConfigPath(), "ASDC", version, bpmnFileName).normalize().toString());
 
         byte[] bytesToSend = IOUtils.toByteArray(bpmnFileStream);
-        HttpEntity requestEntity =
-                MultipartEntityBuilder.create()
-                        .addPart(FormBodyPartBuilder.create().setName("deployment-name")
-                                .setBody(new StringBody("MSO Sample 1", ContentType.TEXT_PLAIN))
-                                .setField("Content-Disposition",
-                                        String.format("form-data; name=\"%s\"", "deployment-name"))
-                                .build())
-                        .addPart(FormBodyPartBuilder.create().setName("enable-duplicate-filtering")
-                                .setBody(new StringBody("false", ContentType.TEXT_PLAIN))
-                                .setField("Content-Disposition",
-                                        String.format("form-data; name=\"%s\"", "enable-duplicate-filtering"))
-                                .build())
-                        .addPart(FormBodyPartBuilder.create().setName("deplpy-changed-only")
-                                .setBody(new StringBody("false", ContentType.TEXT_PLAIN))
-                                .setField("Content-Disposition",
-                                        String.format("form-data; name=\"%s\"", "deploy-changed-only"))
-                                .build())
-                        .addPart(FormBodyPartBuilder.create().setName("deployment-source")
-                                .setBody(new StringBody("local", ContentType.TEXT_PLAIN))
-                                .setField("Content-Disposition",
-                                        String.format("form-data; name=\"%s\"", "deployment-source"))
-                                .build())
-                        .addPart(
-                                FormBodyPartBuilder.create().setName(bpmnFileName)
-                                        .setBody(new ByteArrayBody(bytesToSend, ContentType.create("octet"),
-                                                bpmnFileName))
-                                        .setField("Content-Disposition",
-                                                String.format("form-data; name=\"%s\"; filename=\"%s\"; size=%d",
-                                                        bpmnFileName, bpmnFileName, bytesToSend.length))
-                                        .build())
-                        .build();
+        HttpEntity requestEntity = MultipartEntityBuilder.create()
+                .addPart(FormBodyPartBuilder.create()
+                        .setName("deployment-name")
+                        .setBody(new StringBody("MSO Sample 1", ContentType.TEXT_PLAIN))
+                        .setField("Content-Disposition", String.format("form-data; name=\"%s\"", "deployment-name"))
+                        .build())
+                .addPart(FormBodyPartBuilder.create()
+                        .setName("enable-duplicate-filtering")
+                        .setBody(new StringBody("false", ContentType.TEXT_PLAIN))
+                        .setField("Content-Disposition",
+                                String.format("form-data; name=\"%s\"", "enable-duplicate-filtering"))
+                        .build())
+                .addPart(FormBodyPartBuilder.create()
+                        .setName("deplpy-changed-only")
+                        .setBody(new StringBody("false", ContentType.TEXT_PLAIN))
+                        .setField("Content-Disposition", String.format("form-data; name=\"%s\"", "deploy-changed-only"))
+                        .build())
+                .addPart(FormBodyPartBuilder.create()
+                        .setName("deployment-source")
+                        .setBody(new StringBody("local", ContentType.TEXT_PLAIN))
+                        .setField("Content-Disposition", String.format("form-data; name=\"%s\"", "deployment-source"))
+                        .build())
+                .addPart(FormBodyPartBuilder.create()
+                        .setName(bpmnFileName)
+                        .setBody(new ByteArrayBody(bytesToSend, ContentType.create("octet"), bpmnFileName))
+                        .setField("Content-Disposition",
+                                String.format("form-data; name=\"%s\"; filename=\"%s\"; size=%d", bpmnFileName,
+                                        bpmnFileName, bytesToSend.length))
+                        .build())
+                .build();
 
         IOUtils.closeQuietly(bpmnFileStream);
         return requestEntity;

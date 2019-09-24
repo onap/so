@@ -196,7 +196,10 @@ public class BBInputSetup implements JavaDelegate {
     protected void setHomingFlag(GeneralBuildingBlock outputBB, boolean homing, Map<ResourceKey, String> lookupKeyMap) {
 
         if (lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID) != null && homing && outputBB != null) {
-            for (GenericVnf vnf : outputBB.getCustomer().getServiceSubscription().getServiceInstances().get(0)
+            for (GenericVnf vnf : outputBB.getCustomer()
+                    .getServiceSubscription()
+                    .getServiceInstances()
+                    .get(0)
                     .getVnfs()) {
                 if (vnf.getVnfId().equalsIgnoreCase(lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID))) {
                     vnf.setCallHoming(homing);
@@ -1287,8 +1290,9 @@ public class BBInputSetup implements JavaDelegate {
                         vnfModelInfo.setModelCustomizationUuid(vnfModelCustomizationUUID);
                         this.mapCatalogVnf(vnf, vnfModelInfo, service);
                         lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, vnf.getVnfId());
-                        String vfModuleCustomizationUUID = this.bbInputSetupUtils
-                                .getAAIVfModule(vnf.getVnfId(), vfModule.getVfModuleId()).getModelCustomizationId();
+                        String vfModuleCustomizationUUID =
+                                this.bbInputSetupUtils.getAAIVfModule(vnf.getVnfId(), vfModule.getVfModuleId())
+                                        .getModelCustomizationId();
                         ModelInfo vfModuleModelInfo = new ModelInfo();
                         vfModuleModelInfo.setModelCustomizationId(vfModuleCustomizationUUID);
                         this.mapCatalogVfModule(vfModule, vfModuleModelInfo, service, vnfModelCustomizationUUID);
@@ -1345,8 +1349,9 @@ public class BBInputSetup implements JavaDelegate {
             for (Configuration configuration : serviceInstance.getConfigurations()) {
                 if (lookupKeyMap.get(ResourceKey.CONFIGURATION_ID) != null && configuration.getConfigurationId()
                         .equalsIgnoreCase(lookupKeyMap.get(ResourceKey.CONFIGURATION_ID))) {
-                    String configurationCustUUID = this.bbInputSetupUtils
-                            .getAAIConfiguration(configuration.getConfigurationId()).getModelCustomizationId();
+                    String configurationCustUUID =
+                            this.bbInputSetupUtils.getAAIConfiguration(configuration.getConfigurationId())
+                                    .getModelCustomizationId();
                     ModelInfo modelInfo = new ModelInfo();
                     modelInfo.setModelCustomizationUuid(configurationCustUUID);
                     this.mapCatalogConfiguration(configuration, modelInfo, service,

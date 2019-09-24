@@ -102,8 +102,11 @@ public class BPRestCallback {
         try {
             int timeout = 60 * 1000;
 
-            RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(timeout).setConnectTimeout(timeout)
-                    .setConnectionRequestTimeout(timeout).build();
+            RequestConfig requestConfig = RequestConfig.custom()
+                    .setSocketTimeout(timeout)
+                    .setConnectTimeout(timeout)
+                    .setConnectionRequestTimeout(timeout)
+                    .build();
 
             HttpClient client = HttpClientBuilder.create().build();
             method = new HttpPost(url);
