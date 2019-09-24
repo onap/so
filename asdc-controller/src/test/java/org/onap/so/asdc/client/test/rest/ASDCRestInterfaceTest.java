@@ -56,12 +56,16 @@ import org.onap.so.db.catalog.beans.NetworkResource;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ToscaCsar;
+import org.onap.so.db.catalog.beans.VnfResource;
+import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.beans.Workflow;
 import org.onap.so.db.catalog.data.repository.AllottedResourceCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.AllottedResourceRepository;
 import org.onap.so.db.catalog.data.repository.NetworkResourceRepository;
 import org.onap.so.db.catalog.data.repository.ServiceRepository;
 import org.onap.so.db.catalog.data.repository.ToscaCsarRepository;
+import org.onap.so.db.catalog.data.repository.VnfCustomizationRepository;
+import org.onap.so.db.catalog.data.repository.VnfResourceRepository;
 import org.onap.so.db.catalog.data.repository.WorkflowRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -86,6 +90,9 @@ public class ASDCRestInterfaceTest extends BaseTest {
 
     @Autowired
     private NetworkResourceRepository networkRepo;
+
+    @Autowired
+    private VnfCustomizationRepository vnfCustRepo;
 
     @Autowired
     private WorkflowRepository workflowRepo;
@@ -297,6 +304,18 @@ public class ASDCRestInterfaceTest extends BaseTest {
         Optional<NetworkResource> networkResource = networkRepo.findById("89789b26-a46b-4cee-aed0-d46e21f93a5e");
         assertTrue(networkResource.isPresent());
         assertEquals("Generic NeutronNet", networkResource.get().getModelName());
+
+        List<VnfResourceCustomization> vnfCustomizationResources =
+                vnfCustRepo.findByModelCustomizationUUID("01564fe7-0541-4d92-badc-464cc35f83ba");
+
+        for (VnfResourceCustomization vnfResourceCustomization : vnfCustomizationResources) {
+
+            assertTrue(vnfResourceCustomization.getVfModuleCustomizations().stream()
+                    .anyMatch(vfModuleCust -> "354b1e83-47db-4af1-8af4-9c14b03b482d"
+                            .equals(vfModuleCust.getModelCustomizationUUID())));
+
+        }
+
     }
 
     @Test
