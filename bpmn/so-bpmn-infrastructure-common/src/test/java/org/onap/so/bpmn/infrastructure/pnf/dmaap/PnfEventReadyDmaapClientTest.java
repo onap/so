@@ -30,8 +30,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,7 +41,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.message.BasicHttpResponse;
 import org.junit.Before;
 import org.junit.Test;
@@ -182,8 +182,8 @@ public class PnfEventReadyDmaapClientTest {
         threadRunFlag.setAccessible(false);
     }
 
-    private HttpResponse createResponse(String json) throws UnsupportedEncodingException {
-        HttpEntity entity = new StringEntity(json);
+    private HttpResponse createResponse(String json) {
+        HttpEntity entity = new InputStreamEntity(new ByteArrayInputStream(json.getBytes()));
         ProtocolVersion protocolVersion = new ProtocolVersion("", 1, 1);
         HttpResponse response = new BasicHttpResponse(protocolVersion, 1, "");
         response.setEntity(entity);

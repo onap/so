@@ -28,6 +28,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Spliterator;
@@ -41,6 +42,9 @@ public final class JsonUtilForPnfCorrelationId {
     }
 
     static List<String> parseJsonToGelAllPnfCorrelationId(String json) {
+        if (json == null || json.isEmpty()) {
+            return Collections.emptyList();
+        }
         JsonElement je = new JsonParser().parse(json);
         JsonArray array = je.getAsJsonArray();
         List<String> list = new ArrayList<>();
