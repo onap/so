@@ -39,6 +39,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class WorkflowActionBBFailure {
 
+    private static final String DEACTIVATE_FABRIC_CONFIGURATION_FLOW = "DeactivateFabricConfigurationBB";
+    private static final String UNASSIGN_FABRIC_CONFIGURATION_FLOW = "UnassignFabricConfigurationBB";
     private static final Logger logger = LoggerFactory.getLogger(WorkflowActionBBFailure.class);
     public static final String ROLLBACK_TARGET_STATE = "rollbackTargetState";
     @Autowired
@@ -96,6 +98,16 @@ public class WorkflowActionBBFailure {
                 String rollbackTargetState = (String) execution.getVariable(ROLLBACK_TARGET_STATE);
                 request.setRequestStatus(rollbackTargetState);
             } else if (isRollbackFailure) {
+                if (ebb != null && ebb.getBuildingBlock() != null && ebb.getBuildingBlock().getBpmnFlowName() != null) {
+                    String flowName = ebb.getBuildingBlock().getBpmnFlowName();
+                    if (DEACTIVATE_FABRIC_CONFIGURATION_FLOW.equalsIgnoreCase(flowName)
+                            || UNASSIGN_FABRIC_CONFIGURATION_FLOW.equalsIgnoreCase(flowName)) {
+                        String statusMessage = String.format(
+                                "%s Warning: The vf-module is active but configuration was not removed completely for one or more VMs.",
+                                request.getStatusMessage());
+                        request.setStatusMessage(statusMessage);
+                    }
+                }
                 Optional<String> rollbackErrorMsgOp = retrieveErrorMessage(execution);
                 if (rollbackErrorMsgOp.isPresent()) {
                     rollbackErrorMsg = rollbackErrorMsgOp.get();

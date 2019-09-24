@@ -41,6 +41,8 @@ import org.mockito.Spy;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
+import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
+import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.constants.Status;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 
@@ -136,6 +138,31 @@ public class WorkflowActionBBFailureTest extends BaseTaskTest {
         workflowActionBBFailure.updateRequestStatusToFailed(execution);
         String errorMsg = (String) execution.getVariable("RollbackErrorMessage");
         assertEquals("error in rollback", errorMsg);
+        assertEquals(Status.FAILED.toString(), req.getRequestStatus());
+    }
+
+    @Test
+    public void updateRequestStatusToFailedRollbackFabric() {
+        ExecuteBuildingBlock ebb = new ExecuteBuildingBlock();
+        BuildingBlock bb = new BuildingBlock();
+        bb.setBpmnFlowName("UnassignFabricConfigurationBB");
+        ebb.setBuildingBlock(bb);
+        execution.setVariable("buildingBlock", ebb);
+        execution.setVariable("mso-request-id", "123");
+        execution.setVariable("isRollbackComplete", false);
+        execution.setVariable("isRollback", true);
+        InfraActiveRequests req = new InfraActiveRequests();
+        req.setStatusMessage("PINC failure.");
+        WorkflowException wfe = new WorkflowException("processKey123", 1, "error in rollback");
+        execution.setVariable("WorkflowException", wfe);
+        doReturn(req).when(requestsDbClient).getInfraActiveRequestbyRequestId("123");
+        doNothing().when(requestsDbClient).updateInfraActiveRequests(isA(InfraActiveRequests.class));
+        workflowActionBBFailure.updateRequestStatusToFailed(execution);
+        String errorMsg = (String) execution.getVariable("RollbackErrorMessage");
+        assertEquals("error in rollback", errorMsg);
+        assertEquals(
+                "PINC failure. Warning: The vf-module is active but configuration was not removed completely for one or more VMs.",
+                req.getStatusMessage());
         assertEquals(Status.FAILED.toString(), req.getRequestStatus());
     }
 
