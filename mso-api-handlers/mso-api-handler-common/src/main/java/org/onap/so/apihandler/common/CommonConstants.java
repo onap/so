@@ -81,6 +81,7 @@ public final class CommonConstants {
     public static final String X_LATEST_VERSION = "X-LatestVersion";
     public static final String INSTANCE_GROUP_ID = "instanceGroupId";
     public static final String INSTANCE_GROUP_INSTANCE_ID = "instanceGroupInstanceId";
+    public static final String GENERATE_IDS = "generateIdsOnly";
 
     private CommonConstants() {
         // prevent creating an instance of this class

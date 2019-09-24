@@ -151,7 +151,7 @@ public class ResumeOrchestrationRequest {
         Boolean aLaCarte = sir.getRequestDetails().getRequestParameters().getALaCarte();
 
         String pnfCorrelationId = serviceInstances.getPnfCorrelationId(sir);
-        RecipeLookupResult recipeLookupResult = serviceInstances.getServiceInstanceOrchestrationURI(sir, action,
+        RecipeLookupResult recipeLookupResult = requestHandlerUtils.getServiceInstanceOrchestrationURI(sir, action,
                 msoRequest.getAlacarteFlag(sir), currentActiveRequest);
 
         requestDbSave(currentActiveRequest);

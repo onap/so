@@ -44,6 +44,7 @@ public class RequestClientParameter {
     private String recipeParamXsd;
     private String requestUri;
     private String instanceGroupId;
+    private boolean generateIdsOnly;
 
     private RequestClientParameter(Builder builder) {
         requestId = builder.requestId;
@@ -67,7 +68,7 @@ public class RequestClientParameter {
         aLaCarte = builder.aLaCarte;
         requestUri = builder.requestUri;
         instanceGroupId = builder.instanceGroupId;
-
+        generateIdsOnly = builder.generateIdsOnly;
     }
 
     public String getRequestId() {
@@ -154,6 +155,14 @@ public class RequestClientParameter {
         return instanceGroupId;
     }
 
+    public boolean isGenerateIdsOnly() {
+        return generateIdsOnly;
+    }
+
+    public void setGenerateIdsOnly(boolean generateIdsOnly) {
+        this.generateIdsOnly = generateIdsOnly;
+    }
+
     public static class Builder {
         private String requestId;
         private boolean isBaseVfModule = false;
@@ -176,6 +185,7 @@ public class RequestClientParameter {
         private String recipeParamXsd;
         private String requestUri;
         private String instanceGroupId;
+        private boolean generateIdsOnly;
 
         public Builder setRequestId(String requestId) {
             this.requestId = requestId;
@@ -279,6 +289,11 @@ public class RequestClientParameter {
 
         public Builder setInstanceGroupId(String instanceGroupId) {
             this.instanceGroupId = instanceGroupId;
+            return this;
+        }
+
+        public Builder setGenerateIds(boolean generateIdsOnly) {
+            this.generateIdsOnly = generateIdsOnly;
             return this;
         }
 

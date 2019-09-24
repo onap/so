@@ -116,6 +116,9 @@ public class CamundaVIDRequest {
         return serviceInput;
     }
 
+    @JsonProperty(CommonConstants.GENERATE_IDS)
+    private CamundaBooleanInput generateIds;
+
     @JsonProperty(CommonConstants.CAMUNDA_SERVICE_INPUT)
     public void setServiceInput(CamundaInput serviceInput) {
         this.serviceInput = serviceInput;
@@ -347,6 +350,12 @@ public class CamundaVIDRequest {
         return "CamundaRequest";
     }
 
+    public CamundaBooleanInput getGenerateIds() {
+        return generateIds;
+    }
 
+    public void setGenerateIds(CamundaBooleanInput generateIds) {
+        this.generateIds = generateIds;
+    }
 
 }

@@ -99,6 +99,7 @@ public class CamundaClient extends RequestClient {
         return response;
     }
 
+    @Override
     public HttpResponse post(RequestClientParameter parameterObject) throws IOException {
         HttpPost post = new HttpPost(url);
         logger.debug(CAMUNDA_URL_MESAGE + url);
@@ -110,7 +111,7 @@ public class CamundaClient extends RequestClient {
                 parameterObject.getVnfType(), parameterObject.getVfModuleType(), parameterObject.getNetworkType(),
                 parameterObject.getRequestDetails(), parameterObject.getApiVersion(), parameterObject.isaLaCarte(),
                 parameterObject.getRequestUri(), parameterObject.getRecipeParamXsd(),
-                parameterObject.getInstanceGroupId());
+                parameterObject.getInstanceGroupId(), parameterObject.isGenerateIdsOnly());
 
         StringEntity input = new StringEntity(jsonReq);
         input.setContentType(CommonConstants.CONTENT_TYPE_JSON);
@@ -169,7 +170,7 @@ public class CamundaClient extends RequestClient {
             String serviceInstanceId, String pnfCorrelationId, String vnfId, String vfModuleId, String volumeGroupId,
             String networkId, String configurationId, String serviceType, String vnfType, String vfModuleType,
             String networkType, String requestDetails, String apiVersion, boolean aLaCarte, String requestUri,
-            String paramXsd, String instanceGroupId) {
+            String paramXsd, String instanceGroupId, boolean generateIdsOnly) {
         String jsonReq = null;
 
         try {
@@ -196,6 +197,8 @@ public class CamundaClient extends RequestClient {
             CamundaInput requestUriInput = new CamundaInput();
             CamundaInput recipeParamsInput = new CamundaInput();
             CamundaInput instanceGroupIdInput = new CamundaInput();
+            CamundaBooleanInput generateIds = new CamundaBooleanInput();
+
 
             requestIdInput.setValue(StringUtils.defaultString(requestId));
             isBaseVfModuleInput.setValue(isBaseVfModule);
@@ -217,6 +220,7 @@ public class CamundaClient extends RequestClient {
             requestUriInput.setValue(StringUtils.defaultString(requestUri));
             recipeParamsInput.setValue(paramXsd);
             instanceGroupIdInput.setValue(StringUtils.defaultString(instanceGroupId));
+            generateIds.setValue(generateIdsOnly);
 
             serviceInput.setValue(requestDetails);
             camundaRequest.setServiceInput(serviceInput);
@@ -242,6 +246,7 @@ public class CamundaClient extends RequestClient {
             camundaRequest.setRequestUri(requestUriInput);
             camundaRequest.setRecipeParams(recipeParamsInput);
             camundaRequest.setInstanceGroupId(instanceGroupIdInput);
+            camundaRequest.setGenerateIds(generateIds);
 
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);

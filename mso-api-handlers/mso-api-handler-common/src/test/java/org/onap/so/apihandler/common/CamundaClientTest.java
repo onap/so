@@ -47,10 +47,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.mock.env.MockEnvironment;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-
 
 /**
  * This class implements test methods of Camunda Beans.
@@ -164,10 +164,10 @@ public class CamundaClientTest {
         String testResult = testClient.wrapVIDRequest(requestId, isBaseVfModule, recipeTimeout, requestAction,
                 serviceInstanceId, pnfCorrelationId, vnfId, vfModuleId, volumeGroupId, networkId, configurationId,
                 serviceType, vnfType, vfModuleType, networkType, requestDetails, apiVersion, aLaCarte, requestUri, "",
-                instanceGroupId);
+                instanceGroupId, false);
         String expected = inputStream("/WrappedVIDRequest.json");
 
-        assertEquals(expected, testResult);
+        JSONAssert.assertEquals(expected, testResult, false);
     }
 
     @Test

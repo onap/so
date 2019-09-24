@@ -2266,7 +2266,7 @@ public class ServiceInstancesTest extends BaseTest {
         RequestParameters requestParameters = request.getRequestDetails().getRequestParameters();
         String userParamsTxt = inputStream("/userParams.txt");
 
-        List<Map<String, Object>> userParams = servInstances.configureUserParams(requestParameters);
+        List<Map<String, Object>> userParams = requestHandlerUtils.configureUserParams(requestParameters);
         System.out.println(userParams);
         assertTrue(userParams.size() > 0);
         assertTrue(userParams.get(0).containsKey("name"));
@@ -2280,7 +2280,7 @@ public class ServiceInstancesTest extends BaseTest {
         ServiceInstancesRequest request =
                 mapper.readValue(inputStream("/MacroServiceInstance.json"), ServiceInstancesRequest.class);
         CloudConfiguration cloudConfig =
-                servInstances.configureCloudConfig(request.getRequestDetails().getRequestParameters());
+                requestHandlerUtils.configureCloudConfig(request.getRequestDetails().getRequestParameters());
 
         assertEquals("mdt25b", cloudConfig.getLcpCloudRegionId());
         assertEquals("aefb697db6524ddebfe4915591b0a347", cloudConfig.getTenantId());
@@ -2293,7 +2293,7 @@ public class ServiceInstancesTest extends BaseTest {
                 mapper.readValue(inputStream("/MacroServiceInstance.json"), ServiceInstancesRequest.class);
         ServiceInstancesRequest expected =
                 mapper.readValue(inputStream("/LegacyMacroServiceInstance.json"), ServiceInstancesRequest.class);
-        servInstances.mapToLegacyRequest(request.getRequestDetails());
+        requestHandlerUtils.mapToLegacyRequest(request.getRequestDetails());
         System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(request));
         assertThat(request, sameBeanAs(expected));
     }
