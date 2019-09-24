@@ -81,21 +81,25 @@ public class LifecycleManager {
      * @return the response to the request
      */
     public CreateVnfResponse createVnf(final String vnfIdInAai, final CreateVnfRequest request) {
-        final GenericVnf genericVnf = getGenericVnfFromAai(vnfIdInAai);
+        GenericVnf genericVnf = getGenericVnfFromAai(vnfIdInAai);
         EsrVnfm vnfm = aaiHelper.getAssignedVnfm(genericVnf);
         checkIfVnfAlreadyExistsInVnfm(vnfm, genericVnf);
 
         if (vnfm == null) {
             vnfm = aaiHelper.selectVnfm(genericVnf);
-            aaiHelper.addRelationshipFromGenericVnfToVnfm(genericVnf, vnfm.getVnfmId());
+            aaiServiceProvider.invokePutGenericVnfToVnfmRelationship(genericVnf, vnfm.getVnfmId());
         }
-        aaiHelper.addRelationshipFromGenericVnfToTenant(genericVnf, request.getTenant());
         final InlineResponse201 vnfmResponse = sendCreateRequestToVnfm(request, genericVnf, vnfIdInAai, vnfm);
 
         logger.info("Create response: {}", vnfmResponse);
 
         genericVnf.setSelflink(getSelfLink(vnfmResponse, vnfm));
-        aaiServiceProvider.invokePutGenericVnf(genericVnf);
+
+        GenericVnf genericVnfPatch = new GenericVnf();
+        genericVnfPatch.setVnfId(genericVnf.getVnfId());
+        genericVnfPatch.setSelflink(genericVnf.getSelflink());
+        aaiServiceProvider.invokePatchGenericVnf(genericVnfPatch);
+
         final String vnfIdInVnfm = vnfmResponse.getId();
 
         final OamIpAddressSource oamIpAddressSource = extractOamIpAddressSource(request);

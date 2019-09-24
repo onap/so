@@ -212,12 +212,16 @@ public class Sol003LcnControllerTest {
 
         final Vserver vserver = (Vserver) bodyArgument2.getAllValues().get(0);
         assertEquals("myVnfc1", vserver.getVserverId());
-        final Relationship relationship = vserver.getRelationshipList().getRelationship().get(0);
-        assertEquals("generic-vnf", relationship.getRelatedTo());
-        assertEquals("tosca.relationships.HostedOn", relationship.getRelationshipLabel());
-        assertEquals("/aai/v15/network/generic-vnfs/generic-vnf/myTestVnfId", relationship.getRelatedLink());
-        assertEquals("generic-vnf.vnf-id", relationship.getRelationshipData().get(0).getRelationshipKey());
-        assertEquals("myTestVnfId", relationship.getRelationshipData().get(0).getRelationshipValue());
+
+        final ArgumentCaptor<AAIResourceUri> uriArgument1Connect = ArgumentCaptor.forClass(AAIResourceUri.class);
+        final ArgumentCaptor<AAIResourceUri> uriArgument2Connect = ArgumentCaptor.forClass(AAIResourceUri.class);
+        verify(aaiResourcesClient, timeout(1000)).connect(uriArgument1Connect.capture(), uriArgument2Connect.capture());
+        assertEquals(
+                "/cloud-infrastructure/cloud-regions/cloud-region/" + CLOUD_OWNER + "/" + REGION + "/tenants/tenant/"
+                        + TENANT_ID + "/vservers/vserver/myVnfc1",
+                uriArgument1Connect.getAllValues().get(0).build().toString());
+        assertEquals("/network/generic-vnfs/generic-vnf/myTestVnfId",
+                uriArgument2Connect.getAllValues().get(0).build().toString());
     }
 
     @Test

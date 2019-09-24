@@ -25,6 +25,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
@@ -175,20 +176,14 @@ public class VnfmAdapterControllerTest {
         assertEquals("/network/generic-vnfs/generic-vnf/myTestVnfId", uriArgument.getValue().build().toString());
 
         assertEquals("myTestVnfId", genericVnfArgument.getValue().getVnfId());
-        assertEquals(2, genericVnfArgument.getValue().getRelationshipList().getRelationship().size());
-        final Relationship vnfmRelationship =
-                genericVnfArgument.getValue().getRelationshipList().getRelationship().get(0);
-        assertEquals("esr-vnfm", vnfmRelationship.getRelatedTo());
-        assertEquals("tosca.relationships.DependsOn", vnfmRelationship.getRelationshipLabel());
-        assertEquals("/aai/v15/external-system/esr-vnfm-list/esr-vnfm/vnfm2", vnfmRelationship.getRelatedLink());
 
-        final Relationship tenantRelationship =
-                genericVnfArgument.getValue().getRelationshipList().getRelationship().get(1);
-        assertEquals("tenant", tenantRelationship.getRelatedTo());
-        assertEquals(
-                "/aai/v15/cloud-infrastructure/cloud-regions/cloud-region/myTestCloudOwner/myTestRegion/tenants/tenant/myTestTenantId",
-                tenantRelationship.getRelatedLink());
-
+        final ArgumentCaptor<AAIResourceUri> uriArgument1Connect = ArgumentCaptor.forClass(AAIResourceUri.class);
+        final ArgumentCaptor<AAIResourceUri> uriArgument2Connect = ArgumentCaptor.forClass(AAIResourceUri.class);
+        verify(aaiResourcesClient, timeout(1000)).connect(uriArgument1Connect.capture(), uriArgument2Connect.capture());
+        assertEquals("/external-system/esr-vnfm-list/esr-vnfm/vnfm2",
+                uriArgument1Connect.getAllValues().get(0).build().toString());
+        assertEquals("/network/generic-vnfs/generic-vnf/myTestVnfId",
+                uriArgument2Connect.getAllValues().get(0).build().toString());
 
         // check the job status
 

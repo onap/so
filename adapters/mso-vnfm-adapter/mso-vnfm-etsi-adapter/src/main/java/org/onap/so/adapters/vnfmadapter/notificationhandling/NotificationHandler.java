@@ -97,10 +97,12 @@ public class NotificationHandler implements Runnable {
     private void handleVnfInstantiateCompleted() {
         final GenericVnf genericVnf = aaiServiceProvider
                 .invokeQueryGenericVnf(vnfInstance.getLinks().getSelf().getHref()).getGenericVnf().get(0);
-        setOamIpAddress(genericVnf, vnfInstance);
-        genericVnf.setOrchestrationStatus("Created");
 
-        aaiServiceProvider.invokePutGenericVnf(genericVnf);
+        final GenericVnf genericVnfPatch = new GenericVnf();
+        genericVnfPatch.setVnfId(genericVnf.getVnfId());
+        setOamIpAddress(genericVnfPatch, vnfInstance);
+        genericVnfPatch.setOrchestrationStatus("Created");
+        aaiServiceProvider.invokePatchGenericVnf(genericVnfPatch);
 
         addVservers(vnfLcmOperationOccurrenceNotification, genericVnf.getVnfId(), vnfInstance.getVimConnectionInfo());
 
@@ -162,9 +164,12 @@ public class NotificationHandler implements Runnable {
             jobManager.notificationProcessedForOperation(vnfLcmOperationOccurrenceNotification.getVnfLcmOpOccId(),
                     deleteSuccessful);
             jobManager.vnfDeleted(vnfLcmOperationOccurrenceNotification.getVnfLcmOpOccId());
-            genericVnf.setOrchestrationStatus("Assigned");
-            genericVnf.setSelflink("");
-            aaiServiceProvider.invokePutGenericVnf(genericVnf);
+
+            final GenericVnf genericVnfPatch = new GenericVnf();
+            genericVnfPatch.setVnfId(genericVnf.getVnfId());
+            genericVnfPatch.setOrchestrationStatus("Assigned");
+            genericVnfPatch.setSelflink("");
+            aaiServiceProvider.invokePatchGenericVnf(genericVnfPatch);
         }
     }
 
@@ -180,10 +185,11 @@ public class NotificationHandler implements Runnable {
                     getVimConnectionInfo(vimConnectionIdToVimConnectionInfo, vnfc);
             if (ChangeTypeEnum.ADDED.equals(vnfc.getChangeType())) {
                 final Vserver vserver = aaiHelper.createVserver(vnfc);
-                aaiHelper.addRelationshipFromVserverVnfToGenericVnf(vserver, vnfId);
-
                 aaiServiceProvider.invokePutVserver(getCloudOwner(vimConnectionInfo), getCloudRegion(vimConnectionInfo),
                         getTenant(vimConnectionInfo), vserver);
+
+                aaiServiceProvider.invokePutVserverToVnfRelationship(getCloudOwner(vimConnectionInfo),
+                        getCloudRegion(vimConnectionInfo), getTenant(vimConnectionInfo), vserver, vnfId);
             }
         }
     }

@@ -31,14 +31,10 @@ import org.onap.aai.domain.yang.EsrVnfmList;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.Relationship;
 import org.onap.aai.domain.yang.RelationshipData;
-import org.onap.aai.domain.yang.RelationshipList;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.LcnVnfLcmOperationOccurrenceNotificationAffectedVnfcs;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.TenantNotFoundException;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfmNotFoundException;
-import org.onap.so.client.aai.AAIObjectType;
-import org.onap.so.client.aai.AAIVersion;
-import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.vnfmadapter.v1.model.Tenant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,38 +54,6 @@ public class AaiHelper {
     @Autowired
     public AaiHelper(final AaiServiceProvider aaiServiceProvider) {
         this.aaiServiceProvider = aaiServiceProvider;
-    }
-
-    /**
-     * Add a relationship to the given generic VNF to the given VNFM.
-     *
-     * @param vnf the generic VNF
-     * @param vnfmId the ID of the VNFM
-     */
-    public void addRelationshipFromGenericVnfToVnfm(final GenericVnf vnf, final String vnfmId) {
-        if (vnf.getRelationshipList() == null) {
-            vnf.setRelationshipList(new RelationshipList());
-        }
-        final RelationshipList vnfmRelationshiplist = vnf.getRelationshipList();
-        vnfmRelationshiplist.getRelationship().add(createRelationshipToVnfm(vnfmId));
-
-    }
-
-    private Relationship createRelationshipToVnfm(final String vnfmId) {
-        final Relationship relationship = new Relationship();
-        relationship.setRelatedTo("esr-vnfm");
-        relationship.setRelationshipLabel("tosca.relationships.DependsOn");
-        relationship.setRelatedLink("/aai/" + AAIVersion.LATEST
-                + AAIUriFactory.createResourceUri(AAIObjectType.VNFM, vnfmId).build().toString());
-        relationship.getRelationshipData().add(createRelationshipData("esr-vnfm.vnfm-id", vnfmId));
-        return relationship;
-    }
-
-    private RelationshipData createRelationshipData(final String key, final String value) {
-        final RelationshipData data = new RelationshipData();
-        data.setRelationshipKey(key);
-        data.setRelationshipValue(value);
-        return data;
     }
 
     /**
@@ -242,64 +206,12 @@ public class AaiHelper {
         return vserver;
     }
 
-    /**
-     * Add a relationship to the given vserver to the given VNF.
-     *
-     * @param vnf the vserver
-     * @param vnfmId the ID of the VNF
-     */
-    public void addRelationshipFromVserverVnfToGenericVnf(final Vserver vserver, final String vnfId) {
-        if (vserver.getRelationshipList() == null) {
-            vserver.setRelationshipList(new RelationshipList());
-        }
-        final RelationshipList vserverRelationshiplist = vserver.getRelationshipList();
-        vserverRelationshiplist.getRelationship().add(createRelationshipToGenericVnf(vnfId));
-    }
-
-    private Relationship createRelationshipToGenericVnf(final String vnfId) {
-        final Relationship relationship = new Relationship();
-        relationship.setRelatedTo("generic-vnf");
-        relationship.setRelationshipLabel("tosca.relationships.HostedOn");
-        relationship.setRelatedLink("/aai/" + AAIVersion.LATEST
-                + AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId).build().toString());
-        relationship.getRelationshipData().add(createRelationshipData("generic-vnf.vnf-id", vnfId));
-        return relationship;
-    }
-
     public void setOamIpAddressSource(final String vnfId, final OamIpAddressSource oamIpAddressSource) {
         mapOfVnfIdToOamIpAddressHolder.put(vnfId, oamIpAddressSource);
     }
 
     public OamIpAddressSource getOamIpAddressSource(final String vnfId) {
         return mapOfVnfIdToOamIpAddressHolder.get(vnfId);
-    }
-
-    /**
-     * Add a relationship to the given tenant to the given VNF.
-     *
-     * @param vnf the generic vnf
-     * @param tenant the Tenant
-     */
-
-    public void addRelationshipFromGenericVnfToTenant(final GenericVnf vnf, final Tenant tenant) {
-        if (vnf.getRelationshipList() == null) {
-            vnf.setRelationshipList(new RelationshipList());
-        }
-        final RelationshipList vnfmRelationshiplist = vnf.getRelationshipList();
-        vnfmRelationshiplist.getRelationship().add(createRelationshipToTenant(tenant));
-    }
-
-    private Relationship createRelationshipToTenant(final Tenant tenant) {
-        final Relationship relationship = new Relationship();
-        relationship.setRelatedTo("tenant");
-        relationship.setRelatedLink("/aai/" + AAIVersion.LATEST + AAIUriFactory.createResourceUri(AAIObjectType.TENANT,
-                tenant.getCloudOwner(), tenant.getRegionName(), tenant.getTenantId()).build().toString());
-        relationship.getRelationshipData()
-                .add(createRelationshipData("cloud-region.cloud-owner", tenant.getCloudOwner()));
-        relationship.getRelationshipData()
-                .add(createRelationshipData("cloud-region.cloud-region-id", tenant.getRegionName()));
-        relationship.getRelationshipData().add(createRelationshipData("tenant.tenant-id", tenant.getTenantId()));
-        return relationship;
     }
 
 }
