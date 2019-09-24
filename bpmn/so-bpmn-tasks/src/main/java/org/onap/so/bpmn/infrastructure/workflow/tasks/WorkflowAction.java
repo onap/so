@@ -197,7 +197,9 @@ public class WorkflowAction {
                 suppressRollback = false;
             }
             execution.setVariable("suppressRollback", suppressRollback);
+            boolean isResume = false;
             if (isUriResume(uri)) {
+                isResume = true;
                 logger.debug("replacing URI {}", uri);
                 uri = bbInputSetupUtils.loadOriginalInfraActiveRequestById(requestId).getRequestUrl();
                 logger.debug("for RESUME with original value {}", uri);
@@ -224,6 +226,12 @@ public class WorkflowAction {
                 flowsToExecute = bbInputSetupUtils.loadOriginalFlowExecutionPath(requestId);
                 if (flowsToExecute == null) {
                     buildAndThrowException(execution, "Could not resume Macro flow. Error loading execution path.");
+                }
+            } else if (aLaCarte && isResume) {
+                flowsToExecute = bbInputSetupUtils.loadOriginalFlowExecutionPath(requestId);
+                if (flowsToExecute == null) {
+                    buildAndThrowException(execution,
+                            "Could not resume request with request Id: " + requestId + ". No flowsToExecute was found");
                 }
             } else {
                 if (aLaCarte) {
@@ -387,7 +395,7 @@ public class WorkflowAction {
                 flowNames.add(ebb.getBuildingBlock().getBpmnFlowName());
             }
 
-            if (!aLaCarte) {
+            if (!isResume) {
                 bbInputSetupUtils.persistFlowExecutionPath(requestId, flowsToExecute);
             }
             execution.setVariable("flowNames", flowNames);

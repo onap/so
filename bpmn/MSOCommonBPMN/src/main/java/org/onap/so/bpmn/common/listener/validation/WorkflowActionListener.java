@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2018 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2017 - 2019 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,25 +18,27 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.workflowmessage;
+package org.onap.so.bpmn.common.listener.validation;
 
-import org.apache.http.entity.ContentType;
-import org.junit.Test;
-import org.mockito.Mock;
+import org.camunda.bpm.engine.delegate.DelegateExecution;
 
-import static junit.framework.Assert.assertFalse;
+public interface WorkflowActionListener {
 
-public class BPRestCallbackTest {
+    /**
+     * Should this listener run for given bb
+     * 
+     * @return
+     * 
+     */
+    public boolean shouldRunFor(String bbName, String eventName);
 
-    @Mock
-    ContentType contentType;
+    /**
+     * Determines whether or not the listener should be executed
+     * 
+     * 
+     * @param execution
+     * @return
+     */
+    public void executeListener(DelegateExecution execution);
 
-    @Test
-    public void testSendExceptionCase() {
-
-        BPRestCallback test = new BPRestCallback();
-        test.send("workflowMessageUrl/", "messageType", "correlator", contentType,"message");
-        assertFalse(test.send("workflowMessageUrl/", "messageType", "correlator", contentType,"message"));
-
-        }
-    }
+}

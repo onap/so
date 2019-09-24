@@ -2,14 +2,14 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2018 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *l
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,28 +18,8 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.workflowmessage;
+package org.onap.so.bpmn.common.listener.validation;
 
-import org.junit.Assert;
-import org.junit.Test;
+public interface WorkflowActionCompletion extends WorkflowActionListener {
 
-public class WMAdapterRestTest {
-
-    @Test(expected = ClassFormatError.class)
-    public void testHealthCheckException() throws Exception {
-
-        WMAdapterRest test = new WMAdapterRest();
-        test.healthcheck("34388737-cdad-4d96-ae6f-39d08024b495");
-        Assert.assertFalse(true);
-
-    }
-
-    @Test(expected = ClassFormatError.class)
-    public void testReceiveWorkflowMsgException() throws Exception {
-        WMAdapterRest test = new WMAdapterRest();
-        test.receiveWorkflowMessage("contentTypeHeader", "messageType", "correlator", "content");
-        Assert.assertFalse(true);
-
-    }
 }
-

@@ -22,6 +22,7 @@ package org.onap.so.db.catalog.client;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -732,5 +733,13 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         List<Workflow> workflow = client.findWorkflowBySource("abc");
         assertNull(workflow);
     }
+
+    @Test
+    public void getCloudSites() {
+        List<CloudSite> cloudSites = client.getCloudSites();
+        assertNotNull(cloudSites);
+        assertNotEquals(0, cloudSites.size());
+    }
+
 
 }

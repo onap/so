@@ -20,27 +20,14 @@
 
 package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.camunda.bpm.engine.delegate.BpmnError;
-import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
-import org.onap.so.bpmn.common.workflow.context.WorkflowCallbackResponse;
-import org.onap.so.bpmn.common.workflow.context.WorkflowContextHolder;
 import org.onap.so.bpmn.core.WorkflowException;
-import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
-import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
-import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
-import org.onap.so.serviceinstancebeans.RequestReferences;
-import org.onap.so.serviceinstancebeans.ServiceInstancesResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class FlowCompletionTasks {
@@ -50,7 +37,9 @@ public class FlowCompletionTasks {
     @Autowired
     private RequestsDbClient requestDbclient;
 
+
     public void updateRequestDbStatus(BuildingBlockExecution execution) {
+
         try {
             String requestId = execution.getGeneralBuildingBlock().getRequestContext().getMsoRequestId();
             InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);

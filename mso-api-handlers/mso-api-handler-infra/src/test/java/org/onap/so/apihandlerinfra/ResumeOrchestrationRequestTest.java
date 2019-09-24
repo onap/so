@@ -21,6 +21,7 @@ package org.onap.so.apihandlerinfra;
 
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -30,7 +31,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -56,10 +56,10 @@ import org.onap.so.constants.Status;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.serviceinstancebeans.ModelInfo;
+import org.onap.so.serviceinstancebeans.ModelType;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 import org.springframework.web.client.HttpClientErrorException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.onap.so.serviceinstancebeans.ModelType;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ResumeOrchestrationRequestTest {
@@ -258,7 +258,7 @@ public class ResumeOrchestrationRequestTest {
         when(requestHandler.convertJsonToServiceInstanceRequest(anyString(), any(Actions.class), anyString(),
                 anyString())).thenReturn(sir);
         when(serviceInstances.getPnfCorrelationId(any(ServiceInstancesRequest.class))).thenReturn("pnfCorrelationId");
-        doReturn(lookupResult).when(serviceInstances).getServiceInstanceOrchestrationURI(sir, action, aLaCarte,
+        doReturn(lookupResult).when(requestHandler).getServiceInstanceOrchestrationURI(sir, action, aLaCarte,
                 currentActiveRequest);
         doReturn(requestClientParameter).when(resumeReq).setRequestClientParameter(lookupResult, version,
                 infraActiveRequest, currentActiveRequest, "pnfCorrelationId", aLaCarte, sir);
@@ -311,7 +311,7 @@ public class ResumeOrchestrationRequestTest {
                 anyString())).thenReturn(sirNullALaCarte);
         when(serviceInstances.getPnfCorrelationId(any(ServiceInstancesRequest.class))).thenReturn("pnfCorrelationId");
         doReturn(false).when(msoRequest).getAlacarteFlag(sirNullALaCarte);
-        doReturn(lookupResult).when(serviceInstances).getServiceInstanceOrchestrationURI(sirNullALaCarte, action, false,
+        doReturn(lookupResult).when(requestHandler).getServiceInstanceOrchestrationURI(sirNullALaCarte, action, false,
                 currentActiveRequest);
         doReturn(requestClientParameter).when(resumeReq).setRequestClientParameter(lookupResult, version,
                 infraActiveRequest, currentActiveRequest, "pnfCorrelationId", aLaCarte, sirNullALaCarte);

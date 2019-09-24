@@ -23,9 +23,7 @@
 package org.onap.so.bpmn.servicedecomposition.tasks;
 
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -76,12 +74,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 
 @Component("BBInputSetupUtils")
 public class BBInputSetupUtils {
@@ -177,39 +174,32 @@ public class BBInputSetupUtils {
     }
 
     public InfraActiveRequests loadOriginalInfraActiveRequestById(String requestId) {
-
         return this.requestsDbClient.getInfraActiveRequestbyRequestId(
                 this.requestsDbClient.getInfraActiveRequestbyRequestId(requestId).getOriginalRequestId());
     }
 
     public List<ExecuteBuildingBlock> loadOriginalFlowExecutionPath(String requestId) {
-
-        List<ExecuteBuildingBlock> asList = null;
         if (requestId != null) {
-
             InfraActiveRequests request = loadInfraActiveRequestById(requestId);
-
             if (request.getOriginalRequestId() != null) {
-
                 RequestProcessingData requestProcessingData =
                         this.requestsDbClient.getRequestProcessingDataBySoRequestIdAndName(
                                 request.getOriginalRequestId(), PROCESSING_DATA_NAME_EXECUTION_FLOWS);
-
-                ObjectMapper om = new ObjectMapper();
                 try {
-                    ExecuteBuildingBlock[] asArray =
-                            om.readValue(requestProcessingData.getValue(), ExecuteBuildingBlock[].class);
-                    asList = Arrays.asList(asArray);
+                    ObjectMapper om = new ObjectMapper();
+                    TypeFactory typeFactory = objectMapper.getTypeFactory();
+                    return om.readValue(requestProcessingData.getValue(),
+                            typeFactory.constructCollectionType(List.class, ExecuteBuildingBlock.class));
                 } catch (Exception e) {
                     logger.error(DATA_LOAD_ERROR, e);
+                    throw new RuntimeException("Error Loading Original Request Data", e);
                 }
+            } else {
+                throw new RuntimeException("Original Request Id is null for record: " + requestId);
             }
-
         } else {
-            logger.debug(REQUEST_ERROR);
+            throw new RuntimeException("Null Request Id Passed in");
         }
-
-        return asList;
     }
 
     public Service getCatalogServiceByModelUUID(String modelUUID) {

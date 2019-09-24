@@ -45,11 +45,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -66,7 +64,6 @@ import org.mockito.Spy;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.GenericVnfs;
 import org.onap.aai.domain.yang.L3Network;
-import org.onap.aai.domain.yang.L3Networks;
 import org.onap.aai.domain.yang.Relationship;
 import org.onap.aai.domain.yang.RelationshipList;
 import org.onap.aai.domain.yang.ServiceInstance;
@@ -80,7 +77,6 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
-import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
 import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.DuplicateNameException;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
@@ -103,8 +99,6 @@ import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.macro.NorthBoundRequest;
 import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
-import org.onap.so.db.request.beans.InfraActiveRequests;
-import org.onap.so.db.request.beans.RequestProcessingData;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.RequestDetails;
 import org.onap.so.serviceinstancebeans.RequestParameters;
@@ -1476,9 +1470,19 @@ public class WorkflowActionTest extends BaseTaskTest {
     }
 
     @Test
+    public void extractResourceIdAndTypeFromUriResumeTest() {
+        Resource resource = workflowAction.extractResourceIdAndTypeFromUri(
+                "http://localhost:9100/onap/so/infra/serviceInstantiation/v7/serviceInstances/4ff87c63-461b-4d83-8121-d351e6db216c/vnfs/eea9b93b-b5b9-4fad-9c35-12d52e4b683f/vfModules/33cb74cd-9cb3-4090-a3c0-1b8c8e235847/resume");
+        assertEquals(resource.getResourceId(), "33cb74cd-9cb3-4090-a3c0-1b8c8e235847");
+    }
+
+    @Test
     public void isUriResumeTest() {
         assertTrue(workflowAction.isUriResume(
                 "http://localhost:9100/onap/so/infra/orchestrationRequests/v7/requests/2f8ab587-ef6a-4456-b7b2-d73f9363dabd/resume"));
+        assertTrue(workflowAction.isUriResume(
+                "        http://localhost:9100/onap/so/infra/serviceInstantiation/v7/serviceInstances/4ff87c63-461b-4d83-8121-d351e6db216c/vnfs/eea9b93b-b5b9-4fad-9c35-12d52e4b683f/vfModules/33cb74cd-9cb3-4090-a3c0-1b8c8e235847/resume"));
+
         assertFalse(workflowAction.isUriResume("/v6/serviceInstances/123/vnfs/1234/vfmodules/5678/replace"));
     }
 
