@@ -13,10 +13,12 @@
   <packaging>pom</packaging>
   <version>1.4.0-SNAPSHOT</version>
   <name>so</name>
+
   <description>This Maven project is responsible to build and package all child projects - contributions in the MSO project.
 	This build can be configured to run Functional tests and to start/stop a jboss server + Mysql DB.
 	"mvn clean install -P with-integration-tests -Dintegration-tests-user=root -Dintegration-tests-group=root -Dintegration-tests-db-type=MYSQL"
-	</description>
+  </description>
+
   <organization>
     <name>ONAP - SO</name>
     <url>http://www.onap.org/</url>
