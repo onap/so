@@ -55,7 +55,7 @@ public class SDNCClient {
         BaseClient<String, LinkedHashMap<String, Object>> STOClient = new BaseClient<>();
 
         STOClient.setTargetUrl(targetUrl);
-        HttpHeaders httpHeader = sdnCommonTasks.getHttpHeaders(properties.getAuth());
+        HttpHeaders httpHeader = sdnCommonTasks.getHttpHeaders(properties.getAuth(), true);
         STOClient.setHttpHeader(httpHeader);
         LinkedHashMap<String, Object> output =
                 STOClient.post(jsonRequest, new ParameterizedTypeReference<LinkedHashMap<String, Object>>() {});
@@ -67,7 +67,7 @@ public class SDNCClient {
         String jsonRequest = sdnCommonTasks.buildJsonRequest(request);
         BaseClient<String, LinkedHashMap<String, Object>> STOClient = new BaseClient<>();
         STOClient.setTargetUrl(url);
-        HttpHeaders httpHeader = sdnCommonTasks.getHttpHeaders(properties.getAuth());
+        HttpHeaders httpHeader = sdnCommonTasks.getHttpHeaders(properties.getAuth(), true);
         STOClient.setHttpHeader(httpHeader);
         LinkedHashMap<String, Object> output =
                 STOClient.post(jsonRequest, new ParameterizedTypeReference<LinkedHashMap<String, Object>>() {});
@@ -87,7 +87,7 @@ public class SDNCClient {
         String targetUrl = UriBuilder.fromUri(properties.getHost()).path(queryLink).build().toString();
         BaseClient<String, LinkedHashMap<String, Object>> STOClient = new BaseClient<>();
         STOClient.setTargetUrl(targetUrl);
-        HttpHeaders httpHeader = sdnCommonTasks.getHttpHeaders(properties.getAuth());
+        HttpHeaders httpHeader = sdnCommonTasks.getHttpHeaders(properties.getAuth(), false);
         STOClient.setHttpHeader(httpHeader);
         LinkedHashMap<String, Object> output =
                 STOClient.get(jsonRequest, new ParameterizedTypeReference<LinkedHashMap<String, Object>>() {});
