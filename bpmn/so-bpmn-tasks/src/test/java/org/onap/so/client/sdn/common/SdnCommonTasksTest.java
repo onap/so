@@ -21,6 +21,7 @@
 package org.onap.so.client.sdn.common;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import java.util.LinkedHashMap;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -29,6 +30,8 @@ import org.junit.rules.ExpectedException;
 import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.exception.MapperException;
 import org.onap.so.client.sdnc.SdnCommonTasks;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 
 
 public class SdnCommonTasksTest {
@@ -53,7 +56,20 @@ public class SdnCommonTasksTest {
 
     @Test
     public void getHttpHeadersTest() {
-        Assert.assertNotNull(sdnCommonTasks.getHttpHeaders(""));
+        HttpHeaders result = sdnCommonTasks.getHttpHeaders("auth", true);
+
+        assertEquals("auth", result.getFirst("Authorization"));
+        assertEquals(MediaType.APPLICATION_JSON.toString(), result.getFirst("Content-Type"));
+        assertEquals(MediaType.APPLICATION_JSON.toString(), result.getFirst("Accept"));
+    }
+
+    @Test
+    public void getHttpHeadersGetRequestTest() {
+        HttpHeaders result = sdnCommonTasks.getHttpHeaders("auth", false);
+
+        assertEquals("auth", result.getFirst("Authorization"));
+        assertEquals(MediaType.APPLICATION_JSON.toString(), result.getFirst("Accept"));
+        assertFalse(result.containsKey("Content-Type"));
     }
 
     @Test
