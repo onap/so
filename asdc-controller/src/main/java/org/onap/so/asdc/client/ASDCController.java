@@ -808,6 +808,7 @@ public class ASDCController {
                     logger.debug("Preparing to deploy Service: {}", iNotif.getServiceUUID());
                     try {
                         this.deployResourceStructure(resourceStructure, toscaResourceStructure);
+                        serviceDeployed = true;
                     } catch (ArtifactInstallerException e) {
                         deployStatus = DistributionStatusEnum.DEPLOY_ERROR;
                         errorMessage = e.getMessage();
