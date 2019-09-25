@@ -82,10 +82,12 @@ public class SdnCommonTasks {
      * @param auth
      * @return
      */
-    public HttpHeaders getHttpHeaders(String auth) {
+    public HttpHeaders getHttpHeaders(String auth, boolean includeContentType) {
         HttpHeaders httpHeader = new HttpHeaders();
         httpHeader.set("Authorization", auth);
-        httpHeader.setContentType(MediaType.APPLICATION_JSON);
+        if (includeContentType) {
+            httpHeader.setContentType(MediaType.APPLICATION_JSON);
+        }
         List<MediaType> acceptMediaTypes = new ArrayList<>();
         acceptMediaTypes.add(MediaType.APPLICATION_JSON);
         httpHeader.setAccept(acceptMediaTypes);
