@@ -310,7 +310,8 @@ public class WorkflowActionBBTasks {
             rollbackFlowsFiltered.addAll(rollbackFlows);
             if ("RollbackToAssigned".equals(handlingCode) || ROLLBACKTOCREATED.equals(handlingCode)) {
                 for (int i = 0; i < rollbackFlows.size(); i++) {
-                    if (rollbackFlows.get(i).getBuildingBlock().getBpmnFlowName().contains("Unassign")) {
+                    if (rollbackFlows.get(i).getBuildingBlock().getBpmnFlowName().contains("Unassign") && !rollbackFlows
+                            .get(i).getBuildingBlock().getBpmnFlowName().contains("FabricConfiguration")) {
                         rollbackFlowsFiltered.remove(rollbackFlows.get(i));
                     } else if (rollbackFlows.get(i).getBuildingBlock().getBpmnFlowName().contains("Delete")
                             && ROLLBACKTOCREATED.equals(handlingCode)) {

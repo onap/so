@@ -328,6 +328,51 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
     }
 
     @Test
+    public void rollbackExecutionRollbackToAssignedWithFabricTest() {
+        execution.setVariable("isRollback", false);
+        execution.setVariable("handlingCode", "RollbackToAssigned");
+        List<ExecuteBuildingBlock> flowsToExecute = new ArrayList();
+        ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock();
+        BuildingBlock bb1 = new BuildingBlock();
+        bb1.setBpmnFlowName("AssignVfModuleBB");
+        ebb1.setBuildingBlock(bb1);
+        flowsToExecute.add(ebb1);
+        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock();
+        BuildingBlock bb2 = new BuildingBlock();
+        bb2.setBpmnFlowName("CreateVfModuleBB");
+        ebb2.setBuildingBlock(bb2);
+        flowsToExecute.add(ebb2);
+        ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock();
+        BuildingBlock bb3 = new BuildingBlock();
+        bb3.setBpmnFlowName("ActivateVfModuleBB");
+        ebb3.setBuildingBlock(bb3);
+        flowsToExecute.add(ebb3);
+        ExecuteBuildingBlock ebb4 = new ExecuteBuildingBlock();
+        BuildingBlock bb4 = new BuildingBlock();
+        bb4.setBpmnFlowName("AssignFabricConfigurationBB");
+        ebb4.setBuildingBlock(bb4);
+        flowsToExecute.add(ebb4);
+        ExecuteBuildingBlock ebb5 = new ExecuteBuildingBlock();
+        BuildingBlock bb5 = new BuildingBlock();
+        bb5.setBpmnFlowName("ActivateFabricConfigurationBB");
+        ebb5.setBuildingBlock(bb5);
+        flowsToExecute.add(ebb5);
+
+        execution.setVariable("flowsToExecute", flowsToExecute);
+        execution.setVariable("gCurrentSequence", 5);
+
+        workflowActionBBTasks.rollbackExecutionPath(execution);
+        List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+        assertEquals(0, execution.getVariable("gCurrentSequence"));
+        assertEquals(4, ebbs.size());
+        assertEquals("DeactivateFabricConfigurationBB", ebbs.get(0).getBuildingBlock().getBpmnFlowName());
+        assertEquals("UnassignFabricConfigurationBB", ebbs.get(1).getBuildingBlock().getBpmnFlowName());
+        assertEquals("DeactivateVfModuleBB", ebbs.get(2).getBuildingBlock().getBpmnFlowName());
+        assertEquals("DeleteVfModuleBB", ebbs.get(3).getBuildingBlock().getBpmnFlowName());
+
+    }
+
+    @Test
     public void rollbackExecutionRollbackToCreatedTest() {
         execution.setVariable("isRollback", false);
         execution.setVariable("handlingCode", "RollbackToCreated");
