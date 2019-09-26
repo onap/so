@@ -92,6 +92,19 @@ public class ExecuteActivityTest extends BaseTaskTest {
     }
 
     @Test
+    public void executeException_Test() throws Exception {
+        execution.setVariable("workflowSyncAckSent", true);
+        execution.setVariable("testProcessKey", "testProcessKeyValue");
+        thrown.expect(BpmnError.class);
+        executeActivity.execute(execution);
+        String errorMessage = (String) execution.getVariable("ExecuteActivityErrorMessage");
+        assertEquals(errorMessage, "not implemented");
+        WorkflowException workflowException = (WorkflowException) execution.getVariable("WorkflowException");
+        assertEquals(workflowException.getErrorMessage(), "not implemented");
+        assertEquals(workflowException.getErrorCode(), 7000);
+    }
+
+    @Test
     public void buildAndThrowException_Test() throws Exception {
         doNothing().when(workflowActionBBFailure).updateRequestStatusToFailed(execution);
         doReturn("Process key").when(exceptionBuilder).getProcessKey(execution);

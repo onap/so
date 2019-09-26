@@ -138,7 +138,9 @@ public class ExecuteActivity implements JavaDelegate {
 
             execution.setVariable(WORKFLOW_EXCEPTION, workflowException);
         } catch (Exception e) {
-            buildAndThrowException(execution, e.getMessage());
+            logger.error("BPMN exception on activity execution: " + e.getMessage());
+            workflowException = new WorkflowException(EXECUTE_BUILDING_BLOCK, 7000, e.getMessage());
+            handlingCode = ABORT_HANDLING_CODE;
         }
 
         if (workflowException != null && handlingCode != null && handlingCode.equals(ABORT_HANDLING_CODE)) {
