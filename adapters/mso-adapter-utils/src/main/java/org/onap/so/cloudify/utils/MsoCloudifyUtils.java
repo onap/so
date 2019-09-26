@@ -751,16 +751,19 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin {
         GetBlueprint getRequest = cloudify.blueprints().getMetadataById(blueprintId);
         try {
             Blueprint bp = getRequest.execute();
-            logger.debug("Blueprint exists: {}", bp.getId());
-            return true;
+            if (bp != null) {
+                logger.debug("Blueprint exists: {}", bp.getId());
+                return true;
+            } else {
+                logger.debug("Null blueprint!", bp.getId());
+                return false;
+            }
         } catch (CloudifyResponseException ce) {
             if (ce.getStatus() == 404) {
                 return false;
             } else {
                 throw ce;
             }
-        } catch (Exception e) {
-            throw e;
         }
     }
 
@@ -799,8 +802,12 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin {
         GetBlueprint getRequest = cloudify.blueprints().getMetadataById(blueprintId);
         try {
             Blueprint bp = getRequest.execute();
-            logger.debug("Blueprint {} already exists.", bp.getId());
-            return false;
+            if (bp != null) {
+                logger.debug("Blueprint {} already exists.", bp.getId());
+                return false;
+            } else {
+                logger.debug("Null blueprint!");
+            }
         } catch (CloudifyResponseException ce) {
             if (ce.getStatus() == 404) {
                 // This is the expected result.
@@ -808,8 +815,6 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin {
             } else {
                 throw ce;
             }
-        } catch (Exception e) {
-            throw e;
         }
 
         // Create a blueprint ZIP file in memory
