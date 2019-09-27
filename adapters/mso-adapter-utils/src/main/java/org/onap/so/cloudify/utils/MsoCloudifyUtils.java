@@ -419,7 +419,11 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin {
                 logger.debug("pollTimeout remaining: " + pollTimeout);
 
                 execution = queryExecution.execute();
-                status = execution.getStatus();
+                if (execution != null) {
+                    status = execution.getStatus();
+                } else {
+                    status = TERMINATED;
+                }
             }
 
             // Broke the loop. Check again for a terminal state
@@ -562,7 +566,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin {
             Executions executions = listExecutions.execute();
 
             // If no executions, does this give NOT_FOUND or empty set?
-            if (executions.getItems().isEmpty()) {
+            if (executions == null || executions.getItems().isEmpty()) {
                 return new DeploymentInfoBuilder().withId(deployment.getId())
                         .withDeploymentInputs(deployment.getInputs()).build();
             } else {
