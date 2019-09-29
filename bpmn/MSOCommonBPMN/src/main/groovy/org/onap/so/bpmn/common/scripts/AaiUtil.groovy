@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory
 import org.onap.so.openpojo.rules.HasToStringRule
 import org.onap.logging.filter.base.ONAPComponents;
 
-@Deprecated
+//@Deprecated
 class AaiUtil {
     private static final Logger logger = LoggerFactory.getLogger( AaiUtil.class);
 

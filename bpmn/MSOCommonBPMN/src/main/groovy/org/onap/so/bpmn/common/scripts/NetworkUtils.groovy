@@ -344,7 +344,7 @@ class NetworkUtils {
 	}
 
 	// build network single elements
-	@Deprecated //TODO remove if not used anywhere
+	//@Deprecated //TODO remove if not used anywhere
 	def buildNetworkElements(l3Network, createNetworkContrailResponse, networkList) {
 		def replaceNetworkId = ""
 		def replaceNeutronNetworkId = ""

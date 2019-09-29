@@ -373,7 +373,7 @@ class MsoUtils {
 	/**
 	 * Use formatXml instead.  Note: this method inserts an XML preamble.
 	 */
-	@Deprecated
+	//@Deprecated
 	def formatXML(xmlInput) {
 		def parseXml = null
 		def formatXml = null

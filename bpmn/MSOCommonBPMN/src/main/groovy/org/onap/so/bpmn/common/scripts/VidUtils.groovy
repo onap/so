@@ -170,7 +170,7 @@ class VidUtils {
 	 * @param String json
 	 * @return String json requestDetails
 	 */
-	@Deprecated
+	//@Deprecated
 	public getJsonRequestDetails(String jsonInput) {
 		String rtn = ""
 		if (jsonInput.isEmpty() || jsonInput == null) {
@@ -192,7 +192,7 @@ class VidUtils {
 	 * @param String json
 	 * @return String xml requestDetails
 	 */
-	@Deprecated
+	//@Deprecated
 	public getJsonRequestDetailstoXml(String jsonInput) {
 		String rtn = null
 		def jsonString = getJsonRequestDetails(jsonInput)
