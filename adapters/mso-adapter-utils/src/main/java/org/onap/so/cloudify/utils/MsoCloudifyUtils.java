@@ -419,7 +419,11 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin {
                 logger.debug("pollTimeout remaining: " + pollTimeout);
 
                 execution = queryExecution.execute();
-                status = execution.getStatus();
+                if (execution != null) {
+                    status = execution.getStatus();
+                } else {
+                    status = TERMINATED;
+                }
             }
 
             // Broke the loop. Check again for a terminal state
