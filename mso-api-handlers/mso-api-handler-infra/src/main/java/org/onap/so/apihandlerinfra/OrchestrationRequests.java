@@ -81,7 +81,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
-
 @Path("onap/so/infra/orchestrationRequests")
 @OpenAPIDefinition(info = @Info(title = "onap/so/infra/orchestrationRequests",
         description = "API Requests for Orchestration requests"))
@@ -128,33 +127,21 @@ public class OrchestrationRequests {
             throw new ValidateException.Builder("Request Id " + requestId + " is not a valid UUID",
                     HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo).build();
         }
-        try {
-            infraActiveRequest = requestsDbClient.getInfraActiveRequestbyRequestId(requestId);
-            requestProcessingData = requestsDbClient.getRequestProcessingDataBySoRequestId(requestId);
 
+        infraActiveRequest = infraActiveRequestLookup(requestId);
+
+        try {
+            requestProcessingData = requestsDbClient.getRequestProcessingDataBySoRequestId(requestId);
         } catch (Exception e) {
-            logger.error("Exception occurred", e);
+            logger.error("Exception occurred while communicating with RequestDb during requestProcessingData lookup ",
+                    e);
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.AvailabilityError).build();
 
-            ValidateException validateException =
-                    new ValidateException.Builder("Exception while communciate with Request DB - Infra Request Lookup",
-                            HttpStatus.SC_NOT_FOUND, ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB).cause(e)
-                                    .errorInfo(errorLoggerInfo).build();
-
-            throw validateException;
-
-        }
-
-        if (infraActiveRequest == null) {
-
-            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR,
-                    ErrorCode.BusinessProcesssError).build();
-
-            ValidateException validateException =
-                    new ValidateException.Builder("Orchestration RequestId " + requestId + " is not found in DB",
-                            HttpStatus.SC_NO_CONTENT, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR)
-                                    .errorInfo(errorLoggerInfo).build();
+            ValidateException validateException = new ValidateException.Builder(
+                    "Exception occurred while communicating with RequestDb during requestProcessingData lookup",
+                    HttpStatus.SC_NOT_FOUND, ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB).cause(e)
+                            .errorInfo(errorLoggerInfo).build();
 
             throw validateException;
         }
@@ -239,8 +226,6 @@ public class OrchestrationRequests {
         logger.debug("requestId is: {}", requestId);
         ServiceInstancesRequest sir;
 
-        InfraActiveRequests infraActiveRequest;
-
         try {
             ObjectMapper mapper = new ObjectMapper();
             sir = mapper.readValue(requestJSON, ServiceInstancesRequest.class);
@@ -270,41 +255,26 @@ public class OrchestrationRequests {
             throw validateException;
         }
 
-        infraActiveRequest = requestsDbClient.getInfraActiveRequestbyRequestId(requestId);
-        if (infraActiveRequest == null) {
-            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND,
-                    ErrorCode.BusinessProcesssError).build();
+        InfraActiveRequests infraActiveRequest = infraActiveRequestLookup(requestId);
 
-            ValidateException validateException =
-                    new ValidateException.Builder("Null response from RequestDB when searching by RequestId",
-                            HttpStatus.SC_NOT_FOUND, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo)
-                                    .build();
+        String status = infraActiveRequest.getRequestStatus();
+        if (Status.IN_PROGRESS.toString().equalsIgnoreCase(status) || Status.PENDING.toString().equalsIgnoreCase(status)
+                || Status.PENDING_MANUAL_TASK.toString().equalsIgnoreCase(status)) {
+            infraActiveRequest.setRequestStatus(Status.UNLOCKED.toString());
+            infraActiveRequest.setLastModifiedBy(Constants.MODIFIED_BY_APIHANDLER);
+            infraActiveRequest.setRequestId(requestId);
+            requestsDbClient.save(infraActiveRequest);
+        } else {
+
+            ErrorLoggerInfo errorLoggerInfo =
+                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, ErrorCode.DataError).build();
+
+            ValidateException validateException = new ValidateException.Builder(
+                    "Orchestration RequestId " + requestId + " has a status of " + status + " and can not be unlocked",
+                    HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo)
+                            .build();
 
             throw validateException;
-
-        } else {
-            String status = infraActiveRequest.getRequestStatus();
-            if (Status.IN_PROGRESS.toString().equalsIgnoreCase(status)
-                    || Status.PENDING.toString().equalsIgnoreCase(status)
-                    || Status.PENDING_MANUAL_TASK.toString().equalsIgnoreCase(status)) {
-                infraActiveRequest.setRequestStatus(Status.UNLOCKED.toString());
-                infraActiveRequest.setLastModifiedBy(Constants.MODIFIED_BY_APIHANDLER);
-                infraActiveRequest.setRequestId(requestId);
-                requestsDbClient.save(infraActiveRequest);
-            } else {
-
-                ErrorLoggerInfo errorLoggerInfo =
-                        new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, ErrorCode.DataError)
-                                .build();
-
-                ValidateException validateException = new ValidateException.Builder(
-                        "Orchestration RequestId " + requestId + " has a status of " + status
-                                + " and can not be unlocked",
-                        HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo)
-                                .build();
-
-                throw validateException;
-            }
         }
         return Response.status(HttpStatus.SC_NO_CONTENT).entity("").build();
     }
@@ -552,5 +522,35 @@ public class OrchestrationRequests {
         }
         addedRequestProcessingData.add(finalProcessingData);
         return addedRequestProcessingData;
+    }
+
+    protected InfraActiveRequests infraActiveRequestLookup(String requestId) throws ApiException {
+        InfraActiveRequests infraActiveRequest = null;
+        try {
+            infraActiveRequest = requestsDbClient.getInfraActiveRequestbyRequestId(requestId);
+        } catch (Exception e) {
+            logger.error("Exception occurred while communicating with RequestDb during InfraActiveRequest lookup ", e);
+            ErrorLoggerInfo errorLoggerInfo =
+                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.AvailabilityError).build();
+
+            ValidateException validateException = new ValidateException.Builder(
+                    "Exception occurred while communicating with RequestDb during InfraActiveRequest lookup",
+                    HttpStatus.SC_NOT_FOUND, ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB).cause(e)
+                            .errorInfo(errorLoggerInfo).build();
+
+            throw validateException;
+        }
+
+        if (infraActiveRequest == null) {
+            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR,
+                    ErrorCode.BusinessProcesssError).build();
+
+            ValidateException validateException = new ValidateException.Builder(
+                    "Null response from RequestDB when searching by RequestId " + requestId, HttpStatus.SC_NOT_FOUND,
+                    ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
+
+            throw validateException;
+        }
+        return infraActiveRequest;
     }
 }
