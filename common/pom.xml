@@ -131,6 +131,17 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.onap.aaf.authz</groupId>
+      <artifactId>aaf-cadi-aaf</artifactId>
+      <version>2.1.9</version>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.servlet</groupId>
+          <artifactId>servlet-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>org.reflections</groupId>
       <artifactId>reflections</artifactId>
       <version>0.9.11</version>
