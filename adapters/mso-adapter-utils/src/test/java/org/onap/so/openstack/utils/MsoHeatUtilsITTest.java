@@ -133,7 +133,7 @@ public class MsoHeatUtilsITTest extends BaseTest {
     @Test
     public void deleteVduTest() throws Exception {
         VduInstance expected = new VduInstance();
-        expected.setVduInstanceId("instanceId");
+        expected.setVduInstanceId("name/stackId");
         expected.setVduInstanceName("instanceId");
         VduStatus status = new VduStatus();
         status.setState(VduStateType.DELETED);
@@ -209,8 +209,8 @@ public class MsoHeatUtilsITTest extends BaseTest {
         StubOpenStack.mockOpenStackResponseAccess(wireMockServer, wireMockPort);
         StubOpenStack.mockOpenStackPostStack_200(wireMockServer, "OpenstackResponse_Stack_Created.json");
         StubOpenStack.mockOpenStackGet(wireMockServer, "TEST-stack/stackId");
-        StackInfo stackInfo = heatUtils.createStack(cloudSite.getId(), "CloudOwner", "tenantId", "TEST-stack",
-                "TEST-heat", new HashMap<>(), false, 1, "TEST-env", new HashMap<>(), new HashMap<>());
+        StackInfo stackInfo = heatUtils.createStack(cloudSite.getId(), "CloudOwner", "tenantId", "TEST-stack", null,
+                "TEST-heat", new HashMap<>(), false, 1, "TEST-env", new HashMap<>(), new HashMap<>(), false, false);
         assertNotNull(stackInfo);
     }
 

@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
@@ -135,7 +134,7 @@ public class VnfAdapterObjectMapperTest {
         expectedCreateVolumeGroupRequest.setSkipAAI(true);
         expectedCreateVolumeGroupRequest
                 .setSuppressBackout(Boolean.TRUE.equals(orchestrationContext.getIsRollbackEnabled()));
-        expectedCreateVolumeGroupRequest.setFailIfExists(true);
+        expectedCreateVolumeGroupRequest.setFailIfExists(false);
 
         MsoRequest msoRequest = new MsoRequest();
         msoRequest.setRequestId(requestContext.getMsoRequestId());
@@ -215,7 +214,7 @@ public class VnfAdapterObjectMapperTest {
         expectedCreateVolumeGroupRequest.setSkipAAI(true);
         expectedCreateVolumeGroupRequest
                 .setSuppressBackout(Boolean.TRUE.equals(orchestrationContext.getIsRollbackEnabled()));
-        expectedCreateVolumeGroupRequest.setFailIfExists(true);
+        expectedCreateVolumeGroupRequest.setFailIfExists(false);
 
         MsoRequest msoRequest = new MsoRequest();
         msoRequest.setRequestId(requestContext.getMsoRequestId());

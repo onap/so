@@ -24,8 +24,22 @@ import org.onap.so.openstack.exceptions.MsoException;
 
 public class StackCreationException extends MsoException {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6221508301589330950L;
+
+    boolean stackCreationFailed = false;
+    boolean stackRollbackFailed = false;
+
     public StackCreationException(String error) {
         super(error);
+    }
+
+    public StackCreationException(String error, boolean stackCreationFailed, boolean stackRollbackFailed) {
+        super(error);
+        this.stackRollbackFailed = stackRollbackFailed;
+        this.stackCreationFailed = stackCreationFailed;
     }
 
 }

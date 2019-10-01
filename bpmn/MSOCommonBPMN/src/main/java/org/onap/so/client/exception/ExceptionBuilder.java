@@ -26,25 +26,25 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.onap.so.logger.LoggingAnchor;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.aai.domain.yang.LInterface;
 import org.onap.aai.domain.yang.Vserver;
+import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.logging.filter.base.ONAPComponentsList;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.common.DelegateExecutionImpl;
 import org.onap.so.bpmn.core.WorkflowException;
-import org.onap.so.logger.ErrorCode;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
+import org.onap.so.logger.ErrorCode;
+import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.objects.audit.AAIObjectAudit;
 import org.onap.so.objects.audit.AAIObjectAuditList;
-import org.onap.logging.filter.base.ONAPComponentsList;
-import org.onap.logging.filter.base.ONAPComponents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -187,6 +187,10 @@ public class ExceptionBuilder {
         buildAndThrowWorkflowException(execution, errorCode, msg, extSystemErrorSource);
     }
 
+    /**
+     * @deprecated Please utilize method that specifies where the failure occured
+     */
+    @Deprecated
     public void buildAndThrowWorkflowException(BuildingBlockExecution execution, int errorCode, String errorMessage) {
         if (execution instanceof DelegateExecutionImpl) {
             buildAndThrowWorkflowException(((DelegateExecutionImpl) execution).getDelegateExecution(), errorCode,
