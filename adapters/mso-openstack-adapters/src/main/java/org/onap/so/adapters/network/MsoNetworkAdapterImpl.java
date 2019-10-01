@@ -24,8 +24,6 @@
 
 package org.onap.so.adapters.network;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +31,6 @@ import java.util.Map;
 import java.util.Optional;
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
-import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.adapters.network.beans.ContrailPolicyRef;
 import org.onap.so.adapters.network.beans.ContrailPolicyRefSeq;
 import org.onap.so.adapters.network.beans.ContrailSubnet;
@@ -51,6 +48,7 @@ import org.onap.so.db.catalog.data.repository.NetworkResourceRepository;
 import org.onap.so.db.catalog.utils.MavenLikeVersioning;
 import org.onap.so.entity.MsoRequest;
 import org.onap.so.logger.ErrorCode;
+import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.openstack.beans.HeatStatus;
 import org.onap.so.openstack.beans.NetworkInfo;
@@ -74,6 +72,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 @Transactional
@@ -427,7 +427,8 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 if (backout == null)
                     backout = true;
                 heatStack = heat.createStack(cloudSiteId, CLOUD_OWNER, tenantId, networkName, null, template,
-                        stackParams, true, heatTemplate.getTimeoutMinutes(), null, null, null, backout.booleanValue());
+                        stackParams, true, heatTemplate.getTimeoutMinutes(), null, null, null, backout.booleanValue(),
+                        failIfExists);
             } catch (MsoException me) {
                 me.addContext(CREATE_NETWORK_CONTEXT);
                 logger.error("{} {} Exception creating network type {} in {}/{} ", MessageEnum.RA_CREATE_NETWORK_EXC,
@@ -1015,13 +1016,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     @Override
     public void deleteNetwork(String cloudSiteId, String tenantId, String networkType, String modelCustomizationUuid,
             String networkId, MsoRequest msoRequest, Holder<Boolean> networkDeleted) throws NetworkException {
-
         logger.debug("*** DELETE Network adapter with Network: {} in {}/{}", networkId, cloudSiteId, tenantId);
-
-        // Will capture execution time for metrics
-        long startTime = System.currentTimeMillis();
-
-
         if (commonUtils.isNullOrEmpty(cloudSiteId) || commonUtils.isNullOrEmpty(tenantId)
                 || commonUtils.isNullOrEmpty(networkId)) {
             String error = "Missing mandatory parameter cloudSiteId, tenantId or networkId";
@@ -1043,20 +1038,15 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 networkResource = nrc.getNetworkResource();
             }
         }
+
         String mode = "";
         if (networkResource != null) {
-            logger.debug(LOG_DEBUG_MSG, networkResource);
-
+            logger.debug(LOG_DEBUG_MSG, networkResource.toString());
             mode = networkResource.getOrchestrationMode();
         }
 
         if (NEUTRON_MODE.equals(mode)) {
-
-            // Use MsoNeutronUtils for all NEUTRON commands
-            long deleteNetworkStarttime = System.currentTimeMillis();
             try {
-                // The deleteNetwork function in MsoNeutronUtils returns success if the network
-                // was not found. So don't bother to query first.
                 boolean deleted = neutron.deleteNetwork(networkId, tenantId, cloudSiteId);
                 networkDeleted.value = deleted;
             } catch (MsoException me) {
@@ -1065,21 +1055,10 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                         ErrorCode.DataError.getValue(), networkId, cloudSiteId, tenantId, me);
                 throw new NetworkException(me);
             }
-        } else { // DEFAULT to ("HEAT".equals (mode))
-            long deleteStackStarttime = System.currentTimeMillis();
-
+        } else {
             try {
-                // The deleteStack function in MsoHeatUtils returns NOTFOUND if the stack was not found or if the stack
-                // was deleted.
-                // So query first to report back if stack WAS deleted or just NOTOFUND
-                StackInfo heatStack = null;
-                heatStack = heat.queryStack(cloudSiteId, CLOUD_OWNER, tenantId, networkId);
-                if (heatStack != null && heatStack.getStatus() != HeatStatus.NOTFOUND) {
-                    heat.deleteStack(tenantId, CLOUD_OWNER, cloudSiteId, networkId, true);
-                    networkDeleted.value = true;
-                } else {
-                    networkDeleted.value = false;
-                }
+                heat.deleteStack(tenantId, CLOUD_OWNER, cloudSiteId, networkId, true, 120);
+                networkDeleted.value = true;
             } catch (MsoException me) {
                 me.addContext("DeleteNetwork");
                 logger.error("{} {} Delete Network (heat): {} in {}/{} ", MessageEnum.RA_DELETE_NETWORK_EXC,
@@ -1087,10 +1066,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 throw new NetworkException(me);
             }
         }
-
-
-        // On success, nothing is returned.
-        return;
     }
 
     /**
@@ -1103,9 +1078,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
      */
     @Override
     public void rollbackNetwork(NetworkRollback rollback) throws NetworkException {
-        // Will capture execution time for metrics
-        long startTime = System.currentTimeMillis();
-
         if (rollback == null) {
             logger.error("{} {} rollback is null", MessageEnum.RA_ROLLBACK_NULL, ErrorCode.DataError.getValue());
             return;
@@ -1119,8 +1091,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         String modelCustomizationUuid = rollback.getModelCustomizationUuid();
 
         logger.debug("*** ROLLBACK Network {} in {}/{}", networkId, cloudSiteId, tenantId);
-
-
         // Retrieve the Network Resource definition
         NetworkResource networkResource = null;
         if (commonUtils.isNullOrEmpty(modelCustomizationUuid)) {
@@ -1138,13 +1108,8 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         }
 
         if (rollback.getNetworkCreated()) {
-            // Rolling back a newly created network, so delete it.
             if (NEUTRON_MODE.equals(mode)) {
-                // Use MsoNeutronUtils for all NEUTRON commands
-                long deleteNetworkStarttime = System.currentTimeMillis();
                 try {
-                    // The deleteNetwork function in MsoNeutronUtils returns success if the network
-                    // was not found. So don't bother to query first.
                     neutron.deleteNetwork(networkId, tenantId, cloudSiteId);
                 } catch (MsoException me) {
                     me.addContext("RollbackNetwork");
@@ -1153,12 +1118,9 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                             cloudSiteId, tenantId, me);
                     throw new NetworkException(me);
                 }
-            } else { // DEFAULT to if ("HEAT".equals (mode))
-                long deleteStackStarttime = System.currentTimeMillis();
+            } else {
                 try {
-                    // The deleteStack function in MsoHeatUtils returns success if the stack
-                    // was not found. So don't bother to query first.
-                    heat.deleteStack(tenantId, CLOUD_OWNER, cloudSiteId, networkId, true);
+                    heat.deleteStack(tenantId, CLOUD_OWNER, cloudSiteId, networkId, true, 120);
                 } catch (MsoException me) {
                     me.addContext("RollbackNetwork");
                     logger.error("{} {} Exception - Rollback Network (heat): {} in {}/{} ",
@@ -1168,8 +1130,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 }
             }
         }
-
-        return;
     }
 
     private String validateNetworkParams(NetworkType neutronNetworkType, String networkName, String physicalNetwork,

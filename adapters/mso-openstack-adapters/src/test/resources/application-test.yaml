@@ -1,5 +1,3 @@
-# will be used as entry in DB to say SITE OFF/ON for healthcheck
-# MSO Properties go here
 org:
   onap:
     so:
@@ -41,7 +39,7 @@ org:
           default_keystone_reg_ex: "/[vV][0-9]"
           default_tenant_description: ECOMP Tenant
           default_region_type: single
-          default_user_role: admin
+          default_user_role: adminev
           default_success_status_string: Success
           default_no_regions_status_string: no regions
           default_orm_request_path: /v1/orm/customers/

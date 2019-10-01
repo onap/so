@@ -78,7 +78,7 @@ public class VnfAdapterObjectMapper {
 
         createVolumeGroupRequest.setSkipAAI(true);
         createVolumeGroupRequest.setSuppressBackout(Boolean.TRUE.equals(orchestrationContext.getIsRollbackEnabled()));
-        createVolumeGroupRequest.setFailIfExists(true);
+        createVolumeGroupRequest.setFailIfExists(false);
 
         createVolumeGroupRequest.setMsoRequest(createMsoRequest(requestContext, serviceInstance));
 

@@ -12,7 +12,7 @@
 	"volumeGroupStackId": "volumeGroupStackId",
 	"skipAAI": true,
 	"backout": false,
-	"failIfExists": true,
+	"failIfExists": false,
 	"msoRequest": 
 	{
 		"requestId": "requestId",

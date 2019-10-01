@@ -269,6 +269,7 @@ public class NetworkAdapterObjectMapper {
                 org.onap.so.openstack.beans.Subnet.class) == null) {
             PropertyMap<org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet, org.onap.so.openstack.beans.Subnet> personMap =
                     new PropertyMap<org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet, org.onap.so.openstack.beans.Subnet>() {
+                        @Override
                         protected void configure() {
                             map().setSubnetName(source.getSubnetName());
                             map(source.getSubnetId(), destination.getSubnetId());
@@ -387,7 +388,7 @@ public class NetworkAdapterObjectMapper {
         createNetworkRequest.setSkipAAI(true);
         createNetworkRequest.setBackout(Boolean.TRUE.equals(orchestrationContext.getIsRollbackEnabled()));
         // TODO confirm value - false by default
-        createNetworkRequest.setFailIfExists(true);
+        createNetworkRequest.setFailIfExists(false);
         // NetworkTechnology(NetworkTechnology.NEUTRON); NOOP - default
         return createNetworkRequest;
     }

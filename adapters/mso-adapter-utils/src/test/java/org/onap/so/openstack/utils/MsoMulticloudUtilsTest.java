@@ -24,8 +24,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -95,9 +95,9 @@ public class MsoMulticloudUtilsTest extends BaseTest {
         wireMockServer.stubFor(get(urlEqualTo(MULTICLOUD_GET_PATH)).inScenario("CREATE").whenScenarioStateIs("UPDATING")
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                         .withBodyFile("MulticloudGetUpdateResponse.json").withStatus(HttpStatus.SC_OK)));
-        StackInfo result =
-                multicloudUtils.createStack("MTN14", "CloudOwner", "TEST-tenant", "TEST-stack", new VduModelInfo(),
-                        "TEST-heat", new HashMap<>(), true, 200, "TEST-env", new HashMap<>(), new HashMap<>(), false);
+        StackInfo result = multicloudUtils.createStack("MTN14", "CloudOwner", "TEST-tenant", "TEST-stack",
+                new VduModelInfo(), "TEST-heat", new HashMap<>(), true, 200, "TEST-env", new HashMap<>(),
+                new HashMap<>(), false, false);
         wireMockServer.resetScenarios();
         assertNotNull(result);
         assertEquals("TEST-stack", result.getName());
@@ -155,7 +155,8 @@ public class MsoMulticloudUtilsTest extends BaseTest {
             cloudSite.setIdentityService(new CloudIdentity());
             when(cloudConfigMock.getCloudSite("MTN13")).thenReturn(Optional.of(cloudSite));
             multicloudUtilsMock.createStack("MNT14", "CloudOwner", "TEST-tenant", "TEST-stack", new VduModelInfo(),
-                    "TEST-heat", new HashMap<>(), false, 200, "TEST-env", new HashMap<>(), new HashMap<>(), false);
+                    "TEST-heat", new HashMap<>(), false, 200, "TEST-env", new HashMap<>(), new HashMap<>(), false,
+                    false);
         } catch (MsoException e) {
             assertEquals("0 : Multicloud client could not be initialized", e.toString());
             return;
@@ -169,7 +170,8 @@ public class MsoMulticloudUtilsTest extends BaseTest {
             wireMockServer.stubFor(post(urlPathEqualTo(MULTICLOUD_CREATE_PATH)).willReturn(
                     aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_BAD_REQUEST)));
             multicloudUtils.createStack("MTN14", "CloudOwner", "TEST-tenant", "TEST-stack", new VduModelInfo(),
-                    "TEST-heat", new HashMap<>(), false, 200, "TEST-env", new HashMap<>(), new HashMap<>(), false);
+                    "TEST-heat", new HashMap<>(), false, 200, "TEST-env", new HashMap<>(), new HashMap<>(), false,
+                    false);
         } catch (MsoException e) {
             assertEquals("0 : Bad Request", e.toString());
             return;
@@ -181,9 +183,9 @@ public class MsoMulticloudUtilsTest extends BaseTest {
     public void createStackEmptyResponseEntity() throws MsoException {
         wireMockServer.stubFor(post(urlPathEqualTo(MULTICLOUD_CREATE_PATH)).willReturn(
                 aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_CREATED)));
-        StackInfo result =
-                multicloudUtils.createStack("MTN14", "CloudOwner", "TEST-tenant", "TEST-stack", new VduModelInfo(),
-                        "TEST-heat", new HashMap<>(), false, 200, "TEST-env", new HashMap<>(), new HashMap<>(), false);
+        StackInfo result = multicloudUtils.createStack("MTN14", "CloudOwner", "TEST-tenant", "TEST-stack",
+                new VduModelInfo(), "TEST-heat", new HashMap<>(), false, 200, "TEST-env", new HashMap<>(),
+                new HashMap<>(), false, false);
         assertNotNull(result);
         assertEquals("TEST-stack/", result.getName());
     }
