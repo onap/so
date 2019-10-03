@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ebc92001_4a89f35d",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/cloudify/utils/MsoCloudifyUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 755,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-03T15:17:36Z",
+      "side": 1,
+      "message": "add line:\nreturn true;",
+      "range": {
+        "startLine": 755,
+        "startChar": 16,
+        "endLine": 755,
+        "endChar": 65
+      },
+      "revId": "8fab153588eb5000d80a4f8df45645cea952276b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "06235c35_4ee857b8",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/cloudify/utils/MsoCloudifyUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 757,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-03T15:17:36Z",
+      "side": 1,
+      "message": "you have null pointer exception on getting id, and I think method should return false if bp is null.\n\nchange:\nlogger.debug(\"blueprint not found\");\nreturn false;",
+      "range": {
+        "startLine": 757,
+        "startChar": 16,
+        "endLine": 757,
+        "endChar": 60
+      },
+      "revId": "8fab153588eb5000d80a4f8df45645cea952276b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b7cf8648_a3476a8f",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/cloudify/utils/MsoCloudifyUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 759,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-03T15:17:36Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 759,
+        "startChar": 12,
+        "endLine": 759,
+        "endChar": 24
+      },
+      "revId": "8fab153588eb5000d80a4f8df45645cea952276b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5baee029_6b9014ad",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/cloudify/utils/MsoCloudifyUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 768,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-03T15:17:36Z",
+      "side": 1,
+      "message": "remove this, it is completely unnecessary",
+      "range": {
+        "startLine": 766,
+        "startChar": 10,
+        "endLine": 768,
+        "endChar": 9
+      },
+      "revId": "8fab153588eb5000d80a4f8df45645cea952276b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "343f6104_b3a0cc00",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/cloudify/utils/MsoCloudifyUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 810,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-03T15:17:36Z",
+      "side": 1,
+      "message": "If bp is null, the method should not return false, only continues its logic:\ncorrect:\n\n            if (bp !\u003d null) {\n                logger.debug(\"Blueprint {} already exists.\", bp.getId());\n                return false;\n            }",
+      "range": {
+        "startLine": 806,
+        "startChar": 12,
+        "endLine": 810,
+        "endChar": 13
+      },
+      "revId": "8fab153588eb5000d80a4f8df45645cea952276b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "54752c31_b3e23ac5",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/cloudify/utils/MsoCloudifyUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 811,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-03T15:17:36Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 811,
+        "startChar": 12,
+        "endLine": 811,
+        "endChar": 25
+      },
+      "revId": "8fab153588eb5000d80a4f8df45645cea952276b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "327f4e01_3ea484d7",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/cloudify/utils/MsoCloudifyUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 821,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-03T15:17:36Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 819,
+        "startChar": 10,
+        "endLine": 821,
+        "endChar": 9
+      },
+      "revId": "8fab153588eb5000d80a4f8df45645cea952276b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
