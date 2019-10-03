@@ -21,6 +21,7 @@
 package org.onap.so.apihandlerinfra;
 
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
@@ -39,6 +40,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.apihandler.common.ResponseBuilder;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
+import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.constants.OrchestrationRequestFormat;
 import org.onap.so.constants.Status;
 import org.onap.so.db.request.beans.InfraActiveRequests;
@@ -327,4 +329,13 @@ public class OrchestrationRequestsUnitTest {
 
         assertEquals(Status.FAILED.toString(), result);
     }
+
+    @Test
+    public void infraActiveRequestNullValidationExceptionTest() throws ApiException {
+        iar.setRequestId(REQUEST_ID);
+        thrown.expect(ValidateException.class);
+        thrown.expectMessage(containsString("Null response from RequestDB when searching by RequestId " + REQUEST_ID));
+        orchestrationRequests.infraActiveRequestLookup(iar.getRequestId());
+    }
+
 }

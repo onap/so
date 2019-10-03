@@ -335,7 +335,7 @@ public class OrchestrationRequestsTest extends BaseTest {
         expectedRequestError = new RequestError();
         se = new ServiceException();
         se.setMessageId(ErrorNumbers.SVC_DETAILED_SERVICE_ERROR);
-        se.setText("Null response from RequestDB when searching by RequestId");
+        se.setText("Null response from RequestDB when searching by RequestId " + INVALID_REQUEST_ID);
         expectedRequestError.setServiceException(se);
 
         builder = UriComponentsBuilder.fromHttpUrl(
