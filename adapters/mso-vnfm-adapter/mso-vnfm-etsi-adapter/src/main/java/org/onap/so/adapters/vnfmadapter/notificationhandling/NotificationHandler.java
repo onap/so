@@ -145,24 +145,33 @@ public class NotificationHandler implements Runnable {
     }
 
     private void handleVnfTerminateFailed() {
-        final GenericVnf genericVnf = aaiServiceProvider
-                .invokeQueryGenericVnf(vnfInstance.getLinks().getSelf().getHref()).getGenericVnf().get(0);
-        deleteVservers(vnfLcmOperationOccurrenceNotification, genericVnf);
-        jobManager.notificationProcessedForOperation(vnfLcmOperationOccurrenceNotification.getVnfLcmOpOccId(), false);
+        try {
+            final GenericVnf genericVnf = aaiServiceProvider
+                    .invokeQueryGenericVnf(vnfInstance.getLinks().getSelf().getHref()).getGenericVnf().get(0);
+            deleteVservers(vnfLcmOperationOccurrenceNotification, genericVnf);
+        } finally {
+            jobManager.notificationProcessedForOperation(vnfLcmOperationOccurrenceNotification.getVnfLcmOpOccId(),
+                    false);
+        }
     }
 
     private void handleVnfTerminateCompleted() {
-        final GenericVnf genericVnf = aaiServiceProvider
-                .invokeQueryGenericVnf(vnfInstance.getLinks().getSelf().getHref()).getGenericVnf().get(0);
-        deleteVservers(vnfLcmOperationOccurrenceNotification, genericVnf);
-
-        boolean deleteSuccessful = false;
+        GenericVnf genericVnf = null;
         try {
-            vnfmServiceProvider.deleteVnf(aaiHelper.getAssignedVnfm(genericVnf), genericVnf.getSelflink());
-            deleteSuccessful = true;
+            genericVnf = aaiServiceProvider.invokeQueryGenericVnf(vnfInstance.getLinks().getSelf().getHref())
+                    .getGenericVnf().get(0);
+            deleteVservers(vnfLcmOperationOccurrenceNotification, genericVnf);
+
+            try {
+                vnfmServiceProvider.deleteVnf(aaiHelper.getAssignedVnfm(genericVnf), genericVnf.getSelflink());
+            } catch (Exception exception) {
+                logger.error("Exception deleting the identifier " + genericVnf.getSelflink()
+                        + " from the VNFM. The VNF has been terminated successfully but the identifier will remain on the VNFM.",
+                        exception);
+            }
         } finally {
             jobManager.notificationProcessedForOperation(vnfLcmOperationOccurrenceNotification.getVnfLcmOpOccId(),
-                    deleteSuccessful);
+                    true);
             jobManager.vnfDeleted(vnfLcmOperationOccurrenceNotification.getVnfLcmOpOccId());
 
             final GenericVnf genericVnfPatch = new GenericVnf();
@@ -195,18 +204,25 @@ public class NotificationHandler implements Runnable {
     }
 
     private void deleteVservers(final VnfLcmOperationOccurrenceNotification notification, final GenericVnf vnf) {
-        for (final LcnVnfLcmOperationOccurrenceNotificationAffectedVnfcs vnfc : notification.getAffectedVnfcs()) {
-            if (ChangeTypeEnum.REMOVED.equals(vnfc.getChangeType())) {
+        try {
+            for (final LcnVnfLcmOperationOccurrenceNotificationAffectedVnfcs vnfc : notification.getAffectedVnfcs()) {
+                if (ChangeTypeEnum.REMOVED.equals(vnfc.getChangeType())) {
 
-                final Relationship relationshipToVserver = aaiHelper.deleteRelationshipWithDataValue(vnf, "vserver",
-                        "vserver.vserver-id", vnfc.getComputeResource().getResourceId());
+                    final Relationship relationshipToVserver = aaiHelper.deleteRelationshipWithDataValue(vnf, "vserver",
+                            "vserver.vserver-id", vnfc.getComputeResource().getResourceId());
 
-                aaiServiceProvider.invokeDeleteVserver(
-                        aaiHelper.getRelationshipData(relationshipToVserver, "cloud-region.cloud-owner"),
-                        aaiHelper.getRelationshipData(relationshipToVserver, "cloud-region.cloud-region-id"),
-                        aaiHelper.getRelationshipData(relationshipToVserver, "tenant.tenant-id"),
-                        vnfc.getComputeResource().getResourceId());
+                    aaiServiceProvider.invokeDeleteVserver(
+                            aaiHelper.getRelationshipData(relationshipToVserver, "cloud-region.cloud-owner"),
+                            aaiHelper.getRelationshipData(relationshipToVserver, "cloud-region.cloud-region-id"),
+                            aaiHelper.getRelationshipData(relationshipToVserver, "tenant.tenant-id"),
+                            vnfc.getComputeResource().getResourceId());
+                }
             }
+        } catch (final Exception exception) {
+            logger.error(
+                    "Error encountered deleting vservers based on received notification, AAI may not be updated correctly "
+                            + vnfLcmOperationOccurrenceNotification,
+                    exception);
         }
     }
 

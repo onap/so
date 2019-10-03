@@ -33,6 +33,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.rest.exceptions.InvalidRestRequestException;
+import org.onap.so.rest.exceptions.NotFoundException;
 import org.onap.so.rest.exceptions.RestProcessingException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -116,7 +117,7 @@ public class HttpRestServiceProviderImplTest {
 
     }
 
-    @Test(expected = InvalidRestRequestException.class)
+    @Test(expected = NotFoundException.class)
     public void test_get_ThrowsInvalidRestRequestExceptionifHttpClientErrorExceptionWithHttpStatusNotFoundHttpStatus() {
         assertGetErrorScenario(HttpStatus.NOT_FOUND);
     }
@@ -239,7 +240,7 @@ public class HttpRestServiceProviderImplTest {
 
     }
 
-    @Test(expected = InvalidRestRequestException.class)
+    @Test(expected = NotFoundException.class)
     public void test_post_ThrowsInvalidRestRequestExceptionifHttpClientErrorExceptionWithHttpStatusNotFoundHttpStatus() {
         assertPostErrorScenario(HttpStatus.NOT_FOUND);
     }

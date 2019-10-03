@@ -29,6 +29,7 @@ import org.onap.so.adapters.vnfmadapter.extclients.aai.AaiServiceProvider;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.VnfmServiceProvider;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.JobNotFoundException;
+import org.onap.so.rest.exceptions.NotFoundException;
 import org.onap.vnfmadapter.v1.model.OperationEnum;
 import org.onap.vnfmadapter.v1.model.OperationStateEnum;
 import org.onap.vnfmadapter.v1.model.OperationStatusRetrievalStatusEnum;
@@ -116,7 +117,7 @@ public class JobManager {
             response.setVnfInstanceId(operation.getVnfInstanceId());
 
             return response;
-        } catch (final Exception exception) {
+        } catch (final NotFoundException exception) {
             logger.error("Exception encountered trying to get operation status for operation id "
                     + vnfmOperation.getOperationId(), exception);
             return response.operationStatusRetrievalStatus(OperationStatusRetrievalStatusEnum.WAITING_FOR_STATUS);

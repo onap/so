@@ -24,6 +24,7 @@ import com.google.common.base.Optional;
 import org.onap.so.configuration.rest.BasicHttpHeadersProvider;
 import org.onap.so.configuration.rest.HttpHeadersProvider;
 import org.onap.so.rest.exceptions.InvalidRestRequestException;
+import org.onap.so.rest.exceptions.NotFoundException;
 import org.onap.so.rest.exceptions.RestProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,8 +122,10 @@ public class HttpRestServiceProviderImpl implements HttpRestServiceProvider {
                     + httpClientErrorException.getRawStatusCode();
             LOGGER.error(message, httpClientErrorException);
             final int rawStatusCode = httpClientErrorException.getRawStatusCode();
-            if (rawStatusCode == HttpStatus.BAD_REQUEST.value() || rawStatusCode == HttpStatus.NOT_FOUND.value()) {
+            if (rawStatusCode == HttpStatus.BAD_REQUEST.value()) {
                 throw new InvalidRestRequestException("No result found for given url: " + url);
+            } else if (rawStatusCode == HttpStatus.NOT_FOUND.value()) {
+                throw new NotFoundException("No result found for given url: " + url);
             }
             throw new RestProcessingException("Unable to invoke HTTP " + httpMethod + " using URL: " + url);
 
