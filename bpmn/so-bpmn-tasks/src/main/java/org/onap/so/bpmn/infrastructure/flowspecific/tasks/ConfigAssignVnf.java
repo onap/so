@@ -124,7 +124,7 @@ public class ConfigAssignVnf {
     private Service getServiceFromRequestUserParams(List<Map<String, Object>> userParams) throws Exception {
         Map<String, Object> serviceMap = userParams.stream().filter(key -> key.containsKey("service")).findFirst()
                 .orElseThrow(() -> new Exception("Can not find service in userParams section in generalBuildingBlock"));
-        return convertServiceFromJsonToServiceObject((String) serviceMap.get("service"));
+        return convertServiceFromJsonToServiceObject(serviceMap.get("service").toString());
     }
 
     private Service convertServiceFromJsonToServiceObject(String serviceFromJson) throws Exception {
