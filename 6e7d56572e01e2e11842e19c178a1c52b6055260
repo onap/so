@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1e3c66f2_9a2b07a4",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/java/org/onap/so/bpmn/common/workflow/service/WorkflowAsyncResource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-03T15:37:56Z",
+      "side": 1,
+      "message": "private",
+      "range": {
+        "startLine": 163,
+        "startChar": 4,
+        "endLine": 163,
+        "endChar": 20
+      },
+      "revId": "6e7d56572e01e2e11842e19c178a1c52b6055260",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0e6744c1_b6840355",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/java/org/onap/so/bpmn/common/workflow/service/WorkflowAsyncResource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-03T15:37:56Z",
+      "side": 1,
+      "message": "I think that this can not be null. Show me please, where this VariableMapImpl object can be set as null.",
+      "range": {
+        "startLine": 167,
+        "startChar": 8,
+        "endLine": 167,
+        "endChar": 27
+      },
+      "revId": "6e7d56572e01e2e11842e19c178a1c52b6055260",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
