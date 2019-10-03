@@ -40,7 +40,6 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.onap.so.adapters.vnf.exceptions.VnfAlreadyExists;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
 import org.onap.so.adapters.vnf.exceptions.VnfNotFound;
 import org.onap.so.db.catalog.beans.HeatEnvironment;
@@ -50,15 +49,15 @@ import org.onap.so.db.catalog.beans.VfModule;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfResource;
 import org.onap.so.entity.MsoRequest;
-import org.onap.so.openstack.beans.HeatStatus;
-import org.onap.so.openstack.beans.StackInfo;
 import org.onap.so.openstack.beans.VnfRollback;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.utils.MsoHeatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.github.tomakehurst.wiremock.stubbing.Scenario;
 
 
 public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
+
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
@@ -71,17 +70,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
     String vnfName = "DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/stackId";
 
     @Test
-    @Ignore
-    public void healthCheckVNFTest() {
-        MsoVnfAdapterImpl instance = new MsoVnfAdapterImpl();
-        instance.healthCheck();
-    }
-
-    @Test
     public void createVnfTest() throws Exception {
-        StackInfo info = new StackInfo();
-        info.setStatus(HeatStatus.CREATED);
-
         mockOpenStackResponseAccess(wireMockServer, wireMockPort);
         mockOpenStackGetStackVfModule_200(wireMockServer);
 
@@ -90,103 +79,55 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
         Map<String, Object> map = new HashMap<>();
         map.put("key1", "value1");
         instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "",
-                "VFMOD", "volumeGroupHeatStackId|1", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
-                Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(),
-                new Holder<Map<String, String>>(), new Holder<VnfRollback>());
-    }
-
-    @Test
-    public void createVnfTest_HeatStatusUpdating() throws Exception {
-        expectedException.expect(VnfAlreadyExists.class);
-        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
-
-        wireMockServer.stubFor(get(
-                urlPathEqualTo("/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/stackId"))
-                        .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                                .withBodyFile("OpenstackResponse_Stack_Updating_VfModule.json")
-                                .withStatus(HttpStatus.SC_OK)));
-
-        MsoRequest msoRequest = getMsoRequest();
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("key1", "value1");
-        instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "",
-                "VFMOD", "volumeGroupHeatStackId|1", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
-                Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(),
-                new Holder<Map<String, String>>(), new Holder<VnfRollback>());
-    }
-
-    @Test
-    public void createVnfTest_HeatStatusUpdated() throws Exception {
-        expectedException.expect(VnfAlreadyExists.class);
-        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
-
-        wireMockServer.stubFor(get(
-                urlPathEqualTo("/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/stackId"))
-                        .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                                .withBodyFile("OpenstackResponse_StackId.json").withStatus(HttpStatus.SC_OK)));
-
-        MsoRequest msoRequest = getMsoRequest();
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("key1", "value1");
-        instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "",
-                "VFMOD", "volumeGroupHeatStackId|1", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
-                Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(),
-                new Holder<Map<String, String>>(), new Holder<VnfRollback>());
+                "VFMOD", null, null, "b4ea86b4-253f-11e7-93ae-92361f002671", map, Boolean.TRUE, Boolean.TRUE,
+                Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
+                new Holder<VnfRollback>());
     }
 
     @Test
     public void createVnfTest_HeatStatusFailed() throws Exception {
-        expectedException.expect(VnfAlreadyExists.class);
         mockOpenStackResponseAccess(wireMockServer, wireMockPort);
-
         wireMockServer.stubFor(get(
                 urlPathEqualTo("/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/stackId"))
                         .willReturn(aResponse().withHeader("Content-Type", "application/json")
                                 .withBodyFile("OpenstackResponse_Stack_Failed_VfModule.json")
-                                .withStatus(HttpStatus.SC_OK)));
+                                .withStatus(HttpStatus.SC_OK))
+                        .inScenario("HeatStatusFailure").whenScenarioStateIs(Scenario.STARTED)
+                        .willSetStateTo("HeatStackFailed"));
+
+        wireMockServer.stubFor(get(
+                urlPathEqualTo("/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/stackId"))
+                        .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                                .withBodyFile("OpenstackResponse_Stack_Created_VfModule.json")
+                                .withStatus(HttpStatus.SC_OK))
+                        .inScenario("HeatStatusFailure").whenScenarioStateIs("HeatStackFailed")
+                        .willSetStateTo("HeatStackSuccess"));
 
         MsoRequest msoRequest = getMsoRequest();
 
         Map<String, Object> map = new HashMap<>();
         map.put("key1", "value1");
         instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "",
-                "VFMOD", "volumeGroupHeatStackId|1", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
-                Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(),
-                new Holder<Map<String, String>>(), new Holder<VnfRollback>());
+                "VFMOD", null, null, "b4ea86b4-253f-11e7-93ae-92361f002671", map, Boolean.FALSE, Boolean.TRUE,
+                Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
+                new Holder<VnfRollback>());
     }
+
+
 
     @Test
     public void createVnfTest_HeatStatusCreated() throws Exception {
-        expectedException.expect(VnfAlreadyExists.class);
         mockOpenStackResponseAccess(wireMockServer, wireMockPort);
-
         mockOpenStackGetStackVfModule_200(wireMockServer);
-
         MsoRequest msoRequest = getMsoRequest();
-
         Map<String, Object> map = new HashMap<>();
         map.put("key1", "value1");
         instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "",
-                "VFMOD", "volumeGroupHeatStackId|1", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
-                Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(),
-                new Holder<Map<String, String>>(), new Holder<VnfRollback>());
+                "VFMOD", null, null, "b4ea86b4-253f-11e7-93ae-92361f002671", map, Boolean.TRUE, Boolean.TRUE,
+                Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
+                new Holder<VnfRollback>());
     }
 
-
-    @Test
-    public void createVnfTest_ExceptionInGettingHeat() throws Exception {
-        expectedException.expect(VnfException.class);
-        MsoRequest msoRequest = getMsoRequest();
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("key1", "value1");
-        instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "",
-                "VFMOD", "volumeGroupHeatStackId|1", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
-                Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(),
-                new Holder<Map<String, String>>(), new Holder<VnfRollback>());
-    }
 
     @Test
     public void createVnfTest_NestedHeatStatusNotFound() throws Exception {

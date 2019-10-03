@@ -10,7 +10,7 @@
 	"modelCustomizationUuid": "vfModuleModelCustomizationUuid",
 	"skipAAI": true,
 	"backout": true,
-	"failIfExists": true,
+	"failIfExists": false,
 	"msoRequest": 
 	{
 		"requestId": "requestId",

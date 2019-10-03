@@ -135,7 +135,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
     public StackInfo createStack(String cloudSiteId, String cloudOwner, String tenantId, String stackName,
             VduModelInfo vduModel, String heatTemplate, Map<String, ?> stackInputs, boolean pollForCompletion,
             int timeoutMinutes, String environment, Map<String, Object> files, Map<String, Object> heatFiles,
-            boolean backout) throws MsoException {
+            boolean backout, boolean failIfExists) throws MsoException {
 
         logger.trace("Started MsoMulticloudUtils.createStack");
 
@@ -881,11 +881,11 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
         }
 
         try {
-            StackInfo stackInfo =
-                    createStack(cloudSiteId, cloudOwner, tenantId, instanceName, vduModel, heatTemplate, inputs, true, // poll
-                                                                                                                       // for
-                                                                                                                       // completion
-                            vduModel.getTimeoutMinutes(), heatEnvironment, nestedTemplates, files, rollbackOnFailure);
+            StackInfo stackInfo = createStack(cloudSiteId, cloudOwner, tenantId, instanceName, vduModel, heatTemplate,
+                    inputs, true, // poll
+                                  // for
+                                  // completion
+                    vduModel.getTimeoutMinutes(), heatEnvironment, nestedTemplates, files, rollbackOnFailure, false);
             // Populate a vduInstance from the StackInfo
             return stackInfoToVduInstance(stackInfo);
         } catch (Exception e) {
@@ -957,6 +957,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
     /*
      * Convert the local DeploymentInfo object (Cloudify-specific) to a generic VduInstance object
      */
+    @Override
     protected VduInstance stackInfoToVduInstance(StackInfo stackInfo) {
         VduInstance vduInstance = new VduInstance();
 

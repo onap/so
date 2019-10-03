@@ -106,7 +106,7 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup {
         expectedCreateNetworkRequest.setNetworkName(l3Network.getNetworkName());
         expectedCreateNetworkRequest.setNetworkType(l3Network.getNetworkType());
         expectedCreateNetworkRequest.setBackout(false);
-        expectedCreateNetworkRequest.setFailIfExists(true);
+        expectedCreateNetworkRequest.setFailIfExists(false);
         expectedCreateNetworkRequest.setNetworkTechnology("CONTRAIL");
         MsoRequest msoRequest = new MsoRequest();
         msoRequest.setRequestId(requestContext.getMsoRequestId());

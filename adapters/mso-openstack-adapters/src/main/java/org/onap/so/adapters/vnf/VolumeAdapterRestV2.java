@@ -105,7 +105,6 @@ public class VolumeAdapterRestV2 {
             @ApiResponse(code = 500, message = "create vnfVolume failed, examine entity object for details")})
     public Response createVNFVolumes(@ApiParam(value = "mode", required = true) @QueryParam("mode") String mode,
             @ApiParam(value = "CreateVolumeGroupRequest", required = true) final CreateVolumeGroupRequest req) {
-        logger.debug("createVNFVolumes enter: {}", req.toJsonString());
         CreateVNFVolumesTask task = new CreateVNFVolumesTask(req, mode);
         if (req.isSynchronous()) {
             // This is a synchronous request

@@ -194,9 +194,7 @@ public class NetworkAdapterRestTest extends BaseRestTestUtils {
     public void testRollbackNetwork() throws IOException {
 
         RollbackNetworkRequest request = new RollbackNetworkRequest();
-
         MsoRequest msoReq = new MsoRequest();
-
         msoReq.setRequestId(MSO_REQUEST_ID);
         msoReq.setServiceInstanceId(MSO_SERVICE_INSTANCE_ID);
 
