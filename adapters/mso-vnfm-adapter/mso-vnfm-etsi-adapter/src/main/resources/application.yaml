@@ -23,22 +23,11 @@ spring:
   http:
     converters:
     preferred-json-mapper: gson
-    
-http:
-  client:
-    ssl:
-      trust-store: classpath:org.onap.so.trust.jks
-      trust-store-password: ',sx#.C*W)]wVgJC6ccFHI#:H'
         
 server:
   port: 9092
   tomcat:
     max-threads: 50
-  ssl:
-    key-alias: so@so.onap.org
-    key--store-password: 'ywsqCy:EEo#j}HJHM7z^Rk[L'
-    key-store: classpath:so-vnfm-adapter.p12
-    key-store-type: PKCS12
 
 mso:
   key: 07a7159d3bf51a0e53be7a8f89699be7
@@ -55,7 +44,7 @@ sdc:
   endpoint: http://sdc.onap/1234A
   
 vnfmadapter:
-  endpoint: https://so-vnfm-adapter.onap:9092
+  endpoint: http://so-vnfm-adapter.onap:9092
 
 #Actuator
 management:
