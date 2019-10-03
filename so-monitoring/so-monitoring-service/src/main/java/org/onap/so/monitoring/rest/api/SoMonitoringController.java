@@ -19,6 +19,7 @@
  */
 package org.onap.so.monitoring.rest.api;
 
+import com.google.common.base.Optional;
 import java.util.List;
 import java.util.Map;
 import javax.ws.rs.GET;
@@ -39,12 +40,12 @@ import org.onap.so.monitoring.model.ProcessInstanceVariableDetail;
 import org.onap.so.monitoring.model.SoInfraRequest;
 import org.onap.so.monitoring.rest.service.CamundaProcessDataServiceProvider;
 import org.onap.so.rest.exceptions.InvalidRestRequestException;
+import org.onap.so.rest.exceptions.HttpResouceNotFoundException;
 import org.onap.so.rest.exceptions.RestProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.google.common.base.Optional;
 
 /**
  * @author waqas.ikram@ericsson.com
@@ -85,7 +86,7 @@ public class SoMonitoringController {
             LOGGER.error("Unable to find process instance id for : " + requestId);
             return Response.status(Status.NO_CONTENT).build();
 
-        } catch (final InvalidRestRequestException extensions) {
+        } catch (final InvalidRestRequestException | HttpResouceNotFoundException extensions) {
             final String message = "Unable to find process instance id for : " + requestId;
             LOGGER.error(message);
             return Response.status(Status.BAD_REQUEST).entity(message).build();
@@ -114,7 +115,7 @@ public class SoMonitoringController {
             LOGGER.error("Unable to find process instance id for : " + processInstanceId);
             return Response.status(Status.NO_CONTENT).build();
 
-        } catch (final InvalidRestRequestException extensions) {
+        } catch (final InvalidRestRequestException | HttpResouceNotFoundException extensions) {
             final String message = "Unable to find process instance id for : " + processInstanceId;
             LOGGER.error(message);
             return Response.status(Status.BAD_REQUEST).entity(message).build();
@@ -143,7 +144,7 @@ public class SoMonitoringController {
             LOGGER.error("Unable to find process definition xml for processDefinitionId: " + processDefinitionId);
             return Response.status(Status.NO_CONTENT).build();
 
-        } catch (final InvalidRestRequestException extensions) {
+        } catch (final InvalidRestRequestException | HttpResouceNotFoundException extensions) {
             final String message =
                     "Unable to find process definition xml for processDefinitionId: {}" + processDefinitionId;
             return Response.status(Status.BAD_REQUEST).entity(message).build();
@@ -166,7 +167,7 @@ public class SoMonitoringController {
             final List<ActivityInstanceDetail> activityInstanceDetails =
                     camundaProcessDataServiceProvider.getActivityInstance(processInstanceId);
             return Response.status(Status.OK).entity(activityInstanceDetails).build();
-        } catch (final InvalidRestRequestException extensions) {
+        } catch (final InvalidRestRequestException | HttpResouceNotFoundException extensions) {
             final String message = "Unable to find activity instance for processInstanceId: " + processInstanceId;
             LOGGER.error(message);
             return Response.status(Status.BAD_REQUEST).entity(message).build();
@@ -189,7 +190,7 @@ public class SoMonitoringController {
             final List<ProcessInstanceVariableDetail> processInstanceVariable =
                     camundaProcessDataServiceProvider.getProcessInstanceVariable(processInstanceId);
             return Response.status(Status.OK).entity(processInstanceVariable).build();
-        } catch (final InvalidRestRequestException extensions) {
+        } catch (final InvalidRestRequestException | HttpResouceNotFoundException extensions) {
             final String message =
                     "Unable to find process instance variables for processInstanceId: " + processInstanceId;
             LOGGER.error(message);
@@ -217,7 +218,7 @@ public class SoMonitoringController {
             LOGGER.info("result size: " + requests.size());
             return Response.status(Status.OK).entity(requests).build();
 
-        } catch (final InvalidRestRequestException extensions) {
+        } catch (final InvalidRestRequestException | HttpResouceNotFoundException extensions) {
             final String message = "Unable to search request for filters: " + filters + ", from: " + startTime
                     + ", to: " + endTime + ", maxResult: " + maxResult;
             LOGGER.error(message);

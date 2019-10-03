@@ -17,37 +17,15 @@
  * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
+
 package org.onap.so.rest.exceptions;
 
-/**
- * @author waqas.ikram@est.tech
- *
- */
-public class RestProcessingException extends RuntimeException {
 
-    private static final long serialVersionUID = 16862313537198441L;
-    private final int statusCode;
+public class HttpResouceNotFoundException extends RuntimeException {
 
-    public RestProcessingException(final String message) {
+    private static final long serialVersionUID = 9007892558312387355L;
+
+    public HttpResouceNotFoundException(final String message) {
         super(message);
-        statusCode = 0;
-    }
-
-    public RestProcessingException(final String message, final Throwable cause) {
-        this(message, cause, 0);
-    }
-
-    public RestProcessingException(final String message, final Throwable cause, final int statusCode) {
-        super(message, cause);
-        this.statusCode = statusCode;
-    }
-
-    /**
-     * Get the status code from the response to the rest request, if available
-     * 
-     * @return the status code, or 0 if not available
-     */
-    public int getStatusCode() {
-        return statusCode;
     }
 }

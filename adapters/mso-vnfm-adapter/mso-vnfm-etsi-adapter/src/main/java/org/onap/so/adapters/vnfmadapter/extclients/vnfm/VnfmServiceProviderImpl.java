@@ -26,10 +26,13 @@ import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.CreateVnfRequest;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse2001;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201.InstantiationStateEnum;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InstantiateVnfRequest;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRequest;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.TerminateVnfRequest;
+import org.onap.so.adapters.vnfmadapter.jobmanagement.JobManager;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfmRequestFailureException;
+import org.onap.so.rest.exceptions.RestProcessingException;
 import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,6 +118,18 @@ public class VnfmServiceProviderImpl implements VnfmServiceProvider {
         try {
             response = getHttpServiceProvider(vnfm).postHttpRequest(terminateVnfRequest, vnfSelfLink + "/terminate",
                     Void.class);
+        } catch (final RestProcessingException restProcessingException) {
+            if (restProcessingException.getStatusCode() == HttpStatus.CONFLICT.value()) {
+                InlineResponse201 vnf = getVnf(vnfm, vnfSelfLink).get();
+                if (vnf.getInstantiationState().equals(InstantiationStateEnum.NOT_INSTANTIATED)) {
+                    return JobManager.ALREADY_COMPLETED_OPERATION_ID;
+                } else {
+                    final String errorMessage =
+                            "Terminate request to " + vnfSelfLink + " resulted in exception" + terminateVnfRequest;
+                    logger.error(errorMessage, restProcessingException);
+                    throw new VnfmRequestFailureException(errorMessage, restProcessingException);
+                }
+            }
         } catch (final Exception exception) {
             final String errorMessage =
                     "Terminate request to " + vnfSelfLink + " resulted in exception" + terminateVnfRequest;

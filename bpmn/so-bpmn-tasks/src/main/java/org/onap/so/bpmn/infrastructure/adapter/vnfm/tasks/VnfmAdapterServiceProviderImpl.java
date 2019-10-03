@@ -20,7 +20,9 @@
 
 package org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks;
 
+import com.google.common.base.Optional;
 import org.onap.so.rest.exceptions.InvalidRestRequestException;
+import org.onap.so.rest.exceptions.HttpResouceNotFoundException;
 import org.onap.so.rest.exceptions.RestProcessingException;
 import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.onap.vnfmadapter.v1.model.CreateVnfRequest;
@@ -33,7 +35,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import com.google.common.base.Optional;
 
 /**
  * @author waqas.ikram@est.tech
@@ -82,7 +83,8 @@ public class VnfmAdapterServiceProviderImpl implements VnfmAdapterServiceProvide
             }
 
             return Optional.of(createVnfResponse);
-        } catch (final RestProcessingException | InvalidRestRequestException httpInvocationException) {
+        } catch (final RestProcessingException | InvalidRestRequestException
+                | HttpResouceNotFoundException httpInvocationException) {
             LOGGER.error("Unexpected error while processing create and instantiation request", httpInvocationException);
             return Optional.absent();
         }
@@ -144,7 +146,8 @@ public class VnfmAdapterServiceProviderImpl implements VnfmAdapterServiceProvide
                 return Optional.absent();
             }
             return Optional.of(response.getBody());
-        } catch (final RestProcessingException | InvalidRestRequestException httpInvocationException) {
+        } catch (final RestProcessingException | InvalidRestRequestException
+                | HttpResouceNotFoundException httpInvocationException) {
             LOGGER.error("Unexpected error while processing job request", httpInvocationException);
             throw httpInvocationException;
         }
