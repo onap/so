@@ -384,10 +384,15 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin {
         Exception savedException = null;
 
         try {
+            String status = null;
             StartExecution executionRequest = cloudify.executions().start(executeParams);
             logger.debug(executionRequest.toString());
             execution = executeAndRecordCloudifyRequest(executionRequest);
-            executionId = execution.getId();
+            if (execution != null) {
+                executionId = execution.getId();
+            } else {
+                logger.debug("execution is null!");
+            }
 
             if (!pollForCompletion) {
                 // Client did not request polling, so just return the Execution object
@@ -398,7 +403,11 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin {
             boolean timedOut = false;
             int pollTimeout = timeout;
 
-            String status = execution.getStatus();
+            if (execution != null) {
+                status = execution.getStatus();
+            } else {
+                status = TERMINATED;
+            }
 
             // Create a reusable cloudify query request
             GetExecution queryExecution = cloudify.executions().byId(executionId);
