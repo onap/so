@@ -21,7 +21,6 @@
 package org.onap.so.logging.jaxrs.filter;
 
 import java.io.IOException;
-import java.util.UUID;
 import org.onap.logging.filter.spring.SpringClientFilter;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.logger.MdcConstants;
@@ -51,7 +50,7 @@ public class SOSpringClientFilter extends SpringClientFilter implements ClientHt
             MDC.put(ONAPLogConstants.MDCs.RESPONSE_CODE, String.valueOf(statusCode));
             setResponseDescription(statusCode);
         } catch (IOException e) {
-            logger.error("Unable to get statusCode from response");
+            logger.error("Unable to get statusCode from response", e);
         }
 
 
