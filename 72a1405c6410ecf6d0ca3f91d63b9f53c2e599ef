@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b9f92a77_14514c47",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/cloudify/utils/MsoCloudifyUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 758,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-04T14:11:23Z",
+      "side": 1,
+      "message": "remove it please, this causes null pointer ex, bp is null here",
+      "range": {
+        "startLine": 758,
+        "startChar": 48,
+        "endLine": 758,
+        "endChar": 58
+      },
+      "revId": "72a1405c6410ecf6d0ca3f91d63b9f53c2e599ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
