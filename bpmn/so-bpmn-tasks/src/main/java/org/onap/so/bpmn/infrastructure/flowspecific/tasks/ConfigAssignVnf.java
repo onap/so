@@ -124,12 +124,14 @@ public class ConfigAssignVnf {
     private Service getServiceFromRequestUserParams(List<Map<String, Object>> userParams) throws Exception {
         Map<String, Object> serviceMap = userParams.stream().filter(key -> key.containsKey("service")).findFirst()
                 .orElseThrow(() -> new Exception("Can not find service in userParams section in generalBuildingBlock"));
-        return convertServiceFromJsonToServiceObject((String) serviceMap.get("service"));
+        return getServiceObjectFromServiceMap(serviceMap);
     }
 
-    private Service convertServiceFromJsonToServiceObject(String serviceFromJson) throws Exception {
+    private Service getServiceObjectFromServiceMap(Map<String, Object> serviceMap) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String serviceFromJson = objectMapper.writeValueAsString(serviceMap.get("service"));
         try {
-            return new ObjectMapper().readValue(serviceFromJson, Service.class);
+            return objectMapper.readValue(serviceFromJson, Service.class);
         } catch (Exception e) {
             logger.error(String.format(
                     "An exception occurred while converting json object to Service object. The json is: %s",
@@ -150,5 +152,4 @@ public class ConfigAssignVnf {
                     genericVnfModelCustomizationUuid));
         }
     }
-
 }
