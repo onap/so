@@ -21,7 +21,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { BpmnInfraRequest } from './model/bpmnInfraRequest.model';
 import { catchError } from 'rxjs/operators';
 import { Observable } from 'rxjs';

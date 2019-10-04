@@ -2,8 +2,6 @@
 ============LICENSE_START=======================================================
  Copyright (C) 2018 Ericsson. All rights reserved.
 ================================================================================
- Modifications Copyright (c) 2019 Samsung
-================================================================================
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -26,25 +24,17 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { DetailsComponent } from './details/details.component';
-import {AuthGuard} from "./auth.guard";
-import {LoginComponent} from "./login/login.component";
 
 const routes: Routes = [
   {
     // Route to home page
     path: '',
-    component: HomeComponent,
-    canActivate: [AuthGuard]
+    component: HomeComponent
   },
   {
     // Route to page to show individual process based on ID
     path: 'details/:id',
     component: DetailsComponent
-  },
-  {
-    // Route to login page
-    path: 'login',
-    component: LoginComponent
   }
 ];
 
