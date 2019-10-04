@@ -65,7 +65,6 @@ import org.onap.so.db.catalog.beans.Workflow;
 import org.onap.so.db.catalog.beans.macro.NorthBoundRequest;
 import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
 import org.onap.so.db.catalog.beans.macro.RainyDayHandlerStatus;
-import org.onap.so.logger.LogConstants;
 import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -767,7 +766,8 @@ public class CatalogDbClient {
     }
 
     public List<CloudSite> getCloudSites() {
-        return this.getMultipleResources(cloudSiteClient, UriBuilder.fromUri(endpoint + CLOUD_SITE).build());
+        return this.getMultipleResources(cloudSiteClient,
+                UriBuilder.fromUri(endpoint + CLOUD_SITE).queryParam("size", "1000").build());
     }
 
 
