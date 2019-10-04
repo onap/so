@@ -47,23 +47,32 @@ import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.cds.beans.AbstractCDSPropertiesBean;
 import org.onap.so.client.exception.ExceptionBuilder;
+import org.onap.so.serviceinstancebeans.ModelInfo;
+import org.onap.so.serviceinstancebeans.Resources;
+import org.onap.so.serviceinstancebeans.Service;
+import org.onap.so.serviceinstancebeans.Vnfs;
 
 public class ConfigAssignVnfTest {
 
     private static final String GENERIC_VNF_ID = "vnfId_configVnfTest";
     private static final String GENERIC_VNF_NAME = "vnfName_configVnfTest";
-    private static final String VNF_MODEL_CUSTOMIZATION_UUID = "0c1ac643-377e-475b-be50-6be65f91a7ad";
+    private static final String VNF_MODEL_CUSTOMIZATION_ID = "0c1ac643-377e-475b-be50-6be65f91a7ad";
     private static final String SERVICE_INSTANCE_ID = "serviceInst_configTest";
     private static final String SERVICE_MODEL_UUID = "5af91c26-8418-4d3f-944c-965842deda94";
     private static final String TARGET_VNF_MODEL_CUSTOMIZATION_UUID = "0c1ac643-377e-475b-be50-6be65f91a7ad";
     private static final String GENERAL_BLOCK_EXECUTION_MAP_KEY = "gBBInput";
     private static final int THE_NUMBER_OF_EXPECTED_CONFIG_PROPERTIES = 8;
 
-    private static final String USER_PARAMS_FROM_REQUEST = "{\"resources\":{\"vnfs\":["
-            + "{\"modelInfo\":{\"modelCustomizationId\":\"" + VNF_MODEL_CUSTOMIZATION_UUID + "\"},"
-            + "\"instanceParams\":[{\"paramName1\":\"paramValue1\",\"paramName2\":\"paramValue2\"},{\"paramName3\":\"paramValue3\"}]},"
-            + "{\"modelInfo\":{\"modelCustomizationId\":\"2d1ac656-377e-467b-be50-6ce65f66a7ca\"},"
-            + "\"instanceParams\":[{\"parName4\":\"parValue4\",\"parName5\":\"parValue5\"}]}]}}\n";
+    private static final String INSTANCE_PARAM1_NAME = "paramName1";
+    private static final String INSTANCE_PARAM1_VALUE = "paramValue1";
+    private static final String INSTANCE_PARAM2_NAME = "paramName2";
+    private static final String INSTANCE_PARAM2_VALUE = "paramValue2";
+    private static final String INSTANCE_PARAM3_NAME = "paramName3";
+    private static final String INSTANCE_PARAM3_VALUE = "paramValue3";
+    private static final String INSTANCE_PARAM4_NAME = "paramName4";
+    private static final String INSTANCE_PARAM4_VALUE = "paramValue4";
+    private static final String INSTANCE_PARAM5_NAME = "paramName5";
+    private static final String INSTANCE_PARAM5_VALUE = "paramValue5";
 
 
     private ConfigAssignVnf testedObject;
@@ -103,13 +112,13 @@ public class ConfigAssignVnfTest {
         assertThat(configAssignPropertiesNode.get("vnf-name").asText()).isEqualTo(GENERIC_VNF_NAME);
         assertThat(configAssignPropertiesNode.get("service-model-uuid").asText()).isEqualTo(SERVICE_MODEL_UUID);
         assertThat(configAssignPropertiesNode.get("vnf-customization-uuid").asText())
-                .isEqualTo(VNF_MODEL_CUSTOMIZATION_UUID);
-        assertThat(configAssignPropertiesNode.has("paramName1")).isTrue();
-        assertThat(configAssignPropertiesNode.get("paramName1").asText()).isEqualTo("paramValue1");
-        assertThat(configAssignPropertiesNode.has("paramName2")).isTrue();
-        assertThat(configAssignPropertiesNode.get("paramName2").asText()).isEqualTo("paramValue2");
-        assertThat(configAssignPropertiesNode.has("paramName3")).isTrue();
-        assertThat(configAssignPropertiesNode.get("paramName3").asText()).isEqualTo("paramValue3");
+                .isEqualTo(VNF_MODEL_CUSTOMIZATION_ID);
+        assertThat(configAssignPropertiesNode.has(INSTANCE_PARAM1_NAME)).isTrue();
+        assertThat(configAssignPropertiesNode.get(INSTANCE_PARAM1_NAME).asText()).isEqualTo(INSTANCE_PARAM1_VALUE);
+        assertThat(configAssignPropertiesNode.has(INSTANCE_PARAM2_NAME)).isTrue();
+        assertThat(configAssignPropertiesNode.get(INSTANCE_PARAM2_NAME).asText()).isEqualTo(INSTANCE_PARAM2_VALUE);
+        assertThat(configAssignPropertiesNode.has(INSTANCE_PARAM3_NAME)).isTrue();
+        assertThat(configAssignPropertiesNode.get(INSTANCE_PARAM3_NAME).asText()).isEqualTo(INSTANCE_PARAM3_VALUE);
     }
 
     private BuildingBlockExecution createBuildingBlockExecution() {
@@ -152,8 +161,49 @@ public class ConfigAssignVnfTest {
     private List<Map<String, Object>> createRequestUserParams() {
         List<Map<String, Object>> userParams = new ArrayList<>();
         Map<String, Object> userParamMap = new HashMap<>();
-        userParamMap.put("service", USER_PARAMS_FROM_REQUEST);
+        userParamMap.put("service", createService());
         userParams.add(userParamMap);
         return userParams;
+    }
+
+    private Service createService() {
+        Service service = new Service();
+        Resources resources = new Resources();
+        resources.setVnfs(createVnfList());
+        service.setResources(resources);
+        return service;
+    }
+
+    private List<Vnfs> createVnfList() {
+        List<Map<String, String>> instanceParamsListSearchedVnf = new ArrayList<>();
+        Map<String, String> instanceParam = new HashMap<>();
+        instanceParam.put(INSTANCE_PARAM1_NAME, INSTANCE_PARAM1_VALUE);
+        instanceParam.put(INSTANCE_PARAM2_NAME, INSTANCE_PARAM2_VALUE);
+        Map<String, String> instanceParam2 = new HashMap<>();
+        instanceParam2.put(INSTANCE_PARAM3_NAME, INSTANCE_PARAM3_VALUE);
+        instanceParamsListSearchedVnf.add(instanceParam);
+        instanceParamsListSearchedVnf.add(instanceParam2);
+        Vnfs searchedVnf = createVnf(VNF_MODEL_CUSTOMIZATION_ID, instanceParamsListSearchedVnf);
+
+        List<Map<String, String>> instanceParamsListForAnotherVnf = new ArrayList<>();
+        Map<String, String> instanceParam3 = new HashMap<>();
+        instanceParam3.put(INSTANCE_PARAM4_NAME, INSTANCE_PARAM4_VALUE);
+        instanceParam3.put(INSTANCE_PARAM5_NAME, INSTANCE_PARAM5_VALUE);
+        instanceParamsListForAnotherVnf.add(instanceParam3);
+        Vnfs anotherVnf = createVnf("2d1ac656-377e-467b-be50-6ce65f66a7ca", instanceParamsListForAnotherVnf);
+
+        List<Vnfs> vnfList = new ArrayList<>();
+        vnfList.add(searchedVnf);
+        vnfList.add(anotherVnf);
+        return vnfList;
+    }
+
+    private Vnfs createVnf(String vnfModelCustomizationId, List<Map<String, String>> instanceParamsList) {
+        Vnfs vnf = new Vnfs();
+        ModelInfo modelInfo = new ModelInfo();
+        modelInfo.setModelCustomizationId(vnfModelCustomizationId);
+        vnf.setModelInfo(modelInfo);
+        vnf.setInstanceParams(instanceParamsList);
+        return vnf;
     }
 }
