@@ -155,23 +155,10 @@ public class BPMNUtil {
         }
     }
 
-    private static String getProcessInstanceId(HistoryService historyService, String processDefinitionID) {
-        List<HistoricProcessInstance> historyList = historyService.createHistoricProcessInstanceQuery().list();
-        String pID = null;
-        for (HistoricProcessInstance hInstance : historyList) {
-            if (hInstance.getProcessDefinitionKey().equals(processDefinitionID)) {
-                pID = hInstance.getId();
-                break;
-            }
-        }
-        return pID;
-    }
-
     public static boolean isProcessInstanceFinished(ProcessEngineServices processEngineServices, String pid) {
         return processEngineServices.getHistoryService().createHistoricProcessInstanceQuery().processInstanceId(pid)
                 .finished().count() == 1 ? true : false;
     }
-
 
     private static void buildVariable(String key, String value, Map<String, Object> variableValueType) {
         Map<String, Object> host = new HashMap<>();
