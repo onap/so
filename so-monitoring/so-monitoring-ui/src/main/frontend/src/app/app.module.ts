@@ -2,8 +2,6 @@
 ============LICENSE_START=======================================================
  Copyright (C) 2018 Ericsson. All rights reserved.
 ================================================================================
- Modifications Copyright (c) 2019 Samsung
-================================================================================
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -30,7 +28,7 @@ import { AppComponent } from './app.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { TopbarComponent } from './topbar/topbar.component';
 import { HomeComponent } from './home/home.component';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DetailsComponent } from './details/details.component';
 import { ToastrNotificationService } from './toastr-notification-service.service';
@@ -39,9 +37,6 @@ import { MatFormFieldModule, MatInputModule, MatTableModule, MatTabsModule, MatS
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { RouterModule, Routes } from '@angular/router';
 import { APP_BASE_HREF } from '@angular/common';
-import { LoginComponent } from './login/login.component';
-import { BasicAuthInterceptor } from "./basic-auth.interceptor";
-import { ErrorInterceptor } from "./error.interceptor";
 
 @NgModule({
   declarations: [
@@ -49,8 +44,7 @@ import { ErrorInterceptor } from "./error.interceptor";
     SidebarComponent,
     TopbarComponent,
     HomeComponent,
-    DetailsComponent,
-    LoginComponent
+    DetailsComponent
   ],
   imports: [
     BrowserModule,
@@ -77,10 +71,7 @@ import { ErrorInterceptor } from "./error.interceptor";
   schemas: [
     CUSTOM_ELEMENTS_SCHEMA
   ],
-  providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: BasicAuthInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-    ToastrNotificationService],
+  providers: [ToastrNotificationService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

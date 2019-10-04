@@ -2,9 +2,7 @@
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2018 Ericsson. All rights reserved.
  * ================================================================================
- * Modifications Copyright (c) 2019 Samsung
- * ================================================================================
-  * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -23,15 +21,16 @@ package org.onap.so.monitoring.rest.api;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 /**
  * @author waqas.ikram@ericsson.com
  */
 @Configuration
-public class WebApplicationConfig implements WebMvcConfigurer {
+public class WebApplicationConfig extends WebMvcConfigurerAdapter {
     @Override
     public void addViewControllers(final ViewControllerRegistry registry) {
+        super.addViewControllers(registry);
         registry.addViewController("/details/**").setViewName("forward:/");
     }
 }

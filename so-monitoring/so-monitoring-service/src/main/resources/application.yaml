@@ -19,9 +19,3 @@ mso:
 spring:
   main:
     allow-bean-definition-overriding: true
-  security:
-    usercredentials:
-    -
-      username: gui
-      password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
-      role: GUI-Client
