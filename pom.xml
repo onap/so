@@ -32,7 +32,6 @@
     <module>cloudify-client</module>
     <module>cxf-logging</module>
     <module>so-monitoring</module>
-    <module>vnfm-simulator</module>
     <module>packages</module>
   </modules>
   <properties>
