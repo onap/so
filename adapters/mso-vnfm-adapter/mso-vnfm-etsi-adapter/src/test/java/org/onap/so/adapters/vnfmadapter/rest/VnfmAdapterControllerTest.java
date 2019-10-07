@@ -61,6 +61,7 @@ import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201L
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201LinksSelf;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfmNotFoundException;
 import org.onap.so.client.aai.AAIResourcesClient;
+import org.onap.so.client.aai.AAIVersion;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.vnfmadapter.v1.model.CreateVnfRequest;
 import org.onap.vnfmadapter.v1.model.CreateVnfResponse;
@@ -408,7 +409,7 @@ public class VnfmAdapterControllerTest {
 
     private void addRelationshipFromGenericVnfToVnfm(final GenericVnf genericVnf, final String vnfmId) {
         final Relationship relationshipToVnfm = new Relationship();
-        relationshipToVnfm.setRelatedLink("/aai/v15/external-system/esr-vnfm-list/esr-vnfm/" + vnfmId);
+        relationshipToVnfm.setRelatedLink("/aai/" + AAIVersion.LATEST + "/external-system/esr-vnfm-list/esr-vnfm/" + vnfmId);
         relationshipToVnfm.setRelatedTo("esr-vnfm");
         final RelationshipData relationshipData = new RelationshipData();
         relationshipData.setRelationshipKey("esr-vnfm.vnfm-id");
