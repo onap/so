@@ -40,6 +40,7 @@ import org.onap.so.BaseIntegrationTest;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestParameters;
+import org.onap.so.client.aai.AAIVersion;
 import org.onap.so.db.catalog.beans.ControllerSelectionReference;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -68,21 +69,22 @@ public class AppcRunTasksIT extends BaseIntegrationTest {
         final String aaiVnfJson =
                 new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "aaiGenericVnfWithVservers.json")));
         wireMockServer.stubFor(
-                get(urlEqualTo("/aai/v15/network/generic-vnfs/generic-vnf/testVnfId1?depth=all")).willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json").withBody(aaiVnfJson).withStatus(200)));
+                get(urlEqualTo("/aai/" + AAIVersion.LATEST + "/network/generic-vnfs/generic-vnf/testVnfId1?depth=all"))
+                        .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(aaiVnfJson)
+                                .withStatus(200)));
 
         final String aaiVserverJson =
                 new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "aaiVserverFullQueryResponse.json")));
-        wireMockServer.stubFor(get(urlEqualTo(
-                "/aai/v15/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/mtn23a/tenants/tenant/e6beab145f6b49098277ac163ac1b4f3/vservers/vserver/48bd7f11-408f-417c-b834-b41c1b98f7d7"))
+        wireMockServer.stubFor(get(urlEqualTo("/aai/" + AAIVersion.LATEST
+                + "/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/mtn23a/tenants/tenant/e6beab145f6b49098277ac163ac1b4f3/vservers/vserver/48bd7f11-408f-417c-b834-b41c1b98f7d7"))
                         .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(aaiVserverJson)
                                 .withStatus(200)));
-        wireMockServer.stubFor(get(urlEqualTo(
-                "/aai/v15/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/mtn23a/tenants/tenant/e6beab145f6b49098277ac163ac1b4f3/vservers/vserver/1b3f44e5-d96d-4aac-bd9a-310e8cfb0af5"))
+        wireMockServer.stubFor(get(urlEqualTo("/aai/" + AAIVersion.LATEST
+                + "/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/mtn23a/tenants/tenant/e6beab145f6b49098277ac163ac1b4f3/vservers/vserver/1b3f44e5-d96d-4aac-bd9a-310e8cfb0af5"))
                         .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(aaiVserverJson)
                                 .withStatus(200)));
-        wireMockServer.stubFor(get(urlEqualTo(
-                "/aai/v15/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/mtn23a/tenants/tenant/e6beab145f6b49098277ac163ac1b4f3/vservers/vserver/14551849-1e70-45cd-bc5d-a256d49548a2"))
+        wireMockServer.stubFor(get(urlEqualTo("/aai/" + AAIVersion.LATEST
+                + "/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/mtn23a/tenants/tenant/e6beab145f6b49098277ac163ac1b4f3/vservers/vserver/14551849-1e70-45cd-bc5d-a256d49548a2"))
                         .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(aaiVserverJson)
                                 .withStatus(200)));
 
