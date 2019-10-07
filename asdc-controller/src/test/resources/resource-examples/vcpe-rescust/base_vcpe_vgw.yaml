@@ -1,0 +1,243 @@
+##########################################################################
+#
+#==================LICENSE_START==========================================
+#
+#
+# Copyright 2017 AT&T Intellectual Property. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#        http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#==================LICENSE_END============================================
+#
+# ECOMP is a trademark and service mark of AT&T Intellectual Property.
+#
+##########################################################################
+
+heat_template_version: 2013-05-23
+
+description: Heat template to deploy vCPE vGateway (vG)
+
+##############
+#            #
+# PARAMETERS #
+#            #
+##############
+
+parameters:
+  vcpe_image_name:
+    type: string
+    label: Image name or ID
+    description: Image to be used for compute instance
+  vcpe_flavor_name:
+    type: string
+    label: Flavor
+    description: Type of instance (flavor) to be used
+  public_net_id:
+    type: string
+    label: Public network name or ID
+    description: Public network that enables remote connection to VNF
+  mux_gw_private_net_id:
+    type: string
+    label: vGMUX private network name or ID
+    description: Private network that connects vGMUX to vGWs
+  mux_gw_private_subnet_id:
+    type: string
+    label: vGMUX private sub-network name or ID
+    description: vGMUX private sub-network name or ID
+  mux_gw_private_net_cidr:
+    type: string
+    label: vGMUX private network CIDR
+    description: The CIDR of the vGMUX private network
+  onap_private_net_id:
+    type: string
+    label: ONAP management network name or ID
+    description: Private network that connects ONAP components and the VNF
+  onap_private_subnet_id:
+    type: string
+    label: ONAP management sub-network name or ID
+    description: Private sub-network that connects ONAP components and the VNF
+  onap_private_net_cidr:
+    type: string
+    label: ONAP private network CIDR
+    description: The CIDR of the protected private network
+  cpe_public_net_id:
+    type: string
+    label: vCPE network that emulates internetmanagement name or ID
+    description: Private network that connects vGW to emulated internet
+  cpe_public_subnet_id:
+    type: string
+    label: vCPE Public subnet
+    description: vCPE Public subnet
+  cpe_public_net_cidr:
+    type: string
+    label: vCPE public network CIDR
+    description: The CIDR of the vCPE public
+  vgw_private_ip_0:
+    type: string
+    label: vGW private IP address towards the vGMUX
+    description: Private IP address that is assigned to the vGW to communicate with vGMUX
+  vgw_private_ip_1:
+    type: string
+    label: vGW private IP address towards the ONAP management network
+    description: Private IP address that is assigned to the vGW to communicate with ONAP components
+  ## VPP will use DHCP to get the vgw_private_ip_2 on the CPE_PUBLIC  subnet
+  #vgw_private_ip_2:
+  #  type: string
+  #  label: vGW private IP address towards the vCPE public network
+  #  description: Private IP address that is assigned to the vGW to communicate with vCPE public network
+  vgw_name_0:
+    type: string
+    label: vGW  name
+    description: Name of the vGW
+  vnf_id:
+    type: string
+    label: VNF ID
+    description: The VNF ID is provided by ONAP
+  vf_module_id:
+    type: string
+    label: vCPE module ID
+    description: The vCPE Module ID is provided by ONAP
+  dcae_collector_ip:
+    type: string
+    label: DCAE collector IP address
+    description: IP address of the DCAE collector
+  dcae_collector_port:
+    type: string
+    label: DCAE collector port
+    description: Port of the DCAE collector
+  key_name:
+    type: string
+    label: Key pair name
+    description: Public/Private key pair name
+  pub_key:
+    type: string
+    label: Public key
+    description: Public key to be installed on the compute instance
+  script_version:
+    type: string
+    label: Script version number
+    description: Version number of the scripts that install the vGW
+  nexus_artifact_repo:
+    type: string
+    description: Root URL for the Nexus repository for Maven artifacts.
+    default: "https://nexus.onap.org"
+  cloud_env:
+    type: string
+    label: Cloud environment
+    description: Cloud environment (e.g., openstack, rackspace)
+  mux_ip_addr:
+    type: string
+    label: vGMUX IP address
+    description: IP address of vGMUX
+  vg_vgmux_tunnel_vni:
+    type: number
+    label: vG-vGMUX tunnel vni
+    description: vni value of vG-vGMUX vxlan tunnel
+
+#############
+#           #
+# RESOURCES #
+#           #
+#############
+
+resources:
+
+  random-str:
+    type: OS::Heat::RandomString
+    properties:
+      length: 4
+
+  my_keypair:
+    type: OS::Nova::KeyPair
+    properties:
+      name:
+        str_replace:
+          template: base_rand
+          params:
+            base: { get_param: key_name }
+            rand: { get_resource: random-str }
+      public_key: { get_param: pub_key }
+      save_private_key: false
+
+  # Virtual GW Instantiation
+  vgw_private_0_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: mux_gw_private_net_id }
+      fixed_ips: [{"subnet": { get_param: mux_gw_private_subnet_id }, "ip_address": { get_param: vgw_private_ip_0 }}]
+
+  vgw_private_1_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: onap_private_net_id }
+      fixed_ips: [{"subnet": { get_param: onap_private_subnet_id }, "ip_address": { get_param: vgw_private_ip_1 }}]
+
+  vgw_private_2_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: cpe_public_net_id}
+      fixed_ips: [{"subnet": { get_param: cpe_public_subnet_id }}]
+      ##fixed_ips: [{"subnet": { get_param: cpe_public_subnet_id }, "ip_address": { get_param: vgw_private_ip_2 }}]
+
+  vgw_0:
+    type: OS::Nova::Server
+    properties:
+      image: { get_param: vcpe_image_name }
+      flavor: { get_param: vcpe_flavor_name }
+      name: { get_param: vgw_name_0 }
+      key_name: { get_resource: my_keypair }
+      networks:
+        - network: { get_param: public_net_id }
+        - port: { get_resource: vgw_private_0_port }
+        - port: { get_resource: vgw_private_1_port }
+        - port: { get_resource: vgw_private_2_port }
+      metadata: {vnf_id: { get_param: vnf_id }, vf_module_id: { get_param: vf_module_id }}
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          params:
+            __mux_gw_private_net_ipaddr__ : { get_param: vgw_private_ip_0 }
+            __oam_ipaddr__ : { get_param: vgw_private_ip_1 }
+            __oam_cidr__ : { get_param: onap_private_net_cidr }
+            __cpe_public_net_cidr__ : { get_param: cpe_public_net_cidr }
+            __mux_gw_private_net_cidr__ : { get_param: mux_gw_private_net_cidr }
+            __script_version__ : { get_param: script_version }
+            __cloud_env__ : { get_param: cloud_env }
+            __mux_ip_addr__: { get_param: mux_ip_addr }
+            __vg_vgmux_tunnel_vni__: { get_param: vg_vgmux_tunnel_vni }
+            __nexus_artifact_repo__: { get_param: nexus_artifact_repo }
+          template: |
+            #!/bin/bash
+
+            # Create configuration files
+            mkdir /opt/config
+            echo "__oam_ipaddr__" > /opt/config/oam_ipaddr.txt
+            echo "__oam_cidr__" > /opt/config/oam_cidr.txt
+            echo "__cpe_public_net_cidr__" > /opt/config/cpe_public_net_cidr.txt
+            echo "__mux_gw_private_net_ipaddr__" > /opt/config/mux_gw_private_net_ipaddr.txt
+            echo "__mux_gw_private_net_cidr__" > /opt/config/mux_gw_private_net_cidr.txt
+            echo "__script_version__" > /opt/config/script_version.txt
+            echo "__cloud_env__" > /opt/config/cloud_env.txt
+            echo "__mux_ip_addr__" > /opt/config/mux_ip_addr.txt
+            echo "__vg_vgmux_tunnel_vni__" > /opt/config/vg_vgmux_tunnel_vni.txt
+            echo "__nexus_artifact_repo__" > /opt/config/nexus_artifact_repo.txt
+
+            # Download and run install script
+            apt-get update
+            apt-get -y install unzip
+            if [[ "__script_version__" =~ "SNAPSHOT" ]]; then REPO=snapshots; else REPO=releases; fi
+            curl -k -L "__nexus_artifact_repo__/service/local/artifact/maven/redirect?r=${REPO}&g=org.onap.demo.vnf.vcpe&a=vcpe-scripts&e=zip&v=__script_version__" -o /opt/vcpe-scripts-__script_version__.zip
+            unzip -j /opt/vcpe-scripts-__script_version__.zip -d /opt v_gw_install.sh
+            cd /opt
+            chmod +x v_gw_install.sh
+            ./v_gw_install.sh
+

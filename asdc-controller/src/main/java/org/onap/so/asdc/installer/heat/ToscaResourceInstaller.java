@@ -706,7 +706,9 @@ public class ToscaResourceInstaller {
                 if (!"{}".equals(resourceInput)) {
                     allottedResource.setResourceInput(resourceInput);
                 }
-                service.getAllottedCustomizations().add(allottedResource);
+                if (!service.getAllottedCustomizations().contains(allottedResource)) {
+                    service.getAllottedCustomizations().add(allottedResource);
+                }
             }
         }
     }

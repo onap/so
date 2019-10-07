@@ -366,6 +366,30 @@ public class ASDCRestInterfaceTest extends BaseTest {
         assertEquals("PublicNS", service.get().getModelName());
     }
 
+    @Test
+    public void test_Vcperescust_Distribution() throws Exception {
+        wireMockServer.stubFor(post(urlPathMatching("/aai/.*"))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")));
+
+        wireMockServer.stubFor(post(urlPathMatching("/v1.0/activity-spec"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withStatus(org.springframework.http.HttpStatus.ACCEPTED.value())));
+
+        String resourceLocation = "src/test/resources/resource-examples/vcpe-rescust/";
+        ObjectMapper mapper = new ObjectMapper();
+        NotificationDataImpl request = mapper.readValue(
+                new File(resourceLocation + "demo-vcpe-rescust-notification.json"), NotificationDataImpl.class);
+        headers.add("resource-location", resourceLocation);
+        HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("test/treatNotification/v1"),
+                HttpMethod.POST, entity, String.class);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+
+        Optional<Service> service = serviceRepo.findById("d3aac917-543d-4421-b6d7-ba2b65884eb7");
+        assertTrue(service.isPresent());
+        assertEquals("vCPEResCust 2019-10-01 _2364", service.get().getModelName());
+    }
+
     protected String createURLWithPort(String uri) {
         return "http://localhost:" + port + uri;
     }

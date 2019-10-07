@@ -1,0 +1,108 @@
+{
+  "distributionID": "5ea97d50-9e1d-4b2c-aa47-2523e35e2120",
+  "serviceName": "vCPEResCust 2019-10-01 _2364",
+  "serviceVersion": "1.0",
+  "serviceUUID": "d3aac917-543d-4421-b6d7-ba2b65884eb7",
+  "serviceDescription": "catalog service description",
+  "serviceInvariantUUID": "d0568a10-a0e0-4efa-b698-ad3772f2e30f",
+  "resources": [{
+    "resourceInstanceName": "TunnelXConn_2019-10-01 03:23:27.409 0",
+    "resourceName": "TunnelXConn_2019-10-01 03:23:27.409",
+    "resourceVersion": "1.0",
+    "resoucreType": "VF",
+    "resourceUUID": "629f9662-55bb-430c-8f22-5204c37c9898",
+    "resourceInvariantUUID": "3a367ac8-5dff-4325-a0e7-9e0299d22152",
+    "resourceCustomizationUUID": "4e0249f0-5118-4323-b5e9-0783ad1123ba",
+    "category": "Allotted Resource",
+    "subcategory": "TunnelXConn",
+    "artifacts": []
+  }, {
+    "resourceInstanceName": "BRG_2019-10-01 03:23:27.409 0",
+    "resourceName": "BRG_2019-10-01 03:23:27.409",
+    "resourceVersion": "1.0",
+    "resoucreType": "VF",
+    "resourceUUID": "abafad1c-47fc-4d30-a079-be14871f0c6a",
+    "resourceInvariantUUID": "05a482b5-ec0d-45cb-ae95-397ce6765c9e",
+    "resourceCustomizationUUID": "aff592e4-cfc7-43ce-abea-f026b56995ab",
+    "category": "Allotted Resource",
+    "subcategory": "BRG",
+    "artifacts": []
+  }, {
+    "resourceInstanceName": "vCPE_vgw bf175ab0-4fa2 0",
+    "resourceName": "vCPE_vgw bf175ab0-4fa2",
+    "resourceVersion": "1.0",
+    "resoucreType": "VF",
+    "resourceUUID": "df1ce337-78b2-4e43-afb8-081d5ca175fc",
+    "resourceInvariantUUID": "1d2b0362-af54-43b9-9a5b-2dba408742b2",
+    "resourceCustomizationUUID": "6f2c39b3-d14f-4575-97b3-c93a7620591e",
+    "category": "Generic",
+    "subcategory": "Abstract",
+    "artifacts": [{
+      "artifactName": "vf-license-model.xml",
+      "artifactType": "VF_LICENSE",
+      "artifactURL": "/vf-license-model.xml",
+      "artifactChecksum": "YjBlNjhjNGU0ZjZkYzUwYjlhODg2NDMzZjk0MGNjMzM\u003d",
+      "artifactDescription": "VF license file",
+      "artifactTimeout": 120,
+      "artifactUUID": "2f362774-ac17-48a9-9c93-632b661ea689",
+      "artifactVersion": "1"
+    }, {
+      "artifactName": "vcpe_vgwbf175ab04fa20_modules.json",
+      "artifactType": "VF_MODULES_METADATA",
+      "artifactURL": "/vcpe_vgwbf175ab04fa20_modules.json",
+      "artifactChecksum": "NTg2NjQxOWNkNmNjY2EzY2M3ZGJjM2YyOTI2ZjlkNzU\u003d",
+      "artifactDescription": "Auto-generated VF Modules information artifact",
+      "artifactTimeout": 120,
+      "artifactUUID": "b02ab2a2-a657-44c4-ae88-578fe0caa30d",
+      "artifactVersion": "1"
+    }, {
+      "artifactName": "base_vcpe_vgw.yaml",
+      "artifactType": "HEAT",
+      "artifactURL": "/base_vcpe_vgw.yaml",
+      "artifactChecksum": "OTI1ODIwZTFhMjc3ZDVhYWU4ZjJjMTEzZGZiZTY4Zjg\u003d",
+      "artifactDescription": "created from csar",
+      "artifactTimeout": 120,
+      "artifactUUID": "e3a33b76-1f8a-44ba-808b-8a4c79e4b44a",
+      "artifactVersion": "2"
+    }, {
+      "artifactName": "vendor-license-model.xml",
+      "artifactType": "VENDOR_LICENSE",
+      "artifactURL": "/vendor-license-model.xml",
+      "artifactChecksum": "YThkMTY5ZWU5MDg5YmI5MWNiY2M5OTg1MTdjMzQzNWM\u003d",
+      "artifactDescription": " Vendor license file",
+      "artifactTimeout": 120,
+      "artifactUUID": "3eae4c31-394f-497b-83e9-110e87e40964",
+      "artifactVersion": "1"
+    }, {
+      "artifactName": "base_vcpe_vgw.env",
+      "artifactType": "HEAT_ENV",
+      "artifactURL": "/base_vcpe_vgw.env",
+      "artifactChecksum": "MTY4ZDUxYTUwNjExN2JhZjQzNGE5ZWQ3MGUxM2IyYWM\u003d",
+      "artifactDescription": "Auto-generated HEAT Environment deployment artifact",
+      "artifactTimeout": 120,
+      "artifactUUID": "9b73763b-0f60-47c3-8939-cf2f819bc75a",
+      "artifactVersion": "2",
+      "generatedFromUUID": "e3a33b76-1f8a-44ba-808b-8a4c79e4b44a"
+    }]
+  }],
+  "serviceArtifacts": [{
+    "artifactName": "service-Vcperescust201910012364-template.yml",
+    "artifactType": "TOSCA_TEMPLATE",
+    "artifactURL": "/service-Vcperescust201910012364-template.yml",
+    "artifactChecksum": "ZDRmZTZkNTkyNTBhMjM1Nzk1NzBiMjdkYmVjMWJiZjI\u003d",
+    "artifactDescription": "TOSCA representation of the asset",
+    "artifactTimeout": 0,
+    "artifactUUID": "50f4eed5-3330-46c3-89e8-a56d2de4354b",
+    "artifactVersion": "1"
+  }, {
+    "artifactName": "service-Vcperescust201910012364-csar.csar",
+    "artifactType": "TOSCA_CSAR",
+    "artifactURL": "/service-Vcperescust201910012364-csar.csar",
+    "artifactChecksum": "ZDlmMTMyYjVjZmMxNmQ1MDM2NmIyN2ZlYWUzNjM5ODU\u003d",
+    "artifactDescription": "TOSCA definition package of the asset",
+    "artifactTimeout": 0,
+    "artifactUUID": "2da4976c-1532-4b1e-b662-d80f487d1661",
+    "artifactVersion": "1"
+  }],
+  "workloadContext": "Production"
+}
