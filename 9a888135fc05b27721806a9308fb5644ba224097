@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f63143f0_a6cf3855",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/notificationhandling/NotificationHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-10-07T14:32:24Z",
+      "side": 1,
+      "message": "failure to delete vserver should be handle gracefully as well it may stop flow to delete related object",
+      "range": {
+        "startLine": 151,
+        "startChar": 12,
+        "endLine": 151,
+        "endChar": 78
+      },
+      "revId": "9a888135fc05b27721806a9308fb5644ba224097",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "69b9c237_15d685b2",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/notificationhandling/NotificationHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-10-07T14:32:24Z",
+      "side": 1,
+      "message": "in my opinion,  it should not be marked as successful if it fails to delete self link or vserver",
+      "range": {
+        "startLine": 173,
+        "startChar": 0,
+        "endLine": 174,
+        "endChar": 26
+      },
+      "revId": "9a888135fc05b27721806a9308fb5644ba224097",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "986cc680_e07dcdf7",
+        "filename": "common/src/main/java/org/onap/so/rest/exceptions/NotFoundException.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-10-07T14:32:24Z",
+      "side": 1,
+      "message": "Subjective comment: rename it HttpResouceNotFoundException",
+      "range": {
+        "startLine": 24,
+        "startChar": 13,
+        "endLine": 24,
+        "endChar": 31
+      },
+      "revId": "9a888135fc05b27721806a9308fb5644ba224097",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
