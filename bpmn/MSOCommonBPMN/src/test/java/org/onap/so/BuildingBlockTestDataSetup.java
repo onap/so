@@ -689,7 +689,7 @@ public class BuildingBlockTestDataSetup {
 
         List<Configuration> configurations = new ArrayList<>();
         configurations.add(config);
-        ServiceInstance serviceInstance = new ServiceInstance();
+        ServiceInstance serviceInstance;
         try {
             serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
         } catch (BBObjectNotFoundException e) {

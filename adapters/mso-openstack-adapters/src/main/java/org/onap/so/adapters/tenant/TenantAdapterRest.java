@@ -100,7 +100,7 @@ public class TenantAdapterRest {
         logger.debug("createTenant enter: {}", req.toJsonString());
 
         String newTenantId = null;
-        TenantRollback tenantRollback = new TenantRollback();
+        TenantRollback tenantRollback;
 
         try {
             Holder<String> htenant = new Holder<>();

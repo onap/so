@@ -310,7 +310,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             // First, look up to see if the Network already exists (by name).
             // For HEAT orchestration of networks, the stack name will always match the network name
             StackInfo heatStack = null;
-            long queryNetworkStarttime = System.currentTimeMillis();
+            // long queryNetworkStarttime = System.currentTimeMillis();
             try {
                 heatStack = heat.queryStack(cloudSiteId, CLOUD_OWNER, tenantId, networkName);
             } catch (MsoException me) {
@@ -564,7 +564,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             // Verify that the Network exists
             // For Neutron-based orchestration, the networkId is the Neutron Network UUID.
             NetworkInfo netInfo = null;
-            long queryNetworkStarttime = System.currentTimeMillis();
+            // long queryNetworkStarttime = System.currentTimeMillis();
             try {
                 netInfo = neutron.queryNetwork(networkId, tenantId, cloudSiteId);
             } catch (MsoException me) {
@@ -608,7 +608,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             // First, look up to see that the Network already exists.
             // For Heat-based orchestration, the networkId is the network Stack ID.
             StackInfo heatStack = null;
-            long queryStackStarttime = System.currentTimeMillis();
+            // long queryStackStarttime = System.currentTimeMillis();
             try {
                 heatStack = heat.queryStack(cloudSiteId, CLOUD_OWNER, tenantId, networkName);
             } catch (MsoException me) {
@@ -728,7 +728,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
             // Update the network stack
             // Ignore MsoStackNotFound exception because we already checked.
-            long updateStackStarttime = System.currentTimeMillis();
+            // long updateStackStarttime = System.currentTimeMillis();
             try {
                 heatStack = heatWithUpdate.updateStack(cloudSiteId, CLOUD_OWNER, tenantId, networkId, template,
                         stackParams, true, heatTemplate.getTimeoutMinutes());
@@ -893,7 +893,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         logger.debug("*** QUERY Network with Network: {} in {}/{}", networkNameOrId, cloudSiteId, tenantId);
 
         // Will capture execution time for metrics
-        long startTime = System.currentTimeMillis();
+        // long startTime = System.currentTimeMillis();
 
         if (commonUtils.isNullOrEmpty(cloudSiteId) || commonUtils.isNullOrEmpty(tenantId)
                 || commonUtils.isNullOrEmpty(networkNameOrId)) {
@@ -919,7 +919,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         String neutronId = null;
         // Try Heat first, since networks may be named the same as the Heat stack
         StackInfo heatStack = null;
-        long queryStackStarttime = System.currentTimeMillis();
+        // long queryStackStarttime = System.currentTimeMillis();
         try {
             heatStack = heat.queryStack(cloudSiteId, CLOUD_OWNER, tenantId, networkNameOrId);
         } catch (MsoException me) {
@@ -961,7 +961,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         // Query directly against the Neutron Network for the details
         // no RouteTargets available for ContrailV2 in neutron net-show
         // networkId is heatStackId
-        long queryNetworkStarttime = System.currentTimeMillis();
+        // long queryNetworkStarttime = System.currentTimeMillis();
         try {
             NetworkInfo netInfo = neutron.queryNetwork(neutronId, tenantId, cloudSiteId);
             if (netInfo != null) {
