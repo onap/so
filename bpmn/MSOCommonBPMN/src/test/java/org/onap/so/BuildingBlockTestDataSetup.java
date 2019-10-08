@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import org.assertj.core.util.Arrays;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.impl.pvm.runtime.ExecutionImpl;
 import org.junit.Before;
@@ -65,9 +64,6 @@ import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.exception.BBObjectNotFoundException;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.AllottedResource;
-import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoAllottedResource;
-import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceProxy;
 
 public class BuildingBlockTestDataSetup {
     private int collectionCounter;
@@ -80,7 +76,6 @@ public class BuildingBlockTestDataSetup {
     private int pnfCounter;
     private int projectCounter;
     private int serviceInstanceCounter;
-    private int serviceProxyCounter;
     private int serviceSubscriptionCounter;
     private int vfModuleCounter;
     private int volumeGroupCounter;
@@ -112,7 +107,6 @@ public class BuildingBlockTestDataSetup {
         pnfCounter = 0;
         projectCounter = 0;
         serviceInstanceCounter = 0;
-        serviceProxyCounter = 0;
         serviceSubscriptionCounter = 0;
         vfModuleCounter = 0;
         volumeGroupCounter = 0;
@@ -141,14 +135,6 @@ public class BuildingBlockTestDataSetup {
     public Map<String, String> buildUserInput() {
         Map<String, String> userInput = new HashMap<>();
         userInput.put("testUserInputKey", "testUserInputValue");
-
-        return userInput;
-    }
-
-    public Map<String, String> setUserInput() {
-        Map<String, String> userInput = buildUserInput();
-
-        gBBInput.setUserInput(userInput);
 
         return userInput;
     }
@@ -212,14 +198,6 @@ public class BuildingBlockTestDataSetup {
 
     public OrchestrationContext buildOrchestrationContext() {
         OrchestrationContext orchestrationContext = new OrchestrationContext();
-
-        return orchestrationContext;
-    }
-
-    public OrchestrationContext setOrchestrationContext() {
-        OrchestrationContext orchestrationContext = buildOrchestrationContext();
-
-        gBBInput.setOrchContext(orchestrationContext);
 
         return orchestrationContext;
     }
@@ -350,7 +328,7 @@ public class BuildingBlockTestDataSetup {
         Collection collection = new Collection();
         collection.setId("testId");
 
-        ServiceInstance serviceInstance = null;
+        ServiceInstance serviceInstance;
 
         try {
             serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
@@ -363,30 +341,6 @@ public class BuildingBlockTestDataSetup {
         return collection;
     }
 
-    public InstanceGroup setInstanceGroup() {
-        InstanceGroup instanceGroup = new InstanceGroup();
-        instanceGroup.setId("testId");
-        instanceGroup.setInstanceGroupFunction("testInstanceGroupFunction");
-
-        Collection collection = null;
-
-        try {
-            ServiceInstance serviceInstance =
-                    extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
-            collection = serviceInstance.getCollection();
-
-            if (collection == null) {
-                collection = setCollection();
-            }
-        } catch (BBObjectNotFoundException e) {
-            collection = setCollection();
-        }
-
-        collection.setInstanceGroup(instanceGroup);
-
-        return instanceGroup;
-    }
-
     public VpnBinding buildVpnBinding() {
         vpnBindingCounter++;
 
@@ -394,21 +348,6 @@ public class BuildingBlockTestDataSetup {
         vpnBinding.setVpnId("testVpnId" + vpnBindingCounter);
         vpnBinding.setVpnName("testVpnName" + vpnBindingCounter);
         vpnBinding.setCustomerVpnId("testCustomerVpnId" + vpnBindingCounter);
-
-        return vpnBinding;
-    }
-
-    public VpnBinding setVpnBinding() {
-        VpnBinding vpnBinding = buildVpnBinding();
-
-        Customer customer = gBBInput.getCustomer();
-
-        if (customer == null) {
-            customer = buildCustomer();
-        }
-
-        customer.getVpnBindings().add(vpnBinding);
-        lookupKeyMap.put(ResourceKey.VPN_ID, vpnBinding.getVpnId());
 
         return vpnBinding;
     }
@@ -529,7 +468,7 @@ public class BuildingBlockTestDataSetup {
     public VfModule setVfModule() {
         VfModule vfModule = buildVfModule();
 
-        GenericVnf genericVnf = null;
+        GenericVnf genericVnf;
 
         try {
             genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
@@ -582,8 +521,6 @@ public class BuildingBlockTestDataSetup {
     }
 
     public ServiceProxy buildServiceProxy() {
-        serviceProxyCounter++;
-
         ServiceProxy serviceProxy = new ServiceProxy();
         serviceProxy.setServiceInstance(buildServiceInstance());
         serviceProxy.getServiceInstance().getVnfs().add(buildGenericVnf());
@@ -616,87 +553,5 @@ public class BuildingBlockTestDataSetup {
         vpnBondingLink.setTransportServiceProxy(buildServiceProxy());
 
         return vpnBondingLink;
-    }
-
-    public VpnBondingLink setVpnBondingLink() {
-        VpnBondingLink vpnBondingLink = buildVpnBondingLink();
-
-        ServiceInstance serviceInstance = null;
-
-        try {
-            serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
-        } catch (BBObjectNotFoundException e) {
-            serviceInstance = setServiceInstance();
-        }
-
-        serviceInstance.getVpnBondingLinks().add(vpnBondingLink);
-        lookupKeyMap.put(ResourceKey.VPN_BONDING_LINK_ID, vpnBondingLink.getVpnBondingLinkId());
-
-
-        return vpnBondingLink;
-    }
-
-    public Customer setAvpnCustomer() {
-        Customer customer = buildCustomer();
-
-        gBBInput.setCustomer(customer);
-
-        return customer;
-    }
-
-    public ServiceProxy setServiceProxy(String uniqueIdentifier, String type) {
-        ServiceProxy serviceProxy = new ServiceProxy();
-        serviceProxy.setId("testProxyId" + uniqueIdentifier);
-        serviceProxy.setType(type);
-
-        ModelInfoServiceProxy modelInfo = new ModelInfoServiceProxy();
-        modelInfo.setModelInvariantUuid("testProxyModelInvariantUuid" + uniqueIdentifier);
-        modelInfo.setModelName("testProxyModelName" + uniqueIdentifier);
-        modelInfo.setModelUuid("testProxyModelUuid" + uniqueIdentifier);
-        modelInfo.setModelVersion("testProxyModelVersion" + uniqueIdentifier);
-        modelInfo.setModelInstanceName("testProxyInstanceName" + uniqueIdentifier);
-
-        serviceProxy.setModelInfoServiceProxy(modelInfo);
-
-        return serviceProxy;
-    }
-
-    public AllottedResource setAllottedResource(String uniqueIdentifier) {
-        AllottedResource ar = new AllottedResource();
-        ar.setId("testAllottedResourceId" + uniqueIdentifier);
-
-        ModelInfoAllottedResource modelInfo = new ModelInfoAllottedResource();
-        modelInfo.setModelInvariantUuid("testAllottedModelInvariantUuid" + uniqueIdentifier);
-        modelInfo.setModelName("testAllottedModelName" + uniqueIdentifier);
-        modelInfo.setModelUuid("testAllottedModelUuid" + uniqueIdentifier);
-        modelInfo.setModelVersion("testAllottedModelVersion" + uniqueIdentifier);
-        modelInfo.setModelInstanceName("testAllottedInstanceName" + uniqueIdentifier);
-
-        ar.setModelInfoAllottedResource(modelInfo);
-
-        return ar;
-    }
-
-    public Configuration setConfiguration() {
-        Configuration config = new Configuration();
-        config.setConfigurationId("testConfigurationId");
-        ModelInfoConfiguration modelInfoConfig = new ModelInfoConfiguration();
-        modelInfoConfig.setModelCustomizationId("modelCustomizationId");
-        modelInfoConfig.setModelVersionId("modelVersionId");
-        modelInfoConfig.setModelInvariantId("modelInvariantId");
-        modelInfoConfig.setPolicyName("policyName");
-        config.setModelInfoConfiguration(modelInfoConfig);
-
-        List<Configuration> configurations = new ArrayList<>();
-        configurations.add(config);
-        ServiceInstance serviceInstance = new ServiceInstance();
-        try {
-            serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
-        } catch (BBObjectNotFoundException e) {
-            serviceInstance = setServiceInstance();
-        }
-        lookupKeyMap.put(ResourceKey.CONFIGURATION_ID, "testConfigurationId");
-        serviceInstance.setConfigurations(configurations);
-        return config;
     }
 }
