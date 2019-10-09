@@ -96,6 +96,10 @@ public class VfModuleTopologyOperationRequestMapper {
             genericResourceApiSvcAction = GenericResourceApiSvcActionEnumeration.UNASSIGN;
             requestAction = GenericResourceApiRequestActionEnumeration.DELETEVFMODULEINSTANCE;
             includeModelInformation = false;
+        } else if (svcAction.equals(SDNCSvcAction.CHANGE_ASSIGN)) {
+            genericResourceApiSvcAction = GenericResourceApiSvcActionEnumeration.CHANGEASSIGN;
+            requestAction = GenericResourceApiRequestActionEnumeration.CREATEVFMODULEINSTANCE;
+            includeModelInformation = true;
         }
 
         String sdncReqId = UUID.randomUUID().toString();

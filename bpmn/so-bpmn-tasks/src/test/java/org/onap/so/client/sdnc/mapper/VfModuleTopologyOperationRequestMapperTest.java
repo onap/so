@@ -334,4 +334,69 @@ public class VfModuleTopologyOperationRequestMapperTest {
                 serviceInstance, customer, cloudRegion, requestContext, null, new URI("http://localhost:8080"));
     }
 
+    @Test
+    public void reqMapperChangeAssignTest() throws Exception {
+
+        // prepare and set service instance
+        ServiceInstance serviceInstance = new ServiceInstance();
+        serviceInstance.setServiceInstanceId("serviceInstanceId");
+        ModelInfoServiceInstance modelInfoServiceInstance = new ModelInfoServiceInstance();
+        modelInfoServiceInstance.setModelInvariantUuid("serviceModelInvariantUuid");
+        modelInfoServiceInstance.setModelName("serviceModelName");
+        modelInfoServiceInstance.setModelUuid("serviceModelUuid");
+        modelInfoServiceInstance.setModelVersion("serviceModelVersion");
+
+        serviceInstance.setModelInfoServiceInstance(modelInfoServiceInstance);
+        // prepare Customer object
+        Customer customer = new Customer();
+        customer.setGlobalCustomerId("globalCustomerId");
+        customer.setServiceSubscription(new ServiceSubscription());
+        // set Customer on service instance
+        customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
+        //
+        RequestContext requestContext = new RequestContext();
+        RequestParameters requestParameters = new RequestParameters();
+        HashMap<String, Object> userParams1 = new HashMap<>();
+        userParams1.put("key1", "value1");
+        List<Map<String, Object>> userParams = new ArrayList<>();
+        userParams.add(userParams1);
+
+        requestParameters.setUserParams(userParams);
+        requestContext.setRequestParameters(requestParameters);
+        requestContext.setProductFamilyId("productFamilyId");
+
+        GenericVnf vnf = new GenericVnf();
+        vnf.setVnfId("testVnfId");
+        vnf.setVnfType("testVnfType");
+        ModelInfoGenericVnf modelInfoGenericVnf = new ModelInfoGenericVnf();
+        modelInfoGenericVnf.setModelInvariantUuid("vnfModelInvariantUuid");
+        modelInfoGenericVnf.setModelName("vnfModelName");
+        modelInfoGenericVnf.setModelVersion("vnfModelVersion");
+        modelInfoGenericVnf.setModelUuid("vnfModelUuid");
+        modelInfoGenericVnf.setModelCustomizationUuid("vnfModelCustomizationUuid");
+        vnf.setModelInfoGenericVnf(modelInfoGenericVnf);
+
+        VfModule vfModule = new VfModule();
+        vfModule.setVfModuleId("testVfModuleId");
+        vfModule.setVfModuleName("testVfModuleName");
+        ModelInfoVfModule modelInfoVfModule = new ModelInfoVfModule();
+        modelInfoVfModule.setModelInvariantUUID("vfModuleModelInvariantUuid");
+        modelInfoVfModule.setModelName("vfModuleModelName");
+        modelInfoVfModule.setModelVersion("vfModuleModelVersion");
+        modelInfoVfModule.setModelUUID("vfModuleModelUuid");
+        modelInfoVfModule.setModelCustomizationUUID("vfModuleModelCustomizationUuid");
+        vfModule.setModelInfoVfModule(modelInfoVfModule);
+
+        CloudRegion cloudRegion = new CloudRegion();
+
+        GenericResourceApiVfModuleOperationInformation vfModuleSDNCrequest = mapper.reqMapper(
+                SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.CHANGE_ASSIGN, vfModule, null, vnf,
+                serviceInstance, customer, cloudRegion, requestContext, null, new URI("http://localhost:8080"));
+
+        assertEquals("vnfModelCustomizationUuid",
+                vfModuleSDNCrequest.getVnfInformation().getOnapModelInformation().getModelCustomizationUuid());
+        assertEquals("vfModuleModelCustomizationUuid",
+                vfModuleSDNCrequest.getVfModuleInformation().getOnapModelInformation().getModelCustomizationUuid());
+    }
+
 }
