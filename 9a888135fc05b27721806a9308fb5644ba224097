@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "704d2cb0_2fb1e771",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/notificationhandling/NotificationHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2019-10-09T08:22:37Z",
+      "side": 1,
+      "message": "It is. In this case here we are setting the result to failed on line 153",
+      "parentUuid": "f63143f0_a6cf3855",
+      "range": {
+        "startLine": 151,
+        "startChar": 12,
+        "endLine": 151,
+        "endChar": 78
+      },
+      "revId": "9a888135fc05b27721806a9308fb5644ba224097",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "69b9c237_15d685b2",
         "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/notificationhandling/NotificationHandler.java",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "7ff3cd87_82cac70c",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/notificationhandling/NotificationHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2019-10-09T08:22:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "69b9c237_15d685b2",
+      "range": {
+        "startLine": 173,
+        "startChar": 0,
+        "endLine": 174,
+        "endChar": 26
+      },
+      "revId": "9a888135fc05b27721806a9308fb5644ba224097",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "986cc680_e07dcdf7",
         "filename": "common/src/main/java/org/onap/so/rest/exceptions/NotFoundException.java",
         "patchSetId": 1
@@ -59,6 +107,30 @@
       "writtenOn": "2019-10-07T14:32:24Z",
       "side": 1,
       "message": "Subjective comment: rename it HttpResouceNotFoundException",
+      "range": {
+        "startLine": 24,
+        "startChar": 13,
+        "endLine": 24,
+        "endChar": 31
+      },
+      "revId": "9a888135fc05b27721806a9308fb5644ba224097",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e8dddcaa_b1cf6ea4",
+        "filename": "common/src/main/java/org/onap/so/rest/exceptions/NotFoundException.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2019-10-09T08:22:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "986cc680_e07dcdf7",
       "range": {
         "startLine": 24,
         "startChar": 13,
