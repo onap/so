@@ -145,31 +145,31 @@ public class NotificationHandler implements Runnable {
     }
 
     private void handleVnfTerminateFailed() {
-        final GenericVnf genericVnf = aaiServiceProvider
-                .invokeQueryGenericVnf(vnfInstance.getLinks().getSelf().getHref()).getGenericVnf().get(0);
-        deleteVservers(vnfLcmOperationOccurrenceNotification, genericVnf);
-        jobManager.notificationProcessedForOperation(vnfLcmOperationOccurrenceNotification.getVnfLcmOpOccId(), false);
+        try {
+            final GenericVnf genericVnf = aaiServiceProvider
+                    .invokeQueryGenericVnf(vnfInstance.getLinks().getSelf().getHref()).getGenericVnf().get(0);
+            deleteVserversFromAai(vnfLcmOperationOccurrenceNotification, genericVnf);
+        } finally {
+            jobManager.notificationProcessedForOperation(vnfLcmOperationOccurrenceNotification.getVnfLcmOpOccId(),
+                    false);
+        }
     }
 
     private void handleVnfTerminateCompleted() {
-        final GenericVnf genericVnf = aaiServiceProvider
-                .invokeQueryGenericVnf(vnfInstance.getLinks().getSelf().getHref()).getGenericVnf().get(0);
-        deleteVservers(vnfLcmOperationOccurrenceNotification, genericVnf);
-
-        boolean deleteSuccessful = false;
+        GenericVnf genericVnf = null;
+        boolean vServersDeletedFromAai = false;
+        boolean identifierDeletedFromVnfm = false;
+        boolean genericVnfUpdated = false;
         try {
-            vnfmServiceProvider.deleteVnf(aaiHelper.getAssignedVnfm(genericVnf), genericVnf.getSelflink());
-            deleteSuccessful = true;
+            genericVnf = aaiServiceProvider.invokeQueryGenericVnf(vnfInstance.getLinks().getSelf().getHref())
+                    .getGenericVnf().get(0);
+            vServersDeletedFromAai = deleteVserversFromAai(vnfLcmOperationOccurrenceNotification, genericVnf);
+            identifierDeletedFromVnfm = deleteVnfIdentifierOnVnfm(genericVnf);
+            genericVnfUpdated = patchVnfInAai(genericVnf.getVnfId(), "Assigned", identifierDeletedFromVnfm ? "" : null);
         } finally {
             jobManager.notificationProcessedForOperation(vnfLcmOperationOccurrenceNotification.getVnfLcmOpOccId(),
-                    deleteSuccessful);
+                    vServersDeletedFromAai && identifierDeletedFromVnfm && genericVnfUpdated);
             jobManager.vnfDeleted(vnfLcmOperationOccurrenceNotification.getVnfLcmOpOccId());
-
-            final GenericVnf genericVnfPatch = new GenericVnf();
-            genericVnfPatch.setVnfId(genericVnf.getVnfId());
-            genericVnfPatch.setOrchestrationStatus("Assigned");
-            genericVnfPatch.setSelflink("");
-            aaiServiceProvider.invokePatchGenericVnf(genericVnfPatch);
         }
     }
 
@@ -194,19 +194,60 @@ public class NotificationHandler implements Runnable {
         }
     }
 
-    private void deleteVservers(final VnfLcmOperationOccurrenceNotification notification, final GenericVnf vnf) {
-        for (final LcnVnfLcmOperationOccurrenceNotificationAffectedVnfcs vnfc : notification.getAffectedVnfcs()) {
-            if (ChangeTypeEnum.REMOVED.equals(vnfc.getChangeType())) {
+    private boolean deleteVserversFromAai(final VnfLcmOperationOccurrenceNotification notification,
+            final GenericVnf vnf) {
+        try {
+            for (final LcnVnfLcmOperationOccurrenceNotificationAffectedVnfcs vnfc : notification.getAffectedVnfcs()) {
+                if (ChangeTypeEnum.REMOVED.equals(vnfc.getChangeType())) {
 
-                final Relationship relationshipToVserver = aaiHelper.deleteRelationshipWithDataValue(vnf, "vserver",
-                        "vserver.vserver-id", vnfc.getComputeResource().getResourceId());
+                    final Relationship relationshipToVserver = aaiHelper.deleteRelationshipWithDataValue(vnf, "vserver",
+                            "vserver.vserver-id", vnfc.getComputeResource().getResourceId());
 
-                aaiServiceProvider.invokeDeleteVserver(
-                        aaiHelper.getRelationshipData(relationshipToVserver, "cloud-region.cloud-owner"),
-                        aaiHelper.getRelationshipData(relationshipToVserver, "cloud-region.cloud-region-id"),
-                        aaiHelper.getRelationshipData(relationshipToVserver, "tenant.tenant-id"),
-                        vnfc.getComputeResource().getResourceId());
+                    aaiServiceProvider.invokeDeleteVserver(
+                            aaiHelper.getRelationshipData(relationshipToVserver, "cloud-region.cloud-owner"),
+                            aaiHelper.getRelationshipData(relationshipToVserver, "cloud-region.cloud-region-id"),
+                            aaiHelper.getRelationshipData(relationshipToVserver, "tenant.tenant-id"),
+                            vnfc.getComputeResource().getResourceId());
+                }
             }
+            return true;
+        } catch (final Exception exception) {
+            logger.error(
+                    "Error encountered deleting vservers based on received notification, AAI may not be updated correctly "
+                            + vnfLcmOperationOccurrenceNotification,
+                    exception);
+            return false;
+        }
+    }
+
+    private boolean deleteVnfIdentifierOnVnfm(GenericVnf genericVnf) {
+        try {
+            vnfmServiceProvider.deleteVnf(aaiHelper.getAssignedVnfm(genericVnf), genericVnf.getSelflink());
+            return true;
+        } catch (Exception exception) {
+            logger.error("Exception deleting the identifier " + genericVnf.getSelflink()
+                    + " from the VNFM. The VNF has been terminated successfully but the identifier will remain on the VNFM.",
+                    exception);
+            return false;
+        }
+    }
+
+    private boolean patchVnfInAai(final String vnfId, final String orchestrationStatus, final String selfLink) {
+        try {
+            final GenericVnf genericVnfPatch = new GenericVnf();
+            genericVnfPatch.setVnfId(vnfId);
+            genericVnfPatch.setOrchestrationStatus(orchestrationStatus);
+            if (selfLink != null) {
+                genericVnfPatch.setSelflink(selfLink);
+            }
+            aaiServiceProvider.invokePatchGenericVnf(genericVnfPatch);
+            return true;
+        } catch (final Exception exception) {
+            logger.error(
+                    "Error encountered setting orchestration status and/or self link based on received notification, AAI may not be updated correctly "
+                            + vnfLcmOperationOccurrenceNotification,
+                    exception);
+            return false;
         }
     }
 

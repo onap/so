@@ -57,6 +57,7 @@ import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.JSON;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse2001;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201.InstantiationStateEnum;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201Links;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201LinksSelf;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfmNotFoundException;
@@ -319,6 +320,40 @@ public class VnfmAdapterControllerTest {
         assertEquals(OperationStateEnum.PROCESSING, secondJobQueryResponse.getBody().getOperationState());
         assertEquals(JAN_1_2019_12_00, secondJobQueryResponse.getBody().getStartTime());
         assertEquals(JAN_1_2019_1_00, secondJobQueryResponse.getBody().getStateEnteredTime());
+    }
+
+    @Test
+    public void deleteVnf_VnfAlreadyTerminated_Returns202AndJobId() throws Exception {
+        final TestRestTemplate restTemplate = new TestRestTemplate("test", "test");
+
+        final GenericVnf genericVnf = setUpGenericVnfInMockAai("vnfmType1");
+        addSelfLinkToGenericVnf(genericVnf);
+        addRelationshipFromGenericVnfToVnfm(genericVnf, "vnfm1");
+        setUpVnfmsInMockAai();
+
+        mockRestServer.expect(requestTo("http://vnfm:8080/vnfs/myTestVnfIdOnVnfm/terminate"))
+                .andRespond(withStatus(HttpStatus.CONFLICT).contentType(MediaType.APPLICATION_JSON));
+
+        final InlineResponse201 reponse = new InlineResponse201();
+        reponse.setInstantiationState(InstantiationStateEnum.NOT_INSTANTIATED);
+        mockRestServer.expect(requestTo(new URI("http://vnfm:8080/vnfs/myTestVnfIdOnVnfm")))
+                .andRespond(withSuccess(gson.toJson(reponse), MediaType.APPLICATION_JSON));
+
+        mockRestServer.expect(requestTo("http://vnfm:8080/vnfs/myTestVnfIdOnVnfm"))
+                .andRespond(withStatus(HttpStatus.NO_CONTENT).contentType(MediaType.APPLICATION_JSON));
+
+        final RequestEntity<Void> request = RequestEntity
+                .delete(new URI("http://localhost:" + port + "/so/vnfm-adapter/v1/vnfs/myTestVnfId"))
+                .accept(MediaType.APPLICATION_JSON).header("X-ONAP-RequestId", "myRequestId")
+                .header("X-ONAP-InvocationID", "myInvocationId").header("Content-Type", "application/json").build();
+        final ResponseEntity<DeleteVnfResponse> deleteVnfResponse =
+                restTemplate.exchange(request, DeleteVnfResponse.class);
+        assertEquals(202, deleteVnfResponse.getStatusCode().value());
+        assertNotNull(deleteVnfResponse.getBody().getJobId());
+
+        final ResponseEntity<QueryJobResponse> jobQueryResponse =
+                controller.jobQuery(deleteVnfResponse.getBody().getJobId(), "", "so", "1213");
+        assertEquals(OperationStateEnum.COMPLETED, jobQueryResponse.getBody().getOperationState());
     }
 
     @Test
