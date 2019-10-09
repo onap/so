@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "a0435c34_2de21fd3",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/extclients/vnfm/VnfmServiceProviderImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-10-09T13:10:52Z",
+      "side": 1,
+      "message": "it shouldn\u0027t be mark as ALREADY_COMPLETED_OPERATION_ID ... if i understand it correctly it is a failure scenario",
+      "parentUuid": "10679921_cd5fe50d",
+      "range": {
+        "startLine": 124,
+        "startChar": 20,
+        "endLine": 124,
+        "endChar": 95
+      },
+      "revId": "fbf6300274558ffe323bf66bb5b23c72c350d3ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c066b750_861dd3af",
         "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/lifecycle/LifecycleManager.java",
         "patchSetId": 2
@@ -96,6 +120,30 @@
     },
     {
       "key": {
+        "uuid": "6526ef6b_8a2a83f9",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/lifecycle/LifecycleManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-10-09T13:10:52Z",
+      "side": 1,
+      "message": "Okay lets revisit this in Frankfurt .. separation of calls and adding persistence may solve lots of these issues",
+      "parentUuid": "dc2c88a9_826c5e87",
+      "range": {
+        "startLine": 212,
+        "startChar": 12,
+        "endLine": 212,
+        "endChar": 73
+      },
+      "revId": "fbf6300274558ffe323bf66bb5b23c72c350d3ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "fb7d2a01_3d0ca392",
         "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/notificationhandling/NotificationHandler.java",
         "patchSetId": 2
@@ -131,6 +179,30 @@
       "side": 1,
       "message": "If the requests to the VNFM fail, then retry of the flow is possible. If the update of AAI fails, then we dont have a retry. \nAAI failing out of sync with what is deloyed could happen in several different ways though, I think we should consider a more general solution for how to resolve that situation",
       "parentUuid": "fb7d2a01_3d0ca392",
+      "range": {
+        "startLine": 158,
+        "startChar": 3,
+        "endLine": 174,
+        "endChar": 5
+      },
+      "revId": "fbf6300274558ffe323bf66bb5b23c72c350d3ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "13f4306e_40c291a1",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/notificationhandling/NotificationHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-10-09T13:10:52Z",
+      "side": 1,
+      "message": "agree need proper solution lets revisit this in Frankfurt... can we capture these sort of limitation in design wiki?",
+      "parentUuid": "7205ca8e_fb86c4aa",
       "range": {
         "startLine": 158,
         "startChar": 3,
