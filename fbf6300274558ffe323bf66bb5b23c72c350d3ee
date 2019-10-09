@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "10679921_cd5fe50d",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/extclients/vnfm/VnfmServiceProviderImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2019-10-09T12:49:26Z",
+      "side": 1,
+      "message": "When we receive a delete request from the flow, there are two requests we need to make to the VNFM - terminate (which deletes the VMs etc) and delete (which deletes the identifier for the VNF).\nWhen the VNFM sucessfully processes the terminate request the instantiation state is set to NOT_INSTANTIATED.\nIf for some reason the delete (ie delete identifier) fails then the overall bpmn flow will fail. \nThis handling here allows the user to try again the delete operation towards the adapter, without the adapter throwing an error because the terminate has already succeeded.\n\nSimilarly, this also supports the case where the create (ie create identifier) towards the VNFM succeeds but the instantiate fails (leaving the VNF in NOT_INSTANTIATED state), and the user wants to delete the VNF",
+      "parentUuid": "bc52bfc8_b3f2ebc2",
+      "range": {
+        "startLine": 124,
+        "startChar": 20,
+        "endLine": 124,
+        "endChar": 95
+      },
+      "revId": "fbf6300274558ffe323bf66bb5b23c72c350d3ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c066b750_861dd3af",
         "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/lifecycle/LifecycleManager.java",
         "patchSetId": 2
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "dc2c88a9_826c5e87",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/lifecycle/LifecycleManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2019-10-09T12:49:26Z",
+      "side": 1,
+      "message": "When we receive the delete request, we must send terminate request and delete request to the VNFM. \nThe delete request should not be send until after the terminate has completed. The terminate is an asyn operation, we only know it has finished when we receive the notification. Part of our processing of the notification is to send the delete request. \nIn a scenario where we receive a delete request, and the terminate part of that request is already done, then there will be no notification and so we must invoke the delete as part of the handling of the delete request from the flow.\n\nWe decided to combine the create/instantiate in a single call because there didnt seem to be any benefit in supporting them separately, and followed suit with the terminate/delete to be consistent. However, I think if we considered the terminate/delete case upfront we would have made a different decision here. The handling of the delete case is somewhat convoluted as a result (due to the async nature of the terminate call to the VNFM)",
+      "parentUuid": "c066b750_861dd3af",
+      "range": {
+        "startLine": 212,
+        "startChar": 12,
+        "endLine": 212,
+        "endChar": 73
+      },
+      "revId": "fbf6300274558ffe323bf66bb5b23c72c350d3ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "fb7d2a01_3d0ca392",
         "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/notificationhandling/NotificationHandler.java",
         "patchSetId": 2
@@ -59,6 +107,30 @@
       "writtenOn": "2019-10-09T12:04:19Z",
       "side": 1,
       "message": "if VnfTerminatation fails to update AAI, it will not retry it ever correct? how would be recover/try it again then?",
+      "range": {
+        "startLine": 158,
+        "startChar": 3,
+        "endLine": 174,
+        "endChar": 5
+      },
+      "revId": "fbf6300274558ffe323bf66bb5b23c72c350d3ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7205ca8e_fb86c4aa",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/notificationhandling/NotificationHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2019-10-09T12:49:26Z",
+      "side": 1,
+      "message": "If the requests to the VNFM fail, then retry of the flow is possible. If the update of AAI fails, then we dont have a retry. \nAAI failing out of sync with what is deloyed could happen in several different ways though, I think we should consider a more general solution for how to resolve that situation",
+      "parentUuid": "fb7d2a01_3d0ca392",
       "range": {
         "startLine": 158,
         "startChar": 3,
