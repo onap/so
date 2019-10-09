@@ -20,7 +20,6 @@
 
 package org.onap.so.bpmn.servicedecomposition;
 
-import static org.junit.Assert.assertEquals;
 import java.io.ByteArrayOutputStream;
 import java.io.Externalizable;
 import java.io.File;
@@ -33,8 +32,7 @@ import java.util.Map;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.impl.pvm.runtime.ExecutionImpl;
 import org.junit.Test;
-import org.onap.so.SerializableChecker;
-import org.onap.so.SerializableChecker.SerializationFailure;
+import static org.junit.Assert.assertEquals;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.common.DelegateExecutionImpl;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
