@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "44030527_7594c247",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/extclients/vnfm/VnfmServiceProviderImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2019-10-09T13:29:14Z",
+      "side": 1,
+      "message": "its not a failure scenario",
+      "parentUuid": "a0435c34_2de21fd3",
+      "range": {
+        "startLine": 124,
+        "startChar": 20,
+        "endLine": 124,
+        "endChar": 95
+      },
+      "revId": "fbf6300274558ffe323bf66bb5b23c72c350d3ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c066b750_861dd3af",
         "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/lifecycle/LifecycleManager.java",
         "patchSetId": 2
