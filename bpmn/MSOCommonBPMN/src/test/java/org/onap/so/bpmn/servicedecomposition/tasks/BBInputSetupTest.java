@@ -34,6 +34,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,6 +49,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
@@ -107,6 +109,7 @@ import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
 import org.onap.so.db.request.beans.InfraActiveRequests;
+import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.ModelType;
@@ -128,8 +131,10 @@ public class BBInputSetupTest {
 
     protected ObjectMapper mapper = new ObjectMapper();
     private static final String CLOUD_OWNER = "CloudOwner";
+    private static final String REQUEST_ID = "b20bbd26-af25-4a50-a9fe-222a3c0f9771";
 
     @Spy
+    @InjectMocks
     private BBInputSetup SPY_bbInputSetup = new BBInputSetup();
 
     @Mock
@@ -140,6 +145,9 @@ public class BBInputSetupTest {
 
     @Spy
     private BBInputSetupMapperLayer bbInputSetupMapperLayer;
+
+    @Mock
+    private RequestsDbClient requestsDbClient;
 
     @Before
     public void setup() {
@@ -441,8 +449,8 @@ public class BBInputSetupTest {
                 .getCatalogServiceByModelUUID(aaiServiceInstance.getModelVersionId());
         doReturn(aaiServiceInstance).when(SPY_bbInputSetupUtils).getAAIServiceInstanceById("instanceId");
 
-        doNothing().when(SPY_bbInputSetup).populateObjectsOnAssignAndCreateFlows(requestDetails, service, "bbName",
-                serviceInstance, lookupKeyMap, resourceId, vnfType, null, null);
+        doNothing().when(SPY_bbInputSetup).populateObjectsOnAssignAndCreateFlows(executeBB.getRequestId(),
+                requestDetails, service, "bbName", serviceInstance, lookupKeyMap, resourceId, vnfType, null, null);
         doReturn(serviceInstance).when(SPY_bbInputSetup).getExistingServiceInstance(aaiServiceInstance);
         doReturn(expected).when(SPY_bbInputSetup).populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance,
                 executeBB, requestAction, null);
@@ -492,8 +500,8 @@ public class BBInputSetupTest {
                 .getCatalogServiceByModelUUID(aaiServiceInstance.getModelVersionId());
         doReturn(aaiServiceInstance).when(SPY_bbInputSetupUtils).getAAIServiceInstanceById("instanceId");
 
-        doNothing().when(SPY_bbInputSetup).populateObjectsOnAssignAndCreateFlows(requestDetails, service, "bbName",
-                serviceInstance, lookupKeyMap, resourceId, vnfType, null, null);
+        doNothing().when(SPY_bbInputSetup).populateObjectsOnAssignAndCreateFlows(executeBB.getRequestId(),
+                requestDetails, service, "bbName", serviceInstance, lookupKeyMap, resourceId, vnfType, null, null);
 
         doReturn(serviceInstance).when(SPY_bbInputSetup).getExistingServiceInstance(aaiServiceInstance);
         doReturn(expected).when(SPY_bbInputSetup).populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance,
@@ -783,8 +791,8 @@ public class BBInputSetupTest {
                 Mockito.mock(org.onap.so.serviceinstancebeans.LineOfBusiness.class);
         Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
 
-        doNothing().when(SPY_bbInputSetup).populateL3Network(instanceName, modelInfo, service, bbName, serviceInstance,
-                lookupKeyMap, resourceId, null);
+        doNothing().when(SPY_bbInputSetup).populateL3Network(REQUEST_ID, instanceName, modelInfo, service, bbName,
+                serviceInstance, lookupKeyMap, resourceId, null);
         doReturn(modelInfo).when(requestDetails).getModelInfo();
         doReturn(productFamilyId).when(requestInfo).getProductFamilyId();
         doReturn(requestInfo).when(requestDetails).getRequestInfo();
@@ -795,45 +803,45 @@ public class BBInputSetupTest {
         doReturn(cloudConfiguration).when(requestDetails).getCloudConfiguration();
 
         doReturn(ModelType.network).when(modelInfo).getModelType();
-        SPY_bbInputSetup.populateObjectsOnAssignAndCreateFlows(requestDetails, service, bbName, serviceInstance,
-                lookupKeyMap, resourceId, vnfType, null, null);
-        verify(SPY_bbInputSetup, times(1)).populateL3Network(instanceName, modelInfo, service, bbName, serviceInstance,
-                lookupKeyMap, resourceId, null);
+        SPY_bbInputSetup.populateObjectsOnAssignAndCreateFlows(REQUEST_ID, requestDetails, service, bbName,
+                serviceInstance, lookupKeyMap, resourceId, vnfType, null, null);
+        verify(SPY_bbInputSetup, times(1)).populateL3Network(REQUEST_ID, instanceName, modelInfo, service, bbName,
+                serviceInstance, lookupKeyMap, resourceId, null);
         assertEquals("NetworkId populated", true,
                 lookupKeyMap.get(ResourceKey.NETWORK_ID).equalsIgnoreCase(resourceId));
 
         doReturn(ModelType.vnf).when(modelInfo).getModelType();
         resourceId = "vnfId";
-        doNothing().when(SPY_bbInputSetup).populateGenericVnf(modelInfo, instanceName, platform, lineOfBusiness,
-                service, bbName, serviceInstance, lookupKeyMap, relatedInstanceList, resourceId, vnfType, null,
-                productFamilyId);
-        SPY_bbInputSetup.populateObjectsOnAssignAndCreateFlows(requestDetails, service, bbName, serviceInstance,
-                lookupKeyMap, resourceId, vnfType, null, null);
-        verify(SPY_bbInputSetup, times(1)).populateGenericVnf(modelInfo, instanceName, platform, lineOfBusiness,
-                service, bbName, serviceInstance, lookupKeyMap, relatedInstanceList, resourceId, vnfType, null,
-                productFamilyId);
+        doNothing().when(SPY_bbInputSetup).populateGenericVnf(REQUEST_ID, modelInfo, instanceName, platform,
+                lineOfBusiness, service, bbName, serviceInstance, lookupKeyMap, relatedInstanceList, resourceId,
+                vnfType, null, productFamilyId);
+        SPY_bbInputSetup.populateObjectsOnAssignAndCreateFlows(REQUEST_ID, requestDetails, service, bbName,
+                serviceInstance, lookupKeyMap, resourceId, vnfType, null, null);
+        verify(SPY_bbInputSetup, times(1)).populateGenericVnf(REQUEST_ID, modelInfo, instanceName, platform,
+                lineOfBusiness, service, bbName, serviceInstance, lookupKeyMap, relatedInstanceList, resourceId,
+                vnfType, null, productFamilyId);
         assertEquals("VnfId populated", true,
                 lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID).equalsIgnoreCase(resourceId));
 
         doReturn(ModelType.volumeGroup).when(modelInfo).getModelType();
         resourceId = "volumeGroupId";
-        doNothing().when(SPY_bbInputSetup).populateVolumeGroup(modelInfo, service, bbName, serviceInstance,
+        doNothing().when(SPY_bbInputSetup).populateVolumeGroup(REQUEST_ID, modelInfo, service, bbName, serviceInstance,
                 lookupKeyMap, resourceId, relatedInstanceList, instanceName, vnfType, null);
-        SPY_bbInputSetup.populateObjectsOnAssignAndCreateFlows(requestDetails, service, bbName, serviceInstance,
-                lookupKeyMap, resourceId, vnfType, null, null);
-        verify(SPY_bbInputSetup, times(1)).populateVolumeGroup(modelInfo, service, bbName, serviceInstance,
+        SPY_bbInputSetup.populateObjectsOnAssignAndCreateFlows(REQUEST_ID, requestDetails, service, bbName,
+                serviceInstance, lookupKeyMap, resourceId, vnfType, null, null);
+        verify(SPY_bbInputSetup, times(1)).populateVolumeGroup(REQUEST_ID, modelInfo, service, bbName, serviceInstance,
                 lookupKeyMap, resourceId, relatedInstanceList, instanceName, vnfType, null);
         assertEquals("VolumeGroupId populated", true,
                 lookupKeyMap.get(ResourceKey.VOLUME_GROUP_ID).equalsIgnoreCase(resourceId));
 
         doReturn(ModelType.vfModule).when(modelInfo).getModelType();
         resourceId = "vfModuleId";
-        doNothing().when(SPY_bbInputSetup).populateVfModule(modelInfo, service, bbName, serviceInstance, lookupKeyMap,
-                resourceId, relatedInstanceList, instanceName, null, cloudConfiguration);
-        SPY_bbInputSetup.populateObjectsOnAssignAndCreateFlows(requestDetails, service, bbName, serviceInstance,
-                lookupKeyMap, resourceId, vnfType, null, null);
-        verify(SPY_bbInputSetup, times(1)).populateVfModule(modelInfo, service, bbName, serviceInstance, lookupKeyMap,
-                resourceId, relatedInstanceList, instanceName, null, cloudConfiguration);
+        doNothing().when(SPY_bbInputSetup).populateVfModule(REQUEST_ID, modelInfo, service, bbName, serviceInstance,
+                lookupKeyMap, resourceId, relatedInstanceList, instanceName, null, cloudConfiguration);
+        SPY_bbInputSetup.populateObjectsOnAssignAndCreateFlows(REQUEST_ID, requestDetails, service, bbName,
+                serviceInstance, lookupKeyMap, resourceId, vnfType, null, null);
+        verify(SPY_bbInputSetup, times(1)).populateVfModule(REQUEST_ID, modelInfo, service, bbName, serviceInstance,
+                lookupKeyMap, resourceId, relatedInstanceList, instanceName, null, cloudConfiguration);
         assertEquals("VfModuleId populated", true,
                 lookupKeyMap.get(ResourceKey.VF_MODULE_ID).equalsIgnoreCase(resourceId));
     }
@@ -1114,12 +1122,12 @@ public class BBInputSetupTest {
         doReturn(aaiGenericVnf).when(SPY_bbInputSetupUtils).getAAIGenericVnf(vnf.getVnfId());
 
         lookupKeyMap.put(ResourceKey.VOLUME_GROUP_ID, "volumeGroupId");
-        SPY_bbInputSetup.populateVolumeGroup(modelInfo, service, bbName, serviceInstance, lookupKeyMap, resourceId,
-                requestDetails.getRelatedInstanceList(), reqInfo.getInstanceName(), null, null);
+        SPY_bbInputSetup.populateVolumeGroup(REQUEST_ID, modelInfo, service, bbName, serviceInstance, lookupKeyMap,
+                resourceId, requestDetails.getRelatedInstanceList(), reqInfo.getInstanceName(), null, null);
         verify(SPY_bbInputSetup, times(1)).mapCatalogVolumeGroup(vg, modelInfo, service, "vnfModelCustomizationUUID");
         vnf.getVolumeGroups().clear();
-        SPY_bbInputSetup.populateVolumeGroup(modelInfo, service, bbName, serviceInstance, lookupKeyMap, resourceId,
-                requestDetails.getRelatedInstanceList(), reqInfo.getInstanceName(), null, null);
+        SPY_bbInputSetup.populateVolumeGroup(REQUEST_ID, modelInfo, service, bbName, serviceInstance, lookupKeyMap,
+                resourceId, requestDetails.getRelatedInstanceList(), reqInfo.getInstanceName(), null, null);
         verify(SPY_bbInputSetup, times(1)).mapCatalogVolumeGroup(vnf.getVolumeGroups().get(0), modelInfo, service,
                 "vnfModelCustomizationUUID");
     }
@@ -1168,19 +1176,19 @@ public class BBInputSetupTest {
 
         doNothing().when(SPY_bbInputSetup).mapCatalogNetwork(network, modelInfo, service);
 
-        SPY_bbInputSetup.populateL3Network(instanceName, modelInfo, service, bbName, serviceInstance, lookupKeyMap,
-                resourceId, null);
+        SPY_bbInputSetup.populateL3Network(REQUEST_ID, instanceName, modelInfo, service, bbName, serviceInstance,
+                lookupKeyMap, resourceId, null);
 
         lookupKeyMap.put(ResourceKey.NETWORK_ID, null);
 
-        SPY_bbInputSetup.populateL3Network(instanceName, modelInfo, service, bbName, serviceInstance, lookupKeyMap,
-                resourceId, null);
+        SPY_bbInputSetup.populateL3Network(REQUEST_ID, instanceName, modelInfo, service, bbName, serviceInstance,
+                lookupKeyMap, resourceId, null);
         verify(SPY_bbInputSetup, times(1)).mapCatalogNetwork(network, modelInfo, service);
 
         instanceName = "networkName2";
         L3Network network2 = SPY_bbInputSetup.createNetwork(lookupKeyMap, instanceName, resourceId, null);
-        SPY_bbInputSetup.populateL3Network(instanceName, modelInfo, service, bbName, serviceInstance, lookupKeyMap,
-                resourceId, null);
+        SPY_bbInputSetup.populateL3Network(REQUEST_ID, instanceName, modelInfo, service, bbName, serviceInstance,
+                lookupKeyMap, resourceId, null);
         verify(SPY_bbInputSetup, times(2)).mapCatalogNetwork(network2, modelInfo, service);
     }
 
@@ -1238,15 +1246,15 @@ public class BBInputSetupTest {
         doNothing().when(SPY_bbInputSetup).mapCatalogConfiguration(configuration, modelInfo, service,
                 configResourceKeys);
         doReturn(vnfc).when(SPY_bbInputSetup).getVnfcToConfiguration(vnfcName);
-        SPY_bbInputSetup.populateConfiguration(modelInfo, service, bbName, serviceInstance, lookupKeyMap, resourceId,
-                instanceName, configResourceKeys, requestDetails);
+        SPY_bbInputSetup.populateConfiguration(REQUEST_ID, modelInfo, service, bbName, serviceInstance, lookupKeyMap,
+                resourceId, instanceName, configResourceKeys, requestDetails);
         verify(SPY_bbInputSetup, times(1)).mapCatalogConfiguration(configuration, modelInfo, service,
                 configResourceKeys);
 
         lookupKeyMap.put(ResourceKey.CONFIGURATION_ID, null);
 
-        SPY_bbInputSetup.populateConfiguration(modelInfo, service, bbName, serviceInstance, lookupKeyMap, resourceId,
-                instanceName, configResourceKeys, requestDetails);
+        SPY_bbInputSetup.populateConfiguration(REQUEST_ID, modelInfo, service, bbName, serviceInstance, lookupKeyMap,
+                resourceId, instanceName, configResourceKeys, requestDetails);
         verify(SPY_bbInputSetup, times(2)).mapCatalogConfiguration(configuration, modelInfo, service,
                 configResourceKeys);
 
@@ -1257,8 +1265,8 @@ public class BBInputSetupTest {
         doReturn(configuration2).when(SPY_bbInputSetup).createConfiguration(lookupKeyMap, instanceName, resourceId);
         doNothing().when(SPY_bbInputSetup).mapCatalogConfiguration(configuration2, modelInfo, service,
                 configResourceKeys);
-        SPY_bbInputSetup.populateConfiguration(modelInfo, service, bbName, serviceInstance, lookupKeyMap, resourceId,
-                instanceName, configResourceKeys, requestDetails);
+        SPY_bbInputSetup.populateConfiguration(REQUEST_ID, modelInfo, service, bbName, serviceInstance, lookupKeyMap,
+                resourceId, instanceName, configResourceKeys, requestDetails);
         verify(SPY_bbInputSetup, times(1)).mapCatalogConfiguration(configuration2, modelInfo, service,
                 configResourceKeys);
     }
@@ -1323,8 +1331,8 @@ public class BBInputSetupTest {
         doReturn(null).when(SPY_bbInputSetup).findConfigurationResourceCustomization(modelInfo, service);
         doReturn(vnfc).when(SPY_bbInputSetup).getVnfcToConfiguration(vnfcName);
 
-        SPY_bbInputSetup.populateConfiguration(modelInfo, service, bbName, serviceInstance, lookupKeyMap, resourceId,
-                instanceName, configResourceKeys, requestDetails);
+        SPY_bbInputSetup.populateConfiguration(REQUEST_ID, modelInfo, service, bbName, serviceInstance, lookupKeyMap,
+                resourceId, instanceName, configResourceKeys, requestDetails);
         verify(SPY_bbInputSetup, times(1)).mapCatalogConfiguration(configuration, modelInfo, service,
                 configResourceKeys);
     }
@@ -1368,15 +1376,15 @@ public class BBInputSetupTest {
                 new org.onap.so.db.catalog.beans.InstanceGroup();
         doReturn(catalogInstanceGroup).when(SPY_bbInputSetupUtils).getCatalogInstanceGroup(any());
 
-        SPY_bbInputSetup.populateGenericVnf(modelInfo, instanceName, platform, lineOfBusiness, service, bbName,
-                serviceInstance, lookupKeyMap, requestDetails.getRelatedInstanceList(), resourceId, vnfType, null,
-                requestDetails.getRequestInfo().getProductFamilyId());
+        SPY_bbInputSetup.populateGenericVnf(REQUEST_ID, modelInfo, instanceName, platform, lineOfBusiness, service,
+                bbName, serviceInstance, lookupKeyMap, requestDetails.getRelatedInstanceList(), resourceId, vnfType,
+                null, requestDetails.getRequestInfo().getProductFamilyId());
 
         lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, null);
 
-        SPY_bbInputSetup.populateGenericVnf(modelInfo, instanceName, platform, lineOfBusiness, service, bbName,
-                serviceInstance, lookupKeyMap, requestDetails.getRelatedInstanceList(), resourceId, vnfType, null,
-                requestDetails.getRequestInfo().getProductFamilyId());
+        SPY_bbInputSetup.populateGenericVnf(REQUEST_ID, modelInfo, instanceName, platform, lineOfBusiness, service,
+                bbName, serviceInstance, lookupKeyMap, requestDetails.getRelatedInstanceList(), resourceId, vnfType,
+                null, requestDetails.getRequestInfo().getProductFamilyId());
         verify(SPY_bbInputSetup, times(1)).mapCatalogVnf(vnf, modelInfo, service);
 
         instanceName = "vnfName2";
@@ -1389,9 +1397,9 @@ public class BBInputSetupTest {
 
         lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, "genericVnfId2");
 
-        SPY_bbInputSetup.populateGenericVnf(modelInfo, instanceName, platform, lineOfBusiness, service, bbName,
-                serviceInstance, lookupKeyMap, requestDetails.getRelatedInstanceList(), resourceId, vnfType, null,
-                requestDetails.getRequestInfo().getProductFamilyId());
+        SPY_bbInputSetup.populateGenericVnf(REQUEST_ID, modelInfo, instanceName, platform, lineOfBusiness, service,
+                bbName, serviceInstance, lookupKeyMap, requestDetails.getRelatedInstanceList(), resourceId, vnfType,
+                null, requestDetails.getRequestInfo().getProductFamilyId());
         verify(SPY_bbInputSetup, times(2)).mapCatalogVnf(vnf2, modelInfo, service);
         verify(SPY_bbInputSetup, times(2)).mapNetworkCollectionInstanceGroup(vnf2, "{instanceGroupId}");
         verify(SPY_bbInputSetup, times(2)).mapVnfcCollectionInstanceGroup(vnf2, modelInfo, service);
@@ -1465,15 +1473,15 @@ public class BBInputSetupTest {
                 new org.onap.so.db.catalog.beans.InstanceGroup();
         doReturn(catalogInstanceGroup).when(SPY_bbInputSetupUtils).getCatalogInstanceGroup(any());
 
-        SPY_bbInputSetup.populateGenericVnf(modelInfo, instanceName, platform, lineOfBusiness, service, bbName,
-                serviceInstance, lookupKeyMap, requestDetails.getRelatedInstanceList(), resourceId, vnfType, null,
-                requestDetails.getRequestInfo().getProductFamilyId());
+        SPY_bbInputSetup.populateGenericVnf(REQUEST_ID, modelInfo, instanceName, platform, lineOfBusiness, service,
+                bbName, serviceInstance, lookupKeyMap, requestDetails.getRelatedInstanceList(), resourceId, vnfType,
+                null, requestDetails.getRequestInfo().getProductFamilyId());
 
         lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, null);
 
-        SPY_bbInputSetup.populateGenericVnf(modelInfo, instanceName, platform, lineOfBusiness, service, bbName,
-                serviceInstance, lookupKeyMap, requestDetails.getRelatedInstanceList(), resourceId, vnfType, null,
-                requestDetails.getRequestInfo().getProductFamilyId());
+        SPY_bbInputSetup.populateGenericVnf(REQUEST_ID, modelInfo, instanceName, platform, lineOfBusiness, service,
+                bbName, serviceInstance, lookupKeyMap, requestDetails.getRelatedInstanceList(), resourceId, vnfType,
+                null, requestDetails.getRequestInfo().getProductFamilyId());
         verify(SPY_bbInputSetup, times(1)).mapCatalogVnf(vnf, modelInfo, service);
 
         instanceName = "vnfName2";
@@ -1485,9 +1493,9 @@ public class BBInputSetupTest {
         doReturn(vnf2AAI).when(SPY_bbInputSetupUtils).getAAIGenericVnf(vnf2.getVnfId());
         doNothing().when(SPY_bbInputSetup).mapCatalogVnf(vnf2, modelInfo, service);
         doNothing().when(SPY_bbInputSetup).mapNetworkCollectionInstanceGroup(vnf2, "{instanceGroupId}");
-        SPY_bbInputSetup.populateGenericVnf(modelInfo, instanceName, platform, lineOfBusiness, service, bbName,
-                serviceInstance, lookupKeyMap, requestDetails.getRelatedInstanceList(), resourceId, vnfType, null,
-                requestDetails.getRequestInfo().getProductFamilyId());
+        SPY_bbInputSetup.populateGenericVnf(REQUEST_ID, modelInfo, instanceName, platform, lineOfBusiness, service,
+                bbName, serviceInstance, lookupKeyMap, requestDetails.getRelatedInstanceList(), resourceId, vnfType,
+                null, requestDetails.getRequestInfo().getProductFamilyId());
         verify(SPY_bbInputSetup, times(2)).mapCatalogVnf(vnf2, modelInfo, service);
         verify(SPY_bbInputSetup, times(2)).mapNetworkCollectionInstanceGroup(vnf2, "{instanceGroupId}");
         verify(SPY_bbInputSetup, times(1)).mapVnfcCollectionInstanceGroup(vnf2, modelInfo, service);
@@ -1939,14 +1947,14 @@ public class BBInputSetupTest {
         executeBB.getBuildingBlock().setBpmnFlowName(AssignFlows.NETWORK_MACRO.toString());
         executeBB.getBuildingBlock().setKey("ab153b6e-c364-44c0-bef6-1f2982117f04");
         SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
-        verify(SPY_bbInputSetup, times(1)).populateL3Network(any(String.class), isA(ModelInfo.class),
+        verify(SPY_bbInputSetup, times(1)).populateL3Network(any(String.class), any(String.class), isA(ModelInfo.class),
                 isA(Service.class), any(String.class), isA(ServiceInstance.class), any(), any(String.class), any());
 
         executeBB.getBuildingBlock().setKey("ab153b6e-c364-44c0-bef6-1f2982117f04");
         executeBB.getBuildingBlock().setBpmnFlowName(AssignFlows.VNF.toString());
         SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
-        verify(SPY_bbInputSetup, times(1)).populateGenericVnf(isA(ModelInfo.class), any(String.class),
-                isA(org.onap.so.serviceinstancebeans.Platform.class),
+        verify(SPY_bbInputSetup, times(1)).populateGenericVnf(any(String.class), isA(ModelInfo.class),
+                any(String.class), isA(org.onap.so.serviceinstancebeans.Platform.class),
                 isA(org.onap.so.serviceinstancebeans.LineOfBusiness.class), isA(Service.class), any(String.class),
                 isA(ServiceInstance.class), any(), any(), any(String.class), any(String.class), any(),
                 any(String.class));
@@ -1955,17 +1963,17 @@ public class BBInputSetupTest {
         executeBB.getBuildingBlock().setBpmnFlowName(AssignFlows.VF_MODULE.toString());
         executeBB.getBuildingBlock().setKey("a25e8e8c-58b8-4eec-810c-97dcc1f5cb7f");
         SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
-        verify(SPY_bbInputSetup, times(1)).populateVfModule(isA(ModelInfo.class), isA(Service.class), any(String.class),
-                isA(ServiceInstance.class), any(), any(String.class), any(), any(String.class), any(),
-                isA(CloudConfiguration.class));
+        verify(SPY_bbInputSetup, times(1)).populateVfModule(any(String.class), isA(ModelInfo.class), isA(Service.class),
+                any(String.class), isA(ServiceInstance.class), any(), any(String.class), any(), any(String.class),
+                any(), isA(CloudConfiguration.class));
 
         lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, null);
         executeBB.getBuildingBlock().setBpmnFlowName(AssignFlows.VOLUME_GROUP.toString());
         executeBB.getBuildingBlock().setKey("72d9d1cd-f46d-447a-abdb-451d6fb05fa8");
         SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
-        verify(SPY_bbInputSetup, times(1)).populateVolumeGroup(isA(ModelInfo.class), isA(Service.class),
-                any(String.class), isA(ServiceInstance.class), any(), any(String.class), ArgumentMatchers.isNull(),
-                ArgumentMatchers.isNull(), any(String.class), any());
+        verify(SPY_bbInputSetup, times(1)).populateVolumeGroup(any(String.class), isA(ModelInfo.class),
+                isA(Service.class), any(String.class), isA(ServiceInstance.class), any(), any(String.class),
+                ArgumentMatchers.isNull(), ArgumentMatchers.isNull(), any(String.class), any());
 
         Configuration configuration = new Configuration();
         configuration.setConfigurationId("configurationId");
@@ -1975,16 +1983,16 @@ public class BBInputSetupTest {
         configurationCust.setModelCustomizationUUID("72d9d1cd-f46d-447a-abdb-451d6fb05fa9");
         doReturn(configurationCustList).when(service).getConfigurationCustomizations();
         configurationCustList.add(configurationCust);
-        doNothing().when(SPY_bbInputSetup).populateConfiguration(isA(ModelInfo.class), isA(Service.class),
-                any(String.class), isA(ServiceInstance.class), any(), any(String.class), ArgumentMatchers.isNull(),
-                isA(ConfigurationResourceKeys.class), isA(RequestDetails.class));
+        doNothing().when(SPY_bbInputSetup).populateConfiguration(any(String.class), isA(ModelInfo.class),
+                isA(Service.class), any(String.class), isA(ServiceInstance.class), any(), any(String.class),
+                ArgumentMatchers.isNull(), isA(ConfigurationResourceKeys.class), isA(RequestDetails.class));
 
         executeBB.getBuildingBlock().setBpmnFlowName("AssignFabricConfigurationBB");
         executeBB.getBuildingBlock().setKey("72d9d1cd-f46d-447a-abdb-451d6fb05fa9");
         SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
-        verify(SPY_bbInputSetup, times(1)).populateConfiguration(isA(ModelInfo.class), isA(Service.class),
-                any(String.class), isA(ServiceInstance.class), any(), any(String.class), ArgumentMatchers.isNull(),
-                isA(ConfigurationResourceKeys.class), isA(RequestDetails.class));
+        verify(SPY_bbInputSetup, times(1)).populateConfiguration(any(String.class), isA(ModelInfo.class),
+                isA(Service.class), any(String.class), isA(ServiceInstance.class), any(), any(String.class),
+                ArgumentMatchers.isNull(), isA(ConfigurationResourceKeys.class), isA(RequestDetails.class));
 
 
     }
@@ -2050,16 +2058,16 @@ public class BBInputSetupTest {
         ConfigurationResourceCustomization configurationCust = new ConfigurationResourceCustomization();
         configurationCust.setModelCustomizationUUID("72d9d1cd-f46d-447a-abdb-451d6fb05fa9");
         configurationCustList.add(configurationCust);
-        doNothing().when(SPY_bbInputSetup).populateConfiguration(isA(ModelInfo.class), isA(Service.class),
-                any(String.class), isA(ServiceInstance.class), any(), any(String.class), ArgumentMatchers.isNull(),
-                isA(ConfigurationResourceKeys.class), isA(RequestDetails.class));
+        doNothing().when(SPY_bbInputSetup).populateConfiguration(any(String.class), isA(ModelInfo.class),
+                isA(Service.class), any(String.class), isA(ServiceInstance.class), any(), any(String.class),
+                ArgumentMatchers.isNull(), isA(ConfigurationResourceKeys.class), isA(RequestDetails.class));
 
         executeBB.getBuildingBlock().setBpmnFlowName("AssignVrfConfigurationBB");
         executeBB.getBuildingBlock().setKey("72d9d1cd-f46d-447a-abdb-451d6fb05fa9");
         gBB = SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
-        verify(SPY_bbInputSetup, times(1)).populateConfiguration(isA(ModelInfo.class), isA(Service.class),
-                any(String.class), isA(ServiceInstance.class), any(), any(String.class), ArgumentMatchers.isNull(),
-                isA(ConfigurationResourceKeys.class), isA(RequestDetails.class));
+        verify(SPY_bbInputSetup, times(1)).populateConfiguration(any(String.class), isA(ModelInfo.class),
+                isA(Service.class), any(String.class), isA(ServiceInstance.class), any(), any(String.class),
+                ArgumentMatchers.isNull(), isA(ConfigurationResourceKeys.class), isA(RequestDetails.class));
         assertEquals(gBB.getCustomer().getVpnBindings().get(0).getVpnId(), "vpnBindingId");
         assertEquals(gBB.getServiceInstance().getNetworks().get(0).getNetworkId(), "localNetworkId");
         assertEquals(gBB.getServiceInstance().getNetworks().get(0).getVpnBindings().get(0).getVpnId(),
@@ -2223,14 +2231,14 @@ public class BBInputSetupTest {
         executeBB.getBuildingBlock().setBpmnFlowName(AssignFlows.NETWORK_MACRO.toString());
         executeBB.getBuildingBlock().setKey("ab153b6e-c364-44c0-bef6-1f2982117f04");
         SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
-        verify(SPY_bbInputSetup, times(1)).populateL3Network(any(String.class), isA(ModelInfo.class),
+        verify(SPY_bbInputSetup, times(1)).populateL3Network(any(String.class), any(String.class), isA(ModelInfo.class),
                 isA(Service.class), any(String.class), isA(ServiceInstance.class), any(), any(String.class), any());
 
         executeBB.getBuildingBlock().setBpmnFlowName(AssignFlows.VNF.toString());
         executeBB.getBuildingBlock().setKey("ab153b6e-c364-44c0-bef6-1f2982117f04");
         SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
-        verify(SPY_bbInputSetup, times(1)).populateGenericVnf(isA(ModelInfo.class), any(String.class),
-                isA(org.onap.so.serviceinstancebeans.Platform.class),
+        verify(SPY_bbInputSetup, times(1)).populateGenericVnf(any(String.class), isA(ModelInfo.class),
+                any(String.class), isA(org.onap.so.serviceinstancebeans.Platform.class),
                 isA(org.onap.so.serviceinstancebeans.LineOfBusiness.class), isA(Service.class), any(String.class),
                 isA(ServiceInstance.class), any(), ArgumentMatchers.isNull(), any(String.class),
                 ArgumentMatchers.isNull(), any(), any(String.class));
@@ -2239,17 +2247,17 @@ public class BBInputSetupTest {
         executeBB.getBuildingBlock().setBpmnFlowName(AssignFlows.VF_MODULE.toString());
         executeBB.getBuildingBlock().setKey("a25e8e8c-58b8-4eec-810c-97dcc1f5cb7f");
         SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
-        verify(SPY_bbInputSetup, times(1)).populateVfModule(isA(ModelInfo.class), isA(Service.class), any(String.class),
-                isA(ServiceInstance.class), any(), any(String.class), any(), any(String.class), any(),
-                isA(CloudConfiguration.class));
+        verify(SPY_bbInputSetup, times(1)).populateVfModule(any(String.class), isA(ModelInfo.class), isA(Service.class),
+                any(String.class), isA(ServiceInstance.class), any(), any(String.class), any(), any(String.class),
+                any(), isA(CloudConfiguration.class));
 
         lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, null);
         executeBB.getBuildingBlock().setBpmnFlowName(AssignFlows.VOLUME_GROUP.toString());
         executeBB.getBuildingBlock().setKey("72d9d1cd-f46d-447a-abdb-451d6fb05fa8");
         SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
-        verify(SPY_bbInputSetup, times(1)).populateVolumeGroup(isA(ModelInfo.class), isA(Service.class),
-                any(String.class), isA(ServiceInstance.class), any(), any(String.class), ArgumentMatchers.isNull(),
-                ArgumentMatchers.isNull(), ArgumentMatchers.isNull(), any());
+        verify(SPY_bbInputSetup, times(1)).populateVolumeGroup(any(String.class), isA(ModelInfo.class),
+                isA(Service.class), any(String.class), isA(ServiceInstance.class), any(), any(String.class),
+                ArgumentMatchers.isNull(), ArgumentMatchers.isNull(), ArgumentMatchers.isNull(), any());
     }
 
     @Test
@@ -2288,14 +2296,14 @@ public class BBInputSetupTest {
         executeBB.getBuildingBlock().setBpmnFlowName(AssignFlows.NETWORK_MACRO.toString());
         executeBB.getBuildingBlock().setKey("ab153b6e-c364-44c0-bef6-1f2982117f04");
         SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
-        verify(SPY_bbInputSetup, times(1)).populateL3Network(any(String.class), isA(ModelInfo.class),
+        verify(SPY_bbInputSetup, times(1)).populateL3Network(any(String.class), any(String.class), isA(ModelInfo.class),
                 isA(Service.class), any(String.class), isA(ServiceInstance.class), any(), any(String.class), any());
 
         executeBB.getBuildingBlock().setBpmnFlowName(AssignFlows.VNF.toString());
         executeBB.getBuildingBlock().setKey("ab153b6e-c364-44c0-bef6-1f2982117f04");
         SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
-        verify(SPY_bbInputSetup, times(1)).populateGenericVnf(isA(ModelInfo.class), any(String.class),
-                isA(org.onap.so.serviceinstancebeans.Platform.class),
+        verify(SPY_bbInputSetup, times(1)).populateGenericVnf(any(String.class), isA(ModelInfo.class),
+                any(String.class), isA(org.onap.so.serviceinstancebeans.Platform.class),
                 isA(org.onap.so.serviceinstancebeans.LineOfBusiness.class), isA(Service.class), any(String.class),
                 isA(ServiceInstance.class), any(), any(), any(String.class), any(String.class), any(),
                 any(String.class));
@@ -2304,17 +2312,17 @@ public class BBInputSetupTest {
         executeBB.getBuildingBlock().setBpmnFlowName(AssignFlows.VF_MODULE.toString());
         executeBB.getBuildingBlock().setKey("a25e8e8c-58b8-4eec-810c-97dcc1f5cb7f");
         SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
-        verify(SPY_bbInputSetup, times(1)).populateVfModule(isA(ModelInfo.class), isA(Service.class), any(String.class),
-                isA(ServiceInstance.class), any(), any(String.class), any(), any(String.class), any(),
-                isA(CloudConfiguration.class));
+        verify(SPY_bbInputSetup, times(1)).populateVfModule(any(String.class), isA(ModelInfo.class), isA(Service.class),
+                any(String.class), isA(ServiceInstance.class), any(), any(String.class), any(), any(String.class),
+                any(), isA(CloudConfiguration.class));
 
         lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, null);
         executeBB.getBuildingBlock().setBpmnFlowName(AssignFlows.VOLUME_GROUP.toString());
         executeBB.getBuildingBlock().setKey("72d9d1cd-f46d-447a-abdb-451d6fb05fa8");
         SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
-        verify(SPY_bbInputSetup, times(1)).populateVolumeGroup(isA(ModelInfo.class), isA(Service.class),
-                any(String.class), isA(ServiceInstance.class), any(), any(String.class), ArgumentMatchers.isNull(),
-                ArgumentMatchers.isNull(), any(String.class), any());
+        verify(SPY_bbInputSetup, times(1)).populateVolumeGroup(any(String.class), isA(ModelInfo.class),
+                isA(Service.class), any(String.class), isA(ServiceInstance.class), any(), any(String.class),
+                ArgumentMatchers.isNull(), ArgumentMatchers.isNull(), any(String.class), any());
     }
 
     @Test
@@ -2392,8 +2400,8 @@ public class BBInputSetupTest {
         doReturn("ab153b6e-c364-44c0-bef6-1f2982117f04").when(networkCust).getModelCustomizationUUID();
         networkCustList.add(networkCust);
         doReturn(networkCustList).when(service).getNetworkCustomizations();
-        doNothing().when(SPY_bbInputSetup).populateL3Network(any(), isA(ModelInfo.class), isA(Service.class),
-                any(String.class), isA(ServiceInstance.class), any(), any(String.class), any());
+        doNothing().when(SPY_bbInputSetup).populateL3Network(any(String.class), any(), isA(ModelInfo.class),
+                isA(Service.class), any(String.class), isA(ServiceInstance.class), any(), any(String.class), any());
 
         executeBB.getBuildingBlock().setBpmnFlowName(AssignFlows.NETWORK_MACRO.toString());
         executeBB.getBuildingBlock().setKey("ab153b6e-c364-44c0-bef6-1f2982117f04");
@@ -2874,8 +2882,8 @@ public class BBInputSetupTest {
         doNothing().when(SPY_bbInputSetup).mapCatalogVfModule(isA(VfModule.class), isA(ModelInfo.class),
                 isA(Service.class), isA(String.class));
 
-        SPY_bbInputSetup.populateVfModule(modelInfo, service, bbName, serviceInstance, lookupKeyMap, resourceId,
-                relatedInstanceList, instanceName, instanceParams, cloudConfiguration);
+        SPY_bbInputSetup.populateVfModule(REQUEST_ID, modelInfo, service, bbName, serviceInstance, lookupKeyMap,
+                resourceId, relatedInstanceList, instanceName, instanceParams, cloudConfiguration);
 
         verify(SPY_bbInputSetup, times(3)).mapCatalogVfModule(isA(VfModule.class), isA(ModelInfo.class),
                 isA(Service.class), isA(String.class));
@@ -2901,6 +2909,18 @@ public class BBInputSetupTest {
         doReturn(configurationWrapper).when(SPY_bbInputSetupUtils).getAAIResourceDepthOne(aaiResourceUri);
         vnfc = SPY_bbInputSetup.getVnfcToConfiguration(vnfcName);
         Assert.assertNotNull(vnfc);
+    }
+
+    @Test
+    public void updateInstanceNameTest() {
+        InfraActiveRequests request = new InfraActiveRequests();
+        request.setRequestId(REQUEST_ID);
+
+        when(requestsDbClient.getInfraActiveRequestbyRequestId(REQUEST_ID)).thenReturn(request);
+        SPY_bbInputSetup.updateInstanceName(REQUEST_ID, ModelType.service, "instanceName");
+
+        verify(requestsDbClient).updateInfraActiveRequests(request);
+        assertEquals("instanceName", request.getServiceInstanceName());
     }
 
 
