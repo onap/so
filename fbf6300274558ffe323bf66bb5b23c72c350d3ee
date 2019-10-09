@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bc52bfc8_b3f2ebc2",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/extclients/vnfm/VnfmServiceProviderImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-10-09T12:04:19Z",
+      "side": 1,
+      "message": "is it not misleading or may be i am not understanding it ... why InstantiationState NOT_INSTANTIATED is treated as ALREADY_COMPLETED??? shouldn\u0027t we mark it as FAILURE?",
+      "range": {
+        "startLine": 124,
+        "startChar": 20,
+        "endLine": 124,
+        "endChar": 95
+      },
+      "revId": "fbf6300274558ffe323bf66bb5b23c72c350d3ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c066b750_861dd3af",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/lifecycle/LifecycleManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-10-09T12:04:19Z",
+      "side": 1,
+      "message": "why set OperationId as ALREADY_COMPELETED? in my opinion we should introduce persistence to track the job status and getJobStatus operation get status from this persistence",
+      "range": {
+        "startLine": 212,
+        "startChar": 12,
+        "endLine": 212,
+        "endChar": 73
+      },
+      "revId": "fbf6300274558ffe323bf66bb5b23c72c350d3ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fb7d2a01_3d0ca392",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/notificationhandling/NotificationHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-10-09T12:04:19Z",
+      "side": 1,
+      "message": "if VnfTerminatation fails to update AAI, it will not retry it ever correct? how would be recover/try it again then?",
+      "range": {
+        "startLine": 158,
+        "startChar": 3,
+        "endLine": 174,
+        "endChar": 5
+      },
+      "revId": "fbf6300274558ffe323bf66bb5b23c72c350d3ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
