@@ -128,8 +128,7 @@ public final class SerializableChecker {
 
     private static boolean isSerializable(Class<?> inClass) {
         Set<Class<?>> interfaces = getInterfaces(inClass);
-        if (interfaces == null)
-            return false;
+
         boolean isSerializable = interfaces.contains(Serializable.class);
         if (isSerializable)
             return true;
