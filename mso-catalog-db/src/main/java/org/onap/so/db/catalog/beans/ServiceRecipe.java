@@ -25,7 +25,8 @@ import java.util.Date;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -46,6 +47,7 @@ public class ServiceRecipe implements Serializable, Recipe {
 
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @BusinessKey
@@ -116,6 +118,7 @@ public class ServiceRecipe implements Serializable, Recipe {
         super();
     }
 
+    @Override
     public Integer getId() {
         return id;
     }
@@ -136,6 +139,7 @@ public class ServiceRecipe implements Serializable, Recipe {
         this.serviceModelUUID = serviceModelUUID;
     }
 
+    @Override
     public String getAction() {
         return action;
     }
@@ -144,6 +148,7 @@ public class ServiceRecipe implements Serializable, Recipe {
         this.action = action;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
@@ -152,6 +157,7 @@ public class ServiceRecipe implements Serializable, Recipe {
         this.description = description;
     }
 
+    @Override
     public String getOrchestrationUri() {
         return orchestrationUri;
     }
@@ -160,6 +166,7 @@ public class ServiceRecipe implements Serializable, Recipe {
         this.orchestrationUri = orchestrationUri;
     }
 
+    @Override
     public String getParamXsd() {
         return paramXsd;
     }
@@ -168,6 +175,7 @@ public class ServiceRecipe implements Serializable, Recipe {
         this.paramXsd = paramXsd;
     }
 
+    @Override
     public Integer getRecipeTimeout() {
         return recipeTimeout;
     }
