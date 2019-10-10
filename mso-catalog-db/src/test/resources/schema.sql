@@ -120,6 +120,7 @@ CREATE TABLE `cloud_sites` (
   `LAST_UPDATED_BY` varchar(120) DEFAULT NULL,
   `CREATION_TIMESTAMP` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `UPDATE_TIMESTAMP` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `SUPPORT_FABRIC` bit(1) NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `FK_cloud_sites_identity_services` (`IDENTITY_SERVICE_ID`),
   CONSTRAINT `FK_cloud_sites_identity_services` FOREIGN KEY (`IDENTITY_SERVICE_ID`) REFERENCES `identity_services` (`ID`)
