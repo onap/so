@@ -7,6 +7,76 @@ Service Orchestrator Release Notes
 ==================================
 
 The SO provides the highest level of service orchestration in the ONAP architecture. 
+The SO provides the highest level of service orchestration in the ONAP architecture. 
+
+Version: 1.5.3
+-----------------------
+
+:Release Date: 2019-10-10
+
+**Docker Images**
+
+**Dockers released for SO:**
+
+ - onap/so/api-handler-infra,1.5.3
+ - onap/so/bpmn-infra,1.5.3
+ - onap/so/catalog-db-adapter,1.5.3
+ - onap/so/openstack-adapter,1.5.3
+ - onap/so/request-db-adapter,1.5.3
+ - onap/so/sdc-controller,1.5.3
+ - onap/so/sdnc-adapter,1.5.3
+ - onap/so/so-monitoring,1.5.3
+ - onap/so/vfc-adapter,1.5.3
+ - onap/so/vnfm-adapter,1.5.3
+
+**Release Purpose**
+
+The R5 El Alto release of ONAP is a maintenance release, focusing on deployability, technical debt, and auto test case improvements.
+
+**New Features**
+
+The main goal of the El-Alto release was to improve documentation, UT improvement for various kinds of resources.
+
+**Epics**
+
+
+**Stories**
+
+
+
+**Security Notes**
+ 
+ Quick Links:
+
+ - `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`_
+ - `Passing Badge information for SO <https://bestpractices.coreinfrastructure.org/en/projects/1702>`_
+
+
+**Known Issues**
+
+OJSI Issues
+
+-  [`OJSI-110 <https://jira.onap.org/browse/OJSI-110>`__\ ] - so-monitor exposes plain text HTTP endpoint using port 30224
+
+-  [`OJSI-138 <https://jira.onap.org/browse/OJSI-138>`__\ ] - so exposes plain text HTTP endpoint using port 30277
+
+-  [`OJSI-169 <https://jira.onap.org/browse/OJSI-169>`__\ ] - Port 30224 exposes unprotected service outside of cluster
+
+-  [`OJSI-203 <https://jira.onap.org/browse/OJSI-203>`__\ ] - SO exposes unprotected APIs/UIs (CVE-2019-12128
+
+
+**Upgrade Notes**
+
+	N/A
+
+**Deprecation Notes**
+
+	N/A
+
+**Other**
+
+	N/A
+
 
 Version: 1.4.4
 -----------------------
