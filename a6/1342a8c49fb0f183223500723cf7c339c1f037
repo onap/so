@@ -1,0 +1,9 @@
+Code-Review+1: Jessica Wagantall <jwagantall@linuxfoundation.org>
+Code-Review+2: Brian Freeman <bf1936@att.com>
+Code-Review+2: Marcus Williams <marcus.williams@intel.com>
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Submitted-by: Marcus Williams <marcus.williams@intel.com>
+Submitted-at: Thu, 10 Oct 2019 21:31:48 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/so/+/96889
+Project: so
+Branch: refs/heads/elalto
