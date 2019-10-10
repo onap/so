@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5b75690e_cb6aabe4",
+        "filename": "releases/1.5.3.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 481
+      },
+      "writtenOn": "2019-10-10T15:58:43Z",
+      "side": 1,
+      "message": "space after \":\"\nmake it look like:\nref: 3c1f70e434b23e8bda331837c1e4ed8506f0166d",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 6,
+        "endChar": 44
+      },
+      "revId": "5c6e429c3151f9cab7c809aa5f9e2a103dbffaf0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c3a3d9ee_2bb5f08a",
+        "filename": "releases/1.5.3.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 481
+      },
+      "writtenOn": "2019-10-10T15:58:43Z",
+      "side": 1,
+      "message": "the job referenced, did not tagged using this label. \nHowever, it used \"1.5.3-20191010T0328\"\nPlease double check the job number and the tag are correct",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 36
+      },
+      "revId": "5c6e429c3151f9cab7c809aa5f9e2a103dbffaf0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8ed80919_b6742f94",
+        "filename": "releases/1.5.3.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 481
+      },
+      "writtenOn": "2019-10-10T15:58:43Z",
+      "side": 1,
+      "message": "these images are prefixed with \"so/\"\nfor example \"so/api-handler-infra\"\nmake sure you reflect that",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 1
+      },
+      "revId": "5c6e429c3151f9cab7c809aa5f9e2a103dbffaf0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a4e6d620_8a8f6984",
+        "filename": "releases/1.5.3.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 481
+      },
+      "writtenOn": "2019-10-10T15:58:43Z",
+      "side": 1,
+      "message": "remove these",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 1
+      },
+      "revId": "5c6e429c3151f9cab7c809aa5f9e2a103dbffaf0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
