@@ -7,6 +7,69 @@ Service Orchestrator Release Notes
 ==================================
 
 The SO provides the highest level of service orchestration in the ONAP architecture. 
+The SO provides the highest level of service orchestration in the ONAP architecture. 
+
+Version: 1.5.3
+-----------------------
+
+:Release Date: 2019-10-10
+
+**Docker Images**
+
+**Dockers released for SO:**
+
+ - onap/so/api-handler-infra,1.5.3
+ - onap/so/bpmn-infra,1.5.3
+ - onap/so/catalog-db-adapter,1.5.3
+ - onap/so/openstack-adapter,1.5.3
+ - onap/so/request-db-adapter,1.5.3
+ - onap/so/sdc-controller,1.5.3
+ - onap/so/sdnc-adapter,1.5.3
+ - onap/so/so-monitoring,1.5.3
+ - onap/so/vfc-adapter,1.5.3
+ - onap/so/vnfm-adapter,1.5.3
+
+**Release Purpose**
+
+
+**New Features**
+
+The main goal of the El-Alto release was to:
+
+**Epics**
+
+
+**Stories**
+
+
+
+**Security Notes**
+ SO code has been formally scanned during build time using NexusIQ and all Critical vulnerabilities have been addressed, items that remain open have been assessed for risk and determined to be false positive. The SO open Critical security vulnerabilities and their risk assessment have been documented as part of the `project <https://wiki.onap.org/pages/viewpage.action?pageId=43385708>`_.
+
+ Quick Links:
+
+ - `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`_
+ - `Passing Badge information for SO <https://bestpractices.coreinfrastructure.org/en/projects/1702>`_
+
+
+**Known Issues**
+
+Testing Terminate and Delete of ETSI VNFM Adapter is done and has some of the minor issues pending, it will be done in El Alto.
+
+-  [`SO-2013 <https://jira.onap.org/browse/SO-2013>`__\ ] - Test Terminate/Delete VNF with VNFM Adapter	
+
+**Upgrade Notes**
+
+	N/A
+
+**Deprecation Notes**
+
+	N/A
+
+**Other**
+
+	N/A
+
 
 Version: 1.4.4
 -----------------------
