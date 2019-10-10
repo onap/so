@@ -1,0 +1,28 @@
+---
+distribution_type: 'container'
+version: '1.5.3'
+project: 'so'
+log_dir: 'so-maven-docker-stage-elalto/2/'
+ref:3c1f70e434b23e8bda331837c1e4ed8506f0166d
+containers:
+    - name: 'api-handler-infra'
+      version: '1.5.3-20191010T0422'
+    - name: 'bpmn-infra'
+      version: '1.5.3-20191010T0422'
+    - name: 'catalog-db-adapter'
+      version: '1.5.3-20191010T0422'
+    - name: 'request-db-adapter'
+      version: '1.5.3-20191010T0422'
+    - name: 'sdc-controller'
+      version: '1.5.3-20191010T0422'
+    - name: 'sdnc-adapter'
+      version: '1.5.3-20191010T0422'
+    - name: 'so-monitoring'
+      version: '1.5.3-20191010T0422'
+    - name: 'vfc-adapter'
+      version: '1.5.3-20191010T0422'
+    - name: 'vnfm-adapter'
+      version: '1.5.3-20191010T0422'
+ 
+ 
+ 
