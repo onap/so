@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "30acf99f_f510fcd7",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/java/org/onap/so/bpmn/common/workflow/service/WorkflowAsyncResource.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-11T09:24:49Z",
+      "side": 1,
+      "message": "This check is not needed. \nVariableMapImpl is the object that is sent from mso-api-handlers to bpmn project using rest. It can not be null, because this map object holds essential information about request. \nGo to the CamundaClient class and see post method, there is a build process of jsonReq, that is set as entity of post request. This json is converted to VariableMapImpl. When the post request is sent to bpmn, this method is invoked.",
+      "range": {
+        "startLine": 167,
+        "startChar": 8,
+        "endLine": 167,
+        "endChar": 27
+      },
+      "revId": "298cfc64abcc8074ec7a135864b8c958fe8ffe5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
