@@ -8,6 +8,11 @@ import javax.management.JMX;
 import javax.management.MBeanServer;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
+import org.jboss.logging.MDC;
+import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
+import org.onap.so.logger.ErrorCode;
+import org.onap.so.logger.ScheduledTasksMDCSetup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,16 +32,22 @@ public class ScheduledDnsLookup {
     @Autowired
     private DbDnsIpAddress dnsIpAddress;
 
+    @Autowired
+    private ScheduledTasksMDCSetup scheduledMDCSetup;
+
     private static Logger logger = LoggerFactory.getLogger(ScheduledDnsLookup.class);
 
     @Scheduled(fixedRate = 15000)
     public void performDnsLookup() {
-
+        scheduledMDCSetup.mdcSetup(ONAPComponents.SO, "performDnsLookup");
         String dnsUrl = System.getenv(DB_HOST);
 
         try {
             if (dnsUrl == null) {
+                scheduledMDCSetup.errorMDCSetup(ErrorCode.DataError, "Database DNS is not provided.");
                 logger.error("Database DNS is not provided. Please verify the configuration");
+                MDC.put(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE, ONAPLogConstants.ResponseStatus.ERROR.toString());
+                scheduledMDCSetup.exitAndClearMDC();
                 return;
             }
 
@@ -46,6 +57,7 @@ public class ScheduledDnsLookup {
             /* This is in initial state */
             if (currentIpAddress == null) {
                 dnsIpAddress.setIpAddress(ipAddress);
+                scheduledMDCSetup.exitAndClearMDC();
                 return;
             }
 
@@ -57,7 +69,7 @@ public class ScheduledDnsLookup {
         } catch (UnknownHostException e) {
             logger.warn("Database DNS %s is not resolvable to an IP Address", dnsUrl);
         }
-
+        scheduledMDCSetup.exitAndClearMDC();
     }
 
     private void softEvictConnectionPool() {
