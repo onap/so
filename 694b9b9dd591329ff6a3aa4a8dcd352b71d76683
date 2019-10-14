@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a745751b_83f173a9",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/cloudify/utils/MsoCloudifyUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 399,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-14T12:23:49Z",
+      "side": 1,
+      "message": "if execution is null, null pointer ex will be thrown during invoking this method in createAndInstallDeployment method.",
+      "range": {
+        "startLine": 399,
+        "startChar": 16,
+        "endLine": 399,
+        "endChar": 33
+      },
+      "revId": "694b9b9dd591329ff6a3aa4a8dcd352b71d76683",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e323b1c1_371066ec",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/cloudify/utils/MsoCloudifyUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 409,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-14T12:23:49Z",
+      "side": 1,
+      "message": "Why do check if execution is null the second time? And why do you set status as TERMINATED if execution is null? The result of this is that this method returns null execution, what causes null pointer ex later.\nYou already made a similar change in this method before (cancelExecution), and if execution is null, you does not set status. Check this (line 495).",
+      "range": {
+        "startLine": 409,
+        "startChar": 16,
+        "endLine": 409,
+        "endChar": 36
+      },
+      "revId": "694b9b9dd591329ff6a3aa4a8dcd352b71d76683",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e37e187f_675c03f3",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/cloudify/utils/MsoCloudifyUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 413,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-14T12:23:49Z",
+      "side": 1,
+      "message": "This method is always executed, even if executionId parameter is null, what does not make a sense.",
+      "range": {
+        "startLine": 413,
+        "startChar": 12,
+        "endLine": 413,
+        "endChar": 82
+      },
+      "revId": "694b9b9dd591329ff6a3aa4a8dcd352b71d76683",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
