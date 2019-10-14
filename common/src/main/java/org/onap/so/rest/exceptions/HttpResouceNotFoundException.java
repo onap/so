@@ -18,19 +18,14 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.svnfm.simulator.oauth;
+package org.onap.so.rest.exceptions;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
-import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 
-@Configuration
-@EnableResourceServer
-@Profile("oauth-authentication")
-/**
- * Enforces oauth token based authentication when the spring profile "oauth-authentication" is active
- */
-public class OAuth2ResourceServer extends ResourceServerConfigurerAdapter {
+public class HttpResouceNotFoundException extends RuntimeException {
 
+    private static final long serialVersionUID = 9007892558312387355L;
+
+    public HttpResouceNotFoundException(final String message) {
+        super(message);
+    }
 }

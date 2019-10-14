@@ -37,6 +37,7 @@ import org.json.JSONException;
 import org.junit.Test;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.adapters.catalogdb.CatalogDbAdapterBaseTest;
+import org.onap.so.db.catalog.beans.ServiceRecipe;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -51,6 +52,8 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
 
     private static final String ECOMP_MSO_CATALOG_V2_VF_MODULES = "ecomp/mso/catalog/v2/vfModules";
+
+    private static final String SERVICE_RECIPE = "serviceRecipe";
 
     private static final String ECOMP_MSO_CATALOG_V2_SERVICE_ALLOTTED_RESOURCES =
             "ecomp/mso/catalog/v2/serviceAllottedResources";
@@ -837,6 +840,25 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
                 assertEquals("ERROR", mdc.get(RESPONSE_STATUS_CODE));
                 assertNotNull(mdc.get(RESPONSE_DESCRIPTION));
             }
+    }
+
+    @Test
+    public void testCreateServiceRecipe() throws JSONException {
+        ServiceRecipe recipe = new ServiceRecipe();
+        recipe.setAction("action");
+        recipe.setDescription("description");
+        recipe.setOrchestrationUri("http://test");
+        recipe.setRecipeTimeout(120);
+        recipe.setServiceModelUUID(serviceUUID);
+        HttpEntity<ServiceRecipe> entity = new HttpEntity<ServiceRecipe>(recipe, headers);
+        headers.set("Accept", MediaType.APPLICATION_JSON);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(SERVICE_RECIPE));
+
+        ResponseEntity<String> response =
+                restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, String.class);
+
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatusCode().value());
     }
 
     private String createURLWithPort(String uri) {
