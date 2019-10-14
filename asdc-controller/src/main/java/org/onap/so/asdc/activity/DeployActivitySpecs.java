@@ -155,7 +155,7 @@ public class DeployActivitySpecs {
             connection.setConnectTimeout(5000);
             responseCode = connection.getResponseCode();
         } catch (Exception e) {
-            logger.warn("Exception on connecting to SDC WFD endpoint: " + e.getMessage());
+            logger.warn("Exception on connecting to SDC WFD endpoint: ", e);
         }
         if (responseCode == HttpStatus.SC_OK || responseCode == HttpStatus.SC_NOT_FOUND) {
             isUp = true;

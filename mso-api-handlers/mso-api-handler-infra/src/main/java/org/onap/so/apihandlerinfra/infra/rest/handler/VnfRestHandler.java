@@ -27,7 +27,6 @@ import java.util.HashMap;
 import org.onap.so.apihandler.common.RequestClientParameter;
 import org.onap.so.apihandlerinfra.Action;
 import org.onap.so.apihandlerinfra.Constants;
-import org.onap.so.apihandlerinfra.infra.rest.exception.NoRecipeException;
 import org.onap.so.constants.Status;
 import org.onap.so.db.catalog.beans.Recipe;
 import org.onap.so.db.catalog.beans.VnfRecipe;
