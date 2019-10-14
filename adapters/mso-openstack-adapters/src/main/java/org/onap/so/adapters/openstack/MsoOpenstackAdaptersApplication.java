@@ -27,7 +27,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.EnableMBeanExport;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.jmx.support.RegistrationPolicy;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -37,6 +39,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @EnableScheduling
 @EnableJpaRepositories({"org.onap.so.db.catalog.data.repository", "org.onap.so.db.request.data.repository"})
 @EntityScan({"org.onap.so.db.catalog.beans", "org.onap.so.db.request.beans"})
+@EnableMBeanExport(registration = RegistrationPolicy.IGNORE_EXISTING)
 public class MsoOpenstackAdaptersApplication {
 
 
@@ -59,6 +62,7 @@ public class MsoOpenstackAdaptersApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(MsoOpenstackAdaptersApplication.class, args);
+        java.security.Security.setProperty("networkaddress.cache.ttl", "10");
         setLogsDir();
     }
 
