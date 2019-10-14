@@ -46,6 +46,7 @@ import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Primary;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
@@ -57,7 +58,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @EnableAsync
 @ComponentScan(basePackages = {"org.onap"}, nameGenerator = DefaultToShortClassNameBeanNameGenerator.class,
         excludeFilters = {@Filter(type = FilterType.ANNOTATION, classes = SpringBootApplication.class)})
-
+@EnableScheduling
 public class MSOInfrastructureApplication {
 
     private static final Logger logger = LoggerFactory.getLogger(MSOInfrastructureApplication.class);
@@ -89,6 +90,7 @@ public class MSOInfrastructureApplication {
 
     public static void main(String... args) {
         SpringApplication.run(MSOInfrastructureApplication.class, args);
+        java.security.Security.setProperty("networkaddress.cache.ttl", "10");
         System.getProperties().setProperty("mso.config.path", ".");
         setLogsDir();
     }
@@ -99,7 +101,7 @@ public class MSOInfrastructureApplication {
             DeploymentBuilder deploymentBuilder = processEngine.getRepositoryService().createDeployment();
             deployCustomWorkflows(deploymentBuilder);
         } catch (Exception e) {
-            logger.warn("Unable to invoke deploymentBuilder ", e);
+            logger.warn("Unable to invoke deploymentBuilder: " + e.getMessage());
         }
     }
 
@@ -136,11 +138,11 @@ public class MSOInfrastructureApplication {
                         deploymentBuilder.addString(workflowName, workflowBody);
                     }
                     deploymentBuilder.enableDuplicateFiltering(true);
+                    deploymentBuilder.deploy();
                 }
-                deploymentBuilder.deploy();
             }
         } catch (Exception e) {
-            logger.warn("Unable to deploy custom workflows ", e);
+            logger.warn("Unable to deploy custom workflows, " + e.getMessage());
         }
     }
 }
