@@ -24,6 +24,7 @@ import com.google.common.base.Optional;
 import java.util.Map;
 import org.onap.aai.domain.yang.EsrVnfm;
 import org.onap.aai.domain.yang.GenericVnf;
+import org.onap.aai.domain.yang.Relationship;
 import org.onap.so.adapters.vnfmadapter.extclients.SdcPackageProvider;
 import org.onap.so.adapters.vnfmadapter.extclients.aai.AaiHelper;
 import org.onap.so.adapters.vnfmadapter.extclients.aai.AaiServiceProvider;
@@ -207,6 +208,10 @@ public class LifecycleManager {
         final EsrVnfm vnfm = getAssignedVnfm(genericVnf);
 
         final String operationId = sendTerminateRequestToVnfm(vnfm, genericVnf);
+
+        if (operationId.equals(JobManager.ALREADY_COMPLETED_OPERATION_ID)) {
+            sendDeleteRequestToVnfm(genericVnf);
+        }
         final String jobId = jobManager.createJob(vnfm.getVnfmId(), operationId, true);
 
         return new DeleteVnfResponse().jobId(jobId);
@@ -233,5 +238,28 @@ public class LifecycleManager {
             throw new VnfmNotFoundException("No VNFM found in AAI for VNF " + genericVnf.getVnfId());
         }
         return vnfm;
+    }
+
+    private void sendDeleteRequestToVnfm(final GenericVnf genericVnf) {
+
+        vnfmServiceProvider.deleteVnf(aaiHelper.getAssignedVnfm(genericVnf), genericVnf.getSelflink());
+
+        final GenericVnf genericVnfPatch = new GenericVnf();
+        genericVnfPatch.setVnfId(genericVnf.getVnfId());
+        genericVnfPatch.setOrchestrationStatus("Assigned");
+        genericVnfPatch.setSelflink("");
+        aaiServiceProvider.invokePatchGenericVnf(genericVnfPatch);
+
+        for (final Relationship relationship : genericVnf.getRelationshipList().getRelationship()) {
+            if (relationship.getRelatedTo().equals("vserver")) {
+                aaiServiceProvider.invokeDeleteVserver(
+                        aaiHelper.getRelationshipData(relationship, "cloud-region.cloud-owner"),
+                        aaiHelper.getRelationshipData(relationship, "cloud-region.cloud-region-id"),
+                        aaiHelper.getRelationshipData(relationship, "tenant.tenant-id"),
+                        aaiHelper.getRelationshipData(relationship, "vserver.vserver-id"));
+            }
+        }
+
+
     }
 }

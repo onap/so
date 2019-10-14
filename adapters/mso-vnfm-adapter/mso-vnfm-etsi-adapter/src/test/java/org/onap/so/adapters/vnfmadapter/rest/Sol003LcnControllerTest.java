@@ -73,6 +73,7 @@ import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201L
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201LinksSelf;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201VimConnectionInfo;
 import org.onap.so.client.aai.AAIResourcesClient;
+import org.onap.so.client.aai.AAIVersion;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

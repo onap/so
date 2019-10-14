@@ -29,6 +29,7 @@ import org.onap.so.adapters.vnfmadapter.extclients.aai.AaiServiceProvider;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.VnfmServiceProvider;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.JobNotFoundException;
+import org.onap.so.rest.exceptions.HttpResouceNotFoundException;
 import org.onap.vnfmadapter.v1.model.OperationEnum;
 import org.onap.vnfmadapter.v1.model.OperationStateEnum;
 import org.onap.vnfmadapter.v1.model.OperationStatusRetrievalStatusEnum;
@@ -42,6 +43,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class JobManager {
+    public static final String ALREADY_COMPLETED_OPERATION_ID = "alreadyCompleted";
     private static final String SEPARATOR = "_";
     private static Logger logger = getLogger(JobManager.class);
     private final Map<String, VnfmOperation> mapOfJobIdToVnfmOperation = Maps.newConcurrentMap();
@@ -87,6 +89,11 @@ public class JobManager {
             throw new JobNotFoundException("No job found with ID: " + jobId);
         }
 
+        if (vnfmOperation.getOperationId().equals(ALREADY_COMPLETED_OPERATION_ID)) {
+            response.setOperationStatusRetrievalStatus(OperationStatusRetrievalStatusEnum.STATUS_FOUND);
+            return response.operationState(OperationStateEnum.COMPLETED);
+        }
+
         if (vnfmOperation.isVnfDeleted()) {
             response.setOperationStatusRetrievalStatus(OperationStatusRetrievalStatusEnum.STATUS_FOUND);
             return response.operationState(getOperationState(vnfmOperation, null));
@@ -116,7 +123,7 @@ public class JobManager {
             response.setVnfInstanceId(operation.getVnfInstanceId());
 
             return response;
-        } catch (final Exception exception) {
+        } catch (final HttpResouceNotFoundException exception) {
             logger.error("Exception encountered trying to get operation status for operation id "
                     + vnfmOperation.getOperationId(), exception);
             return response.operationStatusRetrievalStatus(OperationStatusRetrievalStatusEnum.WAITING_FOR_STATUS);

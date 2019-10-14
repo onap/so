@@ -32,7 +32,6 @@
     <module>cloudify-client</module>
     <module>cxf-logging</module>
     <module>so-monitoring</module>
-    <module>vnfm-simulator</module>
     <module>packages</module>
   </modules>
   <properties>
@@ -49,7 +48,7 @@
     <sonar.cpd.exclusions>**/*</sonar.cpd.exclusions>
     <jacoco.version>0.7.5.201505241946</jacoco.version>
     <org.apache.maven.user-settings />
-    <openstack.version>1.5.0-SNAPSHOT</openstack.version>
+    <openstack.version>1.5.1</openstack.version>
     <maven.build.timestamp.format>yyyyMMdd'T'HHmm</maven.build.timestamp.format>
     <originalClassifier>original</originalClassifier>
     <docker.skip>true</docker.skip>

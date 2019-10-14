@@ -78,6 +78,179 @@ OJSI Issues
 	N/A
 
 
+
+Version: 5.0.1
+-----------------------
+
+:Release Date: 2019-10-11
+
+**Docker Images**
+
+**Dockers released for SO:**
+
+ - onap/so/api-handler-infra,1.5.3
+ - onap/so/bpmn-infra,1.5.3
+ - onap/so/catalog-db-adapter,1.5.3
+ - onap/so/openstack-adapter,1.5.3
+ - onap/so/request-db-adapter,1.5.3
+ - onap/so/sdc-controller,1.5.3
+ - onap/so/sdnc-adapter,1.5.3
+ - onap/so/so-monitoring,1.5.3
+ - onap/so/vfc-adapter,1.5.3
+ - onap/so/vnfm-adapter,1.5.3
+ - onap/so/vnfm-simulator,1.5.3
+
+**Release Purpose**
+
+The R5 El Alto release of ONAP is a maintenance release, focusing on deployability, technical debt, and auto test case improvements.
+
+**New Features**
+
+The main goal of the El-Alto release was to improve documentation, UT improvement for various kinds of resources.
+
+**Epics**
+-  [`SO-1756 <https://jira.onap.org/browse/SO-1756>`__\ ] - Enhance SO VNFM Adapter
+
+**Stories**
+-  [`SO-2376 <https://jira.onap.org/browse/SO-2376>`__\ ] - Improve fall out case handling
+-  [`SO-2363 <https://jira.onap.org/browse/SO-2363>`__\ ] - Update Resume Logic and Add Workflow Listeners
+-  [`SO-2353 <https://jira.onap.org/browse/SO-2353>`__\ ] - update logging to match onap logging library
+-  [`SO-2352 <https://jira.onap.org/browse/SO-2352>`__\ ] - Improvements to relationship handling in VNFM adapter
+-  [`SO-2332 <https://jira.onap.org/browse/SO-2332>`__\ ] - Remove unused table requestdb.active_requests.
+-  [`SO-2306 <https://jira.onap.org/browse/SO-2306>`__\ ] - getentity csar logging
+-  [`SO-2301 <https://jira.onap.org/browse/SO-2301>`__\ ] - Integrate Logging Library
+-  [`SO-2297 <https://jira.onap.org/browse/SO-2297>`__\ ] - updated all sql files including in tests to use
+-  [`SO-2291 <https://jira.onap.org/browse/SO-2291>`__\ ] - Created external task utils in a common location
+-  [`SO-2283 <https://jira.onap.org/browse/SO-2283>`__\ ] - Convert NetworkCollection to use GetEntity API.
+-  [`SO-2282 <https://jira.onap.org/browse/SO-2282>`__\ ] - Convert to use the GetEntity API
+-  [`SO-2259 <https://jira.onap.org/browse/SO-2259>`__\ ] - Added default value for when ErrorCode is null in mdc
+-  [`SO-2244 <https://jira.onap.org/browse/SO-2244>`__\ ] - Updated VNF and VfModules to use the getEntity API.
+-  [`SO-2233 <https://jira.onap.org/browse/SO-2233>`__\ ] - fixed dsl builder to correctly add output
+-  [`SO-2232 <https://jira.onap.org/browse/SO-2232>`__\ ] - Initial commit of validation framework to APIH
+-  [`SO-2231 <https://jira.onap.org/browse/SO-2231>`__\ ] - asdc controller treat distributionid as requestid in mdc
+-  [`SO-2224 <https://jira.onap.org/browse/SO-2224>`__\ ] - Updated vnfc instance groups to use the getEntity API.
+-  [`SO-2216 <https://jira.onap.org/browse/SO-2216>`__\ ] - health check now entirely config based
+-  [`SO-2205 <https://jira.onap.org/browse/SO-2205>`__\ ] - add rainy day handling with SERVICE_ROLE and type
+-  [`SO-2202 <https://jira.onap.org/browse/SO-2202>`__\ ] - Updated cvnfc's to use the getEntity API
+-  [`SO-2190 <https://jira.onap.org/browse/SO-2190>`__\ ] - VNFM adapter support two way TLS
+-  [`SO-2180 <https://jira.onap.org/browse/SO-2180>`__\ ] - Support oauth for calls from VNFM to VNFM adapter
+-  [`SO-2169 <https://jira.onap.org/browse/SO-2169>`__\ ] - Add oauth for calls from VNFM adapter to VNFM
+-  [`SO-2157 <https://jira.onap.org/browse/SO-2157>`__\ ] - Upgrade springboot.version from 2.0.5 to 2.1.5
+-  [`SO-2147 <https://jira.onap.org/browse/SO-2147>`__\ ] - Converted NetworkResource to use the parser getEntity method
+-  [`SO-2143 <https://jira.onap.org/browse/SO-2143>`__\ ] - Implement TLS for calls into VNFM adapter
+-  [`SO-2142 <https://jira.onap.org/browse/SO-2142>`__\ ] - mso to enhance get orchestration request to include workflow step
+-  [`SO-2122 <https://jira.onap.org/browse/SO-2122>`__\ ] - Added servicename to MDC so that it gets logged and added enter and exit markers
+-  [`SO-2121 <https://jira.onap.org/browse/SO-2121>`__\ ] - Removing the application-local.yaml files from the projects to fix CSO pen test issues
+-  [`SO-2116 <https://jira.onap.org/browse/SO-2116>`__\ ] - Implement TLS for calls from VNFM adapter to VNFM
+-  [`SO-2114 <https://jira.onap.org/browse/SO-2114>`__\ ] - We need to expand column request_status on table archived_infra_requests as well
+-  [`SO-2111 <https://jira.onap.org/browse/SO-2111>`__\ ] - add query stack data and populate table step
+-  [`SO-2097 <https://jira.onap.org/browse/SO-2097>`__\ ] - Global JJB Migration of SO
+-  [`SO-2093 <https://jira.onap.org/browse/SO-2093>`__\ ] - mso will support new requeststate values
+-  [`SO-2092 <https://jira.onap.org/browse/SO-2092>`__\ ] - update bpmn to save extsystemerrorsource
+-  [`SO-2080 <https://jira.onap.org/browse/SO-2080>`__\ ] - support new query param format
+-  [`SO-2068 <https://jira.onap.org/browse/SO-2068>`__\ ] - improved logging when no exception data is found
+-  [`SO-2066 <https://jira.onap.org/browse/SO-2066>`__\ ] - SO API Security Matrix
+-  [`SO-2064 <https://jira.onap.org/browse/SO-2064>`__\ ] - Alpine porting check
+-  [`SO-2057 <https://jira.onap.org/browse/SO-2057>`__\ ] - Update failsafe dependency to 2.0.1
+-  [`SO-2055 <https://jira.onap.org/browse/SO-2055>`__\ ] - enhance workflowaction to handle resume func
+-  [`SO-2054 <https://jira.onap.org/browse/SO-2054>`__\ ] - add rollback ext system error source
+-  [`SO-2052 <https://jira.onap.org/browse/SO-2052>`__\ ] - Javadoc and logging improvement
+-  [`SO-2048 <https://jira.onap.org/browse/SO-2048>`__\ ] - Building individual repos for reducing compilation time
+-  [`SO-2043 <https://jira.onap.org/browse/SO-2043>`__\ ] - Security updates for maven dependencies
+-  [`SO-2035 <https://jira.onap.org/browse/SO-2035>`__\ ] - update apih to accept new uri parameter
+-  [`SO-2032 <https://jira.onap.org/browse/SO-2032>`__\ ] - support no payload for alacarte deletes
+-  [`SO-2024 <https://jira.onap.org/browse/SO-2024>`__\ ] - Validate ServiceInstance name using createNodesUri.
+-  [`SO-2023 <https://jira.onap.org/browse/SO-2023>`__\ ] - add is_data_internal column to request processing data
+-  [`SO-2022 <https://jira.onap.org/browse/SO-2022>`__\ ] - Validate name for InstanceGroup, Configuration and Network.
+-  [`SO-2021 <https://jira.onap.org/browse/SO-2021>`__\ ] - update multi stage code to accurately skip bbs if true
+-  [`SO-2020 <https://jira.onap.org/browse/SO-2020>`__\ ] - mso to validate the name uniqueness during object creation in a ai
+-  [`SO-2018 <https://jira.onap.org/browse/SO-2018>`__\ ] - Changes related to eviction of connections from connection pool
+-  [`SO-2017 <https://jira.onap.org/browse/SO-2017>`__\ ] - use count format and limit one for exists
+-  [`SO-2015 <https://jira.onap.org/browse/SO-2015>`__\ ] - support async operation for vf module operations with sdnc
+-  [`SO-2001 <https://jira.onap.org/browse/SO-2001>`__\ ] - Added ext_system_error_source column to requestdb
+-  [`SO-1999 <https://jira.onap.org/browse/SO-1999>`__\ ] - replaced String.repeat with static final strings
+-  [`SO-1990 <https://jira.onap.org/browse/SO-1990>`__\ ] - resume request copying request body rewrite requestorid
+-  [`SO-1976 <https://jira.onap.org/browse/SO-1976>`__\ ] - Enhance naming service support
+-  [`SO-1975 <https://jira.onap.org/browse/SO-1975>`__\ ] - Accommodate WAN Networking
+-  [`SO-1963 <https://jira.onap.org/browse/SO-1963>`__\ ] - apih resume request handling more generic
+-  [`SO-1960 <https://jira.onap.org/browse/SO-1960>`__\ ] - apih to populate original request id
+-  [`SO-1914 <https://jira.onap.org/browse/SO-1914>`__\ ] - Renamed NF fields in catalog db pojo
+-  [`SO-1902 <https://jira.onap.org/browse/SO-1902>`__\ ] - Added script for adding original_request_id column
+-  [`SO-1898 <https://jira.onap.org/browse/SO-1898>`__\ ] - Audit service enhancements
+-  [`SO-1897 <https://jira.onap.org/browse/SO-1897>`__\ ] - fix keypair conflict issue in openstack adapter
+-  [`SO-1893 <https://jira.onap.org/browse/SO-1893>`__\ ] - Initial checkin of updates for vf module replace
+-  [`SO-1867 <https://jira.onap.org/browse/SO-1867>`__\ ] - store openstack request status in requestdb
+-  [`SO-1866 <https://jira.onap.org/browse/SO-1866>`__\ ] - Update Rainy day handling to be more robust
+-  [`SO-1847 <https://jira.onap.org/browse/SO-1847>`__\ ] - Added inProgress request check to resume
+-  [`SO-1831 <https://jira.onap.org/browse/SO-1831>`__\ ] - Resume APIH Functionality
+-  [`SO-1807 <https://jira.onap.org/browse/SO-1807>`__\ ] - Store Cloud Request in Database, add to request service
+-  [`SO-1697 <https://jira.onap.org/browse/SO-1697>`__\ ] - Support State transition for configuration building blocks
+-  [`SO-1538 <https://jira.onap.org/browse/SO-1538>`__\ ] - Integration Test for SO VNFM Adapter - Perform the functional test to validate VNFM Adapter NBI and SOL003-based SBI
+-  [`SO-1447 <https://jira.onap.org/browse/SO-1447>`__\ ] - Refine multicloud use of SO cloudsites and identify DB
+-  [`SO-1446 <https://jira.onap.org/browse/SO-1446>`__\ ] - Multicloud API updates for generic clouds
+
+**Key Issues Addressed**
+-  [`SO-2400 <https://jira.onap.org/browse/SO-2400>`__\ ] - vCPE Create Res Cust Service Error : Execption in create execution list
+-  [`SO-2382 <https://jira.onap.org/browse/SO-2382>`__\ ] - SO ConfigAssign Java Exception
+-  [`SO-2378 <https://jira.onap.org/browse/SO-2378>`__\ ] - Java lang exception in Homing
+-  [`SO-2375 <https://jira.onap.org/browse/SO-2375>`__\ ] - vCPE instantiate gmux fails due to API Handler error
+-  [`SO-2357 <https://jira.onap.org/browse/SO-2357>`__\ ] - Distribution of K8S service fails
+-  [`SO-2354 <https://jira.onap.org/browse/SO-2354>`__\ ] - vCPE model_customization_id not found on create vfmodule
+-  [`SO-2351 <https://jira.onap.org/browse/SO-2351>`__\ ] - SO Distribution Error on Allotted Resource - duplicate primary
+-  [`SO-2349 <https://jira.onap.org/browse/SO-2349>`__\ ] - Exception in DMAAP Client when PNF_READY event arrives from PRH
+-  [`SO-2337 <https://jira.onap.org/browse/SO-2337>`__\ ] - Git clone not working for CSIT filename too long
+-  [`SO-2289 <https://jira.onap.org/browse/SO-2289>`__\ ] - CreateVcpeResCustService_simplified workflow used in PnP PNF registration workflow returns an exception in Dmaap listener
+-  [`SO-2229 <https://jira.onap.org/browse/SO-2229>`__\ ] - sdc adapter and openstack container in crash loopback
+-  [`SO-2228 <https://jira.onap.org/browse/SO-2228>`__\ ] - SDC Handler crash loopback
+-  [`SO-2222 <https://jira.onap.org/browse/SO-2222>`__\ ] - SO 1.5.0-STAGING-latest containers fail liveness probe
+-  [`SO-2221 <https://jira.onap.org/browse/SO-2221>`__\ ] - SO 1.5.0-STAGING-latest container fails to start
+-  [`SO-2082 <https://jira.onap.org/browse/SO-2082>`__\ ] - Delete Network does not work correctly
+-  [`SO-2038 <https://jira.onap.org/browse/SO-2038>`__\ ] - Fix build and harkari-cp version, Get LF to add dependency
+-  [`SO-2003 <https://jira.onap.org/browse/SO-2003>`__\ ] - No workflow assigned to 'Dissociate' button in VID
+-  [`SO-1934 <https://jira.onap.org/browse/SO-1934>`__\ ] - ETSI Building Block Fails to Execute - Due to variables not being mapped correctly in the workflow
+-  [`SO-1892 <https://jira.onap.org/browse/SO-1892>`__\ ] - CatalogDbClent -  sql query error
+-  [`SO-1809 <https://jira.onap.org/browse/SO-1809>`__\ ] - 'DoDeleteE2EServiceInstance' calls 'AAI GenericGetService' sub-process which is deleted from SO common-bpmn
+-  [`SO-1644 <https://jira.onap.org/browse/SO-1644>`__\ ] - SO doesn't keep the proxy settings within the containers
+-  [`SO-1605 <https://jira.onap.org/browse/SO-1605>`__\ ] - SO fails on updating Camunda table when DoCreateVfModule for vCPE infra service
+
+**Security Notes**
+ 
+ Quick Links:
+
+ - `SO project page <https://wiki.onap.org/display/DW/Service+Orchestrator+Project>`_
+ - `Passing Badge information for SO <https://bestpractices.coreinfrastructure.org/en/projects/1702>`_
+
+
+**Known Issues**
+
+-  [`SO-2063 <https://jira.onap.org/browse/SO-2063>`__\ ] - AAF integration
+-  [`SO-2403 <https://jira.onap.org/browse/SO-2403>`__\ ] - Not Displaying correct Workflow Name
+-  [`SO-2430 <https://jira.onap.org/browse/SO-2430>`__\ ] - vCPE Create VFmodule Fails on Query to SDNC
+-  [`SO-2433 <https://jira.onap.org/browse/SO-2433>`__\ ] - Not providing user options during Pause For Manual Task
+-  [`SO-2434 <https://jira.onap.org/browse/SO-2434>`__\ ] - Displaying Un-needed Mandatory User Inputs for Workflow with Pause
+
+
+OJSI Issues
+
+-  [`OJSI-110 <https://jira.onap.org/browse/OJSI-110>`__\ ] - so-monitor exposes plain text HTTP endpoint using port 30224
+-  [`OJSI-138 <https://jira.onap.org/browse/OJSI-138>`__\ ] - so exposes plain text HTTP endpoint using port 30277
+-  [`OJSI-169 <https://jira.onap.org/browse/OJSI-169>`__\ ] - Port 30224 exposes unprotected service outside of cluster
+-  [`OJSI-203 <https://jira.onap.org/browse/OJSI-203>`__\ ] - SO exposes unprotected APIs/UIs (CVE-2019-12128
+
+
+**Upgrade Notes**
+
+	N/A
+
+**Deprecation Notes**
+
+	N/A
+
+**Other**
+
+	N/A
+
+
 Version: 1.4.4
 -----------------------
 

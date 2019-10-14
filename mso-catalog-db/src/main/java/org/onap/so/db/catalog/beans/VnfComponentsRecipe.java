@@ -23,6 +23,8 @@ package org.onap.so.db.catalog.beans;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -38,6 +40,7 @@ public class VnfComponentsRecipe implements Serializable, Recipe {
 
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @BusinessKey
@@ -92,6 +95,7 @@ public class VnfComponentsRecipe implements Serializable, Recipe {
                 .toHashCode();
     }
 
+    @Override
     public Integer getId() {
         return id;
     }
@@ -100,6 +104,7 @@ public class VnfComponentsRecipe implements Serializable, Recipe {
         this.id = id;
     }
 
+    @Override
     public String getAction() {
         return action;
     }
@@ -108,6 +113,7 @@ public class VnfComponentsRecipe implements Serializable, Recipe {
         this.action = action;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
@@ -132,6 +138,7 @@ public class VnfComponentsRecipe implements Serializable, Recipe {
         this.vnfType = vnfType;
     }
 
+    @Override
     public String getParamXsd() {
         return paramXsd;
     }

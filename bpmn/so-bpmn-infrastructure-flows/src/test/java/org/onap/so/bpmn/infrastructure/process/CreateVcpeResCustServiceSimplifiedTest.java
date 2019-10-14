@@ -43,6 +43,7 @@ import org.onap.ccsdk.cds.controllerblueprints.processing.api.ExecutionServiceIn
 import org.onap.so.BaseBPMNTest;
 import org.onap.so.GrpcNettyServer;
 import org.onap.so.bpmn.mock.FileUtil;
+import org.onap.so.client.aai.AAIVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +61,7 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
     private static final int DMAAP_DELAY_TIME_MS = 2000;
 
     private static final String TEST_PROCESSINSTANCE_KEY = "CreateVcpeResCustService_simplified";
-
+    private static final AAIVersion VERSION = AAIVersion.LATEST;
     private String testBusinessKey;
     private String requestObject;
     private String responseObject;
@@ -230,7 +231,8 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
 
         String aaiResponse = "{\n" + "  \"results\": [\n" + "    {\n"
                 + "      \"resource-type\": \"service-instance\",\n"
-                + "      \"resource-link\": \"https://localhost:8443/aai/v15/business/customers/customer/ADemoCustomerInCiti/service-subscriptions/service-subscription/vCPE/service-instances/service-instance/key3\"\n"
+                + "      \"resource-link\": \"https://localhost:8443/aai/" + VERSION
+                + "/business/customers/customer/ADemoCustomerInCiti/service-subscriptions/service-subscription/vCPE/service-instances/service-instance/key3\"\n"
                 + "    }\n" + "  ]\n" + "}";
 
         String aaiPnfEntry = "{  \n" + "   \"pnf-name\":\"PNFDemo\",\n" + "   \"pnf-id\":\"testtest\",\n"
@@ -240,52 +242,55 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
         /**
          * Get the AAI entry for globalCustomerId as specified in the request file.
          */
-        wireMockServer.stubFor(
-                get(urlPathMatching("/aai/v15/business/customers/customer/ADemoCustomerInCiti.*")).willReturn(ok()));
+        wireMockServer
+                .stubFor(get(urlPathMatching("/aai/" + VERSION + "/business/customers/customer/ADemoCustomerInCiti.*"))
+                        .willReturn(ok()));
 
         /**
          * PUT the service to AAI with globalCustomerId, service type as specified in the request file. Service instance
          * id is generated during runtime, REGEX is used to represent the information.
          */
-        wireMockServer.stubFor(put(urlPathMatching(
-                "/aai/v15/business/customers/customer/ADemoCustomerInCiti/service-subscriptions/service-subscription/vCPE/service-instances/service-instance/.*")));
+        wireMockServer.stubFor(put(urlPathMatching("/aai/" + VERSION
+                + "/business/customers/customer/ADemoCustomerInCiti/service-subscriptions/service-subscription/vCPE/service-instances/service-instance/.*")));
 
-        wireMockServer.stubFor(get(urlPathMatching(
-                "/aai/v15/business/customers/customer/ADemoCustomerInCiti/service-subscriptions/service-subscription/vCPE/service-instances/service-instance/.*"))
+        wireMockServer.stubFor(get(urlPathMatching("/aai/" + VERSION
+                + "/business/customers/customer/ADemoCustomerInCiti/service-subscriptions/service-subscription/vCPE/service-instances/service-instance/.*"))
                         .willReturn(okJson(aaiResponse)));
 
         /**
          * Get the service from AAI
          */
-        wireMockServer.stubFor(get(urlPathMatching("/aai/v15/nodes/service-instances/service-instance/.*"))
+        wireMockServer.stubFor(get(urlPathMatching("/aai/" + VERSION + "/nodes/service-instances/service-instance/.*"))
                 .willReturn(okJson(aaiResponse)));
 
         /**
          * Put the project as specified in the request file to AAI.
          */
-        wireMockServer.stubFor(put(urlEqualTo("/aai/v15/business/projects/project/Project-Demonstration")));
+        wireMockServer.stubFor(put(urlEqualTo("/aai/" + VERSION + "/business/projects/project/Project-Demonstration")));
 
         /**
          * GET the project as specified in the request file to AAI.
          */
-        wireMockServer.stubFor(
-                get(urlPathMatching("/aai/v15/business/projects/project/Project-Demonstration")).willReturn(ok()));
+        wireMockServer
+                .stubFor(get(urlPathMatching("/aai/" + VERSION + "/business/projects/project/Project-Demonstration"))
+                        .willReturn(ok()));
 
         /**
          * PUT the PNF correlation ID to AAI.
          */
-        wireMockServer.stubFor(put(urlEqualTo("/aai/v15/network/pnfs/pnf/PNFDemo")));
+        wireMockServer.stubFor(put(urlEqualTo("/aai/" + VERSION + "/network/pnfs/pnf/PNFDemo")));
 
         /**
          * Get the PNF entry from AAI.
          */
-        wireMockServer.stubFor(get(urlEqualTo("/aai/v15/network/pnfs/pnf/PNFDemo")).willReturn(okJson(aaiPnfEntry)));
+        wireMockServer.stubFor(
+                get(urlEqualTo("/aai/" + VERSION + "/network/pnfs/pnf/PNFDemo")).willReturn(okJson(aaiPnfEntry)));
 
         /**
          * Put the PNF relationship
          */
-        wireMockServer.stubFor(put(
-                urlEqualTo("/aai/v15/business/projects/project/Project-Demonstration/relationship-list/relationship")));
+        wireMockServer.stubFor(put(urlEqualTo("/aai/" + VERSION
+                + "/business/projects/project/Project-Demonstration/relationship-list/relationship")));
     }
 
     /**

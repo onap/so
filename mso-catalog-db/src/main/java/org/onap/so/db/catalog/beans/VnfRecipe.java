@@ -24,6 +24,8 @@ import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
@@ -42,6 +44,7 @@ public class VnfRecipe implements Serializable, Recipe {
 
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @BusinessKey
@@ -117,6 +120,7 @@ public class VnfRecipe implements Serializable, Recipe {
         this.nfRole = nfRole;
     }
 
+    @Override
     public String getParamXsd() {
         return paramXsd;
     }
@@ -133,6 +137,7 @@ public class VnfRecipe implements Serializable, Recipe {
         this.vfModuleId = vfModuleId;
     }
 
+    @Override
     public Integer getId() {
         return id;
     }
@@ -141,6 +146,7 @@ public class VnfRecipe implements Serializable, Recipe {
         this.id = id;
     }
 
+    @Override
     public String getAction() {
         return action;
     }
@@ -149,6 +155,7 @@ public class VnfRecipe implements Serializable, Recipe {
         this.action = action;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
@@ -157,6 +164,7 @@ public class VnfRecipe implements Serializable, Recipe {
         this.description = description;
     }
 
+    @Override
     public String getOrchestrationUri() {
         return orchestrationUri;
     }
@@ -165,6 +173,7 @@ public class VnfRecipe implements Serializable, Recipe {
         this.orchestrationUri = orchestrationUri;
     }
 
+    @Override
     public Integer getRecipeTimeout() {
         return recipeTimeout;
     }
