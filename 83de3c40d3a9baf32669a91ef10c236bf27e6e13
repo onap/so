@@ -1,0 +1,188 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3685b368_151af8af",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/java/org/onap/so/bpmn/common/workflow/service/WorkflowResource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 336,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-14T12:42:39Z",
+      "side": 1,
+      "message": "Remove it.",
+      "range": {
+        "startLine": 336,
+        "startChar": 12,
+        "endLine": 336,
+        "endChar": 59
+      },
+      "revId": "83de3c40d3a9baf32669a91ef10c236bf27e6e13",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "02e85b26_7f752d71",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/java/org/onap/so/bpmn/common/workflow/service/WorkflowResource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 560,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-14T12:42:39Z",
+      "side": 1,
+      "message": "Remove it.",
+      "range": {
+        "startLine": 560,
+        "startChar": 8,
+        "endLine": 560,
+        "endChar": 55
+      },
+      "revId": "83de3c40d3a9baf32669a91ef10c236bf27e6e13",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ac9f69c3_898ce782",
+        "filename": "mso-api-handlers/mso-requests-db-repositories/src/main/java/org/onap/so/db/request/data/repository/InfraActiveRequestsRepositoryImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-14T12:42:39Z",
+      "side": 1,
+      "message": "Remove it.",
+      "range": {
+        "startLine": 117,
+        "startChar": 8,
+        "endLine": 117,
+        "endChar": 61
+      },
+      "revId": "83de3c40d3a9baf32669a91ef10c236bf27e6e13",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "80c936c4_202f67e1",
+        "filename": "mso-api-handlers/mso-requests-db-repositories/src/main/java/org/onap/so/db/request/data/repository/InfraActiveRequestsRepositoryImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-14T12:42:39Z",
+      "side": 1,
+      "message": "Remove it.",
+      "range": {
+        "startLine": 134,
+        "startChar": 8,
+        "endLine": 134,
+        "endChar": 61
+      },
+      "revId": "83de3c40d3a9baf32669a91ef10c236bf27e6e13",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "39b08e8a_fa66aeca",
+        "filename": "mso-api-handlers/mso-requests-db-repositories/src/main/java/org/onap/so/db/request/data/repository/InfraActiveRequestsRepositoryImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 416,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-14T12:42:39Z",
+      "side": 1,
+      "message": "Remove it.",
+      "range": {
+        "startLine": 416,
+        "startChar": 8,
+        "endLine": 416,
+        "endChar": 61
+      },
+      "revId": "83de3c40d3a9baf32669a91ef10c236bf27e6e13",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "825ce973_d9434d32",
+        "filename": "mso-api-handlers/mso-requests-db-repositories/src/main/java/org/onap/so/db/request/data/repository/InfraActiveRequestsRepositoryImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 437,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-14T12:42:39Z",
+      "side": 1,
+      "message": "Remove it.",
+      "range": {
+        "startLine": 437,
+        "startChar": 8,
+        "endLine": 437,
+        "endChar": 61
+      },
+      "revId": "83de3c40d3a9baf32669a91ef10c236bf27e6e13",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b2cda936_8752d600",
+        "filename": "mso-api-handlers/mso-requests-db-repositories/src/main/java/org/onap/so/db/request/data/repository/InfraActiveRequestsRepositoryImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 467,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-14T12:42:39Z",
+      "side": 1,
+      "message": "Remove it.",
+      "range": {
+        "startLine": 467,
+        "startChar": 8,
+        "endLine": 467,
+        "endChar": 61
+      },
+      "revId": "83de3c40d3a9baf32669a91ef10c236bf27e6e13",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ed281a64_c2ebfe7c",
+        "filename": "mso-api-handlers/mso-requests-db-repositories/src/main/java/org/onap/so/db/request/data/repository/InfraActiveRequestsRepositoryImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 493,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-14T12:42:39Z",
+      "side": 1,
+      "message": "Remove it.",
+      "range": {
+        "startLine": 493,
+        "startChar": 8,
+        "endLine": 493,
+        "endChar": 61
+      },
+      "revId": "83de3c40d3a9baf32669a91ef10c236bf27e6e13",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
