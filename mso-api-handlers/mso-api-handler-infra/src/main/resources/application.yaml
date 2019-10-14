@@ -74,11 +74,3 @@ management:
       prometheus:
         enabled: true # Whether exporting of metrics to Prometheus is enabled.
         step: 1m # Step size (i.e. reporting frequency) to use.
- 
-
-org:
-  onap:
-    so:
-      adapters:
-        network:
-          encryptionKey: aa3871669d893c7fb8abbcda31b88b4f
