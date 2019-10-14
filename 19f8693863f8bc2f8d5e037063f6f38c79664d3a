@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "95cba859_df6ec9d4",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/V7.1__UpdatedCloudSiteTable.sql",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 5286
+      },
+      "writtenOn": "2019-10-14T06:19:49Z",
+      "side": 1,
+      "message": "make this not null also.\n\nADD COLUMN IF NOT EXISTS SUPPORT_FABRIC bit(1)\n    NOT NULL DEFAULT 1",
+      "range": {
+        "startLine": 5,
+        "startChar": 4,
+        "endLine": 5,
+        "endChar": 13
+      },
+      "revId": "19f8693863f8bc2f8d5e037063f6f38c79664d3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e4f43f24_64ced2b2",
+        "filename": "mso-catalog-db/src/test/resources/schema.sql",
+        "patchSetId": 1
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 5286
+      },
+      "writtenOn": "2019-10-14T06:19:49Z",
+      "side": 1,
+      "message": "For backward compartibility, assign default value for this column, since we are changing to not null.",
+      "range": {
+        "startLine": 123,
+        "startChar": 25,
+        "endLine": 123,
+        "endChar": 35
+      },
+      "revId": "19f8693863f8bc2f8d5e037063f6f38c79664d3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
