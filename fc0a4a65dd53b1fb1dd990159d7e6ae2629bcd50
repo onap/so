@@ -1,0 +1,395 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "54b055b5_8b40f7c6",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/network/MsoNetworkAdapterImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 313,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-14T12:36:43Z",
+      "side": 1,
+      "message": "Remove it.",
+      "range": {
+        "startLine": 313,
+        "startChar": 12,
+        "endLine": 313,
+        "endChar": 71
+      },
+      "revId": "fc0a4a65dd53b1fb1dd990159d7e6ae2629bcd50",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4beed022_c030001e",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/network/MsoNetworkAdapterImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 567,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-14T12:36:43Z",
+      "side": 1,
+      "message": "Remove it.",
+      "range": {
+        "startLine": 567,
+        "startChar": 11,
+        "endLine": 567,
+        "endChar": 71
+      },
+      "revId": "fc0a4a65dd53b1fb1dd990159d7e6ae2629bcd50",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ef74e184_9bb1b779",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/network/MsoNetworkAdapterImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 611,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-14T12:36:43Z",
+      "side": 1,
+      "message": "Remove it.",
+      "range": {
+        "startLine": 611,
+        "startChar": 12,
+        "endLine": 611,
+        "endChar": 69
+      },
+      "revId": "fc0a4a65dd53b1fb1dd990159d7e6ae2629bcd50",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a76cc333_98c33ffc",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/network/MsoNetworkAdapterImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 731,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-14T12:36:43Z",
+      "side": 1,
+      "message": "Remove it.",
+      "range": {
+        "startLine": 731,
+        "startChar": 12,
+        "endLine": 731,
+        "endChar": 70
+      },
+      "revId": "fc0a4a65dd53b1fb1dd990159d7e6ae2629bcd50",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "847b9491_15da659a",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/network/MsoNetworkAdapterImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 896,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-14T12:36:43Z",
+      "side": 1,
+      "message": "Remove it.",
+      "range": {
+        "startLine": 895,
+        "startChar": 8,
+        "endLine": 896,
+        "endChar": 55
+      },
+      "revId": "fc0a4a65dd53b1fb1dd990159d7e6ae2629bcd50",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "05bdcfd8_458f98e1",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/network/MsoNetworkAdapterImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 922,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-14T12:36:43Z",
+      "side": 1,
+      "message": "Remove it.",
+      "range": {
+        "startLine": 922,
+        "startChar": 8,
+        "endLine": 922,
+        "endChar": 65
+      },
+      "revId": "fc0a4a65dd53b1fb1dd990159d7e6ae2629bcd50",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "042d3c1d_a254ee5d",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/network/MsoNetworkAdapterImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 964,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-14T12:36:43Z",
+      "side": 1,
+      "message": "Remove it.",
+      "range": {
+        "startLine": 964,
+        "startChar": 8,
+        "endLine": 964,
+        "endChar": 67
+      },
+      "revId": "fc0a4a65dd53b1fb1dd990159d7e6ae2629bcd50",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3946b54e_a086fe7e",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/BuildingBlockTestDataSetup.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-14T12:36:43Z",
+      "side": 1,
+      "message": "Remove it.",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 29,
+        "endChar": 36
+      },
+      "revId": "fc0a4a65dd53b1fb1dd990159d7e6ae2629bcd50",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87205704_184f75ad",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/BuildingBlockTestDataSetup.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-14T12:36:43Z",
+      "side": 1,
+      "message": "Remove it.",
+      "range": {
+        "startLine": 83,
+        "startChar": 4,
+        "endLine": 83,
+        "endChar": 36
+      },
+      "revId": "fc0a4a65dd53b1fb1dd990159d7e6ae2629bcd50",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "264c4daf_fe3f7c4b",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/BuildingBlockTestDataSetup.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-14T12:36:43Z",
+      "side": 1,
+      "message": "Remove method.",
+      "range": {
+        "startLine": 219,
+        "startChar": 4,
+        "endLine": 219,
+        "endChar": 59
+      },
+      "revId": "fc0a4a65dd53b1fb1dd990159d7e6ae2629bcd50",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da4305c8_3ab8676a",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/BuildingBlockTestDataSetup.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 366,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-14T12:36:43Z",
+      "side": 1,
+      "message": "Remove method.",
+      "range": {
+        "startLine": 366,
+        "startChar": 3,
+        "endLine": 366,
+        "endChar": 45
+      },
+      "revId": "fc0a4a65dd53b1fb1dd990159d7e6ae2629bcd50",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d9def292_267e3cec",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/BuildingBlockTestDataSetup.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 401,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-14T12:36:43Z",
+      "side": 1,
+      "message": "Remove method.",
+      "range": {
+        "startLine": 401,
+        "startChar": 3,
+        "endLine": 401,
+        "endChar": 39
+      },
+      "revId": "fc0a4a65dd53b1fb1dd990159d7e6ae2629bcd50",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0c44a5e3_12984a88",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/BuildingBlockTestDataSetup.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 621,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-14T12:36:43Z",
+      "side": 1,
+      "message": "Remove method.",
+      "range": {
+        "startLine": 621,
+        "startChar": 4,
+        "endLine": 621,
+        "endChar": 47
+      },
+      "revId": "fc0a4a65dd53b1fb1dd990159d7e6ae2629bcd50",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e23af750_8df1409d",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/BuildingBlockTestDataSetup.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 639,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-14T12:36:43Z",
+      "side": 1,
+      "message": "Remove method.",
+      "range": {
+        "startLine": 639,
+        "startChar": 3,
+        "endLine": 639,
+        "endChar": 39
+      },
+      "revId": "fc0a4a65dd53b1fb1dd990159d7e6ae2629bcd50",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "683c5cb2_92e96790",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/BuildingBlockTestDataSetup.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 647,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-14T12:36:43Z",
+      "side": 1,
+      "message": "Remove method.",
+      "range": {
+        "startLine": 647,
+        "startChar": 4,
+        "endLine": 647,
+        "endChar": 79
+      },
+      "revId": "fc0a4a65dd53b1fb1dd990159d7e6ae2629bcd50",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d8546f3c_d52793ff",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/BuildingBlockTestDataSetup.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 664,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-14T12:36:43Z",
+      "side": 1,
+      "message": "Remove method.",
+      "range": {
+        "startLine": 664,
+        "startChar": 4,
+        "endLine": 664,
+        "endChar": 74
+      },
+      "revId": "fc0a4a65dd53b1fb1dd990159d7e6ae2629bcd50",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8230f689_bf4a9854",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/BuildingBlockTestDataSetup.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 680,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-14T12:36:43Z",
+      "side": 1,
+      "message": "This method is not used, remove it.",
+      "range": {
+        "startLine": 680,
+        "startChar": 4,
+        "endLine": 680,
+        "endChar": 45
+      },
+      "revId": "fc0a4a65dd53b1fb1dd990159d7e6ae2629bcd50",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
