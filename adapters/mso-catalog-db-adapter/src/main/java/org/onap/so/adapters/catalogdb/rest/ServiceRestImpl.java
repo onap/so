@@ -63,7 +63,7 @@ public class ServiceRestImpl {
     public Service findService(@PathParam("modelUUID") String modelUUID, @QueryParam("depth") int depth) {
         org.onap.so.db.catalog.beans.Service service = serviceRepo.findOneByModelUUID(modelUUID);
         if (service == null) {
-            new CatalogEntityNotFoundException("Unable to find Service " + modelUUID);
+            throw new CatalogEntityNotFoundException("Unable to find Service " + modelUUID);
         }
         return serviceMapper.mapService(service, depth);
     }
@@ -79,7 +79,7 @@ public class ServiceRestImpl {
                     required = false) @QueryParam("distributionStatus") String distributionStatus,
             @Parameter(description = "depth", required = false) @QueryParam("depth") int depth) {
         List<Service> services = new ArrayList<>();
-        List<org.onap.so.db.catalog.beans.Service> serviceFromDB = new ArrayList<>();
+        List<org.onap.so.db.catalog.beans.Service> serviceFromDB;
         if (!Strings.isNullOrEmpty(modelName) && !Strings.isNullOrEmpty(distributionStatus)) {
             serviceFromDB = serviceRepo.findByModelNameAndDistrobutionStatus(modelName, distributionStatus);
         } else if (!Strings.isNullOrEmpty(modelName)) {
