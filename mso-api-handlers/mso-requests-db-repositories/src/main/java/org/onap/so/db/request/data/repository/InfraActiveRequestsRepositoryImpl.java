@@ -114,7 +114,6 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
     private List<InfraActiveRequests> executeInfraQuery(final CriteriaQuery<InfraActiveRequests> crit,
             final List<Predicate> predicates, final Order order) {
 
-        final long startTime = System.currentTimeMillis();
         logger.debug("Execute query on infra active request table");
 
         final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -131,15 +130,12 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
      */
     @Override
     public InfraActiveRequests getRequestFromInfraActive(final String requestId) {
-        final long startTime = System.currentTimeMillis();
         logger.debug("Get request {} from InfraActiveRequests DB", requestId);
 
-        InfraActiveRequests ar = null;
         final Query query = entityManager
                 .createQuery("from InfraActiveRequests where requestId = :requestId OR clientRequestId = :requestId");
         query.setParameter(REQUEST_ID, requestId);
-        ar = this.getSingleResult(query);
-        return ar;
+        return this.getSingleResult(query);
     }
 
     /*
@@ -238,7 +234,6 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
     @Override
     public List<InfraActiveRequests> getOrchestrationFiltersFromInfraActive(
             final Map<String, List<String>> orchestrationMap) {
-
 
         final List<Predicate> predicates = new LinkedList<>();
         final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -416,17 +411,13 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
      */
     @Override
     public InfraActiveRequests getRequestFromInfraActive(final String requestId, final String requestType) {
-        final long startTime = System.currentTimeMillis();
         logger.debug("Get infra request from DB with id {}", requestId);
-
-        InfraActiveRequests ar = null;
 
         final Query query = entityManager.createQuery(
                 "from InfraActiveRequests where (requestId = :requestId OR clientRequestId = :requestId) and requestType = :requestType");
         query.setParameter(REQUEST_ID, requestId);
         query.setParameter(REQUEST_TYPE, requestType);
-        ar = this.getSingleResult(query);
-        return ar;
+        return this.getSingleResult(query);
     }
 
 
@@ -440,7 +431,6 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
     public InfraActiveRequests checkDuplicateByVnfName(final String vnfName, final String action,
             final String requestType) {
 
-        final long startTime = System.currentTimeMillis();
         logger.debug("Get infra request from DB for VNF {} and action {} and requestType {}", vnfName, action,
                 requestType);
 
@@ -470,7 +460,6 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
     public InfraActiveRequests checkDuplicateByVnfId(final String vnfId, final String action,
             final String requestType) {
 
-        final long startTime = System.currentTimeMillis();
         logger.debug("Get list of infra requests from DB for VNF {} and action {}", vnfId, action);
 
         InfraActiveRequests ar = null;
@@ -496,7 +485,6 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
      */
     @Override
     public InfraActiveRequests checkVnfIdStatus(final String operationalEnvironmentId) {
-        final long startTime = System.currentTimeMillis();
         logger.debug("Get Infra request from DB for OperationalEnvironmentId {}", operationalEnvironmentId);
 
         InfraActiveRequests ar = null;

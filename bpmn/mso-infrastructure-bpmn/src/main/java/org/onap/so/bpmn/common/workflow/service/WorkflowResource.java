@@ -333,8 +333,6 @@ public class WorkflowResource extends ProcessEngineAwareService {
         public void run() {
             setLogContext(processKey, inputVariables);
 
-            long startTime = System.currentTimeMillis();
-
             try {
 
                 RuntimeService runtimeService = getProcessEngineServices().getRuntimeService();
@@ -557,7 +555,6 @@ public class WorkflowResource extends ProcessEngineAwareService {
         // TODO filter only set of variables
         WorkflowResponse response = new WorkflowResponse();
 
-        long startTime = System.currentTimeMillis();
         try {
             ProcessEngineServices engine = getProcessEngineServices();
             List<HistoricVariableInstance> variables = engine.getHistoryService().createHistoricVariableInstanceQuery()
