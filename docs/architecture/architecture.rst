@@ -108,6 +108,8 @@ SO Sub-Components
    * Tracking capability which VNFM instance has handled with which VNF instance
    * BPMN Building Block workflows and Java-based recipes for VNF LCM
    * VNFM Simulator for validating SO VNFM Adapter NBI and SBI for integration testing
+   * CSIT for VNFM Adapter, https://wiki.onap.org/display/DW/SO+ETSI+CSIT
+   * Running the CSIT tests guide, https://wiki.onap.org/pages/viewpage.action?pageId=68524128
 
 Third Party and Open Source
 ---------------------------
