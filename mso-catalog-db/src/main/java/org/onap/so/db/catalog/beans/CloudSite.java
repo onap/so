@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -120,6 +120,11 @@ public class CloudSite {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
 
+    @JsonProperty("support_fabric")
+    @BusinessKey
+    @Column(name = "SUPPORT_FABRIC")
+    private Boolean supportFabric = true;
+
     @Transient
     private URI uri;
 
@@ -142,6 +147,7 @@ public class CloudSite {
         this.platform = site.getPlatform();
         this.regionId = site.getRegionId();
         this.identityServiceId = site.getIdentityServiceId();
+        this.supportFabric = site.getSupportFabric();
     }
 
 
@@ -245,6 +251,14 @@ public class CloudSite {
 
     public void setIdentityService(CloudIdentity identity) {
         this.identityService = identity;
+    }
+
+    public Boolean getSupportFabric() {
+        return supportFabric;
+    }
+
+    public void setSupportFabric(Boolean supportFabric) {
+        this.supportFabric = supportFabric;
     }
 
     @Deprecated
