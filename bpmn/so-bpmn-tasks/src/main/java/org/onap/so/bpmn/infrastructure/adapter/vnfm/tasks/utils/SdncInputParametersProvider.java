@@ -19,6 +19,8 @@
  */
 package org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.utils;
 
+import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.ADDITIONAL_PARAMS;
+import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.EXT_VIRTUAL_LINKS;
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.FORWARD_SLASH;
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.PRELOAD_VNFS_URL;
 import java.io.IOException;
@@ -35,8 +37,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import net.minidev.json.JSONArray;
@@ -48,18 +48,16 @@ import net.minidev.json.JSONArray;
  * @author waqas.ikram@est.tech
  */
 @Service
-public class InputParametersProviderImpl implements InputParametersProvider {
+public class SdncInputParametersProvider extends AbstractInputParametersProvider<GenericVnf> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(InputParametersProviderImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SdncInputParametersProvider.class);
 
-    private static final String EXT_VIRTUAL_LINKS = "extVirtualLinks";
-    private static final String ADDITIONAL_PARAMS = "additionalParams";
     private static final String VNF_PARAMETERS_PATH = "$..vnf-parameters";
 
     private final SDNCClient sdncClient;
 
     @Autowired
-    public InputParametersProviderImpl(final SDNCClient sdncClient) {
+    public SdncInputParametersProvider(final SDNCClient sdncClient) {
         this.sdncClient = sdncClient;
     }
 
@@ -80,8 +78,11 @@ public class InputParametersProviderImpl implements InputParametersProvider {
                     if (vnfParametersObject instanceof JSONArray) {
                         final JSONArray vnfParameters = (JSONArray) vnfParametersObject;
                         final Map<String, String> vnfParametersMap = getVnfParameterMap(vnfParameters);
-                        return new InputParameter(getAdditionalParameters(vnfParametersMap),
-                                getExtVirtualLinks(vnfParametersMap));
+                        final Map<String, String> additionalParameters = getAdditionalParameters(vnfParametersMap);
+                        final List<ExternalVirtualLink> extVirtualLinks = getExtVirtualLinks(vnfParametersMap);
+                        final InputParameter inputParameter = new InputParameter(additionalParameters, extVirtualLinks);
+                        LOGGER.info("InputParameter found in sdnc response : {}", inputParameter);
+                        return inputParameter;
                     }
                 }
             }
@@ -93,38 +94,23 @@ public class InputParametersProviderImpl implements InputParametersProvider {
 
     }
 
-    private List<ExternalVirtualLink> getExtVirtualLinks(final Map<String, String> vnfParametersMap)
-            throws JsonParseException, IOException {
-        try {
-            final String extVirtualLinksString = vnfParametersMap.get(EXT_VIRTUAL_LINKS);
+    private List<ExternalVirtualLink> getExtVirtualLinks(final Map<String, String> vnfParametersMap) {
+        final String extVirtualLinksString = vnfParametersMap.get(EXT_VIRTUAL_LINKS);
 
-            if (extVirtualLinksString != null && !extVirtualLinksString.isEmpty()) {
-                final ObjectMapper mapper = new ObjectMapper();
-                final TypeReference<List<ExternalVirtualLink>> extVirtualLinksStringTypeRef =
-                        new TypeReference<List<ExternalVirtualLink>>() {};
-
-                return mapper.readValue(extVirtualLinksString, extVirtualLinksStringTypeRef);
-            }
-        } catch (final Exception exception) {
-            LOGGER.error("Unable to parse {} ", EXT_VIRTUAL_LINKS, exception);
+        if (extVirtualLinksString != null && !extVirtualLinksString.isEmpty()) {
+            return parseExternalVirtualLinks(extVirtualLinksString);
         }
         return Collections.emptyList();
     }
 
-    private Map<String, String> getAdditionalParameters(final Map<String, String> vnfParametersMap)
-            throws JsonParseException, IOException {
-        try {
-            final String additionalParamsString = vnfParametersMap.get(ADDITIONAL_PARAMS);
-            if (additionalParamsString != null && !additionalParamsString.isEmpty()) {
-                final ObjectMapper mapper = new ObjectMapper();
-                final TypeReference<Map<String, String>> typeRef = new TypeReference<Map<String, String>>() {};
-                return mapper.readValue(additionalParamsString, typeRef);
-            }
-        } catch (final Exception exception) {
-            LOGGER.error("Unable to parse {} ", ADDITIONAL_PARAMS, exception);
+    private Map<String, String> getAdditionalParameters(final Map<String, String> vnfParametersMap) {
+        final String additionalParamsString = vnfParametersMap.get(ADDITIONAL_PARAMS);
+        if (additionalParamsString != null && !additionalParamsString.isEmpty()) {
+            return parseAdditionalParameters(additionalParamsString);
         }
         return Collections.emptyMap();
     }
+
 
     private Map<String, String> getVnfParameterMap(final JSONArray array) {
         try {
