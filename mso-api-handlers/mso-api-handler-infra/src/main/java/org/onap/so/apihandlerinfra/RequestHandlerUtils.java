@@ -109,7 +109,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
 
     private static Logger logger = LoggerFactory.getLogger(RequestHandlerUtils.class);
 
-    private static final String SAVE_TO_DB = "save instance to db";
+    protected static final String SAVE_TO_DB = "save instance to db";
     private static final String NAME = "name";
     private static final String VALUE = "value";
 
@@ -118,9 +118,6 @@ public class RequestHandlerUtils extends AbstractRestHandler {
 
     @Autowired
     private RequestClientFactory reqClientFactory;
-
-    @Autowired
-    private RequestsDbClient infraActiveRequestsClient;
 
     @Autowired
     private ResponseBuilder builder;
