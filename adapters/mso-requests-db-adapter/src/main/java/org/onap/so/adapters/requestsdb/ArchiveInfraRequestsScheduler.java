@@ -27,15 +27,19 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import org.onap.so.logger.LoggingAnchor;
+import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.db.request.beans.ArchivedInfraRequests;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.data.repository.ArchivedInfraRequestsRepository;
 import org.onap.so.db.request.data.repository.InfraActiveRequestsRepository;
 import org.onap.so.logger.ErrorCode;
+import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
+import org.onap.so.logger.ScheduledTasksMDCSetup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -52,6 +56,9 @@ public class ArchiveInfraRequestsScheduler {
     private InfraActiveRequestsRepository infraActiveRepo;
     @Autowired
     private ArchivedInfraRequestsRepository archivedInfraRepo;
+    @Autowired
+    private ScheduledTasksMDCSetup scheduledMDCSetup;
+
 
     @Value("${mso.infra-requests.archived.period}")
     private int archivedPeriod;
@@ -62,6 +69,7 @@ public class ArchiveInfraRequestsScheduler {
     @Scheduled(cron = "0 0 1 * * ?")
     @SchedulerLock(name = "archiveInfraRequestsScheduler")
     public void infraRequestsScheduledTask() {
+        scheduledMDCSetup.mdcSetup(ONAPComponents.REQUEST_DB, "infraRequestsScheduledTask");
         logger.debug("Start of archiveInfraRequestsScheduler");
 
         Date currentDate = new Date();
@@ -89,6 +97,7 @@ public class ArchiveInfraRequestsScheduler {
         } while (!requestsByStartTime.isEmpty());
 
         logger.debug("End of archiveInfraRequestsScheduler");
+        scheduledMDCSetup.exitAndClearMDC();
     }
 
     protected void archiveInfraRequests(List<InfraActiveRequests> requests) {
@@ -146,6 +155,8 @@ public class ArchiveInfraRequestsScheduler {
                 newArchivedReqs.add(archivedInfra);
                 oldInfraReqs.add(iar);
             } catch (Exception e) {
+                scheduledMDCSetup.errorMDCSetup(ErrorCode.UnknownError, e.getMessage());
+                MDC.put(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE, ONAPLogConstants.ResponseStatus.ERROR.toString());
                 logger.error(LoggingAnchor.TWO, MessageEnum.RA_GENERAL_EXCEPTION.toString(),
                         ErrorCode.UnknownError.getValue(), e);
             }
