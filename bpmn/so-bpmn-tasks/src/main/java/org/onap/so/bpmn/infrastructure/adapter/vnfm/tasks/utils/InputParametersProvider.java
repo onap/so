@@ -19,13 +19,11 @@
  */
 package org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.utils;
 
-import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
-
 /**
  * @author waqas.ikram@est.tech
  */
-public interface InputParametersProvider {
+public interface InputParametersProvider<T> {
 
-    InputParameter getInputParameter(final GenericVnf genericVnf);
+    InputParameter getInputParameter(final T object);
 
 }
