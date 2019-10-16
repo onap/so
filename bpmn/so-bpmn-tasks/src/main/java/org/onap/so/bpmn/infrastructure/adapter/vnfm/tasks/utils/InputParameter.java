@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.onap.vnfmadapter.v1.model.ExternalVirtualLink;
 
 /**
@@ -38,6 +40,8 @@ public class InputParameter implements Serializable {
     private Map<String, String> additionalParams = new HashMap<>();
 
     private List<ExternalVirtualLink> extVirtualLinks = new ArrayList<>();
+
+    public InputParameter() {}
 
     public InputParameter(final Map<String, String> additionalParams, final List<ExternalVirtualLink> extVirtualLinks) {
         this.additionalParams = additionalParams;
@@ -65,6 +69,12 @@ public class InputParameter implements Serializable {
         this.additionalParams = additionalParams;
     }
 
+    public void putAdditionalParams(final Map<String, String> additionalParams) {
+        if (additionalParams != null) {
+            this.additionalParams.putAll(additionalParams);
+        }
+    }
+
     /**
      * @param extVirtualLinks the extVirtualLinks to set
      */
@@ -72,9 +82,17 @@ public class InputParameter implements Serializable {
         this.extVirtualLinks = extVirtualLinks;
     }
 
+    public void addExtVirtualLinks(final List<ExternalVirtualLink> extVirtualLinks) {
+        if (extVirtualLinks != null) {
+            this.extVirtualLinks = Stream.concat(this.extVirtualLinks.stream(), extVirtualLinks.stream()).distinct()
+                    .collect(Collectors.toList());
+        }
+    }
+
     @Override
     public String toString() {
-        return "InputParameter [additionalParams=" + additionalParams + ", extVirtualLinks=" + extVirtualLinks + "]";
+        return this.getClass().getSimpleName() + " [additionalParams=" + additionalParams + ", extVirtualLinks="
+                + extVirtualLinks + "]";
     }
 
 }

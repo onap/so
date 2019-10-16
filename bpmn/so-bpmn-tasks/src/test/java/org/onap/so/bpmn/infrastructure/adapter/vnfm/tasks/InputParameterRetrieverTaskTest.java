@@ -19,12 +19,16 @@
  */
 package org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.TestConstants.ADDITIONAL_PARAMS_VALUE;
+import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.TestConstants.getUserParamsMap;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,9 +41,12 @@ import org.onap.so.bpmn.common.exceptions.RequiredExecutionVariableExeception;
 import org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.utils.InputParameter;
 import org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.utils.InputParametersProvider;
 import org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.utils.NullInputParameter;
+import org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.utils.UserParamInputParametersProvider;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
+import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
+import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestParameters;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 
 /**
@@ -47,33 +54,49 @@ import org.onap.so.client.exception.BBObjectNotFoundException;
  */
 public class InputParameterRetrieverTaskTest extends BaseTaskTest {
 
-    private final BuildingBlockExecution stubbedxecution = new StubbedBuildingBlockExecution();
+    private final StubbedBuildingBlockExecution stubbedxecution = new StubbedBuildingBlockExecution();
 
     @Mock
-    private InputParametersProvider inputParametersProvider;
+    private InputParametersProvider<GenericVnf> sdncInputParametersProvider;
+
+    private final InputParametersProvider<Map<String, Object>> userParamsinputParametersProvider =
+            new UserParamInputParametersProvider();
 
     @Test
-    public void testGGetInputParameters_inputParameterStoredInExecutionContext() throws BBObjectNotFoundException {
-        final InputParameterRetrieverTask objUnderTest =
-                new InputParameterRetrieverTask(inputParametersProvider, extractPojosForBB);
+    public void testGetInputParameters_inputParameterStoredInExecutionContext() throws BBObjectNotFoundException {
+        final InputParameterRetrieverTask objUnderTest = new InputParameterRetrieverTask(sdncInputParametersProvider,
+                userParamsinputParametersProvider, extractPojosForBB);
+
+
+        final GeneralBuildingBlock buildingBlock =
+                getGeneralBuildingBlock(getUserParamsMap(ADDITIONAL_PARAMS_VALUE, null));
+        stubbedxecution.setGeneralBuildingBlock(buildingBlock);
 
         final InputParameter inputParameter = new InputParameter(Collections.emptyMap(), Collections.emptyList());
-        when(inputParametersProvider.getInputParameter(Mockito.any(GenericVnf.class))).thenReturn(inputParameter);
+        when(sdncInputParametersProvider.getInputParameter(Mockito.any(GenericVnf.class))).thenReturn(inputParameter);
+
         when(extractPojosForBB.extractByKey(any(), eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(new GenericVnf());
         objUnderTest.getInputParameters(stubbedxecution);
 
         final Object actual = stubbedxecution.getVariable(Constants.INPUT_PARAMETER);
         assertNotNull(actual);
         assertTrue(actual instanceof InputParameter);
+        final InputParameter actualInputParameter = (InputParameter) actual;
+        final Map<String, String> actualAdditionalParams = actualInputParameter.getAdditionalParams();
+        assertEquals(3, actualAdditionalParams.size());
+
+        final String actualInstanceType = actualAdditionalParams.get("instance_type");
+        assertEquals("m1.small", actualInstanceType);
+
     }
 
     @Test
     public void testGGetInputParameters_ThrowExecption_NullInputParameterStoredInExecutionContext()
             throws BBObjectNotFoundException {
-        final InputParameterRetrieverTask objUnderTest =
-                new InputParameterRetrieverTask(inputParametersProvider, extractPojosForBB);
+        final InputParameterRetrieverTask objUnderTest = new InputParameterRetrieverTask(sdncInputParametersProvider,
+                userParamsinputParametersProvider, extractPojosForBB);
 
-        when(inputParametersProvider.getInputParameter(Mockito.any(GenericVnf.class)))
+        when(sdncInputParametersProvider.getInputParameter(Mockito.any(GenericVnf.class)))
                 .thenThrow(RuntimeException.class);
         when(extractPojosForBB.extractByKey(any(), eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(new GenericVnf());
         objUnderTest.getInputParameters(stubbedxecution);
@@ -84,13 +107,29 @@ public class InputParameterRetrieverTaskTest extends BaseTaskTest {
     }
 
 
+    private GeneralBuildingBlock getGeneralBuildingBlock(final Map<String, Object> userParams) {
+        final GeneralBuildingBlock buildingBlock = new GeneralBuildingBlock();
+        final RequestContext requestContext = new RequestContext();
+        final RequestParameters requestParameters = new RequestParameters();
+        requestParameters.setUserParams(Arrays.asList(userParams));
+        requestContext.setRequestParameters(requestParameters);
+        buildingBlock.setRequestContext(requestContext);
+        return buildingBlock;
+
+    }
+
     private class StubbedBuildingBlockExecution implements BuildingBlockExecution {
 
         private final Map<String, Serializable> execution = new HashMap<>();
+        private GeneralBuildingBlock buildingBlock;
+
+        private void setGeneralBuildingBlock(final GeneralBuildingBlock buildingBlock) {
+            this.buildingBlock = buildingBlock;
+        }
 
         @Override
         public GeneralBuildingBlock getGeneralBuildingBlock() {
-            return null;
+            return buildingBlock;
         }
 
         @SuppressWarnings("unchecked")
