@@ -228,7 +228,8 @@ The main goal of the El-Alto release was to improve documentation, UT improvemen
 -  [`SO-2430 <https://jira.onap.org/browse/SO-2430>`__\ ] - vCPE Create VFmodule Fails on Query to SDNC
 -  [`SO-2433 <https://jira.onap.org/browse/SO-2433>`__\ ] - Not providing user options during Pause For Manual Task
 -  [`SO-2434 <https://jira.onap.org/browse/SO-2434>`__\ ] - Displaying Un-needed Mandatory User Inputs for Workflow with Pause
-
+-  [`SO-1754 <https://jira.onap.org/browse/SO-1754>`__\ ] - SO-Mariadb: 'VNF_RESOURCE_CUSTOMIZATION' DB update bug when service is distributed.
+-  [`SO-2447 <https://jira.onap.org/browse/SO-2447>`__\ ] - Openstack Adatper fails to find Stack Name and creates duplicate stack with address conflict
 
 OJSI Issues
 
