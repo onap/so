@@ -1068,10 +1068,11 @@ public class ToscaResourceInstaller {
                     EntityQuery.newBuilder("org.openecomp.groups.VfcInstanceGroup"),
                     TopologyTemplateQuery.newBuilder(SdcTypes.VF).customizationUUID(vfCustomizationUUID), false);
 
+            Set<VnfcCustomization> existingVnfcGroupSet = new HashSet<>();
 
             for (IEntityDetails groupEntity : vfcEntityList) {
-                VnfcInstanceGroupCustomization vnfcInstanceGroupCustomization =
-                        createVNFCInstanceGroup(groupEntity, nodeTemplate, vnfResource, toscaResourceStruct);
+                VnfcInstanceGroupCustomization vnfcInstanceGroupCustomization = createVNFCInstanceGroup(groupEntity,
+                        nodeTemplate, vnfResource, toscaResourceStruct, existingVnfcGroupSet);
                 vnfcInstanceGroupCustomizationRepo.saveAndFlush(vnfcInstanceGroupCustomization);
             }
 
@@ -1888,7 +1889,7 @@ public class ToscaResourceInstaller {
 
     protected VnfcInstanceGroupCustomization createVNFCInstanceGroup(IEntityDetails vfcInstanceEntity,
             NodeTemplate vnfcNodeTemplate, VnfResourceCustomization vnfResourceCustomization,
-            ToscaResourceStructure toscaResourceStructure) {
+            ToscaResourceStructure toscaResourceStructure, Set<VnfcCustomization> existingVnfcGroupSet) {
 
         Metadata instanceMetadata = vfcInstanceEntity.getMetadata();
 
@@ -1958,39 +1959,47 @@ public class ToscaResourceInstaller {
         vfcInstanceGroupCustom.setInstanceGroup(vfcInstanceGroup);
 
         ArrayList<Input> inputs = vnfcNodeTemplate.getSubMappingToscaTemplate().getInputs();
-        createVFCInstanceGroupMembers(vfcInstanceGroupCustom, vfcInstanceEntity, inputs);
+        createVFCInstanceGroupMembers(vfcInstanceGroupCustom, vfcInstanceEntity, inputs, existingVnfcGroupSet);
 
         return vfcInstanceGroupCustom;
     }
 
     private void createVFCInstanceGroupMembers(VnfcInstanceGroupCustomization vfcInstanceGroupCustom,
-            IEntityDetails vfcModuleEntity, List<Input> inputList) {
+            IEntityDetails vfcModuleEntity, List<Input> inputList, Set<VnfcCustomization> existingVnfcGroupSet) {
         List<IEntityDetails> members = vfcModuleEntity.getMemberNodes();
         if (!CollectionUtils.isEmpty(members)) {
             for (IEntityDetails vfcEntity : members) {
-                VnfcCustomization vnfcCustomization = new VnfcCustomization();
 
-                Metadata metadata = vfcEntity.getMetadata();
-                vnfcCustomization
-                        .setModelCustomizationUUID(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
-                vnfcCustomization.setModelInstanceName(vfcEntity.getName());
-                vnfcCustomization.setModelUUID(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
-                vnfcCustomization
-                        .setModelInvariantUUID(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID));
-                vnfcCustomization.setModelVersion(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_VERSION));
-                vnfcCustomization.setModelName(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
-                vnfcCustomization.setToscaNodeType(testNull(vfcEntity.getToscaType()));
-                vnfcCustomization
-                        .setDescription(testNull(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION)));
-                vnfcCustomization.setResourceInput(getVnfcResourceInput(vfcEntity, inputList));
-                vnfcCustomization.setVnfcInstanceGroupCustomization(vfcInstanceGroupCustom);
-                List<VnfcCustomization> vnfcCustomizations = vfcInstanceGroupCustom.getVnfcCustomizations();
+                VnfcCustomization existingVfcGroup = findExistingVfc(existingVnfcGroupSet,
+                        vfcEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
 
-                if (vnfcCustomizations == null) {
-                    vnfcCustomizations = new ArrayList<>();
-                    vfcInstanceGroupCustom.setVnfcCustomizations(vnfcCustomizations);
+                if (existingVfcGroup == null) {
+                    VnfcCustomization vnfcCustomization = new VnfcCustomization();
+
+                    Metadata metadata = vfcEntity.getMetadata();
+                    vnfcCustomization.setModelCustomizationUUID(
+                            metadata.getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
+                    vnfcCustomization.setModelInstanceName(vfcEntity.getName());
+                    vnfcCustomization.setModelUUID(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
+                    vnfcCustomization
+                            .setModelInvariantUUID(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID));
+                    vnfcCustomization.setModelVersion(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_VERSION));
+                    vnfcCustomization.setModelName(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
+                    vnfcCustomization.setToscaNodeType(testNull(vfcEntity.getToscaType()));
+                    vnfcCustomization
+                            .setDescription(testNull(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION)));
+                    vnfcCustomization.setResourceInput(getVnfcResourceInput(vfcEntity, inputList));
+                    vnfcCustomization.setVnfcInstanceGroupCustomization(vfcInstanceGroupCustom);
+                    List<VnfcCustomization> vnfcCustomizations = vfcInstanceGroupCustom.getVnfcCustomizations();
+
+                    if (vnfcCustomizations == null) {
+                        vnfcCustomizations = new ArrayList<>();
+                        vfcInstanceGroupCustom.setVnfcCustomizations(vnfcCustomizations);
+                    }
+                    vnfcCustomizations.add(vnfcCustomization);
+
+                    existingVnfcGroupSet.add(vnfcCustomization);
                 }
-                vnfcCustomizations.add(vnfcCustomization);
             }
         }
     }
