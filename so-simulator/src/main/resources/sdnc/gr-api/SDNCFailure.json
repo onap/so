@@ -1,0 +1,8 @@
+{
+	"output": {
+		"svc-request-id": "service-request-id-902112066",
+		"response-code": "500",
+		"response-message": "Error updating selflink in generic-vnf in AAI",
+		"ack-final-indicator": "Y"
+	}
+}

@@ -1,0 +1,10 @@
+{
+    "explanation": "The resource could not be found.",
+    "code": 404,
+    "error": {
+        "message": "The Stack (Stability_Tools-27525-T-01-DPA2a_test_net_0) could not be found.",
+        "traceback": "Traceback (most recent call last):\n\n  File \"/usr/lib/python2.7/dist-packages/heat/common/context.py\", line 300, in wrapped\n    return func(self, ctx, *args, **kwargs)\n\n  File \"/usr/lib/python2.7/dist-packages/heat/engine/service.py\", line 422, in identify_stack\n    raise exception.StackNotFound(stack_name=stack_name)\n\nStackNotFound: The Stack (Stability_Tools-27525-T-01-DPA2a_test_net_0) could not be found.\n",
+        "type": "StackNotFound"
+    },
+    "title": "Not Found"
+}
