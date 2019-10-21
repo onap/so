@@ -1,0 +1,75 @@
+{
+    "server": {
+        "OS-EXT-STS:task_state": null,
+        "addresses": {           
+        },
+        "links": [
+            {
+                "href": "https://test.com/v2.1/872f331350c54e59991a8de2cbffb40c/servers/d29f3151-592d-4011-9356-ad047794e236",
+                "rel": "self"
+            },
+            {
+                "href": "https://test.com/872f331350c54e59991a8de2cbffb40c/servers/d29f3151-592d-4011-9356-ad047794e236",
+                "rel": "bookmark"
+            }
+        ],
+        "image": {
+            "id": "d46a5dfb-bf63-49db-b9eb-c7519bf46017",
+            "links": [
+                {
+                    "href": "https://test.com/872f331350c54e59991a8de2cbffb40c/images/d46a5dfb-bf63-49db-b9eb-c7519bf46017",
+                    "rel": "bookmark"
+                }
+            ]
+        },
+        "OS-EXT-STS:vm_state": "active",
+        "OS-EXT-SRV-ATTR:instance_name": "instance-00000183",
+        "OS-SRV-USG:launched_at": "2019-02-11T19:12:51.000000",
+        "flavor": {
+            "id": "10259b47-bf17-4343-b885-32a68b1c4ba8",
+            "links": [
+                {
+                    "href": "https://test.com/872f331350c54e59991a8de2cbffb40c/flavors/10259b47-bf17-4343-b885-32a68b1c4ba8",
+                    "rel": "bookmark"
+                }
+            ]
+        },
+        "id": "d29f3151-592d-4011-9356-ad047794e236",
+        "security_groups": [
+            {
+                "name": "zauk51bcgwy09_oam_security_group"
+            }
+        ],
+        "user_id": "3344345757302c88cf9f4ac7e9805c7073af90bce2e4c186ff1806fe867610b5",
+        "OS-DCF:diskConfig": "MANUAL",
+        "accessIPv4": "",
+        "accessIPv6": "",
+        "progress": 0,
+        "OS-EXT-STS:power_state": 1,
+        "OS-EXT-AZ:availability_zone": "auk51b-kvm-az01",
+        "metadata": {
+            "stack-root-id": "",
+            "vf_module_id": "26dd34cf-6b9b-485d-90e9-6101ff917516",
+            "vnf_id": "921662e3-eac6-446d-9573-ac377827c74f",
+            "workload_context": "Production",
+            "stack-name": "zauk51bcgwy01_base11",
+            "environment_context": "General_Revenue-Bearing",
+            "vf_module_name": "zauk51bcgwy01_base11",
+            "vnf_name": "zauk51bcgwy09",
+            "stack-root-name": "",
+            "stack-id": "0009693a-2fb1-4e91-80b8-70cc0a4e3f0f"
+        },
+        "status": "ACTIVE",
+        "updated": "2019-02-11T19:12:46Z",
+        "hostId": "50197c55fc934e7b3947e17db762f0839320f94983df774d84991ad2",
+        "OS-EXT-SRV-ATTR:host": "rdm52r19c001",
+        "OS-SRV-USG:terminated_at": null,
+        "key_name": null,
+        "OS-EXT-SRV-ATTR:hypervisor_hostname": "test.com",
+        "name": "zauk51bfrwl09oam001",
+        "created": "2019-02-11T19:11:58Z",
+        "tenant_id": "872f331350c54e59991a8de2cbffb40c",
+        "os-extended-volumes:volumes_attached": [],
+        "config_drive": "True"
+    }
+}

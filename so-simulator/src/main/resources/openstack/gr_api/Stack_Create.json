@@ -1,0 +1,11 @@
+{
+  "stack": {
+    "id": "stackId", 
+    "links": [
+      {
+        "href": "https://test.com/v1/e2a6af59d1cb43b2874e943bbbf8470a/stacks/zauk51bmcir02_base/20f2cad7-4626-476a-9279-4bd81ca62e4b", 
+        "rel": "self"
+      }
+    ]
+  }
+}
