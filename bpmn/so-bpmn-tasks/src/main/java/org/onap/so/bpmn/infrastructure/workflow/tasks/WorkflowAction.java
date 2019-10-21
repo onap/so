@@ -94,6 +94,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.util.CollectionUtils;
 
 @Component
 public class WorkflowAction {
@@ -410,15 +411,17 @@ public class WorkflowAction {
                 }
             }
 
-            if (flowsToExecute == null || flowsToExecute.isEmpty()) {
+            if (CollectionUtils.isEmpty(flowsToExecute)) {
                 throw new IllegalStateException("Macro did not come up with a valid execution path.");
             }
+
             List<String> flowNames = new ArrayList<>();
             logger.info("List of BuildingBlocks to execute:");
-            for (ExecuteBuildingBlock ebb : flowsToExecute) {
+
+            flowsToExecute.forEach(ebb -> {
                 logger.info(ebb.getBuildingBlock().getBpmnFlowName());
                 flowNames.add(ebb.getBuildingBlock().getBpmnFlowName());
-            }
+            });
 
             if (!isResume) {
                 bbInputSetupUtils.persistFlowExecutionPath(requestId, flowsToExecute);

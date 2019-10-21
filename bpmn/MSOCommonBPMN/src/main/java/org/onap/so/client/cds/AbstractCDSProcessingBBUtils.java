@@ -22,14 +22,18 @@
 
 package org.onap.so.client.cds;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.Struct;
+import com.google.protobuf.Struct.Builder;
+import com.google.protobuf.util.JsonFormat;
+import io.grpc.Status;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.ccsdk.cds.controllerblueprints.common.api.ActionIdentifiers;
 import org.onap.ccsdk.cds.controllerblueprints.common.api.CommonHeader;
 import org.onap.ccsdk.cds.controllerblueprints.common.api.EventType;
 import org.onap.ccsdk.cds.controllerblueprints.processing.api.ExecutionServiceInput;
 import org.onap.ccsdk.cds.controllerblueprints.processing.api.ExecutionServiceOutput;
+import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.client.PreconditionFailedException;
 import org.onap.so.client.RestPropertiesLoader;
 import org.onap.so.client.cds.beans.AbstractCDSPropertiesBean;
@@ -39,15 +43,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.Struct;
-import com.google.protobuf.Struct.Builder;
-import com.google.protobuf.util.JsonFormat;
-import io.grpc.Status;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Util class to support Call to CDS client
- *
  */
 @Component
 public class AbstractCDSProcessingBBUtils {
@@ -60,11 +60,7 @@ public class AbstractCDSProcessingBBUtils {
     private static final String RESPONSE_PAYLOAD = "CDSResponsePayload";
     private static final String CDS_STATUS = "CDSStatus";
     private static final String EXEC_INPUT = "executionServiceInput";
-
-
-    /**
-     * indicate exception thrown.
-     */
+    private static final String EXECUTION_OBJECT = "executionObject";
     private static final String EXCEPTION = "Exception";
 
     @Autowired
@@ -76,34 +72,33 @@ public class AbstractCDSProcessingBBUtils {
      * @param execution DelegateExecution object
      */
     public void constructExecutionServiceInputObject(DelegateExecution execution) {
-        logger.trace("Start AbstractCDSProcessingBBUtils.preProcessRequest ");
+        logger.trace("Start AbstractCDSProcessingBBUtils.preProcessRequest for DelegateExecution object.");
 
         try {
             AbstractCDSPropertiesBean executionObject =
-                    (AbstractCDSPropertiesBean) execution.getVariable("executionObject");
+                    (AbstractCDSPropertiesBean) execution.getVariable(EXECUTION_OBJECT);
 
-            String payload = executionObject.getRequestObject();
+            ExecutionServiceInput executionServiceInput = prepareExecutionServiceInput(executionObject);
 
-            CommonHeader commonHeader = CommonHeader.newBuilder().setOriginatorId(executionObject.getOriginatorId())
-                    .setRequestId(executionObject.getRequestId()).setSubRequestId(executionObject.getSubRequestId())
-                    .build();
-            ActionIdentifiers actionIdentifiers =
-                    ActionIdentifiers.newBuilder().setBlueprintName(executionObject.getBlueprintName())
-                            .setBlueprintVersion(executionObject.getBlueprintVersion())
-                            .setActionName(executionObject.getActionName()).setMode(executionObject.getMode()).build();
+            execution.setVariable(EXEC_INPUT, executionServiceInput);
 
-            Builder struct = Struct.newBuilder();
-            try {
-                JsonFormat.parser().merge(payload, struct);
-            } catch (InvalidProtocolBufferException e) {
-                logger.error("Failed to parse received message. blueprint({}:{}) for action({}). {}",
-                        executionObject.getBlueprintVersion(), executionObject.getBlueprintName(),
-                        executionObject.getActionName(), e);
-            }
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
 
-            ExecutionServiceInput executionServiceInput =
-                    ExecutionServiceInput.newBuilder().setCommonHeader(commonHeader)
-                            .setActionIdentifiers(actionIdentifiers).setPayload(struct.build()).build();
+    /**
+     * Extracting data from execution object and building the ExecutionServiceInput Object
+     *
+     * @param execution BuildingBlockExecution object
+     */
+    public void constructExecutionServiceInputObject(BuildingBlockExecution execution) {
+        logger.trace("Start AbstractCDSProcessingBBUtils.preProcessRequest for BuildingBlockExecution object.");
+
+        try {
+            AbstractCDSPropertiesBean executionObject = execution.getVariable(EXECUTION_OBJECT);
+
+            ExecutionServiceInput executionServiceInput = prepareExecutionServiceInput(executionObject);
 
             execution.setVariable(EXEC_INPUT, executionServiceInput);
 
@@ -119,48 +114,96 @@ public class AbstractCDSProcessingBBUtils {
      */
     public void sendRequestToCDSClient(DelegateExecution execution) {
 
-        logger.trace("Start AbstractCDSProcessingBBUtils.sendRequestToCDSClient ");
+        logger.trace("Start AbstractCDSProcessingBBUtils.sendRequestToCDSClient for DelegateExecution object.");
         try {
-            CDSProperties props = RestPropertiesLoader.getInstance().getNewImpl(CDSProperties.class);
-            if (props == null) {
-                throw new PreconditionFailedException(
-                        "No RestProperty.CDSProperties implementation found on classpath, can't create client.");
-            }
-
             ExecutionServiceInput executionServiceInput = (ExecutionServiceInput) execution.getVariable(EXEC_INPUT);
-
-            CDSResponse cdsResponse = new CDSResponse();
-
-            try (CDSProcessingClient cdsClient = new CDSProcessingClient(new ResponseHandler(cdsResponse))) {
-                CountDownLatch countDownLatch = cdsClient.sendRequest(executionServiceInput);
-                countDownLatch.await(props.getTimeout(), TimeUnit.SECONDS);
-            } catch (InterruptedException ex) {
-                logger.error("Caught exception in sendRequestToCDSClient in AbstractCDSProcessingBBUtils : ", ex);
-                Thread.currentThread().interrupt();
-            }
-
-            String cdsResponseStatus = cdsResponse.status;
-
-            /**
-             * throw CDS failed exception.
-             */
-            if (!cdsResponseStatus.equals(SUCCESS)) {
-                throw new BadResponseException("CDS call failed with status: " + cdsResponse.status
-                        + " and errorMessage: " + cdsResponse.errorMessage);
-            }
-
-            execution.setVariable(CDS_STATUS, cdsResponseStatus);
+            CDSResponse cdsResponse = getCdsResponse(executionServiceInput);
+            execution.setVariable(CDS_STATUS, cdsResponse.status);
 
             if (cdsResponse.payload != null) {
                 String payload = JsonFormat.printer().print(cdsResponse.payload);
                 execution.setVariable(RESPONSE_PAYLOAD, payload);
             }
 
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
 
+    /**
+     * get the executionServiceInput object from execution and send a request to CDS Client and wait for TIMEOUT period
+     *
+     * @param execution BuildingBlockExecution object
+     */
+    public void sendRequestToCDSClient(BuildingBlockExecution execution) {
+
+        logger.trace("Start AbstractCDSProcessingBBUtils.sendRequestToCDSClient for BuildingBlockExecution object.");
+        try {
+            ExecutionServiceInput executionServiceInput = execution.getVariable(EXEC_INPUT);
+            CDSResponse cdsResponse = getCdsResponse(executionServiceInput);
+            execution.setVariable(CDS_STATUS, cdsResponse.status);
+
+            if (cdsResponse.payload != null) {
+                String payload = JsonFormat.printer().print(cdsResponse.payload);
+                execution.setVariable(RESPONSE_PAYLOAD, payload);
+            }
 
         } catch (Exception ex) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+    }
+
+    private CDSResponse getCdsResponse(ExecutionServiceInput executionServiceInput) throws BadResponseException {
+        CDSProperties props = RestPropertiesLoader.getInstance().getNewImpl(CDSProperties.class);
+        if (props == null) {
+            throw new PreconditionFailedException(
+                    "No RestProperty.CDSProperties implementation found on classpath, can't create client.");
+        }
+
+        CDSResponse cdsResponse = new CDSResponse();
+
+        try (CDSProcessingClient cdsClient = new CDSProcessingClient(new ResponseHandler(cdsResponse))) {
+            CountDownLatch countDownLatch = cdsClient.sendRequest(executionServiceInput);
+            countDownLatch.await(props.getTimeout(), TimeUnit.SECONDS);
+        } catch (InterruptedException ex) {
+            logger.error("Caught exception in sendRequestToCDSClient in AbstractCDSProcessingBBUtils : ", ex);
+            Thread.currentThread().interrupt();
+        }
+
+        String cdsResponseStatus = cdsResponse.status;
+
+        /**
+         * throw CDS failed exception.
+         */
+        if (!cdsResponseStatus.equals(SUCCESS)) {
+            throw new BadResponseException("CDS call failed with status: " + cdsResponse.status + " and errorMessage: "
+                    + cdsResponse.errorMessage);
+        }
+        return cdsResponse;
+    }
+
+    private ExecutionServiceInput prepareExecutionServiceInput(AbstractCDSPropertiesBean executionObject) {
+        String payload = executionObject.getRequestObject();
+
+        CommonHeader commonHeader = CommonHeader.newBuilder().setOriginatorId(executionObject.getOriginatorId())
+                .setRequestId(executionObject.getRequestId()).setSubRequestId(executionObject.getSubRequestId())
+                .build();
+        ActionIdentifiers actionIdentifiers =
+                ActionIdentifiers.newBuilder().setBlueprintName(executionObject.getBlueprintName())
+                        .setBlueprintVersion(executionObject.getBlueprintVersion())
+                        .setActionName(executionObject.getActionName()).setMode(executionObject.getMode()).build();
+
+        Builder struct = Struct.newBuilder();
+        try {
+            JsonFormat.parser().merge(payload, struct);
+        } catch (InvalidProtocolBufferException e) {
+            logger.error("Failed to parse received message. blueprint({}:{}) for action({}). {}",
+                    executionObject.getBlueprintVersion(), executionObject.getBlueprintName(),
+                    executionObject.getActionName(), e);
+        }
+
+        return ExecutionServiceInput.newBuilder().setCommonHeader(commonHeader).setActionIdentifiers(actionIdentifiers)
+                .setPayload(struct.build()).build();
     }
 
     private class ResponseHandler implements CDSProcessingListener {
