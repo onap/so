@@ -34,8 +34,6 @@ import org.springframework.stereotype.Component;
 @Profile("!test")
 public class CreateInventoryService {
 
-    private static final Logger logger = LoggerFactory.getLogger(CreateInventoryService.class);
-
     @Autowired
     public Environment env;
 
