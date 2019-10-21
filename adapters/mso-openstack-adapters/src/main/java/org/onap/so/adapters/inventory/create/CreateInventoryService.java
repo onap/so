@@ -36,6 +36,7 @@ public class CreateInventoryService {
 
     private static final Logger logger = LoggerFactory.getLogger(CreateInventoryService.class);
 
+
     @Autowired
     public Environment env;
 
@@ -47,6 +48,8 @@ public class CreateInventoryService {
 
     @PostConstruct
     public void auditAAIInventory() throws Exception {
+
+        logger.info(this.getClass().getName());
 
         ExternalTaskClient client = externalTaskServiceUtils.createExternalTaskClient();
         client.subscribe("InventoryCreate")

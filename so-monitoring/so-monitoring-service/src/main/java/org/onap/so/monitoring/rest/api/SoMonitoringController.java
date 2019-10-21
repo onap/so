@@ -83,7 +83,7 @@ public class SoMonitoringController {
                 return Response.status(Status.OK).entity(processInstanceId.get()).build();
             }
 
-            LOGGER.error("Unable to find process instance id for : " + requestId);
+            LOGGER.error("Unable to find process instance id for : {} ", requestId);
             return Response.status(Status.NO_CONTENT).build();
 
         } catch (final InvalidRestRequestException | HttpResouceNotFoundException extensions) {
@@ -112,7 +112,7 @@ public class SoMonitoringController {
                 return Response.status(Status.OK).entity(processInstanceDetail.get()).build();
             }
 
-            LOGGER.error("Unable to find process instance id for : " + processInstanceId);
+            LOGGER.error("Unable to find process instance id for : {}", processInstanceId);
             return Response.status(Status.NO_CONTENT).build();
 
         } catch (final InvalidRestRequestException | HttpResouceNotFoundException extensions) {
@@ -141,7 +141,7 @@ public class SoMonitoringController {
                 final ProcessDefinitionDetail definitionDetail = response.get();
                 return Response.status(Status.OK).entity(definitionDetail).build();
             }
-            LOGGER.error("Unable to find process definition xml for processDefinitionId: " + processDefinitionId);
+            LOGGER.error("Unable to find process definition xml for processDefinitionId: {}", processDefinitionId);
             return Response.status(Status.NO_CONTENT).build();
 
         } catch (final InvalidRestRequestException | HttpResouceNotFoundException extensions) {
@@ -215,7 +215,7 @@ public class SoMonitoringController {
         try {
             final List<SoInfraRequest> requests =
                     databaseServiceProvider.getSoInfraRequest(filters, startTime, endTime, maxResult);
-            LOGGER.info("result size: " + requests.size());
+            LOGGER.info("result size: {}", requests.size());
             return Response.status(Status.OK).entity(requests).build();
 
         } catch (final InvalidRestRequestException | HttpResouceNotFoundException extensions) {
