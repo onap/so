@@ -53,7 +53,7 @@ public class ConfigAssignVnf {
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigAssignVnf.class);
     private static final String ORIGINATOR_ID = "SO";
-    private static final String ACTION_NAME = "config-assign";
+    private static final String ACTION_NAME = "ConfigAssign";
     private static final String MODE = "sync";
 
     private final ExtractPojosForBB extractPojosForBB;
