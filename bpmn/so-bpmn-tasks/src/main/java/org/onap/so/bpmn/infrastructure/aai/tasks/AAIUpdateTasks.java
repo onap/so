@@ -5,6 +5,7 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
+ *  Modifications Copyright (c) 2019 Bell Canada.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +28,7 @@ import java.util.Map;
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
 import org.onap.so.adapters.nwrest.UpdateNetworkResponse;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.onap.so.bpmn.infrastructure.aai.tasks.cds.UpdateOrchestrationStatus;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
@@ -748,7 +750,6 @@ public class AAIUpdateTasks {
             logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusConfigDeployConfigureVnf", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
-
     }
 
     /**
@@ -760,11 +761,36 @@ public class AAIUpdateTasks {
         try {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
             aaiVnfResources.updateOrchestrationStatusVnf(vnf, OrchestrationStatus.CONFIGURED);
-
         } catch (Exception ex) {
             logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusConfigDeployConfiguredVnf", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+    }
 
+    /**
+     * BPMN access method to update status of VNF/VF-Module based on SO scope and action.
+     *
+     * @param execution - BuildingBlockExecution
+     * @param scope - SO scope (vnf/vfModule)
+     * @param action - action (configAssign/configDeploy/configUndeploy etc..)
+     */
+    public void updateOrchestrationStatusForCds(BuildingBlockExecution execution, String scope, String action) {
+        try {
+            UpdateOrchestrationStatus orchestrationStatusForCds = new UpdateOrchestrationStatus();
+            switch (scope) {
+                case "vnf":
+                    orchestrationStatusForCds.updateAAI(extractPojosForBB, execution, action, aaiVnfResources);
+                    break;
+                case "vfModule":
+                    orchestrationStatusForCds.updateAAI(extractPojosForBB, execution, action, aaiVfModuleResources);
+                    break;
+                default:
+                    throw new IllegalArgumentException(
+                            "Invalid scope to update orchestration status for CDS : " + action);
+            }
+        } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusForCds", ex);
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
     }
 }
