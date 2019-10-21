@@ -99,5 +99,4 @@ public class BuildingBlock implements Serializable {
     public void setBpmnAction(String action) {
         this.bpmnAction = action;
     }
-
 }
