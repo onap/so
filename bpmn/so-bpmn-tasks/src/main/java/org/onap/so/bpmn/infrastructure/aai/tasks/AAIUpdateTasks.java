@@ -5,6 +5,7 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
+ *  Modifications Copyright (c) 2019 Bell Canada.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,11 +23,14 @@
 
 package org.onap.so.bpmn.infrastructure.aai.tasks;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
 import org.onap.so.adapters.nwrest.UpdateNetworkResponse;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.onap.so.bpmn.infrastructure.aai.tasks.cds.UpdateOrchestrationStatusForCds;
+import org.onap.so.bpmn.infrastructure.aai.tasks.cds.UpdateOrchestrationStatusForVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
@@ -78,6 +82,15 @@ public class AAIUpdateTasks {
     private AAICollectionResources aaiCollectionResources;
     @Autowired
     private AAIConfigurationResources aaiConfigurationResources;
+
+    private static Map<String, UpdateOrchestrationStatusForCds> updateOrchestrationStatusMap = new HashMap<>();
+
+    static {
+        updateOrchestrationStatusMap.put("vnf-assign",
+                new UpdateOrchestrationStatusForVnf(OrchestrationStatus.ASSIGNED));
+        updateOrchestrationStatusMap.put("vnf-deploy",
+                new UpdateOrchestrationStatusForVnf(OrchestrationStatus.CONFIGURED));
+    }
 
     /**
      * BPMN access method to update the status of Service to Assigned in AAI
@@ -748,7 +761,6 @@ public class AAIUpdateTasks {
             logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusConfigDeployConfigureVnf", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
-
     }
 
     /**
@@ -760,11 +772,29 @@ public class AAIUpdateTasks {
         try {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
             aaiVnfResources.updateOrchestrationStatusVnf(vnf, OrchestrationStatus.CONFIGURED);
-
         } catch (Exception ex) {
             logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusConfigDeployConfiguredVnf", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+    }
 
+    /**
+     * BPMN access method to update status of VNF/VF-Module based on SO scope and action.
+     *
+     * @param execution - BuildingBlockExecutio
+     * @param scope - SO scope (VNF/VF-MODULE/PNF)
+     * @param action - action (assign/deploy/undeploy etc..)
+     */
+    public void updateOrchestrationStatusForCds(BuildingBlockExecution execution, String scope, String action) {
+        try {
+            String cdsScopeAndAction = scope + "-" + action;
+            UpdateOrchestrationStatusForCds updateOrchestrationStatusForCds =
+                    (UpdateOrchestrationStatusForCds) updateOrchestrationStatusMap.get(cdsScopeAndAction);
+            updateOrchestrationStatusForCds.updateAAI(extractPojosForBB, execution);
+
+        } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusForCds", ex);
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
     }
 }
