@@ -1,0 +1,7 @@
+{
+	"output": {
+		"ack-final-indicator": "Y",
+		"response-code": "200",
+		"response-message": "SDN-C is healthy"
+	}
+}

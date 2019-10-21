@@ -1,0 +1,17 @@
+{
+	"stack": {
+		"description": null,
+		"links": null,
+		"stack_status_reason": "${stack_failure_message}",
+		"stack_name": "${stackName}",
+		"updated_time": null,
+		"creation_time": null,
+		"stack_status": "CREATE_FAILED",
+		"id": "stackId",
+		"files": null,
+		"outputs": null,
+		"parameters": {
+			
+		}
+	}
+}
