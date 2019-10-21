@@ -26,8 +26,10 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.onap.so.bpmn.infrastructure.decisionpoint.api.ControllerContext;
 import org.onap.so.bpmn.infrastructure.decisionpoint.api.controller.ControllerPreparable;
+import org.onap.so.client.cds.AbstractCDSProcessingBBUtils;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -35,7 +37,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {CdsControllerDE.class, ExceptionBuilder.class})
+@ContextConfiguration(classes = {CdsControllerDE.class, ExceptionBuilder.class, AbstractCDSProcessingBBUtils.class})
 public class CdsControllerDETest {
 
     @Autowired
@@ -46,6 +48,9 @@ public class CdsControllerDETest {
 
     @MockBean
     private ControllerPreparable<DelegateExecution> preparable;
+
+    @Mock
+    private AbstractCDSProcessingBBUtils abstractCDSProcessingBBUtils;
 
     @Before
     public void setUp() {

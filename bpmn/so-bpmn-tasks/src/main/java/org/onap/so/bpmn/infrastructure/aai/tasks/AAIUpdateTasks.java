@@ -5,13 +5,14 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
+ *  Modifications Copyright (c) 2019 Bell Canada.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,39 +23,23 @@
 
 package org.onap.so.bpmn.infrastructure.aai.tasks;
 
-import java.util.List;
-import java.util.Map;
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
 import org.onap.so.adapters.nwrest.UpdateNetworkResponse;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.*;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.client.exception.ExceptionBuilder;
-import org.onap.so.client.orchestration.AAICollectionResources;
-import org.onap.so.client.orchestration.AAIConfigurationResources;
-import org.onap.so.client.orchestration.AAINetworkResources;
-import org.onap.so.client.orchestration.AAIPnfResources;
-import org.onap.so.client.orchestration.AAIServiceInstanceResources;
-import org.onap.so.client.orchestration.AAIVfModuleResources;
-import org.onap.so.client.orchestration.AAIVnfResources;
-import org.onap.so.client.orchestration.AAIVolumeGroupResources;
+import org.onap.so.client.orchestration.*;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class AAIUpdateTasks {
@@ -340,7 +325,6 @@ public class AAIUpdateTasks {
      * BPMN access method to update status of VfModule to Created in AAI
      *
      * @param execution
-     *
      */
     public void updateOrchestrationStatusCreatedVfModule(BuildingBlockExecution execution) {
         try {
@@ -357,7 +341,6 @@ public class AAIUpdateTasks {
      * BPMN access method to update aaiDeactivateVfModuleRollback to true for deactivating the VfModule
      *
      * @param execution
-     * @throws buildAndThrowWorkflowException
      */
     public void updateOrchestrationStatusDeactivateVfModule(BuildingBlockExecution execution) {
         execution.setVariable("aaiDeactivateVfModuleRollback", false);
@@ -794,7 +777,6 @@ public class AAIUpdateTasks {
             logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusConfigDeployConfigureVnf", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
-
     }
 
     /**
@@ -806,11 +788,55 @@ public class AAIUpdateTasks {
         try {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
             aaiVnfResources.updateOrchestrationStatusVnf(vnf, OrchestrationStatus.CONFIGURED);
-
         } catch (Exception ex) {
             logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusConfigDeployConfiguredVnf", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
+    }
 
+    /**
+     * BPMN access method to update status of VNF/VF-Module based on SO scope and action.
+     *
+     * @param execution - BuildingBlockExecution
+     * @param scope - SO scope (vnf/vfModule)
+     * @param action - action (configAssign/configDeploy/configUndeploy etc..)
+     */
+    public void updateOrchestrationStatusForCds(BuildingBlockExecution execution, String scope, String action) {
+        try {
+            GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
+            OrchestrationStatus status = getOrchestrationStatus(action);
+            switch (scope) {
+                case "vnf":
+                    aaiVnfResources.updateOrchestrationStatusVnf(vnf, status);
+                    break;
+                case "vfModule":
+                    VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
+                    aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule, vnf, status);
+                    break;
+                default:
+                    throw new IllegalArgumentException(
+                            "Invalid scope to update orchestration status for CDS : " + action);
+            }
+        } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusForCds", ex);
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
+    private OrchestrationStatus getOrchestrationStatus(String action) {
+        /**
+         * At this state, OrcherstationStatus enum associated with configAssign and configDeploy. I am not sure which is
+         * the correct approach. 1. Are we going to map each specific action to OrchestrationStauts ? 2. We will have
+         * only one generic status for all actions ?
+         */
+
+        switch (action) {
+            case "configAssign":
+                return OrchestrationStatus.ASSIGNED;
+            case "configDeploy":
+                return OrchestrationStatus.CONFIGURED;
+            default:
+                throw new IllegalArgumentException("Invalid action to set Orchestration status: " + action);
+        }
     }
 }
