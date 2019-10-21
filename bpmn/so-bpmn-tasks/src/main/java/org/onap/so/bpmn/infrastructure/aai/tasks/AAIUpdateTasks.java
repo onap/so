@@ -767,4 +767,13 @@ public class AAIUpdateTasks {
         }
 
     }
+
+    /**
+     * Update status of VNF/VF-Module in AAI based on SO scope(vnf/vf-module)
+     *
+     * @param execution BuildingBlockExecution object
+     */
+    public void updateOrchestrationStatusForCds(BuildingBlockExecution execution) {
+        // TODO
+    }
 }
