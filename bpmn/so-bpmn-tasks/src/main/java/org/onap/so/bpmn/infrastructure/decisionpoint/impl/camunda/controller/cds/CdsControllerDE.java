@@ -31,10 +31,13 @@ import org.springframework.stereotype.Component;
  * This implementation of {@ref ControllerRunnable} is used for Self service, i.e, blueprint based Controller.
  */
 @Component
-public class CdsControllerDE extends AbstractCDSProcessingBBUtils implements ControllerRunnable<DelegateExecution> {
+public class CdsControllerDE implements ControllerRunnable<DelegateExecution> {
 
     @Autowired(required = false)
     private List<ControllerPreparable<DelegateExecution>> prepareList;
+
+    @Autowired
+    private AbstractCDSProcessingBBUtils abstractCDSProcessingBBUtils;
 
     @Override
     public Boolean understand(ControllerContext<DelegateExecution> context) {
@@ -55,7 +58,7 @@ public class CdsControllerDE extends AbstractCDSProcessingBBUtils implements Con
     @Override
     public void run(ControllerContext<DelegateExecution> context) {
         DelegateExecution execution = context.getExecution();
-        constructExecutionServiceInputObject(execution);
-        sendRequestToCDSClient(execution);
+        abstractCDSProcessingBBUtils.constructExecutionServiceInputObject(execution);
+        abstractCDSProcessingBBUtils.sendRequestToCDSClient(execution);
     }
 }
