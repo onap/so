@@ -1,0 +1,10 @@
+<input>
+	<service-information>
+		<service-type>useless-trash</service-type>
+		<service-instance-id>useless-trash</service-instance-id>
+	</service-information>
+	<svc-request-id>${responseCode}</svc-request-id>
+	<response-code>${responseCode}</response-code>
+	<response-message>${responseMessage}</response-message>
+	<ack-final-indicator>Y</ack-final-indicator>
+</input>

@@ -1,0 +1,20 @@
+{
+	"output": {
+		"response-code": "200",
+		"response-message": "Success in US746794 DG",
+		"ack-final-indicator": "Y",
+		"svc-request-id": "248783176134150",
+		"response-parameters": [
+			{
+				"sequence-number": 2,
+				"tag-value": "DEBES0MDABE0207URWX01",
+				"tag-name": "vnf-host-name"
+			},
+			{
+				"sequence-number": 1,
+				"tag-value": "911ce7a0-3852-4786-9f3b-41fa1adda63a",
+				"tag-name": "vnf-id"
+			}
+		]
+	}
+}

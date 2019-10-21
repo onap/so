@@ -1,0 +1,14 @@
+<output xmlns="org:onap:sdnctl:vnf">
+	<svc-request-id>${requestId}</svc-request-id>
+	<service-information>
+		<service-id>${serviceId}</service-id>
+		<service-type>${serviceType}</service-type>
+		<service-instance-id>${serviceInstanceId}</service-instance-id>
+		<subscriber-name>${subscriberName}</subscriber-name>
+	</service-information>
+	<response-code>200</response-code>
+	<network-information>
+		<network-id>${networkId}</network-id>
+	</network-information>
+	<ack-final-indicator>Y</ack-final-indicator>
+</output>

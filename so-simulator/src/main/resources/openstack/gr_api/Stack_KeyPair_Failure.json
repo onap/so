@@ -1,0 +1,44 @@
+{
+  "stack": {
+    "capabilities": [], 
+    "creation_time": "2019-04-22T19:36:00Z", 
+    "description": "BroadWorks NFM Template with Data and OAMP Interfaces - Version 13DEC2017", 
+    "disable_rollback": true, 
+    "id": "stackId", 
+    "links": [
+    ], 
+    "notification_topics": [], 
+    "outputs": [], 
+    "parameters": {
+      "HostnameWithDomain": "test.com", 
+      "OS::project_id": "efb9b00711a64eb087e3cca9767f7909", 
+      "OS::stack_id": "8a2470c3-5fc0-479a-8849-5f38f5eeed35", 
+      "OS::stack_name": "hst3bbfnm0011v_base", 
+      "availability_zone_0": "hst3b-kvm-az01", 
+      "bfnm_cinder_volume_id_0": "0659b195-1bf9-4def-8d15-fffee392131f", 
+      "bfnm_cinder_volume_id_1": "c193ef62-128c-4bd5-9d7d-af7e91af36c0", 
+      "bfnm_flavor_name": "nd.c4r8d0", 
+      "bfnm_key_name": "hst3bbfnm0011vm001", 
+      "bfnm_names": "hst3bbfnm0011vm001", 
+      "bfnm_nsdnet_ips": "1.3.1.7", 
+      "bfnm_nsdnet_net_security_group": "default",  
+      "ifcfg-eth0_content_0": "DEVICE=\"eth0\" NEWLINE\nBOOTPROTO=static NEWLINE\nONBOOT=yes NEWLINE\nTYPE=\"Ethernet\" NEWLINE\nIPADDR=135.63.139.74 NEWLINE\nNETMASK=255.255.255.0 NEWLINE\nGATEWAY=135.63.139.65  NEWLINE\nIPV6INIT=no NEWLINE\nIPV6_AUTOCONF=no NEWLINE\nMTU=1450", 
+      "mech_id": "m04137", 
+      "nsdnet_net_id": "53f5c3f5-ae22-48b3-a476-c48d9fe46a75", 
+      "ntp_servers": "server 135.190.235.222 iburst NEWLINE \nserver 135.191.235.222 iburst NEWLINE \nserver 135.193.235.222 iburst  NEWLINE \noptions timeout:1 attempts:2", 
+      "resolv_conf_content": "search test.com NEWLINE nameserver 135.190.235.222 NEWLINE nameserver 135.193.235.222 NEWLINE nameserver 135.191.235.222 NEWLINE options timeout:1 attempts:2", 
+      "vf_module_id": "d117fdf9-bcba-4c92-b3da-af538615b63d", 
+      "vnf_id": "8faf7e17-de35-4d9e-a731-1e463e94261a", 
+      "vnf_name": "hst3bbfnm"
+    }, 
+    "parent": null, 
+    "stack_name": "${stackName}",
+    "stack_owner": "m95682", 
+    "stack_status": "CREATE_FAILED", 
+    "stack_status_reason": "Resource CREATE failed: Conflict: resources.bfnm_my_keypair: Key pair 'hst3bbfnm0011vm001' already exists. (HTTP 409) (Request-ID: req-941b0af6-63ae-4d6a-afbc-90b728bacf82)", 
+    "stack_user_project_id": "2399d381718342edaff3d7daae2f2003", 
+    "template_description": "BroadWorks NFM Template with Data and OAMP Interfaces - Version 13DEC2017", 
+    "timeout_mins": 120, 
+    "updated_time": null
+  }
+}

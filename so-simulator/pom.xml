@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <parent>
+    <groupId>org.onap.so</groupId>
+    <artifactId>so</artifactId>
+    <version>1.4.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>so-simulator</artifactId>
+  <name>SO REST Simulator</name>
+  <packaging>jar</packaging>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <citrus.simulator.version>1.0.4-SNAPSHOT</citrus.simulator.version>
+    <spring.boot.version>1.5.10.RELEASE</spring.boot.version>
+    <testng.version>6.14.3</testng.version>
+    <docker.buildArg.project_version>${project.version}</docker.buildArg.project_version>
+    <docker.buildArg.artifact_id>${project.artifactId}</docker.buildArg.artifact_id>
+    <docker.buildArg.docker_repository>${dockerPullRepo}</docker.buildArg.docker_repository>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring.boot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter</artifactId>
+    </dependency>
+    <!-- Citrus Simulator -->
+    <dependency>
+      <groupId>org.onap.so</groupId>
+      <artifactId>citrus-simulator-starter</artifactId>
+      <version>${citrus.simulator.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.so</groupId>
+      <artifactId>citrus-simulator-ui</artifactId>
+      <version>${citrus.simulator.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onap</groupId>
+      <artifactId>aai-client</artifactId>
+      <version>1.1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.core</groupId>
+      <artifactId>jersey-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.logging-analytics</groupId>
+      <artifactId>logging-slf4j</artifactId>
+      <version>1.4.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.consol.citrus</groupId>
+      <artifactId>citrus-ws</artifactId>
+      <version>2.7.8</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.7.0</version>
+        <configuration>
+          <encoding>${project.build.sourceEncoding}</encoding>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>${spring.boot.version}</version>
+        <configuration>
+          <mainClass>org.onap.so.simulator.Simulator</mainClass>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>io.fabric8</groupId>
+        <artifactId>fabric8-maven-plugin</artifactId>
+        <configuration combine.self="override">
+          <skip>${docker.skip}</skip>
+          <skipBuild>${docker.skip.build}</skipBuild>
+          <skipPush>${docker.skip.push}</skipPush>
+          <dockerHost>${docker.newHost}</dockerHost>
+          <!-- 1. Update address to your local docker VM. 2. Add IP to your NO_PROXY
+    				environment variable -->
+          <certPath>${docker.host.cert.path}</certPath>
+          <!-- Add -Ddocker.host.cert.pat="path
+    				to your local certs directory" to maven build command -->
+          <pushRegistry>${dockerPushRepo}</pushRegistry>
+          <!-- Update .m2/settings.xml Add server id settings.dockerRepository, username,
+    				and password -->
+          <pullRegistry>${dockerPullRepo}</pullRegistry>
+          <!-- If docker repo is not public. Update .m2/settings.xml Add server id
+    				settings.dockerRepository, username, and password -->
+          <images>
+            <image>
+              <alias>service</alias>
+              <name>${artifactId}:${project.version}</name>
+              <build>
+                <dockerFile>Dockerfile</dockerFile>
+                <assembly>
+                  <descriptorRef>artifact</descriptorRef>
+                </assembly>
+              </build>
+            </image>
+          </images>
+        </configuration>
+        <executions>
+          <execution>
+            <id>start</id>
+            <goals>
+              <goal>build</goal>
+              <goal>push</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  <groupId>org.onap.so.simulator</groupId>
+</project>
