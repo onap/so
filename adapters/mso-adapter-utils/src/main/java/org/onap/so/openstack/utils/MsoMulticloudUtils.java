@@ -525,7 +525,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
 
     private StackInfo getStackStatus(String cloudSiteId, String cloudOwner, String tenantId, String instanceId,
             boolean pollForCompletion, int timeoutMinutes, boolean backout) throws MsoException {
-        StackInfo stackInfo = new StackInfo();
+        StackInfo stackInfo;
 
         // If client has requested a final response, poll for stack completion
         if (pollForCompletion) {
