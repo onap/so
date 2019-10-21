@@ -58,6 +58,7 @@ import org.onap.so.serviceinstancebeans.Resources;
 import org.onap.so.serviceinstancebeans.Service;
 import org.onap.so.serviceinstancebeans.Vnfs;
 
+
 public class ConfigAssignVnfTest {
 
     private static final String GENERIC_VNF_ID = "vnfId_configVnfTest";
