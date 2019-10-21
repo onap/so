@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "917bddf1_8b19ac78",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/inventory/create/CreateInventoryService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-21T08:25:18Z",
+      "side": 1,
+      "message": "What this line is supposed to do? Logging only class name? This log is absolutely redundant.",
+      "range": {
+        "startLine": 52,
+        "startChar": 8,
+        "endLine": 52,
+        "endChar": 47
+      },
+      "revId": "c5b1e5092263a159f99a0a5ead44429e4b995af3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
