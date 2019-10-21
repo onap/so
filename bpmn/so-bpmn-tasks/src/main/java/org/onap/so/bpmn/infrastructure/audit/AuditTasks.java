@@ -21,7 +21,6 @@
 package org.onap.so.bpmn.infrastructure.audit;
 
 
-import java.util.List;
 import org.onap.so.audit.beans.AuditInventory;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
@@ -32,10 +31,6 @@ import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.client.exception.ExceptionBuilder;
-import org.onap.so.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
-import org.onap.so.db.request.beans.RequestProcessingData;
-import org.onap.so.db.request.client.RequestsDbClient;
-import org.onap.so.objects.audit.AAIObjectAuditList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
