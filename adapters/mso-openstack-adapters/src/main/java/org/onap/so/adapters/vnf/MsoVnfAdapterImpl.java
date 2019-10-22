@@ -414,34 +414,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         return new HashMap<>(stringInputs);
     }
 
-    protected boolean callHeatbridge(String heatStackId) {
-        String executionDir = "/usr/local/lib/python2.7/dist-packages/heatbridge";
-        String openstackIdentityUrl = "", username = "", password = "", tenant = "", region = "", owner = "";
-        long waitTimeMs = 10000L;
-        try {
-            String[] cmdarray = {"/usr/bin/python", "HeatBridgeMain.py", openstackIdentityUrl, username, password,
-                    tenant, region, owner, heatStackId};
-            String[] envp = null;
-            File dir = new File(executionDir);
-            logger.debug("Calling HeatBridgeMain.py in {} with arguments {}", dir, Arrays.toString(cmdarray));
-            Runtime r = Runtime.getRuntime();
-            Process p = r.exec(cmdarray, envp, dir);
-            boolean wait = p.waitFor(waitTimeMs, TimeUnit.MILLISECONDS);
-
-            logger.debug(" HeatBridgeMain.py returned {} with code {}", wait, p.exitValue());
-            return wait && p.exitValue() == 0;
-        } catch (IOException e) {
-            logger.debug(" HeatBridgeMain.py failed with IO Exception! {}", e);
-            return false;
-        } catch (RuntimeException e) {
-            logger.debug(" HeatBridgeMain.py failed during runtime! {}", e);
-            return false;
-        } catch (Exception e) {
-            logger.debug(" HeatBridgeMain.py failed for unknown reasons! {}", e);
-            return false;
-        }
-    }
-
     private void heatbridge(StackInfo heatStack, String cloudOwner, String cloudSiteId, String tenantId,
             String genericVnfName, String vfModuleId) {
         try {
@@ -631,11 +603,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         vfRollback.setBaseGroupHeatStackId(baseVfHeatStackId);
         vfRollback.setIsBase(isBaseRequest);
         vfRollback.setModelCustomizationUuid(mcu);
-
-        // Put data into A&AI through Heatstack
-        if (enableBridge != null && enableBridge) {
-            callHeatbridge(baseVfHeatStackId);
-        }
 
         // handle a nestedStackId if sent- this one would be for the volume - so applies to both Vf and Vnf
         StackInfo nestedHeatStack = null;
@@ -1156,8 +1123,10 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 }
             }
             logger.debug("VF Module {} successfully created", vfModuleName);
-            // call heatbridge
-            heatbridge(heatStack, cloudOwner, cloudSiteId, tenantId, genericVnfName, vfModuleId);
+            if (enableBridge != null && enableBridge) {
+                // call heatbridge
+                heatbridge(heatStack, cloudOwner, cloudSiteId, tenantId, genericVnfName, vfModuleId);
+            }
         } catch (Exception e) {
             logger.debug("unhandled exception in create VF", e);
             throw new VnfException("Exception during create VF " + e.getMessage());
