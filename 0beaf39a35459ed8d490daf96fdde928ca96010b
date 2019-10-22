@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ec489876_57d187f3",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/adapter/vnfm/tasks/utils/AbstractInputParametersProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2019-10-22T15:27:25Z",
+      "side": 1,
+      "message": "parseAdditionalParamaters would be a more accurate name",
+      "range": {
+        "startLine": 41,
+        "startChar": 34,
+        "endLine": 41,
+        "endChar": 57
+      },
+      "revId": "0beaf39a35459ed8d490daf96fdde928ca96010b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bf04b05e_f3a9869e",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/adapter/vnfm/tasks/utils/AbstractInputParametersProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2019-10-22T15:27:25Z",
+      "side": 1,
+      "message": "parseExternalVirtualLinks would be a more accurate name",
+      "range": {
+        "startLine": 53,
+        "startChar": 40,
+        "endLine": 53,
+        "endChar": 62
+      },
+      "revId": "0beaf39a35459ed8d490daf96fdde928ca96010b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "52924394_2abcbe48",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/adapter/vnfm/tasks/InputParameterRetrieverTaskTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2019-10-22T15:27:25Z",
+      "side": 1,
+      "message": "Would be good to have a test case where the parameters are set in both SDNC and user param",
+      "revId": "0beaf39a35459ed8d490daf96fdde928ca96010b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
