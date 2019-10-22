@@ -22,11 +22,13 @@
 package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.onap.so.bpmn.infrastructure.flowspecific.exceptions.VnfNotFoundException;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
@@ -127,12 +129,12 @@ public class ConfigAssignVnf {
         return getServiceObjectFromServiceMap(serviceMap);
     }
 
-    private Service getServiceObjectFromServiceMap(Map<String, Object> serviceMap) throws Exception {
+    private Service getServiceObjectFromServiceMap(Map<String, Object> serviceMap) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         String serviceFromJson = objectMapper.writeValueAsString(serviceMap.get("service"));
         try {
             return objectMapper.readValue(serviceFromJson, Service.class);
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error(String.format(
                     "An exception occurred while converting json object to Service object. The json is: %s",
                     serviceFromJson), e);
@@ -141,15 +143,14 @@ public class ConfigAssignVnf {
     }
 
     private List<Map<String, String>> getInstanceParamForVnf(Service service, String genericVnfModelCustomizationUuid)
-            throws Exception {
+            throws VnfNotFoundException {
         Optional<Vnfs> foundedVnf = service.getResources().getVnfs().stream()
                 .filter(vnfs -> vnfs.getModelInfo().getModelCustomizationId().equals(genericVnfModelCustomizationUuid))
                 .findFirst();
         if (foundedVnf.isPresent()) {
             return foundedVnf.get().getInstanceParams();
         } else {
-            throw new Exception(String.format("Can not find vnf for genericVnfModelCustomizationUuid: %s",
-                    genericVnfModelCustomizationUuid));
+            throw new VnfNotFoundException(genericVnfModelCustomizationUuid);
         }
     }
 }
