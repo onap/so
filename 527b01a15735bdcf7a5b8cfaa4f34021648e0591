@@ -22,6 +22,30 @@
       "revId": "527b01a15735bdcf7a5b8cfaa4f34021648e0591",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "707a0ea6_296d4bc9",
+        "filename": "docs/release-notes.rst",
+        "patchSetId": 2
+      },
+      "lineNbr": 638,
+      "author": {
+        "id": 4965
+      },
+      "writtenOn": "2019-10-23T20:36:41Z",
+      "side": 1,
+      "message": "This is not sth that I created thus I\u0027d prefer to keep it unchanged. It\u0027s unrelated to security release notes (I\u0027ve only remove trailing whitespaces as I do in every file that I touch;)",
+      "parentUuid": "d3922992_95a3550a",
+      "range": {
+        "startLine": 638,
+        "startChar": 1,
+        "endLine": 638,
+        "endChar": 66
+      },
+      "revId": "527b01a15735bdcf7a5b8cfaa4f34021648e0591",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
