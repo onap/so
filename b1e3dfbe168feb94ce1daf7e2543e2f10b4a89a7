@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6690d961_599844d0",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/adapter/vnfm/tasks/utils/InputParameterRetrieverTaskTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2019-10-23T10:39:24Z",
+      "side": 1,
+      "message": "also set \"instance_type\" to a different value than \"m1.small\" and verify in the test case that the user input value takes precedence over the SDNC value",
+      "range": {
+        "startLine": 180,
+        "startChar": 0,
+        "endLine": 180,
+        "endChar": 8
+      },
+      "revId": "b1e3dfbe168feb94ce1daf7e2543e2f10b4a89a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
