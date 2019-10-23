@@ -128,8 +128,8 @@ public class R__CloudConfigMigration implements JdbcMigration, MigrationInfoProv
     private void migrateCloudIdentity(Collection<CloudIdentity> entities, Connection connection) throws SQLException {
         logger.debug("Starting migration for CloudConfig-->IdentityService");
         String insert =
-                "INSERT INTO `identity_services` (`ID`, `IDENTITY_URL`, `MSO_ID`, `MSO_PASS`, `ADMIN_TENANT`, `MEMBER_ROLE`, `TENANT_METADATA`, `IDENTITY_SERVER_TYPE`, `IDENTITY_AUTHENTICATION_TYPE`, `LAST_UPDATED_BY`) "
-                        + "VALUES (?,?,?,?,?,?,?,?,?,?);";
+                "INSERT INTO `identity_services` (`ID`, `IDENTITY_URL`, `MSO_ID`, `MSO_PASS`, `ADMIN_TENANT`, `MEMBER_ROLE`, `TENANT_METADATA`, `IDENTITY_SERVER_TYPE`, `IDENTITY_AUTHENTICATION_TYPE`, `LAST_UPDATED_BY`, `PROJECT_DOMAIN_NAME`, `USER_DOMAIN_NAME`) "
+                        + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?);";
 
         try (Statement stmt = connection.createStatement();
                 PreparedStatement ps = connection.prepareStatement(insert)) {
@@ -157,6 +157,8 @@ public class R__CloudConfigMigration implements JdbcMigration, MigrationInfoProv
                                         ? cloudIdentity.getIdentityAuthenticationType().name()
                                         : null);
                         ps.setString(10, FLYWAY);
+                        ps.setString(11, cloudIdentity.getProjectDomainName());
+                        ps.setString(12, cloudIdentity.getUserDomainName());
                         ps.executeUpdate();
                     }
                 }
