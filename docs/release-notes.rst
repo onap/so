@@ -38,9 +38,11 @@ The R5 El Alto release of ONAP is a maintenance release, focusing on deployabili
 The main goal of the El-Alto release was to improve documentation, UT improvement for various kinds of resources.
 
 **Epics**
+
 -  [`SO-1756 <https://jira.onap.org/browse/SO-1756>`__\ ] - Enhance SO VNFM Adapter
 
 **Stories**
+
 -  [`SO-2376 <https://jira.onap.org/browse/SO-2376>`__\ ] - Improve fall out case handling
 -  [`SO-2363 <https://jira.onap.org/browse/SO-2363>`__\ ] - Update Resume Logic and Add Workflow Listeners
 -  [`SO-2353 <https://jira.onap.org/browse/SO-2353>`__\ ] - update logging to match onap logging library
@@ -119,6 +121,7 @@ The main goal of the El-Alto release was to improve documentation, UT improvemen
 -  [`SO-1446 <https://jira.onap.org/browse/SO-1446>`__\ ] - Multicloud API updates for generic clouds
 
 **Key Issues Addressed**
+
 -  [`SO-2400 <https://jira.onap.org/browse/SO-2400>`__\ ] - vCPE Create Res Cust Service Error : Execption in create execution list
 -  [`SO-2382 <https://jira.onap.org/browse/SO-2382>`__\ ] - SO ConfigAssign Java Exception
 -  [`SO-2378 <https://jira.onap.org/browse/SO-2378>`__\ ] - Java lang exception in Homing
