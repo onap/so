@@ -21,8 +21,13 @@
 package org.onap.so.adapters.requestsdb;
 
 
+import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +38,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.data.controller.InstanceNameDuplicateCheckRequest;
+import org.onap.so.serviceinstancebeans.ModelType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -91,14 +97,6 @@ public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsA
 
     @Before
     public void setup() {
-
-        headers = new HttpHeaders();
-        restTemplate = new TestRestTemplate("test", "test");
-
-        headers.set("Accept", MediaType.APPLICATION_JSON);
-        headers.set("Content-Type", MediaType.APPLICATION_JSON);
-        headers.set("Authorization", msoAdaptersAuth);
-
         infraActiveRequests = new InfraActiveRequests();
 
         infraActiveRequests.setRequestId(UUID.randomUUID().toString());
@@ -126,12 +124,22 @@ public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsA
         infraActiveRequests
                 .setRequestUrl("http://localhost:8080/onap/so/infra/serviceInstantiation/v7/serviceInstances");
 
-        HttpEntity<String> entity = new HttpEntity(infraActiveRequests, headers);
+        saveInfraActiveRequest(infraActiveRequests);
+    }
+
+    public void saveInfraActiveRequest(InfraActiveRequests request) {
+        headers = new HttpHeaders();
+        restTemplate = new TestRestTemplate("test", "test");
+
+        headers.set("Accept", MediaType.APPLICATION_JSON);
+        headers.set("Content-Type", MediaType.APPLICATION_JSON);
+        headers.set("Authorization", msoAdaptersAuth);
+
+        HttpEntity<String> entity = new HttpEntity(request, headers);
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort("/infraActiveRequests"));
         ResponseEntity<String> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, String.class);
-
         assertEquals(201, response.getStatusCodeValue());
     }
 
@@ -296,5 +304,39 @@ public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsA
 
         assertEquals(200, response.getStatusCodeValue());
         assertEquals(null, response.getBody());
+    }
+
+    @Test
+    public void getInProgressVolumeGroupsAndVfModulesTest() {
+        boolean expectedReturned = false;
+        InfraActiveRequests request = new InfraActiveRequests();
+        request.setRequestId(UUID.randomUUID().toString());
+        request.setVfModuleId(UUID.randomUUID().toString());
+        request.setRequestStatus("IN_PROGRESS");
+        request.setRequestScope(ModelType.vfModule.toString());
+        Instant startInstant = Instant.now().minus(3, ChronoUnit.MINUTES);
+        request.setStartTime(Timestamp.from(startInstant));
+        request.setRequestAction("create");
+        saveInfraActiveRequest(request);
+
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort("/infraActiveRequests/getInProgressVolumeGroupsAndVfModules"));
+
+        HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+        ResponseEntity<List<InfraActiveRequests>> response = restTemplate.exchange(builder.toUriString(),
+                HttpMethod.GET, entity, new ParameterizedTypeReference<List<InfraActiveRequests>>() {});
+
+        List<InfraActiveRequests> responseList = response.getBody();
+
+        assertEquals(200, response.getStatusCodeValue());
+
+        for (InfraActiveRequests result : responseList) {
+            if (result.getRequestId().equals(request.getRequestId())) {
+                assertThat(request, sameBeanAs(result).ignoring("modifyTime"));
+                expectedReturned = true;
+            }
+        }
+        assertTrue(expectedReturned);
     }
 }

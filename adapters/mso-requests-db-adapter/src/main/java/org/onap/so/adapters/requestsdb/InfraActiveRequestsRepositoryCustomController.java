@@ -74,4 +74,9 @@ public class InfraActiveRequestsRepositoryCustomController {
             @RequestParam(value = "maxResult", required = false) Integer maxResult) {
         return infraActiveRequestsRepository.getInfraActiveRequests(filters, startTime, endTime, maxResult);
     }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/infraActiveRequests/getInProgressVolumeGroupsAndVfModules")
+    public List<InfraActiveRequests> getInProgressVolumeGroupsAndVfModules() {
+        return infraActiveRequestsRepository.getInProgressVolumeGroupsAndVfModules();
+    }
 }

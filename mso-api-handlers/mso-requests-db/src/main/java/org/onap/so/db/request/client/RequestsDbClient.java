@@ -115,6 +115,8 @@ public class RequestsDbClient {
 
     private String getInfraActiveRequests = "/infraActiveRequests/v1/getInfraActiveRequests";
 
+    private String getInProgressVolumeGroupsAndVfModules = "/infraActiveRequests/getInProgressVolumeGroupsAndVfModules";
+
     private static final String findBySoRequestIdAndGroupIdAndName =
             "/requestProcessingData/search/findOneBySoRequestIdAndGroupingIdAndName";
 
@@ -183,6 +185,15 @@ public class RequestsDbClient {
             }
             throw e;
         }
+    }
+
+    public List<InfraActiveRequests> getInProgressVolumeGroupsAndVfModules() {
+        HttpHeaders headers = getHttpHeaders();
+        URI uri = getUri(endpoint + getInProgressVolumeGroupsAndVfModules);
+        HttpEntity<Map<String, List<String>>> entity = new HttpEntity<>(headers);
+        return restTemplate
+                .exchange(uri, HttpMethod.GET, entity, new ParameterizedTypeReference<List<InfraActiveRequests>>() {})
+                .getBody();
     }
 
     public InfraActiveRequests getInfraActiveRequestbyRequestId(String requestId) {
