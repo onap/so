@@ -89,7 +89,7 @@
         <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${execution.getVariable("isTopLevelFlow")==true&amp;&amp;execution.getVariable("sentSyncResponse")==false}</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
       <bpmn:sequenceFlow id="SequenceFlow_0eana0l" sourceRef="Task_SendSyncAckError" targetRef="Task_UpdateDb" />
-      <bpmn:serviceTask id="Task_SendSyncAckError" name="Send Sync Ack API Handler" camunda:asyncAfter="true" camunda:expression="${WorkflowActionBBTasks.sendSyncAck(execution)}">
+      <bpmn:serviceTask id="Task_SendSyncAckError" name="Send Sync Ack API Handler" camunda:asyncAfter="true" camunda:expression="${WorkflowActionBBTasks.sendErrorSyncAck(execution)}">
         <bpmn:incoming>SequenceFlow_0vi883o</bpmn:incoming>
         <bpmn:outgoing>SequenceFlow_0eana0l</bpmn:outgoing>
       </bpmn:serviceTask>
