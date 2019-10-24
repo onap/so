@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d54e82d6_16fe418b",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/inventory/create/CreateInventoryService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-10-24T10:28:02Z",
+      "side": 1,
+      "message": "please remove these imports also",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 31
+      },
+      "revId": "ae80ed0abc7034386bc0a21daaaf90cd356c96c4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
