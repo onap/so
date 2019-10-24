@@ -136,15 +136,9 @@ public class VnfmServiceProviderImpl implements VnfmServiceProvider {
             logger.error(errorMessage, exception);
             throw new VnfmRequestFailureException(errorMessage, exception);
         }
-        if (response.getStatusCode() != HttpStatus.ACCEPTED) {
-            final String errorMessage = "Terminate request to " + vnfSelfLink + " returned status code: "
-                    + response.getStatusCode() + ", request: " + terminateVnfRequest;
-            logger.error(errorMessage);
-            throw new VnfmRequestFailureException(errorMessage);
-        }
+        checkIfResponseIsAcceptable(response, vnfSelfLink, terminateVnfRequest);
         final String locationHeader = response.getHeaders().get("Location").iterator().next();
         return locationHeader.substring(locationHeader.lastIndexOf("/") + 1);
-
     }
 
     @Override
@@ -174,6 +168,22 @@ public class VnfmServiceProviderImpl implements VnfmServiceProvider {
                     "Create request to vnfm:" + vnfm.getVnfmId() + " resulted in exception" + createVnfRequest;
             logger.error(errorMessage, exception);
             throw new VnfmRequestFailureException(errorMessage, exception);
+        }
+    }
+
+    private void checkIfResponseIsAcceptable(ResponseEntity<Void> response, String vnfSelfLink,
+            TerminateVnfRequest terminateVnfRequest) {
+        if (response == null) {
+            final String errorMessage =
+                    "Terminate request to " + vnfSelfLink + ", response is null, " + "request: " + terminateVnfRequest;
+            logger.error(errorMessage);
+            throw new VnfmRequestFailureException(errorMessage);
+        }
+        if (response.getStatusCode() != HttpStatus.ACCEPTED) {
+            final String errorMessage = "Terminate request to " + vnfSelfLink + ", returned status code: "
+                    + response.getStatusCode() + ", request: " + terminateVnfRequest;
+            logger.error(errorMessage);
+            throw new VnfmRequestFailureException(errorMessage);
         }
     }
 
