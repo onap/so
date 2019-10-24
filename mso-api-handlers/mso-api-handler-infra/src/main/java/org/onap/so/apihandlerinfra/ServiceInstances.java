@@ -846,19 +846,9 @@ public class ServiceInstances extends AbstractRestHandler {
             currentActiveReq.setNetworkType(networkType);
         }
 
-        InfraActiveRequests dup = null;
-        boolean inProgress = false;
+        requestHandlerUtils.checkForDuplicateRequests(action, instanceIdMap, requestScope, currentActiveReq,
+                instanceName);
 
-        dup = requestHandlerUtils.duplicateCheck(action, instanceIdMap, instanceName, requestScope, currentActiveReq);
-
-        if (dup != null) {
-            inProgress = requestHandlerUtils.camundaHistoryCheck(dup, currentActiveReq);
-        }
-
-        if (dup != null && inProgress) {
-            requestHandlerUtils.buildErrorOnDuplicateRecord(currentActiveReq, action, instanceIdMap, instanceName,
-                    requestScope, dup);
-        }
         ServiceInstancesResponse serviceResponse = new ServiceInstancesResponse();
 
         RequestReferences referencesResponse = new RequestReferences();
@@ -1006,18 +996,7 @@ public class ServiceInstances extends AbstractRestHandler {
             throw validateException;
         }
 
-        InfraActiveRequests dup =
-                requestHandlerUtils.duplicateCheck(action, instanceIdMap, null, requestScope, currentActiveReq);
-        boolean inProgress = false;
-
-        if (dup != null) {
-            inProgress = requestHandlerUtils.camundaHistoryCheck(dup, currentActiveReq);
-        }
-
-        if (dup != null && inProgress) {
-            requestHandlerUtils.buildErrorOnDuplicateRecord(currentActiveReq, action, instanceIdMap, null, requestScope,
-                    dup);
-        }
+        requestHandlerUtils.checkForDuplicateRequests(action, instanceIdMap, requestScope, currentActiveReq, null);
 
         ServiceInstancesResponse serviceResponse = new ServiceInstancesResponse();
 
@@ -1077,18 +1056,8 @@ public class ServiceInstances extends AbstractRestHandler {
         requestHandlerUtils.setInstanceId(currentActiveReq, requestScope, null, instanceIdMap);
         String instanceName = sir.getRequestDetails().getRequestInfo().getInstanceName();
 
-        InfraActiveRequests dup = null;
-
-        dup = requestHandlerUtils.duplicateCheck(action, instanceIdMap, instanceName, requestScope, currentActiveReq);
-
-        if (dup != null) {
-            inProgress = requestHandlerUtils.camundaHistoryCheck(dup, currentActiveReq);
-        }
-
-        if (instanceIdMap != null && dup != null && inProgress) {
-            requestHandlerUtils.buildErrorOnDuplicateRecord(currentActiveReq, action, instanceIdMap, instanceName,
-                    requestScope, dup);
-        }
+        requestHandlerUtils.checkForDuplicateRequests(action, instanceIdMap, requestScope, currentActiveReq,
+                instanceName);
 
         ServiceInstancesResponse serviceResponse = new ServiceInstancesResponse();
         RequestReferences referencesResponse = new RequestReferences();
