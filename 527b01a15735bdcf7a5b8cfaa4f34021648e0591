@@ -46,6 +46,30 @@
       "revId": "527b01a15735bdcf7a5b8cfaa4f34021648e0591",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ec50cfce_dac118f6",
+        "filename": "docs/release-notes.rst",
+        "patchSetId": 2
+      },
+      "lineNbr": 638,
+      "author": {
+        "id": 29
+      },
+      "writtenOn": "2019-10-24T14:27:41Z",
+      "side": 1,
+      "message": "I dont understand this sentence\nhttps://nexus3.onap.org/#browse/browse:docker.release:v2%2Fonap%2Fso%2Fapi-handler-infra%2Ftags%2F1.5.3\nthe dockers are not under ecomp",
+      "parentUuid": "707a0ea6_296d4bc9",
+      "range": {
+        "startLine": 638,
+        "startChar": 1,
+        "endLine": 638,
+        "endChar": 66
+      },
+      "revId": "527b01a15735bdcf7a5b8cfaa4f34021648e0591",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
