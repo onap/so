@@ -70,6 +70,30 @@
       "revId": "527b01a15735bdcf7a5b8cfaa4f34021648e0591",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b85524cb_fc6efa30",
+        "filename": "docs/release-notes.rst",
+        "patchSetId": 2
+      },
+      "lineNbr": 638,
+      "author": {
+        "id": 4965
+      },
+      "writtenOn": "2019-10-24T18:54:12Z",
+      "side": 1,
+      "message": "Brian, take a look at the date, this are Beijing release notes not El Alto. I\u0027ve just removed whitespaces in whole file",
+      "parentUuid": "ec50cfce_dac118f6",
+      "range": {
+        "startLine": 638,
+        "startChar": 1,
+        "endLine": 638,
+        "endChar": 66
+      },
+      "revId": "527b01a15735bdcf7a5b8cfaa4f34021648e0591",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
