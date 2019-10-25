@@ -39,7 +39,12 @@ public class BuildingBlock implements Serializable {
     private Boolean isVirtualLink;
     @JsonProperty("virtual-link-key")
     private String virtualLinkKey;
-
+    //set scope and action
+    @JsonProperty("scope")
+    private String bpmnScope;
+    @JsonProperty("action")
+    private String bpmnAction;
+    
     public String getBpmnFlowName() {
         return bpmnFlowName;
     }
@@ -79,4 +84,20 @@ public class BuildingBlock implements Serializable {
     public void setVirtualLinkKey(String virtualLinkKey) {
         this.virtualLinkKey = virtualLinkKey;
     }
+
+	public String getBpmnScope() {
+		return bpmnScope;
+	}
+
+	public void setBpmnScope(String scope) {
+		this.bpmnScope = scope;
+	}
+
+	public String getBpmnAction() {
+		return bpmnAction;
+	}
+
+	public void setBpmnAction(String action) {
+		this.bpmnAction = action;
+	}
 }

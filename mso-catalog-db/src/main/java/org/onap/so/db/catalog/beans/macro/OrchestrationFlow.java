@@ -64,7 +64,15 @@ public class OrchestrationFlow implements Serializable {
     @BusinessKey
     @Column(name = "FLOW_VERSION")
     private Double flowVersion;
+    
+    @BusinessKey
+    @Column(name = "ACTION")
+    private String bpmnAction;
 
+	@BusinessKey
+    @Column(name = "SCOPE")
+    private String bpmnScope;
+    
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "NB_REQ_REF_LOOKUP_ID")
     private NorthBoundRequest northBoundRequest;
@@ -132,6 +140,22 @@ public class OrchestrationFlow implements Serializable {
         this.id = id;
     }
 
+    public String getBpmnAction() {
+		return bpmnAction;
+	}
+
+	public void setBpmnAction(String bpmnAction) {
+		this.bpmnAction = bpmnAction;
+	}
+
+	public String getBpmnscope() {
+		return bpmnScope;
+	}
+
+	public void setBpmnscope(String bpmnScope) {
+		this.bpmnScope = bpmnScope;
+	}
+    
     @LinkedResource
     public NorthBoundRequest getNorthBoundRequest() {
         return northBoundRequest;

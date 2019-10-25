@@ -76,6 +76,9 @@ public class VfModuleCustomization implements Serializable {
     @Column(name = "AVAILABILITY_ZONE_COUNT")
     private Integer availabilityZoneCount;
 
+    @Column(name = "SKIP_POST_INSTANTIATION_CONFIGURATION")
+    private Boolean skipPostInstConf;
+    
     @Column(name = "CREATION_TIMESTAMP", updatable = false)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     @Temporal(TemporalType.TIMESTAMP)
@@ -239,4 +242,15 @@ public class VfModuleCustomization implements Serializable {
     public void setCvnfcCustomization(Set<CvnfcCustomization> cvnfcCustomization) {
         this.cvnfcCustomization = cvnfcCustomization;
     }
+
+	public Boolean isSkipPostInstConf() {
+		return skipPostInstConf;
+	}
+
+	public void setSkipPostInstConf(Boolean skipPostInstConf) {
+		this.skipPostInstConf = skipPostInstConf;
+	}
+
+	
+    
 }

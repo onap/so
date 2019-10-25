@@ -856,7 +856,7 @@ public class CatalogDbClient {
                     "Unable to find VnfResourceCustomization ModelCustomizationUUID:" + vnfCustomizationUUID);
     }
 
-    protected VfModuleCustomization findVfModuleCustomizationInList(String vfModuleCustomizationUUID,
+    public VfModuleCustomization findVfModuleCustomizationInList(String vfModuleCustomizationUUID,
             List<VfModuleCustomization> vfModuleList) {
         if (vfModuleCustomizationUUID == null) {
             throw new EntityNotFoundException("a NULL UUID was provided in query to search for VfModuleCustomization");
@@ -1024,4 +1024,11 @@ public class CatalogDbClient {
         HttpHeaders headers = getHttpHeaders();
         return new HttpEntity<>(headers);
     }
+
+ // TODO : Logic of getting the List of VfModuleCustomization
+	public List<VfModuleCustomization> getVfModuleResourceCustomizationByModelUuid(String modelUuid) {
+		
+		
+		return null;
+	}
 }
