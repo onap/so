@@ -23,8 +23,6 @@ package org.onap.so.adapters.inventory.create;
 import javax.annotation.PostConstruct;
 import org.camunda.bpm.client.ExternalTaskClient;
 import org.onap.so.utils.ExternalTaskServiceUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
@@ -33,8 +31,6 @@ import org.springframework.stereotype.Component;
 @Component
 @Profile("!test")
 public class CreateInventoryService {
-
-    private static final Logger logger = LoggerFactory.getLogger(CreateInventoryService.class);
 
     @Autowired
     public Environment env;
