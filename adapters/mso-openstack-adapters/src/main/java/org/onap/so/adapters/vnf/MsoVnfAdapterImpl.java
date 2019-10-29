@@ -421,8 +421,8 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
             List<String> oobMgtNetNames = new ArrayList<>();
 
-            HeatBridgeApi heatBridgeClient =
-                    new HeatBridgeImpl(new AAIResourcesClient(), cloudIdentity, cloudOwner, cloudSiteId, tenantId);
+            HeatBridgeApi heatBridgeClient = new HeatBridgeImpl(new AAIResourcesClient(), cloudIdentity, cloudOwner,
+                    cloudSiteId, cloudSite.getRegionId(), tenantId);
 
             heatBridgeClient.authenticate();
 
