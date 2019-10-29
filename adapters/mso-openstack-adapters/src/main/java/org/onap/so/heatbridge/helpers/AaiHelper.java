@@ -43,6 +43,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.onap.aai.domain.yang.Flavor;
 import org.onap.aai.domain.yang.Image;
+import org.onap.aai.domain.yang.PInterface;
+import org.onap.aai.domain.yang.Pserver;
 import org.onap.aai.domain.yang.Relationship;
 import org.onap.aai.domain.yang.RelationshipData;
 import org.onap.aai.domain.yang.RelationshipList;
@@ -50,6 +52,7 @@ import org.onap.aai.domain.yang.SriovVf;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.so.heatbridge.constants.HeatBridgeConstants;
 import org.openstack4j.model.compute.Server;
+import org.openstack4j.model.network.Port;
 
 /**
  * This class provides wrapper methods to manage creation of AAI objects and extracting objects from AAI and
@@ -134,6 +137,37 @@ public class AaiHelper {
         server.getLinks().stream().filter(link -> link.getRel().equals(HeatBridgeConstants.OS_RESOURCES_SELF_LINK_KEY))
                 .findFirst().ifPresent(link -> vserver.setVserverSelflink(link.getHref()));
         return vserver;
+    }
+
+    /**
+     * Transform Openstack Server object to AAI Pserver object
+     *
+     * @param server Openstack server object
+     * @return AAI Pserver object
+     */
+    public Pserver buildPserver(final Server server) {
+        Pserver pserver = new Pserver();
+        pserver.setInMaint(false);
+        pserver.setPserverId(server.getId());
+        pserver.setHostname(server.getHypervisorHostname());
+        pserver.setPserverName2(server.getHost());
+        pserver.setProvStatus(server.getStatus().value());
+        return pserver;
+    }
+
+    /**
+     * Transform Openstack Server object to AAI PInterface object
+     *
+     * @param port Openstack port object
+     * @return AAI PInterface object
+     */
+    public PInterface buildPInterface(Port port) {
+        Map<String, Object> portProfile = port.getProfile();
+        PInterface pInterface = new PInterface();
+        pInterface.setInterfaceName(portProfile.get(HeatBridgeConstants.OS_PHYSICAL_NETWORK_KEY).toString());
+        pInterface.setInMaint(false);
+        pInterface.setInterfaceRole(HeatBridgeConstants.OS_PHYSICAL_INTERFACE_KEY);
+        return pInterface;
     }
 
     /**

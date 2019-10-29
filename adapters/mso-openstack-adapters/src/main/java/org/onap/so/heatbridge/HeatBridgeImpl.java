@@ -32,6 +32,7 @@
  */
 package org.onap.so.heatbridge;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -260,6 +261,61 @@ public class HeatBridgeImpl implements HeatBridgeApi {
             // Update l-interface to the vserver
             transaction.create(AAIUriFactory.createResourceUri(AAIObjectType.L_INTERFACE, cloudOwner, cloudRegionId,
                     tenantId, port.getDeviceId(), lIf.getInterfaceName()), lIf);
+        }
+    }
+
+    @Override
+    public void createPserversAndPinterfacesIfNotPresentInAai(final List<Resource> stackResources)
+            throws HeatBridgeException {
+        Map<String, Pserver> serverHostnames = getPserverMapping(stackResources);
+        createPServerIfNotExists(serverHostnames);
+        List<String> portIds =
+                extractStackResourceIdsByResourceType(stackResources, HeatBridgeConstants.OS_PORT_RESOURCE_TYPE);
+        for (String portId : portIds) {
+            Port port = osClient.getPortById(portId);
+            if (port.getvNicType().equalsIgnoreCase(HeatBridgeConstants.OS_SRIOV_PORT_TYPE)) {
+                createPServerPInterfaceIfNotExists(serverHostnames.get(port.getHostId()).getHostname(),
+                        aaiHelper.buildPInterface(port));
+            }
+        }
+    }
+
+    private Map<String, Pserver> getPserverMapping(final List<Resource> stackResources) {
+        List<Server> osServers = getAllOpenstackServers(stackResources);
+        Map<String, Pserver> pserverMap = new HashMap<>();
+        for (Server server : osServers) {
+            pserverMap.put(server.getHost(), aaiHelper.buildPserver(server));
+        }
+        return pserverMap;
+    }
+
+    private void createPServerIfNotExists(Map<String, Pserver> serverHostnames) throws HeatBridgeException {
+        for (Pserver pserver : serverHostnames.values()) {
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.PSERVER, pserver.getHostname());
+            try {
+                resourcesClient.create(uri, pserver);
+            } catch (PreconditionFailedException e) {
+                if (!e.getLocalizedMessage()
+                        .contains("msg=Precondition Required:resource-version not passed for update of")) {
+                    String msg = "Failed to add to AAI " + uri.toString();
+                    throw new HeatBridgeException(msg, e);
+                }
+            }
+        }
+    }
+
+    private void createPServerPInterfaceIfNotExists(String pserverHostname, PInterface pInterface)
+            throws HeatBridgeException {
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.P_INTERFACE, pserverHostname,
+                pInterface.getInterfaceName());
+        try {
+            resourcesClient.create(uri, pInterface);
+        } catch (PreconditionFailedException e) {
+            if (!e.getLocalizedMessage()
+                    .contains("msg=Precondition Required:resource-version not passed for update of")) {
+                String msg = "Failed to add to AAI " + uri.toString();
+                throw new HeatBridgeException(msg, e);
+            }
         }
     }
 
