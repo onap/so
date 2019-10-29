@@ -210,7 +210,8 @@ public class MsoVnfMulticloudAdapterImplTest extends BaseRestTestUtils {
         wireMockServer.stubFor(delete(urlPathEqualTo("/api/multicloud/v1/CloudOwner/MTN13/infra_workload/workload-id"))
                 .willReturn(aResponse().withStatus(HttpStatus.SC_NO_CONTENT)));
 
-        instance.deleteVfModule("MTN13", "CloudOwner", "123", "workload-id", msoRequest, new Holder<>());
+        instance.deleteVfModule("MTN13", "CloudOwner", "123", "workload-id", "5aae1e49-805c-4f9f-bd78-055bf7451157",
+                "11420693-3f69-4c61-b3ee-9787c744e760", msoRequest, new Holder<>());
     }
 
     @Test

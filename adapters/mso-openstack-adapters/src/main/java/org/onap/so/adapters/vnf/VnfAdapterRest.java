@@ -179,7 +179,8 @@ public class VnfAdapterRest {
                 Holder<Map<String, String>> outputs = new Holder<>();
                 if (cloudsite != null && !cloudsite.equals(TESTING_KEYWORD)) {
                     vnfAdapter.deleteVfModule(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
-                            req.getVfModuleStackId(), req.getMsoRequest(), outputs);
+                            req.getVfModuleStackId(), req.getVnfId(), req.getVfModuleId(), req.getMsoRequest(),
+                            outputs);
                 }
                 response = new DeleteVfModuleResponse(req.getVnfId(), req.getVfModuleId(), Boolean.TRUE,
                         req.getMessageId(), outputs.value);
