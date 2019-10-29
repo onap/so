@@ -138,6 +138,13 @@ public interface HeatBridgeApi {
     void buildAddVserverLInterfacesToAaiAction(List<Resource> stackResources, List<String> oobMgtNetIds);
 
     /**
+     * Query and build AAI actions for Openstack Compute resources to AAI's pserver and pinterface objects
+     *
+     * @param stackResources Openstack StackResources list
+     */
+    void createPserversAndPinterfacesIfNotPresentInAai(final List<Resource> stackResources) throws HeatBridgeException;
+
+    /**
      * Execute AAI restful API to update the Openstack resources
      *
      * @throws HeatBridgeException when failing to add openstack resource PoJos to AAI
