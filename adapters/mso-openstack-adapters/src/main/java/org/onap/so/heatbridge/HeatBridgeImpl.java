@@ -102,21 +102,25 @@ public class HeatBridgeImpl implements HeatBridgeApi {
     private AAISingleTransactionClient transaction;
     private String cloudOwner;
     private String cloudRegionId;
+    private String regionId;
     private String tenantId;
     private AaiHelper aaiHelper = new AaiHelper();
     private CloudIdentity cloudIdentity;
 
 
     public HeatBridgeImpl(AAIResourcesClient resourcesClient, final CloudIdentity cloudIdentity,
-            @Nonnull final String cloudOwner, @Nonnull final String cloudRegionId, @Nonnull final String tenantId) {
+        @Nonnull final String cloudOwner, @Nonnull final String cloudRegionId, @Nonnull final String regionId,
+        @Nonnull final String tenantId) {
         Objects.requireNonNull(cloudOwner, "Null cloud-owner value!");
         Objects.requireNonNull(cloudRegionId, "Null cloud-region identifier!");
         Objects.requireNonNull(tenantId, "Null tenant identifier!");
+        Objects.requireNonNull(regionId, "Null regionId identifier!");
         Objects.requireNonNull(tenantId, "Null AAI actions list!");
 
         this.cloudIdentity = cloudIdentity;
         this.cloudOwner = cloudOwner;
         this.cloudRegionId = cloudRegionId;
+        this.regionId = regionId;
         this.tenantId = tenantId;
         this.resourcesClient = resourcesClient;
         this.transaction = resourcesClient.beginSingleTransaction();
@@ -124,11 +128,10 @@ public class HeatBridgeImpl implements HeatBridgeApi {
 
     @Override
     public OpenstackClient authenticate() throws HeatBridgeException {
-        this.osClient = new MsoCloudClientFactoryImpl(new OpenstackClientFactoryImpl()).getOpenstackClient(
-                cloudIdentity.getIdentityUrl(), cloudIdentity.getMsoId(), cloudIdentity.getMsoPass(), cloudRegionId,
-                tenantId);
-        logger.debug("Successfully authenticated with keystone for tenant: " + tenantId + " and cloud " + "region: "
-                + cloudRegionId);
+        this.osClient = new MsoCloudClientFactoryImpl(new OpenstackClientFactoryImpl())
+            .getOpenstackClient(cloudIdentity.getIdentityUrl(), cloudIdentity.getMsoId(), cloudIdentity.getMsoPass(),
+                regionId, tenantId);
+        logger.debug("Successfully authenticated with keystone for tenant: " + tenantId + " and region: " + regionId);
         return osClient;
     }
 
