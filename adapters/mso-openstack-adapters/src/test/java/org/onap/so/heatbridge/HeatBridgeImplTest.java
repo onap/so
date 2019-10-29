@@ -112,7 +112,7 @@ public class HeatBridgeImplTest {
     public void setUp() throws HeatBridgeException, OpenstackClientException, BulkProcessFailed {
 
         when(resourcesClient.beginSingleTransaction()).thenReturn(transaction);
-        heatbridge = new HeatBridgeImpl(resourcesClient, cloudIdentity, CLOUD_OWNER, REGION_ID, TENANT_ID);
+        heatbridge = new HeatBridgeImpl(resourcesClient, cloudIdentity, CLOUD_OWNER, REGION_ID, REGION_ID, TENANT_ID);
     }
 
     @Ignore
