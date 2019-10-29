@@ -1081,8 +1081,8 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
 
     }
 
-    public void deleteVfModule(String cloudSiteId, String cloudOwner, String tenantId, String vnfName,
-            MsoRequest msoRequest, Holder<Map<String, String>> outputs) throws VnfException {
+    public void deleteVfModule(String cloudSiteId, String cloudOwner, String tenantId, String vnfName, String vnfId,
+            String vfModuleId, MsoRequest msoRequest, Holder<Map<String, String>> outputs) throws VnfException {
         logger.debug("Deleting VF " + vnfName + " in " + cloudOwner + "/" + cloudSiteId + "/" + tenantId);
 
         // 1702 capture the output parameters on a delete

@@ -150,4 +150,11 @@ public interface HeatBridgeApi {
      * @throws HeatBridgeException when failing to add openstack resource PoJos to AAI
      */
     void submitToAai() throws HeatBridgeException;
+
+    /**
+     * Delete heatbridge data for a given vf-module
+     *
+     * @throws HeatBridgeException when failing to remove heatbridge data from AAI for a given vf-module
+     */
+    void deleteVfModuleData(String vnfId, String vfModuleId) throws HeatBridgeException;
 }

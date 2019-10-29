@@ -58,6 +58,7 @@ import org.onap.aai.domain.yang.SriovVfs;
 import org.onap.aai.domain.yang.Vlan;
 import org.onap.aai.domain.yang.Vlans;
 import org.onap.aai.domain.yang.Vserver;
+import org.onap.aai.domain.yang.VfModule;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.AAISingleTransactionClient;
@@ -121,6 +122,11 @@ public class HeatBridgeImpl implements HeatBridgeApi {
         this.regionId = regionId;
         this.tenantId = tenantId;
         this.resourcesClient = resourcesClient;
+        this.transaction = resourcesClient.beginSingleTransaction();
+    }
+
+    public HeatBridgeImpl() {
+        this.resourcesClient = new AAIResourcesClient();
         this.transaction = resourcesClient.beginSingleTransaction();
     }
 
@@ -434,6 +440,73 @@ public class HeatBridgeImpl implements HeatBridgeApi {
             logger.debug(msg + " with error: " + e);
             throw new HeatBridgeException(msg, e);
         }
+    }
+
+    @Override
+    public void deleteVfModuleData(@Nonnull final String vnfId, @Nonnull final String vfModuleId)
+            throws HeatBridgeException {
+        Objects.requireNonNull(vnfId, "Null vnf-id!");
+        Objects.requireNonNull(vfModuleId, "Null vf-module-id!");
+        try {
+            Optional<VfModule> vfModule = resourcesClient.get(VfModule.class,
+                    AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId).depth(Depth.ONE));
+            if (vfModule.isPresent()) {
+                List<AAIResourceUri> vserverUris = HeatBridgeUtils.getVserverUris(vfModule.get());
+                createTransactionToDeleteSriovPfFromPserver(vserverUris);
+                if (!vserverUris.isEmpty()) {
+                    for (AAIResourceUri vserverUri : vserverUris) {
+                        resourcesClient.delete(vserverUri);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            String msg = "Failed to commit delete heatbridge data transaction";
+            logger.debug(msg + " with error: " + e);
+            throw new HeatBridgeException(msg, e);
+        }
+    }
+
+    private void createTransactionToDeleteSriovPfFromPserver(List<AAIResourceUri> vserverUris) {
+        Map<String, List<String>> pserverToPciIdMap = getPserverToPciIdMap(vserverUris);
+        for (Map.Entry<String, List<String>> entry : pserverToPciIdMap.entrySet()) {
+            String pserverName = entry.getKey();
+            List<String> pciIds = entry.getValue();
+            Optional<Pserver> pserver = resourcesClient.get(Pserver.class,
+                    AAIUriFactory.createResourceUri(AAIObjectType.PSERVER, pserverName).depth(Depth.TWO));
+            if (pserver.isPresent()) {
+                // For each pserver/p-interface match sriov-vfs by pic-id and delete them.
+                pserver.get().getPInterfaces().getPInterface().stream().filter(
+                        pIf -> pIf.getSriovPfs() != null && CollectionUtils.isNotEmpty(pIf.getSriovPfs().getSriovPf()))
+                        .forEach(pIf -> pIf.getSriovPfs().getSriovPf().forEach(sriovPf -> {
+                            if (pciIds.contains(sriovPf.getPfPciId())) {
+                                logger.debug("creating transaction to delete SR-IOV PF: " + pIf.getInterfaceName()
+                                        + " from PServer: " + pserverName);
+                                resourcesClient.delete(AAIUriFactory.createResourceUri(AAIObjectType.SRIOV_PF,
+                                        pserverName, pIf.getInterfaceName(), sriovPf.getPfPciId()));
+                            }
+                        }));
+            }
+        }
+    }
+
+    private Map<String, List<String>> getPserverToPciIdMap(List<AAIResourceUri> vserverUris) {
+        Map<String, List<String>> pserverToPciIdMap = new HashMap<>();
+        for (AAIResourceUri vserverUri : vserverUris) {
+            Optional<Vserver> vserverOpt = resourcesClient.get(Vserver.class, vserverUri.depth(Depth.TWO));
+            if (vserverOpt.isPresent() && vserverOpt.get().getLInterfaces() != null) {
+                Vserver vserver = vserverOpt.get();
+                List<String> pciIds = HeatBridgeUtils.extractPciIdsFromVServer(vserver);
+                if (CollectionUtils.isNotEmpty(pciIds)) {
+                    List<String> matchingPservers =
+                            HeatBridgeUtils.extractRelationshipDataValue(vserver.getRelationshipList());
+                    Preconditions.checkState(matchingPservers != null && matchingPservers.size() == 1,
+                            "Invalid pserver relationships for vserver: " + vserver.getVserverName());
+                    pserverToPciIdMap.put(matchingPservers.get(0), pciIds);
+                }
+            }
+
+        }
+        return pserverToPciIdMap;
     }
 
     private <T> Predicate<T> distinctByProperty(Function<? super T, Object> keyExtractor) {

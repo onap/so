@@ -1072,8 +1072,8 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
     }
 
 
-    public void deleteVfModule(String cloudSiteId, String cloudOwner, String tenantId, String vfModuleId,
-            MsoRequest msoRequest, Holder<Map<String, String>> outputs) throws VnfException {
+    public void deleteVfModule(String cloudSiteId, String cloudOwner, String tenantId, String vfModuleId, String vnfId,
+            String aaiVfModuleId, MsoRequest msoRequest, Holder<Map<String, String>> outputs) throws VnfException {
 
         logger.debug("Deleting VF Module " + vfModuleId + " in " + cloudOwner + "/" + cloudSiteId + "/" + tenantId);
 
