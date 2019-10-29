@@ -65,13 +65,13 @@ public class MsoCloudClientFactoryImpl implements MsoCloudClientFactory {
         Objects.requireNonNull(url, "Null openstack url!");
         Objects.requireNonNull(msoId, "Null openstack user id!");
         Objects.requireNonNull(msoPass, "Null openstack password!");
-        Objects.requireNonNull(cloudRegionId, "Null cloud-region ID!");
+        Objects.requireNonNull(regionId, "Null regionId ID!");
         Objects.requireNonNull(tenantId, "Null tenant ID!");
         try {
             final OpenstackAccess osAccess = new OpenstackAccessBuilder().setBaseUrl(url) // keystone URL
                     .setUser(msoId) // keystone username
                     .setPassword(CryptoUtils.decryptCloudConfigPassword(msoPass)) // keystone decrypted password
-                    .setRegion(cloudRegionId) // openstack region
+                    .setRegion(regionId) // openstack region
                     .setDomainName(HeatBridgeConstants.OS_DEFAULT_DOMAIN_NAME) // hardcode to "default"
                     .setTenantId(tenantId) // tenantId
                     .build();
