@@ -815,3 +815,10 @@ VALUES
 UPDATE rainy_day_handler_macro SET reg_ex_error_message = '*' WHERE reg_ex_error_message IS null;
 
 UPDATE rainy_day_handler_macro SET SERVICE_ROLE = '*' WHERE SERVICE_ROLE IS null;
+
+delete from rainy_day_handler_macro where FLOW_NAME = 'ConfigAssignVnfBB';
+delete from rainy_day_handler_macro where FLOW_NAME = 'ConfigDeployVnfBB';
+
+insert into rainy_day_handler_macro (FLOW_NAME, SERVICE_TYPE, VNF_TYPE, ERROR_CODE, WORK_STEP, POLICY) values
+('ConfigAssignVnfBB', '*', '*', '*', '*', 'Rollback'),
+('ConfigDeployVnfBB', '*', '*', '*', '*', 'Rollback');
