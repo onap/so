@@ -46,14 +46,6 @@ import org.openstack4j.model.heat.Resource;
 public interface HeatBridgeApi {
 
     /**
-     * Authenticate with Openstack Keystone. The auth information is read from SO cloud configuration file.
-     *
-     * @return Openstack client object with keystone token
-     * @throws HeatBridgeException upon failure to authenticate with keystone
-     */
-    OpenstackClient authenticate() throws HeatBridgeException;
-
-    /**
      * Query all the stack based resources from Openstack Heat service
      *
      * @param heatStackId Heat stack UUID
