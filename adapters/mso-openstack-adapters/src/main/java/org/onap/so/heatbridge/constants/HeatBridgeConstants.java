@@ -43,6 +43,7 @@ public class HeatBridgeConstants {
     public static final String OS_SRIOV_PORT_TYPE = "direct";
     public static final String OS_PCI_SLOT_KEY = "pci_slot";
     public static final String OS_PHYSICAL_NETWORK_KEY = "physical_network";
+    public static final String OS_PHYSICAL_INTERFACE_KEY = "physical-interface";
     public static final String OS_VLAN_NETWORK_KEY = "vlan";
     public static final String OS_UNKNOWN_KEY = "unknown";
     public static final String OS_RESOURCES_SELF_LINK_KEY = "self";

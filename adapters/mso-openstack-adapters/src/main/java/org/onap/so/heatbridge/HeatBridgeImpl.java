@@ -32,6 +32,7 @@
  */
 package org.onap.so.heatbridge;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -49,6 +50,7 @@ import org.onap.aai.domain.yang.Image;
 import org.onap.aai.domain.yang.L3InterfaceIpv4AddressList;
 import org.onap.aai.domain.yang.LInterface;
 import org.onap.aai.domain.yang.PInterface;
+import org.onap.aai.domain.yang.Pserver;
 import org.onap.aai.domain.yang.SriovPf;
 import org.onap.aai.domain.yang.SriovPfs;
 import org.onap.aai.domain.yang.SriovVf;
@@ -63,6 +65,7 @@ import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.graphinventory.entities.uri.Depth;
 import org.onap.so.client.graphinventory.exceptions.BulkProcessFailed;
+import org.onap.so.client.PreconditionFailedException;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.heatbridge.constants.HeatBridgeConstants;
 import org.onap.so.heatbridge.factory.MsoCloudClientFactoryImpl;
@@ -261,6 +264,44 @@ public class HeatBridgeImpl implements HeatBridgeApi {
             transaction.create(AAIUriFactory.createResourceUri(AAIObjectType.L_INTERFACE, cloudOwner, cloudRegionId,
                     tenantId, port.getDeviceId(), lIf.getInterfaceName()), lIf);
         }
+    }
+
+    @Override
+    public void createPserversAndPinterfacesIfNotPresentInAai(final List<Resource> stackResources)
+            throws HeatBridgeException {
+        Map<String, Pserver> serverHostnames = getPserverMapping(stackResources);
+        createPServerIfNotExists(serverHostnames);
+        List<String> portIds =
+                extractStackResourceIdsByResourceType(stackResources, HeatBridgeConstants.OS_PORT_RESOURCE_TYPE);
+        for (String portId : portIds) {
+            Port port = osClient.getPortById(portId);
+            if (port.getvNicType().equalsIgnoreCase(HeatBridgeConstants.OS_SRIOV_PORT_TYPE)) {
+                createPServerPInterfaceIfNotExists(serverHostnames.get(port.getHostId()).getHostname(),
+                        aaiHelper.buildPInterface(port));
+            }
+        }
+    }
+
+    private Map<String, Pserver> getPserverMapping(final List<Resource> stackResources) {
+        List<Server> osServers = getAllOpenstackServers(stackResources);
+        Map<String, Pserver> pserverMap = new HashMap<>();
+        for (Server server : osServers) {
+            pserverMap.put(server.getHost(), aaiHelper.buildPserver(server));
+        }
+        return pserverMap;
+    }
+
+    private void createPServerIfNotExists(Map<String, Pserver> serverHostnames) {
+        for (Pserver pserver : serverHostnames.values()) {
+            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.PSERVER, pserver.getHostname());
+            resourcesClient.createIfNotExists(uri, Optional.of(pserver));
+        }
+    }
+
+    private void createPServerPInterfaceIfNotExists(String pserverHostname, PInterface pInterface) {
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.P_INTERFACE, pserverHostname,
+                pInterface.getInterfaceName());
+        resourcesClient.createIfNotExists(uri, Optional.of(pInterface));
     }
 
     private void updateLInterfaceVlan(final Port port, final LInterface lIf) {
