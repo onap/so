@@ -195,7 +195,8 @@ public class VnfAdapterRestV2 {
                     // Support different Adapter Implementations
                     MsoVnfAdapter adapter = vnfAdapterRestUtils.getVnfAdapterImpl(mode, cloudsite);
                     adapter.deleteVfModule(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
-                            req.getVfModuleStackId(), req.getMsoRequest(), outputs);
+                            req.getVfModuleStackId(), req.getVnfId(), req.getVfModuleId(), req.getMsoRequest(),
+                            outputs);
                 }
                 response = new DeleteVfModuleResponse(req.getVnfId(), req.getVfModuleId(), Boolean.TRUE,
                         req.getMessageId(), outputs.value);

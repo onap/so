@@ -101,7 +101,8 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
         msoRequest.setRequestId("12345");
         msoRequest.setServiceInstanceId("12345");
 
-        instance.deleteVfModule("mtn13", "CloudOwner", "1234", "vfname", msoRequest, new Holder<>());
+        instance.deleteVfModule("mtn13", "CloudOwner", "1234", "vfname", "5aae1e49-805c-4f9f-bd78-055bf7451157",
+                "11420693-3f69-4c61-b3ee-9787c744e760", msoRequest, new Holder<>());
     }
 
     @Test
@@ -124,7 +125,8 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
         wireMockServer.stubFor(get(urlPathEqualTo("/v2.0/api/v3/tokens"))
                 .willReturn(aResponse().withBodyFile("OpenstackResponse_Access.json").withStatus(HttpStatus.SC_OK)));
 
-        instance.deleteVfModule("mtn13", "CloudOwner", "1234", "vfname", msoRequest, new Holder<>());
+        instance.deleteVfModule("mtn13", "CloudOwner", "1234", "vfname", "5aae1e49-805c-4f9f-bd78-055bf7451157",
+                "11420693-3f69-4c61-b3ee-9787c744e760", msoRequest, new Holder<>());
     }
 
     @Test
