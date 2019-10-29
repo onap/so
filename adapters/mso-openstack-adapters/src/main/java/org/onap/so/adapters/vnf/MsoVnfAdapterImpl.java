@@ -63,6 +63,7 @@ import org.onap.so.db.catalog.data.repository.VFModuleCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.VnfResourceRepository;
 import org.onap.so.db.catalog.utils.MavenLikeVersioning;
 import org.onap.so.entity.MsoRequest;
+import org.onap.so.heatbridge.HeatBridgeException;
 import org.onap.so.heatbridge.HeatBridgeApi;
 import org.onap.so.heatbridge.HeatBridgeImpl;
 import org.onap.so.logger.ErrorCode;
@@ -1136,8 +1137,8 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     }
 
     @Override
-    public void deleteVfModule(String cloudSiteId, String cloudOwner, String tenantId, String vnfName,
-            MsoRequest msoRequest, Holder<Map<String, String>> outputs) throws VnfException {
+    public void deleteVfModule(String cloudSiteId, String cloudOwner, String tenantId, String vnfName, String vnfId,
+            String vfModuleId, MsoRequest msoRequest, Holder<Map<String, String>> outputs) throws VnfException {
         Map<String, Object> stackOutputs;
         try {
             stackOutputs = msoHeatUtils.queryStackForOutputs(cloudSiteId, cloudOwner, tenantId, vnfName);
@@ -1201,6 +1202,12 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             } catch (Exception e) {
                 logger.error("Exception encountered while sending Confirm to Valet ", e);
             }
+        }
+        // call heatbridge delete
+        try {
+            new HeatBridgeImpl().deleteVfModuleData(vnfId, vfModuleId);
+        } catch (HeatBridgeException e) {
+            logger.error("Heatbridge failed to delete AAI data for vf-module: " + vfModuleId, e);
         }
     }
 
