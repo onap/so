@@ -47,13 +47,13 @@ public interface MsoCloudClientFactory {
      * @param url openstack url
      * @param msoId openstack user for mso
      * @param msoPass openstack password for mso user
-     * @param cloudRegionId cloud-region identifier
+     * @param regionId region identifier
      * @param tenantId tenant identifier
      * @return Openstack Client for the keystone version requested
      * @throws HeatBridgeException if any errors when reading cloud configuration or getting openstack client
      */
 
 
-    OpenstackClient getOpenstackClient(String url, String msoId, String msoPass, String cloudRegionId, String tenantId)
+    OpenstackClient getOpenstackClient(String url, String msoId, String msoPass, String regionId, String tenantId)
             throws HeatBridgeException;
 }

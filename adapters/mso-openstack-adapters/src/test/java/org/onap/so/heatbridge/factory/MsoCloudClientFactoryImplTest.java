@@ -38,7 +38,7 @@ public class MsoCloudClientFactoryImplTest {
 
     private static final String MSO_ID = "testMsoId";
     private static final String ENCRYPTED_PASSWORD = CryptoUtils.encryptCloudConfigPassword("testPassword");
-    private static final String CLOUD_REGION_ID = "testCloudRegionId";
+    private static final String REGION_ID = "testCloudRegionId";
     private static final String TENANT_ID = "testTenantId";
 
     private MsoCloudClientFactoryImpl testedObject;
@@ -52,20 +52,19 @@ public class MsoCloudClientFactoryImplTest {
 
     @Test
     public void getOpenstackClientWithVersion2() throws Exception {
-        testedObject.getOpenstackClient(URL_V2, MSO_ID, ENCRYPTED_PASSWORD, CLOUD_REGION_ID, TENANT_ID);
+        testedObject.getOpenstackClient(URL_V2, MSO_ID, ENCRYPTED_PASSWORD, REGION_ID, TENANT_ID);
         verify(openstackClientFactoryMock).createOpenstackV2Client(any(OpenstackAccess.class));
     }
 
     @Test
     public void getOpenstackClientWithVersion3() throws Exception {
-        testedObject.getOpenstackClient(URL_V3, MSO_ID, ENCRYPTED_PASSWORD, CLOUD_REGION_ID, TENANT_ID);
+        testedObject.getOpenstackClient(URL_V3, MSO_ID, ENCRYPTED_PASSWORD, REGION_ID, TENANT_ID);
         verify(openstackClientFactoryMock).createOpenstackV3Client(any(OpenstackAccess.class));
     }
 
     @Test(expected = HeatBridgeException.class)
     public void getOpenstackClient_unsupportedVersion() throws Exception {
-        testedObject.getOpenstackClient(URL_WITH_UNSUPPORTED_VERSION, MSO_ID, ENCRYPTED_PASSWORD, CLOUD_REGION_ID,
-                TENANT_ID);
+        testedObject.getOpenstackClient(URL_WITH_UNSUPPORTED_VERSION, MSO_ID, ENCRYPTED_PASSWORD, REGION_ID, TENANT_ID);
     }
 
 }
