@@ -41,6 +41,8 @@ public class RequestParameters implements Serializable {
     private List<Map<String, Object>> userParams = new ArrayList<>();
     @JsonProperty("aLaCarte")
     private Boolean aLaCarte;
+    @JsonProperty("pnfCorrelationId")
+    private String pnfCorrelationId;
     @JsonProperty("payload")
     private String payload;
     @JsonProperty("usePreload")
@@ -83,6 +85,16 @@ public class RequestParameters implements Serializable {
     @JsonProperty("aLaCarte")
     public void setaLaCarte(Boolean aLaCarte) {
         this.aLaCarte = aLaCarte;
+    }
+
+    @JsonProperty("pnfCorrelationId")
+    public String getPnfCorrelationId() {
+        return pnfCorrelationId;
+    }
+
+    @JsonProperty("pnfCorrelationId")
+    public void setPnfCorrelationId(String pnfCorrelationId) {
+        this.pnfCorrelationId = pnfCorrelationId;
     }
 
     public Boolean isaLaCarte() {

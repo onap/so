@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.MockitoJUnitRunner;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -58,7 +59,7 @@ public class PnfCDSRequestProviderTest {
     private static final String MODEL_UUID = "modelUuid";
     private static final String PRC_CUSTOMIZATION_UUID = "PRC_customizationUuid";
     private static final String PRC_INSTANCE_NAME = "PRC_instanceName";
-    private static final String PRC_TARGET_SOFTWARE_VERSION = "targetSoftwareVersion";
+    private static final String PRC_TARGET_SOFTWARE_VERSION = "target-software-version";
     private static final String SCOPE = "scope";
     private static final String ACTION = "action";
     private static final String PROCESS_KEY = "testProcessKey";

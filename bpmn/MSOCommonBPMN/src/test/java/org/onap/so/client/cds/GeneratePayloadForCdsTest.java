@@ -37,7 +37,9 @@ import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestParameters;
 import org.onap.so.client.cds.beans.AbstractCDSPropertiesBean;
 import org.onap.so.client.exception.PayloadGenerationException;
 import org.onap.so.serviceinstancebeans.*;
+
 import java.util.*;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.ThrowableAssert.catchThrowable;
 import static org.junit.Assert.assertNotNull;
@@ -75,7 +77,7 @@ public class GeneratePayloadForCdsTest {
     private static final String MODEL_UUID = "modelUuid";
     private static final String PRC_CUSTOMIZATION_UUID = "PRC_customizationUuid";
     private static final String PRC_INSTANCE_NAME = "PRC_instanceName";
-    private static final String PRC_TARGET_SOFTWARE_VERSION = "targetSoftwareVersion";
+    private static final String PRC_TARGET_SOFTWARE_VERSION = "target-software-version";
     private static final String SCOPE = "scope";
     private static final String ACTION = "action";
     private static final String PROCESS_KEY = "testProcessKey";

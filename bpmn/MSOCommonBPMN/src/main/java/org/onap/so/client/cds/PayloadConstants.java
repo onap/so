@@ -44,7 +44,7 @@ public final class PayloadConstants {
     public static final String PRC_BLUEPRINT_NAME = "PRC_blueprintName";
     public static final String PRC_BLUEPRINT_VERSION = "PRC_blueprintVersion";
     public static final String PRC_CUSTOMIZATION_UUID = "PRC_customizationUuid";
-    public static final String PRC_TARGET_SOFTWARE_VERSION = "targetSoftwareVersion";
+    public static final String PRC_TARGET_SOFTWARE_VERSION = "target-software-version";
 
     public final static String PNF_CORRELATION_ID = "pnfCorrelationId";
     public final static String PNF_UUID = "pnfUuid";

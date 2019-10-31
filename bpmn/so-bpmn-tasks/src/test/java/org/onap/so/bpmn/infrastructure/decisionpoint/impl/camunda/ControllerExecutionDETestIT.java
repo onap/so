@@ -37,13 +37,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.fail;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.*;
+import static org.onap.so.client.cds.PayloadConstants.PRC_TARGET_SOFTWARE_VERSION;
 
 @RunWith(Parameterized.class)
 public class ControllerExecutionDETestIT extends BaseIntegrationTest {
@@ -114,12 +117,13 @@ public class ControllerExecutionDETestIT extends BaseIntegrationTest {
         delegateExecution.setVariable(MODEL_UUID, TEST_MODEL_UUID);
         delegateExecution.setVariable(SERVICE_INSTANCE_ID, TEST_SERVICE_INSTANCE_ID);
         delegateExecution.setVariable(MSO_REQUEST_ID, TEST_MSO_REQUEST_ID);
+        delegateExecution.setVariable("testProcessKey", TEST_PROCESS_KEY);
         delegateExecution.setVariable(PNF_UUID, TEST_PNF_UUID);
         delegateExecution.setVariable(PRC_INSTANCE_NAME, TEST_PNF_RESOURCE_INSTANCE_NAME);
         delegateExecution.setVariable(PRC_CUSTOMIZATION_UUID, TEST_PNF_RESOURCE_CUSTOMIZATION_UUID);
         delegateExecution.setVariable(PRC_BLUEPRINT_NAME, TEST_PNF_RESOURCE_BLUEPRINT_NAME);
         delegateExecution.setVariable(PRC_BLUEPRINT_VERSION, TEST_PNF_RESOURCE_BLUEPRINT_VERSION);
-        delegateExecution.setVariable("targetSoftwareVersion", TEST_SOFTWARE_VERSION);
+        delegateExecution.setVariable(PRC_TARGET_SOFTWARE_VERSION, TEST_SOFTWARE_VERSION);
 
         delegateExecution.setVariable("actor", CDS_ACTOR);
         delegateExecution.setVariable("action", this.action);
@@ -184,7 +188,7 @@ public class ControllerExecutionDETestIT extends BaseIntegrationTest {
             assertThat(propertiesStruct.getFieldsOrThrow("pnf-ipv6-address").getStringValue()).isEqualTo("::/128");
         } else if (!action.equalsIgnoreCase(ASSIGN_ACTION)) {
             assertThat(actionIdentifiers.getMode()).isEqualTo("sync");
-            assertThat(propertiesStruct.getFieldsOrThrow("target-software-version").getStringValue())
+            assertThat(propertiesStruct.getFieldsOrThrow(PRC_TARGET_SOFTWARE_VERSION).getStringValue())
                     .isEqualTo(TEST_SOFTWARE_VERSION);
         } else {
             assertThat(actionIdentifiers.getMode()).isEqualTo("sync");
