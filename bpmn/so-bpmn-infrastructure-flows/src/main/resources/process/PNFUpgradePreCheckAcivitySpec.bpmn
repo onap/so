@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0g1sp5d" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.3.4">
+  <bpmn:process id="PNFUpgradePreCheckActivitySpec" name="PNFUpgradePreCheckActivitySpec" isExecutable="true">
+    <bpmn:startEvent id="PNFUpgradePreCheckActivitySpec_StartEvent">
+      <bpmn:outgoing>SequenceFlow_075xa4p</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="PNFUpgradePreCheckActivitySpec_EndEvent">
+      <bpmn:incoming>SequenceFlow_0uckp4o</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:callActivity id="Task_0hu3542" name="Precheck CDS call" calledElement="AbstractCDSProcessingBB">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+        <camunda:in source="executionObject" target="executionObject" />
+        <camunda:out source="CDSStatus" target="CDSStatus" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1exhmuw</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0uckp4o</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:serviceTask id="Task_09tvt8z" name="Prepare precheck" camunda:delegateExpression="${PreparePreCheckDelegate}">
+      <bpmn:incoming>SequenceFlow_075xa4p</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1exhmuw</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_075xa4p" sourceRef="PNFUpgradePreCheckActivitySpec_StartEvent" targetRef="Task_09tvt8z" />
+    <bpmn:sequenceFlow id="SequenceFlow_1exhmuw" sourceRef="Task_09tvt8z" targetRef="Task_0hu3542" />
+    <bpmn:sequenceFlow id="SequenceFlow_0uckp4o" sourceRef="Task_0hu3542" targetRef="PNFUpgradePreCheckActivitySpec_EndEvent" />
+  </bpmn:process>
+  <bpmn:error id="Error_1wktg98" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="PNFUpgradePreCheckActivitySpec">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="PNFUpgradePreCheckActivitySpec_StartEvent">
+        <dc:Bounds x="152" y="112" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0udcdd6_di" bpmnElement="PNFUpgradePreCheckActivitySpec_EndEvent">
+        <dc:Bounds x="772" y="112" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_0wybp6m_di" bpmnElement="Task_0hu3542">
+        <dc:Bounds x="540" y="90" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1q0mi2w_di" bpmnElement="Task_09tvt8z">
+        <dc:Bounds x="330" y="90" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_075xa4p_di" bpmnElement="SequenceFlow_075xa4p">
+        <di:waypoint x="188" y="130" />
+        <di:waypoint x="330" y="130" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1exhmuw_di" bpmnElement="SequenceFlow_1exhmuw">
+        <di:waypoint x="430" y="130" />
+        <di:waypoint x="540" y="130" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0uckp4o_di" bpmnElement="SequenceFlow_0uckp4o">
+        <di:waypoint x="640" y="130" />
+        <di:waypoint x="772" y="130" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

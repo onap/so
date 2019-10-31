@@ -83,6 +83,10 @@ public class PnfResourceCustomization implements Serializable {
     @Column(name = "SKIP_POST_INSTANTIATION_CONFIGURATION")
     private Boolean skipPostInstConf;
 
+    //TODO
+    @Column(name = "SOFTWARE_VERSION")
+    private String softwareVersion;
+
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
@@ -90,7 +94,7 @@ public class PnfResourceCustomization implements Serializable {
                 .append("nfFunction", nfFunction).append("nfType", nfType).append("nfRole", nfRole)
                 .append("nfNamingCode", nfNamingCode).append("multiStageDesign", multiStageDesign)
                 .append("pnfResources", pnfResources).append("blueprintName", blueprintName)
-                .append("blueprintVersion", blueprintVersion).toString();
+                .append("blueprintVersion", blueprintVersion).append("softwareVersion", softwareVersion).toString();
     }
 
     @Override
@@ -212,6 +216,15 @@ public class PnfResourceCustomization implements Serializable {
 
     public void setBlueprintVersion(String blueprintVersion) {
         this.blueprintVersion = blueprintVersion;
+    }
+
+    //TODO
+    public String getSoftwareVersion() {
+        return softwareVersion;
+    }
+    //TODO
+    public void setSoftwareVersion(String softwareVersion) {
+        this.softwareVersion = softwareVersion;
     }
 
     public Boolean isSkipPostInstConf() {
