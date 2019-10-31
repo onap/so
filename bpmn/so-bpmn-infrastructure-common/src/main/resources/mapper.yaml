@@ -1,0 +1,11 @@
+resolution-key: "pnfCorrelationId"
+service-instance-id: "serviceInstanceId"
+pnf-id: "pnfUuid"
+pnf-name: "pnfCorrelationId"
+service-model-uuid: "modelUuid"
+pnf-customization-uuid: "PRC_customizationUuid"
+software-version: "softwareVersion"
+pre-check: "preCheck"
+aai-pnf:
+  pnf-ipv4-address: "IpaddressV4Oam"
+  pnf-ipv6-address: "IpaddressV6Oam"

@@ -39,6 +39,8 @@ public class ExecutionVariableNames {
 
     public final static String SERVICE_MODEL_INFO = "serviceModelInfo";
 
+    public final static String SOFTWARE_VERSION = "softwareVersion";
+
     /**
      * Variable used to contain the {@link org.onap.so.client.cds.beans.AbstractCDSPropertiesBean} json value.
      */

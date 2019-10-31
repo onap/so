@@ -1,0 +1,8 @@
+config-assign-request:
+  resolution-key:
+  config-assign-properties:
+      service-instance-id:
+      pnf-id:
+      pnf-name:
+      service-model-uuid:
+      pnf-customization-uuid:
