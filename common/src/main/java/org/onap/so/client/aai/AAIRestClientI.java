@@ -38,4 +38,6 @@ public interface AAIRestClientI {
     Optional<Pnf> getPnfByName(String pnfId);
 
     void createPnf(String pnfId, Pnf pnf);
+
+    void updatePnf(String pnfId, Pnf pnf);
 }
