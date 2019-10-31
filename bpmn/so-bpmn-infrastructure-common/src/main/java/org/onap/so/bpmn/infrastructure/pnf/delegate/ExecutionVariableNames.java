@@ -52,6 +52,8 @@ public class ExecutionVariableNames {
     public static final String PRC_CUSTOMIZATION_UUID = "PRC_customizationUuid";
     public static final String PRC_INSTANCE_NAME = "PRC_instanceName";
 
+    public static final String SOFTWARE_VERSION = "softwareVersion";
+
     /**
      * Variable used to contain skipPostInstantiationConfiguration flag.
      */

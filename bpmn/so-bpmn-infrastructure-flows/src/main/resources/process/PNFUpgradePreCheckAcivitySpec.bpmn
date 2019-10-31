@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0g1sp5d" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.3.4">
+  <bpmn:process id="PNFUpgradePreCheckActivitySpec" isExecutable="true">
+    <bpmn:startEvent id="preCheck_StartEvent">
+      <bpmn:outgoing>SequenceFlow_075xa4p</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="preCheck_EndEvent">
+      <bpmn:incoming>SequenceFlow_0jivkig</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0pac7y9" default="SequenceFlow_1llnb5x">
+      <bpmn:incoming>SequenceFlow_1vjy37w</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0jivkig</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1llnb5x</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Task_1wq99hf" name="Upgrade checker" camunda:delegateExpression="${UpgradeCheckerDelegate}">
+      <bpmn:incoming>SequenceFlow_075xa4p</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0uwlycb</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:callActivity id="Task_0hu3542" name="Precheck CDS call" calledElement="AbstractCDSProcessingBB">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+        <camunda:in source="executionObject" target="executionObject" />
+        <camunda:out source="CDSStatus" target="CDSStatus" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0gmcdh1</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1vjy37w</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:serviceTask id="Task_09tvt8z" name="Prepare precheck" camunda:delegateExpression="${PreparePreCheckDelegate}">
+      <bpmn:incoming>SequenceFlow_0uwlycb</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0gmcdh1</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_075xa4p" sourceRef="preCheck_StartEvent" targetRef="Task_1wq99hf" />
+    <bpmn:sequenceFlow id="SequenceFlow_0uwlycb" sourceRef="Task_1wq99hf" targetRef="Task_09tvt8z" />
+    <bpmn:sequenceFlow id="SequenceFlow_0gmcdh1" sourceRef="Task_09tvt8z" targetRef="Task_0hu3542" />
+    <bpmn:sequenceFlow id="SequenceFlow_1vjy37w" sourceRef="Task_0hu3542" targetRef="ExclusiveGateway_0pac7y9" />
+    <bpmn:sequenceFlow id="SequenceFlow_0jivkig" name="Success" sourceRef="ExclusiveGateway_0pac7y9" targetRef="preCheck_EndEvent">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("CDSStatus").equals("Success")}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="EndEvent_0sbeafs">
+      <bpmn:incoming>SequenceFlow_1llnb5x</bpmn:incoming>
+      <bpmn:errorEventDefinition errorRef="Error_1wktg98" />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1llnb5x" name="Failure" sourceRef="ExclusiveGateway_0pac7y9" targetRef="EndEvent_0sbeafs" />
+  </bpmn:process>
+  <bpmn:error id="Error_1wktg98" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="PNFUpgradePreCheckActivitySpec">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="preCheck_StartEvent">
+        <dc:Bounds x="179" y="109" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0udcdd6_di" bpmnElement="preCheck_EndEvent">
+        <dc:Bounds x="1062" y="106" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0pac7y9_di" bpmnElement="ExclusiveGateway_0pac7y9" isMarkerVisible="true">
+        <dc:Bounds x="885" y="99" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0bmyifr_di" bpmnElement="Task_1wq99hf">
+        <dc:Bounds x="310" y="87" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_0wybp6m_di" bpmnElement="Task_0hu3542">
+        <dc:Bounds x="710" y="84" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1q0mi2w_di" bpmnElement="Task_09tvt8z">
+        <dc:Bounds x="510" y="87" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_075xa4p_di" bpmnElement="SequenceFlow_075xa4p">
+        <di:waypoint x="215" y="127" />
+        <di:waypoint x="310" y="127" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0uwlycb_di" bpmnElement="SequenceFlow_0uwlycb">
+        <di:waypoint x="410" y="127" />
+        <di:waypoint x="510" y="127" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0gmcdh1_di" bpmnElement="SequenceFlow_0gmcdh1">
+        <di:waypoint x="610" y="127" />
+        <di:waypoint x="710" y="127" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1vjy37w_di" bpmnElement="SequenceFlow_1vjy37w">
+        <di:waypoint x="810" y="124" />
+        <di:waypoint x="885" y="124" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0jivkig_di" bpmnElement="SequenceFlow_0jivkig">
+        <di:waypoint x="935" y="124" />
+        <di:waypoint x="1062" y="124" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="978" y="106" width="43" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0gdr28t_di" bpmnElement="EndEvent_0sbeafs">
+        <dc:Bounds x="892" y="252" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1llnb5x_di" bpmnElement="SequenceFlow_1llnb5x">
+        <di:waypoint x="910" y="149" />
+        <di:waypoint x="910" y="252" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="909" y="198" width="34" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,3 +1,6 @@
+package org.onap.so.bpmn.infrastructure.process;
+
+
 /*-
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2019 Nordix Foundation.
@@ -18,49 +21,40 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.infrastructure.process;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.ok;
-import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.put;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
-import java.io.IOException;
-import java.util.List;
-import java.util.UUID;
+import com.google.protobuf.Struct;
+import org.assertj.core.api.Assertions;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onap.ccsdk.cds.controllerblueprints.common.api.ActionIdentifiers;
 import org.onap.ccsdk.cds.controllerblueprints.common.api.CommonHeader;
 import org.onap.ccsdk.cds.controllerblueprints.processing.api.ExecutionServiceInput;
 import org.onap.so.BaseBPMNTest;
-import org.onap.so.GrpcNettyServer;
-import org.onap.so.bpmn.mock.FileUtil;
 import org.onap.so.client.aai.AAIVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.google.protobuf.Struct;
-
+import org.onap.so.GrpcNettyServer;
+import org.onap.so.bpmn.mock.FileUtil;
+import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.assertj.core.api.Assertions.fail;
+import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
 
 /**
- * Basic Integration test for createVcpeResCustService_Simplified.bpmn workflow.
+ * Basic Integration test for PNFUpgradePreCheckActivitySpec.bpmn workflow.
  */
-public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
+public class PNFUpgradePreCheckActivitySpecTest extends BaseBPMNTest {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     private static final long WORKFLOW_WAIT_TIME = 1000L;
     private static final int DMAAP_DELAY_TIME_MS = 2000;
 
-    private static final String TEST_PROCESSINSTANCE_KEY = "CreateVcpeResCustService_simplified";
+    private static final String TEST_PROCESSINSTANCE_KEY = "PNFUpgradePreCheckActivitySpec";
     private static final AAIVersion VERSION = AAIVersion.LATEST;
     private String testBusinessKey;
     private String requestObject;
@@ -69,6 +63,15 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
 
     @Autowired
     private GrpcNettyServer grpcNettyServer;
+
+    /**
+     * Service model info json.
+     */
+    private static String TEST_SERVICE_MODEL_INFO = "{\n" + "      \"modelType\":\"service\",\n"
+            + "      \"modelInvariantUuid\":\"439b7a2f-9524-4dbf-9eee-f2e05521df3f\",\n"
+            + "      \"modelInvariantId\":\"439b7a2f-9524-4dbf-9eee-f2e05521df3f\",\n"
+            + "      \"modelUuid\":\"42daaac6-5017-4e1e-96c8-6a27dfbe1421\",\n"
+            + "      \"modelName\":\"PNF_demo_resource\",\n" + "      \"modelVersion\":\"1.0\"\n" + "}";
 
     @Before
     public void setUp() throws IOException {
@@ -94,7 +97,7 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
          */
         msoRequestId = UUID.randomUUID().toString();
 
-        variables.put("mso-request-id", msoRequestId);
+        variables.put("msoRequestId", msoRequestId);
 
         /**
          * Create Business key for the process instance
@@ -103,6 +106,11 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
 
         logger.info("Test the process instance: {} with business key: {}", TEST_PROCESSINSTANCE_KEY, testBusinessKey);
 
+        variables.put("serviceModelInfo", TEST_SERVICE_MODEL_INFO);
+
+        UUID uuid = UUID.randomUUID();
+        logger.debug("Generated UUID for pnf: {}, version: {}, variant: {}", uuid, uuid.version(), uuid.variant());
+        variables.put("pnfUuid", uuid.toString());
     }
 
 
@@ -123,20 +131,16 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
             waitCount--;
         }
 
-        assertThat(pi).isEnded().hasPassedInOrder("createVCPE_startEvent", "preProcessRequest_ScriptTask",
-                "sendSyncAckResponse_ScriptTask", "ScriptTask_0cdtchu", "DecomposeService", "ScriptTask_0lpv2da",
-                "ScriptTask_1y241p8", "CallActivity_1vc4jeh", "ScriptTask_1y5lvl7", "GeneratePnfUuid", "Task_14l19kv",
-                "Pnf_Con", "setPONR_ScriptTask", "postProcessAndCompletionRequest_ScriptTask",
-                "callCompleteMsoProcess_CallActivity", "ScriptTask_2", "CreateVCPE_EndEvent");
+        assertThat(pi).isEnded().hasPassedInOrder("preCheck_StartEvent", "Task_1wq99hf", "Task_09tvt8z", "Task_0hu3542",
+                "ExclusiveGateway_0pac7y9", "preCheck_EndEvent");
 
         List<ExecutionServiceInput> detailedMessages = grpcNettyServer.getDetailedMessages();
-        assertThat(detailedMessages).hasSize(2);
+        Assertions.assertThat(detailedMessages).hasSize(1);
         try {
-            checkConfigAssign(detailedMessages.get(0));
-            checkConfigDeploy(detailedMessages.get(1));
+            checkPreCheck(detailedMessages.get(0));
         } catch (Exception e) {
             e.printStackTrace();
-            fail("ConfigAssign/deploy request exception", e);
+            fail("PreCheck request exception", e);
         }
     }
 
@@ -145,72 +149,45 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
                 .singleResult() == null;
     }
 
-    private void checkConfigAssign(ExecutionServiceInput executionServiceInput) {
+    private void checkPreCheck(ExecutionServiceInput executionServiceInput) {
 
-        logger.info("Checking the configAssign request");
+        logger.info("Checking the preCheck request");
         ActionIdentifiers actionIdentifiers = executionServiceInput.getActionIdentifiers();
 
         /**
          * the fields of actionIdentifiers should match the one in the
-         * response/createVcpeResCustServiceSimplifiedTest_catalogdb.json.
+         * response/PNFUpgradePreCheckActivitySpecTest_catalogdb.json.
          */
-        assertThat(actionIdentifiers.getBlueprintName()).isEqualTo("test_configuration_restconf");
-        assertThat(actionIdentifiers.getBlueprintVersion()).isEqualTo("1.0.0");
-        assertThat(actionIdentifiers.getActionName()).isEqualTo("config-assign");
-        assertThat(actionIdentifiers.getMode()).isEqualTo("sync");
+        Assertions.assertThat(actionIdentifiers.getBlueprintName()).isEqualTo("test_preCheck_restconf");
+        Assertions.assertThat(actionIdentifiers.getBlueprintVersion()).isEqualTo("1.0.0");
+        Assertions.assertThat(actionIdentifiers.getActionName()).isEqualTo("preCheck");
+        Assertions.assertThat(actionIdentifiers.getMode()).isEqualTo("sync");
 
         CommonHeader commonHeader = executionServiceInput.getCommonHeader();
-        assertThat(commonHeader.getOriginatorId()).isEqualTo("SO");
-        assertThat(commonHeader.getRequestId()).isEqualTo(msoRequestId);
+        Assertions.assertThat(commonHeader.getOriginatorId()).isEqualTo("SO");
+        Assertions.assertThat(commonHeader.getRequestId()).isEqualTo(msoRequestId);
 
         Struct payload = executionServiceInput.getPayload();
-        Struct requeststruct = payload.getFieldsOrThrow("config-assign-request").getStructValue();
+        Struct requeststruct = payload.getFieldsOrThrow("preCheck-request").getStructValue();
 
-        assertThat(requeststruct.getFieldsOrThrow("resolution-key").getStringValue()).isEqualTo("PNFDemo");
-        Struct propertiesStruct = requeststruct.getFieldsOrThrow("config-assign-properties").getStructValue();
+        Assertions.assertThat(requeststruct.getFieldsOrThrow("resolution-key").getStringValue()).isEqualTo("PNFDemo");
+        Struct propertiesStruct = requeststruct.getFieldsOrThrow("preCheck-properties").getStructValue();
 
-        assertThat(propertiesStruct.getFieldsOrThrow("pnf-name").getStringValue()).isEqualTo("PNFDemo");
-        assertThat(propertiesStruct.getFieldsOrThrow("service-model-uuid").getStringValue())
-                .isEqualTo("f2daaac6-5017-4e1e-96c8-6a27dfbe1421");
-        assertThat(propertiesStruct.getFieldsOrThrow("pnf-customization-uuid").getStringValue())
-                .isEqualTo("68dc9a92-214c-11e7-93ae-92361f002680");
-    }
-
-    private void checkConfigDeploy(ExecutionServiceInput executionServiceInput) {
-
-        logger.info("Checking the configDeploy request");
-        ActionIdentifiers actionIdentifiers = executionServiceInput.getActionIdentifiers();
-
-        /**
-         * the fields of actionIdentifiers should match the one in the
-         * response/createVcpeResCustServiceSimplifiedTest_catalogdb.json.
-         */
-        assertThat(actionIdentifiers.getBlueprintName()).isEqualTo("test_configuration_restconf");
-        assertThat(actionIdentifiers.getBlueprintVersion()).isEqualTo("1.0.0");
-        assertThat(actionIdentifiers.getActionName()).isEqualTo("config-deploy");
-        assertThat(actionIdentifiers.getMode()).isEqualTo("async");
-
-        CommonHeader commonHeader = executionServiceInput.getCommonHeader();
-        assertThat(commonHeader.getOriginatorId()).isEqualTo("SO");
-        assertThat(commonHeader.getRequestId()).isEqualTo(msoRequestId);
-
-        Struct payload = executionServiceInput.getPayload();
-        Struct requeststruct = payload.getFieldsOrThrow("config-deploy-request").getStructValue();
-
-        assertThat(requeststruct.getFieldsOrThrow("resolution-key").getStringValue()).isEqualTo("PNFDemo");
-        Struct propertiesStruct = requeststruct.getFieldsOrThrow("config-deploy-properties").getStructValue();
-
-        assertThat(propertiesStruct.getFieldsOrThrow("pnf-name").getStringValue()).isEqualTo("PNFDemo");
-        assertThat(propertiesStruct.getFieldsOrThrow("service-model-uuid").getStringValue())
-                .isEqualTo("f2daaac6-5017-4e1e-96c8-6a27dfbe1421");
-        assertThat(propertiesStruct.getFieldsOrThrow("pnf-customization-uuid").getStringValue())
-                .isEqualTo("68dc9a92-214c-11e7-93ae-92361f002680");
+        Assertions.assertThat(propertiesStruct.getFieldsOrThrow("pnf-name").getStringValue()).isEqualTo("PNFDemo");
+        Assertions.assertThat(propertiesStruct.getFieldsOrThrow("service-model-uuid").getStringValue())
+                .isEqualTo("42daaac6-5017-4e1e-96c8-6a27dfbe1421");
+        Assertions.assertThat(propertiesStruct.getFieldsOrThrow("pnf-customization-uuid").getStringValue())
+                .isEqualTo("48dc9a92-214c-11e7-93ae-92361f002680");
+        Assertions.assertThat(propertiesStruct.getFieldsOrThrow("software-version").getStringValue())
+                .isEqualTo("1.0.0");
 
         /**
          * IP addresses match the OAM ip addresses from AAI.
          */
-        assertThat(propertiesStruct.getFieldsOrThrow("pnf-ipv4-address").getStringValue()).isEqualTo("1.1.1.1");
-        assertThat(propertiesStruct.getFieldsOrThrow("pnf-ipv6-address").getStringValue()).isEqualTo("::/128");
+        Assertions.assertThat(propertiesStruct.getFieldsOrThrow("pnf-ipv4-address").getStringValue())
+                .isEqualTo("1.1.1.1");
+        Assertions.assertThat(propertiesStruct.getFieldsOrThrow("pnf-ipv6-address").getStringValue())
+                .isEqualTo("::/128");
     }
 
     /**
@@ -305,21 +282,21 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
          * Return valid json for the model UUID in the request file.
          */
         wireMockServer
-                .stubFor(get(urlEqualTo("/v2/serviceResources?serviceModelUuid=f2daaac6-5017-4e1e-96c8-6a27dfbe1421"))
+                .stubFor(get(urlEqualTo("/v2/serviceResources?serviceModelUuid=42daaac6-5017-4e1e-96c8-6a27dfbe1421"))
                         .willReturn(okJson(responseObject)));
 
         /**
          * Return valid json for the service model InvariantUUID as specified in the request file.
          */
         wireMockServer.stubFor(
-                get(urlEqualTo("/v2/serviceResources?serviceModelInvariantUuid=539b7a2f-9524-4dbf-9eee-f2e05521df3f"))
+                get(urlEqualTo("/v2/serviceResources?serviceModelInvariantUuid=439b7a2f-9524-4dbf-9eee-f2e05521df3f"))
                         .willReturn(okJson(responseObject)));
 
         /**
          * Return valid spring data rest json for the service model UUID as specified in the request file.
          */
         wireMockServer.stubFor(get(urlEqualTo(
-                "/pnfResourceCustomization/search/findPnfResourceCustomizationByModelUuid?SERVICE_MODEL_UUID=f2daaac6-5017-4e1e-96c8-6a27dfbe1421"))
+                "/pnfResourceCustomization/search/findPnfResourceCustomizationByModelUuid?SERVICE_MODEL_UUID=42daaac6-5017-4e1e-96c8-6a27dfbe1421"))
                         .willReturn(okJson(catalogdbClientResponse)));
     }
 
