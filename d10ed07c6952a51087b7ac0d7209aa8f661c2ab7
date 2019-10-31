@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "58f8b32d_4bf4b191",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/HeatBridgeImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 493,
+      "author": {
+        "id": 153
+      },
+      "writtenOn": "2019-10-31T12:53:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5ba0680f_2535d92a",
+      "range": {
+        "startLine": 493,
+        "startChar": 12,
+        "endLine": 493,
+        "endChar": 38
+      },
+      "revId": "d10ed07c6952a51087b7ac0d7209aa8f661c2ab7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a04f51ba_2a4f4b8c",
         "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/utils/HeatBridgeUtils.java",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2019-10-31T10:55:10Z",
       "side": 1,
       "message": "make it private please",
+      "range": {
+        "startLine": 70,
+        "startChar": 4,
+        "endLine": 70,
+        "endChar": 10
+      },
+      "revId": "d10ed07c6952a51087b7ac0d7209aa8f661c2ab7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "426da421_1c8047f4",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/utils/HeatBridgeUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 153
+      },
+      "writtenOn": "2019-10-31T12:53:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a04f51ba_2a4f4b8c",
       "range": {
         "startLine": 70,
         "startChar": 4,
