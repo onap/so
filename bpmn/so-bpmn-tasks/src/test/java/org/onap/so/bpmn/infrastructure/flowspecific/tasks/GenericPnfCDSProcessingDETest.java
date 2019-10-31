@@ -66,8 +66,8 @@ public class GenericPnfCDSProcessingDETest extends BaseTaskTest {
     private AbstractCDSProcessingBBUtils cdsDispather;
 
     private static final String PRECHECK_ACTION = "precheck";
-    private static final String DOWNLOAD_ACTION = "downloadNeSw";
-    private static final String ACTIVATE_ACTION = "activateNeSw";
+    private static final String DOWNLOAD_ACTION = "downloadNESw";
+    private static final String ACTIVATE_ACTION = "activateNESw";
     private static final String POSTCHECK_ACTION = "postcheck";
 
     private String description;

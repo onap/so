@@ -20,22 +20,9 @@
 
 package org.onap.so.bpmn.infrastructure.process;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.ok;
-import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.put;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
-import java.io.IOException;
-import java.util.List;
-import java.util.UUID;
+import com.google.protobuf.Struct;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onap.ccsdk.cds.controllerblueprints.common.api.ActionIdentifiers;
 import org.onap.ccsdk.cds.controllerblueprints.common.api.CommonHeader;
@@ -47,7 +34,21 @@ import org.onap.so.client.aai.AAIVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.google.protobuf.Struct;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.put;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.ok;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
 
 
 /**
@@ -62,10 +63,10 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
 
     private static final String TEST_PROCESSINSTANCE_KEY = "CreateVcpeResCustService_simplified";
     private static final AAIVersion VERSION = AAIVersion.LATEST;
+    private static final Map<String, Object> executionVariables = new HashMap();
     private String testBusinessKey;
     private String requestObject;
     private String responseObject;
-    private String msoRequestId;
 
     @Autowired
     private GrpcNettyServer grpcNettyServer;
@@ -76,25 +77,25 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
         requestObject = FileUtil.readResourceFile("request/" + getClass().getSimpleName() + ".json");
         responseObject = FileUtil.readResourceFile("response/" + getClass().getSimpleName() + ".json");
 
-        variables.put("bpmnRequest", requestObject);
+        executionVariables.clear();
+
+        executionVariables.put("bpmnRequest", requestObject);
 
         /**
          * This variable indicates that the flow was invoked asynchronously. It's injected by {@link WorkflowProcessor}.
          */
-        variables.put("isAsyncProcess", "true");
+        executionVariables.put("isAsyncProcess", "true");
 
         /**
          * Temporary solution to add pnfCorrelationId to context. this value is getting from the request to SO api
          * handler and then convert to CamudaInput
          */
-        variables.put("pnfCorrelationId", "PNFDemo");
+        executionVariables.put("pnfCorrelationId", "PNFDemo");
 
         /**
          * Create mso-request-id.
          */
-        msoRequestId = UUID.randomUUID().toString();
 
-        variables.put("mso-request-id", msoRequestId);
 
         /**
          * Create Business key for the process instance
@@ -113,8 +114,11 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
         mockAai();
         mockDmaapForPnf();
 
+        final String msoRequestId = UUID.randomUUID().toString();
+        executionVariables.put("mso-request-id", msoRequestId);
+
         ProcessInstance pi =
-                runtimeService.startProcessInstanceByKey(TEST_PROCESSINSTANCE_KEY, testBusinessKey, variables);
+                runtimeService.startProcessInstanceByKey(TEST_PROCESSINSTANCE_KEY, testBusinessKey, executionVariables);
 
         int waitCount = 10;
         while (!isProcessInstanceEnded() && waitCount >= 0) {
@@ -129,14 +133,24 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
                 "callCompleteMsoProcess_CallActivity", "ScriptTask_2", "CreateVCPE_EndEvent");
 
         List<ExecutionServiceInput> detailedMessages = grpcNettyServer.getDetailedMessages();
-        assertThat(detailedMessages).hasSize(2);
+        assertThat(detailedMessages.size() == 2);
+        int count = 0;
         try {
-            checkConfigAssign(detailedMessages.get(0));
-            checkConfigDeploy(detailedMessages.get(1));
+            for (ExecutionServiceInput eSI : detailedMessages) {
+                if ("config-assign".equals(eSI.getActionIdentifiers().getActionName())) {
+                    checkConfigAssign(eSI, msoRequestId);
+                    count++;
+                }
+                if ("config-deploy".equals(eSI.getActionIdentifiers().getActionName())) {
+                    checkConfigDeploy(eSI, msoRequestId);
+                    count++;
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
             fail("ConfigAssign/deploy request exception", e);
         }
+        assertThat(count == 2);
     }
 
     private boolean isProcessInstanceEnded() {
@@ -144,7 +158,7 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
                 .singleResult() == null;
     }
 
-    private void checkConfigAssign(ExecutionServiceInput executionServiceInput) {
+    private void checkConfigAssign(ExecutionServiceInput executionServiceInput, String msoRequestId) {
 
         logger.info("Checking the configAssign request");
         ActionIdentifiers actionIdentifiers = executionServiceInput.getActionIdentifiers();
@@ -175,7 +189,7 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
                 .isEqualTo("68dc9a92-214c-11e7-93ae-92361f002680");
     }
 
-    private void checkConfigDeploy(ExecutionServiceInput executionServiceInput) {
+    private void checkConfigDeploy(ExecutionServiceInput executionServiceInput, String msoRequestId) {
 
         logger.info("Checking the configDeploy request");
         ActionIdentifiers actionIdentifiers = executionServiceInput.getActionIdentifiers();

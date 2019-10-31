@@ -40,8 +40,8 @@ public class PnfCDSRequestProviderTest {
     @InjectMocks
     private PnfCDSRequestProvider pnfCDSRequestProvider;
 
-    private static final String DOWNLOAD_ACTION = "downloadNeSw";
-    private static final String ACTIVATE_ACTION = "activateNeSw";
+    private static final String DOWNLOAD_ACTION = "downloadNESw";
+    private static final String ACTIVATE_ACTION = "activateNESw";
     private static final String TEST_MODEL_UUID = "6bc0b04d-1873-4721-b53d-6615225b2a28";
     private static final String TEST_SERVICE_INSTANCE_ID = "test_service_id";
     private static final String TEST_PROCESS_KEY = "processKey1";

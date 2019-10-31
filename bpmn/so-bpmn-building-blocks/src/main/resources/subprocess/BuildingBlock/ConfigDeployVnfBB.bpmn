@@ -18,7 +18,7 @@
       <bpmn:extensionElements>
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:in source="executionObject" target="executionObject" />
-        <camunda:out source="CDSStatus" target="CDSStatus" />
+        <camunda:out source="ControllerStatus" target="ControllerStatus" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0kruy8t</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_03xbj4e</bpmn:outgoing>
@@ -39,7 +39,7 @@
       <bpmn:outgoing>SequenceFlow_0o50k2d</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="SequenceFlow_1tb7fs1" name="success" sourceRef="ExclusiveGateway_0duh80v" targetRef="UpdateAAIConfigured">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("CDSStatus").equals("Success")}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("ControllerStatus").equals("Success")}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_0o50k2d" sourceRef="ExclusiveGateway_0duh80v" targetRef="EndEvent_0wwnq4u" />
     <bpmn:endEvent id="EndEvent_0wwnq4u">

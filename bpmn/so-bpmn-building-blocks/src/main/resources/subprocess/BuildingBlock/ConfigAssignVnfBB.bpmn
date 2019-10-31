@@ -12,7 +12,7 @@
     <bpmn:callActivity id="CallActivity_1gfzi2g" name="Abstract CDS&#10;(CDS Call)&#10;" calledElement="AbstractCDSProcessingBB">
       <bpmn:extensionElements>
         <camunda:out source="WorkflowException" target="WorkflowException" />
-        <camunda:out source="CDSStatus" target="CDSStatus" />
+        <camunda:out source="ControllerStatus" target="ControllerStatus" />
         <camunda:in source="executionObject" target="executionObject" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_05qembo</bpmn:incoming>
@@ -34,7 +34,7 @@
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="SequenceFlow_0cvsnuu" sourceRef="CallActivity_1gfzi2g" targetRef="ExclusiveGateway_13q340y" />
     <bpmn:sequenceFlow id="SequenceFlow_07tqu82" name="success" sourceRef="ExclusiveGateway_13q340y" targetRef="Task_1hs1mn0">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{execution.getVariable("CDSStatus").equals("Success")}]]></bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{execution.getVariable("ControllerStatus").equals("Success")}]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:endEvent id="EndEvent_0mnaj50">
       <bpmn:incoming>SequenceFlow_15gxql1</bpmn:incoming>
