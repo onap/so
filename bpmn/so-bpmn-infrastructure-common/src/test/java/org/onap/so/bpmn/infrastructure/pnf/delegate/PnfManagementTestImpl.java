@@ -50,6 +50,11 @@ public class PnfManagementTestImpl implements PnfManagement {
     }
 
     @Override
+    public void updateEntry(String pnfCorrelationId, Pnf entry) throws IOException {
+        created.put(pnfCorrelationId, entry);
+    }
+
+    @Override
     public void createRelation(String serviceInstanceId, String pnfName) {}
 
     public Map<String, Pnf> getCreated() {
