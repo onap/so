@@ -1,0 +1,10 @@
+config-deploy-request:
+  resolution-key:
+  config-deploy-properties:
+    service-instance-id:
+    pnf-id:
+    pnf-name:
+    service-model-uuid:
+    pnf-customization-uuid:
+    pnf-ipv4-address:
+    pnf-ipv6-address:

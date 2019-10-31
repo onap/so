@@ -1,0 +1,14 @@
+{
+  "name": "GenericCDSCallActivity",
+  "description": "Activity to Call CDS using Genric way",
+  "categoryList": [
+    "PNF"
+  ],
+  "inputParameters": [],
+  "outputParameters": [
+    {
+      "name": "WorkflowException",
+      "type": "WorkflowException"
+    }
+  ]
+}
