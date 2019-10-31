@@ -54,7 +54,6 @@ public class ExecutionVariableNames {
     public static final String PRC_INSTANCE_NAME = "PRC_instanceName";
     public static final String PRC_CONTROLLER_ACTOR = "actor";
 
-
     /**
      * Variable used to contain skipPostInstantiationConfiguration flag.
      */
