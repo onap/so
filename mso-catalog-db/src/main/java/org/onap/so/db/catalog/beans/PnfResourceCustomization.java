@@ -16,22 +16,13 @@ package org.onap.so.db.catalog.beans;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.openpojo.business.annotation.BusinessKey;
-import java.io.Serializable;
-import java.util.Date;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Date;
 
 @Entity
 @Table(name = "pnf_resource_customization")
@@ -83,6 +74,13 @@ public class PnfResourceCustomization implements Serializable {
     @Column(name = "SKIP_POST_INSTANTIATION_CONFIGURATION")
     private Boolean skipPostInstConf;
 
+    /*
+     * TODO new_software_version and existing_software_version may be able to reuse
+     */
+    /*
+     * @Column(name = "SOFTWARE_VERSION") private String softwareVersion;
+     */
+
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
@@ -90,7 +88,8 @@ public class PnfResourceCustomization implements Serializable {
                 .append("nfFunction", nfFunction).append("nfType", nfType).append("nfRole", nfRole)
                 .append("nfNamingCode", nfNamingCode).append("multiStageDesign", multiStageDesign)
                 .append("pnfResources", pnfResources).append("blueprintName", blueprintName)
-                .append("blueprintVersion", blueprintVersion).toString();
+                .append("blueprintVersion", blueprintVersion)
+                /* TODO.append("softwareVersion", softwareVersion) */.toString();
     }
 
     @Override
@@ -213,6 +212,13 @@ public class PnfResourceCustomization implements Serializable {
     public void setBlueprintVersion(String blueprintVersion) {
         this.blueprintVersion = blueprintVersion;
     }
+
+    // TODO
+    /*
+     * public String getSoftwareVersion() { return softwareVersion; }
+     * 
+     * public void setSoftwareVersion(String softwareVersion) { this.softwareVersion = softwareVersion; }
+     */
 
     public Boolean isSkipPostInstConf() {
         return skipPostInstConf;
