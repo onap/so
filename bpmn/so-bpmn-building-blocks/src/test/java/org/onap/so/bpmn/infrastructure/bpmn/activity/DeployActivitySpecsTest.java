@@ -52,7 +52,7 @@ public class DeployActivitySpecsTest extends BaseBPMNTest {
     }
 
     @Test
-    @Ignore
+//    @Ignore
     public void DeployActivitySpec_Test() throws Exception {
         String HOSTNAME = createURLWithPort("");
         ProtocolVersion protocolVersion = new ProtocolVersion("", 1, 1);

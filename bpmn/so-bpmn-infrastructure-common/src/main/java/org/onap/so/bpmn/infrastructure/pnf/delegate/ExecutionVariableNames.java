@@ -39,6 +39,11 @@ public class ExecutionVariableNames {
 
     public final static String SERVICE_MODEL_INFO = "serviceModelInfo";
 
+    public final static String SOFTWARE_VERSION = "softwareVersion";
+    public final static String SOFTWARE_FTP_URL = "ftpUrl";
+    public final static String SOFTWARE_FTP_USERNAME = "ftpUsername";
+    public final static String SOFTWARE_FTP_PASSWORD = "ftpPassword";
+
     /**
      * Variable used to contain the {@link org.onap.so.client.cds.beans.AbstractCDSPropertiesBean} json value.
      */

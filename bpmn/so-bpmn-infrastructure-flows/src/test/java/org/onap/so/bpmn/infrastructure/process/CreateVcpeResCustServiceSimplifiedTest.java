@@ -105,7 +105,7 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
 
     }
 
-    @Ignore
+    // @Ignore
     @Test
     public void workflow_validInput_expectedOuput() throws InterruptedException {
 

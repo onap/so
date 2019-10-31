@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1262xvt" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.3.5">
+  <bpmn:process id="GenericCDSCallActivity" name="GenericCDSCallActivity" isExecutable="true">
+    <bpmn:startEvent id="Genric_CDS_Call_StartEvent_1">
+      <bpmn:outgoing>SequenceFlow_1c9ztxy</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="ServiceTask_1xdvqqh" name="Prepare request object" camunda:delegateExpression="${GenericRequestObjectCreater}">
+      <bpmn:incoming>SequenceFlow_1c1apr8</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1advgef</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:callActivity id="CallActivity_02msbp3" name="Send Request&#10; to CDS&#10;" calledElement="AbstractCDSProcessingBB">
+      <bpmn:extensionElements>
+        <camunda:in source="executionObject" target="executionObject" />
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+        <camunda:out source="CDSStatus" target="CDSStatus" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1advgef</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1rhw7t1</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="SequenceFlow_1c9ztxy" sourceRef="Genric_CDS_Call_StartEvent_1" targetRef="ExclusiveGateway_12z7b52" />
+    <bpmn:sequenceFlow id="SequenceFlow_1advgef" sourceRef="ServiceTask_1xdvqqh" targetRef="CallActivity_02msbp3" />
+    <bpmn:endEvent id="EndEvent_1hrebdf">
+      <bpmn:incoming>SequenceFlow_1rhw7t1</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1rhw7t1" sourceRef="CallActivity_02msbp3" targetRef="EndEvent_1hrebdf" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_12z7b52" name="actionName">
+      <bpmn:documentation>To use this Generic block actionName should be provided.</bpmn:documentation>
+      <bpmn:incoming>SequenceFlow_1c9ztxy</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1c1apr8</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1wjl0wy</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_1c1apr8" name="action exists" sourceRef="ExclusiveGateway_12z7b52" targetRef="ServiceTask_1xdvqqh">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${execution.getVariable('actionName') != null}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="EndEvent_18zwbn6">
+      <bpmn:incoming>SequenceFlow_1wjl0wy</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_15yx6d7" errorRef="Error_0mz9m91" />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1wjl0wy" name="No action&#10;found" sourceRef="ExclusiveGateway_12z7b52" targetRef="EndEvent_18zwbn6" />
+  </bpmn:process>
+  <bpmn:error id="Error_0mz9m91" name="MSOWorkflowException" errorCode="MSOWorkflowException" camunda:errorMessage="No action found in during execution" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="GenericCDSCallActivity">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="Genric_CDS_Call_StartEvent_1">
+        <dc:Bounds x="152" y="112" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1xdvqqh_di" bpmnElement="ServiceTask_1xdvqqh">
+        <dc:Bounds x="410" y="90" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_02msbp3_di" bpmnElement="CallActivity_02msbp3">
+        <dc:Bounds x="596" y="90" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1c9ztxy_di" bpmnElement="SequenceFlow_1c9ztxy">
+        <di:waypoint x="188" y="130" />
+        <di:waypoint x="245" y="130" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1advgef_di" bpmnElement="SequenceFlow_1advgef">
+        <di:waypoint x="510" y="130" />
+        <di:waypoint x="596" y="130" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1hrebdf_di" bpmnElement="EndEvent_1hrebdf">
+        <dc:Bounds x="792" y="112" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1rhw7t1_di" bpmnElement="SequenceFlow_1rhw7t1">
+        <di:waypoint x="696" y="130" />
+        <di:waypoint x="792" y="130" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_12z7b52_di" bpmnElement="ExclusiveGateway_12z7b52" isMarkerVisible="true">
+        <dc:Bounds x="245" y="105" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="240" y="83" width="59" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1c1apr8_di" bpmnElement="SequenceFlow_1c1apr8">
+        <di:waypoint x="295" y="130" />
+        <di:waypoint x="410" y="130" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="324" y="112" width="61" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_18zwbn6_di" bpmnElement="EndEvent_18zwbn6">
+        <dc:Bounds x="252" y="262" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1wjl0wy_di" bpmnElement="SequenceFlow_1wjl0wy">
+        <di:waypoint x="270" y="155" />
+        <di:waypoint x="270" y="262" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="262" y="206" width="47" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
