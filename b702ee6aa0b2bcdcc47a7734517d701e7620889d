@@ -16,6 +16,24 @@
       "revId": "b702ee6aa0b2bcdcc47a7734517d701e7620889d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "838aff70_b0ee4fe7",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/utils/HeatBridgeUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 153
+      },
+      "writtenOn": "2019-10-31T12:53:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2995ba0f_40578acc",
+      "revId": "b702ee6aa0b2bcdcc47a7734517d701e7620889d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
