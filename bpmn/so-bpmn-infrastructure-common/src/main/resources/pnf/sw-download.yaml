@@ -1,0 +1,11 @@
+sw-download-request:
+  resolution-key:
+  sw-download-properties:
+    service-instance-id:
+    pnf-id:
+    pnf-name:
+    service-model-uuid:
+    pnf-customization-uuid:
+    pnf-ipv4-address:
+    pnf-ipv6-address:
+    software-version:
