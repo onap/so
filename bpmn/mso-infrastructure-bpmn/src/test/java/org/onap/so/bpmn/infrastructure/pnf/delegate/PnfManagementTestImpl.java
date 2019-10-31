@@ -58,6 +58,12 @@ public class PnfManagementTestImpl implements PnfManagement {
         serviceAndPnfRelationMap.put(serviceInstanceId, pnfName);
     }
 
+    @Override
+    public void updateEntry(String pnfCorrelationId, Pnf entry) {
+        created.put(pnfCorrelationId, entry);
+    }
+
+
     public Map<String, Pnf> getCreated() {
         return created;
     }

@@ -55,7 +55,7 @@ public class GeneratePayloadForCdsTest {
     private static final String VF_SCOPE = "vfModule";
     private static final String ASSIGN_ACTION = "configAssign";
     private static final String DEPLOY_ACTION = "configDeploy";
-    private static final String DOWNLOAD_ACTION = "downloadNeSw";
+    private static final String DOWNLOAD_ACTION = "downloadNESw";
     private static final String MSO_REQUEST_ID = "1234";
     private static final String BUILDING_BLOCK = "buildingBlock";
     private static final String PUBLIC_NET_ID = "public-net-id";

@@ -92,4 +92,9 @@ public class AAIRestClientImpl implements AAIRestClientI {
         new AAIResourcesClient().createIfNotExists(AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnfId),
                 Optional.of(pnf));
     }
+
+    @Override
+    public void updatePnf(String pnfId, Pnf pnf) {
+        new AAIResourcesClient().update(AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnfId), pnf);
+    }
 }

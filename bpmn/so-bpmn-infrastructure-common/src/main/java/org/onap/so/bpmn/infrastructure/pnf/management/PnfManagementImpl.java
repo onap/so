@@ -44,6 +44,11 @@ public class PnfManagementImpl implements PnfManagement {
         restClient.createPnf(pnfCorrelationId, entry);
     }
 
+    public void updateEntry(String pnfCorrelationId, Pnf entry) {
+        AAIRestClientImpl restClient = new AAIRestClientImpl();
+        restClient.updatePnf(pnfCorrelationId, entry);
+    }
+
     @Override
     public void createRelation(String serviceInstanceId, String pnfName) {
         AAIResourceUri serviceInstanceURI =
