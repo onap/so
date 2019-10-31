@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0474hns" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.3.5">
+  <bpmn:process id="PNFSWUPDownload" name="PNFSWUPDownload" isExecutable="true">
+    <bpmn:startEvent id="download_StartEvent" name="Start Flow">
+      <bpmn:outgoing>SequenceFlow_1fdclh0</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="ServiceTask_1mpt2eq" name="NF Download Dispatcher" camunda:delegateExpression="${NfSoftwareUpgradeDispatcher}">
+      <bpmn:incoming>SequenceFlow_1fdclh0</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_12155q6</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="download_EndEvent" name="End">
+      <bpmn:incoming>SequenceFlow_1d2rfyx</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_1kiurmf" />
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1ja7grm" default="SequenceFlow_078xmlz">
+      <bpmn:incoming>SequenceFlow_0o6b6a8</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_078xmlz</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0qznt4u</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="EndEvent_1j64ij1">
+      <bpmn:incoming>SequenceFlow_078xmlz</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0b3kbjs" errorRef="Error_1q14dnd" />
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1rj84ne" default="SequenceFlow_1tfbzn1">
+      <bpmn:incoming>SequenceFlow_1ccldpp</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0s6i4o9</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1tfbzn1</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="EndEvent_1ubpef4">
+      <bpmn:incoming>SequenceFlow_1tfbzn1</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0wevx6s" errorRef="Error_1q14dnd" />
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_08lusga" default="SequenceFlow_1gawssm">
+      <bpmn:incoming>SequenceFlow_1kaikh5</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1d2rfyx</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1gawssm</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="EndEvent_11hee4g">
+      <bpmn:incoming>SequenceFlow_1gawssm</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_12tyzwb" errorRef="Error_1q14dnd" />
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="ServiceTask_0yavde3" name="Download" camunda:delegateExpression="${ControllerExecutionDE}">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="action">downloadNeSw</camunda:inputParameter>
+          <camunda:inputParameter name="scope">pnf</camunda:inputParameter>
+          <camunda:inputParameter name="mode">async</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0s6i4o9</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0o6b6a8</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="ServiceTask_1wxo7xz" name="Post check" camunda:delegateExpression="${ControllerExecutionDE}">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="action">postCheck</camunda:inputParameter>
+          <camunda:inputParameter name="scope">pnf</camunda:inputParameter>
+          <camunda:inputParameter name="mode">async</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0qznt4u</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1kaikh5</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="ServiceTask_1nl90ao" name="Pre check" camunda:delegateExpression="${ControllerExecutionDE}">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="action">preCheck</camunda:inputParameter>
+          <camunda:inputParameter name="scope">pnf</camunda:inputParameter>
+          <camunda:inputParameter name="mode">async</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_12155q6</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1ccldpp</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1fdclh0" sourceRef="download_StartEvent" targetRef="ServiceTask_1mpt2eq" />
+    <bpmn:sequenceFlow id="SequenceFlow_12155q6" sourceRef="ServiceTask_1mpt2eq" targetRef="ServiceTask_1nl90ao" />
+    <bpmn:sequenceFlow id="SequenceFlow_1d2rfyx" name="Success" sourceRef="ExclusiveGateway_08lusga" targetRef="download_EndEvent">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("CDSStatus").equals("Success")}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_0o6b6a8" sourceRef="ServiceTask_0yavde3" targetRef="ExclusiveGateway_1ja7grm" />
+    <bpmn:sequenceFlow id="SequenceFlow_078xmlz" name="Failure" sourceRef="ExclusiveGateway_1ja7grm" targetRef="EndEvent_1j64ij1" />
+    <bpmn:sequenceFlow id="SequenceFlow_1ccldpp" sourceRef="ServiceTask_1nl90ao" targetRef="ExclusiveGateway_1rj84ne" />
+    <bpmn:sequenceFlow id="SequenceFlow_0s6i4o9" name="Success" sourceRef="ExclusiveGateway_1rj84ne" targetRef="ServiceTask_0yavde3">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("CDSStatus").equals("Success")}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_1tfbzn1" name="Failure" sourceRef="ExclusiveGateway_1rj84ne" targetRef="EndEvent_1ubpef4" />
+    <bpmn:sequenceFlow id="SequenceFlow_1kaikh5" sourceRef="ServiceTask_1wxo7xz" targetRef="ExclusiveGateway_08lusga" />
+    <bpmn:sequenceFlow id="SequenceFlow_1gawssm" name="Failure" sourceRef="ExclusiveGateway_08lusga" targetRef="EndEvent_11hee4g" />
+    <bpmn:sequenceFlow id="SequenceFlow_0qznt4u" name="Success" sourceRef="ExclusiveGateway_1ja7grm" targetRef="ServiceTask_1wxo7xz">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("CDSStatus").equals("Success")}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmn:error id="Error_1q14dnd" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="PNFSWUPDownload">
+      <bpmndi:BPMNShape id="StartEvent_1k8gssq_di" bpmnElement="download_StartEvent">
+        <dc:Bounds x="162" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="157" y="145" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1mpt2eq_di" bpmnElement="ServiceTask_1mpt2eq">
+        <dc:Bounds x="280" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1e4dq7w_di" bpmnElement="download_EndEvent">
+        <dc:Bounds x="1312" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1321" y="145" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1ja7grm_di" bpmnElement="ExclusiveGateway_1ja7grm" isMarkerVisible="true">
+        <dc:Bounds x="895" y="95" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1j64ij1_di" bpmnElement="EndEvent_1j64ij1">
+        <dc:Bounds x="902" y="252" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1rj84ne_di" bpmnElement="ExclusiveGateway_1rj84ne" isMarkerVisible="true">
+        <dc:Bounds x="635" y="95" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1ubpef4_di" bpmnElement="EndEvent_1ubpef4">
+        <dc:Bounds x="642" y="252" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_08lusga_di" bpmnElement="ExclusiveGateway_08lusga" isMarkerVisible="true">
+        <dc:Bounds x="1155" y="95" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_11hee4g_di" bpmnElement="EndEvent_11hee4g">
+        <dc:Bounds x="1162" y="252" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0yavde3_di" bpmnElement="ServiceTask_0yavde3">
+        <dc:Bounds x="760" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1wxo7xz_di" bpmnElement="ServiceTask_1wxo7xz">
+        <dc:Bounds x="1000" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1nl90ao_di" bpmnElement="ServiceTask_1nl90ao">
+        <dc:Bounds x="480" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1fdclh0_di" bpmnElement="SequenceFlow_1fdclh0">
+        <di:waypoint x="198" y="120" />
+        <di:waypoint x="280" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_12155q6_di" bpmnElement="SequenceFlow_12155q6">
+        <di:waypoint x="380" y="120" />
+        <di:waypoint x="480" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1d2rfyx_di" bpmnElement="SequenceFlow_1d2rfyx">
+        <di:waypoint x="1205" y="120" />
+        <di:waypoint x="1312" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1214" y="102" width="43" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0o6b6a8_di" bpmnElement="SequenceFlow_0o6b6a8">
+        <di:waypoint x="860" y="120" />
+        <di:waypoint x="895" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_078xmlz_di" bpmnElement="SequenceFlow_078xmlz">
+        <di:waypoint x="920" y="145" />
+        <di:waypoint x="920" y="252" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="918" y="217" width="34" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ccldpp_di" bpmnElement="SequenceFlow_1ccldpp">
+        <di:waypoint x="580" y="120" />
+        <di:waypoint x="635" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0s6i4o9_di" bpmnElement="SequenceFlow_0s6i4o9">
+        <di:waypoint x="685" y="120" />
+        <di:waypoint x="760" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="678" y="102" width="43" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1tfbzn1_di" bpmnElement="SequenceFlow_1tfbzn1">
+        <di:waypoint x="660" y="145" />
+        <di:waypoint x="660" y="252" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="658" y="217" width="34" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1kaikh5_di" bpmnElement="SequenceFlow_1kaikh5">
+        <di:waypoint x="1100" y="120" />
+        <di:waypoint x="1155" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1gawssm_di" bpmnElement="SequenceFlow_1gawssm">
+        <di:waypoint x="1180" y="145" />
+        <di:waypoint x="1180" y="252" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1178" y="172" width="34" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0qznt4u_di" bpmnElement="SequenceFlow_0qznt4u">
+        <di:waypoint x="945" y="120" />
+        <di:waypoint x="1000" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="951" y="102" width="43" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
