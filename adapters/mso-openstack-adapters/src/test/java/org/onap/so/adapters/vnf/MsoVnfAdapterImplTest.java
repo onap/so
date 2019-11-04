@@ -85,6 +85,20 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
     }
 
     @Test
+    public void createVnfTest_NullFailIfExists() throws Exception {
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+        mockOpenStackGetStackVfModule_200(wireMockServer);
+
+        MsoRequest msoRequest = getMsoRequest();
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("key1", "value1");
+        instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "",
+                "VFMOD", null, null, "b4ea86b4-253f-11e7-93ae-92361f002671", map, null, Boolean.TRUE, Boolean.FALSE,
+                msoRequest, new Holder<>(), new Holder<Map<String, String>>(), new Holder<VnfRollback>());
+    }
+
+    @Test
     public void createVnfTest_HeatStatusFailed() throws Exception {
         mockOpenStackResponseAccess(wireMockServer, wireMockPort);
         wireMockServer.stubFor(get(
