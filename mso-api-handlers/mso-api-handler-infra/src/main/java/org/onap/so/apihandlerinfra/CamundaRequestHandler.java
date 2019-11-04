@@ -7,11 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.xml.bind.DatatypeConverter;
-import org.apache.http.HttpStatus;
 import org.camunda.bpm.engine.impl.persistence.entity.HistoricActivityInstanceEntity;
 import org.camunda.bpm.engine.impl.persistence.entity.HistoricProcessInstanceEntity;
-import org.onap.so.apihandler.common.ErrorNumbers;
-import org.onap.so.apihandlerinfra.exceptions.ContactCamundaException;
+import org.onap.logging.filter.spring.SpringClientPayloadFilter;
+import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
 import org.onap.so.utils.CryptoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +21,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.BufferingClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Component;
@@ -33,15 +34,16 @@ import org.springframework.web.client.RestTemplate;
 public class CamundaRequestHandler {
 
     private static Logger logger = LoggerFactory.getLogger(CamundaRequestHandler.class);
-
-    @Autowired
-    private RestTemplate restTemplate;
+    private static final String TIMEOUT = "30000";
+    private static final String RETRY_TIMEOUT = "15000";
+    private static final String TIMEOUT_PROPERTY = "mso.camunda.request.timeout";
+    private static final String RETRY_TIMEOUT_PROPERTY = "mso.camunda.request.timeout.retry";
 
     @Autowired
     private Environment env;
 
-    public ResponseEntity<List<HistoricProcessInstanceEntity>> getCamundaProcessInstanceHistory(String requestId) {
-        RetryTemplate retryTemplate = setRetryTemplate();
+    public ResponseEntity<List<HistoricProcessInstanceEntity>> getCamundaProcessInstanceHistory(String requestId,
+            boolean retry) {
         String path = env.getProperty("mso.camunda.rest.history.uri") + requestId;
         String targetUrl = env.getProperty("mso.camundaURL") + path;
         HttpHeaders headers =
@@ -49,86 +51,90 @@ public class CamundaRequestHandler {
 
         HttpEntity<?> requestEntity = new HttpEntity<>(headers);
 
-        return retryTemplate.execute(context -> {
-            if (context.getLastThrowable() != null) {
-                logger.error("Retrying: Last call resulted in exception: ", context.getLastThrowable());
-            }
-            if (context.getRetryCount() == 0) {
-                logger.info("Querying Camunda for process-instance history for requestId: {}", requestId);
-            } else {
-                logger.info("Retry: {} of 3. Querying Camunda for process-instance history for requestId: {}",
-                        context.getRetryCount(), requestId);
-            }
-            return restTemplate.exchange(targetUrl, HttpMethod.GET, requestEntity,
-                    new ParameterizedTypeReference<List<HistoricProcessInstanceEntity>>() {});
-        });
-    }
-
-    protected ResponseEntity<List<HistoricActivityInstanceEntity>> getCamundaActivityHistory(String processInstanceId,
-            String requestId) throws ContactCamundaException {
-        RetryTemplate retryTemplate = setRetryTemplate();
-        String path = env.getProperty("mso.camunda.rest.activity.uri") + processInstanceId;
-        String targetUrl = env.getProperty("mso.camundaURL") + path;
-        HttpHeaders headers =
-                setCamundaHeaders(env.getRequiredProperty("mso.camundaAuth"), env.getRequiredProperty("mso.msoKey"));
-        HttpEntity<?> requestEntity = new HttpEntity<>(headers);
-        try {
+        if (retry) {
+            RestTemplate restTemplate = getRestTemplate(retry);
+            RetryTemplate retryTemplate = getRetryTemplate();
             return retryTemplate.execute(context -> {
                 if (context.getLastThrowable() != null) {
                     logger.error("Retrying: Last call resulted in exception: ", context.getLastThrowable());
                 }
                 if (context.getRetryCount() == 0) {
-                    logger.info(
-                            "Querying Camunda for activity-instance history for processInstanceId: {}, for requestId: {}",
-                            processInstanceId, requestId);
+                    logger.info("Querying Camunda for process-instance history for requestId: {}", requestId);
                 } else {
-                    logger.info(
-                            "Retry: {} of 3. Querying Camunda for activity-instance history for processInstanceId: {}, for requestId: {}",
-                            context.getRetryCount(), processInstanceId, requestId);
+                    logger.info("Retry: Querying Camunda for process-instance history for requestId: {}",
+                            context.getRetryCount(), requestId);
                 }
-
                 return restTemplate.exchange(targetUrl, HttpMethod.GET, requestEntity,
-                        new ParameterizedTypeReference<List<HistoricActivityInstanceEntity>>() {});
+                        new ParameterizedTypeReference<List<HistoricProcessInstanceEntity>>() {});
             });
-
-        } catch (RestClientException e) {
-            logger.error(
-                    "Error querying Camunda for activity-instance history for processInstanceId: {}, for requestId: {}, exception: {}",
-                    processInstanceId, requestId, e.getMessage());
-            throw new ContactCamundaException.Builder("activity-instance", requestId, e.toString(),
-                    HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e).build();
+        } else {
+            RestTemplate restTemplate = getRestTemplate(retry);
+            return restTemplate.exchange(targetUrl, HttpMethod.GET, requestEntity,
+                    new ParameterizedTypeReference<List<HistoricProcessInstanceEntity>>() {});
         }
     }
 
-    protected String getTaskName(String requestId) throws ContactCamundaException {
+    protected ResponseEntity<List<HistoricActivityInstanceEntity>> getCamundaActivityHistory(String processInstanceId) {
+        RestTemplate restTemplate = getRestTemplate(false);
+        String path = env.getProperty("mso.camunda.rest.activity.uri") + processInstanceId;
+        String targetUrl = env.getProperty("mso.camundaURL") + path;
+        HttpHeaders headers =
+                setCamundaHeaders(env.getRequiredProperty("mso.camundaAuth"), env.getRequiredProperty("mso.msoKey"));
+        HttpEntity<?> requestEntity = new HttpEntity<>(headers);
+
+        return restTemplate.exchange(targetUrl, HttpMethod.GET, requestEntity,
+                new ParameterizedTypeReference<List<HistoricActivityInstanceEntity>>() {});
+    }
+
+    protected String getTaskName(String requestId) {
         ResponseEntity<List<HistoricProcessInstanceEntity>> response = null;
-        ResponseEntity<List<HistoricActivityInstanceEntity>> activityResponse = null;
-        String processInstanceId = null;
+
+        String taskInformation = null;
         try {
-            response = getCamundaProcessInstanceHistory(requestId);
+            response = getCamundaProcessInstanceHistory(requestId, false);
         } catch (RestClientException e) {
-            logger.error("Error querying Camunda for process-instance history for requestId: {}, exception: {}",
+            logger.warn("Error querying Camunda for process-instance history for requestId: {}, exception: {}",
                     requestId, e.getMessage());
-            throw new ContactCamundaException.Builder("process-instance", requestId, e.toString(),
-                    HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e).build();
         }
 
+        if (response != null) {
+            taskInformation = getTaskInformation(response, requestId);
+        }
+        return taskInformation;
+    }
+
+    protected String getTaskInformation(ResponseEntity<List<HistoricProcessInstanceEntity>> response,
+            String requestId) {
         List<HistoricProcessInstanceEntity> historicProcessInstanceList = response.getBody();
+        ResponseEntity<List<HistoricActivityInstanceEntity>> activityResponse = null;
+        String processInstanceId = null;
+        String taskInformation = null;
 
         if (historicProcessInstanceList != null && !historicProcessInstanceList.isEmpty()) {
             Collections.reverse(historicProcessInstanceList);
             processInstanceId = historicProcessInstanceList.get(0).getId();
         } else {
-            return "No processInstances returned for requestId: " + requestId;
+            logger.warn("No processInstances returned for requestId: {} to get TaskInformation", requestId);
         }
 
         if (processInstanceId != null) {
-            activityResponse = getCamundaActivityHistory(processInstanceId, requestId);
+            try {
+                activityResponse = getCamundaActivityHistory(processInstanceId);
+            } catch (RestClientException e) {
+                logger.warn(
+                        "Error querying Camunda for activity-instance history for processInstanceId: {}, for requestId: {}, exception: {}",
+                        processInstanceId, requestId, e.getMessage());
+            }
         } else {
-            return "No processInstanceId returned for requestId: " + requestId;
+            logger.warn("No processInstanceId returned for requestId: {} to get TaskInformation", requestId);
         }
 
-        return getActivityName(activityResponse.getBody());
+        if (activityResponse != null) {
+            taskInformation = getActivityName(activityResponse.getBody());
+        } else {
+            logger.warn("No activity history information returned for requestId: {} to get TaskInformation", requestId);
+        }
+        return taskInformation;
     }
 
     protected String getActivityName(List<HistoricActivityInstanceEntity> activityInstanceList) {
@@ -169,12 +175,31 @@ public class CamundaRequestHandler {
         return headers;
     }
 
-    protected RetryTemplate setRetryTemplate() {
+    protected RetryTemplate getRetryTemplate() {
         RetryTemplate retryTemplate = new RetryTemplate();
         Map<Class<? extends Throwable>, Boolean> retryableExceptions = new HashMap<>();
         retryableExceptions.put(ResourceAccessException.class, true);
-        SimpleRetryPolicy policy = new SimpleRetryPolicy(4, retryableExceptions);
+        SimpleRetryPolicy policy = new SimpleRetryPolicy(2, retryableExceptions);
         retryTemplate.setRetryPolicy(policy);
         return retryTemplate;
+    }
+
+    protected RestTemplate getRestTemplate(boolean retry) {
+        int timeout;
+        if (retry) {
+            timeout = Integer.parseInt(env.getProperty(RETRY_TIMEOUT_PROPERTY, RETRY_TIMEOUT));
+        } else {
+            timeout = Integer.parseInt(env.getProperty(TIMEOUT_PROPERTY, TIMEOUT));
+        }
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+        factory.setConnectionRequestTimeout(timeout);
+        factory.setReadTimeout(timeout);
+        factory.setConnectTimeout(timeout);
+        restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(factory));
+        restTemplate.getInterceptors().add(new SOSpringClientFilter());
+        restTemplate.getInterceptors().add((new SpringClientPayloadFilter()));
+        return restTemplate;
     }
 }

@@ -333,7 +333,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
         String requestId = duplicateRecord.getRequestId();
         ResponseEntity<List<HistoricProcessInstanceEntity>> response = null;
         try {
-            response = camundaRequestHandler.getCamundaProcessInstanceHistory(requestId);
+            response = camundaRequestHandler.getCamundaProcessInstanceHistory(requestId, true);
         } catch (RestClientException e) {
             logger.error("Error querying Camunda for process-instance history for requestId: {}, exception: {}",
                     requestId, e.getMessage());
