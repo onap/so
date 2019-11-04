@@ -25,10 +25,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
+import java.util.HashMap;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -439,6 +441,30 @@ public class RequestHandlerUtilsUnitTest {
         String expected = getRequestBody("/RequestBodyNewRequestorId.json");
         String result = requestHandler.updateRequestorIdInRequestBody(infraActiveRequest, newRequestorId);
         assertEquals(expected, result);
+    }
+
+    @Test
+    public void checkForDuplicateRequestsTest() throws ApiException {
+        InfraActiveRequests currentActiveReq = new InfraActiveRequests();
+        currentActiveReq.setAicCloudRegion("testRegion");
+        currentActiveReq.setRequestId("792a3158-d9a3-49fd-b3ac-ab09842d6a1a");
+        Action action = Action.createInstance;
+        String requestScope = ModelType.service.toString();
+
+        InfraActiveRequests duplicate = new InfraActiveRequests();
+
+        HashMap<String, String> instanceIdMap = new HashMap<String, String>();
+        String instanceName = "instanceName";
+
+        doReturn(duplicate).when(requestHandler).duplicateCheck(action, instanceIdMap, instanceName, requestScope,
+                currentActiveReq);
+        doReturn(true).when(requestHandler).camundaHistoryCheck(duplicate, currentActiveReq);
+        doNothing().when(requestHandler).buildErrorOnDuplicateRecord(currentActiveReq, action, instanceIdMap,
+                instanceName, requestScope, duplicate);
+
+        requestHandler.checkForDuplicateRequests(action, instanceIdMap, requestScope, currentActiveReq, instanceName);
+        verify(requestHandler).buildErrorOnDuplicateRecord(currentActiveReq, action, instanceIdMap, instanceName,
+                requestScope, duplicate);
     }
 
 }

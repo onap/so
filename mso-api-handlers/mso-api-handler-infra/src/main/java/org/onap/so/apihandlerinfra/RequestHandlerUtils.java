@@ -306,6 +306,22 @@ public class RequestHandlerUtils extends AbstractRestHandler {
         return requestUri;
     }
 
+    public void checkForDuplicateRequests(Actions action, HashMap<String, String> instanceIdMap, String requestScope,
+            InfraActiveRequests currentActiveReq, String instanceName) throws ApiException {
+        InfraActiveRequests dup = null;
+        boolean inProgress = false;
+
+        dup = duplicateCheck(action, instanceIdMap, instanceName, requestScope, currentActiveReq);
+
+        if (dup != null) {
+            inProgress = camundaHistoryCheck(dup, currentActiveReq);
+        }
+
+        if (dup != null && inProgress) {
+            buildErrorOnDuplicateRecord(currentActiveReq, action, instanceIdMap, instanceName, requestScope, dup);
+        }
+    }
+
     public InfraActiveRequests duplicateCheck(Actions action, HashMap<String, String> instanceIdMap,
             String instanceName, String requestScope, InfraActiveRequests currentActiveReq) throws ApiException {
         InfraActiveRequests dup = null;
