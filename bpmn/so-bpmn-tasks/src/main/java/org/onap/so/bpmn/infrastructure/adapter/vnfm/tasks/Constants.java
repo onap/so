@@ -60,5 +60,8 @@ public class Constants {
 
     public static final String OPERATION_STATUS_PARAM_NAME = "operationStatus";
 
+    public static final String EXT_VIRTUAL_LINKS = "extVirtualLinks";
+    public static final String ADDITIONAL_PARAMS = "additionalParams";
+
     private Constants() {}
 }

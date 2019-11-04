@@ -20,11 +20,17 @@
 package org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.utils;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import org.onap.vnfmadapter.v1.model.ExternalVirtualLink;
 
 /**
  * @author waqas.ikram@est.tech
  */
 public class NullInputParameter extends InputParameter {
+
+    private static final String ERROR =
+            "method should not be called for null object " + NullInputParameter.class.getSimpleName();
 
     private static final long serialVersionUID = -7261286746726871696L;
 
@@ -34,4 +40,23 @@ public class NullInputParameter extends InputParameter {
         super(Collections.emptyMap(), Collections.emptyList());
     }
 
+    @Override
+    public void setAdditionalParams(final Map<String, String> additionalParams) {
+        throw new UnsupportedOperationException("setAdditionalParams() " + ERROR);
+    }
+
+    @Override
+    public void setExtVirtualLinks(final List<ExternalVirtualLink> extVirtualLinks) {
+        throw new UnsupportedOperationException("setExtVirtualLinks() " + ERROR);
+    }
+
+    @Override
+    public void addExtVirtualLinks(final List<ExternalVirtualLink> extVirtualLinks) {
+        throw new UnsupportedOperationException("addExtVirtualLinks() " + ERROR);
+    }
+
+    @Override
+    public void putAdditionalParams(final Map<String, String> additionalParams) {
+        throw new UnsupportedOperationException("putAdditionalParams() " + ERROR);
+    }
 }

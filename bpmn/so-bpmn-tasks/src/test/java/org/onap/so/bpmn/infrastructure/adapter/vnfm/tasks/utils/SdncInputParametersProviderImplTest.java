@@ -48,7 +48,7 @@ import org.onap.vnfmadapter.v1.model.ExternalVirtualLink;
  * @author waqas.ikram@est.tech
  */
 @RunWith(MockitoJUnitRunner.class)
-public class InputParametersProviderImplTest {
+public class SdncInputParametersProviderImplTest {
 
     private static final String BASE_DIR = "src/test/resources/__files/";
 
@@ -89,7 +89,7 @@ public class InputParametersProviderImplTest {
     @Test
     public void testGetInputParameter_ValidResponseFromSdncInvalidData_EmptyInputParameter() throws Exception {
         when(mockedSdncClient.get(Mockito.eq(URL))).thenReturn(getReponseAsString(INVALID_PRE_LOAD_SDNC_RESPONSE));
-        final InputParametersProvider objUnderTest = new InputParametersProviderImpl(mockedSdncClient);
+        final InputParametersProvider<GenericVnf> objUnderTest = new SdncInputParametersProvider(mockedSdncClient);
         final InputParameter actual = objUnderTest.getInputParameter(getGenericVnf());
         assertNotNull(actual);
         assertTrue(actual.getAdditionalParams().isEmpty());
@@ -99,7 +99,7 @@ public class InputParametersProviderImplTest {
     @Test
     public void testGetInputParameter_ExceptionThrownFromSdnc_EmptyInputParameter() throws Exception {
         when(mockedSdncClient.get(Mockito.eq(URL))).thenThrow(RuntimeException.class);
-        final InputParametersProvider objUnderTest = new InputParametersProviderImpl(mockedSdncClient);
+        final InputParametersProvider<GenericVnf> objUnderTest = new SdncInputParametersProvider(mockedSdncClient);
         final InputParameter actual = objUnderTest.getInputParameter(getGenericVnf());
         assertNotNull(actual);
         assertTrue(actual instanceof NullInputParameter);
@@ -110,7 +110,7 @@ public class InputParametersProviderImplTest {
     @Test
     public void testGetInputParameter_InvalidResponseData_EmptyInputParameter() throws Exception {
         when(mockedSdncClient.get(Mockito.eq(URL))).thenReturn(getReponseAsString(INVALID_ADDITIONAL_AND_EXT_VM_DATA));
-        final InputParametersProvider objUnderTest = new InputParametersProviderImpl(mockedSdncClient);
+        final InputParametersProvider<GenericVnf> objUnderTest = new SdncInputParametersProvider(mockedSdncClient);
         final InputParameter actual = objUnderTest.getInputParameter(getGenericVnf());
         assertNotNull(actual);
         assertTrue(actual.getAdditionalParams().isEmpty());
@@ -120,7 +120,7 @@ public class InputParametersProviderImplTest {
     @Test
     public void testGetInputParameter_EmptyResponseData_EmptyInputParameter() throws Exception {
         when(mockedSdncClient.get(Mockito.eq(URL))).thenReturn("");
-        final InputParametersProvider objUnderTest = new InputParametersProviderImpl(mockedSdncClient);
+        final InputParametersProvider<GenericVnf> objUnderTest = new SdncInputParametersProvider(mockedSdncClient);
         final InputParameter actual = objUnderTest.getInputParameter(getGenericVnf());
         assertNotNull(actual);
         assertTrue(actual instanceof NullInputParameter);
@@ -131,7 +131,7 @@ public class InputParametersProviderImplTest {
     @Test
     public void testGetInputParameter_InvalidVnfParamsResponseData_EmptyInputParameter() throws Exception {
         when(mockedSdncClient.get(Mockito.eq(URL))).thenReturn(getReponseAsString(INVALID_VNF_PARAMS));
-        final InputParametersProvider objUnderTest = new InputParametersProviderImpl(mockedSdncClient);
+        final InputParametersProvider<GenericVnf> objUnderTest = new SdncInputParametersProvider(mockedSdncClient);
         final InputParameter actual = objUnderTest.getInputParameter(getGenericVnf());
         assertNotNull(actual);
         assertTrue(actual.getAdditionalParams().isEmpty());
@@ -140,7 +140,7 @@ public class InputParametersProviderImplTest {
 
     private void assertValues(final GenericVnf genericVnf) throws MapperException, BadResponseException, IOException {
         when(mockedSdncClient.get(Mockito.eq(URL))).thenReturn(getReponseAsString(PRE_LOAD_SDNC_RESPONSE));
-        final InputParametersProvider objUnderTest = new InputParametersProviderImpl(mockedSdncClient);
+        final InputParametersProvider<GenericVnf> objUnderTest = new SdncInputParametersProvider(mockedSdncClient);
         final InputParameter actual = objUnderTest.getInputParameter(genericVnf);
         assertNotNull(actual);
 
