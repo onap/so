@@ -23,9 +23,13 @@ package org.onap.so.apihandler.filters;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Collections;
 import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.UriInfo;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -52,6 +56,9 @@ public class RequestIdFilterTest {
 
     @Mock
     private RequestsDbClient requestsDbClient;
+
+    @Mock
+    private UriInfo uriInfo;
 
     @InjectMocks
     @Spy
@@ -87,11 +94,34 @@ public class RequestIdFilterTest {
 
         doReturn(infraActiveRequests).when(requestsDbClient).getInfraActiveRequestbyRequestId(requestId);
         doReturn(error).when(requestIdFilter).createRequestError(REQUEST_ID, "InfraActiveRequests");
+        doReturn("/onap/so/infra/serviceInstantiation/v7/serviceInstances").when(uriInfo).getPath();
+        doReturn(uriInfo).when(mockContext).getUriInfo();
 
         thrown.expect(DuplicateRequestIdException.class);
         thrown.expectMessage("HTTP 400 Bad Request");
+
+
         requestIdFilter.filter(mockContext);
     }
+
+
+    @Test
+    public void filterTestInfraSkipRequestIdLookup() throws IOException {
+        String requestId = REQUEST_ID;
+        MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, requestId);
+
+        // ExpectedRecord InfraActiveRequests
+        InfraActiveRequests infraActiveRequests = new InfraActiveRequests();
+        infraActiveRequests.setRequestId(REQUEST_ID);
+
+        doReturn("onap/so/infra/orchestrationRequests/v7/" + REQUEST_ID).when(uriInfo).getPath();
+        doReturn(uriInfo).when(mockContext).getUriInfo();
+
+        verify(requestsDbClient, never()).getInfraActiveRequestbyRequestId(REQUEST_ID);
+
+        requestIdFilter.filter(mockContext);
+    }
+
 
     @Test
     public void createRequestErrorTest() throws IOException {

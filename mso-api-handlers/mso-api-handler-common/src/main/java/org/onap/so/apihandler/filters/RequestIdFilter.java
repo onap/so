@@ -23,6 +23,7 @@ import java.io.IOException;
 import javax.annotation.Priority;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Provider;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.apihandler.common.ErrorNumbers;
@@ -52,15 +53,20 @@ public class RequestIdFilter implements ContainerRequestFilter {
     @Override
     public void filter(ContainerRequestContext context) throws IOException {
         String requestId = MDC.get(ONAPLogConstants.MDCs.REQUEST_ID);
+        UriInfo uriInfo = context.getUriInfo();
+        String requestURI = uriInfo.getPath();
 
-        logger.info("Checking if requestId: {} already exists in requestDb InfraActiveRequests table", requestId);
-        InfraActiveRequests infraActiveRequests = infraActiveRequestsClient.getInfraActiveRequestbyRequestId(requestId);
+        if (!requestURI.contains("orchestrationRequests")) {
+            logger.info("Checking if requestId: {} already exists in requestDb InfraActiveRequests table", requestId);
+            InfraActiveRequests infraActiveRequests =
+                    infraActiveRequestsClient.getInfraActiveRequestbyRequestId(requestId);
 
-        if (infraActiveRequests != null) {
-            logger.error(
-                    "RequestId: {} already exists in RequestDB InfraActiveRequests table, throwing DuplicateRequestIdException",
-                    requestId);
-            throw new DuplicateRequestIdException(createRequestError(requestId, "InfraActiveRequests"));
+            if (infraActiveRequests != null) {
+                logger.error(
+                        "RequestId: {} already exists in RequestDB InfraActiveRequests table, throwing DuplicateRequestIdException",
+                        requestId);
+                throw new DuplicateRequestIdException(createRequestError(requestId, "InfraActiveRequests"));
+            }
         }
     }
 
