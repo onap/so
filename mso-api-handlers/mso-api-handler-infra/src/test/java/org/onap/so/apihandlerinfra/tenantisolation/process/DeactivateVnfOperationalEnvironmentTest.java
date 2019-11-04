@@ -64,7 +64,7 @@ public class DeactivateVnfOperationalEnvironmentTest extends BaseTest {
     public void init() {
         wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
                 .withRequestBody(containing("{\"requestId\":\"" + requestId
-                        + "\",\"clientRequestId\":null,\"action\":null,\"requestStatus\":\"COMPLETE\",\"statusMessage\":\"SUCCESSFUL"))
+                        + "\",\"requestStatus\":\"COMPLETE\",\"statusMessage\":\"SUCCESSFUL"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withStatus(HttpStatus.SC_OK)));
     }
@@ -129,7 +129,7 @@ public class DeactivateVnfOperationalEnvironmentTest extends BaseTest {
                         .withBody(mapper.writeValueAsString(iar)).withStatus(HttpStatus.SC_OK)));
         wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
                 .withRequestBody(containing("{\"requestId\":\"" + requestId
-                        + "\",\"clientRequestId\":null,\"action\":null,\"requestStatus\":\"FAILED\",\"statusMessage\":\"FAILURE"))
+                        + "\",\"requestStatus\":\"FAILED\",\"statusMessage\":\"FAILURE"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withStatus(HttpStatus.SC_OK)));
 

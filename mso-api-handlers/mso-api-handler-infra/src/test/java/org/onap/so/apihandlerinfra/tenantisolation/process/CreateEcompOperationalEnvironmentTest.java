@@ -95,7 +95,7 @@ public class CreateEcompOperationalEnvironmentTest extends BaseTest {
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(iar)).withStatus(HttpStatus.SC_OK)));
         wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests/")).withRequestBody(containing(
-                "{\"requestId\":\"123\",\"clientRequestId\":null,\"action\":null,\"requestStatus\":\"COMPLETE\",\"statusMessage\":\"SUCCESSFUL, operationalEnvironmentId - operationalEnvId; Success Message: SUCCESSFULLY Created ECOMP OperationalEnvironment.\",\"rollbackStatusMessage\":null,\"flowStatus\":null,\"retryStatusMessage\":null,\"progress\":100"))
+                "{\"requestId\":\"123\",\"requestStatus\":\"COMPLETE\",\"statusMessage\":\"SUCCESSFUL, operationalEnvironmentId - operationalEnvId; Success Message: SUCCESSFULLY Created ECOMP OperationalEnvironment.\",\"progress\":100"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withStatus(HttpStatus.SC_OK)));
 
@@ -127,7 +127,7 @@ public class CreateEcompOperationalEnvironmentTest extends BaseTest {
                         .withBody(mapper.writeValueAsString(iar)).withStatus(HttpStatus.SC_OK)));
         wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
                 .withRequestBody(containing("{\"requestId\":\"" + uuid
-                        + "\",\"clientRequestId\":null,\"action\":null,\"requestStatus\":\"FAILED\",\"statusMessage\":\"FAILURE, operationalEnvironmentId - operationalEnvId; Error message:"))
+                        + "\",\"requestStatus\":\"FAILED\",\"statusMessage\":\"FAILURE, operationalEnvironmentId - operationalEnvId; Error message:"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withStatus(HttpStatus.SC_OK)));
 

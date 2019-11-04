@@ -343,6 +343,14 @@ public class RequestsDbClient {
         restTemplate.put(uri, entity);
     }
 
+    public void patchInfraActiveRequests(InfraActiveRequests request) {
+        HttpHeaders headers = getHttpHeaders();
+        URI uri = getUri(infraActiveRequestURI + request.getRequestId());
+        HttpEntity<InfraActiveRequests> entity = new HttpEntity<>(request, headers);
+        restTemplate.exchange(uri, HttpMethod.PATCH, new HttpEntity<InfraActiveRequests>(request, headers),
+                String.class);
+    }
+
     protected URI getUri(String uri) {
         return URI.create(uri);
     }
