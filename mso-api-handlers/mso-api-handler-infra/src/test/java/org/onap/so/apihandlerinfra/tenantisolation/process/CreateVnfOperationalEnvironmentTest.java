@@ -151,7 +151,7 @@ public class CreateVnfOperationalEnvironmentTest extends BaseTest {
         ObjectMapper mapper = new ObjectMapper();
         wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
                 .withRequestBody(containing("{\"requestId\":\"" + requestId
-                        + "\",\"clientRequestId\":null,\"action\":null,\"requestStatus\":\"COMPLETE\",\"statusMessage\":\"SUCCESSFUL"))
+                        + "\",\"requestStatus\":\"COMPLETE\",\"statusMessage\":\"SUCCESSFUL"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withStatus(HttpStatus.SC_OK)));
 
@@ -188,7 +188,7 @@ public class CreateVnfOperationalEnvironmentTest extends BaseTest {
         ObjectMapper mapper = new ObjectMapper();
         wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
                 .withRequestBody(containing("{\"requestId\":\"" + requestId
-                        + "\",\"clientRequestId\":null,\"action\":null,\"requestStatus\":\"COMPLETE\",\"statusMessage\":\"SUCCESSFUL"))
+                        + "\",\"requestStatus\":\"COMPLETE\",\"statusMessage\":\"SUCCESSFUL"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withStatus(HttpStatus.SC_OK)));
 
