@@ -714,6 +714,9 @@ public class ASDCNotificationLogging {
 
                 if ("Allotted Resource".equalsIgnoreCase(category)) {
 
+                    buffer.append(System.lineSeparator());
+                    buffer.append("Allotted Resource Properties:");
+                    buffer.append(System.lineSeparator());
                     buffer.append("Model Name:");
                     buffer.append(testNull(arEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_NAME)));
                     buffer.append(System.lineSeparator());
@@ -738,6 +741,7 @@ public class ASDCNotificationLogging {
                     buffer.append(System.lineSeparator());
                     buffer.append("Model Description:");
                     buffer.append(arEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION));
+                    buffer.append(System.lineSeparator());
                     buffer.append(System.lineSeparator());
 
 
@@ -784,6 +788,9 @@ public class ASDCNotificationLogging {
 
                 if ("Allotted Resource".equalsIgnoreCase(category)) {
 
+                    buffer.append(System.lineSeparator());
+                    buffer.append("Allotted Resource Properties:");
+                    buffer.append(System.lineSeparator());
                     buffer.append("Model Name:");
                     buffer.append(testNull(pnfAREntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_NAME)));
                     buffer.append(System.lineSeparator());
@@ -809,7 +816,7 @@ public class ASDCNotificationLogging {
                     buffer.append("Model Description:");
                     buffer.append(pnfAREntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION));
                     buffer.append(System.lineSeparator());
-
+                    buffer.append(System.lineSeparator());
 
                     buffer.append("Allotted Resource Customization Properties:");
                     buffer.append(System.lineSeparator());

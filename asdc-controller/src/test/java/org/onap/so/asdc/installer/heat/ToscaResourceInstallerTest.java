@@ -622,8 +622,8 @@ public class ToscaResourceInstallerTest extends BaseTest {
     }
 
     private void prepareConfigurationResource() {
-        doReturn(metadata).when(nodeTemplate).getMetaData();
-        doReturn(MockConstants.TEMPLATE_TYPE).when(nodeTemplate).getType();
+        doReturn(metadata).when(entityDetails).getMetadata();
+        doReturn(MockConstants.TEMPLATE_TYPE).when(entityDetails).getToscaType();
 
         doReturn(MockConstants.MODEL_NAME).when(metadata).getValue(SdcPropertyNames.PROPERTY_NAME_NAME);
         doReturn(MockConstants.MODEL_INVARIANT_UUID).when(metadata)
@@ -639,7 +639,7 @@ public class ToscaResourceInstallerTest extends BaseTest {
     public void getConfigurationResourceTest() {
         prepareConfigurationResource();
 
-        ConfigurationResource configResource = toscaInstaller.getConfigurationResource(nodeTemplate);
+        ConfigurationResource configResource = toscaInstaller.getConfigurationResource(entityDetails);
 
         assertNotNull(configResource);
         assertEquals(MockConstants.MODEL_NAME, configResource.getModelName());
@@ -647,7 +647,7 @@ public class ToscaResourceInstallerTest extends BaseTest {
         assertEquals(MockConstants.MODEL_UUID, configResource.getModelUUID());
         assertEquals(MockConstants.MODEL_VERSION, configResource.getModelVersion());
         assertEquals(MockConstants.MODEL_DESCRIPTION, configResource.getDescription());
-        assertEquals(MockConstants.TEMPLATE_TYPE, nodeTemplate.getType());
+        assertEquals(MockConstants.TEMPLATE_TYPE, entityDetails.getToscaType());
     }
 
     private void prepareConfigurationResourceCustomization() {
@@ -655,13 +655,11 @@ public class ToscaResourceInstallerTest extends BaseTest {
         doReturn(MockConstants.MODEL_CUSTOMIZATIONUUID).when(metadata)
                 .getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
         doReturn(csarHelper).when(toscaResourceStructure).getSdcCsarHelper();
-        doReturn(null).when(csarHelper).getNodeTemplatePropertyLeafValue(nodeTemplate,
-                SdcPropertyNames.PROPERTY_NAME_NFFUNCTION);
-        doReturn(null).when(csarHelper).getNodeTemplatePropertyLeafValue(nodeTemplate,
-                SdcPropertyNames.PROPERTY_NAME_NFROLE);
-        doReturn(null).when(csarHelper).getNodeTemplatePropertyLeafValue(nodeTemplate,
-                SdcPropertyNames.PROPERTY_NAME_NFTYPE);
         doReturn(MockConstants.MODEL_CUSTOMIZATIONUUID).when(spResourceCustomization).getModelCustomizationUUID();
+        doReturn(null).when(toscaInstaller).getLeafPropertyValue(entityDetails,
+                SdcPropertyNames.PROPERTY_NAME_NFFUNCTION);
+        doReturn(null).when(toscaInstaller).getLeafPropertyValue(entityDetails, SdcPropertyNames.PROPERTY_NAME_NFROLE);
+        doReturn(null).when(toscaInstaller).getLeafPropertyValue(entityDetails, SdcPropertyNames.PROPERTY_NAME_NFTYPE);
     }
 
 
@@ -670,7 +668,7 @@ public class ToscaResourceInstallerTest extends BaseTest {
         prepareConfigurationResourceCustomization();
 
         ConfigurationResourceCustomization configurationResourceCustomization =
-                toscaInstaller.getConfigurationResourceCustomization(nodeTemplate, toscaResourceStructure,
+                toscaInstaller.getConfigurationResourceCustomization(entityDetails, toscaResourceStructure,
                         spResourceCustomization, service);
         assertNotNull(configurationResourceCustomization);
         assertNotNull(configurationResourceCustomization.getConfigurationResource());
