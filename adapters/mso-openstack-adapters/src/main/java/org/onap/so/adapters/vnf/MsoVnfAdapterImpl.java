@@ -1074,6 +1074,9 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 if (backout == null) {
                     backout = true;
                 }
+                if (failIfExists == null) {
+                    failIfExists = false;
+                }
                 if (msoHeatUtils != null) {
                     heatStack = msoHeatUtils.createStack(cloudSiteId, cloudOwner, tenantId, vfModuleName, null,
                             template, goldenInputs, true, heatTemplate.getTimeoutMinutes(), newEnvironmentString,
