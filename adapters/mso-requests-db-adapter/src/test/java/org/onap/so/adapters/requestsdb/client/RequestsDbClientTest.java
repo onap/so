@@ -27,6 +27,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +43,7 @@ import org.onap.so.db.request.beans.OperationStatus;
 import org.onap.so.db.request.beans.OperationalEnvDistributionStatus;
 import org.onap.so.db.request.beans.OperationalEnvServiceModelStatus;
 import org.onap.so.db.request.beans.RequestProcessingData;
+import org.onap.so.serviceinstancebeans.ModelType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.server.LocalServerPort;
 
@@ -313,5 +316,21 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
         List<InfraActiveRequests> infraActiveRequestsResponse = requestsDbClient.getRequest(filters);
 
         verifyInfraActiveRequests(infraActiveRequestsResponse.get(0));
+    }
+
+    @Test
+    public void getInProgressVolumeGroupsAndVfModulesTest() {
+        InfraActiveRequests request = new InfraActiveRequests();
+        request.setRequestId(UUID.randomUUID().toString());
+        request.setVfModuleId(UUID.randomUUID().toString());
+        request.setRequestStatus("IN_PROGRESS");
+        request.setRequestScope(ModelType.vfModule.toString());
+        Instant startInstant = Instant.now().minus(3, ChronoUnit.MINUTES);
+        request.setStartTime(Timestamp.from(startInstant));
+        request.setRequestAction("create");
+        requestsDbClient.save(request);
+
+        List<InfraActiveRequests> infraActiveRequests = requestsDbClient.getInProgressVolumeGroupsAndVfModules();
+        assertThat(request, sameBeanAs(infraActiveRequests.get(0)).ignoring("modifyTime"));
     }
 }
