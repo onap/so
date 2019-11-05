@@ -27,12 +27,20 @@
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="test" />
 	</logger>
+	
+	<logger name="org.apache.catalina.core.ContainerBase" level="${so.log.level:-DEBUG}"
+		additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger>
+	
+	
 
 	<logger name="com.att" level="${so.log.level:-DEBUG}"
 		additivity="false">
 		<appender-ref ref="STDOUT" />
 	</logger>
-	<root level="WARN">
+	
+	<root level="INFO">
 		<appender-ref ref="STDOUT" />
 	</root>
 

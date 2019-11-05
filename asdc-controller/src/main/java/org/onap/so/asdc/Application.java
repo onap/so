@@ -27,12 +27,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.EnableMBeanExport;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.jmx.support.RegistrationPolicy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication(scanBasePackages = {"org.onap.so"})
 @EnableScheduling
 @EnableJpaRepositories("org.onap.so.db.catalog.data.repository")
+@EnableMBeanExport(registration = RegistrationPolicy.IGNORE_EXISTING)
 public class Application {
     private static final Logger logger = LoggerFactory.getLogger(Application.class);
     private static final String LOGS_DIR = "logs_dir";
@@ -58,6 +61,7 @@ public class Application {
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
+        java.security.Security.setProperty("networkaddress.cache.ttl", "10");
         System.getProperties().setProperty("mso.db", "MARIADB");
 
         System.getProperties().setProperty("server.name", "Springboot");

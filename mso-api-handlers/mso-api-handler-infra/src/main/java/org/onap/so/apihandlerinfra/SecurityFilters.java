@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 - 2019 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,36 +18,24 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.security;
+package org.onap.so.apihandlerinfra;
 
-public class UserCredentials {
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.Ordered;
 
-    private String username;
-    private String password;
-    private String role;
+@Configuration
+@Profile("!test")
+public class SecurityFilters {
 
-    public String getUsername() {
-        return username;
+    @Bean
+    public FilterRegistrationBean<SoCadiFilter> loginRegistrationBean() {
+        FilterRegistrationBean<SoCadiFilter> filterRegistrationBean = new FilterRegistrationBean<>();
+        filterRegistrationBean.setFilter(new SoCadiFilter());
+        filterRegistrationBean.setName("cadiFilter");
+        filterRegistrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        return filterRegistrationBean;
     }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
 }
