@@ -51,9 +51,12 @@ import org.onap.sdc.tosca.parser.elements.queries.EntityQuery;
 import org.onap.sdc.tosca.parser.elements.queries.EntityQuery.EntityQueryBuilder;
 import org.onap.sdc.tosca.parser.elements.queries.TopologyTemplateQuery;
 import org.onap.sdc.tosca.parser.elements.queries.TopologyTemplateQuery.TopologyTemplateQueryBuilder;
+import org.onap.sdc.tosca.parser.enums.EntityTemplateType;
 import org.onap.sdc.tosca.parser.enums.SdcTypes;
 import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
-import org.onap.sdc.toscaparser.api.*;
+import org.onap.sdc.toscaparser.api.CapabilityAssignment;
+import org.onap.sdc.toscaparser.api.Property;
+import org.onap.sdc.toscaparser.api.RequirementAssignment;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.onap.sdc.toscaparser.api.functions.GetInput;
 import org.onap.sdc.toscaparser.api.parameters.Input;
@@ -433,7 +436,6 @@ public class ToscaResourceInstaller {
             createToscaCsar(toscaResourceStruct);
             createService(toscaResourceStruct, vfResourceStruct);
             Service service = toscaResourceStruct.getCatalogService();
-            List<NodeTemplate> vfNodeTemplatesList = toscaResourceStruct.getSdcCsarHelper().getServiceVfList();
 
             List<IEntityDetails> vfEntityList = getEntityDetails(toscaResourceStruct,
                     EntityQuery.newBuilder(SdcTypes.VF), TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE), false);
@@ -449,8 +451,7 @@ public class ToscaResourceInstaller {
                     arEntityDetails.add(vfEntityDetails);
                 }
 
-                processVfModules(vfEntityDetails, vfNodeTemplatesList.get(0), toscaResourceStruct, vfResourceStructure,
-                        service, metadata);
+                processVfModules(vfEntityDetails, toscaResourceStruct, vfResourceStructure, service, metadata);
             }
 
             processResourceSequence(toscaResourceStruct, service);
@@ -510,24 +511,24 @@ public class ToscaResourceInstaller {
     }
 
 
-    List<NodeTemplate> getRequirementList(List<NodeTemplate> resultList, List<NodeTemplate> nodeTemplates,
+    List<IEntityDetails> getRequirementList(List<IEntityDetails> resultList, List<IEntityDetails> entityDetails,
             ISdcCsarHelper iSdcCsarHelper) {
 
-        List<NodeTemplate> nodes = new ArrayList<>();
-        nodes.addAll(nodeTemplates);
+        List<IEntityDetails> entities = new ArrayList<>();
+        entityDetails.addAll(entityDetails);
 
-        for (NodeTemplate nodeTemplate : nodeTemplates) {
-            RequirementAssignments requirement = iSdcCsarHelper.getRequirementsOf(nodeTemplate);
-            List<RequirementAssignment> reqAs = requirement.getAll();
-            for (RequirementAssignment ra : reqAs) {
+        for (IEntityDetails entity : entityDetails) {
+            List<RequirementAssignment> requirements = entity.getRequirements();
+
+            for (RequirementAssignment ra : requirements) {
                 String reqNode = ra.getNodeTemplateName();
-                for (NodeTemplate rNode : resultList) {
-                    if (rNode.getName().equals(reqNode)) {
-                        if (!resultList.contains(nodeTemplate)) {
-                            resultList.add(nodeTemplate);
+                for (IEntityDetails rEntity : resultList) {
+                    if (rEntity.getName().equals(reqNode)) {
+                        if (!resultList.contains(entityDetails)) {
+                            resultList.add(entity);
                         }
-                        if (nodes.contains(nodeTemplate)) {
-                            nodes.remove(nodeTemplate);
+                        if (entities.contains(entityDetails)) {
+                            entities.remove(entityDetails);
                         }
                         break;
                     }
@@ -535,8 +536,8 @@ public class ToscaResourceInstaller {
             }
         }
 
-        if (!nodes.isEmpty()) {
-            getRequirementList(resultList, nodes, iSdcCsarHelper);
+        if (!entities.isEmpty()) {
+            getRequirementList(resultList, entities, iSdcCsarHelper);
         }
 
         return resultList;
@@ -545,26 +546,30 @@ public class ToscaResourceInstaller {
     // This method retrieve resource sequence from csar file
     void processResourceSequence(ToscaResourceStructure toscaResourceStructure, Service service) {
         List<String> resouceSequence = new ArrayList<>();
-        List<NodeTemplate> resultList = new ArrayList<>();
+        List<IEntityDetails> resultList = new ArrayList<>();
 
         ISdcCsarHelper iSdcCsarHelper = toscaResourceStructure.getSdcCsarHelper();
-        List<NodeTemplate> nodeTemplates = iSdcCsarHelper.getServiceNodeTemplates();
-        List<NodeTemplate> nodes = new ArrayList<>();
-        nodes.addAll(nodeTemplates);
 
-        for (NodeTemplate nodeTemplate : nodeTemplates) {
-            RequirementAssignments requirement = iSdcCsarHelper.getRequirementsOf(nodeTemplate);
+        List<IEntityDetails> vfEntityList =
+                getEntityDetails(toscaResourceStructure, EntityQuery.newBuilder(EntityTemplateType.NODE_TEMPLATE),
+                        TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE), false);
 
-            if (requirement == null || requirement.getAll() == null || requirement.getAll().isEmpty()) {
-                resultList.add(nodeTemplate);
-                nodes.remove(nodeTemplate);
+        List<IEntityDetails> entities = new ArrayList<>();
+        entities.addAll(vfEntityList);
+
+        for (IEntityDetails entityDetails : vfEntityList) {
+            List<RequirementAssignment> requirements = entityDetails.getRequirements();
+
+            if (requirements == null || requirements.isEmpty()) {
+                resultList.add(entityDetails);
+                entities.remove(entityDetails);
             }
         }
 
-        resultList = getRequirementList(resultList, nodes, iSdcCsarHelper);
+        resultList = getRequirementList(resultList, entities, iSdcCsarHelper);
 
-        for (NodeTemplate node : resultList) {
-            String templateName = node.getMetaData().getValue("name");
+        for (IEntityDetails entity : resultList) {
+            String templateName = entity.getMetadata().getValue("name");
             if (!resouceSequence.contains(templateName)) {
                 resouceSequence.add(templateName);
             }
@@ -608,13 +613,17 @@ public class ToscaResourceInstaller {
         Map<String, String> resouceRequest = new HashMap<>();
         ISdcCsarHelper iSdcCsarHelper = toscaResourceStructure.getSdcCsarHelper();
 
+        List<IEntityDetails> nodeTemplateEntityList =
+                getEntityDetails(toscaResourceStructure, EntityQuery.newBuilder(EntityTemplateType.NODE_TEMPLATE),
+                        TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE), false);
+
         List<Input> serInput = iSdcCsarHelper.getServiceInputs();
-        Optional<NodeTemplate> nodeTemplateOpt = iSdcCsarHelper.getServiceNodeTemplates().stream()
-                .filter(e -> e.getMetaData().getValue(CUSTOMIZATION_UUID).equals(resourceCustomizationUuid))
+        Optional<IEntityDetails> nodeTemplateOpt = nodeTemplateEntityList.stream()
+                .filter(e -> e.getMetadata().getValue(CUSTOMIZATION_UUID).equals(resourceCustomizationUuid))
                 .findFirst();
         if (nodeTemplateOpt.isPresent()) {
-            NodeTemplate nodeTemplate = nodeTemplateOpt.get();
-            LinkedHashMap<String, Property> resourceProperties = nodeTemplate.getProperties();
+            IEntityDetails entityDetails = nodeTemplateOpt.get();
+            Map<String, Property> resourceProperties = entityDetails.getProperties();
 
             for (String key : resourceProperties.keySet()) {
                 Property property = resourceProperties.get(key);
@@ -993,9 +1002,8 @@ public class ToscaResourceInstaller {
         return String.valueOf(value);
     }
 
-    protected void processVfModules(IEntityDetails vfEntityDetails, NodeTemplate nodeTemplate,
-            ToscaResourceStructure toscaResourceStruct, VfResourceStructure vfResourceStructure, Service service,
-            Metadata metadata) throws Exception {
+    protected void processVfModules(IEntityDetails vfEntityDetails, ToscaResourceStructure toscaResourceStruct,
+            VfResourceStructure vfResourceStructure, Service service, Metadata metadata) throws Exception {
 
         String vfCustomizationCategory =
                 vfEntityDetails.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_CATEGORY);
@@ -1062,7 +1070,6 @@ public class ToscaResourceInstaller {
                 }
             }
 
-
             // Check for VNFC Instance Group info and add it if there is
             List<IEntityDetails> vfcEntityList = getEntityDetails(toscaResourceStruct,
                     EntityQuery.newBuilder("org.openecomp.groups.VfcInstanceGroup"),
@@ -1072,7 +1079,7 @@ public class ToscaResourceInstaller {
 
             for (IEntityDetails groupEntity : vfcEntityList) {
                 VnfcInstanceGroupCustomization vnfcInstanceGroupCustomization = createVNFCInstanceGroup(groupEntity,
-                        nodeTemplate, vnfResource, toscaResourceStruct, existingVnfcGroupSet);
+                        vfEntityDetails, vnfResource, toscaResourceStruct, existingVnfcGroupSet);
                 vnfcInstanceGroupCustomizationRepo.saveAndFlush(vnfcInstanceGroupCustomization);
             }
 
@@ -1887,7 +1894,7 @@ public class ToscaResourceInstaller {
     }
 
     protected VnfcInstanceGroupCustomization createVNFCInstanceGroup(IEntityDetails vfcInstanceEntity,
-            NodeTemplate vnfcNodeTemplate, VnfResourceCustomization vnfResourceCustomization,
+            IEntityDetails vfEntityDetails, VnfResourceCustomization vnfResourceCustomization,
             ToscaResourceStructure toscaResourceStructure, Set<VnfcCustomization> existingVnfcGroupSet) {
 
         Metadata instanceMetadata = vfcInstanceEntity.getMetadata();
@@ -1957,7 +1964,8 @@ public class ToscaResourceInstaller {
 
         vfcInstanceGroupCustom.setInstanceGroup(vfcInstanceGroup);
 
-        ArrayList<Input> inputs = vnfcNodeTemplate.getSubMappingToscaTemplate().getInputs();
+        List<Input> inputs = vfEntityDetails.getInputs();
+
         createVFCInstanceGroupMembers(vfcInstanceGroupCustom, vfcInstanceEntity, inputs, existingVnfcGroupSet);
 
         return vfcInstanceGroupCustom;

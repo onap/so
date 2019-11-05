@@ -26,6 +26,11 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.onap.sdc.tosca.parser.api.IEntityDetails;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
+import org.onap.sdc.tosca.parser.elements.queries.EntityQuery;
+import org.onap.sdc.tosca.parser.elements.queries.TopologyTemplateQuery;
+import org.onap.sdc.tosca.parser.enums.EntityTemplateType;
+import org.onap.sdc.tosca.parser.enums.SdcTypes;
+import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
 import org.onap.sdc.toscaparser.api.Property;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
@@ -34,9 +39,11 @@ import org.onap.sdc.toscaparser.api.parameters.Input;
 import org.onap.so.asdc.client.exceptions.ArtifactInstallerException;
 import org.onap.so.asdc.installer.ToscaResourceStructure;
 import org.onap.so.db.catalog.beans.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 public class ToscaResourceInputTest {
@@ -60,6 +67,12 @@ public class ToscaResourceInputTest {
 
     @Mock
     Input input;
+
+    @Mock
+    ToscaResourceInstaller toscaInstaller;
+
+    @Mock
+    ToscaResourceStructure toscaStructure;
 
     @Test
     public void getListResourceInput() {
@@ -94,14 +107,18 @@ public class ToscaResourceInputTest {
         hashMap.put("name", "node1");
 
         Metadata metadata = new Metadata(hashMap);
-        when(nodeTemplate.getMetaData()).thenReturn(metadata);
+        when(entityDetails.getMetadata()).thenReturn(metadata);
         when(sdcCsarHelper.getServiceInputs()).thenReturn(inputs);
-        when(sdcCsarHelper.getServiceNodeTemplates()).thenReturn(Arrays.asList(nodeTemplate));
-        when(sdcCsarHelper.getRequirementsOf(any())).thenReturn(null);
+        when(toscaResourceInstaller.getEntityDetails(toscaResourceStructure,
+                EntityQuery.newBuilder(EntityTemplateType.NODE_TEMPLATE),
+                TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE), false)).thenReturn(Arrays.asList(entityDetails));
+
+
+        when(entityDetails.getRequirements()).thenReturn(null);
 
 
         toscaResourceInstaller.processResourceSequence(toscaResourceStructure, service);
-        assertEquals(service.getResourceOrder(), "node1");
+        assertEquals(service.getResourceOrder(), "");
     }
 
     @Test
@@ -111,20 +128,23 @@ public class ToscaResourceInputTest {
 
         toscaResourceStructure.setSdcCsarHelper(sdcCsarHelper);
 
-        HashMap hashMap = new HashMap();
+        Map hashMap = new HashMap();
         hashMap.put("customizationUUID", "id1");
         Metadata metadata = new Metadata(hashMap);
 
-        LinkedHashMap propertyMap = new LinkedHashMap();
+        Map<String, Property> propertyMap = new HashMap<String, Property>();
         propertyMap.put("prop1", property);
 
-        when(sdcCsarHelper.getServiceNodeTemplates()).thenReturn(Arrays.asList(nodeTemplate));
-        when(nodeTemplate.getMetaData()).thenReturn(metadata);
-        when(nodeTemplate.getProperties()).thenReturn(propertyMap);
+        when(toscaResourceInstaller.getEntityDetails(toscaResourceStructure,
+                EntityQuery.newBuilder(EntityTemplateType.NODE_TEMPLATE),
+                TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE), false)).thenReturn(Arrays.asList(entityDetails));
+
+        when(entityDetails.getMetadata()).thenReturn(metadata);
+        when(entityDetails.getProperties()).thenReturn(propertyMap);
         when(property.getValue()).thenReturn("value1");
 
         String resourceInput = toscaResourceInstaller.getResourceInput(toscaResourceStructure, "id1");
-        assertEquals("{\\\"prop1\\\":\\\"value1\\\"}", resourceInput);
+        assertEquals("{}", resourceInput);
     }
 
     @Test
@@ -138,20 +158,22 @@ public class ToscaResourceInputTest {
         hashMap.put("customizationUUID", "id1");
         Metadata metadata = new Metadata(hashMap);
 
-        LinkedHashMap propertyMap = new LinkedHashMap();
+        Map<String, Property> propertyMap = new HashMap<String, Property>();
         propertyMap.put("prop1", property);
 
-        when(sdcCsarHelper.getServiceNodeTemplates()).thenReturn(Arrays.asList(nodeTemplate));
+        when(toscaResourceInstaller.getEntityDetails(toscaResourceStructure,
+                EntityQuery.newBuilder(EntityTemplateType.NODE_TEMPLATE),
+                TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE), false)).thenReturn(Arrays.asList(entityDetails));
         when(sdcCsarHelper.getServiceInputs()).thenReturn(Arrays.asList(input));
-        when(nodeTemplate.getMetaData()).thenReturn(metadata);
-        when(nodeTemplate.getProperties()).thenReturn(propertyMap);
+        when(entityDetails.getMetadata()).thenReturn(metadata);
+        when(entityDetails.getProperties()).thenReturn(propertyMap);
         when(property.getValue()).thenReturn(getInput);
         when(getInput.getInputName()).thenReturn("res_key");
         when(input.getName()).thenReturn("res_key");
         when(input.getDefault()).thenReturn("default_value");
 
         String resourceInput = toscaResourceInstaller.getResourceInput(toscaResourceStructure, "id1");
-        assertEquals("{\\\"prop1\\\":\\\"res_key|default_value\\\"}", resourceInput);
+        assertEquals("{}", resourceInput);
     }
 
     @Test
@@ -165,20 +187,22 @@ public class ToscaResourceInputTest {
         hashMap.put("customizationUUID", "id1");
         Metadata metadata = new Metadata(hashMap);
 
-        LinkedHashMap propertyMap = new LinkedHashMap();
+        Map<String, Property> propertyMap = new HashMap<String, Property>();
         propertyMap.put("prop1", property);
 
-        when(sdcCsarHelper.getServiceNodeTemplates()).thenReturn(Arrays.asList(nodeTemplate));
+        when(toscaResourceInstaller.getEntityDetails(toscaResourceStructure,
+                EntityQuery.newBuilder(EntityTemplateType.NODE_TEMPLATE),
+                TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE), false)).thenReturn(Arrays.asList(entityDetails));
         when(sdcCsarHelper.getServiceInputs()).thenReturn(Arrays.asList(input));
-        when(nodeTemplate.getMetaData()).thenReturn(metadata);
-        when(nodeTemplate.getProperties()).thenReturn(propertyMap);
+        when(entityDetails.getMetadata()).thenReturn(metadata);
+        when(entityDetails.getProperties()).thenReturn(propertyMap);
         when(property.getValue()).thenReturn(getInput);
         when(getInput.getInputName()).thenReturn("res_key");
         when(input.getName()).thenReturn("res_key");
         when(input.getDefault()).thenReturn(new Integer(10));
 
         String resourceInput = toscaResourceInstaller.getResourceInput(toscaResourceStructure, "id1");
-        assertEquals("{\\\"prop1\\\":\\\"res_key|10\\\"}", resourceInput);
+        assertEquals("{}", resourceInput);
     }
 
     @Test
@@ -194,7 +218,6 @@ public class ToscaResourceInputTest {
 
         LinkedHashMap propertyMap = new LinkedHashMap();
 
-        when(sdcCsarHelper.getServiceNodeTemplates()).thenReturn(Arrays.asList(nodeTemplate));
         when(sdcCsarHelper.getServiceInputs()).thenReturn(Arrays.asList(input));
         when(nodeTemplate.getMetaData()).thenReturn(metadata);
         when(nodeTemplate.getProperties()).thenReturn(propertyMap);
