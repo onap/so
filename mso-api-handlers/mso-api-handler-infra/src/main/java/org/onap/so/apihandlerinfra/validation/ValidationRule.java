@@ -22,7 +22,7 @@
 package org.onap.so.apihandlerinfra.validation;
 
 import org.onap.so.exceptions.ValidationException;
-
+@FunctionalInterface
 public interface ValidationRule {
     ValidationInformation validate(ValidationInformation info) throws ValidationException;
 }
