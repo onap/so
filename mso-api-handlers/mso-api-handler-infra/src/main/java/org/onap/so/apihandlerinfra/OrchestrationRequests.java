@@ -414,7 +414,7 @@ public class OrchestrationRequests {
     }
 
     protected void mapRequestStatusAndExtSysErrSrcToRequest(InfraActiveRequests iar, RequestStatus status,
-            String format) throws ContactCamundaException {
+            String format) {
         String rollbackStatusMessage = iar.getRollbackStatusMessage();
         String flowStatusMessage = iar.getFlowStatus();
         String retryStatusMessage = iar.getRetryStatusMessage();
