@@ -72,7 +72,7 @@ public class DmaapOperationalEnvClient {
 
     public void dmaapPublishOperationalEnvRequest(String operationalEnvironmentId, String operationalEnvironmentName,
             String operationalEnvironmentType, String tenantContext, String workloadContext, String action)
-            throws ApiException, IOException, InterruptedException {
+            throws ApiException {
 
         String request = this.buildRequest(operationalEnvironmentId, operationalEnvironmentName,
                 operationalEnvironmentType, tenantContext, workloadContext, action);
