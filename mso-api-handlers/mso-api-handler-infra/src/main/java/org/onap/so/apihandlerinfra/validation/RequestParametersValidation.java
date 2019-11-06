@@ -49,12 +49,12 @@ public class RequestParametersValidation implements ValidationRule {
             }
         }
         if (reqVersion >= 4) {
-            if (Action.addRelationships.equals(action) || Action.removeRelationships.equals(action)) {
-                if (requestParameters == null || requestParameters.getALaCarte() == null) {
+            if ((Action.addRelationships.equals(action) || Action.removeRelationships.equals(action)&& (requestParameters == null || requestParameters.getALaCarte() == null))) {
+              
                     throw new ValidationException("aLaCarte in requestParameters");
                 }
             }
-        }
+        
         if (requestParameters == null && !requestScope.equalsIgnoreCase(ModelType.service.name())) {
             info.setALaCarteFlag(true);
         }
