@@ -122,7 +122,7 @@ public class CreateVnfOperationalEnvironment {
     }
 
 
-    protected String getEcompManagingEnvironmentId() throws TenantIsolationException {
+    protected String getEcompManagingEnvironmentId() throws  {
         RelatedInstanceList[] relatedInstances = request.getRequestDetails().getRelatedInstanceList();
         if (relatedInstances.length > 0 && relatedInstances[0].getRelatedInstance() != null) {
             return relatedInstances[0].getRelatedInstance().getInstanceId();
@@ -194,7 +194,7 @@ public class CreateVnfOperationalEnvironment {
     protected String getEnvironmentName(List<Property> props) {
         String env = "";
         for (Property prop : props) {
-            if (prop.getName().equalsIgnoreCase("Environment")) {
+            if (Environment.equalsIgnoreCase(prop.getName())) {
                 env = prop.getValue();
             }
         }
