@@ -22,6 +22,8 @@
 package org.onap.so.apihandlerinfra.validation;
 
 import java.util.HashMap;
+import java.util.Map;
+
 import org.onap.so.apihandlerinfra.Actions;
 import org.onap.so.serviceinstancebeans.LineOfBusiness;
 import org.onap.so.serviceinstancebeans.OwningEntity;
@@ -71,7 +73,7 @@ public class ValidationInformation {
         this.sir = value;
     }
 
-    public HashMap<String, String> getInstanceIdMap() {
+    public Map<String, String> getInstanceIdMap() {
         return this.instanceIdMap;
     }
 
