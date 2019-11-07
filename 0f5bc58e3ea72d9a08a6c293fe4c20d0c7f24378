@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3344f610_34ad6cf4",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/HeatBridgeImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 502,
+      "author": {
+        "id": 97
+      },
+      "writtenOn": "2019-11-07T16:29:19Z",
+      "side": 1,
+      "message": "It seems like we should check this precondition first rather than fetch the data and fail.",
+      "revId": "0f5bc58e3ea72d9a08a6c293fe4c20d0c7f24378",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a9a8fb45_dd3e4aa9",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/utils/HeatBridgeUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 97
+      },
+      "writtenOn": "2019-11-07T16:29:19Z",
+      "side": 1,
+      "message": "Relationship parsing is built into the AAIResultWrapper object.",
+      "revId": "0f5bc58e3ea72d9a08a6c293fe4c20d0c7f24378",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
