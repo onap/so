@@ -34,6 +34,7 @@ import javax.jws.soap.SOAPBinding;
 @WebService(name = "SDNCCallbackAdapterPortType",
         targetNamespace = "http://org.onap/workflow/sdnc/adapter/callback/wsdl/v1")
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
+@FunctionalInterface
 public interface SDNCCallbackAdapterPortType {
 
 
