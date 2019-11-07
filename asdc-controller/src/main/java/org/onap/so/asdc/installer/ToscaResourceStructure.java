@@ -25,6 +25,7 @@ package org.onap.so.asdc.installer;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import org.onap.so.logger.LoggingAnchor;
 import org.onap.sdc.api.notification.IArtifactInfo;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
@@ -159,7 +160,10 @@ public class ToscaResourceStructure {
         }
 
         serviceMetadata = sdcCsarHelper.getServiceMetadata();
+        Map<String, String> serviceMetadataAllProperties = sdcCsarHelper.getServiceMetadataAllProperties();
+        System.out.println("testing");
 
+        serviceMetadata.getAllProperties();
     }
 
     public String getHeatTemplateUUID() {
