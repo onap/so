@@ -185,7 +185,7 @@ public class WorkflowResource {
     }
 
     protected List<WorkflowActivitySpecSequence> getWorkflowActivitySpecSequence(List<String> activityNames,
-            Workflow workflow) throws Exception {
+            Workflow workflow)  {
         if (activityNames == null || activityNames.isEmpty()) {
             return null;
         }
