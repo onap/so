@@ -182,6 +182,12 @@ public class ToscaResourceInstaller {
 
     protected static final String SKIP_POST_INST_CONF = "skip_post_instantiation_configuration";
 
+    protected static final String CONTROLLER_ACTOR = "controller_actor";
+
+    protected static final String CDS_MODEL_NAME = "cds_model_name";
+
+    protected static final String CDS_MODEL_VERSION = "cds_model_version";
+
     @Autowired
     protected ServiceRepository serviceRepo;
 
@@ -975,8 +981,8 @@ public class ToscaResourceInstaller {
         pnfResourceCustomization.setBlueprintName(getStringValue(properties.get(SDNC_MODEL_NAME)));
         pnfResourceCustomization.setBlueprintVersion(getStringValue(properties.get(SDNC_MODEL_VERSION)));
         pnfResourceCustomization.setSkipPostInstConf(getBooleanValue(properties.get(SKIP_POST_INST_CONF)));
+        pnfResourceCustomization.setControllerActor(getStringValue(properties.get(CONTROLLER_ACTOR)));
         pnfResourceCustomization.setPnfResources(pnfResource);
-
         return pnfResourceCustomization;
     }
 
@@ -1401,7 +1407,6 @@ public class ToscaResourceInstaller {
             ResourceStructure resourceStructure) {
 
         Metadata serviceMetadata = toscaResourceStructure.getServiceMetadata();
-
         List<Service> services =
                 serviceRepo.findByModelUUID(serviceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
         Service service;
@@ -1438,6 +1443,10 @@ public class ToscaResourceInstaller {
                 generateNamingValue = "true".equalsIgnoreCase(generateNaming);
             }
             service.setOnapGeneratedNaming(generateNamingValue);
+            service.setBlueprintName(serviceMetadata.getValue(CDS_MODEL_NAME));
+            service.setBlueprintVersion(serviceMetadata.getValue(CDS_MODEL_VERSION));
+            service.setSkipPostInstConf(Boolean.valueOf(serviceMetadata.getValue(SKIP_POST_INST_CONF)));
+            service.setControllerActor(serviceMetadata.getValue(CONTROLLER_ACTOR));
         }
 
 
@@ -2382,6 +2391,14 @@ public class ToscaResourceInstaller {
         if (minInstances != null && minInstances.length() > 0) {
             vfModuleCustomization.setMinInstances(Integer.valueOf(minInstances));
         }
+
+        String skipPostInstConfText = getLeafPropertyValue(vfModuleEntityDetails, SKIP_POST_INST_CONF);
+
+        if (skipPostInstConfText != null) {
+            vfModuleCustomization.setSkipPostInstConf(
+                    Boolean.parseBoolean(getLeafPropertyValue(vfModuleEntityDetails, SKIP_POST_INST_CONF)));
+        }
+
         return vfModuleCustomization;
     }
 
@@ -2576,7 +2593,7 @@ public class ToscaResourceInstaller {
                     Boolean.parseBoolean(getLeafPropertyValue(entityDetails, SKIP_POST_INST_CONF)));
         }
 
-
+        vnfResourceCustomization.setControllerActor(getLeafPropertyValue(entityDetails, CONTROLLER_ACTOR));
         vnfResourceCustomization.setVnfResources(vnfResource);
         vnfResourceCustomization.setAvailabilityZoneMaxCount(Integer.getInteger(
                 entityDetails.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_AVAILABILITYZONECOUNT)));

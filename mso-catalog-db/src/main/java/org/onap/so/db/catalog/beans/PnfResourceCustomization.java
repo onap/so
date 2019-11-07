@@ -83,6 +83,9 @@ public class PnfResourceCustomization implements Serializable {
     @Column(name = "SKIP_POST_INSTANTIATION_CONFIGURATION")
     private Boolean skipPostInstConf;
 
+    @Column(name = "CONTROLLER_ACTOR")
+    private String controllerActor;
+
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
@@ -90,7 +93,7 @@ public class PnfResourceCustomization implements Serializable {
                 .append("nfFunction", nfFunction).append("nfType", nfType).append("nfRole", nfRole)
                 .append("nfNamingCode", nfNamingCode).append("multiStageDesign", multiStageDesign)
                 .append("pnfResources", pnfResources).append("blueprintName", blueprintName)
-                .append("blueprintVersion", blueprintVersion).toString();
+                .append("blueprintVersion", blueprintVersion).append("controllerActor", controllerActor).toString();
     }
 
     @Override
@@ -222,4 +225,11 @@ public class PnfResourceCustomization implements Serializable {
         this.skipPostInstConf = skipPostInstConf;
     }
 
+    public String getControllerActor() {
+        return controllerActor;
+    }
+
+    public void setControllerActor(String controllerActor) {
+        this.controllerActor = controllerActor;
+    }
 }

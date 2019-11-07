@@ -159,7 +159,6 @@ public class ToscaResourceStructure {
         }
 
         serviceMetadata = sdcCsarHelper.getServiceMetadata();
-
     }
 
     public String getHeatTemplateUUID() {
