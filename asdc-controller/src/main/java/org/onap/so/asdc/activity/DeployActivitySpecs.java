@@ -58,7 +58,7 @@ public class DeployActivitySpecs {
     protected static final Logger logger = LoggerFactory.getLogger(DeployActivitySpecs.class);
 
     @Transactional
-    public void deployActivities() throws Exception {
+    public void deployActivities() {
         String hostname = env.getProperty(SDC_ENDPOINT);
         logger.debug("{} {}", "SDC ActivitySpec endpoint: ", hostname);
         if (hostname == null || hostname.isEmpty()) {
