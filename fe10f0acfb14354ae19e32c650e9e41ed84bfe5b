@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "07f04b77_e6870262",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/HeatBridgeImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 153
+      },
+      "writtenOn": "2019-11-07T16:03:46Z",
+      "side": 1,
+      "message": "Its done this way to prevent it from failing if the pserver gets added simultaneously by another request that is running in parallel. Notice I am not throwing when it complains about resource-version not passed meaning the object exist already...",
+      "parentUuid": "278ed56c_92400c5d",
+      "revId": "fe10f0acfb14354ae19e32c650e9e41ed84bfe5b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cc5d642a_6043637e",
         "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/HeatBridgeImpl.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2019-11-07T16:01:00Z",
       "side": 1,
       "message": "I think it\u0027s cleaner to run an resourcesClient.exists(uri) and throw an exception if it does exist rather than attempting to parse the error message. The error message or implementation may change on the A\u0026AI side and resource version could go away.",
+      "revId": "fe10f0acfb14354ae19e32c650e9e41ed84bfe5b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "639c0ba3_fbade459",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/HeatBridgeImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 313,
+      "author": {
+        "id": 153
+      },
+      "writtenOn": "2019-11-07T16:03:46Z",
+      "side": 1,
+      "message": "Its done this way to prevent it from failing if the pserver gets added simultaneously by another request that is running in parallel. Notice I am not throwing when it complains about resource-version not passed meaning the object exist already...",
+      "parentUuid": "cc5d642a_6043637e",
       "revId": "fe10f0acfb14354ae19e32c650e9e41ed84bfe5b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
