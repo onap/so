@@ -1,15 +1,20 @@
-/*
- * ============LICENSE_START======================================================= Copyright (C) 2019 Nordix
- * Foundation. ================================================================================ Licensed under the
- * Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may
- * obtain a copy of the License at
+/*-
+ * ============LICENSE_START=======================================================
+ *  Copyright (C) 2019 Nordix
+ *  ================================================================================
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language governing permissions and limitations under the
- * License.
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  *
- * SPDX-License-Identifier: Apache-2.0 ============LICENSE_END=========================================================
+ *  SPDX-License-Identifier: Apache-2.0
+ *  ============LICENSE_END=========================================================
  */
 
 package org.onap.so.asdc.client;
@@ -20,13 +25,16 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.PersistenceContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -64,7 +72,10 @@ import org.springframework.transaction.annotation.Transactional;
  * This is used to run some basic integration test(BIT) for ASDC controller. It will test the csar install and all the
  * testing csar files are located underneath src/main/resources/download folder,
  *
- * PNF csar: service-Testservice140-csar.csar VNF csar: service-Svc140-VF-csar.csar
+ * PNF csar: service-pnfservice.csar VNF csar: service-Svc140-VF-csar.csar
+ *
+ * All the csar files are cleaned, i.e, removing the comments and most of the description to avoid violation of
+ * security.
  */
 @Transactional
 public class ASDCControllerITTest extends BaseTest {
@@ -141,10 +152,146 @@ public class ASDCControllerITTest extends BaseTest {
      * Mock the AAI using wireshark.
      */
     private void initMockAaiServer(final String serviceUuid, final String serviceInvariantUuid) {
-        String modelEndpoint = "/aai/v15/service-design-and-creation/models/model/" + serviceInvariantUuid
+        String modelEndpoint = "/aai/v17/service-design-and-creation/models/model/" + serviceInvariantUuid
                 + "/model-vers/model-ver/" + serviceUuid + "?depth=0";
 
         wireMockServer.stubFor(post(urlEqualTo(modelEndpoint)).willReturn(ok()));
+    }
+
+    /**
+     * Test with service-pnfservice.csar.
+     */
+    @Test
+    public void treatNotification_ValidPnfResource_ExpectedOutput() {
+
+        /**
+         * service UUID/invariantUUID from global metadata in service-PnfServiceTestCds-template.yml.
+         */
+        String serviceUuid = "77cf276e-905c-43f6-8d54-dda474be2f2e";
+        String serviceInvariantUuid = "913e6776-4bc3-49b9-b399-b5bb4690f0c7";
+
+        initMockAaiServer(serviceUuid, serviceInvariantUuid);
+
+        NotificationDataImpl notificationData = new NotificationDataImpl();
+        notificationData.setServiceUUID(serviceUuid);
+        notificationData.setDistributionID(distributionId);
+        notificationData.setServiceInvariantUUID(serviceInvariantUuid);
+        notificationData.setServiceVersion("1.0");
+
+        ResourceInfoImpl resourceInfo = constructPnfResourceInfo();
+        List<ResourceInfoImpl> resourceInfoList = new ArrayList<>();
+        resourceInfoList.add(resourceInfo);
+        notificationData.setResources(resourceInfoList);
+
+        ArtifactInfoImpl artifactInfo = constructPnfServiceArtifact();
+        List<ArtifactInfoImpl> artifactInfoList = new ArrayList<>();
+        artifactInfoList.add(artifactInfo);
+        notificationData.setServiceArtifacts(artifactInfoList);
+
+        try {
+            asdcController.treatNotification(notificationData);
+
+            logger.info("Checking the database for PNF ingestion");
+
+            /**
+             * Check the tosca csar entity, it should be the same as provided from NotficationData.
+             */
+            ToscaCsar toscaCsar = toscaCsarRepository.findById(artifactUuid)
+                    .orElseThrow(() -> new EntityNotFoundException("Tosca csar: " + artifactUuid + " not found"));
+            assertEquals("tosca csar UUID", artifactUuid, toscaCsar.getArtifactUUID());
+            assertEquals("tosca csar name", "service-pnfservice.csar", toscaCsar.getName());
+            assertEquals("tosca csar version", "1.0", toscaCsar.getVersion());
+            assertNull("tosca csar descrption", toscaCsar.getDescription());
+            assertEquals("tosca csar checksum", "MANUAL_RECORD", toscaCsar.getArtifactChecksum());
+            assertEquals("toscar csar URL", "/download/service-pnfservice.csar", toscaCsar.getUrl());
+
+            /**
+             * Check the service entity, it should be the same as global metadata information in
+             * service-Testservice140-template.yml inside csar.
+             */
+            Service service = serviceRepository.findById(serviceUuid)
+                    .orElseThrow(() -> new EntityNotFoundException("Service: " + serviceUuid + " not found"));
+            assertEquals("model UUID", serviceUuid, service.getModelUUID());
+            assertEquals("model name", "PNF Service Test CDS", service.getModelName());
+            assertEquals("model invariantUUID", serviceInvariantUuid, service.getModelInvariantUUID());
+            assertEquals("model version", "1.0", service.getModelVersion());
+            assertEquals("description", "123123", service.getDescription().trim());
+            assertEquals("tosca csar artifact UUID", artifactUuid, service.getCsar().getArtifactUUID());
+            assertEquals("service type", "", service.getServiceType());
+            assertEquals("service role", "", service.getServiceRole());
+            assertEquals("environment context", "General_Revenue-Bearing", service.getEnvironmentContext());
+            assertEquals("service category", "Network L1-3", service.getCategory());
+            assertNull("workload context", service.getWorkloadContext());
+            assertEquals("resource order", "PNF CDS Test", service.getResourceOrder());
+            assertEquals("CDS blueprint name", "Blueprint140", service.getBlueprintName());
+            assertEquals("CDS blueprint version", "v1.4.0", service.getBlueprintVersion());
+            assertEquals("controller actor", "SO-REF-DATA", service.getControllerActor());
+
+            /**
+             * Check PNF resource, it should be the same as metadata in the topology template in
+             * service-PnfServiceTestCds-template.yml OR global metadata in the resource-PnfServiceTestCds-template.yml
+             */
+            String pnfResourceKey = "aa5d0562-80e7-43e9-af74-3085e57ab09f";
+            PnfResource pnfResource = pnfResourceRepository.findById(pnfResourceKey)
+                    .orElseThrow(() -> new EntityNotFoundException("PNF resource:" + pnfResourceKey + " not found"));
+            assertNull("orchestration mode", pnfResource.getOrchestrationMode());
+            assertEquals("Description", "123123", pnfResource.getDescription().trim());
+            assertEquals("model UUID", pnfResourceKey, pnfResource.getModelUUID());
+            assertEquals("model invariant UUID", "17d9d183-cee5-4a46-b5c4-6d5203f7d2e8",
+                    pnfResource.getModelInvariantUUID());
+            assertEquals("model version", "1.0", pnfResource.getModelVersion());
+            assertEquals("model name", "PNF CDS Test", pnfResource.getModelName());
+            assertEquals("tosca node type", "org.openecomp.resource.pnf.PnfCdsTest", pnfResource.getToscaNodeType());
+            assertEquals("resource category", "Application L4+", pnfResource.getCategory());
+            assertEquals("resource sub category", "Firewall", pnfResource.getSubCategory());
+
+            /**
+             * Check PNF resource customization, it should be the same as metadata in the topology template in
+             * service-PnfServiceTestCds-template.yml OR global metadata in the resource-PnfServiceTestCds-template.yml
+             */
+            String pnfCustomizationKey = "9f01263a-eaf7-4d98-a37b-3785f751903e";
+            PnfResourceCustomization pnfCustomization = pnfCustomizationRepository.findById(pnfCustomizationKey)
+                    .orElseThrow(() -> new EntityNotFoundException(
+                            "PNF resource customization: " + pnfCustomizationKey + " not found"));
+            assertEquals("model customizationUUID", pnfCustomizationKey, pnfCustomization.getModelCustomizationUUID());
+            assertEquals("model instance name", "PNF CDS Test 0", pnfCustomization.getModelInstanceName());
+            assertEquals("NF type", "", pnfCustomization.getNfType());
+            assertEquals("NF Role", "nf", pnfCustomization.getNfRole());
+            assertEquals("NF function", "nf", pnfCustomization.getNfFunction());
+            assertEquals("NF naming code", "", pnfCustomization.getNfNamingCode());
+            assertEquals("PNF resource model UUID", pnfResourceKey, pnfCustomization.getPnfResources().getModelUUID());
+            assertEquals("Multi stage design", "", pnfCustomization.getMultiStageDesign());
+            assertNull("resource input", pnfCustomization.getResourceInput());
+            assertEquals("cds blueprint name(sdnc_model_name property)", "Blueprint140",
+                    pnfCustomization.getBlueprintName());
+            assertEquals("cds blueprint version(sdnc_model_version property)", "v1.4.0",
+                    pnfCustomization.getBlueprintVersion());
+            assertTrue("skip post instantiation configuration", pnfCustomization.isSkipPostInstConf());
+            assertEquals("controller actor", "SO-REF-DATA", pnfCustomization.getControllerActor());
+
+            /**
+             * Check the pnf resource customization with service mapping
+             */
+            List<PnfResourceCustomization> pnfCustList = service.getPnfCustomizations();
+            assertEquals("PNF resource customization entity", 1, pnfCustList.size());
+            assertEquals(pnfCustomizationKey, pnfCustList.get(0).getModelCustomizationUUID());
+
+            /**
+             * Check the watchdog for component distribution status
+             */
+            List<WatchdogComponentDistributionStatus> distributionList =
+                    watchdogCDStatusRepository.findByDistributionId(this.distributionId);
+            assertNotNull(distributionList);
+            assertEquals(1, distributionList.size());
+            WatchdogComponentDistributionStatus distributionStatus = distributionList.get(0);
+            assertEquals("COMPONENT_DONE_OK", distributionStatus.getComponentDistributionStatus());
+            assertEquals("SO", distributionStatus.getComponentName());
+
+
+        } catch (Exception e) {
+            logger.info(e.getMessage(), e);
+            fail(e.getMessage());
+        }
     }
 
     /**
@@ -179,8 +326,8 @@ public class ASDCControllerITTest extends BaseTest {
     private ArtifactInfoImpl constructPnfServiceArtifact() {
         ArtifactInfoImpl artifactInfo = new ArtifactInfoImpl();
         artifactInfo.setArtifactType(ASDCConfiguration.TOSCA_CSAR);
-        artifactInfo.setArtifactURL("/download/service-Testservice140-csar.csar");
-        artifactInfo.setArtifactName("service-Testservice140-csar.csar");
+        artifactInfo.setArtifactURL("/download/service-pnfservice.csar");
+        artifactInfo.setArtifactName("service-pnfservice.csar");
         artifactInfo.setArtifactVersion("1.0");
         artifactInfo.setArtifactUUID(artifactUuid);
         return artifactInfo;
@@ -192,13 +339,13 @@ public class ASDCControllerITTest extends BaseTest {
      */
     private ResourceInfoImpl constructPnfResourceInfo() {
         ResourceInfoImpl resourceInfo = new ResourceInfoImpl();
-        resourceInfo.setResourceInstanceName("Test140PNF");
-        resourceInfo.setResourceInvariantUUID("d832a027-75f3-455d-9de4-f02fcdee7e7e");
+        resourceInfo.setResourceInstanceName("PNF CDS Test");
+        resourceInfo.setResourceInvariantUUID("17d9d183-cee5-4a46-b5c4-6d5203f7d2e8");
         resourceInfo.setResoucreType("PNF");
         resourceInfo.setCategory("Application L4+");
-        resourceInfo.setSubcategory("Call Control");
-        resourceInfo.setResourceUUID("9c54e269-122b-4e8a-8b2a-6eac849b441a");
-        resourceInfo.setResourceCustomizationUUID("428a3d73-f962-4cc2-ba62-2483c45d6b12");
+        resourceInfo.setSubcategory("Firewall");
+        resourceInfo.setResourceUUID("aa5d0562-80e7-43e9-af74-3085e57ab09f");
+        resourceInfo.setResourceCustomizationUUID("9f01263a-eaf7-4d98-a37b-3785f751903e");
         resourceInfo.setResourceVersion("1.0");
         return resourceInfo;
     }
@@ -207,7 +354,6 @@ public class ASDCControllerITTest extends BaseTest {
      * Testing with the service-Svc140-VF-csar.csar.
      */
     @Test
-    @Ignore
     public void treatNotification_ValidVnfResource_ExpectedOutput() {
 
         /**
@@ -244,11 +390,11 @@ public class ASDCControllerITTest extends BaseTest {
             ToscaCsar toscaCsar = toscaCsarRepository.findById(artifactUuid)
                     .orElseThrow(() -> new EntityNotFoundException("Tosca csar: " + artifactUuid + " not found"));
             assertEquals("tosca csar UUID", artifactUuid, toscaCsar.getArtifactUUID());
-            assertEquals("tosca csar name", "service-Svc140-VF-csar.csar", toscaCsar.getName());
+            assertEquals("tosca csar name", "service-vnfservice.csar", toscaCsar.getName());
             assertEquals("tosca csar version", "1.0", toscaCsar.getVersion());
             assertNull("tosca csar descrption", toscaCsar.getDescription());
             assertEquals("tosca csar checksum", "MANUAL_RECORD", toscaCsar.getArtifactChecksum());
-            assertEquals("toscar csar URL", "/download/service-Svc140-VF-csar.csar", toscaCsar.getUrl());
+            assertEquals("toscar csar URL", "/download/service-vnfservice.csar", toscaCsar.getUrl());
 
             /**
              * Check the service entity, it should be the same as global metadata information in
@@ -268,6 +414,9 @@ public class ASDCControllerITTest extends BaseTest {
             assertEquals("service category", "Network Service", service.getCategory());
             assertNull("workload context", service.getWorkloadContext());
             assertEquals("resource order", "TestVF140", service.getResourceOrder());
+            assertEquals("CDS blueprint name", "BP140", service.getBlueprintName());
+            assertEquals("CDS blueprint version", "v1.4.0", service.getBlueprintVersion());
+            assertEquals("controller actor", "SO-REF-DATA", service.getControllerActor());
 
             /**
              * Check VNF resource, it should be the same as metadata in the topology template in
@@ -304,11 +453,12 @@ public class ASDCControllerITTest extends BaseTest {
             assertNull("NF naming code", vnfCustomization.getNfNamingCode());
             assertEquals("VNF resource model UUID", vnfResourceKey, vnfCustomization.getVnfResources().getModelUUID());
             assertEquals("Multi stage design", "false", vnfCustomization.getMultiStageDesign());
-            assertNull("resource input", vnfCustomization.getResourceInput());
-            assertEquals("cds blueprint name(sdnc_model_name property)", vnfCustomization.getBlueprintName(),
-                    vnfCustomization.getBlueprintName());
-            assertEquals("cds blueprint version(sdnc_model_version property)", vnfCustomization.getBlueprintVersion(),
+            assertNotNull("resource input", vnfCustomization.getResourceInput());
+            assertEquals("cds blueprint name(sdnc_model_name property)", "BP140", vnfCustomization.getBlueprintName());
+            assertEquals("cds blueprint version(sdnc_model_version property)", "v1.4.0",
                     vnfCustomization.getBlueprintVersion());
+            assertEquals("controller actor", "SO-REF-DATA", vnfCustomization.getControllerActor());
+
             /**
              * Check the vnf resource customization with service mapping
              */
@@ -335,8 +485,8 @@ public class ASDCControllerITTest extends BaseTest {
     private ArtifactInfoImpl constructVnfServiceArtifact() {
         ArtifactInfoImpl artifactInfo = new ArtifactInfoImpl();
         artifactInfo.setArtifactType(ASDCConfiguration.TOSCA_CSAR);
-        artifactInfo.setArtifactURL("/download/service-Svc140-VF-csar.csar");
-        artifactInfo.setArtifactName("service-Svc140-VF-csar.csar");
+        artifactInfo.setArtifactURL("/download/service-vnfservice.csar");
+        artifactInfo.setArtifactName("service-vnfservice.csar");
         artifactInfo.setArtifactVersion("1.0");
         artifactInfo.setArtifactUUID(artifactUuid);
         return artifactInfo;

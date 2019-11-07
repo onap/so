@@ -100,6 +100,9 @@ public class VfModuleCustomization implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "vfModuleCustomization")
     private Set<CvnfcCustomization> cvnfcCustomization;
 
+    @Column(name = "SKIP_POST_INSTANTIATION_CONFIGURATION")
+    private Boolean skipPostInstConf;
+
     @Override
     public boolean equals(final Object other) {
         if (!(other instanceof VfModuleCustomization)) {
@@ -238,5 +241,13 @@ public class VfModuleCustomization implements Serializable {
 
     public void setCvnfcCustomization(Set<CvnfcCustomization> cvnfcCustomization) {
         this.cvnfcCustomization = cvnfcCustomization;
+    }
+
+    public Boolean isSkipPostInstConf() {
+        return skipPostInstConf;
+    }
+
+    public void setSkipPostInstConf(Boolean skipPostInstConf) {
+        this.skipPostInstConf = skipPostInstConf;
     }
 }
