@@ -24,11 +24,9 @@ package org.onap.so.db.request.data.repository;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +65,6 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
     protected static final String SOURCE = "source";
     protected static final String START_TIME = "startTime";
     protected static final String END_TIME = "endTime";
-    protected static final String REQUEST_TYPE = "requestType";
     protected static final String SERVICE_INSTANCE_ID = "serviceInstanceId";
     protected static final String SERVICE_INSTANCE_NAME = "serviceInstanceName";
     protected static final String VNF_INSTANCE_NAME = "vnfName";
@@ -88,12 +85,11 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
     protected static final String SERVICE_VERSION = "serviceVersion";
     protected static final String REQUEST_ID = "requestId";
     protected static final String REQUESTOR_ID = "requestorId";
-    protected static final String ACTION = "action";
     protected static final String OPENV = "operationalEnvironment";
 
     private static final List<String> VALID_COLUMNS =
-            Arrays.asList(REQUEST_ID, SERVICE_INSTANCE_ID, SERVICE_INSTANCE_NAME, ACTION, REQUEST_STATUS,
-                    VFMODULE_INSTANCE_ID, VNF_INSTANCE_ID, NETWORK_INSTANCE_ID, VOLUME_GROUP_INSTANCE_ID);
+            Arrays.asList(REQUEST_ID, SERVICE_INSTANCE_ID, SERVICE_INSTANCE_NAME, REQUEST_STATUS, VFMODULE_INSTANCE_ID,
+                    VNF_INSTANCE_ID, NETWORK_INSTANCE_ID, VOLUME_GROUP_INSTANCE_ID);
 
 
     /*
@@ -132,10 +128,11 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
     public InfraActiveRequests getRequestFromInfraActive(final String requestId) {
         logger.debug("Get request {} from InfraActiveRequests DB", requestId);
 
-        final Query query = entityManager
-                .createQuery("from InfraActiveRequests where requestId = :requestId OR clientRequestId = :requestId");
+        InfraActiveRequests ar = null;
+        final Query query = entityManager.createQuery("from InfraActiveRequests where requestId = :requestId");
         query.setParameter(REQUEST_ID, requestId);
-        return this.getSingleResult(query);
+        ar = this.getSingleResult(query);
+        return ar;
     }
 
     /*
@@ -234,6 +231,7 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
     @Override
     public List<InfraActiveRequests> getOrchestrationFiltersFromInfraActive(
             final Map<String, List<String>> orchestrationMap) {
+
 
         final List<Predicate> predicates = new LinkedList<>();
         final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -385,12 +383,8 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
             final CriteriaQuery<InfraActiveRequests> crit = cb.createQuery(InfraActiveRequests.class);
             final Root<InfraActiveRequests> candidateRoot = crit.from(InfraActiveRequests.class);
             final Predicate isEqual = cb.equal(candidateRoot.get(queryAttributeName), queryValue);
-            final Predicate equalRequestType = cb.equal(candidateRoot.get(REQUEST_TYPE), requestType);
-            final Predicate isNull = cb.isNull(candidateRoot.get(REQUEST_TYPE));
-            final Predicate orClause = cb.or(equalRequestType, isNull);
             final Order orderDesc = cb.desc(candidateRoot.get(START_TIME));
             final Order orderAsc = cb.asc(candidateRoot.get(SOURCE));
-            crit.where(cb.and(isEqual, orClause)).orderBy(orderDesc, orderAsc);
 
             final List<InfraActiveRequests> arList = entityManager.createQuery(crit).getResultList();
             if (arList != null && !arList.isEmpty()) {
@@ -413,68 +407,12 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
     public InfraActiveRequests getRequestFromInfraActive(final String requestId, final String requestType) {
         logger.debug("Get infra request from DB with id {}", requestId);
 
-        final Query query = entityManager.createQuery(
-                "from InfraActiveRequests where (requestId = :requestId OR clientRequestId = :requestId) and requestType = :requestType");
+        InfraActiveRequests ar = null;
+
+        final Query query = entityManager
+                .createQuery("from InfraActiveRequests where requestId = :requestId and requestType = :requestType");
         query.setParameter(REQUEST_ID, requestId);
-        query.setParameter(REQUEST_TYPE, requestType);
-        return this.getSingleResult(query);
-    }
-
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.onap.so.requestsdb.InfraActiveRequestsRepositoryCustom#checkDuplicateByVnfName(java.lang. String,
-     * java.lang.String, java.lang.String)
-     */
-    @Override
-    public InfraActiveRequests checkDuplicateByVnfName(final String vnfName, final String action,
-            final String requestType) {
-
-        logger.debug("Get infra request from DB for VNF {} and action {} and requestType {}", vnfName, action,
-                requestType);
-
-        InfraActiveRequests ar = null;
-
-        final Query query = entityManager.createQuery(
-                "from InfraActiveRequests where vnfName = :vnfName and action = :action and (requestStatus = 'PENDING' or requestStatus = 'IN_PROGRESS' or requestStatus = 'TIMEOUT' or requestStatus = 'PENDING_MANUAL_TASK') and requestType = :requestType ORDER BY startTime DESC");
-        query.setParameter("vnfName", vnfName);
-        query.setParameter("action", action);
-        query.setParameter(REQUEST_TYPE, requestType);
-        @SuppressWarnings("unchecked")
-        final List<InfraActiveRequests> results = query.getResultList();
-        if (!results.isEmpty()) {
-            ar = results.get(0);
-        }
-
-        return ar;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.onap.so.requestsdb.InfraActiveRequestsRepositoryCustom#checkDuplicateByVnfId(java.lang. String,
-     * java.lang.String, java.lang.String)
-     */
-    @Override
-    public InfraActiveRequests checkDuplicateByVnfId(final String vnfId, final String action,
-            final String requestType) {
-
-        logger.debug("Get list of infra requests from DB for VNF {} and action {}", vnfId, action);
-
-        InfraActiveRequests ar = null;
-
-        final Query query = entityManager.createQuery(
-                "from InfraActiveRequests where vnfId = :vnfId and action = :action and (requestStatus = 'PENDING' or requestStatus = 'IN_PROGRESS' or requestStatus = 'TIMEOUT' or requestStatus = 'PENDING_MANUAL_TASK') and requestType = :requestType ORDER BY startTime DESC");
-        query.setParameter("vnfId", vnfId);
-        query.setParameter("action", action);
-        query.setParameter(REQUEST_TYPE, requestType);
-        @SuppressWarnings("unchecked")
-        final List<InfraActiveRequests> results = query.getResultList();
-        if (!results.isEmpty()) {
-            ar = results.get(0);
-        }
-
+        ar = this.getSingleResult(query);
         return ar;
     }
 
@@ -494,10 +432,9 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
         final Root<InfraActiveRequests> candidateRoot = crit.from(InfraActiveRequests.class);
         final Predicate operationalEnvEq = cb.equal(candidateRoot.get("operationalEnvId"), operationalEnvironmentId);
         final Predicate requestStatusNotEq = cb.notEqual(candidateRoot.get(REQUEST_STATUS), "COMPLETE");
-        final Predicate actionEq = cb.equal(candidateRoot.get("action"), "create");
         final Order startTimeOrder = cb.desc(candidateRoot.get("startTime"));
         crit.select(candidateRoot);
-        crit.where(cb.and(operationalEnvEq, requestStatusNotEq, actionEq));
+        crit.where(cb.and(operationalEnvEq, requestStatusNotEq));
         crit.orderBy(startTimeOrder);
         final TypedQuery<InfraActiveRequests> query = entityManager.createQuery(crit);
         final List<InfraActiveRequests> results = query.getResultList();

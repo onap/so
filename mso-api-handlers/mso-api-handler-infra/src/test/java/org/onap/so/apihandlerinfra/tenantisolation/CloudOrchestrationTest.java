@@ -262,7 +262,6 @@ public class CloudOrchestrationTest extends BaseTest {
         iar.setRequestId("requestId");
         iar.setOperationalEnvName("myVnfOpEnv");
         iar.setRequestStatus(Status.IN_PROGRESS.toString());
-        iar.setAction(Action.create.toString());
         iar.setRequestAction(Action.create.toString());
         iar.setRequestScope("UNKNOWN");
         // iarRepo.saveAndFlush(iar);

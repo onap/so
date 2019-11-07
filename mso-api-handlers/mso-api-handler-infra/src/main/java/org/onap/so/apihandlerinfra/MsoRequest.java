@@ -278,7 +278,6 @@ public class MsoRequest {
             String vnfType = "";
             aq.setRequestId(requestId);
             aq.setRequestAction(action.toString());
-            aq.setAction(action.toString());
             aq.setRequestUrl(MDC.get(LogConstants.HTTP_URL));
 
             Timestamp startTimeStamp = new Timestamp(System.currentTimeMillis());
@@ -410,7 +409,6 @@ public class MsoRequest {
                     taskRequest.getRequestDetails().getRequestInfo();
             aq.setRequestId(requestId);
             aq.setRequestAction(action.name());
-            aq.setAction(action.name());
             aq.setRequestUrl(MDC.get(LogConstants.HTTP_URL));
 
             Timestamp startTimeStamp = new Timestamp(System.currentTimeMillis());

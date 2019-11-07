@@ -268,7 +268,6 @@ public class TenantIsolationRequest {
         aq.setRequestId(requestId);
 
         aq.setRequestAction(action.name());
-        aq.setAction(action.name());
 
         Timestamp startTimeStamp = new Timestamp(System.currentTimeMillis());
 

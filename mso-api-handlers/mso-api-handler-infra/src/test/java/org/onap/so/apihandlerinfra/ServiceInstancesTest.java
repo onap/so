@@ -1431,7 +1431,6 @@ public class ServiceInstancesTest extends BaseTest {
     public void createVfModuleNoModelType() throws IOException {
         InfraActiveRequests expectedRecord = new InfraActiveRequests();
         expectedRecord.setRequestStatus("FAILED");
-        expectedRecord.setAction("createInstance");
         expectedRecord.setStatusMessage("Error parsing request: No valid modelType is specified");
         expectedRecord.setProgress(100L);
         expectedRecord.setSource("VID");

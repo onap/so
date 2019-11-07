@@ -51,7 +51,6 @@ public class NetworkRestHandler extends AbstractRestHandler {
         Timestamp startTimeStamp = new Timestamp(System.currentTimeMillis());
         InfraActiveRequests deleteRequest = new InfraActiveRequests();
         deleteRequest.setRequestAction(Action.deleteInstance.toString());
-        deleteRequest.setAction(Action.deleteInstance.toString());
         deleteRequest.setStartTime(startTimeStamp);
         deleteRequest.setServiceInstanceId(serviceInstanceId);
         deleteRequest.setNetworkId(networkId);

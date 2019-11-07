@@ -47,10 +47,6 @@ public interface InfraActiveRequestsRepositoryCustom {
 
     public InfraActiveRequests getRequestFromInfraActive(String requestId, String requestType);
 
-    public InfraActiveRequests checkDuplicateByVnfName(String vnfName, String action, String requestType);
-
-    public InfraActiveRequests checkDuplicateByVnfId(String vnfId, String action, String requestType);
-
     public InfraActiveRequests checkVnfIdStatus(String operationalEnvironmentId);
 
     List<InfraActiveRequests> getInfraActiveRequests(final Map<String, String[]> filters, final long startTime,

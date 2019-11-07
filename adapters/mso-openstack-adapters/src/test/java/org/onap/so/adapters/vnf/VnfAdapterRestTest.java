@@ -98,7 +98,6 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
     private static final String EXN_HSL_NET_FQDN = "hsl";
     private static final String AVAILABILITY_ZONE_0 = "nova";
     private static final String VF_MODULE_INDEX = "0";
-    private static final String REQUEST_TYPE = "";
 
     @Test
     public void testCreateVfModule() throws JSONException, JsonParseException, JsonMappingException, IOException {
@@ -188,7 +187,6 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
         msoReq.setRequestId(MSO_REQUEST_ID);
         msoReq.setServiceInstanceId(MSO_SERVICE_INSTANCE_ID);
         request.setMsoRequest(msoReq);
-        request.setRequestType(REQUEST_TYPE);
         request.setCloudSiteId(CLOUDSITE_ID);
         request.setTenantId(TENANT_ID);
         request.setModelCustomizationUuid(MODEL_CUSTOMIZATION_UUID);
@@ -254,7 +252,6 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
         msoReq.setRequestId(MSO_REQUEST_ID);
         msoReq.setServiceInstanceId(MSO_SERVICE_INSTANCE_ID);
         request.setMsoRequest(msoReq);
-        request.setRequestType(REQUEST_TYPE);
         request.setCloudSiteId(CLOUDSITE_ID);
         request.setTenantId(TENANT_ID);
         request.setModelCustomizationUuid(MODEL_CUSTOMIZATION_UUID);
@@ -394,7 +391,6 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
         request.setFailIfExists(failIfExists);
         request.setModelCustomizationUuid(MODEL_CUSTOMIZATION_UUID);
         request.setMsoRequest(msoRequest);
-        request.setRequestType(REQUEST_TYPE);
         request.setTenantId(TENANT_ID);
         request.setVfModuleId(VF_MODULE_ID);
         request.setVfModuleName(VF_MODULE_NAME);
@@ -526,7 +522,6 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
         msoReq.setRequestId(MSO_REQUEST_ID);
         msoReq.setServiceInstanceId(MSO_SERVICE_INSTANCE_ID);
         request.setMsoRequest(msoReq);
-        request.setRequestType(REQUEST_TYPE);
         request.setCloudSiteId(CLOUDSITE_ID);
         request.setTenantId(TENANT_ID);
         request.setModelCustomizationUuid(MODEL_CUSTOMIZATION_UUID);

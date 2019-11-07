@@ -85,6 +85,7 @@ public class DMaaPRestClientTest {
             throw new RuntimeException(e);
         }
 
+        MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, null);
         DMaaPRestClient client = new DMaaPRestClient(url, contentType, auth, key);
         Map<String, String> map = new HashMap<>();
         client.initializeHeaderMap(map);

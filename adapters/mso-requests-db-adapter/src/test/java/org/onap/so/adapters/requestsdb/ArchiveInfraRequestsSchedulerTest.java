@@ -53,11 +53,9 @@ public class ArchiveInfraRequestsSchedulerTest extends RequestsAdapterBase {
 
         InfraActiveRequests iar1 = new InfraActiveRequests();
         iar1.setRequestId(requestId1);
-        iar1.setAction("action1");
 
         InfraActiveRequests iar2 = new InfraActiveRequests();
         iar2.setRequestId(requestId2);
-        iar2.setAction("action2");
 
         List<InfraActiveRequests> requests = new ArrayList<>();
         requests.add(iar1);
