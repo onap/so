@@ -102,7 +102,11 @@ public class WorkflowAsyncResource extends ProcessEngineAwareService {
             MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, getRequestId(inputVariables));
             processor.startProcess(processKey, variableMap);
             WorkflowResponse response = waitForResponse(inputVariables);
-            return Response.status(202).entity(response).build();
+            if (response.getMessageCode() == 500) {
+                return Response.status(500).entity(response).build();
+            } else {
+                return Response.status(202).entity(response).build();
+            }
         } catch (WorkflowProcessorException e) {
             WorkflowResponse response = e.getWorkflowResponse();
             return Response.status(500).entity(response).build();
@@ -112,7 +116,7 @@ public class WorkflowAsyncResource extends ProcessEngineAwareService {
         }
     }
 
-    private WorkflowResponse waitForResponse(Map<String, Object> inputVariables) throws Exception {
+    protected WorkflowResponse waitForResponse(Map<String, Object> inputVariables) throws Exception {
         String requestId = getRequestId(inputVariables);
         long currentWaitTime = 0;
         long waitTime = getWaitTime(inputVariables);
