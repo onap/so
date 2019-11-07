@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d2004157_45647597",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/V7.4__UpdateRainyDayHandlerMacroForConfigAssignAndDeploy.sql",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-11-07T18:15:38Z",
+      "side": 1,
+      "message": "This needs to be put in the repeatable macro script, this will not work here.  The repeatable macro script clears these tables",
+      "revId": "c9f90de90874f34ce95cd6563b593eb05ba385cc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
