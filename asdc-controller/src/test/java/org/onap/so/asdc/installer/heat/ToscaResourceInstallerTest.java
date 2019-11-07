@@ -55,6 +55,7 @@ import org.onap.sdc.tosca.parser.impl.SdcCsarHelperImpl;
 import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
 import org.onap.sdc.toscaparser.api.Group;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
+import org.onap.sdc.toscaparser.api.Property;
 import org.onap.sdc.toscaparser.api.RequirementAssignment;
 import org.onap.sdc.toscaparser.api.RequirementAssignments;
 import org.onap.sdc.toscaparser.api.SubstitutionMappings;
@@ -80,8 +81,6 @@ import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ServiceProxyResourceCustomization;
 import org.onap.so.db.catalog.beans.ToscaCsar;
 import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
-import org.onap.so.db.catalog.data.repository.AllottedResourceCustomizationRepository;
-import org.onap.so.db.catalog.data.repository.AllottedResourceRepository;
 import org.onap.so.db.catalog.data.repository.ConfigurationResourceCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.InstanceGroupRepository;
 import org.onap.so.db.catalog.data.repository.ServiceRepository;
@@ -93,7 +92,6 @@ import org.onap.so.db.request.beans.WatchdogComponentDistributionStatus;
 import org.onap.so.db.request.data.repository.WatchdogComponentDistributionStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ToscaResourceInstallerTest extends BaseTest {
@@ -101,12 +99,6 @@ public class ToscaResourceInstallerTest extends BaseTest {
     private ToscaResourceInstaller toscaInstaller;
     @Autowired
     private WatchdogComponentDistributionStatusRepository watchdogCDStatusRepository;
-    @Autowired
-    private AllottedResourceRepository allottedRepo;
-    @Autowired
-    private AllottedResourceCustomizationRepository allottedCustomizationRepo;
-    @Autowired
-    private ServiceRepository serviceRepo;
     @Mock
     private SdcCsarHelperImpl sdcCsarHelper;
     @Mock
@@ -135,6 +127,8 @@ public class ToscaResourceInstallerTest extends BaseTest {
     private StatefulEntityType entityType;
     @Mock
     private Service service;
+    @Mock
+    Property property;
 
     private NotificationDataImpl notificationData;
     private JsonStatusData statusData;
@@ -379,16 +373,9 @@ public class ToscaResourceInstallerTest extends BaseTest {
 
         // doReturn(csarHelper).when(toscaResourceStructure).getSdcCsarHelper();
         toscaResourceStructObj.setSdcCsarHelper(csarHelper);
-        doReturn(null).when(csarHelper).getNodeTemplatePropertyLeafValue(nodeTemplate,
-                SdcPropertyNames.PROPERTY_NAME_NFFUNCTION);
-        doReturn(null).when(csarHelper).getNodeTemplatePropertyLeafValue(nodeTemplate,
-                SdcPropertyNames.PROPERTY_NAME_NFROLE);
-        doReturn(null).when(csarHelper).getNodeTemplatePropertyLeafValue(nodeTemplate,
-                SdcPropertyNames.PROPERTY_NAME_NFTYPE);
-        doReturn(resourceCustomizationUUID).when(csarHelper).getMetadataPropertyValue(metadata,
-                SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
-        doReturn(uuid).when(csarHelper).getMetadataPropertyValue(metadata,
-                SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELUUID);
+
+        doReturn(resourceCustomizationUUID).when(metadata).getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
+        doReturn(uuid).when(metadata).getValue(SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELUUID);
 
 
         // vnfc instance group list
@@ -409,10 +396,6 @@ public class ToscaResourceInstallerTest extends BaseTest {
         doReturn(new ArrayList<Input>()).when(submappings).getInputs();
         doReturn(submappings).when(nodeTemplate).getSubMappingToscaTemplate();
 
-        doReturn(vnfcInstanceGroupList).when(csarHelper).getGroupsOfOriginOfNodeTemplateByToscaGroupType(nodeTemplate,
-                "org.openecomp.groups.VfcInstanceGroup");
-
-
         doReturn(notificationData).when(vfResourceStruct).getNotification();
         doReturn(resourceInstance).when(vfResourceStruct).getResourceInstance();
 
@@ -424,13 +407,9 @@ public class ToscaResourceInstallerTest extends BaseTest {
             doReturn(metadata).when(g1).getMetadata();
             vfModuleGroups.add(g1);
 
-            doReturn(vfModuleGroups).when(csarHelper).getVfModulesByVf(resourceCustomizationUUID);
-            doReturn("1").when(csarHelper).getGroupPropertyLeafValue(g1, SdcPropertyNames.PROPERTY_NAME_INITIALCOUNT);
-
             doReturn(metadata).when(nodeTemplate).getMetaData();
             List<NodeTemplate> nodeList = new ArrayList<>();
             nodeList.add(nodeTemplate);
-            doReturn(nodeList).when(csarHelper).getServiceVfList();
 
             IVfModuleData moduleMetadata = mock(IVfModuleData.class);
             doReturn(name).when(moduleMetadata).getVfModuleModelName();
@@ -752,9 +731,6 @@ public class ToscaResourceInstallerTest extends BaseTest {
         groupList.add(group3);
 
         doReturn(csarHelper).when(toscaResourceStructure).getSdcCsarHelper();
-        doReturn(null).when(csarHelper).getRequirementsOf(node1);
-        doReturn(requirements2).when(csarHelper).getRequirementsOf(node2);
-        doReturn(requirements3).when(csarHelper).getRequirementsOf(node3);
 
         ToscaResourceInstaller installer = new ToscaResourceInstaller();
         Method[] methods = installer.getClass().getDeclaredMethods();
