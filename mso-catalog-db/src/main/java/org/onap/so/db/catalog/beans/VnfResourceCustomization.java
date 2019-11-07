@@ -124,6 +124,9 @@ public class VnfResourceCustomization implements Serializable {
     @Column(name = "NF_DATA_VALID")
     private Boolean nfDataValid;
 
+    @Column(name = "CONTROLLER_ACTOR")
+    private String controllerActor;
+
     @Override
     public boolean equals(final Object other) {
         if (!(other instanceof VnfResourceCustomization)) {
@@ -152,7 +155,8 @@ public class VnfResourceCustomization implements Serializable {
                 .append("multiStageDesign", multiStageDesign).append("vnfResources", vnfResources)
                 .append("vfModuleCustomizations", vfModuleCustomizations)
                 .append("vnfcInstanceGroupOrder", vnfcInstanceGroupOrder)
-                .append("vnfcInstanceGroupCustomizations", vnfcInstanceGroupCustomizations).toString();
+                .append("vnfcInstanceGroupCustomizations", vnfcInstanceGroupCustomizations)
+                .append("controllerActor", controllerActor).toString();
     }
 
     @PrePersist
@@ -345,5 +349,11 @@ public class VnfResourceCustomization implements Serializable {
         this.nfDataValid = nfDataValid;
     }
 
+    public String getControllerActor() {
+        return controllerActor;
+    }
 
+    public void setControllerActor(String controllerActor) {
+        this.controllerActor = controllerActor;
+    }
 }

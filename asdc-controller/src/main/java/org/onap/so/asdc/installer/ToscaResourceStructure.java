@@ -25,7 +25,6 @@ package org.onap.so.asdc.installer;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.List;
-import org.onap.so.logger.LoggingAnchor;
 import org.onap.sdc.api.notification.IArtifactInfo;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory;
@@ -52,10 +51,10 @@ import org.onap.so.db.catalog.beans.VfModule;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.logger.ErrorCode;
+import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 
 public class ToscaResourceStructure {
 
