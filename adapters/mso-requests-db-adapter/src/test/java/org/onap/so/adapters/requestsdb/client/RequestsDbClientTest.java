@@ -83,7 +83,6 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
         infraActiveRequests.setSource("sourceTest");
         infraActiveRequests.setOperationalEnvName(UUID.randomUUID().toString());
         infraActiveRequests.setRequestStatus("IN_PROGRESS");
-        infraActiveRequests.setAction("create");
         infraActiveRequests.setRequestAction("someaction");
         infraActiveRequests.setStartTime(new Timestamp(System.currentTimeMillis()));
         infraActiveRequests
@@ -120,7 +119,6 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
         infraActiveRequests2.setSource("sourceTest");
         infraActiveRequests2.setOperationalEnvName(UUID.randomUUID().toString());
         infraActiveRequests2.setRequestStatus("IN_PROGRESS");
-        infraActiveRequests2.setAction("create");
         infraActiveRequests2.setRequestAction("someaction");
         infraActiveRequests2.setStartTime(new Timestamp(System.currentTimeMillis()));
         infraActiveRequests

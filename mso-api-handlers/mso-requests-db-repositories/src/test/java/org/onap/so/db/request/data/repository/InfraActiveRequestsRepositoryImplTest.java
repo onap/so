@@ -28,7 +28,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.onap.so.db.request.data.repository.InfraActiveRequestsRepositoryImpl.ACTION;
 import static org.onap.so.db.request.data.repository.InfraActiveRequestsRepositoryImpl.REQUEST_ID;
 import static org.onap.so.db.request.data.repository.InfraActiveRequestsRepositoryImpl.SERVICE_INSTANCE_ID;
 import java.util.Collections;
@@ -140,59 +139,6 @@ public class InfraActiveRequestsRepositoryImplTest {
 
         assertEquals(REQUEST_ID_VALUE, actualRequests.get(0).getRequestId());
         assertEquals(SERVICE_INSTANCE_ID_VALUE, actualRequests.get(0).getServiceInstanceId());
-    }
-
-
-    @Test
-    public void test_GetInfraActiveRequestsData_withNotEqualAction() {
-        final Map<String, String[]> values = new HashMap<>();
-        values.put(ACTION, new String[] {QueryOperationType.NEQ.name(), "createInstance"});
-        final List<InfraActiveRequests> actualRequests =
-                objUnderTest.getInfraActiveRequests(values, START_TIME_IN_MILISEC, END_TIME_IN_MILISEC, null);
-        assertFalse(actualRequests.isEmpty());
-        for (final InfraActiveRequests actualActiveRequests : actualRequests) {
-            assertNotEquals("createInstance", actualActiveRequests.getAction());
-        }
-    }
-
-
-    @Test
-    public void test_GetInfraActiveRequestsData_withNotEqualToServiceInstanceNameAndServiceInstanceIdNul() {
-        final Map<String, String[]> values = new HashMap<>();
-        values.put(ACTION, new String[] {QueryOperationType.NEQ.name(), "createInstance"});
-        values.put(SERVICE_INSTANCE_ID, new String[] {QueryOperationType.EQ.name(), SERVICE_INSTANCE_ID_VALUE});
-
-        final List<InfraActiveRequests> actualRequests =
-                objUnderTest.getInfraActiveRequests(values, START_TIME_IN_MILISEC, END_TIME_IN_MILISEC, null);
-        assertFalse(actualRequests.isEmpty());
-        for (final InfraActiveRequests actualActiveRequests : actualRequests) {
-            assertNotEquals("createInstance", actualActiveRequests.getAction());
-            assertEquals(SERVICE_INSTANCE_ID_VALUE, actualActiveRequests.getServiceInstanceId());
-        }
-    }
-
-    @Test
-    public void test_GetInfraActiveRequestsData_withStartEndDateTimeNotEqualAction() {
-        final Map<String, String[]> values = new HashMap<>();
-        values.put(ACTION, new String[] {QueryOperationType.NEQ.name(), "createInstance"});
-        final List<InfraActiveRequests> actualRequests =
-                objUnderTest.getInfraActiveRequests(values, START_TIME_IN_MILISEC, END_TIME_IN_MILISEC, null);
-        assertFalse(actualRequests.isEmpty());
-        for (final InfraActiveRequests actualActiveRequests : actualRequests) {
-            assertNotEquals("createInstance", actualActiveRequests.getAction());
-        }
-    }
-
-    @Test
-    public void test_GetInfraActiveRequestsData_withLimitNotEqualAction() {
-        final Map<String, String[]> values = new HashMap<>();
-        values.put(ACTION, new String[] {QueryOperationType.NEQ.name(), "createInstance"});
-        final List<InfraActiveRequests> actualRequests =
-                objUnderTest.getInfraActiveRequests(values, START_TIME_IN_MILISEC, END_TIME_IN_MILISEC, MAX_LIMIT);
-        assertFalse(actualRequests.isEmpty());
-        for (final InfraActiveRequests actualActiveRequests : actualRequests) {
-            assertNotEquals("createInstance", actualActiveRequests.getAction());
-        }
     }
 
     @Test

@@ -94,7 +94,6 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
     private InfraActiveRequests buildTestRequest() {
         InfraActiveRequests testRequest = new InfraActiveRequests();
         testRequest.setRequestId("00032ab7-3fb3-42e5-965d-8ea592502017");
-        testRequest.setClientRequestId("00032ab7-3fb3-42e5-965d-8ea592502016");
         testRequest.setRequestStatus("COMPLETE");
         testRequest.setStatusMessage("Vf Module has been deleted successfully.");
         testRequest.setProgress((long) 100);
@@ -103,7 +102,6 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
         testRequest.setServiceInstanceId("e3b5744d-2ad1-4cdd-8390-c999a38829bc");
         testRequest.setRequestAction("deleteInstance");
         testRequest.setRequestScope("vfModule");
-        testRequest.setAction("deleteInstance");
         testRequest.setAicCloudRegion("mtn6");
         testRequest.setLastModifiedBy("BPMN");
         testRequest.setVfModuleId("c7d527b1-7a91-49fd-b97d-1c8c0f4a7992");
@@ -153,26 +151,10 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
     }
 
     @Test
-    public void getByClientRequestId() throws MsoRequestsDbException {
-        InfraActiveRequests testRequest = setupTestEntities();
-        // Given
-        String clientRequestId = "00032ab7-3fb3-42e5-965d-8ea592502016";
-
-        // When
-        InfraActiveRequests infraRequest = dbAdapter.getInfraRequest(clientRequestId);
-        if (infraRequest == null)
-            fail("Null infraRequest");
-
-        // Then
-        assertEquals(clientRequestId, infraRequest.getClientRequestId());
-    }
-
-
-    @Test
     public void updateInfraRequest() throws MsoRequestsDbException {
         InfraActiveRequests testRequest = setupTestEntities();
         // Given
-        String clientRequestId = "00032ab7-3fb3-42e5-965d-8ea592502016";
+        String requestId = "00032ab7-3fb3-42e5-965d-8ea592502017";
 
 
         // When
@@ -214,7 +196,7 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
         dbAdapter.updateInfraRequest(testRequest.getRequestId(), lastModifiedBy, statusMessage, responseBody,
                 requestStatus, progress, vnfOutputs, serviceInstanceId, networkId, vnfId, vfModuleId, volumeGroupId,
                 serviceInstanceName, configurationId, configurationName, vfModuleName);
-        InfraActiveRequests infraRequest = dbAdapter.getInfraRequest(clientRequestId);
+        InfraActiveRequests infraRequest = dbAdapter.getInfraRequest(requestId);
         // Then
         assertThat(infraRequest, sameBeanAs(testRequest).ignoring("requestBody").ignoring("endTime")
                 .ignoring("startTime").ignoring("modifyTime"));
@@ -241,12 +223,12 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
     public void updateInfraRequestNulls() throws MsoRequestsDbException {
         InfraActiveRequests testRequest = setupTestEntities();
         // Given
-        String clientRequestId = "00032ab7-3fb3-42e5-965d-8ea592502016";
+        String requestId = "00032ab7-3fb3-42e5-965d-8ea592502017";
 
         // When
         dbAdapter.updateInfraRequest(testRequest.getRequestId(), testRequest.getLastModifiedBy(), null, null, null,
                 null, null, null, null, null, null, null, null, null, null, null);
-        InfraActiveRequests infraRequest = dbAdapter.getInfraRequest(clientRequestId);
+        InfraActiveRequests infraRequest = dbAdapter.getInfraRequest(requestId);
         // Then
         assertThat(infraRequest, sameBeanAs(testRequest).ignoring("requestBody").ignoring("endTime")
                 .ignoring("startTime").ignoring("modifyTime"));

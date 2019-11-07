@@ -83,7 +83,6 @@ public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsA
         assertEquals(infraActiveRequests.getNetworkName(), infraActiveRequestsResponse.getNetworkName());
         assertEquals(infraActiveRequests.getConfigurationId(), infraActiveRequestsResponse.getConfigurationId());
         assertEquals(infraActiveRequests.getConfigurationName(), infraActiveRequestsResponse.getConfigurationName());
-        assertEquals(infraActiveRequests.getAaiServiceId(), infraActiveRequestsResponse.getAaiServiceId());
         assertEquals(infraActiveRequests.getTenantId(), infraActiveRequestsResponse.getTenantId());
         assertEquals(infraActiveRequests.getRequestScope(), infraActiveRequestsResponse.getRequestScope());
         assertEquals(infraActiveRequests.getRequestorId(), infraActiveRequestsResponse.getRequestorId());
@@ -91,7 +90,6 @@ public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsA
         assertEquals(infraActiveRequests.getOperationalEnvId(), infraActiveRequestsResponse.getOperationalEnvId());
         assertEquals(infraActiveRequests.getOperationalEnvName(), infraActiveRequestsResponse.getOperationalEnvName());
         assertEquals(infraActiveRequests.getRequestStatus(), infraActiveRequestsResponse.getRequestStatus());
-        assertEquals(infraActiveRequests.getAction(), infraActiveRequestsResponse.getAction());
         assertEquals(infraActiveRequests.getRequestUrl(), infraActiveRequestsResponse.getRequestUrl());
     }
 
@@ -120,7 +118,6 @@ public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsA
         infraActiveRequests.setSource("sourceTest");
         infraActiveRequests.setOperationalEnvName(UUID.randomUUID().toString());
         infraActiveRequests.setRequestStatus("IN_PROGRESS");
-        infraActiveRequests.setAction("create");
         infraActiveRequests
                 .setRequestUrl("http://localhost:8080/onap/so/infra/serviceInstantiation/v7/serviceInstances");
 

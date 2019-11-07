@@ -65,9 +65,6 @@ public class RequestsDBHelper {
         request.setProgress(100L);
         request.setLastModifiedBy("APIH");
         request.setOperationalEnvId(operationalEnvironmentId);
-        if (request.getAction() == null) {
-            request.setRequestAction(UNKNOWN);
-        }
         if (request.getRequestScope() == null) {
             request.setRequestScope(UNKNOWN);
         }
@@ -100,9 +97,6 @@ public class RequestsDBHelper {
         request.setProgress(100L);
         request.setLastModifiedBy("APIH");
         request.setOperationalEnvId(operationalEnvironmentId);
-        if (request.getAction() == null) {
-            request.setRequestAction(UNKNOWN);
-        }
         if (request.getRequestScope() == null) {
             request.setRequestScope(UNKNOWN);
         }

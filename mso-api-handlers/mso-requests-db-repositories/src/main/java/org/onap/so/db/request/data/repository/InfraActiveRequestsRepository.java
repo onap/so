@@ -33,14 +33,6 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 public interface InfraActiveRequestsRepository
         extends JpaRepository<InfraActiveRequests, String>, InfraActiveRequestsRepositoryCustom {
 
-    InfraActiveRequests findOneByRequestIdOrClientRequestId(String requestId, String clientRequestId);
-
-    InfraActiveRequests findOneByRequestIdOrClientRequestIdAndRequestType(String requestId, String clientRequestId,
-            String requestType);
-
-    List<InfraActiveRequests> findByActionAndRequestStatusAndVfModuleId(String action, String requestStatus,
-            String vfModuleId);
-
     InfraActiveRequests findOneByRequestId(String string);
 
     InfraActiveRequests findOneByRequestBody(String requestBody);

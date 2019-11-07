@@ -53,10 +53,6 @@ public abstract class InfraRequests implements java.io.Serializable {
     @Id
     @Column(name = "REQUEST_ID", length = 45)
     private String requestId;
-    @Column(name = "CLIENT_REQUEST_ID", length = 45, unique = true)
-    private String clientRequestId;
-    @Column(name = "ACTION", length = 45)
-    private String action;
     @Column(name = "REQUEST_STATUS", length = 20)
     private String requestStatus;
     @Column(name = "STATUS_MESSAGE", length = 2000)
@@ -84,12 +80,8 @@ public abstract class InfraRequests implements java.io.Serializable {
     private String vnfType;
     @Column(name = "SERVICE_TYPE", length = 45)
     private String serviceType;
-    @Column(name = "AIC_NODE_CLLI", length = 11)
-    private String aicNodeClli;
     @Column(name = "TENANT_ID", length = 45)
     private String tenantId;
-    @Column(name = "PROV_STATUS", length = 20)
-    private String provStatus;
     @Column(name = "VNF_PARAMS")
     private String vnfParams;
     @Column(name = "VNF_OUTPUTS")
@@ -103,8 +95,6 @@ public abstract class InfraRequests implements java.io.Serializable {
     @Column(name = "MODIFY_TIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date modifyTime;
-    @Column(name = "REQUEST_TYPE", length = 20)
-    private String requestType;
     @Column(name = "VOLUME_GROUP_ID", length = 45)
     private String volumeGroupId;
     @Column(name = "VOLUME_GROUP_NAME", length = 45)
@@ -115,8 +105,6 @@ public abstract class InfraRequests implements java.io.Serializable {
     private String vfModuleName;
     @Column(name = "VF_MODULE_MODEL_NAME", length = 200)
     private String vfModuleModelName;
-    @Column(name = "AAI_SERVICE_ID", length = 50)
-    private String aaiServiceId;
     @Column(name = "CLOUD_REGION", length = 11)
     private String aicCloudRegion;
     @Column(name = "CALLBACK_URL", length = 200)
@@ -175,22 +163,6 @@ public abstract class InfraRequests implements java.io.Serializable {
 
     public void setRequestId(String requestId) {
         this.requestId = requestId;
-    }
-
-    public String getClientRequestId() {
-        return clientRequestId;
-    }
-
-    public void setClientRequestId(String clientRequestId) {
-        this.clientRequestId = clientRequestId;
-    }
-
-    public String getAction() {
-        return this.action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
     }
 
     public String getRequestStatus() {
@@ -299,28 +271,12 @@ public abstract class InfraRequests implements java.io.Serializable {
         this.serviceType = serviceType;
     }
 
-    public String getAicNodeClli() {
-        return this.aicNodeClli;
-    }
-
-    public void setAicNodeClli(String aicNodeClli) {
-        this.aicNodeClli = aicNodeClli;
-    }
-
     public String getTenantId() {
         return this.tenantId;
     }
 
     public void setTenantId(String tenantId) {
         this.tenantId = tenantId;
-    }
-
-    public String getProvStatus() {
-        return this.provStatus;
-    }
-
-    public void setProvStatus(String provStatus) {
-        this.provStatus = provStatus;
     }
 
     public String getVnfParams() {
@@ -367,14 +323,6 @@ public abstract class InfraRequests implements java.io.Serializable {
         return this.modifyTime;
     }
 
-    public String getRequestType() {
-        return this.requestType;
-    }
-
-    public void setRequestType(String requestType) {
-        this.requestType = requestType;
-    }
-
     public String getVolumeGroupId() {
         return this.volumeGroupId;
     }
@@ -413,14 +361,6 @@ public abstract class InfraRequests implements java.io.Serializable {
 
     public void setVfModuleModelName(String vfModuleModelName) {
         this.vfModuleModelName = vfModuleModelName;
-    }
-
-    public String getAaiServiceId() {
-        return this.aaiServiceId;
-    }
-
-    public void setAaiServiceId(String aaiServiceId) {
-        this.aaiServiceId = aaiServiceId;
     }
 
     public String getAicCloudRegion() {
@@ -637,24 +577,20 @@ public abstract class InfraRequests implements java.io.Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("requestId", getRequestId())
-                .append("clientRequestId", getClientRequestId()).append("action", getAction())
-                .append("requestStatus", getRequestStatus()).append("statusMessage", getStatusMessage())
-                .append("rollbackStatusMessage", getRollbackStatusMessage()).append("flowStatus", getFlowStatus())
-                .append("retryStatusMessage", getRetryStatusMessage()).append("progress", getProgress())
-                .append("startTime", getStartTime()).append("endTime", getEndTime()).append("source", getSource())
-                .append("vnfId", getVnfId()).append("vnfName", getVnfName()).append("vnfType", getVnfType())
-                .append("serviceType", getServiceType()).append("aicNodeClli", getAicNodeClli())
-                .append("tenantId", getTenantId()).append("provStatus", getProvStatus())
-                .append("vnfParams", getVnfParams()).append("vnfOutputs", getVnfOutputs())
-                .append("requestBody", getRequestBody()).append("responseBody", getResponseBody())
-                .append("lastModifiedBy", getLastModifiedBy()).append("modifyTime", getModifyTime())
-                .append("requestType", getRequestType()).append("volumeGroupId", getVolumeGroupId())
+        return new ToStringBuilder(this).append("requestId", getRequestId()).append("requestStatus", getRequestStatus())
+                .append("statusMessage", getStatusMessage()).append("rollbackStatusMessage", getRollbackStatusMessage())
+                .append("flowStatus", getFlowStatus()).append("retryStatusMessage", getRetryStatusMessage())
+                .append("progress", getProgress()).append("startTime", getStartTime()).append("endTime", getEndTime())
+                .append("source", getSource()).append("vnfId", getVnfId()).append("vnfName", getVnfName())
+                .append("vnfType", getVnfType()).append("serviceType", getServiceType())
+                .append("tenantId", getTenantId()).append("vnfParams", getVnfParams())
+                .append("vnfOutputs", getVnfOutputs()).append("requestBody", getRequestBody())
+                .append("responseBody", getResponseBody()).append("lastModifiedBy", getLastModifiedBy())
+                .append("modifyTime", getModifyTime()).append("volumeGroupId", getVolumeGroupId())
                 .append("volumeGroupName", getVolumeGroupName()).append("vfModuleId", getVfModuleId())
                 .append("vfModuleName", getVfModuleName()).append("vfModuleModelName", getVfModuleModelName())
-                .append("aaiServiceId", getAaiServiceId()).append("aicCloudRegion", getAicCloudRegion())
-                .append("callBackUrl", getCallBackUrl()).append("correlator", getCorrelator())
-                .append("serviceInstanceId", getServiceInstanceId())
+                .append("aicCloudRegion", getAicCloudRegion()).append("callBackUrl", getCallBackUrl())
+                .append("correlator", getCorrelator()).append("serviceInstanceId", getServiceInstanceId())
                 .append("serviceInstanceName", getServiceInstanceName()).append("requestScope", getRequestScope())
                 .append("requestAction", getRequestAction()).append("networkId", getNetworkId())
                 .append("networkName", getNetworkName()).append("networkType", getNetworkType())

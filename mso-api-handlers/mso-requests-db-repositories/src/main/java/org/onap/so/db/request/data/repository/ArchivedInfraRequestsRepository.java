@@ -29,7 +29,5 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 @RepositoryRestResource(collectionResourceRel = "archivedInfraRequests", path = "archivedInfraRequests")
 public interface ArchivedInfraRequestsRepository extends JpaRepository<ArchivedInfraRequests, String> {
 
-    List<InfraActiveRequests> findByActionAndRequestStatusAndVfModuleId(String action, String requestStatus,
-            String vfModuleId);
 
 }

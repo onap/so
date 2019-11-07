@@ -35,7 +35,6 @@ public class ArchivedInfraRequests extends InfraRequests {
 
     public ArchivedInfraRequests(String requestId, String action) {
         setRequestId(requestId);
-        setAction(action);
     }
 
     public ArchivedInfraRequests(String requestId) {
@@ -61,22 +60,19 @@ public class ArchivedInfraRequests extends InfraRequests {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("requestId", getRequestId())
-                .append("clientRequestId", getClientRequestId()).append("action", getAction())
-                .append("requestStatus", getRequestStatus()).append("statusMessage", getStatusMessage())
-                .append("progress", getProgress()).append("startTime", getStartTime()).append("endTime", getEndTime())
-                .append("source", getSource()).append("vnfId", getVnfId()).append("vnfName", getVnfName())
-                .append("vnfType", getVnfType()).append("serviceType", getServiceType())
-                .append("aicNodeClli", getAicNodeClli()).append("tenantId", getTenantId())
-                .append("provStatus", getProvStatus()).append("vnfParams", getVnfParams())
-                .append("vnfOutputs", getVnfOutputs()).append("requestBody", getRequestBody())
-                .append("responseBody", getResponseBody()).append("lastModifiedBy", getLastModifiedBy())
-                .append("modifyTime", getModifyTime()).append("requestType", getRequestType())
+        return new ToStringBuilder(this).append("requestId", getRequestId()).append("requestStatus", getRequestStatus())
+                .append("statusMessage", getStatusMessage()).append("progress", getProgress())
+                .append("startTime", getStartTime()).append("endTime", getEndTime()).append("source", getSource())
+                .append("vnfId", getVnfId()).append("vnfName", getVnfName()).append("vnfType", getVnfType())
+                .append("serviceType", getServiceType()).append("tenantId", getTenantId())
+                .append("vnfParams", getVnfParams()).append("vnfOutputs", getVnfOutputs())
+                .append("requestBody", getRequestBody()).append("responseBody", getResponseBody())
+                .append("lastModifiedBy", getLastModifiedBy()).append("modifyTime", getModifyTime())
                 .append("volumeGroupId", getVolumeGroupId()).append("volumeGroupName", getVolumeGroupName())
                 .append("vfModuleId", getVfModuleId()).append("vfModuleName", getVfModuleName())
-                .append("vfModuleModelName", getVfModuleModelName()).append("aaiServiceId", getAaiServiceId())
-                .append("aicCloudRegion", getAicCloudRegion()).append("callBackUrl", getCallBackUrl())
-                .append("correlator", getCorrelator()).append("serviceInstanceId", getServiceInstanceId())
+                .append("vfModuleModelName", getVfModuleModelName()).append("aicCloudRegion", getAicCloudRegion())
+                .append("callBackUrl", getCallBackUrl()).append("correlator", getCorrelator())
+                .append("serviceInstanceId", getServiceInstanceId())
                 .append("serviceInstanceName", getServiceInstanceName()).append("requestScope", getRequestScope())
                 .append("requestAction", getRequestAction()).append("networkId", getNetworkId())
                 .append("networkName", getNetworkName()).append("networkType", getNetworkType())

@@ -154,7 +154,6 @@ public class ServiceInstanceRestHandlerTest {
     public void test_createInfraActiveRequestForDelete() throws Exception {
         InfraActiveRequests expected = new InfraActiveRequests();
         expected.setRequestAction(Action.deleteInstance.toString());
-        expected.setAction(Action.deleteInstance.toString());
         expected.setServiceInstanceId("serviceInstanceId");
         expected.setRequestId("requestId");
         expected.setRequestorId("userId");

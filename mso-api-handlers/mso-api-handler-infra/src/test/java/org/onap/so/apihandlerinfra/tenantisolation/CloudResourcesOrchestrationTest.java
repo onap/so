@@ -271,7 +271,6 @@ public class CloudResourcesOrchestrationTest extends BaseTest {
         InfraActiveRequests iar = new InfraActiveRequests();
         iar.setRequestId("requestId-getOpEnvFilterEx1");
         iar.setRequestScope("requestScope");
-        iar.setRequestType("requestType");
         iar.setOperationalEnvId("operationalEnvironmentId");
         iar.setOperationalEnvName("operationalEnvName");
         iar.setRequestorId("xxxxxx");
@@ -296,7 +295,6 @@ public class CloudResourcesOrchestrationTest extends BaseTest {
         InfraActiveRequests iar = new InfraActiveRequests();
         iar.setRequestId("requestIdFilterException2");
         iar.setRequestScope("requestScope");
-        iar.setRequestType("requestType");
         iar.setOperationalEnvId("operationalEnvId");
         iar.setOperationalEnvName("operationalEnvName");
         iar.setRequestorId("xxxxxx");

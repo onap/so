@@ -107,12 +107,8 @@ public class ArchiveInfraRequestsScheduler {
         for (InfraActiveRequests iar : requests) {
             ArchivedInfraRequests archivedInfra = new ArchivedInfraRequests();
             try {
-                archivedInfra.setAaiServiceId(iar.getAaiServiceId());
-                archivedInfra.setAction(iar.getAction());
                 archivedInfra.setAicCloudRegion(iar.getAicCloudRegion());
-                archivedInfra.setAicNodeClli(iar.getAicNodeClli());
                 archivedInfra.setCallBackUrl(iar.getCallBackUrl());
-                archivedInfra.setClientRequestId(iar.getClientRequestId());
                 archivedInfra.setConfigurationId(iar.getConfigurationId());
                 archivedInfra.setConfigurationName(iar.getConfigurationName());
                 archivedInfra.setCorrelator(iar.getCorrelator());
@@ -125,14 +121,12 @@ public class ArchiveInfraRequestsScheduler {
                 archivedInfra.setOperationalEnvName(iar.getOperationalEnvName());
                 archivedInfra.setRequestUrl(iar.getRequestUrl());
                 archivedInfra.setProgress(iar.getProgress());
-                archivedInfra.setProvStatus(iar.getProvStatus());
                 archivedInfra.setRequestAction(iar.getRequestAction());
                 archivedInfra.setRequestBody(iar.getRequestBody());
                 archivedInfra.setRequestId(iar.getRequestId());
                 archivedInfra.setRequestorId(iar.getRequestorId());
                 archivedInfra.setRequestScope(iar.getRequestScope());
                 archivedInfra.setRequestStatus(iar.getRequestStatus());
-                archivedInfra.setRequestType(iar.getRequestType());
                 archivedInfra.setResponseBody(iar.getResponseBody());
                 archivedInfra.setServiceInstanceId(iar.getServiceInstanceId());
                 archivedInfra.setServiceInstanceName(iar.getServiceInstanceName());

@@ -73,7 +73,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
             String networkId, String vnfId, String vfModuleId, String volumeGroupId, String serviceInstanceName,
             String configurationId, String configurationName, String vfModuleName) throws MsoRequestsDbException {
         try {
-            InfraActiveRequests request = infraActive.findOneByRequestIdOrClientRequestId(requestId, requestId);
+            InfraActiveRequests request = infraActive.findOneByRequestId(requestId);
             if (request == null) {
                 String error = "Entity not found. Unable to retrieve MSO Infra Requests DB for Request ID " + requestId;
                 throw new MsoRequestsDbException(error);
@@ -147,7 +147,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
         logger.debug("Call to MSO Infra RequestsDb adapter get method with request Id: {}", requestId);
         InfraActiveRequests request = null;
         try {
-            request = infraActive.findOneByRequestIdOrClientRequestId(requestId, requestId);
+            request = infraActive.findOneByRequestId(requestId);
             if (request == null) {
                 String error = "Entity not found. Unable to retrieve MSO Infra Requests DB for Request ID " + requestId;
                 throw new MsoRequestsDbException(error);

@@ -109,7 +109,6 @@ public class VolumeRestHandlerTest {
     public void test_createInfraActiveRequestForDelete() throws Exception {
         InfraActiveRequests expected = new InfraActiveRequests();
         expected.setRequestAction(Action.deleteInstance.toString());
-        expected.setAction(Action.deleteInstance.toString());
         expected.setServiceInstanceId("serviceInstanceId");
         expected.setVnfId("vnfId");
         expected.setVolumeGroupId("volumeGroupId");
