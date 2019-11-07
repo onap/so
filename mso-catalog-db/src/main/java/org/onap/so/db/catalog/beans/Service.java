@@ -142,6 +142,18 @@ public class Service implements Serializable {
     @Column(name = "ONAP_GENERATED_NAMING")
     private Boolean onapGeneratedNaming;
 
+    @Column(name = "CDS_BLUEPRINT_NAME")
+    private String blueprintName;
+
+    @Column(name = "CDS_BLUEPRINT_VERSION")
+    private String blueprintVersion;
+
+    @Column(name = "SKIP_POST_INSTANTIATION_CONFIGURATION")
+    private Boolean skipPostInstConf;
+
+    @Column(name = "CONTROLLER_ACTOR")
+    private String controllerActor;
+
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("modelName", modelName).append("description", description)
@@ -399,4 +411,35 @@ public class Service implements Serializable {
         this.onapGeneratedNaming = onapGeneratedNaming;
     }
 
+    public String getBlueprintName() {
+        return blueprintName;
+    }
+
+    public void setBlueprintName(String blueprintName) {
+        this.blueprintName = blueprintName;
+    }
+
+    public String getBlueprintVersion() {
+        return blueprintVersion;
+    }
+
+    public void setBlueprintVersion(String blueprintVersion) {
+        this.blueprintVersion = blueprintVersion;
+    }
+
+    public Boolean isSkipPostInstConf() {
+        return skipPostInstConf;
+    }
+
+    public void setSkipPostInstConf(Boolean skipPostInstConf) {
+        this.skipPostInstConf = skipPostInstConf;
+    }
+
+    public String getControllerActor() {
+        return controllerActor;
+    }
+
+    public void setControllerActor(String controllerActor) {
+        this.controllerActor = controllerActor;
+    }
 }
