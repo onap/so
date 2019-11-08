@@ -431,6 +431,8 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
             List<Server> osServers = heatBridgeClient.getAllOpenstackServers(stackResources);
 
+            heatBridgeClient.createPserversAndPinterfacesIfNotPresentInAai(stackResources);
+
             List<Image> osImages = heatBridgeClient.extractOpenstackImagesFromServers(osServers);
 
             List<Flavor> osFlavors = heatBridgeClient.extractOpenstackFlavorsFromServers(osServers);
