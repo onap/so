@@ -42,6 +42,9 @@
         <executions>
           <execution>
             <id>original</id>
+            <configuration>
+              <skip>false</skip>
+            </configuration>
           </execution>
         </executions>
       </plugin>

@@ -592,21 +592,13 @@
           <version>3.0.2</version>
           <executions>
             <execution>
-              <id>tests</id>
-              <goals>
-                <goal>test-jar</goal>
-              </goals>
-              <configuration>
-                <skip>false</skip>
-              </configuration>
-            </execution>
-            <execution>
               <id>original</id>
               <phase>package</phase>
               <goals>
                 <goal>jar</goal>
               </goals>
               <configuration>
+                <skip>true</skip>
                 <classifier>${originalClassifier}</classifier>
                 <includes>
                   <include>**</include>
