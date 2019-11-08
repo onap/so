@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c6ef2f3e_d622bb13",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/HeatBridgeImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 484,
+      "author": {
+        "id": 97
+      },
+      "writtenOn": "2019-11-08T15:41:58Z",
+      "side": 1,
+      "message": "I had no issue the using preconditions. I think you should do something like:\n\nAAIResultWrapper vserverWrapper \u003d resourcesClient.get(vserverUri.depth(Depth.TWO));\nList\u003cString\u003e connectedPservers \u003d vserverWrapper.getRelatedLinks(AAIObjectType.PSERVER)\nif (connectedPservers.size() \u003d\u003d 1) {\n                 List\u003cString\u003e pciIds \u003d HeatBridgeUtils.extractPciIdsFromVServer(vserverWrapper.asBean(Vserver.class));\n... etc ...\n\n}\nextractPciIdsFromVServer is a pretty expensive operation to throw away if you later find that you had more than pserver. You know the relationship state right away, it\u0027s better to check it then.",
+      "revId": "56c15a582613735982be756c1399cb3ace9fb2a8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
