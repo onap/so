@@ -1497,6 +1497,12 @@ public class WorkflowAction {
             boolean isVirtualLink, String virtualLinkKey, boolean isConfiguration) {
         ExecuteBuildingBlock executeBuildingBlock = new ExecuteBuildingBlock();
         BuildingBlock buildingBlock = new BuildingBlock();
+        
+		if (null != orchFlow.getBpmnAction() && null != orchFlow.getBpmnScope()) {
+			buildingBlock.setBpmnAction(orchFlow.getBpmnAction());
+			buildingBlock.setBpmnScope(orchFlow.getBpmnScope());
+		}
+        
         buildingBlock.setBpmnFlowName(orchFlow.getFlowName());
         buildingBlock.setMsoId(UUID.randomUUID().toString());
         if (resource == null) {
