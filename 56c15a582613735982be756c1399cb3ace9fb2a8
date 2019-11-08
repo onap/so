@@ -16,6 +16,24 @@
       "revId": "56c15a582613735982be756c1399cb3ace9fb2a8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "97960cbe_e380f828",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/HeatBridgeImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 484,
+      "author": {
+        "id": 153
+      },
+      "writtenOn": "2019-11-08T19:30:21Z",
+      "side": 1,
+      "message": "I removed the precondition since this is only used by delete flow and given that we want to remove we can proceed with delete and not throw an exception if something we want to delete is not there",
+      "parentUuid": "c6ef2f3e_d622bb13",
+      "revId": "56c15a582613735982be756c1399cb3ace9fb2a8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
