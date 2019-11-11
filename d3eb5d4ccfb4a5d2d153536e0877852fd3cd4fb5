@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "77719291_38035167",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/Action.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-11-11T20:44:11Z",
+      "side": 1,
+      "message": "No longer needed. I am pushing a patch to rectify this",
+      "range": {
+        "startLine": 26,
+        "startChar": 1,
+        "endLine": 28,
+        "endChar": 1
+      },
+      "revId": "d3eb5d4ccfb4a5d2d153536e0877852fd3cd4fb5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
