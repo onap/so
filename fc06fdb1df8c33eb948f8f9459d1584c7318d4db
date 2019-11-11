@@ -22,6 +22,30 @@
       "revId": "fc06fdb1df8c33eb948f8f9459d1584c7318d4db",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b3b5f6b0_5a6af44d",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/Constants.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 3895
+      },
+      "writtenOn": "2019-11-11T13:21:41Z",
+      "side": 1,
+      "message": "Yes that is the intention currently, would you recommend a different approach?",
+      "parentUuid": "83535d7b_97512d2a",
+      "range": {
+        "startLine": 31,
+        "startChar": 73,
+        "endLine": 31,
+        "endChar": 84
+      },
+      "revId": "fc06fdb1df8c33eb948f8f9459d1584c7318d4db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
