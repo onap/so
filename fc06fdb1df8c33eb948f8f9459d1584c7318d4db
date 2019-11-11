@@ -46,6 +46,30 @@
       "revId": "fc06fdb1df8c33eb948f8f9459d1584c7318d4db",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1a191cac_470e2b0e",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/Constants.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 3895
+      },
+      "writtenOn": "2019-11-11T13:57:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b3b5f6b0_5a6af44d",
+      "range": {
+        "startLine": 31,
+        "startChar": 73,
+        "endLine": 31,
+        "endChar": 84
+      },
+      "revId": "fc06fdb1df8c33eb948f8f9459d1584c7318d4db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
