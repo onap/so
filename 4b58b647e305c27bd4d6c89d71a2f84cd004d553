@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7608bf22_dd86a460",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/HeatBridgeImpl.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-11-13T12:18:57Z",
+      "side": 1,
+      "message": "I do not see the place where this method is used. All this change in this ticket are for this method. Can you tell me what it is used for? If it is not used, I would remove it.",
+      "range": {
+        "startLine": 128,
+        "startChar": 27,
+        "endLine": 128,
+        "endChar": 39
+      },
+      "revId": "4b58b647e305c27bd4d6c89d71a2f84cd004d553",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
