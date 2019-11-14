@@ -93,10 +93,19 @@
         <artifactId>maven-jar-plugin</artifactId>
         <executions>
           <execution>
-            <id>tests</id>
+            <id>tests-jar</id>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+            <configuration>
+              <skip>false</skip>
+            </configuration>
           </execution>
           <execution>
             <id>original</id>
+            <configuration>
+              <skip>false</skip>
+            </configuration>
           </execution>
         </executions>
       </plugin>
