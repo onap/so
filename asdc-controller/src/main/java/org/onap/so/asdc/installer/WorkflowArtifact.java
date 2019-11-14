@@ -22,9 +22,6 @@ package org.onap.so.asdc.installer;
 
 
 import java.io.UnsupportedEncodingException;
-import org.onap.so.db.catalog.beans.HeatEnvironment;
-import org.onap.so.db.catalog.beans.HeatFiles;
-import org.onap.so.db.catalog.beans.HeatTemplate;
 import org.onap.sdc.api.notification.IArtifactInfo;
 import org.onap.sdc.api.results.IDistributionClientDownloadResult;
 
