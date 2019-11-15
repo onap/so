@@ -188,9 +188,11 @@ public class WorkflowAction {
             boolean isResume = false;
             if (isUriResume(uri)) {
                 isResume = true;
-                logger.debug("replacing URI {}", uri);
-                uri = bbInputSetupUtils.loadOriginalInfraActiveRequestById(requestId).getRequestUrl();
-                logger.debug("for RESUME with original value {}", uri);
+                if (!aLaCarte) {
+                    logger.debug("replacing URI {}", uri);
+                    uri = bbInputSetupUtils.loadOriginalInfraActiveRequestById(requestId).getRequestUrl();
+                    logger.debug("for RESUME with original value {}", uri);
+                }
             }
             Resource resource = extractResourceIdAndTypeFromUri(uri);
             WorkflowType resourceType = resource.getResourceType();
@@ -1129,8 +1131,8 @@ public class WorkflowAction {
     }
 
     protected Resource extractResourceIdAndTypeFromUri(String uri) {
-        Pattern patt = Pattern.compile(
-                "[vV]\\d+.*?(?:(?:/(?<type>" + SUPPORTEDTYPES + ")(?:/(?<id>[^/]+))?)(?:/(?<action>[^/]+))?)?$");
+        Pattern patt = Pattern.compile("[vV]\\d+.*?(?:(?:/(?<type>" + SUPPORTEDTYPES
+                + ")(?:/(?<id>[^/]+))?)(?:/(?<action>[^/]+))?(?:/resume)?)?$");
         Matcher m = patt.matcher(uri);
         Boolean generated = false;
 
