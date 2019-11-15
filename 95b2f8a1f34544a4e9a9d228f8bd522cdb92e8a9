@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b30c16b2_3779ef67",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/vnf/MsoVnfAdapterImpl.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 428,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-11-15T11:31:50Z",
+      "side": 1,
+      "message": "not used",
+      "range": {
+        "startLine": 428,
+        "startChar": 33,
+        "endLine": 428,
+        "endChar": 56
+      },
+      "revId": "95b2f8a1f34544a4e9a9d228f8bd522cdb92e8a9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e19259b5_d0d3fb34",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/HeatBridgeImpl.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-11-15T11:31:50Z",
+      "side": 1,
+      "message": "not used anymore, remove it please",
+      "range": {
+        "startLine": 105,
+        "startChar": 4,
+        "endLine": 105,
+        "endChar": 28
+      },
+      "revId": "95b2f8a1f34544a4e9a9d228f8bd522cdb92e8a9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d13dff76_642d4e6c",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/HeatBridgeImpl.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-11-15T11:31:50Z",
+      "side": 1,
+      "message": "not used, remove it please",
+      "range": {
+        "startLine": 108,
+        "startChar": 4,
+        "endLine": 108,
+        "endChar": 40
+      },
+      "revId": "95b2f8a1f34544a4e9a9d228f8bd522cdb92e8a9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d83d6bfa_e0a68ec8",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/factory/MsoCloudClientFactoryImpl.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-11-15T11:31:50Z",
+      "side": 1,
+      "message": "change also interface and tests where this method is used: cloudRegionId -\u003e regionId",
+      "range": {
+        "startLine": 64,
+        "startChar": 28,
+        "endLine": 64,
+        "endChar": 36
+      },
+      "revId": "95b2f8a1f34544a4e9a9d228f8bd522cdb92e8a9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
