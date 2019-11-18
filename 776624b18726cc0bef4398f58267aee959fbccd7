@@ -22,6 +22,30 @@
       "revId": "776624b18726cc0bef4398f58267aee959fbccd7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "89466caa_a63d68d6",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/installer/ToscaResourceStructure.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-11-18T15:55:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8261a578_1543e598",
+      "range": {
+        "startLine": 164,
+        "startChar": 8,
+        "endLine": 164,
+        "endChar": 38
+      },
+      "revId": "776624b18726cc0bef4398f58267aee959fbccd7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
