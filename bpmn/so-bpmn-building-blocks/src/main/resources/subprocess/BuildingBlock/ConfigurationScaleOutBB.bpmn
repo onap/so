@@ -1,68 +1,158 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_0ky0lyw" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_0ky0lyw" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.14.0">
   <bpmn:process id="ConfigurationScaleOutBB" name="ConfigurationScaleOutBB" isExecutable="true">
     <bpmn:startEvent id="Start_ConfigScaleOutBB" name="Start">
-      <bpmn:outgoing>SequenceFlow_06ab7wm</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0g9dxlf</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:serviceTask id="QueryVfModule" name="Query VF Module (SDNC)" camunda:expression="${SDNCQueryTasks.queryVfModule(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
-      <bpmn:incoming>SequenceFlow_06ab7wm</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_149xlbu</bpmn:outgoing>
+      <bpmn:incoming>SequenceFlow_00lqfg6</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1ryvy27</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="SequenceFlow_06ab7wm" sourceRef="Start_ConfigScaleOutBB" targetRef="QueryVfModule" />
     <bpmn:endEvent id="End_ConfigScaleOutBB" name="End">
       <bpmn:incoming>SequenceFlow_12srn62</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1nq83m8</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_12srn62" sourceRef="Call-AppC-ConfigScaleOut" targetRef="End_ConfigScaleOutBB" />
-    <bpmn:sequenceFlow id="SequenceFlow_149xlbu" sourceRef="QueryVfModule" targetRef="GetConfigScaleOutParams" />
-    <bpmn:sequenceFlow id="SequenceFlow_1juznaa" sourceRef="GetConfigScaleOutParams" targetRef="Call-AppC-ConfigScaleOut" />
     <bpmn:serviceTask id="GetConfigScaleOutParams" name="Get Config Scale Out Params" camunda:expression="${ConfigurationScaleOut.setParamsForConfigurationScaleOut(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
-      <bpmn:incoming>SequenceFlow_149xlbu</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1juznaa</bpmn:outgoing>
+      <bpmn:incoming>SequenceFlow_1ryvy27</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_10fh4lh</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Call-AppC-ConfigScaleOut" name="Call APP-C For&#10;Configuration Scale Out&#10;" camunda:expression="${ConfigurationScaleOut.callAppcClient(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
-      <bpmn:incoming>SequenceFlow_1juznaa</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_10fh4lh</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_12srn62</bpmn:outgoing>
     </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_012fw5h" name="check for the controller Actor">
+      <bpmn:incoming>SequenceFlow_0jc4gak</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_00lqfg6</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0a1qi8e</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_0g9dxlf" sourceRef="Start_ConfigScaleOutBB" targetRef="ServiceTask_1crq0k2" />
+    <bpmn:sequenceFlow id="SequenceFlow_1nq83m8" sourceRef="Call-CDS-ConfigScaleOut" targetRef="End_ConfigScaleOutBB" />
+    <bpmn:callActivity id="Call-CDS-ConfigScaleOut" name="Call CDS for Configuration Scale Out" calledElement="ControllerExecutionBB">
+      <bpmn:incoming>SequenceFlow_1e4rnn5</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1nq83m8</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="SequenceFlow_10fh4lh" sourceRef="GetConfigScaleOutParams" targetRef="Call-AppC-ConfigScaleOut" />
+    <bpmn:sequenceFlow id="SequenceFlow_1ryvy27" sourceRef="QueryVfModule" targetRef="GetConfigScaleOutParams" />
+    <bpmn:sequenceFlow id="SequenceFlow_00lqfg6" sourceRef="ExclusiveGateway_012fw5h" targetRef="QueryVfModule" />
+    <bpmn:sequenceFlow id="SequenceFlow_0a1qi8e" name="CDS" sourceRef="ExclusiveGateway_012fw5h" targetRef="ServiceTask_17r3b9s">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${execution.getVariable("controller_actor") == CDS}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="ServiceTask_1crq0k2" name="Set Controller Actor" camunda:expression="${ControllerActorSelection.(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_0g9dxlf</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0jc4gak</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0jc4gak" sourceRef="ServiceTask_1crq0k2" targetRef="ExclusiveGateway_012fw5h" />
+    <bpmn:serviceTask id="ServiceTask_17r3b9s" name="PreProces For CDS ControllerExecution" camunda:expression="${GenericVnfHealthCheck.setParamsForGenericVnfHealthCheckForCDS(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_0a1qi8e</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1e4rnn5</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1e4rnn5" sourceRef="ServiceTask_17r3b9s" targetRef="Call-CDS-ConfigScaleOut" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="ConfigurationScaleOutBB">
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="Start_ConfigScaleOutBB">
-        <dc:Bounds x="173" y="102" width="36" height="36" />
+        <dc:Bounds x="87" y="172" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="179" y="145" width="25" height="14" />
+          <dc:Bounds x="93" y="148" width="24" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_1juzqvs_di" bpmnElement="QueryVfModule">
-        <dc:Bounds x="261" y="80" width="100" height="80" />
+        <dc:Bounds x="424" y="74" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_06ab7wm_di" bpmnElement="SequenceFlow_06ab7wm">
-        <di:waypoint xsi:type="dc:Point" x="209" y="120" />
-        <di:waypoint xsi:type="dc:Point" x="261" y="120" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="EndEvent_07e01q3_di" bpmnElement="End_ConfigScaleOutBB">
-        <dc:Bounds x="694" y="102" width="36" height="36" />
+        <dc:Bounds x="902" y="96" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="702" y="145" width="20" height="14" />
+          <dc:Bounds x="911" y="72" width="19" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_12srn62_di" bpmnElement="SequenceFlow_12srn62">
-        <di:waypoint xsi:type="dc:Point" x="653" y="120" />
-        <di:waypoint xsi:type="dc:Point" x="694" y="120" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_149xlbu_di" bpmnElement="SequenceFlow_149xlbu">
-        <di:waypoint xsi:type="dc:Point" x="361" y="120" />
-        <di:waypoint xsi:type="dc:Point" x="406" y="120" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1juznaa_di" bpmnElement="SequenceFlow_1juznaa">
-        <di:waypoint xsi:type="dc:Point" x="506" y="120" />
-        <di:waypoint xsi:type="dc:Point" x="553" y="120" />
+        <di:waypoint x="845" y="114" />
+        <di:waypoint x="902" y="114" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="828.5" y="89" width="90" height="20" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_1jq0gvz_di" bpmnElement="GetConfigScaleOutParams">
-        <dc:Bounds x="406" y="80" width="100" height="80" />
+        <dc:Bounds x="578" y="74" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_1778mx4_di" bpmnElement="Call-AppC-ConfigScaleOut">
-        <dc:Bounds x="553" y="80" width="100" height="80" />
+        <dc:Bounds x="745" y="74" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_012fw5h_di" bpmnElement="ExclusiveGateway_012fw5h" isMarkerVisible="true">
+        <dc:Bounds x="284" y="168" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="343.5" y="181" width="75" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0g9dxlf_di" bpmnElement="SequenceFlow_0g9dxlf">
+        <di:waypoint x="123" y="192" />
+        <di:waypoint x="156" y="193" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="94.5" y="167.5" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1nq83m8_di" bpmnElement="SequenceFlow_1nq83m8">
+        <di:waypoint x="708" y="266" />
+        <di:waypoint x="920" y="266" />
+        <di:waypoint x="920" y="132" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="769" y="241" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_05q654j_di" bpmnElement="Call-CDS-ConfigScaleOut">
+        <dc:Bounds x="608" y="226" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_10fh4lh_di" bpmnElement="SequenceFlow_10fh4lh">
+        <di:waypoint x="678" y="114" />
+        <di:waypoint x="745" y="114" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="666.5" y="89" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ryvy27_di" bpmnElement="SequenceFlow_1ryvy27">
+        <di:waypoint x="524" y="114" />
+        <di:waypoint x="578" y="114" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="506" y="89" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_00lqfg6_di" bpmnElement="SequenceFlow_00lqfg6">
+        <di:waypoint x="309" y="168" />
+        <di:waypoint x="309" y="114" />
+        <di:waypoint x="424" y="114" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="279" y="131" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0a1qi8e_di" bpmnElement="SequenceFlow_0a1qi8e">
+        <di:waypoint x="309" y="218" />
+        <di:waypoint x="309" y="266" />
+        <di:waypoint x="424" y="266" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="276" y="229" width="24" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1crq0k2_di" bpmnElement="ServiceTask_1crq0k2">
+        <dc:Bounds x="156" y="153" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0jc4gak_di" bpmnElement="SequenceFlow_0jc4gak">
+        <di:waypoint x="256" y="193" />
+        <di:waypoint x="284" y="193" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="270" y="172" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_17r3b9s_di" bpmnElement="ServiceTask_17r3b9s">
+        <dc:Bounds x="424" y="226" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1e4rnn5_di" bpmnElement="SequenceFlow_1e4rnn5">
+        <di:waypoint x="524" y="266" />
+        <di:waypoint x="608" y="266" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="566" y="245" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
