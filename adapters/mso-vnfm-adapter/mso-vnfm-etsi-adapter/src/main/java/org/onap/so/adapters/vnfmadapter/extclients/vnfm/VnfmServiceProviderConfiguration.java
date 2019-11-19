@@ -21,7 +21,6 @@
 package org.onap.so.adapters.vnfmadapter.extclients.vnfm;
 
 import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
-import com.google.gson.Gson;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -29,7 +28,6 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
-import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.UUID;
@@ -43,7 +41,7 @@ import org.apache.http.ssl.SSLContextBuilder;
 import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.aai.domain.yang.EsrVnfm;
 import org.onap.logging.filter.spring.SpringClientPayloadFilter;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.JSON;
+import org.onap.so.adapters.vnfmadapter.extclients.AbstractServiceProviderConfiguration;
 import org.onap.so.configuration.rest.BasicHttpHeadersProvider;
 import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
 import org.onap.so.rest.service.HttpRestServiceProvider;
@@ -58,9 +56,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.GsonHttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
 import org.springframework.web.client.RestTemplate;
@@ -69,7 +64,7 @@ import org.springframework.web.client.RestTemplate;
  * Configures the HttpRestServiceProvider for REST call to a VNFM.
  */
 @Configuration
-public class VnfmServiceProviderConfiguration {
+public class VnfmServiceProviderConfiguration extends AbstractServiceProviderConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(VnfmServiceProviderConfiguration.class);
     private Map<String, HttpRestServiceProvider> mapOfVnfmIdToHttpRestServiceProvider = new ConcurrentHashMap<>();
@@ -133,17 +128,6 @@ public class VnfmServiceProviderConfiguration {
                         : oauthEndpoint);
         resourceDetails.setGrantType("client_credentials");
         return new OAuth2RestTemplate(resourceDetails);
-    }
-
-    private void setGsonMessageConverter(final RestTemplate restTemplate) {
-        final Iterator<HttpMessageConverter<?>> iterator = restTemplate.getMessageConverters().iterator();
-        while (iterator.hasNext()) {
-            if (iterator.next() instanceof MappingJackson2HttpMessageConverter) {
-                iterator.remove();
-            }
-        }
-        final Gson gson = new JSON().getGson();
-        restTemplate.getMessageConverters().add(new GsonHttpMessageConverter(gson));
     }
 
     private void setTrustStore(final RestTemplate restTemplate) {

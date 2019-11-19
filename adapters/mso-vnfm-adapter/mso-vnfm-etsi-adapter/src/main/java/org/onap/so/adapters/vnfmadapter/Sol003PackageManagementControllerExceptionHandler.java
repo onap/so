@@ -1,0 +1,66 @@
+/*-
+ * ============LICENSE_START=======================================================
+ *  Copyright (C) 2019 Nordix Foundation.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * ============LICENSE_END=========================================================
+ */
+
+package org.onap.so.adapters.vnfmadapter;
+
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.ProblemDetails;
+import org.onap.so.adapters.vnfmadapter.rest.Sol003PackageManagementController;
+import org.onap.so.adapters.vnfmadapter.rest.exceptions.EtsiCatalogManagerRequestFailureException;
+import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfPkgConflictException;
+import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfPkgNotFoundException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+/**
+ * Exception Handler for the Package Management Controller {@link Sol003PackageManagementController Sol003Controller}
+ * 
+ * @author gareth.roper@est.tech
+ */
+@ControllerAdvice(assignableTypes = Sol003PackageManagementController.class)
+
+public class Sol003PackageManagementControllerExceptionHandler {
+
+    @ExceptionHandler(EtsiCatalogManagerRequestFailureException.class)
+    public ResponseEntity<ProblemDetails> handleEtsiCatalogManagerRequestFailureException(
+            EtsiCatalogManagerRequestFailureException etsiCatalogManagerRequestFailureException) {
+        final ProblemDetails problemDetails = new ProblemDetails();
+        problemDetails.setDetail(etsiCatalogManagerRequestFailureException.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problemDetails);
+    }
+
+    @ExceptionHandler(VnfPkgConflictException.class)
+    public ResponseEntity<ProblemDetails> handleVnfPkgConflictException(
+            VnfPkgConflictException vnfPkgConflictException) {
+        final ProblemDetails problemDetails = new ProblemDetails();
+        problemDetails.setDetail(vnfPkgConflictException.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(problemDetails);
+    }
+
+    @ExceptionHandler(VnfPkgNotFoundException.class)
+    public ResponseEntity<ProblemDetails> handleVnfPkgNotFoundException(
+            VnfPkgNotFoundException vnfPkgNotFoundException) {
+        final ProblemDetails problemDetails = new ProblemDetails();
+        problemDetails.setDetail(vnfPkgNotFoundException.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problemDetails);
+    }
+
+}
