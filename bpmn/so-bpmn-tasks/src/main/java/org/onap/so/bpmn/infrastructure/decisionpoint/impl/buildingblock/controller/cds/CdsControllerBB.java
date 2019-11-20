@@ -1,38 +1,47 @@
 /*-
  * ============LICENSE_START=======================================================
- * ONAP - SO
- * ================================================================================
- * Copyright (C) 2019 TechMahindra
- * ================================================================================
- * Modifications Copyright (c) 2019 Samsung
- * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Copyright (C) 2019 Nordix
+ *  ================================================================================
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
+ *  SPDX-License-Identifier: Apache-2.0
+ *  ============LICENSE_END=========================================================
  */
 
-package org.onap.so.client.cds;
+package org.onap.so.bpmn.infrastructure.decisionpoint.impl.buildingblock.controller.cds;
 
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.Struct;
+import com.google.protobuf.Struct.Builder;
+import com.google.protobuf.util.JsonFormat;
+import io.grpc.Status;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.ccsdk.cds.controllerblueprints.common.api.ActionIdentifiers;
 import org.onap.ccsdk.cds.controllerblueprints.common.api.CommonHeader;
 import org.onap.ccsdk.cds.controllerblueprints.common.api.EventType;
 import org.onap.ccsdk.cds.controllerblueprints.processing.api.ExecutionServiceInput;
 import org.onap.ccsdk.cds.controllerblueprints.processing.api.ExecutionServiceOutput;
+import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.onap.so.bpmn.infrastructure.decisionpoint.api.ControllerContext;
+import org.onap.so.bpmn.infrastructure.decisionpoint.api.ControllerRunnable;
+import org.onap.so.bpmn.infrastructure.decisionpoint.api.controller.ControllerPreparable;
 import org.onap.so.client.PreconditionFailedException;
 import org.onap.so.client.RestPropertiesLoader;
+import org.onap.so.client.cds.CDSProcessingClient;
+import org.onap.so.client.cds.CDSProcessingListener;
+import org.onap.so.client.cds.CDSProperties;
 import org.onap.so.client.cds.beans.AbstractCDSPropertiesBean;
 import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.exception.ExceptionBuilder;
@@ -40,20 +49,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.Struct;
-import com.google.protobuf.Struct.Builder;
-import com.google.protobuf.util.JsonFormat;
-import io.grpc.Status;
 
 /**
- * Util class to support Call to CDS client
+ * This component is used to run against CDS controller.
  *
+ * It's similiar to {@link org.onap.so.client.cds.AbstractCDSProcessingBBUtils} for demo purpose.
  */
 @Component
-public class AbstractCDSProcessingBBUtils implements CDSProcessingListener {
+public class CdsControllerBB implements ControllerRunnable<BuildingBlockExecution>, CDSProcessingListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(AbstractCDSProcessingBBUtils.class);
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private static final String SUCCESS = "Success";
     private static final String FAILED = "Failed";
@@ -68,14 +73,39 @@ public class AbstractCDSProcessingBBUtils implements CDSProcessingListener {
     private final AtomicReference<String> cdsResponse = new AtomicReference<>();
 
     @Autowired
-    protected ExceptionBuilder exceptionUtil;
+    private ExceptionBuilder exceptionUtil;
+
+    @Autowired(required = false)
+    private List<ControllerPreparable<BuildingBlockExecution>> prepareList;
+
+    @Override
+    public Boolean understand(ControllerContext<BuildingBlockExecution> context) {
+        return context.getControllerActor().equalsIgnoreCase("cds");
+    }
+
+    @Override
+    public Boolean ready(ControllerContext<BuildingBlockExecution> context) {
+        return true;
+    }
+
+    @Override
+    public void prepare(ControllerContext<BuildingBlockExecution> context) {
+        prepareList.stream().filter(prepare -> prepare.understand(context))
+                .forEach(prepare -> prepare.prepare(context));
+    }
+
+    @Override
+    public void run(ControllerContext<BuildingBlockExecution> context) {
+        constructExecutionServiceInputObject(context.getExecution());
+        sendRequestToCDSClient(context.getExecution());
+    }
 
     /**
      * Extracting data from execution object and building the ExecutionServiceInput Object
-     * 
+     *
      * @param execution DelegateExecution object
      */
-    public void constructExecutionServiceInputObject(DelegateExecution execution) {
+    public void constructExecutionServiceInputObject(BuildingBlockExecution execution) {
         logger.trace("Start AbstractCDSProcessingBBUtils.preProcessRequest ");
 
         try {
@@ -114,10 +144,10 @@ public class AbstractCDSProcessingBBUtils implements CDSProcessingListener {
 
     /**
      * get the executionServiceInput object from execution and send a request to CDS Client and wait for TIMEOUT period
-     * 
+     *
      * @param execution DelegateExecution object
      */
-    public void sendRequestToCDSClient(DelegateExecution execution) {
+    public void sendRequestToCDSClient(BuildingBlockExecution execution) {
 
         logger.trace("Start AbstractCDSProcessingBBUtils.sendRequestToCDSClient ");
         try {
@@ -157,7 +187,6 @@ public class AbstractCDSProcessingBBUtils implements CDSProcessingListener {
 
     /**
      * Get Response from CDS Client
-     * 
      */
     @Override
     public void onMessage(ExecutionServiceOutput message) {
@@ -194,5 +223,4 @@ public class AbstractCDSProcessingBBUtils implements CDSProcessingListener {
         logger.error("Failed processing blueprint {}", status, t);
         cdsResponse.set(EXCEPTION);
     }
-
 }
