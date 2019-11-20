@@ -55,6 +55,8 @@ import org.onap.so.bpmn.infrastructure.adapter.vnf.tasks.VnfAdapterImpl;
 import org.onap.so.bpmn.infrastructure.appc.tasks.AppcOrchestratorPreProcessor;
 import org.onap.so.bpmn.infrastructure.appc.tasks.AppcRunTasks;
 import org.onap.so.bpmn.infrastructure.audit.AuditTasks;
+import org.onap.so.bpmn.infrastructure.decisionpoint.impl.buildingblock.ControllerExecutionBB;
+import org.onap.so.bpmn.infrastructure.decisionpoint.impl.camunda.ControllerExecutionDE;
 import org.onap.so.bpmn.infrastructure.flowspecific.tasks.ActivateVfModule;
 import org.onap.so.bpmn.infrastructure.flowspecific.tasks.AssignNetwork;
 import org.onap.so.bpmn.infrastructure.flowspecific.tasks.AssignNetworkBBUtils;
@@ -253,6 +255,12 @@ public abstract class BaseBPMNTest {
 
     @MockBean
     protected ManualHandlingTasks manualHandlingTasks;
+
+    @MockBean
+    protected ControllerExecutionBB controllerExecutionBB;
+
+    @MockBean
+    protected ControllerExecutionDE controllerExecutionDE;
 
     @LocalServerPort
     protected int port;
