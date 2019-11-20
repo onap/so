@@ -15,6 +15,7 @@
         "blueprintVersion": "1.0.0",
         "skipPostInstConf": false,
         "creationTimestamp": "2019-03-08T12:00:29.000+0000",
+        "controllerActor": "cds",
         "_links": {
           "self": {
             "href": "http://localhost:41023/pnfResourceCustomization/68dc9a92-214c-11e7-93ae-92361f002680"
