@@ -13,6 +13,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.source>1.8</maven.compiler.source>
+    <grpc.version>1.17.1</grpc.version>
   </properties>
   <build>
     <plugins>
@@ -163,6 +164,12 @@
       <groupId>nl.jqno.equalsverifier</groupId>
       <artifactId>equalsverifier</artifactId>
       <version>2.5.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.grpc</groupId>
+      <artifactId>grpc-testing</artifactId>
+      <version>${grpc.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

@@ -68,7 +68,7 @@ public class AbstractCDSProcessingBBUtils implements CDSProcessingListener {
     private final AtomicReference<String> cdsResponse = new AtomicReference<>();
 
     @Autowired
-    private ExceptionBuilder exceptionUtil;
+    protected ExceptionBuilder exceptionUtil;
 
     /**
      * Extracting data from execution object and building the ExecutionServiceInput Object
