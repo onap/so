@@ -1,15 +1,20 @@
-/*
- * ============LICENSE_START======================================================= Copyright (C) 2019 Nordix
- * Foundation. ================================================================================ Licensed under the
- * Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may
- * obtain a copy of the License at
+/*-
+ * ============LICENSE_START=======================================================
+ *  Copyright (C) 2019 Nordix
+ *  ================================================================================
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language governing permissions and limitations under the
- * License.
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  *
- * SPDX-License-Identifier: Apache-2.0 ============LICENSE_END=========================================================
+ *  SPDX-License-Identifier: Apache-2.0
+ *  ============LICENSE_END=========================================================
  */
 
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
@@ -17,6 +22,7 @@ package org.onap.so.bpmn.infrastructure.pnf.delegate;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.MODEL_UUID;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PRC_BLUEPRINT_NAME;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PRC_BLUEPRINT_VERSION;
+import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PRC_CONTROLLER_ACTOR;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PRC_CUSTOMIZATION_UUID;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PRC_INSTANCE_NAME;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.SERVICE_MODEL_INFO;
@@ -75,6 +81,7 @@ public class ConfigCheckerDelegate implements JavaDelegate {
                 delegateExecution.setVariable(PRC_CUSTOMIZATION_UUID,
                         pnfResourceCustomization.getModelCustomizationUUID());
                 delegateExecution.setVariable(PRC_INSTANCE_NAME, pnfResourceCustomization.getModelInstanceName());
+                delegateExecution.setVariable(PRC_CONTROLLER_ACTOR, pnfResourceCustomization.getControllerActor());
             } else {
                 logger.warn("Unable to find the PNF resource customizations of model service UUID: {}",
                         serviceModelUuid);
