@@ -215,3 +215,9 @@ camunda:
     metrics:
       enabled: false
       db-reporter-activate: false
+# CDSProcessingClient
+cds:
+  endpoint: localhost
+  port: 11012
+  auth: Basic Y2NzZGthcHBzOmNjc2RrYXBwcw==
+  timeout: 60

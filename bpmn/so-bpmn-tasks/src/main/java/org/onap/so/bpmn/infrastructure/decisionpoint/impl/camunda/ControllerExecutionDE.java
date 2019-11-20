@@ -1,0 +1,133 @@
+/*-
+ * ============LICENSE_START=======================================================
+ *  Copyright (C) 2019 Nordix
+ *  ================================================================================
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *  SPDX-License-Identifier: Apache-2.0
+ *  ============LICENSE_END=========================================================
+ */
+package org.onap.so.bpmn.infrastructure.decisionpoint.impl.camunda;
+
+import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.camunda.bpm.engine.delegate.JavaDelegate;
+import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.bpmn.infrastructure.decisionpoint.api.ControllerContext;
+import org.onap.so.bpmn.infrastructure.decisionpoint.api.ControllerRunnable;
+import org.onap.so.bpmn.infrastructure.decisionpoint.impl.AbstractControllerExecution;
+import org.onap.so.db.catalog.beans.ControllerSelectionReference;
+import org.onap.so.db.catalog.beans.PnfResourceCustomization;
+import org.onap.so.db.catalog.beans.VnfResourceCustomization;
+import org.onap.so.db.catalog.client.CatalogDbClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+/**
+ * This class is used for camunda {@ref DelegateExecution} API based controller execution.
+ *
+ * The following parameters are expected in the {@ref DelegateExecution} context,
+ *
+ * action: action to be executed scope: type of the resource, i.e, pnf, vnf, vf resource_customization_uuid: resource
+ * customization UUID
+ */
+@Component
+public class ControllerExecutionDE extends AbstractControllerExecution<DelegateExecution> implements JavaDelegate {
+
+    @Autowired
+    protected CatalogDbClient catalogDbClient;
+
+    @Override
+    public void execute(final DelegateExecution execution) {
+        ControllerContext<DelegateExecution> controllerContext = buildControllerContext(execution);
+        controllerExecute(controllerContext);
+    }
+
+    /**
+     * this method is used to get the controller actor, there could be few places to get the actor(ordered by priority),
+     *
+     * 1. From execution context 2. From Database 3. From actor selection table
+     *
+     * @param execution
+     * @param controllerScope
+     * @param resourceCustomizationUuid
+     * @param controllerAction
+     * @return
+     */
+    protected String getControllerActor(DelegateExecution execution, String controllerScope,
+            String resourceCustomizationUuid, String controllerAction) {
+
+        String controllerActor = "";
+
+        /**
+         * Firstly, check the execution context for actor parameter.
+         */
+        if (execution.hasVariable(CONTROLLER_ACTOR_PARAM)) {
+            controllerActor = String.valueOf(execution.getVariable(CONTROLLER_ACTOR_PARAM));
+        } else {
+
+            /**
+             * secondly, if no meanful actor from execution context, getting from resource table in database.
+             */
+            switch (controllerScope.toLowerCase()) {
+                case "pnf":
+                    PnfResourceCustomization pnfResourceCustomization = catalogDbClient
+                            .getPnfResourceCustomizationByModelCustomizationUUID(resourceCustomizationUuid);
+                    controllerActor = pnfResourceCustomization.getControllerActor();
+                    break;
+                case "vnf":
+                case "vf":
+                    VnfResourceCustomization vnfResourceCustomization = catalogDbClient
+                            .getVnfResourceCustomizationByModelCustomizationUUID(resourceCustomizationUuid);
+                    controllerActor = vnfResourceCustomization.getControllerActor();
+                    break;
+                default:
+                    logger.warn("Unrecognized scope: {}", controllerScope);
+            }
+            /**
+             * Lastly, can NOT find the controller actor information from resource customization table.
+             */
+            if (controllerActor == null || controllerActor.equals("")) {
+                ControllerSelectionReference reference = catalogDbClient
+                        .getControllerSelectionReferenceByVnfTypeAndActionCategory(controllerScope, controllerAction);
+                controllerActor = reference.getControllerName();
+            }
+        }
+        return controllerActor;
+    }
+
+    @Override
+    public void controllerExecute(ControllerContext<DelegateExecution> controllerContext) {
+        ControllerRunnable controller = getController(controllerContext);
+        if (controller == null) {
+            exceptionBuilder.buildAndThrowWorkflowException(controllerContext.getExecution(), 9000,
+                    "Unable to find the controller implementation", ONAPComponents.SO);
+        } else {
+            if (controller.ready(controllerContext)) {
+                controller.prepare(controllerContext);
+                controller.run(controllerContext);
+            } else {
+                exceptionBuilder.buildAndThrowWorkflowException(controllerContext.getExecution(), 9001,
+                        "Controller is NOT Ready for the action", ONAPComponents.SO);
+            }
+        }
+    }
+
+    @Override
+    protected String getParameterFromExecution(DelegateExecution execution, String parameterName) {
+        if (execution.hasVariable(parameterName)) {
+            String paramValue = String.valueOf(execution.getVariable(parameterName));
+            return paramValue;
+        } else {
+            return "";
+        }
+    }
+}
