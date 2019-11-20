@@ -1,0 +1,15 @@
+{
+  "name": "GenericControllerExecution",
+  "description": "Generic controller execution with BuildingBlockExecution context against controller northbound interface",
+  "categoryList": [
+    "VNF",
+    "PNF"
+  ],
+  "inputParameters": [],
+  "outputParameters": [
+    {
+      "name": "WorkflowException",
+      "type": "WorkflowException"
+    }
+  ]
+}
