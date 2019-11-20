@@ -68,7 +68,7 @@ public class AbstractCDSProcessingBBUtils {
     private static final String EXCEPTION = "Exception";
 
     @Autowired
-    private ExceptionBuilder exceptionUtil;
+    protected ExceptionBuilder exceptionUtil;
 
     /**
      * Extracting data from execution object and building the ExecutionServiceInput Object
