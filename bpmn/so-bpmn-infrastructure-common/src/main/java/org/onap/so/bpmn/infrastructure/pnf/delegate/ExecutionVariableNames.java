@@ -5,6 +5,7 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Modifications Copyright 2018 Nokia
+ * Modifications Copyright 2019 Nordix
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,6 +52,8 @@ public class ExecutionVariableNames {
     public static final String PRC_BLUEPRINT_VERSION = "PRC_blueprintVersion";
     public static final String PRC_CUSTOMIZATION_UUID = "PRC_customizationUuid";
     public static final String PRC_INSTANCE_NAME = "PRC_instanceName";
+    public static final String PRC_CONTROLLER_ACTOR = "actor";
+
 
     /**
      * Variable used to contain skipPostInstantiationConfiguration flag.
