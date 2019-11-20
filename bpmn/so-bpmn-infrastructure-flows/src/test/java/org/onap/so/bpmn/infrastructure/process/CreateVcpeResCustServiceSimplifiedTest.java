@@ -96,6 +96,8 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
 
         variables.put("mso-request-id", msoRequestId);
 
+        variables.put("actor", "cds");
+
         /**
          * Create Business key for the process instance
          */
@@ -105,7 +107,6 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
 
     }
 
-    @Ignore
     @Test
     public void workflow_validInput_expectedOuput() throws InterruptedException {
 
