@@ -86,7 +86,6 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 public class ServiceInstancesTest extends BaseTest {
 
     private final ObjectMapper mapper = new ObjectMapper();
-    private ObjectMapper errorMapper = new ObjectMapper();
 
     @Autowired
     private ServiceInstances servInstances;
@@ -108,8 +107,6 @@ public class ServiceInstancesTest extends BaseTest {
     @Before
     public void beforeClass() {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        errorMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        errorMapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
         // set headers
         headers = new HttpHeaders();
         headers.set(ONAPLogConstants.Headers.PARTNER_NAME, "test_name");
@@ -124,7 +121,7 @@ public class ServiceInstancesTest extends BaseTest {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-        wireMockServer.stubFor(post(urlMatching(".*/infraActiveRequests.*")).willReturn(aResponse()
+        wireMockServer.stubFor(post(urlMatching(".*/infraActiveRequests/")).willReturn(aResponse()
                 .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).withStatus(HttpStatus.SC_OK)));
         Mockito.doReturn(null).when(requestsDbClient).getInfraActiveRequestbyRequestId(Mockito.any());
     }
@@ -907,7 +904,7 @@ public class ServiceInstancesTest extends BaseTest {
         ResponseEntity<String> response = sendRequest(inputStream("/NoVnfResource.json"), uri, HttpMethod.POST);
 
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
-        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
+        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
         assertEquals("No valid vnfResource is specified", realResponse.getServiceException().getText());
     }
 
@@ -943,6 +940,45 @@ public class ServiceInstancesTest extends BaseTest {
         uri = servInstanceuri + "v7"
                 + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/vnfs/ff305d54-75b4-431b-adb2-eb6b9e5ff000/replace";
         ResponseEntity<String> response = sendRequest(inputStream("/ReplaceVnf.json"), uri, HttpMethod.POST, headers);
+
+        assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
+        ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+    }
+
+    @Test
+    public void replaceVnfInstanceNoCloudConfig() throws IOException {
+        wireMockServer.stubFor(post(urlMatching(".*/infraActiveRequests/v1/getInfraActiveRequests.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBodyFile("infra/VnfLookup.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+        wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+        wireMockServer.stubFor(get(urlMatching(
+                ".*/vnfResourceCustomization/search/findByModelCustomizationUUID[?]MODEL_CUSTOMIZATION_UUID=68dc9a92-214c-11e7-93ae-92361f002671"))
+                        .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                                .withBody(getWiremockResponseForCatalogdb(
+                                        "vnfResourceCustomization_ReplaceVnf_Response.json"))
+                                .withStatus(org.apache.http.HttpStatus.SC_OK)));
+        wireMockServer.stubFor(get(urlMatching(".*/vnfResourceCustomization/1/vnfResources"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(getWiremockResponseForCatalogdb("vnfResources_ReplaceVnf_Response.json"))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+        wireMockServer.stubFor(get(urlMatching(
+                ".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction[?]nfRole=GR-API-DEFAULT&action=replaceInstance"))
+                        .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                                .withBody(getWiremockResponseForCatalogdb("vnfRecipeReplaceInstance_Response.json"))
+                                .withStatus(org.apache.http.HttpStatus.SC_OK)));
+        // expected response
+        ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
+        RequestReferences requestReferences = new RequestReferences();
+        requestReferences.setInstanceId("1882939");
+        requestReferences.setRequestSelfLink(createExpectedSelfLink("v7", "32807a28-1a14-4b88-b7b3-2950918aa76d"));
+        expectedResponse.setRequestReferences(requestReferences);
+        uri = servInstanceuri + "v7"
+                + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/vnfs/ff305d54-75b4-431b-adb2-eb6b9e5ff000/replace";
+        ResponseEntity<String> response =
+                sendRequest(inputStream("/ReplaceVnfNoCloudConfig.json"), uri, HttpMethod.POST, headers);
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
@@ -1340,7 +1376,7 @@ public class ServiceInstancesTest extends BaseTest {
                 sendRequest(inputStream("/VfModuleInvalid.json"), uri, HttpMethod.POST, headers);
 
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
-        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
+        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
         assertEquals("No valid vfModuleCustomization is specified", realResponse.getServiceException().getText());
     }
 
@@ -1374,6 +1410,44 @@ public class ServiceInstancesTest extends BaseTest {
                 + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/vnfs/ff305d54-75b4-431b-adb2-eb6b9e5ff000/vfModules/ff305d54-75b4-431b-adb2-eb6b9e5ff000/replace";
         ResponseEntity<String> response =
                 sendRequest(inputStream("/ReplaceVfModule.json"), uri, HttpMethod.POST, headers);
+
+        assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
+        ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+    }
+
+    @Test
+    public void replaceVfModuleInstanceNoCloudConfigurationTest() throws IOException {
+        wireMockServer.stubFor(
+                get(urlPathEqualTo("/aai/v17/network/generic-vnfs/generic-vnf/ff305d54-75b4-431b-adb2-eb6b9e5ff000"))
+                        .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                                .withBodyFile("infra/Vnf.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+        wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+        wireMockServer
+                .stubFor(get(urlMatching(".*/vfModule/search/findFirstVfModuleByModelInvariantUUIDAndModelVersion[?]"
+                        + "modelInvariantUUID=78ca26d0-246d-11e7-93ae-92361f002671&modelVersion=2"))
+                                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                                        .withBody(getWiremockResponseForCatalogdb("vfModule_Response.json"))
+                                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+        wireMockServer.stubFor(get(urlMatching(
+                ".*/vnfComponentsRecipe/search/findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction"
+                        + "[?]vfModuleModelUUID=GR-API-DEFAULT&vnfComponentType=vfModule&action=replaceInstance"))
+                                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                                        .withBody(getWiremockResponseForCatalogdb(
+                                                "vnfComponentRecipeDeleteVfModule_Response.json"))
+                                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+        // expected response
+        ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
+        RequestReferences requestReferences = new RequestReferences();
+        requestReferences.setInstanceId("1882939");
+        requestReferences.setRequestSelfLink(createExpectedSelfLink("v7", "32807a28-1a14-4b88-b7b3-2950918aa76d"));
+        expectedResponse.setRequestReferences(requestReferences);
+        uri = servInstanceuri + "v7"
+                + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/vnfs/ff305d54-75b4-431b-adb2-eb6b9e5ff000/vfModules/ff305d54-75b4-431b-adb2-eb6b9e5ff000/replace";
+        ResponseEntity<String> response =
+                sendRequest(inputStream("/ReplaceVfModuleNoCloudConfig.json"), uri, HttpMethod.POST, headers);
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
@@ -2143,7 +2217,7 @@ public class ServiceInstancesTest extends BaseTest {
                 sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST, headers);
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
-        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
+        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
         assertEquals("Request Failed due to BPEL error with HTTP Status = 202{\"instanceId\": \"1882939\"}",
                 realResponse.getServiceException().getText());
     }
@@ -2178,7 +2252,7 @@ public class ServiceInstancesTest extends BaseTest {
                 sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST, headers);
 
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
-        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
+        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
         assertEquals("Exception caught mapping Camunda JSON response to object",
                 realResponse.getServiceException().getText());
     }
@@ -2211,7 +2285,7 @@ public class ServiceInstancesTest extends BaseTest {
                 sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST, headers);
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
-        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
+        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
         assertTrue(realResponse.getServiceException().getText()
                 .contains("<aetgt:ErrorMessage>Exception in create execution list 500"));
     }
@@ -2379,7 +2453,7 @@ public class ServiceInstancesTest extends BaseTest {
                 sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST, headers);
 
         assertEquals(Response.Status.NOT_ACCEPTABLE.getStatusCode(), response.getStatusCode().value());
-        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
+        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
         assertEquals("Exception caught mapping Camunda JSON response to object",
                 realResponse.getServiceException().getText());
     }
@@ -2395,7 +2469,7 @@ public class ServiceInstancesTest extends BaseTest {
                 sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST, headers);
 
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
-        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
+        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
         assertEquals(
                 "Unable to check for duplicate instance due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException$InternalServerError: 500 Server Error",
                 realResponse.getServiceException().getText());
@@ -2418,7 +2492,7 @@ public class ServiceInstancesTest extends BaseTest {
                 sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST, headers);
 
         assertEquals(Response.Status.CONFLICT.getStatusCode(), response.getStatusCode().value());
-        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
+        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
         assertEquals(
                 "Error: Locked instance - This service (testService9) already has a request being worked with a status of UNLOCKED (RequestId - f0a35706-efc4-4e27-80ea-a995d7a2a40f). The existing request must finish or be cleaned up before proceeding.",
                 realResponse.getServiceException().getText());
@@ -2440,7 +2514,7 @@ public class ServiceInstancesTest extends BaseTest {
                 sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST, headers);
 
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
-        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
+        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
         assertEquals(
                 "Unable to get process-instance history from Camunda for requestId: f0a35706-efc4-4e27-80ea-a995d7a2a40f due to error: org.springframework.web.client.HttpServerErrorException$InternalServerError: 500 Server Error",
                 realResponse.getServiceException().getText());
@@ -2457,7 +2531,7 @@ public class ServiceInstancesTest extends BaseTest {
                 sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST, headers);
 
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
-        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
+        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
         assertEquals(
                 "Unable to check for duplicate instance due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException$InternalServerError: 500 Server Error",
                 realResponse.getServiceException().getText());
@@ -2489,7 +2563,7 @@ public class ServiceInstancesTest extends BaseTest {
                 sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST, headers);
 
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
-        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
+        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
         assertEquals(
                 "Unable to save instance to db due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException$InternalServerError: 500 Server Error",
                 realResponse.getServiceException().getText());
@@ -2509,7 +2583,7 @@ public class ServiceInstancesTest extends BaseTest {
                 sendRequest(inputStream("/ServiceInstancePortConfiguration.json"), uri, HttpMethod.POST, headers);
 
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
-        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
+        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
         assertEquals(
                 "Unable to save instance to db due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException$InternalServerError: 500 Server Error",
                 realResponse.getServiceException().getText());
@@ -2526,7 +2600,7 @@ public class ServiceInstancesTest extends BaseTest {
                 sendRequest(inputStream("/ServiceInstanceParseFail.json"), uri, HttpMethod.POST, headers);
 
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
-        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
+        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
         assertEquals(
                 "Unable to save instance to db due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException$InternalServerError: 500 Server Error",
                 realResponse.getServiceException().getText());
@@ -2631,7 +2705,7 @@ public class ServiceInstancesTest extends BaseTest {
         ResponseEntity<String> response = sendRequest(null, uri, HttpMethod.DELETE);
         // then
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
-        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
+        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
         assertEquals(realResponse.getServiceException().getText(), "No valid X-ONAP-RequestID header is specified");
     }
 
@@ -2644,7 +2718,7 @@ public class ServiceInstancesTest extends BaseTest {
         ResponseEntity<String> response = sendRequest(null, uri, HttpMethod.DELETE, noPartnerHeaders);
         // then
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
-        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
+        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
         assertEquals(realResponse.getServiceException().getText(), "No valid X-ONAP-PartnerName header is specified");
     }
 
@@ -2663,7 +2737,7 @@ public class ServiceInstancesTest extends BaseTest {
 
         // then
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
-        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
+        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
         assertEquals(realResponse.getServiceException().getText(), "No valid X-RequestorID header is specified");
     }
 
@@ -2751,7 +2825,7 @@ public class ServiceInstancesTest extends BaseTest {
         ResponseEntity<String> response = sendRequest(inputStream("/UpdateNetwork.json"), uri, HttpMethod.PUT, headers);
 
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
-        RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
+        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
         assertEquals(realResponse.getServiceException().getText(),
                 "No valid modelCustomizationId for networkResourceCustomization lookup is specified");
     }
@@ -2933,5 +3007,20 @@ public class ServiceInstancesTest extends BaseTest {
         Actions action = servInstances.handleReplaceInstance(Action.replaceInstance, sir);
         assertEquals(Action.replaceInstanceRetainAssignments, action);
     }
+
+    @Test
+    public void getCloudConfigurationAAIEntityNotFoundTest() throws IOException {
+        RequestError expectedResponse =
+                mapper.readValue(inputStream("/AAIEntityNotFoundResponse.json"), RequestError.class);
+        uri = servInstanceuri + "v7"
+                + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/vnfs/ff305d54-75b4-431b-adb2-eb6b9e5ff000/vfModules/ff305d54-75b4-431b-adb2-eb6b9e5ff000/replace";
+        ResponseEntity<String> response =
+                sendRequest(inputStream("/ReplaceVfModuleNoCloudConfig.json"), uri, HttpMethod.POST, headers);
+
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
+        RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
+        assertThat(expectedResponse, sameBeanAs(realResponse));
+    }
+
 }
 

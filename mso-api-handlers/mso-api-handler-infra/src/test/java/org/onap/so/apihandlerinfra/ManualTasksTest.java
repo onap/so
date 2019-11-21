@@ -161,7 +161,6 @@ public class ManualTasksTest extends BaseTest {
                 restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, String.class);
 
         ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
@@ -198,7 +197,6 @@ public class ManualTasksTest extends BaseTest {
                 restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, String.class);
 
         ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
@@ -240,7 +238,6 @@ public class ManualTasksTest extends BaseTest {
 
 
         ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);

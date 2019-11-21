@@ -140,18 +140,7 @@ public class MsoRequest {
             }
             re.setServiceException(se);
         }
-
-        String requestErrorStr = null;
-
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.setSerializationInclusion(Include.NON_DEFAULT);
-            requestErrorStr = mapper.writeValueAsString(re);
-        } catch (Exception e) {
-            logger.error("Exception in buildServiceErrorResponse writing exceptionType to string ", e);
-        }
-
-        return builder.buildResponse(httpResponseCode, null, requestErrorStr, version);
+        return builder.buildResponse(httpResponseCode, null, re, version);
     }
 
 

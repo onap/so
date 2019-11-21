@@ -48,11 +48,6 @@ public class CloudConfigurationValidation implements ValidationRule {
                                 || action == Action.updateInstance)) {
                     throw new ValidationException("cloudConfiguration");
                 }
-                if ((requestScope.equalsIgnoreCase(ModelType.vnf.name())
-                        || requestScope.equalsIgnoreCase(ModelType.vfModule.name()))
-                        && action == Action.replaceInstance) {
-                    throw new ValidationException("cloudConfiguration");
-                }
                 if (requestScope.equalsIgnoreCase(ModelType.configuration.name())
                         && (action == Action.enablePort || action == Action.disablePort
                                 || action == Action.activateInstance || action == Action.deactivateInstance)) {

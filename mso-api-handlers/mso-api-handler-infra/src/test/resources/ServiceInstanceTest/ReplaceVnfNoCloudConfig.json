@@ -1,0 +1,58 @@
+{
+    "vnfInstanceId": "ff305d54-75b4-431b-adb2-eb6b9e5ff000",
+    "requestDetails": {
+        "modelInfo": {
+            "modelType": "vnf",
+            "modelInvariantId": "ff5256d2-5a33-55df-13ab-12abad84e7ff",
+            "modelName": "vSAMP12..base..module-0",
+            "modelVersion": "1",
+            "modelVersionId": "1",
+            "modelCustomizationId": "68dc9a92-214c-11e7-93ae-92361f002671"
+        },
+        "requestInfo": {
+            "instanceName": "VNFTEST-10",
+            "source": "VID",
+            "suppressRollback": true,
+            "requestorId": "xxxxxx",
+            "productFamilyId": "FamilyID"
+        },
+        "relatedInstanceList": [
+        {
+            "relatedInstance": {
+               "instanceId": "f7ce78bb-423b-11e7-93f8-0050569a7968", 
+               "modelInfo": {   
+                  "modelType": "service",
+                  "modelInvariantId": "ff3514e3-5a33-55df-13ab-12abad84e7ff",
+                  "modelVersionId": "fe6985cd-ea33-3346-ac12-ab121484a3fe",
+                  "modelName": "vSAMP12",
+                  "modelVersion": "1.0"
+               }
+            }
+         },
+         {
+            "relatedInstance": {
+               "instanceId": "ff305d54-75b4-431b-adb2-eb6b9e5ff000",
+                "instanceDirection": "source",
+               "modelInfo": {   
+                  "modelType": "vnf",
+                  "modelInvariantId": "ff5256d1-5a33-55df-13ab-12abad84e7ff",
+                  "modelVersionId": "fe6478e4-ea33-3346-ac12-ab121484a3fe",
+                  "modelName": "vSAMP12",
+                  "modelVersion": "1.0",
+                  "modelCustomizationId": "b0ed83ec-b7b4-4c70-91c2-63feeaf8609b"
+               }
+            }
+         }
+         ],
+        "requestParameters": {
+            "aLaCarte": true,
+            "userParams": []
+        },
+        "platform": {
+            "platformName": "platformName"
+        },
+        "lineOfBusiness": {
+            "lineOfBusinessName": "lobName"
+        }
+    }
+}

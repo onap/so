@@ -20,7 +20,9 @@
 
 package org.onap.so.apihandlerinfra.infra.rest.exception;
 
-public class AAIEntityNotFound extends Exception {
+import org.onap.so.apihandlerinfra.exceptions.ApiException;
+
+public class AAIEntityNotFound extends ApiException {
 
     public AAIEntityNotFound(String errorMessage) {
         super(errorMessage);

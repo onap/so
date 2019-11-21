@@ -46,6 +46,8 @@ import org.onap.so.apihandler.common.RequestClientParameter;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.RequestDbFailureException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
+import org.onap.so.apihandlerinfra.infra.rest.BpmnRequestBuilder;
+import org.onap.so.apihandlerinfra.infra.rest.exception.CloudConfigurationNotFoundException;
 import org.onap.so.apihandlerinfra.infra.rest.handler.AbstractRestHandler;
 import org.onap.so.apihandlerinfra.infra.rest.validators.RequestValidatorListenerRunner;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
@@ -56,6 +58,7 @@ import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.exceptions.ValidationException;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
+import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.ModelType;
 import org.onap.so.serviceinstancebeans.RequestDetails;
@@ -106,6 +109,9 @@ public class ServiceInstances extends AbstractRestHandler {
 
     @Autowired
     private RequestValidatorListenerRunner requestValidatorListenerRunner;
+
+    @Autowired
+    private BpmnRequestBuilder bpmnRequestBuilder;
 
     @POST
     @Path("/{version:[vV][5-7]}/serviceInstances")
@@ -825,9 +831,19 @@ public class ServiceInstances extends AbstractRestHandler {
         if (sir.getRequestDetails().getRequestParameters() != null) {
             aLaCarte = sir.getRequestDetails().getRequestParameters().getALaCarte();
         }
+
         requestHandlerUtils.parseRequest(sir, instanceIdMap, action, version, requestJSON, aLaCarte, requestId,
                 currentActiveReq);
+        if ((action == Action.replaceInstance || action == Action.replaceInstanceRetainAssignments)
+                && (requestScope.equals(ModelType.vnf.toString()) || requestScope.equals(ModelType.vfModule.toString()))
+                && sir.getRequestDetails().getCloudConfiguration() == null) {
+            CloudConfiguration cloudConfiguration =
+                    getCloudConfigurationOnReplace(requestScope, instanceIdMap, currentActiveReq);
+            sir.getRequestDetails().setCloudConfiguration(cloudConfiguration);
+            setCloudConfigurationCurrentActiveRequest(cloudConfiguration, currentActiveReq);
+        }
         requestHandlerUtils.setInstanceId(currentActiveReq, requestScope, null, instanceIdMap);
+
 
         int requestVersion = Integer.parseInt(version.substring(1));
         String instanceName = null;
@@ -910,7 +926,9 @@ public class ServiceInstances extends AbstractRestHandler {
                     ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e).errorInfo(errorLoggerInfo).build();
         }
 
-        if (!requestScope.equalsIgnoreCase(ModelType.service.name()) && action != Action.recreateInstance) {
+        if (!requestScope.equalsIgnoreCase(ModelType.service.name()) && action != Action.recreateInstance
+                && !(requestScope.equalsIgnoreCase(ModelType.vnf.name())
+                        && (action == Action.replaceInstance || action == Action.replaceInstanceRetainAssignments))) {
             aLaCarte = true;
         } else if (aLaCarte == null) {
             aLaCarte = false;
@@ -1041,7 +1059,6 @@ public class ServiceInstances extends AbstractRestHandler {
         String serviceInstanceId;
         Boolean aLaCarte = null;
         String apiVersion = version.substring(1);
-        boolean inProgress = false;
         ServiceInstancesRequest sir;
 
         sir = requestHandlerUtils.convertJsonToServiceInstanceRequest(requestJSON, action, requestId, requestUri);
@@ -1051,6 +1068,7 @@ public class ServiceInstances extends AbstractRestHandler {
         if (sir.getRequestDetails().getRequestParameters() != null) {
             aLaCarte = sir.getRequestDetails().getRequestParameters().getALaCarte();
         }
+
         requestHandlerUtils.parseRequest(sir, instanceIdMap, action, version, requestJSON, aLaCarte, requestId,
                 currentActiveReq);
         requestHandlerUtils.setInstanceId(currentActiveReq, requestScope, null, instanceIdMap);
@@ -1134,4 +1152,35 @@ public class ServiceInstances extends AbstractRestHandler {
                 requestScope);
     }
 
+    protected CloudConfiguration getCloudConfigurationOnReplace(String requestScope,
+            HashMap<String, String> instanceIdMap, InfraActiveRequests currentActiveReq) throws ApiException {
+        logger.debug("Replace request is missing cloudConfiguration, autofilling from create.");
+        CloudConfiguration cloudConfiguration = null;
+        if (requestScope.equals(ModelType.vfModule.toString())) {
+            cloudConfiguration = bpmnRequestBuilder.getCloudConfigurationVfModuleReplace(
+                    instanceIdMap.get("vnfInstanceId"), instanceIdMap.get("vfModuleInstanceId"));
+        } else {
+            cloudConfiguration = bpmnRequestBuilder.mapCloudConfigurationVnf(instanceIdMap.get("vnfInstanceId"));
+        }
+
+        if (cloudConfiguration == null) {
+            String errorMessage = "CloudConfiguration not found during autofill for replace request.";
+            logger.error(errorMessage);
+            updateStatus(currentActiveReq, Status.FAILED, errorMessage);
+            throw new CloudConfigurationNotFoundException(
+                    "CloudConfiguration not found during autofill for replace request.");
+        }
+        return cloudConfiguration;
+    }
+
+    protected void setCloudConfigurationCurrentActiveRequest(CloudConfiguration cloudConfiguration,
+            InfraActiveRequests currentActiveRequest) {
+        if (cloudConfiguration.getLcpCloudRegionId() != null) {
+            currentActiveRequest.setAicCloudRegion(cloudConfiguration.getLcpCloudRegionId());
+        }
+
+        if (cloudConfiguration.getTenantId() != null) {
+            currentActiveRequest.setTenantId(cloudConfiguration.getTenantId());
+        }
+    }
 }

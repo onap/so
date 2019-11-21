@@ -77,7 +77,6 @@ public class RequestIdFilterTest {
         serviceException.setMessageId("SVC0002");
         serviceException.setText(
                 "RequestId: 32807a28-1a14-4b88-b7b3-2950918aa769 already exists in the RequestDB InfraActiveRequests table");
-        serviceException.setVariables(Collections.emptyList());
         requestError.setServiceException(serviceException);
         return requestError;
     }
