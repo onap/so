@@ -304,5 +304,16 @@
       <version>1.7.0</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.onap.aaf.authz</groupId>
+      <artifactId>aaf-cadi-aaf</artifactId>
+      <version>2.1.9</version>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.servlet</groupId>
+          <artifactId>servlet-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
   </dependencies>
 </project>
