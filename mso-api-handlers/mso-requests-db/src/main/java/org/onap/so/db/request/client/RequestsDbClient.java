@@ -22,6 +22,7 @@ package org.onap.so.db.request.client;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -70,6 +71,7 @@ public class RequestsDbClient {
     private static final String SERVICE_ID = "SERVICE_ID";
     private static final String OPERATION_ID = "OPERATION_ID";
     private static final String SO_REQUEST_ID = "SO_REQUEST_ID";
+    private static final String IS_INTERNAL_DATA = "IS_INTERNAL_DATA";
     private static final String NAME = "NAME";
     private static final String GROUPING_ID = "GROUPING_ID";
     private static final String REQUEST_ID = "REQUEST_ID";
@@ -83,7 +85,7 @@ public class RequestsDbClient {
     protected String endpoint;
 
     @Value("${mso.adapters.requestDb.auth:#{null}}")
-    private String msoAdaptersAuth;
+    protected String msoAdaptersAuth;
 
     private String getOrchestrationFilterURI = "/infraActiveRequests/getOrchestrationFiltersFromInfraActive/";
     private static final String OPERATION_STATUS_SEARCH = "/operationStatus/search";
@@ -125,6 +127,9 @@ public class RequestsDbClient {
     private static final String findBySoRequestIdOrderByGroupingIdDesc =
             "/requestProcessingData/search/findBySoRequestIdOrderByGroupingIdDesc";
 
+    private static final String findBySoRequestIdAndIsDataInternalOrderByGroupingIdDesc =
+            "/requestProcessingData/search/findBySoRequestIdAndIsDataInternalOrderByGroupingIdDesc";
+
     private static final String findByGroupingIdAndNameAndTag =
             "/requestProcessingData/search/findByGroupingIdAndNameAndTag";
 
@@ -153,8 +158,12 @@ public class RequestsDbClient {
         findOneByRequestId = endpoint + findOneByRequestId;
     }
 
-    private ClientFactory getClientFactory() {
-        URI baseUri = UriBuilder.fromUri(endpoint).build();
+    protected String getEndpoint() {
+        return endpoint;
+    }
+
+    protected ClientFactory getClientFactory() {
+        URI baseUri = UriBuilder.fromUri(getEndpoint()).build();
         ClientHttpRequestFactory factory =
                 new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory());
 
@@ -386,6 +395,18 @@ public class RequestsDbClient {
                         .queryParam(SO_REQUEST_ID, soRequestId).build().toString()));
     }
 
+    public List<RequestProcessingData> getExternalRequestProcessingDataBySoRequestId(String soRequestId) {
+        URI uri = getUri(UriBuilder.fromUri(getEndpoint() + findBySoRequestIdAndIsDataInternalOrderByGroupingIdDesc)
+                .queryParam(SO_REQUEST_ID, soRequestId).queryParam(IS_INTERNAL_DATA, false).build().toString());
+        ResponseEntity<RequestProcessingData[]> array =
+                restTemplate.exchange(uri, HttpMethod.GET, getHttpEntity(), RequestProcessingData[].class);
+        if (array != null) {
+            return Arrays.asList(array.getBody());
+        } else {
+            return null;
+        }
+    }
+
     public RequestProcessingData getRequestProcessingDataBySoRequestIdAndNameAndGrouping(String soRequestId,
             String name, String groupingId) {
         return getClientFactory().create(RequestProcessingData.class)
@@ -424,6 +445,7 @@ public class RequestsDbClient {
         rpd.setSoRequestId(requestId);
         rpd.setValue(flowExecutionPath);
         rpd.setTag(BPMN_EXECUTION_DATA_TAG);
+        rpd.setIsDataInternal(true);
 
         HttpEntity<RequestProcessingData> entity = new HttpEntity<>(rpd, headers);
         restTemplate.postForLocation(uri, entity);

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -85,5 +85,29 @@ public class RequestProcessingDataRequestDbQueryTest {
         assertEquals(dataFound.get(1).getName(), secondEntry.getName());
         assertEquals(dataFound.get(1).getValue(), secondEntry.getValue());
         assertEquals(dataFound.get(1).getTag(), secondEntry.getTag());
+    }
+
+    @Test
+    @Transactional
+    public void testGetRequestProcessingDataBySoRequestIdAndIsInternalData() {
+        String soRequestId = "00032ab7-na18-42e5-965d-8ea592502018";
+        String tag = "pincFabricConfigRequest";
+        RequestProcessingData firstEntry = new RequestProcessingData();
+        List<RequestProcessingData> expectedList = new ArrayList<>();
+        firstEntry.setSoRequestId(soRequestId);
+        firstEntry.setGroupingId("7d2e8c07-4d10-456d-bddc-37abf38ca715");
+        firstEntry.setName("configurationId");
+        firstEntry.setValue("52234bc0-d6a6-41d4-a901-79015e4877e2");
+        firstEntry.setTag(tag);
+        expectedList.add(firstEntry);
+
+        List<RequestProcessingData> dataFound = client.getExternalRequestProcessingDataBySoRequestId(soRequestId);
+
+        assertEquals(1, dataFound.size());
+        assertEquals(dataFound.get(0).getSoRequestId(), firstEntry.getSoRequestId());
+        assertEquals(dataFound.get(0).getGroupingId(), firstEntry.getGroupingId());
+        assertEquals(dataFound.get(0).getName(), firstEntry.getName());
+        assertEquals(dataFound.get(0).getValue(), firstEntry.getValue());
+        assertEquals(dataFound.get(0).getTag(), firstEntry.getTag());
     }
 }

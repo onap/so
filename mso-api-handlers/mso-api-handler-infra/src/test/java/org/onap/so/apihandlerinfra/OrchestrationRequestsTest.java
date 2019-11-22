@@ -107,6 +107,18 @@ public class OrchestrationRequestsTest extends BaseTest {
                                 .withBody(new String(Files.readAllBytes(Paths.get(
                                         "src/test/resources/OrchestrationRequest/ActivityInstanceHistoryResponse.json"))))
                                 .withStatus(HttpStatus.SC_OK)));
+        wireMockServer.stubFor(get(
+                ("/requestProcessingData/search/findBySoRequestIdAndIsDataInternalOrderByGroupingIdDesc?SO_REQUEST_ID=00032ab7-1a18-42e5-965d-8ea592502018&IS_INTERNAL_DATA=false"))
+                        .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                                .withBody(new String(Files.readAllBytes(Paths.get(
+                                        "src/test/resources/OrchestrationRequest/getRequestProcessingDataArray.json"))))
+                                .withStatus(HttpStatus.SC_OK)));
+        wireMockServer.stubFor(get(
+                ("/requestProcessingData/search/findBySoRequestIdAndIsDataInternalOrderByGroupingIdDesc?SO_REQUEST_ID=00032ab7-3fb3-42e5-965d-8ea592502017&IS_INTERNAL_DATA=false"))
+                        .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                                .withBody(new String(Files.readAllBytes(Paths.get(
+                                        "src/test/resources/OrchestrationRequest/getRequestProcessingDataArray.json"))))
+                                .withStatus(HttpStatus.SC_OK)));
     }
 
     @Test
@@ -117,6 +129,16 @@ public class OrchestrationRequestsTest extends BaseTest {
 
         Request request = ORCHESTRATION_LIST.getRequestList().get(1).getRequest();
         testResponse.setRequest(request);
+        testResponse.getRequest().setRequestProcessingData(new ArrayList<RequestProcessingData>());
+        RequestProcessingData e = new RequestProcessingData();
+        e.setGroupingId("7d2e8c07-4d10-456d-bddc-37abf38ca714");
+        e.setTag("pincFabricConfigRequest");
+        List<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> data1 = new HashMap<String, String>();
+        data1.put("requestAction", "assign");
+        data.add(data1);
+        e.setDataPairs(data);
+        testResponse.getRequest().getRequestProcessingData().add(e);
         String testRequestId = request.getRequestId();
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);
@@ -148,6 +170,16 @@ public class OrchestrationRequestsTest extends BaseTest {
 
         Request request = ORCHESTRATION_LIST.getRequestList().get(8).getRequest();
         testResponse.setRequest(request);
+        testResponse.getRequest().setRequestProcessingData(new ArrayList<RequestProcessingData>());
+        RequestProcessingData e = new RequestProcessingData();
+        e.setGroupingId("7d2e8c07-4d10-456d-bddc-37abf38ca714");
+        e.setTag("pincFabricConfigRequest");
+        List<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> data1 = new HashMap<String, String>();
+        data1.put("requestAction", "assign");
+        data.add(data1);
+        e.setDataPairs(data);
+        testResponse.getRequest().getRequestProcessingData().add(e);
         String testRequestId = request.getRequestId();
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);
@@ -184,6 +216,16 @@ public class OrchestrationRequestsTest extends BaseTest {
         request.setCloudRequestData(cloudRequestData);
         testResponse.setRequest(request);
         String testRequestId = request.getRequestId();
+        testResponse.getRequest().setRequestProcessingData(new ArrayList<RequestProcessingData>());
+        RequestProcessingData e = new RequestProcessingData();
+        e.setGroupingId("7d2e8c07-4d10-456d-bddc-37abf38ca714");
+        e.setTag("pincFabricConfigRequest");
+        List<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> data1 = new HashMap<String, String>();
+        data1.put("requestAction", "assign");
+        data.add(data1);
+        e.setDataPairs(data);
+        testResponse.getRequest().getRequestProcessingData().add(e);
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);

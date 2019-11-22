@@ -31,6 +31,11 @@
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.core</groupId>
+      <artifactId>jersey-common</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   <packaging>jar</packaging>
   <build>
