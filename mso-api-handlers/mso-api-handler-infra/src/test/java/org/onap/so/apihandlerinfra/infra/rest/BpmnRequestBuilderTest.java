@@ -22,9 +22,12 @@ package org.onap.so.apihandlerinfra.infra.rest;
 
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.Before;
 import org.junit.Rule;
@@ -43,8 +46,11 @@ import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
+import org.onap.so.constants.Status;
 import org.onap.so.db.request.client.RequestsDbClient;
+import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.ModelType;
+import org.onap.so.serviceinstancebeans.RequestDetails;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -141,6 +147,49 @@ public class BpmnRequestBuilderTest {
                 .readValue(new File(RESOURCE_PATH + "ExpectedVolumeGroupRequest.json"), ServiceInstancesRequest.class);
         ServiceInstancesRequest actualRequest = reqBuilder.buildVolumeGroupDeleteRequest("vnfId", "volumeGroupId");
         assertThat(actualRequest, sameBeanAs(expectedRequest));
+    }
+
+    @Test
+    public void test_getCloudConfigurationVfModuleReplace() throws Exception {
+        String vnfId = "vnfId";
+        String vfModuleId = "vfModuleId";
+
+        GenericVnf vnf = provider.getMapper().readValue(new File(RESOURCE_PATH + "Vnf.json"), GenericVnf.class);
+
+        doReturn(Optional.of(vnf)).when(aaiResourcesClient).get(GenericVnf.class,
+                AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId));
+
+        CloudConfiguration result = reqBuilder.getCloudConfigurationVfModuleReplace(vnfId, vfModuleId);
+        assertEquals("0422ffb57ba042c0800a29dc85ca70f8", result.getTenantId());
+        assertEquals("cloudOwner", result.getCloudOwner());
+        assertEquals("regionOne", result.getLcpCloudRegionId());
+    }
+
+    @Test
+    public void test_mapCloudConfigurationVnf() throws Exception {
+        String vnfId = "6fb01019-c3c4-41fe-b307-d1c56850b687";
+        Map<String, String[]> filters = new HashMap<>();
+        filters.put("vnfId", new String[] {"EQ", vnfId});
+        filters.put("requestStatus", new String[] {"EQ", Status.COMPLETE.toString()});
+        filters.put("action", new String[] {"EQ", "createInstance"});
+
+        ServiceInstancesRequest serviceRequest = new ServiceInstancesRequest();
+        CloudConfiguration cloudConfiguration = new CloudConfiguration();
+        RequestDetails requestDetails = new RequestDetails();
+        cloudConfiguration.setCloudOwner("cloudOwner");
+        cloudConfiguration.setTenantId("tenantId");
+        cloudConfiguration.setLcpCloudRegionId("lcpCloudRegionId");
+        requestDetails.setCloudConfiguration(cloudConfiguration);
+        serviceRequest.setRequestDetails(requestDetails);
+
+        doReturn(filters).when(reqBuilder).createQueryRequest("vnfId", vnfId);
+        doReturn(Optional.of(serviceRequest)).when(reqBuilder).findServiceInstanceRequest(filters);
+
+
+        CloudConfiguration result = reqBuilder.mapCloudConfigurationVnf(vnfId);
+        assertEquals("tenantId", result.getTenantId());
+        assertEquals("cloudOwner", result.getCloudOwner());
+        assertEquals("lcpCloudRegionId", result.getLcpCloudRegionId());
     }
 
 }

@@ -71,72 +71,33 @@ public class ApiExceptionMapper implements ExceptionMapper<ApiException> {
     @Override
     public Response toResponse(ApiException exception) {
         logger.error("Error During API Call", exception);
-        return Response.status(exception.getHttpResponseCode()).entity(buildErrorString(exception)).build();
+        return Response.status(exception.getHttpResponseCode()).entity(buildError(exception)).build();
     }
 
-    protected String buildErrorString(ApiException exception) {
+    protected RequestError buildError(ApiException exception) {
         String errorText = exception.getMessage();
         String messageId = exception.getMessageID();
         List<String> variables = exception.getVariables();
-        ErrorLoggerInfo errorLoggerInfo = exception.getErrorLoggerInfo();
-
-
 
         if (errorText.length() > 1999) {
             errorText = errorText.substring(0, 1999);
         }
-
-
-
-        List<MediaType> typeList = Optional.ofNullable(headers.getAcceptableMediaTypes()).orElse(new ArrayList<>());
-        List<String> typeListString = typeList.stream().map(item -> item.toString()).collect(Collectors.toList());
-        MediaType type;
-        if (typeListString.stream().anyMatch(item -> item.contains(MediaType.APPLICATION_XML))) {
-            type = MediaType.APPLICATION_XML_TYPE;
-        } else if (typeListString.stream().anyMatch(item -> typeListString.contains(MediaType.APPLICATION_JSON))) {
-            type = MediaType.APPLICATION_JSON_TYPE;
-        } else {
-            type = MediaType.APPLICATION_JSON_TYPE;
-        }
-
-        return buildServiceErrorResponse(errorText, messageId, variables, type);
+        return buildServiceErrorResponse(errorText, messageId, variables);
 
     }
 
-    protected String buildServiceErrorResponse(String errorText, String messageId, List<String> variables,
-            MediaType type) {
-        RequestError re = new RequestError();
-        ServiceException se = new ServiceException();
-        se.setMessageId(messageId);
-        se.setText(errorText);
+    protected RequestError buildServiceErrorResponse(String errorText, String messageId, List<String> variables) {
+        RequestError requestError = new RequestError();
+        ServiceException serviceException = new ServiceException();
+        serviceException.setMessageId(messageId);
+        serviceException.setText(errorText);
         if (variables != null) {
             for (String variable : variables) {
-                se.getVariables().add(variable);
+                serviceException.getVariables().add(variable);
             }
         }
-        re.setServiceException(se);
-        String requestErrorStr;
-
-        ObjectMapper mapper = createObjectMapper();
-
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_DEFAULT);
-        try {
-            if (MediaType.APPLICATION_JSON_TYPE.equals(type)) {
-                requestErrorStr = mapper.writeValueAsString(re);
-            } else {
-                StringWriter sw = new StringWriter();
-                this.getMarshaller().marshal(re, sw);
-                requestErrorStr = sw.toString();
-            }
-        } catch (JsonProcessingException | JAXBException e) {
-            String errorMsg =
-                    "Exception in buildServiceErrorResponse writing exceptionType to string " + e.getMessage();
-            logger.error("BuildServiceErrorResponse", e);
-            return errorMsg;
-        }
-
-        return requestErrorStr;
+        requestError.setServiceException(serviceException);
+        return requestError;
     }
 
     protected void writeErrorLog(Exception e, String errorText, ErrorLoggerInfo errorLogInfo) {

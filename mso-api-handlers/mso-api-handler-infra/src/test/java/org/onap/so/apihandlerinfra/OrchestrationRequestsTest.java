@@ -323,7 +323,6 @@ public class OrchestrationRequestsTest extends BaseTest {
     public void testUnlockOrchestrationRequest() throws Exception {
         setupTestUnlockOrchestrationRequest("0017f68c-eb2d-45bb-b7c7-ec31b37dc349", "UNLOCKED");
         ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
         String requestJSON =
                 new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/Request.json")));
         HttpHeaders headers = new HttpHeaders();
@@ -359,7 +358,6 @@ public class OrchestrationRequestsTest extends BaseTest {
     public void testUnlockOrchestrationRequest_invalid_Json() throws Exception {
         setupTestUnlockOrchestrationRequest_invalid_Json();
         ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
         String requestJSON =
                 new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/Request.json")));
         HttpHeaders headers = new HttpHeaders();
@@ -387,7 +385,7 @@ public class OrchestrationRequestsTest extends BaseTest {
         actualRequestError = mapper.readValue(response.getBody(), RequestError.class);
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatusCode().value());
-        assertThat(actualRequestError, sameBeanAs(expectedRequestError));
+        assertThat(expectedRequestError, sameBeanAs(actualRequestError));
     }
 
     @Test

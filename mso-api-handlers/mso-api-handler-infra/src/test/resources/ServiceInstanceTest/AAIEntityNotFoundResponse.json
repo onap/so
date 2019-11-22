@@ -1,0 +1,8 @@
+{
+    "requestError": {
+        "serviceException": {
+            "messageId": "SVC0001",
+            "text": "Generic Vnf Not Found In Inventory, VnfId: ff305d54-75b4-431b-adb2-eb6b9e5ff000"
+        }
+    }
+}

@@ -91,6 +91,16 @@ public class BpmnRequestBuilder {
         return createServiceInstancesRequest(vnf, vfModule, modelType);
     }
 
+    public CloudConfiguration getCloudConfigurationVfModuleReplace(String vnfId, String vfModuleId)
+            throws AAIEntityNotFound {
+        GenericVnf vnf = aaiDataRet.getGenericVnf(vnfId);
+        if (vnf == null) {
+            throw new AAIEntityNotFound(GENERIC_VNF_NOT_FOUND_IN_INVENTORY_VNF_ID + vnfId);
+        }
+
+        return mapCloudConfiguration(vnf, vfModuleId);
+    }
+
     public ServiceInstancesRequest buildVolumeGroupDeleteRequest(String vnfId, String volumeGroupId)
             throws AAIEntityNotFound {
         GenericVnf vnf = aaiDataRet.getGenericVnf(vnfId);
@@ -174,7 +184,7 @@ public class BpmnRequestBuilder {
         }
         requestDetails.setModelInfo(mapVfModuleModelInformation(vfModule, modelType));
 
-        requestDetails.setCloudConfiguration(mapCloudConfiguration(vnf, vfModule));
+        requestDetails.setCloudConfiguration(mapCloudConfiguration(vnf, vfModule.getVfModuleId()));
         requestDetails.setRequestParameters(createRequestParameters());
         return requestDetails;
     }
@@ -264,7 +274,7 @@ public class BpmnRequestBuilder {
         return modelInfo;
     }
 
-    public CloudConfiguration mapCloudConfiguration(GenericVnf vnf, VfModule vfModule) {
+    public CloudConfiguration mapCloudConfiguration(GenericVnf vnf, String vfModuleId) {
         CloudConfiguration cloudConfig = new CloudConfiguration();
         AAIResultWrapper wrapper = new AAIResultWrapper(vnf);
         Optional<org.onap.so.client.aai.entities.Relationships> relationshipsOpt = wrapper.getRelationships();
@@ -281,7 +291,7 @@ public class BpmnRequestBuilder {
         }
 
         if (tenantId == null || cloudOwner == null || lcpRegionId == null) {
-            Map<String, String[]> filters = createQueryRequest("vfModuleId", vfModule.getVfModuleId());
+            Map<String, String[]> filters = createQueryRequest("vfModuleId", vfModuleId);
             Optional<ServiceInstancesRequest> request = findServiceInstanceRequest(filters);
             if (request.isPresent()) {
                 if (request.get().getRequestDetails() != null
@@ -364,6 +374,36 @@ public class BpmnRequestBuilder {
             throw new CloudConfigurationNotFoundException(CLOUD_CONFIGURATION_COULD_NOT_BE_FOUND);
         }
 
+        cloudConfig.setTenantId(tenantId);
+        cloudConfig.setCloudOwner(cloudOwner);
+        cloudConfig.setLcpCloudRegionId(lcpRegionId);
+        return cloudConfig;
+    }
+
+    public CloudConfiguration mapCloudConfigurationVnf(String vnfId) {
+        CloudConfiguration cloudConfig = new CloudConfiguration();
+        String tenantId = null;
+        String cloudOwner = null;
+        String lcpRegionId = null;
+
+        Map<String, String[]> filters = createQueryRequest("vnfId", vnfId);
+        Optional<ServiceInstancesRequest> request = findServiceInstanceRequest(filters);
+        if (request.isPresent()) {
+            if (request.get().getRequestDetails() != null
+                    && request.get().getRequestDetails().getCloudConfiguration() != null) {
+                if (request.get().getRequestDetails().getCloudConfiguration().getTenantId() != null) {
+                    tenantId = request.get().getRequestDetails().getCloudConfiguration().getTenantId();
+                }
+                if (request.get().getRequestDetails().getCloudConfiguration().getCloudOwner() != null) {
+                    cloudOwner = request.get().getRequestDetails().getCloudConfiguration().getCloudOwner();
+                }
+                if (request.get().getRequestDetails().getCloudConfiguration().getLcpCloudRegionId() != null) {
+                    lcpRegionId = request.get().getRequestDetails().getCloudConfiguration().getLcpCloudRegionId();
+                }
+            }
+        } else {
+            throw new CloudConfigurationNotFoundException(CLOUD_CONFIGURATION_COULD_NOT_BE_FOUND);
+        }
         cloudConfig.setTenantId(tenantId);
         cloudConfig.setCloudOwner(cloudOwner);
         cloudConfig.setLcpCloudRegionId(lcpRegionId);
