@@ -125,7 +125,7 @@ public class BPRestCallback {
                 method.setHeader(ONAPLogConstants.Headers.PARTNER_NAME, "SO-SDNCAdapter");
             } catch (Exception e) {
                 logger.error(LoggingAnchor.FOUR, MessageEnum.RA_SET_CALLBACK_AUTH_EXC.toString(), CAMUNDA,
-                        ErrorCode.BusinessProcesssError.getValue(), "Unable to set authorization in callback request",
+                        ErrorCode.BusinessProcessError.getValue(), "Unable to set authorization in callback request",
                         e);
                 error = true;
             }
@@ -143,14 +143,14 @@ public class BPRestCallback {
                 if (httpResponse.getStatusLine().getStatusCode() >= 300) {
                     String msg = "Received error response to callback request: " + httpResponse.getStatusLine();
                     logger.error(LoggingAnchor.FOUR, MessageEnum.RA_CALLBACK_BPEL_EXC.toString(), CAMUNDA,
-                            ErrorCode.BusinessProcesssError.getValue(), msg);
+                            ErrorCode.BusinessProcessError.getValue(), msg);
 
                 }
             }
             return true;
         } catch (Exception e) {
             logger.error(LoggingAnchor.FOUR, MessageEnum.RA_CALLBACK_BPEL_EXC.toString(), CAMUNDA,
-                    ErrorCode.BusinessProcesssError.getValue(), "Error sending callback request", e);
+                    ErrorCode.BusinessProcessError.getValue(), "Error sending callback request", e);
             return false;
         } finally {
             if (httpResponse != null) {

@@ -129,7 +129,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
         } catch (Exception e) {
             String error = "Error retrieving MSO Infra Requests DB for Request ID " + requestId;
             logger.error(error, e);
-            throw new MsoRequestsDbException(error, ErrorCode.BusinessProcesssError, e);
+            throw new MsoRequestsDbException(error, ErrorCode.BusinessProcessError, e);
         }
     }
 
@@ -155,7 +155,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
         } catch (Exception e) {
             String error = "Error retrieving MSO Infra Requests DB for Request ID " + requestId;
             logger.error(error, e);
-            throw new MsoRequestsDbException(error, ErrorCode.BusinessProcesssError, e);
+            throw new MsoRequestsDbException(error, ErrorCode.BusinessProcessError, e);
         }
         return request;
     }

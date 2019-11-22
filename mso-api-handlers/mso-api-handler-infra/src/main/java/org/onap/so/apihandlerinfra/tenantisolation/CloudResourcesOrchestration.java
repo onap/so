@@ -134,8 +134,9 @@ public class CloudResourcesOrchestration {
         }
         if (infraActiveRequest == null) {
 
-            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND,
-                    ErrorCode.BusinessProcesssError).build();
+            ErrorLoggerInfo errorLoggerInfo =
+                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, ErrorCode.BusinessProcessError)
+                            .build();
             ValidateException validateException =
                     new ValidateException.Builder("Orchestration RequestId " + requestId + " is not found in DB",
                             HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR)
@@ -203,7 +204,7 @@ public class CloudResourcesOrchestration {
 
             if (requestDB == null) {
                 ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR,
-                        ErrorCode.BusinessProcesssError).build();
+                        ErrorCode.BusinessProcessError).build();
                 ValidateException validateException =
                         new ValidateException.Builder("Orchestration RequestId " + requestId + " is not found in DB",
                                 HttpStatus.SC_NO_CONTENT, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR)
@@ -227,7 +228,7 @@ public class CloudResourcesOrchestration {
                 orchestrationMap = tenantIsolationRequest.getOrchestrationFilters(queryParams);
             } catch (ValidationException ex) {
                 ErrorLoggerInfo errorLoggerInfo =
-                        new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.BusinessProcesssError)
+                        new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.BusinessProcessError)
                                 .build();
                 ValidateException validateException =
                         new ValidateException.Builder(ex.getMessage(), HttpStatus.SC_INTERNAL_SERVER_ERROR,

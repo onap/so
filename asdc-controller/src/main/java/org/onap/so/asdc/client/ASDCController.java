@@ -688,7 +688,7 @@ public class ASDCController {
                     iNotif.getDistributionID());
             logger.error(LoggingAnchor.FIVE, MessageEnum.ASDC_GENERAL_EXCEPTION_ARG.toString(),
                     "Database concurrency exception: ", "ASDC", "treatNotification",
-                    ErrorCode.BusinessProcesssError.getValue(), "RuntimeException in treatNotification", e);
+                    ErrorCode.BusinessProcessError.getValue(), "RuntimeException in treatNotification", e);
 
         } catch (Exception e) {
             logger.error("", MessageEnum.ASDC_GENERAL_EXCEPTION_ARG.toString(),
@@ -823,7 +823,7 @@ public class ASDCController {
         } catch (ASDCDownloadException | UnsupportedEncodingException e) {
             logger.error(LoggingAnchor.SIX, MessageEnum.ASDC_GENERAL_EXCEPTION_ARG.toString(),
                     "Exception caught during Installation of artifact", "ASDC", "processResourceNotification",
-                    ErrorCode.BusinessProcesssError.getValue(), "Exception in processResourceNotification", e);
+                    ErrorCode.BusinessProcessError.getValue(), "Exception in processResourceNotification", e);
         }
     }
 
@@ -869,7 +869,7 @@ public class ASDCController {
                 } catch (Exception e) {
                     logger.error(LoggingAnchor.SIX, MessageEnum.ASDC_GENERAL_EXCEPTION_ARG.toString(),
                             "Exception caught during processCsarServiceArtifacts", "ASDC",
-                            "processCsarServiceArtifacts", ErrorCode.BusinessProcesssError.getValue(),
+                            "processCsarServiceArtifacts", ErrorCode.BusinessProcessError.getValue(),
                             "Exception in processCsarServiceArtifacts", e);
                 }
             } else if (artifact.getArtifactType().equals(ASDCConfiguration.WORKFLOW)) {
@@ -890,7 +890,7 @@ public class ASDCController {
                     logger.info("Whats the error {}", e.getMessage());
                     logger.error(LoggingAnchor.SIX, MessageEnum.ASDC_GENERAL_EXCEPTION_ARG.toString(),
                             "Exception caught during processCsarServiceArtifacts", "ASDC",
-                            "processCsarServiceArtifacts", ErrorCode.BusinessProcesssError.getValue(),
+                            "processCsarServiceArtifacts", ErrorCode.BusinessProcessError.getValue(),
                             "Exception in processCsarServiceArtifacts", e);
                 }
             }

@@ -200,8 +200,9 @@ public class ManualTasks {
         }
 
         if (response == null) {
-            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR,
-                    ErrorCode.BusinessProcesssError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+            ErrorLoggerInfo errorLoggerInfo =
+                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, ErrorCode.BusinessProcessError)
+                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
 
 
             BPMNFailureException bpmnFailureException =
@@ -229,7 +230,7 @@ public class ManualTasks {
             } catch (JsonProcessingException e) {
 
                 ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR,
-                        ErrorCode.BusinessProcesssError).build();
+                        ErrorCode.BusinessProcessError).build();
 
 
                 ValidateException validateException =
@@ -243,7 +244,7 @@ public class ManualTasks {
             return builder.buildResponse(HttpStatus.SC_ACCEPTED, requestId, completeResp, apiVersion);
         } else {
             ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.BusinessProcesssError)
+                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.BusinessProcessError)
                             .build();
 
 

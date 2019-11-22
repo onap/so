@@ -179,7 +179,7 @@ public class BpmnRestClient {
             logger.trace("request body is {}", jsonReq);
         } catch (Exception e) {
             logger.error(LoggingAnchor.FIVE, MessageEnum.APIH_WARP_REQUEST.toString(), "Camunda", "wrapVIDRequest",
-                    ErrorCode.BusinessProcesssError.getValue(), "Error in APIH Warp request", e);
+                    ErrorCode.BusinessProcessError.getValue(), "Error in APIH Warp request", e);
         }
         return jsonReq;
     }

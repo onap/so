@@ -643,7 +643,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                                 + " VersionMin=" + vnfMin + " VersionMax:" + vnfMax + " NOT supported on Cloud: "
                                 + cloudSiteId + " with AIC_Version:" + cloudSite.getCloudVersion();
                 logger.error(LoggingAnchor.FIVE, MessageEnum.RA_CONFIG_EXC.toString(), error, "OpenStack",
-                        ErrorCode.BusinessProcesssError.getValue(), "Exception - setVersion");
+                        ErrorCode.BusinessProcessError.getValue(), "Exception - setVersion");
                 logger.debug(error);
                 throw new VnfException(error, MsoExceptionCategory.USERDATA);
             }
@@ -773,7 +773,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                         + cloudOwner + "/" + cloudSiteId + "/" + tenantId + " USER ERROR";
                 logger.error(LoggingAnchor.TEN, MessageEnum.RA_QUERY_VNF_ERR.toString(), volumeGroupId, cloudOwner,
                         cloudSiteId, tenantId, error, "VDU", "queryVdu(volume)",
-                        ErrorCode.BusinessProcesssError.getValue(),
+                        ErrorCode.BusinessProcessError.getValue(),
                         "Create VFModule: Attached Volume Group " + "DOES NOT EXIST");
                 logger.debug(error);
                 throw new VnfException(error, MsoExceptionCategory.USERDATA);
@@ -822,7 +822,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                             + "/" + cloudSiteId + "/" + tenantId + " USER ERROR";
                     logger.error(LoggingAnchor.TEN, MessageEnum.RA_QUERY_VNF_ERR.toString(), baseVfModuleId, cloudOwner,
                             cloudSiteId, tenantId, error, "VDU", "queryVdu(Base)",
-                            ErrorCode.BusinessProcesssError.getValue(), "Create VFModule: Base Module DOES NOT EXIST");
+                            ErrorCode.BusinessProcessError.getValue(), "Create VFModule: Base Module DOES NOT EXIST");
                     logger.debug(error);
                     throw new VnfException(error, MsoExceptionCategory.USERDATA);
                 } else {

@@ -542,8 +542,9 @@ public class OrchestrationRequests {
         }
 
         if (infraActiveRequest == null) {
-            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR,
-                    ErrorCode.BusinessProcesssError).build();
+            ErrorLoggerInfo errorLoggerInfo =
+                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, ErrorCode.BusinessProcessError)
+                            .build();
 
             ValidateException validateException = new ValidateException.Builder(
                     "Null response from RequestDB when searching by RequestId " + requestId, HttpStatus.SC_NOT_FOUND,
