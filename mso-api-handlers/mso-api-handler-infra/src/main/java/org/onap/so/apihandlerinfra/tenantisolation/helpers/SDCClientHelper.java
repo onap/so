@@ -94,7 +94,7 @@ public class SDCClientHelper {
 
             if (basicAuthCred == null || "".equals(basicAuthCred)) {
                 ErrorLoggerInfo errorLoggerInfo =
-                        new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.BusinessProcesssError)
+                        new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.BusinessProcessError)
                                 .build();
 
                 throw new ValidateException.Builder(
@@ -143,7 +143,7 @@ public class SDCClientHelper {
             return client.post(jsonPayload);
         } catch (Exception ex) {
             ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.BusinessProcesssError)
+                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.BusinessProcessError)
                             .build();
 
             throw new ValidateException.Builder("Bad request could not post payload", HttpStatus.SC_BAD_REQUEST,

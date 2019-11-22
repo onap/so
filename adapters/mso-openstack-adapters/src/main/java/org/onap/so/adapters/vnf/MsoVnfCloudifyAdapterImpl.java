@@ -601,7 +601,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                     + vnfResource.getModelUUID() + " VersionMin=" + vnfMin + " VersionMax:" + vnfMax
                     + " NOT supported on Cloud: " + cloudSiteId + " with AIC_Version:" + cloudSite.getCloudVersion();
             logger.error(LoggingAnchor.FIVE, MessageEnum.RA_CONFIG_EXC.toString(), error, OPENSTACK,
-                    ErrorCode.BusinessProcesssError.getValue(), "Exception - setVersion");
+                    ErrorCode.BusinessProcessError.getValue(), "Exception - setVersion");
             logger.debug(error);
             throw new VnfException(error, MsoExceptionCategory.USERDATA);
         }
@@ -725,7 +725,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                 String error = "Create VFModule: Attached Volume Group DOES NOT EXIST " + volumeGroupId + " in "
                         + cloudSiteId + "/" + tenantId + " USER ERROR";
                 logger.error(BRACKETS, MessageEnum.RA_QUERY_VNF_ERR.toString(), volumeGroupId, cloudSiteId, tenantId,
-                        error, CLOUDIFY, "queryDeployment(volume)", ErrorCode.BusinessProcesssError.getValue(),
+                        error, CLOUDIFY, "queryDeployment(volume)", ErrorCode.BusinessProcessError.getValue(),
                         "Create VFModule: Attached Volume Group DOES NOT EXIST");
                 logger.debug(error);
                 throw new VnfException(error, MsoExceptionCategory.USERDATA);
@@ -774,7 +774,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                             + cloudSiteId + "/" + tenantId + " USER ERROR";
                     logger.error(BRACKETS, MessageEnum.RA_QUERY_VNF_ERR.toString(), baseVfModuleId, cloudSiteId,
                             tenantId, error, CLOUDIFY, "queryDeployment(Base)",
-                            ErrorCode.BusinessProcesssError.getValue(),
+                            ErrorCode.BusinessProcessError.getValue(),
                             "Create VFModule: Base " + "Module DOES NOT EXIST");
                     logger.debug(error);
                     throw new VnfException(error, MsoExceptionCategory.USERDATA);

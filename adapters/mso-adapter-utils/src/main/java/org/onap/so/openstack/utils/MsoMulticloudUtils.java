@@ -578,7 +578,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
                     if (!backout) {
                         logger.warn(String.format("%s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_ERR.toString(),
                                 "Create Stack error, stack deletion suppressed", "", "",
-                                ErrorCode.BusinessProcesssError.getValue(),
+                                ErrorCode.BusinessProcessError.getValue(),
                                 "Exception in Create Stack, stack deletion suppressed"));
                     } else {
                         try {
@@ -621,7 +621,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
                                     logger.error(String.format("%s %s %s %s %d %s",
                                             MessageEnum.RA_CREATE_STACK_ERR.toString(),
                                             "Create Stack: Nested exception rolling back stack: " + e3, "", "",
-                                            ErrorCode.BusinessProcesssError.getValue(),
+                                            ErrorCode.BusinessProcessError.getValue(),
                                             "Create Stack: Nested exception rolling back stack on error on query"));
                                 }
                             }
@@ -629,7 +629,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
                             // Just log this one. We will report the original exception.
                             logger.error(String.format("%s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_ERR.toString(),
                                     "Create Stack: Nested exception rolling back stack: " + e2, "", "",
-                                    ErrorCode.BusinessProcesssError.getValue(),
+                                    ErrorCode.BusinessProcessError.getValue(),
                                     "Create Stack: Nested exception rolling back stack"));
                         }
                     }
@@ -644,13 +644,13 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
                 logger.error(String.format("%s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_ERR.toString(),
                         "Create Stack error:  Polling complete with non-success status: " + stackInfo.getStatus() + ", "
                                 + stackInfo.getStatusMessage(),
-                        "", "", ErrorCode.BusinessProcesssError.getValue(), "Create Stack error"));
+                        "", "", ErrorCode.BusinessProcessError.getValue(), "Create Stack error"));
 
                 // Rollback the stack creation, since it is in an indeterminate state.
                 if (!backout) {
                     logger.warn(String.format("%s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_ERR.toString(),
                             "Create Stack errored, stack deletion suppressed", "", "",
-                            ErrorCode.BusinessProcesssError.getValue(),
+                            ErrorCode.BusinessProcessError.getValue(),
                             "Create Stack error, stack deletion suppressed"));
                 } else {
                     try {
@@ -685,7 +685,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
                                     logger.warn(String.format("%s %s %s %s %d %s",
                                             MessageEnum.RA_CREATE_STACK_ERR.toString(),
                                             "Create Stack errored, stack deletion FAILED", "", "",
-                                            ErrorCode.BusinessProcesssError.getValue(),
+                                            ErrorCode.BusinessProcessError.getValue(),
                                             "Create Stack error, stack deletion FAILED"));
                                     logger.debug("Stack deletion FAILED on a rollback of a create - " + instanceId
                                             + ", status=" + queryInfo.getStatus() + ", reason="
@@ -699,7 +699,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
                                 logger.warn(String.format("%s %s %s %s %d %s",
                                         MessageEnum.RA_CREATE_STACK_ERR.toString(),
                                         "Create Stack errored, then stack deletion FAILED - exception thrown", "", "",
-                                        ErrorCode.BusinessProcesssError.getValue(), me2.getContextMessage()));
+                                        ErrorCode.BusinessProcessError.getValue(), me2.getContextMessage()));
                             }
                         }
                         StringBuilder errorContextMessage;
@@ -717,7 +717,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
                         // shouldn't happen - but handle
                         logger.error(String.format("%s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_ERR.toString(),
                                 "Create Stack: Nested exception rolling back stack: " + e2, "", "",
-                                ErrorCode.BusinessProcesssError.getValue(),
+                                ErrorCode.BusinessProcessError.getValue(),
                                 "Exception in Create Stack: rolling back stack"));
                     }
                 }
@@ -840,7 +840,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
             return JSON_MAPPER.readTree(directives);
         } catch (Exception e) {
             logger.error(String.format("%s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_ERR.toString(),
-                    "Create Stack: " + e, "", "", ErrorCode.BusinessProcesssError.getValue(),
+                    "Create Stack: " + e, "", "", ErrorCode.BusinessProcessError.getValue(),
                     "Exception in Create Stack: Invalid JSON format of directives" + directives));
             MsoException me = new MsoAdapterException("Invalid JSON format of directives parameter: " + directives);
             me.addContext(CREATE_STACK);

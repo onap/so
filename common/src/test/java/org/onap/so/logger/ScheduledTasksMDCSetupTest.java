@@ -60,7 +60,7 @@ public class ScheduledTasksMDCSetupTest {
     public void errorMDCSetupTest() {
         tasksMDCSetup.errorMDCSetup(ErrorCode.UnknownError, "Error");
 
-        assertEquals(ErrorCode.UnknownError.toString(), MDC.get(ONAPLogConstants.MDCs.ERROR_CODE));
+        assertEquals("900", MDC.get(ONAPLogConstants.MDCs.ERROR_CODE));
         assertEquals("Error", MDC.get(ONAPLogConstants.MDCs.ERROR_DESC));
     }
 

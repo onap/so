@@ -250,7 +250,7 @@ public class ActivateVnfStatusOperationalEnvironment {
             String dbErrorMessage = "Failure calling SDC: statusCode: " + statusCode + "; messageId: "
                     + jsonResponse.get("messageId") + "; message: " + jsonResponse.get("message");
             ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.BusinessProcesssError)
+                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.BusinessProcessError)
                             .build();
             ValidateException validateException =
                     new ValidateException.Builder(dbErrorMessage, HttpStatus.SC_BAD_REQUEST,
@@ -304,7 +304,7 @@ public class ActivateVnfStatusOperationalEnvironment {
             if (status.equals("Failure") && queryServiceModelResponseList.size() == count) {
                 this.errorMessage = "Overall Activation process is a Failure. " + status;
                 ErrorLoggerInfo errorLoggerInfo =
-                        new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.BusinessProcesssError)
+                        new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.BusinessProcessError)
                                 .build();
                 ValidateException validateException =
                         new ValidateException.Builder(this.errorMessage, HttpStatus.SC_BAD_REQUEST,

@@ -50,7 +50,7 @@ public class ScheduledTasksMDCSetup extends MDCSetup {
     }
 
     public void errorMDCSetup(ErrorCode errorCode, String errorDescription) {
-        MDC.put(ONAPLogConstants.MDCs.ERROR_CODE, errorCode.toString());
+        MDC.put(ONAPLogConstants.MDCs.ERROR_CODE, String.valueOf(errorCode.getValue()));
         MDC.put(ONAPLogConstants.MDCs.ERROR_DESC, errorDescription);
     }
 

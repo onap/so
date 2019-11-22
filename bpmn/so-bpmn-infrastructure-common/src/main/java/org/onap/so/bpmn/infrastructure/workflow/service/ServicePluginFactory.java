@@ -832,7 +832,7 @@ public class ServicePluginFactory {
             return mapper.readValue(jsonstr, type);
         } catch (IOException e) {
             logger.error("{} {} fail to unMarshal json", MessageEnum.RA_NS_EXC.toString(),
-                    ErrorCode.BusinessProcesssError.getValue(), e);
+                    ErrorCode.BusinessProcessError.getValue(), e);
         }
         return null;
     }

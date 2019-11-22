@@ -216,7 +216,7 @@ public class BpelRestClient {
             if (totalretries >= retryCount) {
                 debug("Retried " + totalretries + " times, giving up.");
                 logger.error("{} {} Could not deliver response to BPEL after {} tries: {}",
-                        MessageEnum.RA_SEND_VNF_NOTIF_ERR, ErrorCode.BusinessProcesssError.getValue(), totalretries,
+                        MessageEnum.RA_SEND_VNF_NOTIF_ERR, ErrorCode.BusinessProcessError.getValue(), totalretries,
                         toBpelStr);
                 return false;
             }
@@ -273,7 +273,7 @@ public class BpelRestClient {
             }
         } catch (Exception e) {
             logger.error("{} {} Exception - Error sending Bpel notification: {} ", MessageEnum.RA_SEND_VNF_NOTIF_ERR,
-                    ErrorCode.BusinessProcesssError.getValue(), toBpelStr, e);
+                    ErrorCode.BusinessProcessError.getValue(), toBpelStr, e);
             lastResponseCode = 900;
             lastResponse = "";
         }

@@ -138,7 +138,7 @@ public class ASDCRestInterface {
             logger.info("Error caught " + e.getMessage());
             logger.error(LoggingAnchor.SIX, MessageEnum.ASDC_GENERAL_EXCEPTION.toString(),
                     "Exception caught during ASDCRestInterface", "ASDC", "invokeASDCService",
-                    ErrorCode.BusinessProcesssError.getValue(), "Exception in invokeASDCService", e);
+                    ErrorCode.BusinessProcessError.getValue(), "Exception in invokeASDCService", e);
         }
 
         return null;
