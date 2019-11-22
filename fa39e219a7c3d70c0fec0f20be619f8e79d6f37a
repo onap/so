@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c4807d_bffaa91b",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ControllerActorSelection.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-11-22T16:39:29Z",
+      "side": 1,
+      "message": "Add copyright header",
+      "revId": "fa39e219a7c3d70c0fec0f20be619f8e79d6f37a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e9a3c27a_1ea788e9",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ControllerActorSelection.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-11-22T16:39:29Z",
+      "side": 1,
+      "message": "Question - Why are you passing null if controller actor doesn\u0027t exist ?",
+      "range": {
+        "startLine": 37,
+        "startChar": 43,
+        "endLine": 37,
+        "endChar": 59
+      },
+      "revId": "fa39e219a7c3d70c0fec0f20be619f8e79d6f37a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
