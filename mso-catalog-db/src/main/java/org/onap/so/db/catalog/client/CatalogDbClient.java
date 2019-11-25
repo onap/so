@@ -32,6 +32,7 @@ import javax.ws.rs.core.UriBuilder;
 import org.apache.http.HttpStatus;
 import org.onap.logging.filter.base.Constants;
 import org.onap.logging.filter.spring.SpringClientPayloadFilter;
+import org.onap.so.db.catalog.beans.BBNameSelectionReference;
 import org.onap.so.db.catalog.beans.BuildingBlockDetail;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.CloudifyManager;
@@ -119,6 +120,8 @@ public class CatalogDbClient {
     private static final String PNF_RESOURCE = "/pnfResource";
     private static final String PNF_RESOURCE_CUSTOMIZATION = "/pnfResourceCustomization";
     private static final String WORKFLOW = "/workflow";
+    private static final String BB_NAME_SELECTION_REFERENCE = "/bbNameSelectionReference";
+
 
 
     private static final String SEARCH = "/search";
@@ -218,6 +221,7 @@ public class CatalogDbClient {
     private String pnfResourceURI;
     private String pnfResourceCustomizationURI;
     private String workflowURI;
+    private String bbNameSelectionReferenceURI;
 
     private final Client<Service> serviceClient;
 
@@ -274,6 +278,8 @@ public class CatalogDbClient {
     private final Client<PnfResourceCustomization> pnfResourceCustomizationClient;
 
     private final Client<Workflow> workflowClient;
+    
+    private final Client<BBNameSelectionReference> bbNameSelectionReferenceClient;
 
     @Value("${mso.catalog.db.spring.endpoint:#{null}}")
     private String endpoint;
@@ -358,6 +364,7 @@ public class CatalogDbClient {
         pnfResourceURI = endpoint + PNF_RESOURCE + URI_SEPARATOR;
         pnfResourceCustomizationURI = endpoint + PNF_RESOURCE_CUSTOMIZATION + URI_SEPARATOR;
         workflowURI = endpoint + WORKFLOW + URI_SEPARATOR;
+        bbNameSelectionReferenceURI = endpoint +BB_NAME_SELECTION_REFERENCE+URI_SEPARATOR;
 
     }
 
@@ -409,6 +416,7 @@ public class CatalogDbClient {
         pnfResourceClient = clientFactory.create(PnfResource.class);
         pnfResourceCustomizationClient = clientFactory.create(PnfResourceCustomization.class);
         workflowClient = clientFactory.create(Workflow.class);
+        bbNameSelectionReferenceClient = clientFactory.create(BBNameSelectionReference.class);
     }
 
     public CatalogDbClient(String baseUri, String auth) {
@@ -459,6 +467,7 @@ public class CatalogDbClient {
         pnfResourceClient = clientFactory.create(PnfResource.class);
         pnfResourceCustomizationClient = clientFactory.create(PnfResourceCustomization.class);
         workflowClient = clientFactory.create(Workflow.class);
+        bbNameSelectionReferenceClient = clientFactory.create(BBNameSelectionReference.class);
     }
 
     public NetworkCollectionResourceCustomization getNetworkCollectionResourceCustomizationByID(
@@ -679,6 +688,13 @@ public class CatalogDbClient {
         return this.getSingleResource(controllerSelectionReferenceClient, UriBuilder.fromUri(endpoint
                 + "/controllerSelectionReference/search/findControllerSelectionReferenceByVnfTypeAndActionCategory")
                 .queryParam("VNF_TYPE", vnfType).queryParam("ACTION_CATEGORY", actionCategory).build());
+    }
+    
+
+    public BBNameSelectionReference getBBNameSelectionReference(String actor,
+            String scope, String action) {
+        return this.getSingleResource(bbNameSelectionReferenceClient, UriBuilder.fromUri(bbNameSelectionReferenceURI)
+                .queryParam("ACTOR", actor).queryParam("SCOPE", scope).queryParam("ACTION",action).build());
     }
 
     public Service getFirstByModelNameOrderByModelVersionDesc(String modelName) {
