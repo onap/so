@@ -34,6 +34,40 @@
       "revId": "56c15a582613735982be756c1399cb3ace9fb2a8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c94103c3_8da379a0",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/utils/HeatBridgeUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 97
+      },
+      "writtenOn": "2019-11-26T15:18:25Z",
+      "side": 1,
+      "message": "Relationship data extraction can be done via AAIResultWrapper produced by the AAIResourcesClient. Rather than duplicating the logic here we should use the existing client logic.",
+      "revId": "56c15a582613735982be756c1399cb3ace9fb2a8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "109796d6_031cc2f6",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/utils/HeatBridgeUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 97
+      },
+      "writtenOn": "2019-11-26T15:18:25Z",
+      "side": 1,
+      "message": "Extracting data from relationship data is not recommended by A\u0026AI and may be deprecated at any time.\n\nThe AAIResourcesClient can do what you want here.\n\nAAIResultWrapper resultWrapper \u003d new AAIResultWrapper(vfModule);\n\nOptional\u003cRelationships\u003e relationships \u003d resultWrapper.getRelationships();\nif (relationships.isPresent()) {\nreturn relationships.getRelatedUris(AAIObjectType.VSERVER);\n}",
+      "revId": "56c15a582613735982be756c1399cb3ace9fb2a8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
