@@ -21,11 +21,9 @@
 
 package org.onap.so.bpmn.infrastructure.pnf.dmaap;
 
-import java.util.Map;
-
 public interface DmaapClient {
 
-    void registerForUpdate(String pnfCorrelationId, Runnable informConsumer, Map<String, String> updateInfo);
+    void registerForUpdate(String pnfCorrelationId, Runnable informConsumer);
 
     Runnable unregister(String pnfCorrelationId);
 }

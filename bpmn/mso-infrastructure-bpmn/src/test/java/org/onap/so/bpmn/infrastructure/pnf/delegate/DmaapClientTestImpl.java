@@ -34,7 +34,7 @@ public class DmaapClientTestImpl implements DmaapClient {
     private Runnable informConsumer;
 
     @Override
-    public void registerForUpdate(String pnfCorrelationId, Runnable informConsumer, Map<String, String> updateInfo) {
+    public void registerForUpdate(String pnfCorrelationId, Runnable informConsumer) {
         this.pnfCorrelationId = pnfCorrelationId;
         this.informConsumer = informConsumer;
     }

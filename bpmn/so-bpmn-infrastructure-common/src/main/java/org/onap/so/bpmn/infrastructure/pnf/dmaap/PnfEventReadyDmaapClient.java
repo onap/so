@@ -23,14 +23,14 @@
 package org.onap.so.bpmn.infrastructure.pnf.dmaap;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -40,11 +40,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-import org.onap.so.client.aai.entities.uri.AAIResourceUri;
-import org.onap.so.client.aai.entities.uri.AAIUriFactory;
-import org.onap.so.client.aai.AAIResourcesClient;
-import org.onap.so.client.aai.AAIObjectType;
-import static org.onap.so.bpmn.infrastructure.pnf.dmaap.JsonUtilForPnfCorrelationId.*;
 
 @Component
 public class PnfEventReadyDmaapClient implements DmaapClient {
@@ -57,7 +52,6 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
     private int topicListenerDelayInSeconds;
     private volatile ScheduledThreadPoolExecutor executor;
     private volatile boolean dmaapThreadListenerIsRunning;
-    private volatile List<Map<String, String>> listOfUpdateInfoMap;
 
     @Autowired
     public PnfEventReadyDmaapClient(Environment env) {
@@ -70,16 +64,11 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
                 .port(env.getProperty("pnf.dmaap.port", Integer.class)).path(env.getProperty("pnf.dmaap.topicName"))
                 .path(env.getProperty("pnf.dmaap.consumerGroup")).path(env.getProperty("pnf.dmaap.consumerId"))
                 .build());
-        listOfUpdateInfoMap = new ArrayList<>();
     }
 
     @Override
-    public synchronized void registerForUpdate(String pnfCorrelationId, Runnable informConsumer,
-            Map<String, String> updateInfo) {
+    public synchronized void registerForUpdate(String pnfCorrelationId, Runnable informConsumer) {
         logger.debug("registering for pnf ready dmaap event for pnf correlation id: {}", pnfCorrelationId);
-        synchronized (listOfUpdateInfoMap) {
-            listOfUpdateInfoMap.add(updateInfo);
-        }
         pnfCorrelationIdToThreadMap.put(pnfCorrelationId, informConsumer);
         if (!dmaapThreadListenerIsRunning) {
             startDmaapThreadListener();
@@ -90,16 +79,6 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
     public synchronized Runnable unregister(String pnfCorrelationId) {
         logger.debug("unregistering from pnf ready dmaap event for pnf correlation id: {}", pnfCorrelationId);
         Runnable runnable = pnfCorrelationIdToThreadMap.remove(pnfCorrelationId);
-        synchronized (listOfUpdateInfoMap) {
-            for (int i = listOfUpdateInfoMap.size() - 1; i >= 0; i--) {
-                if (!listOfUpdateInfoMap.get(i).containsKey("pnfCorrelationId"))
-                    continue;
-                String id = listOfUpdateInfoMap.get(i).get("pnfCorrelationId");
-                if (id != pnfCorrelationId)
-                    continue;
-                listOfUpdateInfoMap.remove(i);
-            }
-        }
         if (pnfCorrelationIdToThreadMap.isEmpty()) {
             stopDmaapThreadListener();
         }
@@ -132,17 +111,22 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
             try {
                 logger.debug("dmaap listener starts listening pnf ready dmaap topic");
                 HttpResponse response = httpClient.execute(getRequest);
-                if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                    String responseString = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
-                    List<String> idList = parseJsonToGelAllPnfCorrelationId(responseString);
-                    idList.stream().findFirst().ifPresent(id -> registerClientResponse(id, responseString));
-                    idList.forEach(this::informAboutPnfReadyIfPnfCorrelationIdFound);
-                }
+                getPnfCorrelationIdListFromResponse(response).forEach(this::informAboutPnfReadyIfPnfCorrelationIdFound);
             } catch (IOException e) {
                 logger.error("Exception caught during sending rest request to dmaap for listening event topic", e);
             } finally {
                 getRequest.reset();
             }
+        }
+
+        private List<String> getPnfCorrelationIdListFromResponse(HttpResponse response) throws IOException {
+            if (response.getStatusLine().getStatusCode() == 200) {
+                String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+                if (responseString != null) {
+                    return JsonUtilForPnfCorrelationId.parseJsonToGelAllPnfCorrelationId(responseString);
+                }
+            }
+            return Collections.emptyList();
         }
 
         private void informAboutPnfReadyIfPnfCorrelationIdFound(String pnfCorrelationId) {
@@ -152,36 +136,6 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
                 runnable.run();
             }
         }
-
-        private void registerClientResponse(String pnfCorrelationId, String response) {
-
-            String customerId = null;
-            String serviceType = null;
-            String serId = null;
-            synchronized (listOfUpdateInfoMap) {
-                for (Map<String, String> map : listOfUpdateInfoMap) {
-                    if (!map.containsKey("pnfCorrelationId"))
-                        continue;
-                    if (pnfCorrelationId != map.get("pnfCorrelationId"))
-                        continue;
-                    if (!map.containsKey("globalSubscriberID"))
-                        continue;
-                    if (!map.containsKey("serviceType"))
-                        continue;
-                    if (!map.containsKey("serviceInstanceId"))
-                        continue;
-                    customerId = map.get("pnfCorrelationId");
-                    serviceType = map.get("serviceType");
-                    serId = map.get("serviceInstanceId");
-                }
-            }
-            if (customerId == null || serviceType == null || serId == null)
-                return;
-            AAIResourcesClient client = new AAIResourcesClient();
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE_METADATA, customerId,
-                    serviceType, serId);
-            client.update(uri, response);
-        }
-
     }
+
 }
