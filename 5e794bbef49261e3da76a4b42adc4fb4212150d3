@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a7ce364_c10b7bba",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/HeatBridgeImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 486,
+      "author": {
+        "id": 97
+      },
+      "writtenOn": "2019-11-26T15:18:25Z",
+      "side": 1,
+      "message": "This method call is no longer needed. you already have this via vserverRelationships.get().getRelatedLinks(AAIObjectType.PSERVER)",
+      "revId": "5e794bbef49261e3da76a4b42adc4fb4212150d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
