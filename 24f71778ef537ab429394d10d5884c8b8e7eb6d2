@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "85d78540_9810d7bd",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/V8.1__AddControllerActor.sql",
+        "patchSetId": 4
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-11-26T14:13:31Z",
+      "side": 1,
+      "message": "What is a controller actor?",
+      "revId": "24f71778ef537ab429394d10d5884c8b8e7eb6d2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "024ce120_f74a6985",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/V8.2__AddBlueprintAndSkipConfiguration.sql",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-11-26T14:13:31Z",
+      "side": 1,
+      "message": "Why did we need two migration scripts?  Can we combine them into a single migration?",
+      "revId": "24f71778ef537ab429394d10d5884c8b8e7eb6d2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
