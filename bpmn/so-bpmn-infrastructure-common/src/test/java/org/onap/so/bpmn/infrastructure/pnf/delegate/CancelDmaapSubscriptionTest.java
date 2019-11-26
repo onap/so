@@ -32,7 +32,7 @@ public class CancelDmaapSubscriptionTest {
     private static final String TEST_PNF_CORRELATION_ID = "testPnfCorrelationId";
 
     @Test
-    public void shouldCancelSubscription() throws Exception {
+    public void shouldCancelSubscription() {
         // given
         CancelDmaapSubscription delegate = new CancelDmaapSubscription();
         DmaapClientTestImpl dmaapClientTest = new DmaapClientTestImpl();
@@ -42,7 +42,7 @@ public class CancelDmaapSubscriptionTest {
                 .thenReturn(TEST_PNF_CORRELATION_ID);
         when(delegateExecution.getProcessBusinessKey()).thenReturn("testBusinessKey");
         dmaapClientTest.registerForUpdate("testPnfCorrelationId", () -> {
-        }, null);
+        });
         // when
         delegate.execute(delegateExecution);
         // then
