@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "8ab6e887_16356cdc",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigVnf.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2019-11-27T18:00:10Z",
+      "side": 1,
+      "message": "Just given a second thought, \n\nWe are sending actionname to CDS and\nCDS on the basis of actionname will execute the steps in blueprint-workflow.\n\nAnd assumption here is that only actionname will change all other params will be same for any action?\n\nPlease clarify.",
+      "parentUuid": "d648bc03_f6f8e146",
+      "range": {
+        "startLine": 45,
+        "startChar": 8,
+        "endLine": 45,
+        "endChar": 87
+      },
+      "revId": "f178f2304a551a4554a22c0f72fae3debf98f72e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e8e35ef5_8cdb04d9",
         "filename": "bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/BuildingBlock/ControllerExecutionBB.bpmn",
         "patchSetId": 16
