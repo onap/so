@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e8e35ef5_8cdb04d9",
+        "filename": "bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/BuildingBlock/ControllerExecutionBB.bpmn",
+        "patchSetId": 16
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2019-11-27T17:11:41Z",
+      "side": 1,
+      "message": "as i see this is a generic bb, will this still be calling using this expression?",
+      "range": {
+        "startLine": 26,
+        "startChar": 123,
+        "endLine": 26,
+        "endChar": 262
+      },
+      "revId": "f178f2304a551a4554a22c0f72fae3debf98f72e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
