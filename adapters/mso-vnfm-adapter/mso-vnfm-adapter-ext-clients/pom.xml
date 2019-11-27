@@ -110,6 +110,26 @@
               </configOptions>
             </configuration>
           </execution>
+          <execution>
+            <id>etsicatalog-api</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <inputSpec>${basedir}/src/main/resources/ETSI-Catalog-API.json</inputSpec>
+              <language>java</language>
+              <library>okhttp-gson</library>
+              <output>${project.build.directory}/generated-sources/etsicatalog</output>
+              <apiPackage>org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.api</apiPackage>
+              <modelPackage>org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model</modelPackage>
+              <configOptions>
+                <sourceFolder>src/gen/java/main</sourceFolder>
+                <withXml>true</withXml>
+                <useRxJava2>true</useRxJava2>
+                <serializableModel>true</serializableModel>
+              </configOptions>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
     </plugins>
