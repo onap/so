@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "d648bc03_f6f8e146",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigVnf.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2019-11-27T17:54:23Z",
+      "side": 1,
+      "message": "should this payload not change on the basis of action\n\nlike config-deploy-vnf-request might have different params than\nconfig-assign-vnf-request.\n\nhow are you taking care that. Is this code complete. Because I dont see this\nin TODO tasks.\n\nPlease comment.",
+      "range": {
+        "startLine": 45,
+        "startChar": 8,
+        "endLine": 45,
+        "endChar": 87
+      },
+      "revId": "f178f2304a551a4554a22c0f72fae3debf98f72e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e8e35ef5_8cdb04d9",
         "filename": "bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/BuildingBlock/ControllerExecutionBB.bpmn",
         "patchSetId": 16
