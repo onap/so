@@ -1,0 +1,3102 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Modeling etsicatalog API",
+    "description": "\n\nThe `swagger-ui` view can be found [here](/api/catalog/v1/swagger).\nThe `ReDoc` view can be found [here](/api/catalog/v1/redoc).\nThe swagger YAML document can be found [here](/api/catalog/v1/swagger.yaml).\nThe swagger JSON document can be found [here](/api/catalog/v1/swagger.json).",
+    "version": "v1"
+  },
+  "host": "127.0.0.1:8000",
+  "schemes": ["http"],
+  "basePath": "/",
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "securityDefinitions": {
+    "Basic": {
+      "type": "basic"
+    }
+  },
+  "security": [{
+    "Basic": []
+  }],
+  "paths": {
+    "/api/catalog/v1/callback_sample": {
+      "get": {
+        "operationId": "api_catalog_v1_callback_sample_list",
+        "description": "Callback Sample.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": ["Sample interface"]
+      },
+      "parameters": []
+    },
+    "/api/catalog/v1/health_check": {
+      "get": {
+        "operationId": "api_catalog_v1_health_check_list",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Active"
+          }
+        },
+        "tags": ["Health Check interface"]
+      },
+      "parameters": []
+    },
+    "/api/catalog/v1/jobs/{job_id}": {
+      "get": {
+        "operationId": "api_catalog_v1_jobs_read",
+        "description": "Get job status",
+        "parameters": [{
+          "name": "job_id",
+          "in": "query",
+          "description": "job id",
+          "type": "string"
+        }, {
+          "name": "responseId",
+          "in": "query",
+          "description": "response id",
+          "type": "string"
+        }],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/GetJobResponse"
+            }
+          },
+          "500": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PostJobResponseResult"
+            }
+          }
+        },
+        "tags": ["Catalog interface"]
+      },
+      "post": {
+        "operationId": "api_catalog_v1_jobs_create",
+        "description": "Update job status",
+        "parameters": [{
+          "name": "data",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/PostJobRequest"
+          }
+        }, {
+          "name": "job_id",
+          "in": "query",
+          "description": "job id",
+          "type": "string"
+        }],
+        "responses": {
+          "202": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PostJobResponseResult"
+            }
+          },
+          "500": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PostJobResponseResult"
+            }
+          }
+        },
+        "tags": ["Catalog interface"]
+      },
+      "parameters": [{
+        "name": "job_id",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }]
+    },
+    "/api/catalog/v1/mandb/{modelName}": {
+      "get": {
+        "operationId": "api_catalog_v1_mandb_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": ["Sample interface"]
+      },
+      "delete": {
+        "operationId": "api_catalog_v1_mandb_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": ["Sample interface"]
+      },
+      "parameters": [{
+        "name": "modelName",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }]
+    },
+    "/api/catalog/v1/nspackages": {
+      "get": {
+        "operationId": "api_catalog_v1_nspackages_list",
+        "description": "Query NS packages",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/NsPackage"
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/InternalErrorRequest"
+            }
+          }
+        },
+        "tags": ["Catalog interface"]
+      },
+      "post": {
+        "operationId": "api_catalog_v1_nspackages_create",
+        "description": "On distribute NS package",
+        "parameters": [{
+          "name": "data",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/NsPackageDistributeRequest"
+          }
+        }],
+        "responses": {
+          "202": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/NsPackageDistributeResponse"
+            }
+          },
+          "500": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/InternalErrorRequest"
+            }
+          }
+        },
+        "tags": ["Catalog interface"]
+      },
+      "parameters": []
+    },
+    "/api/catalog/v1/nspackages/{csarId}": {
+      "get": {
+        "operationId": "api_catalog_v1_nspackages_read",
+        "description": "Query one NS package",
+        "parameters": [{
+          "name": "csarId",
+          "in": "query",
+          "description": "csarId",
+          "type": "string"
+        }],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/NsPackage"
+            }
+          },
+          "500": {
+            "description": "error message",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "tags": ["Catalog interface"]
+      },
+      "delete": {
+        "operationId": "api_catalog_v1_nspackages_delete",
+        "description": "Delete one NS package",
+        "parameters": [{
+          "name": "csarId",
+          "in": "query",
+          "description": "csarId",
+          "type": "string"
+        }],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/NsPackageDistributeResponse"
+            }
+          },
+          "500": {
+            "description": "error message",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "tags": ["Catalog interface"]
+      },
+      "parameters": [{
+        "name": "csarId",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }]
+    },
+    "/api/catalog/v1/service_packages": {
+      "get": {
+        "operationId": "api_catalog_v1_service_packages_list",
+        "description": "Query Service packages",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ServicePackage"
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/InternalErrorRequest"
+            }
+          }
+        },
+        "tags": ["Catalog interface"]
+      },
+      "post": {
+        "operationId": "api_catalog_v1_service_packages_create",
+        "description": "On distribute Service package",
+        "parameters": [{
+          "name": "data",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/ServicePackageDistributeRequest"
+          }
+        }],
+        "responses": {
+          "202": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/InternalErrorRequest"
+            }
+          },
+          "500": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/InternalErrorRequest"
+            }
+          }
+        },
+        "tags": ["Catalog interface"]
+      },
+      "parameters": []
+    },
+    "/api/catalog/v1/service_packages/{csarId}": {
+      "get": {
+        "operationId": "api_catalog_v1_service_packages_read",
+        "description": "Query one Service package",
+        "parameters": [{
+          "name": "csarId",
+          "in": "query",
+          "description": "csarId",
+          "type": "string"
+        }],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ServicePackage"
+            }
+          },
+          "404": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/InternalErrorRequest"
+            }
+          },
+          "500": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/InternalErrorRequest"
+            }
+          }
+        },
+        "tags": ["Catalog interface"]
+      },
+      "delete": {
+        "operationId": "api_catalog_v1_service_packages_delete",
+        "description": "Delete one Service package",
+        "parameters": [{
+          "name": "csarId",
+          "in": "query",
+          "description": "csarId",
+          "type": "string"
+        }],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "404": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/InternalErrorRequest"
+            }
+          },
+          "500": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/InternalErrorRequest"
+            }
+          }
+        },
+        "tags": ["Catalog interface"]
+      },
+      "parameters": [{
+        "name": "csarId",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }]
+    },
+    "/api/catalog/v1/vnfpackages": {
+      "get": {
+        "operationId": "api_catalog_v1_vnfpackages_list",
+        "description": "Query Nf packages",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/NfPackage"
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/InternalErrorRequest"
+            }
+          }
+        },
+        "tags": ["Catalog interface"]
+      },
+      "post": {
+        "operationId": "api_catalog_v1_vnfpackages_create",
+        "description": "On distribute Nf package",
+        "parameters": [{
+          "name": "data",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/NfPackageDistributeRequest"
+          }
+        }],
+        "responses": {
+          "202": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PostJobResponse"
+            }
+          },
+          "500": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/InternalErrorRequest"
+            }
+          }
+        },
+        "tags": ["Catalog interface"]
+      },
+      "parameters": []
+    },
+    "/api/catalog/v1/vnfpackages/{csarId}": {
+      "get": {
+        "operationId": "api_catalog_v1_vnfpackages_read",
+        "description": "Query one Nf package",
+        "parameters": [{
+          "name": "csarId",
+          "in": "query",
+          "description": "csarId",
+          "type": "string"
+        }],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/NfPackage"
+            }
+          },
+          "500": {
+            "description": "error message",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "tags": ["Catalog interface"]
+      },
+      "delete": {
+        "operationId": "api_catalog_v1_vnfpackages_delete",
+        "description": "Delete one Nf package",
+        "parameters": [{
+          "name": "csarId",
+          "in": "query",
+          "description": "csarId",
+          "type": "string"
+        }],
+        "responses": {
+          "202": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PostJobResponse"
+            }
+          },
+          "500": {
+            "description": "error message",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "tags": ["Catalog interface"]
+      },
+      "parameters": [{
+        "name": "csarId",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }]
+    },
+    "/api/nsd/v1/health_check": {
+      "get": {
+        "operationId": "api_nsd_v1_health_check_list",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Active"
+          }
+        },
+        "tags": ["Health Check interface"]
+      },
+      "parameters": []
+    },
+    "/api/nsd/v1/ns_descriptors": {
+      "get": {
+        "operationId": "api_nsd_v1_ns_descriptors_list",
+        "description": "Query multiple NSDs",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/NsdInfo"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        },
+        "tags": ["NSD Management interface"]
+      },
+      "post": {
+        "operationId": "api_nsd_v1_ns_descriptors_create",
+        "description": "Create a NSD",
+        "parameters": [{
+          "name": "data",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/CreateNsdInfoRequest"
+          }
+        }],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/NsdInfo"
+            }
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        },
+        "tags": ["NSD Management interface"]
+      },
+      "parameters": []
+    },
+    "/api/nsd/v1/ns_descriptors/{nsdInfoId}": {
+      "get": {
+        "operationId": "api_nsd_v1_ns_descriptors_read",
+        "description": "Query a NSD",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/NsdInfo"
+            }
+          },
+          "404": {
+            "description": "NSDs do not exist"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        },
+        "tags": ["NSD Management interface"]
+      },
+      "delete": {
+        "operationId": "api_nsd_v1_ns_descriptors_delete",
+        "description": "Delete a NSD",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        },
+        "tags": ["NSD Management interface"]
+      },
+      "parameters": [{
+        "name": "nsdInfoId",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }]
+    },
+    "/api/nsd/v1/ns_descriptors/{nsdInfoId}/nsd_content": {
+      "get": {
+        "operationId": "api_nsd_v1_ns_descriptors_nsd_content_list",
+        "description": "Download NSD content",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "404": {
+            "description": "NSD does not exist."
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        },
+        "tags": ["NSD Management interface"]
+      },
+      "put": {
+        "operationId": "api_nsd_v1_ns_descriptors_nsd_content_update",
+        "description": "Upload NSD content",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "PNFD file"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        },
+        "tags": ["NSD Management interface"]
+      },
+      "parameters": [{
+        "name": "nsdInfoId",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }]
+    },
+    "/api/nsd/v1/pnf_descriptors": {
+      "get": {
+        "operationId": "api_nsd_v1_pnf_descriptors_list",
+        "description": "Query multiple PNFDs",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/PnfdInfo"
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SUBSCRIPTION_ProblemDetailsSerializer"
+            }
+          }
+        },
+        "tags": ["NSD Management interface"]
+      },
+      "post": {
+        "operationId": "api_nsd_v1_pnf_descriptors_create",
+        "description": "Create a  PNFD",
+        "parameters": [{
+          "name": "data",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/CreatePnfdInfoRequest"
+          }
+        }],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PnfdInfo"
+            }
+          },
+          "500": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SUBSCRIPTION_ProblemDetailsSerializer"
+            }
+          }
+        },
+        "tags": ["NSD Management interface"]
+      },
+      "parameters": []
+    },
+    "/api/nsd/v1/pnf_descriptors/{pnfdInfoId}": {
+      "get": {
+        "operationId": "api_nsd_v1_pnf_descriptors_read",
+        "description": "Query a PNFD",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PnfdInfo"
+            }
+          },
+          "404": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SUBSCRIPTION_ProblemDetailsSerializer"
+            }
+          },
+          "500": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SUBSCRIPTION_ProblemDetailsSerializer"
+            }
+          }
+        },
+        "tags": ["NSD Management interface"]
+      },
+      "delete": {
+        "operationId": "api_nsd_v1_pnf_descriptors_delete",
+        "description": "Delete a PNFD",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "500": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SUBSCRIPTION_ProblemDetailsSerializer"
+            }
+          }
+        },
+        "tags": ["NSD Management interface"]
+      },
+      "parameters": [{
+        "name": "pnfdInfoId",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }]
+    },
+    "/api/nsd/v1/pnf_descriptors/{pnfdInfoId}/pnfd_content": {
+      "get": {
+        "operationId": "Fetch PNFD content",
+        "description": "Fetch PNFD content",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "PNFD file",
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "404": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SUBSCRIPTION_ProblemDetailsSerializer"
+            }
+          },
+          "500": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SUBSCRIPTION_ProblemDetailsSerializer"
+            }
+          }
+        },
+        "tags": ["NSD Management interface"]
+      },
+      "put": {
+        "operationId": "api_nsd_v1_pnf_descriptors_pnfd_content_update",
+        "description": "Upload PNFD content",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "500": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SUBSCRIPTION_ProblemDetailsSerializer"
+            }
+          }
+        },
+        "tags": ["NSD Management interface"]
+      },
+      "parameters": [{
+        "name": "pnfdInfoId",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }]
+    },
+    "/api/nsd/v1/subscriptions": {
+      "get": {
+        "operationId": "api_nsd_v1_subscriptions_list",
+        "description": "Query subscriptions for Nsd Management",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/NsdmSubscription"
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SUBSCRIPTION_ProblemDetailsSerializer"
+            }
+          },
+          "404": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SUBSCRIPTION_ProblemDetailsSerializer"
+            }
+          },
+          "500": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SUBSCRIPTION_ProblemDetailsSerializer"
+            }
+          }
+        },
+        "tags": ["NSD Management interface"]
+      },
+      "post": {
+        "operationId": "api_nsd_v1_subscriptions_create",
+        "description": "Create Subscription for NSD Management",
+        "parameters": [{
+          "name": "data",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/NsdmSubscriptionRequest"
+          }
+        }],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/NsdmSubscription"
+            }
+          },
+          "303": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SUBSCRIPTION_ProblemDetailsSerializer"
+            }
+          },
+          "400": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SUBSCRIPTION_ProblemDetailsSerializer"
+            }
+          },
+          "500": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SUBSCRIPTION_ProblemDetailsSerializer"
+            }
+          }
+        },
+        "tags": ["NSD Management interface"]
+      },
+      "parameters": []
+    },
+    "/api/nsd/v1/subscriptions/{subscriptionId}": {
+      "get": {
+        "operationId": "api_nsd_v1_subscriptions_read",
+        "description": "Query subscriptions for Nsd Management",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/NsdmSubscription"
+            }
+          },
+          "400": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SUBSCRIPTION_ProblemDetailsSerializer"
+            }
+          },
+          "404": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SUBSCRIPTION_ProblemDetailsSerializer"
+            }
+          },
+          "500": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SUBSCRIPTION_ProblemDetailsSerializer"
+            }
+          }
+        },
+        "tags": ["NSD Management interface"]
+      },
+      "delete": {
+        "operationId": "api_nsd_v1_subscriptions_delete",
+        "description": "Delete subscription for Nsd Management",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "No_Content"
+          },
+          "400": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SUBSCRIPTION_ProblemDetailsSerializer"
+            }
+          },
+          "404": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SUBSCRIPTION_ProblemDetailsSerializer"
+            }
+          },
+          "500": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SUBSCRIPTION_ProblemDetailsSerializer"
+            }
+          }
+        },
+        "tags": ["NSD Management interface"]
+      },
+      "parameters": [{
+        "name": "subscriptionId",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }]
+    },
+    "/api/parser/v1/health_check": {
+      "get": {
+        "operationId": "api_parser_v1_health_check_list",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Active"
+          }
+        },
+        "tags": ["Health Check interface"]
+      },
+      "parameters": []
+    },
+    "/api/parser/v1/parser": {
+      "post": {
+        "operationId": "api_parser_v1_parser_create",
+        "description": "Parse model(NS, Service, VNF, PNF)",
+        "parameters": [{
+          "name": "data",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/ParseModelRequest"
+          }
+        }],
+        "responses": {
+          "202": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ParseModelResponse"
+            }
+          },
+          "500": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/InternalErrorRequest"
+            }
+          }
+        },
+        "tags": ["Parser interface"]
+      },
+      "parameters": []
+    },
+    "/api/parser/v1/parsernsd": {
+      "post": {
+        "operationId": "api_parser_v1_parsernsd_create",
+        "description": "Parse NS model",
+        "parameters": [{
+          "name": "data",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/ParseModelRequest"
+          }
+        }],
+        "responses": {
+          "202": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ParseModelResponse"
+            }
+          },
+          "500": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/InternalErrorRequest"
+            }
+          }
+        },
+        "tags": ["Parser interface"]
+      },
+      "parameters": []
+    },
+    "/api/parser/v1/parserpnfd": {
+      "post": {
+        "operationId": "api_parser_v1_parserpnfd_create",
+        "description": "Parse PNF model",
+        "parameters": [{
+          "name": "data",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/ParseModelRequest"
+          }
+        }],
+        "responses": {
+          "202": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ParseModelResponse"
+            }
+          },
+          "500": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/InternalErrorRequest"
+            }
+          }
+        },
+        "tags": ["Parser interface"]
+      },
+      "parameters": []
+    },
+    "/api/parser/v1/parservnfd": {
+      "post": {
+        "operationId": "api_parser_v1_parservnfd_create",
+        "description": "Parse NF model",
+        "parameters": [{
+          "name": "data",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/ParseModelRequest"
+          }
+        }],
+        "responses": {
+          "202": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ParseModelResponse"
+            }
+          },
+          "500": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/InternalErrorRequest"
+            }
+          }
+        },
+        "tags": ["Parser interface"]
+      },
+      "parameters": []
+    },
+    "/api/vnfpkgm/v1/health_check": {
+      "get": {
+        "operationId": "api_vnfpkgm_v1_health_check_list",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Active"
+          }
+        },
+        "tags": ["Health Check interface"]
+      },
+      "parameters": []
+    },
+    "/api/vnfpkgm/v1/subscriptions": {
+      "get": {
+        "operationId": "api_vnfpkgm_v1_subscriptions_list",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PkgmSubscription"
+            }
+          },
+          "400": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SUBSCRIPTION_ProblemDetailsSerializer"
+            }
+          },
+          "500": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SUBSCRIPTION_ProblemDetailsSerializer"
+            }
+          }
+        },
+        "tags": ["VNF Package Management interface"]
+      },
+      "post": {
+        "operationId": "api_vnfpkgm_v1_subscriptions_create",
+        "description": "",
+        "parameters": [{
+          "name": "data",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/PkgmSubscriptionRequest"
+          }
+        }],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PkgmSubscription"
+            }
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        },
+        "tags": ["VNF Package Management interface"]
+      },
+      "parameters": []
+    },
+    "/api/vnfpkgm/v1/subscriptions/{subscriptionId}": {
+      "get": {
+        "operationId": "api_vnfpkgm_v1_subscriptions_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PkgmSubscription"
+            }
+          },
+          "404": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SUBSCRIPTION_ProblemDetailsSerializer"
+            }
+          },
+          "500": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SUBSCRIPTION_ProblemDetailsSerializer"
+            }
+          }
+        },
+        "tags": ["VNF Package Management interface"]
+      },
+      "delete": {
+        "operationId": "api_vnfpkgm_v1_subscriptions_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "404": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SUBSCRIPTION_ProblemDetailsSerializer"
+            }
+          },
+          "500": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SUBSCRIPTION_ProblemDetailsSerializer"
+            }
+          }
+        },
+        "tags": ["VNF Package Management interface"]
+      },
+      "parameters": [{
+        "name": "subscriptionId",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }]
+    },
+    "/api/vnfpkgm/v1/vnf_packages": {
+      "get": {
+        "operationId": "api_vnfpkgm_v1_vnf_packages_list",
+        "description": "Query multiple VNF package resource",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/VnfPkgInfo"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "tags": ["VNF Package Management interface"]
+      },
+      "post": {
+        "operationId": "api_vnfpkgm_v1_vnf_packages_create",
+        "description": "Create an individual VNF package resource",
+        "parameters": [{
+          "name": "data",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/CreateVnfPkgInfoRequest"
+          }
+        }],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/VnfPkgInfo"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "tags": ["VNF Package Management interface"]
+      },
+      "parameters": []
+    },
+    "/api/vnfpkgm/v1/vnf_packages/{vnfPkgId}": {
+      "get": {
+        "operationId": "api_vnfpkgm_v1_vnf_packages_read",
+        "description": "Query an individual VNF package resource",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/VnfPkgInfo"
+            }
+          },
+          "404": {
+            "description": "VNF package does not exist",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "tags": ["VNF Package Management interface"]
+      },
+      "delete": {
+        "operationId": "api_vnfpkgm_v1_vnf_packages_delete",
+        "description": "Delete an individual VNF package resource",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "500": {
+            "description": "Internal error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "tags": ["VNF Package Management interface"]
+      },
+      "parameters": [{
+        "name": "vnfPkgId",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }]
+    },
+    "/api/vnfpkgm/v1/vnf_packages/{vnfPkgId}/artifacts/{artifactPath}": {
+      "get": {
+        "operationId": "api_vnfpkgm_v1_vnf_packages_artifacts_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Return the artifact file",
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "404": {
+            "description": "Artifact not found",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "tags": ["VNF Package Management interface"]
+      },
+      "parameters": [{
+        "name": "artifactPath",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }, {
+        "name": "vnfPkgId",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }]
+    },
+    "/api/vnfpkgm/v1/vnf_packages/{vnfPkgId}/package_content": {
+      "get": {
+        "operationId": "api_vnfpkgm_v1_vnf_packages_package_content_list",
+        "description": "Fetch VNF package content",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "VNF package file",
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "404": {
+            "description": "VNF package does not exist",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "tags": ["VNF Package Management interface"]
+      },
+      "put": {
+        "operationId": "api_vnfpkgm_v1_vnf_packages_package_content_update",
+        "description": "Upload VNF package content",
+        "parameters": [],
+        "responses": {
+          "202": {
+            "description": "Successfully"
+          },
+          "500": {
+            "description": "Internal error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "tags": ["VNF Package Management interface"]
+      },
+      "parameters": [{
+        "name": "vnfPkgId",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }]
+    },
+    "/api/vnfpkgm/v1/vnf_packages/{vnfPkgId}/package_content/upload_from_uri": {
+      "post": {
+        "operationId": "api_vnfpkgm_v1_vnf_packages_package_content_upload_from_uri_create",
+        "description": "Upload VNF package content from uri",
+        "parameters": [{
+          "name": "data",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/UploadVnfPackageFromUriRequest"
+          }
+        }],
+        "responses": {
+          "202": {
+            "description": "Successfully"
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "tags": ["VNF Package Management interface"]
+      },
+      "parameters": [{
+        "name": "vnfPkgId",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }]
+    },
+    "/api/vnfpkgm/v1/vnf_packages/{vnfPkgId}/vnfd": {
+      "get": {
+        "operationId": "VNFD of an on-boarded VNF package",
+        "description": "Read VNFD of an on-boarded VNF package",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "VNFD of an on-boarded VNF package",
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "404": {
+            "description": "VNF package does not exist",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "tags": ["VNF Package Management interface"]
+      },
+      "parameters": [{
+        "name": "vnfPkgId",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }]
+    },
+    "/samples/": {
+      "get": {
+        "operationId": "samples_list",
+        "description": "List all samples.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": ["Sample interface"]
+      },
+      "parameters": []
+    }
+  },
+  "definitions": {
+    "JobResponseHistoryList": {
+      "description": "Response History List",
+      "type": "object",
+      "properties": {
+        "status": {
+          "title": "Status",
+          "description": "Status",
+          "type": "string",
+          "minLength": 1
+        },
+        "progress": {
+          "title": "Progress",
+          "description": "Job Progress",
+          "type": "string",
+          "minLength": 1
+        },
+        "statusDescription": {
+          "title": "Statusdescription",
+          "description": "Status Description",
+          "type": "string",
+          "minLength": 1
+        },
+        "errorCode": {
+          "title": "Errorcode",
+          "description": "Error Code",
+          "type": "string",
+          "minLength": 1,
+          "x-nullable": true
+        },
+        "responseId": {
+          "title": "Responseid",
+          "description": "Response Id",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "JobResponseDescriptor": {
+      "title": "Responsedescriptor",
+      "description": "Job Response Descriptor",
+      "type": "object",
+      "properties": {
+        "status": {
+          "title": "Status",
+          "description": "Status",
+          "type": "string",
+          "minLength": 1
+        },
+        "progress": {
+          "title": "Progress",
+          "description": "Job Progress",
+          "type": "string",
+          "minLength": 1
+        },
+        "statusDescription": {
+          "title": "Statusdescription",
+          "description": "Status Description",
+          "type": "string",
+          "minLength": 1
+        },
+        "errorCode": {
+          "title": "Errorcode",
+          "description": "Error Code",
+          "type": "string",
+          "minLength": 1,
+          "x-nullable": true
+        },
+        "responseId": {
+          "title": "Responseid",
+          "description": "Response Id",
+          "type": "string",
+          "minLength": 1
+        },
+        "responseHistoryList": {
+          "description": "Response History List",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/JobResponseHistoryList"
+          }
+        }
+      }
+    },
+    "GetJobResponse": {
+      "type": "object",
+      "properties": {
+        "jobId": {
+          "title": "Jobid",
+          "description": "Job Id",
+          "type": "string",
+          "minLength": 1
+        },
+        "responseDescriptor": {
+          "$ref": "#/definitions/JobResponseDescriptor"
+        }
+      }
+    },
+    "PostJobResponseResult": {
+      "required": ["result"],
+      "type": "object",
+      "properties": {
+        "result": {
+          "title": "Result",
+          "description": "Result",
+          "type": "string",
+          "minLength": 1
+        },
+        "msg": {
+          "title": "Msg",
+          "description": "Message",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "PostJobRequest": {
+      "type": "object",
+      "properties": {
+        "progress": {
+          "title": "Progress",
+          "description": "Job Progress",
+          "type": "string",
+          "minLength": 1
+        },
+        "desc": {
+          "title": "Desc",
+          "description": "Description",
+          "type": "string",
+          "minLength": 1
+        },
+        "errcode": {
+          "title": "Errcode",
+          "description": "Error Code",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "NsPackageInfo": {
+      "title": "Packageinfo",
+      "description": "NS Package Info",
+      "type": "object",
+      "properties": {
+        "nsdId": {
+          "title": "Nsdid",
+          "description": "NSD ID",
+          "type": "string",
+          "minLength": 1,
+          "x-nullable": true
+        },
+        "nsPackageId": {
+          "title": "Nspackageid",
+          "description": "NS Package ID",
+          "type": "string",
+          "x-nullable": true
+        },
+        "nsdProvider": {
+          "title": "Nsdprovider",
+          "description": "NSD Provider",
+          "type": "string",
+          "x-nullable": true
+        },
+        "nsdVersion": {
+          "title": "Nsdversion",
+          "description": "NSD Version",
+          "type": "string",
+          "x-nullable": true
+        },
+        "csarName": {
+          "title": "Csarname",
+          "description": "CSAR name",
+          "type": "string",
+          "x-nullable": true
+        },
+        "nsdModel": {
+          "title": "Nsdmodel",
+          "description": "NSD Model",
+          "type": "string",
+          "x-nullable": true
+        },
+        "downloadUrl": {
+          "title": "Downloadurl",
+          "description": "URL to download NSD Model",
+          "type": "string",
+          "minLength": 1,
+          "x-nullable": true
+        }
+      },
+      "x-nullable": true
+    },
+    "NsPackage": {
+      "type": "object",
+      "properties": {
+        "csarId": {
+          "title": "Csarid",
+          "description": "CSAR ID",
+          "type": "string",
+          "minLength": 1,
+          "x-nullable": true
+        },
+        "packageInfo": {
+          "$ref": "#/definitions/NsPackageInfo"
+        }
+      }
+    },
+    "InternalErrorRequest": {
+      "required": ["error"],
+      "type": "object",
+      "properties": {
+        "error": {
+          "title": "Error",
+          "description": "Error",
+          "type": "string",
+          "minLength": 1
+        },
+        "errorMessage": {
+          "title": "Errormessage",
+          "description": "Error Message",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "NsPackageDistributeRequest": {
+      "required": ["csarId"],
+      "type": "object",
+      "properties": {
+        "csarId": {
+          "title": "Csarid",
+          "description": "csarId",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "NsPackageDistributeResponse": {
+      "required": ["status", "statusDescription", "errorCode"],
+      "type": "object",
+      "properties": {
+        "status": {
+          "title": "Status",
+          "description": "status",
+          "type": "string",
+          "minLength": 1
+        },
+        "statusDescription": {
+          "title": "Statusdescription",
+          "description": "statusDescription",
+          "type": "string",
+          "minLength": 1
+        },
+        "errorCode": {
+          "title": "Errorcode",
+          "description": "errorCode",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "ServicePackageInfo": {
+      "title": "Packageinfo",
+      "description": "Service Package Info",
+      "type": "object",
+      "properties": {
+        "servicedId": {
+          "title": "Servicedid",
+          "description": "ServiceD ID",
+          "type": "string",
+          "minLength": 1,
+          "x-nullable": true
+        },
+        "servicePackageId": {
+          "title": "Servicepackageid",
+          "description": "Service Package ID",
+          "type": "string",
+          "x-nullable": true
+        },
+        "servicedProvider": {
+          "title": "Servicedprovider",
+          "description": "ServiceD Provider",
+          "type": "string",
+          "x-nullable": true
+        },
+        "servicedVersion": {
+          "title": "Servicedversion",
+          "description": "ServiceD Version",
+          "type": "string",
+          "x-nullable": true
+        },
+        "csarName": {
+          "title": "Csarname",
+          "description": "CSAR name",
+          "type": "string",
+          "x-nullable": true
+        },
+        "servicedModel": {
+          "title": "Servicedmodel",
+          "description": "ServiceD Model",
+          "type": "string",
+          "x-nullable": true
+        },
+        "downloadUrl": {
+          "title": "Downloadurl",
+          "description": "URL to download ServiceD Model",
+          "type": "string",
+          "minLength": 1,
+          "x-nullable": true
+        }
+      },
+      "x-nullable": true
+    },
+    "ServicePackage": {
+      "type": "object",
+      "properties": {
+        "csarId": {
+          "title": "Csarid",
+          "description": "CSAR ID",
+          "type": "string",
+          "minLength": 1,
+          "x-nullable": true
+        },
+        "packageInfo": {
+          "$ref": "#/definitions/ServicePackageInfo"
+        }
+      }
+    },
+    "ServicePackageDistributeRequest": {
+      "required": ["csarId"],
+      "type": "object",
+      "properties": {
+        "csarId": {
+          "title": "Csarid",
+          "description": "csarId",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "NfPackageInfo": {
+      "title": "Packageinfo",
+      "description": "VNF Package Info",
+      "required": ["vnfPackageId"],
+      "type": "object",
+      "properties": {
+        "vnfdId": {
+          "title": "Vnfdid",
+          "description": "VNFD ID",
+          "type": "string",
+          "x-nullable": true
+        },
+        "vnfPackageId": {
+          "title": "Vnfpackageid",
+          "description": "VNF Package ID",
+          "type": "string",
+          "minLength": 1
+        },
+        "vnfdProvider": {
+          "title": "Vnfdprovider",
+          "description": "VNFD Provider",
+          "type": "string",
+          "x-nullable": true
+        },
+        "vnfdVersion": {
+          "title": "Vnfdversion",
+          "description": "VNFD Version",
+          "type": "string",
+          "x-nullable": true
+        },
+        "vnfVersion": {
+          "title": "Vnfversion",
+          "description": "VNF Version",
+          "type": "string",
+          "x-nullable": true
+        },
+        "csarName": {
+          "title": "Csarname",
+          "description": "CSAR Name",
+          "type": "string",
+          "x-nullable": true
+        },
+        "vnfdModel": {
+          "title": "Vnfdmodel",
+          "description": "VNFD Model",
+          "type": "string",
+          "x-nullable": true
+        },
+        "downloadUrl": {
+          "title": "Downloadurl",
+          "description": "URL to download VNFD Model",
+          "type": "string",
+          "x-nullable": true
+        }
+      }
+    },
+    "NfImageInfo": {
+      "description": "Image Info",
+      "required": ["index", "fileName", "imageId", "vimId", "vimUser", "tenant", "status"],
+      "type": "object",
+      "properties": {
+        "index": {
+          "title": "Index",
+          "description": "Index of VNF Image",
+          "type": "string",
+          "minLength": 1
+        },
+        "fileName": {
+          "title": "Filename",
+          "description": "Image file name",
+          "type": "string",
+          "minLength": 1
+        },
+        "imageId": {
+          "title": "Imageid",
+          "description": "Image ID",
+          "type": "string",
+          "minLength": 1
+        },
+        "vimId": {
+          "title": "Vimid",
+          "description": "VIM ID",
+          "type": "string",
+          "minLength": 1
+        },
+        "vimUser": {
+          "title": "Vimuser",
+          "description": "User of VIM",
+          "type": "string",
+          "minLength": 1
+        },
+        "tenant": {
+          "title": "Tenant",
+          "description": "Tenant",
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "title": "Status",
+          "description": "Status",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "NfPackage": {
+      "required": ["csarId", "packageInfo"],
+      "type": "object",
+      "properties": {
+        "csarId": {
+          "title": "Csarid",
+          "description": "CSAR ID",
+          "type": "string",
+          "minLength": 1
+        },
+        "packageInfo": {
+          "$ref": "#/definitions/NfPackageInfo"
+        },
+        "imageInfo": {
+          "description": "Image Info",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/NfImageInfo"
+          },
+          "x-nullable": true
+        }
+      }
+    },
+    "NfPackageDistributeRequest": {
+      "required": ["csarId"],
+      "type": "object",
+      "properties": {
+        "csarId": {
+          "title": "Csarid",
+          "description": "CSAR ID",
+          "type": "string",
+          "minLength": 1
+        },
+        "vimIds": {
+          "description": "A string for vimIds",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "labVimId": {
+          "title": "Labvimid",
+          "description": "A list of VIM IDs.",
+          "type": "string"
+        }
+      }
+    },
+    "PostJobResponse": {
+      "required": ["jobId"],
+      "type": "object",
+      "properties": {
+        "jobId": {
+          "title": "Jobid",
+          "description": "jobId",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "ProblemDetails": {
+      "title": "Onboardingfailuredetails",
+      "description": "Failure details of current onboarding procedure.It shall be present when the nsdOnboardingState attribute is CREATED and the uploading or processing fails in NFVO.",
+      "required": ["title", "detail"],
+      "type": "object",
+      "properties": {
+        "type": {
+          "title": "Type",
+          "description": "A URI reference according to IETF RFC 3986 [10] that identifies the problem type.         It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced.         When this member is not present, its value is assumed to be \"about:blank\".",
+          "type": "string",
+          "x-nullable": true
+        },
+        "title": {
+          "title": "Title",
+          "description": "The HTTP status code for this occurrence of the problem.",
+          "type": "integer"
+        },
+        "detail": {
+          "title": "Detail",
+          "description": "A human-readable explanation specific to this occurrence of the problem.",
+          "type": "string",
+          "minLength": 1
+        },
+        "instance": {
+          "title": "Instance",
+          "description": "A URI reference that identifies the specific occurrence of the problem.         It may yield further information if dereferenced.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "additional_attributes": {
+          "title": "Additional attributes",
+          "description": "Any number of additional attributes, as defined in a specification or by an implementation.",
+          "type": "object",
+          "additionalProperties": {
+            "description": "Additional attribute",
+            "type": "string"
+          },
+          "x-nullable": true
+        }
+      }
+    },
+    "UriLink": {
+      "title": "Self",
+      "description": "URI of this resource.",
+      "required": ["href"],
+      "type": "object",
+      "properties": {
+        "href": {
+          "title": "Href",
+          "description": "URI of the referenced resource",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "NSD_LinkSerializer": {
+      "title": " links",
+      "description": "Links to resources related to this resource.",
+      "required": ["self", "nsd_content"],
+      "type": "object",
+      "properties": {
+        "self": {
+          "$ref": "#/definitions/UriLink"
+        },
+        "nsd_content": {
+          "$ref": "#/definitions/UriLink"
+        }
+      }
+    },
+    "NsdInfo": {
+      "required": ["id", "nsdOnboardingState", "nsdOperationalState", "nsdUsageState", "_links"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "description": "Identifier of the onboarded individual NS descriptor resource.This identifier is allocated by the NFVO.",
+          "type": "string",
+          "minLength": 1
+        },
+        "nsdId": {
+          "title": "Nsdid",
+          "description": "This identifier, which is allocated by the NSD designer,identifies the NSD in a globally unique way.It is copied from the NSD content and shall be present after the NSD content is on-boarded.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "nsdName": {
+          "title": "Nsdname",
+          "description": "Name of the onboarded NSD.This information is copied from the NSD content and shall be present after the NSD content is on-boarded.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "nsdVersion": {
+          "title": "Nsdversion",
+          "description": "Version of the on-boarded NSD.This information is copied from the NSD content and shall be present after the NSD content is on-boarded.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "nsdDesigner": {
+          "title": "Nsddesigner",
+          "description": "Designer of the on-boarded NSD.This information is copied from the NSD content and shall be present after the NSD content is on-boarded.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "nsdInvariantId": {
+          "title": "Nsdinvariantid",
+          "description": "This identifier, which is allocated by the NSD designer,identifies an NSD in a version independent manner.This information is copied from the NSD content and shall be present after the NSD content is on-boarded.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "vnfPkgIds": {
+          "description": "Identifies the VNF package for the VNFD referenced by the on-boarded NS descriptor resource.",
+          "type": "array",
+          "items": {
+            "description": "Identifier of the VNF package",
+            "type": "string"
+          },
+          "x-nullable": true
+        },
+        "pnfdInfoIds": {
+          "description": "Identifies the PnfdInfo element for the PNFD referenced by the on-boarded NS descriptor resource.",
+          "type": "array",
+          "items": {
+            "description": "Identifier of the PnfdInfo element",
+            "type": "string"
+          },
+          "x-nullable": true
+        },
+        "nestedNsdInfoIds": {
+          "description": "Identifies the NsdInfo element for the nested NSD referenced by the on-boarded NS descriptor resource.",
+          "type": "array",
+          "items": {
+            "description": "Identifier of the NsdInfo element",
+            "type": "string"
+          },
+          "x-nullable": true
+        },
+        "nsdOnboardingState": {
+          "title": "Nsdonboardingstate",
+          "description": "Onboarding state of the individual NS descriptor resource.",
+          "type": "string",
+          "enum": ["CREATED", "UPLOADING", "PROCESSING", "ONBOARDED"]
+        },
+        "onboardingFailureDetails": {
+          "$ref": "#/definitions/ProblemDetails"
+        },
+        "nsdOperationalState": {
+          "title": "Nsdoperationalstate",
+          "description": "Operational state of the individual NS descriptor resource.This attribute can be modified with the PATCH method.",
+          "type": "string",
+          "enum": ["ENABLED", "DISABLED"]
+        },
+        "nsdUsageState": {
+          "title": "Nsdusagestate",
+          "description": "Usage state of the individual NS descriptor resource.",
+          "type": "string",
+          "enum": ["IN_USE", "NOT_IN_USE"]
+        },
+        "userDefinedData": {
+          "title": "Userdefineddata",
+          "description": "User defined data for the individual NS descriptor resource.This attribute can be modified with the PATCH method.",
+          "type": "object",
+          "additionalProperties": {
+            "description": "Key Value Pairs",
+            "type": "string"
+          },
+          "x-nullable": true
+        },
+        "_links": {
+          "$ref": "#/definitions/NSD_LinkSerializer"
+        }
+      }
+    },
+    "CreateNsdInfoRequest": {
+      "type": "object",
+      "properties": {
+        "userDefinedData": {
+          "title": "Userdefineddata",
+          "description": "User-defined data for the NS descriptor resource to be created.It shall be present when the user defined data is set for the individual NS descriptor resource to be created.",
+          "type": "object",
+          "additionalProperties": {
+            "description": "Key Value Pairs",
+            "type": "string"
+          },
+          "x-nullable": true
+        }
+      }
+    },
+    "PNFD_LinkSerializer": {
+      "title": " links",
+      "description": "Links to resources related to this resource.",
+      "required": ["self", "pnfd_content"],
+      "type": "object",
+      "properties": {
+        "self": {
+          "$ref": "#/definitions/UriLink"
+        },
+        "pnfd_content": {
+          "$ref": "#/definitions/UriLink"
+        }
+      }
+    },
+    "PnfdInfo": {
+      "required": ["id", "pnfdOnboardingState", "pnfdUsageState", "_links"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "description": "Identifier of the onboarded individual PNF descriptor resource.         This identifier is allocated by the NFVO.",
+          "type": "string",
+          "minLength": 1
+        },
+        "pnfdId": {
+          "title": "Pnfdid",
+          "description": "This identifier, which is allocated by the PNFD designer,         identifies the PNFD in a globally unique way.         It is copied from the PNFD content and shall be present after the PNFD content is on-boarded.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "pnfdName": {
+          "title": "Pnfdname",
+          "description": "Name of the onboarded PNFD.         This information is copied from the PNFD content and shall be present after the PNFD content is on-boarded.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "pnfdVersion": {
+          "title": "Pnfdversion",
+          "description": "Version of the on-boarded PNFD.         This information is copied from the PNFD content and shall be present after the PNFD content is on-boarded.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "pnfdProvider": {
+          "title": "Pnfdprovider",
+          "description": "Provider of the on-boarded PNFD.         This information is copied from the PNFD content and shall be present after the PNFD content is on-boarded.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "pnfdInvariantId": {
+          "title": "Pnfdinvariantid",
+          "description": "Identifies a PNFD in a version independent manner.         This attribute is invariant across versions of PNFD.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "pnfdOnboardingState": {
+          "title": "Pnfdonboardingstate",
+          "description": "Onboarding state of the individual PNF descriptor resource.",
+          "type": "string",
+          "enum": ["CREATED", "UPLOADING", "PROCESSING", "ONBOARDED"]
+        },
+        "onboardingFailureDetails": {
+          "$ref": "#/definitions/ProblemDetails"
+        },
+        "pnfdUsageState": {
+          "title": "Pnfdusagestate",
+          "description": "Usage state of the individual PNF descriptor resource.",
+          "type": "string",
+          "enum": ["IN_USE", "NOT_IN_USE"]
+        },
+        "userDefinedData": {
+          "title": "Userdefineddata",
+          "description": "User defined data for the individual PNF descriptor resource.         This attribute can be modified with the PATCH method.",
+          "type": "object",
+          "additionalProperties": {
+            "description": "Key Value Pairs",
+            "type": "string"
+          },
+          "x-nullable": true
+        },
+        "_links": {
+          "$ref": "#/definitions/PNFD_LinkSerializer"
+        }
+      }
+    },
+    "SUBSCRIPTION_ProblemDetailsSerializer": {
+      "required": ["status", "detail"],
+      "type": "object",
+      "properties": {
+        "type": {
+          "title": "Type",
+          "description": "Type",
+          "type": "string",
+          "minLength": 1,
+          "x-nullable": true
+        },
+        "title": {
+          "title": "Title",
+          "description": "Title",
+          "type": "string",
+          "minLength": 1,
+          "x-nullable": true
+        },
+        "status": {
+          "title": "Status",
+          "description": "Status",
+          "type": "integer"
+        },
+        "detail": {
+          "title": "Detail",
+          "description": "Detail",
+          "type": "string",
+          "minLength": 1
+        },
+        "instance": {
+          "title": "Instance",
+          "description": "Instance",
+          "type": "string",
+          "minLength": 1,
+          "x-nullable": true
+        },
+        "additional_details": {
+          "description": "Any number of additional attributes, as defined in a specification or by an implementation.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-nullable": true
+        }
+      }
+    },
+    "CreatePnfdInfoRequest": {
+      "type": "object",
+      "properties": {
+        "userDefinedData": {
+          "title": "Userdefineddata",
+          "description": "User-defined data for the PNF descriptor resource to be created.It shall be present when the user defined data is set for the individual PNF descriptor resource to be created.",
+          "type": "object",
+          "additionalProperties": {
+            "description": "Key Value Pairs",
+            "type": "string"
+          },
+          "x-nullable": true
+        }
+      }
+    },
+    "NsdmNotificationsFilter": {
+      "title": "Filter",
+      "description": "Filter settings for this subscription, to define the of all notifications this subscription relates to.",
+      "type": "object",
+      "properties": {
+        "notificationTypes": {
+          "description": "Match particular notification types",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["NsdOnBoardingNotification", "NsdOnboardingFailureNotification", "NsdChangeNotification", "NsdDeletionNotification", "PnfdOnBoardingNotification", "PnfdOnBoardingFailureNotification", "PnfdDeletionNotification"]
+          }
+        },
+        "nsdInfoId": {
+          "description": "Match NS packages with particular nsdInfoIds",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "nsdId": {
+          "description": "Match NS Packages with particular nsdIds",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "nsdName": {
+          "description": "Match NS Packages with particular nsdNames",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1
+          }
+        },
+        "nsdVersion": {
+          "description": "match NS packages that belong to certain nsdversion",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1
+          }
+        },
+        "nsdInvariantId": {
+          "description": "Match NS Packages with particular nsdInvariantIds",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "vnfPkgIds": {
+          "description": "Match NS Packages that has VNF PackageIds",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "nestedNsdInfoIds": {
+          "description": "Match NS Packages with particular nsdInvariantIds",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "nsdOnboardingState": {
+          "description": "Match NS Packages with particular NS Onboarding State",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["CREATED", "UPLOADING", "PROCESSING", "ONBOARDED"]
+          }
+        },
+        "nsdOperationalState": {
+          "description": "Match NS Packages with particular NS Operational State",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["ENABLED", "DISABLED"]
+          }
+        },
+        "nsdUsageState": {
+          "description": "Match NS Packages with particular NS Usage State",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["IN_USE", "NOT_IN_USE"]
+          }
+        },
+        "pnfdInfoIds": {
+          "description": "Match PF packages with particular pnfdInfoIds",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "pnfdId": {
+          "description": "Match PF packages with particular pnfdInfoIds",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "pnfdName": {
+          "description": "Match PF Packages with particular pnfdNames",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1
+          }
+        },
+        "pnfdVersion": {
+          "description": "match PF packages that belong to certain pnfd version",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1
+          }
+        },
+        "pnfdProvider": {
+          "description": "Match PF Packages with particular pnfdProvider",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1
+          }
+        },
+        "pnfdInvariantId": {
+          "description": "Match PF Packages with particular pnfdInvariantIds",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "pnfdOnboardingState": {
+          "description": "Match PF Packages with particular PNF Onboarding State ",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["CREATED", "UPLOADING", "PROCESSING", "ONBOARDED"]
+          }
+        },
+        "pnfdUsageState": {
+          "description": "Match PF Packages with particular PNF usage State",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["IN_USE", "NOT_IN_USE"]
+          }
+        }
+      }
+    },
+    "NSDM_SUB_LinkSerializer": {
+      "title": " links",
+      "description": "Links to resources related to this resource.",
+      "required": ["self"],
+      "type": "object",
+      "properties": {
+        "self": {
+          "$ref": "#/definitions/UriLink"
+        }
+      }
+    },
+    "NsdmSubscription": {
+      "required": ["id", "callbackUri", "_links"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "description": "Identifier of this subscription resource.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 1
+        },
+        "callbackUri": {
+          "title": "Callbackuri",
+          "description": "The URI of the endpoint to send the notification to.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 1
+        },
+        "filter": {
+          "$ref": "#/definitions/NsdmNotificationsFilter"
+        },
+        "_links": {
+          "$ref": "#/definitions/NSDM_SUB_LinkSerializer"
+        }
+      }
+    },
+    "BasicAuth": {
+      "title": "Paramsbasic",
+      "description": "Parameters for authentication/authorization using BASIC.",
+      "type": "object",
+      "properties": {
+        "userName": {
+          "title": "Username",
+          "description": "Username to be used in HTTP Basic authentication.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 1
+        },
+        "password": {
+          "title": "Password",
+          "description": "Password to be used in HTTP Basic authentication.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 1
+        }
+      }
+    },
+    "OAuthCredentials": {
+      "title": "Paramsoauth2clientcredentials",
+      "description": "Parameters for authentication/authorization using OAUTH2_CLIENT_CREDENTIALS.",
+      "type": "object",
+      "properties": {
+        "clientId": {
+          "title": "Clientid",
+          "description": "Client identifier to be used in the access token request of the OAuth 2.0 client credentials grant type.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 1
+        },
+        "clientPassword": {
+          "title": "Clientpassword",
+          "description": "Client password to be used in the access token request of the OAuth 2.0 client credentials grant type.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 1
+        },
+        "tokenEndpoint": {
+          "title": "Tokenendpoint",
+          "description": "The token endpoint from which the access token can be obtained.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 1
+        }
+      }
+    },
+    "SubscriptionAuthentication": {
+      "title": "Authentication",
+      "description": "Authentication parameters to configure the use of Authorization when sending notifications corresponding to this subscription.",
+      "required": ["authType"],
+      "type": "object",
+      "properties": {
+        "authType": {
+          "description": "Defines the types of Authentication / Authorization which the API consumer is willing to accept when receiving a notification.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["BASIC", "OAUTH2_CLIENT_CREDENTIALS", "TLS_CERT"]
+          }
+        },
+        "paramsBasic": {
+          "$ref": "#/definitions/BasicAuth"
+        },
+        "paramsOauth2ClientCredentials": {
+          "$ref": "#/definitions/OAuthCredentials"
+        }
+      }
+    },
+    "NsdmSubscriptionRequest": {
+      "required": ["callbackUri"],
+      "type": "object",
+      "properties": {
+        "callbackUri": {
+          "title": "Callbackuri",
+          "description": "The URI of the endpoint to send the notification to.",
+          "type": "string",
+          "minLength": 1
+        },
+        "filter": {
+          "$ref": "#/definitions/NsdmNotificationsFilter"
+        },
+        "authentication": {
+          "$ref": "#/definitions/SubscriptionAuthentication"
+        }
+      }
+    },
+    "ParseModelRequest": {
+      "required": ["csarId"],
+      "type": "object",
+      "properties": {
+        "csarId": {
+          "title": "Csarid",
+          "description": "CSAR ID",
+          "type": "string",
+          "minLength": 1
+        },
+        "packageType": {
+          "title": "Packagetype",
+          "description": "Package type: VNF, PNF, NS, Service",
+          "type": "string",
+          "minLength": 1
+        },
+        "inputs": {
+          "title": "Inputs",
+          "description": "Inputs",
+          "type": "string"
+        }
+      }
+    },
+    "ParseModelResponse": {
+      "required": ["model"],
+      "type": "object",
+      "properties": {
+        "model": {
+          "title": "Model",
+          "description": "Model",
+          "type": "string"
+        }
+      }
+    },
+    "VNF_SUBSCRIPTION_LINKSERIALIZER": {
+      "title": "Self",
+      "description": "URI of this resource.",
+      "required": ["href"],
+      "type": "object",
+      "properties": {
+        "href": {
+          "title": "Href",
+          "description": "URI of the referenced resource.",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "LinkSelf": {
+      "title": " links",
+      "description": "Links to resources related to this resource.",
+      "required": ["self"],
+      "type": "object",
+      "properties": {
+        "self": {
+          "$ref": "#/definitions/VNF_SUBSCRIPTION_LINKSERIALIZER"
+        }
+      }
+    },
+    "Version": {
+      "title": "Versions",
+      "description": "match VNF packages that contain VNF products with certain versions",
+      "required": ["vnfSoftwareVersion"],
+      "type": "object",
+      "properties": {
+        "vnfSoftwareVersion": {
+          "title": "Vnfsoftwareversion",
+          "description": "VNF software version to match.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 1
+        },
+        "vnfdVersions": {
+          "description": "Match VNF packages that contain VNF products with certain VNFD versions",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "vnfProducts": {
+      "title": "Vnfproducts",
+      "description": "match VNF packages that contain VNF products with certain product names, from one particular provider",
+      "required": ["vnfProductName"],
+      "type": "object",
+      "properties": {
+        "vnfProductName": {
+          "title": "Vnfproductname",
+          "description": "Name of the VNF product to match.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 1
+        },
+        "versions": {
+          "$ref": "#/definitions/Version"
+        }
+      }
+    },
+    "vnfProductsProviders": {
+      "title": "Vnfproductsfromproviders",
+      "description": "Match VNF packages that contain VNF products from certain providers.",
+      "required": ["vnfProvider"],
+      "type": "object",
+      "properties": {
+        "vnfProvider": {
+          "title": "Vnfprovider",
+          "description": "Name of the VNFprovider to match.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 1
+        },
+        "vnfProducts": {
+          "$ref": "#/definitions/vnfProducts"
+        }
+      }
+    },
+    "PkgmNotificationsFilter": {
+      "title": "Filter",
+      "description": "Filter settings for this subscription, to define the subset of all notifications this subscription relates to",
+      "type": "object",
+      "properties": {
+        "notificationTypes": {
+          "description": "Match particular notification types",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["VnfPackageOnboardingNotification", "VnfPackageChangeNotification"]
+          }
+        },
+        "vnfProductsFromProviders": {
+          "$ref": "#/definitions/vnfProductsProviders"
+        },
+        "vnfdId": {
+          "description": "Match VNF packages with a VNFD identifierlisted in the attribute",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "vnfPkgId": {
+          "description": "Match VNF packages with a VNFD identifierlisted in the attribute",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "operationalState": {
+          "description": "Operational state of the VNF package.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["ENABLED", "DISABLED"]
+          }
+        },
+        "usageState": {
+          "description": "Operational state of the VNF package.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["IN_USE", "NOT_IN_USE"]
+          }
+        }
+      }
+    },
+    "PkgmSubscription": {
+      "required": ["id", "callbackUri", "_links"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "description": "Identifier of this subscription resource.",
+          "type": "string",
+          "format": "uuid"
+        },
+        "callbackUri": {
+          "title": "Callbackuri",
+          "description": "The URI of the endpoint to send the notification to.",
+          "type": "string",
+          "format": "uri",
+          "minLength": 1
+        },
+        "_links": {
+          "$ref": "#/definitions/LinkSelf"
+        },
+        "filter": {
+          "$ref": "#/definitions/PkgmNotificationsFilter"
+        }
+      }
+    },
+    "PkgmSubscriptionRequest": {
+      "required": ["callbackUri"],
+      "type": "object",
+      "properties": {
+        "filters": {
+          "$ref": "#/definitions/PkgmNotificationsFilter"
+        },
+        "callbackUri": {
+          "title": "Callbackuri",
+          "description": "Callback URI to sendthe notification",
+          "type": "string",
+          "format": "uri",
+          "minLength": 1
+        },
+        "authentication": {
+          "$ref": "#/definitions/SubscriptionAuthentication"
+        }
+      }
+    },
+    "Checksum": {
+      "title": "Checksum",
+      "description": "Checksum of the on-boarded VNF package.",
+      "required": ["algorithm", "hash"],
+      "type": "object",
+      "properties": {
+        "algorithm": {
+          "title": "Algorithm",
+          "description": "Name of the algorithm used to generate the checksum.",
+          "type": "string",
+          "minLength": 1
+        },
+        "hash": {
+          "title": "Hash",
+          "description": "The hexadecimal value of the checksum.",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "VnfPackageSoftwareImageInfo": {
+      "description": "Information about VNF package artifacts that are software images.",
+      "required": ["id", "name", "provider", "version", "checksum", "containerFormat", "diskFormat", "createdAt", "minDisk", "minRam", "size", "imagePath"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "description": "Identifier of the software image.",
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "title": "Name",
+          "description": "Name of the software image.",
+          "type": "string",
+          "minLength": 1
+        },
+        "provider": {
+          "title": "Provider",
+          "description": "Provider of the software image.",
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "title": "Version",
+          "description": "Version of the software image.",
+          "type": "string",
+          "minLength": 1
+        },
+        "checksum": {
+          "$ref": "#/definitions/Checksum"
+        },
+        "containerFormat": {
+          "title": "Containerformat",
+          "description": "terminationType: Indicates whether forceful or graceful termination is requested.",
+          "type": "string",
+          "enum": ["AKI", "AMI", "ARI", "BARE", "DOCKER", "OVA", "OVF"]
+        },
+        "diskFormat": {
+          "title": "Diskformat",
+          "description": "Disk format of a software image is the format of the underlying disk image.",
+          "type": "string",
+          "enum": ["AKI", "AMI", "ARI", "ISO", "QCOW2", "RAW", "VDI", "VHD", "VHDX", "VMDK"]
+        },
+        "createdAt": {
+          "title": "Createdat",
+          "description": "Time when this software image was created.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "minDisk": {
+          "title": "Mindisk",
+          "description": "The minimal disk for this software image in bytes.",
+          "type": "integer"
+        },
+        "minRam": {
+          "title": "Minram",
+          "description": "The minimal RAM for this software image in bytes.",
+          "type": "integer"
+        },
+        "size": {
+          "title": "Size",
+          "description": "Size of this software image in bytes.",
+          "type": "integer"
+        },
+        "userMetadata": {
+          "title": "Usermetadata",
+          "description": "User-defined data.",
+          "type": "object",
+          "additionalProperties": {
+            "description": "KeyValue Pairs",
+            "type": "string"
+          },
+          "x-nullable": true
+        },
+        "imagePath": {
+          "title": "Imagepath",
+          "description": "Path in the VNF package.",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "VnfPackageArtifactInfo": {
+      "description": "Information about VNF package artifacts contained in the VNF package that are not software images.",
+      "required": ["artifactPath", "checksum"],
+      "type": "object",
+      "properties": {
+        "artifactPath": {
+          "title": "Artifactpath",
+          "description": "Path in the VNF package.",
+          "type": "string",
+          "minLength": 1
+        },
+        "checksum": {
+          "$ref": "#/definitions/Checksum"
+        },
+        "metadata": {
+          "title": "Metadata",
+          "description": "The metadata of the artifact that are available in the VNF package",
+          "type": "object",
+          "additionalProperties": {
+            "description": "KeyValue Pairs",
+            "type": "string"
+          },
+          "x-nullable": true
+        }
+      }
+    },
+    "VNF_PKGM_Link_Serializer": {
+      "title": " links",
+      "description": "Links to resources related to this resource.",
+      "required": ["self", "packageContent"],
+      "type": "object",
+      "properties": {
+        "self": {
+          "$ref": "#/definitions/UriLink"
+        },
+        "vnfd": {
+          "$ref": "#/definitions/UriLink"
+        },
+        "packageContent": {
+          "$ref": "#/definitions/UriLink"
+        }
+      }
+    },
+    "VnfPkgInfo": {
+      "required": ["id", "onboardingState", "operationalState", "usageState", "_links"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "description": "Identifier of the on-boarded VNF package.",
+          "type": "string",
+          "minLength": 1
+        },
+        "vnfdId": {
+          "title": "Vnfdid",
+          "description": "This identifier, which is managed by the VNF provider, identifies the VNF package and the VNFD in a globally unique way.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "vnfProvider": {
+          "title": "Vnfprovider",
+          "description": "Provider of the VNF package and the VNFD.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "vnfProductName": {
+          "title": "Vnfproductname",
+          "description": "Name to identify the VNF product.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "vnfSoftwareVersion": {
+          "title": "Vnfsoftwareversion",
+          "description": "Software version of the VNF.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "vnfdVersion": {
+          "title": "Vnfdversion",
+          "description": "The version of the VNvFD.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "checksum": {
+          "$ref": "#/definitions/Checksum"
+        },
+        "softwareImages": {
+          "description": "Information about VNF package artifacts that are software images.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/VnfPackageSoftwareImageInfo"
+          },
+          "x-nullable": true
+        },
+        "additionalArtifacts": {
+          "description": "Information about VNF package artifacts contained in the VNF package that are not software images.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/VnfPackageArtifactInfo"
+          },
+          "x-nullable": true
+        },
+        "onboardingState": {
+          "title": "Onboardingstate",
+          "description": "On-boarding state of the VNF package.",
+          "type": "string",
+          "enum": ["CREATED", "UPLOADING", "PROCESSING", "ONBOARDED"]
+        },
+        "operationalState": {
+          "title": "Operationalstate",
+          "description": "Operational state of the VNF package.",
+          "type": "string",
+          "enum": ["ENABLED", "DISABLED"]
+        },
+        "usageState": {
+          "title": "Usagestate",
+          "description": "Usage state of the VNF package.",
+          "type": "string",
+          "enum": ["IN_USE", "NOT_IN_USE"]
+        },
+        "userDefinedData": {
+          "title": "Userdefineddata",
+          "description": "User defined data for the VNF package.",
+          "type": "object",
+          "additionalProperties": {
+            "description": "KeyValue Pairs",
+            "type": "string"
+          },
+          "x-nullable": true
+        },
+        "_links": {
+          "$ref": "#/definitions/VNF_PKGM_Link_Serializer"
+        }
+      }
+    },
+    "CreateVnfPkgInfoRequest": {
+      "type": "object",
+      "properties": {
+        "userDefinedData": {
+          "title": "Userdefineddata",
+          "description": "User defined data for the VNF package.",
+          "type": "object",
+          "additionalProperties": {
+            "description": "KeyValue Pairs",
+            "type": "string"
+          },
+          "x-nullable": true
+        }
+      }
+    },
+    "UploadVnfPackageFromUriRequest": {
+      "required": ["addressInformation"],
+      "type": "object",
+      "properties": {
+        "addressInformation": {
+          "title": "Addressinformation",
+          "description": "Address information of the VNF package content.",
+          "type": "string",
+          "minLength": 1
+        },
+        "userName": {
+          "title": "Username",
+          "description": "User name to be used for authentication.",
+          "type": "string",
+          "minLength": 1
+        },
+        "password": {
+          "title": "Password",
+          "description": "Password to be used for authentication.",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}
