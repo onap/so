@@ -1,0 +1,107 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ca4418f3_61366463",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1501,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-11-28T21:14:31Z",
+      "side": 1,
+      "message": "What if its empty or null ?",
+      "range": {
+        "startLine": 1501,
+        "startChar": 36,
+        "endLine": 1501,
+        "endChar": 60
+      },
+      "revId": "46c16fe122b867956c0e99b9f5bf1f52109ae722",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e2dfebdb_8dcc0d44",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-11-28T21:14:31Z",
+      "side": 1,
+      "message": "Missing copyright header",
+      "revId": "46c16fe122b867956c0e99b9f5bf1f52109ae722",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7eef28eb_33417253",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-11-28T21:14:31Z",
+      "side": 1,
+      "message": "Please give a small description whats the purpose of this class.",
+      "revId": "46c16fe122b867956c0e99b9f5bf1f52109ae722",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1c755faf_2297db88",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-11-28T21:14:31Z",
+      "side": 1,
+      "message": "Question- \nWho is going to call SkipCDSBuildingBlockListener",
+      "range": {
+        "startLine": 14,
+        "startChar": 13,
+        "endLine": 14,
+        "endChar": 41
+      },
+      "revId": "46c16fe122b867956c0e99b9f5bf1f52109ae722",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "73fe4a08_6d827584",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-11-28T21:14:31Z",
+      "side": 1,
+      "message": "Remove unwanted space. Applies elsewhere.",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 2
+      },
+      "revId": "46c16fe122b867956c0e99b9f5bf1f52109ae722",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
