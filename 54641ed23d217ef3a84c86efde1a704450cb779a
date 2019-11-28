@@ -1,0 +1,181 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7637cc7b_e3fae3a5",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ControllerExecution.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-11-28T20:48:52Z",
+      "side": 1,
+      "message": "Add copyright header.",
+      "revId": "54641ed23d217ef3a84c86efde1a704450cb779a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4c379b6d_d62e9278",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ControllerExecution.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-11-28T20:48:52Z",
+      "side": 1,
+      "message": "Remove extra space",
+      "revId": "54641ed23d217ef3a84c86efde1a704450cb779a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "59e1036d_208a3921",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ControllerExecution.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-11-28T20:48:52Z",
+      "side": 1,
+      "message": "Please add java doc for this method.",
+      "range": {
+        "startLine": 34,
+        "startChar": 13,
+        "endLine": 34,
+        "endChar": 42
+      },
+      "revId": "54641ed23d217ef3a84c86efde1a704450cb779a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "196f8bc5_832ec1f9",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ControllerExecution.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-11-28T20:48:52Z",
+      "side": 1,
+      "message": "Doubt - Are we going to have controller actor at PNF level ?\nbecause as per this patch https://gerrit.onap.org/r/#/c/so/+/98418/5/mso-catalog-db/src/main/java/org/onap/so/db/catalog/beans/PnfResourceCustomization.java\nwe have controller actor at PNF level then in that case you might need to see is it at VNF or PNF.",
+      "range": {
+        "startLine": 42,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 111
+      },
+      "revId": "54641ed23d217ef3a84c86efde1a704450cb779a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7034426d_3a76b8d0",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ControllerExecution.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-11-28T20:48:52Z",
+      "side": 1,
+      "message": "Please add java doc for this method",
+      "revId": "54641ed23d217ef3a84c86efde1a704450cb779a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8d655a92_43bf3752",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ControllerExecution.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-11-28T20:48:52Z",
+      "side": 1,
+      "message": "Also if you check WorkflowActionBB.bpmn it calls WorkflowActionBBTasks.selectBB method \nwhy can\u0027t we make use of that method ?",
+      "revId": "54641ed23d217ef3a84c86efde1a704450cb779a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "42066a7e_70c68e09",
+        "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/beans/BBNameSelectionReference.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-11-28T20:48:52Z",
+      "side": 1,
+      "message": "Add copyright header.",
+      "revId": "54641ed23d217ef3a84c86efde1a704450cb779a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8c086a30_b9f1a86a",
+        "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/beans/BBNameSelectionReference.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-11-28T20:48:52Z",
+      "side": 1,
+      "message": "We are using OrchestrationFlow Reference table to have \nScope and Action. \nCorrect me if I am wrong thanks.  \n\nhttps://gerrit.onap.org/r/#/c/so/+/98166/1/mso-catalog-db/src/main/java/org/onap/so/db/catalog/beans/macro/OrchestrationFlow.java\n\nI am not sure how we are passing controller-actor information. Please touch base with Yuri or Henry",
+      "range": {
+        "startLine": 11,
+        "startChar": 15,
+        "endLine": 11,
+        "endChar": 39
+      },
+      "revId": "54641ed23d217ef3a84c86efde1a704450cb779a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ca80e4fd_22f3909d",
+        "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/beans/BBNameSelectionReference.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-11-28T20:48:52Z",
+      "side": 1,
+      "message": "Remove unwanted spaces. Applies elsewhere",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 1
+      },
+      "revId": "54641ed23d217ef3a84c86efde1a704450cb779a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
