@@ -1,5 +1,6 @@
 use catalogdb;
 
+
 CREATE TABLE IF NOT EXISTS `BBNameSelectionReference` (
   `ACTOR` varchar(200) NOT NULL ,
   `SCOPE` varchar(200) NOT NULL,

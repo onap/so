@@ -278,7 +278,7 @@ public class CatalogDbClient {
     private final Client<PnfResourceCustomization> pnfResourceCustomizationClient;
 
     private final Client<Workflow> workflowClient;
-    
+
     private final Client<BBNameSelectionReference> bbNameSelectionReferenceClient;
 
     @Value("${mso.catalog.db.spring.endpoint:#{null}}")
@@ -364,7 +364,7 @@ public class CatalogDbClient {
         pnfResourceURI = endpoint + PNF_RESOURCE + URI_SEPARATOR;
         pnfResourceCustomizationURI = endpoint + PNF_RESOURCE_CUSTOMIZATION + URI_SEPARATOR;
         workflowURI = endpoint + WORKFLOW + URI_SEPARATOR;
-        bbNameSelectionReferenceURI = endpoint +BB_NAME_SELECTION_REFERENCE+URI_SEPARATOR;
+        bbNameSelectionReferenceURI = endpoint + BB_NAME_SELECTION_REFERENCE + URI_SEPARATOR;
 
     }
 
@@ -689,12 +689,11 @@ public class CatalogDbClient {
                 + "/controllerSelectionReference/search/findControllerSelectionReferenceByVnfTypeAndActionCategory")
                 .queryParam("VNF_TYPE", vnfType).queryParam("ACTION_CATEGORY", actionCategory).build());
     }
-    
 
-    public BBNameSelectionReference getBBNameSelectionReference(String actor,
-            String scope, String action) {
+
+    public BBNameSelectionReference getBBNameSelectionReference(String actor, String scope, String action) {
         return this.getSingleResource(bbNameSelectionReferenceClient, UriBuilder.fromUri(bbNameSelectionReferenceURI)
-                .queryParam("ACTOR", actor).queryParam("SCOPE", scope).queryParam("ACTION",action).build());
+                .queryParam("ACTOR", actor).queryParam("SCOPE", scope).queryParam("ACTION", action).build());
     }
 
     public Service getFirstByModelNameOrderByModelVersionDesc(String modelName) {
