@@ -116,6 +116,24 @@
     },
     {
       "key": {
+        "uuid": "0f38ea96_9aa23392",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ControllerExecution.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 2973
+      },
+      "writtenOn": "2019-11-29T09:51:19Z",
+      "side": 1,
+      "message": "This selectBB is referring to BBNameSelectionReference table to get bbName based on Actor,Scope and Action",
+      "parentUuid": "8d655a92_43bf3752",
+      "revId": "54641ed23d217ef3a84c86efde1a704450cb779a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "42066a7e_70c68e09",
         "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/beans/BBNameSelectionReference.java",
         "patchSetId": 1
@@ -144,6 +162,30 @@
       "writtenOn": "2019-11-28T20:48:52Z",
       "side": 1,
       "message": "We are using OrchestrationFlow Reference table to have \nScope and Action. \nCorrect me if I am wrong thanks.  \n\nhttps://gerrit.onap.org/r/#/c/so/+/98166/1/mso-catalog-db/src/main/java/org/onap/so/db/catalog/beans/macro/OrchestrationFlow.java\n\nI am not sure how we are passing controller-actor information. Please touch base with Yuri or Henry",
+      "range": {
+        "startLine": 11,
+        "startChar": 15,
+        "endLine": 11,
+        "endChar": 39
+      },
+      "revId": "54641ed23d217ef3a84c86efde1a704450cb779a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8e4fcdee_64532d6d",
+        "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/beans/BBNameSelectionReference.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 2973
+      },
+      "writtenOn": "2019-11-29T09:51:19Z",
+      "side": 1,
+      "message": "We are creating a new table here for non cds flow.When The Collector Actor is not CDS then we will search which bb to execute for the normal flow from this table based on Actor, Scope and Action.",
+      "parentUuid": "8c086a30_b9f1a86a",
       "range": {
         "startLine": 11,
         "startChar": 15,
