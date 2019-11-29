@@ -82,6 +82,30 @@
     },
     {
       "key": {
+        "uuid": "7c31c59e_a79fc225",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ControllerExecution.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 2973
+      },
+      "writtenOn": "2019-11-29T10:00:18Z",
+      "side": 1,
+      "message": "Currently we are not handling pnf as building blocks are not available for pnf.",
+      "parentUuid": "196f8bc5_832ec1f9",
+      "range": {
+        "startLine": 42,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 111
+      },
+      "revId": "54641ed23d217ef3a84c86efde1a704450cb779a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7034426d_3a76b8d0",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ControllerExecution.java",
         "patchSetId": 1
