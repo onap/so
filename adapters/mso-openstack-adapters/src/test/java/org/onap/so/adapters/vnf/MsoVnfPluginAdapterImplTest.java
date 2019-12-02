@@ -134,7 +134,8 @@ public class MsoVnfPluginAdapterImplTest extends BaseRestTestUtils {
         expectedException.expect(VnfException.class);
         MsoRequest msoRequest = getMsoRequest();
         msoVnfPluginAdapter.deleteVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12",
-                msoRequest, new Holder<Map<String, String>>());
+                "5aae1e49-805c-4f9f-bd78-055bf7451157", "11420693-3f69-4c61-b3ee-9787c744e760", msoRequest,
+                new Holder<Map<String, String>>());
     }
 
     @Test
@@ -151,7 +152,8 @@ public class MsoVnfPluginAdapterImplTest extends BaseRestTestUtils {
                                 .withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)));
         MsoRequest msoRequest = getMsoRequest();
         msoVnfPluginAdapter.deleteVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12",
-                msoRequest, new Holder<Map<String, String>>());
+                "5aae1e49-805c-4f9f-bd78-055bf7451157", "11420693-3f69-4c61-b3ee-9787c744e760", msoRequest,
+                new Holder<Map<String, String>>());
     }
 
     private MsoRequest getMsoRequest() {

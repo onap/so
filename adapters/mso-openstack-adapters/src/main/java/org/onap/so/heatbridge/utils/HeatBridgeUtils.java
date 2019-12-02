@@ -35,10 +35,15 @@ package org.onap.so.heatbridge.utils;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
+import org.apache.commons.collections.CollectionUtils;
+import org.onap.aai.domain.yang.SriovVf;
+import org.onap.aai.domain.yang.Vserver;
 
-public class HeatBridgeUtils {
+public final class HeatBridgeUtils {
 
     /**
      * IaaS naming convention for compute/p-interface to openstack/physical-network name mapping
@@ -64,4 +69,13 @@ public class HeatBridgeUtils {
         }
         return Optional.empty();
     }
+
+    public static List<String> extractPciIdsFromVServer(Vserver vserver) {
+        return vserver.getLInterfaces().getLInterface().stream()
+                .filter(lInterface -> lInterface.getSriovVfs() != null
+                        && CollectionUtils.isNotEmpty(lInterface.getSriovVfs().getSriovVf()))
+                .flatMap(lInterface -> lInterface.getSriovVfs().getSriovVf().stream()).map(SriovVf::getPciId)
+                .collect(Collectors.toList());
+    }
+
 }
