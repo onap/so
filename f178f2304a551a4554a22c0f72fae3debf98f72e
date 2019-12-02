@@ -49,6 +49,54 @@
     },
     {
       "key": {
+        "uuid": "1f6b8f7f_d2b179a4",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigVnf.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-02T14:59:54Z",
+      "side": 1,
+      "message": "Yes you are correct I should add TODO comment here.",
+      "parentUuid": "d648bc03_f6f8e146",
+      "range": {
+        "startLine": 45,
+        "startChar": 8,
+        "endLine": 45,
+        "endChar": 87
+      },
+      "revId": "f178f2304a551a4554a22c0f72fae3debf98f72e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "092b6ff0_1a789526",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigVnf.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-02T14:59:54Z",
+      "side": 1,
+      "message": "so you are saying I shouldn\u0027t  pass extra Config string instead direct action-name ?",
+      "parentUuid": "8ab6e887_16356cdc",
+      "range": {
+        "startLine": 45,
+        "startChar": 8,
+        "endLine": 45,
+        "endChar": 87
+      },
+      "revId": "f178f2304a551a4554a22c0f72fae3debf98f72e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e8e35ef5_8cdb04d9",
         "filename": "bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/BuildingBlock/ControllerExecutionBB.bpmn",
         "patchSetId": 16
@@ -60,6 +108,30 @@
       "writtenOn": "2019-11-27T17:11:41Z",
       "side": 1,
       "message": "as i see this is a generic bb, will this still be calling using this expression?",
+      "range": {
+        "startLine": 26,
+        "startChar": 123,
+        "endLine": 26,
+        "endChar": 262
+      },
+      "revId": "f178f2304a551a4554a22c0f72fae3debf98f72e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6cec5ee9_54076e34",
+        "filename": "bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/BuildingBlock/ControllerExecutionBB.bpmn",
+        "patchSetId": 16
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-02T14:59:54Z",
+      "side": 1,
+      "message": "I am going to make use of this BPMN  https://jira.onap.org/browse/SO-2312\n\nAlso its going to call GenericCDSProcessing.buildPayloadBasedOnScopeAndAction",
+      "parentUuid": "e8e35ef5_8cdb04d9",
       "range": {
         "startLine": 26,
         "startChar": 123,
