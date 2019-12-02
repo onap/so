@@ -25,15 +25,11 @@
 package org.onap.so.adapters.vnf;
 
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
 import org.apache.commons.collections.CollectionUtils;
@@ -427,6 +423,8 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
             HeatBridgeApi heatBridgeClient =
                     new HeatBridgeImpl(new AAIResourcesClient(), cloudIdentity, cloudOwner, cloudSiteId, tenantId);
+
+            heatBridgeClient.authenticate();
 
             List<Resource> stackResources = heatBridgeClient.queryNestedHeatStackResources(heatStackId);
 
