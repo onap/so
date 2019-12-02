@@ -577,7 +577,7 @@ public class ToscaResourceInstaller {
 
         String resourceSeqStr = resouceSequence.stream().collect(Collectors.joining(","));
         service.setResourceOrder(resourceSeqStr);
-        logger.debug(" resourceSeq for service uuid(" + service.getModelUUID() + ") : " + resourceSeqStr);
+        logger.debug(" resourceSeq for service uuid{}: {}", service.getModelUUID(), resourceSeqStr);
     }
 
 
@@ -638,8 +638,7 @@ public class ToscaResourceInstaller {
             String jsonStr = objectMapper.writeValueAsString(resouceRequest);
 
             jsonStr = jsonStr.replace("\"", "\\\"");
-            logger.debug(
-                    "resource request for resource customization id (" + resourceCustomizationUuid + ") : " + jsonStr);
+            logger.debug("resource request for resource customization id {}: {}", resourceCustomizationUuid, jsonStr);
             return jsonStr;
         } catch (JsonProcessingException e) {
             logger.error("resource input could not be deserialized for resource customization id ("
@@ -682,8 +681,8 @@ public class ToscaResourceInstaller {
                     networkCustomization.setResourceInput(
                             getResourceInput(toscaResourceStruct, networkCustomization.getModelCustomizationUUID()));
                     service.getNetworkCustomizations().add(networkCustomization);
-                    logger.debug("No NetworkResourceName found in TempNetworkHeatTemplateLookup for "
-                            + networkResourceModelName);
+                    logger.debug("No NetworkResourceName found in TempNetworkHeatTemplateLookup for {}",
+                            networkResourceModelName);
                 }
 
             }
@@ -1008,25 +1007,25 @@ public class ToscaResourceInstaller {
         String vfCustomizationCategory =
                 vfEntityDetails.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_CATEGORY);
 
-        logger.debug("VF Category is : " + vfCustomizationCategory);
+        logger.debug("VF Category is: {} ", vfCustomizationCategory);
 
         String vfCustomizationUUID =
                 vfEntityDetails.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
 
-        logger.debug("VFCustomizationUUID=" + vfCustomizationUUID);
+        logger.debug("VFCustomizationUUID= {}", vfCustomizationUUID);
 
         IResourceInstance vfNotificationResource = vfResourceStructure.getResourceInstance();
 
         // Make sure the VF ResourceCustomizationUUID from the notification and tosca customizations match before
         // comparing their VF Modules UUID's
-        logger.debug("Checking if Notification VF ResourceCustomizationUUID: "
-                + vfNotificationResource.getResourceCustomizationUUID() + " matches Tosca VF Customization UUID: "
-                + vfCustomizationUUID);
+        logger.debug(
+                "Checking if Notification VF ResourceCustomizationUUID: {} matches Tosca VF Customization UUID: {}",
+                vfNotificationResource.getResourceCustomizationUUID(), vfCustomizationUUID);
 
         if (vfCustomizationUUID.equals(vfNotificationResource.getResourceCustomizationUUID())) {
 
-            logger.debug("vfCustomizationUUID: " + vfCustomizationUUID
-                    + " matches vfNotificationResource CustomizationUUID");
+            logger.debug("vfCustomizationUUID: {}  matches vfNotificationResource CustomizationUUID ",
+                    vfCustomizationUUID);
 
             VnfResourceCustomization vnfResource = createVnfResource(vfEntityDetails, toscaResourceStruct, service);
 
@@ -1038,7 +1037,7 @@ public class ToscaResourceInstaller {
 
                 for (VfModuleStructure vfModuleStructure : vfResourceStructure.getVfModuleStructure()) {
 
-                    logger.debug("vfModuleStructure:" + vfModuleStructure.toString());
+                    logger.debug("vfModuleStructure: {}", vfModuleStructure);
 
                     List<IEntityDetails> vfModuleEntityList =
                             getEntityDetails(toscaResourceStruct,
@@ -1087,7 +1086,7 @@ public class ToscaResourceInstaller {
             if (!CollectionUtils.isEmpty(seqResult)) {
                 String resultStr = seqResult.stream().collect(Collectors.joining(","));
                 vnfResource.setVnfcInstanceGroupOrder(resultStr);
-                logger.debug("vnfcGroupOrder result for service uuid(" + service.getModelUUID() + ") : " + resultStr);
+                logger.debug("vnfcGroupOrder result for service uuid {}: {}", service.getModelUUID(), resultStr);
             }
             // add this vnfResource with existing vnfResource for this service
             addVnfCustomization(service, vnfResource);
@@ -1197,7 +1196,7 @@ public class ToscaResourceInstaller {
             watchdogDistributionStatusRepository.saveAndFlush(distributionStatus);
 
         } catch (ObjectOptimisticLockingFailureException e) {
-            logger.debug("ObjectOptimisticLockingFailureException in processWatchdog : " + e.toString());
+            logger.debug("ObjectOptimisticLockingFailureException in processWatchdog : {} ", e);
             throw e;
         }
     }
@@ -2028,8 +2027,7 @@ public class ToscaResourceInstaller {
             ObjectMapper objectMapper = new ObjectMapper();
             jsonStr = objectMapper.writeValueAsString(resouceRequest);
             jsonStr = jsonStr.replace("\"", "\\\"");
-            logger.debug("vfcResource request for resource customization id (" + resourceCustomizationUuid + ") : "
-                    + jsonStr);
+            logger.debug("vfcResource request for resource customization id {}: {}", resourceCustomizationUuid, jsonStr);
         } catch (JsonProcessingException e) {
             logger.debug("Json Exception: {}", e.getMessage());
             logger.error("Exception occurred", e);
