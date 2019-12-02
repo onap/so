@@ -34,7 +34,6 @@ import javax.persistence.Table;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.onap.so.db.catalog.beans.BuildingBlockDetail;
 import com.openpojo.business.annotation.BusinessKey;
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
@@ -65,6 +64,14 @@ public class OrchestrationFlow implements Serializable {
     @Column(name = "FLOW_VERSION")
     private Double flowVersion;
 
+    @BusinessKey
+    @Column(name = "ACTION")
+    private String bpmnAction;
+
+    @BusinessKey
+    @Column(name = "SCOPE")
+    private String bpmnScope;
+
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "NB_REQ_REF_LOOKUP_ID")
     private NorthBoundRequest northBoundRequest;
@@ -73,7 +80,8 @@ public class OrchestrationFlow implements Serializable {
     public String toString() {
         return new ToStringBuilder(this).append("id", id).append("action", action)
                 .append("sequenceNumber", sequenceNumber).append("flowName", flowName)
-                .append("flowVersion", flowVersion).toString();
+                .append("flowVersion", flowVersion).append("bpmnAction", bpmnAction).append("bpmnScope", bpmnScope)
+                .toString();
     }
 
     @Override
@@ -83,13 +91,14 @@ public class OrchestrationFlow implements Serializable {
         }
         OrchestrationFlow castOther = (OrchestrationFlow) other;
         return new EqualsBuilder().append(action, castOther.action).append(sequenceNumber, castOther.sequenceNumber)
-                .append(flowName, castOther.flowName).append(flowVersion, castOther.flowVersion).isEquals();
+                .append(flowName, castOther.flowName).append(flowVersion, castOther.flowVersion)
+                .append(bpmnAction, castOther.bpmnAction).append(bpmnScope, castOther.bpmnScope).isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(action).append(sequenceNumber).append(flowName).append(flowVersion)
-                .toHashCode();
+                .append(bpmnAction).append(bpmnScope).toHashCode();
     }
 
     public String getAction() {
@@ -130,6 +139,22 @@ public class OrchestrationFlow implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getBpmnAction() {
+        return bpmnAction;
+    }
+
+    public void setBpmnAction(String bpmnAction) {
+        this.bpmnAction = bpmnAction;
+    }
+
+    public String getBpmnScope() {
+        return bpmnScope;
+    }
+
+    public void setBpmnScope(String bpmnScope) {
+        this.bpmnScope = bpmnScope;
     }
 
     @LinkedResource

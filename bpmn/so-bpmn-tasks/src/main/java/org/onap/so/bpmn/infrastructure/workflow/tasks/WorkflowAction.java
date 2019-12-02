@@ -71,13 +71,11 @@ import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.macro.NorthBoundRequest;
 import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
 import org.onap.so.db.catalog.client.CatalogDbClient;
-import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.ModelType;
 import org.onap.so.serviceinstancebeans.Networks;
 import org.onap.so.serviceinstancebeans.RelatedInstance;
 import org.onap.so.serviceinstancebeans.RequestDetails;
-import org.onap.so.serviceinstancebeans.RequestInfo;
 import org.onap.so.serviceinstancebeans.Service;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 import org.onap.so.serviceinstancebeans.VfModules;
@@ -184,15 +182,27 @@ public class WorkflowAction {
             execution.setVariable(BBConstants.G_ISTOPLEVELFLOW, true);
             ServiceInstancesRequest sIRequest = mapper.readValue(bpmnRequest, ServiceInstancesRequest.class);
             RequestDetails requestDetails = sIRequest.getRequestDetails();
-            execution.setVariable("suppressRollback", isSuppressRollback(requestDetails.getRequestInfo()));
+            String cloudOwner = "";
+            try {
+                cloudOwner = requestDetails.getCloudConfiguration().getCloudOwner();
+            } catch (Exception ex) {
+                logger.error("Exception in getCloundOwner", ex);
+                cloudOwner = environment.getProperty(defaultCloudOwner);
+            }
+            boolean suppressRollback = false;
+            try {
+                suppressRollback = requestDetails.getRequestInfo().getSuppressRollback();
+            } catch (Exception ex) {
+                logger.error("Exception in getSuppressRollback", ex);
+                suppressRollback = false;
+            }
+            execution.setVariable("suppressRollback", suppressRollback);
             boolean isResume = false;
             if (isUriResume(uri)) {
                 isResume = true;
-                if (!aLaCarte) {
-                    logger.debug("replacing URI {}", uri);
-                    uri = bbInputSetupUtils.loadOriginalInfraActiveRequestById(requestId).getRequestUrl();
-                    logger.debug("for RESUME with original value {}", uri);
-                }
+                logger.debug("replacing URI {}", uri);
+                uri = bbInputSetupUtils.loadOriginalInfraActiveRequestById(requestId).getRequestUrl();
+                logger.debug("for RESUME with original value {}", uri);
             }
             Resource resource = extractResourceIdAndTypeFromUri(uri);
             WorkflowType resourceType = resource.getResourceType();
@@ -224,7 +234,6 @@ public class WorkflowAction {
                             "Could not resume request with request Id: " + requestId + ". No flowsToExecute was found");
                 }
             } else {
-                String cloudOwner = getCloudOwner(requestDetails.getCloudConfiguration());
                 if (aLaCarte) {
                     if (orchFlows == null || orchFlows.isEmpty()) {
                         orchFlows = queryNorthBoundRequestCatalogDb(execution, requestAction, resourceType, aLaCarte,
@@ -399,21 +408,6 @@ public class WorkflowAction {
         } catch (Exception ex) {
             buildAndThrowException(execution, "Exception in create execution list. " + ex.getMessage(), ex);
         }
-    }
-
-    private String getCloudOwner(CloudConfiguration cloudConfiguration) {
-        if (cloudConfiguration != null && cloudConfiguration.getCloudOwner() != null) {
-            return cloudConfiguration.getCloudOwner();
-        }
-        logger.warn("cloud owner value not found in request details, it will be set as default");
-        return environment.getProperty(defaultCloudOwner);
-    }
-
-    private boolean isSuppressRollback(RequestInfo requestInfo) {
-        if (requestInfo != null) {
-            return requestInfo.getSuppressRollback();
-        }
-        return false;
     }
 
     protected <T> List<T> getRelatedResourcesInVfModule(String vnfId, String vfModuleId, Class<T> resultClass,
@@ -1131,8 +1125,8 @@ public class WorkflowAction {
     }
 
     protected Resource extractResourceIdAndTypeFromUri(String uri) {
-        Pattern patt = Pattern.compile("[vV]\\d+.*?(?:(?:/(?<type>" + SUPPORTEDTYPES
-                + ")(?:/(?<id>[^/]+))?)(?:/(?<action>[^/]+))?(?:/resume)?)?$");
+        Pattern patt = Pattern.compile(
+                "[vV]\\d+.*?(?:(?:/(?<type>" + SUPPORTEDTYPES + ")(?:/(?<id>[^/]+))?)(?:/(?<action>[^/]+))?)?$");
         Matcher m = patt.matcher(uri);
         Boolean generated = false;
 
@@ -1503,6 +1497,12 @@ public class WorkflowAction {
             boolean isVirtualLink, String virtualLinkKey, boolean isConfiguration) {
         ExecuteBuildingBlock executeBuildingBlock = new ExecuteBuildingBlock();
         BuildingBlock buildingBlock = new BuildingBlock();
+
+        if (null != orchFlow.getBpmnAction() && null != orchFlow.getBpmnScope()) {
+            buildingBlock.setBpmnAction(orchFlow.getBpmnAction());
+            buildingBlock.setBpmnScope(orchFlow.getBpmnScope());
+        }
+
         buildingBlock.setBpmnFlowName(orchFlow.getFlowName());
         buildingBlock.setMsoId(UUID.randomUUID().toString());
         if (resource == null) {
@@ -1628,4 +1628,3 @@ public class WorkflowAction {
                 && (bbInputSetupUtils.getAAIServiceInstanceById(serviceInstanceId) != null));
     }
 }
-
