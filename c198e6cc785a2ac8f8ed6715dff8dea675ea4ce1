@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8ccdbe81_474e88fa",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-03T17:10:08Z",
+      "side": 1,
+      "message": "This is redundant initialization.",
+      "range": {
+        "startLine": 185,
+        "startChar": 32,
+        "endLine": 185,
+        "endChar": 35
+      },
+      "revId": "c198e6cc785a2ac8f8ed6715dff8dea675ea4ce1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3d07a878_031cdc50",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-03T17:10:08Z",
+      "side": 1,
+      "message": "Extract into different method. The general rule is Try-catch blocks should not be nested",
+      "range": {
+        "startLine": 186,
+        "startChar": 2,
+        "endLine": 191,
+        "endChar": 13
+      },
+      "revId": "c198e6cc785a2ac8f8ed6715dff8dea675ea4ce1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f39b7955_e91b27a4",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-03T17:10:08Z",
+      "side": 1,
+      "message": "The default value for a boolean is false therefore this is redundant initialization.",
+      "range": {
+        "startLine": 192,
+        "startChar": 0,
+        "endLine": 192,
+        "endChar": 45
+      },
+      "revId": "c198e6cc785a2ac8f8ed6715dff8dea675ea4ce1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d9710892_3e1158f5",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-03T17:10:08Z",
+      "side": 1,
+      "message": "Extract into different method. The general rule is Try-catch blocks should not be nested",
+      "range": {
+        "startLine": 193,
+        "startChar": 11,
+        "endLine": 198,
+        "endChar": 13
+      },
+      "revId": "c198e6cc785a2ac8f8ed6715dff8dea675ea4ce1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "16a62b5d_747dbdc7",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1501,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-03T17:10:08Z",
+      "side": 1,
+      "message": "Optional : You can use Strings.nullorEmpty method as well.\n\nhttps://guava.dev/releases/23.0/api/docs/com/google/common/base/Strings.html#isNullOrEmpty-java.lang.String-",
+      "range": {
+        "startLine": 1501,
+        "startChar": 12,
+        "endLine": 1501,
+        "endChar": 81
+      },
+      "revId": "c198e6cc785a2ac8f8ed6715dff8dea675ea4ce1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
