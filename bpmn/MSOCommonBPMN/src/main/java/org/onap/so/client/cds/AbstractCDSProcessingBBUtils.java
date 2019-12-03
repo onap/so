@@ -24,7 +24,6 @@ package org.onap.so.client.cds;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.ccsdk.cds.controllerblueprints.common.api.ActionIdentifiers;
 import org.onap.ccsdk.cds.controllerblueprints.common.api.CommonHeader;
@@ -51,7 +50,7 @@ import io.grpc.Status;
  *
  */
 @Component
-public class AbstractCDSProcessingBBUtils implements CDSProcessingListener {
+public class AbstractCDSProcessingBBUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractCDSProcessingBBUtils.class);
 
@@ -64,15 +63,12 @@ public class AbstractCDSProcessingBBUtils implements CDSProcessingListener {
      */
     private static final String EXCEPTION = "Exception";
 
-
-    private final AtomicReference<String> cdsResponse = new AtomicReference<>();
-
     @Autowired
     private ExceptionBuilder exceptionUtil;
 
     /**
      * Extracting data from execution object and building the ExecutionServiceInput Object
-     * 
+     *
      * @param execution DelegateExecution object
      */
     public void constructExecutionServiceInputObject(DelegateExecution execution) {
@@ -114,7 +110,7 @@ public class AbstractCDSProcessingBBUtils implements CDSProcessingListener {
 
     /**
      * get the executionServiceInput object from execution and send a request to CDS Client and wait for TIMEOUT period
-     * 
+     *
      * @param execution DelegateExecution object
      */
     public void sendRequestToCDSClient(DelegateExecution execution) {
@@ -130,7 +126,9 @@ public class AbstractCDSProcessingBBUtils implements CDSProcessingListener {
             ExecutionServiceInput executionServiceInput =
                     (ExecutionServiceInput) execution.getVariable("executionServiceInput");
 
-            try (CDSProcessingClient cdsClient = new CDSProcessingClient(this)) {
+            CDSResponse cdsResponse = new CDSResponse();
+
+            try (CDSProcessingClient cdsClient = new CDSProcessingClient(new Listener(cdsResponse))) {
                 CountDownLatch countDownLatch = cdsClient.sendRequest(executionServiceInput);
                 countDownLatch.await(props.getTimeout(), TimeUnit.SECONDS);
             } catch (InterruptedException ex) {
@@ -138,16 +136,20 @@ public class AbstractCDSProcessingBBUtils implements CDSProcessingListener {
                 Thread.currentThread().interrupt();
             }
 
-            if (cdsResponse != null) {
-                String cdsResponseStatus = cdsResponse.get();
-                execution.setVariable("CDSStatus", cdsResponseStatus);
+            String cdsResponseStatus = cdsResponse.status;
+            execution.setVariable("CDSStatus", cdsResponseStatus);
 
-                /**
-                 * throw CDS failed exception.
-                 */
-                if (cdsResponseStatus != SUCCESS) {
-                    throw new BadResponseException("CDS call failed with status: " + cdsResponseStatus);
-                }
+            if (cdsResponse.payload != null) {
+                String payload = JsonFormat.printer().print(cdsResponse.payload);
+                execution.setVariable("CDSResponsePayload", payload);
+            }
+
+            /**
+             * throw CDS failed exception.
+             */
+            if (cdsResponseStatus != SUCCESS) {
+                throw new BadResponseException("CDS call failed with status: " + cdsResponse.status
+                        + " and errorMessage: " + cdsResponse.errorMessage);
             }
 
         } catch (Exception ex) {
@@ -155,44 +157,65 @@ public class AbstractCDSProcessingBBUtils implements CDSProcessingListener {
         }
     }
 
-    /**
-     * Get Response from CDS Client
-     * 
-     */
-    @Override
-    public void onMessage(ExecutionServiceOutput message) {
-        logger.info("Received notification from CDS: {}", message);
-        EventType eventType = message.getStatus().getEventType();
+    class Listener implements CDSProcessingListener {
 
-        switch (eventType) {
+        private CDSResponse cdsResponse;
 
-            case EVENT_COMPONENT_FAILURE:
-                // failed processing with failure
-                cdsResponse.set(FAILED);
-                break;
-            case EVENT_COMPONENT_PROCESSING:
-                // still processing
-                cdsResponse.set(PROCESSING);
-                break;
-            case EVENT_COMPONENT_EXECUTED:
-                // done with async processing
-                cdsResponse.set(SUCCESS);
-                break;
-            default:
-                cdsResponse.set(FAILED);
-                break;
+        Listener(CDSResponse cdsResponse) {
+            this.cdsResponse = cdsResponse;
         }
 
+        /**
+         * Get Response from CDS Client
+         */
+        @Override
+        public void onMessage(ExecutionServiceOutput message) {
+            logger.info("Received notification from CDS: {}", message);
+            EventType eventType = message.getStatus().getEventType();
+
+            switch (eventType) {
+
+                case EVENT_COMPONENT_FAILURE:
+                    cdsResponse.status = FAILED;
+                    cdsResponse.errorMessage = message.getStatus().getErrorMessage();
+                    break;
+                case EVENT_COMPONENT_PROCESSING:
+                    cdsResponse.status = PROCESSING;
+                    break;
+                case EVENT_COMPONENT_EXECUTED:
+                    cdsResponse.status = SUCCESS;
+                    break;
+                default:
+                    cdsResponse.status = FAILED;
+                    cdsResponse.errorMessage = message.getStatus().getErrorMessage();
+                    break;
+            }
+
+            cdsResponse.payload = message.getPayload();
+
+        }
+
+        /**
+         * On error at CDS, log the error
+         */
+        @Override
+        public void onError(Throwable t) {
+            Status status = Status.fromThrowable(t);
+            logger.error("Failed processing blueprint {}", status, t);
+            cdsResponse.status = EXCEPTION;
+        }
     }
 
-    /**
-     * On error at CDS, log the error
-     */
-    @Override
-    public void onError(Throwable t) {
-        Status status = Status.fromThrowable(t);
-        logger.error("Failed processing blueprint {}", status, t);
-        cdsResponse.set(EXCEPTION);
-    }
+    private class CDSResponse {
 
+        String status;
+        String errorMessage;
+        Struct payload;
+
+        @Override
+        public String toString() {
+            return "CDSResponse{" + "status='" + status + '\'' + ", errorMessage='" + errorMessage + '\'' + ", payload="
+                    + payload + '}';
+        }
+    }
 }
