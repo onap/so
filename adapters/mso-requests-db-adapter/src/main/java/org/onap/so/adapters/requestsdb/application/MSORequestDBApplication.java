@@ -22,7 +22,6 @@
 
 package org.onap.so.adapters.requestsdb.application;
 
-import java.time.Duration;
 import javax.sql.DataSource;
 import org.onap.logging.filter.base.Constants;
 import org.onap.logging.filter.base.ONAPComponents;
@@ -34,8 +33,7 @@ import org.springframework.jmx.support.RegistrationPolicy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import net.javacrumbs.shedlock.core.LockProvider;
 import net.javacrumbs.shedlock.provider.jdbctemplate.JdbcTemplateLockProvider;
-import net.javacrumbs.shedlock.spring.ScheduledLockConfiguration;
-import net.javacrumbs.shedlock.spring.ScheduledLockConfigurationBuilder;
+import net.javacrumbs.shedlock.spring.annotation.EnableSchedulerLock;
 
 /**
  * @since Version 1.0
@@ -43,6 +41,7 @@ import net.javacrumbs.shedlock.spring.ScheduledLockConfigurationBuilder;
  */
 @SpringBootApplication(scanBasePackages = {"org.onap.so", "org.onap.logging.filter"})
 @EnableScheduling
+@EnableSchedulerLock(defaultLockAtMostFor = "120s")
 @EnableMBeanExport(registration = RegistrationPolicy.IGNORE_EXISTING)
 public class MSORequestDBApplication {
 
@@ -66,10 +65,5 @@ public class MSORequestDBApplication {
         return new JdbcTemplateLockProvider(dataSource);
     }
 
-    @Bean
-    public ScheduledLockConfiguration taskScheduler(LockProvider lockProvider) {
-        return ScheduledLockConfigurationBuilder.withLockProvider(lockProvider).withPoolSize(10)
-                .withDefaultLockAtMostFor(Duration.ofMinutes(10)).build();
-    }
 
 }
