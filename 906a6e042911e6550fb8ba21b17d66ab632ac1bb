@@ -1,0 +1,188 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "525d19c7_8da8c5b0",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/installer/heat/ToscaResourceInstaller.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 580,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-12-03T14:31:35Z",
+      "side": 1,
+      "message": "uuid {}: {}",
+      "range": {
+        "startLine": 580,
+        "startChar": 53,
+        "endLine": 580,
+        "endChar": 54
+      },
+      "revId": "906a6e042911e6550fb8ba21b17d66ab632ac1bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4af578c9_8093ad5f",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/installer/heat/ToscaResourceInstaller.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 641,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-12-03T14:31:35Z",
+      "side": 1,
+      "message": "id {}: {}",
+      "range": {
+        "startLine": 641,
+        "startChar": 75,
+        "endLine": 641,
+        "endChar": 76
+      },
+      "revId": "906a6e042911e6550fb8ba21b17d66ab632ac1bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6af7cc42_dbfdbdc5",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/installer/heat/ToscaResourceInstaller.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1010,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-12-03T14:31:35Z",
+      "side": 1,
+      "message": "is: {}",
+      "range": {
+        "startLine": 1010,
+        "startChar": 36,
+        "endLine": 1010,
+        "endChar": 40
+      },
+      "revId": "906a6e042911e6550fb8ba21b17d66ab632ac1bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8b17e408_d628049e",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/installer/heat/ToscaResourceInstaller.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1027,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-12-03T14:31:35Z",
+      "side": 1,
+      "message": "vfCustomizationUUID: {}",
+      "range": {
+        "startLine": 1027,
+        "startChar": 45,
+        "endLine": 1027,
+        "endChar": 48
+      },
+      "revId": "906a6e042911e6550fb8ba21b17d66ab632ac1bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d98ff535_53627885",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/installer/heat/ToscaResourceInstaller.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1040,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-12-03T14:31:35Z",
+      "side": 1,
+      "message": "vfModuleStructure: {}",
+      "range": {
+        "startLine": 1040,
+        "startChar": 51,
+        "endLine": 1040,
+        "endChar": 54
+      },
+      "revId": "906a6e042911e6550fb8ba21b17d66ab632ac1bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aff6ada_a38f8737",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/installer/heat/ToscaResourceInstaller.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1089,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-12-03T14:31:35Z",
+      "side": 1,
+      "message": "uuid {}: {}",
+      "range": {
+        "startLine": 1089,
+        "startChar": 64,
+        "endLine": 1089,
+        "endChar": 74
+      },
+      "revId": "906a6e042911e6550fb8ba21b17d66ab632ac1bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c5a958fa_e63244c7",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/installer/heat/ToscaResourceInstaller.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1199,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-12-03T14:31:35Z",
+      "side": 1,
+      "message": "vfModuleStructure: {}",
+      "range": {
+        "startLine": 1199,
+        "startChar": 69,
+        "endLine": 1199,
+        "endChar": 88
+      },
+      "revId": "906a6e042911e6550fb8ba21b17d66ab632ac1bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a8739c4_6e350e38",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/installer/heat/ToscaResourceInstaller.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2030,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-12-03T14:31:35Z",
+      "side": 1,
+      "message": "customization id {}: {}",
+      "range": {
+        "startLine": 2030,
+        "startChar": 59,
+        "endLine": 2030,
+        "endChar": 81
+      },
+      "revId": "906a6e042911e6550fb8ba21b17d66ab632ac1bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
