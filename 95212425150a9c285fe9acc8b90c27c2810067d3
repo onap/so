@@ -22,6 +22,30 @@
       "revId": "95212425150a9c285fe9acc8b90c27c2810067d3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "034a4bae_e83b48a9",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/installer/heat/ToscaResourceInstaller.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-12-03T15:09:23Z",
+      "side": 1,
+      "message": "Stick to the \u0027traditional\u0027 way of defining variables here:). I think some of the variables are used in the unit tests.",
+      "parentUuid": "fb9ac920_a2cb228f",
+      "range": {
+        "startLine": 185,
+        "startChar": 4,
+        "endLine": 189,
+        "endChar": 74
+      },
+      "revId": "95212425150a9c285fe9acc8b90c27c2810067d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
