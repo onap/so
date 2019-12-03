@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "d4b600ef_514bf3a7",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/vnf/MsoVnfAdapterImpl.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 428,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-12-03T11:41:42Z",
+      "side": 1,
+      "message": "Yes, now I see it is used because of merge one of your ticket.",
+      "parentUuid": "0196beb0_c6392162",
+      "range": {
+        "startLine": 428,
+        "startChar": 33,
+        "endLine": 428,
+        "endChar": 56
+      },
+      "revId": "95b2f8a1f34544a4e9a9d228f8bd522cdb92e8a9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e19259b5_d0d3fb34",
         "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/HeatBridgeImpl.java",
         "patchSetId": 8
