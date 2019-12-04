@@ -70,6 +70,30 @@
       "revId": "95212425150a9c285fe9acc8b90c27c2810067d3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c8db575c_7c7a0aa6",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/installer/heat/ToscaResourceInstaller.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-12-04T10:51:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "df2f1cbf_e90628e5",
+      "range": {
+        "startLine": 185,
+        "startChar": 4,
+        "endLine": 189,
+        "endChar": 74
+      },
+      "revId": "95212425150a9c285fe9acc8b90c27c2810067d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
