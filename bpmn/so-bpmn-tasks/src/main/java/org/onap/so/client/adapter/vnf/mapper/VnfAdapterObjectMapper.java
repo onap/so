@@ -52,6 +52,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Component
 public class VnfAdapterObjectMapper {
     private ObjectMapper mapper = new ObjectMapper();
+    private static final String ENABLE_BRIDGE = "mso.bridgeEnabled";
 
     @PostConstruct
     public void init() {
@@ -86,6 +87,10 @@ public class VnfAdapterObjectMapper {
         createVolumeGroupRequest.setMessageId(messageId);
         createVolumeGroupRequest.setNotificationUrl(createCallbackUrl("VNFAResponse", messageId));
 
+        String enableBridge = getProperty(ENABLE_BRIDGE);
+        if (enableBridge == null || Boolean.valueOf(enableBridge)) {
+            createVolumeGroupRequest.setEnableBridge(true);
+        }
         return createVolumeGroupRequest;
     }
 

@@ -11,6 +11,7 @@
 	"skipAAI": true,
 	"backout": false,
 	"failIfExists": false,
+	"enableBridge": true,
 	"msoRequest": 
 	{
 		"requestId": "requestId",

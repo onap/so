@@ -150,7 +150,23 @@ public class VnfAdapterObjectMapperTest {
         CreateVolumeGroupRequest actualCreateVolumeGroupRequest =
                 vnfAdapterObjectMapper.createVolumeGroupRequestMapper(requestContext, cloudRegion, orchestrationContext,
                         serviceInstance, genericVnf, volumeGroup, sdncVfModuleQueryResponse);
+        assertThat(actualCreateVolumeGroupRequest, sameBeanAs(expectedCreateVolumeGroupRequest));
 
+        doReturn("false").when(vnfAdapterObjectMapper).getProperty("mso.bridgeEnabled");
+        actualCreateVolumeGroupRequest = vnfAdapterObjectMapper.createVolumeGroupRequestMapper(requestContext,
+                cloudRegion, orchestrationContext, serviceInstance, genericVnf, volumeGroup, sdncVfModuleQueryResponse);
+        assertThat(actualCreateVolumeGroupRequest, sameBeanAs(expectedCreateVolumeGroupRequest));
+
+        doReturn(null).when(vnfAdapterObjectMapper).getProperty("mso.bridgeEnabled");
+        expectedCreateVolumeGroupRequest.setEnableBridge(true);
+        actualCreateVolumeGroupRequest = vnfAdapterObjectMapper.createVolumeGroupRequestMapper(requestContext,
+                cloudRegion, orchestrationContext, serviceInstance, genericVnf, volumeGroup, sdncVfModuleQueryResponse);
+        assertThat(actualCreateVolumeGroupRequest, sameBeanAs(expectedCreateVolumeGroupRequest));
+
+        doReturn("true").when(vnfAdapterObjectMapper).getProperty("mso.bridgeEnabled");
+        expectedCreateVolumeGroupRequest.setEnableBridge(true);
+        actualCreateVolumeGroupRequest = vnfAdapterObjectMapper.createVolumeGroupRequestMapper(requestContext,
+                cloudRegion, orchestrationContext, serviceInstance, genericVnf, volumeGroup, sdncVfModuleQueryResponse);
         assertThat(actualCreateVolumeGroupRequest, sameBeanAs(expectedCreateVolumeGroupRequest));
     }
 

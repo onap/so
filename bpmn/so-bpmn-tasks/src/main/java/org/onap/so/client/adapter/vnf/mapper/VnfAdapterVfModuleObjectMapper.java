@@ -68,6 +68,7 @@ import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfresourceassign
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVnftopologyVnfTopology;
 import org.onap.so.adapters.vnfrest.CreateVfModuleRequest;
 import org.onap.so.adapters.vnfrest.DeleteVfModuleRequest;
+import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
@@ -95,6 +96,7 @@ import com.google.common.base.Joiner;
 public class VnfAdapterVfModuleObjectMapper {
     @Autowired
     protected VnfAdapterObjectMapperUtils vnfAdapterObjectMapperUtils;
+
     private static final Logger logger = LoggerFactory.getLogger(VnfAdapterVfModuleObjectMapper.class);
     private static List<String> sdncResponseParamsToSkip =
             asList("vnf_id", "vf_module_id", "vnf_name", "vf_module_name");
@@ -114,6 +116,7 @@ public class VnfAdapterVfModuleObjectMapper {
     private static final String FLOATING_IP = "_floating_ip";
     private static final String FLOATING_V6_IP = "_floating_v6_ip";
     private static final String UNDERSCORE = "_";
+    private static final String ENABLE_BRIDGE = "mso.bridgeEnabled";
 
     @PostConstruct
     public void init() {
@@ -159,6 +162,11 @@ public class VnfAdapterVfModuleObjectMapper {
         createVfModuleRequest.setMessageId(messageId);
         createVfModuleRequest
                 .setNotificationUrl(vnfAdapterObjectMapperUtils.createCallbackUrl("VNFAResponse", messageId));
+
+        String enableBridge = getProperty(ENABLE_BRIDGE);
+        if (enableBridge == null || Boolean.valueOf(enableBridge)) {
+            createVfModuleRequest.setEnableBridge(true);
+        }
 
         return createVfModuleRequest;
     }
@@ -915,5 +923,9 @@ public class VnfAdapterVfModuleObjectMapper {
             }
         }
         return baseVfModule;
+    }
+
+    protected String getProperty(String key) {
+        return UrnPropertiesReader.getVariable(key);
     }
 }

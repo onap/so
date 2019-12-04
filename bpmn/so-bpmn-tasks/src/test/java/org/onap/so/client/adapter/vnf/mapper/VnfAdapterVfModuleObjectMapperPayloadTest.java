@@ -23,6 +23,7 @@ package org.onap.so.client.adapter.vnf.mapper;
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.doReturn;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -32,6 +33,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.Mockito;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVmNetworkData;
 import org.onap.so.adapters.vnfrest.CreateVfModuleRequest;
 import org.onap.so.adapters.vnfrest.DeleteVfModuleRequest;
@@ -46,6 +48,7 @@ import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoGenericVnf;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
 import org.onap.so.openstack.utils.MsoMulticloudUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.onap.so.client.adapter.vnf.mapper.exceptions.MissingValueTagException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -55,6 +58,9 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
 
     private VnfAdapterVfModuleObjectMapper vfModuleObjectMapper = new VnfAdapterVfModuleObjectMapper();
     private ObjectMapper omapper = new ObjectMapper();
+
+    @Autowired
+    protected VnfAdapterObjectMapperUtils vnfAdapterObjectMapperUtils;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -128,16 +134,35 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
         String sdncVfModuleQueryResponse = new String(Files
                 .readAllBytes(Paths.get(JSON_FILE_LOCATION + "genericResourceApiVfModuleSdncVfModuleTopology.json")));
 
+        VnfAdapterVfModuleObjectMapper spyMapper = Mockito.spy(vfModuleObjectMapper);
+
+        doReturn("false").when(spyMapper).getProperty("mso.bridgeEnabled");
         CreateVfModuleRequest vfModuleVNFAdapterRequest =
-                vfModuleObjectMapper.createVfModuleRequestMapper(requestContext, cloudRegion, orchestrationContext,
+                spyMapper.createVfModuleRequestMapper(requestContext, cloudRegion, orchestrationContext,
                         serviceInstance, vnf, vfModule, null, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
-
-
         String jsonToCompare =
                 new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "vnfAdapterCreateVfModuleRequest.json")));
-
         CreateVfModuleRequest reqMapper1 = omapper.readValue(jsonToCompare, CreateVfModuleRequest.class);
+        assertThat(vfModuleVNFAdapterRequest, sameBeanAs(reqMapper1).ignoring("messageId").ignoring("notificationUrl"));
 
+
+        doReturn("true").when(spyMapper).getProperty("mso.bridgeEnabled");
+        vfModuleVNFAdapterRequest =
+                spyMapper.createVfModuleRequestMapper(requestContext, cloudRegion, orchestrationContext,
+                        serviceInstance, vnf, vfModule, null, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
+        jsonToCompare = new String(Files
+                .readAllBytes(Paths.get(JSON_FILE_LOCATION + "vnfAdapterCreateVfModuleRequestBridgeEnabled.json")));
+        reqMapper1 = omapper.readValue(jsonToCompare, CreateVfModuleRequest.class);
+        assertThat(vfModuleVNFAdapterRequest, sameBeanAs(reqMapper1).ignoring("messageId").ignoring("notificationUrl"));
+
+
+        doReturn(null).when(spyMapper).getProperty("mso.bridgeEnabled");
+        vfModuleVNFAdapterRequest =
+                spyMapper.createVfModuleRequestMapper(requestContext, cloudRegion, orchestrationContext,
+                        serviceInstance, vnf, vfModule, null, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
+        jsonToCompare = new String(Files
+                .readAllBytes(Paths.get(JSON_FILE_LOCATION + "vnfAdapterCreateVfModuleRequestBridgeEnabled.json")));
+        reqMapper1 = omapper.readValue(jsonToCompare, CreateVfModuleRequest.class);
         assertThat(vfModuleVNFAdapterRequest, sameBeanAs(reqMapper1).ignoring("messageId").ignoring("notificationUrl"));
     }
 

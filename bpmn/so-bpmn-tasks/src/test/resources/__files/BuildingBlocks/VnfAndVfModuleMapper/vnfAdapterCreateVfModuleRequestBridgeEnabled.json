@@ -9,7 +9,7 @@
 	"vnfVersion": "serviceModelVersion",
 	"modelCustomizationUuid": "vfModuleModelCustomizationUuid",
 	"skipAAI": true,
-	"backout": true,
+	"backout": false,
 	"failIfExists": false,
 	"enableBridge": true,
 	"msoRequest": 
