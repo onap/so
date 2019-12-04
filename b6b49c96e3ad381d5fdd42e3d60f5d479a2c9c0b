@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "75f75bd2_04d7632c",
+        "filename": "bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/BuildingBlock/ControllerExecutionBB.bpmn",
+        "patchSetId": 9
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-04T16:33:09Z",
+      "side": 1,
+      "message": "FYI this should be ${GenericCDSProcessing.buildPayloadBasedOnScopeAndAction(InjectExecution.execute(execution, execution.getVariable(\"gBuildingBlockExecution\")))}",
+      "range": {
+        "startLine": 27,
+        "startChar": 102,
+        "endLine": 27,
+        "endChar": 246
+      },
+      "revId": "b6b49c96e3ad381d5fdd42e3d60f5d479a2c9c0b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
