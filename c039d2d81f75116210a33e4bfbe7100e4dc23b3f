@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "57632013_97dd6685",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigVfModule.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-05T22:40:46Z",
+      "side": 1,
+      "message": "I will remove it",
+      "parentUuid": "8211569b_74fbc4bf",
+      "range": {
+        "startLine": 39,
+        "startChar": 4,
+        "endLine": 39,
+        "endChar": 26
+      },
+      "revId": "c039d2d81f75116210a33e4bfbe7100e4dc23b3f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9111b868_20c83922",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigVnf.java",
         "patchSetId": 21
@@ -59,6 +83,24 @@
     },
     {
       "key": {
+        "uuid": "55315ef0_72a02df8",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigVnf.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-05T22:40:46Z",
+      "side": 1,
+      "message": "Yes",
+      "parentUuid": "f5733714_30041702",
+      "revId": "c039d2d81f75116210a33e4bfbe7100e4dc23b3f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b9ea24a3_d581307f",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigureInstanceParamsForVnf.java",
         "patchSetId": 21
@@ -70,6 +112,30 @@
       "writtenOn": "2019-12-04T13:20:22Z",
       "side": 1,
       "message": "As method parameter I would put here List\u003cMap\u003cString, Object\u003e\u003e userParamsFromRequest instead of GeneralBuidingBlock",
+      "range": {
+        "startLine": 38,
+        "startChar": 62,
+        "endLine": 38,
+        "endChar": 96
+      },
+      "revId": "c039d2d81f75116210a33e4bfbe7100e4dc23b3f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d3ed1310_bb1b19cd",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigureInstanceParamsForVnf.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-05T22:40:46Z",
+      "side": 1,
+      "message": "Yup will do.",
+      "parentUuid": "b9ea24a3_d581307f",
       "range": {
         "startLine": 38,
         "startChar": 62,
@@ -105,6 +171,30 @@
     },
     {
       "key": {
+        "uuid": "eca1b0c6_5f2d2a5e",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigureInstanceParamsForVnf.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-05T22:40:46Z",
+      "side": 1,
+      "message": "I know thats why I added TODO. I will fix it in the next patch.",
+      "parentUuid": "c28c7c56_c2a3a8ff",
+      "range": {
+        "startLine": 52,
+        "startChar": 12,
+        "endLine": 52,
+        "endChar": 32
+      },
+      "revId": "c039d2d81f75116210a33e4bfbe7100e4dc23b3f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "24dc5661_bbe6c00b",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/GeneratePayloadForCds.java",
         "patchSetId": 21
@@ -116,6 +206,30 @@
       "writtenOn": "2019-12-04T13:20:22Z",
       "side": 1,
       "message": "not used",
+      "range": {
+        "startLine": 41,
+        "startChar": 4,
+        "endLine": 41,
+        "endChar": 48
+      },
+      "revId": "c039d2d81f75116210a33e4bfbe7100e4dc23b3f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cab7e245_f64f7568",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/GeneratePayloadForCds.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-05T22:40:46Z",
+      "side": 1,
+      "message": "@Rahul Tyagi is going to have dependency patch on this so he needs it.\nI can add comment for that",
+      "parentUuid": "24dc5661_bbe6c00b",
       "range": {
         "startLine": 41,
         "startChar": 4,
@@ -145,6 +259,24 @@
     },
     {
       "key": {
+        "uuid": "4da92587_66434b86",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/GeneratePayloadForCds.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-05T22:40:46Z",
+      "side": 1,
+      "message": "The logic I wrote so far is to support CDS specific config but its extendable to support non-config actions because payload is getting generated based on scope and action.\nAlthough the java doc and method names I have written need to be changed to reflect that.",
+      "parentUuid": "dfd706bf_8257a9fe",
+      "revId": "c039d2d81f75116210a33e4bfbe7100e4dc23b3f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5b33e08a_adf40aca",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/PayloadConstants.java",
         "patchSetId": 21
@@ -156,6 +288,24 @@
       "writtenOn": "2019-12-05T21:15:13Z",
       "side": 1,
       "message": "Suggest to remove this constant, see comments in other files about supporting non-config actions as well",
+      "revId": "c039d2d81f75116210a33e4bfbe7100e4dc23b3f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "144959cf_639712c5",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/PayloadConstants.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-05T22:40:46Z",
+      "side": 1,
+      "message": "Yes config prefix is not required so removing it.",
+      "parentUuid": "5b33e08a_adf40aca",
       "revId": "c039d2d81f75116210a33e4bfbe7100e4dc23b3f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
