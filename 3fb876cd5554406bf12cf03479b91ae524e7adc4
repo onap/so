@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "273ef037_c78190c0",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/GeneratePayloadForCds.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-05T22:40:46Z",
+      "side": 1,
+      "message": "Yes",
+      "parentUuid": "4e3caf7e_e52be2f8",
+      "range": {
+        "startLine": 57,
+        "startChar": 4,
+        "endLine": 61,
+        "endChar": 5
+      },
+      "revId": "3fb876cd5554406bf12cf03479b91ae524e7adc4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "963a8e84_6484e097",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/GeneratePayloadForCds.java",
         "patchSetId": 18
@@ -36,6 +60,30 @@
       "writtenOn": "2019-12-05T17:15:42Z",
       "side": 1,
       "message": "factory pattern?",
+      "range": {
+        "startLine": 69,
+        "startChar": 8,
+        "endLine": 70,
+        "endChar": 23
+      },
+      "revId": "3fb876cd5554406bf12cf03479b91ae524e7adc4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d2144dc3_7df4feb0",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/GeneratePayloadForCds.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-05T22:40:46Z",
+      "side": 1,
+      "message": "I can use factory pattern but not aiming for it right now. I will stick with this implementation for now.",
+      "parentUuid": "963a8e84_6484e097",
       "range": {
         "startLine": 69,
         "startChar": 8,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "5054c457_e343d796",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/GeneratePayloadForCds.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-05T22:40:46Z",
+      "side": 1,
+      "message": "I am not sure about it. At this stage sync is being used for SO-CDS payload so I am keeping it same.",
+      "parentUuid": "1eade32e_e457285b",
+      "range": {
+        "startLine": 97,
+        "startChar": 34,
+        "endLine": 97,
+        "endChar": 38
+      },
+      "revId": "3fb876cd5554406bf12cf03479b91ae524e7adc4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "20d01e0e_b83425b0",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/PayloadConstants.java",
         "patchSetId": 18
@@ -82,6 +154,30 @@
       "writtenOn": "2019-12-05T17:15:42Z",
       "side": 1,
       "message": "if this can be used as constant, it provides more flexibility to prepare request",
+      "range": {
+        "startLine": 29,
+        "startChar": 41,
+        "endLine": 29,
+        "endChar": 42
+      },
+      "revId": "3fb876cd5554406bf12cf03479b91ae524e7adc4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "beb4ac1b_8cb0e0c2",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/PayloadConstants.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-05T22:40:46Z",
+      "side": 1,
+      "message": "It\u0027s no longer needed.",
+      "parentUuid": "20d01e0e_b83425b0",
       "range": {
         "startLine": 29,
         "startChar": 41,
@@ -117,6 +213,53 @@
     },
     {
       "key": {
+        "uuid": "8888b110_bdc44371",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/VirtualComponent.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-05T22:40:46Z",
+      "side": 1,
+      "message": "Thats a good catch.\nDo you have any suggestions ?",
+      "parentUuid": "32675430_dbf31f6b",
+      "range": {
+        "startLine": 25,
+        "startChar": 17,
+        "endLine": 25,
+        "endChar": 33
+      },
+      "revId": "3fb876cd5554406bf12cf03479b91ae524e7adc4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6d9b37f9_05ffca34",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/client/cds/GeneratePayloadForCdsTest.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-05T22:40:46Z",
+      "side": 1,
+      "message": "Need to remove this.",
+      "range": {
+        "startLine": 78,
+        "startChar": 4,
+        "endLine": 78,
+        "endChar": 51
+      },
+      "revId": "3fb876cd5554406bf12cf03479b91ae524e7adc4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2a5004bf_f667320f",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericCDSProcessing.java",
         "patchSetId": 18
@@ -128,6 +271,30 @@
       "writtenOn": "2019-12-05T17:15:42Z",
       "side": 1,
       "message": "if we provide it through input in bpmn , it is included in DelegateExecution object. I think these parameters not needed externally.",
+      "range": {
+        "startLine": 62,
+        "startChar": 77,
+        "endLine": 62,
+        "endChar": 106
+      },
+      "revId": "3fb876cd5554406bf12cf03479b91ae524e7adc4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "96ddbdce_c96ea9ea",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericCDSProcessing.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-05T22:40:46Z",
+      "side": 1,
+      "message": "I will remove it. I didnt know about that.",
+      "parentUuid": "2a5004bf_f667320f",
       "range": {
         "startLine": 62,
         "startChar": 77,
