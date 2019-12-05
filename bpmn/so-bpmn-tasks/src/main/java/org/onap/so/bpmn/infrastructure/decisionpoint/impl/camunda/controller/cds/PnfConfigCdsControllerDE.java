@@ -24,6 +24,7 @@ import org.onap.so.bpmn.infrastructure.decisionpoint.api.ControllerContext;
 import org.onap.so.bpmn.infrastructure.decisionpoint.api.ControllerRunnable;
 import org.onap.so.bpmn.infrastructure.decisionpoint.api.controller.ControllerPreparable;
 import org.onap.so.client.cds.AbstractCDSProcessingBBUtils;
+import org.onap.so.client.cds.PayloadConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -31,17 +32,23 @@ import org.springframework.stereotype.Component;
  * This implementation of {@ref ControllerRunnable} is used for Self service, i.e, blueprint based Controller.
  */
 @Component
-public class CdsControllerDE implements ControllerRunnable<DelegateExecution> {
+public class PnfConfigCdsControllerDE implements ControllerRunnable<DelegateExecution> {
+
+    private static final String ASSIGN_ACTION = "config-assign";
+    private static final String DEPLOY_ACTION = "config-deploy";
 
     @Autowired(required = false)
     private List<ControllerPreparable<DelegateExecution>> prepareList;
 
     @Autowired
-    private AbstractCDSProcessingBBUtils abstractCDSProcessingBBUtils;
+    private AbstractCDSProcessingBBUtils cdsDispatcher;
 
     @Override
     public Boolean understand(ControllerContext<DelegateExecution> context) {
-        return context.getControllerActor().equalsIgnoreCase("cds");
+        return PayloadConstants.CDS_ACTOR.equalsIgnoreCase(context.getControllerActor())
+                && PayloadConstants.PNF_SCOPE.equalsIgnoreCase(context.getControllerScope())
+                && (ASSIGN_ACTION.equalsIgnoreCase(context.getControllerAction())
+                        || DEPLOY_ACTION.equalsIgnoreCase(context.getControllerAction())); // legacy behavior
     }
 
     @Override
@@ -58,7 +65,7 @@ public class CdsControllerDE implements ControllerRunnable<DelegateExecution> {
     @Override
     public void run(ControllerContext<DelegateExecution> context) {
         DelegateExecution execution = context.getExecution();
-        abstractCDSProcessingBBUtils.constructExecutionServiceInputObject(execution);
-        abstractCDSProcessingBBUtils.sendRequestToCDSClient(execution);
+        cdsDispatcher.constructExecutionServiceInputObject(execution);
+        cdsDispatcher.sendRequestToCDSClient(execution);
     }
 }
