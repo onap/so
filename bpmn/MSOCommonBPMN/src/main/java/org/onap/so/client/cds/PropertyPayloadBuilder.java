@@ -19,10 +19,10 @@
  */
 package org.onap.so.client.cds;
 
+import static org.onap.so.client.cds.PayloadConstants.PROPERTIES;
 import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static org.onap.so.client.cds.PayloadConstants.PROPERTIES;
 
 public class PropertyPayloadBuilder {
 
@@ -43,4 +43,3 @@ public class PropertyPayloadBuilder {
         return propertyBuilder;
     }
 }
-

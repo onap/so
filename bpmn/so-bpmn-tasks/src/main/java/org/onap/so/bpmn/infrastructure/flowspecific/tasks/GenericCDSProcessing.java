@@ -71,7 +71,7 @@ public class GenericCDSProcessing<T> implements ControllerRunnable<T> {
 
     @Override
     public void run(ControllerContext<T> context) {
-        if (context instanceof DelegateExecution) {
+        if (context.getExecution() instanceof DelegateExecution) {
             DelegateExecution delegateExecution = (DelegateExecution) context.getExecution();
             try {
                 String action = String.valueOf(delegateExecution.getVariable(PayloadConstants.ACTION));
