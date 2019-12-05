@@ -25,6 +25,40 @@
     },
     {
       "key": {
+        "uuid": "9111b868_20c83922",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigVnf.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-05T21:15:13Z",
+      "side": 1,
+      "message": "Why is CONFIG added as prefix? action should already contain \u0027config-\u0027 as part of action name.",
+      "revId": "c039d2d81f75116210a33e4bfbe7100e4dc23b3f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f5733714_30041702",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigVnf.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-05T21:15:13Z",
+      "side": 1,
+      "message": "I would recommend use full name of action everywhere, not have implicit config prefix as we will soon have non-config actions as well",
+      "revId": "c039d2d81f75116210a33e4bfbe7100e4dc23b3f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b9ea24a3_d581307f",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigureInstanceParamsForVnf.java",
         "patchSetId": 21
@@ -91,6 +125,40 @@
       "revId": "c039d2d81f75116210a33e4bfbe7100e4dc23b3f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dfd706bf_8257a9fe",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/GeneratePayloadForCds.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-05T21:15:13Z",
+      "side": 1,
+      "message": "This code is very focused on config actions including names of methods and classes. How is it intended to support non-config actions?",
+      "revId": "c039d2d81f75116210a33e4bfbe7100e4dc23b3f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5b33e08a_adf40aca",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/PayloadConstants.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-05T21:15:13Z",
+      "side": 1,
+      "message": "Suggest to remove this constant, see comments in other files about supporting non-config actions as well",
+      "revId": "c039d2d81f75116210a33e4bfbe7100e4dc23b3f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     },
     {
       "key": {
