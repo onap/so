@@ -37,11 +37,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {CdsControllerDE.class, ExceptionBuilder.class, AbstractCDSProcessingBBUtils.class})
-public class CdsControllerDETest {
+@ContextConfiguration(
+        classes = {PnfConfigCdsControllerDE.class, ExceptionBuilder.class, AbstractCDSProcessingBBUtils.class})
+public class PnfConfigCdsControllerDETest {
 
     @Autowired
-    private CdsControllerDE cdsControllerDE;
+    private PnfConfigCdsControllerDE pnfConfigCdsControllerDE;
 
     @MockBean
     private ControllerContext controllerContext;
@@ -52,20 +53,46 @@ public class CdsControllerDETest {
     @Mock
     private AbstractCDSProcessingBBUtils abstractCDSProcessingBBUtils;
 
-    @Before
-    public void setUp() {
+    @Test
+    public void testUnderstand_action_assign_TrueReturned() {
+        // when
         when(controllerContext.getControllerActor()).thenReturn("cds");
+        when(controllerContext.getControllerScope()).thenReturn("pnf");
+        when(controllerContext.getControllerAction()).thenReturn("config-assign");
+
+        // verify
+        assertTrue(pnfConfigCdsControllerDE.understand(controllerContext));
     }
 
     @Test
-    public void testUnderstand_validContext_TrueReturned() {
-        assertTrue(cdsControllerDE.understand(controllerContext));
+    public void testUnderstand_action_deploy_TrueReturned() {
+        // when
+        when(controllerContext.getControllerActor()).thenReturn("cds");
+        when(controllerContext.getControllerScope()).thenReturn("pnf");
+        when(controllerContext.getControllerAction()).thenReturn("config-deploy");
+
+        // verify
+        assertTrue(pnfConfigCdsControllerDE.understand(controllerContext));
+    }
+
+    @Test
+    public void testUnderstand_action_any_FalseReturned() {
+        // when
+        when(controllerContext.getControllerActor()).thenReturn("cds");
+        when(controllerContext.getControllerScope()).thenReturn("pnf");
+        when(controllerContext.getControllerAction()).thenReturn("any-action");
+
+        // verify
+        assertFalse(pnfConfigCdsControllerDE.understand(controllerContext));
     }
 
     @Test
     public void testUnderstand_invalidContext_FalseReturned() {
+        // when
         when(controllerContext.getControllerActor()).thenReturn("appc");
-        assertFalse(cdsControllerDE.understand(controllerContext));
+
+        // verify
+        assertFalse(pnfConfigCdsControllerDE.understand(controllerContext));
     }
 
 }
