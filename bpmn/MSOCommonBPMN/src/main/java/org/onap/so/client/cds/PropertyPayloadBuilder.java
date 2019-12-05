@@ -43,4 +43,3 @@ public class PropertyPayloadBuilder {
         return propertyBuilder;
     }
 }
-
