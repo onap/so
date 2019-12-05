@@ -34,6 +34,7 @@ public class GeneratePayloadForCds {
 
     private static final String ORIGINATOR_ID = "SO";
     private static final String MODE = "sync";
+    private static final String MSO_REQUEST_ID = "msoRequestId";
     private BuildingBlockExecution execution;
     private String scope;
     private String action;
@@ -44,6 +45,7 @@ public class GeneratePayloadForCds {
 
     private static final String BUILDING_BLOCK = "buildingBlock";
     private ExtractPojosForBB extractPojosForBB;
+
 
     public GeneratePayloadForCds(BuildingBlockExecution execution, ExtractPojosForBB extractPojosForBB) {
         this.execution = execution;
@@ -88,6 +90,11 @@ public class GeneratePayloadForCds {
                 configuration = new GeneratePayloadForService(extractPojosForBB);
                 configuration.setExecutionObject(execution);
                 return configuration.buildRequestPayload(action);
+
+            case "pnf":
+                configuration = new ConfigPnf();
+                configuration.setExecutionObject(delegateExecution);
+                return configuration.buildRequestPayload(action);
         }
 
         return Optional.empty();
@@ -103,7 +110,7 @@ public class GeneratePayloadForCds {
         final AbstractCDSPropertiesBean cdsPropertiesBean = new AbstractCDSPropertiesBean();
         final String requestPayload = generateConfigPropertiesPayload()
                 .orElseThrow(() -> new PayloadGenerationException("Failed to build payload for CDS"));
-        final String requestId = execution.getGeneralBuildingBlock().getRequestContext().getMsoRequestId();
+        final String requestId = getRequestIdUsingScope();
 
         cdsPropertiesBean.setRequestObject(requestPayload);
         cdsPropertiesBean.setBlueprintName(configuration.getBlueprintName());
@@ -115,5 +122,12 @@ public class GeneratePayloadForCds {
         cdsPropertiesBean.setMode(MODE);
 
         return cdsPropertiesBean;
+    }
+
+    private String getRequestIdUsingScope() {
+        if ("pnf".equalsIgnoreCase(scope))
+            return String.valueOf(delegateExecution.getVariable(MSO_REQUEST_ID));
+        else
+            return execution.getGeneralBuildingBlock().getRequestContext().getMsoRequestId();
     }
 }

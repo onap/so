@@ -22,6 +22,7 @@ package org.onap.so.client.cds;
 import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import static org.onap.so.client.cds.PayloadConstants.PROPERTIES;
 
 public class PropertyPayloadBuilder {
@@ -31,13 +32,12 @@ public class PropertyPayloadBuilder {
     /**
      * Build property payload.
      *
-     * @param action - SO action
+     * @param action     - SO action
      * @param jsonObject - An object comprises configuration properties for CDS.
      * @return "<action>-properties":{ // Configuration properties }
      */
     public static String buildConfigProperties(String action, JsonObject jsonObject) {
         String propertyBuilder = "\"" + action + PROPERTIES + "\"" + ":" + jsonObject + "}";
-
         logger.info("The property payload is {}", propertyBuilder);
 
         return propertyBuilder;

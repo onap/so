@@ -30,4 +30,20 @@ public final class PayloadConstants {
     public static String PROPERTIES = "-properties";
     public static String SCOPE = "scope";
     public static String ACTION = "action";
+    public static String CONFIG = "config-";
+    public static String VNF_SCOPE = "vnf";
+    public static String PNF_SCOPE = "pnf";
+    public static String VFMODULE_SCOPE = "vf-module";
+    public static String RESOLUTION_KEY = "resolution-key";
+    public static String SEPARATOR = "-";
+
+    public static final String PRC_BLUEPRINT_NAME = "PRC_blueprintName";
+    public static final String PRC_BLUEPRINT_VERSION = "PRC_blueprintVersion";
+    public static final String PRC_CUSTOMIZATION_UUID = "PRC_customizationUuid";
+
+    public final static String PNF_CORRELATION_ID = "pnfCorrelationId";
+    public final static String PNF_UUID = "pnfUuid";
+    public final static String SERVICE_INSTANCE_ID = "serviceInstanceId";
+    public final static String MODEL_UUID = "modelUuid";
+
 }
