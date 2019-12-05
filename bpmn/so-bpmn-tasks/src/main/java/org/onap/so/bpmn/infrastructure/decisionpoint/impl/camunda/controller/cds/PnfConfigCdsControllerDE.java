@@ -31,7 +31,7 @@ import org.springframework.stereotype.Component;
  * This implementation of {@ref ControllerRunnable} is used for Self service, i.e, blueprint based Controller.
  */
 @Component
-public class CdsControllerDE implements ControllerRunnable<DelegateExecution> {
+public class PnfConfigCdsControllerDE implements ControllerRunnable<DelegateExecution> {
 
     @Autowired(required = false)
     private List<ControllerPreparable<DelegateExecution>> prepareList;
@@ -41,7 +41,10 @@ public class CdsControllerDE implements ControllerRunnable<DelegateExecution> {
 
     @Override
     public Boolean understand(ControllerContext<DelegateExecution> context) {
-        return context.getControllerActor().equalsIgnoreCase("cds");
+        return "cds".equalsIgnoreCase(context.getControllerActor())
+                && "pnf".equalsIgnoreCase(context.getControllerScope())
+                && ("config-assign".equalsIgnoreCase(context.getControllerAction())
+                        || "config-deploy".equalsIgnoreCase(context.getControllerAction())); // legacy behavior
     }
 
     @Override
