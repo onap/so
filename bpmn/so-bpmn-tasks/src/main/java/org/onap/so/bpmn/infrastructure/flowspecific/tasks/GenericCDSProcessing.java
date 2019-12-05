@@ -44,36 +44,40 @@ public class GenericCDSProcessing {
         this.extractPojosForBB = extractPojosForBB;
     }
 
-    // Use this method for components which supports BuildingBlock.
-    public void buildPayloadBasedOnScopeAndAction(BuildingBlockExecution buildingBlockExecution) {
-        try {
-            GeneratePayloadForCds configurePayloadForCds =
-                    new GeneratePayloadForCds(buildingBlockExecution, extractPojosForBB);
-
-            AbstractCDSPropertiesBean abstractCDSPropertiesBean = configurePayloadForCds.buildCdsPropertiesBean();
-
-            buildingBlockExecution.setVariable("executionObject", abstractCDSPropertiesBean);
-
-        } catch (Exception ex) {
-            logger.error("An exception occurred when creating payload for CDS request", ex);
-            exceptionBuilder.buildAndThrowWorkflowException(buildingBlockExecution, 7000, ex);
-        }
-    }
-
     // For PNF currently we do not have BuildingBlockExecution therefore we have to pass scope and action through BPMN
     // process.
-    public void buildPayloadBasedOnScopeAndAction(DelegateExecution delegateExecution, String scope, String action) {
-        try {
+    public <T> void buildPayloadBasedOnScopeAndAction(T execution) {
 
-            GeneratePayloadForCds configurePayloadForCds = new GeneratePayloadForCds(delegateExecution, scope, action);
+        if (execution instanceof DelegateExecution) {
+            DelegateExecution delegateExecution = (DelegateExecution) execution;
+            try {
+                Object action = delegateExecution.getVariable("action");
+                Object scope = delegateExecution.getVariable("scope");
+                GeneratePayloadForCds configurePayloadForCds = new GeneratePayloadForCds((DelegateExecution) delegateExecution, String.valueOf(scope), String.valueOf(action));
 
-            AbstractCDSPropertiesBean abstractCDSPropertiesBean = configurePayloadForCds.buildCdsPropertiesBean();
+                AbstractCDSPropertiesBean abstractCDSPropertiesBean = configurePayloadForCds.buildCdsPropertiesBean();
 
-            delegateExecution.setVariable("executionObject", abstractCDSPropertiesBean);
+                delegateExecution.setVariable("executionObject", abstractCDSPropertiesBean);
 
-        } catch (Exception ex) {
-            logger.error("An exception occurred when creating payload for CDS request", ex);
-            exceptionBuilder.buildAndThrowWorkflowException(delegateExecution, 7000, ex);
+            } catch (Exception ex) {
+                logger.error("An exception occurred when creating payload for CDS request", ex);
+                exceptionBuilder.buildAndThrowWorkflowException(delegateExecution, 7000, ex);
+            }
+        }
+        else{
+            BuildingBlockExecution buildingBlockExecution = (BuildingBlockExecution) execution;
+            try {
+                GeneratePayloadForCds configurePayloadForCds =
+                        new GeneratePayloadForCds(buildingBlockExecution, extractPojosForBB);
+
+                AbstractCDSPropertiesBean abstractCDSPropertiesBean = configurePayloadForCds.buildCdsPropertiesBean();
+
+                buildingBlockExecution.setVariable("executionObject", abstractCDSPropertiesBean);
+
+            } catch (Exception ex) {
+                logger.error("An exception occurred when creating payload for CDS request", ex);
+                exceptionBuilder.buildAndThrowWorkflowException(buildingBlockExecution, 7000, ex);
+            }
         }
     }
 }

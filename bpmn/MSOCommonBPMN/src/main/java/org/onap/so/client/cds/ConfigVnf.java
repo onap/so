@@ -27,7 +27,6 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
-import static org.onap.so.client.cds.PayloadConstants.CONFIG;
 import static org.onap.so.client.cds.PayloadConstants.VNF_SCOPE;
 import java.util.Optional;
 
@@ -49,7 +48,7 @@ public class ConfigVnf implements VirtualComponent {
         this.action = action;
         vnfObject = buildPropertyObjectForVnf();
 
-        String requestBuilder = "{\"" + CONFIG + action + "-" + VNF_SCOPE + "-request\":{" + "\"resolution-key\":"
+        String requestBuilder = "{\"" + action + "-" + VNF_SCOPE + "-request\":{" + "\"resolution-key\":"
                 + "\"" + resolutionKey + "\","
                 + PropertyPayloadBuilder.buildConfigProperties(action, VNF_SCOPE, vnfObject) + '}';
 
