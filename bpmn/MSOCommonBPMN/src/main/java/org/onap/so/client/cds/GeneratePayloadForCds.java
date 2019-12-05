@@ -42,6 +42,7 @@ public class GeneratePayloadForCds {
     private static final String BUILDING_BLOCK = "buildingBlock";
     private ExtractPojosForBB extractPojosForBB;
 
+
     public GeneratePayloadForCds(BuildingBlockExecution execution, ExtractPojosForBB extractPojosForBB) {
         this.execution = execution;
 
@@ -79,6 +80,11 @@ public class GeneratePayloadForCds {
             case "vf-module":
                 configuration = new ConfigVfModule(extractPojosForBB);
                 configuration.setExecutionObject(execution);
+                return configuration.buildRequestPayload(action);
+
+            case "pnf":
+                configuration = new ConfigPnf();
+                configuration.setExecutionObject(delegateExecution);
                 return configuration.buildRequestPayload(action);
         }
 
