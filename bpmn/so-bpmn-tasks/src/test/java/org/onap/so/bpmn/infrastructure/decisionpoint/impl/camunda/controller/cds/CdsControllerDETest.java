@@ -54,17 +54,48 @@ public class CdsControllerDETest {
 
     @Before
     public void setUp() {
-        when(controllerContext.getControllerActor()).thenReturn("cds");
+
     }
 
     @Test
-    public void testUnderstand_validContext_TrueReturned() {
+    public void testUnderstand_action_assign_TrueReturned() {
+        // when
+        when(controllerContext.getControllerActor()).thenReturn("cds");
+        when(controllerContext.getControllerScope()).thenReturn("pnf");
+        when(controllerContext.getControllerAction()).thenReturn("config-assign");
+
+        // verify
         assertTrue(cdsControllerDE.understand(controllerContext));
     }
 
     @Test
+    public void testUnderstand_action_deploy_TrueReturned() {
+        // when
+        when(controllerContext.getControllerActor()).thenReturn("cds");
+        when(controllerContext.getControllerScope()).thenReturn("pnf");
+        when(controllerContext.getControllerAction()).thenReturn("config-deploy");
+
+        // verify
+        assertTrue(cdsControllerDE.understand(controllerContext));
+    }
+
+    @Test
+    public void testUnderstand_action_any_FalseReturned() {
+        // when
+        when(controllerContext.getControllerActor()).thenReturn("cds");
+        when(controllerContext.getControllerScope()).thenReturn("pnf");
+        when(controllerContext.getControllerAction()).thenReturn("any-action");
+
+        // verify
+        assertFalse(cdsControllerDE.understand(controllerContext));
+    }
+
+    @Test
     public void testUnderstand_invalidContext_FalseReturned() {
+        // when
         when(controllerContext.getControllerActor()).thenReturn("appc");
+
+        // verify
         assertFalse(cdsControllerDE.understand(controllerContext));
     }
 
