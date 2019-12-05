@@ -25,7 +25,6 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
-import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.cds.beans.AbstractCDSPropertiesBean;
 import java.util.Optional;
 import java.util.UUID;
@@ -40,9 +39,8 @@ public class GeneratePayloadForCds {
     private VirtualComponent configuration;
     private DelegateExecution delegateExecution;
     private static final String BUILDING_BLOCK = "buildingBlock";
-    private ExtractPojosForBB extractPojosForBB;
 
-    public GeneratePayloadForCds(BuildingBlockExecution execution, ExtractPojosForBB extractPojosForBB) {
+    public GeneratePayloadForCds(BuildingBlockExecution execution) {
         this.execution = execution;
 
         ExecuteBuildingBlock executeBuildingBlock = execution.getVariable(BUILDING_BLOCK);
@@ -50,8 +48,6 @@ public class GeneratePayloadForCds {
 
         this.scope = buildingBlock.getBpmnScope();
         this.action = buildingBlock.getBpmnAction();
-
-        this.extractPojosForBB = extractPojosForBB;
 
         // Setting scope and action for UpdateAAI BPMN process.
         execution.setVariable("scope", scope);
@@ -72,13 +68,18 @@ public class GeneratePayloadForCds {
     protected Optional<String> generateConfigPropertiesPayload() throws Exception {
         switch (scope) {
             case "vnf":
-                configuration = new ConfigVnf(extractPojosForBB);
+                configuration = new ConfigVnf();
                 configuration.setExecutionObject(execution);
                 return configuration.buildRequestPayload(action);
 
             case "vf-module":
-                configuration = new ConfigVfModule(extractPojosForBB);
+                configuration = new ConfigVfModule();
                 configuration.setExecutionObject(execution);
+                return configuration.buildRequestPayload(action);
+
+            case "pnf":
+                configuration = new ConfigPnf();
+                configuration.setExecutionObject(delegateExecution);
                 return configuration.buildRequestPayload(action);
         }
 
