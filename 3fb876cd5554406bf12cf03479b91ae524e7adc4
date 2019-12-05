@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4e3caf7e_e52be2f8",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/GeneratePayloadForCds.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2019-12-05T17:15:42Z",
+      "side": 1,
+      "message": "is this constructor added for pnf?",
+      "range": {
+        "startLine": 57,
+        "startChar": 4,
+        "endLine": 61,
+        "endChar": 5
+      },
+      "revId": "3fb876cd5554406bf12cf03479b91ae524e7adc4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "963a8e84_6484e097",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/GeneratePayloadForCds.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2019-12-05T17:15:42Z",
+      "side": 1,
+      "message": "factory pattern?",
+      "range": {
+        "startLine": 69,
+        "startChar": 8,
+        "endLine": 70,
+        "endChar": 23
+      },
+      "revId": "3fb876cd5554406bf12cf03479b91ae524e7adc4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1eade32e_e457285b",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/GeneratePayloadForCds.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2019-12-05T17:15:42Z",
+      "side": 1,
+      "message": "is the mode going to be always sync.",
+      "range": {
+        "startLine": 97,
+        "startChar": 34,
+        "endLine": 97,
+        "endChar": 38
+      },
+      "revId": "3fb876cd5554406bf12cf03479b91ae524e7adc4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "20d01e0e_b83425b0",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/PayloadConstants.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2019-12-05T17:15:42Z",
+      "side": 1,
+      "message": "if this can be used as constant, it provides more flexibility to prepare request",
+      "range": {
+        "startLine": 29,
+        "startChar": 41,
+        "endLine": 29,
+        "endChar": 42
+      },
+      "revId": "3fb876cd5554406bf12cf03479b91ae524e7adc4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "32675430_dbf31f6b",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/VirtualComponent.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2019-12-05T17:15:42Z",
+      "side": 1,
+      "message": "As this commit stands for Generic impl, and pnf is physical network function. It shouldn\u0027t implement smthng Virtual. \nThough it is just representation, but in terms of pnf this interface should have some other name.",
+      "range": {
+        "startLine": 25,
+        "startChar": 17,
+        "endLine": 25,
+        "endChar": 33
+      },
+      "revId": "3fb876cd5554406bf12cf03479b91ae524e7adc4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2a5004bf_f667320f",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericCDSProcessing.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2019-12-05T17:15:42Z",
+      "side": 1,
+      "message": "if we provide it through input in bpmn , it is included in DelegateExecution object. I think these parameters not needed externally.",
+      "range": {
+        "startLine": 62,
+        "startChar": 77,
+        "endLine": 62,
+        "endChar": 106
+      },
+      "revId": "3fb876cd5554406bf12cf03479b91ae524e7adc4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
