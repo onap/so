@@ -406,6 +406,30 @@
     },
     {
       "key": {
+        "uuid": "b60048d4_eb4b8cde",
+        "filename": "bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/BuildingBlock/ControllerExecutionBB.bpmn",
+        "patchSetId": 21
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-06T20:21:21Z",
+      "side": 1,
+      "message": "Can you bring this question in the upcoming meeting? \nRight now in the code I have two methods one specific for vnf/vf module like this \nbuildPayloadBasedOnScopeAndAction(BuildingBlockExecution execution)\n\nFor pnf \nbuildPayloadBasedOnScopeAndAction(DelegateExecution delegateExecution)\n\nso I guess with this approach you need to add extra bpmn box which will call GenericCDSprocessing class \n\nother option would be make this method generic \n\nso it can take either BuildingBlockExecution or DelegateExecution\n\n\npublic \u003cT\u003e void buildPayloadBasedonScopeAndAction(T executionObject)  {\n\n\n}",
+      "parentUuid": "f6288b93_99e9aa26",
+      "range": {
+        "startLine": 27,
+        "startChar": 104,
+        "endLine": 27,
+        "endChar": 244
+      },
+      "revId": "c039d2d81f75116210a33e4bfbe7100e4dc23b3f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "11035221_45f75cc5",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/aai/tasks/AAIUpdateTasks.java",
         "patchSetId": 21
