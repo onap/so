@@ -401,6 +401,23 @@
       "revId": "c039d2d81f75116210a33e4bfbe7100e4dc23b3f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a9ae06be_657ecec4",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericCDSProcessing.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2019-12-06T14:47:55Z",
+      "side": 1,
+      "message": "Are you going to write a test for this class. If you can add I\u0027ll write pnf testcase above that.",
+      "revId": "c039d2d81f75116210a33e4bfbe7100e4dc23b3f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
