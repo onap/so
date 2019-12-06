@@ -382,6 +382,30 @@
     },
     {
       "key": {
+        "uuid": "f6288b93_99e9aa26",
+        "filename": "bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/BuildingBlock/ControllerExecutionBB.bpmn",
+        "patchSetId": 21
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2019-12-06T15:16:44Z",
+      "side": 1,
+      "message": "As I understood in ydy call they said that \"they will TRY TO complete it in frankfurt scope\" and that too for PNF PnP usecase, so there is risk involved. But we need software upgrade usecase, so better to consider alternative approach as custom workflow. And that uses delegateexecution.",
+      "parentUuid": "460bdfed_3e409dc2",
+      "range": {
+        "startLine": 27,
+        "startChar": 104,
+        "endLine": 27,
+        "endChar": 244
+      },
+      "revId": "c039d2d81f75116210a33e4bfbe7100e4dc23b3f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "11035221_45f75cc5",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/aai/tasks/AAIUpdateTasks.java",
         "patchSetId": 21
