@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "c8212741_c444baf0",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/api/ControllerRunnable.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-12-06T14:26:44Z",
+      "side": 1,
+      "message": "they serve different purpose. check the documentation.",
+      "parentUuid": "23f5262f_7f513092",
+      "revId": "97aed494472480162d3970dd446d2069470f0eb1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9dc48dc9_70a2fc97",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/api/ControllerRunnable.java",
         "patchSetId": 9
@@ -39,6 +57,30 @@
       "revId": "97aed494472480162d3970dd446d2069470f0eb1",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dc4f9138_0ad0655e",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/api/ControllerRunnable.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-12-06T14:26:44Z",
+      "side": 1,
+      "message": "Check the interface documentation. They serve different purpose.",
+      "parentUuid": "9dc48dc9_70a2fc97",
+      "range": {
+        "startLine": 34,
+        "startChar": 4,
+        "endLine": 42,
+        "endChar": 54
+      },
+      "revId": "97aed494472480162d3970dd446d2069470f0eb1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -65,6 +107,30 @@
     },
     {
       "key": {
+        "uuid": "955569d0_25a360c8",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/ControllerExecutionBB.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-12-06T14:26:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07c54c69_18eecfea",
+      "range": {
+        "startLine": 49,
+        "startChar": 18,
+        "endLine": 49,
+        "endChar": 19
+      },
+      "revId": "97aed494472480162d3970dd446d2069470f0eb1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0f37d07b_c49481f7",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/ControllerExecutionBB.java",
         "patchSetId": 9
@@ -85,6 +151,30 @@
       "revId": "97aed494472480162d3970dd446d2069470f0eb1",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "610a8421_c819a207",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/ControllerExecutionBB.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-12-06T14:26:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0f37d07b_c49481f7",
+      "range": {
+        "startLine": 93,
+        "startChar": 41,
+        "endLine": 93,
+        "endChar": 48
+      },
+      "revId": "97aed494472480162d3970dd446d2069470f0eb1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -111,6 +201,30 @@
     },
     {
       "key": {
+        "uuid": "f7e49faf_8d039660",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-12-06T14:26:44Z",
+      "side": 1,
+      "message": "i prefer to use if else to make the code more readable.",
+      "parentUuid": "eec69224_6b919836",
+      "range": {
+        "startLine": 67,
+        "startChar": 10,
+        "endLine": 67,
+        "endChar": 16
+      },
+      "revId": "97aed494472480162d3970dd446d2069470f0eb1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9b48a46f_de9075d9",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDE.java",
         "patchSetId": 9
@@ -131,6 +245,30 @@
       "revId": "97aed494472480162d3970dd446d2069470f0eb1",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "12831392_c82fc522",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-12-06T14:26:44Z",
+      "side": 1,
+      "message": "same as above.",
+      "parentUuid": "9b48a46f_de9075d9",
+      "range": {
+        "startLine": 71,
+        "startChar": 14,
+        "endLine": 71,
+        "endChar": 20
+      },
+      "revId": "97aed494472480162d3970dd446d2069470f0eb1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -157,6 +295,30 @@
     },
     {
       "key": {
+        "uuid": "de488080_771db7b2",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-12-06T14:26:44Z",
+      "side": 1,
+      "message": "same as above.",
+      "parentUuid": "7befafb2_920e1adb",
+      "range": {
+        "startLine": 82,
+        "startChar": 10,
+        "endLine": 82,
+        "endChar": 16
+      },
+      "revId": "97aed494472480162d3970dd446d2069470f0eb1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "03b05b64_bea5b5aa",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDE.java",
         "patchSetId": 9
@@ -177,6 +339,30 @@
       "revId": "97aed494472480162d3970dd446d2069470f0eb1",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "388e9e25_9db9ca74",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-12-06T14:26:44Z",
+      "side": 1,
+      "message": "I prefer to use the value if only used once in the code.",
+      "parentUuid": "03b05b64_bea5b5aa",
+      "range": {
+        "startLine": 83,
+        "startChar": 19,
+        "endLine": 83,
+        "endChar": 21
+      },
+      "revId": "97aed494472480162d3970dd446d2069470f0eb1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -203,6 +389,30 @@
     },
     {
       "key": {
+        "uuid": "def6403e_12d9b241",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-12-06T14:26:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d5bcf986_8faa8082",
+      "range": {
+        "startLine": 92,
+        "startChar": 10,
+        "endLine": 92,
+        "endChar": 16
+      },
+      "revId": "97aed494472480162d3970dd446d2069470f0eb1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "03a3e3fc_1fb3646a",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDE.java",
         "patchSetId": 9
@@ -226,6 +436,30 @@
     },
     {
       "key": {
+        "uuid": "de407de9_8b103fba",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-12-06T14:26:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "03a3e3fc_1fb3646a",
+      "range": {
+        "startLine": 100,
+        "startChar": 41,
+        "endLine": 100,
+        "endChar": 48
+      },
+      "revId": "97aed494472480162d3970dd446d2069470f0eb1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "644ff3df_dad7f5b7",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/controller/appc/AppcControllerDE.java",
         "patchSetId": 9
@@ -237,6 +471,30 @@
       "writtenOn": "2019-12-06T13:26:46Z",
       "side": 1,
       "message": "if first if is successful then others are tried falsely. if/else-if can be considered.",
+      "range": {
+        "startLine": 126,
+        "startChar": 12,
+        "endLine": 143,
+        "endChar": 13
+      },
+      "revId": "97aed494472480162d3970dd446d2069470f0eb1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0e9feb74_9e1af384",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/controller/appc/AppcControllerDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-12-06T14:26:44Z",
+      "side": 1,
+      "message": "the code is \u0027copied\u0027 from groovy. will fix it.",
+      "parentUuid": "644ff3df_dad7f5b7",
       "range": {
         "startLine": 126,
         "startChar": 12,
@@ -272,6 +530,30 @@
     },
     {
       "key": {
+        "uuid": "cbc115d2_f3f8186e",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/controller/cds/prepare/PrepareConfigDeployDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-12-06T14:26:44Z",
+      "side": 1,
+      "message": "they are used only once here. not required.",
+      "parentUuid": "ef69e15a_327df449",
+      "range": {
+        "startLine": 37,
+        "startChar": 72,
+        "endLine": 37,
+        "endChar": 75
+      },
+      "revId": "97aed494472480162d3970dd446d2069470f0eb1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c0dbfb8a_b67503fe",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/controller/cds/prepare/PrepareConfigDeployDE.java",
         "patchSetId": 9
@@ -283,6 +565,30 @@
       "writtenOn": "2019-12-06T13:26:46Z",
       "side": 1,
       "message": "same as above.",
+      "range": {
+        "startLine": 38,
+        "startChar": 77,
+        "endLine": 38,
+        "endChar": 90
+      },
+      "revId": "97aed494472480162d3970dd446d2069470f0eb1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "511c1b86_85864a00",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/controller/cds/prepare/PrepareConfigDeployDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-12-06T14:26:44Z",
+      "side": 1,
+      "message": "same as above.",
+      "parentUuid": "c0dbfb8a_b67503fe",
       "range": {
         "startLine": 38,
         "startChar": 77,
@@ -309,6 +615,24 @@
       "revId": "97aed494472480162d3970dd446d2069470f0eb1",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "515f9f93_a3f6ddbb",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/ControllerExecutionBBTestIT.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-12-06T14:26:44Z",
+      "side": 1,
+      "message": "only few test cases for now. when the size growing in the future, that can be considerred.",
+      "parentUuid": "f6b312bb_fa7b50f2",
+      "revId": "97aed494472480162d3970dd446d2069470f0eb1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
