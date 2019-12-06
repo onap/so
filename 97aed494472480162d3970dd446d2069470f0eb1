@@ -1,0 +1,222 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "23f5262f_7f513092",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/api/ControllerRunnable.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2019-12-06T13:26:46Z",
+      "side": 1,
+      "message": "Understand and prepare methods are similar to controllerpreparable interface. Just wanted to know motivation behind this. \n\ncan that interface be extended here or remove these methods and impl both interfaces where reqd.",
+      "revId": "97aed494472480162d3970dd446d2069470f0eb1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "07c54c69_18eecfea",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/ControllerExecutionBB.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2019-12-06T13:26:46Z",
+      "side": 1,
+      "message": "final?",
+      "range": {
+        "startLine": 49,
+        "startChar": 18,
+        "endLine": 49,
+        "endChar": 19
+      },
+      "revId": "97aed494472480162d3970dd446d2069470f0eb1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0f37d07b_c49481f7",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/ControllerExecutionBB.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2019-12-06T13:26:46Z",
+      "side": 1,
+      "message": "Database",
+      "range": {
+        "startLine": 93,
+        "startChar": 41,
+        "endLine": 93,
+        "endChar": 48
+      },
+      "revId": "97aed494472480162d3970dd446d2069470f0eb1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eec69224_6b919836",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2019-12-06T13:26:46Z",
+      "side": 1,
+      "message": "i think else is not required",
+      "range": {
+        "startLine": 67,
+        "startChar": 10,
+        "endLine": 67,
+        "endChar": 16
+      },
+      "revId": "97aed494472480162d3970dd446d2069470f0eb1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9b48a46f_de9075d9",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2019-12-06T13:26:46Z",
+      "side": 1,
+      "message": "same here if reverted.",
+      "range": {
+        "startLine": 71,
+        "startChar": 14,
+        "endLine": 71,
+        "endChar": 20
+      },
+      "revId": "97aed494472480162d3970dd446d2069470f0eb1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "03a3e3fc_1fb3646a",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2019-12-06T13:26:46Z",
+      "side": 1,
+      "message": "Database",
+      "range": {
+        "startLine": 100,
+        "startChar": 41,
+        "endLine": 100,
+        "endChar": 48
+      },
+      "revId": "97aed494472480162d3970dd446d2069470f0eb1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "644ff3df_dad7f5b7",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/controller/appc/AppcControllerDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2019-12-06T13:26:46Z",
+      "side": 1,
+      "message": "if first if is successful then others are tried falsely. if/else-if can be considered.",
+      "range": {
+        "startLine": 126,
+        "startChar": 12,
+        "endLine": 143,
+        "endChar": 13
+      },
+      "revId": "97aed494472480162d3970dd446d2069470f0eb1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ef69e15a_327df449",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/controller/cds/prepare/PrepareConfigDeployDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2019-12-06T13:26:46Z",
+      "side": 1,
+      "message": "can these be listed as constant in a file with package scope.",
+      "range": {
+        "startLine": 37,
+        "startChar": 72,
+        "endLine": 37,
+        "endChar": 75
+      },
+      "revId": "97aed494472480162d3970dd446d2069470f0eb1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c0dbfb8a_b67503fe",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/controller/cds/prepare/PrepareConfigDeployDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2019-12-06T13:26:46Z",
+      "side": 1,
+      "message": "same as above.",
+      "range": {
+        "startLine": 38,
+        "startChar": 77,
+        "endLine": 38,
+        "endChar": 90
+      },
+      "revId": "97aed494472480162d3970dd446d2069470f0eb1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f6b312bb_fa7b50f2",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/ControllerExecutionBBTestIT.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2019-12-06T13:26:46Z",
+      "side": 1,
+      "message": "@suggestion I can see redundant code for multiple testcases, can you consider @Parameters() annotations for same code multiple input parameters.",
+      "revId": "97aed494472480162d3970dd446d2069470f0eb1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
