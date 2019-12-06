@@ -1,0 +1,344 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b6a0117d_16d84aad",
+        "filename": "bpmn/so-bpmn-building-blocks/src/main/resources/ActivitySpec/GenericControllerExecutionDE.json",
+        "patchSetId": 10
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-06T21:37:17Z",
+      "side": 1,
+      "message": "All current activities are based on building blocks. Are DelegateExecution activities really supported?",
+      "revId": "dbda87442eb9b2068dedb67db89420718b3b0fe9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e616f277_fe99ef98",
+        "filename": "bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/Activity/GenericControllerExecutionDE.bpmn",
+        "patchSetId": 10
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-06T21:37:17Z",
+      "side": 1,
+      "message": "See comment in corresponding JSON spec file.",
+      "revId": "dbda87442eb9b2068dedb67db89420718b3b0fe9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fcc876e5_3c2db385",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/ConfigurePnfResource.bpmn",
+        "patchSetId": 10
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-06T21:37:17Z",
+      "side": 1,
+      "message": "I think scope should be input parameter as well (with value PNF)",
+      "revId": "dbda87442eb9b2068dedb67db89420718b3b0fe9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dfde1629_31500b3f",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/ConfigurePnfResource.bpmn",
+        "patchSetId": 10
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-06T21:37:17Z",
+      "side": 1,
+      "message": "Should also have scope input parameter",
+      "revId": "dbda87442eb9b2068dedb67db89420718b3b0fe9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3309c65c_39ec15eb",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/ControllerExecutionBB.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-06T21:37:17Z",
+      "side": 1,
+      "message": "Controler -\u003e Controller",
+      "revId": "dbda87442eb9b2068dedb67db89420718b3b0fe9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6df4df85_cd07eab5",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/ControllerExecutionBB.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-06T21:37:17Z",
+      "side": 1,
+      "message": "Controler -\u003e Controller",
+      "revId": "dbda87442eb9b2068dedb67db89420718b3b0fe9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bc279dfd_8b199788",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/controller/appc/AppcControllerBB.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-06T21:37:17Z",
+      "side": 1,
+      "message": "Could have name that makes it clearer these are supported actions in case of SDNC.",
+      "revId": "dbda87442eb9b2068dedb67db89420718b3b0fe9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2b494155_d93231c6",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/controller/appc/AppcControllerBB.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-06T21:37:17Z",
+      "side": 1,
+      "message": "Why both appCClient and client?",
+      "revId": "dbda87442eb9b2068dedb67db89420718b3b0fe9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f192a35e_849d99ae",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/controller/appc/AppcControllerBB.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-06T21:37:17Z",
+      "side": 1,
+      "message": "Could be more clear this check is for SDNC only.",
+      "revId": "dbda87442eb9b2068dedb67db89420718b3b0fe9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "43ec82df_379f2e00",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/controller/appc/AppcControllerBB.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-06T21:37:17Z",
+      "side": 1,
+      "message": "How to interpret this comment? There is no PayloadInfo in the code here",
+      "revId": "dbda87442eb9b2068dedb67db89420718b3b0fe9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b5f9b94f_e24f6d3c",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/controller/appc/AppcControllerHealthCheckBB.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-06T21:37:17Z",
+      "side": 1,
+      "message": "This class supports VNFs only. It should be reflected in name.",
+      "revId": "dbda87442eb9b2068dedb67db89420718b3b0fe9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "19352cc1_66ba1674",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/controller/appc/AppcControllerHealthCheckBB.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-06T21:37:17Z",
+      "side": 1,
+      "message": "With this approach controller actor selection will not work correctly since the healthcheck implementation used here always does own lookup in the controller reference table. So the actor value in ControllerContext is ignored.",
+      "revId": "dbda87442eb9b2068dedb67db89420718b3b0fe9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c266e2fb_f2f63b32",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/controller/appc/AppcControllerScaleOutBB.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-06T21:37:17Z",
+      "side": 1,
+      "message": "Action is ConfigScaleOut, not ScaleOut\nShould have Vnf in name as well.",
+      "revId": "dbda87442eb9b2068dedb67db89420718b3b0fe9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8d5aef13_b0fdc1db",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/controller/appc/AppcControllerScaleOutBB.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-06T21:37:17Z",
+      "side": 1,
+      "message": "This code has same issue as healthcheck - instead of using actor indicated in ControllerContext, it will perform own lookup in the controller reference table.",
+      "revId": "dbda87442eb9b2068dedb67db89420718b3b0fe9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d5118f61_e8225f49",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/controller/appc/prepare/PrepareAppcUpgradePreCheckPnfBB.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-06T21:37:17Z",
+      "side": 1,
+      "message": "The parent class PrepareAppcBB only understands appc. But APPC does not support any PNF LCM actions including upgrade.",
+      "revId": "dbda87442eb9b2068dedb67db89420718b3b0fe9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0b6ec141_6034f460",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDE.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-06T21:37:17Z",
+      "side": 1,
+      "message": "Controler -\u003e Controller",
+      "revId": "dbda87442eb9b2068dedb67db89420718b3b0fe9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dc195578_1d80341c",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDE.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-06T21:37:17Z",
+      "side": 1,
+      "message": "Controler -\u003e Controller",
+      "revId": "dbda87442eb9b2068dedb67db89420718b3b0fe9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8c57996b_5b666614",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/controller/appc/AppcControllerDE.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-06T21:37:17Z",
+      "side": 1,
+      "message": "Does this code actually support any APPC or SDNC action and for any scope?",
+      "revId": "dbda87442eb9b2068dedb67db89420718b3b0fe9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "56e547e7_b8aa7288",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/controller/cds/prepare/PrepareConfigAssignDE.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-06T21:37:17Z",
+      "side": 1,
+      "message": "Should have Pnf in name, as it is the only supported scope.",
+      "revId": "dbda87442eb9b2068dedb67db89420718b3b0fe9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5aa2338b_f701340a",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/controller/cds/prepare/PrepareConfigDeployDE.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-06T21:37:17Z",
+      "side": 1,
+      "message": "Class should have Pnf as part of name.",
+      "revId": "dbda87442eb9b2068dedb67db89420718b3b0fe9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
