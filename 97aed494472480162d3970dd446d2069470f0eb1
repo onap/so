@@ -111,6 +111,75 @@
     },
     {
       "key": {
+        "uuid": "7befafb2_920e1adb",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2019-12-06T14:03:33Z",
+      "side": 1,
+      "message": "can be removed",
+      "range": {
+        "startLine": 82,
+        "startChar": 10,
+        "endLine": 82,
+        "endChar": 16
+      },
+      "revId": "97aed494472480162d3970dd446d2069470f0eb1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "03b05b64_bea5b5aa",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2019-12-06T14:03:33Z",
+      "side": 1,
+      "message": "can be defined as EMPTY_STRING as const.",
+      "range": {
+        "startLine": 83,
+        "startChar": 19,
+        "endLine": 83,
+        "endChar": 21
+      },
+      "revId": "97aed494472480162d3970dd446d2069470f0eb1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d5bcf986_8faa8082",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDE.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2019-12-06T14:03:33Z",
+      "side": 1,
+      "message": "can be removed",
+      "range": {
+        "startLine": 92,
+        "startChar": 10,
+        "endLine": 92,
+        "endChar": 16
+      },
+      "revId": "97aed494472480162d3970dd446d2069470f0eb1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "03a3e3fc_1fb3646a",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDE.java",
         "patchSetId": 9
