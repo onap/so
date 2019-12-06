@@ -418,6 +418,24 @@
       "revId": "c039d2d81f75116210a33e4bfbe7100e4dc23b3f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a67c03e1_619b2610",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericCDSProcessing.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-06T15:07:48Z",
+      "side": 1,
+      "message": "I can write it. Thanks",
+      "parentUuid": "a9ae06be_657ecec4",
+      "revId": "c039d2d81f75116210a33e4bfbe7100e4dc23b3f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
