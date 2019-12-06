@@ -335,6 +335,29 @@
     },
     {
       "key": {
+        "uuid": "671cd838_ccc8ee4f",
+        "filename": "bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/BuildingBlock/ControllerExecutionBB.bpmn",
+        "patchSetId": 21
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2019-12-06T14:38:10Z",
+      "side": 1,
+      "message": "Are you going to have one more building block which takes delegateExecution in to consideration. Because pnf does not have Buildingblockexecution in place?",
+      "range": {
+        "startLine": 27,
+        "startChar": 104,
+        "endLine": 27,
+        "endChar": 244
+      },
+      "revId": "c039d2d81f75116210a33e4bfbe7100e4dc23b3f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "11035221_45f75cc5",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/aai/tasks/AAIUpdateTasks.java",
         "patchSetId": 21
