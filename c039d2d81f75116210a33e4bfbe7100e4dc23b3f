@@ -430,6 +430,30 @@
     },
     {
       "key": {
+        "uuid": "109d36ae_a7117138",
+        "filename": "bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/BuildingBlock/ControllerExecutionBB.bpmn",
+        "patchSetId": 21
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2019-12-06T21:55:19Z",
+      "side": 1,
+      "message": "How does public \u003cT\u003e void buildPayloadBasedonScopeAndAction(T executionObject) will help ---(it will only reduce 2 overloaded methods to one method in class). But how Generic impl will help on calling side. You still need GenericCDSProcessing(buildingblockExecution) and GenericCDSProcessing(delegateExecution) two calls to execute this generic method differently. Right? \n\nsure, We can discuss this in upcoming call in detail.",
+      "parentUuid": "b60048d4_eb4b8cde",
+      "range": {
+        "startLine": 27,
+        "startChar": 104,
+        "endLine": 27,
+        "endChar": 244
+      },
+      "revId": "c039d2d81f75116210a33e4bfbe7100e4dc23b3f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "11035221_45f75cc5",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/aai/tasks/AAIUpdateTasks.java",
         "patchSetId": 21
