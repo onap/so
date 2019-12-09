@@ -10,9 +10,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,6 +45,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
+@Deprecated
 @WebService(serviceName = "RequestsDbAdapter",
         endpointInterface = "org.onap.so.adapters.requestsdb.MsoRequestsDbAdapter",
         targetNamespace = "http://org.onap.so/requestsdb")
@@ -183,7 +184,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 
     /**
      * update operation status <br>
-     * 
+     *
      * @param serviceId
      * @param operationId
      * @param operationType
@@ -253,7 +254,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 
     /**
      * init the operation status of all the resources <br>
-     * 
+     *
      * @param serviceId the service Id
      * @param operationId the operation Id
      * @param operationType the operationType
@@ -284,7 +285,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 
     /**
      * get resource operation status <br>
-     * 
+     *
      * @param serviceId
      * @param operationId
      * @param resourceTemplateUUID
@@ -304,7 +305,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 
     /**
      * update resource operation status <br>
-     * 
+     *
      * @param serviceId
      * @param operationId
      * @param resourceTemplateUUID
@@ -340,7 +341,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 
     /**
      * update service operation status when a operation resource status updated <br>
-     * 
+     *
      * @param operStatus the resource operation status
      * @since ONAP Amsterdam Release
      */
