@@ -371,6 +371,41 @@ public class RequestsDbClient {
                 String.class);
     }
 
+    public InfraActiveRequests getInfraActiveRequests(String requestId, String basicAuth, String host) {
+        RestTemplate template = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.AUTHORIZATION, basicAuth);
+        headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
+        headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
+        URI uri = getUri(host + "/infraActiveRequests/" + requestId);
+        try {
+            InfraActiveRequests infraActiveRequests = template
+                    .exchange(uri, HttpMethod.GET, new HttpEntity<>(headers), InfraActiveRequests.class).getBody();
+            if (infraActiveRequests != null) {
+                infraActiveRequests.setRequestId(requestId);
+            }
+            return infraActiveRequests;
+        } catch (HttpClientErrorException e) {
+            if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
+                return null;
+            }
+            throw e;
+        }
+    }
+
+    public void updateInfraActiveRequests(InfraActiveRequests request, String basicAuth, String host) {
+        RestTemplate template = new RestTemplate();
+        template.getInterceptors().add(new SOSpringClientFilter());
+        template.getInterceptors().add(new SpringClientPayloadFilter());
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.AUTHORIZATION, basicAuth);
+        headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
+        headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
+        URI uri = getUri(host + "/infraActiveRequests/" + request.getRequestId());
+        HttpEntity<InfraActiveRequests> entity = new HttpEntity<>(request, headers);
+        template.put(uri, entity);
+    }
+
     protected URI getUri(String uri) {
         return URI.create(uri);
     }
