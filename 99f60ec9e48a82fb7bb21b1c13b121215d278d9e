@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "acc90e36_649f658a",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigVnf.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2019-12-10T17:22:37Z",
+      "side": 1,
+      "message": "will remove this change in upcoming patch, this change should be done in parent commit. https://gerrit.onap.org/r/c/so/+/97391/21",
+      "revId": "99f60ec9e48a82fb7bb21b1c13b121215d278d9e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a1781139_18101d2a",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/PropertyPayloadBuilder.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2019-12-10T17:22:37Z",
+      "side": 1,
+      "message": "will remove in upcoming commit. preferable to do this change in parent commit. https://gerrit.onap.org/r/c/so/+/97391/21",
+      "revId": "99f60ec9e48a82fb7bb21b1c13b121215d278d9e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
