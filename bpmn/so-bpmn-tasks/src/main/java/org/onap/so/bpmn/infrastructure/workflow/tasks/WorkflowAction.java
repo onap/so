@@ -335,8 +335,14 @@ public class WorkflowAction {
                         orchFlows = queryNorthBoundRequestCatalogDb(execution, requestAction, resourceType, aLaCarte,
                                 cloudOwner, serviceType);
                     }
-                    flowsToExecute = buildExecuteBuildingBlockList(orchFlows, resourceCounter, requestId, apiVersion,
-                            resourceId, requestAction, aLaCarte, vnfType, workflowResourceIds, requestDetails);
+                    boolean vnfReplace = false;
+                    if (resourceType.equals(WorkflowType.VNF) && ("replaceInstance".equalsIgnoreCase(requestAction)
+                            || "replaceInstanceRetainAssignments".equalsIgnoreCase(requestAction))) {
+                        vnfReplace = true;
+                    }
+                    flowsToExecute =
+                            buildExecuteBuildingBlockList(orchFlows, resourceCounter, requestId, apiVersion, resourceId,
+                                    requestAction, aLaCarte, vnfType, workflowResourceIds, requestDetails, vnfReplace);
                     if (!resourceCounter.stream().filter(x -> WorkflowType.NETWORKCOLLECTION == x.getResourceType())
                             .collect(Collectors.toList()).isEmpty()) {
                         logger.info("Sorting for Vlan Tagging");
@@ -1402,13 +1408,15 @@ public class WorkflowAction {
     protected List<ExecuteBuildingBlock> buildExecuteBuildingBlockList(List<OrchestrationFlow> orchFlows,
             List<Resource> resourceCounter, String requestId, String apiVersion, String resourceId,
             String requestAction, boolean aLaCarte, String vnfType, WorkflowResourceIds workflowResourceIds,
-            RequestDetails requestDetails) {
+            RequestDetails requestDetails, boolean replaceVnf) {
         List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
         for (OrchestrationFlow orchFlow : orchFlows) {
             if (orchFlow.getFlowName().contains(SERVICE)) {
                 for (int i = 0; i < resourceCounter.stream().filter(x -> WorkflowType.SERVICE == x.getResourceType())
                         .collect(Collectors.toList()).size(); i++) {
-                    workflowResourceIds.setServiceInstanceId(resourceId);
+                    if (!replaceVnf) {
+                        workflowResourceIds.setServiceInstanceId(resourceId);
+                    }
                     flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId,
                             resourceCounter.stream().filter(x -> WorkflowType.SERVICE == x.getResourceType())
                                     .collect(Collectors.toList()).get(i),

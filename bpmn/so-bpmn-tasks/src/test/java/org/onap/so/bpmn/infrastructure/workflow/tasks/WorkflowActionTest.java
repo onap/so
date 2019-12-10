@@ -927,6 +927,9 @@ public class WorkflowActionTest extends BaseTaskTest {
                 "CreateVfModuleBB", "CreateVfModuleBB", "ActivateVfModuleBB", "ActivateVfModuleBB",
                 "AssignFabricConfigurationBB", "ActivateFabricConfigurationBB", "ChangeModelVnfBB", "ActivateVnfBB",
                 "ChangeModelServiceInstanceBB", "SDNOVnfHealthCheckBB", "AAIUnsetVnfInMaintBB");
+        for (ExecuteBuildingBlock executeBuildingBlock : ebbs) {
+            assertEquals("123", executeBuildingBlock.getWorkflowResourceIds().getServiceInstanceId());
+        }
     }
 
     @Ignore
