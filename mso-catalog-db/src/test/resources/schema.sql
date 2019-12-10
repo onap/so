@@ -736,6 +736,8 @@ CREATE TABLE `orchestration_flow_reference` (
   `SEQ_NO` int(11) NOT NULL,
   `FLOW_NAME` varchar(200) NOT NULL,
   `FLOW_VERSION` double NOT NULL,
+  `SCOPE` varchar(200) DEFAULT NULL,
+  `ACTION` varchar(200) DEFAULT NULL,
   `NB_REQ_REF_LOOKUP_ID` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_orchestration_flow_reference` (`COMPOSITE_ACTION`,`FLOW_NAME`,`SEQ_NO`,`NB_REQ_REF_LOOKUP_ID`),

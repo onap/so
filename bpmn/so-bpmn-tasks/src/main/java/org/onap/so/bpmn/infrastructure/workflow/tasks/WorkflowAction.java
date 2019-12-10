@@ -1503,6 +1503,10 @@ public class WorkflowAction {
             boolean isVirtualLink, String virtualLinkKey, boolean isConfiguration) {
         ExecuteBuildingBlock executeBuildingBlock = new ExecuteBuildingBlock();
         BuildingBlock buildingBlock = new BuildingBlock();
+
+        Optional.ofNullable(orchFlow.getBpmnAction()).ifPresent(action -> buildingBlock.setBpmnAction(action));
+        Optional.ofNullable(orchFlow.getBpmnScope()).ifPresent(scope -> buildingBlock.setBpmnScope(scope));
+
         buildingBlock.setBpmnFlowName(orchFlow.getFlowName());
         buildingBlock.setMsoId(UUID.randomUUID().toString());
         if (resource == null) {
@@ -1628,4 +1632,3 @@ public class WorkflowAction {
                 && (bbInputSetupUtils.getAAIServiceInstanceById(serviceInstanceId) != null));
     }
 }
-
