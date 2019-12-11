@@ -1,0 +1,170 @@
+{
+    "vserver-id": "92272b67-d23f-42ca-87fa-7b06a9ec81f3",
+    "vserver-name": "tsbc0005vm002",
+    "vserver-name2": "tsbc0005vm002",
+    "vserver-selflink": "https://test.com:8774/v2/0422ffb57ba042c0800a29dc85ca70f8/servers/92272b67-d23f-42ca-87fa-7b06a9ec81f3",
+    "in-maint": false,
+    "is-closed-loop-disabled": false,    
+    "l-interfaces": {
+        "l-interface": [
+            {
+                "interface-name": "tsbc0005v_tsbc0005vm002_mgmt_port_1",
+                "selflink": "https://test.com:9696/v2.0/ports/07f5b14c-147a-4d14-8c94-a9e94dbc097b",
+                "interface-id": "07f5b14c-147a-4d14-8c94-a9e94dbc097b",
+                "macaddr": "02:07:f5:b1:4c:14",
+                "network-name": "GRP-27529-T-IST-05E-dyh3b_TIPFR_OAMP_NSD_TSBC0_net_1",
+                "is-port-mirrored": false,
+                "in-maint": false,
+                "is-ip-unnumbered": false,
+                "l3-interface-ipv4-address-list": [
+                    {
+                        "l3-interface-ipv4-address": "1.2.2.2",
+                        "l3-interface-ipv4-prefix-length": 28,
+                        "is-floating": false,
+                        "neutron-network-id": "cae2ade2-9f44-40fa-b124-18b101ff9aa0",
+                        "neutron-subnet-id": "1f954922-6e9c-4a64-9d78-62e869ba8c77"
+                    }
+                ]
+            },
+            {
+                "interface-name": "tsbc0005v_tsbc0005vm002_role1_port_0",
+                "selflink": "https://test.com:9696/v2.0/ports/0594a2f2-7ea4-42eb-abc2-48ea49677fca",
+                "interface-id": "0594a2f2-7ea4-42eb-abc2-48ea49677fca",
+                "macaddr": "02:05:94:a2:f2:7e",
+                "network-name": "GRP-27529-T-IST-05E-dyh3b_TIPFR-UNTR-Role1-PARNT_net_1",
+                "is-port-mirrored": false,
+                "in-maint": false,
+                "is-ip-unnumbered": false,
+                "l-interfaces": {
+                    "l-interface": [
+                        {
+                            "interface-name": "tsbc0005v_tsbc0005vm002_subint_untrusted_role1_81",
+                            "interface-id": "2bbfa345-33bb-495a-94b2-fb514ee1cffc",
+                            "macaddr": "02:05:94:a2:f2:7e",
+                            "network-name": "GRP-27529-T-IST-05E-dyh3b_TIPFR_UNTR_VSE_Role10_net_1",
+                            "is-port-mirrored": false,
+                            "in-maint": false,
+                            "is-ip-unnumbered": false
+                        }
+                    ]
+                },
+                "l3-interface-ipv4-address-list": [
+                    {
+                        "l3-interface-ipv4-address": "172.26.0.36",
+                        "l3-interface-ipv4-prefix-length": 27,
+                        "is-floating": false,
+                        "neutron-network-id": "49bd2c8c-808d-4783-a1c5-5d9ae0c6a9fa",
+                        "neutron-subnet-id": "8d073a94-b1b9-493a-8fc1-cf92abcba466"
+                    }
+                ]
+            },
+            {
+                "interface-name": "tsbc0005v_tsbc0005vm002_service1_port_0",
+                "selflink": "https://test.com:9696/v2.0/ports/27391d94-33af-474a-927d-d409249e8fd3",
+                "interface-id": "27391d94-33af-474a-927d-d409249e8fd3",
+                "macaddr": "02:27:39:1d:94:33",
+                "network-name": "GRP-27529-T-IST-05E-dyh3b_TIPFR-UNTR-CUS-PARNT_net_1",
+                "is-port-mirrored": false,
+                "in-maint": false,
+                "is-ip-unnumbered": false,
+                "l-interfaces": {
+                    "l-interface": [
+                        {
+                            "interface-name": "tsbc0005v_tsbc0005vm002_subint_untrusted_service1_101",
+                            "interface-id": "d54dfd09-75c6-4e04-b204-909455b8f933",
+                            "macaddr": "02:27:39:1d:94:33",
+                            "network-name": "GRP-27529-T-IST-05E_int_SUB-INTERFACE_net_006",
+                            "is-port-mirrored": false,
+                            "in-maint": false,
+                            "is-ip-unnumbered": false
+                        },
+                        {
+                            "interface-name": "tsbc0005v_tsbc0005vm002_subint_untrusted_service1_103",
+                            "interface-id": "f7a998c0-8939-4b07-bf4a-0862e9c325e1",
+                            "macaddr": "02:27:39:1d:94:33",
+                            "network-name": "GRP-27529-T-IST-05E_int_SUB-INTERFACE_net_008",
+                            "is-port-mirrored": false,
+                            "in-maint": false,
+                            "is-ip-unnumbered": false
+                        },
+                        {
+                            "interface-name": "tsbc0005v_tsbc0005vm002_subint_untrusted_service1_102",
+                            "interface-id": "621c1fea-60b8-44ee-aede-c01b8b1aaa70",
+                            "macaddr": "02:27:39:1d:94:33",
+                            "network-name": "GRP-27529-T-IST-05E_int_SUB-INTERFACE_net_007",
+                            "is-port-mirrored": false,
+                            "in-maint": false,
+                            "is-ip-unnumbered": false
+                        }
+                    ]
+                },
+                "l3-interface-ipv4-address-list": [
+                    {
+                        "l3-interface-ipv4-address": "172.26.0.5",
+                        "l3-interface-ipv4-prefix-length": 27,
+                        "is-floating": false,
+                        "neutron-network-id": "7acdc0c3-eff2-4ecb-8722-a3451711027c",
+                        "neutron-subnet-id": "4c4cc70a-7f31-41a6-a50f-5390d80fd127"
+                    }
+                ]
+            },
+            {
+                "interface-name": "tsbc0005v_tsbc0005vm002_int_ha_port_0",
+                "selflink": "https://test.com:9696/v2.0/ports/00bb8407-650e-48b5-b919-33b88d6f8fe3",
+                "interface-id": "00bb8407-650e-48b5-b919-33b88d6f8fe3",
+                "macaddr": "02:00:bb:84:07:65",
+                "network-name": "tsbc0005v_int_ha_net",
+                "is-port-mirrored": false,
+                "in-maint": false,
+                "is-ip-unnumbered": false,
+                "l3-interface-ipv4-address-list": [
+                    {
+                        "l3-interface-ipv4-address": "172.26.1.27",
+                        "l3-interface-ipv4-prefix-length": 26,
+                        "is-floating": false,
+                        "neutron-network-id": "de0a1ec5-8685-4de5-999c-a791bd48c9d8",
+                        "neutron-subnet-id": "1151932c-935d-4cdc-b134-f58bebed9bf1"
+                    }
+                ]
+            },
+            {
+                "interface-name": "tsbc0005v_tsbc0005vm002_mgmt_port_0",
+                "selflink": "https://test.com:9696/v2.0/ports/8d93f63e-e972-48c7-ad98-b2122da47315",
+                "interface-id": "8d93f63e-e972-48c7-ad98-b2122da47315",
+                "macaddr": "02:8d:93:f6:3e:e9",
+                "network-name": "GRP-27529-T-IST-05E-dyh3b_TIPFR_OAMP_NSD_TSBC0_net_1",
+                "is-port-mirrored": false,
+                "in-maint": false,
+                "is-ip-unnumbered": false,
+                "l3-interface-ipv4-address-list": [
+                    {
+                        "l3-interface-ipv4-address": "1.8.2.2",
+                        "l3-interface-ipv4-prefix-length": 28,
+                        "is-floating": false,
+                        "neutron-network-id": "cae2ade2-9f44-40fa-b124-18b101ff9aa0",
+                        "neutron-subnet-id": "1f954922-6e9c-4a64-9d78-62e869ba8c77"
+                    }
+                ]
+            },
+            {
+                "interface-name": "tsbc0005v_tsbc0005vm002_trusted_port",
+                "selflink": "https://test.com:9696/v2.0/ports/d2f51f82-0ec2-4581-bd1a-d2a82073e52b",
+                "interface-id": "d2f51f82-0ec2-4581-bd1a-d2a82073e52b",
+                "macaddr": "02:d2:f5:1f:82:0e",
+                "network-name": "GRP-27529-T-IST-05E-dyh3b_TIPFR_TRST_VIF_TSBC0_net_1",
+                "is-port-mirrored": false,
+                "in-maint": false,
+                "is-ip-unnumbered": false,
+                "l3-interface-ipv4-address-list": [
+                    {
+                        "l3-interface-ipv4-address": "1.6.2.1",
+                        "l3-interface-ipv4-prefix-length": 28,
+                        "is-floating": false,
+                        "neutron-network-id": "4f35d575-a4f2-4020-8322-3eb138e7f258",
+                        "neutron-subnet-id": "d476da9d-bf9b-49e1-aec9-fee99b863f30"
+                    }
+                ]
+            }
+        ]
+    }
+}
