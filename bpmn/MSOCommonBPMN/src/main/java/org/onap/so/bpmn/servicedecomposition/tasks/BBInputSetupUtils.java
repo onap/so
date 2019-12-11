@@ -359,7 +359,7 @@ public class BBInputSetupUtils {
     }
 
     public Optional<ServiceInstance> getAAIServiceInstanceByName(String globalCustomerId, String serviceType,
-            String serviceInstanceName) throws Exception {
+            String serviceInstanceName) throws MultipleObjectsFoundException {
         ServiceInstance aaiServiceInstance = null;
         ServiceInstances aaiServiceInstances = null;
         aaiServiceInstances = getAAIServiceInstancesByName(globalCustomerId, serviceType, serviceInstanceName);
@@ -367,7 +367,10 @@ public class BBInputSetupUtils {
         if (aaiServiceInstances == null) {
             return Optional.empty();
         } else if (aaiServiceInstances.getServiceInstance().size() > 1) {
-            throw new Exception("Multiple Service Instances Returned");
+            String message = String.format(
+                    "Multiple service instances found for customer-id: %s, service-type: %s and service-instance-name: %s.",
+                    globalCustomerId, serviceType, serviceInstanceName);
+            throw new MultipleObjectsFoundException(message);
         } else {
             aaiServiceInstance = aaiServiceInstances.getServiceInstance().get(0);
         }
@@ -472,7 +475,9 @@ public class BBInputSetupUtils {
             if (serviceInstances.get().getServiceInstance().isEmpty()) {
                 throw new NoServiceInstanceFoundException("No ServiceInstances Returned");
             } else if (serviceInstances.get().getServiceInstance().size() > 1) {
-                throw new MultipleObjectsFoundException("Multiple ServiceInstances Returned");
+                String message = String.format("Mulitple service instances were found for instance-group-id: %s.",
+                        instanceGroupId);
+                throw new MultipleObjectsFoundException(message);
             } else {
                 serviceInstance = serviceInstances.get().getServiceInstance().get(0);
             }
@@ -481,7 +486,7 @@ public class BBInputSetupUtils {
     }
 
     public Optional<L3Network> getRelatedNetworkByNameFromServiceInstance(String serviceInstanceId, String networkName)
-            throws Exception {
+            throws MultipleObjectsFoundException {
         AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId);
         uri.relatedTo(AAIObjectPlurals.L3_NETWORK).queryParam("network-name", networkName);
         Optional<L3Networks> networks = injectionHelper.getAaiClient().get(L3Networks.class, uri);
@@ -491,7 +496,10 @@ public class BBInputSetupUtils {
             return Optional.empty();
         } else {
             if (networks.get().getL3Network().size() > 1) {
-                throw new Exception("Multiple Networks Returned");
+                String message =
+                        String.format("Multiple networks found for service-instance-id: %s and network-name: %s.",
+                                serviceInstanceId, networkName);
+                throw new MultipleObjectsFoundException(message);
             } else {
                 network = networks.get().getL3Network().get(0);
             }
@@ -500,7 +508,7 @@ public class BBInputSetupUtils {
     }
 
     public Optional<GenericVnf> getRelatedVnfByNameFromServiceInstance(String serviceInstanceId, String vnfName)
-            throws Exception {
+            throws MultipleObjectsFoundException {
         AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId);
         uri.relatedTo(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", vnfName);
         Optional<GenericVnfs> vnfs = injectionHelper.getAaiClient().get(GenericVnfs.class, uri);
@@ -510,7 +518,9 @@ public class BBInputSetupUtils {
             return Optional.empty();
         } else {
             if (vnfs.get().getGenericVnf().size() > 1) {
-                throw new Exception("Multiple Vnfs Returned");
+                String message = String.format("Multiple vnfs found for service-instance-id: %s and vnf-name: %s.",
+                        serviceInstanceId, vnfName);
+                throw new MultipleObjectsFoundException(message);
             } else {
                 vnf = vnfs.get().getGenericVnf().get(0);
             }
@@ -519,7 +529,7 @@ public class BBInputSetupUtils {
     }
 
     public Optional<VolumeGroup> getRelatedVolumeGroupByNameFromVnf(String vnfId, String volumeGroupName)
-            throws Exception {
+            throws MultipleObjectsFoundException {
         AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId);
         uri.relatedTo(AAIObjectPlurals.VOLUME_GROUP).queryParam("volume-group-name", volumeGroupName);
         Optional<VolumeGroups> volumeGroups = injectionHelper.getAaiClient().get(VolumeGroups.class, uri);
@@ -529,7 +539,9 @@ public class BBInputSetupUtils {
             return Optional.empty();
         } else {
             if (volumeGroups.get().getVolumeGroup().size() > 1) {
-                throw new Exception("Multiple VolumeGroups Returned");
+                String message = String.format("Multiple volume-groups found for vnf-id: %s and volume-group-name: %s.",
+                        vnfId, volumeGroupName);
+                throw new MultipleObjectsFoundException(message);
             } else {
                 volumeGroup = volumeGroups.get().getVolumeGroup().get(0);
             }
@@ -538,7 +550,7 @@ public class BBInputSetupUtils {
     }
 
     public Optional<VolumeGroup> getRelatedVolumeGroupByNameFromVfModule(String vnfId, String vfModuleId,
-            String volumeGroupName) throws Exception {
+            String volumeGroupName) throws MultipleObjectsFoundException {
         AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId);
         uri.relatedTo(AAIObjectPlurals.VOLUME_GROUP).queryParam("volume-group-name", volumeGroupName);
         Optional<VolumeGroups> volumeGroups = injectionHelper.getAaiClient().get(VolumeGroups.class, uri);
@@ -548,7 +560,10 @@ public class BBInputSetupUtils {
             return Optional.empty();
         } else {
             if (volumeGroups.get().getVolumeGroup().size() > 1) {
-                throw new Exception("Multiple VolumeGroups Returned");
+                String message = String.format(
+                        "Multiple voulme-groups found for vnf-id: %s, vf-module-id: %s and volume-group-name: %s.",
+                        vnfId, vfModuleId, volumeGroupName);
+                throw new MultipleObjectsFoundException(message);
             } else {
                 volumeGroup = volumeGroups.get().getVolumeGroup().get(0);
             }
@@ -617,7 +632,7 @@ public class BBInputSetupUtils {
     }
 
     public Optional<Configuration> getRelatedConfigurationByNameFromServiceInstance(String serviceInstanceId,
-            String configurationName) throws Exception {
+            String configurationName) throws MultipleObjectsFoundException {
         AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId);
         uri.relatedTo(AAIObjectPlurals.CONFIGURATION).queryParam("configuration-name", configurationName);
         Optional<Configurations> configurations = injectionHelper.getAaiClient().get(Configurations.class, uri);
@@ -627,7 +642,10 @@ public class BBInputSetupUtils {
             return Optional.empty();
         } else {
             if (configurations.get().getConfiguration().size() > 1) {
-                throw new Exception("Multiple Configurations Returned");
+                String message = String.format(
+                        "Multiple configurations found for service-instance-d: %s and configuration-name: %s.",
+                        serviceInstanceId, configurationName);
+                throw new MultipleObjectsFoundException(message);
             } else {
                 configuration = configurations.get().getConfiguration().get(0);
             }
