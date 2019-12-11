@@ -55,6 +55,8 @@ public class RequestInfo implements Serializable {
     protected boolean suppressRollback;
     @JsonProperty("requestorId")
     protected String requestorId;
+    @JsonProperty("applicationId")
+    protected String applicationId;
 
     /**
      * Gets the value of the callbackUrl property.
@@ -201,12 +203,21 @@ public class RequestInfo implements Serializable {
         this.requestorId = requestorId;
     }
 
+    public String getApplicationId() {
+        return applicationId;
+    }
+
+    public void setApplicationId(String applicationId) {
+        this.applicationId = applicationId;
+    }
+
     @Override
     public String toString() {
         return "RequestInfo [billingAccountNumber=" + billingAccountNumber + ", callbackUrl=" + callbackUrl
                 + ", correlator=" + correlator + ", orderNumber=" + orderNumber + ", productFamilyId=" + productFamilyId
                 + ", orderVersion=" + orderVersion + ", source=" + source + ", instanceName=" + instanceName
-                + ", suppressRollback=" + suppressRollback + ", requestorId=" + requestorId + "]";
+                + ", suppressRollback=" + suppressRollback + ", requestorId=" + requestorId + ", applicationId="
+                + applicationId + "]";
     }
 
 

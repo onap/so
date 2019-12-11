@@ -361,6 +361,10 @@ public class BBInputSetup implements JavaDelegate {
 
         org.onap.so.serviceinstancebeans.Platform platform = requestDetails.getPlatform();
         org.onap.so.serviceinstancebeans.LineOfBusiness lineOfBusiness = requestDetails.getLineOfBusiness();
+        String applicationId = "";
+        if (requestDetails.getRequestInfo().getApplicationId() != null) {
+            applicationId = requestDetails.getRequestInfo().getApplicationId();
+        }
 
         if (modelType.equals(ModelType.network)) {
             lookupKeyMap.put(ResourceKey.NETWORK_ID, resourceId);
@@ -369,7 +373,8 @@ public class BBInputSetup implements JavaDelegate {
         } else if (modelType.equals(ModelType.vnf)) {
             lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, resourceId);
             this.populateGenericVnf(requestId, modelInfo, instanceName, platform, lineOfBusiness, service, bbName,
-                    serviceInstance, lookupKeyMap, relatedInstanceList, resourceId, vnfType, null, productFamilyId);
+                    serviceInstance, lookupKeyMap, relatedInstanceList, resourceId, vnfType, null, productFamilyId,
+                    applicationId);
         } else if (modelType.equals(ModelType.volumeGroup)) {
             lookupKeyMap.put(ResourceKey.VOLUME_GROUP_ID, resourceId);
             this.populateVolumeGroup(requestId, modelInfo, service, bbName, serviceInstance, lookupKeyMap, resourceId,
@@ -748,7 +753,7 @@ public class BBInputSetup implements JavaDelegate {
             org.onap.so.serviceinstancebeans.LineOfBusiness lineOfBusiness, Service service, String bbName,
             ServiceInstance serviceInstance, Map<ResourceKey, String> lookupKeyMap,
             RelatedInstanceList[] relatedInstanceList, String resourceId, String vnfType,
-            List<Map<String, String>> instanceParams, String productFamilyId) {
+            List<Map<String, String>> instanceParams, String productFamilyId, String applicationId) {
         GenericVnf vnf = null;
         ModelInfo instanceGroupModelInfo = null;
         String instanceGroupId = null;
@@ -777,7 +782,7 @@ public class BBInputSetup implements JavaDelegate {
         }
         if (vnf == null && bbName.equalsIgnoreCase(AssignFlows.VNF.toString())) {
             vnf = createGenericVnf(lookupKeyMap, instanceName, platform, lineOfBusiness, resourceId, generatedVnfType,
-                    instanceParams, productFamilyId);
+                    instanceParams, productFamilyId, applicationId);
             serviceInstance.getVnfs().add(vnf);
             mapVnfcCollectionInstanceGroup(vnf, modelInfo, service);
         }
@@ -831,7 +836,7 @@ public class BBInputSetup implements JavaDelegate {
     protected GenericVnf createGenericVnf(Map<ResourceKey, String> lookupKeyMap, String instanceName,
             org.onap.so.serviceinstancebeans.Platform platform,
             org.onap.so.serviceinstancebeans.LineOfBusiness lineOfBusiness, String vnfId, String vnfType,
-            List<Map<String, String>> instanceParams, String productFamilyId) {
+            List<Map<String, String>> instanceParams, String productFamilyId, String applicationId) {
         lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, vnfId);
         GenericVnf genericVnf = new GenericVnf();
         genericVnf.setVnfId(vnfId);
@@ -840,6 +845,7 @@ public class BBInputSetup implements JavaDelegate {
         genericVnf.setVnfType(vnfType);
         genericVnf.setProvStatus(PREPROV);
         genericVnf.setServiceId(productFamilyId);
+        genericVnf.setApplicationId(applicationId);
         if (platform != null) {
             genericVnf.setPlatform(this.mapperLayer.mapRequestPlatform(platform));
         }
@@ -1431,9 +1437,10 @@ public class BBInputSetup implements JavaDelegate {
                 this.bbInputSetupUtils.updateInfraActiveRequestVnfId(request, vnfId);
             }
             String productFamilyId = requestDetails.getRequestInfo().getProductFamilyId();
+            String applicationId = "";
             this.populateGenericVnf(executeBB.getRequestId(), vnfs.getModelInfo(), vnfs.getInstanceName(),
                     vnfs.getPlatform(), vnfs.getLineOfBusiness(), service, bbName, serviceInstance, lookupKeyMap, null,
-                    vnfId, vnfType, vnfs.getInstanceParams(), productFamilyId);
+                    vnfId, vnfType, vnfs.getInstanceParams(), productFamilyId, applicationId);
         } else if (bbName.contains(VF_MODULE) || bbName.contains(VOLUME_GROUP)) {
             Pair<Vnfs, VfModules> vnfsAndVfModules = getVfModulesAndItsVnfsByKey(key, resources);
             if (vnfsAndVfModules != null) {
