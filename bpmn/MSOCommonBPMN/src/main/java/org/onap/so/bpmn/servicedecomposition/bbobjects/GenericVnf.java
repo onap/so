@@ -144,6 +144,8 @@ public class GenericVnf implements Serializable, ShallowCopy<GenericVnf> {
     private String blueprintName;
     @JsonProperty("CDS_BLUEPRINT_VERSION")
     private String blueprintVersion;
+    @JsonProperty("application-id")
+    private String applicationId;
 
 
     public String getBlueprintName() {
@@ -528,6 +530,15 @@ public class GenericVnf implements Serializable, ShallowCopy<GenericVnf> {
 
     public void setCallHoming(Boolean callHoming) {
         this.callHoming = callHoming;
+    }
+
+
+    public String getApplicationId() {
+        return applicationId;
+    }
+
+    public void setApplicationId(String applicationId) {
+        this.applicationId = applicationId;
     }
 
     @Override

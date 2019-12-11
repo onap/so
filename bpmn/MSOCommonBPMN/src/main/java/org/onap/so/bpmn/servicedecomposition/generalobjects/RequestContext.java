@@ -55,6 +55,8 @@ public class RequestContext implements Serializable {
     private RequestParameters requestParameters;
     @JsonProperty("configurationParameters")
     private List<Map<String, String>> configurationParameters = new ArrayList<>();
+    @JsonProperty("application-id")
+    private String applicationId;
 
     public String getServiceURI() {
         return serviceURI;
@@ -142,5 +144,13 @@ public class RequestContext implements Serializable {
 
     public void setConfigurationParameters(List<Map<String, String>> configurationParameters) {
         this.configurationParameters = configurationParameters;
+    }
+
+    public String getApplicationId() {
+        return applicationId;
+    }
+
+    public void setApplicationId(String applicationId) {
+        this.applicationId = applicationId;
     }
 }

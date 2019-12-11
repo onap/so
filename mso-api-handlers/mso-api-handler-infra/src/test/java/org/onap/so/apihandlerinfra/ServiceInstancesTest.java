@@ -1419,7 +1419,7 @@ public class ServiceInstancesTest extends BaseTest {
     @Test
     public void replaceVfModuleInstanceNoCloudConfigurationTest() throws IOException {
         wireMockServer.stubFor(
-                get(urlPathEqualTo("/aai/v17/network/generic-vnfs/generic-vnf/ff305d54-75b4-431b-adb2-eb6b9e5ff000"))
+                get(urlPathEqualTo("/aai/v19/network/generic-vnfs/generic-vnf/ff305d54-75b4-431b-adb2-eb6b9e5ff000"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBodyFile("infra/Vnf.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))

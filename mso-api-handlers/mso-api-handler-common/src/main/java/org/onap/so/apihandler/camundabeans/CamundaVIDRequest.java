@@ -357,5 +357,4 @@ public class CamundaVIDRequest {
     public void setGenerateIds(CamundaBooleanInput generateIds) {
         this.generateIds = generateIds;
     }
-
 }
