@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "83861c49_206803ad",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/CreateVcpeResCustService_simplified.bpmn",
+        "patchSetId": 11
+      },
+      "lineNbr": 434,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-11T13:20:28Z",
+      "side": 1,
+      "message": "Is this done to support a test case? I don\u0027t think it is the right approach, see other comment about actor variable in test case for this workflow.",
+      "revId": "d948654b9a4cf4da27960907daca6895f4910e03",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8bd2ed9d_fa6e12da",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/test/java/org/onap/so/bpmn/infrastructure/process/CreateVcpeResCustServiceSimplifiedTest.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-11T13:20:28Z",
+      "side": 1,
+      "message": "If this variable is only set in the test case, the workflow will fail outside of test environment. To be backwards compatible, I think you need to set the actor variable somewhere inside the vcpe workflow or configuration sub-process itself.",
+      "revId": "d948654b9a4cf4da27960907daca6895f4910e03",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9ff4f1b8_4895f256",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/controller/LcmControllerBB.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-11T13:20:28Z",
+      "side": 1,
+      "message": "What does this declaration actually mean? Which classes will be included in the list? Why controller runnable?\nIs it assumed that prepare classes will check that actor is supported since the list itself isn\u0027t actor-specific?",
+      "revId": "d948654b9a4cf4da27960907daca6895f4910e03",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4cf3af71_e807ca19",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/controller/appc/AppcControllerBB.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-11T13:20:28Z",
+      "side": 1,
+      "message": "Are all these imports actually referenced below?",
+      "revId": "d948654b9a4cf4da27960907daca6895f4910e03",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3fab0cf3_093cf817",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/controller/appc/prepare/PrepareAppcUpgradePreCheckPnfBB.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-11T13:20:28Z",
+      "side": 1,
+      "message": "APPC doesn\u0027t support PNFs.",
+      "revId": "d948654b9a4cf4da27960907daca6895f4910e03",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5b7853bd_526b908b",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/controller/appc/prepare/PrepareAppcUpgradePreCheckPnfBB.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-11T13:20:28Z",
+      "side": 1,
+      "message": "Need to settle naming convention for action input parameter, which may be different than name of Action parameter in the API.",
+      "revId": "d948654b9a4cf4da27960907daca6895f4910e03",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3af31f71_46f23820",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/controller/appc/prepare/PrepareAppcUpgradePreCheckPnfBB.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-11T13:20:28Z",
+      "side": 1,
+      "message": "Is this based on existing code?",
+      "revId": "d948654b9a4cf4da27960907daca6895f4910e03",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4d8aef51_0ddbd99e",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/controller/sdnc/SdncControllerBB.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-11T13:20:28Z",
+      "side": 1,
+      "message": "I would suggest for now to have an empty list of supported actions as they are in reality not supported in the code.\nLater when actions are added, note that the name in this list should correspond to cross-API (SDNC and CDS) name of action, not API-specific name. It remains to be decided what convention to use for cross-API naming of actions.\nAlso is this list needed at all? Or could you simply check if any of the available prepare classes understand the particular action?",
+      "revId": "d948654b9a4cf4da27960907daca6895f4910e03",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a9c0ece4_5506fc67",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/controller/appc/AppcControllerDE.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-11T13:20:28Z",
+      "side": 1,
+      "message": "Why is the approach different between building block classes and DE classes? In other case there is LcmController base class.",
+      "revId": "d948654b9a4cf4da27960907daca6895f4910e03",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
