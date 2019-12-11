@@ -62,6 +62,7 @@ import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.AAIConfigurationResources;
+import org.onap.so.client.orchestration.AAIEntityNotFoundException;
 import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
@@ -184,7 +185,21 @@ public class WorkflowAction {
             execution.setVariable(BBConstants.G_ISTOPLEVELFLOW, true);
             ServiceInstancesRequest sIRequest = mapper.readValue(bpmnRequest, ServiceInstancesRequest.class);
             RequestDetails requestDetails = sIRequest.getRequestDetails();
-            execution.setVariable("suppressRollback", isSuppressRollback(requestDetails.getRequestInfo()));
+            String cloudOwner = "";
+            try {
+                cloudOwner = requestDetails.getCloudConfiguration().getCloudOwner();
+            } catch (Exception ex) {
+                logger.error("Exception in getCloudOwner", ex);
+                cloudOwner = environment.getProperty(defaultCloudOwner);
+            }
+            boolean suppressRollback = false;
+            try {
+                suppressRollback = requestDetails.getRequestInfo().getSuppressRollback();
+            } catch (Exception ex) {
+                logger.error("Exception in getSuppressRollback", ex);
+                suppressRollback = false;
+            }
+            execution.setVariable("suppressRollback", suppressRollback);
             boolean isResume = false;
             if (isUriResume(uri)) {
                 isResume = true;
@@ -403,7 +418,7 @@ public class WorkflowAction {
             execution.setVariable("isRollbackComplete", false);
 
         } catch (Exception ex) {
-            buildAndThrowException(execution, "Exception in create execution list. " + ex.getMessage(), ex);
+            buildAndThrowException(execution, "Exception in execution list. ", ex);
         }
     }
 
@@ -479,7 +494,8 @@ public class WorkflowAction {
         return false;
     }
 
-    protected List<ExecuteBuildingBlock> getConfigBuildingBlocks(ConfigBuildingBlocksDataObject dataObj) {
+    protected List<ExecuteBuildingBlock> getConfigBuildingBlocks(ConfigBuildingBlocksDataObject dataObj)
+            throws Exception {
 
         List<ExecuteBuildingBlock> flowsToExecuteConfigs = new ArrayList<>();
         List<OrchestrationFlow> result = dataObj.getOrchFlows().stream()
@@ -488,8 +504,17 @@ public class WorkflowAction {
         String vfModuleId = dataObj.getWorkflowResourceIds().getVfModuleId();
 
         String vnfCustomizationUUID = bbInputSetupUtils.getAAIGenericVnf(vnfId).getModelCustomizationId();
-        String vfModuleCustomizationUUID =
-                bbInputSetupUtils.getAAIVfModule(vnfId, vfModuleId).getModelCustomizationId();
+        String vfModuleCustomizationUUID = "";
+        org.onap.aai.domain.yang.VfModule aaiVfModule = bbInputSetupUtils.getAAIVfModule(vnfId, vfModuleId);
+
+        if (aaiVfModule == null) {
+            logger.error("No matching VfModule is found in Generic-Vnf in AAI for vnfId: {} and vfModuleId : {}", vnfId,
+                    vfModuleId);
+            throw new AAIEntityNotFoundException("No matching VfModule is found in Generic-Vnf in AAI for vnfId: "
+                    + vnfId + " and vfModuleId : " + vfModuleId);
+        } else {
+            vfModuleCustomizationUUID = aaiVfModule.getModelCustomizationId();
+        }
 
         List<org.onap.aai.domain.yang.Vnfc> vnfcs = getRelatedResourcesInVfModule(vnfId, vfModuleId,
                 org.onap.aai.domain.yang.Vnfc.class, AAIObjectType.VNFC);
