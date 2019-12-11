@@ -1702,7 +1702,24 @@ public class WorkflowActionTest extends BaseTaskTest {
                 "vfModule with name (vFModName222), same parent and different customization id (1234567) already exists. The name must be unique."));
         workflowAction.validateResourceIdInAAI("generatedId123", WorkflowType.VFMODULE, "vFModName222", reqDetails,
                 workflowResourceIds);
+    }
 
+    @Test
+    public void validateVfModuleResourceIdInAAINotGloballyUniqueTest() throws Exception {
+        RequestDetails reqDetails = setupRequestDetails("id123", "subServiceType123", "1234567");
+        WorkflowResourceIds workflowResourceIds = new WorkflowResourceIds();
+        workflowResourceIds.setVnfId("id111");
+
+        GenericVnf vnf1 = new GenericVnf();
+        workflowResourceIds.setVnfId("id111");
+        when(bbSetupUtils.getAAIGenericVnf("id111")).thenReturn(vnf1);
+
+        when(bbSetupUtils.existsAAIVfModuleGloballyByName("vFModName333")).thenReturn(true);
+        this.expectedException.expect(DuplicateNameException.class);
+        this.expectedException.expectMessage(
+                containsString("vfModule with name vFModName333 already exists. The name must be unique."));
+        workflowAction.validateResourceIdInAAI("generatedId123", WorkflowType.VFMODULE, "vFModName333", reqDetails,
+                workflowResourceIds);
     }
 
     @Test
@@ -1725,6 +1742,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         VolumeGroup volumeGroup = new VolumeGroup();
         volumeGroup.setVolumeGroupId("id123");
         volumeGroup.setVolumeGroupName("name123");
+        volumeGroup.setVfModuleModelCustomizationId("1234567");
         workflowResourceIds.setVnfId("id123");
         Optional<VolumeGroup> opVolumeGroup = Optional.of(volumeGroup);
 
@@ -1744,6 +1762,24 @@ public class WorkflowActionTest extends BaseTaskTest {
         String id2 = workflowAction.validateResourceIdInAAI("generatedId123", WorkflowType.VOLUMEGROUP, "111111",
                 reqDetails, workflowResourceIds);
         assertEquals("generatedId123", id2);
+    }
+
+    @Test
+    public void validateVolumeGroupResourceIdInAAINotGloballyUniqueTest() throws Exception {
+        RequestDetails reqDetails = setupRequestDetails("id123", "subServiceType123", "1234567");
+        WorkflowResourceIds workflowResourceIds = new WorkflowResourceIds();
+        workflowResourceIds.setVnfId("id123");
+        GenericVnf vnf = new GenericVnf();
+        vnf.setVnfId("id123");
+        when(bbSetupUtils.getAAIGenericVnf("id123")).thenReturn(vnf);
+        when(bbSetupUtils.getRelatedVolumeGroupByNameFromVnf("id123", "testVolumeGroup")).thenReturn(Optional.empty());
+
+        when(bbSetupUtils.existsAAIVolumeGroupGloballyByName("testVolumeGroup")).thenReturn(true);
+        this.expectedException.expect(DuplicateNameException.class);
+        this.expectedException.expectMessage(
+                containsString("volumeGroup with name testVolumeGroup already exists. The name must be unique."));
+        workflowAction.validateResourceIdInAAI("generatedId123", WorkflowType.VOLUMEGROUP, "testVolumeGroup",
+                reqDetails, workflowResourceIds);
     }
 
     @Test
@@ -1785,6 +1821,22 @@ public class WorkflowActionTest extends BaseTaskTest {
         this.expectedException.expectMessage(containsString(
                 "configuration with name (name222), same parent and different customization id (id123) already exists. The name must be unique."));
         workflowAction.validateResourceIdInAAI("generatedId123", WorkflowType.CONFIGURATION, "name222", reqDetails,
+                workflowResourceIds);
+    }
+
+    @Test
+    public void validateConfigurationResourceIdInAAINotGloballyUniqueTest() throws Exception {
+        RequestDetails reqDetails = setupRequestDetails("id123", "subServiceType123", "1234567");
+        WorkflowResourceIds workflowResourceIds = new WorkflowResourceIds();
+        workflowResourceIds.setServiceInstanceId("siId123");
+
+        when(bbSetupUtils.getRelatedConfigurationByNameFromServiceInstance("siId123", "testConfig"))
+                .thenReturn(Optional.empty());
+        when(bbSetupUtils.existsAAIConfigurationGloballyByName("testConfig")).thenReturn(true);
+        this.expectedException.expect(DuplicateNameException.class);
+        this.expectedException.expectMessage(
+                containsString("configuration with name testConfig already exists. The name must be unique."));
+        workflowAction.validateResourceIdInAAI("generatedId123", WorkflowType.CONFIGURATION, "testConfig", reqDetails,
                 workflowResourceIds);
     }
 
