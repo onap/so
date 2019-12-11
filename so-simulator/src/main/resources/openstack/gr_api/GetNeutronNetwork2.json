@@ -43,7 +43,7 @@
             "port_filter": false,
             "vlan": "181"
         },
-        "binding:vnic_type": "direct",
+        "binding:vnic_type": "normal",
         "binding:vif_type": "hw_veb",
         "mac_address": "fa:16:3e:0c:29:94",
         "project_id": "872f331350c54e59991a8de2cbffb40c",
