@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "9a8070b9_f988ba7e",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigVfModule.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-12T19:39:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "57632013_97dd6685",
+      "range": {
+        "startLine": 39,
+        "startChar": 4,
+        "endLine": 39,
+        "endChar": 26
+      },
+      "revId": "c039d2d81f75116210a33e4bfbe7100e4dc23b3f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9111b868_20c83922",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigVnf.java",
         "patchSetId": 21
@@ -60,6 +84,24 @@
       "writtenOn": "2019-12-05T21:15:13Z",
       "side": 1,
       "message": "Why is CONFIG added as prefix? action should already contain \u0027config-\u0027 as part of action name.",
+      "revId": "c039d2d81f75116210a33e4bfbe7100e4dc23b3f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ec381b65_a9760daa",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigVnf.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-12T19:39:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9111b868_20c83922",
       "revId": "c039d2d81f75116210a33e4bfbe7100e4dc23b3f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
@@ -183,6 +225,30 @@
       "side": 1,
       "message": "I know thats why I added TODO. I will fix it in the next patch.",
       "parentUuid": "c28c7c56_c2a3a8ff",
+      "range": {
+        "startLine": 52,
+        "startChar": 12,
+        "endLine": 52,
+        "endChar": 32
+      },
+      "revId": "c039d2d81f75116210a33e4bfbe7100e4dc23b3f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dacf221b_97202c83",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigureInstanceParamsForVnf.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-12T19:39:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "eca1b0c6_5f2d2a5e",
       "range": {
         "startLine": 52,
         "startChar": 12,
@@ -493,6 +559,30 @@
         "startChar": 19,
         "endLine": 85,
         "endChar": 22
+      },
+      "revId": "c039d2d81f75116210a33e4bfbe7100e4dc23b3f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e27a6a20_5e7c948f",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/aai/tasks/AAIUpdateTasks.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-12T19:39:24Z",
+      "side": 1,
+      "message": "I have static body below.\n\nif you have non static field then it cannot be referenced from a static context",
+      "parentUuid": "11035221_45f75cc5",
+      "range": {
+        "startLine": 85,
+        "startChar": 12,
+        "endLine": 85,
+        "endChar": 18
       },
       "revId": "c039d2d81f75116210a33e4bfbe7100e4dc23b3f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
