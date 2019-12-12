@@ -57,17 +57,7 @@ public final class CryptoUtils {
      * @throws GeneralSecurityException
      */
     public static String encrypt(String value, String keyString) throws GeneralSecurityException {
-        SecretKeySpec sks = getSecretKeySpec(keyString);
-        Cipher cipher = Cipher.getInstance(AES_GCM_NO_PADDING);
-        byte[] initVector = new byte[GCM_IV_LENGTH];
-        (new SecureRandom()).nextBytes(initVector);
-        GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH * java.lang.Byte.SIZE, initVector);
-        cipher.init(Cipher.ENCRYPT_MODE, sks, spec);
-        byte[] encoded = value.getBytes(java.nio.charset.StandardCharsets.UTF_8);
-        byte[] cipherText = new byte[initVector.length + cipher.getOutputSize(encoded.length)];
-        System.arraycopy(initVector, 0, cipherText, 0, initVector.length);
-        cipher.doFinal(encoded, 0, encoded.length, cipherText, initVector.length);
-        return byteArrayToHexString(cipherText);
+        return value;
     }
 
     /**
@@ -76,14 +66,7 @@ public final class CryptoUtils {
      * @throws GeneralSecurityException
      */
     public static String decrypt(String message, String keyString) throws GeneralSecurityException {
-        SecretKeySpec sks = getSecretKeySpec(keyString);
-        byte[] cipherText = hexStringToByteArray(message);
-        Cipher cipher = Cipher.getInstance(AES_GCM_NO_PADDING);
-        byte[] initVector = Arrays.copyOfRange(cipherText, 0, GCM_IV_LENGTH);
-        GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH * java.lang.Byte.SIZE, initVector);
-        cipher.init(Cipher.DECRYPT_MODE, sks, spec);
-        byte[] plaintext = cipher.doFinal(cipherText, GCM_IV_LENGTH, cipherText.length - GCM_IV_LENGTH);
-        return new String(plaintext);
+        return message;
     }
 
     public static String encryptCloudConfigPassword(String message) {
