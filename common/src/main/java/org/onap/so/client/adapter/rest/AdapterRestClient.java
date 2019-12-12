@@ -70,7 +70,7 @@ public class AdapterRestClient extends RestClient {
             byte[] encoded = Base64.encodeBase64(auth.getBytes());
             String encodedString = new String(encoded);
             encodedString = "Basic " + encodedString;
-            return encodedString;
+            return "Basic " + encryptedAuth;
         } catch (GeneralSecurityException e) {
             logger.error(e.getMessage(), e);
             return null;

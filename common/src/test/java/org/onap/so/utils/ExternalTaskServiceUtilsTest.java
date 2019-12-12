@@ -47,7 +47,7 @@ public class ExternalTaskServiceUtilsTest {
     @Test
     public void testGetAuth() throws Exception {
         String actual = utils.getAuth();
-        String expected = "Att32054Life!@";
+        String expected = "6B466C603A260F3655DBF91E53CE54667041C01406D10E8CAF9CC24D8FA5388D06F90BFE4C852052B436";
         assertEquals(expected, actual);
     }
 

@@ -101,7 +101,7 @@ public class AAIResourcesClientTest {
     public void verifyBasicAuth() {
         AAIResourceUri path = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test3");
         wireMockRule.stubFor(get(urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build().toString()))
-                .withHeader("Authorization", equalTo("Basic dGVzdDp0ZXN0"))
+                .withHeader("Authorization", equalTo("Basic NUUxMkFDQUNCRDU1MkE0MTVFMDgxRTI5RjJDNDc3MkY5ODM1NzkyQTUxQzc2NkNDRkRENzQzM0RCNTIyMEI1OTk2OUNCMjc5OEM="))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                         .withBodyFile("aai/resources/mockObject.json").withStatus(200)));
         AAIResourcesClient client = aaiClient;
