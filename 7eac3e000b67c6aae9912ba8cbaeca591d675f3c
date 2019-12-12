@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "23e4e311_de9d8e4b",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/ControllerExecutionBB.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-12T20:24:12Z",
+      "side": 1,
+      "message": "I believe the first parameter should not be controllerScope. Look at examples in flowspecific tasks.",
+      "revId": "7eac3e000b67c6aae9912ba8cbaeca591d675f3c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3633ea43_db59e1b5",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDE.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-12T20:24:12Z",
+      "side": 1,
+      "message": "I believe first parameter should not be controllerScope. Check examples in flowspecific tasks.",
+      "revId": "7eac3e000b67c6aae9912ba8cbaeca591d675f3c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
