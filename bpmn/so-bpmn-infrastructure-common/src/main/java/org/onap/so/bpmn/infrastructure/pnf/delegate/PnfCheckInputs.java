@@ -22,8 +22,6 @@
 
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
-import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_CORRELATION_ID;
-import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_UUID;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.SERVICE_INSTANCE_ID;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.TIMEOUT_FOR_NOTIFICATION;
 import com.google.common.base.Strings;
@@ -37,40 +35,21 @@ import org.springframework.stereotype.Component;
 @Component
 public class PnfCheckInputs implements JavaDelegate {
 
-    public static final String UUID_REGEX =
-            "(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[1-5]{1}[0-9a-f]{3}-[89ab]{1}[0-9a-f]{3}-[0-9a-f]{12}$";
-
+    private AssignPnfInputsCheckerDelegate assignPnfInputsCheckerDelegate;
     private String pnfEntryNotificationTimeout;
 
     @Autowired
-    public PnfCheckInputs(@Value("${aai.pnfEntryNotificationTimeout}") String pnfEntryNotificationTimeout) {
+    public PnfCheckInputs(@Value("${aai.pnfEntryNotificationTimeout}") String pnfEntryNotificationTimeout,
+            AssignPnfInputsCheckerDelegate assignPnfInputsCheckerDelegate) {
+        this.assignPnfInputsCheckerDelegate = assignPnfInputsCheckerDelegate;
         this.pnfEntryNotificationTimeout = pnfEntryNotificationTimeout;
     }
 
     @Override
     public void execute(DelegateExecution execution) {
-        validatePnfCorrelationId(execution);
-        validatePnfUuid(execution);
+        assignPnfInputsCheckerDelegate.execute(execution);
         validateTimeout(execution);
         validateServiceInstanceId(execution);
-    }
-
-    private void validatePnfCorrelationId(DelegateExecution execution) {
-        String pnfCorrelationId = (String) execution.getVariable(PNF_CORRELATION_ID);
-        if (Strings.isNullOrEmpty(pnfCorrelationId)) {
-            new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999,
-                    "pnfCorrelationId variable not defined");
-        }
-    }
-
-    private void validatePnfUuid(DelegateExecution execution) {
-        String pnfUuid = (String) execution.getVariable(PNF_UUID);
-        if (Strings.isNullOrEmpty(pnfUuid)) {
-            new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, "pnfUuid variable not defined");
-        }
-        if (!pnfUuid.matches(UUID_REGEX)) {
-            new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, "pnfUuid is not a valid UUID");
-        }
     }
 
     private void validateTimeout(DelegateExecution execution) {
