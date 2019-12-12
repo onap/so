@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "ed418b04_a2cc4422",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/CreateVcpeResCustService_simplified.bpmn",
+        "patchSetId": 11
+      },
+      "lineNbr": 434,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-12-12T19:23:06Z",
+      "side": 1,
+      "message": "it was for testing purpose. removed now.",
+      "parentUuid": "83861c49_206803ad",
+      "revId": "d948654b9a4cf4da27960907daca6895f4910e03",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8bd2ed9d_fa6e12da",
         "filename": "bpmn/so-bpmn-infrastructure-flows/src/test/java/org/onap/so/bpmn/infrastructure/process/CreateVcpeResCustServiceSimplifiedTest.java",
         "patchSetId": 11
@@ -33,6 +51,24 @@
       "revId": "d948654b9a4cf4da27960907daca6895f4910e03",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "18adf888_5da31c31",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/test/java/org/onap/so/bpmn/infrastructure/process/CreateVcpeResCustServiceSimplifiedTest.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-12-12T19:23:06Z",
+      "side": 1,
+      "message": "previously this is for testing purpose, removed now.",
+      "parentUuid": "8bd2ed9d_fa6e12da",
+      "revId": "d948654b9a4cf4da27960907daca6895f4910e03",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "6970868b_511be8b6",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/controller/LcmControllerBB.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-12-12T19:23:06Z",
+      "side": 1,
+      "message": "changed to ControllerPreparable now. It was typo.",
+      "parentUuid": "9ff4f1b8_4895f256",
+      "revId": "d948654b9a4cf4da27960907daca6895f4910e03",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4cf3af71_e807ca19",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/controller/appc/AppcControllerBB.java",
         "patchSetId": 11
@@ -67,6 +121,24 @@
       "revId": "d948654b9a4cf4da27960907daca6895f4910e03",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b3ad65c2_749b980f",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/controller/appc/AppcControllerBB.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-12-12T19:23:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4cf3af71_e807ca19",
+      "revId": "d948654b9a4cf4da27960907daca6895f4910e03",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "95c04c58_2080875a",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/controller/appc/prepare/PrepareAppcUpgradePreCheckPnfBB.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-12-12T19:23:06Z",
+      "side": 1,
+      "message": "Move to SDNC package now.",
+      "parentUuid": "3fab0cf3_093cf817",
+      "revId": "d948654b9a4cf4da27960907daca6895f4910e03",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5b7853bd_526b908b",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/controller/appc/prepare/PrepareAppcUpgradePreCheckPnfBB.java",
         "patchSetId": 11
@@ -101,6 +191,24 @@
       "revId": "d948654b9a4cf4da27960907daca6895f4910e03",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e5513e22_8701e4ed",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/controller/appc/prepare/PrepareAppcUpgradePreCheckPnfBB.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-12-12T19:23:06Z",
+      "side": 1,
+      "message": "Once we decide the name convention for PNF SW upgrade use case. this can be updated. Leave it for demo purpose.",
+      "parentUuid": "5b7853bd_526b908b",
+      "revId": "d948654b9a4cf4da27960907daca6895f4910e03",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "59d2e1e8_26df248f",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/controller/appc/prepare/PrepareAppcUpgradePreCheckPnfBB.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-12-12T19:23:06Z",
+      "side": 1,
+      "message": "This is based on previous discussion in PNF SW upgrade meeting. The pass-in payload will be joint json containing all the payload per action.",
+      "parentUuid": "3af31f71_46f23820",
+      "revId": "d948654b9a4cf4da27960907daca6895f4910e03",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4d8aef51_0ddbd99e",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/controller/sdnc/SdncControllerBB.java",
         "patchSetId": 11
@@ -132,6 +258,24 @@
       "writtenOn": "2019-12-11T13:20:28Z",
       "side": 1,
       "message": "I would suggest for now to have an empty list of supported actions as they are in reality not supported in the code.\nLater when actions are added, note that the name in this list should correspond to cross-API (SDNC and CDS) name of action, not API-specific name. It remains to be decided what convention to use for cross-API naming of actions.\nAlso is this list needed at all? Or could you simply check if any of the available prepare classes understand the particular action?",
+      "revId": "d948654b9a4cf4da27960907daca6895f4910e03",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b43763bc_dfcf2e51",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/controller/sdnc/SdncControllerBB.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-12-12T19:23:06Z",
+      "side": 1,
+      "message": "Remove all the actions in this class. You can have actions specified in the ControllerRunnable instance in case that\u0027s a special instance for these actions only. Or else it should be handled in the ControllerPreparable instances.",
+      "parentUuid": "4d8aef51_0ddbd99e",
       "revId": "d948654b9a4cf4da27960907daca6895f4910e03",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
@@ -152,6 +296,24 @@
       "revId": "d948654b9a4cf4da27960907daca6895f4910e03",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "93657d02_001f7d5d",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/controller/appc/AppcControllerDE.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-12-12T19:23:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a9c0ece4_5506fc67",
+      "revId": "d948654b9a4cf4da27960907daca6895f4910e03",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
