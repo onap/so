@@ -64,7 +64,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -147,6 +146,39 @@ public class OrchestrationRequestsTest extends BaseTest {
 
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl(createURLWithPort("/onap/so/infra/orchestrationRequests/v7/" + testRequestId));
+
+        ResponseEntity<GetOrchestrationResponse> response =
+                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, GetOrchestrationResponse.class);
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        assertThat(response.getBody(), sameBeanAs(testResponse).ignoring("request.startTime")
+                .ignoring("request.finishTime").ignoring("request.requestStatus.timeStamp"));
+        assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
+        assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
+        assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
+        assertEquals("7.0.0", response.getHeaders().get("X-LatestVersion").get(0));
+        assertEquals("00032ab7-1a18-42e5-965d-8ea592502018", response.getHeaders().get("X-TransactionID").get(0));
+        assertNotNull(response.getBody().getRequest().getFinishTime());
+    }
+
+    @Test
+    public void getOrchestrationRequestSimpleTest() throws Exception {
+        setupTestGetOrchestrationRequest();
+        // TEST VALID REQUEST
+        GetOrchestrationResponse testResponse = new GetOrchestrationResponse();
+
+        Request request = ORCHESTRATION_LIST.getRequestList().get(1).getRequest();
+        request.setRequestProcessingData(null);
+        testResponse.setRequest(request);
+
+        String testRequestId = request.getRequestId();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Accept", MediaType.APPLICATION_JSON);
+        headers.set("Content-Type", MediaType.APPLICATION_JSON);
+        HttpEntity<Request> entity = new HttpEntity<Request>(null, headers);
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort("/onap/so/infra/orchestrationRequests/v7/" + testRequestId))
+                .queryParam("format", "simple");
 
         ResponseEntity<GetOrchestrationResponse> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, GetOrchestrationResponse.class);
@@ -447,6 +479,7 @@ public class OrchestrationRequestsTest extends BaseTest {
         actualProcessingData = orchReq.mapRequestProcessingData(processingData);
         assertThat(actualProcessingData, sameBeanAs(expectedDataList));
     }
+
 
     public void setupTestGetOrchestrationRequest() throws Exception {
         // For testGetOrchestrationRequest
