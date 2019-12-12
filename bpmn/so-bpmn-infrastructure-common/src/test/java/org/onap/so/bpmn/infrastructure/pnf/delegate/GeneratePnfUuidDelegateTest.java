@@ -35,6 +35,6 @@ public class GeneratePnfUuidDelegateTest {
         // when
         delegate.execute(execution);
         // then
-        assertThat((String) execution.getVariable(PNF_UUID)).matches(PnfCheckInputs.UUID_REGEX);
+        assertThat((String) execution.getVariable(PNF_UUID)).matches(AssignPnfInputsCheckerDelegate.UUID_REGEX);
     }
 }
