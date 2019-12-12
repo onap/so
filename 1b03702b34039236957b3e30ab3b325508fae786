@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b831e22b_de2407cf",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1515,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-12T17:58:41Z",
+      "side": 1,
+      "message": "What if the value is not present then setBpmnAction won\u0027t be called ?\nHow you are going to handle this.",
+      "range": {
+        "startLine": 1515,
+        "startChar": 8,
+        "endLine": 1515,
+        "endChar": 16
+      },
+      "revId": "1b03702b34039236957b3e30ab3b325508fae786",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
