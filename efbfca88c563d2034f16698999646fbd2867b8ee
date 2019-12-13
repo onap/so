@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0eac0080_265790d3",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/ControllerExecutionBB.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-13T19:55:58Z",
+      "side": 1,
+      "message": "Is there case with actor \u003d\u003d SO-REF-DATA that should follow this path?",
+      "revId": "efbfca88c563d2034f16698999646fbd2867b8ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0759af33_d462f076",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDE.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-13T19:55:58Z",
+      "side": 1,
+      "message": "Is there case with actor \u003d\u003d SO-REF-DATA that should follow this path?",
+      "revId": "efbfca88c563d2034f16698999646fbd2867b8ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
