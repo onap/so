@@ -61,7 +61,8 @@ public class CamundaRequestHandler {
                 if (context.getRetryCount() == 0) {
                     logger.info("Querying Camunda for process-instance history for requestId: {}", requestId);
                 } else {
-                    logger.info("Retry: Querying Camunda for process-instance history for requestId: {}",
+                    logger.info(
+                            "Retry: Querying Camunda for process-instance history for retryCount: {} and requestId: {}",
                             context.getRetryCount(), requestId);
                 }
                 return restTemplate.exchange(targetUrl, HttpMethod.GET, requestEntity,
