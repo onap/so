@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "74639326_2af604e2",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/V8.1__AddBBNameSelectionReference.sql",
+        "patchSetId": 12
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-13T16:34:55Z",
+      "side": 1,
+      "message": "(Update) For scope values, suggest to check to separate email discussion. \u0027vf-module\u0027 might be wrong as well.",
+      "parentUuid": "25531d81_9236250b",
+      "revId": "a5492215a678b2863afdff42e323c185f07ce9c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2f19da84_4346610d",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ControllerExecution.java",
         "patchSetId": 12
