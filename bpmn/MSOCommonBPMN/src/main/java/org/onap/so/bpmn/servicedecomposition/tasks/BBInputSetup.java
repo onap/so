@@ -62,6 +62,7 @@ import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.NoServiceInstanceFoundException;
+import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.ServiceModelNotFoundException;
 import org.onap.so.client.aai.AAICommonObjectMapperProvider;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
@@ -253,41 +254,46 @@ public class BBInputSetup implements JavaDelegate {
         String bbName = executeBB.getBuildingBlock().getBpmnFlowName();
         String serviceInstanceId = lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID);
         org.onap.aai.domain.yang.ServiceInstance aaiServiceInstance = null;
-        if (serviceInstanceId != null) {
-            aaiServiceInstance = bbInputSetupUtils.getAAIServiceInstanceById(serviceInstanceId);
-        }
         Service service = null;
         boolean isReplace = false;
-        if (aaiServiceInstance != null) {
-            if (requestAction.equalsIgnoreCase("replaceInstance")) {
-                RelatedInstanceList[] relatedInstanceList = requestDetails.getRelatedInstanceList();
-                if (relatedInstanceList != null) {
-                    for (RelatedInstanceList relatedInstList : relatedInstanceList) {
-                        RelatedInstance relatedInstance = relatedInstList.getRelatedInstance();
-                        if (relatedInstance.getModelInfo().getModelType().equals(ModelType.service)) {
-                            service = bbInputSetupUtils
-                                    .getCatalogServiceByModelUUID(relatedInstance.getModelInfo().getModelVersionId());
-                            isReplace = true;
+        if (serviceInstanceId != null) {
+            aaiServiceInstance = bbInputSetupUtils.getAAIServiceInstanceById(serviceInstanceId);
+            if (aaiServiceInstance != null) {
+                if (requestAction.equalsIgnoreCase("replaceInstance")) {
+                    RelatedInstanceList[] relatedInstanceList = requestDetails.getRelatedInstanceList();
+                    if (relatedInstanceList != null) {
+                        for (RelatedInstanceList relatedInstList : relatedInstanceList) {
+                            RelatedInstance relatedInstance = relatedInstList.getRelatedInstance();
+                            if (relatedInstance.getModelInfo().getModelType().equals(ModelType.service)) {
+                                service = bbInputSetupUtils.getCatalogServiceByModelUUID(
+                                        relatedInstance.getModelInfo().getModelVersionId());
+                                isReplace = true;
+                            }
                         }
                     }
+                } else {
+                    service = bbInputSetupUtils.getCatalogServiceByModelUUID(aaiServiceInstance.getModelVersionId());
+                }
+                if (service == null) {
+                    String message = String.format(
+                            "Related service instance model not found in MSO CatalogDB: model-version-id=%s",
+                            aaiServiceInstance.getModelVersionId());
+                    throw new ServiceModelNotFoundException(message);
                 }
             } else {
-                service = bbInputSetupUtils.getCatalogServiceByModelUUID(aaiServiceInstance.getModelVersionId());
+                String message = String.format("Related service instance from AAI not found: service-instance-id=%s",
+                        serviceInstanceId);
+                throw new NoServiceInstanceFoundException(message);
             }
         }
-        if (aaiServiceInstance != null && service != null) {
-            ServiceInstance serviceInstance = this.getExistingServiceInstance(aaiServiceInstance);
-            serviceInstance.setModelInfoServiceInstance(this.mapperLayer.mapCatalogServiceIntoServiceInstance(service));
-            this.populateObjectsOnAssignAndCreateFlows(executeBB.getRequestId(), requestDetails, service, bbName,
-                    serviceInstance, lookupKeyMap, resourceId, vnfType, executeBB.getBuildingBlock().getKey(),
-                    executeBB.getConfigurationResourceKeys(), isReplace);
-            return this.populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance, executeBB, requestAction,
-                    null);
-        } else {
-            logger.debug("Related Service Instance from AAI: {}", aaiServiceInstance);
-            logger.debug("Related Service Instance Model Info from AAI: {}", service);
-            throw new Exception("Could not find relevant information for related Service Instance");
-        }
+
+        ServiceInstance serviceInstance = this.getExistingServiceInstance(aaiServiceInstance);
+        serviceInstance.setModelInfoServiceInstance(this.mapperLayer.mapCatalogServiceIntoServiceInstance(service));
+        this.populateObjectsOnAssignAndCreateFlows(executeBB.getRequestId(), requestDetails, service, bbName,
+                serviceInstance, lookupKeyMap, resourceId, vnfType, executeBB.getBuildingBlock().getKey(),
+                executeBB.getConfigurationResourceKeys(), isReplace);
+        return this.populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance, executeBB, requestAction, null);
+
     }
 
     protected GeneralBuildingBlock getGBBCM(ExecuteBuildingBlock executeBB, RequestDetails requestDetails,
@@ -1279,24 +1285,30 @@ public class BBInputSetup implements JavaDelegate {
         String serviceInstanceId = lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID);
         RequestDetails requestDetails = executeBB.getRequestDetails();
         GeneralBuildingBlock gBB = null;
+        Service service = null;
         if (serviceInstanceId != null) {
             aaiServiceInstance = bbInputSetupUtils.getAAIServiceInstanceById(serviceInstanceId);
+            if (aaiServiceInstance != null) {
+                service = bbInputSetupUtils.getCatalogServiceByModelUUID(aaiServiceInstance.getModelVersionId());
+                if (service == null) {
+                    String message = String.format(
+                            "Related service instance model not found in MSO CatalogDB: model-version-id=%s",
+                            aaiServiceInstance.getModelVersionId());
+                    throw new ServiceModelNotFoundException(message);
+                }
+            } else {
+                String message = String.format("Related service instance from AAI not found: service-instance-id=%s",
+                        serviceInstanceId);
+                throw new NoServiceInstanceFoundException(message);
+            }
         }
-        Service service = null;
-        if (aaiServiceInstance != null) {
-            service = bbInputSetupUtils.getCatalogServiceByModelUUID(aaiServiceInstance.getModelVersionId());
-        }
-        if (aaiServiceInstance != null && service != null) {
-            ServiceInstance serviceInstance = this.getExistingServiceInstance(aaiServiceInstance);
-            serviceInstance.setModelInfoServiceInstance(this.mapperLayer.mapCatalogServiceIntoServiceInstance(service));
-            updateInstanceName(executeBB.getRequestId(), ModelType.service, serviceInstance.getServiceInstanceName());
-            gBB = populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance, executeBB, requestAction, null);
-        } else {
-            logger.debug("Related Service Instance from AAI: {}", aaiServiceInstance);
-            logger.debug("Related Service Instance Model Info from AAI: {}", service);
-            throw new Exception("Could not find relevant information for related Service Instance");
-        }
-        ServiceInstance serviceInstance = gBB.getServiceInstance();
+
+        ServiceInstance serviceInstance = this.getExistingServiceInstance(aaiServiceInstance);
+        serviceInstance.setModelInfoServiceInstance(this.mapperLayer.mapCatalogServiceIntoServiceInstance(service));
+        updateInstanceName(executeBB.getRequestId(), ModelType.service, serviceInstance.getServiceInstanceName());
+        gBB = populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance, executeBB, requestAction, null);
+
+        serviceInstance = gBB.getServiceInstance();
         CloudRegion cloudRegion = null;
         if (cloudConfiguration == null) {
             Optional<CloudRegion> cloudRegionOp = cloudInfoFromAAI.getCloudInfoFromAAI(serviceInstance);

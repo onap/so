@@ -46,7 +46,9 @@ import java.util.Optional;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
@@ -87,6 +89,8 @@ import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoNetwork;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceProxy;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
+import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.NoServiceInstanceFoundException;
+import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.ServiceModelNotFoundException;
 import org.onap.so.client.aai.AAICommonObjectMapperProvider;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
@@ -148,6 +152,9 @@ public class BBInputSetupTest {
 
     @Mock
     private RequestsDbClient requestsDbClient;
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setup() {
@@ -462,18 +469,49 @@ public class BBInputSetupTest {
         assertThat(actual, sameBeanAs(expected));
     }
 
-    @Test(expected = Exception.class)
+    @Test
     public void testGetGBBALaCarteNonServiceWithoutServiceModelInfo() throws Exception {
         ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
                 ExecuteBuildingBlock.class);
         RequestDetails requestDetails = mapper.readValue(
                 new File(RESOURCE_PATH + "RequestDetailsInput_withRelatedInstanceList.json"), RequestDetails.class);
         Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
+        lookupKeyMap.put(ResourceKey.SERVICE_INSTANCE_ID, "si123");
         String requestAction = "createInstance";
         org.onap.aai.domain.yang.ServiceInstance aaiServiceInstance = new org.onap.aai.domain.yang.ServiceInstance();
         aaiServiceInstance.setModelVersionId("modelVersionId");
         String resourceId = "123";
         String vnfType = "vnfType";
+
+        doReturn(aaiServiceInstance).when(SPY_bbInputSetupUtils).getAAIServiceInstanceById("si123");
+        doReturn(null).when(SPY_bbInputSetupUtils).getCatalogServiceByModelUUID(aaiServiceInstance.getModelVersionId());
+
+        expectedException.expect(ServiceModelNotFoundException.class);
+        expectedException.expectMessage(
+                "Related service instance model not found in MSO CatalogDB: model-version-id=modelVersionId");
+
+        SPY_bbInputSetup.getGBBALaCarteNonService(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId,
+                vnfType);
+    }
+
+    @Test
+    public void testGetGBBALaCarteNonServiceServiceInstanceNotFoundInAAI() throws Exception {
+        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
+                ExecuteBuildingBlock.class);
+        RequestDetails requestDetails = mapper.readValue(
+                new File(RESOURCE_PATH + "RequestDetailsInput_withRelatedInstanceList.json"), RequestDetails.class);
+        Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
+        lookupKeyMap.put(ResourceKey.SERVICE_INSTANCE_ID, "si123");
+        String requestAction = "createInstance";
+        org.onap.aai.domain.yang.ServiceInstance aaiServiceInstance = new org.onap.aai.domain.yang.ServiceInstance();
+        aaiServiceInstance.setModelVersionId("modelVersionId");
+        String resourceId = "123";
+        String vnfType = "vnfType";
+
+        doReturn(null).when(SPY_bbInputSetupUtils).getAAIServiceInstanceById("si123");
+
+        expectedException.expect(NoServiceInstanceFoundException.class);
+        expectedException.expectMessage("Related service instance from AAI not found: service-instance-id=si123");
 
         SPY_bbInputSetup.getGBBALaCarteNonService(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId,
                 vnfType);
@@ -2665,6 +2703,48 @@ public class BBInputSetupTest {
                 executeBB.getBuildingBlock().getBpmnFlowName(), requestAction, cloudConfiguration);
         verify(SPY_bbInputSetup, times(1)).mapCatalogConfiguration(any(Configuration.class), any(ModelInfo.class),
                 any(Service.class), isA(ConfigurationResourceKeys.class));
+    }
+
+    @Test
+    public void testGetGBBMacroExistingServiceServiceinstancenotFoundInAai() throws Exception {
+        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
+                ExecuteBuildingBlock.class);
+        Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
+        lookupKeyMap.put(ResourceKey.SERVICE_INSTANCE_ID, "si123");
+
+        CloudConfiguration cloudConfiguration = new CloudConfiguration();
+        cloudConfiguration.setLcpCloudRegionId("cloudRegionId");
+
+        doReturn(null).when(SPY_bbInputSetupUtils).getAAIServiceInstanceById("si123");
+
+        expectedException.expect(NoServiceInstanceFoundException.class);
+        expectedException.expectMessage("Related service instance from AAI not found: service-instance-id=si123");
+
+        SPY_bbInputSetup.getGBBMacroExistingService(executeBB, lookupKeyMap, "AssignVnfBB", "assign",
+                cloudConfiguration);
+    }
+
+    @Test
+    public void testGetGBBMacroExistingServiceServiceModelNotFound() throws Exception {
+        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
+                ExecuteBuildingBlock.class);
+        Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
+        lookupKeyMap.put(ResourceKey.SERVICE_INSTANCE_ID, "si123");
+        org.onap.aai.domain.yang.ServiceInstance aaiServiceInstance = new org.onap.aai.domain.yang.ServiceInstance();
+        aaiServiceInstance.setModelVersionId("modelVersionId");
+
+        CloudConfiguration cloudConfiguration = new CloudConfiguration();
+        cloudConfiguration.setLcpCloudRegionId("cloudRegionId");
+
+        doReturn(aaiServiceInstance).when(SPY_bbInputSetupUtils).getAAIServiceInstanceById("si123");
+        doReturn(null).when(SPY_bbInputSetupUtils).getCatalogServiceByModelUUID(aaiServiceInstance.getModelVersionId());
+
+        expectedException.expect(ServiceModelNotFoundException.class);
+        expectedException.expectMessage(
+                "Related service instance model not found in MSO CatalogDB: model-version-id=modelVersionId");
+
+        SPY_bbInputSetup.getGBBMacroExistingService(executeBB, lookupKeyMap, "AssignVnfBB", "assign",
+                cloudConfiguration);
     }
 
     @Test
