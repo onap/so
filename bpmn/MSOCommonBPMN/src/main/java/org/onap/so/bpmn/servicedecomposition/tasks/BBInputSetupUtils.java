@@ -587,6 +587,24 @@ public class BBInputSetupUtils {
         return aaiRC.exists(l3networkUri);
     }
 
+    public boolean existsAAIVfModuleGloballyByName(String vfModuleName) {
+        AAIResourceUri vfModuleUri =
+                AAIUriFactory.createNodesUri(AAIObjectPlurals.VF_MODULE).queryParam("vf-module-name", vfModuleName);
+        return injectionHelper.getAaiClient().exists(vfModuleUri);
+    }
+
+    public boolean existsAAIConfigurationGloballyByName(String configurationName) {
+        AAIResourceUri configUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.CONFIGURATION)
+                .queryParam("configuration-name", configurationName);
+        return injectionHelper.getAaiClient().exists(configUri);
+    }
+
+    public boolean existsAAIVolumeGroupGloballyByName(String volumeGroupName) {
+        AAIResourceUri volumeGroupUri = AAIUriFactory.createNodesUri(AAIObjectPlurals.VOLUME_GROUP)
+                .queryParam("volume-group-name", volumeGroupName);
+        return injectionHelper.getAaiClient().exists(volumeGroupUri);
+    }
+
     public GenericVnfs getAAIVnfsGloballyByName(String vnfName) {
 
         return injectionHelper.getAaiClient()

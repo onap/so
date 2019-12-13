@@ -1268,12 +1268,15 @@ public class WorkflowAction {
                         }
                     }
                 }
+                if (bbInputSetupUtils.existsAAIVfModuleGloballyByName(instanceName)) {
+                    throw new DuplicateNameException("vfModule", instanceName);
+                }
             } else if ("VOLUMEGROUP".equalsIgnoreCase(type.toString())) {
                 GenericVnf vnf = bbInputSetupUtils.getAAIGenericVnf(workflowResourceIds.getVnfId());
                 Optional<VolumeGroup> volumeGroup = bbInputSetupUtils
                         .getRelatedVolumeGroupByNameFromVnf(workflowResourceIds.getVnfId(), instanceName);
                 if (volumeGroup.isPresent()) {
-                    if (vnf.getModelCustomizationId()
+                    if (volumeGroup.get().getVfModuleModelCustomizationId()
                             .equalsIgnoreCase(reqDetails.getModelInfo().getModelCustomizationId())) {
                         return volumeGroup.get().getVolumeGroupId();
                     } else {
@@ -1286,7 +1289,7 @@ public class WorkflowAction {
                                 bbInputSetupUtils.getRelatedVolumeGroupByNameFromVfModule(vnf.getVnfId(),
                                         vfModule.getVfModuleId(), instanceName);
                         if (volumeGroupFromVfModule.isPresent()) {
-                            if (vnf.getModelCustomizationId()
+                            if (volumeGroupFromVfModule.get().getVfModuleModelCustomizationId()
                                     .equalsIgnoreCase(reqDetails.getModelInfo().getModelCustomizationId())) {
                                 return volumeGroupFromVfModule.get().getVolumeGroupId();
                             } else {
@@ -1296,6 +1299,9 @@ public class WorkflowAction {
                             }
                         }
                     }
+                }
+                if (bbInputSetupUtils.existsAAIVolumeGroupGloballyByName(instanceName)) {
+                    throw new DuplicateNameException("volumeGroup", instanceName);
                 }
             } else if ("CONFIGURATION".equalsIgnoreCase(type.toString())) {
                 Optional<org.onap.aai.domain.yang.Configuration> configuration =
@@ -1310,6 +1316,9 @@ public class WorkflowAction {
                                 String.format(NAME_EXISTS_WITH_DIFF_CUSTOMIZATION_ID, instanceName,
                                         configuration.get().getConfigurationId()));
                     }
+                }
+                if (bbInputSetupUtils.existsAAIConfigurationGloballyByName(instanceName)) {
+                    throw new DuplicateNameException("configuration", instanceName);
                 }
             }
             return generatedResourceId;

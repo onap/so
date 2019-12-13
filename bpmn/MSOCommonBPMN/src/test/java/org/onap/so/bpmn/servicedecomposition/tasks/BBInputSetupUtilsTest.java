@@ -878,4 +878,35 @@ public class BBInputSetupUtilsTest {
         assertEquals(actual.get().getConfigurationId(), expected.get().getConfiguration().get(0).getConfigurationId());
     }
 
+    @Test
+    public void existsAAIVfModuleGloballyByNameTest() throws Exception {
+        AAIResourceUri expectedUri =
+                AAIUriFactory.createNodesUri(AAIObjectPlurals.VF_MODULE).queryParam("vf-module-name", "testVfModule");
+        bbInputSetupUtils.existsAAIVfModuleGloballyByName("testVfModule");
+        verify(MOCK_aaiResourcesClient, times(1)).exists(expectedUri);
+    }
+
+    @Test
+    public void existsAAIConfigurationGloballyByNameTest() throws Exception {
+        AAIResourceUri expectedUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.CONFIGURATION)
+                .queryParam("configuration-name", "testConfig");
+        bbInputSetupUtils.existsAAIConfigurationGloballyByName("testConfig");
+        verify(MOCK_aaiResourcesClient, times(1)).exists(expectedUri);
+    }
+
+    @Test
+    public void existsAAINetworksGloballyByNameTest() throws Exception {
+        AAIResourceUri expectedUri =
+                AAIUriFactory.createResourceUri(AAIObjectPlurals.L3_NETWORK).queryParam("network-name", "testNetwork");
+        bbInputSetupUtils.existsAAINetworksGloballyByName("testNetwork");
+        verify(MOCK_aaiResourcesClient, times(1)).exists(expectedUri);
+    }
+
+    @Test
+    public void existsAAIVolumeGroupGloballyByNameTest() throws Exception {
+        AAIResourceUri expectedUri = AAIUriFactory.createNodesUri(AAIObjectPlurals.VOLUME_GROUP)
+                .queryParam("volume-group-name", "testVoumeGroup");
+        bbInputSetupUtils.existsAAIVolumeGroupGloballyByName("testVoumeGroup");
+        verify(MOCK_aaiResourcesClient, times(1)).exists(expectedUri);
+    }
 }
