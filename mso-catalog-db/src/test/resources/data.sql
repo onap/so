@@ -768,9 +768,14 @@ insert into pnf_resource_customization_to_service(service_model_uuid, resource_m
 
 insert into workflow(artifact_uuid, artifact_name, name, operation_name, version, description, body, resource_target, source) values
 ('5b0c4322-643d-4c9f-b184-4516049e99b1', 'testingWorkflow.bpmn', 'testingWorkflow', 'create', 1, 'Test Workflow', null, 'vnf', 'sdc');
+insert into workflow(artifact_uuid, artifact_name, name, operation_name, version, description, body, resource_target, source) values
+('b2fd5627-55e4-4f4f-8064-9e6f443e9152','DummyPnfWorkflow','Dummy Pnf Workflow','DummyPnfWorkflow',1.0,'Dummy Pnf Workflow to test custom Pnf workflow',null,'pnf','native');
 
 insert into vnf_resource_to_workflow(vnf_resource_model_uuid, workflow_id) values
 ('ff2ae348-214a-11e7-93ae-92361f002671', '1');
+
+Insert into pnf_resource_to_workflow (`PNF_RESOURCE_MODEL_UUID`,`WORKFLOW_ID`) values
+("ff2ae348-214a-11e7-93ae-92361f002680", 2);
 
 insert into activity_spec(name, description, version) values
 ('testActivity1', 'Test Activity 1', 1);
