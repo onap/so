@@ -818,6 +818,7 @@ public class BBInputSetupTest {
         String vnfType = "vnfType";
         String resourceId = "networkId";
         String productFamilyId = "productFamilyId";
+        String applicationId = "applicationId";
         Service service = Mockito.mock(Service.class);
         ServiceInstance serviceInstance = Mockito.mock(ServiceInstance.class);
         RequestDetails requestDetails = Mockito.mock(RequestDetails.class);
@@ -841,6 +842,7 @@ public class BBInputSetupTest {
         doReturn(lineOfBusiness).when(requestDetails).getLineOfBusiness();
         doReturn(relatedInstanceList).when(requestDetails).getRelatedInstanceList();
         doReturn(cloudConfiguration).when(requestDetails).getCloudConfiguration();
+        doReturn(applicationId).when(requestInfo).getApplicationId();
 
         doReturn(ModelType.network).when(modelInfo).getModelType();
         SPY_bbInputSetup.populateObjectsOnAssignAndCreateFlows(REQUEST_ID, requestDetails, service, bbName,
@@ -852,14 +854,16 @@ public class BBInputSetupTest {
 
         doReturn(ModelType.vnf).when(modelInfo).getModelType();
         resourceId = "vnfId";
+
         doNothing().when(SPY_bbInputSetup).populateGenericVnf(REQUEST_ID, modelInfo, instanceName, platform,
                 lineOfBusiness, service, bbName, serviceInstance, lookupKeyMap, relatedInstanceList, resourceId,
-                vnfType, null, productFamilyId);
+                vnfType, null, productFamilyId, applicationId);
+
         SPY_bbInputSetup.populateObjectsOnAssignAndCreateFlows(REQUEST_ID, requestDetails, service, bbName,
                 serviceInstance, lookupKeyMap, resourceId, vnfType, null, null, false);
         verify(SPY_bbInputSetup, times(1)).populateGenericVnf(REQUEST_ID, modelInfo, instanceName, platform,
                 lineOfBusiness, service, bbName, serviceInstance, lookupKeyMap, relatedInstanceList, resourceId,
-                vnfType, null, productFamilyId);
+                vnfType, null, productFamilyId, applicationId);
         assertEquals("VnfId populated", true,
                 lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID).equalsIgnoreCase(resourceId));
 
@@ -1392,6 +1396,7 @@ public class BBInputSetupTest {
         vnf.setVnfName("vnfName");
         serviceInstance.getVnfs().add(vnf);
         String vnfType = "vnfType";
+        String applicationId = "applicationId";
         RequestDetails requestDetails =
                 mapper.readValue(new File(RESOURCE_PATH + "RequestDetails_CreateVnf.json"), RequestDetails.class);
 
@@ -1418,20 +1423,20 @@ public class BBInputSetupTest {
 
         SPY_bbInputSetup.populateGenericVnf(REQUEST_ID, modelInfo, instanceName, platform, lineOfBusiness, service,
                 bbName, serviceInstance, lookupKeyMap, requestDetails.getRelatedInstanceList(), resourceId, vnfType,
-                null, requestDetails.getRequestInfo().getProductFamilyId());
+                null, requestDetails.getRequestInfo().getProductFamilyId(), applicationId);
 
         lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, null);
 
         SPY_bbInputSetup.populateGenericVnf(REQUEST_ID, modelInfo, instanceName, platform, lineOfBusiness, service,
                 bbName, serviceInstance, lookupKeyMap, requestDetails.getRelatedInstanceList(), resourceId, vnfType,
-                null, requestDetails.getRequestInfo().getProductFamilyId());
+                null, requestDetails.getRequestInfo().getProductFamilyId(), applicationId);
         verify(SPY_bbInputSetup, times(1)).mapCatalogVnf(vnf, modelInfo, service);
 
         instanceName = "vnfName2";
         GenericVnf vnf2 = SPY_bbInputSetup.createGenericVnf(lookupKeyMap, instanceName, platform, lineOfBusiness,
-                resourceId, vnfType, null, requestDetails.getRequestInfo().getProductFamilyId());
+                resourceId, vnfType, null, requestDetails.getRequestInfo().getProductFamilyId(), applicationId);
         doReturn(vnf2).when(SPY_bbInputSetup).createGenericVnf(lookupKeyMap, instanceName, platform, lineOfBusiness,
-                resourceId, vnfType, null, requestDetails.getRequestInfo().getProductFamilyId());
+                resourceId, vnfType, null, requestDetails.getRequestInfo().getProductFamilyId(), applicationId);
         doNothing().when(SPY_bbInputSetup).mapNetworkCollectionInstanceGroup(vnf2, "{instanceGroupId}");
         doNothing().when(SPY_bbInputSetup).mapVnfcCollectionInstanceGroup(vnf2, modelInfo, service);
 
@@ -1439,7 +1444,7 @@ public class BBInputSetupTest {
 
         SPY_bbInputSetup.populateGenericVnf(REQUEST_ID, modelInfo, instanceName, platform, lineOfBusiness, service,
                 bbName, serviceInstance, lookupKeyMap, requestDetails.getRelatedInstanceList(), resourceId, vnfType,
-                null, requestDetails.getRequestInfo().getProductFamilyId());
+                null, requestDetails.getRequestInfo().getProductFamilyId(), applicationId);
         verify(SPY_bbInputSetup, times(2)).mapCatalogVnf(vnf2, modelInfo, service);
         verify(SPY_bbInputSetup, times(2)).mapNetworkCollectionInstanceGroup(vnf2, "{instanceGroupId}");
         verify(SPY_bbInputSetup, times(2)).mapVnfcCollectionInstanceGroup(vnf2, modelInfo, service);
@@ -1501,6 +1506,7 @@ public class BBInputSetupTest {
         Platform expectedPlatform = new Platform();
         LineOfBusiness expectedLineOfBusiness = new LineOfBusiness();
         String resourceId = "123";
+        String applicationId = "applicationId";
         doReturn(expectedPlatform).when(bbInputSetupMapperLayer).mapRequestPlatform(platform);
         doReturn(expectedLineOfBusiness).when(bbInputSetupMapperLayer).mapRequestLineOfBusiness(lineOfBusiness);
         org.onap.aai.domain.yang.GenericVnf vnfAAI = new org.onap.aai.domain.yang.GenericVnf();
@@ -1515,18 +1521,18 @@ public class BBInputSetupTest {
 
         SPY_bbInputSetup.populateGenericVnf(REQUEST_ID, modelInfo, instanceName, platform, lineOfBusiness, service,
                 bbName, serviceInstance, lookupKeyMap, requestDetails.getRelatedInstanceList(), resourceId, vnfType,
-                null, requestDetails.getRequestInfo().getProductFamilyId());
+                null, requestDetails.getRequestInfo().getProductFamilyId(), applicationId);
 
         lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, null);
 
         SPY_bbInputSetup.populateGenericVnf(REQUEST_ID, modelInfo, instanceName, platform, lineOfBusiness, service,
                 bbName, serviceInstance, lookupKeyMap, requestDetails.getRelatedInstanceList(), resourceId, vnfType,
-                null, requestDetails.getRequestInfo().getProductFamilyId());
+                null, requestDetails.getRequestInfo().getProductFamilyId(), applicationId);
         verify(SPY_bbInputSetup, times(1)).mapCatalogVnf(vnf, modelInfo, service);
 
         instanceName = "vnfName2";
         GenericVnf vnf2 = SPY_bbInputSetup.createGenericVnf(lookupKeyMap, instanceName, platform, lineOfBusiness,
-                resourceId, vnfType, null, requestDetails.getRequestInfo().getProductFamilyId());
+                resourceId, vnfType, null, requestDetails.getRequestInfo().getProductFamilyId(), applicationId);
 
         org.onap.aai.domain.yang.GenericVnf vnf2AAI = new org.onap.aai.domain.yang.GenericVnf();
         vnfAAI.setModelCustomizationId("modelCustId2");
@@ -1535,7 +1541,7 @@ public class BBInputSetupTest {
         doNothing().when(SPY_bbInputSetup).mapNetworkCollectionInstanceGroup(vnf2, "{instanceGroupId}");
         SPY_bbInputSetup.populateGenericVnf(REQUEST_ID, modelInfo, instanceName, platform, lineOfBusiness, service,
                 bbName, serviceInstance, lookupKeyMap, requestDetails.getRelatedInstanceList(), resourceId, vnfType,
-                null, requestDetails.getRequestInfo().getProductFamilyId());
+                null, requestDetails.getRequestInfo().getProductFamilyId(), applicationId);
         verify(SPY_bbInputSetup, times(2)).mapCatalogVnf(vnf2, modelInfo, service);
         verify(SPY_bbInputSetup, times(2)).mapNetworkCollectionInstanceGroup(vnf2, "{instanceGroupId}");
         verify(SPY_bbInputSetup, times(1)).mapVnfcCollectionInstanceGroup(vnf2, modelInfo, service);
@@ -1971,7 +1977,6 @@ public class BBInputSetupTest {
         configResourceKeys.setVfModuleCustomizationUUID("vfModuleCustomizationUUID");
         configResourceKeys.setVnfResourceCustomizationUUID("vnfResourceCustomizationUUID");
         executeBB.setConfigurationResourceKeys(configResourceKeys);
-
         executeBB.setRequestDetails(requestDetails);
         doReturn(gBB).when(SPY_bbInputSetup).getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap,
                 requestAction, lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID));
@@ -1997,7 +2002,7 @@ public class BBInputSetupTest {
                 any(String.class), isA(org.onap.so.serviceinstancebeans.Platform.class),
                 isA(org.onap.so.serviceinstancebeans.LineOfBusiness.class), isA(Service.class), any(String.class),
                 isA(ServiceInstance.class), any(), any(), any(String.class), any(String.class), any(),
-                any(String.class));
+                any(String.class), any(String.class));
 
         lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, null);
         executeBB.getBuildingBlock().setBpmnFlowName(AssignFlows.VF_MODULE.toString());
@@ -2256,7 +2261,6 @@ public class BBInputSetupTest {
         Service service = Mockito.mock(Service.class);
         String requestAction = "createInstance";
 
-
         executeBB.setRequestDetails(requestDetails);
         doReturn(gBB).when(SPY_bbInputSetup).getGBBALaCarteService(executeBB, requestDetails, lookupKeyMap,
                 requestAction, lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID));
@@ -2281,7 +2285,7 @@ public class BBInputSetupTest {
                 any(String.class), isA(org.onap.so.serviceinstancebeans.Platform.class),
                 isA(org.onap.so.serviceinstancebeans.LineOfBusiness.class), isA(Service.class), any(String.class),
                 isA(ServiceInstance.class), any(), ArgumentMatchers.isNull(), any(String.class),
-                ArgumentMatchers.isNull(), any(), any(String.class));
+                ArgumentMatchers.isNull(), any(), any(String.class), any());
 
         lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, null);
         executeBB.getBuildingBlock().setBpmnFlowName(AssignFlows.VF_MODULE.toString());
@@ -2346,7 +2350,7 @@ public class BBInputSetupTest {
                 any(String.class), isA(org.onap.so.serviceinstancebeans.Platform.class),
                 isA(org.onap.so.serviceinstancebeans.LineOfBusiness.class), isA(Service.class), any(String.class),
                 isA(ServiceInstance.class), any(), any(), any(String.class), any(String.class), any(),
-                any(String.class));
+                any(String.class), any(String.class));
 
         lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, null);
         executeBB.getBuildingBlock().setBpmnFlowName(AssignFlows.VF_MODULE.toString());
@@ -2847,6 +2851,7 @@ public class BBInputSetupTest {
         String platformName = "platformName";
         String lineOfBusinessName = "lineOfBusinessName";
         String productFamilyId = "productFamilyId";
+        String applicationId = "applicationId";
         Platform platform = new Platform();
         platform.setPlatformName(platformName);
         LineOfBusiness lineOfBusiness = new LineOfBusiness();
@@ -2863,6 +2868,7 @@ public class BBInputSetupTest {
         expected.setLineOfBusiness(lineOfBusiness);
         expected.setProvStatus("PREPROV");
         expected.setServiceId(productFamilyId);
+        expected.setApplicationId(applicationId);
         Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
         List<Map<String, String>> instanceParams = new ArrayList<>();
         instanceParams.add(cloudParams);
@@ -2876,14 +2882,14 @@ public class BBInputSetupTest {
         doReturn(lineOfBusiness).when(bbInputSetupMapperLayer).mapRequestLineOfBusiness(requestLineOfBusiness);
 
         GenericVnf actual = SPY_bbInputSetup.createGenericVnf(lookupKeyMap, instanceName, requestPlatform,
-                requestLineOfBusiness, vnfId, vnfType, instanceParams, productFamilyId);
+                requestLineOfBusiness, vnfId, vnfType, instanceParams, productFamilyId, applicationId);
 
         assertThat(actual, sameBeanAs(expected));
         assertEquals("LookupKeyMap is populated", vnfId, lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID));
 
         expected.getCloudParams().clear();
         actual = SPY_bbInputSetup.createGenericVnf(lookupKeyMap, instanceName, requestPlatform, requestLineOfBusiness,
-                vnfId, vnfType, null, productFamilyId);
+                vnfId, vnfType, null, productFamilyId, applicationId);
         assertThat(actual, sameBeanAs(expected));
     }
 
