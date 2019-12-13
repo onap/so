@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "402338a5_84f9abf7",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/ControllerExecutionBB.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-13T11:00:21Z",
+      "side": 1,
+      "message": "It looks like the SO-CDS patch assumes the value is vf-module.",
+      "revId": "6c5d5c38bb1c4ee6a05caa4bde647774ad738222",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "28c9f8b9_c3d826cc",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDE.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-12-13T11:00:21Z",
+      "side": 1,
+      "message": "vf-module is used elsewhere",
+      "revId": "6c5d5c38bb1c4ee6a05caa4bde647774ad738222",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
