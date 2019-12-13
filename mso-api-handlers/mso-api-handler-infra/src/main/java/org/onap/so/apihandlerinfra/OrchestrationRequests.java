@@ -130,25 +130,29 @@ public class OrchestrationRequests {
 
         infraActiveRequest = infraActiveRequestLookup(requestId);
 
-        try {
-            requestProcessingData = requestsDbClient.getExternalRequestProcessingDataBySoRequestId(requestId);
-        } catch (Exception e) {
-            logger.error("Exception occurred while communicating with RequestDb during requestProcessingData lookup ",
-                    e);
-            ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.AvailabilityError).build();
+        if (isRequestProcessingDataRequired(format)) {
+            try {
+                requestProcessingData = requestsDbClient.getExternalRequestProcessingDataBySoRequestId(requestId);
+            } catch (Exception e) {
+                logger.error(
+                        "Exception occurred while communicating with RequestDb during requestProcessingData lookup ",
+                        e);
+                ErrorLoggerInfo errorLoggerInfo =
+                        new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.AvailabilityError)
+                                .build();
 
-            ValidateException validateException = new ValidateException.Builder(
-                    "Exception occurred while communicating with RequestDb during requestProcessingData lookup",
-                    HttpStatus.SC_NOT_FOUND, ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB).cause(e)
-                            .errorInfo(errorLoggerInfo).build();
+                ValidateException validateException = new ValidateException.Builder(
+                        "Exception occurred while communicating with RequestDb during requestProcessingData lookup",
+                        HttpStatus.SC_NOT_FOUND, ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB).cause(e)
+                                .errorInfo(errorLoggerInfo).build();
 
-            throw validateException;
+                throw validateException;
+            }
         }
 
         Request request = mapInfraActiveRequestToRequest(infraActiveRequest, includeCloudRequest, format);
 
-        if (!requestProcessingData.isEmpty()) {
+        if (null != requestProcessingData && !requestProcessingData.isEmpty()) {
             request.setRequestProcessingData(mapRequestProcessingData(requestProcessingData));
         }
         request.setRequestId(requestId);
@@ -196,15 +200,19 @@ public class OrchestrationRequests {
         orchestrationList = new GetOrchestrationListResponse();
         List<RequestList> requestLists = new ArrayList<>();
 
+
         for (InfraActiveRequests infraActive : activeRequests) {
-            List<RequestProcessingData> requestProcessingData =
-                    requestsDbClient.getRequestProcessingDataBySoRequestId(infraActive.getRequestId());
             RequestList requestList = new RequestList();
             Request request = mapInfraActiveRequestToRequest(infraActive, includeCloudRequest, format);
 
-            if (!requestProcessingData.isEmpty()) {
-                request.setRequestProcessingData(mapRequestProcessingData(requestProcessingData));
+            if (isRequestProcessingDataRequired(format)) {
+                List<RequestProcessingData> requestProcessingData =
+                        requestsDbClient.getRequestProcessingDataBySoRequestId(infraActive.getRequestId());
+                if (null != requestProcessingData && !requestProcessingData.isEmpty()) {
+                    request.setRequestProcessingData(mapRequestProcessingData(requestProcessingData));
+                }
             }
+
             requestList.setRequest(request);
             requestLists.add(requestList);
         }
@@ -522,6 +530,14 @@ public class OrchestrationRequests {
         }
         addedRequestProcessingData.add(finalProcessingData);
         return addedRequestProcessingData;
+    }
+
+    protected boolean isRequestProcessingDataRequired(String format) {
+        if (StringUtils.isNotEmpty(format) && format.equalsIgnoreCase(OrchestrationRequestFormat.SIMPLE.name())) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     protected InfraActiveRequests infraActiveRequestLookup(String requestId) throws ApiException {
