@@ -49,7 +49,7 @@ public class ProcessVnfc extends AbstractTestAction {
                     aaiResourceClient.create(vnfcURI, vnfc);
                 AAIResourceUri vfModuleURI = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE,
                         context.getVariable("vnfId"), context.getVariable("vfModuleId"));
-                AAIResourceUri pserverURI = AAIUriFactory.createResourceUri(AAIObjectType.PSERVER, "rdm52r19c001");
+                AAIResourceUri pserverURI = AAIUriFactory.createResourceUri(AAIObjectType.PSERVER, "test");
                 AAIResourceUri vserverURI = AAIUriFactory.createResourceUri(AAIObjectType.VSERVER,
                         context.getVariable("cloudOwner"), context.getVariable("cloudRegion"),
                         context.getVariable("tenant"), "d29f3151-592d-4011-9356-ad047794e236");

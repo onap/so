@@ -62,7 +62,7 @@
         "status": "ACTIVE",
         "updated": "2019-02-11T19:12:46Z",
         "hostId": "50197c55fc934e7b3947e17db762f0839320f94983df774d84991ad2",
-        "OS-EXT-SRV-ATTR:host": "rdm52r19c001",
+        "OS-EXT-SRV-ATTR:host": "test",
         "OS-SRV-USG:terminated_at": null,
         "key_name": null,
         "OS-EXT-SRV-ATTR:hypervisor_hostname": "test.com",
