@@ -28,6 +28,8 @@ import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -43,7 +45,6 @@ import java.util.Arrays;
 public final class CryptoUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(CryptoUtils.class);
-
 
     private static final String AES = "AES";
     private static final String CLOUD_KEY = "aa3871669d893c7fb8abbcda31b88b4f";
@@ -76,6 +77,8 @@ public final class CryptoUtils {
      * @throws GeneralSecurityException
      */
     public static String decrypt(String message, String keyString) throws GeneralSecurityException {
+        if (message.equals(System.getenv("PLAINTEXTPASSWORD")))
+            return message;
         SecretKeySpec sks = getSecretKeySpec(keyString);
         byte[] cipherText = hexStringToByteArray(message);
         Cipher cipher = Cipher.getInstance(AES_GCM_NO_PADDING);
