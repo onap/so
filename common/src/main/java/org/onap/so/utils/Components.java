@@ -6,10 +6,11 @@ import org.onap.logging.filter.base.ONAPComponents;
 import org.onap.logging.filter.base.ONAPComponentsList;
 
 public enum Components implements ONAPComponentsList {
-    OPENSTACK, UNKNOWN, ASDC_CONTROLLER, APIH;
+    OPENSTACK, UNKNOWN, ASDC_CONTROLLER, APIH, SDNC_ADAPTER;
+
 
     public static Set<Components> getSOInternalComponents() {
-        return EnumSet.of(ASDC_CONTROLLER, APIH);
+        return EnumSet.of(ASDC_CONTROLLER, APIH, SDNC_ADAPTER);
     }
 
     @Override
