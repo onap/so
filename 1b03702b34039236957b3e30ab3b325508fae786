@@ -22,6 +22,30 @@
       "revId": "1b03702b34039236957b3e30ab3b325508fae786",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b019e3cb_5e0e84f3",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1515,
+      "author": {
+        "id": 2937
+      },
+      "writtenOn": "2019-12-16T04:55:29Z",
+      "side": 1,
+      "message": "Here if the orchFlow.getBpmnAction() is not present then it will pass default value null.\nPooja is handling null in her code patch https://gerrit.onap.org/r/#/c/so/+/98987/.",
+      "parentUuid": "b831e22b_de2407cf",
+      "range": {
+        "startLine": 1515,
+        "startChar": 8,
+        "endLine": 1515,
+        "endChar": 16
+      },
+      "revId": "1b03702b34039236957b3e30ab3b325508fae786",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
