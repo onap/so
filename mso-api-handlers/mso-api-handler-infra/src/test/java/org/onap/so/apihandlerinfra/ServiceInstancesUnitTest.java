@@ -95,6 +95,6 @@ public class ServiceInstancesUnitTest {
         serviceInstances.setCloudConfigurationCurrentActiveRequest(cloudConfiguration, currentActiveRequest);
 
         assertEquals("tenantId", currentActiveRequest.getTenantId());
-        assertEquals("lcpCloudRegionId", currentActiveRequest.getAicCloudRegion());
+        assertEquals("lcpCloudRegionId", currentActiveRequest.getCloudRegion());
     }
 }

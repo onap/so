@@ -22,7 +22,7 @@
   "vfModuleId": null,
   "vfModuleName": null,
   "vfModuleModelName": null,
-  "aicCloudRegion": "n6",
+  "cloudRegion": "n6",
   "callBackUrl": null,
   "correlator": null,
   "serviceInstanceId": "9e15a443-af65-4f05-9000-47ae495e937d",

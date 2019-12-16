@@ -22,7 +22,7 @@
 	"vfModuleId": "c7d527b1-7a91-49fd-b97d-1c8c0f4a7992",
 	"vfModuleName": null,
 	"vfModuleModelName": "vSAMP10aDEV::base::module-0",
-	"aicCloudRegion": "mtn6",
+	"cloudRegion": "mtn6",
 	"callBackUrl": null,
 	"correlator": null,
 	"serviceInstanceId": "e3b5744d-2ad1-4cdd-8390-c999a38829bc",

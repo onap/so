@@ -107,7 +107,7 @@ public class ArchiveInfraRequestsScheduler {
         for (InfraActiveRequests iar : requests) {
             ArchivedInfraRequests archivedInfra = new ArchivedInfraRequests();
             try {
-                archivedInfra.setAicCloudRegion(iar.getAicCloudRegion());
+                archivedInfra.setCloudRegion(iar.getCloudRegion());
                 archivedInfra.setCallBackUrl(iar.getCallBackUrl());
                 archivedInfra.setConfigurationId(iar.getConfigurationId());
                 archivedInfra.setConfigurationName(iar.getConfigurationName());
