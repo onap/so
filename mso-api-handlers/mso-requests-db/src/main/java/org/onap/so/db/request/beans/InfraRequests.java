@@ -106,7 +106,7 @@ public abstract class InfraRequests implements java.io.Serializable {
     @Column(name = "VF_MODULE_MODEL_NAME", length = 200)
     private String vfModuleModelName;
     @Column(name = "CLOUD_REGION", length = 11)
-    private String aicCloudRegion;
+    private String cloudRegion;
     @Column(name = "CALLBACK_URL", length = 200)
     private String callBackUrl;
     @Column(name = "CORRELATOR", length = 80)
@@ -363,12 +363,12 @@ public abstract class InfraRequests implements java.io.Serializable {
         this.vfModuleModelName = vfModuleModelName;
     }
 
-    public String getAicCloudRegion() {
-        return this.aicCloudRegion;
+    public String getCloudRegion() {
+        return this.cloudRegion;
     }
 
-    public void setAicCloudRegion(String aicCloudRegion) {
-        this.aicCloudRegion = aicCloudRegion;
+    public void setCloudRegion(String cloudRegion) {
+        this.cloudRegion = cloudRegion;
     }
 
     public String getCallBackUrl() {
@@ -589,7 +589,7 @@ public abstract class InfraRequests implements java.io.Serializable {
                 .append("modifyTime", getModifyTime()).append("volumeGroupId", getVolumeGroupId())
                 .append("volumeGroupName", getVolumeGroupName()).append("vfModuleId", getVfModuleId())
                 .append("vfModuleName", getVfModuleName()).append("vfModuleModelName", getVfModuleModelName())
-                .append("aicCloudRegion", getAicCloudRegion()).append("callBackUrl", getCallBackUrl())
+                .append("cloudRegion", getCloudRegion()).append("callBackUrl", getCallBackUrl())
                 .append("correlator", getCorrelator()).append("serviceInstanceId", getServiceInstanceId())
                 .append("serviceInstanceName", getServiceInstanceName()).append("requestScope", getRequestScope())
                 .append("requestAction", getRequestAction()).append("networkId", getNetworkId())

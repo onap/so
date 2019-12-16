@@ -111,7 +111,7 @@ public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsA
         infraActiveRequests.setNetworkName("networkInstanceNameTest");
         infraActiveRequests.setConfigurationId(UUID.randomUUID().toString());
         infraActiveRequests.setConfigurationName("configurationInstanceNameTest");
-        infraActiveRequests.setAicCloudRegion("1");
+        infraActiveRequests.setCloudRegion("1");
         infraActiveRequests.setTenantId(UUID.randomUUID().toString());
         infraActiveRequests.setRequestScope("operationalEnvironment");
         infraActiveRequests.setRequestorId(UUID.randomUUID().toString());

@@ -301,7 +301,7 @@ public class MsoRequest {
                 if (servInsReq.getRequestDetails().getCloudConfiguration() != null) {
                     CloudConfiguration cloudConfiguration = servInsReq.getRequestDetails().getCloudConfiguration();
                     if (cloudConfiguration.getLcpCloudRegionId() != null) {
-                        aq.setAicCloudRegion(cloudConfiguration.getLcpCloudRegionId());
+                        aq.setCloudRegion(cloudConfiguration.getLcpCloudRegionId());
                     }
 
                     if (cloudConfiguration.getTenantId() != null) {

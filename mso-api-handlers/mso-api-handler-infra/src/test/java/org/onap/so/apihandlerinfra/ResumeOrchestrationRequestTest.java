@@ -149,7 +149,7 @@ public class ResumeOrchestrationRequestTest {
     private void setInfraActiveRequest() throws IOException {
         infraActiveRequest.setTenantId("tenant-id");
         infraActiveRequest.setRequestBody(getRequestBody("/RequestBody.json"));
-        infraActiveRequest.setAicCloudRegion("cloudRegion");
+        infraActiveRequest.setCloudRegion("cloudRegion");
         infraActiveRequest.setRequestScope(SERVICE);
         infraActiveRequest.setServiceInstanceId(SERVICE_INSTANCE_ID);
         infraActiveRequest.setServiceInstanceName(SERVICE_INSTANCE_NAME);
@@ -173,7 +173,7 @@ public class ResumeOrchestrationRequestTest {
         currentActiveRequest.setStartTime(startTimeStamp);
         currentActiveRequest.setTenantId("tenant-id");
         currentActiveRequest.setRequestBody(getRequestBody("/RequestBody.json"));
-        currentActiveRequest.setAicCloudRegion("cloudRegion");
+        currentActiveRequest.setCloudRegion("cloudRegion");
         currentActiveRequest.setRequestScope(SERVICE);
         currentActiveRequest.setServiceInstanceId(SERVICE_INSTANCE_ID);
         currentActiveRequest.setServiceInstanceName(SERVICE_INSTANCE_NAME);
