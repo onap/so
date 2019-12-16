@@ -13,7 +13,7 @@ SO consists of following sub-components:
  - Set of adapters (*/adapters*) adapters that interact with ONAP components (SDNC, VFC, Request DB, Catalog DB) or external components (VNFM, Openstack)
  - Data Stores: Catalog DB (configuration is here */mso-catalog-db*) to store service and resource models, recipes and workflows
  - SDC Client and Controller (*/asdc-controller) to receive updated models from SDC and populate Catalog DB
- - SO Monitoring (*/so-monitoring) service to monitor BPMN workflow execution status
+ - SO Monitoring (*/so-monitoring) service to monitor BPMN workflow execution status 
 
 # Compiling SO
 
