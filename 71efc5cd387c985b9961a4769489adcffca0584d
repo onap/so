@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "56cd21f4_edd98f9a",
+        "filename": "adapters/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 3957
+      },
+      "writtenOn": "2019-12-17T13:29:56Z",
+      "side": 1,
+      "message": "should we keep module naming convention. mso-ve-vnfm-adapter",
+      "range": {
+        "startLine": 25,
+        "startChar": 12,
+        "endLine": 25,
+        "endChar": 27
+      },
+      "revId": "71efc5cd387c985b9961a4769489adcffca0584d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
