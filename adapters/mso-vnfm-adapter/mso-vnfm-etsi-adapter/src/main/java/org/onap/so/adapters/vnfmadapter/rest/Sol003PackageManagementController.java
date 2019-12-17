@@ -24,9 +24,13 @@ import static org.onap.so.adapters.vnfmadapter.Constants.APPLICATION_ZIP;
 import static org.onap.so.adapters.vnfmadapter.Constants.PACKAGE_MANAGEMENT_BASE_URL;
 import static org.slf4j.LoggerFactory.getLogger;
 import java.util.List;
+import java.util.Optional;
 import javax.ws.rs.core.MediaType;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.EtsiCatalogServiceProvider;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.ProblemDetails;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.InlineResponse2001;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -45,13 +49,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(value = PACKAGE_MANAGEMENT_BASE_URL, consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class Sol003PackageManagementController {
 
-    private static final String LOG_REQUEST_RECEIVED = "VNF Package Management Controller: {} {} {} {} {}";
+    private final EtsiCatalogServiceProvider etsiCatalogServiceProvider;
+
+    @Autowired
+    Sol003PackageManagementController(final EtsiCatalogServiceProvider etsiCatalogServiceProvider) {
+        this.etsiCatalogServiceProvider = etsiCatalogServiceProvider;
+    }
+
+
+    private static final String LOG_REQUEST_RECEIVED = "VNF PackageManagement Controller: {} {} {}";
     private static final Logger logger = getLogger(Sol003PackageManagementController.class);
 
     /**
-     * GET VNF packages information. Direction: VNFM -> VNFM-Adapter. Will return zero or more VNF package
-     * representations that match the attribute filter. These representations will be in a list. Section Number: 10.4.2
-     *
+     * GET VNF packages information. Will return zero or more VNF package representations that match the attribute
+     * filter. These representations will be in a list. Section Number: 10.4.2
+     * 
      * @return A List of all VNF packages. Object: List<InlineResponse2001> Response Code: 200 OK
      */
 
@@ -62,9 +74,9 @@ public class Sol003PackageManagementController {
     }
 
     /**
-     * GET VNF package information. Direction: VNFM -> VNFM-Adapter. Will return a specific VNF package representation
-     * that match the attribute filter. Section Number: 10.4.3
-     *
+     * GET VNF package information. Will return a specific VNF package representation that match the attribute filter.
+     * Section Number: 10.4.3
+     * 
      * @param vnfPkgId The ID of the VNF Package that you want to query.
      * @return A VNF package based on vnfPkgId. Object: VnfPkgInfo Response Code: 200 OK
      */
@@ -75,44 +87,67 @@ public class Sol003PackageManagementController {
     }
 
     /**
-     * GET VNFD, from VNF package. Direction: VNFM -> VNFM-Adapter. Will return a copy of the file representing the VNFD
-     * or a ZIP file that contains the file/multiple files representing the VNFD specified. Section Number: 10.4.4
-     *
+     * GET VNFD, from VNF package. Will return a copy of the file representing the VNFD or a ZIP file that contains the
+     * file/multiple files representing the VNFD specified. Section Number: 10.4.4
+     * 
      * @param vnfPkgId The ID of the VNF Package that you want to retrieve the VNFD from.
      * @return The VNFD of a VNF Package as a single file or within a ZIP file. Object: byte[] Response Code: 200 OK
      */
-    @GetMapping(value = "/vnf_packages/{vnfPkgId}/vnfd", produces = {MediaType.TEXT_PLAIN, APPLICATION_ZIP})
+    @GetMapping(value = "/vnf_packages/{vnfPkgId}/vnfd",
+            produces = {MediaType.TEXT_PLAIN, APPLICATION_ZIP, MediaType.APPLICATION_JSON})
     public ResponseEntity<byte[]> getVnfPackageVnfd(@PathVariable("vnfPkgId") final String vnfPkgId) {
         logger.info(LOG_REQUEST_RECEIVED, "getVnfPackageVnfd: ", vnfPkgId);
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     /**
-     * GET Package Content, from VNF Package. Direction: VNFM -> VNFM-Adapter. Will return a copy of the VNF package
-     * file that you specified. Section Number: 10.4.5
-     *
+     * GET Package Content, from VNF Package. Will return a copy of the VNF package file that you specified. Section
+     * Number: 10.4.5
+     * 
      * @param vnfPkgId The ID of the VNF Package that you want to retrieve the "package_content" from.
      * @return The Package Content of a VNF Package. Object: byte[] Response Code: 200 OK
      */
-    @GetMapping(value = "/vnf_packages/{vnfPkgId}/package_content", produces = {APPLICATION_ZIP})
-    public ResponseEntity<byte[]> getVnfPackageContent(@PathVariable("vnfPkgId") final String vnfPkgId) {
-        logger.info(LOG_REQUEST_RECEIVED, "getVnfPackageContent: ", vnfPkgId);
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    @GetMapping(value = "/vnf_packages/{vnfPkgId}/package_content",
+            produces = {MediaType.APPLICATION_JSON, APPLICATION_ZIP, MediaType.APPLICATION_OCTET_STREAM})
+    public ResponseEntity getVnfPackageContent(@PathVariable("vnfPkgId") final String vnfPkgId) {
+        logger.info(LOG_REQUEST_RECEIVED, "getVnfPackageContent Endpoint Invoked with VNF Package ID: ", vnfPkgId);
+        final Optional<byte[]> response = etsiCatalogServiceProvider.getVnfPackageContent(vnfPkgId);
+        if (response.isPresent()) {
+            logger.info(LOG_REQUEST_RECEIVED, "getVnfPackageContent Response: ", HttpStatus.OK);
+            return new ResponseEntity(response.get(), HttpStatus.OK);
+        }
+        logger.error("Null response was received from the EtsiCatalogManager using the GET \"package_content\"");
+        return new ResponseEntity(buildProblemDetails("An error occurred, a null response was received by the\n"
+                + " Sol003PackageManagementController from the EtsiCatalogManager using the GET \"package_content\" \n"
+                + "endpoint."), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
-     * GET Artifact, from VNF Package. Direction: VNFM -> VNFM-Adapter. Will return a the content of the artifact that
-     * you specified. Section Number: 10.4.6
-     *
+     * GET Artifact, from VNF Package Will return a the content of the artifact that you specified. Section Number:
+     * 10.4.6
+     * 
      * @param vnfPkgId The ID of the VNF Package that you want to retrieve an artifact from.
      * @param artifactPath The path of the artifact that you want to retrieve.
      * @return An Artifact from a VNF Package. Object: byte[] Response Code: 200 OK
      */
     @GetMapping(value = "/vnf_packages/{vnfPkgId}/artifacts/{artifactPath}",
-            produces = {MediaType.APPLICATION_OCTET_STREAM})
+            produces = {MediaType.APPLICATION_OCTET_STREAM, MediaType.APPLICATION_JSON})
     public ResponseEntity<byte[]> getVnfPackageArtifact(@PathVariable("vnfPkgId") final String vnfPkgId,
             @PathVariable("artifactPath") final String artifactPath) {
         logger.info(LOG_REQUEST_RECEIVED, "getVnfPackageArtifact: vnfPkgId=", vnfPkgId, " artifactPath=", artifactPath);
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
+
+    /**
+     * Builds the ProblemDetails Object, using the provided error message.
+     * 
+     * @param detail The error message retrieved from the exception thrown.
+     * @return ProblemDetails Object, containing error information.
+     */
+    private ProblemDetails buildProblemDetails(String detail) {
+        final ProblemDetails problemDetails = new ProblemDetails();
+        problemDetails.setDetail(detail);
+        return problemDetails;
+    }
+
 }

@@ -53,9 +53,9 @@ public class Sol003SubscriptionManagementController {
     private static final Logger logger = getLogger(Sol003SubscriptionManagementController.class);
 
     /**
-     * POST Subscribe request. Direction: VNFM -> VNFM Adapter. Will send request and respond with the subscription that
-     * you subscribed to, if successful. Section Number: 10.4.7
-     *
+     * POST Subscribe request. Will send request and respond with the subscription that you subscribed to, if
+     * successful. Section Number: 10.4.7
+     * 
      * @param pkgmSubscriptionRequest This includes the details of the subscription to be created.
      * @return The subscription requested, if successful. Object: InlineRespone2002 Response Code: 201 Created Response
      *         Code: 303 Duplicate Subscription
@@ -68,9 +68,8 @@ public class Sol003SubscriptionManagementController {
     }
 
     /**
-     * GET all subscriptions. Direction: VNFM -> VNFM Adapter. Will return a list of all subscriptions currently active.
-     * Section Number: 10.4.7
-     *
+     * GET all subscriptions. Will return a list of all subscriptions currently active. Section Number: 10.4.7
+     * 
      * @return All of the current active subscriptions. Object: List<InlineResponse2002> Response Code: 200 OK
      */
     @GetMapping(value = "/subscriptions")
@@ -80,8 +79,8 @@ public class Sol003SubscriptionManagementController {
     }
 
     /**
-     * GET a specific subscription, by subscriptionId. Direction: VNFM -> VNFM Adapter. Section Number: 10.4.8
-     *
+     * GET a specific subscription, by subscriptionId. Section Number: 10.4.8
+     * 
      * @param subscriptionId The ID of the subscription that you wish to retrieve.
      * @return A subscription based on subscriptionId. Object: InlineResponse2002 Response Code: 200 OK
      */
@@ -93,8 +92,8 @@ public class Sol003SubscriptionManagementController {
     }
 
     /**
-     * DELETE a specific subscription, by subscriptionId. Direction: VNFM -> VNFM Adapter. Section Number: 10.4.7
-     *
+     * DELETE a specific subscription, by subscriptionId. Section Number: 10.4.7
+     * 
      * @param subscriptionId The ID of the subscription that you wish to delete.
      * @return Empty response if successful. Object: Void Response Code: 204 No Content
      */
