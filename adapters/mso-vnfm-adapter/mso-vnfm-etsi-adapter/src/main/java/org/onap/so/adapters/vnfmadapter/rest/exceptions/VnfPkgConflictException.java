@@ -23,7 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Exception for a Vnfpkg Conflict failure, due to state of resource.
+ * Exception for a VnfPkg Conflict failures, due to state of resource.
  * 
  * @author gareth.roper@est.tech
  */

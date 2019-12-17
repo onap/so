@@ -44,11 +44,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
@@ -203,6 +199,109 @@ public class Sol003PackageManagementControllerTest {
         final ResponseEntity<ProblemDetails> responseEntity = sendHttpRequest(VNF_PACKAGE_ID + "/package_content");
 
         assertEquals(ProblemDetails.class, responseEntity.getBody().getClass());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void testGetPackageArtifact_ValidArray_Success() {
+        final byte[] responseArray = buildByteArrayWithRandomData(10);
+
+        mockRestServer.expect(requestTo(MSB_BASE_URL + "/" + VNF_PACKAGE_ID + "/artifacts/" + ARTIFACT_PATH))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(responseArray, MediaType.APPLICATION_OCTET_STREAM));
+
+        final String testURL = "http://localhost:" + port + PACKAGE_MANAGEMENT_BASE_URL + "/vnf_packages/"
+                + VNF_PACKAGE_ID + "/artifacts/" + ARTIFACT_PATH;
+        final HttpEntity<?> request = new HttpEntity<>(basicHttpHeadersProvider.getHttpHeaders());
+        final ResponseEntity<byte[]> responseEntity =
+                restTemplate.withBasicAuth("test", "test").exchange(testURL, HttpMethod.GET, request, byte[].class);
+
+        assertEquals(byte[].class, responseEntity.getBody().getClass());
+        assertArrayEquals(responseEntity.getBody(), responseArray);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void testOnGetPackageArtifact_Conflict_Fail() {
+        mockRestServer.expect(requestTo(MSB_BASE_URL + "/" + VNF_PACKAGE_ID + "/artifacts/" + ARTIFACT_PATH))
+                .andExpect(method(HttpMethod.GET)).andRespond(withStatus(HttpStatus.CONFLICT));
+
+        final ResponseEntity<ProblemDetails> responseEntity =
+                sendHttpRequest(VNF_PACKAGE_ID + "/artifacts/" + ARTIFACT_PATH);
+
+        assertNotNull(responseEntity.getBody());
+        assertEquals(HttpStatus.CONFLICT, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void testOnGetPackageArtifact_NotFound_Fail() {
+        mockRestServer.expect(requestTo(MSB_BASE_URL + "/" + VNF_PACKAGE_ID + "/artifacts/" + ARTIFACT_PATH))
+                .andExpect(method(HttpMethod.GET)).andRespond(withStatus(HttpStatus.NOT_FOUND));
+
+        final ResponseEntity<ProblemDetails> responseEntity =
+                sendHttpRequest(VNF_PACKAGE_ID + "/artifacts/" + ARTIFACT_PATH);
+
+        assertNotNull(responseEntity.getBody());
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void testOnGetPackageArtifact_UnauthorizedClient_Fail() {
+        final String testURL = "http://localhost:" + port + PACKAGE_MANAGEMENT_BASE_URL + "/vnf_packages/"
+                + VNF_PACKAGE_ID + "/artifacts/" + ARTIFACT_PATH;
+        final HttpEntity<?> request = new HttpEntity<>(basicHttpHeadersProvider.getHttpHeaders());
+        final ResponseEntity<ProblemDetails> responseEntity =
+                restTemplate.exchange(testURL, HttpMethod.GET, request, ProblemDetails.class);
+
+        assertNotNull(responseEntity.getBody());
+        assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void testOnGetPackageArtifact_InternalServerError_Fail() {
+        mockRestServer.expect(requestTo(MSB_BASE_URL + "/" + VNF_PACKAGE_ID + "/artifacts/" + ARTIFACT_PATH))
+                .andExpect(method(HttpMethod.GET)).andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR));
+
+        final ResponseEntity<ProblemDetails> responseEntity =
+                sendHttpRequest(VNF_PACKAGE_ID + "/artifacts/" + ARTIFACT_PATH);
+
+        assertNotNull(responseEntity.getBody());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void testOnGetPackageArtifact_BadRequest_Fail() {
+        mockRestServer.expect(requestTo(MSB_BASE_URL + "/" + VNF_PACKAGE_ID + "/artifacts/" + ARTIFACT_PATH))
+                .andExpect(method(HttpMethod.GET)).andRespond(withStatus(HttpStatus.BAD_REQUEST));
+
+        final ResponseEntity<ProblemDetails> responseEntity =
+                sendHttpRequest(VNF_PACKAGE_ID + "/artifacts/" + ARTIFACT_PATH);
+
+        assertNotNull(responseEntity.getBody());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void testOnGetPackageArtifact_UnauthorizedServer_InternalError_Fail() {
+        mockRestServer.expect(requestTo(MSB_BASE_URL + "/" + VNF_PACKAGE_ID + "/artifacts/" + ARTIFACT_PATH))
+                .andExpect(method(HttpMethod.GET)).andRespond(withStatus(HttpStatus.UNAUTHORIZED));
+
+        final ResponseEntity<ProblemDetails> responseEntity =
+                sendHttpRequest(VNF_PACKAGE_ID + "/artifacts/" + ARTIFACT_PATH);
+
+        assertNotNull(responseEntity.getBody());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void testGetPackageArtifact_SuccessResponseFromServerWithNullPackage_Fail() {
+        mockRestServer.expect(requestTo(MSB_BASE_URL + "/" + VNF_PACKAGE_ID + "/artifacts/" + ARTIFACT_PATH))
+                .andExpect(method(HttpMethod.GET)).andRespond(withSuccess());
+
+        final ResponseEntity<ProblemDetails> responseEntity =
+                sendHttpRequest(VNF_PACKAGE_ID + "/artifacts/" + ARTIFACT_PATH);
+
+        assertNotNull(responseEntity.getBody());
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
     }
 
@@ -369,17 +468,10 @@ public class Sol003PackageManagementControllerTest {
                 + VNF_PACKAGE_ID + "\" \n" + "endpoint.", problemDetails.getDetail());
     }
 
-    // The below 2 test methods are here to improve code coverage and provide a foundation for writing future tests
+    // The below test method is here to improve code coverage and provide a foundation for writing future tests
     @Test
     public void testGetVnfd_Not_Implemented() {
         final ResponseEntity<ProblemDetails> responseEntity = sendHttpRequest(VNF_PACKAGE_ID + "/vnfd");
-        assertEquals(HttpStatus.NOT_IMPLEMENTED, responseEntity.getStatusCode());
-    }
-
-    @Test
-    public void testGetArtifact_Not_Implemented() {
-        final ResponseEntity<ProblemDetails> responseEntity =
-                sendHttpRequest(VNF_PACKAGE_ID + "/artifacts/" + ARTIFACT_PATH);
         assertEquals(HttpStatus.NOT_IMPLEMENTED, responseEntity.getStatusCode());
     }
 
