@@ -21,16 +21,21 @@
 package org.onap.so.adapters.vnfmadapter.extclients.etsicatalog;
 
 import java.util.Optional;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VnfPkgInfo;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.InlineResponse2001;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.EtsiCatalogManagerRequestFailureException;
+import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfPkgBadRequestException;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfPkgConflictException;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfPkgNotFoundException;
 import org.onap.so.rest.exceptions.HttpResouceNotFoundException;
+import org.onap.so.rest.exceptions.InvalidRestRequestException;
 import org.onap.so.rest.exceptions.RestProcessingException;
 import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -44,31 +49,34 @@ import org.springframework.stereotype.Service;
 public class EtsiCatalogServiceProviderImpl implements EtsiCatalogServiceProvider {
     private static final Logger logger = LoggerFactory.getLogger(EtsiCatalogServiceProviderImpl.class);
 
-    @Qualifier
+    @Qualifier("etsiCatalogServiceProvider")
     private final HttpRestServiceProvider httpServiceProvider;
     private final EtsiCatalogUrlProvider etsiCatalogUrlProvider;
+    private final ConversionService conversionService;
 
     @Autowired
     public EtsiCatalogServiceProviderImpl(final EtsiCatalogUrlProvider etsiCatalogUrlProvider,
-            final HttpRestServiceProvider httpServiceProvider) {
+            final HttpRestServiceProvider httpServiceProvider, final ConversionService conversionService) {
         this.etsiCatalogUrlProvider = etsiCatalogUrlProvider;
         this.httpServiceProvider = httpServiceProvider;
+        this.conversionService = conversionService;
     }
 
     @Override
-    public Optional<byte[]> getVnfPackageContent(String vnfPkgId) throws EtsiCatalogManagerRequestFailureException {
+    public Optional<byte[]> getVnfPackageContent(final String vnfPkgId)
+            throws EtsiCatalogManagerRequestFailureException {
         try {
-            ResponseEntity<byte[]> response = httpServiceProvider
+            final ResponseEntity<byte[]> response = httpServiceProvider
                     .getHttpResponse(etsiCatalogUrlProvider.getVnfPackageContentUrl(vnfPkgId), byte[].class);
             logger.info("getVnfPackageContent Request to ETSI Catalog Manager Status Code: {}",
                     response.getStatusCodeValue());
             if (response.getStatusCode() == HttpStatus.OK) {
                 return Optional.ofNullable(response.getBody());
             }
-        } catch (HttpResouceNotFoundException httpResouceNotFoundException) {
+        } catch (final HttpResouceNotFoundException httpResouceNotFoundException) {
             logger.error("Caught HttpResouceNotFoundException", httpResouceNotFoundException);
             throw new VnfPkgNotFoundException("No Vnf Package found with vnfPkgId: " + vnfPkgId);
-        } catch (RestProcessingException restProcessingException) {
+        } catch (final RestProcessingException restProcessingException) {
             logger.error("Caught RestProcessingException with Status Code: {}", restProcessingException.getStatusCode(),
                     restProcessingException);
             if (restProcessingException.getStatusCode() == HttpStatus.CONFLICT.value()) {
@@ -77,5 +85,76 @@ public class EtsiCatalogServiceProviderImpl implements EtsiCatalogServiceProvide
             }
         }
         throw new EtsiCatalogManagerRequestFailureException("Internal Server Error Occurred.");
+    }
+
+    @Override
+    public Optional<InlineResponse2001[]> getVnfPackages() {
+        try {
+            final ResponseEntity<VnfPkgInfo[]> response =
+                    httpServiceProvider.getHttpResponse(etsiCatalogUrlProvider.getVnfPackagesUrl(), VnfPkgInfo[].class);
+            logger.info("getVnfPackages Request to ETSI Catalog Manager Status Code: {}",
+                    response.getStatusCodeValue());
+            if (response.getStatusCode() == HttpStatus.OK) {
+                if (response.hasBody()) {
+                    final VnfPkgInfo[] vnfPackages = response.getBody();
+                    final InlineResponse2001[] responses = new InlineResponse2001[vnfPackages.length];
+                    for (int index = 0; index < vnfPackages.length; index++) {
+                        if (conversionService.canConvert(vnfPackages[index].getClass(), InlineResponse2001.class)) {
+                            final InlineResponse2001 inlineResponse2001 =
+                                    conversionService.convert(vnfPackages[index], InlineResponse2001.class);
+                            if (inlineResponse2001 != null) {
+                                responses[index] = inlineResponse2001;
+                            }
+                        }
+                        logger.error("Unable to find Converter for response class: {}", vnfPackages[index].getClass());
+                    }
+                    return Optional.ofNullable(responses);
+                }
+                logger.error("Received response without body ...");
+            }
+            logger.error("Unexpected status code received {}", response.getStatusCode());
+            return Optional.empty();
+        } catch (final InvalidRestRequestException invalidRestRequestException) {
+            logger.error("Caught InvalidRestRequestException", invalidRestRequestException);
+            throw new VnfPkgBadRequestException("Error: Bad Request Received");
+        } catch (final HttpResouceNotFoundException httpResouceNotFoundException) {
+            logger.error("Caught HttpResouceNotFoundException", httpResouceNotFoundException);
+            throw new VnfPkgNotFoundException("No Vnf Packages found");
+        } catch (final RestProcessingException restProcessingException) {
+            logger.error("Caught RestProcessingException with Status Code: {}", restProcessingException.getStatusCode(),
+                    restProcessingException);
+            throw new EtsiCatalogManagerRequestFailureException("Internal Server Error Occurred.");
+        }
+    }
+
+    @Override
+    public Optional<InlineResponse2001> getVnfPackage(final String vnfPkgId) {
+        try {
+            final ResponseEntity<VnfPkgInfo> response = httpServiceProvider
+                    .getHttpResponse(etsiCatalogUrlProvider.getVnfPackageUrl(vnfPkgId), VnfPkgInfo.class);
+            logger.info("getVnfPackage Request for vnfPkgId {} to ETSI Catalog Manager Status Code: {}", vnfPkgId,
+                    response.getStatusCodeValue());
+            if (response.getStatusCode() == HttpStatus.OK) {
+                if (response.hasBody()) {
+                    final VnfPkgInfo vnfPkgInfo = response.getBody();
+                    if (conversionService.canConvert(vnfPkgInfo.getClass(), InlineResponse2001.class)) {
+                        return Optional.ofNullable(conversionService.convert(vnfPkgInfo, InlineResponse2001.class));
+                    }
+                    logger.error("Unable to find Converter for response class: {}", vnfPkgInfo.getClass());
+                }
+                logger.error("Received response without body ....");
+            }
+            return Optional.empty();
+        } catch (final InvalidRestRequestException invalidRestRequestException) {
+            logger.error("Caught InvalidRestRequestException", invalidRestRequestException);
+            throw new VnfPkgBadRequestException("Error: Bad Request Received");
+        } catch (final HttpResouceNotFoundException httpResouceNotFoundException) {
+            logger.error("Caught HttpResouceNotFoundException", httpResouceNotFoundException);
+            throw new VnfPkgNotFoundException("No Vnf Package found with vnfPkgId: " + vnfPkgId);
+        } catch (final RestProcessingException restProcessingException) {
+            logger.error("Caught RestProcessingException with Status Code: {}", restProcessingException.getStatusCode(),
+                    restProcessingException);
+            throw new EtsiCatalogManagerRequestFailureException("Internal Server Error Occurred.");
+        }
     }
 }

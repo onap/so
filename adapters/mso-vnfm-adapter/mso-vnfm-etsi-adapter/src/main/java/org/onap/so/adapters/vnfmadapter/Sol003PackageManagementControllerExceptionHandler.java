@@ -23,6 +23,7 @@ package org.onap.so.adapters.vnfmadapter;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.ProblemDetails;
 import org.onap.so.adapters.vnfmadapter.rest.Sol003PackageManagementController;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.EtsiCatalogManagerRequestFailureException;
+import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfPkgBadRequestException;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfPkgConflictException;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfPkgNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -41,7 +42,7 @@ public class Sol003PackageManagementControllerExceptionHandler {
 
     @ExceptionHandler(EtsiCatalogManagerRequestFailureException.class)
     public ResponseEntity<ProblemDetails> handleEtsiCatalogManagerRequestFailureException(
-            EtsiCatalogManagerRequestFailureException etsiCatalogManagerRequestFailureException) {
+            final EtsiCatalogManagerRequestFailureException etsiCatalogManagerRequestFailureException) {
         final ProblemDetails problemDetails = new ProblemDetails();
         problemDetails.setDetail(etsiCatalogManagerRequestFailureException.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problemDetails);
@@ -49,7 +50,7 @@ public class Sol003PackageManagementControllerExceptionHandler {
 
     @ExceptionHandler(VnfPkgConflictException.class)
     public ResponseEntity<ProblemDetails> handleVnfPkgConflictException(
-            VnfPkgConflictException vnfPkgConflictException) {
+            final VnfPkgConflictException vnfPkgConflictException) {
         final ProblemDetails problemDetails = new ProblemDetails();
         problemDetails.setDetail(vnfPkgConflictException.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(problemDetails);
@@ -57,10 +58,17 @@ public class Sol003PackageManagementControllerExceptionHandler {
 
     @ExceptionHandler(VnfPkgNotFoundException.class)
     public ResponseEntity<ProblemDetails> handleVnfPkgNotFoundException(
-            VnfPkgNotFoundException vnfPkgNotFoundException) {
+            final VnfPkgNotFoundException vnfPkgNotFoundException) {
         final ProblemDetails problemDetails = new ProblemDetails();
         problemDetails.setDetail(vnfPkgNotFoundException.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problemDetails);
     }
 
+    @ExceptionHandler(VnfPkgBadRequestException.class)
+    public ResponseEntity<ProblemDetails> handleVnfPkgBadRequestException(
+            final VnfPkgBadRequestException vnfPkgBadRequestException) {
+        final ProblemDetails problemDetails = new ProblemDetails();
+        problemDetails.setDetail(vnfPkgBadRequestException.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetails);
+    }
 }
