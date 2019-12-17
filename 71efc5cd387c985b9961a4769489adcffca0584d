@@ -22,6 +22,53 @@
       "revId": "71efc5cd387c985b9961a4769489adcffca0584d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "611b0169_493a168e",
+        "filename": "adapters/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 6077
+      },
+      "writtenOn": "2019-12-17T15:02:47Z",
+      "side": 1,
+      "message": "During last meeting it was mentioned that name \"mso\" is not up to date that\u0027s why we skipped it. But for the naming compatibility purposes we can add mso just to follow the same rule.",
+      "parentUuid": "56cd21f4_edd98f9a",
+      "range": {
+        "startLine": 25,
+        "startChar": 12,
+        "endLine": 25,
+        "endChar": 27
+      },
+      "revId": "71efc5cd387c985b9961a4769489adcffca0584d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f96f0c28_2b2602be",
+        "filename": "adapters/ve-vnfm-adapter/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 6077
+      },
+      "writtenOn": "2019-12-17T15:02:47Z",
+      "side": 1,
+      "message": "why 1.8? Maybe we can use a newer java version",
+      "range": {
+        "startLine": 24,
+        "startChar": 22,
+        "endLine": 24,
+        "endChar": 25
+      },
+      "revId": "71efc5cd387c985b9961a4769489adcffca0584d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
