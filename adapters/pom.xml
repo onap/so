@@ -22,6 +22,7 @@
     <module>mso-vfc-adapter</module>
     <module>mso-openstack-adapters</module>
     <module>mso-vnfm-adapter</module>
+    <module>mso-ve-vnfm-adapter</module>
   </modules>
 
   <dependencies>
