@@ -79,4 +79,16 @@ public class EtsiCatalogUrlProvider {
         return url;
     }
 
+    /**
+     * Get the URL for retrieving VNF Package Artifacts
+     *
+     * @param vnfPkgId The ID of the VNF Package
+     * @param artifactPath The path to the Artifact
+     * @return the URL for the GET operation
+     */
+    public String getVnfPackageArtifactUrl(final String vnfPkgId, final String artifactPath) {
+        final String url = msbEndpoint + vnfpkgmServiceUrl + "/vnf_packages/" + vnfPkgId + "/artifacts/" + artifactPath;
+        logger.info("getVnfPackageArtifactUrl: {}", url);
+        return url;
+    }
 }
