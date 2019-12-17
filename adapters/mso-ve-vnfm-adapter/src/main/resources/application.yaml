@@ -1,0 +1,2 @@
+notification:
+  url:  /lcm/v1/vnf/instances/notifications
