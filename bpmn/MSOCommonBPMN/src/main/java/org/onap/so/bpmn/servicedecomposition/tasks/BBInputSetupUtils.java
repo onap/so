@@ -571,6 +571,24 @@ public class BBInputSetupUtils {
         }
     }
 
+    public Optional<VolumeGroup> getRelatedVolumeGroupFromVfModule(String vnfId, String vfModuleId) throws Exception {
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId);
+        uri.relatedTo(AAIObjectPlurals.VOLUME_GROUP);
+        Optional<VolumeGroups> volumeGroups = injectionHelper.getAaiClient().get(VolumeGroups.class, uri);
+        VolumeGroup volumeGroup = null;
+        if (!volumeGroups.isPresent()) {
+            logger.debug("VfModule does not have a volume group attached");
+            return Optional.empty();
+        } else {
+            if (volumeGroups.get().getVolumeGroup().size() > 1) {
+                throw new Exception("Multiple VolumeGroups Returned");
+            } else {
+                volumeGroup = volumeGroups.get().getVolumeGroup().get(0);
+            }
+            return Optional.of(volumeGroup);
+        }
+    }
+
     public Optional<org.onap.aai.domain.yang.VpnBinding> getAICVpnBindingFromNetwork(
             org.onap.aai.domain.yang.L3Network aaiLocalNetwork) {
         AAIResultWrapper networkWrapper = new AAIResultWrapper(aaiLocalNetwork);

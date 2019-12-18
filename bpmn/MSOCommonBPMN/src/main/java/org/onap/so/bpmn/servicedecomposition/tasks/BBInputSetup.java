@@ -117,6 +117,7 @@ public class BBInputSetup implements JavaDelegate {
     private static final String VNF = "Vnf";
     private static final String NETWORK_COLLECTION = "NetworkCollection";
     private static final String PREPROV = "PREPROV";
+    private static final String CREATEVOLUME = "CreateVolume";
 
     @Autowired
     private BBInputSetupUtils bbInputSetupUtils;
@@ -381,7 +382,8 @@ public class BBInputSetup implements JavaDelegate {
             this.populateGenericVnf(requestId, modelInfo, instanceName, platform, lineOfBusiness, service, bbName,
                     serviceInstance, lookupKeyMap, relatedInstanceList, resourceId, vnfType, null, productFamilyId,
                     applicationId);
-        } else if (modelType.equals(ModelType.volumeGroup)) {
+        } else if (modelType.equals(ModelType.volumeGroup) || (modelType.equals(ModelType.vfModule)
+                && (bbName.equalsIgnoreCase(AssignFlows.VOLUME_GROUP.toString()) || bbName.startsWith(CREATEVOLUME)))) {
             lookupKeyMap.put(ResourceKey.VOLUME_GROUP_ID, resourceId);
             this.populateVolumeGroup(requestId, modelInfo, service, bbName, serviceInstance, lookupKeyMap, resourceId,
                     relatedInstanceList, instanceName, vnfType, null);
@@ -605,6 +607,7 @@ public class BBInputSetup implements JavaDelegate {
                         bbInputSetupUtils.getAAIVolumeGroup(cloudOwner, cloudRegionId, volumeGroup.getVolumeGroupId())
                                 .getModelCustomizationId();
                 if (modelInfo.getModelCustomizationId().equalsIgnoreCase(volumeGroupCustId)) {
+                    logger.debug("Found volume group for vfModule: " + volumeGroup.getVolumeGroupId());
                     return Optional.of(volumeGroup.getVolumeGroupId());
                 }
             }

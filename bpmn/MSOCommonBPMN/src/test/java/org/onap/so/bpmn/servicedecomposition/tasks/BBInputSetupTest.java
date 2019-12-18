@@ -888,6 +888,18 @@ public class BBInputSetupTest {
                 lookupKeyMap, resourceId, relatedInstanceList, instanceName, null, cloudConfiguration, false);
         assertEquals("VfModuleId populated", true,
                 lookupKeyMap.get(ResourceKey.VF_MODULE_ID).equalsIgnoreCase(resourceId));
+
+        String bbNameAssignVolume = AssignFlows.VOLUME_GROUP.toString();
+        doReturn(ModelType.vfModule).when(modelInfo).getModelType();
+        resourceId = "vfModuleId";
+        doNothing().when(SPY_bbInputSetup).populateVolumeGroup(REQUEST_ID, modelInfo, service, bbNameAssignVolume,
+                serviceInstance, lookupKeyMap, resourceId, relatedInstanceList, instanceName, vnfType, null);
+        SPY_bbInputSetup.populateObjectsOnAssignAndCreateFlows(REQUEST_ID, requestDetails, service, bbNameAssignVolume,
+                serviceInstance, lookupKeyMap, resourceId, vnfType, null, null, false);
+        verify(SPY_bbInputSetup, times(1)).populateVolumeGroup(REQUEST_ID, modelInfo, service, bbNameAssignVolume,
+                serviceInstance, lookupKeyMap, resourceId, relatedInstanceList, instanceName, vnfType, null);
+        assertEquals("VolumeGroupId populated", true,
+                lookupKeyMap.get(ResourceKey.VOLUME_GROUP_ID).equalsIgnoreCase(resourceId));
     }
 
     @Test

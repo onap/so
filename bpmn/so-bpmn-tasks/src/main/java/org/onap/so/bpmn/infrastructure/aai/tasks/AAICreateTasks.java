@@ -372,6 +372,7 @@ public class AAICreateTasks {
                 logger.info("VolumeGroup not found. Skipping Connect between VfModule and VolumeGroup");
             }
             if (volumeGroup != null) {
+                logger.debug("Connecting VfModule to VolumGroup");
                 aaiVfModuleResources.connectVfModuleToVolumeGroup(vnf, vfModule, volumeGroup,
                         execution.getGeneralBuildingBlock().getCloudRegion());
             }

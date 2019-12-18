@@ -815,6 +815,51 @@ public class BBInputSetupUtilsTest {
     }
 
     @Test
+    public void getRelatedVolumeGroupFromVfModuleMultipleVolumeGroupsExceptionTest() throws Exception {
+        expectedException.expect(Exception.class);
+
+        String vnfId = "vnfId";
+        String volumeGroupId = "volumeGroupId";
+
+        VolumeGroup volumeGroup = new VolumeGroup();
+        volumeGroup.setVolumeGroupId("id123");
+        volumeGroup.setVolumeGroupName("name123");
+
+        VolumeGroups expectedVolumeGroup = new VolumeGroups();
+        expectedVolumeGroup.getVolumeGroup().add(volumeGroup);
+        expectedVolumeGroup.getVolumeGroup().add(volumeGroup);
+
+        doReturn(expectedVolumeGroup).when(MOCK_aaiResourcesClient).get(eq(VolumeGroups.class),
+                any(AAIResourceUri.class));
+
+        bbInputSetupUtils.getRelatedVolumeGroupFromVfModule(vnfId, volumeGroupId);
+    }
+
+    @Test
+    public void getRelatedVolumeGroupFromVfModuleNotFoundTest() throws Exception {
+        String vnfId = "vnfId";
+        String volumeGroupId = "volumeGroupId";
+
+        doReturn(Optional.empty()).when(MOCK_aaiResourcesClient).get(eq(VolumeGroups.class), any(AAIResourceUri.class));
+
+        Optional<VolumeGroup> actualVolumeGroup =
+                bbInputSetupUtils.getRelatedVolumeGroupFromVfModule(vnfId, volumeGroupId);
+
+        assertEquals(actualVolumeGroup, Optional.empty());
+    }
+
+    @Test
+    public void getRelatedVolumeGroupFromVfModuleTest() throws Exception {
+        Optional<VolumeGroups> expected = Optional.of(new VolumeGroups());
+        VolumeGroup volumeGroup = new VolumeGroup();
+        volumeGroup.setVolumeGroupId("id123");
+        expected.get().getVolumeGroup().add(volumeGroup);
+        doReturn(expected).when(MOCK_aaiResourcesClient).get(eq(VolumeGroups.class), any(AAIResourceUri.class));
+        Optional<VolumeGroup> actual = this.bbInputSetupUtils.getRelatedVolumeGroupFromVfModule("id123", "id123");
+        assertEquals(actual.get().getVolumeGroupId(), expected.get().getVolumeGroup().get(0).getVolumeGroupId());
+    }
+
+    @Test
     public void getRelatedVolumeGroupByNameFromVfModuleMultipleVolumeGroupsExceptionTest() throws Exception {
         expectedException.expect(MultipleObjectsFoundException.class);
         expectedException.expectMessage(containsString(
@@ -851,6 +896,7 @@ public class BBInputSetupUtilsTest {
 
         assertEquals(actualVolumeGroup, Optional.empty());
     }
+
 
     @Test
     public void loadOriginalFlowExecutionPathTest() throws Exception {

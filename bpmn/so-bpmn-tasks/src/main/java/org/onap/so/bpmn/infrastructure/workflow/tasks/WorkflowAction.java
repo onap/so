@@ -111,6 +111,8 @@ public class WorkflowAction {
     private static final String CONFIGURATION = "Configuration";
     private static final String ASSIGNINSTANCE = "assignInstance";
     private static final String CREATEINSTANCE = "createInstance";
+    private static final String REPLACEINSTANCE = "replaceInstance";
+    private static final String REPLACEINSTANCERETAINASSIGNMENTS = "replaceInstanceRetainAssignments";
     private static final String USERPARAMSERVICE = "service";
     private static final String SUPPORTEDTYPES =
             "vnfs|vfModules|networks|networkCollections|volumeGroups|serviceInstances|instanceGroups";
@@ -130,6 +132,8 @@ public class WorkflowAction {
     private static final String NAME_EXISTS_WITH_DIFF_PARENT = "(%s) id (%s) and different parent relationship";
     private static final String CREATENETWORKBB = "CreateNetworkBB";
     private static final String ACTIVATENETWORKBB = "ActivateNetworkBB";
+    private static final String VOLUMEGROUP_DELETE_PATTERN = "(Un|De)(.*)Volume(.*)";
+    private static final String VOLUMEGROUP_CREATE_PATTERN = "(A|C)(.*)Volume(.*)";
 
     @Autowired
     protected BBInputSetup bbInputSetup;
@@ -262,6 +266,18 @@ public class WorkflowAction {
                     }
                     orchFlows = orchFlows.stream().filter(item -> !item.getFlowName().contains(FABRIC_CONFIGURATION))
                             .collect(Collectors.toList());
+
+                    if ((requestAction.equalsIgnoreCase(REPLACEINSTANCE)
+                            || requestAction.equalsIgnoreCase(REPLACEINSTANCERETAINASSIGNMENTS))
+                            && resourceType.equals(WorkflowType.VFMODULE)) {
+                        logger.debug("Build a BB list for replacing BB modules");
+                        orchFlows = getVfModuleReplaceBuildingBlocks(
+                                new ConfigBuildingBlocksDataObject().setsIRequest(sIRequest).setOrchFlows(orchFlows)
+                                        .setRequestId(requestId).setResourceKey(resourceKey).setApiVersion(apiVersion)
+                                        .setResourceId(resourceId).setRequestAction(requestAction).setaLaCarte(aLaCarte)
+                                        .setVnfType(vnfType).setWorkflowResourceIds(workflowResourceIds)
+                                        .setRequestDetails(requestDetails).setExecution(execution));
+                    }
                     for (OrchestrationFlow orchFlow : orchFlows) {
                         ExecuteBuildingBlock ebb = buildExecuteBuildingBlock(orchFlow, requestId, resourceKey,
                                 apiVersion, resourceId, requestAction, aLaCarte, vnfType, workflowResourceIds,
@@ -272,7 +288,8 @@ public class WorkflowAction {
                     boolean foundRelated = false;
                     boolean containsService = false;
                     if (resourceType == WorkflowType.SERVICE && requestAction.equalsIgnoreCase(ASSIGNINSTANCE)) {
-                        // SERVICE-MACRO-ASSIGN will always get user params with a
+                        // SERVICE-MACRO-ASSIGN will always get user params with
+                        // a
                         // service.
                         if (sIRequest.getRequestDetails().getRequestParameters().getUserParams() != null) {
                             List<Map<String, Object>> userParams =
@@ -290,7 +307,8 @@ public class WorkflowAction {
                                     "Service-Macro-Assign request details must contain user params with a service");
                         }
                     } else if (resourceType == WorkflowType.SERVICE && requestAction.equalsIgnoreCase(CREATEINSTANCE)) {
-                        // SERVICE-MACRO-CREATE will get user params with a service,
+                        // SERVICE-MACRO-CREATE will get user params with a
+                        // service,
                         // a service with a network, a service with a
                         // networkcollection, OR an empty service.
                         // If user params is just a service or null and macro
@@ -319,7 +337,8 @@ public class WorkflowAction {
                                     || requestAction.equalsIgnoreCase("activate" + FABRIC_CONFIGURATION))) {
                         // SERVICE-MACRO-ACTIVATE, SERVICE-MACRO-UNASSIGN, and
                         // SERVICE-MACRO-DELETE
-                        // Will never get user params with service, macro will have
+                        // Will never get user params with service, macro will
+                        // have
                         // to query the SI in AAI to find related instances.
                         traverseAAIService(execution, resourceCounter, resourceId, aaiResourceIds);
                     } else if (resourceType == WorkflowType.SERVICE
@@ -357,7 +376,8 @@ public class WorkflowAction {
                         logger.info("Sorting for Vlan Tagging");
                         flowsToExecute = sortExecutionPathByObjectForVlanTagging(flowsToExecute, requestAction);
                     }
-                    // By default, enable homing at VNF level for CREATEINSTANCE and ASSIGNINSTANCE
+                    // By default, enable homing at VNF level for CREATEINSTANCE
+                    // and ASSIGNINSTANCE
                     if (resourceType == WorkflowType.SERVICE
                             && (requestAction.equals(CREATEINSTANCE) || requestAction.equals(ASSIGNINSTANCE))
                             && !resourceCounter.stream().filter(x -> WorkflowType.VNF.equals(x.getResourceType()))
@@ -374,7 +394,8 @@ public class WorkflowAction {
                     }
                 }
             }
-            // If the user set "Homing_Solution" to "none", disable homing, else if "Homing_Solution" is specified,
+            // If the user set "Homing_Solution" to "none", disable homing, else
+            // if "Homing_Solution" is specified,
             // enable it.
             if (sIRequest.getRequestDetails().getRequestParameters() != null
                     && sIRequest.getRequestDetails().getRequestParameters().getUserParams() != null) {
@@ -543,6 +564,68 @@ public class WorkflowAction {
             }
         }
         return flowsToExecuteConfigs;
+    }
+
+    protected List<OrchestrationFlow> getVfModuleReplaceBuildingBlocks(ConfigBuildingBlocksDataObject dataObj)
+            throws Exception {
+
+        List<ExecuteBuildingBlock> flowsToExecuteConfigs = new ArrayList<>();
+
+        String vnfId = dataObj.getWorkflowResourceIds().getVnfId();
+        String vfModuleId = dataObj.getWorkflowResourceIds().getVfModuleId();
+
+        logger.debug("BUILDING REPLACE LIST");
+
+        boolean volumeGroupExisted = false;
+        boolean volumeGroupWillExist = false;
+        boolean keepVolumeGroup = false;
+
+        boolean rebuildVolumeGroups = false;
+        if (dataObj.getRequestDetails().getRequestParameters() != null
+                && dataObj.getRequestDetails().getRequestParameters().getRebuildVolumeGroups() != null) {
+            rebuildVolumeGroups =
+                    dataObj.getRequestDetails().getRequestParameters().getRebuildVolumeGroups().booleanValue();
+        }
+
+        Optional<VolumeGroup> volumeGroupFromVfModule =
+                bbInputSetupUtils.getRelatedVolumeGroupFromVfModule(vnfId, vfModuleId);
+        if (volumeGroupFromVfModule.isPresent()) {
+            String volumeGroupId = volumeGroupFromVfModule.get().getVolumeGroupId();
+            logger.debug("Volume group id of the existing volume group is: " + volumeGroupId);
+            volumeGroupExisted = true;
+            dataObj.getWorkflowResourceIds().setVolumeGroupId(volumeGroupId);
+        }
+
+        List<OrchestrationFlow> orchFlows = dataObj.getOrchFlows();
+        VfModuleCustomization vfModuleCustomization = catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID(
+                dataObj.getRequestDetails().getModelInfo().getModelCustomizationUuid());
+        if (vfModuleCustomization != null && vfModuleCustomization.getVfModule() != null
+                && vfModuleCustomization.getVfModule().getVolumeHeatTemplate() != null
+                && vfModuleCustomization.getVolumeHeatEnv() != null) {
+            volumeGroupWillExist = true;
+            if (!volumeGroupExisted) {
+                String newVolumeGroupId = UUID.randomUUID().toString();
+                dataObj.getWorkflowResourceIds().setVolumeGroupId(newVolumeGroupId);
+                logger.debug("newVolumeGroupId: " + newVolumeGroupId);
+            }
+        }
+
+        if (volumeGroupExisted && volumeGroupWillExist && !rebuildVolumeGroups) {
+            keepVolumeGroup = true;
+        }
+
+        if (!volumeGroupExisted || keepVolumeGroup) {
+            logger.debug("Filtering out deletion of volume groups");
+            orchFlows = orchFlows.stream().filter(item -> !item.getFlowName().matches(VOLUMEGROUP_DELETE_PATTERN))
+                    .collect(Collectors.toList());
+        }
+        if (!volumeGroupWillExist || keepVolumeGroup) {
+            logger.debug("Filtering out creation of volume groups");
+            orchFlows = orchFlows.stream().filter(item -> !item.getFlowName().matches(VOLUMEGROUP_CREATE_PATTERN))
+                    .collect(Collectors.toList());
+        }
+
+        return orchFlows;
     }
 
     protected String getVnfcNameForConfiguration(org.onap.aai.domain.yang.Configuration configuration) {
@@ -1366,6 +1449,11 @@ public class WorkflowAction {
                             requestDetails, false, null, false));
                 }
             } else if (orchFlow.getFlowName().contains(VOLUMEGROUP)) {
+                if (requestAction.equalsIgnoreCase(REPLACEINSTANCE)
+                        || requestAction.equalsIgnoreCase(REPLACEINSTANCERETAINASSIGNMENTS)) {
+                    logger.debug("Replacing workflow resource id by volume group id");
+                    resourceId = workflowResourceIds.getVolumeGroupId();
+                }
                 for (int i = 0; i < resourceCounter.stream()
                         .filter(x -> WorkflowType.VOLUMEGROUP == x.getResourceType()).collect(Collectors.toList())
                         .size(); i++) {
@@ -1421,6 +1509,13 @@ public class WorkflowAction {
         executeBuildingBlock.setApiVersion(apiVersion);
         executeBuildingBlock.setaLaCarte(aLaCarte);
         executeBuildingBlock.setRequestAction(requestAction);
+
+        if (resource != null
+                && (orchFlow.getFlowName().contains(VOLUMEGROUP) && (requestAction.equalsIgnoreCase(REPLACEINSTANCE)
+                        || requestAction.equalsIgnoreCase(REPLACEINSTANCERETAINASSIGNMENTS)))) {
+            logger.debug("Setting resourceId to volume group id for volume group flow on replace");
+            resourceId = workflowResourceIds.getVolumeGroupId();
+        }
         executeBuildingBlock.setResourceId(resourceId);
         executeBuildingBlock.setVnfType(vnfType);
         executeBuildingBlock.setWorkflowResourceIds(workflowResourceIds);
@@ -1681,4 +1776,3 @@ public class WorkflowAction {
         return generatedResourceId;
     }
 }
-

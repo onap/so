@@ -125,6 +125,16 @@ public class WorkflowActionTest extends BaseTaskTest {
 
     private String RESOURCE_PATH = "src/test/resources/__files/";
 
+    private List<OrchestrationFlow> replaceVfModuleOrchFlows =
+            createFlowList("DeactivateVfModuleBB", "DeleteVfModuleATTBB", "DeactivateVolumeGroupBB",
+                    "DeleteVolumeGroupBB", "UnassignVFModuleBB", "UnassignVolumeGroupBB", "AssignVolumeGroupBB",
+                    "AssignVfModuleBB", "CreateVfModuleBB", "ActivateVfModuleBB", "CreateVolumeGroupBB",
+                    "ActivateVolumeGroupBB", "ChangeModelVnfBB", "ChangeModelServiceInstanceBB");
+    private List<OrchestrationFlow> replaceRetainAssignmentsVfModuleOrchFlows = createFlowList("DeactivateVfModuleBB",
+            "DeleteVfModuleATTBB", "DeactivateVolumeGroupBB", "DeleteVolumeGroupBB", "UnassignVolumeGroupBB",
+            "AssignVolumeGroupBB", "ChangeModelVfModuleBB", "CreateVolumeGroupBB", "ActivateVolumeGroupBB",
+            "CreateVfModuleBB", "ActivateVfModuleBB", "ChangeModelVnfBB", "ChangeModelServiceInstanceBB");
+
     @Before
     public void before() throws Exception {
         execution = new DelegateExecutionFake();
@@ -1091,6 +1101,362 @@ public class WorkflowActionTest extends BaseTaskTest {
                 "AssignFabricConfigurationBB", "ActivateFabricConfigurationBB", "AssignFabricConfigurationBB",
                 "ActivateFabricConfigurationBB");
     }
+
+    @Test
+    public void selectExecutionListALaCarteVfModuleNoVolumeGroupReplaceTest() throws Exception {
+        String gAction = "replaceInstance";
+        String resource = "VfModule";
+        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
+        execution.setVariable("requestAction", gAction);
+        String bpmnRequest =
+                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
+        execution.setVariable("bpmnRequest", bpmnRequest);
+        execution.setVariable("aLaCarte", true);
+        execution.setVariable("apiVersion", "7");
+        execution.setVariable("requestUri",
+                "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules/1234");
+
+        NorthBoundRequest northBoundRequest = new NorthBoundRequest();
+        northBoundRequest.setOrchestrationFlowList(replaceVfModuleOrchFlows);
+        when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
+                true, "my-custom-cloud-owner")).thenReturn(northBoundRequest);
+        workflowAction.selectExecutionList(execution);
+        List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+
+        assertEqualsBulkFlowName(ebbs, "DeactivateVfModuleBB", "DeleteVfModuleATTBB", "UnassignVFModuleBB",
+                "AssignVfModuleBB", "CreateVfModuleBB", "ActivateVfModuleBB", "ChangeModelVnfBB",
+                "ChangeModelServiceInstanceBB");
+    }
+
+    @Test
+    public void selectExecutionListALaCarteVfModuleNoVolumeGroupReplaceRetainAssignmentsTest() throws Exception {
+        String gAction = "replaceInstanceRetainAssignments";
+        String resource = "VfModule";
+        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
+        execution.setVariable("requestAction", gAction);
+        String bpmnRequest =
+                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
+        execution.setVariable("bpmnRequest", bpmnRequest);
+        execution.setVariable("aLaCarte", true);
+        execution.setVariable("apiVersion", "7");
+        execution.setVariable("requestUri",
+                "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules/1234");
+
+        NorthBoundRequest northBoundRequest = new NorthBoundRequest();
+        northBoundRequest.setOrchestrationFlowList(replaceRetainAssignmentsVfModuleOrchFlows);
+        when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
+                true, "my-custom-cloud-owner")).thenReturn(northBoundRequest);
+        workflowAction.selectExecutionList(execution);
+        List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+
+        assertEqualsBulkFlowName(ebbs, "DeactivateVfModuleBB", "DeleteVfModuleATTBB", "ChangeModelVfModuleBB",
+                "CreateVfModuleBB", "ActivateVfModuleBB", "ChangeModelVnfBB", "ChangeModelServiceInstanceBB");
+    }
+
+    @Test
+    public void selectExecutionListALaCarteVfModuleVolumeGroupToNoVolumeGroupReplaceTest() throws Exception {
+        String gAction = "replaceInstance";
+        String resource = "VfModule";
+        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
+        execution.setVariable("requestAction", gAction);
+        String bpmnRequest =
+                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
+        execution.setVariable("bpmnRequest", bpmnRequest);
+        execution.setVariable("aLaCarte", true);
+        execution.setVariable("apiVersion", "7");
+        execution.setVariable("requestUri",
+                "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules/1234");
+        execution.setVariable("vnfId", "b80b16a5-f80d-4ffa-91c8-bd47c7438a3d");
+        execution.setVariable("vfModuleId", "1234");
+
+        VolumeGroup volumeGroup = new VolumeGroup();
+        volumeGroup.setVolumeGroupId("volumeGroupId");
+        doReturn(Optional.of(volumeGroup)).when(bbSetupUtils)
+                .getRelatedVolumeGroupFromVfModule("b80b16a5-f80d-4ffa-91c8-bd47c7438a3d", "1234");
+        NorthBoundRequest northBoundRequest = new NorthBoundRequest();
+        northBoundRequest.setOrchestrationFlowList(replaceVfModuleOrchFlows);
+        when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
+                true, "my-custom-cloud-owner")).thenReturn(northBoundRequest);
+        workflowAction.selectExecutionList(execution);
+        List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+
+        assertEqualsBulkFlowName(ebbs, "DeactivateVfModuleBB", "DeleteVfModuleATTBB", "DeactivateVolumeGroupBB",
+                "DeleteVolumeGroupBB", "UnassignVFModuleBB", "UnassignVolumeGroupBB", "AssignVfModuleBB",
+                "CreateVfModuleBB", "ActivateVfModuleBB", "ChangeModelVnfBB", "ChangeModelServiceInstanceBB");
+    }
+
+    @Test
+    public void selectExecutionListALaCarteVfModuleVolumeGroupToNoVolumeGroupReplaceRetainAssignmentsTest()
+            throws Exception {
+        String gAction = "replaceInstanceRetainAssignments";
+        String resource = "VfModule";
+        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
+        execution.setVariable("requestAction", gAction);
+        String bpmnRequest =
+                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
+        execution.setVariable("bpmnRequest", bpmnRequest);
+        execution.setVariable("aLaCarte", true);
+        execution.setVariable("apiVersion", "7");
+        execution.setVariable("requestUri",
+                "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules/1234");
+        execution.setVariable("vnfId", "b80b16a5-f80d-4ffa-91c8-bd47c7438a3d");
+        execution.setVariable("vfModuleId", "1234");
+
+        VolumeGroup volumeGroup = new VolumeGroup();
+        volumeGroup.setVolumeGroupId("volumeGroupId");
+        doReturn(Optional.of(volumeGroup)).when(bbSetupUtils)
+                .getRelatedVolumeGroupFromVfModule("b80b16a5-f80d-4ffa-91c8-bd47c7438a3d", "1234");
+
+        NorthBoundRequest northBoundRequest = new NorthBoundRequest();
+        northBoundRequest.setOrchestrationFlowList(replaceRetainAssignmentsVfModuleOrchFlows);
+        when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
+                true, "my-custom-cloud-owner")).thenReturn(northBoundRequest);
+        workflowAction.selectExecutionList(execution);
+        List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+
+        assertEqualsBulkFlowName(ebbs, "DeactivateVfModuleBB", "DeleteVfModuleATTBB", "DeactivateVolumeGroupBB",
+                "DeleteVolumeGroupBB", "UnassignVolumeGroupBB", "ChangeModelVfModuleBB", "CreateVfModuleBB",
+                "ActivateVfModuleBB", "ChangeModelVnfBB", "ChangeModelServiceInstanceBB");
+    }
+
+    @Test
+    public void selectExecutionListALaCarteVfModuleKeepVolumeGroupReplaceTest() throws Exception {
+        String gAction = "replaceInstance";
+        String resource = "VfModule";
+        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
+        execution.setVariable("requestAction", gAction);
+        String bpmnRequest =
+                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
+        execution.setVariable("bpmnRequest", bpmnRequest);
+        execution.setVariable("aLaCarte", true);
+        execution.setVariable("apiVersion", "7");
+        execution.setVariable("requestUri",
+                "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules/1234");
+        execution.setVariable("vnfId", "b80b16a5-f80d-4ffa-91c8-bd47c7438a3d");
+        execution.setVariable("vfModuleId", "1234");
+
+        VolumeGroup volumeGroup = new VolumeGroup();
+        volumeGroup.setVolumeGroupId("volumeGroupId");
+        doReturn(Optional.of(volumeGroup)).when(bbSetupUtils)
+                .getRelatedVolumeGroupFromVfModule("b80b16a5-f80d-4ffa-91c8-bd47c7438a3d", "1234");
+
+        VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
+        vfModuleCustomization.setVolumeHeatEnv(new HeatEnvironment());
+        org.onap.so.db.catalog.beans.VfModule vfModule = new org.onap.so.db.catalog.beans.VfModule();
+        vfModule.setVolumeHeatTemplate(new HeatTemplate());
+        vfModuleCustomization.setVfModule(vfModule);
+        when(catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID("9a6d01fd-19a7-490a-9800-460830a12e0b"))
+                .thenReturn(vfModuleCustomization);
+
+        NorthBoundRequest northBoundRequest = new NorthBoundRequest();
+        northBoundRequest.setOrchestrationFlowList(replaceVfModuleOrchFlows);
+        when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
+                true, "my-custom-cloud-owner")).thenReturn(northBoundRequest);
+        workflowAction.selectExecutionList(execution);
+        List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+
+        assertEqualsBulkFlowName(ebbs, "DeactivateVfModuleBB", "DeleteVfModuleATTBB", "UnassignVFModuleBB",
+                "AssignVfModuleBB", "CreateVfModuleBB", "ActivateVfModuleBB", "ChangeModelVnfBB",
+                "ChangeModelServiceInstanceBB");
+    }
+
+    @Test
+    public void selectExecutionListALaCarteVfModuleKeepVolumeGroupReplaceRetainAssignmentsTest() throws Exception {
+        String gAction = "replaceInstanceRetainAssignments";
+        String resource = "VfModule";
+        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
+        execution.setVariable("requestAction", gAction);
+        String bpmnRequest =
+                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
+        execution.setVariable("bpmnRequest", bpmnRequest);
+        execution.setVariable("aLaCarte", true);
+        execution.setVariable("apiVersion", "7");
+        execution.setVariable("requestUri",
+                "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules/1234");
+        execution.setVariable("vnfId", "b80b16a5-f80d-4ffa-91c8-bd47c7438a3d");
+        execution.setVariable("vfModuleId", "1234");
+
+        VolumeGroup volumeGroup = new VolumeGroup();
+        volumeGroup.setVolumeGroupId("volumeGroupId");
+        doReturn(Optional.of(volumeGroup)).when(bbSetupUtils)
+                .getRelatedVolumeGroupFromVfModule("b80b16a5-f80d-4ffa-91c8-bd47c7438a3d", "1234");
+
+        VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
+        vfModuleCustomization.setVolumeHeatEnv(new HeatEnvironment());
+        org.onap.so.db.catalog.beans.VfModule vfModule = new org.onap.so.db.catalog.beans.VfModule();
+        vfModule.setVolumeHeatTemplate(new HeatTemplate());
+        vfModuleCustomization.setVfModule(vfModule);
+        when(catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID("9a6d01fd-19a7-490a-9800-460830a12e0b"))
+                .thenReturn(vfModuleCustomization);
+
+        NorthBoundRequest northBoundRequest = new NorthBoundRequest();
+        northBoundRequest.setOrchestrationFlowList(replaceRetainAssignmentsVfModuleOrchFlows);
+        when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
+                true, "my-custom-cloud-owner")).thenReturn(northBoundRequest);
+        workflowAction.selectExecutionList(execution);
+        List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+
+        assertEqualsBulkFlowName(ebbs, "DeactivateVfModuleBB", "DeleteVfModuleATTBB", "ChangeModelVfModuleBB",
+                "CreateVfModuleBB", "ActivateVfModuleBB", "ChangeModelVnfBB", "ChangeModelServiceInstanceBB");
+    }
+
+    @Test
+    public void selectExecutionListALaCarteVfModuleNoVolumeGroupToVolumeGroupReplaceTest() throws Exception {
+        String gAction = "replaceInstance";
+        String resource = "VfModule";
+        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
+        execution.setVariable("requestAction", gAction);
+        String bpmnRequest =
+                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
+        execution.setVariable("bpmnRequest", bpmnRequest);
+        execution.setVariable("aLaCarte", true);
+        execution.setVariable("apiVersion", "7");
+        execution.setVariable("requestUri",
+                "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules/1234");
+        execution.setVariable("vnfId", "b80b16a5-f80d-4ffa-91c8-bd47c7438a3d");
+        execution.setVariable("vfModuleId", "1234");
+
+        VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
+        vfModuleCustomization.setVolumeHeatEnv(new HeatEnvironment());
+        org.onap.so.db.catalog.beans.VfModule vfModule = new org.onap.so.db.catalog.beans.VfModule();
+        vfModule.setVolumeHeatTemplate(new HeatTemplate());
+        vfModuleCustomization.setVfModule(vfModule);
+        when(catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID("9a6d01fd-19a7-490a-9800-460830a12e0b"))
+                .thenReturn(vfModuleCustomization);
+
+        NorthBoundRequest northBoundRequest = new NorthBoundRequest();
+        northBoundRequest.setOrchestrationFlowList(replaceVfModuleOrchFlows);
+        when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
+                true, "my-custom-cloud-owner")).thenReturn(northBoundRequest);
+        workflowAction.selectExecutionList(execution);
+        List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+
+        assertEqualsBulkFlowName(ebbs, "DeactivateVfModuleBB", "DeleteVfModuleATTBB", "UnassignVFModuleBB",
+                "AssignVolumeGroupBB", "AssignVfModuleBB", "CreateVfModuleBB", "ActivateVfModuleBB",
+                "CreateVolumeGroupBB", "ActivateVolumeGroupBB", "ChangeModelVnfBB", "ChangeModelServiceInstanceBB");
+    }
+
+    @Test
+    public void selectExecutionListALaCarteVfModuleNoVolumeGroupToVolumeGroupReplaceRetainAssignmentsTest()
+            throws Exception {
+        String gAction = "replaceInstanceRetainAssignments";
+        String resource = "VfModule";
+        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
+        execution.setVariable("requestAction", gAction);
+        String bpmnRequest =
+                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
+        execution.setVariable("bpmnRequest", bpmnRequest);
+        execution.setVariable("aLaCarte", true);
+        execution.setVariable("apiVersion", "7");
+        execution.setVariable("requestUri",
+                "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules/1234");
+        execution.setVariable("vnfId", "b80b16a5-f80d-4ffa-91c8-bd47c7438a3d");
+        execution.setVariable("vfModuleId", "1234");
+
+        VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
+        vfModuleCustomization.setVolumeHeatEnv(new HeatEnvironment());
+        org.onap.so.db.catalog.beans.VfModule vfModule = new org.onap.so.db.catalog.beans.VfModule();
+        vfModule.setVolumeHeatTemplate(new HeatTemplate());
+        vfModuleCustomization.setVfModule(vfModule);
+        when(catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID("9a6d01fd-19a7-490a-9800-460830a12e0b"))
+                .thenReturn(vfModuleCustomization);
+
+        NorthBoundRequest northBoundRequest = new NorthBoundRequest();
+        northBoundRequest.setOrchestrationFlowList(replaceRetainAssignmentsVfModuleOrchFlows);
+        when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
+                true, "my-custom-cloud-owner")).thenReturn(northBoundRequest);
+        workflowAction.selectExecutionList(execution);
+        List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+
+        assertEqualsBulkFlowName(ebbs, "DeactivateVfModuleBB", "DeleteVfModuleATTBB", "AssignVolumeGroupBB",
+                "ChangeModelVfModuleBB", "CreateVolumeGroupBB", "ActivateVolumeGroupBB", "CreateVfModuleBB",
+                "ActivateVfModuleBB", "ChangeModelVnfBB", "ChangeModelServiceInstanceBB");
+    }
+
+    @Test
+    public void selectExecutionListALaCarteVfModuleRebuildVolumeGroupReplaceTest() throws Exception {
+        String gAction = "replaceInstance";
+        String resource = "VfModule";
+        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
+        execution.setVariable("requestAction", gAction);
+        String bpmnRequest = new String(
+                Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleReplaceRebuildVolumeGroups.json")));
+        execution.setVariable("bpmnRequest", bpmnRequest);
+        execution.setVariable("aLaCarte", true);
+        execution.setVariable("apiVersion", "7");
+        execution.setVariable("requestUri",
+                "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules/1234");
+        execution.setVariable("vnfId", "b80b16a5-f80d-4ffa-91c8-bd47c7438a3d");
+        execution.setVariable("vfModuleId", "1234");
+
+        VolumeGroup volumeGroup = new VolumeGroup();
+        volumeGroup.setVolumeGroupId("volumeGroupId");
+        doReturn(Optional.of(volumeGroup)).when(bbSetupUtils)
+                .getRelatedVolumeGroupFromVfModule("b80b16a5-f80d-4ffa-91c8-bd47c7438a3d", "1234");
+
+        VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
+        vfModuleCustomization.setVolumeHeatEnv(new HeatEnvironment());
+        org.onap.so.db.catalog.beans.VfModule vfModule = new org.onap.so.db.catalog.beans.VfModule();
+        vfModule.setVolumeHeatTemplate(new HeatTemplate());
+        vfModuleCustomization.setVfModule(vfModule);
+        when(catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID("9a6d01fd-19a7-490a-9800-460830a12e0b"))
+                .thenReturn(vfModuleCustomization);
+
+        NorthBoundRequest northBoundRequest = new NorthBoundRequest();
+        northBoundRequest.setOrchestrationFlowList(replaceVfModuleOrchFlows);
+        when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
+                true, "my-custom-cloud-owner")).thenReturn(northBoundRequest);
+        workflowAction.selectExecutionList(execution);
+        List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+
+        assertEqualsBulkFlowName(ebbs, "DeactivateVfModuleBB", "DeleteVfModuleATTBB", "DeactivateVolumeGroupBB",
+                "DeleteVolumeGroupBB", "UnassignVFModuleBB", "UnassignVolumeGroupBB", "AssignVolumeGroupBB",
+                "AssignVfModuleBB", "CreateVfModuleBB", "ActivateVfModuleBB", "CreateVolumeGroupBB",
+                "ActivateVolumeGroupBB", "ChangeModelVnfBB", "ChangeModelServiceInstanceBB");
+    }
+
+    @Test
+    public void selectExecutionListALaCarteVfModuleRebuildVolumeGroupReplaceRetainAssignmentsTest() throws Exception {
+        String gAction = "replaceInstanceRetainAssignments";
+        String resource = "VfModule";
+        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
+        execution.setVariable("requestAction", gAction);
+        String bpmnRequest = new String(
+                Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleReplaceRebuildVolumeGroups.json")));
+        execution.setVariable("bpmnRequest", bpmnRequest);
+        execution.setVariable("aLaCarte", true);
+        execution.setVariable("apiVersion", "7");
+        execution.setVariable("requestUri",
+                "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules/1234");
+        execution.setVariable("vnfId", "b80b16a5-f80d-4ffa-91c8-bd47c7438a3d");
+        execution.setVariable("vfModuleId", "1234");
+
+        VolumeGroup volumeGroup = new VolumeGroup();
+        volumeGroup.setVolumeGroupId("volumeGroupId");
+        doReturn(Optional.of(volumeGroup)).when(bbSetupUtils)
+                .getRelatedVolumeGroupFromVfModule("b80b16a5-f80d-4ffa-91c8-bd47c7438a3d", "1234");
+
+        VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
+        vfModuleCustomization.setVolumeHeatEnv(new HeatEnvironment());
+        org.onap.so.db.catalog.beans.VfModule vfModule = new org.onap.so.db.catalog.beans.VfModule();
+        vfModule.setVolumeHeatTemplate(new HeatTemplate());
+        vfModuleCustomization.setVfModule(vfModule);
+        when(catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID("9a6d01fd-19a7-490a-9800-460830a12e0b"))
+                .thenReturn(vfModuleCustomization);
+
+        NorthBoundRequest northBoundRequest = new NorthBoundRequest();
+        northBoundRequest.setOrchestrationFlowList(replaceRetainAssignmentsVfModuleOrchFlows);
+        when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
+                true, "my-custom-cloud-owner")).thenReturn(northBoundRequest);
+        workflowAction.selectExecutionList(execution);
+        List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+
+        assertEqualsBulkFlowName(ebbs, "DeactivateVfModuleBB", "DeleteVfModuleATTBB", "DeactivateVolumeGroupBB",
+                "DeleteVolumeGroupBB", "UnassignVolumeGroupBB", "AssignVolumeGroupBB", "ChangeModelVfModuleBB",
+                "CreateVolumeGroupBB", "ActivateVolumeGroupBB", "CreateVfModuleBB", "ActivateVfModuleBB",
+                "ChangeModelVnfBB", "ChangeModelServiceInstanceBB");
+    }
+
 
     @Test
     public void selectExecutionListALaCarteVfModuleFabricDeleteTest() throws Exception {

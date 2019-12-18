@@ -25,6 +25,8 @@ INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, I
 ('VolumeGroup-Delete', 'deleteInstance', 'VolumeGroup', true,true, '7','7', 'DEFAULT', '*'),
 ('VFModule-Create', 'createInstance', 'VfModule', true,true, '7','7', 'DEFAULT', '*'),
 ('VFModule-Delete', 'deleteInstance', 'VfModule', true,true, '7','7', 'DEFAULT', '*'),
+('VFModule-Replace', 'replaceInstance', 'VfModule', true,true, '7','7', 'DEFAULT', '*'),
+('VFModule-Replace-Retain-Assignments', 'replaceInstanceRetainAssignments', 'VfModule', true,true, '7','7', 'DEFAULT', '*'),
 ('NetworkCollection-Macro-Create', 'createInstance', 'NetworkCollection', false,true, '7','7', 'DEFAULT', '*'),
 ('NetworkCollection-Macro-Delete', 'deleteInstance', 'NetworkCollection', false,true, '7','7', 'DEFAULT', '*'),
 ('VFModule-ScaleOut', 'scaleOut', 'VfModule', true, true, '7','7', 'DEFAULT', '*');
@@ -147,7 +149,35 @@ INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FL
 ('VFModule-ScaleOut', '3', 'CreateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-ScaleOut' and CLOUD_OWNER = 'DEFAULT')),
 ('VFModule-ScaleOut', '4', 'ActivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-ScaleOut' and CLOUD_OWNER = 'DEFAULT')),
 ('VFModule-ScaleOut', '5', 'ConfigurationScaleOutBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-ScaleOut' and CLOUD_OWNER = 'DEFAULT')),
-('VFModule-ScaleOut', '6', 'GenericVnfHealthCheckBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-ScaleOut' and CLOUD_OWNER = 'DEFAULT'));
+('VFModule-ScaleOut', '6', 'GenericVnfHealthCheckBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-ScaleOut' and CLOUD_OWNER = 'DEFAULT')),
+('VFModule-Replace', '1', 'DeactivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace' and CLOUD_OWNER = 'DEFAULT')),
+('VFModule-Replace', '2', 'DeleteVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace' and CLOUD_OWNER = 'DEFAULT')),
+('VFModule-Replace', '3', 'DeactivateVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace' and CLOUD_OWNER = 'DEFAULT')),
+('VFModule-Replace', '4', 'DeleteVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace' and CLOUD_OWNER = 'DEFAULT')),
+('VFModule-Replace', '5', 'UnassignVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace' and CLOUD_OWNER = 'DEFAULT')),
+('VFModule-Replace', '6', 'UnassignVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace' and CLOUD_OWNER = 'DEFAULT')),
+('VFModule-Replace', '7', 'AssignVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace' and CLOUD_OWNER = 'DEFAULT')),
+('VFModule-Replace', '8', 'AssignVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace' and CLOUD_OWNER = 'DEFAULT')),
+('VFModule-Replace', '9', 'CreateVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace' and CLOUD_OWNER = 'DEFAULT')),
+('VFModule-Replace', '10', 'ActivateVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace' and CLOUD_OWNER = 'DEFAULT')),
+('VFModule-Replace', '11', 'CreateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace' and CLOUD_OWNER = 'DEFAULT')),
+('VFModule-Replace', '12', 'ActivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace' and CLOUD_OWNER = 'DEFAULT')),
+('VFModule-Replace', '13', 'ChangeModelVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace' and CLOUD_OWNER = 'DEFAULT')),
+('VFModule-Replace', '14', 'ChangeModelServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace' and CLOUD_OWNER = 'DEFAULT')),
+('VFModule-Replace-Retain-Assignments', '1', 'DeactivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace-Retain-Assignments' and CLOUD_OWNER = 'DEFAULT')),
+('VFModule-Replace-Retain-Assignments', '2', 'DeleteVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace-Retain-Assignments' and CLOUD_OWNER = 'DEFAULT')),
+('VFModule-Replace-Retain-Assignments', '3', 'DeactivateVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace-Retain-Assignments' and CLOUD_OWNER = 'DEFAULT')),
+('VFModule-Replace-Retain-Assignments', '4', 'DeleteVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace-Retain-Assignments' and CLOUD_OWNER = 'DEFAULT')),
+('VFModule-Replace-Retain-Assignments', '5', 'UnassignVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace-Retain-Assignments' and CLOUD_OWNER = 'DEFAULT')),
+('VFModule-Replace-Retain-Assignments', '6', 'AssignVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace-Retain-Assignments' and CLOUD_OWNER = 'DEFAULT')),
+('VFModule-Replace-Retain-Assignments', '7', 'ChangeModelVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace-Retain-Assignments' and CLOUD_OWNER = 'DEFAULT')),
+('VFModule-Replace-Retain-Assignments', '8', 'CreateVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace-Retain-Assignments' and CLOUD_OWNER = 'DEFAULT')),
+('VFModule-Replace-Retain-Assignments', '9', 'ActivateVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace-Retain-Assignments' and CLOUD_OWNER = 'DEFAULT')),
+('VFModule-Replace-Retain-Assignments', '10', 'CreateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace-Retain-Assignments' and CLOUD_OWNER = 'DEFAULT')),
+('VFModule-Replace-Retain-Assignments', '11', 'ActivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace-Retain-Assignments' and CLOUD_OWNER = 'DEFAULT')),
+('VFModule-Replace-Retain-Assignments', '12', 'ChangeModelVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace-Retain-Assignments' and CLOUD_OWNER = 'DEFAULT')),
+('VFModule-Replace-Retain-Assignments', '13', 'ChangeModelServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace-Retain-Assignments' and CLOUD_OWNER = 'DEFAULT'));
+
 
 INSERT INTO rainy_day_handler_macro (FLOW_NAME, SERVICE_TYPE, VNF_TYPE, ERROR_CODE, WORK_STEP, POLICY)
 VALUES
@@ -815,3 +845,7 @@ VALUES
 UPDATE rainy_day_handler_macro SET reg_ex_error_message = '*' WHERE reg_ex_error_message IS null;
 
 UPDATE rainy_day_handler_macro SET SERVICE_ROLE = '*' WHERE SERVICE_ROLE IS null;
+
+INSERT INTO vnf_components_recipe (VNF_TYPE, VNF_COMPONENT_TYPE, ACTION, VERSION, ORCHESTRATION_URI, RECIPE_TIMEOUT)
+VALUES
+(NULL, 'vfModule', 'replaceInstanceRetainAssignments', '1', '/mso/async/services/WorkflowActionBB', 180);
