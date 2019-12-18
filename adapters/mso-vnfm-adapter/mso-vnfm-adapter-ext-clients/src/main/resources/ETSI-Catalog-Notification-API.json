@@ -1,0 +1,230 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Modeling etsicatalog API",
+    "description": "\n\nThe `swagger-ui` view can be found [here](/api/catalog/v1/swagger).\nThe `ReDoc` view can be found [here](/api/catalog/v1/redoc).\nThe swagger YAML document can be found [here](/api/catalog/v1/swagger.yaml).\nThe swagger JSON document can be found [here](/api/catalog/v1/swagger.json).",
+    "version": "v1"
+  },
+  "host": "127.0.0.1:8000",
+  "schemes": ["http"],
+  "basePath": "/",
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "securityDefinitions": {
+    "Basic": {
+      "type": "basic"
+    }
+  },
+  "security": [{
+    "Basic": []
+  }],
+  "paths": {
+    "/URI-is-provided-by-the-client-when-creating-the-subscription-VnfPackageChangeNotification": {
+      "get": {
+        "operationId": "URI-is-provided-by-the-client-when-creating-the-subscription-VnfPackageChangeNotification_list",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "500": {
+            "description": "error message",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "tags": ["VNF Package Management interface"]
+      },
+      "post": {
+        "operationId": "URI-is-provided-by-the-client-when-creating-the-subscription-VnfPackageChangeNotification_create",
+        "description": "",
+        "parameters": [{
+          "name": "data",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/PkgChangeNotification"
+          }
+        }],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": ["VNF Package Management interface"]
+      },
+      "parameters": []
+    },
+    "/URI-is-provided-by-the-client-when-creating-the-subscription-VnfPackageOnboardingNotification": {
+      "get": {
+        "operationId": "URI-is-provided-by-the-client-when-creating-the-subscription-VnfPackageOnboardingNotification_list",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "500": {
+            "description": "error message",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "tags": ["VNF Package Management interface"]
+      },
+      "post": {
+        "operationId": "URI-is-provided-by-the-client-when-creating-the-subscription-VnfPackageOnboardingNotification_create",
+        "description": "",
+        "parameters": [{
+          "name": "data",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/PkgOnboardingNotification"
+          }
+        }],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": ["VNF Package Management interface"]
+      },
+      "parameters": []
+    }
+  },
+  "definitions": {
+    "NOTIFICATION_LINKSERIALIZER": {
+      "title": "Vnfpackage",
+      "description": "Link to the resource representing the VNF package to which the notified change applies.",
+      "required": ["href"],
+      "type": "object",
+      "properties": {
+        "href": {
+          "title": "Href",
+          "description": "URI of the referenced resource.",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "PkgmLinks": {
+      "title": " links",
+      "description": "Links to resources related to this resource.",
+      "type": "object",
+      "properties": {
+        "vnfPackage": {
+          "$ref": "#/definitions/NOTIFICATION_LINKSERIALIZER"
+        },
+        "subscription": {
+          "$ref": "#/definitions/NOTIFICATION_LINKSERIALIZER"
+        }
+      }
+    },
+    "PkgChangeNotification": {
+      "required": ["id", "notificationType", "timeStamp", "subscriptionId", "vnfPkgId", "changeType", "vnfdId", "_links"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "description": "Identifier of this notification.",
+          "type": "string",
+          "minLength": 1
+        },
+        "notificationType": {
+          "title": "Notificationtype",
+          "description": "Discriminator for the different notification types.",
+          "type": "string",
+          "enum": ["VnfPackageChangeNotification"]
+        },
+        "timeStamp": {
+          "title": "Timestamp",
+          "description": "Date-time of the generation of the notification.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "subscriptionId": {
+          "title": "Subscriptionid",
+          "description": "Identifier of the subscription that this notification relates to.",
+          "type": "string",
+          "minLength": 1
+        },
+        "vnfPkgId": {
+          "title": "Vnfpkgid",
+          "description": "Identifier of the VNF package.",
+          "type": "string",
+          "format": "uuid"
+        },
+        "changeType": {
+          "title": "Changetype",
+          "description": "The type of change of the VNF package.",
+          "type": "string",
+          "enum": ["OP_STATE_CHANGE", "PKG_DELETE"]
+        },
+        "operationalState": {
+          "title": "Operationalstate",
+          "description": "New operational state of the VNF package.",
+          "type": "string",
+          "enum": ["ENABLED", "DISABLED"]
+        },
+        "vnfdId": {
+          "title": "Vnfdid",
+          "description": "This identifier, which is managed by the VNF provider, identifies the VNF package and the VNFD in a globally unique way.",
+          "type": "string",
+          "minLength": 1
+        },
+        "_links": {
+          "$ref": "#/definitions/PkgmLinks"
+        }
+      }
+    },
+    "PkgOnboardingNotification": {
+      "required": ["id", "notificationType", "subscriptionId", "timeStamp", "vnfPkgId", "vnfdId", "_links"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "description": "Identifier of this notification.",
+          "type": "string",
+          "minLength": 1
+        },
+        "notificationType": {
+          "title": "Notificationtype",
+          "description": "Discriminator for the different notification types.",
+          "type": "string",
+          "enum": ["VnfPackageOnboardingNotification"]
+        },
+        "subscriptionId": {
+          "title": "Subscriptionid",
+          "description": "Identifier of the subscription that this notification relates to.",
+          "type": "string",
+          "minLength": 1
+        },
+        "timeStamp": {
+          "title": "Timestamp",
+          "description": "Date-time of the generation of the notification.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "vnfPkgId": {
+          "title": "Vnfpkgid",
+          "description": "Identifier of the VNF package.",
+          "type": "string",
+          "format": "uuid"
+        },
+        "vnfdId": {
+          "title": "Vnfdid",
+          "description": "This identifier, which is managed by the VNF provider, identifies the VNF package and the VNFD in a globally unique way.",
+          "type": "string",
+          "format": "uuid"
+        },
+        "_links": {
+          "$ref": "#/definitions/PkgmLinks"
+        }
+      }
+    }
+  }
+}

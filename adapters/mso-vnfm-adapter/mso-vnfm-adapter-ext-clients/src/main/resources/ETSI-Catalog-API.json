@@ -764,6 +764,7 @@
             }
           }
         },
+        "produces": ["application/octet-stream", "application/json"],
         "tags": ["NSD Management interface"]
       },
       "put": {
@@ -1129,8 +1130,17 @@
               "$ref": "#/definitions/PkgmSubscription"
             }
           },
+          "400": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SUBSCRIPTION_ProblemDetailsSerializer"
+            }
+          },
           "500": {
-            "description": "Internal error"
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SUBSCRIPTION_ProblemDetailsSerializer"
+            }
           }
         },
         "tags": ["VNF Package Management interface"]
@@ -1330,6 +1340,7 @@
             }
           }
         },
+        "produces": ["application/octet-stream", "application/json"],
         "tags": ["VNF Package Management interface"]
       },
       "parameters": [{
@@ -1370,6 +1381,7 @@
             }
           }
         },
+        "produces": ["application/octet-stream", "application/json"],
         "tags": ["VNF Package Management interface"]
       },
       "put": {
@@ -1460,6 +1472,7 @@
             }
           }
         },
+        "produces": ["application/octet-stream", "application/json"],
         "tags": ["VNF Package Management interface"]
       },
       "parameters": [{
@@ -2710,8 +2723,6 @@
       }
     },
     "vnfProductsProviders": {
-      "title": "Vnfproductsfromproviders",
-      "description": "Match VNF packages that contain VNF products from certain providers.",
       "required": ["vnfProvider"],
       "type": "object",
       "properties": {
@@ -2741,7 +2752,11 @@
           }
         },
         "vnfProductsFromProviders": {
-          "$ref": "#/definitions/vnfProductsProviders"
+          "description": "Match VNF packages that contain VNF products from certain providers.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/vnfProductsProviders"
+          }
         },
         "vnfdId": {
           "description": "Match VNF packages with a VNFD identifierlisted in the attribute",
