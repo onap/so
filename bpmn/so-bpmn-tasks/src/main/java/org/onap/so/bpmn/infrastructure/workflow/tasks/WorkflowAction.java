@@ -6,6 +6,8 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
+ * Copyright (C) 2019 Nokia.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -104,6 +106,7 @@ public class WorkflowAction {
     private static final String VNF_TYPE = "vnfType";
     private static final String SERVICE = "Service";
     private static final String VNF = "Vnf";
+    private static final String PNF = "Pnf";
     private static final String VFMODULE = "VfModule";
     private static final String VOLUMEGROUP = "VolumeGroup";
     private static final String NETWORK = "Network";
@@ -368,9 +371,8 @@ public class WorkflowAction {
                             || "replaceInstanceRetainAssignments".equalsIgnoreCase(requestAction))) {
                         vnfReplace = true;
                     }
-                    flowsToExecute =
-                            buildExecuteBuildingBlockList(orchFlows, resourceCounter, requestId, apiVersion, resourceId,
-                                    requestAction, aLaCarte, vnfType, workflowResourceIds, requestDetails, vnfReplace);
+                    flowsToExecute = buildExecuteBuildingBlockList(orchFlows, resourceCounter, requestId, apiVersion,
+                            resourceId, requestAction, vnfType, workflowResourceIds, requestDetails, vnfReplace);
                     if (!resourceCounter.stream().filter(x -> WorkflowType.NETWORKCOLLECTION == x.getResourceType())
                             .collect(Collectors.toList()).isEmpty()) {
                         logger.info("Sorting for Vlan Tagging");
@@ -1386,67 +1388,62 @@ public class WorkflowAction {
         return sortedOrchFlows;
     }
 
+    private void addBuildingBlockToExecuteBBList(List<ExecuteBuildingBlock> flowsToExecute, List<Resource> resourceList,
+            WorkflowType workflowType, OrchestrationFlow orchFlow, String requestId, String apiVersion,
+            String resourceId, String requestAction, String vnfType, WorkflowResourceIds workflowResourceIds,
+            RequestDetails requestDetails, boolean isVirtualLink, boolean isConfiguration) {
+
+        List<Resource> serviceResources = resourceList.stream()
+                .filter(resource -> resource.getResourceType().equals(workflowType)).collect(Collectors.toList());
+        serviceResources.forEach(resource -> flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId, resource,
+                apiVersion, resourceId, requestAction, false, vnfType, workflowResourceIds, requestDetails,
+                isVirtualLink, resource.getVirtualLinkKey(), isConfiguration)));
+    }
+
     protected List<ExecuteBuildingBlock> buildExecuteBuildingBlockList(List<OrchestrationFlow> orchFlows,
-            List<Resource> resourceCounter, String requestId, String apiVersion, String resourceId,
-            String requestAction, boolean aLaCarte, String vnfType, WorkflowResourceIds workflowResourceIds,
-            RequestDetails requestDetails, boolean replaceVnf) {
+            List<Resource> resourceList, String requestId, String apiVersion, String resourceId, String requestAction,
+            String vnfType, WorkflowResourceIds workflowResourceIds, RequestDetails requestDetails,
+            boolean replaceVnf) {
         List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
         for (OrchestrationFlow orchFlow : orchFlows) {
             if (orchFlow.getFlowName().contains(SERVICE)) {
-                for (int i = 0; i < resourceCounter.stream().filter(x -> WorkflowType.SERVICE == x.getResourceType())
-                        .collect(Collectors.toList()).size(); i++) {
-                    if (!replaceVnf) {
-                        workflowResourceIds.setServiceInstanceId(resourceId);
-                    }
-                    flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId,
-                            resourceCounter.stream().filter(x -> WorkflowType.SERVICE == x.getResourceType())
-                                    .collect(Collectors.toList()).get(i),
-                            apiVersion, resourceId, requestAction, aLaCarte, vnfType, workflowResourceIds,
-                            requestDetails, false, null, false));
+                if (!replaceVnf) {
+                    workflowResourceIds.setServiceInstanceId(resourceId);
                 }
+                addBuildingBlockToExecuteBBList(flowsToExecute, resourceList, WorkflowType.SERVICE, orchFlow, requestId,
+                        apiVersion, resourceId, requestAction, vnfType, workflowResourceIds, requestDetails, false,
+                        false);
             } else if (orchFlow.getFlowName().contains(VNF)) {
-                for (int i = 0; i < resourceCounter.stream().filter(x -> WorkflowType.VNF == x.getResourceType())
-                        .collect(Collectors.toList()).size(); i++) {
-                    flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId,
-                            resourceCounter.stream().filter(x -> WorkflowType.VNF == x.getResourceType())
-                                    .collect(Collectors.toList()).get(i),
-                            apiVersion, resourceId, requestAction, aLaCarte, vnfType, workflowResourceIds,
-                            requestDetails, false, null, false));
-                }
+                addBuildingBlockToExecuteBBList(flowsToExecute, resourceList, WorkflowType.VNF, orchFlow, requestId,
+                        apiVersion, resourceId, requestAction, vnfType, workflowResourceIds, requestDetails, false,
+                        false);
+            } else if (orchFlow.getFlowName().contains(PNF)) {
+                addBuildingBlockToExecuteBBList(flowsToExecute, resourceList, WorkflowType.PNF, orchFlow, requestId,
+                        apiVersion, resourceId, requestAction, vnfType, workflowResourceIds, requestDetails, false,
+                        false);
             } else if (orchFlow.getFlowName().contains(NETWORK)
                     && !orchFlow.getFlowName().contains(NETWORKCOLLECTION)) {
-                for (int i = 0; i < resourceCounter.stream().filter(x -> WorkflowType.NETWORK == x.getResourceType())
-                        .collect(Collectors.toList()).size(); i++) {
-                    flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId,
-                            resourceCounter.stream().filter(x -> WorkflowType.NETWORK == x.getResourceType())
-                                    .collect(Collectors.toList()).get(i),
-                            apiVersion, resourceId, requestAction, aLaCarte, vnfType, workflowResourceIds,
-                            requestDetails, false, null, false));
-                }
-                for (int i = 0; i < resourceCounter.stream()
-                        .filter(x -> WorkflowType.VIRTUAL_LINK == x.getResourceType()).collect(Collectors.toList())
-                        .size(); i++) {
-                    Resource resource =
-                            resourceCounter.stream().filter(x -> WorkflowType.VIRTUAL_LINK == x.getResourceType())
-                                    .collect(Collectors.toList()).get(i);
-                    flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId, resource, apiVersion, resourceId,
-                            requestAction, aLaCarte, vnfType, workflowResourceIds, requestDetails, true,
-                            resource.getVirtualLinkKey(), false));
-                }
+                addBuildingBlockToExecuteBBList(flowsToExecute, resourceList, WorkflowType.NETWORK, orchFlow, requestId,
+                        apiVersion, resourceId, requestAction, vnfType, workflowResourceIds, requestDetails, false,
+                        false);
+                addBuildingBlockToExecuteBBList(flowsToExecute, resourceList, WorkflowType.VIRTUAL_LINK, orchFlow,
+                        requestId, apiVersion, resourceId, requestAction, vnfType, workflowResourceIds, requestDetails,
+                        true, false);
+
             } else if (orchFlow.getFlowName().contains(VFMODULE)) {
                 List<Resource> vfModuleResourcesSorted = null;
                 if (requestAction.equals(CREATEINSTANCE) || requestAction.equals(ASSIGNINSTANCE)
                         || requestAction.equals("activateInstance")) {
-                    vfModuleResourcesSorted = sortVfModulesByBaseFirst(resourceCounter.stream()
+                    vfModuleResourcesSorted = sortVfModulesByBaseFirst(resourceList.stream()
                             .filter(x -> WorkflowType.VFMODULE == x.getResourceType()).collect(Collectors.toList()));
                 } else {
-                    vfModuleResourcesSorted = sortVfModulesByBaseLast(resourceCounter.stream()
+                    vfModuleResourcesSorted = sortVfModulesByBaseLast(resourceList.stream()
                             .filter(x -> WorkflowType.VFMODULE == x.getResourceType()).collect(Collectors.toList()));
                 }
                 for (int i = 0; i < vfModuleResourcesSorted.size(); i++) {
                     flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId, vfModuleResourcesSorted.get(i),
-                            apiVersion, resourceId, requestAction, aLaCarte, vnfType, workflowResourceIds,
-                            requestDetails, false, null, false));
+                            apiVersion, resourceId, requestAction, false, vnfType, workflowResourceIds, requestDetails,
+                            false, null, false));
                 }
             } else if (orchFlow.getFlowName().contains(VOLUMEGROUP)) {
                 if (requestAction.equalsIgnoreCase(REPLACEINSTANCE)
@@ -1454,38 +1451,20 @@ public class WorkflowAction {
                     logger.debug("Replacing workflow resource id by volume group id");
                     resourceId = workflowResourceIds.getVolumeGroupId();
                 }
-                for (int i = 0; i < resourceCounter.stream()
-                        .filter(x -> WorkflowType.VOLUMEGROUP == x.getResourceType()).collect(Collectors.toList())
-                        .size(); i++) {
-                    flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId,
-                            resourceCounter.stream().filter(x -> WorkflowType.VOLUMEGROUP == x.getResourceType())
-                                    .collect(Collectors.toList()).get(i),
-                            apiVersion, resourceId, requestAction, aLaCarte, vnfType, workflowResourceIds,
-                            requestDetails, false, null, false));
-                }
+                addBuildingBlockToExecuteBBList(flowsToExecute, resourceList, WorkflowType.VOLUMEGROUP, orchFlow,
+                        requestId, apiVersion, resourceId, requestAction, vnfType, workflowResourceIds, requestDetails,
+                        false, false);
             } else if (orchFlow.getFlowName().contains(NETWORKCOLLECTION)) {
-                for (int i = 0; i < resourceCounter.stream()
-                        .filter(x -> WorkflowType.NETWORKCOLLECTION == x.getResourceType()).collect(Collectors.toList())
-                        .size(); i++) {
-                    flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId,
-                            resourceCounter.stream().filter(x -> WorkflowType.NETWORKCOLLECTION == x.getResourceType())
-                                    .collect(Collectors.toList()).get(i),
-                            apiVersion, resourceId, requestAction, aLaCarte, vnfType, workflowResourceIds,
-                            requestDetails, false, null, false));
-                }
+                addBuildingBlockToExecuteBBList(flowsToExecute, resourceList, WorkflowType.NETWORKCOLLECTION, orchFlow,
+                        requestId, apiVersion, resourceId, requestAction, vnfType, workflowResourceIds, requestDetails,
+                        false, false);
             } else if (orchFlow.getFlowName().contains(CONFIGURATION)) {
-                for (int i = 0; i < resourceCounter.stream()
-                        .filter(x -> WorkflowType.CONFIGURATION == x.getResourceType()).collect(Collectors.toList())
-                        .size(); i++) {
-                    flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId,
-                            resourceCounter.stream().filter(x -> WorkflowType.CONFIGURATION == x.getResourceType())
-                                    .collect(Collectors.toList()).get(i),
-                            apiVersion, resourceId, requestAction, aLaCarte, vnfType, workflowResourceIds,
-                            requestDetails, false, null, true));
-                }
+                addBuildingBlockToExecuteBBList(flowsToExecute, resourceList, WorkflowType.CONFIGURATION, orchFlow,
+                        requestId, apiVersion, resourceId, requestAction, vnfType, workflowResourceIds, requestDetails,
+                        false, true);
             } else {
                 flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId, null, apiVersion, resourceId,
-                        requestAction, aLaCarte, vnfType, workflowResourceIds, requestDetails, false, null, false));
+                        requestAction, false, vnfType, workflowResourceIds, requestDetails, false, null, false));
             }
         }
         return flowsToExecute;
