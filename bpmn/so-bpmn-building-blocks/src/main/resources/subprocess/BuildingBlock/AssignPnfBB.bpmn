@@ -11,7 +11,7 @@
     <bpmn:startEvent id="AssignPnf_StartEvent">
       <bpmn:outgoing>SequenceFlow_1fu9o4x</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:serviceTask id="CheckAaiForPnfCorrelationId" name="Check AAI for pnf_correlation_id" camunda:delegateExpression="${CheckAaiForPnfCorrelationIdDelegate}">
+    <bpmn:serviceTask id="CheckAaiForPnfCorrelationId" name="Check AAI for pnf_correlation_id" camunda:expression="${CheckAaiForPnfCorrelationIdDelegate.doSomething(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_02j05kk</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_081rs5d</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -20,7 +20,7 @@
       <bpmn:outgoing>SequenceFlow_0fn5kgz</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_1ewfz8r</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="CreatePnfEntryInAai" name="Create Pnf entry in AAI" camunda:delegateExpression="${CreatePnfEntryInAaiDelegate}">
+    <bpmn:serviceTask id="CreatePnfEntryInAai" name="Create Pnf entry in AAI" camunda:expression="${CreatePnfEntryInAaiDelegate.doSomething(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_0fn5kgz</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0l6rtzy</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -36,7 +36,7 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{aaiContainsInfoAboutPnf}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_0l6rtzy" sourceRef="CreatePnfEntryInAai" targetRef="AaiEntryExists" />
-    <bpmn:serviceTask id="CheckInputs" name="Check Inputs" camunda:delegateExpression="${AssignPnfInputsCheckerDelegate}">
+    <bpmn:serviceTask id="CheckInputs" name="Check Inputs">
       <bpmn:incoming>SequenceFlow_1fu9o4x</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_02j05kk</bpmn:outgoing>
     </bpmn:serviceTask>
