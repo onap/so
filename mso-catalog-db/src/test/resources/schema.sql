@@ -1241,6 +1241,18 @@ CREATE TABLE IF NOT EXISTS `vnf_resource_to_workflow` (
   CONSTRAINT `fk_vnf_resource_to_workflow__workflow1` FOREIGN KEY (`WORKFLOW_ID`) REFERENCES `workflow` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE TABLE IF NOT EXISTS `pnf_resource_to_workflow` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `PNF_RESOURCE_MODEL_UUID` varchar(200) NOT NULL,
+  `WORKFLOW_ID` int(11) NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `UK_pnf_resource_to_workflow` (`PNF_RESOURCE_MODEL_UUID`,`WORKFLOW_ID`),
+  KEY `fk_pnf_resource_to_workflow__workflow1_idx` (`WORKFLOW_ID`),
+  KEY `fk_pnf_resource_to_workflow__pnf_res_mod_uuid_idx` (`PNF_RESOURCE_MODEL_UUID`),
+  CONSTRAINT `fk_pnf_resource_to_workflow__pnf_resource1` FOREIGN KEY (`PNF_RESOURCE_MODEL_UUID`) REFERENCES `pnf_resource` (`MODEL_UUID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_pnf_resource_to_workflow__workflow1` FOREIGN KEY (`WORKFLOW_ID`) REFERENCES `workflow` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 CREATE TABLE IF NOT EXISTS `activity_spec` (
   `ID` INT(11) NOT NULL AUTO_INCREMENT,
   `NAME` VARCHAR(200) NOT NULL,

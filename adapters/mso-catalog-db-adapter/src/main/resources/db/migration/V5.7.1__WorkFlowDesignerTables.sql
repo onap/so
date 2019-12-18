@@ -40,6 +40,27 @@ CREATE TABLE IF NOT EXISTS `catalogdb`.`vnf_resource_to_workflow` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = latin1;
 
+CREATE TABLE IF NOT EXISTS `catalogdb`.`pnf_resource_to_workflow` (
+  `ID` INT(11) NOT NULL AUTO_INCREMENT,
+  `PNF_RESOURCE_MODEL_UUID` VARCHAR(200) NOT NULL,
+  `WORKFLOW_ID` INT(11) NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE INDEX `UK_pnf_resource_to_workflow` (`PNF_RESOURCE_MODEL_UUID` ASC, `WORKFLOW_ID` ASC),
+  INDEX `fk_pnf_resource_to_workflow__workflow1_idx` (`WORKFLOW_ID` ASC),
+  INDEX `fk_pnf_resource_to_workflow__pnf_res_mod_uuid_idx` (`PNF_RESOURCE_MODEL_UUID` ASC),
+  CONSTRAINT `fk_pnf_resource_to_workflow__pnf_resource1`
+    FOREIGN KEY (`PNF_RESOURCE_MODEL_UUID`)
+    REFERENCES `catalogdb`.`pnf_resource` (`MODEL_UUID`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_pnf_resource_to_workflow__workflow1`
+    FOREIGN KEY (`WORKFLOW_ID`)
+    REFERENCES `catalogdb`.`workflow` (`ID`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
 CREATE TABLE IF NOT EXISTS `catalogdb`.`activity_spec` (
   `ID` INT(11) NOT NULL AUTO_INCREMENT,
   `NAME` VARCHAR(200) NOT NULL,
