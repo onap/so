@@ -31,5 +31,6 @@ public enum ResourceKey {
     NETWORK_COLLECTION_ID,
     VPN_ID,
     VPN_BONDING_LINK_ID,
-    INSTANCE_GROUP_ID;
+    INSTANCE_GROUP_ID,
+    PNF
 }

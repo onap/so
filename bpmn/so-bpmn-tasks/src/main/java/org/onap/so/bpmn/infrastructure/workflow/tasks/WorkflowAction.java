@@ -102,6 +102,7 @@ public class WorkflowAction {
     private static final String VNF_TYPE = "vnfType";
     private static final String SERVICE = "Service";
     private static final String VNF = "Vnf";
+    private static final String PNF = "Pnf";
     private static final String VFMODULE = "VfModule";
     private static final String VOLUMEGROUP = "VolumeGroup";
     private static final String NETWORK = "Network";
@@ -620,6 +621,8 @@ public class WorkflowAction {
                 workflowResourceIds.setServiceInstanceId(serviceInstanceId);
                 if (resource == WorkflowType.VNF) {
                     workflowResourceIds.setVnfId(resourceId);
+                } else if (resource == WorkflowType.PNF) {
+                    workflowResourceIds.setPnfId(resourceId);
                 } else if (resource == WorkflowType.VFMODULE) {
                     workflowResourceIds.setVfModuleId(resourceId);
                 } else if (resource == WorkflowType.VOLUMEGROUP) {
@@ -1078,6 +1081,14 @@ public class WorkflowAction {
                             }
                         }
                     }
+                    if (validate.getResources().getPnfs() != null) {
+                        validate.getResources().getPnfs().forEach(pnf -> {
+                            logger.error("PNF MODELCUSTID: " + pnf.getModelInfo().getModelCustomizationId());
+                            resourceCounter.add(new Resource(WorkflowType.PNF,
+                                    pnf.getModelInfo().getModelCustomizationId(), false));
+                        });
+                        foundRelated = true;
+                    }
                     break;
                 }
             }
@@ -1424,6 +1435,11 @@ public class WorkflowAction {
                             apiVersion, resourceId, requestAction, aLaCarte, vnfType, workflowResourceIds,
                             requestDetails, false, null, false));
                 }
+            } else if (orchFlow.getFlowName().contains(PNF)) {
+                resourceCounter.stream().filter(x -> WorkflowType.PNF == x.getResourceType())
+                        .forEach(pnfResource -> flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId,
+                                pnfResource, apiVersion, resourceId, requestAction, aLaCarte, vnfType,
+                                workflowResourceIds, requestDetails, false, null, false)));
             } else if (orchFlow.getFlowName().contains(NETWORK)
                     && !orchFlow.getFlowName().contains(NETWORKCOLLECTION)) {
                 for (int i = 0; i < resourceCounter.stream().filter(x -> WorkflowType.NETWORK == x.getResourceType())
