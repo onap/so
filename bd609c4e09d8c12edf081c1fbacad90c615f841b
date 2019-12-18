@@ -1,0 +1,211 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6efca01c_c2d20af8",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/AbstractControllerExecution.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-18T14:39:49Z",
+      "side": 1,
+      "message": "Optional -\u003e\n\nsatisfiedControllers.forEach(satisfiedController -\u003e logger.debug(\"{} controllerRunnable understands the context\", satisfiedController.getClass().getName()));",
+      "range": {
+        "startLine": 70,
+        "startChar": 11,
+        "endLine": 72,
+        "endChar": 13
+      },
+      "revId": "bd609c4e09d8c12edf081c1fbacad90c615f841b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9833ed52_fbe60afd",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/AbstractControllerExecution.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-18T14:39:49Z",
+      "side": 1,
+      "message": "Returning a possibly-null object from a method usually is not a good practice.\nBetter make use Optional here.",
+      "range": {
+        "startLine": 88,
+        "startChar": 15,
+        "endLine": 88,
+        "endChar": 19
+      },
+      "revId": "bd609c4e09d8c12edf081c1fbacad90c615f841b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3e0d5194_6fe58f76",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/AbstractControllerExecution.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-18T14:39:49Z",
+      "side": 1,
+      "message": "Add description. Applies elsewhere.",
+      "range": {
+        "startLine": 113,
+        "startChar": 4,
+        "endLine": 117,
+        "endChar": 14
+      },
+      "revId": "bd609c4e09d8c12edf081c1fbacad90c615f841b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ca0fcfc4_83382cac",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/ControllerExecutionBB.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-18T14:39:49Z",
+      "side": 1,
+      "message": "Instead do this -\u003e return String.valueof(Object)",
+      "range": {
+        "startLine": 64,
+        "startChar": 12,
+        "endLine": 65,
+        "endChar": 30
+      },
+      "revId": "bd609c4e09d8c12edf081c1fbacad90c615f841b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a212e2d_135ed29b",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/buildingblock/ControllerExecutionBB.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-18T14:39:49Z",
+      "side": 1,
+      "message": "I think it would be better to use Optional here instead returning like this.",
+      "range": {
+        "startLine": 67,
+        "startChar": 8,
+        "endLine": 67,
+        "endChar": 18
+      },
+      "revId": "bd609c4e09d8c12edf081c1fbacad90c615f841b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c574aa74_98ff3ef7",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDE.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-18T14:39:49Z",
+      "side": 1,
+      "message": "Add description for each tag.",
+      "range": {
+        "startLine": 70,
+        "startChar": 5,
+        "endLine": 73,
+        "endChar": 30
+      },
+      "revId": "bd609c4e09d8c12edf081c1fbacad90c615f841b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "385af250_9e85a9fb",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDE.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-18T14:39:49Z",
+      "side": 1,
+      "message": "Correct me if I am wrong the code inside this method is same as ControllerExecutionBB. \nIt would be better to put this code at one place instead of duplicating in two different classes.",
+      "range": {
+        "startLine": 124,
+        "startChar": 0,
+        "endLine": 139,
+        "endChar": 5
+      },
+      "revId": "bd609c4e09d8c12edf081c1fbacad90c615f841b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b172f043_a3584067",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDE.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-18T14:39:49Z",
+      "side": 1,
+      "message": "Instead do this -\u003e return String.valueof(Object)",
+      "range": {
+        "startLine": 144,
+        "startChar": 11,
+        "endLine": 145,
+        "endChar": 30
+      },
+      "revId": "bd609c4e09d8c12edf081c1fbacad90c615f841b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8392a31b_c7e12e2b",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDE.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-18T14:39:49Z",
+      "side": 1,
+      "message": "Why not Optional ?",
+      "range": {
+        "startLine": 147,
+        "startChar": 11,
+        "endLine": 147,
+        "endChar": 22
+      },
+      "revId": "bd609c4e09d8c12edf081c1fbacad90c615f841b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
