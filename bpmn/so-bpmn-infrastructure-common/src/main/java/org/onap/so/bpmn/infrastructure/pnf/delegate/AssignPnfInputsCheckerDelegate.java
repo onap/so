@@ -21,20 +21,20 @@ public class AssignPnfInputsCheckerDelegate implements JavaDelegate {
     }
 
     private void validatePnfCorrelationId(DelegateExecution execution) {
-        String pnfCorrelationId = (String) execution.getVariable(PNF_CORRELATION_ID);
-        if (Strings.isNullOrEmpty(pnfCorrelationId)) {
-            new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999,
-                    "pnfCorrelationId variable not defined");
-        }
+        // String pnfCorrelationId = (String) execution.getVariable(PNF_CORRELATION_ID);
+        // if (Strings.isNullOrEmpty(pnfCorrelationId)) {
+        // new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999,
+        // "pnfCorrelationId variable not defined");
+        // }
     }
 
     private void validatePnfUuid(DelegateExecution execution) {
-        String pnfUuid = (String) execution.getVariable(PNF_UUID);
-        if (Strings.isNullOrEmpty(pnfUuid)) {
-            new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, "pnfUuid variable not defined");
-        }
-        if (!pnfUuid.matches(UUID_REGEX)) {
-            new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, "pnfUuid is not a valid UUID");
-        }
+        // String pnfUuid = (String) execution.getVariable(PNF_UUID);
+        // if (Strings.isNullOrEmpty(pnfUuid)) {
+        // new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, "pnfUuid variable not defined");
+        // }
+        // if (!pnfUuid.matches(UUID_REGEX)) {
+        // new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, "pnfUuid is not a valid UUID");
+        // }
     }
 }

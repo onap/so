@@ -24,6 +24,7 @@ public enum WorkflowType {
 
     SERVICE("Service"),
     VNF("Vnf"),
+    PNF("Pnf"),
     VFMODULE("VfModule"),
     VOLUMEGROUP("VolumeGroup"),
     NETWORK("Network"),

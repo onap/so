@@ -1,0 +1,1076 @@
+diff --git a/bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/entities/ResourceKey.java b/bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/entities/ResourceKey.java
+index 5fe06172a..8608fee24 100644
+--- a/bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/entities/ResourceKey.java
++++ b/bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/entities/ResourceKey.java
+@@ -31,6 +31,5 @@ public enum ResourceKey {
+     NETWORK_COLLECTION_ID,
+     VPN_ID,
+     VPN_BONDING_LINK_ID,
+-    INSTANCE_GROUP_ID,
+-    PNF
++    INSTANCE_GROUP_ID;
+ }
+diff --git a/bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/entities/WorkflowResourceIds.java b/bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/entities/WorkflowResourceIds.java
+index 37c61d106..dc07d13ac 100644
+--- a/bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/entities/WorkflowResourceIds.java
++++ b/bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/entities/WorkflowResourceIds.java
+@@ -37,7 +37,6 @@ public class WorkflowResourceIds implements Serializable {
+     private String networkCollectionId;
+     private String configurationId;
+     private String instanceGroupId;
+-    private String pnfId;
+ 
+     @Override
+     public String toString() {
+@@ -110,12 +109,4 @@ public class WorkflowResourceIds implements Serializable {
+     public void setInstanceGroupId(String instanceGroupId) {
+         this.instanceGroupId = instanceGroupId;
+     }
+-
+-    public void setPnfId(String pnfId) {
+-        this.pnfId = pnfId;
+-    }
+-
+-    public String getPnfId() {
+-        return pnfId;
+-    }
+ }
+diff --git a/bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetup.java b/bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetup.java
+index 92155e2db..763f163a2 100644
+--- a/bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetup.java
++++ b/bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetup.java
+@@ -22,18 +22,38 @@
+ 
+ package org.onap.so.bpmn.servicedecomposition.tasks;
+ 
+-import java.util.*;
++import java.util.ArrayList;
++import java.util.HashMap;
++import java.util.List;
++import java.util.Map;
++import java.util.Optional;
++import java.util.UUID;
+ import org.camunda.bpm.engine.delegate.DelegateExecution;
+ import org.camunda.bpm.engine.delegate.JavaDelegate;
+ import org.javatuples.Pair;
+ import org.onap.so.bpmn.common.BuildingBlockExecution;
+ import org.onap.so.bpmn.common.DelegateExecutionImpl;
+-import org.onap.so.bpmn.servicedecomposition.bbobjects.*;
++import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
+ import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
++import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
++import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
++import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
++import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
++import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
+ import org.onap.so.bpmn.servicedecomposition.bbobjects.LineOfBusiness;
++import org.onap.so.bpmn.servicedecomposition.bbobjects.NetworkPolicy;
+ import org.onap.so.bpmn.servicedecomposition.bbobjects.OwningEntity;
+ import org.onap.so.bpmn.servicedecomposition.bbobjects.Platform;
+ import org.onap.so.bpmn.servicedecomposition.bbobjects.Project;
++import org.onap.so.bpmn.servicedecomposition.bbobjects.RouteTableReference;
++import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
++import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceProxy;
++import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceSubscription;
++import org.onap.so.bpmn.servicedecomposition.bbobjects.Tenant;
++import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
++import org.onap.so.bpmn.servicedecomposition.bbobjects.Vnfc;
++import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
++import org.onap.so.bpmn.servicedecomposition.bbobjects.VpnBinding;
+ import org.onap.so.bpmn.servicedecomposition.entities.ConfigurationResourceKeys;
+ import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
+ import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
+@@ -49,7 +69,6 @@ import org.onap.so.client.aai.entities.Relationships;
+ import org.onap.so.client.aai.entities.uri.AAIResourceUri;
+ import org.onap.so.client.aai.entities.uri.AAIUriFactory;
+ import org.onap.so.client.exception.ExceptionBuilder;
+-import org.onap.so.client.graphinventory.entities.Resource;
+ import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
+ import org.onap.so.db.catalog.beans.CollectionResource;
+ import org.onap.so.db.catalog.beans.CollectionResourceCustomization;
+@@ -65,7 +84,17 @@ import org.onap.so.db.catalog.beans.VnfResourceCustomization;
+ import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
+ import org.onap.so.db.request.beans.InfraActiveRequests;
+ import org.onap.so.db.request.client.RequestsDbClient;
+-import org.onap.so.serviceinstancebeans.*;
++import org.onap.so.serviceinstancebeans.CloudConfiguration;
++import org.onap.so.serviceinstancebeans.ModelInfo;
++import org.onap.so.serviceinstancebeans.ModelType;
++import org.onap.so.serviceinstancebeans.Networks;
++import org.onap.so.serviceinstancebeans.RelatedInstance;
++import org.onap.so.serviceinstancebeans.RelatedInstanceList;
++import org.onap.so.serviceinstancebeans.RequestDetails;
++import org.onap.so.serviceinstancebeans.RequestParameters;
++import org.onap.so.serviceinstancebeans.Resources;
++import org.onap.so.serviceinstancebeans.VfModules;
++import org.onap.so.serviceinstancebeans.Vnfs;
+ import org.slf4j.Logger;
+ import org.slf4j.LoggerFactory;
+ import org.springframework.beans.factory.annotation.Autowired;
+@@ -87,7 +116,6 @@ public class BBInputSetup implements JavaDelegate {
+     private static final String VNF = "Vnf";
+     private static final String NETWORK_COLLECTION = "NetworkCollection";
+     private static final String PREPROV = "PREPROV";
+-    private static final String PNF = "Pnf";
+ 
+     @Autowired
+     private BBInputSetupUtils bbInputSetupUtils;
+@@ -213,7 +241,6 @@ public class BBInputSetup implements JavaDelegate {
+         lookupKeyMap.put(ResourceKey.SERVICE_INSTANCE_ID, workflowResourceIds.getServiceInstanceId());
+         lookupKeyMap.put(ResourceKey.NETWORK_ID, workflowResourceIds.getNetworkId());
+         lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, workflowResourceIds.getVnfId());
+-        lookupKeyMap.put(ResourceKey.PNF, workflowResourceIds.getPnfId());
+         lookupKeyMap.put(ResourceKey.VF_MODULE_ID, workflowResourceIds.getVfModuleId());
+         lookupKeyMap.put(ResourceKey.VOLUME_GROUP_ID, workflowResourceIds.getVolumeGroupId());
+         lookupKeyMap.put(ResourceKey.CONFIGURATION_ID, workflowResourceIds.getConfigurationId());
+@@ -688,13 +715,6 @@ public class BBInputSetup implements JavaDelegate {
+         return null;
+     }
+ 
+-    private void populatePnf(Pnfs pnf, String pnfId, ServiceInstance serviceInstance) {
+-        Pnf genericPnf = new Pnf();
+-        genericPnf.setPnfId(pnfId);
+-        genericPnf.setPnfName(pnf.getInstanceName());
+-        serviceInstance.getPnfs().add(genericPnf);
+-    }
+-
+     protected void populateGenericVnf(String requestId, ModelInfo modelInfo, String instanceName,
+             org.onap.so.serviceinstancebeans.Platform platform,
+             org.onap.so.serviceinstancebeans.LineOfBusiness lineOfBusiness, Service service, String bbName,
+@@ -1367,15 +1387,6 @@ public class BBInputSetup implements JavaDelegate {
+                 mapper.readValue(input, org.onap.so.serviceinstancebeans.Service.class);
+ 
+         Resources resources = serviceMacro.getResources();
+-
+-        List<Pnfs> pnfs = resources.getPnfs();
+-        logger.error("___________________PNFS___________________ ");
+-        for (Pnfs pnf : pnfs) {
+-            logger.error(pnf.toString());
+-        }
+-        logger.error("_________________PNFS_END_________________");
+-
+-
+         Vnfs vnfs = null;
+         VfModules vfModules = null;
+         Networks networks = null;
+@@ -1395,11 +1406,6 @@ public class BBInputSetup implements JavaDelegate {
+             this.populateGenericVnf(executeBB.getRequestId(), vnfs.getModelInfo(), vnfs.getInstanceName(),
+                     vnfs.getPlatform(), vnfs.getLineOfBusiness(), service, bbName, serviceInstance, lookupKeyMap, null,
+                     vnfId, vnfType, vnfs.getInstanceParams(), productFamilyId);
+-        } else if (bbName.contains(PNF)) {
+-            String pnfId = lookupKeyMap.get(ResourceKey.PNF);
+-            logger.error("PNF ID FROM LOOKUPMAP: " + pnfId);
+-            pnfs.stream().filter(x -> Objects.equals(key, x.getModelInfo().getModelCustomizationId())).findFirst()
+-                    .ifPresent(pnf -> this.populatePnf(pnf, pnfId, serviceInstance));
+         } else if (bbName.contains(VF_MODULE) || bbName.contains(VOLUME_GROUP)) {
+             Pair<Vnfs, VfModules> vnfsAndVfModules = getVfModulesAndItsVnfsByKey(key, resources);
+             if (vnfsAndVfModules != null) {
+diff --git a/bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/ExtractPojosForBB.java b/bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/ExtractPojosForBB.java
+index bb70853bb..aa71ee540 100644
+--- a/bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/ExtractPojosForBB.java
++++ b/bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/ExtractPojosForBB.java
+@@ -59,10 +59,6 @@ public class ExtractPojosForBB {
+                     serviceInstance = extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+                     result = lookupObjectInList(serviceInstance.getVnfs(), value);
+                     break;
+-                case PNF:
+-                    serviceInstance = extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+-                    result = lookupObjectInList(serviceInstance.getPnfs(), value);
+-                    break;
+                 case NETWORK_ID:
+                     serviceInstance = extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+                     result = lookupObjectInList(serviceInstance.getNetworks(), value);
+diff --git a/bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/BuildingBlock/AssignPnfBB.bpmn b/bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/BuildingBlock/AssignPnfBB.bpmn
+deleted file mode 100644
+index 5906b93a3..000000000
+--- a/bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/BuildingBlock/AssignPnfBB.bpmn
++++ /dev/null
+@@ -1,137 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1a52v2f" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.5.0">
+-  <bpmn:collaboration id="Collaboration_0go8wi3">
+-    <bpmn:participant id="Participant_1dwc5st" name="SO&#10;Assign PNF" processRef="AssignPnfBB" />
+-    <bpmn:participant id="Participant_0gycee4" name="AAI" />
+-    <bpmn:messageFlow id="MessageFlow_0xh6bkn" sourceRef="CreatePnfEntryInAai" targetRef="Participant_0gycee4" />
+-    <bpmn:messageFlow id="MessageFlow_0cnehf5" sourceRef="Participant_0gycee4" targetRef="CheckAaiForPnfCorrelationId" />
+-    <bpmn:messageFlow id="MessageFlow_1e1pjve" sourceRef="CheckAaiForPnfCorrelationId" targetRef="Participant_0gycee4" />
+-  </bpmn:collaboration>
+-  <bpmn:process id="AssignPnfBB" name="AssignPnfBB" isExecutable="true">
+-    <bpmn:startEvent id="AssignPnf_StartEvent">
+-      <bpmn:outgoing>SequenceFlow_1fu9o4x</bpmn:outgoing>
+-    </bpmn:startEvent>
+-    <bpmn:serviceTask id="CheckAaiForPnfCorrelationId" name="Check AAI for pnf_correlation_id" camunda:expression="${CheckAaiForPnfCorrelationIdDelegate.doSomething(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+-      <bpmn:incoming>SequenceFlow_02j05kk</bpmn:incoming>
+-      <bpmn:outgoing>SequenceFlow_081rs5d</bpmn:outgoing>
+-    </bpmn:serviceTask>
+-    <bpmn:exclusiveGateway id="DoesAaiContainInfoAboutPnf" name="Does AAI contain info about pnf?">
+-      <bpmn:incoming>SequenceFlow_081rs5d</bpmn:incoming>
+-      <bpmn:outgoing>SequenceFlow_0fn5kgz</bpmn:outgoing>
+-      <bpmn:outgoing>SequenceFlow_1ewfz8r</bpmn:outgoing>
+-    </bpmn:exclusiveGateway>
+-    <bpmn:serviceTask id="CreatePnfEntryInAai" name="Create Pnf entry in AAI" camunda:expression="${CreatePnfEntryInAaiDelegate.doSomething(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+-      <bpmn:incoming>SequenceFlow_0fn5kgz</bpmn:incoming>
+-      <bpmn:outgoing>SequenceFlow_0l6rtzy</bpmn:outgoing>
+-    </bpmn:serviceTask>
+-    <bpmn:endEvent id="AaiEntryExists" name="AAI entry exists">
+-      <bpmn:incoming>SequenceFlow_1ewfz8r</bpmn:incoming>
+-      <bpmn:incoming>SequenceFlow_0l6rtzy</bpmn:incoming>
+-    </bpmn:endEvent>
+-    <bpmn:sequenceFlow id="SequenceFlow_081rs5d" sourceRef="CheckAaiForPnfCorrelationId" targetRef="DoesAaiContainInfoAboutPnf" />
+-    <bpmn:sequenceFlow id="SequenceFlow_0fn5kgz" name="No" sourceRef="DoesAaiContainInfoAboutPnf" targetRef="CreatePnfEntryInAai">
+-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{!aaiContainsInfoAboutPnf}</bpmn:conditionExpression>
+-    </bpmn:sequenceFlow>
+-    <bpmn:sequenceFlow id="SequenceFlow_1ewfz8r" name="Yes&#10;&#10;" sourceRef="DoesAaiContainInfoAboutPnf" targetRef="AaiEntryExists">
+-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{aaiContainsInfoAboutPnf}</bpmn:conditionExpression>
+-    </bpmn:sequenceFlow>
+-    <bpmn:sequenceFlow id="SequenceFlow_0l6rtzy" sourceRef="CreatePnfEntryInAai" targetRef="AaiEntryExists" />
+-    <bpmn:serviceTask id="CheckInputs" name="Check Inputs" camunda:delegateExpression="${AssignPnfInputsCheckerDelegate}">
+-      <bpmn:incoming>SequenceFlow_1fu9o4x</bpmn:incoming>
+-      <bpmn:outgoing>SequenceFlow_02j05kk</bpmn:outgoing>
+-    </bpmn:serviceTask>
+-    <bpmn:sequenceFlow id="SequenceFlow_02j05kk" sourceRef="CheckInputs" targetRef="CheckAaiForPnfCorrelationId" />
+-    <bpmn:sequenceFlow id="SequenceFlow_1fu9o4x" sourceRef="AssignPnf_StartEvent" targetRef="CheckInputs" />
+-    <bpmn:textAnnotation id="TextAnnotation_184cxp4">
+-      <bpmn:text>Inputs:
+- - pnfCorrelationId - String
+- - uuid - String</bpmn:text>
+-    </bpmn:textAnnotation>
+-    <bpmn:association id="Association_1le3nwi" sourceRef="AssignPnf_StartEvent" targetRef="TextAnnotation_184cxp4" />
+-  </bpmn:process>
+-  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0go8wi3">
+-      <bpmndi:BPMNShape id="Participant_1dwc5st_di" bpmnElement="Participant_1dwc5st" isHorizontal="true">
+-        <dc:Bounds x="160" y="80" width="1100" height="390" />
+-      </bpmndi:BPMNShape>
+-      <bpmndi:BPMNShape id="Participant_0gycee4_di" bpmnElement="Participant_0gycee4" isHorizontal="true">
+-        <dc:Bounds x="590" y="570" width="502" height="60" />
+-      </bpmndi:BPMNShape>
+-      <bpmndi:BPMNShape id="ServiceTask_1ix8822_di" bpmnElement="CreatePnfEntryInAai">
+-        <dc:Bounds x="920" y="247" width="100" height="80" />
+-      </bpmndi:BPMNShape>
+-      <bpmndi:BPMNShape id="ExclusiveGateway_1l92fkt_di" bpmnElement="DoesAaiContainInfoAboutPnf" isMarkerVisible="true">
+-        <dc:Bounds x="795" y="262" width="50" height="50" />
+-        <bpmndi:BPMNLabel>
+-          <dc:Bounds x="777" y="322" width="85" height="27" />
+-        </bpmndi:BPMNLabel>
+-      </bpmndi:BPMNShape>
+-      <bpmndi:BPMNShape id="ServiceTask_0ebur3y_di" bpmnElement="CheckAaiForPnfCorrelationId">
+-        <dc:Bounds x="640" y="247" width="100" height="80" />
+-      </bpmndi:BPMNShape>
+-      <bpmndi:BPMNShape id="StartEvent_1g3euow_di" bpmnElement="AssignPnf_StartEvent">
+-        <dc:Bounds x="219" y="269" width="36" height="36" />
+-      </bpmndi:BPMNShape>
+-      <bpmndi:BPMNShape id="TextAnnotation_184cxp4_di" bpmnElement="TextAnnotation_184cxp4">
+-        <dc:Bounds x="236" y="150" width="243" height="53" />
+-      </bpmndi:BPMNShape>
+-      <bpmndi:BPMNEdge id="SequenceFlow_081rs5d_di" bpmnElement="SequenceFlow_081rs5d">
+-        <di:waypoint x="740" y="287" />
+-        <di:waypoint x="795" y="287" />
+-      </bpmndi:BPMNEdge>
+-      <bpmndi:BPMNEdge id="SequenceFlow_0fn5kgz_di" bpmnElement="SequenceFlow_0fn5kgz">
+-        <di:waypoint x="845" y="287" />
+-        <di:waypoint x="920" y="287" />
+-        <bpmndi:BPMNLabel>
+-          <dc:Bounds x="854" y="290" width="15" height="14" />
+-        </bpmndi:BPMNLabel>
+-      </bpmndi:BPMNEdge>
+-      <bpmndi:BPMNEdge id="MessageFlow_0xh6bkn_di" bpmnElement="MessageFlow_0xh6bkn">
+-        <di:waypoint x="970" y="327" />
+-        <di:waypoint x="970" y="570" />
+-      </bpmndi:BPMNEdge>
+-      <bpmndi:BPMNEdge id="MessageFlow_0cnehf5_di" bpmnElement="MessageFlow_0cnehf5">
+-        <di:waypoint x="710" y="570" />
+-        <di:waypoint x="710" y="327" />
+-      </bpmndi:BPMNEdge>
+-      <bpmndi:BPMNEdge id="MessageFlow_1e1pjve_di" bpmnElement="MessageFlow_1e1pjve">
+-        <di:waypoint x="671" y="327" />
+-        <di:waypoint x="671" y="570" />
+-      </bpmndi:BPMNEdge>
+-      <bpmndi:BPMNEdge id="Association_1le3nwi_di" bpmnElement="Association_1le3nwi">
+-        <di:waypoint x="237" y="269" />
+-        <di:waypoint x="237" y="203" />
+-      </bpmndi:BPMNEdge>
+-      <bpmndi:BPMNShape id="EndEvent_1wfgsdz_di" bpmnElement="AaiEntryExists">
+-        <dc:Bounds x="1152" y="269" width="36" height="36" />
+-        <bpmndi:BPMNLabel>
+-          <dc:Bounds x="1133" y="312" width="77" height="14" />
+-        </bpmndi:BPMNLabel>
+-      </bpmndi:BPMNShape>
+-      <bpmndi:BPMNEdge id="SequenceFlow_1ewfz8r_di" bpmnElement="SequenceFlow_1ewfz8r">
+-        <di:waypoint x="820" y="262" />
+-        <di:waypoint x="820" y="170" />
+-        <di:waypoint x="1170" y="170" />
+-        <di:waypoint x="1170" y="269" />
+-        <bpmndi:BPMNLabel>
+-          <dc:Bounds x="822" y="240" width="19" height="40" />
+-        </bpmndi:BPMNLabel>
+-      </bpmndi:BPMNEdge>
+-      <bpmndi:BPMNEdge id="SequenceFlow_0l6rtzy_di" bpmnElement="SequenceFlow_0l6rtzy">
+-        <di:waypoint x="1020" y="287" />
+-        <di:waypoint x="1152" y="287" />
+-      </bpmndi:BPMNEdge>
+-      <bpmndi:BPMNShape id="ServiceTask_0tv92eb_di" bpmnElement="CheckInputs">
+-        <dc:Bounds x="400" y="247" width="100" height="80" />
+-      </bpmndi:BPMNShape>
+-      <bpmndi:BPMNEdge id="SequenceFlow_02j05kk_di" bpmnElement="SequenceFlow_02j05kk">
+-        <di:waypoint x="500" y="287" />
+-        <di:waypoint x="640" y="287" />
+-      </bpmndi:BPMNEdge>
+-      <bpmndi:BPMNEdge id="SequenceFlow_1fu9o4x_di" bpmnElement="SequenceFlow_1fu9o4x">
+-        <di:waypoint x="255" y="287" />
+-        <di:waypoint x="400" y="287" />
+-      </bpmndi:BPMNEdge>
+-    </bpmndi:BPMNPlane>
+-  </bpmndi:BPMNDiagram>
+-</bpmn:definitions>
+diff --git a/bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/AssignPnfInputsCheckerDelegate.java b/bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/AssignPnfInputsCheckerDelegate.java
+deleted file mode 100644
+index 9a816cf1a..000000000
+--- a/bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/AssignPnfInputsCheckerDelegate.java
++++ /dev/null
+@@ -1,40 +0,0 @@
+-package org.onap.so.bpmn.infrastructure.pnf.delegate;
+-
+-import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_CORRELATION_ID;
+-import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_UUID;
+-import com.google.common.base.Strings;
+-import org.camunda.bpm.engine.delegate.DelegateExecution;
+-import org.camunda.bpm.engine.delegate.JavaDelegate;
+-import org.onap.so.bpmn.common.scripts.ExceptionUtil;
+-import org.springframework.stereotype.Component;
+-
+-@Component
+-public class AssignPnfInputsCheckerDelegate implements JavaDelegate {
+-
+-    public static final String UUID_REGEX =
+-            "(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[1-5]{1}[0-9a-f]{3}-[89ab]{1}[0-9a-f]{3}-[0-9a-f]{12}$";
+-
+-    @Override
+-    public void execute(DelegateExecution execution) {
+-        validatePnfCorrelationId(execution);
+-        validatePnfUuid(execution);
+-    }
+-
+-    private void validatePnfCorrelationId(DelegateExecution execution) {
+-        // String pnfCorrelationId = (String) execution.getVariable(PNF_CORRELATION_ID);
+-        // if (Strings.isNullOrEmpty(pnfCorrelationId)) {
+-        // new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999,
+-        // "pnfCorrelationId variable not defined");
+-        // }
+-    }
+-
+-    private void validatePnfUuid(DelegateExecution execution) {
+-        // String pnfUuid = (String) execution.getVariable(PNF_UUID);
+-        // if (Strings.isNullOrEmpty(pnfUuid)) {
+-        // new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, "pnfUuid variable not defined");
+-        // }
+-        // if (!pnfUuid.matches(UUID_REGEX)) {
+-        // new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, "pnfUuid is not a valid UUID");
+-        // }
+-    }
+-}
+diff --git a/bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CheckAaiForPnfCorrelationIdDelegate.java b/bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CheckAaiForPnfCorrelationIdDelegate.java
+index 11c129b60..216f426ec 100644
+--- a/bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CheckAaiForPnfCorrelationIdDelegate.java
++++ b/bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CheckAaiForPnfCorrelationIdDelegate.java
+@@ -23,23 +23,10 @@ package org.onap.so.bpmn.infrastructure.pnf.delegate;
+ import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.AAI_CONTAINS_INFO_ABOUT_PNF;
+ import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_CORRELATION_ID;
+ import java.io.IOException;
+-import java.util.List;
+-import java.util.Map;
+-import com.fasterxml.jackson.databind.ObjectMapper;
+ import org.camunda.bpm.engine.delegate.DelegateExecution;
+ import org.camunda.bpm.engine.delegate.JavaDelegate;
+-import org.onap.so.bpmn.common.BuildingBlockExecution;
+-import org.onap.so.bpmn.common.InjectExecution;
+ import org.onap.so.bpmn.common.scripts.ExceptionUtil;
+ import org.onap.so.bpmn.infrastructure.pnf.management.PnfManagement;
+-import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
+-import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
+-import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
+-import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
+-import org.onap.so.client.exception.BBObjectNotFoundException;
+-import org.onap.so.client.exception.ExceptionBuilder;
+-import org.onap.so.serviceinstancebeans.Pnfs;
+-import org.onap.so.serviceinstancebeans.Service;
+ import org.slf4j.Logger;
+ import org.slf4j.LoggerFactory;
+ import org.springframework.beans.factory.annotation.Autowired;
+@@ -47,9 +34,9 @@ import org.springframework.stereotype.Component;
+ 
+ /**
+  * Implementation of "Check AAI for pnf_correlation_id" task in CreateAndActivatePnfResource.bpmn
+- * <p>
++ *
+  * Inputs: - pnfCorrelationId - String
+- * <p>
++ *
+  * Outputs: - aaiContainsInfoAboutPnf - local Boolean
+  */
+ @Component
+@@ -58,62 +45,25 @@ public class CheckAaiForPnfCorrelationIdDelegate implements JavaDelegate {
+     private static final Logger logger = LoggerFactory.getLogger(CheckAaiForPnfCorrelationIdDelegate.class);
+ 
+     private PnfManagement pnfManagement;
+-    @Autowired
+-    ExceptionBuilder exceptionUtil;
+-    @Autowired
+-    private ExtractPojosForBB extractPojosForBB;
+ 
+     @Autowired
+     public void setPnfManagement(PnfManagement pnfManagement) {
+         this.pnfManagement = pnfManagement;
+     }
+ 
+-    public void doSomething(BuildingBlockExecution execution) {
+-        try {
+-            Pnf pnf = extractPojosForBB.extractByKey(execution, ResourceKey.PNF);
+-            logger.error(pnf.toString());
+-            String pnfCorrelationId = pnf.getPnfName();
+-            if (pnfCorrelationId == null) {
+-                logger.error("PnfCorrelationId is null");
+-                // new ExceptionUtil().buildAndThrowWorkflowException(execution, 500, PNF_CORRELATION_ID + " is not
+-                // set");
+-            }
+-            try {
+-                boolean isEntry = pnfManagement.getEntryFor(pnfCorrelationId).isPresent();
+-                logger.debug("AAI entry is found for pnf correlation id {}: {}", PNF_CORRELATION_ID, isEntry);
+-                execution.setVariable(AAI_CONTAINS_INFO_ABOUT_PNF, isEntry);
+-            } catch (IOException e) {
+-                logger.error("Exception in check AAI for pnf_correlation_id execution", e);
+-                // new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, e.getMessage());
+-            }
+-        } catch (BBObjectNotFoundException e) {
+-            logger.error(e.toString());
+-        }
+-    }
+-
+     @Override
+     public void execute(DelegateExecution execution) {
+-        BuildingBlockExecution buildingBlockExecution =
+-                (BuildingBlockExecution) execution.getVariable("gBuildingBlockExecution");
+-        // String pnfCorrelationId = (String) execution.getVariable(PNF_CORRELATION_ID);
++        String pnfCorrelationId = (String) execution.getVariable(PNF_CORRELATION_ID);
++        if (pnfCorrelationId == null) {
++            new ExceptionUtil().buildAndThrowWorkflowException(execution, 500, PNF_CORRELATION_ID + " is not set");
++        }
+         try {
+-            Pnfs pnf = extractPojosForBB.extractByKey(buildingBlockExecution, ResourceKey.PNF);
+-            logger.error(pnf.toString());
+-            String pnfCorrelationId = pnf.getInstanceName();
+-            logger.error("======================BB CALLED======================");
+-            if (pnfCorrelationId == null) {
+-                new ExceptionUtil().buildAndThrowWorkflowException(execution, 500, PNF_CORRELATION_ID + " is not set");
+-            }
+-            try {
+-                boolean isEntry = pnfManagement.getEntryFor(pnfCorrelationId).isPresent();
+-                logger.debug("AAI entry is found for pnf correlation id {}: {}", PNF_CORRELATION_ID, isEntry);
+-                execution.setVariableLocal(AAI_CONTAINS_INFO_ABOUT_PNF, isEntry);
+-            } catch (IOException e) {
+-                logger.error("Exception in check AAI for pnf_correlation_id execution", e);
+-                new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, e.getMessage());
+-            }
+-        } catch (BBObjectNotFoundException e) {
+-            logger.error(e.toString());
++            boolean isEntry = pnfManagement.getEntryFor(pnfCorrelationId).isPresent();
++            logger.debug("AAI entry is found for pnf correlation id {}: {}", PNF_CORRELATION_ID, isEntry);
++            execution.setVariableLocal(AAI_CONTAINS_INFO_ABOUT_PNF, isEntry);
++        } catch (IOException e) {
++            logger.error("Exception in check AAI for pnf_correlation_id execution", e);
++            new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, e.getMessage());
+         }
+     }
+ }
+diff --git a/bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreatePnfEntryInAaiDelegate.java b/bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreatePnfEntryInAaiDelegate.java
+index 4fbf83a55..cb06085ee 100644
+--- a/bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreatePnfEntryInAaiDelegate.java
++++ b/bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/CreatePnfEntryInAaiDelegate.java
+@@ -22,20 +22,16 @@
+ 
+ package org.onap.so.bpmn.infrastructure.pnf.delegate;
+ 
++import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_CORRELATION_ID;
++import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_UUID;
+ import org.camunda.bpm.engine.delegate.DelegateExecution;
+ import org.camunda.bpm.engine.delegate.JavaDelegate;
+ import org.onap.aai.domain.yang.Pnf;
+-import org.onap.so.bpmn.common.BuildingBlockExecution;
+ import org.onap.so.bpmn.infrastructure.pnf.management.PnfManagement;
+-import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
+-import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
+-import org.onap.so.client.exception.BBObjectNotFoundException;
+ import org.slf4j.Logger;
+ import org.slf4j.LoggerFactory;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.stereotype.Component;
+-import java.io.IOException;
+-import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.*;
+ 
+ /**
+  * Implementation of "Create Pnf entry in AAI" task in CreateAndActivatePnfResource.bpmn
+@@ -47,31 +43,12 @@ public class CreatePnfEntryInAaiDelegate implements JavaDelegate {
+ 
+     private static final Logger logger = LoggerFactory.getLogger(CreatePnfEntryInAaiDelegate.class);
+     private PnfManagement pnfManagement;
+-    @Autowired
+-    private ExtractPojosForBB extractPojosForBB;
+ 
+     @Autowired
+     public void setPnfManagement(PnfManagement pnfManagement) {
+         this.pnfManagement = pnfManagement;
+     }
+ 
+-    public void doSomething(BuildingBlockExecution execution) throws Exception {
+-        try {
+-            org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf pnf =
+-                    extractPojosForBB.extractByKey(execution, ResourceKey.PNF);
+-            logger.error(pnf.toString());
+-            String pnfCorrelationId = pnf.getPnfName();
+-            String pnfUuid = pnf.getPnfId();
+-            Pnf pnfAai = new Pnf();
+-            pnf.setPnfId(pnfUuid);
+-            pnf.setPnfName(pnfCorrelationId);
+-            pnfManagement.createEntry(pnfCorrelationId, pnfAai);
+-            logger.debug("AAI entry is created for pnf correlation id: {}, pnf uuid: {}", pnfCorrelationId, pnfUuid);
+-        } catch (BBObjectNotFoundException e) {
+-            logger.error(e.toString());
+-        }
+-    }
+-
+     @Override
+     public void execute(DelegateExecution execution) throws Exception {
+         String pnfCorrelationId = (String) execution.getVariable(PNF_CORRELATION_ID);
+diff --git a/bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputs.java b/bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputs.java
+index 05ed86802..b52110ea8 100644
+--- a/bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputs.java
++++ b/bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputs.java
+@@ -22,6 +22,8 @@
+ 
+ package org.onap.so.bpmn.infrastructure.pnf.delegate;
+ 
++import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_CORRELATION_ID;
++import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_UUID;
+ import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.SERVICE_INSTANCE_ID;
+ import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.TIMEOUT_FOR_NOTIFICATION;
+ import com.google.common.base.Strings;
+@@ -35,23 +37,42 @@ import org.springframework.stereotype.Component;
+ @Component
+ public class PnfCheckInputs implements JavaDelegate {
+ 
+-    private AssignPnfInputsCheckerDelegate assignPnfInputsCheckerDelegate;
++    public static final String UUID_REGEX =
++            "(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[1-5]{1}[0-9a-f]{3}-[89ab]{1}[0-9a-f]{3}-[0-9a-f]{12}$";
++
+     private String pnfEntryNotificationTimeout;
+ 
+     @Autowired
+-    public PnfCheckInputs(@Value("${aai.pnfEntryNotificationTimeout}") String pnfEntryNotificationTimeout,
+-            AssignPnfInputsCheckerDelegate assignPnfInputsCheckerDelegate) {
+-        this.assignPnfInputsCheckerDelegate = assignPnfInputsCheckerDelegate;
++    public PnfCheckInputs(@Value("${aai.pnfEntryNotificationTimeout}") String pnfEntryNotificationTimeout) {
+         this.pnfEntryNotificationTimeout = pnfEntryNotificationTimeout;
+     }
+ 
+     @Override
+     public void execute(DelegateExecution execution) {
+-        assignPnfInputsCheckerDelegate.execute(execution);
++        validatePnfCorrelationId(execution);
++        validatePnfUuid(execution);
+         validateTimeout(execution);
+         validateServiceInstanceId(execution);
+     }
+ 
++    private void validatePnfCorrelationId(DelegateExecution execution) {
++        String pnfCorrelationId = (String) execution.getVariable(PNF_CORRELATION_ID);
++        if (Strings.isNullOrEmpty(pnfCorrelationId)) {
++            new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999,
++                    "pnfCorrelationId variable not defined");
++        }
++    }
++
++    private void validatePnfUuid(DelegateExecution execution) {
++        String pnfUuid = (String) execution.getVariable(PNF_UUID);
++        if (Strings.isNullOrEmpty(pnfUuid)) {
++            new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, "pnfUuid variable not defined");
++        }
++        if (!pnfUuid.matches(UUID_REGEX)) {
++            new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, "pnfUuid is not a valid UUID");
++        }
++    }
++
+     private void validateTimeout(DelegateExecution execution) {
+         if (Strings.isNullOrEmpty(pnfEntryNotificationTimeout)) {
+             new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999,
+diff --git a/bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/AssignPnfInputsCheckerDelegateTest.java b/bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/AssignPnfInputsCheckerDelegateTest.java
+deleted file mode 100644
+index 7291ef66e..000000000
+--- a/bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/AssignPnfInputsCheckerDelegateTest.java
++++ /dev/null
+@@ -1,50 +0,0 @@
+-package org.onap.so.bpmn.infrastructure.pnf.delegate;
+-
+-import org.apache.commons.lang3.StringUtils;
+-import org.camunda.bpm.engine.delegate.BpmnError;
+-import org.camunda.bpm.engine.delegate.DelegateExecution;
+-import org.junit.Before;
+-import org.junit.Test;
+-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+-import static org.onap.so.bpmn.infrastructure.pnf.delegate.PnfInputCheckersTestUtils.*;
+-
+-public class AssignPnfInputsCheckerDelegateTest {
+-
+-    private DelegateExecutionBuilder delegateExecutionBuilder;
+-    private AssignPnfInputsCheckerDelegate sut;
+-    private DelegateExecution execution;
+-
+-    @Before
+-    public void setUp() {
+-        sut = new AssignPnfInputsCheckerDelegate();
+-        delegateExecutionBuilder = new DelegateExecutionBuilder();
+-    }
+-
+-    @Test
+-    public void shouldThrowException_whenPnfCorrelationIdNotSet() {
+-        execution = delegateExecutionBuilder.setPnfCorrelationId(null).setPnfUuid(VALID_UUID).build();
+-        assertThatSutExecutionThrowsExceptionOfInstance(BpmnError.class);
+-    }
+-
+-    @Test
+-    public void shouldThrowException_whenPnfUuidIsNotSet() {
+-        execution = delegateExecutionBuilder.setPnfUuid(null).build();
+-        assertThatSutExecutionThrowsExceptionOfInstance(BpmnError.class);
+-    }
+-
+-    @Test
+-    public void shouldThrowException_whenPnfUuidIsEmptyString() {
+-        execution = delegateExecutionBuilder.setPnfUuid(StringUtils.EMPTY).build();
+-        assertThatSutExecutionThrowsExceptionOfInstance(BpmnError.class);
+-    }
+-
+-    @Test
+-    public void shouldThrowException_whenPnfUuidIsReservedUuid() {
+-        execution = delegateExecutionBuilder.setPnfUuid(RESERVED_UUID).build();
+-        assertThatSutExecutionThrowsExceptionOfInstance(BpmnError.class);
+-    }
+-
+-    private void assertThatSutExecutionThrowsExceptionOfInstance(Class<?> type) {
+-        assertThatThrownBy(() -> sut.execute(execution)).isInstanceOf(type);
+-    }
+-}
+diff --git a/bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/GeneratePnfUuidDelegateTest.java b/bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/GeneratePnfUuidDelegateTest.java
+index fe1c5285c..597d111e2 100644
+--- a/bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/GeneratePnfUuidDelegateTest.java
++++ b/bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/GeneratePnfUuidDelegateTest.java
+@@ -35,6 +35,6 @@ public class GeneratePnfUuidDelegateTest {
+         // when
+         delegate.execute(execution);
+         // then
+-        assertThat((String) execution.getVariable(PNF_UUID)).matches(AssignPnfInputsCheckerDelegate.UUID_REGEX);
++        assertThat((String) execution.getVariable(PNF_UUID)).matches(PnfCheckInputs.UUID_REGEX);
+     }
+ }
+diff --git a/bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java b/bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java
+index 6cdce2f23..6c8716cbd 100644
+--- a/bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java
++++ b/bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java
+@@ -21,58 +21,108 @@
+ package org.onap.so.bpmn.infrastructure.pnf.delegate;
+ 
+ import static org.assertj.core.api.Assertions.assertThatThrownBy;
+-import static org.onap.so.bpmn.infrastructure.pnf.delegate.PnfInputCheckersTestUtils.*;
++import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_CORRELATION_ID;
++import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_UUID;
++import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.SERVICE_INSTANCE_ID;
++import java.util.UUID;
+ import org.apache.commons.lang3.StringUtils;
+ import org.camunda.bpm.engine.delegate.BpmnError;
+ import org.camunda.bpm.engine.delegate.DelegateExecution;
++import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;
+ import org.junit.Before;
+ import org.junit.Test;
+-import org.junit.runner.RunWith;
+-import org.mockito.Mock;
+-import org.mockito.junit.MockitoJUnitRunner;
+ 
+-@RunWith(MockitoJUnitRunner.class)
+ public class PnfCheckInputsTest {
+ 
+-    @Mock
+-    private AssignPnfInputsCheckerDelegate assignPnfInputsCheckerDelegate;
+-    private DelegateExecutionBuilder delegateExecutionBuilder;
++    private static final String PNF_ENTRY_NOTIFICATION_TIMEOUT = "P1D";
++    private static final String VALID_UUID = UUID.nameUUIDFromBytes("testUuid".getBytes()).toString();
++    private static final String RESERVED_UUID = new UUID(0, 0).toString();
++    private static final String DEFAULT_SERVICE_INSTANCE_ID = "da7d07d9-b71c-4128-809d-2ec01c807169";
++    private static final String DEFAULT_PNF_CORRELATION_ID = "testPnfCorrelationId";
+ 
+-    private PnfCheckInputs sut;
+-    private DelegateExecution execution;
++    private DelegateExecutionBuilder delegateExecutionBuilder;
+ 
+     @Before
+     public void setUp() {
+         delegateExecutionBuilder = new DelegateExecutionBuilder();
+     }
+ 
++    @Test
++    public void shouldThrowException_whenPnfCorrelationIdNotSet() {
++        PnfCheckInputs testedObject = new PnfCheckInputs(PNF_ENTRY_NOTIFICATION_TIMEOUT);
++        DelegateExecution execution = delegateExecutionBuilder.setPnfCorrelationId(null).setPnfUuid(VALID_UUID).build();
++        assertThatThrownBy(() -> testedObject.execute(execution)).isInstanceOf(BpmnError.class);
++    }
++
+     @Test
+     public void shouldThrowException_whenPnfEntryNotificationTimeoutIsNull() {
+-        prepareSutWithSetNotificationTimeout(null);
+-        execution = delegateExecutionBuilder.build();
+-        assertThatSutExecutionThrowsExceptionOfInstance(BpmnError.class);
++        PnfCheckInputs testedObject = new PnfCheckInputs(null);
++        DelegateExecution execution = delegateExecutionBuilder.build();
++        assertThatThrownBy(() -> testedObject.execute(execution)).isInstanceOf(BpmnError.class);
+     }
+ 
+     @Test
+     public void shouldThrowException_whenPnfEntryNotificationTimeoutIsEmpty() {
+-        prepareSutWithSetNotificationTimeout(StringUtils.EMPTY);
+-        execution = delegateExecutionBuilder.build();
+-        assertThatSutExecutionThrowsExceptionOfInstance(BpmnError.class);
++        PnfCheckInputs testedObject = new PnfCheckInputs(StringUtils.EMPTY);
++        DelegateExecution execution = delegateExecutionBuilder.build();
++        assertThatThrownBy(() -> testedObject.execute(execution)).isInstanceOf(BpmnError.class);
+     }
+ 
+     @Test
+-    public void shouldThrowException_whenServiceInstanceIdIsNotSet() {
+-        prepareSutWithSetNotificationTimeout(PNF_ENTRY_NOTIFICATION_TIMEOUT);
+-        execution = delegateExecutionBuilder.setServiceInstanceId(null).build();
+-        assertThatSutExecutionThrowsExceptionOfInstance(BpmnError.class);
++    public void shouldThrowException_whenPnfUuidIsNotSet() {
++        PnfCheckInputs testedObject = new PnfCheckInputs(PNF_ENTRY_NOTIFICATION_TIMEOUT);
++        DelegateExecution execution = delegateExecutionBuilder.setPnfUuid(null).build();
++        assertThatThrownBy(() -> testedObject.execute(execution)).isInstanceOf(BpmnError.class);
+     }
+ 
+-    private void prepareSutWithSetNotificationTimeout(String pnfEntryNotificationTimeout) {
+-        sut = new PnfCheckInputs(pnfEntryNotificationTimeout, assignPnfInputsCheckerDelegate);
++    @Test
++    public void shouldThrowException_whenPnfUuidIsEmptyString() {
++        PnfCheckInputs testedObject = new PnfCheckInputs(PNF_ENTRY_NOTIFICATION_TIMEOUT);
++        DelegateExecution execution = delegateExecutionBuilder.setPnfUuid(StringUtils.EMPTY).build();
++        assertThatThrownBy(() -> testedObject.execute(execution)).isInstanceOf(BpmnError.class);
+     }
+ 
+-    private void assertThatSutExecutionThrowsExceptionOfInstance(Class<?> type) {
+-        assertThatThrownBy(() -> sut.execute(execution)).isInstanceOf(type);
++    @Test
++    public void shouldThrowException_whenPnfUuidIsReservedUuid() {
++        PnfCheckInputs testedObject = new PnfCheckInputs(PNF_ENTRY_NOTIFICATION_TIMEOUT);
++        DelegateExecution execution = delegateExecutionBuilder.setPnfUuid(RESERVED_UUID).build();
++        assertThatThrownBy(() -> testedObject.execute(execution)).isInstanceOf(BpmnError.class);
+     }
+ 
++    @Test
++    public void shouldThrowException_whenServiceInstanceIdIsNotSet() {
++        PnfCheckInputs testedObject = new PnfCheckInputs(PNF_ENTRY_NOTIFICATION_TIMEOUT);
++        DelegateExecution execution = delegateExecutionBuilder.setServiceInstanceId(null).build();
++        assertThatThrownBy(() -> testedObject.execute(execution)).isInstanceOf(BpmnError.class);
++    }
++
++    private static class DelegateExecutionBuilder {
++        private String pnfCorrelationId = DEFAULT_PNF_CORRELATION_ID;
++        private String pnfUuid = VALID_UUID;
++        private String serviceInstanceId = DEFAULT_SERVICE_INSTANCE_ID;
++
++        public DelegateExecutionBuilder setPnfCorrelationId(String pnfCorrelationId) {
++            this.pnfCorrelationId = pnfCorrelationId;
++            return this;
++        }
++
++        public DelegateExecutionBuilder setPnfUuid(String pnfUuid) {
++            this.pnfUuid = pnfUuid;
++            return this;
++        }
++
++        public DelegateExecutionBuilder setServiceInstanceId(String serviceInstanceId) {
++            this.serviceInstanceId = serviceInstanceId;
++            return this;
++        }
++
++        public DelegateExecution build() {
++            DelegateExecution execution = new DelegateExecutionFake();
++            execution.setVariable("testProcessKey", "testProcessKeyValue");
++            execution.setVariable(PNF_CORRELATION_ID, this.pnfCorrelationId);
++            execution.setVariable(PNF_UUID, this.pnfUuid);
++            execution.setVariable(SERVICE_INSTANCE_ID, this.serviceInstanceId);
++            return execution;
++        }
++    }
+ }
+diff --git a/bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfInputCheckersTestUtils.java b/bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfInputCheckersTestUtils.java
+deleted file mode 100644
+index c1c7f06d4..000000000
+--- a/bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfInputCheckersTestUtils.java
++++ /dev/null
+@@ -1,46 +0,0 @@
+-package org.onap.so.bpmn.infrastructure.pnf.delegate;
+-
+-import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.*;
+-import org.camunda.bpm.engine.delegate.DelegateExecution;
+-import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;
+-import java.util.UUID;
+-
+-
+-public class PnfInputCheckersTestUtils {
+-
+-    static final String PNF_ENTRY_NOTIFICATION_TIMEOUT = "P1D";
+-    static final String VALID_UUID = UUID.nameUUIDFromBytes("testUuid".getBytes()).toString();
+-    static final String RESERVED_UUID = new UUID(0, 0).toString();
+-    private static final String DEFAULT_SERVICE_INSTANCE_ID = "da7d07d9-b71c-4128-809d-2ec01c807169";
+-    private static final String DEFAULT_PNF_CORRELATION_ID = "testPnfCorrelationId";
+-
+-    static class DelegateExecutionBuilder {
+-        private String pnfCorrelationId = DEFAULT_PNF_CORRELATION_ID;
+-        private String pnfUuid = VALID_UUID;
+-        private String serviceInstanceId = DEFAULT_SERVICE_INSTANCE_ID;
+-
+-        public DelegateExecutionBuilder setPnfCorrelationId(String pnfCorrelationId) {
+-            this.pnfCorrelationId = pnfCorrelationId;
+-            return this;
+-        }
+-
+-        public DelegateExecutionBuilder setPnfUuid(String pnfUuid) {
+-            this.pnfUuid = pnfUuid;
+-            return this;
+-        }
+-
+-        public DelegateExecutionBuilder setServiceInstanceId(String serviceInstanceId) {
+-            this.serviceInstanceId = serviceInstanceId;
+-            return this;
+-        }
+-
+-        public DelegateExecution build() {
+-            DelegateExecution execution = new DelegateExecutionFake();
+-            execution.setVariable("testProcessKey", "testProcessKeyValue");
+-            execution.setVariable(PNF_CORRELATION_ID, this.pnfCorrelationId);
+-            execution.setVariable(PNF_UUID, this.pnfUuid);
+-            execution.setVariable(SERVICE_INSTANCE_ID, this.serviceInstanceId);
+-            return execution;
+-        }
+-    }
+-}
+diff --git a/bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java b/bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java
+index 426a488d4..b5b1f5db2 100644
+--- a/bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java
++++ b/bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java
+@@ -102,7 +102,6 @@ public class WorkflowAction {
+     private static final String VNF_TYPE = "vnfType";
+     private static final String SERVICE = "Service";
+     private static final String VNF = "Vnf";
+-    private static final String PNF = "Pnf";
+     private static final String VFMODULE = "VfModule";
+     private static final String VOLUMEGROUP = "VolumeGroup";
+     private static final String NETWORK = "Network";
+@@ -621,8 +620,6 @@ public class WorkflowAction {
+                 workflowResourceIds.setServiceInstanceId(serviceInstanceId);
+                 if (resource == WorkflowType.VNF) {
+                     workflowResourceIds.setVnfId(resourceId);
+-                } else if (resource == WorkflowType.PNF) {
+-                    workflowResourceIds.setPnfId(resourceId);
+                 } else if (resource == WorkflowType.VFMODULE) {
+                     workflowResourceIds.setVfModuleId(resourceId);
+                 } else if (resource == WorkflowType.VOLUMEGROUP) {
+@@ -1081,14 +1078,6 @@ public class WorkflowAction {
+                             }
+                         }
+                     }
+-                    if (validate.getResources().getPnfs() != null) {
+-                        validate.getResources().getPnfs().forEach(pnf -> {
+-                            logger.error("PNF MODELCUSTID: " + pnf.getModelInfo().getModelCustomizationId());
+-                            resourceCounter.add(new Resource(WorkflowType.PNF,
+-                                    pnf.getModelInfo().getModelCustomizationId(), false));
+-                        });
+-                        foundRelated = true;
+-                    }
+                     break;
+                 }
+             }
+@@ -1435,11 +1424,6 @@ public class WorkflowAction {
+                             apiVersion, resourceId, requestAction, aLaCarte, vnfType, workflowResourceIds,
+                             requestDetails, false, null, false));
+                 }
+-            } else if (orchFlow.getFlowName().contains(PNF)) {
+-                resourceCounter.stream().filter(x -> WorkflowType.PNF == x.getResourceType())
+-                        .forEach(pnfResource -> flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId,
+-                                pnfResource, apiVersion, resourceId, requestAction, aLaCarte, vnfType,
+-                                workflowResourceIds, requestDetails, false, null, false)));
+             } else if (orchFlow.getFlowName().contains(NETWORK)
+                     && !orchFlow.getFlowName().contains(NETWORKCOLLECTION)) {
+                 for (int i = 0; i < resourceCounter.stream().filter(x -> WorkflowType.NETWORK == x.getResourceType())
+diff --git a/bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowType.java b/bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowType.java
+index 1eb5cf743..05a51797d 100644
+--- a/bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowType.java
++++ b/bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowType.java
+@@ -24,7 +24,6 @@ public enum WorkflowType {
+ 
+     SERVICE("Service"),
+     VNF("Vnf"),
+-    PNF("Pnf"),
+     VFMODULE("VfModule"),
+     VOLUMEGROUP("VolumeGroup"),
+     NETWORK("Network"),
+diff --git a/common/src/main/java/org/onap/so/client/aai/AAIVersion.java b/common/src/main/java/org/onap/so/client/aai/AAIVersion.java
+index 2d07f7076..3a59b2b33 100644
+--- a/common/src/main/java/org/onap/so/client/aai/AAIVersion.java
++++ b/common/src/main/java/org/onap/so/client/aai/AAIVersion.java
+@@ -23,7 +23,7 @@ package org.onap.so.client.aai;
+ import org.onap.so.client.graphinventory.GraphInventoryVersion;
+ 
+ public enum AAIVersion implements GraphInventoryVersion {
+-    V13("v13"), V14("v14"), V15("v15"); // , V16("v16"), V17("v17");
++    V13("v13"), V14("v14"), V15("v15"), V16("v16"), V17("v17");
+ 
+     public static final AAIVersion LATEST = AAIVersion.values()[AAIVersion.values().length - 1];
+     private final String value;
+diff --git a/common/src/main/java/org/onap/so/serviceinstancebeans/Pnfs.java b/common/src/main/java/org/onap/so/serviceinstancebeans/Pnfs.java
+deleted file mode 100644
+index 65567988d..000000000
+--- a/common/src/main/java/org/onap/so/serviceinstancebeans/Pnfs.java
++++ /dev/null
+@@ -1,108 +0,0 @@
+-package org.onap.so.serviceinstancebeans;
+-
+-import com.fasterxml.jackson.annotation.JsonInclude;
+-import com.fasterxml.jackson.annotation.JsonProperty;
+-import com.fasterxml.jackson.annotation.JsonRootName;
+-import javax.persistence.Id;
+-import java.io.Serializable;
+-import java.util.ArrayList;
+-import java.util.List;
+-import java.util.Map;
+-
+-@JsonRootName(value = "pnfs")
+-@JsonInclude(JsonInclude.Include.NON_DEFAULT)
+-public class Pnfs implements Serializable {
+-
+-    private static final long serialVersionUID = 8081495240474276501L;
+-    @JsonProperty("modelInfo")
+-    protected ModelInfo modelInfo;
+-    @JsonProperty("cloudConfiguration")
+-    protected CloudConfiguration cloudConfiguration;
+-    @JsonProperty("instanceName")
+-    protected String instanceName;
+-    @JsonProperty("platform")
+-    protected Platform platform;
+-    @JsonProperty("lineOfBusiness")
+-    protected LineOfBusiness lineOfBusiness;
+-    @JsonProperty("productFamilyId")
+-    protected String productFamilyId;
+-    @JsonProperty("instanceParams")
+-    private List<Map<String, String>> instanceParams = new ArrayList<>();
+-
+-    // @JsonProperty("vfModules")
+-    // private List<VfModules> vfModules = new ArrayList<>();
+-
+-
+-    public ModelInfo getModelInfo() {
+-        return modelInfo;
+-    }
+-
+-    public void setModelInfo(ModelInfo modelInfo) {
+-        this.modelInfo = modelInfo;
+-    }
+-
+-    public CloudConfiguration getCloudConfiguration() {
+-        return cloudConfiguration;
+-    }
+-
+-    public void setCloudConfiguration(CloudConfiguration cloudConfiguration) {
+-        this.cloudConfiguration = cloudConfiguration;
+-    }
+-
+-    public String getInstanceName() {
+-        return instanceName;
+-    }
+-
+-    public void setInstanceName(String instanceName) {
+-        this.instanceName = instanceName;
+-    }
+-
+-    public Platform getPlatform() {
+-        return platform;
+-    }
+-
+-    public void setPlatform(Platform platform) {
+-        this.platform = platform;
+-    }
+-
+-    public LineOfBusiness getLineOfBusiness() {
+-        return lineOfBusiness;
+-    }
+-
+-    public void setLineOfBusiness(LineOfBusiness lineOfBusiness) {
+-        this.lineOfBusiness = lineOfBusiness;
+-    }
+-
+-    public String getProductFamilyId() {
+-        return productFamilyId;
+-    }
+-
+-    public void setProductFamilyId(String productFamilyId) {
+-        this.productFamilyId = productFamilyId;
+-    }
+-
+-    public List<Map<String, String>> getInstanceParams() {
+-        return instanceParams;
+-    }
+-
+-    public void setInstanceParams(List<Map<String, String>> instanceParams) {
+-        this.instanceParams = instanceParams;
+-    }
+-
+-    // public List<VfModules> getVfModules() {
+-    // return vfModules;
+-    // }
+-    //
+-    // public void setVfModules(List<VfModules> vfModules) {
+-    // this.vfModules = vfModules;
+-    // }
+-
+-    @Override
+-    public String toString() {
+-        return "Pnfs [modelInfo=" + modelInfo + ", cloudConfiguration=" + cloudConfiguration + ", instanceName="
+-                + instanceName + ", platform=" + platform + ", " + "lineOfBusiness=" + lineOfBusiness
+-                + ", productFamilyId=" + productFamilyId + ", instanceParams=" + instanceParams;
+-        // + ", vfModules=" + vfModules + "]";
+-    }
+-
+-}
+diff --git a/common/src/main/java/org/onap/so/serviceinstancebeans/Resources.java b/common/src/main/java/org/onap/so/serviceinstancebeans/Resources.java
+index 0bf72a768..2123b2f6f 100644
+--- a/common/src/main/java/org/onap/so/serviceinstancebeans/Resources.java
++++ b/common/src/main/java/org/onap/so/serviceinstancebeans/Resources.java
+@@ -36,8 +36,6 @@ public class Resources implements Serializable {
+     private static final long serialVersionUID = 2194797231782624520L;
+     @JsonProperty("vnfs")
+     private List<Vnfs> vnfs = new ArrayList<>();
+-    @JsonProperty("pnfs")
+-    private List<Pnfs> pnfs = new ArrayList<>();
+     @JsonProperty("networks")
+     private List<Networks> networks = new ArrayList<>();
+ 
+@@ -49,14 +47,6 @@ public class Resources implements Serializable {
+         this.vnfs = vnfs;
+     }
+ 
+-    public List<Pnfs> getPnfs() {
+-        return pnfs;
+-    }
+-
+-    public void setPnfs(List<Pnfs> pnfs) {
+-        this.pnfs = pnfs;
+-    }
+-
+     public List<Networks> getNetworks() {
+         return networks;
+     }
