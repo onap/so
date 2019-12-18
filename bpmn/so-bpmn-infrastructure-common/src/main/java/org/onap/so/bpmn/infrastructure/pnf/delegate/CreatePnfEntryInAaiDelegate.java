@@ -22,16 +22,20 @@
 
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
-import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_CORRELATION_ID;
-import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_UUID;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.onap.aai.domain.yang.Pnf;
+import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.infrastructure.pnf.management.PnfManagement;
+import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
+import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
+import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import java.io.IOException;
+import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.*;
 
 /**
  * Implementation of "Create Pnf entry in AAI" task in CreateAndActivatePnfResource.bpmn
@@ -43,10 +47,29 @@ public class CreatePnfEntryInAaiDelegate implements JavaDelegate {
 
     private static final Logger logger = LoggerFactory.getLogger(CreatePnfEntryInAaiDelegate.class);
     private PnfManagement pnfManagement;
+    @Autowired
+    private ExtractPojosForBB extractPojosForBB;
 
     @Autowired
     public void setPnfManagement(PnfManagement pnfManagement) {
         this.pnfManagement = pnfManagement;
+    }
+
+    public void doSomething(BuildingBlockExecution execution) throws Exception {
+        try {
+            org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf pnf =
+                    extractPojosForBB.extractByKey(execution, ResourceKey.PNF);
+            logger.error(pnf.toString());
+            String pnfCorrelationId = pnf.getPnfName();
+            String pnfUuid = pnf.getPnfId();
+            Pnf pnfAai = new Pnf();
+            pnf.setPnfId(pnfUuid);
+            pnf.setPnfName(pnfCorrelationId);
+            pnfManagement.createEntry(pnfCorrelationId, pnfAai);
+            logger.debug("AAI entry is created for pnf correlation id: {}, pnf uuid: {}", pnfCorrelationId, pnfUuid);
+        } catch (BBObjectNotFoundException e) {
+            logger.error(e.toString());
+        }
     }
 
     @Override
