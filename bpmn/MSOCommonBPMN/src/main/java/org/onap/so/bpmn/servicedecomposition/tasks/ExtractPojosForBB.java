@@ -59,6 +59,10 @@ public class ExtractPojosForBB {
                     serviceInstance = extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
                     result = lookupObjectInList(serviceInstance.getVnfs(), value);
                     break;
+                case PNF:
+                    serviceInstance = extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+                    result = lookupObjectInList(serviceInstance.getPnfs(), value);
+                    break;
                 case NETWORK_ID:
                     serviceInstance = extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
                     result = lookupObjectInList(serviceInstance.getNetworks(), value);

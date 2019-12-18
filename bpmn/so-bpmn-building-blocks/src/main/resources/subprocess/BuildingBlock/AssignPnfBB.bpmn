@@ -11,8 +11,8 @@
     <bpmn:startEvent id="AssignPnf_StartEvent">
       <bpmn:outgoing>SequenceFlow_1fu9o4x</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:serviceTask id="CheckAaiForPnfCorrelationId" name="Check AAI for pnf_correlation_id" camunda:delegateExpression="${CheckAaiForPnfCorrelationIdDelegate}">
-      <bpmn:incoming>SequenceFlow_02j05kk</bpmn:incoming>
+    <bpmn:serviceTask id="CheckAaiForPnfCorrelationId" name="Check AAI for pnf_correlation_id" camunda:expression="${CheckAaiForPnfCorrelationIdDelegate.doSomething(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_1fu9o4x</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_081rs5d</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:exclusiveGateway id="DoesAaiContainInfoAboutPnf" name="Does AAI contain info about pnf?">
@@ -20,7 +20,7 @@
       <bpmn:outgoing>SequenceFlow_0fn5kgz</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_1ewfz8r</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="CreatePnfEntryInAai" name="Create Pnf entry in AAI" camunda:delegateExpression="${CreatePnfEntryInAaiDelegate}">
+    <bpmn:serviceTask id="CreatePnfEntryInAai" name="Create Pnf entry in AAI" camunda:expression="${CreatePnfEntryInAaiDelegate.doSomething(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_0fn5kgz</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0l6rtzy</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -36,12 +36,7 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{aaiContainsInfoAboutPnf}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_0l6rtzy" sourceRef="CreatePnfEntryInAai" targetRef="AaiEntryExists" />
-    <bpmn:serviceTask id="CheckInputs" name="Check Inputs" camunda:delegateExpression="${AssignPnfInputsCheckerDelegate}">
-      <bpmn:incoming>SequenceFlow_1fu9o4x</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_02j05kk</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="SequenceFlow_02j05kk" sourceRef="CheckInputs" targetRef="CheckAaiForPnfCorrelationId" />
-    <bpmn:sequenceFlow id="SequenceFlow_1fu9o4x" sourceRef="AssignPnf_StartEvent" targetRef="CheckInputs" />
+    <bpmn:sequenceFlow id="SequenceFlow_1fu9o4x" sourceRef="AssignPnf_StartEvent" targetRef="CheckAaiForPnfCorrelationId" />
     <bpmn:textAnnotation id="TextAnnotation_184cxp4">
       <bpmn:text>Inputs:
  - pnfCorrelationId - String
@@ -121,16 +116,9 @@
         <di:waypoint x="1020" y="287" />
         <di:waypoint x="1152" y="287" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ServiceTask_0tv92eb_di" bpmnElement="CheckInputs">
-        <dc:Bounds x="400" y="247" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_02j05kk_di" bpmnElement="SequenceFlow_02j05kk">
-        <di:waypoint x="500" y="287" />
-        <di:waypoint x="640" y="287" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1fu9o4x_di" bpmnElement="SequenceFlow_1fu9o4x">
         <di:waypoint x="255" y="287" />
-        <di:waypoint x="400" y="287" />
+        <di:waypoint x="640" y="287" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

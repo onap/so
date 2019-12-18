@@ -37,6 +37,7 @@ public class WorkflowResourceIds implements Serializable {
     private String networkCollectionId;
     private String configurationId;
     private String instanceGroupId;
+    private String pnfId;
 
     @Override
     public String toString() {
@@ -108,5 +109,13 @@ public class WorkflowResourceIds implements Serializable {
 
     public void setInstanceGroupId(String instanceGroupId) {
         this.instanceGroupId = instanceGroupId;
+    }
+
+    public void setPnfId(String pnfId) {
+        this.pnfId = pnfId;
+    }
+
+    public String getPnfId() {
+        return pnfId;
     }
 }
