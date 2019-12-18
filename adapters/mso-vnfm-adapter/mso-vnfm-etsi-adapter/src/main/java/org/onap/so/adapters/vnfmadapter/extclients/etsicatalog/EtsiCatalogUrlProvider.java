@@ -50,10 +50,33 @@ public class EtsiCatalogUrlProvider {
      * @param vnfPkgId The ID of the VNF Package
      * @return the URL for the GET operation
      */
-
     public String getVnfPackageContentUrl(final String vnfPkgId) {
         final String url = msbEndpoint + vnfpkgmServiceUrl + "/vnf_packages/" + vnfPkgId + "/package_content";
         logger.info("getEtsiCatalogVnfPackageContentUrl: {}", url);
         return url;
     }
+
+    /**
+     * Get the URL for retrieving VNF packages information from ETSI Catalog.".
+     *
+     * @return the URL for the GET operation
+     */
+    public String getVnfPackagesUrl() {
+        final String url = msbEndpoint + vnfpkgmServiceUrl + "/vnf_packages";
+        logger.info("getEtsiCatalogVnfPackagesEndpoint: {}", url);
+        return url;
+    }
+
+    /**
+     * Get the URL for retrieving specific VNF package information from the ETSI Catalog.".
+     *
+     * @param vnfPkgId The ID of the VNF Package
+     * @return the URL for the GET operation
+     */
+    public String getVnfPackageUrl(final String vnfPkgId) {
+        final String url = msbEndpoint + vnfpkgmServiceUrl + "/vnf_packages/" + vnfPkgId;
+        logger.info("getEtsiCatalogVnfPackageEndpoint: {}", url);
+        return url;
+    }
+
 }

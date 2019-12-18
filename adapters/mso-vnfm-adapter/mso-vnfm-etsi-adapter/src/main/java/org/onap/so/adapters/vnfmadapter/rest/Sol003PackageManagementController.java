@@ -23,7 +23,6 @@ package org.onap.so.adapters.vnfmadapter.rest;
 import static org.onap.so.adapters.vnfmadapter.Constants.APPLICATION_ZIP;
 import static org.onap.so.adapters.vnfmadapter.Constants.PACKAGE_MANAGEMENT_BASE_URL;
 import static org.slf4j.LoggerFactory.getLogger;
-import java.util.List;
 import java.util.Optional;
 import javax.ws.rs.core.MediaType;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.EtsiCatalogServiceProvider;
@@ -50,40 +49,55 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class Sol003PackageManagementController {
 
     private final EtsiCatalogServiceProvider etsiCatalogServiceProvider;
+    private static final String LOG_REQUEST_RECEIVED = "VNF PackageManagement Controller: {} {} {}";
+    private static final Logger logger = getLogger(Sol003PackageManagementController.class);
 
     @Autowired
     Sol003PackageManagementController(final EtsiCatalogServiceProvider etsiCatalogServiceProvider) {
         this.etsiCatalogServiceProvider = etsiCatalogServiceProvider;
     }
 
-
-    private static final String LOG_REQUEST_RECEIVED = "VNF PackageManagement Controller: {} {} {}";
-    private static final Logger logger = getLogger(Sol003PackageManagementController.class);
-
     /**
      * GET VNF packages information. Will return zero or more VNF package representations that match the attribute
      * filter. These representations will be in a list. Section Number: 10.4.2
      * 
-     * @return A List of all VNF packages. Object: List<InlineResponse2001> Response Code: 200 OK
+     * @return An Array of all VNF packages. Object: InlineResponse2001[] Response Code: 200 OK
      */
-
     @GetMapping(value = "/vnf_packages", produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public ResponseEntity<List<InlineResponse2001>> getVnfPackages() {
+    public ResponseEntity getVnfPackages() {
         logger.info(LOG_REQUEST_RECEIVED, "getVnfPackages.");
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        final Optional<InlineResponse2001[]> response = etsiCatalogServiceProvider.getVnfPackages();
+        if (response.isPresent()) {
+            logger.info(LOG_REQUEST_RECEIVED, "getVnfPackages Response: ", HttpStatus.OK);
+            return new ResponseEntity(response.get(), HttpStatus.OK);
+        }
+        final String errorMessage = "An error occurred, a null response was received by the\n"
+                + " Sol003PackageManagementController from the EtsiCatalogManager using the GET \"vnf_packages\" \n"
+                + "endpoint.";
+        logger.error(errorMessage);
+        return new ResponseEntity(buildProblemDetails(errorMessage), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
      * GET VNF package information. Will return a specific VNF package representation that match the attribute filter.
      * Section Number: 10.4.3
-     * 
+     *
      * @param vnfPkgId The ID of the VNF Package that you want to query.
      * @return A VNF package based on vnfPkgId. Object: VnfPkgInfo Response Code: 200 OK
      */
     @GetMapping(value = "/vnf_packages/{vnfPkgId}", produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public ResponseEntity<InlineResponse2001> getVnfPackage(@PathVariable("vnfPkgId") final String vnfPkgId) {
+    public ResponseEntity getVnfPackage(@PathVariable("vnfPkgId") final String vnfPkgId) {
         logger.info(LOG_REQUEST_RECEIVED, "getVnfPackage: ", vnfPkgId);
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        final Optional<InlineResponse2001> response = etsiCatalogServiceProvider.getVnfPackage(vnfPkgId);
+        if (response.isPresent()) {
+            logger.info(LOG_REQUEST_RECEIVED, "getVnfPackage Response: ", HttpStatus.OK);
+            return new ResponseEntity(response.get(), HttpStatus.OK);
+        }
+        final String errorMessage = "An error occurred, a null response was received by the\n"
+                + " Sol003PackageManagementController from the EtsiCatalogManager using the GET \"vnf_packages\" by vnfPkgId: \""
+                + vnfPkgId + "\" \n" + "endpoint.";
+        logger.error(errorMessage);
+        return new ResponseEntity(buildProblemDetails(errorMessage), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -144,7 +158,7 @@ public class Sol003PackageManagementController {
      * @param detail The error message retrieved from the exception thrown.
      * @return ProblemDetails Object, containing error information.
      */
-    private ProblemDetails buildProblemDetails(String detail) {
+    private ProblemDetails buildProblemDetails(final String detail) {
         final ProblemDetails problemDetails = new ProblemDetails();
         problemDetails.setDetail(detail);
         return problemDetails;

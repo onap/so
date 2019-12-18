@@ -20,6 +20,7 @@
 
 package org.onap.so.adapters.vnfmadapter.extclients.etsicatalog;
 
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.InlineResponse2001;
 import java.util.Optional;
 
 /**
@@ -35,7 +36,21 @@ public interface EtsiCatalogServiceProvider {
      * @param vnfPkgId The ID of the VNF Package from which the "package_content" will be retrieved.
      * @return The Package Content of a VNF Package ("vnfPkgId").
      */
-
     Optional<byte[]> getVnfPackageContent(final String vnfPkgId);
+
+    /**
+     * GET VNF packages information from ETSI Catalog. Will return zero or more VNF package representations.
+     *
+     * @return An Array of all VNF packages retrieved from the ETSI Catalog.
+     */
+    Optional<InlineResponse2001[]> getVnfPackages();
+
+    /**
+     * GET specific VNF package information from ETSI Catalog.
+     *
+     * @param vnfPkgId The ID of the VNF Package that you want to query.
+     * @return The VNF package retrieved from the ETSI Catalog
+     */
+    Optional<InlineResponse2001> getVnfPackage(final String vnfPkgId);
 
 }
