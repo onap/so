@@ -45,6 +45,7 @@ import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
@@ -142,6 +143,7 @@ public class OrchestrationRequestsTest extends BaseTest {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
+        headers.set(ONAPLogConstants.Headers.REQUEST_ID, "1e45215d-b7b3-4c5a-9316-65bdddaf649f");
         HttpEntity<Request> entity = new HttpEntity<Request>(null, headers);
 
         UriComponentsBuilder builder = UriComponentsBuilder
@@ -157,7 +159,7 @@ public class OrchestrationRequestsTest extends BaseTest {
         assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
         assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
         assertEquals("7.0.0", response.getHeaders().get("X-LatestVersion").get(0));
-        assertEquals("00032ab7-1a18-42e5-965d-8ea592502018", response.getHeaders().get("X-TransactionID").get(0));
+        assertEquals("1e45215d-b7b3-4c5a-9316-65bdddaf649f", response.getHeaders().get("X-TransactionID").get(0));
         assertNotNull(response.getBody().getRequest().getFinishTime());
     }
 
@@ -175,6 +177,7 @@ public class OrchestrationRequestsTest extends BaseTest {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
+        headers.set(ONAPLogConstants.Headers.REQUEST_ID, "e5e3c007-9fe9-4a20-8691-bdd20e14504d");
         HttpEntity<Request> entity = new HttpEntity<Request>(null, headers);
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl(createURLWithPort("/onap/so/infra/orchestrationRequests/v7/" + testRequestId))
@@ -190,7 +193,7 @@ public class OrchestrationRequestsTest extends BaseTest {
         assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
         assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
         assertEquals("7.0.0", response.getHeaders().get("X-LatestVersion").get(0));
-        assertEquals("00032ab7-1a18-42e5-965d-8ea592502018", response.getHeaders().get("X-TransactionID").get(0));
+        assertEquals("e5e3c007-9fe9-4a20-8691-bdd20e14504d", response.getHeaders().get("X-TransactionID").get(0));
         assertNotNull(response.getBody().getRequest().getFinishTime());
     }
 
@@ -262,6 +265,7 @@ public class OrchestrationRequestsTest extends BaseTest {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
+        headers.set(ONAPLogConstants.Headers.REQUEST_ID, "0321e28d-3dde-4b31-9b28-1e0f07231b93");
         HttpEntity<Request> entity = new HttpEntity<Request>(null, headers);
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(
@@ -278,7 +282,7 @@ public class OrchestrationRequestsTest extends BaseTest {
         assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
         assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
         assertEquals("7.0.0", response.getHeaders().get("X-LatestVersion").get(0));
-        assertEquals("00032ab7-3fb3-42e5-965d-8ea592502017", response.getHeaders().get("X-TransactionID").get(0));
+        assertEquals("0321e28d-3dde-4b31-9b28-1e0f07231b93", response.getHeaders().get("X-TransactionID").get(0));
     }
 
     @Test

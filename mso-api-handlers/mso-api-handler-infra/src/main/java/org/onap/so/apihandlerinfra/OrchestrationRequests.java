@@ -44,6 +44,7 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.http.HttpStatus;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandler.common.ResponseBuilder;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
@@ -70,6 +71,7 @@ import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 import org.onap.so.utils.UUIDChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -158,7 +160,8 @@ public class OrchestrationRequests {
         request.setRequestId(requestId);
         orchestrationResponse.setRequest(request);
 
-        return builder.buildResponse(HttpStatus.SC_OK, requestId, orchestrationResponse, apiVersion);
+        return builder.buildResponse(HttpStatus.SC_OK, MDC.get(ONAPLogConstants.MDCs.REQUEST_ID), orchestrationResponse,
+                apiVersion);
     }
 
     @GET
@@ -218,7 +221,8 @@ public class OrchestrationRequests {
         }
 
         orchestrationList.setRequestList(requestLists);
-        return builder.buildResponse(HttpStatus.SC_OK, null, orchestrationList, apiVersion);
+        return builder.buildResponse(HttpStatus.SC_OK, MDC.get(ONAPLogConstants.MDCs.REQUEST_ID), orchestrationList,
+                apiVersion);
     }
 
     @POST
