@@ -6,6 +6,8 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
+ * Modifications Copyright (c) 2019 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 import org.onap.aai.domain.yang.CloudRegion;
 import org.onap.aai.domain.yang.Configuration;
 import org.onap.aai.domain.yang.Configurations;
@@ -49,7 +52,6 @@ import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.MultipleObjectsFou
 import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.NoServiceInstanceFoundException;
 import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
-import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
@@ -103,9 +105,7 @@ public class BBInputSetupUtils {
         if (requestDetails.getRelatedInstanceList() != null) {
             for (RelatedInstanceList relatedInstanceList : requestDetails.getRelatedInstanceList()) {
                 RelatedInstance relatedInstance = relatedInstanceList.getRelatedInstance();
-                if (relatedInstance != null && relatedInstance.getModelInfo() != null
-                        && relatedInstance.getModelInfo().getModelType() != null
-                        && relatedInstance.getModelInfo().getModelType().equals(modelType)) {
+                if (isRelatedInstanceValid(modelType, relatedInstance)) {
                     return relatedInstance;
                 }
             }
@@ -113,40 +113,29 @@ public class BBInputSetupUtils {
         return null;
     }
 
-    public void updateInfraActiveRequestVnfId(InfraActiveRequests request, String vnfId) {
+    private void updateInfraActiveRequest(InfraActiveRequests request, Runnable setter) {
         if (request != null) {
-            request.setVnfId(vnfId);
-            this.requestsDbClient.updateInfraActiveRequests(request);
+            setter.run();
+            requestsDbClient.updateInfraActiveRequests(request);
         } else {
             logger.debug(REQUEST_ERROR);
         }
+    }
+
+    public void updateInfraActiveRequestVnfId(InfraActiveRequests request, String vnfId) {
+        updateInfraActiveRequest(request, () -> request.setVnfId(vnfId));
     }
 
     public void updateInfraActiveRequestVfModuleId(InfraActiveRequests request, String vfModuleId) {
-        if (request != null) {
-            request.setVfModuleId(vfModuleId);
-            this.requestsDbClient.updateInfraActiveRequests(request);
-        } else {
-            logger.debug(REQUEST_ERROR);
-        }
+        updateInfraActiveRequest(request, () -> request.setVfModuleId(vfModuleId));
     }
 
     public void updateInfraActiveRequestVolumeGroupId(InfraActiveRequests request, String volumeGroupId) {
-        if (request != null) {
-            request.setVolumeGroupId(volumeGroupId);
-            this.requestsDbClient.updateInfraActiveRequests(request);
-        } else {
-            logger.debug(REQUEST_ERROR);
-        }
+        updateInfraActiveRequest(request, () -> request.setVolumeGroupId(volumeGroupId));
     }
 
     public void updateInfraActiveRequestNetworkId(InfraActiveRequests request, String networkId) {
-        if (request != null) {
-            request.setNetworkId(networkId);
-            this.requestsDbClient.updateInfraActiveRequests(request);
-        } else {
-            logger.debug(REQUEST_ERROR);
-        }
+        updateInfraActiveRequest(request, () -> request.setNetworkId(networkId));
     }
 
     public void persistFlowExecutionPath(String requestId, List<ExecuteBuildingBlock> flowsToExecute) {
@@ -161,39 +150,26 @@ public class BBInputSetupUtils {
             } catch (JsonProcessingException e) {
                 logger.error(DATA_PARSE_ERROR, e);
             }
-
-            this.requestsDbClient.persistProcessingData(flows.toString(), requestId);
+            requestsDbClient.persistProcessingData(flows.toString(), requestId);
         } else {
             logger.debug(REQUEST_ERROR);
         }
     }
 
     public InfraActiveRequests loadInfraActiveRequestById(String requestId) {
-
-        return this.requestsDbClient.getInfraActiveRequestbyRequestId(requestId);
+        return requestsDbClient.getInfraActiveRequestbyRequestId(requestId);
     }
 
     public InfraActiveRequests loadOriginalInfraActiveRequestById(String requestId) {
-        return this.requestsDbClient.getInfraActiveRequestbyRequestId(
-                this.requestsDbClient.getInfraActiveRequestbyRequestId(requestId).getOriginalRequestId());
+        return requestsDbClient.getInfraActiveRequestbyRequestId(
+                requestsDbClient.getInfraActiveRequestbyRequestId(requestId).getOriginalRequestId());
     }
 
     public List<ExecuteBuildingBlock> loadOriginalFlowExecutionPath(String requestId) {
         if (requestId != null) {
             InfraActiveRequests request = loadInfraActiveRequestById(requestId);
             if (request.getOriginalRequestId() != null) {
-                RequestProcessingData requestProcessingData =
-                        this.requestsDbClient.getRequestProcessingDataBySoRequestIdAndName(
-                                request.getOriginalRequestId(), PROCESSING_DATA_NAME_EXECUTION_FLOWS);
-                try {
-                    ObjectMapper om = new ObjectMapper();
-                    TypeFactory typeFactory = objectMapper.getTypeFactory();
-                    return om.readValue(requestProcessingData.getValue(),
-                            typeFactory.constructCollectionType(List.class, ExecuteBuildingBlock.class));
-                } catch (Exception e) {
-                    logger.error(DATA_LOAD_ERROR, e);
-                    throw new RuntimeException("Error Loading Original Request Data", e);
-                }
+                return extractBuildingBlocksToExecute(request);
             } else {
                 throw new RuntimeException("Original Request Id is null for record: " + requestId);
             }
@@ -246,34 +222,28 @@ public class BBInputSetupUtils {
             objectMapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
             objectMapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
             return objectMapper.readValue(requestBody, RequestDetails.class);
-        } else {
-            return null;
         }
+        return null;
     }
 
     protected InfraActiveRequests getInfraActiveRequest(String requestId) {
         if (requestId != null && !requestId.isEmpty()) {
             return requestsDbClient.getInfraActiveRequestbyRequestId(requestId);
-        } else {
-            return null;
         }
+        return null;
     }
 
     protected CloudRegion getCloudRegion(CloudConfiguration cloudConfiguration) {
         if (cloudConfiguration != null) {
             String cloudRegionId = cloudConfiguration.getLcpCloudRegionId();
             String cloudOwner = cloudConfiguration.getCloudOwner();
-            if (cloudRegionId != null && cloudOwner != null && !cloudRegionId.isEmpty() && !cloudOwner.isEmpty()) {
+            if (isCloudConfigurationValid(cloudRegionId, cloudOwner)) {
                 return injectionHelper.getAaiClient().get(CloudRegion.class, AAIUriFactory
                         .createResourceUri(AAIObjectType.CLOUD_REGION, cloudOwner, cloudRegionId).depth(Depth.TWO))
                         .orElse(null);
-
-            } else {
-                return null;
             }
-        } else {
-            return null;
         }
+        return null;
     }
 
     protected InstanceGroup getAAIInstanceGroup(String instanceGroupId) {
@@ -287,16 +257,12 @@ public class BBInputSetupUtils {
     }
 
     public ServiceSubscription getAAIServiceSubscription(String globalSubscriberId, String subscriptionServiceType) {
-
-        if (globalSubscriberId == null || globalSubscriberId.equals("") || subscriptionServiceType == null
-                || subscriptionServiceType.equals("")) {
-            return null;
-        } else {
+        if (isServiceSubscriptionValid(globalSubscriberId, subscriptionServiceType)) {
             return injectionHelper.getAaiClient().get(ServiceSubscription.class, AAIUriFactory
                     .createResourceUri(AAIObjectType.SERVICE_SUBSCRIPTION, globalSubscriberId, subscriptionServiceType))
                     .orElse(null);
         }
-
+        return null;
     }
 
     public ServiceInstance getAAIServiceInstanceById(String serviceInstanceId) {
@@ -313,176 +279,138 @@ public class BBInputSetupUtils {
                 .depth(Depth.TWO)).orElse(null);
     }
 
-    protected org.onap.aai.domain.yang.ServiceInstances getAAIServiceInstancesByName(String serviceInstanceName,
-            Customer customer) {
-
-        return injectionHelper.getAaiClient()
-                .get(org.onap.aai.domain.yang.ServiceInstances.class,
-                        AAIUriFactory
-                                .createResourceUri(AAIObjectPlurals.SERVICE_INSTANCE, customer.getGlobalCustomerId(),
-                                        customer.getServiceSubscription().getServiceType())
-                                .queryParam("service-instance-name", serviceInstanceName).depth(Depth.TWO))
-                .orElseGet(() -> {
-                    logger.debug("No Service Instance matched by name");
-                    return null;
-                });
-    }
-
-    public org.onap.aai.domain.yang.ServiceInstance getAAIServiceInstanceByName(String serviceInstanceName,
-            Customer customer) throws Exception {
-        org.onap.aai.domain.yang.ServiceInstance aaiServiceInstance = null;
-        org.onap.aai.domain.yang.ServiceInstances aaiServiceInstances = null;
-        aaiServiceInstances = getAAIServiceInstancesByName(serviceInstanceName, customer);
-
-        if (aaiServiceInstances == null) {
-            return null;
-        } else if (aaiServiceInstances.getServiceInstance().size() > 1) {
-            throw new Exception("Multiple Service Instances Returned");
-        } else {
-            aaiServiceInstance = aaiServiceInstances.getServiceInstance().get(0);
-        }
-        return aaiServiceInstance;
-    }
-
-    protected ServiceInstances getAAIServiceInstancesByName(String globalCustomerId, String serviceType,
-            String serviceInstanceName) {
-
-        return injectionHelper.getAaiClient()
-                .get(ServiceInstances.class,
-                        AAIUriFactory
-                                .createResourceUri(AAIObjectPlurals.SERVICE_INSTANCE, globalCustomerId, serviceType)
-                                .queryParam("service-instance-name", serviceInstanceName).depth(Depth.TWO))
-                .orElseGet(() -> {
-                    logger.debug("No Service Instance matched by name");
-                    return null;
-                });
-    }
-
-    public Optional<ServiceInstance> getAAIServiceInstanceByName(String globalCustomerId, String serviceType,
-            String serviceInstanceName) throws MultipleObjectsFoundException {
-        ServiceInstance aaiServiceInstance = null;
-        ServiceInstances aaiServiceInstances = null;
-        aaiServiceInstances = getAAIServiceInstancesByName(globalCustomerId, serviceType, serviceInstanceName);
-
-        if (aaiServiceInstances == null) {
-            return Optional.empty();
-        } else if (aaiServiceInstances.getServiceInstance().size() > 1) {
-            String message = String.format(
-                    "Multiple service instances found for customer-id: %s, service-type: %s and service-instance-name: %s.",
-                    globalCustomerId, serviceType, serviceInstanceName);
-            throw new MultipleObjectsFoundException(message);
-        } else {
-            aaiServiceInstance = aaiServiceInstances.getServiceInstance().get(0);
-        }
-        return Optional.of(aaiServiceInstance);
-    }
-
     public org.onap.so.db.catalog.beans.InstanceGroup getCatalogInstanceGroup(String modelUUID) {
-        return this.catalogDbClient.getInstanceGroupByModelUUID(modelUUID);
+        return catalogDbClient.getInstanceGroupByModelUUID(modelUUID);
     }
 
     public List<CollectionResourceInstanceGroupCustomization> getCollectionResourceInstanceGroupCustomization(
             String modelCustomizationUUID) {
-        return this.catalogDbClient
-                .getCollectionResourceInstanceGroupCustomizationByModelCustUUID(modelCustomizationUUID);
+        return catalogDbClient.getCollectionResourceInstanceGroupCustomizationByModelCustUUID(modelCustomizationUUID);
     }
 
     public AAIResultWrapper getAAIResourceDepthOne(AAIResourceUri aaiResourceUri) {
         AAIResourceUri clonedUri = aaiResourceUri.clone();
-        return this.injectionHelper.getAaiClient().get(clonedUri.depth(Depth.ONE));
+        return injectionHelper.getAaiClient().get(clonedUri.depth(Depth.ONE));
     }
 
     public AAIResultWrapper getAAIResourceDepthTwo(AAIResourceUri aaiResourceUri) {
         AAIResourceUri clonedUri = aaiResourceUri.clone();
-        return this.injectionHelper.getAaiClient().get(clonedUri.depth(Depth.TWO));
+        return injectionHelper.getAaiClient().get(clonedUri.depth(Depth.TWO));
+    }
+
+    protected ServiceInstances getAAIServiceInstancesByName(String globalCustomerId, String serviceType,
+            String serviceInstanceName) {
+        return getFromAAI(
+                () -> AAIUriFactory.createResourceUri(AAIObjectPlurals.SERVICE_INSTANCE, globalCustomerId, serviceType)
+                        .queryParam("service-instance-name", serviceInstanceName).depth(Depth.TWO),
+                ServiceInstances.class, "Service Instances");
+    }
+
+    protected org.onap.aai.domain.yang.ServiceInstances getAAIServiceInstancesByName(String serviceInstanceName,
+            Customer customer) {
+
+        return getFromAAI(
+                () -> AAIUriFactory
+                        .createResourceUri(AAIObjectPlurals.SERVICE_INSTANCE, customer.getGlobalCustomerId(),
+                                customer.getServiceSubscription().getServiceType())
+                        .queryParam("service-instance-name", serviceInstanceName).depth(Depth.TWO),
+                org.onap.aai.domain.yang.ServiceInstances.class, "Service Instance");
+    }
+
+    public ServiceInstances getAAIServiceInstancesGloballyByName(String serviceInstanceName) {
+        return getFromAAI(
+                () -> AAIUriFactory.createNodesUri(AAIObjectPlurals.SERVICE_INSTANCE)
+                        .queryParam("service-instance-name", serviceInstanceName),
+                ServiceInstances.class, "Service Instance");
+    }
+
+    public GenericVnfs getAAIVnfsGloballyByName(String vnfName) {
+        return getFromAAI(
+                () -> AAIUriFactory.createNodesUri(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", vnfName),
+                GenericVnfs.class, "GenericVnfs");
     }
 
     public Configuration getAAIConfiguration(String configurationId) {
-        return this.injectionHelper.getAaiClient()
-                .get(Configuration.class,
-                        AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configurationId).depth(Depth.ONE))
-                .orElseGet(() -> {
-                    logger.debug("No Configuration matched by id");
-                    return null;
-                });
+        return getFromAAI(
+                () -> AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configurationId).depth(Depth.ONE),
+                Configuration.class, "Configuration");
     }
 
     public GenericVnf getAAIGenericVnf(String vnfId) {
-
-        return this.injectionHelper.getAaiClient()
-                .get(GenericVnf.class,
-                        AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId).depth(Depth.ONE))
-                .orElseGet(() -> {
-                    logger.debug("No Generic Vnf matched by id");
-                    return null;
-                });
+        return getFromAAI(() -> AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId).depth(Depth.ONE),
+                GenericVnf.class, "Generic Vnf");
     }
 
     public VpnBinding getAAIVpnBinding(String vpnBindingId) {
-
-        return this.injectionHelper.getAaiClient()
-                .get(VpnBinding.class,
-                        AAIUriFactory.createResourceUri(AAIObjectType.VPN_BINDING, vpnBindingId).depth(Depth.ONE))
-                .orElseGet(() -> {
-                    logger.debug("No VpnBinding matched by id");
-                    return null;
-                });
+        return getFromAAI(
+                () -> AAIUriFactory.createResourceUri(AAIObjectType.VPN_BINDING, vpnBindingId).depth(Depth.ONE),
+                VpnBinding.class, "VpnBinding");
     }
 
     public VolumeGroup getAAIVolumeGroup(String cloudOwnerId, String cloudRegionId, String volumeGroupId) {
-        return this.injectionHelper.getAaiClient()
-                .get(VolumeGroup.class, AAIUriFactory
-                        .createResourceUri(AAIObjectType.VOLUME_GROUP, cloudOwnerId, cloudRegionId, volumeGroupId)
-                        .depth(Depth.ONE))
-                .orElseGet(() -> {
-                    logger.debug("No Generic Vnf matched by id");
-                    return null;
-                });
+        return getFromAAI(() -> AAIUriFactory
+                .createResourceUri(AAIObjectType.VOLUME_GROUP, cloudOwnerId, cloudRegionId, volumeGroupId)
+                .depth(Depth.ONE), VolumeGroup.class, "Volume Group");
     }
 
     public VfModule getAAIVfModule(String vnfId, String vfModuleId) {
-        return this.injectionHelper.getAaiClient()
-                .get(VfModule.class,
-                        AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId).depth(Depth.ONE))
-                .orElseGet(() -> {
-                    logger.debug("No Generic Vnf matched by id");
-                    return null;
-                });
+        return getFromAAI(
+                () -> AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId).depth(Depth.ONE),
+                VfModule.class, "VfModule");
     }
 
     public L3Network getAAIL3Network(String networkId) {
+        return getFromAAI(() -> AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId).depth(Depth.ONE),
+                L3Network.class, "L3Network");
+    }
 
-        return this.injectionHelper.getAaiClient()
-                .get(L3Network.class,
-                        AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId).depth(Depth.ONE))
-                .orElseGet(() -> {
-                    logger.debug("No Generic Vnf matched by id");
-                    return null;
-                });
+    public org.onap.aai.domain.yang.ServiceInstance getAAIServiceInstanceByName(String serviceInstanceName,
+            Customer customer) throws MultipleObjectsFoundException {
+        org.onap.aai.domain.yang.ServiceInstances aaiServiceInstances =
+                getAAIServiceInstancesByName(serviceInstanceName, customer);
 
+        if (aaiServiceInstances == null) {
+            return null;
+        } else if (aaiServiceInstances.getServiceInstance().size() > 1) {
+            throw new MultipleObjectsFoundException("Multiple Service Instances Returned");
+        }
+        return aaiServiceInstances.getServiceInstance().get(0);
+    }
+
+    public Optional<ServiceInstance> getAAIServiceInstanceByName(String globalCustomerId, String serviceType,
+            String serviceInstanceName) throws MultipleObjectsFoundException {
+        ServiceInstances aaiServiceInstances =
+                getAAIServiceInstancesByName(globalCustomerId, serviceType, serviceInstanceName);
+
+        if (aaiServiceInstances != null && aaiServiceInstances.getServiceInstance().size() == 1) {
+            return Optional.of(aaiServiceInstances.getServiceInstance().get(0));
+        } else if (aaiServiceInstances != null && aaiServiceInstances.getServiceInstance().size() > 1) {
+            String message = String.format(
+                    "Multiple service instances found for customer-id: %s, service-type: %s and service-instance-name: %s.",
+                    globalCustomerId, serviceType, serviceInstanceName);
+            throw new MultipleObjectsFoundException(message);
+        }
+        logger.debug("No ServiceInstance was found");
+        return Optional.empty();
     }
 
     public Optional<ServiceInstance> getRelatedServiceInstanceFromInstanceGroup(String instanceGroupId)
-            throws Exception {
+            throws MultipleObjectsFoundException, NoServiceInstanceFoundException {
         AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroupId);
         uri.relatedTo(AAIObjectPlurals.SERVICE_INSTANCE);
         Optional<ServiceInstances> serviceInstances = injectionHelper.getAaiClient().get(ServiceInstances.class, uri);
-        ServiceInstance serviceInstance = null;
-        if (!serviceInstances.isPresent()) {
-            logger.debug("No ServiceInstances were found");
-            return Optional.empty();
-        } else {
-            if (serviceInstances.get().getServiceInstance().isEmpty()) {
-                throw new NoServiceInstanceFoundException("No ServiceInstances Returned");
-            } else if (serviceInstances.get().getServiceInstance().size() > 1) {
-                String message = String.format("Mulitple service instances were found for instance-group-id: %s.",
-                        instanceGroupId);
-                throw new MultipleObjectsFoundException(message);
-            } else {
-                serviceInstance = serviceInstances.get().getServiceInstance().get(0);
-            }
-            return Optional.of(serviceInstance);
+
+        if (serviceInstances.isPresent() && serviceInstances.get().getServiceInstance().size() == 1) {
+            return Optional.of(serviceInstances.get().getServiceInstance().get(0));
+        } else if (serviceInstances.isPresent() && serviceInstances.get().getServiceInstance().size() > 1) {
+            String message =
+                    String.format("Mulitple service instances were found for instance-group-id: %s.", instanceGroupId);
+            throw new MultipleObjectsFoundException(message);
+        } else if (serviceInstances.isPresent() && serviceInstances.get().getServiceInstance().isEmpty()) {
+            throw new NoServiceInstanceFoundException("No ServiceInstances Returned");
         }
+        logger.debug("No ServiceInstances were found");
+        return Optional.empty();
     }
 
     public Optional<L3Network> getRelatedNetworkByNameFromServiceInstance(String serviceInstanceId, String networkName)
@@ -490,21 +418,16 @@ public class BBInputSetupUtils {
         AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId);
         uri.relatedTo(AAIObjectPlurals.L3_NETWORK).queryParam("network-name", networkName);
         Optional<L3Networks> networks = injectionHelper.getAaiClient().get(L3Networks.class, uri);
-        L3Network network = null;
-        if (!networks.isPresent()) {
-            logger.debug("No Networks matched by name");
-            return Optional.empty();
-        } else {
-            if (networks.get().getL3Network().size() > 1) {
-                String message =
-                        String.format("Multiple networks found for service-instance-id: %s and network-name: %s.",
-                                serviceInstanceId, networkName);
-                throw new MultipleObjectsFoundException(message);
-            } else {
-                network = networks.get().getL3Network().get(0);
-            }
-            return Optional.of(network);
+
+        if (networks.isPresent() && networks.get().getL3Network().size() == 1) {
+            return Optional.of(networks.get().getL3Network().get(0));
+        } else if (networks.isPresent() && networks.get().getL3Network().size() > 1) {
+            String message = String.format("Multiple networks found for service-instance-id: %s and network-name: %s.",
+                    serviceInstanceId, networkName);
+            throw new MultipleObjectsFoundException(message);
         }
+        logger.debug("No Networks matched by name");
+        return Optional.empty();
     }
 
     public Optional<GenericVnf> getRelatedVnfByNameFromServiceInstance(String serviceInstanceId, String vnfName)
@@ -512,20 +435,16 @@ public class BBInputSetupUtils {
         AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId);
         uri.relatedTo(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", vnfName);
         Optional<GenericVnfs> vnfs = injectionHelper.getAaiClient().get(GenericVnfs.class, uri);
-        GenericVnf vnf = null;
-        if (!vnfs.isPresent()) {
-            logger.debug("No Vnfs matched by name");
-            return Optional.empty();
-        } else {
-            if (vnfs.get().getGenericVnf().size() > 1) {
-                String message = String.format("Multiple vnfs found for service-instance-id: %s and vnf-name: %s.",
-                        serviceInstanceId, vnfName);
-                throw new MultipleObjectsFoundException(message);
-            } else {
-                vnf = vnfs.get().getGenericVnf().get(0);
-            }
-            return Optional.of(vnf);
+
+        if (vnfs.isPresent() && vnfs.get().getGenericVnf().size() == 1) {
+            return Optional.of(vnfs.get().getGenericVnf().get(0));
+        } else if (vnfs.isPresent() && vnfs.get().getGenericVnf().size() > 1) {
+            String message = String.format("Multiple vnfs found for service-instance-id: %s and vnf-name: %s.",
+                    serviceInstanceId, vnfName);
+            throw new MultipleObjectsFoundException(message);
         }
+        logger.debug("No Vnfs matched by name");
+        return Optional.empty();
     }
 
     public Optional<VolumeGroup> getRelatedVolumeGroupByNameFromVnf(String vnfId, String volumeGroupName)
@@ -533,20 +452,16 @@ public class BBInputSetupUtils {
         AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId);
         uri.relatedTo(AAIObjectPlurals.VOLUME_GROUP).queryParam("volume-group-name", volumeGroupName);
         Optional<VolumeGroups> volumeGroups = injectionHelper.getAaiClient().get(VolumeGroups.class, uri);
-        VolumeGroup volumeGroup = null;
-        if (!volumeGroups.isPresent()) {
-            logger.debug("No VolumeGroups matched by name");
-            return Optional.empty();
-        } else {
-            if (volumeGroups.get().getVolumeGroup().size() > 1) {
-                String message = String.format("Multiple volume-groups found for vnf-id: %s and volume-group-name: %s.",
-                        vnfId, volumeGroupName);
-                throw new MultipleObjectsFoundException(message);
-            } else {
-                volumeGroup = volumeGroups.get().getVolumeGroup().get(0);
-            }
-            return Optional.of(volumeGroup);
+
+        if (volumeGroups.isPresent() && volumeGroups.get().getVolumeGroup().size() == 1) {
+            return Optional.of(volumeGroups.get().getVolumeGroup().get(0));
+        } else if (volumeGroups.isPresent() && volumeGroups.get().getVolumeGroup().size() > 1) {
+            String message = String.format("Multiple volume-groups found for vnf-id: %s and volume-group-name: %s.",
+                    vnfId, volumeGroupName);
+            throw new MultipleObjectsFoundException(message);
         }
+        logger.debug("No VolumeGroups matched by name");
+        return Optional.empty();
     }
 
     public Optional<VolumeGroup> getRelatedVolumeGroupByNameFromVfModule(String vnfId, String vfModuleId,
@@ -554,99 +469,33 @@ public class BBInputSetupUtils {
         AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId);
         uri.relatedTo(AAIObjectPlurals.VOLUME_GROUP).queryParam("volume-group-name", volumeGroupName);
         Optional<VolumeGroups> volumeGroups = injectionHelper.getAaiClient().get(VolumeGroups.class, uri);
-        VolumeGroup volumeGroup = null;
-        if (!volumeGroups.isPresent()) {
-            logger.debug("No VolumeGroups matched by name");
-            return Optional.empty();
-        } else {
-            if (volumeGroups.get().getVolumeGroup().size() > 1) {
-                String message = String.format(
-                        "Multiple voulme-groups found for vnf-id: %s, vf-module-id: %s and volume-group-name: %s.",
-                        vnfId, vfModuleId, volumeGroupName);
-                throw new MultipleObjectsFoundException(message);
-            } else {
-                volumeGroup = volumeGroups.get().getVolumeGroup().get(0);
-            }
-            return Optional.of(volumeGroup);
+
+        if (volumeGroups.isPresent() && volumeGroups.get().getVolumeGroup().size() == 1) {
+            return Optional.of(volumeGroups.get().getVolumeGroup().get(0));
+        } else if (volumeGroups.isPresent() && volumeGroups.get().getVolumeGroup().size() > 1) {
+            String message = String.format(
+                    "Multiple volume-groups found for vnf-id: %s, vf-module-id: %s and volume-group-name: %s.", vnfId,
+                    vfModuleId, volumeGroupName);
+            throw new MultipleObjectsFoundException(message);
         }
+        logger.debug("No VolumeGroups matched by name");
+        return Optional.empty();
     }
 
     public Optional<VolumeGroup> getRelatedVolumeGroupFromVfModule(String vnfId, String vfModuleId) throws Exception {
         AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId);
         uri.relatedTo(AAIObjectPlurals.VOLUME_GROUP);
         Optional<VolumeGroups> volumeGroups = injectionHelper.getAaiClient().get(VolumeGroups.class, uri);
-        VolumeGroup volumeGroup = null;
-        if (!volumeGroups.isPresent()) {
-            logger.debug("VfModule does not have a volume group attached");
-            return Optional.empty();
-        } else {
-            if (volumeGroups.get().getVolumeGroup().size() > 1) {
-                throw new Exception("Multiple VolumeGroups Returned");
-            } else {
-                volumeGroup = volumeGroups.get().getVolumeGroup().get(0);
-            }
-            return Optional.of(volumeGroup);
-        }
-    }
 
-    public Optional<org.onap.aai.domain.yang.VpnBinding> getAICVpnBindingFromNetwork(
-            org.onap.aai.domain.yang.L3Network aaiLocalNetwork) {
-        AAIResultWrapper networkWrapper = new AAIResultWrapper(aaiLocalNetwork);
-        if (networkWrapper.getRelationships().isPresent()
-                && !networkWrapper.getRelationships().get().getRelatedUris(AAIObjectType.VPN_BINDING).isEmpty()) {
-            return getAAIResourceDepthOne(
-                    networkWrapper.getRelationships().get().getRelatedUris(AAIObjectType.VPN_BINDING).get(0))
-                            .asBean(org.onap.aai.domain.yang.VpnBinding.class);
+        if (volumeGroups.isPresent() && volumeGroups.get().getVolumeGroup().size() == 1) {
+            return Optional.of(volumeGroups.get().getVolumeGroup().get(0));
+        } else if (volumeGroups.isPresent() && volumeGroups.get().getVolumeGroup().size() > 1) {
+            String message = String.format("Multiple volume-groups found for vnf-id: %s and vf-module-id: %s.", vnfId,
+                    vfModuleId);
+            throw new Exception(message);
         }
+        logger.debug("VfModule does not have a volume group attached");
         return Optional.empty();
-    }
-
-    public ServiceInstances getAAIServiceInstancesGloballyByName(String serviceInstanceName) {
-
-        return injectionHelper.getAaiClient()
-                .get(ServiceInstances.class, AAIUriFactory.createNodesUri(AAIObjectPlurals.SERVICE_INSTANCE)
-                        .queryParam("service-instance-name", serviceInstanceName))
-                .orElseGet(() -> {
-                    logger.debug("No Service Instance matched by name");
-                    return null;
-                });
-    }
-
-    public boolean existsAAINetworksGloballyByName(String networkName) {
-
-        AAIResourceUri l3networkUri =
-                AAIUriFactory.createResourceUri(AAIObjectPlurals.L3_NETWORK).queryParam("network-name", networkName);
-        AAIResourcesClient aaiRC = injectionHelper.getAaiClient();
-        return aaiRC.exists(l3networkUri);
-    }
-
-    public boolean existsAAIVfModuleGloballyByName(String vfModuleName) {
-        AAIResourceUri vfModuleUri =
-                AAIUriFactory.createNodesUri(AAIObjectPlurals.VF_MODULE).queryParam("vf-module-name", vfModuleName);
-        return injectionHelper.getAaiClient().exists(vfModuleUri);
-    }
-
-    public boolean existsAAIConfigurationGloballyByName(String configurationName) {
-        AAIResourceUri configUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.CONFIGURATION)
-                .queryParam("configuration-name", configurationName);
-        return injectionHelper.getAaiClient().exists(configUri);
-    }
-
-    public boolean existsAAIVolumeGroupGloballyByName(String volumeGroupName) {
-        AAIResourceUri volumeGroupUri = AAIUriFactory.createNodesUri(AAIObjectPlurals.VOLUME_GROUP)
-                .queryParam("volume-group-name", volumeGroupName);
-        return injectionHelper.getAaiClient().exists(volumeGroupUri);
-    }
-
-    public GenericVnfs getAAIVnfsGloballyByName(String vnfName) {
-
-        return injectionHelper.getAaiClient()
-                .get(GenericVnfs.class,
-                        AAIUriFactory.createNodesUri(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", vnfName))
-                .orElseGet(() -> {
-                    logger.debug("No GenericVnfs matched by name");
-                    return null;
-                });
     }
 
     public Optional<Configuration> getRelatedConfigurationByNameFromServiceInstance(String serviceInstanceId,
@@ -654,20 +503,102 @@ public class BBInputSetupUtils {
         AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId);
         uri.relatedTo(AAIObjectPlurals.CONFIGURATION).queryParam("configuration-name", configurationName);
         Optional<Configurations> configurations = injectionHelper.getAaiClient().get(Configurations.class, uri);
-        Configuration configuration = null;
-        if (!configurations.isPresent()) {
-            logger.debug("No Configurations matched by name");
-            return Optional.empty();
-        } else {
-            if (configurations.get().getConfiguration().size() > 1) {
-                String message = String.format(
-                        "Multiple configurations found for service-instance-d: %s and configuration-name: %s.",
-                        serviceInstanceId, configurationName);
-                throw new MultipleObjectsFoundException(message);
-            } else {
-                configuration = configurations.get().getConfiguration().get(0);
-            }
-            return Optional.of(configuration);
+
+        if (isOneConfigurationPresent(configurations)) {
+            return Optional.of(configurations.get().getConfiguration().get(0));
+        } else if (isMoreConfigurationsPresent(configurations)) {
+            String message = String.format(
+                    "Multiple configurations found for service-instance-d: %s and configuration-name: %s.",
+                    serviceInstanceId, configurationName);
+            throw new MultipleObjectsFoundException(message);
         }
+        logger.debug("No Configurations matched by name");
+        return Optional.empty();
+    }
+
+    public Optional<org.onap.aai.domain.yang.VpnBinding> getAICVpnBindingFromNetwork(
+            org.onap.aai.domain.yang.L3Network aaiLocalNetwork) {
+        AAIResultWrapper networkWrapper = new AAIResultWrapper(aaiLocalNetwork);
+        if (isNetworkWrapperValid(networkWrapper)) {
+            return getAAIResourceDepthOne(
+                    networkWrapper.getRelationships().get().getRelatedUris(AAIObjectType.VPN_BINDING).get(0))
+                            .asBean(org.onap.aai.domain.yang.VpnBinding.class);
+        }
+        return Optional.empty();
+    }
+
+    public boolean existsAAINetworksGloballyByName(String networkName) {
+        return existsAAIRecordGloballyByName(networkName, "network-name",
+                () -> AAIUriFactory.createResourceUri(AAIObjectPlurals.L3_NETWORK));
+    }
+
+    public boolean existsAAIVfModuleGloballyByName(String vfModuleName) {
+        return existsAAIRecordGloballyByName(vfModuleName, "vf-module-name",
+                () -> AAIUriFactory.createNodesUri(AAIObjectPlurals.VF_MODULE));
+    }
+
+    public boolean existsAAIConfigurationGloballyByName(String configurationName) {
+        return existsAAIRecordGloballyByName(configurationName, "configuration-name",
+                () -> AAIUriFactory.createResourceUri(AAIObjectPlurals.CONFIGURATION));
+    }
+
+    public boolean existsAAIVolumeGroupGloballyByName(String volumeGroupName) {
+        return existsAAIRecordGloballyByName(volumeGroupName, "volume-group-name",
+                () -> AAIUriFactory.createNodesUri(AAIObjectPlurals.VOLUME_GROUP));
+    }
+
+    private List<ExecuteBuildingBlock> extractBuildingBlocksToExecute(InfraActiveRequests request) {
+        RequestProcessingData requestProcessingData = requestsDbClient.getRequestProcessingDataBySoRequestIdAndName(
+                request.getOriginalRequestId(), PROCESSING_DATA_NAME_EXECUTION_FLOWS);
+        try {
+            ObjectMapper om = new ObjectMapper();
+            TypeFactory typeFactory = objectMapper.getTypeFactory();
+            return om.readValue(requestProcessingData.getValue(),
+                    typeFactory.constructCollectionType(List.class, ExecuteBuildingBlock.class));
+        } catch (Exception e) {
+            logger.error(DATA_LOAD_ERROR, e);
+            throw new RuntimeException("Error Loading Original Request Data", e);
+        }
+    }
+
+    private <T> T getFromAAI(Supplier<AAIResourceUri> resourceUriCreator, Class<T> clazz, String typeName) {
+        return injectionHelper.getAaiClient().get(clazz, resourceUriCreator.get()).orElseGet(() -> {
+            logger.debug(String.format("No %s matched.", typeName));
+            return null;
+        });
+    }
+
+    private boolean isNetworkWrapperValid(AAIResultWrapper networkWrapper) {
+        return networkWrapper.getRelationships().isPresent()
+                && !networkWrapper.getRelationships().get().getRelatedUris(AAIObjectType.VPN_BINDING).isEmpty();
+    }
+
+    private boolean isCloudConfigurationValid(String cloudRegionId, String cloudOwner) {
+        return cloudRegionId != null && cloudOwner != null && !cloudRegionId.isEmpty() && !cloudOwner.isEmpty();
+    }
+
+    private boolean isRelatedInstanceValid(ModelType modelType, RelatedInstance relatedInstance) {
+        return relatedInstance != null && relatedInstance.getModelInfo() != null
+                && relatedInstance.getModelInfo().getModelType() != null
+                && relatedInstance.getModelInfo().getModelType().equals(modelType);
+    }
+
+    private boolean isServiceSubscriptionValid(String globalSubscriberId, String subscriptionServiceType) {
+        return globalSubscriberId != null && !globalSubscriberId.isEmpty() && subscriptionServiceType != null
+                && !subscriptionServiceType.isEmpty();
+    }
+
+    private boolean existsAAIRecordGloballyByName(String recordName, String queryParamName,
+            Supplier<AAIResourceUri> uriProvider) {
+        AAIResourceUri uri = uriProvider.get().queryParam(queryParamName, recordName);
+        return injectionHelper.getAaiClient().exists(uri);
+    }
+
+    private boolean isOneConfigurationPresent(Optional<Configurations> configurations) {
+        return configurations.isPresent() && configurations.get().getConfiguration().size() == 1;
+    }
+
+    private boolean isMoreConfigurationsPresent(Optional<Configurations> configurations) {
+        return configurations.isPresent() && configurations.get().getConfiguration().size() > 1;
     }
 }
