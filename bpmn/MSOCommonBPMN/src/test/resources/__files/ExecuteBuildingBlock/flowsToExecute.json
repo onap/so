@@ -1,0 +1,292 @@
+[
+  {
+    "aLaCarte": true,
+    "apiVersion": "7",
+    "buildingBlock": {
+      "bpmn-flow-name": "DeactivateFabricConfigurationBB",
+      "is-virtual-link": false,
+      "key": "7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9",
+      "mso-id": "2f9ddc4b-4dcf-4129-a35f-be1625ae0176",
+      "virtual-link-key": null
+    },
+    "configurationResourceKeys": {
+      "cvnfcCustomizationUUID": "69cce457-9ffd-4359-962b-0596a1e83ad1",
+      "vfModuleCustomizationUUID": "7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9",
+      "vnfResourceCustomizationUUID": "a80f05b8-d651-44af-b999-8ed78fb4582f",
+      "vnfcName": "zauk51bmcmr01mcm001"
+    },
+    "homing": false,
+    "requestAction": "deleteInstance",
+    "requestDetails": {
+      "cloudConfiguration": {
+        "cloudOwner": "att-nc",
+        "lcpCloudRegionId": "auk51b",
+        "tenantId": "e2a6af59d1cb43b2874e943bbbf8470a"
+      },
+      "modelInfo": {
+        "modelCustomizationId": "7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9",
+        "modelCustomizationName": "McmrNcUpVnf20191..cr_mccm_fc_base..module-0",
+        "modelCustomizationUuid": "7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9",
+        "modelId": "00d15ebb-c80e-43c1-80f0-90c40dde70b0",
+        "modelInstanceName": "McmrNcUpVnf20191..cr_mccm_fc_base..module-0",
+        "modelInvariantId": "8028fcc0-96dc-427d-a4de-4536245943da",
+        "modelInvariantUuid": "8028fcc0-96dc-427d-a4de-4536245943da",
+        "modelName": "McmrNcUpVnf20191..cr_mccm_fc_base..module-0",
+        "modelType": "vfModule",
+        "modelUuid": "00d15ebb-c80e-43c1-80f0-90c40dde70b0",
+        "modelVersion": "1",
+        "modelVersionId": "00d15ebb-c80e-43c1-80f0-90c40dde70b0"
+      },
+      "requestInfo": {
+        "requestorId": "pj8646",
+        "source": "VID",
+        "suppressRollback": false
+      },
+      "requestParameters": {
+        "testApi": "GR_API"
+      }
+    },
+    "requestId": "9c944122-d161-4280-8594-48c06a9d96d5",
+    "resourceId": "d1d35800-783d-42d3-82f6-d654c5054a6e",
+    "vnfType": "",
+    "workflowResourceIds": {
+      "configurationId": "10f8a3a3-91bf-4821-9515-c01b2864dff0",
+      "instanceGroupId": "",
+      "networkCollectionId": null,
+      "networkId": "",
+      "serviceInstanceId": "ff9dae72-05bb-4277-ad2b-1b082467c138",
+      "vfModuleId": "d1d35800-783d-42d3-82f6-d654c5054a6e",
+      "vnfId": "84a29830-e533-4f20-a838-910c740bf24c",
+      "volumeGroupId": ""
+    }
+  },
+  {
+    "aLaCarte": true,
+    "apiVersion": "7",
+    "buildingBlock": {
+      "bpmn-flow-name": "UnassignFabricConfigurationBB",
+      "is-virtual-link": false,
+      "key": "7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9",
+      "mso-id": "1ca5584e-38a9-4c3f-a4b4-99b0d42089ba",
+      "virtual-link-key": null
+    },
+    "configurationResourceKeys": {
+      "cvnfcCustomizationUUID": "69cce457-9ffd-4359-962b-0596a1e83ad1",
+      "vfModuleCustomizationUUID": "7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9",
+      "vnfResourceCustomizationUUID": "a80f05b8-d651-44af-b999-8ed78fb4582f",
+      "vnfcName": "zauk51bmcmr01mcm001"
+    },
+    "homing": false,
+    "requestAction": "deleteInstance",
+    "requestDetails": {
+      "cloudConfiguration": {
+        "cloudOwner": "att-nc",
+        "lcpCloudRegionId": "auk51b",
+        "tenantId": "e2a6af59d1cb43b2874e943bbbf8470a"
+      },
+      "modelInfo": {
+        "modelCustomizationId": "7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9",
+        "modelCustomizationName": "McmrNcUpVnf20191..cr_mccm_fc_base..module-0",
+        "modelCustomizationUuid": "7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9",
+        "modelId": "00d15ebb-c80e-43c1-80f0-90c40dde70b0",
+        "modelInstanceName": "McmrNcUpVnf20191..cr_mccm_fc_base..module-0",
+        "modelInvariantId": "8028fcc0-96dc-427d-a4de-4536245943da",
+        "modelInvariantUuid": "8028fcc0-96dc-427d-a4de-4536245943da",
+        "modelName": "McmrNcUpVnf20191..cr_mccm_fc_base..module-0",
+        "modelType": "vfModule",
+        "modelUuid": "00d15ebb-c80e-43c1-80f0-90c40dde70b0",
+        "modelVersion": "1",
+        "modelVersionId": "00d15ebb-c80e-43c1-80f0-90c40dde70b0"
+      },
+      "requestInfo": {
+        "requestorId": "pj8646",
+        "source": "VID",
+        "suppressRollback": false
+      },
+      "requestParameters": {
+        "testApi": "GR_API"
+      }
+    },
+    "requestId": "9c944122-d161-4280-8594-48c06a9d96d5",
+    "resourceId": "d1d35800-783d-42d3-82f6-d654c5054a6e",
+    "vnfType": "",
+    "workflowResourceIds": {
+      "configurationId": "10f8a3a3-91bf-4821-9515-c01b2864dff0",
+      "instanceGroupId": "",
+      "networkCollectionId": null,
+      "networkId": "",
+      "serviceInstanceId": "ff9dae72-05bb-4277-ad2b-1b082467c138",
+      "vfModuleId": "d1d35800-783d-42d3-82f6-d654c5054a6e",
+      "vnfId": "84a29830-e533-4f20-a838-910c740bf24c",
+      "volumeGroupId": ""
+    }
+  },
+  {
+    "aLaCarte": true,
+    "apiVersion": "7",
+    "buildingBlock": {
+      "bpmn-flow-name": "DeactivateVfModuleBB",
+      "is-virtual-link": false,
+      "key": "7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9",
+      "mso-id": "68d16097-4810-477d-803b-8322106106ef",
+      "virtual-link-key": null
+    },
+    "configurationResourceKeys": null,
+    "homing": false,
+    "requestAction": "deleteInstance",
+    "requestDetails": {
+      "cloudConfiguration": {
+        "cloudOwner": "att-nc",
+        "lcpCloudRegionId": "auk51b",
+        "tenantId": "e2a6af59d1cb43b2874e943bbbf8470a"
+      },
+      "modelInfo": {
+        "modelCustomizationId": "7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9",
+        "modelCustomizationName": "McmrNcUpVnf20191..cr_mccm_fc_base..module-0",
+        "modelCustomizationUuid": "7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9",
+        "modelId": "00d15ebb-c80e-43c1-80f0-90c40dde70b0",
+        "modelInstanceName": "McmrNcUpVnf20191..cr_mccm_fc_base..module-0",
+        "modelInvariantId": "8028fcc0-96dc-427d-a4de-4536245943da",
+        "modelInvariantUuid": "8028fcc0-96dc-427d-a4de-4536245943da",
+        "modelName": "McmrNcUpVnf20191..cr_mccm_fc_base..module-0",
+        "modelType": "vfModule",
+        "modelUuid": "00d15ebb-c80e-43c1-80f0-90c40dde70b0",
+        "modelVersion": "1",
+        "modelVersionId": "00d15ebb-c80e-43c1-80f0-90c40dde70b0"
+      },
+      "requestInfo": {
+        "requestorId": "pj8646",
+        "source": "VID",
+        "suppressRollback": false
+      },
+      "requestParameters": {
+        "testApi": "GR_API"
+      }
+    },
+    "requestId": "9c944122-d161-4280-8594-48c06a9d96d5",
+    "resourceId": "d1d35800-783d-42d3-82f6-d654c5054a6e",
+    "vnfType": "",
+    "workflowResourceIds": {
+      "configurationId": "10f8a3a3-91bf-4821-9515-c01b2864dff0",
+      "instanceGroupId": "",
+      "networkCollectionId": null,
+      "networkId": "",
+      "serviceInstanceId": "ff9dae72-05bb-4277-ad2b-1b082467c138",
+      "vfModuleId": "d1d35800-783d-42d3-82f6-d654c5054a6e",
+      "vnfId": "84a29830-e533-4f20-a838-910c740bf24c",
+      "volumeGroupId": ""
+    }
+  },
+  {
+    "aLaCarte": true,
+    "apiVersion": "7",
+    "buildingBlock": {
+      "bpmn-flow-name": "DeleteVfModuleBB",
+      "is-virtual-link": false,
+      "key": "7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9",
+      "mso-id": "0b02eb09-bc23-4329-b19e-716dcca4e4a6",
+      "virtual-link-key": null
+    },
+    "configurationResourceKeys": null,
+    "homing": false,
+    "requestAction": "deleteInstance",
+    "requestDetails": {
+      "cloudConfiguration": {
+        "cloudOwner": "att-nc",
+        "lcpCloudRegionId": "auk51b",
+        "tenantId": "e2a6af59d1cb43b2874e943bbbf8470a"
+      },
+      "modelInfo": {
+        "modelCustomizationId": "7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9",
+        "modelCustomizationName": "McmrNcUpVnf20191..cr_mccm_fc_base..module-0",
+        "modelCustomizationUuid": "7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9",
+        "modelId": "00d15ebb-c80e-43c1-80f0-90c40dde70b0",
+        "modelInstanceName": "McmrNcUpVnf20191..cr_mccm_fc_base..module-0",
+        "modelInvariantId": "8028fcc0-96dc-427d-a4de-4536245943da",
+        "modelInvariantUuid": "8028fcc0-96dc-427d-a4de-4536245943da",
+        "modelName": "McmrNcUpVnf20191..cr_mccm_fc_base..module-0",
+        "modelType": "vfModule",
+        "modelUuid": "00d15ebb-c80e-43c1-80f0-90c40dde70b0",
+        "modelVersion": "1",
+        "modelVersionId": "00d15ebb-c80e-43c1-80f0-90c40dde70b0"
+      },
+      "requestInfo": {
+        "requestorId": "pj8646",
+        "source": "VID",
+        "suppressRollback": false
+      },
+      "requestParameters": {
+        "testApi": "GR_API"
+      }
+    },
+    "requestId": "9c944122-d161-4280-8594-48c06a9d96d5",
+    "resourceId": "d1d35800-783d-42d3-82f6-d654c5054a6e",
+    "vnfType": "",
+    "workflowResourceIds": {
+      "configurationId": "10f8a3a3-91bf-4821-9515-c01b2864dff0",
+      "instanceGroupId": "",
+      "networkCollectionId": null,
+      "networkId": "",
+      "serviceInstanceId": "ff9dae72-05bb-4277-ad2b-1b082467c138",
+      "vfModuleId": "d1d35800-783d-42d3-82f6-d654c5054a6e",
+      "vnfId": "84a29830-e533-4f20-a838-910c740bf24c",
+      "volumeGroupId": ""
+    }
+  },
+  {
+    "aLaCarte": true,
+    "apiVersion": "7",
+    "buildingBlock": {
+      "bpmn-flow-name": "UnassignVfModuleBB",
+      "is-virtual-link": false,
+      "key": "7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9",
+      "mso-id": "bcf95d05-0782-44ff-920d-d5100525c275",
+      "virtual-link-key": null
+    },
+    "configurationResourceKeys": null,
+    "homing": false,
+    "requestAction": "deleteInstance",
+    "requestDetails": {
+      "cloudConfiguration": {
+        "cloudOwner": "att-nc",
+        "lcpCloudRegionId": "auk51b",
+        "tenantId": "e2a6af59d1cb43b2874e943bbbf8470a"
+      },
+      "modelInfo": {
+        "modelCustomizationId": "7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9",
+        "modelCustomizationName": "McmrNcUpVnf20191..cr_mccm_fc_base..module-0",
+        "modelCustomizationUuid": "7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9",
+        "modelId": "00d15ebb-c80e-43c1-80f0-90c40dde70b0",
+        "modelInstanceName": "McmrNcUpVnf20191..cr_mccm_fc_base..module-0",
+        "modelInvariantId": "8028fcc0-96dc-427d-a4de-4536245943da",
+        "modelInvariantUuid": "8028fcc0-96dc-427d-a4de-4536245943da",
+        "modelName": "McmrNcUpVnf20191..cr_mccm_fc_base..module-0",
+        "modelType": "vfModule",
+        "modelUuid": "00d15ebb-c80e-43c1-80f0-90c40dde70b0",
+        "modelVersion": "1",
+        "modelVersionId": "00d15ebb-c80e-43c1-80f0-90c40dde70b0"
+      },
+      "requestInfo": {
+        "requestorId": "pj8646",
+        "source": "VID",
+        "suppressRollback": false
+      },
+      "requestParameters": {
+        "testApi": "GR_API"
+      }
+    },
+    "requestId": "9c944122-d161-4280-8594-48c06a9d96d5",
+    "resourceId": "d1d35800-783d-42d3-82f6-d654c5054a6e",
+    "vnfType": "",
+    "workflowResourceIds": {
+      "configurationId": "10f8a3a3-91bf-4821-9515-c01b2864dff0",
+      "instanceGroupId": "",
+      "networkCollectionId": null,
+      "networkId": "",
+      "serviceInstanceId": "ff9dae72-05bb-4277-ad2b-1b082467c138",
+      "vfModuleId": "d1d35800-783d-42d3-82f6-d654c5054a6e",
+      "vnfId": "84a29830-e533-4f20-a838-910c740bf24c",
+      "volumeGroupId": ""
+    }
+  }
+]
