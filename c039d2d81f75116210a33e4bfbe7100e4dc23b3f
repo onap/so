@@ -166,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "73ec5f0c_5c350ff5",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigVnf.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-19T16:37:29Z",
+      "side": 1,
+      "message": "Yes check this out -\u003e \nhttps://gerrit.onap.org/r/#/c/so/+/97391/26/bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/GeneratePayloadForVnf.java",
+      "parentUuid": "33fb5132_727060e2",
+      "range": {
+        "startLine": 98,
+        "startChar": 0,
+        "endLine": 98,
+        "endChar": 38
+      },
+      "revId": "c039d2d81f75116210a33e4bfbe7100e4dc23b3f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b9ea24a3_d581307f",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigureInstanceParamsForVnf.java",
         "patchSetId": 21
