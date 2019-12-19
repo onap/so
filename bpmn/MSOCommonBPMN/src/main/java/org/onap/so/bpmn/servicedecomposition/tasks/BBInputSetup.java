@@ -1163,7 +1163,7 @@ public class BBInputSetup implements JavaDelegate {
         if (bbName.contains(NETWORK) && !bbName.contains(NETWORK_COLLECTION)) {
             String networkId = lookupKeyMap.get(ResourceKey.NETWORK_ID);
             ModelInfo networkModelInfo = new ModelInfo();
-            if ((!Boolean.TRUE.equals(executeBB.getBuildingBlock().getIsVirtualLink()))) {
+            if ((!Boolean.TRUE.equals(executeBB.getBuildingBlock().isVirtualLink()))) {
                 NetworkResourceCustomization networkCust = getNetworkCustomizationByKey(key, service);
                 if (networkCust != null) {
                     networkModelInfo.setModelCustomizationUuid(networkCust.getModelCustomizationUUID());
