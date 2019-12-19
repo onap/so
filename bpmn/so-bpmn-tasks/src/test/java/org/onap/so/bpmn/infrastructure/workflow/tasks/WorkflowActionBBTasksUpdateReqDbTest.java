@@ -67,16 +67,12 @@ public class WorkflowActionBBTasksUpdateReqDbTest extends BaseTaskTest {
     @Test
     public void getUpdatedRequestTest() throws Exception {
         List<ExecuteBuildingBlock> flowsToExecute = new ArrayList();
-        ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock();
-        BuildingBlock bb1 = new BuildingBlock();
-        bb1.setBpmnFlowName("CreateNetworkBB");
+        BuildingBlock bb1 = new BuildingBlock().setBpmnFlowName("CreateNetworkBB");
+        ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock().setBuildingBlock(bb1);
         flowsToExecute.add(ebb1);
-        ebb1.setBuildingBlock(bb1);
-        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock();
-        BuildingBlock bb2 = new BuildingBlock();
-        bb2.setBpmnFlowName("ActivateNetworkBB");
+        BuildingBlock bb2 = new BuildingBlock().setBpmnFlowName("ActivateNetworkBB");
+        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock().setBuildingBlock(bb2);
         flowsToExecute.add(ebb2);
-        ebb2.setBuildingBlock(bb2);
         String requestId = "requestId";
         execution.setVariable("mso-request-id", requestId);
         execution.setVariable("flowsToExecute", flowsToExecute);
