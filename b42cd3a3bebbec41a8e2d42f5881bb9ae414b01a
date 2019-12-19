@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b1f4cf9e_04a0b067",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1309,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2019-12-19T09:34:43Z",
+      "side": 1,
+      "message": "Could you change resourceCounter name to resourceList or something? Let\u0027s continue with needed refactoring if you already started ;)",
+      "range": {
+        "startLine": 1309,
+        "startChar": 27,
+        "endLine": 1309,
+        "endChar": 42
+      },
+      "revId": "b42cd3a3bebbec41a8e2d42f5881bb9ae414b01a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8f51d804_3e4cfc35",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1339,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2019-12-19T09:34:43Z",
+      "side": 1,
+      "message": "What about WorkflowType? Shouldn\u0027t we introduce type PNF?",
+      "range": {
+        "startLine": 1339,
+        "startChar": 81,
+        "endLine": 1339,
+        "endChar": 97
+      },
+      "revId": "b42cd3a3bebbec41a8e2d42f5881bb9ae414b01a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
