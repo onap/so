@@ -453,21 +453,16 @@ public class WorkflowActionBBTasks {
 
     protected ExecuteBuildingBlock getExecuteBBForConfig(String bbName, ExecuteBuildingBlock ebb,
             String configurationId, ConfigurationResourceKeys configurationResourceKeys) {
-        ExecuteBuildingBlock configBB = new ExecuteBuildingBlock();
-        BuildingBlock buildingBlock = new BuildingBlock();
-        buildingBlock.setBpmnFlowName(bbName);
-        buildingBlock.setMsoId(UUID.randomUUID().toString());
-        configBB.setaLaCarte(ebb.isaLaCarte());
-        configBB.setApiVersion(ebb.getApiVersion());
-        configBB.setRequestAction(ebb.getRequestAction());
-        configBB.setVnfType(ebb.getVnfType());
-        configBB.setRequestId(ebb.getRequestId());
-        configBB.setRequestDetails(ebb.getRequestDetails());
-        configBB.setBuildingBlock(buildingBlock);
+        BuildingBlock buildingBlock =
+                new BuildingBlock().setBpmnFlowName(bbName).setMsoId(UUID.randomUUID().toString());
+
         WorkflowResourceIds workflowResourceIds = ebb.getWorkflowResourceIds();
         workflowResourceIds.setConfigurationId(configurationId);
-        configBB.setWorkflowResourceIds(workflowResourceIds);
-        configBB.setConfigurationResourceKeys(configurationResourceKeys);
+        ExecuteBuildingBlock configBB = new ExecuteBuildingBlock().setaLaCarte(ebb.isaLaCarte())
+                .setApiVersion(ebb.getApiVersion()).setRequestAction(ebb.getRequestAction())
+                .setVnfType(ebb.getVnfType()).setRequestId(ebb.getRequestId())
+                .setRequestDetails(ebb.getRequestDetails()).setBuildingBlock(buildingBlock)
+                .setWorkflowResourceIds(workflowResourceIds).setConfigurationResourceKeys(configurationResourceKeys);
         return configBB;
     }
 

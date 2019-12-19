@@ -1,0 +1,9 @@
+{
+  "mso-id": "msoId",
+  "bpmn-flow-name": "bbName",
+  "key": "sampleKey",
+  "is-virtual-link": true,
+  "virtual-link-key": "sampleVirtualLinkKey",
+  "scope": "sampleScope",
+  "action": "sampleAction"
+}
