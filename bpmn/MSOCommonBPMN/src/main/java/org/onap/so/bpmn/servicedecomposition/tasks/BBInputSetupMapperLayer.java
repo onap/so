@@ -22,12 +22,6 @@
 
 package org.onap.so.bpmn.servicedecomposition.tasks;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.AggregateRoute;
@@ -92,6 +86,12 @@ import org.onap.so.serviceinstancebeans.RequestDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Component("BBInputSetupMapperLayer")
 public class BBInputSetupMapperLayer {
