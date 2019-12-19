@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 Huawei Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2020 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,7 +22,6 @@
 
 package org.onap.so.bpmn.servicedecomposition;
 
-import org.junit.Test;
 import com.openpojo.reflection.PojoClass;
 import com.openpojo.reflection.PojoClassFilter;
 import com.openpojo.reflection.filters.FilterNonConcrete;
@@ -32,6 +33,7 @@ import com.openpojo.validation.rule.impl.NoPrimitivesRule;
 import com.openpojo.validation.rule.impl.SerializableMustHaveSerialVersionUIDRule;
 import com.openpojo.validation.test.impl.GetterTester;
 import com.openpojo.validation.test.impl.SetterTester;
+import org.junit.Test;
 
 
 public class BBPojoTest {
