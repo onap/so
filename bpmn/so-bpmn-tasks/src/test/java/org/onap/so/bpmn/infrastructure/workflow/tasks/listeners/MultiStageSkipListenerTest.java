@@ -90,13 +90,13 @@ public class MultiStageSkipListenerTest {
         WorkflowResourceIds workflowResourceIds = new WorkflowResourceIds();
         workflowResourceIds.setServiceInstanceId("serviceInstanceId");
         workflowResourceIds.setVnfId(vnfId);
-        flowsToExecute.add(new ExecuteBuildingBlock());
-        flowsToExecute.add(new ExecuteBuildingBlock());
-        flowsToExecute.add(new ExecuteBuildingBlock());
-        flowsToExecute.get(0).setResourceId(vfModuleId);
-        flowsToExecute.get(0).setBuildingBlock(new BuildingBlock());
-        flowsToExecute.get(0).getBuildingBlock().setBpmnFlowName("AssignVfModuleBB");
-        flowsToExecute.get(0).setWorkflowResourceIds(workflowResourceIds);
+        BuildingBlock bb = new BuildingBlock.Builder().withBpmnFlowName("AssignVfModuleBB").build();
+        ExecuteBuildingBlock ebb = new ExecuteBuildingBlock.Builder().withResourceId(vfModuleId).withBuildingBlock(bb)
+                .withWorkflowResourceIds(workflowResourceIds).build();
+        flowsToExecute.add(ebb);
+        flowsToExecute.add(new ExecuteBuildingBlock.Builder().build());
+        flowsToExecute.add(new ExecuteBuildingBlock.Builder().build());
+
         BuildingBlockExecution execution = new DelegateExecutionImpl(new DelegateExecutionFake());
 
         org.onap.aai.domain.yang.VfModule vfModule = new org.onap.aai.domain.yang.VfModule();
