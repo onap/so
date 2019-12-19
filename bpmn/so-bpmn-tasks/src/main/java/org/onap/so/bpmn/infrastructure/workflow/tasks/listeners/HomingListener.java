@@ -42,7 +42,7 @@ public class HomingListener implements FlowManipulator {
         boolean homing = (boolean) execution.getVariable("homing");
         boolean calledHoming = (boolean) execution.getVariable("calledHoming");
         if (homing && !calledHoming) {
-            currentBB.setHoming(true);
+            currentBB = currentBB.copyAndChangeExecuteBuildingBlock(true);
             execution.setVariable("calledHoming", true);
         }
     }

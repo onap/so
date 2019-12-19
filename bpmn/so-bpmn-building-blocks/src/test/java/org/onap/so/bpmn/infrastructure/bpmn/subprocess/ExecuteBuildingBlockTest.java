@@ -41,6 +41,7 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.onap.so.bpmn.BaseBPMNTest;
+import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.db.catalog.beans.OrchestrationStatusValidationDirective;
 import org.springframework.beans.factory.annotation.Autowired;
 
