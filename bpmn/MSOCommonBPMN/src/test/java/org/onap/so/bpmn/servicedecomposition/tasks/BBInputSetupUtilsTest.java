@@ -863,7 +863,8 @@ public class BBInputSetupUtilsTest {
     public void getRelatedVolumeGroupByNameFromVfModuleMultipleVolumeGroupsExceptionTest() throws Exception {
         expectedException.expect(MultipleObjectsFoundException.class);
         expectedException.expectMessage(containsString(
-                "Multiple voulme-groups found for vnf-id: vnfId, vf-module-id: volumeGroupId and volume-group-name: volumeGroupName."));
+                "Multiple volume-groups found for vnf-id: vnfId, vf-module-id: volumeGroupId and volume-group-name: volumeGroupName."));
+
         String vnfId = "vnfId";
         String volumeGroupId = "volumeGroupId";
         String volumeGroupName = "volumeGroupName";
