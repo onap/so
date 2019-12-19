@@ -6,6 +6,8 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
+ * Modifications Copyright (c) 2020 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -108,7 +110,6 @@ import org.onap.so.serviceinstancebeans.SubscriberInfo;
 import org.springframework.core.env.Environment;
 
 public class WorkflowActionTest extends BaseTaskTest {
-
 
     @Mock
     protected Environment environment;
@@ -1706,41 +1707,29 @@ public class WorkflowActionTest extends BaseTaskTest {
     @Test
     public void sortExecutionPathByObjectForVlanTaggingCreateTest() throws Exception {
         List<ExecuteBuildingBlock> executeFlows = new ArrayList<>();
-        ExecuteBuildingBlock ebb = new ExecuteBuildingBlock();
-        BuildingBlock bb = new BuildingBlock();
-        bb.setBpmnFlowName("AssignNetworkBB");
-        bb.setKey("0");
-        ebb.setBuildingBlock(bb);
+
+        BuildingBlock bb = new BuildingBlock.Builder().withBpmnFlowName("AssignNetworkBB").withKey("0").build();
+        ExecuteBuildingBlock ebb = new ExecuteBuildingBlock.Builder().withBuildingBlock(bb).build();
         executeFlows.add(ebb);
-        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock();
-        BuildingBlock bb2 = new BuildingBlock();
-        bb2.setBpmnFlowName("AssignNetworkBB");
-        bb2.setKey("1");
-        ebb2.setBuildingBlock(bb2);
+
+        BuildingBlock bb2 = new BuildingBlock.Builder().withBpmnFlowName("AssignNetworkBB").withKey("1").build();
+        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock.Builder().withBuildingBlock(bb2).build();
         executeFlows.add(ebb2);
-        ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock();
-        BuildingBlock bb3 = new BuildingBlock();
-        bb3.setBpmnFlowName("CreateNetworkBB");
-        bb3.setKey("0");
-        ebb3.setBuildingBlock(bb3);
+
+        BuildingBlock bb3 = new BuildingBlock.Builder().withBpmnFlowName("CreateNetworkBB").withKey("0").build();
+        ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock.Builder().withBuildingBlock(bb3).build();
         executeFlows.add(ebb3);
-        ExecuteBuildingBlock ebb4 = new ExecuteBuildingBlock();
-        BuildingBlock bb4 = new BuildingBlock();
-        bb4.setBpmnFlowName("CreateNetworkBB");
-        bb4.setKey("1");
-        ebb4.setBuildingBlock(bb4);
+
+        BuildingBlock bb4 = new BuildingBlock.Builder().withBpmnFlowName("CreateNetworkBB").withKey("1").build();
+        ExecuteBuildingBlock ebb4 = new ExecuteBuildingBlock.Builder().withBuildingBlock(bb4).build();
         executeFlows.add(ebb4);
-        ExecuteBuildingBlock ebb5 = new ExecuteBuildingBlock();
-        BuildingBlock bb5 = new BuildingBlock();
-        bb5.setBpmnFlowName("ActivateNetworkBB");
-        bb5.setKey("0");
-        ebb5.setBuildingBlock(bb5);
+
+        BuildingBlock bb5 = new BuildingBlock.Builder().withBpmnFlowName("ActivateNetworkBB").withKey("0").build();
+        ExecuteBuildingBlock ebb5 = new ExecuteBuildingBlock.Builder().withBuildingBlock(bb5).build();
         executeFlows.add(ebb5);
-        ExecuteBuildingBlock ebb6 = new ExecuteBuildingBlock();
-        BuildingBlock bb6 = new BuildingBlock();
-        bb6.setBpmnFlowName("ActivateNetworkBB");
-        bb6.setKey("1");
-        ebb6.setBuildingBlock(bb6);
+
+        BuildingBlock bb6 = new BuildingBlock.Builder().withBpmnFlowName("ActivateNetworkBB").withKey("1").build();
+        ExecuteBuildingBlock ebb6 = new ExecuteBuildingBlock.Builder().withBuildingBlock(bb6).build();
         executeFlows.add(ebb6);
 
         List<ExecuteBuildingBlock> sorted =
@@ -1752,41 +1741,29 @@ public class WorkflowActionTest extends BaseTaskTest {
     @Test
     public void sortExecutionPathByObjectForVlanTaggingDeleteTest() throws Exception {
         List<ExecuteBuildingBlock> executeFlows = new ArrayList<>();
-        ExecuteBuildingBlock ebb = new ExecuteBuildingBlock();
-        BuildingBlock bb = new BuildingBlock();
-        bb.setBpmnFlowName("DeactivateNetworkBB");
-        bb.setKey("0");
-        ebb.setBuildingBlock(bb);
+
+        BuildingBlock bb = new BuildingBlock.Builder().withBpmnFlowName("DeactivateNetworkBB").withKey("0").build();
+        ExecuteBuildingBlock ebb = new ExecuteBuildingBlock.Builder().withBuildingBlock(bb).build();
         executeFlows.add(ebb);
-        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock();
-        BuildingBlock bb2 = new BuildingBlock();
-        bb2.setBpmnFlowName("DeactivateNetworkBB");
-        bb2.setKey("1");
-        ebb2.setBuildingBlock(bb2);
+
+        BuildingBlock bb2 = new BuildingBlock.Builder().withBpmnFlowName("DeactivateNetworkBB").withKey("1").build();
+        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock.Builder().withBuildingBlock(bb2).build();
         executeFlows.add(ebb2);
-        ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock();
-        BuildingBlock bb3 = new BuildingBlock();
-        bb3.setBpmnFlowName("DeleteNetworkBB");
-        bb3.setKey("0");
-        ebb3.setBuildingBlock(bb3);
+
+        BuildingBlock bb3 = new BuildingBlock.Builder().withBpmnFlowName("DeleteNetworkBB").withKey("0").build();
+        ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock.Builder().withBuildingBlock(bb3).build();
         executeFlows.add(ebb3);
-        ExecuteBuildingBlock ebb4 = new ExecuteBuildingBlock();
-        BuildingBlock bb4 = new BuildingBlock();
-        bb4.setBpmnFlowName("DeleteNetworkBB");
-        bb4.setKey("1");
-        ebb4.setBuildingBlock(bb4);
+
+        BuildingBlock bb4 = new BuildingBlock.Builder().withBpmnFlowName("DeleteNetworkBB").withKey("1").build();
+        ExecuteBuildingBlock ebb4 = new ExecuteBuildingBlock.Builder().withBuildingBlock(bb4).build();
         executeFlows.add(ebb4);
-        ExecuteBuildingBlock ebb5 = new ExecuteBuildingBlock();
-        BuildingBlock bb5 = new BuildingBlock();
-        bb5.setBpmnFlowName("UnassignNetworkBB");
-        bb5.setKey("0");
-        ebb5.setBuildingBlock(bb5);
+
+        BuildingBlock bb5 = new BuildingBlock.Builder().withBpmnFlowName("UnassignNetworkBB").withKey("0").build();
+        ExecuteBuildingBlock ebb5 = new ExecuteBuildingBlock.Builder().withBuildingBlock(bb5).build();
         executeFlows.add(ebb5);
-        ExecuteBuildingBlock ebb6 = new ExecuteBuildingBlock();
-        BuildingBlock bb6 = new BuildingBlock();
-        bb6.setBpmnFlowName("UnassignNetworkBB");
-        bb6.setKey("1");
-        ebb6.setBuildingBlock(bb6);
+
+        BuildingBlock bb6 = new BuildingBlock.Builder().withBpmnFlowName("UnassignNetworkBB").withKey("1").build();
+        ExecuteBuildingBlock ebb6 = new ExecuteBuildingBlock.Builder().withBuildingBlock(bb6).build();
         executeFlows.add(ebb6);
 
         List<ExecuteBuildingBlock> sorted =
@@ -2974,7 +2951,7 @@ public class WorkflowActionTest extends BaseTaskTest {
         ExecuteBuildingBlock result = null;
         try {
             result = workflowAction.buildExecuteBuildingBlock(new OrchestrationFlow(), null, null, null, null, null,
-                    false, null, null, null, false, null, true);
+                    false, null, null, null, false, null, null, true).build();
         } catch (NullPointerException e) {
             fail("NullPointerException should not be thrown when 'resource' is null");
         }

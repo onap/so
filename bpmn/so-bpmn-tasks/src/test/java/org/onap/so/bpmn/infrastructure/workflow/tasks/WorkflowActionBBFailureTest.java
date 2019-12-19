@@ -143,10 +143,8 @@ public class WorkflowActionBBFailureTest extends BaseTaskTest {
 
     @Test
     public void updateRequestStatusToFailedRollbackFabric() {
-        ExecuteBuildingBlock ebb = new ExecuteBuildingBlock();
-        BuildingBlock bb = new BuildingBlock();
-        bb.setBpmnFlowName("UnassignFabricConfigurationBB");
-        ebb.setBuildingBlock(bb);
+        BuildingBlock bb = new BuildingBlock.Builder().withBpmnFlowName("UnassignFabricConfigurationBB").build();
+        ExecuteBuildingBlock ebb = new ExecuteBuildingBlock.Builder().withBuildingBlock(bb).build();
         execution.setVariable("buildingBlock", ebb);
         execution.setVariable("mso-request-id", "123");
         execution.setVariable("isRollbackComplete", false);
