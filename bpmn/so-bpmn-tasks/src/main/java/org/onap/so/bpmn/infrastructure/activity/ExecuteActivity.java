@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -151,33 +151,25 @@ public class ExecuteActivity implements JavaDelegate {
     }
 
     protected BuildingBlock buildBuildingBlock(String activityName) {
-        BuildingBlock buildingBlock = new BuildingBlock();
-        buildingBlock.setBpmnFlowName(activityName);
-        buildingBlock.setMsoId(UUID.randomUUID().toString());
-        buildingBlock.setKey("");
-        buildingBlock.setIsVirtualLink(false);
-        buildingBlock.setVirtualLinkKey("");
-        return buildingBlock;
+        BuildingBlock.Builder buildingBlock = new BuildingBlock.Builder().withBpmnFlowName(activityName)
+                .withMsoId(UUID.randomUUID().toString()).withKey("").withIsVirtualLink(false).withVirtualLinkKey("");
+        return buildingBlock.build();
     }
 
     protected ExecuteBuildingBlock buildExecuteBuildingBlock(DelegateExecution execution, String requestId,
             BuildingBlock buildingBlock) throws Exception {
-        ExecuteBuildingBlock executeBuildingBlock = new ExecuteBuildingBlock();
-        String bpmnRequest = (String) execution.getVariable(G_BPMN_REQUEST);
-        ServiceInstancesRequest sIRequest = mapper.readValue(bpmnRequest, ServiceInstancesRequest.class);
-        RequestDetails requestDetails = sIRequest.getRequestDetails();
-        executeBuildingBlock.setaLaCarte(true);
-        executeBuildingBlock.setRequestAction((String) execution.getVariable(G_ACTION));
-        executeBuildingBlock.setResourceId((String) execution.getVariable(VNF_ID));
-        executeBuildingBlock.setVnfType((String) execution.getVariable(VNF_TYPE));
         WorkflowResourceIds workflowResourceIds = new WorkflowResourceIds();
         workflowResourceIds.setServiceInstanceId((String) execution.getVariable(SERVICE_INSTANCE_ID));
         workflowResourceIds.setVnfId((String) execution.getVariable(VNF_ID));
-        executeBuildingBlock.setWorkflowResourceIds(workflowResourceIds);
-        executeBuildingBlock.setRequestId(requestId);
-        executeBuildingBlock.setBuildingBlock(buildingBlock);
-        executeBuildingBlock.setRequestDetails(requestDetails);
-        return executeBuildingBlock;
+        String bpmnRequest = (String) execution.getVariable(G_BPMN_REQUEST);
+        ServiceInstancesRequest sIRequest = mapper.readValue(bpmnRequest, ServiceInstancesRequest.class);
+        RequestDetails requestDetails = sIRequest.getRequestDetails();
+        ExecuteBuildingBlock.Builder executeBuildingBlock = new ExecuteBuildingBlock.Builder().withaLaCarte(true)
+                .withRequestAction((String) execution.getVariable(G_ACTION))
+                .withResourceId((String) execution.getVariable(VNF_ID))
+                .withVnfType((String) execution.getVariable(VNF_TYPE)).withWorkflowResourceIds(workflowResourceIds)
+                .withRequestId(requestId).withBuildingBlock(buildingBlock).withRequestDetails(requestDetails);
+        return executeBuildingBlock.build();
     }
 
     protected void buildAndThrowException(DelegateExecution execution, String msg, Exception ex) {
