@@ -20,9 +20,9 @@
 
 package org.onap.so.bpmn.servicedecomposition;
 
-import org.junit.Test;
 import com.openpojo.reflection.PojoClass;
 import com.openpojo.reflection.PojoClassFilter;
+import com.openpojo.reflection.filters.FilterNestedClasses;
 import com.openpojo.reflection.filters.FilterNonConcrete;
 import com.openpojo.reflection.filters.FilterPackageInfo;
 import com.openpojo.validation.Validator;
@@ -32,6 +32,7 @@ import com.openpojo.validation.rule.impl.NoPrimitivesRule;
 import com.openpojo.validation.rule.impl.SerializableMustHaveSerialVersionUIDRule;
 import com.openpojo.validation.test.impl.GetterTester;
 import com.openpojo.validation.test.impl.SetterTester;
+import org.junit.Test;
 
 
 public class BBPojoTest {
@@ -50,12 +51,19 @@ public class BBPojoTest {
         Validator validator = ValidatorBuilder.create().with(new GetterMustExistRule()).with(new SetterTester())
                 .with(new GetterTester()).with(new NoPrimitivesRule())
                 .with(new SerializableMustHaveSerialVersionUIDRule()).build();
-        validator.validate(pojoPackage, new FilterPackageInfo(), filterTestClasses, new FilterNonConcrete());
+        validator.validate(pojoPackage, new FilterPackageInfo(), filterTestClasses, new FilterNonConcrete(),
+                new FilterNestedClasses(), new FilterClassesWithAllFinalPojos());
     }
 
     private static class FilterTestClasses implements PojoClassFilter {
         public boolean include(PojoClass pojoClass) {
             return !pojoClass.getSourcePath().contains("/test-classes/");
+        }
+    }
+
+    private static class FilterClassesWithAllFinalPojos implements PojoClassFilter {
+        public boolean include(PojoClass pojoClass) {
+            return !pojoClass.getPojoFields().stream().allMatch(pojoField -> pojoField.isFinal());
         }
     }
 }

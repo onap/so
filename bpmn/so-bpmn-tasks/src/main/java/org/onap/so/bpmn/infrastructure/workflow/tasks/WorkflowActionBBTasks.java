@@ -300,7 +300,11 @@ public class WorkflowActionBBTasks {
                     } else {
                         continue;
                     }
-                    flowsToExecute.get(i).getBuildingBlock().setBpmnFlowName(flowName);
+                    BuildingBlock buildingBlock = flowsToExecute.get(i).getBuildingBlock();
+                    buildingBlock = buildingBlock.copyAndChangeBuildingBlock(flowName);
+                    ExecuteBuildingBlock executeBuildingBlock = flowsToExecute.get(i);
+                    flowsToExecute.set(i, executeBuildingBlock.copyAndChangeExecuteBuildingBlock(buildingBlock));
+
                     rollbackFlows.add(flowsToExecute.get(i));
                 }
             }
@@ -444,21 +448,16 @@ public class WorkflowActionBBTasks {
 
     protected ExecuteBuildingBlock getExecuteBBForConfig(String bbName, ExecuteBuildingBlock ebb,
             String configurationId, ConfigurationResourceKeys configurationResourceKeys) {
-        ExecuteBuildingBlock configBB = new ExecuteBuildingBlock();
-        BuildingBlock buildingBlock = new BuildingBlock();
-        buildingBlock.setBpmnFlowName(bbName);
-        buildingBlock.setMsoId(UUID.randomUUID().toString());
-        configBB.setaLaCarte(ebb.isaLaCarte());
-        configBB.setApiVersion(ebb.getApiVersion());
-        configBB.setRequestAction(ebb.getRequestAction());
-        configBB.setVnfType(ebb.getVnfType());
-        configBB.setRequestId(ebb.getRequestId());
-        configBB.setRequestDetails(ebb.getRequestDetails());
-        configBB.setBuildingBlock(buildingBlock);
+        BuildingBlock buildingBlock =
+                new BuildingBlock.Builder().withBpmnFlowName(bbName).withMsoId(UUID.randomUUID().toString()).build();
+
         WorkflowResourceIds workflowResourceIds = ebb.getWorkflowResourceIds();
         workflowResourceIds.setConfigurationId(configurationId);
-        configBB.setWorkflowResourceIds(workflowResourceIds);
-        configBB.setConfigurationResourceKeys(configurationResourceKeys);
-        return configBB;
+        ExecuteBuildingBlock.Builder configBB = new ExecuteBuildingBlock.Builder().withaLaCarte(ebb.isaLaCarte())
+                .withApiVersion(ebb.getApiVersion()).withRequestAction(ebb.getRequestAction())
+                .withVnfType(ebb.getVnfType()).withRequestId(ebb.getRequestId())
+                .withRequestDetails(ebb.getRequestDetails()).withBuildingBlock(buildingBlock)
+                .withWorkflowResourceIds(workflowResourceIds).withConfigurationResourceKeys(configurationResourceKeys);
+        return configBB.build();
     }
 }
