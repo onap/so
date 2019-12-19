@@ -635,7 +635,7 @@
     <dependency>
       <groupId>org.onap.logging-analytics</groupId>
       <artifactId>logging-filter-base</artifactId>
-      <version>1.6.3-SNAPSHOT</version>
+      <version>1.6.2-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.onap.logging-analytics</groupId>
