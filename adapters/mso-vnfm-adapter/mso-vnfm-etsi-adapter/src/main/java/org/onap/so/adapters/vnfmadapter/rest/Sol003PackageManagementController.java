@@ -110,8 +110,16 @@ public class Sol003PackageManagementController {
     @GetMapping(value = "/vnf_packages/{vnfPkgId}/vnfd",
             produces = {MediaType.TEXT_PLAIN, APPLICATION_ZIP, MediaType.APPLICATION_JSON})
     public ResponseEntity<byte[]> getVnfPackageVnfd(@PathVariable("vnfPkgId") final String vnfPkgId) {
-        logger.info(LOG_REQUEST_RECEIVED, "getVnfPackageVnfd: ", vnfPkgId);
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        logger.info(LOG_REQUEST_RECEIVED, "getVnfPackageVnfd Endpoint Invoked with VNF Package ID: ", vnfPkgId);
+        final Optional<byte[]> response = etsiCatalogServiceProvider.getVnfPackageVnfd(vnfPkgId);
+        if (response.isPresent()) {
+            logger.info(LOG_REQUEST_RECEIVED, "getVnfPackageVnfd Response: ", HttpStatus.OK);
+            return new ResponseEntity(response.get(), HttpStatus.OK);
+        }
+        logger.error("Null response was received from the EtsiCatalogManager using the GET \"vnfd\"");
+        return new ResponseEntity(buildProblemDetails("An error occurred, a null response was received by the\n"
+                + " Sol003PackageManagementController from the EtsiCatalogManager using the GET \"vnfd\" \n"
+                + "endpoint."), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**

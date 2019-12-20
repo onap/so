@@ -53,4 +53,11 @@ public interface EtsiCatalogServiceProvider {
      */
     Optional<InlineResponse2001> getVnfPackage(final String vnfPkgId);
 
+    /**
+     * GET specific VNF package VNFD from ETSI Catalog.
+     *
+     * @param vnfPkgId The ID of the VNF Package that you want to query.
+     * @return The VNFD retrieved from the ETSI Catalog
+     */
+    Optional<byte[]> getVnfPackageVnfd(final String vnfPkgId);
 }

@@ -42,7 +42,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * Provides the implementations of the REST Requests to the ETSI Catalog Manager.
- * 
+ *
  * @author gareth.roper@est.tech
  */
 @Service
@@ -156,5 +156,29 @@ public class EtsiCatalogServiceProviderImpl implements EtsiCatalogServiceProvide
                     restProcessingException);
             throw new EtsiCatalogManagerRequestFailureException("Internal Server Error Occurred.");
         }
+    }
+
+    @Override
+    public Optional<byte[]> getVnfPackageVnfd(String vnfPkgId) {
+        try {
+            final ResponseEntity<byte[]> response = httpServiceProvider
+                    .getHttpResponse(etsiCatalogUrlProvider.getVnfPackageVnfdUrl(vnfPkgId), byte[].class);
+            logger.info("getVnfPackageVnfd Request to ETSI Catalog Manager Status Code: {}",
+                    response.getStatusCodeValue());
+            if (response.getStatusCode() == HttpStatus.OK) {
+                return Optional.ofNullable(response.getBody());
+            }
+        } catch (final HttpResouceNotFoundException httpResouceNotFoundException) {
+            logger.error("Caught HttpResouceNotFoundException", httpResouceNotFoundException);
+            throw new VnfPkgNotFoundException("No Vnf Package found with vnfPkgId: " + vnfPkgId);
+        } catch (final RestProcessingException restProcessingException) {
+            logger.error("Caught RestProcessingException with Status Code: {}", restProcessingException.getStatusCode(),
+                    restProcessingException);
+            if (restProcessingException.getStatusCode() == HttpStatus.CONFLICT.value()) {
+                throw new VnfPkgConflictException("A conflict occurred with the state of the resource,\n"
+                        + "due to the attribute: onboardingState not being set to ONBOARDED.");
+            }
+        }
+        throw new EtsiCatalogManagerRequestFailureException("Internal Server Error Occurred.");
     }
 }
