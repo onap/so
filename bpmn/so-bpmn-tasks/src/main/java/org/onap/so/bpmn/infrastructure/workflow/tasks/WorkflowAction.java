@@ -75,17 +75,7 @@ import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.macro.NorthBoundRequest;
 import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
 import org.onap.so.db.catalog.client.CatalogDbClient;
-import org.onap.so.serviceinstancebeans.CloudConfiguration;
-import org.onap.so.serviceinstancebeans.ModelInfo;
-import org.onap.so.serviceinstancebeans.ModelType;
-import org.onap.so.serviceinstancebeans.Networks;
-import org.onap.so.serviceinstancebeans.RelatedInstance;
-import org.onap.so.serviceinstancebeans.RequestDetails;
-import org.onap.so.serviceinstancebeans.RequestInfo;
-import org.onap.so.serviceinstancebeans.Service;
-import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
-import org.onap.so.serviceinstancebeans.VfModules;
-import org.onap.so.serviceinstancebeans.Vnfs;
+import org.onap.so.serviceinstancebeans.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -730,6 +720,8 @@ public class WorkflowAction {
                 workflowResourceIds.setServiceInstanceId(serviceInstanceId);
                 if (resource == WorkflowType.VNF) {
                     workflowResourceIds.setVnfId(resourceId);
+                } else if (resource == WorkflowType.PNF) {
+                    workflowResourceIds.setPnfId(resourceId);
                 } else if (resource == WorkflowType.VFMODULE) {
                     workflowResourceIds.setVfModuleId(resourceId);
                 } else if (resource == WorkflowType.VOLUMEGROUP) {
@@ -1171,6 +1163,13 @@ public class WorkflowAction {
                                     }
                                 }
                             }
+                        }
+                    }
+                    if (validate.getResources().getPnfs() != null) {
+                        for (Pnfs pnf : validate.getResources().getPnfs()) {
+                            resourceCounter.add(new Resource(WorkflowType.PNF,
+                                    pnf.getModelInfo().getModelCustomizationId(), false));
+                            foundRelated = true;
                         }
                     }
                     if (validate.getResources().getNetworks() != null) {

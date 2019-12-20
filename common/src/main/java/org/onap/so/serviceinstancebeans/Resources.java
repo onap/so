@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -36,6 +38,8 @@ public class Resources implements Serializable {
     private static final long serialVersionUID = 2194797231782624520L;
     @JsonProperty("vnfs")
     private List<Vnfs> vnfs = new ArrayList<>();
+    @JsonProperty("pnfs")
+    private List<Pnfs> pnfs = new ArrayList<>();
     @JsonProperty("networks")
     private List<Networks> networks = new ArrayList<>();
 
@@ -45,6 +49,14 @@ public class Resources implements Serializable {
 
     public void setVnfs(List<Vnfs> vnfs) {
         this.vnfs = vnfs;
+    }
+
+    public List<Pnfs> getPnfs() {
+        return pnfs;
+    }
+
+    public void setPnfs(List<Pnfs> pnfs) {
+        this.pnfs = pnfs;
     }
 
     public List<Networks> getNetworks() {
