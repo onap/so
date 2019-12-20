@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,5 +33,6 @@ public enum ResourceKey {
     NETWORK_COLLECTION_ID,
     VPN_ID,
     VPN_BONDING_LINK_ID,
-    INSTANCE_GROUP_ID;
+    INSTANCE_GROUP_ID,
+    PNF
 }

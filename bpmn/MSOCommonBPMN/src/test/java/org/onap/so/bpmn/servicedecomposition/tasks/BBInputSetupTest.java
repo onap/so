@@ -1934,6 +1934,7 @@ public class BBInputSetupTest {
         String serviceInstanceId = "serviceInstanceId";
         String networkId = "networkId";
         String vnfId = "vnfId";
+        String pnfId = "pnfId";
         String vfModuleId = "vfModuleId";
         String volumeGroupId = "volumeGroupId";
         String configurationId = "configurationId";
@@ -1942,6 +1943,7 @@ public class BBInputSetupTest {
         expected.put(ResourceKey.SERVICE_INSTANCE_ID, serviceInstanceId);
         expected.put(ResourceKey.NETWORK_ID, networkId);
         expected.put(ResourceKey.GENERIC_VNF_ID, vnfId);
+        expected.put(ResourceKey.PNF, pnfId);
         expected.put(ResourceKey.VF_MODULE_ID, vfModuleId);
         expected.put(ResourceKey.VOLUME_GROUP_ID, volumeGroupId);
         expected.put(ResourceKey.CONFIGURATION_ID, configurationId);
@@ -1951,6 +1953,7 @@ public class BBInputSetupTest {
         workflowResourceIds.setServiceInstanceId(serviceInstanceId);
         workflowResourceIds.setNetworkId(networkId);
         workflowResourceIds.setVnfId(vnfId);
+        workflowResourceIds.setPnfId(pnfId);
         workflowResourceIds.setVfModuleId(vfModuleId);
         workflowResourceIds.setVolumeGroupId(volumeGroupId);
         workflowResourceIds.setConfigurationId(configurationId);
