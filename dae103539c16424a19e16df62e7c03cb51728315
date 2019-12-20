@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "741939ca_c248ef08",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/AbstractCDSProcessingBBUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-12-20T13:14:18Z",
+      "side": 1,
+      "message": "I suspect it should be negation:\nif (!cdsResponseStatus.equals(SUCCESS)) {",
+      "range": {
+        "startLine": 154,
+        "startChar": 16,
+        "endLine": 154,
+        "endChar": 49
+      },
+      "revId": "dae103539c16424a19e16df62e7c03cb51728315",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1fed8e41_f123696a",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/AbstractCDSProcessingBBUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-12-20T13:14:18Z",
+      "side": 1,
+      "message": "this case is redundant, because default does the same, remove it please",
+      "range": {
+        "startLine": 182,
+        "startChar": 16,
+        "endLine": 185,
+        "endChar": 26
+      },
+      "revId": "dae103539c16424a19e16df62e7c03cb51728315",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
