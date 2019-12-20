@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4a62cd97_70c16e02",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputs.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-12-20T08:24:44Z",
+      "side": 1,
+      "message": "Please revert changes, the old implementation should stay as it is.",
+      "range": {
+        "startLine": 36,
+        "startChar": 13,
+        "endLine": 36,
+        "endChar": 27
+      },
+      "revId": "fee2a65e2d49cc0b681862206d2190723e544cd0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f571e4fd_d79bbe47",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/AssignPnfInputsCheckerDelegateTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-12-20T08:24:44Z",
+      "side": 1,
+      "message": "why \"sut\"?",
+      "range": {
+        "startLine": 14,
+        "startChar": 43,
+        "endLine": 14,
+        "endChar": 46
+      },
+      "revId": "fee2a65e2d49cc0b681862206d2190723e544cd0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "693ce844_a6b57e2a",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PnfCheckInputsTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-12-20T08:24:44Z",
+      "side": 1,
+      "message": "Please revert changes, the old implementation should stay as it is.",
+      "range": {
+        "startLine": 35,
+        "startChar": 13,
+        "endLine": 35,
+        "endChar": 31
+      },
+      "revId": "fee2a65e2d49cc0b681862206d2190723e544cd0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
