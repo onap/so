@@ -23,7 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Exception for a Vnfpkg Not Found Failure
+ * Exception for VnfPkg Not Found Failures
  * 
  * @author gareth.roper@est.tech
  */

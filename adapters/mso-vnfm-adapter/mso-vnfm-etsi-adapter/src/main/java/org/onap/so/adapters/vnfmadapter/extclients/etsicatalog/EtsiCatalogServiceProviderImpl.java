@@ -23,10 +23,7 @@ package org.onap.so.adapters.vnfmadapter.extclients.etsicatalog;
 import java.util.Optional;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VnfPkgInfo;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.InlineResponse2001;
-import org.onap.so.adapters.vnfmadapter.rest.exceptions.EtsiCatalogManagerRequestFailureException;
-import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfPkgBadRequestException;
-import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfPkgConflictException;
-import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfPkgNotFoundException;
+import org.onap.so.adapters.vnfmadapter.rest.exceptions.*;
 import org.onap.so.rest.exceptions.HttpResouceNotFoundException;
 import org.onap.so.rest.exceptions.InvalidRestRequestException;
 import org.onap.so.rest.exceptions.RestProcessingException;
@@ -76,6 +73,31 @@ public class EtsiCatalogServiceProviderImpl implements EtsiCatalogServiceProvide
         } catch (final HttpResouceNotFoundException httpResouceNotFoundException) {
             logger.error("Caught HttpResouceNotFoundException", httpResouceNotFoundException);
             throw new VnfPkgNotFoundException("No Vnf Package found with vnfPkgId: " + vnfPkgId);
+        } catch (final RestProcessingException restProcessingException) {
+            logger.error("Caught RestProcessingException with Status Code: {}", restProcessingException.getStatusCode(),
+                    restProcessingException);
+            if (restProcessingException.getStatusCode() == HttpStatus.CONFLICT.value()) {
+                throw new VnfPkgConflictException("A conflict occurred with the state of the resource,\n"
+                        + "due to the attribute: onboardingState not being set to ONBOARDED.");
+            }
+        }
+        throw new EtsiCatalogManagerRequestFailureException("Internal Server Error Occurred.");
+    }
+
+    @Override
+    public Optional<byte[]> getVnfPackageArtifact(final String vnfPkgId, final String artifactPath) {
+        try {
+            final ResponseEntity<byte[]> response = httpServiceProvider.getHttpResponse(
+                    etsiCatalogUrlProvider.getVnfPackageArtifactUrl(vnfPkgId, artifactPath), byte[].class);
+            logger.info("getVnfPackageArtifact Request to ETSI Catalog Manager Status Code: {}",
+                    response.getStatusCodeValue());
+            if (response.getStatusCode() == HttpStatus.OK) {
+                return Optional.ofNullable(response.getBody());
+            }
+        } catch (final HttpResouceNotFoundException httpResouceNotFoundException) {
+            logger.error("Caught HttpResouceNotFoundException", httpResouceNotFoundException);
+            throw new VnfPkgNotFoundException("No Vnf Package Artifact found with vnfPkgId: \"" + vnfPkgId
+                    + "\" and artifactPath: \"" + artifactPath + "\".");
         } catch (final RestProcessingException restProcessingException) {
             logger.error("Caught RestProcessingException with Status Code: {}", restProcessingException.getStatusCode(),
                     restProcessingException);

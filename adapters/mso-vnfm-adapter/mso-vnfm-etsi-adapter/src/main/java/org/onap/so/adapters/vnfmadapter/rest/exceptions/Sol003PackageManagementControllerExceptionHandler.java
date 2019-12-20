@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.vnfmadapter;
+package org.onap.so.adapters.vnfmadapter.rest.exceptions;
 
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.ProblemDetails;
 import org.onap.so.adapters.vnfmadapter.rest.Sol003PackageManagementController;
