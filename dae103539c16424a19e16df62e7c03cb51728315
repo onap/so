@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "c8b415f0_a5b682fb",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/AbstractCDSProcessingBBUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-20T16:07:08Z",
+      "side": 1,
+      "message": "Yes I agree with you in-fact I did that change but I forgot to push it sorry about that.",
+      "parentUuid": "741939ca_c248ef08",
+      "range": {
+        "startLine": 154,
+        "startChar": 16,
+        "endLine": 154,
+        "endChar": 49
+      },
+      "revId": "dae103539c16424a19e16df62e7c03cb51728315",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "1fed8e41_f123696a",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/AbstractCDSProcessingBBUtils.java",
         "patchSetId": 3
@@ -36,6 +60,30 @@
       "writtenOn": "2019-12-20T13:14:18Z",
       "side": 1,
       "message": "this case is redundant, because default does the same, remove it please",
+      "range": {
+        "startLine": 182,
+        "startChar": 16,
+        "endLine": 185,
+        "endChar": 26
+      },
+      "revId": "dae103539c16424a19e16df62e7c03cb51728315",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f37580b8_100f3f69",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/AbstractCDSProcessingBBUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-12-20T16:07:08Z",
+      "side": 1,
+      "message": "Yes",
+      "parentUuid": "1fed8e41_f123696a",
       "range": {
         "startLine": 182,
         "startChar": 16,
