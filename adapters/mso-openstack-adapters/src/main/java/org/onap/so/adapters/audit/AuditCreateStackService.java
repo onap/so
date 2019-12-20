@@ -84,7 +84,7 @@ public class AuditCreateStackService extends AbstractAuditService {
                         externalTaskId, getRetrySequence().length);
                 externalTaskService.handleFailure(externalTask, UNABLE_TO_FIND_ALL_V_SERVERS_AND_L_INTERACES_IN_A_AI,
                         UNABLE_TO_FIND_ALL_V_SERVERS_AND_L_INTERACES_IN_A_AI, getRetrySequence().length, 10000);
-            } else if (retryCount != null && retryCount - 1 == 0) {
+            } else if (retryCount == 1) {
                 externalTaskService.complete(externalTask, variables);
                 mdcSetup.setResponseCode(ONAPLogConstants.ResponseStatus.ERROR.toString());
                 logger.debug("The External Task Id: {}  Failed, All Retries Exhausted", externalTaskId);
