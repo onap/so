@@ -30,6 +30,7 @@ public class WorkflowResourceIds implements Serializable {
      */
     private static final long serialVersionUID = 8591599114353940105L;
     private String serviceInstanceId;
+    private String pnfId;
     private String vnfId;
     private String networkId;
     private String volumeGroupId;
@@ -40,10 +41,10 @@ public class WorkflowResourceIds implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("serviceInstanceId", serviceInstanceId).append("vnfId", vnfId)
-                .append("networkId", networkId).append("volumeGroupId", volumeGroupId).append("vfModuleId", vfModuleId)
-                .append("networkCollectionId", networkCollectionId).append("configurationId", configurationId)
-                .toString();
+        return new ToStringBuilder(this).append("serviceInstanceId", serviceInstanceId).append("pnfId", pnfId)
+                .append("vnfId", vnfId).append("networkId", networkId).append("volumeGroupId", volumeGroupId)
+                .append("vfModuleId", vfModuleId).append("networkCollectionId", networkCollectionId)
+                .append("configurationId", configurationId).toString();
     }
 
     public String getServiceInstanceId() {
@@ -52,6 +53,14 @@ public class WorkflowResourceIds implements Serializable {
 
     public void setServiceInstanceId(String serviceInstanceId) {
         this.serviceInstanceId = serviceInstanceId;
+    }
+
+    public String getPnfId() {
+        return pnfId;
+    }
+
+    public void setPnfId(String pnfId) {
+        this.pnfId = pnfId;
     }
 
     public String getVnfId() {

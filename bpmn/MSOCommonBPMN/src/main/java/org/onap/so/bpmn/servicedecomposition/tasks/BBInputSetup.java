@@ -26,34 +26,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.javatuples.Pair;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.common.DelegateExecutionImpl;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.*;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.LineOfBusiness;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.NetworkPolicy;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.OwningEntity;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Platform;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Project;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.RouteTableReference;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceProxy;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceSubscription;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.Tenant;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.Vnfc;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.VpnBinding;
 import org.onap.so.bpmn.servicedecomposition.entities.ConfigurationResourceKeys;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
@@ -89,6 +76,7 @@ import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.ModelType;
 import org.onap.so.serviceinstancebeans.Networks;
+import org.onap.so.serviceinstancebeans.Pnfs;
 import org.onap.so.serviceinstancebeans.RelatedInstance;
 import org.onap.so.serviceinstancebeans.RelatedInstanceList;
 import org.onap.so.serviceinstancebeans.RequestDetails;
@@ -115,6 +103,7 @@ public class BBInputSetup implements JavaDelegate {
     private static final String VF_MODULE = "VfModule";
     private static final String NETWORK = "Network";
     private static final String VNF = "Vnf";
+    private static final String PNF = "Pnf";
     private static final String NETWORK_COLLECTION = "NetworkCollection";
     private static final String PREPROV = "PREPROV";
     private static final String CREATEVOLUME = "CreateVolume";
@@ -243,6 +232,7 @@ public class BBInputSetup implements JavaDelegate {
         lookupKeyMap.put(ResourceKey.SERVICE_INSTANCE_ID, workflowResourceIds.getServiceInstanceId());
         lookupKeyMap.put(ResourceKey.NETWORK_ID, workflowResourceIds.getNetworkId());
         lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, workflowResourceIds.getVnfId());
+        lookupKeyMap.put(ResourceKey.PNF, workflowResourceIds.getPnfId());
         lookupKeyMap.put(ResourceKey.VF_MODULE_ID, workflowResourceIds.getVfModuleId());
         lookupKeyMap.put(ResourceKey.VOLUME_GROUP_ID, workflowResourceIds.getVolumeGroupId());
         lookupKeyMap.put(ResourceKey.CONFIGURATION_ID, workflowResourceIds.getConfigurationId());
@@ -804,6 +794,13 @@ public class BBInputSetup implements JavaDelegate {
             }
             updateInstanceName(requestId, ModelType.vnf, vnf.getVnfName());
         }
+    }
+
+    private void populatePnf(Pnfs pnf, String pnfId, ServiceInstance serviceInstance) {
+        Pnf genericPnf = new Pnf();
+        genericPnf.setPnfId(pnfId);
+        genericPnf.setPnfName(pnf.getInstanceName());
+        serviceInstance.getPnfs().add(genericPnf);
     }
 
     protected boolean instanceGroupInList(GenericVnf vnf, String instanceGroupId) {
@@ -1456,6 +1453,11 @@ public class BBInputSetup implements JavaDelegate {
             this.populateGenericVnf(executeBB.getRequestId(), vnfs.getModelInfo(), vnfs.getInstanceName(),
                     vnfs.getPlatform(), vnfs.getLineOfBusiness(), service, bbName, serviceInstance, lookupKeyMap, null,
                     vnfId, vnfType, vnfs.getInstanceParams(), productFamilyId, applicationId);
+        } else if (bbName.contains(PNF)) {
+            String pnfId = lookupKeyMap.get(ResourceKey.PNF);
+            resources.getPnfs().stream()
+                    .filter(pnf -> Objects.equals(key, pnf.getModelInfo().getModelCustomizationId())).findFirst()
+                    .ifPresent(pnf -> this.populatePnf(pnf, pnfId, serviceInstance));
         } else if (bbName.contains(VF_MODULE) || bbName.contains(VOLUME_GROUP)) {
             Pair<Vnfs, VfModules> vnfsAndVfModules = getVfModulesAndItsVnfsByKey(key, resources);
             if (vnfsAndVfModules != null) {
