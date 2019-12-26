@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6aa88273_95ef9848",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/AbstractCDSProcessingBBUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 5299
+      },
+      "writtenOn": "2019-12-26T14:46:12Z",
+      "side": 1,
+      "message": "EXEC_INPUT is defined",
+      "range": {
+        "startLine": 131,
+        "startChar": 67,
+        "endLine": 131,
+        "endChar": 88
+      },
+      "revId": "6f213e9dec22dc9e12bae2ba5cca272f5c3deb4c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8b67b0f7_7317f02a",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/AbstractCDSProcessingBBUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 5299
+      },
+      "writtenOn": "2019-12-26T14:46:12Z",
+      "side": 1,
+      "message": "what\u0027s 7000",
+      "range": {
+        "startLine": 160,
+        "startChar": 68,
+        "endLine": 160,
+        "endChar": 72
+      },
+      "revId": "6f213e9dec22dc9e12bae2ba5cca272f5c3deb4c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "16a56471_f9b45352",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/AbstractCDSProcessingBBUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 5299
+      },
+      "writtenOn": "2019-12-26T14:46:12Z",
+      "side": 1,
+      "message": "should this be private class?\nListener is not the greatest name",
+      "range": {
+        "startLine": 164,
+        "startChar": 4,
+        "endLine": 164,
+        "endChar": 9
+      },
+      "revId": "6f213e9dec22dc9e12bae2ba5cca272f5c3deb4c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
