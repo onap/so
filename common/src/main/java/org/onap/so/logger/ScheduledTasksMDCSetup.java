@@ -45,7 +45,7 @@ public class ScheduledTasksMDCSetup extends MDCSetup {
             MDC.put(ONAPLogConstants.MDCs.PARTNER_NAME, getProperty(Constants.Property.PARTNER_NAME));
             logger.info(ONAPLogConstants.Markers.ENTRY, "Entering");
         } catch (Exception e) {
-            logger.warn("Error in ScheduledTasksMDCSetup mdcSetup: {}", e.getMessage());
+            logger.warn("Error in ScheduledTasksMDCSetup mdcSetup: ", e.getMessage());
         }
     }
 
@@ -61,7 +61,7 @@ public class ScheduledTasksMDCSetup extends MDCSetup {
             setElapsedTime();
             logger.info(ONAPLogConstants.Markers.EXIT, "Exiting.");
         } catch (Exception e) {
-            logger.warn("Error in ScheduledTasksMDCSetup clear MDC: {}", e.getMessage());
+            logger.warn("Error in ScheduledTasksMDCSetup clear MDC: ", e.getMessage());
         }
         MDC.clear();
     }
