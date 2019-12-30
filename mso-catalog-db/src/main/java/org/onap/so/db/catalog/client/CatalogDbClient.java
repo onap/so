@@ -32,6 +32,7 @@ import javax.ws.rs.core.UriBuilder;
 import org.apache.http.HttpStatus;
 import org.onap.logging.filter.base.Constants;
 import org.onap.logging.filter.spring.SpringClientPayloadFilter;
+import org.onap.so.db.catalog.beans.BBNameSelectionReference;
 import org.onap.so.db.catalog.beans.BuildingBlockDetail;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.CloudifyManager;
@@ -119,6 +120,8 @@ public class CatalogDbClient {
     private static final String PNF_RESOURCE = "/pnfResource";
     private static final String PNF_RESOURCE_CUSTOMIZATION = "/pnfResourceCustomization";
     private static final String WORKFLOW = "/workflow";
+    private static final String BB_NAME_SELECTION_REFERENCE = "/bbNameSelectionReference";
+
 
 
     private static final String SEARCH = "/search";
@@ -203,6 +206,8 @@ public class CatalogDbClient {
     private String findWorkflowByModelUUID = "/findWorkflowByModelUUID";
     private String findWorkflowBySource = "/findBySource";
     private String findVnfResourceCustomizationByModelUuid = "/findVnfResourceCustomizationByModelUuid";
+    private String findBBNameSelectionReferenceByControllerActorAndScopeAndAction =
+            "/findBBNameSelectionReferenceByControllerActorAndScopeAndAction";
 
     private String serviceURI;
     private String vfModuleURI;
@@ -275,6 +280,8 @@ public class CatalogDbClient {
 
     private final Client<Workflow> workflowClient;
 
+    private final Client<BBNameSelectionReference> bbNameSelectionReferenceClient;
+
     @Value("${mso.catalog.db.spring.endpoint:#{null}}")
     private String endpoint;
 
@@ -343,6 +350,9 @@ public class CatalogDbClient {
         findVnfResourceCustomizationByModelUuid =
                 endpoint + VNF_RESOURCE_CUSTOMIZATION + SEARCH + findVnfResourceCustomizationByModelUuid;
 
+        findBBNameSelectionReferenceByControllerActorAndScopeAndAction = endpoint + BB_NAME_SELECTION_REFERENCE + SEARCH
+                + findBBNameSelectionReferenceByControllerActorAndScopeAndAction;
+
         serviceURI = endpoint + SERVICE + URI_SEPARATOR;
         vfModuleURI = endpoint + VFMODULE + URI_SEPARATOR;
         vnfResourceURI = endpoint + VNF_RESOURCE + URI_SEPARATOR;
@@ -409,6 +419,7 @@ public class CatalogDbClient {
         pnfResourceClient = clientFactory.create(PnfResource.class);
         pnfResourceCustomizationClient = clientFactory.create(PnfResourceCustomization.class);
         workflowClient = clientFactory.create(Workflow.class);
+        bbNameSelectionReferenceClient = clientFactory.create(BBNameSelectionReference.class);
     }
 
     public CatalogDbClient(String baseUri, String auth) {
@@ -459,6 +470,7 @@ public class CatalogDbClient {
         pnfResourceClient = clientFactory.create(PnfResource.class);
         pnfResourceCustomizationClient = clientFactory.create(PnfResourceCustomization.class);
         workflowClient = clientFactory.create(Workflow.class);
+        bbNameSelectionReferenceClient = clientFactory.create(BBNameSelectionReference.class);
     }
 
     public NetworkCollectionResourceCustomization getNetworkCollectionResourceCustomizationByID(
@@ -679,6 +691,14 @@ public class CatalogDbClient {
         return this.getSingleResource(controllerSelectionReferenceClient, UriBuilder.fromUri(endpoint
                 + "/controllerSelectionReference/search/findControllerSelectionReferenceByVnfTypeAndActionCategory")
                 .queryParam("VNF_TYPE", vnfType).queryParam("ACTION_CATEGORY", actionCategory).build());
+    }
+
+    public BBNameSelectionReference getBBNameSelectionReference(String controllerActor, String scope, String action) {
+
+        return this.getSingleResource(bbNameSelectionReferenceClient,
+                getUri(UriBuilder.fromUri(findBBNameSelectionReferenceByControllerActorAndScopeAndAction)
+                        .queryParam("CONTROLLER_ACTOR", controllerActor).queryParam("SCOPE", scope)
+                        .queryParam("ACTION", action).build().toString()));
     }
 
     public Service getFirstByModelNameOrderByModelVersionDesc(String modelName) {

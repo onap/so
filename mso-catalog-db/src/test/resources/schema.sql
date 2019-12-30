@@ -1387,6 +1387,18 @@ CREATE TABLE IF NOT EXISTS `activity_spec_to_user_parameters` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = latin1;
 
+--
+-- Table structure for table `bbname_selection_reference`
+--
 
+DROP TABLE IF EXISTS `bbname_selection_reference`;
+CREATE TABLE IF NOT EXISTS `bbname_selection_reference` (
+  `ID` INT(11) NOT NULL AUTO_INCREMENT,
+  `CONTROLLER_ACTOR` varchar(200) NOT NULL ,
+  `SCOPE` varchar(200) NOT NULL,
+  `ACTION` varchar(200) NOT NULL,
+  `BB_NAME` varchar(200) NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
