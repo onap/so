@@ -32,6 +32,8 @@ public class ServiceInstancesRequest implements Serializable {
     private String serviceInstanceId;
     @JsonProperty("vnfInstanceId")
     private String vnfInstanceId;
+    @JsonProperty("pnfId")
+	private String pnfId;
     @JsonProperty("networkInstanceId")
     private String networkInstanceId;
     @JsonProperty("volumeGroupInstanceId")
@@ -66,6 +68,14 @@ public class ServiceInstancesRequest implements Serializable {
     public void setVnfInstanceId(String vnfInstanceId) {
         this.vnfInstanceId = vnfInstanceId;
     }
+
+    public String getPnfId() {
+		return pnfId;
+	}
+
+	public void setPnfId(String pnfId) {
+		this.pnfId = pnfId;
+	}
 
     public String getNetworkInstanceId() {
         return networkInstanceId;
@@ -113,6 +123,7 @@ public class ServiceInstancesRequest implements Serializable {
         sb.append("requestDetails=").append(requestDetails);
         sb.append(", serviceInstanceId='").append(serviceInstanceId).append('\'');
         sb.append(", vnfInstanceId='").append(vnfInstanceId).append('\'');
+        sb.append(", pnfId='").append(pnfId).append('\'');
         sb.append(", networkInstanceId='").append(networkInstanceId).append('\'');
         sb.append(", volumeGroupInstanceId='").append(volumeGroupInstanceId).append('\'');
         sb.append(", vfModuleInstanceId='").append(vfModuleInstanceId).append('\'');

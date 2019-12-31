@@ -74,6 +74,8 @@ public abstract class InfraRequests implements java.io.Serializable {
     private String source;
     @Column(name = "VNF_ID", length = 45)
     private String vnfId;
+    @Column(name = "PNF_ID", length = 45)
+    private String pnfId;
     @Column(name = "VNF_NAME", length = 80)
     private String vnfName;
     @Column(name = "VNF_TYPE", length = 200)
@@ -246,7 +248,15 @@ public abstract class InfraRequests implements java.io.Serializable {
     public void setVnfId(String vnfId) {
         this.vnfId = vnfId;
     }
+    
+    public String getPnfId() {
+        return this.pnfId;
+    }
 
+	public void setPnfId(String pnfId) {
+		this.pnfId = pnfId;
+	}
+    
     public String getVnfName() {
         return this.vnfName;
     }
@@ -582,6 +592,7 @@ public abstract class InfraRequests implements java.io.Serializable {
                 .append("flowStatus", getFlowStatus()).append("retryStatusMessage", getRetryStatusMessage())
                 .append("progress", getProgress()).append("startTime", getStartTime()).append("endTime", getEndTime())
                 .append("source", getSource()).append("vnfId", getVnfId()).append("vnfName", getVnfName())
+                .append("pnfId", getPnfId())
                 .append("vnfType", getVnfType()).append("serviceType", getServiceType())
                 .append("tenantId", getTenantId()).append("vnfParams", getVnfParams())
                 .append("vnfOutputs", getVnfOutputs()).append("requestBody", getRequestBody())
