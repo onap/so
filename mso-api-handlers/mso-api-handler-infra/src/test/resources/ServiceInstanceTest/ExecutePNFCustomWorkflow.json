@@ -1,0 +1,20 @@
+{
+  "requestDetails": {
+    "requestParameters": {
+        "userParams": [{
+          "nrmObj": {        
+            "EUtranGenericCell" : [
+                {"cellLocalId":1, "pci":5},
+                {"cellLocalId":2, "pci":6}
+             ],
+            "ExternalEUtranCell" : [
+                {"cellLocalId":3, "eNBId": "x"}, 
+                {"cellLocalId":4, "eNBId": "y"}
+            ],
+            "EUtranRelation": [{"scellLocalId":5, "tcellLocalId":6}]
+          }        
+        }],
+        "payload": "[{\"GNBDUFunction\":{\"gNBId\":1,\"gNBDUId\":5}}]"
+    }
+  }
+}
