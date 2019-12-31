@@ -72,6 +72,7 @@ public class InfraActiveRequests extends InfraRequests {
                 .append("statusMessage", getStatusMessage()).append("progress", getProgress())
                 .append("startTime", getStartTime()).append("endTime", getEndTime()).append("source", getSource())
                 .append("vnfId", getVnfId()).append("vnfName", getVnfName()).append("vnfType", getVnfType())
+                .append("pnfId", getPnfId())
                 .append("serviceType", getServiceType()).append("tenantId", getTenantId())
                 .append("vnfParams", getVnfParams()).append("vnfOutputs", getVnfOutputs())
                 .append("requestBody", getRequestBody()).append("responseBody", getResponseBody())
