@@ -72,6 +72,9 @@ public class Workflow implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "workflow")
     private List<VnfResourceWorkflow> vnfResourceWorkflow;
+    
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "workflow")
+    private List<PnfResourceWorkflow> pnfResourceWorkflow;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "workflow")
     private List<WorkflowActivitySpecSequence> workflowActivitySpecSequence;
@@ -191,6 +194,15 @@ public class Workflow implements Serializable {
     }
 
     @LinkedResource
+    public List<PnfResourceWorkflow> getPnfResourceWorkflow() {
+        return pnfResourceWorkflow;
+    }
+
+    public void setPnfResourceWorkflow(List<PnfResourceWorkflow> pnfResourceWorkflow) {
+        this.pnfResourceWorkflow = pnfResourceWorkflow;
+    }
+
+    @LinkedResource
     public List<WorkflowActivitySpecSequence> getWorkflowActivitySpecSequence() {
         return workflowActivitySpecSequence;
     }
@@ -207,6 +219,7 @@ public class Workflow implements Serializable {
                 .append("resourceTarget", resourceTarget).append("source", source)
                 .append("timeoutMinutes", timeoutMinutes).append("artifactChecksum", artifactChecksum)
                 .append("created", created).append("vnfResourceWorkflow", vnfResourceWorkflow)
+                .append("pnfResourceWorkflow", pnfResourceWorkflow)
                 .append("WorkflowActivitySpecSequence", workflowActivitySpecSequence).toString();
     }
 

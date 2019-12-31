@@ -317,10 +317,17 @@ public class MsoRequest {
                 if (servInsReq.getVnfInstanceId() != null) {
                     aq.setVnfId(servInsReq.getVnfInstanceId());
                 }
+                
+                if (servInsReq.getPnfId() != null) {
+                    aq.setRequestScope(requestScope);
+                    aq.setPnfId(servInsReq.getPnfId());
+                }
 
                 if (ModelType.service.name().equalsIgnoreCase(requestScope)) {
-                    if (servInsReq.getRequestDetails().getRequestInfo().getInstanceName() != null) {
-                        aq.setServiceInstanceName(requestInfo.getInstanceName());
+                    if (servInsReq.getRequestDetails().getRequestInfo() != null) {
+                        if (servInsReq.getRequestDetails().getRequestInfo().getInstanceName() != null) {
+                            aq.setServiceInstanceName(requestInfo.getInstanceName());
+                        }
                     }
                 }
 
