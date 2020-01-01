@@ -45,5 +45,6 @@ public enum Action implements Actions {
     scaleOut,
     recreateInstance,
     addMembers,
-    removeMembers
+    removeMembers,
+    forCustomWorkflow
 }

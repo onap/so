@@ -245,6 +245,8 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
                 mapKey = "serviceInstanceName";
             } else if ("vnfInstanceId".equalsIgnoreCase(mapKey)) {
                 mapKey = "vnfId";
+            } else if ("pnfId".equalsIgnoreCase(mapKey)) {
+                mapKey = "pnfId";
             } else if ("vnfInstanceName".equalsIgnoreCase(mapKey)) {
                 mapKey = "vnfName";
             } else if ("vfModuleInstanceId".equalsIgnoreCase(mapKey)) {

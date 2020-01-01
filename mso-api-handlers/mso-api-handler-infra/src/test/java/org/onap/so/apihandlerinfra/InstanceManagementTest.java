@@ -172,4 +172,32 @@ public class InstanceManagementTest extends BaseTest {
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
+
+    @Test
+    public void executePNFCustomWorkflow() throws IOException {
+        wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/testingPNFWorkflow"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        wireMockServer.stubFor(get(urlMatching(
+                ".*/workflow/search/findByArtifactUUID[?]artifactUUID=81526781-e55c-4cb7-adb3-97e09d9c76bf"))
+                        .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                                .withBody(getWiremockResponseForCatalogdb("workflow_pnf_Response.json"))
+                                .withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        // expected response
+        ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
+        RequestReferences requestReferences = new RequestReferences();
+        requestReferences.setInstanceId("1882939");
+        requestReferences.setRequestSelfLink(createExpectedSelfLink("v1", "32807a28-1a14-4b88-b7b3-2950918aa76d"));
+        expectedResponse.setRequestReferences(requestReferences);
+        uri = instanceManagementUri + "v1"
+                + "/serviceInstances/5df8b6de-2083-11e7-93ae-92361f002676/pnfs/testpnfcId/workflows/81526781-e55c-4cb7-adb3-97e09d9c76bf";
+        ResponseEntity<String> response =
+                sendRequest(inputStream("/ExecutePNFCustomWorkflow.json"), uri, HttpMethod.POST, headers);
+
+        assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
+        ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+    }
 }
