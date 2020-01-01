@@ -248,15 +248,15 @@ public abstract class InfraRequests implements java.io.Serializable {
     public void setVnfId(String vnfId) {
         this.vnfId = vnfId;
     }
-    
+
     public String getPnfId() {
         return this.pnfId;
     }
 
-	public void setPnfId(String pnfId) {
-		this.pnfId = pnfId;
-	}
-    
+    public void setPnfId(String pnfId) {
+        this.pnfId = pnfId;
+    }
+
     public String getVnfName() {
         return this.vnfName;
     }
@@ -592,8 +592,7 @@ public abstract class InfraRequests implements java.io.Serializable {
                 .append("flowStatus", getFlowStatus()).append("retryStatusMessage", getRetryStatusMessage())
                 .append("progress", getProgress()).append("startTime", getStartTime()).append("endTime", getEndTime())
                 .append("source", getSource()).append("vnfId", getVnfId()).append("vnfName", getVnfName())
-                .append("pnfId", getPnfId())
-                .append("vnfType", getVnfType()).append("serviceType", getServiceType())
+                .append("pnfId", getPnfId()).append("vnfType", getVnfType()).append("serviceType", getServiceType())
                 .append("tenantId", getTenantId()).append("vnfParams", getVnfParams())
                 .append("vnfOutputs", getVnfOutputs()).append("requestBody", getRequestBody())
                 .append("responseBody", getResponseBody()).append("lastModifiedBy", getLastModifiedBy())

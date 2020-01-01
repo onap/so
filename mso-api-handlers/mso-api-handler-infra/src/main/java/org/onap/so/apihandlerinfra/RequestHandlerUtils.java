@@ -276,17 +276,17 @@ public class RequestHandlerUtils extends AbstractRestHandler {
             return (ModelType.instanceGroup.toString());
         } else {
             String requestScope = requestScopeFromUri(requestUri);;
-            
-            if (sir.getRequestDetails() == null ) {
-            	return requestScope;
+
+            if (sir.getRequestDetails() == null) {
+                return requestScope;
             }
             if (sir.getRequestDetails().getModelInfo() == null) {
-            	return requestScope;
+                return requestScope;
             }
             if (sir.getRequestDetails().getModelInfo().getModelType() == null) {
-            	return requestScope;
-            } 
-            requestScope = sir.getRequestDetails().getModelInfo().getModelType().name();            
+                return requestScope;
+            }
+            requestScope = sir.getRequestDetails().getModelInfo().getModelType().name();
             return requestScope;
         }
     }

@@ -108,7 +108,7 @@ public class InstanceManagement {
         return processCustomWorkflowRequest(request, Action.inPlaceSoftwareUpdate, instanceIdMap, version, requestId,
                 requestContext);
     }
-    
+
     @POST
     @Path("/{version:[vV][1]}/serviceInstances/{serviceInstanceId}/pnfs/{pnfId}/workflows/{workflowUuid}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -128,7 +128,7 @@ public class InstanceManagement {
         return processPNFCustomWorkflowRequest(request, Action.forCustomWorkflow, instanceIdMap, version, requestId,
                 requestContext);
     }
-    
+
     private Response processCustomWorkflowRequest(String requestJSON, Actions action,
             HashMap<String, String> instanceIdMap, String version, String requestId,
             ContainerRequestContext requestContext) throws ApiException {
@@ -236,20 +236,20 @@ public class InstanceManagement {
         return requestHandlerUtils.postBPELRequest(currentActiveReq, requestClientParameter,
                 recipeLookupResult.getOrchestrationURI(), requestScope);
     }
-    
+
     private Response processPNFCustomWorkflowRequest(String requestJSON, Actions action,
             HashMap<String, String> instanceIdMap, String version, String requestId,
             ContainerRequestContext requestContext) throws ApiException {
         Boolean aLaCarte = false;
         ServiceInstancesRequest sir;
         String apiVersion = version.substring(1);
-        
+
         String serviceInstanceId = "";
         String pnfId = "";
         String workflowUuid = "";
         if (instanceIdMap != null) {
-        	serviceInstanceId = instanceIdMap.get("serviceInstanceId");
-        	pnfId = instanceIdMap.get("pnfId");        
+            serviceInstanceId = instanceIdMap.get("serviceInstanceId");
+            pnfId = instanceIdMap.get("pnfId");
             workflowUuid = instanceIdMap.get("workflowUuid");
         }
 
@@ -308,9 +308,8 @@ public class InstanceManagement {
         RequestClientParameter requestClientParameter = null;
         try {
             requestClientParameter = new RequestClientParameter.Builder().setRequestId(requestId)
-                    .setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
-                    .setRequestAction(action.toString()).setServiceInstanceId(serviceInstanceId)
-                    .setPnfCorrelationId(pnfId)
+                    .setRecipeTimeout(recipeLookupResult.getRecipeTimeout()).setRequestAction(action.toString())
+                    .setServiceInstanceId(serviceInstanceId).setPnfCorrelationId(pnfId)
                     .setRequestDetails(requestHandlerUtils.mapJSONtoMSOStyle(requestJSON, null, aLaCarte, action))
                     .setApiVersion(apiVersion).setRequestUri(requestUri).build();
         } catch (IOException e) {

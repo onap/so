@@ -172,7 +172,7 @@ public class InstanceManagementTest extends BaseTest {
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }
-    
+
     @Test
     public void executePNFCustomWorkflow() throws IOException {
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/testingPNFWorkflow"))

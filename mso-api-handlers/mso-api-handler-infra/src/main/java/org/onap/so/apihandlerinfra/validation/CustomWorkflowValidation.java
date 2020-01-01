@@ -35,13 +35,13 @@ public class CustomWorkflowValidation implements ValidationRule {
         CloudConfiguration cloudConfiguration = info.getSir().getRequestDetails().getCloudConfiguration();
 
         if (cloudConfiguration == null) {
-           // throw new ValidationException("cloudConfiguration");
+            // throw new ValidationException("cloudConfiguration");
         } else if (Strings.isNullOrEmpty((cloudConfiguration.getCloudOwner()))) {
-           // throw new ValidationException("cloudOwner");
+            // throw new ValidationException("cloudOwner");
         } else if (Strings.isNullOrEmpty((cloudConfiguration.getLcpCloudRegionId()))) {
-           //  throw new ValidationException("lcpCloudRegionId");
+            // throw new ValidationException("lcpCloudRegionId");
         } else if (Strings.isNullOrEmpty((cloudConfiguration.getTenantId()))) {
-          //  throw new ValidationException("tenantId");
+            // throw new ValidationException("tenantId");
         }
         if (requestParameters == null) {
             throw new ValidationException("requestParameters");

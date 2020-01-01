@@ -72,7 +72,7 @@ public class Workflow implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "workflow")
     private List<VnfResourceWorkflow> vnfResourceWorkflow;
-    
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "workflow")
     private List<PnfResourceWorkflow> pnfResourceWorkflow;
 
@@ -192,7 +192,7 @@ public class Workflow implements Serializable {
     public void setVnfResourceWorkflow(List<VnfResourceWorkflow> vnfResourceWorkflow) {
         this.vnfResourceWorkflow = vnfResourceWorkflow;
     }
-    
+
     @LinkedResource
     public List<PnfResourceWorkflow> getPnfResourceWorkflow() {
         return pnfResourceWorkflow;
