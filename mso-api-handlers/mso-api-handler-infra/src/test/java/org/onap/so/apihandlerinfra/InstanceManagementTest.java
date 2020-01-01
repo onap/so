@@ -189,7 +189,7 @@ public class InstanceManagementTest extends BaseTest {
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
         RequestReferences requestReferences = new RequestReferences();
         requestReferences.setInstanceId("1882939");
-        requestReferences.setRequestSelfLink(createExpectedSelfLink("v1", "42807a28-1a14-4b88-b7b3-2950918aa76f"));
+        requestReferences.setRequestSelfLink(createExpectedSelfLink("v1", "32807a28-1a14-4b88-b7b3-2950918aa76d"));
         expectedResponse.setRequestReferences(requestReferences);
         uri = instanceManagementUri + "v1"
                 + "/serviceInstances/5df8b6de-2083-11e7-93ae-92361f002676/pnfs/testpnfcId/workflows/81526781-e55c-4cb7-adb3-97e09d9c76bf";
