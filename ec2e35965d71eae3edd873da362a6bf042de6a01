@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "924165a1_fdbcdfb0",
+        "filename": "bpmn/MSOCommonBPMN/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 402,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-02T15:29:48Z",
+      "side": 1,
+      "message": "It Junit5 unfortunately.",
+      "revId": "ec2e35965d71eae3edd873da362a6bf042de6a01",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
