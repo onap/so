@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a9e4a7b2_eb682a63",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/extclients/etsicatalog/EtsiCatalogServiceProviderImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2020-01-02T10:12:26Z",
+      "side": 1,
+      "message": "this code same as getVnfPackageContent ... try to reuse it by extracting common code to its own method",
+      "range": {
+        "startLine": 166,
+        "startChar": 1,
+        "endLine": 182,
+        "endChar": 95
+      },
+      "revId": "b0ee571aea3383bf4f865b3e8f50a3aa25e23a14",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "08832bc5_15af6df3",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/extclients/etsicatalog/EtsiCatalogUrlProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2020-01-02T10:12:26Z",
+      "side": 1,
+      "message": "make it final",
+      "range": {
+        "startLine": 88,
+        "startChar": 39,
+        "endLine": 88,
+        "endChar": 54
+      },
+      "revId": "b0ee571aea3383bf4f865b3e8f50a3aa25e23a14",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "848f3e06_24bd8060",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/rest/Sol003PackageManagementController.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2020-01-02T10:12:26Z",
+      "side": 1,
+      "message": "extract this to local variable and log it as well same as above\n\nfinal String errorMessage \u003d \"An error occurred, a null response was received by the\\n\"\n\t\n                + \" Sol003PackageManagementController from the EtsiCatalogManager using the GET \\\"vnfd\\\" \\n\"\n\t\n                + \"endpoint.\";",
+      "range": {
+        "startLine": 120,
+        "startChar": 53,
+        "endLine": 122,
+        "endChar": 29
+      },
+      "revId": "b0ee571aea3383bf4f865b3e8f50a3aa25e23a14",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
