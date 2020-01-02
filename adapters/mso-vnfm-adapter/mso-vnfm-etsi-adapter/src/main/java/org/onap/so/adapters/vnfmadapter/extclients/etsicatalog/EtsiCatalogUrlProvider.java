@@ -35,14 +35,17 @@ public class EtsiCatalogUrlProvider {
 
     private static final Logger logger = getLogger(EtsiCatalogUrlProvider.class);
 
-    @Value("${msb.endpoint:#{\"http://msb_iag.onap:80\"}}")
-    private String msbEndpoint;
-    @Value("${msb.catalogServiceUrl:#{null}}")
-    private String catalogServiceUrl;
-    @Value("${msb.vnfpkgmServiceUrl:#{\"/api/vnfpkgm/v1\"}}")
+    @Value("${mso.msb-ip:#{\"http://msb_iag.onap\"}}")
+    private String msbIp;
+    @Value("${mso.msb-port:#{\"80\"}}")
+    private String msbPort;
+    @Value("${etsi.vnfpkgmServiceUrl:#{\"/api/vnfpkgm/v1\"}}")
     private String vnfpkgmServiceUrl;
+    private final String msbEndpoint;
 
-    public EtsiCatalogUrlProvider() {}
+    public EtsiCatalogUrlProvider() {
+        this.msbEndpoint = msbIp + msbPort;
+    }
 
     /**
      * Get the URL for retrieving the Package Content from the ETSI Catalog.".
