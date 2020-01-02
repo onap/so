@@ -26,8 +26,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
-import static org.onap.logging.filter.base.Constants.HttpHeaders.CLIENT_ID;
 import static org.onap.logging.filter.base.Constants.HttpHeaders.ECOMP_REQUEST_ID;
+import static org.onap.logging.filter.base.Constants.HttpHeaders.ONAP_PARTNER_NAME;
 import java.io.IOException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -77,7 +77,7 @@ public class ManualTasksTest extends BaseTest {
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
         headers.set(ECOMP_REQUEST_ID, "987654321");
-        headers.set(CLIENT_ID, "VID");
+        headers.set(ONAP_PARTNER_NAME, "VID");
         HttpEntity<TasksRequest> entity = new HttpEntity<TasksRequest>(taskReq, headers);
 
         UriComponentsBuilder builder =
@@ -112,7 +112,7 @@ public class ManualTasksTest extends BaseTest {
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
         headers.set(ECOMP_REQUEST_ID, "987654321");
-        headers.set(CLIENT_ID, "VID");
+        headers.set(ONAP_PARTNER_NAME, "VID");
         HttpEntity<String> entity = new HttpEntity<String>(invalidRequest, headers);
 
         UriComponentsBuilder builder =
@@ -148,7 +148,7 @@ public class ManualTasksTest extends BaseTest {
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
         headers.set(ECOMP_REQUEST_ID, "987654321");
-        headers.set(CLIENT_ID, "VID");
+        headers.set(ONAP_PARTNER_NAME, "VID");
         HttpEntity<TasksRequest> entity = new HttpEntity<TasksRequest>(taskReq, headers);
 
         UriComponentsBuilder builder =
@@ -188,7 +188,7 @@ public class ManualTasksTest extends BaseTest {
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
         headers.set(ECOMP_REQUEST_ID, "987654321");
-        headers.set(CLIENT_ID, "VID");
+        headers.set(ONAP_PARTNER_NAME, "VID");
         HttpEntity<TasksRequest> entity = new HttpEntity<TasksRequest>(taskReq, headers);
 
         UriComponentsBuilder builder =
