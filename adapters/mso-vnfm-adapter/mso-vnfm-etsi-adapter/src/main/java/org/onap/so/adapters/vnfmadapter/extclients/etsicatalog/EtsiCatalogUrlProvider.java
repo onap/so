@@ -35,11 +35,9 @@ public class EtsiCatalogUrlProvider {
 
     private static final Logger logger = getLogger(EtsiCatalogUrlProvider.class);
 
-    @Value("${msb.endpoint:#{\"http://msb_iag.onap:80\"}}")
+    @Value("${mso.msb-endpoint:#{\"http://msb_iag.onap:80\"}}")
     private String msbEndpoint;
-    @Value("${msb.catalogServiceUrl:#{null}}")
-    private String catalogServiceUrl;
-    @Value("${msb.vnfpkgmServiceUrl:#{\"/api/vnfpkgm/v1\"}}")
+    @Value("${etsi.vnfpkgmServiceUrl:#{\"/api/vnfpkgm/v1\"}}")
     private String vnfpkgmServiceUrl;
 
     public EtsiCatalogUrlProvider() {}

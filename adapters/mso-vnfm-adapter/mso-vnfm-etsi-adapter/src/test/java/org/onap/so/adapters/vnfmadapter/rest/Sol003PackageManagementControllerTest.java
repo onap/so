@@ -20,13 +20,17 @@
 
 package org.onap.so.adapters.vnfmadapter.rest;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.onap.so.adapters.vnfmadapter.Constants.PACKAGE_MANAGEMENT_BASE_URL;
 import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -34,7 +38,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.adapters.vnfmadapter.VnfmAdapterApplication;
-import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.*;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.Checksum;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.ProblemDetails;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.UriLink;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VNFPKGMLinkSerializer;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VnfPackageArtifactInfo;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VnfPackageSoftwareImageInfo;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VnfPkgInfo;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.InlineResponse2001;
 import org.onap.so.configuration.rest.BasicHttpHeadersProvider;
 import org.slf4j.Logger;
@@ -53,7 +63,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
-import com.google.gson.Gson;
 
 /**
  * @author gareth.roper@est.tech
