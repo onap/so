@@ -16,6 +16,24 @@
       "revId": "ec2e35965d71eae3edd873da362a6bf042de6a01",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "deb79bc4_e710283a",
+        "filename": "bpmn/MSOCommonBPMN/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 402,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-01-03T11:18:58Z",
+      "side": 1,
+      "message": "You are right, dependency removed.",
+      "parentUuid": "924165a1_fdbcdfb0",
+      "revId": "ec2e35965d71eae3edd873da362a6bf042de6a01",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
