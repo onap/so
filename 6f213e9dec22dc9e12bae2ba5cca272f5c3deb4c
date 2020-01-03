@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "dd64fcde_caab4937",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/AbstractCDSProcessingBBUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2020-01-03T16:27:37Z",
+      "side": 1,
+      "message": "Will fix that.",
+      "parentUuid": "6aa88273_95ef9848",
+      "range": {
+        "startLine": 131,
+        "startChar": 67,
+        "endLine": 131,
+        "endChar": 88
+      },
+      "revId": "6f213e9dec22dc9e12bae2ba5cca272f5c3deb4c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8b67b0f7_7317f02a",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/AbstractCDSProcessingBBUtils.java",
         "patchSetId": 4
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "d6c30682_0f32d004",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/AbstractCDSProcessingBBUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2020-01-03T16:27:37Z",
+      "side": 1,
+      "message": "Thats a good question. I have seen most the code in SO and I dnt know whats the purpose of that error code. \nI can ask SO folks but for this patch I am keeping 7000 as is.",
+      "parentUuid": "8b67b0f7_7317f02a",
+      "range": {
+        "startLine": 160,
+        "startChar": 68,
+        "endLine": 160,
+        "endChar": 72
+      },
+      "revId": "6f213e9dec22dc9e12bae2ba5cca272f5c3deb4c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "16a56471_f9b45352",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/AbstractCDSProcessingBBUtils.java",
         "patchSetId": 4
@@ -59,6 +107,30 @@
       "writtenOn": "2019-12-26T14:46:12Z",
       "side": 1,
       "message": "should this be private class?\nListener is not the greatest name",
+      "range": {
+        "startLine": 164,
+        "startChar": 4,
+        "endLine": 164,
+        "endChar": 9
+      },
+      "revId": "6f213e9dec22dc9e12bae2ba5cca272f5c3deb4c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "139be517_39e6d3b0",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/AbstractCDSProcessingBBUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2020-01-03T16:27:37Z",
+      "side": 1,
+      "message": "Will change it.",
+      "parentUuid": "16a56471_f9b45352",
       "range": {
         "startLine": 164,
         "startChar": 4,
