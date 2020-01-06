@@ -98,7 +98,7 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
         testRequest.setServiceInstanceId("e3b5744d-2ad1-4cdd-8390-c999a38829bc");
         testRequest.setRequestAction("deleteInstance");
         testRequest.setRequestScope("vfModule");
-        testRequest.setAicCloudRegion("mtn6");
+        testRequest.setCloudRegion("mtn6");
         testRequest.setLastModifiedBy("BPMN");
         testRequest.setVfModuleId("c7d527b1-7a91-49fd-b97d-1c8c0f4a7992");
         testRequest.setVfModuleModelName("vSAMP10aDEV::base::module-0");

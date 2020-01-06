@@ -78,7 +78,7 @@ public class InfraActiveRequests extends InfraRequests {
                 .append("lastModifiedBy", getLastModifiedBy()).append("modifyTime", getModifyTime())
                 .append("volumeGroupId", getVolumeGroupId()).append("volumeGroupName", getVolumeGroupName())
                 .append("vfModuleId", getVfModuleId()).append("vfModuleName", getVfModuleName())
-                .append("vfModuleModelName", getVfModuleModelName()).append("aicCloudRegion", getAicCloudRegion())
+                .append("vfModuleModelName", getVfModuleModelName()).append("CloudRegion", getCloudRegion())
                 .append("callBackUrl", getCallBackUrl()).append("correlator", getCorrelator())
                 .append("serviceInstanceId", getServiceInstanceId())
                 .append("serviceInstanceName", getServiceInstanceName()).append("requestScope", getRequestScope())

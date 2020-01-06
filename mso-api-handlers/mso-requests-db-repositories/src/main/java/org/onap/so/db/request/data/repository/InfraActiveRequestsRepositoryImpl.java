@@ -266,7 +266,7 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
             } else if (mapKey.equalsIgnoreCase("configurationInstanceName")) {
                 mapKey = "configurationName";
             } else if ("lcpCloudRegionId".equalsIgnoreCase(mapKey)) {
-                mapKey = "aicCloudRegion";
+                mapKey = "cloudRegion";
             } else if ("tenantId".equalsIgnoreCase(mapKey)) {
                 mapKey = "tenantId";
             } else if ("modelType".equalsIgnoreCase(mapKey)) {

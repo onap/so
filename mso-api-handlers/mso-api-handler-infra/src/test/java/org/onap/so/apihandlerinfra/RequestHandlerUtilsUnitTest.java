@@ -104,7 +104,7 @@ public class RequestHandlerUtilsUnitTest {
     private void setInfraActiveRequest() throws IOException {
         infraActiveRequest.setTenantId("tenant-id");
         infraActiveRequest.setRequestBody(getRequestBody("/RequestBody.json"));
-        infraActiveRequest.setAicCloudRegion("cloudRegion");
+        infraActiveRequest.setCloudRegion("cloudRegion");
         infraActiveRequest.setRequestScope("service");
         infraActiveRequest.setServiceInstanceId(SERVICE_INSTANCE_ID);
         infraActiveRequest.setServiceInstanceName(SERVICE_INSTANCE_NAME);
@@ -119,7 +119,7 @@ public class RequestHandlerUtilsUnitTest {
         currentActiveRequest.setStartTime(startTimeStamp);
         currentActiveRequest.setTenantId("tenant-id");
         currentActiveRequest.setRequestBody(getRequestBody("/RequestBodyNewRequestorId.json"));
-        currentActiveRequest.setAicCloudRegion("cloudRegion");
+        currentActiveRequest.setCloudRegion("cloudRegion");
         currentActiveRequest.setRequestScope("service");
         currentActiveRequest.setRequestStatus(Status.IN_PROGRESS.toString());
         currentActiveRequest.setLastModifiedBy(Constants.MODIFIED_BY_APIHANDLER);
@@ -446,7 +446,7 @@ public class RequestHandlerUtilsUnitTest {
     @Test
     public void checkForDuplicateRequestsTest() throws ApiException {
         InfraActiveRequests currentActiveReq = new InfraActiveRequests();
-        currentActiveReq.setAicCloudRegion("testRegion");
+        currentActiveReq.setCloudRegion("testRegion");
         currentActiveReq.setRequestId("792a3158-d9a3-49fd-b3ac-ab09842d6a1a");
         Action action = Action.createInstance;
         String requestScope = ModelType.service.toString();

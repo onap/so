@@ -76,7 +76,7 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
         infraActiveRequests.setNetworkName("networkInstanceNameTest");
         infraActiveRequests.setConfigurationId(UUID.randomUUID().toString());
         infraActiveRequests.setConfigurationName("configurationInstanceNameTest");
-        infraActiveRequests.setAicCloudRegion("1");
+        infraActiveRequests.setCloudRegion("1");
         infraActiveRequests.setTenantId(UUID.randomUUID().toString());
         infraActiveRequests.setRequestScope("operationalEnvironment");
         infraActiveRequests.setRequestorId(UUID.randomUUID().toString());
@@ -112,7 +112,7 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
         infraActiveRequests2.setNetworkName("networkInstanceNameTest");
         infraActiveRequests2.setConfigurationId(UUID.randomUUID().toString());
         infraActiveRequests2.setConfigurationName("configurationInstanceNameTest");
-        infraActiveRequests2.setAicCloudRegion("1");
+        infraActiveRequests2.setCloudRegion("1");
         infraActiveRequests2.setTenantId(UUID.randomUUID().toString());
         infraActiveRequests2.setRequestScope("operationalEnvironment");
         infraActiveRequests2.setRequestorId(UUID.randomUUID().toString());

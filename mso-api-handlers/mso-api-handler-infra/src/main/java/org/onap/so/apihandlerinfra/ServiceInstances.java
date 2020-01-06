@@ -1176,7 +1176,7 @@ public class ServiceInstances extends AbstractRestHandler {
     protected void setCloudConfigurationCurrentActiveRequest(CloudConfiguration cloudConfiguration,
             InfraActiveRequests currentActiveRequest) {
         if (cloudConfiguration.getLcpCloudRegionId() != null) {
-            currentActiveRequest.setAicCloudRegion(cloudConfiguration.getLcpCloudRegionId());
+            currentActiveRequest.setCloudRegion(cloudConfiguration.getLcpCloudRegionId());
         }
 
         if (cloudConfiguration.getTenantId() != null) {

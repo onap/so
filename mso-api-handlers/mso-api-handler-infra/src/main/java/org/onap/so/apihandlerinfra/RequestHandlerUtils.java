@@ -643,7 +643,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
         if (infraActiveRequest != null) {
             request.setTenantId(infraActiveRequest.getTenantId());
             request.setRequestBody(updateRequestorIdInRequestBody(infraActiveRequest, requestorId));
-            request.setAicCloudRegion(infraActiveRequest.getAicCloudRegion());
+            request.setCloudRegion(infraActiveRequest.getCloudRegion());
             request.setRequestScope(infraActiveRequest.getRequestScope());
             request.setRequestAction(infraActiveRequest.getRequestAction());
             setInstanceIdAndName(infraActiveRequest, request);
