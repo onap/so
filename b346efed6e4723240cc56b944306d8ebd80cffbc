@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "79b42e5c_100b5856",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/AbstractCDSProcessingBBUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2020-01-06T21:45:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fb176144_06833083",
+      "range": {
+        "startLine": 153,
+        "startChar": 12,
+        "endLine": 156,
+        "endChar": 13
+      },
+      "revId": "b346efed6e4723240cc56b944306d8ebd80cffbc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e83b9a4f_4b43ef81",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/AbstractCDSProcessingBBUtils.java",
         "patchSetId": 5
@@ -59,6 +83,30 @@
       "writtenOn": "2020-01-06T16:24:48Z",
       "side": 1,
       "message": "I know you have limit access on SO code, but is it possible to have this error code define in SO/client where all error code for so client are maintained? \nIn that case you will just import the error code, instead of hard-coding.",
+      "range": {
+        "startLine": 159,
+        "startChar": 68,
+        "endLine": 159,
+        "endChar": 72
+      },
+      "revId": "b346efed6e4723240cc56b944306d8ebd80cffbc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9e067775_9289c146",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/AbstractCDSProcessingBBUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2020-01-06T21:45:22Z",
+      "side": 1,
+      "message": "I dnt know I can check but its not going to be part of this patch FYI",
+      "parentUuid": "e83b9a4f_4b43ef81",
       "range": {
         "startLine": 159,
         "startChar": 68,
