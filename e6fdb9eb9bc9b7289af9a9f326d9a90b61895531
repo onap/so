@@ -1,0 +1,176 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7177231a_d74f180c",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2020-01-06T22:13:15Z",
+      "side": 1,
+      "message": "Missing copyright header",
+      "revId": "e6fdb9eb9bc9b7289af9a9f326d9a90b61895531",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "312be053_7137856d",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2020-01-06T22:13:15Z",
+      "side": 1,
+      "message": "Can you write unit test for this class ?",
+      "range": {
+        "startLine": 13,
+        "startChar": 13,
+        "endLine": 13,
+        "endChar": 41
+      },
+      "revId": "e6fdb9eb9bc9b7289af9a9f326d9a90b61895531",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c119ad35_40b0b692",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2020-01-06T22:13:15Z",
+      "side": 1,
+      "message": "Use CollectionUtils.isEmpty method instead of this.\n\n  public static boolean isEmpty(@Nullable Collection\u003c?\u003e collection) {\n        return collection \u003d\u003d null || collection.isEmpty();\n    }",
+      "range": {
+        "startLine": 34,
+        "startChar": 11,
+        "endLine": 34,
+        "endChar": 89
+      },
+      "revId": "e6fdb9eb9bc9b7289af9a9f326d9a90b61895531",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c4aefcfd_821500ed",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2020-01-06T22:13:15Z",
+      "side": 1,
+      "message": "Redundant cast",
+      "range": {
+        "startLine": 40,
+        "startChar": 30,
+        "endLine": 40,
+        "endChar": 33
+      },
+      "revId": "e6fdb9eb9bc9b7289af9a9f326d9a90b61895531",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baf6b016_14eb1f81",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2020-01-06T22:13:15Z",
+      "side": 1,
+      "message": "Same code written on line 50. \nRefactor into one common method.",
+      "range": {
+        "startLine": 38,
+        "startChar": 15,
+        "endLine": 40,
+        "endChar": 95
+      },
+      "revId": "e6fdb9eb9bc9b7289af9a9f326d9a90b61895531",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bf9371ba_5bcae4dc",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2020-01-06T22:13:15Z",
+      "side": 1,
+      "message": "You can merge this if condition with the following condition",
+      "revId": "e6fdb9eb9bc9b7289af9a9f326d9a90b61895531",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "063c7260_08d096ff",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2020-01-06T22:13:15Z",
+      "side": 1,
+      "message": "Use Strings.isNullOrEmpty instead.",
+      "range": {
+        "startLine": 47,
+        "startChar": 16,
+        "endLine": 47,
+        "endChar": 74
+      },
+      "revId": "e6fdb9eb9bc9b7289af9a9f326d9a90b61895531",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7d7fd43_2886cef3",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2020-01-06T22:13:15Z",
+      "side": 1,
+      "message": "Redundant cast",
+      "range": {
+        "startLine": 53,
+        "startChar": 30,
+        "endLine": 53,
+        "endChar": 33
+      },
+      "revId": "e6fdb9eb9bc9b7289af9a9f326d9a90b61895531",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
