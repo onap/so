@@ -22,11 +22,12 @@ package org.onap.so.monitoring.rest.api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 
 /**
  * @author waqas.ikram@ericsson.com
  */
-@SpringBootApplication(scanBasePackages = {"org.onap"})
+@SpringBootApplication(scanBasePackages = {"org.onap"}, exclude = SecurityAutoConfiguration.class)
 public class SoMonitoringApplication {
 
     public static void main(String[] args) {
