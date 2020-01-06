@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.catalogdb;
+package org.onap.so.security;
 
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -27,7 +27,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.Ordered;
 
 @Configuration
-@Profile("aaf")
+@Profile("!test & aaf")
 public class SecurityFilters {
 
     @Bean

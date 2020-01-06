@@ -31,7 +31,7 @@ import org.springframework.context.annotation.Profile;
 
 @SpringBootApplication
 @Profile("test")
-@ComponentScan(basePackages = {"org.onap.so.asdc"},
+@ComponentScan(basePackages = {"org.onap.so.asdc", "org.onap.so.security"},
         excludeFilters = {@Filter(type = FilterType.ANNOTATION, classes = SpringBootApplication.class),
                 @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = RequestsDBHelper.class),
                 @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = InfraActiveRequestsRepositoryImpl.class)})
