@@ -3,6 +3,7 @@ package org.onap.so.simulator;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.ws.soap.SoapVersion;
@@ -15,7 +16,7 @@ import com.consol.citrus.simulator.http.SimulatorRestAdapter;
 import com.consol.citrus.simulator.http.SimulatorRestConfigurationProperties;
 
 
-@SpringBootApplication
+@SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 public class Simulator extends SimulatorRestAdapter {
 
     public static void main(String[] args) {

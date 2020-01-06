@@ -43,9 +43,11 @@ public class WebSecurityConfig {
 
     @PostConstruct
     private void addRoles() {
-        for (int i = 0; i < credentials.size(); i++) {
-            roles.add(credentials.get(i).getRole());
-        }
+	if (credentials != null) {
+            for (int i = 0; i < credentials.size(); i++) {
+                roles.add(credentials.get(i).getRole());
+            }
+	}
     }
 
     public List<UserCredentials> getUsercredentials() {
