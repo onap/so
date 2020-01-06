@@ -41,7 +41,7 @@ public interface InfraActiveRequestsRepository
 
     List<InfraActiveRequests> findByStartTimeLessThanAndEndTime(Date startTime, Date endTime, Pageable request);
 
-    @Query(value = "SELECT * FROM infra_active_requests WHERE request_status = 'IN_PROGRESS' AND (request_scope = 'volumeGroup' OR request_scope = 'vfModule') AND start_time < (NOW() - INTERVAL 2 MINUTE)",
-            nativeQuery = true)
+    @Query(value = "SELECT * FROM infra_active_requests WHERE request_status = 'IN_PROGRESS' AND (request_scope = 'volumeGroup' OR request_scope = 'vfModule') AND start_time < (NOW() - INTERVAL 2 MINUTE)"
+            + " ORDER BY start_time", nativeQuery = true)
     List<InfraActiveRequests> getInProgressVolumeGroupsAndVfModules();
 }
