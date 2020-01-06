@@ -275,12 +275,18 @@ public class RequestHandlerUtils extends AbstractRestHandler {
         } else if (action == Action.addMembers || action == Action.removeMembers) {
             return (ModelType.instanceGroup.toString());
         } else {
-            String requestScope;
-            if (sir.getRequestDetails().getModelInfo().getModelType() == null) {
-                requestScope = requestScopeFromUri(requestUri);
-            } else {
-                requestScope = sir.getRequestDetails().getModelInfo().getModelType().name();
+            String requestScope = requestScopeFromUri(requestUri);;
+
+            if (sir.getRequestDetails() == null) {
+                return requestScope;
             }
+            if (sir.getRequestDetails().getModelInfo() == null) {
+                return requestScope;
+            }
+            if (sir.getRequestDetails().getModelInfo().getModelType() == null) {
+                return requestScope;
+            }
+            requestScope = sir.getRequestDetails().getModelInfo().getModelType().name();
             return requestScope;
         }
     }
@@ -505,6 +511,9 @@ public class RequestHandlerUtils extends AbstractRestHandler {
             if (instanceIdMap.get(CommonConstants.INSTANCE_GROUP_INSTANCE_ID) != null) {
                 currentActiveReq.setInstanceGroupId(instanceIdMap.get(CommonConstants.INSTANCE_GROUP_INSTANCE_ID));
             }
+            if (instanceIdMap.get("PnfId") != null) {
+                currentActiveReq.setPnfId(instanceIdMap.get("PnfId"));
+            }
         }
     }
 
@@ -610,6 +619,8 @@ public class RequestHandlerUtils extends AbstractRestHandler {
             requestScope = ModelType.configuration.name();
         } else if (requestUri.contains(ModelType.vnf.name())) {
             requestScope = ModelType.vnf.name();
+        } else if (requestUri.contains(ModelType.pnf.name())) {
+            requestScope = ModelType.pnf.name();
         } else {
             requestScope = ModelType.service.name();
         }
