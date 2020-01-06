@@ -20,10 +20,8 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.vfc;
+package org.onap.so.security;
 
-import org.onap.so.security.MSOSpringFirewall;
-import org.onap.so.security.WebSecurityConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -35,19 +33,19 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.web.firewall.StrictHttpFirewall;
 import org.springframework.util.StringUtils;
 
-@Configuration
 @EnableWebSecurity
+@Configuration()
 public class WebSecurityConfigImpl extends WebSecurityConfig {
 
-    @Profile({"basic", "test"})
+    @Profile({"basic"})
     @Bean
     public WebSecurityConfigurerAdapter basicAuth() {
         return new WebSecurityConfigurerAdapter() {
             @Override
             protected void configure(HttpSecurity http) throws Exception {
-                http.csrf().disable().authorizeRequests().antMatchers("/manage/health", "/manage/info", "/services")
-                        .permitAll().antMatchers("/**")
-                        .hasAnyRole(StringUtils.collectionToDelimitedString(getRoles(), ",")).and().httpBasic();
+                http.csrf().disable().authorizeRequests().antMatchers("/manage/health", "/manage/info").permitAll()
+                        .antMatchers("/**").hasAnyRole(StringUtils.collectionToDelimitedString(getRoles(), ",")).and()
+                        .httpBasic();
             }
 
             @Override
@@ -62,17 +60,18 @@ public class WebSecurityConfigImpl extends WebSecurityConfig {
                 auth.userDetailsService(WebSecurityConfigImpl.this.userDetailsService())
                         .passwordEncoder(WebSecurityConfigImpl.this.passwordEncoder());
             }
-
         };
     }
 
-    @Profile("aaf")
+    @Profile({"aaf", "test"})
     @Bean
     public WebSecurityConfigurerAdapter noAuth() {
         return new WebSecurityConfigurerAdapter() {
             @Override
-            protected void configure(HttpSecurity http) throws Exception {
-                http.authorizeRequests().anyRequest().permitAll();
+            public void configure(WebSecurity web) throws Exception {
+                web.ignoring().antMatchers("/**");
+                StrictHttpFirewall firewall = new MSOSpringFirewall();
+                web.httpFirewall(firewall);
             }
         };
     }
