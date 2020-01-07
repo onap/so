@@ -20,23 +20,39 @@
 package org.onap.so.db.catalog.client;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.EntityNotFoundException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.ArgumentMatchers;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.onap.so.db.catalog.beans.CvnfcCustomization;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
+import uk.co.blackpepper.bowman.Client;
+import org.onap.so.db.catalog.beans.Workflow;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(CatalogDbClient.class)
 public class CatalogDbClientTest {
 
     private CatalogDbClient catalogDbClient;
 
+    private CatalogDbClient mockedCatalogDbClient;
+
     @Before
     public void init() {
         catalogDbClient = new CatalogDbClient();
+        mockedCatalogDbClient = PowerMockito.spy(catalogDbClient);
     }
 
     @Rule
@@ -169,6 +185,24 @@ public class CatalogDbClientTest {
         cvnfcs.add(cvnfc2);
         CvnfcCustomization aCvnfc = catalogDbClient.findCvnfcCustomizationInAList(cvnfcCustomizationUuid, cvnfcs);
         assertTrue(aCvnfc.getModelCustomizationUUID().equals("a123"));
+    }
+
+    @Test
+    public final void testFindWorkflowByPnfModelUUID() throws Exception {
+        String pnfResourceModelUUID = "f2d1f2b2-88bb-49da-b716-36ae420ccbff";
+        Workflow wf = new Workflow();
+        wf.setArtifactUUID("b2fd5627-55e4-4f4f-8064-9e6f443e9152");
+        wf.setArtifactName("DummyPnfWorkflow");
+        wf.setVersion(1.0);
+        List<Workflow> wfList = new ArrayList<Workflow>();
+        wfList.add(wf);
+
+        PowerMockito.doReturn(wfList).when(mockedCatalogDbClient, "getMultipleResources",
+                ArgumentMatchers.<Client<Workflow>>any(), ArgumentMatchers.anyObject());
+        List<Workflow> results = mockedCatalogDbClient.findWorkflowByPnfModelUUID(pnfResourceModelUUID);
+        assertEquals(wf.getArtifactUUID(), results.get(0).getArtifactUUID());
+        assertEquals(wf.getArtifactName(), results.get(0).getArtifactName());
+        assertEquals(wf.getVersion(), results.get(0).getVersion());
     }
 
 }
