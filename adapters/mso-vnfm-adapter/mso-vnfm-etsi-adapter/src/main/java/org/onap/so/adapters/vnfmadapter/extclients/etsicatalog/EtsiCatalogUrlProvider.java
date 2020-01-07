@@ -91,4 +91,16 @@ public class EtsiCatalogUrlProvider {
         logger.info("getVnfPackageArtifactUrl: {}", url);
         return url;
     }
+
+    /**
+     * Get the URL for retrieving VNF packages vnfd from ETSI Catalog.
+     *
+     * @param vnfPkgId The ID of the VNF Package
+     * @return the URL for the GET operation
+     */
+    public String getVnfPackageVnfdUrl(final String vnfPkgId) {
+        final String url = msbEndpoint + vnfpkgmServiceUrl + "/vnf_packages/" + vnfPkgId + "/vnfd";
+        logger.info("getEtsiCatalogVnfPackageVnfd: {}", url);
+        return url;
+    }
 }
