@@ -123,7 +123,10 @@ public class QueryAllottedResourceCustomization extends CatalogQuery {
                 put(valueMap, "PROVIDING_SERVICE_MODEL_INVARIANT_UUID", o.getProvidingServiceModelInvariantUUID());
                 put(valueMap, "PROVIDING_SERVICE_MODEL_UUID", o.getProvidingServiceModelUUID());
                 put(valueMap, "PROVIDING_SERVICE_MODEL_NAME", o.getProvidingServiceModelName());
-                put(valueMap, "RESOURCE_INPUT", o.getResourceInput());
+
+                if (isJSONValid(o.getResourceInput())) {
+                    put(valueMap, "RESOURCE_INPUT", o.getResourceInput());
+                }
 
                 sb.append(sep).append(this.setTemplate(TEMPLATE, valueMap));
                 sep = ",\n";

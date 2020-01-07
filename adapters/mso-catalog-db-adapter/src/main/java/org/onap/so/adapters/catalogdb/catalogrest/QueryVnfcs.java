@@ -20,12 +20,12 @@
 
 package org.onap.so.adapters.catalogdb.catalogrest;
 
-import org.onap.so.db.catalog.beans.VnfcCustomization;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.xml.bind.annotation.XmlRootElement;
+import org.onap.so.db.catalog.beans.VnfcCustomization;
 
 @XmlRootElement(name = "vnfcs")
 public class QueryVnfcs extends CatalogQuery {
@@ -105,8 +105,10 @@ public class QueryVnfcs extends CatalogQuery {
             put(valueMap, "MODEL_INVARIANT_ID", o.getModelInvariantUUID());
             put(valueMap, "MODEL_VERSION", o.getModelVersion());
             put(valueMap, "MODEL_CUSTOMIZATION_UUID", o.getModelCustomizationUUID());
-            put(valueMap, "RESOURCE_INPUT", o.getResourceInput());
 
+            if (isJSONValid(o.getResourceInput())) {
+                put(valueMap, "RESOURCE_INPUT", o.getResourceInput());
+            }
             sb.append(sep).append(this.setTemplate(TEMPLATE, valueMap));
             sep = ",\n";
         }

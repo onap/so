@@ -23,6 +23,7 @@
 package org.onap.so.adapters.catalogdb.catalogrest;
 /* should be called QueryVnfResource.java */
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +33,7 @@ import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @XmlRootElement(name = "serviceVnfs")
 public class QueryServiceVnfs extends CatalogQuery {
@@ -120,7 +122,9 @@ public class QueryServiceVnfs extends CatalogQuery {
             put(valueMap, "NF_NAMING_CODE", o.getNfNamingCode());
             put(valueMap, "VNFC_INSTANCE_GROUP_ORDER", o.getVnfcInstanceGroupOrder());
             put(valueMap, "MULTI_STEP_DESIGN", o.getMultiStageDesign());
-            put(valueMap, "RESOURCE_INPUT", o.getResourceInput());
+            if (isJSONValid(o.getResourceInput())) {
+                put(valueMap, "RESOURCE_INPUT", o.getResourceInput());
+            }
 
             String subitem = new QueryVfModule(vrNull ? null : o.getVfModuleCustomizations()).JSON2(true, true);
             valueMap.put("_VFMODULES_", subitem.replaceAll("(?m)^", "\t\t"));
@@ -142,4 +146,5 @@ public class QueryServiceVnfs extends CatalogQuery {
             sb.append("}");
         return sb.toString();
     }
+
 }
