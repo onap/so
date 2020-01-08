@@ -197,6 +197,29 @@
     },
     {
       "key": {
+        "uuid": "48496fcc_ae140434",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 509,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-08T13:57:22Z",
+      "side": 1,
+      "message": "Please rename it to isMoreThanConfigurationPresent",
+      "range": {
+        "startLine": 509,
+        "startChar": 19,
+        "endLine": 509,
+        "endChar": 47
+      },
+      "revId": "1446a80cab5eb47b81f0acc6891224c93931acc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9315a5e8_74450be4",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtils.java",
         "patchSetId": 6
@@ -217,6 +240,29 @@
       "revId": "1446a80cab5eb47b81f0acc6891224c93931acc8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d8cf5ebf_a46de3b1",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 601,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-08T13:57:22Z",
+      "side": 1,
+      "message": "rename like was proposed",
+      "range": {
+        "startLine": 601,
+        "startChar": 20,
+        "endLine": 601,
+        "endChar": 47
+      },
+      "revId": "1446a80cab5eb47b81f0acc6891224c93931acc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
