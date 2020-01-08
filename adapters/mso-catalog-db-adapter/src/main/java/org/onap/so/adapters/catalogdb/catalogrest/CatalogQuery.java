@@ -21,6 +21,7 @@
 
 package org.onap.so.adapters.catalogdb.catalogrest;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -94,5 +95,18 @@ public abstract class CatalogQuery {
     public String toString() {
         return smartToJSON();
 
+    }
+
+    protected boolean isJSONValid(String jsonInString) {
+        try {
+            if (jsonInString == null) {
+                return false;
+            }
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.readValue(jsonInString, String.class);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
 }
