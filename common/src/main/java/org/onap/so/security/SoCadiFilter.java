@@ -20,7 +20,7 @@
  * ===================================================================
  *
  */
-package org.onap.so.adapters.sdnc;
+package org.onap.so.security;
 
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -33,7 +33,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("aaf")
+@Profile("!test & aaf")
 public class SoCadiFilter extends CadiFilter {
 
     protected final Logger logger = LoggerFactory.getLogger(SoCadiFilter.class);

@@ -28,7 +28,9 @@
   </parent>
   <artifactId>so-monitoring-ui</artifactId>
 
-
+  <properties>
+    <yarn.proxy>false</yarn.proxy>
+  </properties>
   <build>
     <plugins>
       <plugin>
@@ -66,7 +68,7 @@
               <goal>yarn</goal>
             </goals>
             <configuration>
-              <yarnInheritsProxyConfigFromMaven>false</yarnInheritsProxyConfigFromMaven>
+              <yarnInheritsProxyConfigFromMaven>${yarn.proxy}</yarnInheritsProxyConfigFromMaven>
               <arguments>build</arguments>
             </configuration>
           </execution>

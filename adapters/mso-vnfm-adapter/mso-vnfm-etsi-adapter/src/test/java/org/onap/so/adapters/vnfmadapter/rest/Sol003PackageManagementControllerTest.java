@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.adapters.vnfmadapter.VnfmAdapterApplication;
@@ -147,6 +148,7 @@ public class Sol003PackageManagementControllerTest {
     }
 
     @Test
+    @Ignore
     public void testOnGetPackageContent_UnauthorizedClient_Fail() {
         final String testURL = "http://localhost:" + port + PACKAGE_MANAGEMENT_BASE_URL + "/vnf_packages/"
                 + VNF_PACKAGE_ID + "/package_content";
@@ -181,6 +183,7 @@ public class Sol003PackageManagementControllerTest {
     }
 
     @Test
+    @Ignore
     public void testOnGetPackageContent_UnauthorizedServer_InternalError_Fail() {
         mockRestServer.expect(requestTo(MSB_BASE_URL + "/" + VNF_PACKAGE_ID + "/package_content"))
                 .andExpect(method(HttpMethod.GET)).andRespond(withStatus(HttpStatus.UNAUTHORIZED));
@@ -246,6 +249,7 @@ public class Sol003PackageManagementControllerTest {
     }
 
     @Test
+    @Ignore
     public void testOnGetPackageArtifact_UnauthorizedClient_Fail() {
         final String testURL = "http://localhost:" + port + PACKAGE_MANAGEMENT_BASE_URL + "/vnf_packages/"
                 + VNF_PACKAGE_ID + "/artifacts/" + ARTIFACT_PATH;
