@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba885872_310ad551",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-08T12:26:13Z",
+      "side": 0,
+      "message": "Is this logic kept somewhere?",
+      "range": {
+        "startLine": 333,
+        "startChar": 2,
+        "endLine": 344,
+        "endChar": 34
+      },
+      "revId": "eff76af0a3eb5fd9acd974fd4054815536b0c9cb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
