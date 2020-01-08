@@ -51,7 +51,8 @@ public class Vnfs implements Serializable {
     private List<Map<String, String>> instanceParams = new ArrayList<>();
     @JsonProperty("vfModules")
     private List<VfModules> vfModules = new ArrayList<>();
-
+    @JsonProperty("applicationId")
+    protected String applicationId;
 
     public ModelInfo getModelInfo() {
         return modelInfo;
@@ -117,12 +118,20 @@ public class Vnfs implements Serializable {
         this.vfModules = vfModules;
     }
 
+    public String getApplicationId() {
+        return applicationId;
+    }
+
+    public void setApplicationId(String applicationId) {
+        this.applicationId = applicationId;
+    }
+
     @Override
     public String toString() {
         return "Vnfs [modelInfo=" + modelInfo + ", cloudConfiguration=" + cloudConfiguration + ", instanceName="
                 + instanceName + ", platform=" + platform + ", " + "lineOfBusiness=" + lineOfBusiness
                 + ", productFamilyId=" + productFamilyId + ", instanceParams=" + instanceParams + ", vfModules="
-                + vfModules + "]";
+                + vfModules + ", applicaionId=" + applicationId + " ]";
     }
 
 }
