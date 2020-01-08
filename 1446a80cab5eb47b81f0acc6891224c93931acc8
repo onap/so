@@ -91,6 +91,69 @@
       "revId": "1446a80cab5eb47b81f0acc6891224c93931acc8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7e47773a_9e0c63db",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-01-08T11:54:46Z",
+      "side": 1,
+      "message": "You could use loadInfraActiveRequestById method (just above, line 159)",
+      "revId": "1446a80cab5eb47b81f0acc6891224c93931acc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1850a5c5_410b45fd",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 507,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-01-08T11:54:46Z",
+      "side": 1,
+      "message": "A bit inconsistent with the the rest of getRelated*FromServiceInstance methods.",
+      "range": {
+        "startLine": 507,
+        "startChar": 12,
+        "endLine": 507,
+        "endChar": 53
+      },
+      "revId": "1446a80cab5eb47b81f0acc6891224c93931acc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9315a5e8_74450be4",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 516,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-01-08T11:54:46Z",
+      "side": 1,
+      "message": "Not sure but you could consider extracting configurations.get().getConfiguration() to method variable (and by analogy volumeGroups.get().getVolumeGroup() and rest of such calls) and use it to create generic function.",
+      "range": {
+        "startLine": 507,
+        "startChar": 0,
+        "endLine": 516,
+        "endChar": 32
+      },
+      "revId": "1446a80cab5eb47b81f0acc6891224c93931acc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
