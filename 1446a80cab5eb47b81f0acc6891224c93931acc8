@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "377fb2fa_fddd5631",
+        "filename": "bpmn/MSOCommonBPMN/pom.xml",
+        "patchSetId": 6
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-08T09:28:58Z",
+      "side": 1,
+      "message": "Add both with concrete version to dependency management in upper module.",
+      "range": {
+        "startLine": 235,
+        "startChar": 0,
+        "endLine": 238,
+        "endChar": 48
+      },
+      "revId": "1446a80cab5eb47b81f0acc6891224c93931acc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "85b4b05a_de9aeb91",
+        "filename": "bpmn/MSOCommonBPMN/pom.xml",
+        "patchSetId": 6
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-08T09:28:58Z",
+      "side": 1,
+      "message": "Extract it to constant variable",
+      "range": {
+        "startLine": 239,
+        "startChar": 15,
+        "endLine": 239,
+        "endChar": 20
+      },
+      "revId": "1446a80cab5eb47b81f0acc6891224c93931acc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e8a0bc34_f1ee5682",
+        "filename": "bpmn/MSOCommonBPMN/pom.xml",
+        "patchSetId": 6
+      },
+      "lineNbr": 245,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-08T09:28:58Z",
+      "side": 1,
+      "message": "same as above",
+      "range": {
+        "startLine": 245,
+        "startChar": 15,
+        "endLine": 245,
+        "endChar": 20
+      },
+      "revId": "1446a80cab5eb47b81f0acc6891224c93931acc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
