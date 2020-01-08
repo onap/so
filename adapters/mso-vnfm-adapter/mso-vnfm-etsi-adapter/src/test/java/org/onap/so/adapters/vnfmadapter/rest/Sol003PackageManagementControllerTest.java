@@ -474,9 +474,100 @@ public class Sol003PackageManagementControllerTest {
 
     // The below test method is here to improve code coverage and provide a foundation for writing future tests
     @Test
-    public void testGetVnfd_Not_Implemented() {
+    public void testGetPackageVnfd_ValidArray_Success() {
+        final byte[] responseArray = buildByteArrayWithRandomData(10);
+
+        mockRestServer.expect(requestTo(MSB_BASE_URL + "/" + VNF_PACKAGE_ID + "/vnfd"))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(responseArray, MediaType.APPLICATION_OCTET_STREAM));
+
+        final String testURL =
+                "http://localhost:" + port + PACKAGE_MANAGEMENT_BASE_URL + "/vnf_packages/" + VNF_PACKAGE_ID + "/vnfd";
+        final HttpEntity<?> request = new HttpEntity<>(basicHttpHeadersProvider.getHttpHeaders());
+        final ResponseEntity<byte[]> responseEntity =
+                restTemplate.withBasicAuth("test", "test").exchange(testURL, HttpMethod.GET, request, byte[].class);
+
+        assertEquals(byte[].class, responseEntity.getBody().getClass());
+        assertArrayEquals(responseEntity.getBody(), responseArray);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void testOnGetPackageVnfd_Conflict_Fail() {
+        mockRestServer.expect(requestTo(MSB_BASE_URL + "/" + VNF_PACKAGE_ID + "/vnfd"))
+                .andExpect(method(HttpMethod.GET)).andRespond(withStatus(HttpStatus.CONFLICT));
+
         final ResponseEntity<ProblemDetails> responseEntity = sendHttpRequest(VNF_PACKAGE_ID + "/vnfd");
-        assertEquals(HttpStatus.NOT_IMPLEMENTED, responseEntity.getStatusCode());
+
+        assertTrue(responseEntity.getBody() instanceof ProblemDetails);
+        assertEquals(HttpStatus.CONFLICT, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void testOnGetPackageVnfd_NotFound_Fail() {
+        mockRestServer.expect(requestTo(MSB_BASE_URL + "/" + VNF_PACKAGE_ID + "/vnfd"))
+                .andExpect(method(HttpMethod.GET)).andRespond(withStatus(HttpStatus.NOT_FOUND));
+
+        final ResponseEntity<ProblemDetails> responseEntity = sendHttpRequest(VNF_PACKAGE_ID + "/vnfd");
+
+        assertTrue(responseEntity.getBody() instanceof ProblemDetails);
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void testOnGetPackageVnfd_UnauthorizedClient_Fail() {
+        final String testURL =
+                "http://localhost:" + port + PACKAGE_MANAGEMENT_BASE_URL + "/vnf_packages/" + VNF_PACKAGE_ID + "/vnfd";
+        final HttpEntity<?> request = new HttpEntity<>(basicHttpHeadersProvider.getHttpHeaders());
+        final ResponseEntity<ProblemDetails> responseEntity =
+                restTemplate.exchange(testURL, HttpMethod.GET, request, ProblemDetails.class);
+
+        assertTrue(responseEntity.getBody() instanceof ProblemDetails);
+        assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void testOnGetPackageVnfd_InternalServerError_Fail() {
+        mockRestServer.expect(requestTo(MSB_BASE_URL + "/" + VNF_PACKAGE_ID + "/vnfd"))
+                .andExpect(method(HttpMethod.GET)).andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR));
+
+        final ResponseEntity<ProblemDetails> responseEntity = sendHttpRequest(VNF_PACKAGE_ID + "/vnfd");
+
+        assertTrue(responseEntity.getBody() instanceof ProblemDetails);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void testOnGetPackageVnfd_BadRequest_Fail() {
+        mockRestServer.expect(requestTo(MSB_BASE_URL + "/" + VNF_PACKAGE_ID + "/vnfd"))
+                .andExpect(method(HttpMethod.GET)).andRespond(withStatus(HttpStatus.BAD_REQUEST));
+
+        final ResponseEntity<ProblemDetails> responseEntity = sendHttpRequest(VNF_PACKAGE_ID + "/vnfd");
+
+        assertTrue(responseEntity.getBody() instanceof ProblemDetails);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void testOnGetPackageVnfd_UnauthorizedServer_InternalError_Fail() {
+        mockRestServer.expect(requestTo(MSB_BASE_URL + "/" + VNF_PACKAGE_ID + "/vnfd"))
+                .andExpect(method(HttpMethod.GET)).andRespond(withStatus(HttpStatus.UNAUTHORIZED));
+
+        final ResponseEntity<ProblemDetails> responseEntity = sendHttpRequest(VNF_PACKAGE_ID + "/vnfd");
+
+        assertTrue(responseEntity.getBody() instanceof ProblemDetails);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void testGetPackageVnfd_SuccessResponseFromServerWithNullPackage_Fail() {
+        mockRestServer.expect(requestTo(MSB_BASE_URL + "/" + VNF_PACKAGE_ID + "/vnfd"))
+                .andExpect(method(HttpMethod.GET)).andRespond(withSuccess());
+
+        final ResponseEntity<ProblemDetails> responseEntity = sendHttpRequest(VNF_PACKAGE_ID + "/vnfd");
+
+        assertEquals(ProblemDetails.class, responseEntity.getBody().getClass());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
     }
 
     // Simply returns a byte array filled with random data, for use in the tests.
