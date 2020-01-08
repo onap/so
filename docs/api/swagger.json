@@ -18,6 +18,9 @@
       "name": "onapsoinfraorchestrationRequests"
     },
     {
+      "name": "onapsoinfraorchestrationTasks"
+    },
+    {
       "name": "onapsoinfraserviceInstantiation"
     },
     {
@@ -422,6 +425,225 @@
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "pattern": "[vV][4-7]"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/onap/so/infra/orchestrationTasks/{version}": {
+      "get": {
+        "tags": [
+          "onapsoinfraorchestrationTasks"
+        ],
+        "summary": "Get all orchestrationTasks",
+        "description": "",
+        "operationId": "getAllOrchestrationTasks",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "pattern": "[vV][4-7]"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/onap/so/infra/orchestrationTasks/{version}/{taskId}": {
+      "get": {
+        "tags": [
+          "onapsoinfraorchestrationTasks"
+        ],
+        "summary": "Get orchestrationTask for a given taskId",
+        "description": "",
+        "operationId": "getOrchestrationTask",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "pattern": "[vV][4-7]"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/onap/so/infra/orchestrationTasks/{version}": {
+      "post": {
+        "tags": [
+          "onapsoinfraorchestrationTasks"
+        ],
+        "summary": "Create an orchestrationTask",
+        "description": "",
+        "operationId": "createOrchestrationTask",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "pattern": "[vV][4-7]"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/onap/so/infra/orchestrationTasks/{version}/{taskId}": {
+      "put": {
+        "tags": [
+          "onapsoinfraorchestrationTasks"
+        ],
+        "summary": "update orchestrationTask for a given taskId",
+        "description": "",
+        "operationId": "updateOrchestrationTask",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "pattern": "[vV][4-7]"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/onap/so/infra/orchestrationTasks/{version}/{taskId}": {
+      "delete": {
+        "tags": [
+          "onapsoinfraorchestrationTasks"
+        ],
+        "summary": "delete orchestrationTask for a given taskId",
+        "description": "",
+        "operationId": "deleteOrchestrationTask",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "pattern": "[vV][4-7]"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/onap/so/infra/orchestrationTasks/{version}/{taskId}": {
+      "delete": {
+        "tags": [
+          "onapsoinfraorchestrationTasks"
+        ],
+        "summary": "delete orchestrationTask for a given taskId",
+        "description": "",
+        "operationId": "deleteOrchestrationTask",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "pattern": "[vV][4-7]"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/onap/so/infra/orchestrationTasks/{version}/{taskId}": {
+      "post": {
+        "tags": [
+          "onapsoinfraorchestrationTasks"
+        ],
+        "summary": "commit orchestrationTask for a given taskId",
+        "description": "",
+        "operationId": "commitOrchestrationTask",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "type": "string",
           },
           {
             "name": "version",
