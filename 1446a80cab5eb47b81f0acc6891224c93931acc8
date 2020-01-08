@@ -94,6 +94,29 @@
     },
     {
       "key": {
+        "uuid": "7b9c3ce4_0e42281e",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-08T12:06:19Z",
+      "side": 1,
+      "message": "I am not sure if Runnable fits here. Besides that we can use Function from FunctionalInterfaces. To be discussed.\n```   \nprivate void updateInfraActiveRequest(InfraActiveRequests request, \n                                          Function\u003cInfraActiveRequests,InfraActiveRequests\u003e requestChangeFunction) {\n        if (request !\u003d null) {\n            requestsDbClient.updateInfraActiveRequests(requestChangeFunction.apply(request));\n        } else {\n            logger.debug(REQUEST_ERROR);\n        }\n    }\n\n    public void updateInfraActiveRequestVnfId(InfraActiveRequests request, String vnfId) {\n        updateInfraActiveRequest(request, (requestToChange) -\u003e {\n            requestToChange.setVnfId(vnfId);\n            return requestToChange;\n        });\n    }\n```",
+      "range": {
+        "startLine": 116,
+        "startChar": 0,
+        "endLine": 123,
+        "endChar": 5
+      },
+      "revId": "1446a80cab5eb47b81f0acc6891224c93931acc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7e47773a_9e0c63db",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtils.java",
         "patchSetId": 6
@@ -108,6 +131,46 @@
       "revId": "1446a80cab5eb47b81f0acc6891224c93931acc8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5e70ad5a_f7264b3a",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-08T12:06:19Z",
+      "side": 1,
+      "message": "same here reorder",
+      "revId": "1446a80cab5eb47b81f0acc6891224c93931acc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4272a472_5d715b4c",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-08T12:06:19Z",
+      "side": 1,
+      "message": "Do we need it here?",
+      "range": {
+        "startLine": 309,
+        "startChar": 14,
+        "endLine": 309,
+        "endChar": 39
+      },
+      "revId": "1446a80cab5eb47b81f0acc6891224c93931acc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
