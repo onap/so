@@ -115,6 +115,12 @@ public class ExtractPojosForBBTest extends BaseTest {
         instanceGroupsPend.add(instanceGroupPend);
         lookupKeyMap.put(ResourceKey.INSTANCE_GROUP_ID, instanceGroupPend.getId());
 
+        List<Pnf> pnfsPend = serviceInstancePend.getPnfs();
+        Pnf pnfPend = new Pnf();
+        pnfPend.setPnfId("abc");
+        pnfsPend.add(pnfPend);
+        lookupKeyMap.put(ResourceKey.PNF, pnfPend.getPnfId());
+
         customer.getServiceSubscription().getServiceInstances().add(serviceInstancePend);
         gBBInput.setCustomer(customer);
 
@@ -143,89 +149,49 @@ public class ExtractPojosForBBTest extends BaseTest {
 
         InstanceGroup extractInstanceGroupPend = extractPojos.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID);
         assertEquals(instanceGroupPend.getId(), extractInstanceGroupPend.getId());
+
+        Pnf extractPnfPend = extractPojos.extractByKey(execution, ResourceKey.PNF);
+        assertEquals(extractPnfPend.getPnfId(), pnfPend.getPnfId());
     }
 
     @Test
     public void siError() throws BBObjectNotFoundException {
-        expectedException.expect(BBObjectNotFoundException.class);
-
-        Customer customer = new Customer();
-        customer.setServiceSubscription(new ServiceSubscription());
-        ServiceInstance serviceInstance = new ServiceInstance();
-        customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
-        gBBInput.setCustomer(customer);
-
-        extractPojos.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+        assertThrowsBBObjectNotFoundForResource_WhenServiceEmpty(ResourceKey.SERVICE_INSTANCE_ID);
     }
 
     @Test
     public void vnfError() throws BBObjectNotFoundException {
-        expectedException.expect(BBObjectNotFoundException.class);
-
-        Customer customer = new Customer();
-        customer.setServiceSubscription(new ServiceSubscription());
-        ServiceInstance serviceInstance = new ServiceInstance();
-        customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
-        gBBInput.setCustomer(customer);
-        extractPojos.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
+        assertThrowsBBObjectNotFoundForResource_WhenServiceEmpty(ResourceKey.GENERIC_VNF_ID);
     }
 
     @Test
     public void vfModuleError() throws BBObjectNotFoundException {
-        expectedException.expect(BBObjectNotFoundException.class);
-
-        Customer customer = new Customer();
-        customer.setServiceSubscription(new ServiceSubscription());
-        ServiceInstance serviceInstance = new ServiceInstance();
-        customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
-        gBBInput.setCustomer(customer);
-        extractPojos.extractByKey(execution, ResourceKey.VF_MODULE_ID);
+        assertThrowsBBObjectNotFoundForResource_WhenServiceEmpty(ResourceKey.VF_MODULE_ID);
     }
 
     @Test
     public void configurationError() throws BBObjectNotFoundException {
-        expectedException.expect(BBObjectNotFoundException.class);
-
-        Customer customer = new Customer();
-        customer.setServiceSubscription(new ServiceSubscription());
-        ServiceInstance serviceInstance = new ServiceInstance();
-        customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
-        gBBInput.setCustomer(customer);
-        extractPojos.extractByKey(execution, ResourceKey.CONFIGURATION_ID);
+        assertThrowsBBObjectNotFoundForResource_WhenServiceEmpty(ResourceKey.CONFIGURATION_ID);
     }
 
     @Test
     public void allotedError() throws BBObjectNotFoundException {
-        expectedException.expect(BBObjectNotFoundException.class);
-
-        Customer customer = new Customer();
-        customer.setServiceSubscription(new ServiceSubscription());
-        ServiceInstance serviceInstance = new ServiceInstance();
-        customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
-        gBBInput.setCustomer(customer);
-        extractPojos.extractByKey(execution, ResourceKey.ALLOTTED_RESOURCE_ID);
+        assertThrowsBBObjectNotFoundForResource_WhenServiceEmpty(ResourceKey.ALLOTTED_RESOURCE_ID);
     }
 
     @Test
     public void vpnBindingError() throws BBObjectNotFoundException {
-        expectedException.expect(BBObjectNotFoundException.class);
-        Customer customer = new Customer();
-        customer.setServiceSubscription(new ServiceSubscription());
-        ServiceInstance serviceInstance = new ServiceInstance();
-        customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
-        gBBInput.setCustomer(customer);
-        extractPojos.extractByKey(execution, ResourceKey.VPN_ID);
+        assertThrowsBBObjectNotFoundForResource_WhenServiceEmpty(ResourceKey.VPN_ID);
     }
 
     @Test
     public void vpnBondingLinkError() throws BBObjectNotFoundException {
-        expectedException.expect(BBObjectNotFoundException.class);
-        Customer customer = new Customer();
-        customer.setServiceSubscription(new ServiceSubscription());
-        ServiceInstance serviceInstance = new ServiceInstance();
-        customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
-        gBBInput.setCustomer(customer);
-        extractPojos.extractByKey(execution, ResourceKey.VPN_BONDING_LINK_ID);
+        assertThrowsBBObjectNotFoundForResource_WhenServiceEmpty(ResourceKey.VPN_BONDING_LINK_ID);
+    }
+
+    @Test
+    public void pnfError() throws BBObjectNotFoundException {
+        assertThrowsBBObjectNotFoundForResource_WhenServiceEmpty(ResourceKey.PNF);
     }
 
     @Test
@@ -238,5 +204,20 @@ public class ExtractPojosForBBTest extends BaseTest {
         gBBInput.setServiceInstance(serviceInstancePend);
         ServiceInstance extractServPend = extractPojos.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
         assertEquals(extractServPend.getServiceInstanceId(), serviceInstancePend.getServiceInstanceId());
+    }
+
+    private void assertThrowsBBObjectNotFoundForResource_WhenServiceEmpty(ResourceKey key)
+            throws BBObjectNotFoundException {
+        expectedException.expect(BBObjectNotFoundException.class);
+        setCustomerWithEmptyServiceInstance();
+        extractPojos.extractByKey(execution, key);
+    }
+
+    private void setCustomerWithEmptyServiceInstance() {
+        Customer customer = new Customer();
+        customer.setServiceSubscription(new ServiceSubscription());
+        ServiceInstance serviceInstance = new ServiceInstance();
+        customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
+        gBBInput.setCustomer(customer);
     }
 }
