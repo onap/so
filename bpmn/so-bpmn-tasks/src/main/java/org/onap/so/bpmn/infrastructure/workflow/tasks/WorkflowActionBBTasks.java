@@ -23,10 +23,17 @@ package org.onap.so.bpmn.infrastructure.workflow.tasks;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import javax.persistence.EntityNotFoundException;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.onap.aai.domain.yang.GenericVnf;
+import org.onap.aai.domain.yang.InstanceGroup;
+import org.onap.aai.domain.yang.L3Network;
+import org.onap.aai.domain.yang.ServiceInstance;
+import org.onap.aai.domain.yang.VfModule;
 import org.onap.aai.domain.yang.Vnfc;
+import org.onap.aai.domain.yang.VolumeGroup;
 import org.onap.so.bpmn.common.DelegateExecutionImpl;
 import org.onap.so.bpmn.common.listener.db.RequestsDbListenerRunner;
 import org.onap.so.bpmn.common.listener.flowmanipulator.FlowManipulatorListenerRunner;
@@ -357,6 +364,8 @@ public class WorkflowActionBBTasks {
             } else if (resourceType == WorkflowType.INSTANCE_GROUP) {
                 request.setInstanceGroupId(resourceId);
             }
+            setInstanceName(resourceId, resourceType, request);
+            request.setLastModifiedBy("CamundaBPMN");
             requestDbclient.updateInfraActiveRequests(request);
         } catch (Exception ex) {
             logger.error("Exception in updateInstanceId", ex);
@@ -460,5 +469,51 @@ public class WorkflowActionBBTasks {
         configBB.setWorkflowResourceIds(workflowResourceIds);
         configBB.setConfigurationResourceKeys(configurationResourceKeys);
         return configBB;
+    }
+
+    protected void setInstanceName(String resourceId, WorkflowType resourceType, InfraActiveRequests request) {
+        logger.debug("Setting instanceName in infraActiveRequest");
+        try {
+            if (resourceType == WorkflowType.SERVICE && request.getServiceInstanceName() == null) {
+                ServiceInstance service = bbInputSetupUtils.getAAIServiceInstanceById(resourceId);
+                if (service != null) {
+                    request.setServiceInstanceName(service.getServiceInstanceName());
+                }
+            } else if (resourceType == WorkflowType.VNF && request.getVnfName() == null) {
+                GenericVnf vnf = bbInputSetupUtils.getAAIGenericVnf(resourceId);
+                if (vnf != null) {
+                    request.setVnfName(vnf.getVnfName());
+                }
+            } else if (resourceType == WorkflowType.VFMODULE && request.getVfModuleName() == null) {
+                VfModule vfModule = bbInputSetupUtils.getAAIVfModule(request.getVnfId(), resourceId);
+                if (vfModule != null) {
+                    request.setVfModuleName(vfModule.getVfModuleName());
+                }
+            } else if (resourceType == WorkflowType.VOLUMEGROUP && request.getVolumeGroupName() == null) {
+                Optional<VolumeGroup> volumeGroup =
+                        bbInputSetupUtils.getRelatedVolumeGroupByIdFromVnf(request.getVnfId(), resourceId);
+                if (volumeGroup.isPresent()) {
+                    request.setVolumeGroupName(volumeGroup.get().getVolumeGroupName());
+                }
+            } else if (resourceType == WorkflowType.NETWORK && request.getNetworkName() == null) {
+                L3Network network = bbInputSetupUtils.getAAIL3Network(resourceId);
+                if (network != null) {
+                    request.setNetworkName(network.getNetworkName());
+                }
+            } else if (resourceType == WorkflowType.CONFIGURATION && request.getConfigurationName() == null) {
+                org.onap.aai.domain.yang.Configuration configuration =
+                        bbInputSetupUtils.getAAIConfiguration(resourceId);
+                if (configuration != null) {
+                    request.setConfigurationName(configuration.getConfigurationName());
+                }
+            } else if (resourceType == WorkflowType.INSTANCE_GROUP && request.getInstanceGroupName() == null) {
+                InstanceGroup instanceGroup = bbInputSetupUtils.getAAIInstanceGroup(resourceId);
+                if (instanceGroup != null) {
+                    request.setInstanceGroupName(instanceGroup.getInstanceGroupName());
+                }
+            }
+        } catch (Exception ex) {
+            logger.error("Exception in setInstanceName", ex);
+        }
     }
 }
