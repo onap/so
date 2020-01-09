@@ -94,6 +94,30 @@
     },
     {
       "key": {
+        "uuid": "d72f2d00_1327848f",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-01-09T09:06:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8285d648_e5746e23",
+      "range": {
+        "startLine": 115,
+        "startChar": 0,
+        "endLine": 116,
+        "endChar": 4
+      },
+      "revId": "1446a80cab5eb47b81f0acc6891224c93931acc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7b9c3ce4_0e42281e",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtils.java",
         "patchSetId": 6
@@ -105,6 +129,30 @@
       "writtenOn": "2020-01-08T12:06:19Z",
       "side": 1,
       "message": "I am not sure if Runnable fits here. Besides that we can use Function from FunctionalInterfaces. To be discussed.\n```   \nprivate void updateInfraActiveRequest(InfraActiveRequests request, \n                                          Function\u003cInfraActiveRequests,InfraActiveRequests\u003e requestChangeFunction) {\n        if (request !\u003d null) {\n            requestsDbClient.updateInfraActiveRequests(requestChangeFunction.apply(request));\n        } else {\n            logger.debug(REQUEST_ERROR);\n        }\n    }\n\n    public void updateInfraActiveRequestVnfId(InfraActiveRequests request, String vnfId) {\n        updateInfraActiveRequest(request, (requestToChange) -\u003e {\n            requestToChange.setVnfId(vnfId);\n            return requestToChange;\n        });\n    }\n```",
+      "range": {
+        "startLine": 116,
+        "startChar": 0,
+        "endLine": 123,
+        "endChar": 5
+      },
+      "revId": "1446a80cab5eb47b81f0acc6891224c93931acc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "79ee2b8b_dad48dd2",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-01-09T09:06:48Z",
+      "side": 1,
+      "message": "You are right, it fits better here. Done.",
+      "parentUuid": "7b9c3ce4_0e42281e",
       "range": {
         "startLine": 116,
         "startChar": 0,
@@ -134,6 +182,24 @@
     },
     {
       "key": {
+        "uuid": "70355ed0_f15af990",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-01-09T09:06:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7e47773a_9e0c63db",
+      "revId": "1446a80cab5eb47b81f0acc6891224c93931acc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5e70ad5a_f7264b3a",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtils.java",
         "patchSetId": 6
@@ -151,6 +217,24 @@
     },
     {
       "key": {
+        "uuid": "0e630686_7430348b",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-01-09T09:06:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5e70ad5a_f7264b3a",
+      "revId": "1446a80cab5eb47b81f0acc6891224c93931acc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4272a472_5d715b4c",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtils.java",
         "patchSetId": 6
@@ -162,6 +246,30 @@
       "writtenOn": "2020-01-08T12:06:19Z",
       "side": 1,
       "message": "Do we need it here?",
+      "range": {
+        "startLine": 309,
+        "startChar": 14,
+        "endLine": 309,
+        "endChar": 39
+      },
+      "revId": "1446a80cab5eb47b81f0acc6891224c93931acc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bd0c06ce_695a91b7",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-01-09T09:06:48Z",
+      "side": 1,
+      "message": "No, I removed it here. However in case of Customer there is a name conflict between: \n\norg.onap.so.bpmn.servicedecomposition.bbobjects.Customer and  org.onap.aai.domain.yang.Customer",
+      "parentUuid": "4272a472_5d715b4c",
       "range": {
         "startLine": 309,
         "startChar": 14,
@@ -197,6 +305,30 @@
     },
     {
       "key": {
+        "uuid": "9a3c3bc5_90cfde74",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 507,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-01-09T09:06:48Z",
+      "side": 1,
+      "message": "Extracted to methods in other places as well.",
+      "parentUuid": "1850a5c5_410b45fd",
+      "range": {
+        "startLine": 507,
+        "startChar": 12,
+        "endLine": 507,
+        "endChar": 53
+      },
+      "revId": "1446a80cab5eb47b81f0acc6891224c93931acc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "48496fcc_ae140434",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtils.java",
         "patchSetId": 6
@@ -208,6 +340,30 @@
       "writtenOn": "2020-01-08T13:57:22Z",
       "side": 1,
       "message": "Please rename it to isMoreThanConfigurationPresent",
+      "range": {
+        "startLine": 509,
+        "startChar": 19,
+        "endLine": 509,
+        "endChar": 47
+      },
+      "revId": "1446a80cab5eb47b81f0acc6891224c93931acc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0e3e624e_cd66a62a",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 509,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-01-09T09:06:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "48496fcc_ae140434",
       "range": {
         "startLine": 509,
         "startChar": 19,
@@ -243,6 +399,30 @@
     },
     {
       "key": {
+        "uuid": "8fc0adb2_983d504a",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 516,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-01-09T09:06:48Z",
+      "side": 1,
+      "message": "I tried that, but it really didn\u0027t look good.\nI would need to introduce too many parameters(including functional ones to the generic function). I agree that it doesn\u0027t look good now either with so many code duplications, but I decided to make the small step first.\n\nMaybe in the future we could create some kind of a generic wrapper for aai objects and hide specific calls like getVolumeGroup(), getConfiguration() there?",
+      "parentUuid": "9315a5e8_74450be4",
+      "range": {
+        "startLine": 507,
+        "startChar": 0,
+        "endLine": 516,
+        "endChar": 32
+      },
+      "revId": "1446a80cab5eb47b81f0acc6891224c93931acc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d8cf5ebf_a46de3b1",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtils.java",
         "patchSetId": 6
@@ -254,6 +434,30 @@
       "writtenOn": "2020-01-08T13:57:22Z",
       "side": 1,
       "message": "rename like was proposed",
+      "range": {
+        "startLine": 601,
+        "startChar": 20,
+        "endLine": 601,
+        "endChar": 47
+      },
+      "revId": "1446a80cab5eb47b81f0acc6891224c93931acc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b6f8f224_c6e73c02",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 601,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-01-09T09:06:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d8cf5ebf_a46de3b1",
       "range": {
         "startLine": 601,
         "startChar": 20,
