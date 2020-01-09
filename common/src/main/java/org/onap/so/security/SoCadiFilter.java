@@ -83,6 +83,9 @@ public class SoCadiFilter extends CadiFilter {
     @Value("${mso.config.cadi.apiEnforcement:#{null}}")
     private String apiEnforcement;
 
+    @Value("${mso.config.cadi.userExpires:#{null}}")
+    private String userExpires;
+
     private void checkIfNullProperty(String key, String value) {
         /*
          * When value is null, it is not defined in application.yaml set nothing in System properties
@@ -108,6 +111,7 @@ public class SoCadiFilter extends CadiFilter {
         checkIfNullProperty(Config.AAF_LOCATE_URL, aafLocateUrl);
         checkIfNullProperty(Config.AAF_URL, aafUrl);
         checkIfNullProperty(Config.CADI_API_ENFORCEMENT, apiEnforcement);
+        checkIfNullProperty(Config.AAF_USER_EXPIRES, userExpires);
         // checkIfNullProperty(AFT_ENVIRONMENT_VAR, aftEnv);
         logger.debug(" *** init Filter Config *** ");
         super.init(filterConfig);
