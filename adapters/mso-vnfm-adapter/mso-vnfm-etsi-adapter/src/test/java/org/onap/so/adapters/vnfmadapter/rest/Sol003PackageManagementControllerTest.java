@@ -516,14 +516,13 @@ public class Sol003PackageManagementControllerTest {
 
     @Test
     public void testOnGetPackageVnfd_UnauthorizedClient_Fail() {
-        final String testURL =
-                "http://localhost:" + port + PACKAGE_MANAGEMENT_BASE_URL + "/vnf_packages/" + VNF_PACKAGE_ID + "/vnfd";
-        final HttpEntity<?> request = new HttpEntity<>(basicHttpHeadersProvider.getHttpHeaders());
-        final ResponseEntity<ProblemDetails> responseEntity =
-                restTemplate.exchange(testURL, HttpMethod.GET, request, ProblemDetails.class);
+        mockRestServer.expect(requestTo(MSB_BASE_URL + "/" + VNF_PACKAGE_ID + "/vnfd"))
+                .andExpect(method(HttpMethod.GET)).andRespond(withStatus(HttpStatus.UNAUTHORIZED));
+
+        final ResponseEntity<ProblemDetails> responseEntity = sendHttpRequest(VNF_PACKAGE_ID + "/vnfd");
 
         assertTrue(responseEntity.getBody() instanceof ProblemDetails);
-        assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
     }
 
     @Test
