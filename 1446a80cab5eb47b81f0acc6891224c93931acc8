@@ -263,6 +263,29 @@
       "revId": "1446a80cab5eb47b81f0acc6891224c93931acc8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b4067443_e2cbaa1a",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-09T08:29:06Z",
+      "side": 1,
+      "message": "I would add global constants like:\nNULL_GLOBAL_SUB_ID\nEMPTY_GLOBAL_SUB_ID\nsame for subServiceType.",
+      "range": {
+        "startLine": 268,
+        "startChar": 2,
+        "endLine": 284,
+        "endChar": 74
+      },
+      "revId": "1446a80cab5eb47b81f0acc6891224c93931acc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
