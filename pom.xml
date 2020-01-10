@@ -58,7 +58,7 @@
     <docker.buildArg.project_version>${project.version}</docker.buildArg.project_version>
     <docker.buildArg.artifact_id>${project.artifactId}</docker.buildArg.artifact_id>
     <docker.buildArg.docker_repository>${dockerPullRepo}</docker.buildArg.docker_repository>
-    <enforcer.skip>true</enforcer.skip>
+    <enforcer.skip>false</enforcer.skip>
     <nexusproxy>https://nexus.onap.org</nexusproxy>
     <releaseNexusPath>content/repositories/releases/</releaseNexusPath>
     <snapshotNexusPath>content/repositories/snapshots/</snapshotNexusPath>
@@ -496,6 +496,42 @@
             <version>2.9.8</version>
           </dependency>
         </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>3.0.0-M3</version>
+        <executions>
+          <execution>
+           <id>enforce-property</id>
+           <configuration>
+             <skip>true</skip>
+           </configuration>
+          </execution>
+          <execution>
+           <id>enforce-no-snapshots</id>
+           <configuration>
+             <skip>true</skip>
+           </configuration>
+          </execution>
+          <execution>
+            <id>enforce-banned-dependencies</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <bannedDependencies>
+                  <excludes>
+                    <exclude>org.powermock</exclude>
+                  </excludes>
+                  <searchTransitive>false</searchTransitive>
+                </bannedDependencies>
+              </rules>
+              <fail>true</fail>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
     <pluginManagement>
