@@ -35,6 +35,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AAIFlagTasks {
+    private static final Logger logger = LoggerFactory.getLogger(AAIFlagTasks.class);
+
 
     @Autowired
     private AAIVnfResources aaiVnfResources;
@@ -107,7 +109,7 @@ public class AAIFlagTasks {
             String vnfId = vnf.getVnfId();
             inPserversLocked = aaiVnfResources.checkVnfPserversLockedFlag(vnfId);
         } catch (Exception ex) {
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+            logger.warn("Exception on checking pservers: " + ex.getMessage());
         }
         if (inPserversLocked) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "VNF PServers in Locked in A&AI");

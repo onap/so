@@ -20,21 +20,23 @@
 
 package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
 
-import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.assertThat;
+import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
+import java.util.List;
 import org.camunda.bpm.engine.delegate.BpmnError;
+import org.camunda.bpm.engine.externaltask.LockedExternalTask;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Test;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.BaseBPMNTest;
-import org.onap.appc.client.lcm.model.Action;
 
 public class DistributeTrafficActivityTest extends BaseBPMNTest {
     @Test
     public void sunnyDayDistributeTrafficActivity_Test() throws InterruptedException {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("DistributeTrafficActivity", variables);
         assertThat(pi).isNotNull();
+        processExternalTasks(pi, "TaskDistributeTraffic");
         assertThat(pi).isStarted().hasPassedInOrder("DistributeTrafficActivity_Start", "TaskPreProcessActivity",
                 "TaskDistributeTraffic", "DistributeTrafficActivity_End");
         assertThat(pi).isEnded();
@@ -42,13 +44,12 @@ public class DistributeTrafficActivityTest extends BaseBPMNTest {
 
     @Test
     public void rainyDayDistributeTrafficActivity_Test() throws Exception {
-        variables.put("actionDistributeTraffic", Action.DistributeTraffic);
-        doThrow(new BpmnError("7000", "TESTING ERRORS")).when(appcRunTasks)
-                .runAppcCommand(any(BuildingBlockExecution.class), any(Action.class));
+        doThrow(new BpmnError("7000", "TESTING ERRORS")).when(appcOrchestratorPreProcessor)
+                .buildAppcTaskRequest(any(BuildingBlockExecution.class), any(String.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("DistributeTrafficActivity", variables);
         assertThat(pi).isNotNull().isStarted()
-                .hasPassedInOrder("DistributeTrafficActivity_Start", "TaskPreProcessActivity", "TaskDistributeTraffic")
-                .hasNotPassed("DistributeTrafficActivity_End");
+                .hasPassedInOrder("DistributeTrafficActivity_Start", "TaskPreProcessActivity")
+                .hasNotPassed("TaskDistributeTraffic", "DistributeTrafficActivity_End");
     }
 
 }

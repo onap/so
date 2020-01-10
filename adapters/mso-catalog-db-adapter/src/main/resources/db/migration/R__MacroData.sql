@@ -29,7 +29,8 @@ INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, I
 ('VFModule-Replace-Retain-Assignments', 'replaceInstanceRetainAssignments', 'VfModule', true,true, '7','7', 'DEFAULT', '*'),
 ('NetworkCollection-Macro-Create', 'createInstance', 'NetworkCollection', false,true, '7','7', 'DEFAULT', '*'),
 ('NetworkCollection-Macro-Delete', 'deleteInstance', 'NetworkCollection', false,true, '7','7', 'DEFAULT', '*'),
-('VFModule-ScaleOut', 'scaleOut', 'VfModule', true, true, '7','7', 'DEFAULT', '*');
+('VFModule-ScaleOut', 'scaleOut', 'VfModule', true, true, '7','7', 'DEFAULT', '*'),
+('VNF-InPlaceUpdate', 'inPlaceSoftwareUpdate', 'Vnf', true, true, '7','7', 'DEFAULT', '*');
 
 
 INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FLOW_VERSION, NB_REQ_REF_LOOKUP_ID) VALUES
@@ -176,7 +177,26 @@ INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FL
 ('VFModule-Replace-Retain-Assignments', '10', 'CreateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace-Retain-Assignments' and CLOUD_OWNER = 'DEFAULT')),
 ('VFModule-Replace-Retain-Assignments', '11', 'ActivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace-Retain-Assignments' and CLOUD_OWNER = 'DEFAULT')),
 ('VFModule-Replace-Retain-Assignments', '12', 'ChangeModelVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace-Retain-Assignments' and CLOUD_OWNER = 'DEFAULT')),
-('VFModule-Replace-Retain-Assignments', '13', 'ChangeModelServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace-Retain-Assignments' and CLOUD_OWNER = 'DEFAULT'));
+('VFModule-Replace-Retain-Assignments', '13', 'ChangeModelServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VFModule-Replace-Retain-Assignments' and CLOUD_OWNER = 'DEFAULT')),
+('VNF-InPlaceUpdate', '1', 'VNFCheckPserversLockedFlagActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-InPlaceUpdate' and CLOUD_OWNER = 'DEFAULT')),
+('VNF-InPlaceUpdate', '2', 'VNFCheckInMaintFlagActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-InPlaceUpdate' and CLOUD_OWNER = 'DEFAULT')),
+('VNF-InPlaceUpdate', '3', 'VNFSetInMaintFlagActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-InPlaceUpdate' and CLOUD_OWNER = 'DEFAULT')),
+('VNF-InPlaceUpdate', '4', 'VNFCheckClosedLoopDisabledFlagActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-InPlaceUpdate' and CLOUD_OWNER = 'DEFAULT')),
+('VNF-InPlaceUpdate', '5', 'VNFSetClosedLoopDisabledFlagActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-InPlaceUpdate' and CLOUD_OWNER = 'DEFAULT')),
+('VNF-InPlaceUpdate', '6', 'VNFLockActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-InPlaceUpdate' and CLOUD_OWNER = 'DEFAULT')),
+('VNF-InPlaceUpdate', '7', 'VNFUpgradePreCheckActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-InPlaceUpdate' and CLOUD_OWNER = 'DEFAULT')),
+('VNF-InPlaceUpdate', '8', 'VNFQuiesceTrafficActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-InPlaceUpdate' and CLOUD_OWNER = 'DEFAULT')),
+('VNF-InPlaceUpdate', '9', 'VNFStopActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-InPlaceUpdate' and CLOUD_OWNER = 'DEFAULT')),
+('VNF-InPlaceUpdate', '10', 'VNFSnapShotActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-InPlaceUpdate' and CLOUD_OWNER = 'DEFAULT')),
+('VNF-InPlaceUpdate', '11', 'VNFStartActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-InPlaceUpdate' and CLOUD_OWNER = 'DEFAULT')),
+('VNF-InPlaceUpdate', '12', 'VNFUpgradeBackupActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-InPlaceUpdate' and CLOUD_OWNER = 'DEFAULT')),
+('VNF-InPlaceUpdate', '13', 'VNFUpgradeSoftwareActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-InPlaceUpdate' and CLOUD_OWNER = 'DEFAULT')),
+('VNF-InPlaceUpdate', '14', 'VNFUpgradePostCheckActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-InPlaceUpdate' and CLOUD_OWNER = 'DEFAULT')),
+('VNF-InPlaceUpdate', '15', 'VNFResumeTrafficActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-InPlaceUpdate' and CLOUD_OWNER = 'DEFAULT')),
+('VNF-InPlaceUpdate', '16', 'VNFUnlockActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-InPlaceUpdate' and CLOUD_OWNER = 'DEFAULT')),
+('VNF-InPlaceUpdate', '17', 'VNFUnsetInMaintFlagActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-InPlaceUpdate' and CLOUD_OWNER = 'DEFAULT')),
+('VNF-InPlaceUpdate', '18', 'VNFUnsetClosedLoopDisabledFlagActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-InPlaceUpdate' and CLOUD_OWNER = 'DEFAULT'));
+
 
 
 INSERT INTO rainy_day_handler_macro (FLOW_NAME, SERVICE_TYPE, VNF_TYPE, ERROR_CODE, WORK_STEP, POLICY)
@@ -849,3 +869,7 @@ UPDATE rainy_day_handler_macro SET SERVICE_ROLE = '*' WHERE SERVICE_ROLE IS null
 INSERT INTO vnf_components_recipe (VNF_TYPE, VNF_COMPONENT_TYPE, ACTION, VERSION, ORCHESTRATION_URI, RECIPE_TIMEOUT)
 VALUES
 (NULL, 'vfModule', 'replaceInstanceRetainAssignments', '1', '/mso/async/services/WorkflowActionBB', 180);
+
+UPDATE vnf_recipe
+SET ORCHESTRATION_URI = '/mso/async/services/WorkflowActionBB'
+WHERE NF_ROLE = 'GR-API-DEFAULT' AND ACTION = 'inPlaceSoftwareUpdate';

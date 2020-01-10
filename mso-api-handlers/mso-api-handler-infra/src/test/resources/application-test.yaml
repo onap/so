@@ -23,6 +23,8 @@ mso:
         uri: http://localhost:${wiremock.server.port}
       - subsystem: sdnc
         uri: http://localhost:${wiremock.server.port}
+      - subsystem: soappcorchestrator
+        uri: http://localhost:${wiremock.server.port}
   infra-requests:
     archived:
       period: 180

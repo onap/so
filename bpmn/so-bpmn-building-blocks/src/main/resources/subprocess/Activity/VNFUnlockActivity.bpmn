@@ -9,12 +9,12 @@
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_06vhbci" sourceRef="VNFUnlockActivity_Start" targetRef="TaskPreProcessActivity" />
     <bpmn:sequenceFlow id="SequenceFlow_01312aj" sourceRef="TaskUnlock" targetRef="VNFUnlockActivity_End" />
-    <bpmn:serviceTask id="TaskUnlock" name="VNF Unlock" camunda:expression="${AppcRunTasks.runAppcCommand(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)),execution.getVariable(&#34;actionUnlock&#34;))}">
+    <bpmn:serviceTask id="TaskUnlock" name="VNF Unlock" camunda:type="external" camunda:topic="AppcService">
       <bpmn:incoming>SequenceFlow_0cf0riu</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_01312aj</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_0cf0riu" sourceRef="TaskPreProcessActivity" targetRef="TaskUnlock" />
-    <bpmn:serviceTask id="TaskPreProcessActivity" name="PreProcess Activity" camunda:expression="${AppcRunTasks.preProcessActivity(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn:serviceTask id="TaskPreProcessActivity" name="PreProcess Activity" camunda:expression="${AppcOrchestratorPreProcessor.buildAppcTaskRequest(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)),&#34;Unlock&#34;)}">
       <bpmn:incoming>SequenceFlow_06vhbci</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0cf0riu</bpmn:outgoing>
     </bpmn:serviceTask>

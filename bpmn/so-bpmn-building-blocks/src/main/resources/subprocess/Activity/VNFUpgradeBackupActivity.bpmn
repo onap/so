@@ -9,12 +9,12 @@
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_06vhbci" sourceRef="VNFUpgradeBackupActivity_Start" targetRef="TaskPreProcessActivity" />
     <bpmn:sequenceFlow id="SequenceFlow_01312aj" sourceRef="TaskUpgradeBackup" targetRef="VNFUpgradeBackupActivity_End" />
-    <bpmn:serviceTask id="TaskUpgradeBackup" name="VNF UpgradeBackup" camunda:expression="${AppcRunTasks.runAppcCommand(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)),execution.getVariable(&#34;actionUpgradeBackup&#34;))}">
+    <bpmn:serviceTask id="TaskUpgradeBackup" name="VNF UpgradeBackup" camunda:type="external" camunda:topic="AppcService">
       <bpmn:incoming>SequenceFlow_0cf0riu</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_01312aj</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_0cf0riu" sourceRef="TaskPreProcessActivity" targetRef="TaskUpgradeBackup" />
-    <bpmn:serviceTask id="TaskPreProcessActivity" name="PreProcess Activity" camunda:expression="${AppcRunTasks.preProcessActivity(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn:serviceTask id="TaskPreProcessActivity" name="PreProcess Activity" camunda:expression="${AppcOrchestratorPreProcessor.buildAppcTaskRequest(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)),&#34;UpgradeBackup&#34;)}">
       <bpmn:incoming>SequenceFlow_06vhbci</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0cf0riu</bpmn:outgoing>
     </bpmn:serviceTask>

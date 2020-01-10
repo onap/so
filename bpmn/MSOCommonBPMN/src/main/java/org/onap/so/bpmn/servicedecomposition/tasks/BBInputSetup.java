@@ -307,7 +307,7 @@ public class BBInputSetup implements JavaDelegate {
         }
 
         String instanceGroupId = lookupKeyMap.get(ResourceKey.INSTANCE_GROUP_ID);
-        if (instanceGroupId != null) {
+        if (instanceGroupId != null && !instanceGroupId.isEmpty()) {
             org.onap.aai.domain.yang.InstanceGroup aaiInstancegroup =
                     bbInputSetupUtils.getAAIInstanceGroup(instanceGroupId);
             InstanceGroup instanceGroup = this.mapperLayer.mapAAIInstanceGroupIntoInstanceGroup(aaiInstancegroup);

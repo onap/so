@@ -29,7 +29,6 @@ import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.Job;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
-import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions;
 import org.junit.Test;

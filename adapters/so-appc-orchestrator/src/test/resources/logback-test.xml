@@ -1,0 +1,31 @@
+<configuration>
+  
+  
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{1024} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+
+  <logger name="com.att.ecomp.audit" level="info" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
+  
+  <logger name="com.att.eelf.metrics" level="info" additivity="false">
+        <appender-ref ref="STDOUT" />
+  </logger>
+
+  <logger name="com.att.eelf.error" level="trace" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger> 
+  
+	<logger name="org.onap" level="${so.log.level:-WARN}" additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger>
+
+  <root level="WARN">
+    <appender-ref ref="STDOUT" />
+  </root>
+  
+</configuration>

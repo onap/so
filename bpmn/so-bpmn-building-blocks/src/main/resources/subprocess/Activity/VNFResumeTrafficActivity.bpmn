@@ -9,12 +9,12 @@
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_06vhbci" sourceRef="VNFResumeTrafficActivity_Start" targetRef="TaskPreProcessActivity" />
     <bpmn:sequenceFlow id="SequenceFlow_01312aj" sourceRef="TaskResumeTraffic" targetRef="VNFResumeTrafficActivity_End" />
-    <bpmn:serviceTask id="TaskResumeTraffic" name="VNF Resume Traffic" camunda:expression="${AppcRunTasks.runAppcCommand(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)),execution.getVariable(&#34;actionResumeTraffic&#34;))}">
+    <bpmn:serviceTask id="TaskResumeTraffic" name="VNF Resume Traffic" camunda:type="external" camunda:topic="AppcService">
       <bpmn:incoming>SequenceFlow_0cf0riu</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_01312aj</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_0cf0riu" sourceRef="TaskPreProcessActivity" targetRef="TaskResumeTraffic" />
-    <bpmn:serviceTask id="TaskPreProcessActivity" name="PreProcess Activity" camunda:expression="${AppcRunTasks.preProcessActivity(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn:serviceTask id="TaskPreProcessActivity" name="PreProcess Activity" camunda:expression="${AppcOrchestratorPreProcessor.buildAppcTaskRequest(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)),&#34;ResumeTraffic&#34;)}">
       <bpmn:incoming>SequenceFlow_06vhbci</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0cf0riu</bpmn:outgoing>
     </bpmn:serviceTask>
