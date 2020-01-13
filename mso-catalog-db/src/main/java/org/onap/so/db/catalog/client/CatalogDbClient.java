@@ -124,38 +124,38 @@ public class CatalogDbClient {
     private static final String SEARCH = "/search";
     private static final String URI_SEPARATOR = "/";
 
-    private static final String SERVICE_MODEL_UUID = "serviceModelUUID";
-    private static final String SERVICE_NAME = "serviceName";
-    private static final String MODEL_UUID = "modelUUID";
-    private static final String MODEL_CUSTOMIZATION_UUID = "modelCustomizationUUID";
-    private static final String ACTION = "action";
-    private static final String MODEL_NAME = "modelName";
-    private static final String MODEL_VERSION = "modelVersion";
-    private static final String MODEL_INVARIANT_UUID = "modelInvariantUUID";
-    private static final String VNF_RESOURCE_MODEL_UUID = "vnfResourceModelUUID";
-    private static final String PNF_RESOURCE_MODEL_UUID = "pnfResourceModelUUID";
-    private static final String NF_ROLE = "nfRole";
-    private static final String VF_MODULE_MODEL_UUID = "vfModuleModelUUID";
-    private static final String VNF_COMPONENT_TYPE = "vnfComponentType";
-    private static final String BUILDING_BLOCK_NAME = "buildingBlockName";
-    private static final String RESOURCE_TYPE = "resourceType";
-    private static final String ORCHESTRATION_STATUS = "orchestrationStatus";
-    private static final String TARGET_ACTION = "targetAction";
-    private static final String REQUEST_SCOPE = "requestScope";
-    private static final String IS_ALACARTE = "isALaCarte";
-    private static final String CLOUD_OWNER = "cloudOwner";
-    private static final String FLOW_NAME = "flowName";
-    private static final String ERROR_MESSAGE = "errorMessage";
-    private static final String SERVICE_ROLE = "serviceRole";
-    private static final String SERVICE_TYPE = "serviceType";
-    private static final String VNF_TYPE = "vnfType";
-    private static final String ERROR_CODE = "errorCode";
-    private static final String WORK_STEP = "workStep";
-    private static final String CLLI = "clli";
-    private static final String CLOUD_VERSION = "cloudVersion";
-    private static final String HOMING_INSTANCE = "/homingInstance";
-    private static final String ARTIFACT_UUID = "artifactUUID";
-    private static final String SOURCE = "source";
+    protected static final String SERVICE_MODEL_UUID = "serviceModelUUID";
+    protected static final String SERVICE_NAME = "serviceName";
+    protected static final String MODEL_UUID = "modelUUID";
+    protected static final String MODEL_CUSTOMIZATION_UUID = "modelCustomizationUUID";
+    protected static final String ACTION = "action";
+    protected static final String MODEL_NAME = "modelName";
+    protected static final String MODEL_VERSION = "modelVersion";
+    protected static final String MODEL_INVARIANT_UUID = "modelInvariantUUID";
+    protected static final String VNF_RESOURCE_MODEL_UUID = "vnfResourceModelUUID";
+    protected static final String PNF_RESOURCE_MODEL_UUID = "pnfResourceModelUUID";
+    protected static final String NF_ROLE = "nfRole";
+    protected static final String VF_MODULE_MODEL_UUID = "vfModuleModelUUID";
+    protected static final String VNF_COMPONENT_TYPE = "vnfComponentType";
+    protected static final String BUILDING_BLOCK_NAME = "buildingBlockName";
+    protected static final String RESOURCE_TYPE = "resourceType";
+    protected static final String ORCHESTRATION_STATUS = "orchestrationStatus";
+    protected static final String TARGET_ACTION = "targetAction";
+    protected static final String REQUEST_SCOPE = "requestScope";
+    protected static final String IS_ALACARTE = "isALaCarte";
+    protected static final String CLOUD_OWNER = "cloudOwner";
+    protected static final String FLOW_NAME = "flowName";
+    protected static final String ERROR_MESSAGE = "errorMessage";
+    protected static final String SERVICE_ROLE = "serviceRole";
+    protected static final String SERVICE_TYPE = "serviceType";
+    protected static final String VNF_TYPE = "vnfType";
+    protected static final String ERROR_CODE = "errorCode";
+    protected static final String WORK_STEP = "workStep";
+    protected static final String CLLI = "clli";
+    protected static final String CLOUD_VERSION = "cloudVersion";
+    protected static final String HOMING_INSTANCE = "/homingInstance";
+    protected static final String ARTIFACT_UUID = "artifactUUID";
+    protected static final String SOURCE = "source";
 
     private static final String TARGET_ENTITY = "SO:CatalogDB";
     private static final String ASTERISK = "*";
@@ -820,7 +820,7 @@ public class CatalogDbClient {
         return client.get(uri);
     }
 
-    private <T> List<T> getMultipleResources(Client<T> client, URI uri) {
+    protected <T> List<T> getMultipleResources(Client<T> client, URI uri) {
         Iterable<T> iterator = client.getAll(uri);
         List<T> list = new ArrayList<>();
         Iterator<T> it = iterator.iterator();
