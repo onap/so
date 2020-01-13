@@ -276,7 +276,7 @@ public class BBInputSetupUtils {
         }
     }
 
-    protected InstanceGroup getAAIInstanceGroup(String instanceGroupId) {
+    public InstanceGroup getAAIInstanceGroup(String instanceGroupId) {
         return injectionHelper.getAaiClient().get(InstanceGroup.class,
                 AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroupId)).orElse(null);
     }
@@ -545,6 +545,20 @@ public class BBInputSetupUtils {
             } else {
                 volumeGroup = volumeGroups.get().getVolumeGroup().get(0);
             }
+            return Optional.of(volumeGroup);
+        }
+    }
+
+    public Optional<VolumeGroup> getRelatedVolumeGroupByIdFromVnf(String vnfId, String volumeGroupId) {
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId);
+        uri.relatedTo(AAIObjectPlurals.VOLUME_GROUP).queryParam("volume-group-id", volumeGroupId);
+        Optional<VolumeGroups> volumeGroups = injectionHelper.getAaiClient().get(VolumeGroups.class, uri);
+        VolumeGroup volumeGroup = null;
+        if (!volumeGroups.isPresent()) {
+            logger.debug("No VolumeGroups matched by id");
+            return Optional.empty();
+        } else {
+            volumeGroup = volumeGroups.get().getVolumeGroup().get(0);
             return Optional.of(volumeGroup);
         }
     }

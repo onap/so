@@ -21,14 +21,18 @@
 package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;
@@ -40,17 +44,25 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
+import org.onap.aai.domain.yang.Configuration;
 import org.onap.aai.domain.yang.GenericVnf;
+import org.onap.aai.domain.yang.InstanceGroup;
+import org.onap.aai.domain.yang.L3Network;
+import org.onap.aai.domain.yang.ServiceInstance;
+import org.onap.aai.domain.yang.VfModule;
+import org.onap.aai.domain.yang.VolumeGroup;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.listener.flowmanipulator.FlowManipulatorListenerRunner;
 import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
-import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.request.beans.InfraActiveRequests;
+import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.ModelInfo;
+import org.onap.so.serviceinstancebeans.ModelType;
 import org.onap.so.serviceinstancebeans.RequestDetails;
+import org.onap.so.serviceinstancebeans.RequestInfo;
 import org.springframework.core.env.Environment;
 
 public class WorkflowActionBBTasksTest extends BaseTaskTest {
@@ -479,5 +491,98 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         assertEquals(workflowActionBBTasks.getConfigurationId(vnfc), "configurationId");
     }
 
+    @Test
+    public void setServiceInstanceNameTest() {
+        String resourceId = "40bc4ebd-11df-4610-8055-059f7441ec1c";
+        WorkflowType resourceType = WorkflowType.SERVICE;
+        InfraActiveRequests request = new InfraActiveRequests();
+        ServiceInstance service = new ServiceInstance();
+        service.setServiceInstanceName("serviceInstanceName");
+        doReturn(service).when(bbSetupUtils).getAAIServiceInstanceById(resourceId);
 
+        workflowActionBBTasks.setInstanceName(resourceId, resourceType, request);
+        assertEquals("serviceInstanceName", request.getServiceInstanceName());
+    }
+
+    @Test
+    public void setVnfNameTest() {
+        String resourceId = "40bc4ebd-11df-4610-8055-059f7441ec1c";
+        WorkflowType resourceType = WorkflowType.VNF;
+        InfraActiveRequests request = new InfraActiveRequests();
+        GenericVnf vnf = new GenericVnf();
+        vnf.setVnfName("vnfName");
+        doReturn(vnf).when(bbSetupUtils).getAAIGenericVnf(resourceId);
+
+        workflowActionBBTasks.setInstanceName(resourceId, resourceType, request);
+        assertEquals("vnfName", request.getVnfName());
+    }
+
+    @Test
+    public void setVfModuleNameTest() {
+        String resourceId = "40bc4ebd-11df-4610-8055-059f7441ec1c";
+        WorkflowType resourceType = WorkflowType.VFMODULE;
+        InfraActiveRequests request = new InfraActiveRequests();
+        request.setVnfId("ae5cc3e8-c13c-4d88-aaf6-694ab4977b0e");
+        VfModule vfModule = new VfModule();
+        vfModule.setVfModuleName("vfModuleName");
+        doReturn(vfModule).when(bbSetupUtils).getAAIVfModule("ae5cc3e8-c13c-4d88-aaf6-694ab4977b0e", resourceId);
+
+        workflowActionBBTasks.setInstanceName(resourceId, resourceType, request);
+        assertEquals("vfModuleName", request.getVfModuleName());
+    }
+
+    @Test
+    public void setNetworkNameTest() {
+        String resourceId = "40bc4ebd-11df-4610-8055-059f7441ec1c";
+        WorkflowType resourceType = WorkflowType.NETWORK;
+        InfraActiveRequests request = new InfraActiveRequests();
+        L3Network network = new L3Network();
+        network.setNetworkName("networkName");
+        doReturn(network).when(bbSetupUtils).getAAIL3Network(resourceId);
+
+        workflowActionBBTasks.setInstanceName(resourceId, resourceType, request);
+        assertEquals("networkName", request.getNetworkName());
+    }
+
+    @Test
+    public void setConfigurationNameTest() {
+        String resourceId = "40bc4ebd-11df-4610-8055-059f7441ec1c";
+        WorkflowType resourceType = WorkflowType.CONFIGURATION;
+        InfraActiveRequests request = new InfraActiveRequests();
+        Configuration configuration = new Configuration();
+        configuration.setConfigurationName("configurationName");
+        doReturn(configuration).when(bbSetupUtils).getAAIConfiguration(resourceId);
+
+        workflowActionBBTasks.setInstanceName(resourceId, resourceType, request);
+        assertEquals("configurationName", request.getConfigurationName());
+    }
+
+    @Test
+    public void setInstanceGroupNameTest() {
+        String resourceId = "40bc4ebd-11df-4610-8055-059f7441ec1c";
+        WorkflowType resourceType = WorkflowType.INSTANCE_GROUP;
+        InfraActiveRequests request = new InfraActiveRequests();
+        InstanceGroup instanceGroup = new InstanceGroup();
+        instanceGroup.setInstanceGroupName("instanceGroupName");
+        doReturn(instanceGroup).when(bbSetupUtils).getAAIInstanceGroup(resourceId);
+
+        workflowActionBBTasks.setInstanceName(resourceId, resourceType, request);
+        assertEquals("instanceGroupName", request.getInstanceGroupName());
+    }
+
+    @Test
+    public void setVolumeGroupNameTest() {
+        String resourceId = "40bc4ebd-11df-4610-8055-059f7441ec1c";
+        WorkflowType resourceType = WorkflowType.VOLUMEGROUP;
+        InfraActiveRequests request = new InfraActiveRequests();
+        request.setVnfId("4aa72c90-21eb-4465-8847-997e27af6c3e");
+        VolumeGroup volumeGroup = new VolumeGroup();
+        volumeGroup.setVolumeGroupName("volumeGroupName");
+        Optional<VolumeGroup> returnVolumeGroup = Optional.of(volumeGroup);
+
+        doReturn(returnVolumeGroup).when(bbSetupUtils).getRelatedVolumeGroupByIdFromVnf(request.getVnfId(), resourceId);
+        workflowActionBBTasks.setInstanceName(resourceId, resourceType, request);
+
+        assertEquals("volumeGroupName", request.getVolumeGroupName());
+    }
 }
