@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "167b2c56_111b2129",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2020-01-14T14:37:35Z",
+      "side": 1,
+      "message": "Please correct me if I am wrong why there is a differentiation between config-assign and configAssign ?",
+      "range": {
+        "startLine": 60,
+        "startChar": 8,
+        "endLine": 64,
+        "endChar": 107
+      },
+      "revId": "17fd7447ec1fac5df14eda3248508428cbc1c486",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
