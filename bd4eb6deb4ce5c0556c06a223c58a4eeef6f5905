@@ -1,0 +1,107 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "73c34445_2729805e",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/entities/BuildingBlock.java",
+        "patchSetId": 31
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-01-14T13:38:52Z",
+      "side": 1,
+      "message": "restore this file.",
+      "revId": "bd4eb6deb4ce5c0556c06a223c58a4eeef6f5905",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e114f5f2_3c020adb",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/GeneratePayloadForCds.java",
+        "patchSetId": 31
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-01-14T13:38:52Z",
+      "side": 1,
+      "message": "move up near constants",
+      "range": {
+        "startLine": 45,
+        "startChar": 4,
+        "endLine": 45,
+        "endChar": 65
+      },
+      "revId": "bd4eb6deb4ce5c0556c06a223c58a4eeef6f5905",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "11de40fb_02d3129b",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/PayloadConstants.java",
+        "patchSetId": 31
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-01-14T13:38:52Z",
+      "side": 1,
+      "message": "isn\u0027t it good to have - and separate constant with name SEPARATOR",
+      "range": {
+        "startLine": 29,
+        "startChar": 36,
+        "endLine": 29,
+        "endChar": 37
+      },
+      "revId": "bd4eb6deb4ce5c0556c06a223c58a4eeef6f5905",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1965b284_3cefa301",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericCDSProcessing.java",
+        "patchSetId": 31
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-01-14T13:38:52Z",
+      "side": 1,
+      "message": "I think this will not work, execution object is of type T , but not context.",
+      "range": {
+        "startLine": 74,
+        "startChar": 12,
+        "endLine": 74,
+        "endChar": 48
+      },
+      "revId": "bd4eb6deb4ce5c0556c06a223c58a4eeef6f5905",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c51d39be_d3d624d0",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericCDSProcessingTest.java",
+        "patchSetId": 31
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-01-14T13:38:52Z",
+      "side": 1,
+      "message": "are you going to write test case for other possible scopes and actions.",
+      "revId": "bd4eb6deb4ce5c0556c06a223c58a4eeef6f5905",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
