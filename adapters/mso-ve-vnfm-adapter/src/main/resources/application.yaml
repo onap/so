@@ -1,5 +1,5 @@
 #
-# Copyright © 2019 Samsung.
+# Copyright © 2019, 2020 Samsung.
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,30 @@
 notification:
   url:  /lcm/v1/vnf/instances/notifications
 
+server:
+  port: 8080
+
+my:
+  address: http://localhost
+  auth-type: BASIC
+  user: admin
+  password: a1b2c3d4
+
+vnfm:
+  host: https://localhost:9093
+  subscription: /vnflcm/v1/subscriptions
+
 spring:
   http:
     converters:
       preferred-json-mapper: gson
+  datasource:
+    driver-class-name: org.h2.Driver
+
+aai:
+  endpoint: https://aai.onap:8443
+  auth: 2A11B07DB6214A839394AA1EC5844695F5114FC407FF5422625FB00175A3DCB8A1FF745F22867EFA72D5369D599BBD88DA8BED4233CF5586
+  version: v15
+
+mso:
+  key: 07a7159d3bf51a0e53be7a8f89699be7

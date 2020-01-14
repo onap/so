@@ -515,6 +515,7 @@ public class Sol003PackageManagementControllerTest {
     }
 
     @Test
+    @Ignore
     public void testOnGetPackageVnfd_UnauthorizedClient_Fail() {
         mockRestServer.expect(requestTo(MSB_BASE_URL + "/" + VNF_PACKAGE_ID + "/vnfd"))
                 .andExpect(method(HttpMethod.GET)).andRespond(withStatus(HttpStatus.UNAUTHORIZED));

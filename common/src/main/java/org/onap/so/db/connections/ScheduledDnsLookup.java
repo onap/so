@@ -67,7 +67,7 @@ public class ScheduledDnsLookup {
                 dnsIpAddress.setIpAddress(ipAddress);
             }
         } catch (UnknownHostException e) {
-            logger.warn("Database DNS %s is not resolvable to an IP Address", dnsUrl);
+            logger.warn("Database DNS {} is not resolvable to an IP Address", dnsUrl);
         }
         scheduledMDCSetup.exitAndClearMDC();
     }
