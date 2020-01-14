@@ -247,7 +247,8 @@ public class BBInputSetup implements JavaDelegate {
         if (serviceInstanceId != null) {
             aaiServiceInstance = bbInputSetupUtils.getAAIServiceInstanceById(serviceInstanceId);
             if (aaiServiceInstance != null) {
-                if (requestAction.equalsIgnoreCase("replaceInstance")) {
+                if (requestAction.equalsIgnoreCase("replaceInstance")
+                        || requestAction.equalsIgnoreCase("replaceInstanceRetainAssignments")) {
                     RelatedInstanceList[] relatedInstanceList = requestDetails.getRelatedInstanceList();
                     if (relatedInstanceList != null) {
                         for (RelatedInstanceList relatedInstList : relatedInstanceList) {
@@ -363,7 +364,8 @@ public class BBInputSetup implements JavaDelegate {
         } else if (modelType.equals(ModelType.vnf)) {
             lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, resourceId);
             this.populateGenericVnf(modelInfo, instanceName, platform, lineOfBusiness, service, bbName, serviceInstance,
-                    lookupKeyMap, relatedInstanceList, resourceId, vnfType, null, productFamilyId, applicationId);
+                    lookupKeyMap, relatedInstanceList, resourceId, vnfType, null, productFamilyId, applicationId,
+                    isReplace);
         } else if (modelType.equals(ModelType.volumeGroup) || (modelType.equals(ModelType.vfModule)
                 && (bbName.equalsIgnoreCase(AssignFlows.VOLUME_GROUP.toString()) || bbName.startsWith(CREATEVOLUME)))) {
             lookupKeyMap.put(ResourceKey.VOLUME_GROUP_ID, resourceId);
@@ -555,7 +557,8 @@ public class BBInputSetup implements JavaDelegate {
                         .getModelCustomizationId();
                 ModelInfo modelInfoVfModule = new ModelInfo();
                 modelInfoVfModule.setModelCustomizationId(vfModuleCustId);
-                if (isReplace) {
+                if (isReplace && lookupKeyMap.get(ResourceKey.VF_MODULE_ID) != null
+                        && vfModuleTemp.getVfModuleId().equalsIgnoreCase(lookupKeyMap.get(ResourceKey.VF_MODULE_ID))) {
                     mapCatalogVfModule(vfModuleTemp, modelInfoVfModule, service, replaceVnfModelCustomizationUUID);
                 } else {
                     mapCatalogVfModule(vfModuleTemp, modelInfoVfModule, service, vnfModelCustomizationUUID);
@@ -738,11 +741,12 @@ public class BBInputSetup implements JavaDelegate {
             org.onap.so.serviceinstancebeans.LineOfBusiness lineOfBusiness, Service service, String bbName,
             ServiceInstance serviceInstance, Map<ResourceKey, String> lookupKeyMap,
             RelatedInstanceList[] relatedInstanceList, String resourceId, String vnfType,
-            List<Map<String, String>> instanceParams, String productFamilyId, String applicationId) {
+            List<Map<String, String>> instanceParams, String productFamilyId, String applicationId, boolean isReplace) {
         GenericVnf vnf = null;
         ModelInfo instanceGroupModelInfo = null;
         String instanceGroupId = null;
         String generatedVnfType = vnfType;
+        String replaceVnfModelCustomizationUUID = null;
         if (generatedVnfType == null || generatedVnfType.isEmpty()) {
             generatedVnfType = service.getModelName() + "/" + modelInfo.getModelCustomizationName();
         }
@@ -753,6 +757,9 @@ public class BBInputSetup implements JavaDelegate {
                     instanceGroupModelInfo = relatedInstance.getModelInfo();
                     instanceGroupId = relatedInstance.getInstanceId();
                 }
+                if (relatedInstance.getModelInfo().getModelType().equals(ModelType.vnf) && isReplace) {
+                    replaceVnfModelCustomizationUUID = relatedInstance.getModelInfo().getModelCustomizationId();
+                }
             }
         }
         for (GenericVnf vnfTemp : serviceInstance.getVnfs()) {
@@ -760,6 +767,12 @@ public class BBInputSetup implements JavaDelegate {
                     && vnfTemp.getVnfId().equalsIgnoreCase(lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID))) {
                 String vnfModelCustId =
                         bbInputSetupUtils.getAAIGenericVnf(vnfTemp.getVnfId()).getModelCustomizationId();
+                if (isReplace && replaceVnfModelCustomizationUUID != null
+                        && vnfTemp.getVnfId().equalsIgnoreCase(lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID))) {
+                    modelInfo.setModelCustomizationUuid(replaceVnfModelCustomizationUUID);
+                } else {
+                    modelInfo.setModelCustomizationUuid(vnfModelCustId);
+                }
                 modelInfo.setModelCustomizationUuid(vnfModelCustId);
                 vnf = vnfTemp;
                 break;
@@ -1433,7 +1446,7 @@ public class BBInputSetup implements JavaDelegate {
             String applicationId = "";
             this.populateGenericVnf(vnfs.getModelInfo(), vnfs.getInstanceName(), vnfs.getPlatform(),
                     vnfs.getLineOfBusiness(), service, bbName, serviceInstance, lookupKeyMap, null, vnfId, vnfType,
-                    vnfs.getInstanceParams(), productFamilyId, applicationId);
+                    vnfs.getInstanceParams(), productFamilyId, applicationId, false);
 
         } else if (bbName.contains(PNF)) {
             String pnfId = lookupKeyMap.get(ResourceKey.PNF);
