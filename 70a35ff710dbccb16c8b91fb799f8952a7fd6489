@@ -22,6 +22,30 @@
       "revId": "70a35ff710dbccb16c8b91fb799f8952a7fd6489",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7eab4e91_650cc54a",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericCDSProcessing.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2020-01-15T13:36:28Z",
+      "side": 1,
+      "message": "gotcha. I will fix it right away.\nThanks for reviewing it.",
+      "parentUuid": "8edd6d46_f27ef628",
+      "range": {
+        "startLine": 74,
+        "startChar": 12,
+        "endLine": 74,
+        "endChar": 19
+      },
+      "revId": "70a35ff710dbccb16c8b91fb799f8952a7fd6489",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
