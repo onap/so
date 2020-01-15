@@ -1,0 +1,182 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ad6f5e09_30da4cbb",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-01-15T10:16:42Z",
+      "side": 1,
+      "message": "I think you can skip this change for now. However, if it was intentional, you should modify also the header of this file.",
+      "revId": "6c7d77c7b53ff8314f795ac95dbf3bed13192688",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4a0a1c6b_542ed01e",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-01-15T10:16:42Z",
+      "side": 1,
+      "message": "\"Wildcard imports should not be used\"\nHere is the sonar rule: https://sonar.onap.org/coding_rules#rule_key\u003dsquid%3AS2208\n(Concerns also the imports above)",
+      "range": {
+        "startLine": 66,
+        "startChar": 0,
+        "endLine": 66,
+        "endChar": 42
+      },
+      "revId": "6c7d77c7b53ff8314f795ac95dbf3bed13192688",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e9566718_799b7f03",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-01-15T10:16:42Z",
+      "side": 1,
+      "message": "Consider making the string variables final.",
+      "range": {
+        "startLine": 99,
+        "startChar": 8,
+        "endLine": 99,
+        "endChar": 31
+      },
+      "revId": "6c7d77c7b53ff8314f795ac95dbf3bed13192688",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5f5c55b0_92ed204e",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-01-15T10:16:42Z",
+      "side": 1,
+      "message": "You could extract this json to a file. It will make it much more readable.",
+      "range": {
+        "startLine": 144,
+        "startChar": 8,
+        "endLine": 145,
+        "endChar": 9632
+      },
+      "revId": "6c7d77c7b53ff8314f795ac95dbf3bed13192688",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3ada346d_04602f0b",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-01-15T10:16:42Z",
+      "side": 1,
+      "message": "The try-catch will hide the potential exception (which is rather not expected here). Consider adding a \"throws\" clause instead, like in the other tests. Also, it should be an IOException probably.",
+      "range": {
+        "startLine": 148,
+        "startChar": 0,
+        "endLine": 154,
+        "endChar": 9
+      },
+      "revId": "6c7d77c7b53ff8314f795ac95dbf3bed13192688",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3ef5e31f_47ae3a77",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-01-15T10:16:42Z",
+      "side": 1,
+      "message": "I think this test should check if the contents of expectedFlowsToExecute are equal to what the tested method returns. You don\u0027t need the whole flowsToExecuteString to test just the size of a list.",
+      "range": {
+        "startLine": 166,
+        "startChar": 8,
+        "endLine": 166,
+        "endChar": 75
+      },
+      "revId": "6c7d77c7b53ff8314f795ac95dbf3bed13192688",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dab9311d_66dcea9c",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 789,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-01-15T10:16:42Z",
+      "side": 1,
+      "message": "You can change it to MultipleObjectsFoundException.",
+      "range": {
+        "startLine": 789,
+        "startChar": 97,
+        "endLine": 789,
+        "endChar": 106
+      },
+      "revId": "6c7d77c7b53ff8314f795ac95dbf3bed13192688",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d35c8488_a9033a24",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 974,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-01-15T10:16:42Z",
+      "side": 1,
+      "message": "Consider simplifying this to: assertFalse(actualVolumeGroup.isPresent());",
+      "range": {
+        "startLine": 974,
+        "startChar": 8,
+        "endLine": 974,
+        "endChar": 58
+      },
+      "revId": "6c7d77c7b53ff8314f795ac95dbf3bed13192688",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
