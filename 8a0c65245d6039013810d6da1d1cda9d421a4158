@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f307da17_d0d14f9f",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigPnf.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 4567
+      },
+      "writtenOn": "2020-01-15T17:01:45Z",
+      "side": 1,
+      "message": "why do we need to add custom variable for these use cases? Should the logic be all input are passed as input params to cds? \n\nAlso, the agreement with Zu and Oskar is that all action for new use case will be camel case. Should we change this? \n\nswActivate\nswDownload\n\n??",
+      "range": {
+        "startLine": 61,
+        "startChar": 0,
+        "endLine": 66,
+        "endChar": 9
+      },
+      "revId": "8a0c65245d6039013810d6da1d1cda9d421a4158",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8e23a109_fecf3867",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/PayloadConstants.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 4567
+      },
+      "writtenOn": "2020-01-15T17:01:45Z",
+      "side": 1,
+      "message": "should it be \"vfModule\" \n\nwe decide on the camel case format for scope definition.",
+      "range": {
+        "startLine": 36,
+        "startChar": 43,
+        "endLine": 36,
+        "endChar": 52
+      },
+      "revId": "8a0c65245d6039013810d6da1d1cda9d421a4158",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
