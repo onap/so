@@ -169,7 +169,6 @@ public class BBInputSetupUtils {
     }
 
     public InfraActiveRequests loadInfraActiveRequestById(String requestId) {
-
         return this.requestsDbClient.getInfraActiveRequestbyRequestId(requestId);
     }
 
