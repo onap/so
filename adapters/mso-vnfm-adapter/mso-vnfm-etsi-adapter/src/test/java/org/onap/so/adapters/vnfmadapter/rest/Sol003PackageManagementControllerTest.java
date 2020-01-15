@@ -20,7 +20,10 @@
 
 package org.onap.so.adapters.vnfmadapter.rest;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.onap.so.adapters.vnfmadapter.Constants.PACKAGE_MANAGEMENT_BASE_URL;
 import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
@@ -35,17 +38,25 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.adapters.vnfmadapter.VnfmAdapterApplication;
-import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.*;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.Checksum;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.ProblemDetails;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.UriLink;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VNFPKGMLinkSerializer;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VnfPackageArtifactInfo;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VnfPackageSoftwareImageInfo;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VnfPkgInfo;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.InlineResponse2001;
 import org.onap.so.configuration.rest.BasicHttpHeadersProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
@@ -60,8 +71,6 @@ import com.google.gson.Gson;
 @ActiveProfiles("test")
 public class Sol003PackageManagementControllerTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(Sol003PackageManagementControllerTest.class);
-
     @LocalServerPort
     private int port;
 
@@ -70,14 +79,11 @@ public class Sol003PackageManagementControllerTest {
     private RestTemplate testRestTemplate;
 
     @Autowired
-    private Sol003PackageManagementController controller;
-
-    @Autowired
     private TestRestTemplate restTemplate;
 
     private static final String VNF_PACKAGE_ID = "myVnfPackageId";
     private static final String ARTIFACT_PATH = "myArtifactPath";
-    private static final String MSB_BASE_URL = "http://msb_iag.onap:80/api/vnfpkgm/v1/vnf_packages";
+    private static final String MSB_BASE_URL = "http://msb-iag.onap:80/api/vnfpkgm/v1/vnf_packages";
     private static final String VNFPKGM_BASE_URL = PACKAGE_MANAGEMENT_BASE_URL + "/vnf_packages";
     private static final String localhostUrl = "http://localhost:";
     private static final String GET_VNF_PACKAGES_URL = "";

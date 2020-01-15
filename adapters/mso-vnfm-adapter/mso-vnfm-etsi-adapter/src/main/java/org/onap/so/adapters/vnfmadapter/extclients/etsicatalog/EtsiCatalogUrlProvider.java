@@ -35,12 +35,8 @@ public class EtsiCatalogUrlProvider {
 
     private static final Logger logger = getLogger(EtsiCatalogUrlProvider.class);
 
-    @Value("${msb.endpoint:#{\"http://msb_iag.onap:80\"}}")
-    private String msbEndpoint;
-    @Value("${msb.catalogServiceUrl:#{null}}")
-    private String catalogServiceUrl;
-    @Value("${msb.vnfpkgmServiceUrl:#{\"/api/vnfpkgm/v1\"}}")
-    private String vnfpkgmServiceUrl;
+    @Value("${msb.endpoint:#{\"http://msb-iag.onap:80/api/vnfpkgm/v1\"}}")
+    private String etsiCatalogManagerEndpoint;
 
     public EtsiCatalogUrlProvider() {}
 
@@ -51,7 +47,7 @@ public class EtsiCatalogUrlProvider {
      * @return the URL for the GET operation
      */
     public String getVnfPackageContentUrl(final String vnfPkgId) {
-        final String url = msbEndpoint + vnfpkgmServiceUrl + "/vnf_packages/" + vnfPkgId + "/package_content";
+        final String url = etsiCatalogManagerEndpoint + "/vnf_packages/" + vnfPkgId + "/package_content";
         logger.info("getEtsiCatalogVnfPackageContentUrl: {}", url);
         return url;
     }
@@ -62,7 +58,7 @@ public class EtsiCatalogUrlProvider {
      * @return the URL for the GET operation
      */
     public String getVnfPackagesUrl() {
-        final String url = msbEndpoint + vnfpkgmServiceUrl + "/vnf_packages";
+        final String url = etsiCatalogManagerEndpoint + "/vnf_packages";
         logger.info("getEtsiCatalogVnfPackagesEndpoint: {}", url);
         return url;
     }
@@ -74,7 +70,7 @@ public class EtsiCatalogUrlProvider {
      * @return the URL for the GET operation
      */
     public String getVnfPackageUrl(final String vnfPkgId) {
-        final String url = msbEndpoint + vnfpkgmServiceUrl + "/vnf_packages/" + vnfPkgId;
+        final String url = etsiCatalogManagerEndpoint + "/vnf_packages/" + vnfPkgId;
         logger.info("getEtsiCatalogVnfPackageEndpoint: {}", url);
         return url;
     }
@@ -87,7 +83,7 @@ public class EtsiCatalogUrlProvider {
      * @return the URL for the GET operation
      */
     public String getVnfPackageArtifactUrl(final String vnfPkgId, final String artifactPath) {
-        final String url = msbEndpoint + vnfpkgmServiceUrl + "/vnf_packages/" + vnfPkgId + "/artifacts/" + artifactPath;
+        final String url = etsiCatalogManagerEndpoint + "/vnf_packages/" + vnfPkgId + "/artifacts/" + artifactPath;
         logger.info("getVnfPackageArtifactUrl: {}", url);
         return url;
     }
@@ -99,7 +95,7 @@ public class EtsiCatalogUrlProvider {
      * @return the URL for the GET operation
      */
     public String getVnfPackageVnfdUrl(final String vnfPkgId) {
-        final String url = msbEndpoint + vnfpkgmServiceUrl + "/vnf_packages/" + vnfPkgId + "/vnfd";
+        final String url = etsiCatalogManagerEndpoint + "/vnf_packages/" + vnfPkgId + "/vnfd";
         logger.info("getEtsiCatalogVnfPackageVnfd: {}", url);
         return url;
     }
