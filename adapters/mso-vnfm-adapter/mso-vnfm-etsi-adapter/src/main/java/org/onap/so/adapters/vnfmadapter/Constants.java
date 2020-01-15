@@ -31,6 +31,7 @@ public class Constants {
     public static final String PACKAGE_MANAGEMENT_BASE_URL = BASE_URL + "/vnfpkgm/v1";
     public static final String APPLICATION_ZIP = "application/zip";
     public static final String OPERATION_NOTIFICATION_ENDPOINT = "/lcn/VnfLcmOperationOccurrenceNotification";
+    public static final String ETSI_CATALOG_MANAGER_DEFAULT_ENDPOINT = "http://msb-iag.onap:80/api/vnfpkgm/v1";
 
     private Constants() {}
 }
