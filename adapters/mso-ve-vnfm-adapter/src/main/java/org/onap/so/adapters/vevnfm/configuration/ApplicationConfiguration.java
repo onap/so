@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SO
  * ================================================================================
- * Copyright (C) 2019 Samsung. All rights reserved.
+ * Copyright (C) 2020 Samsung. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,19 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.vevnfm;
+package org.onap.so.adapters.vevnfm.configuration;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.onap.so.rest.service.HttpRestServiceProvider;
+import org.onap.so.rest.service.HttpRestServiceProviderImpl;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 
-@SpringBootApplication(scanBasePackages = {"org.onap.so"})
-public class Application {
+@Configuration
+public class ApplicationConfiguration {
 
-    public static void main(final String... args) {
-        SpringApplication.run(Application.class, args);
+    @Bean
+    public HttpRestServiceProvider restProvider(final RestTemplate restTemplate) {
+        return new HttpRestServiceProviderImpl(restTemplate);
     }
 }
