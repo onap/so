@@ -123,6 +123,7 @@ public interface MsoVnfAdapter {
             @WebParam(name = "vfName") @XmlElement(required = true) String vfName,
             @WebParam(name = "vnfId") @XmlElement(required = true) String vnfId,
             @WebParam(name = "vfModuleId") @XmlElement(required = true) String vfModuleId,
+            @WebParam(name = "modelCustomizationUuid") @XmlElement(required = false) String modelCustomizationUuid,
             @WebParam(name = "request") MsoRequest msoRequest,
             @WebParam(name = "vfModuleOutputs", mode = Mode.OUT) Holder<Map<String, String>> vfModuleOutputs)
             throws VnfException;

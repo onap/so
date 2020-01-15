@@ -1137,7 +1137,8 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
     @Override
     public void deleteVfModule(String cloudSiteId, String cloudOwner, String tenantId, String vnfName, String vnfId,
-            String vfModuleId, MsoRequest msoRequest, Holder<Map<String, String>> outputs) throws VnfException {
+            String vfModuleId, String modelCustomizationUuid, MsoRequest msoRequest,
+            Holder<Map<String, String>> outputs) throws VnfException {
         Map<String, Object> stackOutputs;
         try {
             stackOutputs = msoHeatUtils.queryStackForOutputs(cloudSiteId, cloudOwner, tenantId, vnfName);
@@ -1166,8 +1167,32 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                     msoRequest, failRequestOnValetFailure);
         }
 
+        int timeoutMinutes = 118;
+        VfModule vf = null;
+        VfModuleCustomization vfmc = null;
+        if (modelCustomizationUuid != null) {
+            vfmc = vfModuleCustomRepo.findFirstByModelCustomizationUUIDOrderByCreatedDesc(modelCustomizationUuid);
+            if (vfmc != null) {
+                vf = vfmc.getVfModule();
+            }
+            if (vf != null) {
+                logger.trace("Found vfModuleCust entry {}", vfmc.toString());
+                HeatTemplate heat = vf.getModuleHeatTemplate();
+                if (heat != null && heat.getTimeoutMinutes() != null) {
+                    if (heat.getTimeoutMinutes() < 118) {
+                        timeoutMinutes = heat.getTimeoutMinutes();
+                    }
+                }
+
+            } else {
+                logger.debug(
+                        "Unable to find vfModuleCust with modelCustomizationUuid={} . Using default timeout for polling",
+                        modelCustomizationUuid);
+            }
+        }
+
         try {
-            msoHeatUtils.deleteStack(tenantId, cloudOwner, cloudSiteId, vnfName, true, 118);
+            msoHeatUtils.deleteStack(tenantId, cloudOwner, cloudSiteId, vnfName, true, timeoutMinutes);
         } catch (MsoException me) {
             me.addContext(DELETE_VNF);
             // Failed to query the Stack due to an openstack exception.

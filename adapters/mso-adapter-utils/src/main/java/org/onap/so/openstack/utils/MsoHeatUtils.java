@@ -127,12 +127,9 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
 
     // Properties names and variables (with default values)
     protected String createPollIntervalProp = "org.onap.so.adapters.po.pollInterval";
-    private String deletePollIntervalProp = "org.onap.so.adapters.po.pollInterval";
-    private String deletePollTimeoutProp = "org.onap.so.adapters.po.pollTimeout";
     private String pollingMultiplierProp = "org.onap.so.adapters.po.pollMultiplier";
 
     protected static final String CREATE_POLL_INTERVAL_DEFAULT = "15";
-    private static final String DELETE_POLL_INTERVAL_DEFAULT = "15";
     private static final String POLLING_MULTIPLIER_DEFAULT = "60";
 
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
@@ -177,7 +174,6 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
      * @throws MsoOpenstackException Thrown if the Openstack API call returns an exception.
      */
 
-    @SuppressWarnings("unchecked")
     public StackInfo createStack(String cloudSiteId, String cloudOwner, String tenantId, String stackName,
             VduModelInfo vduModel, String heatTemplate, Map<String, ?> stackInputs, boolean pollForCompletion,
             int timeoutMinutes, String environment, Map<String, Object> nestedTemplates, Map<String, Object> heatFiles,
@@ -848,7 +844,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
      * Boolean if any of the conversions should fail, we will default to adding it to the inputs as a string - see if
      * Openstack can handle it. Also, will remove any params that are extra. Any aliases will be converted to their
      * appropriate name (anyone use this feature?)
-     * 
+     *
      * @param inputs - the Map<String, String> of the inputs received on the request
      * @param template the HeatTemplate object - this is so we can also verify if the param is valid for this template
      * @return HashMap<String, Object> of the inputs, cleaned and converted

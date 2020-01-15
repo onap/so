@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -67,30 +67,30 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
      * msoRequest.setRequestId("12345"); msoRequest.setServiceInstanceId("12345"); Holder<Map<String, String>> outputs =
      * new Holder<>(); instance.queryVnf("siteid", "CloudOwner", "1234", "vfname", msoRequest, new Holder<>(), new
      * Holder<>(), new Holder<>(), outputs);
-     * 
+     *
      * assertTrue(outputs.value.isEmpty()); }
      */
 
     /*
      * @Test public void queryVnfTest() throws Exception {
-     * 
-     * 
+     *
+     *
      * MsoRequest msoRequest = new MsoRequest(); msoRequest.setRequestId("12345");
      * msoRequest.setServiceInstanceId("12345");
      * wireMockServer.stubFor(get(urlPathEqualTo("/v2.0/api/v3/deployments/vfname"))
      * .willReturn(aResponse().withBody("{ \"id\": \"123\" }").withStatus(HttpStatus.SC_OK)));
-     * 
+     *
      * wireMockServer.stubFor(get(urlPathEqualTo("/v2.0/api/v3/deployments/vfname/outputs"))
      * .willReturn(aResponse().withBody("{ \"deployment_id\": \"123\",\"outputs\":{\"abc\":\"abc\"} }")
      * .withStatus(HttpStatus.SC_OK)));
-     * 
+     *
      * wireMockServer.stubFor(get(urlMatching("/v2.0/api/v3/executions?.*")).willReturn(aResponse()
      * .withBody("{ \"items\": {\"id\": \"123\",\"workflow_id\":\"install\",\"status\":\"terminated\" } } ")
      * .withStatus(HttpStatus.SC_OK)));
-     * 
+     *
      * instance.queryVnf("mtn13", "CloudOwner", "1234", "vfname", msoRequest, new Holder<>(), new Holder<>(), new
      * Holder<>(), new Holder<>());
-     * 
+     *
      * }
      */
 
@@ -102,7 +102,7 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
         msoRequest.setServiceInstanceId("12345");
 
         instance.deleteVfModule("mtn13", "CloudOwner", "1234", "vfname", "5aae1e49-805c-4f9f-bd78-055bf7451157",
-                "11420693-3f69-4c61-b3ee-9787c744e760", msoRequest, new Holder<>());
+                "11420693-3f69-4c61-b3ee-9787c744e760", "customizationId", msoRequest, new Holder<>());
     }
 
     @Test
@@ -126,7 +126,7 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
                 .willReturn(aResponse().withBodyFile("OpenstackResponse_Access.json").withStatus(HttpStatus.SC_OK)));
 
         instance.deleteVfModule("mtn13", "CloudOwner", "1234", "vfname", "5aae1e49-805c-4f9f-bd78-055bf7451157",
-                "11420693-3f69-4c61-b3ee-9787c744e760", msoRequest, new Holder<>());
+                "11420693-3f69-4c61-b3ee-9787c744e760", "customizationId", msoRequest, new Holder<>());
     }
 
     @Test

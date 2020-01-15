@@ -1017,7 +1017,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
         // Retrieve the Network Resource definition
         NetworkResource networkResource = null;
-
         if (commonUtils.isNullOrEmpty(modelCustomizationUuid)) {
             if (!commonUtils.isNullOrEmpty(networkType)) {
                 networkResource = networkResourceRepo.findFirstByModelNameOrderByModelVersionDesc(networkType);
@@ -1030,10 +1029,18 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             }
         }
 
+        int timeoutMinutes = 118;
         String mode = "";
         if (networkResource != null) {
             logger.debug(LOG_DEBUG_MSG, networkResource.toString());
             mode = networkResource.getOrchestrationMode();
+            networkResource.getHeatTemplate().getTimeoutMinutes();
+            HeatTemplate heat = networkResource.getHeatTemplate();
+            if (heat != null && heat.getTimeoutMinutes() != null) {
+                if (heat.getTimeoutMinutes() < 118) {
+                    timeoutMinutes = heat.getTimeoutMinutes();
+                }
+            }
         }
 
         if (NEUTRON_MODE.equals(mode)) {
@@ -1048,7 +1055,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             }
         } else {
             try {
-                heat.deleteStack(tenantId, CLOUD_OWNER, cloudSiteId, networkId, true, 120);
+                heat.deleteStack(tenantId, CLOUD_OWNER, cloudSiteId, networkId, true, timeoutMinutes);
                 networkDeleted.value = true;
             } catch (MsoException me) {
                 me.addContext("DeleteNetwork");
@@ -1381,7 +1388,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
          * make these optional + "      ip_version: %ipversion%\n" + "      enable_dhcp: %enabledhcp%\n" +
          * "      gateway_ip: %gatewayip%\n" + "      allocation_pools:\n" + "       - start: %poolstart%\n" +
          * "         end: %poolend%\n";
-         * 
+         *
          */
 
         String outputTempl = "  subnet_id_%subnetId%:\n" + "    description: Openstack subnet identifier\n"

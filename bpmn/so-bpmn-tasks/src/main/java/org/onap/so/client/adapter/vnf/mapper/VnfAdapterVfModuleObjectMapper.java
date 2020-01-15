@@ -879,6 +879,10 @@ public class VnfAdapterVfModuleObjectMapper {
         deleteVfModuleRequest.setTenantId(cloudRegion.getTenantId());
         deleteVfModuleRequest.setVnfId(genericVnf.getVnfId());
         deleteVfModuleRequest.setVfModuleId(vfModule.getVfModuleId());
+        if (vfModule.getModelInfoVfModule() != null) {
+            deleteVfModuleRequest
+                    .setModelCustomizationUuid(vfModule.getModelInfoVfModule().getModelCustomizationUUID());
+        }
         if (!StringUtils.isEmpty(vfModule.getHeatStackId())) {
             deleteVfModuleRequest.setVfModuleStackId(vfModule.getHeatStackId());// DoDVfMod_heatStackId
         } else {

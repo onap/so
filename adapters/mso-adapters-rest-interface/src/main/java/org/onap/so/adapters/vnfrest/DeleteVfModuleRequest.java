@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,7 +30,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @XmlRootElement(name = "deleteVfModuleRequest")
 public class DeleteVfModuleRequest extends VfRequestCommon implements Serializable {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -8504083539107392561L;
     private String cloudSiteId;
@@ -39,6 +39,7 @@ public class DeleteVfModuleRequest extends VfRequestCommon implements Serializab
     private String vnfId;
     private String vfModuleId;
     private String vfModuleStackId;
+    private String modelCustomizationUuid;
 
     private MsoRequest msoRequest = new MsoRequest();
 
@@ -92,6 +93,14 @@ public class DeleteVfModuleRequest extends VfRequestCommon implements Serializab
 
     public void setVfModuleStackId(String vfModuleStackId) {
         this.vfModuleStackId = vfModuleStackId;
+    }
+
+    public String getModelCustomizationUuid() {
+        return modelCustomizationUuid;
+    }
+
+    public void setModelCustomizationUuid(String modelCustomizationUuid) {
+        this.modelCustomizationUuid = modelCustomizationUuid;
     }
 
     public MsoRequest getMsoRequest() {

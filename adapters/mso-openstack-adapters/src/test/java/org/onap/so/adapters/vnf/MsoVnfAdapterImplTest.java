@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -485,7 +485,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
         MsoRequest msoRequest = getMsoRequest();
         try {
             instance.deleteVfModule("mdt1", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12",
-                    "5aae1e49-805c-4f9f-bd78-055bf7451157", "11420693-3f69-4c61-b3ee-9787c744e760", msoRequest,
+                    "5aae1e49-805c-4f9f-bd78-055bf7451157", "11420693-3f69-4c61-b3ee-9787c744e760", null, msoRequest,
                     new Holder<Map<String, String>>());
         } catch (Exception e) {
 
