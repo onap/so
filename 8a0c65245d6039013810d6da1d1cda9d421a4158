@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "6f57c56a_817b0bd3",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigPnf.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-01-15T17:05:18Z",
+      "side": 1,
+      "message": "sure, i\u0027ll fix that in next patch",
+      "parentUuid": "f307da17_d0d14f9f",
+      "range": {
+        "startLine": 61,
+        "startChar": 0,
+        "endLine": 66,
+        "endChar": 9
+      },
+      "revId": "8a0c65245d6039013810d6da1d1cda9d421a4158",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8e23a109_fecf3867",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/PayloadConstants.java",
         "patchSetId": 5
@@ -36,6 +60,30 @@
       "writtenOn": "2020-01-15T17:01:45Z",
       "side": 1,
       "message": "should it be \"vfModule\" \n\nwe decide on the camel case format for scope definition.",
+      "range": {
+        "startLine": 36,
+        "startChar": 43,
+        "endLine": 36,
+        "endChar": 52
+      },
+      "revId": "8a0c65245d6039013810d6da1d1cda9d421a4158",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4e0e7a48_98292f3a",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/PayloadConstants.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-01-15T17:05:18Z",
+      "side": 1,
+      "message": "will fix in next patch",
+      "parentUuid": "8e23a109_fecf3867",
       "range": {
         "startLine": 36,
         "startChar": 43,
