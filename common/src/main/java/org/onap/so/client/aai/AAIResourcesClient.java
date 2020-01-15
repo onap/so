@@ -44,6 +44,11 @@ public class AAIResourcesClient extends
         aaiClient = (AAIClient) super.client;
     }
 
+    public AAIResourcesClient(AAIClient client) {
+        super(client);
+        aaiClient = (AAIClient) super.client;
+    }
+
     @Override
     public AAIResultWrapper createWrapper(String json) {
         return new AAIResultWrapper(json);
