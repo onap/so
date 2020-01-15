@@ -34,14 +34,13 @@ public class Sol003SubscriptionManagementControllerTest {
     @Autowired
     @Qualifier(CONFIGURABLE_REST_TEMPLATE)
     private RestTemplate testRestTemplate;
-    private MockRestServiceServer mockRestServer;
 
     @Autowired
     private Sol003SubscriptionManagementController controller;
 
     @Before
     public void setUp() throws Exception {
-        mockRestServer = MockRestServiceServer.bindTo(testRestTemplate).build();
+        MockRestServiceServer.bindTo(testRestTemplate).build();
     }
 
     @Test
