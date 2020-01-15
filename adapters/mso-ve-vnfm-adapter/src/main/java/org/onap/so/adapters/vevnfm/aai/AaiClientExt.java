@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SO
  * ================================================================================
- * Copyright (C) 2019 Samsung. All rights reserved.
+ * Copyright (C) 2020 Samsung. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,17 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.vevnfm;
+package org.onap.so.adapters.vevnfm.aai;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import java.net.URI;
+import javax.ws.rs.core.UriBuilder;
+import org.onap.so.client.aai.AAIClient;
+import org.onap.so.client.graphinventory.entities.uri.GraphInventoryUri;
 
-@SpringBootApplication(scanBasePackages = {"org.onap.so"})
-public class Application {
+public class AaiClientExt extends AAIClient {
 
-    public static void main(final String... args) {
-        SpringApplication.run(Application.class, args);
+    @Override
+    protected URI constructPath(GraphInventoryUri uri) {
+        return UriBuilder.fromUri(uri.build().toString()).build();
     }
 }

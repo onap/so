@@ -1,5 +1,5 @@
 #
-# Copyright © 2019 Samsung.
+# Copyright © 2019, 2020 Samsung.
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,8 +14,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+server:
+  port: 8080
+
+system:
+  url: http://localhost
+
 notification:
-  url:  /lcm/v1/vnf/instances/notifications
+  url: /lcm/v1/vnf/instances/notifications
+
+aai:
+  endpoint: https://aai.onap:30233
+  path: /api/aai-esr-server/v1/vnfms
+
+vnfm:
+  subscription: /vnflcm/v1/subscriptions
 
 spring:
   http:
