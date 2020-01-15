@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e35843a9_6165ca73",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ControllerExecutionTest.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-01-15T10:23:31Z",
+      "side": 1,
+      "message": "what is the intent here.",
+      "range": {
+        "startLine": 102,
+        "startChar": 7,
+        "endLine": 102,
+        "endChar": 25
+      },
+      "revId": "37e2f5c5c0f1805ba6e5dc29ee70c5cdb6b74642",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
