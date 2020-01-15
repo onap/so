@@ -117,6 +117,30 @@
       "revId": "d9ec457062dc4b96c4a45bbfdaa79569a3437d3b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d9d239b7_4125a65b",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/test/java/org/onap/so/adapters/vnfmadapter/rest/Sol003PackageManagementControllerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2020-01-15T14:31:14Z",
+      "side": 1,
+      "message": "\"Changing PACKAGE_MANAGEMENT_BASE_URL would change the url of the endpoint we expose for package management \" Yes i understand that\n\"would be a backwards incompatible api change,\" How would that be backward incompatible ?\nWe mock the URL in this test and make sure default value is called and if the worry is that someone will change that then EtsiCatalogUrlProvider should have its own test rather then this test class test every single thing in one test class \n\n\"One of the reasons for CI is to verify your external api does not change inadvertently, changes to either of these values has implications externally\"\nhow extracting that to contants breaking that?",
+      "parentUuid": "72f32395_ba0b4df3",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 85
+      },
+      "revId": "d9ec457062dc4b96c4a45bbfdaa79569a3437d3b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
