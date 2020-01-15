@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1e672706_26b2ee98",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/extclients/etsicatalog/EtsiCatalogUrlProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 249
+      },
+      "writtenOn": "2020-01-15T15:41:05Z",
+      "side": 1,
+      "message": "This needs to be read in as an external configuration parameter because at can be changed by deployment. \nlook at other config params for examples of now deployment specific addresses are build up e.g ./resources/config/mso/mso-docker.json (this is in OOM)\n   ...\n      \"adaptersVnfRestEndpoint\": \"http://{{.Values.service.name}}:{{.Values.service.internalPort}}/vnfs/rest/v1/vnfs\"\n   ....",
+      "range": {
+        "startLine": 37,
+        "startChar": 72,
+        "endLine": 37,
+        "endChar": 94
+      },
+      "revId": "7b90a76fff60ebfec0a9e474f3e7b5a07689d57a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
