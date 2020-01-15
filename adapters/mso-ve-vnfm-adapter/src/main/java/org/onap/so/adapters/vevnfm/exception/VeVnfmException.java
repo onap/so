@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SO
  * ================================================================================
- * Copyright (C) 2019 Samsung. All rights reserved.
+ * Copyright (C) 2020 Samsung. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,10 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.vevnfm;
+package org.onap.so.adapters.vevnfm.exception;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-@SpringBootApplication
-public class Application {
-    public static void main(final String... args) {
-        SpringApplication.run(Application.class, args);
+public class VeVnfmException extends Exception {
+    public VeVnfmException(final String message, final Throwable cause) {
+        super(message, cause);
     }
 }
