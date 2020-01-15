@@ -141,6 +141,30 @@
       "revId": "d9ec457062dc4b96c4a45bbfdaa79569a3437d3b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ffc8e479_0befddbc",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/test/java/org/onap/so/adapters/vnfmadapter/rest/Sol003PackageManagementControllerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2020-01-15T15:23:45Z",
+      "side": 1,
+      "message": "PACKAGE_MANAGEMENT_BASE_URL:\nChanging the endpoint is backwards incompatible because any clients will have to be updated to use the new endpoint.\nIf you use the actual value for the endpoint in the test, rather than the constant used in the implementation, then any change in the constant will result in a failed test case, which would hopefully highlight to the implementer or reviewer the consequences of the change.\n\nETSI_CATALOG_MANAGER_DEFAULT_ENDPOINT:\nYes, the concern in somebody could change it. I dont see any reason why we would need a separate test class for that when it can be tested through the api (as it already is).\n\nUsing the constants from the implementation in the test means you are just verifying against what the adapter is using rather than against what the adapter should be using.\nFor example, the package management endpoint must be \"/vnfpkgm/v1\" to comply with the SOL003 spec. Using the constant here in the test class means you are verifying the endpoint is whatever the value of the constant is, rather than verifying it is the correct value of \"/vnfpkgm/v1\".",
+      "parentUuid": "d9d239b7_4125a65b",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 85
+      },
+      "revId": "d9ec457062dc4b96c4a45bbfdaa79569a3437d3b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
