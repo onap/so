@@ -154,6 +154,47 @@
       "revId": "17fd7447ec1fac5df14eda3248508428cbc1c486",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "50e048a7_cc886e29",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListenerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2020-01-15T13:52:23Z",
+      "side": 1,
+      "message": "I agree with Rahul.",
+      "parentUuid": "8e7b5db2_35954ed0",
+      "revId": "17fd7447ec1fac5df14eda3248508428cbc1c486",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "67ec1774_aae90c12",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListenerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2020-01-15T13:52:23Z",
+      "side": 1,
+      "message": "Can you explain why you are doing this ?\n\nYou can do this  executeBuildingBlock.setResourceId(vfModuleId) instead.\nApplies elsewhere.",
+      "range": {
+        "startLine": 154,
+        "startChar": 7,
+        "endLine": 154,
+        "endChar": 55
+      },
+      "revId": "17fd7447ec1fac5df14eda3248508428cbc1c486",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
