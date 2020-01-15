@@ -20,6 +20,7 @@
 
 package org.onap.so.adapters.vevnfm.service;
 
+import java.util.Collections;
 import org.onap.so.adapters.vevnfm.subscription.SubscribeSender;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRequest;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsAuthentication;
@@ -33,14 +34,20 @@ public class SubscriberService {
 
     private static final char COLON = ':';
 
-    @Value("${notification.url}")
-    private String notificationUrl;
+    @Value("${system.url}")
+    private String systemUrl;
 
     @Value("${server.port}")
     private String serverPort;
 
-    @Value("${system.url}")
-    private String systemUrl;
+    @Value("${notification.url}")
+    private String notificationUrl;
+
+    @Value("${notification.username}")
+    private String notificationUsername;
+
+    @Value("${notification.password}")
+    private String notificationPassword;
 
     @Autowired
     private SubscribeSender sender;
@@ -55,6 +62,9 @@ public class SubscriberService {
         request.callbackUri(getCallbackUri());
         final SubscriptionsAuthenticationParamsBasic paramsBasic = new SubscriptionsAuthenticationParamsBasic();
         final SubscriptionsAuthentication authentication = new SubscriptionsAuthentication();
+        paramsBasic.setUserName(notificationUsername);
+        paramsBasic.setPassword(notificationPassword);
+        authentication.setAuthType(Collections.singletonList(SubscriptionsAuthentication.AuthTypeEnum.BASIC));
         authentication.setParamsBasic(paramsBasic);
         request.authentication(authentication);
 

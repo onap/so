@@ -22,6 +22,8 @@ system:
 
 notification:
   url: /lcm/v1/vnf/instances/notifications
+  username: admin
+  password: a4b3c2d1
 
 mso:
   key: 07a7159d3bf51a0e53be7a8f89699be7
