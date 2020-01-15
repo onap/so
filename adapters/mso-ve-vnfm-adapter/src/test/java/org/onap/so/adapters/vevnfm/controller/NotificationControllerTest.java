@@ -20,15 +20,22 @@
 
 package org.onap.so.adapters.vevnfm.controller;
 
+import static org.junit.Assert.assertEquals;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.VnfLcmOperationOccurrenceNotification;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import static org.junit.Assert.assertEquals;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@SpringBootTest
+@RunWith(SpringRunner.class)
 public class NotificationControllerTest {
 
-    private final NotificationController controller = new NotificationController();
+    @Autowired
+    private NotificationController controller;
 
     @Test
     public void testReceiveNotification() {
