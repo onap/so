@@ -84,6 +84,24 @@
     },
     {
       "key": {
+        "uuid": "f9f7ebed_6327cf06",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigPnf.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 4567
+      },
+      "writtenOn": "2020-01-15T17:01:45Z",
+      "side": 1,
+      "message": "included in every request.",
+      "parentUuid": "584cc30e_e309e303",
+      "revId": "36fd8c0fdd35960a301541ae7219542eb740997c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2bdf922d_737a9261",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigPnf.java",
         "patchSetId": 1
@@ -128,6 +146,29 @@
       "revId": "36fd8c0fdd35960a301541ae7219542eb740997c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "198f62ca_bce0fbc9",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigPnf.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 4567
+      },
+      "writtenOn": "2020-01-15T17:01:45Z",
+      "side": 1,
+      "message": "we should pass all input as is and not introduce any customization. Can we avoid this customization logic?",
+      "range": {
+        "startLine": 62,
+        "startChar": 0,
+        "endLine": 67,
+        "endChar": 9
+      },
+      "revId": "36fd8c0fdd35960a301541ae7219542eb740997c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
