@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b4c2e2a0_06095427",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/Constants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2020-01-15T13:16:41Z",
+      "side": 1,
+      "message": "This is only a concern of the EtsiCatalogUrlProvider class so define it in there. \nIts the job of EtsiCatalogUrlProvider to take care of generating the url for etsi catalog manager, anything related to that shouldnt be leaking out into other classes",
+      "range": {
+        "startLine": 34,
+        "startChar": 30,
+        "endLine": 34,
+        "endChar": 111
+      },
+      "revId": "d9ec457062dc4b96c4a45bbfdaa79569a3437d3b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c35d2059_e2287779",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/test/java/org/onap/so/adapters/vnfmadapter/rest/Sol003PackageManagementControllerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2020-01-15T13:16:41Z",
+      "side": 1,
+      "message": "I wouldnt be a fan of using the constant from the implementation in the test.\nIf somebody changes the value of the constant, the necessity to update the test case highlights that the change is something that has external implications",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 85
+      },
+      "revId": "d9ec457062dc4b96c4a45bbfdaa79569a3437d3b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
