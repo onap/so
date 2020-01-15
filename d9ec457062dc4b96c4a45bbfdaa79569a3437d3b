@@ -93,6 +93,30 @@
       "revId": "d9ec457062dc4b96c4a45bbfdaa79569a3437d3b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "72f32395_ba0b4df3",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/test/java/org/onap/so/adapters/vnfmadapter/rest/Sol003PackageManagementControllerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2020-01-15T13:55:12Z",
+      "side": 1,
+      "message": "Changing PACKAGE_MANAGEMENT_BASE_URL would change the url of the endpoint we expose for package management and would be a backwards incompatible api change, the tests verify the exposed url by invoking it. \n\nAny change to the default endpoint used for etsi catalog manager has implications for any deployment where the default value is being used. \nThe tests verify the url the vnfm adapter will invoke by default for the etsi catalog manager.\n\nOne of the reasons for CI is to verify your external api does not change inadvertently, changes to either of these values has implications externally",
+      "parentUuid": "6e5e39c9_ad797c84",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 85
+      },
+      "revId": "d9ec457062dc4b96c4a45bbfdaa79569a3437d3b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
