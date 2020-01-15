@@ -1,0 +1,58 @@
+{
+  "modelCustomizationUUID" : "modelCustomizationUUID",
+  "modelInstanceName" : "modelInstanceName",
+  "configurationType" : "configurationType",
+  "configurationRole" : "configurationRole",
+  "configurationFunction" : "configurationFunction",
+  "policyName" : "policyName",
+
+  "cvnfcCustomization" : {
+    "modelCustomizationUUID" : "modelCustomizationUUID",
+    "modelInstanceName" : "modelInstanceName",
+    "modelUUID" : "modelUUID",
+    "modelInvariantUUID" : "modelInvariantUUID",
+    "modelVersion" : "modelVersion",
+
+    "vfModuleCustomization" : {
+      "modelCustomizationUUID" : "modelCustomizationUUID",
+      "label" : "label",
+      "minInstances": 2,
+      "maxInstances": 3,
+      "availabilityZoneCount": 5,
+      "volumeHeatEnv" : {},
+      "heatEnvironment" : {},
+      "vfModule" : {
+        "modelUUID" : "modelUUID",
+        "modelInvariantUUID" : "modelInvariantUUID",
+        "modelName" : "modelName",
+        "modelVersion" : "modelVersion",
+        "description" : "description",
+        "isBase" : true,
+        "volumeHeatTemplate" : {},
+        "moduleHeatTemplate" : {},
+        "heatFiles" : [],
+        "vfModuleCustomization" : [],
+        "vnfResources" : {
+          "modelName" : "vnfResourceModelName"
+        }
+      }
+    },
+    "vnfcCustomization" : {
+      "modelCustomizationUUID" : "modelCustomizationUUID",
+      "modelInstanceName" : "modelInstanceName",
+      "modelUUID" : "modelUUID"
+    },
+    "cvnfcConfigurationCustomization" : [
+      {
+      "modelCustomizationUUID" : "modelCustomizationUUID",
+      "modelInstanceName" : "modelInstanceName",
+      "configurationType" : "configurationType"
+      },
+      {
+        "modelCustomizationUUID" : "modelCustomizationUUID2",
+        "modelInstanceName" : "modelInstanceName2",
+        "configurationType" : "configurationType2"
+      }
+      ]
+  }
+}

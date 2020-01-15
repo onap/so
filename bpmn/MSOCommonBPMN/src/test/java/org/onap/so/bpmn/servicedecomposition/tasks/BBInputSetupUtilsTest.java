@@ -4,12 +4,14 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2020 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -57,6 +59,7 @@ import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aai.domain.yang.ServiceInstances;
 import org.onap.aai.domain.yang.VolumeGroup;
 import org.onap.aai.domain.yang.VolumeGroups;
+import org.onap.aai.domain.yang.VpnBinding;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceSubscription;
@@ -69,9 +72,13 @@ import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.graphinventory.entities.uri.Depth;
-import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
-import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
+import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
+import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
+import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
+import org.onap.so.db.catalog.beans.VfModuleCustomization;
+import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
+import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.beans.RequestProcessingData;
@@ -622,10 +629,12 @@ public class BBInputSetupUtilsTest {
         L3Network network = new L3Network();
         network.setNetworkId("id123");
         network.setNetworkName("name123");
+
         expected.get().getL3Network().add(network);
         doReturn(expected).when(MOCK_aaiResourcesClient).get(eq(L3Networks.class), any(AAIResourceUri.class));
         Optional<L3Network> actual =
                 this.bbInputSetupUtils.getRelatedNetworkByNameFromServiceInstance("id123", "name123");
+
         assertEquals(actual.get().getNetworkId(), expected.get().getL3Network().get(0).getNetworkId());
     }
 
@@ -996,5 +1005,160 @@ public class BBInputSetupUtilsTest {
                 .queryParam("volume-group-name", "testVoumeGroup");
         bbInputSetupUtils.existsAAIVolumeGroupGloballyByName("testVoumeGroup");
         verify(MOCK_aaiResourcesClient, times(1)).exists(expectedUri);
+    }
+
+    @Test
+    public void shouldChangeInfraActiveRequestVnfId() throws IOException {
+        final String vnfId = "vnfId";
+        InfraActiveRequests infraActiveRequests = loadExpectedInfraActiveRequest();
+
+        bbInputSetupUtils.updateInfraActiveRequestVnfId(infraActiveRequests, vnfId);
+
+        assertEquals(infraActiveRequests.getVnfId(), vnfId);
+    }
+
+    @Test
+    public void shouldChangeInfraActiveRequestVfModuleId() throws IOException {
+        final String vfModuleId = "vfModuleId";
+        InfraActiveRequests infraActiveRequests = loadExpectedInfraActiveRequest();
+
+        bbInputSetupUtils.updateInfraActiveRequestVfModuleId(infraActiveRequests, vfModuleId);
+
+        assertEquals(infraActiveRequests.getVfModuleId(), vfModuleId);
+    }
+
+    @Test
+    public void shouldChangeInfraActiveRequestVolumeGroupId() throws IOException {
+        final String volumeGroupId = "volumeGroupId";
+        InfraActiveRequests infraActiveRequests = loadExpectedInfraActiveRequest();
+
+        bbInputSetupUtils.updateInfraActiveRequestVolumeGroupId(infraActiveRequests, volumeGroupId);
+
+        assertEquals(infraActiveRequests.getVolumeGroupId(), volumeGroupId);
+    }
+
+    @Test
+    public void shouldChangeInfraActiveRequestNetworkId() throws IOException {
+        final String networkId = "activeRequestNetworkId";
+        InfraActiveRequests infraActiveRequests = loadExpectedInfraActiveRequest();
+
+        bbInputSetupUtils.updateInfraActiveRequestNetworkId(infraActiveRequests, networkId);
+
+        assertEquals(infraActiveRequests.getNetworkId(), networkId);
+    }
+
+    @Test
+    public void getCatalogCollectionNetworkResourceCustByIDTest() throws IOException {
+        final String modelCustomizationUUID = "modelCustomizationUUID";
+        CollectionNetworkResourceCustomization expected = mapper
+                .readValue(new File(RESOURCE_PATH + "CollectionNetworkResourceCustomizationInput.json"), CollectionNetworkResourceCustomization.class);
+
+        doReturn(expected).when(MOCK_catalogDbClient)
+                .getCollectionNetworkResourceCustomizationByID(modelCustomizationUUID);
+        CollectionNetworkResourceCustomization actual =
+                bbInputSetupUtils.getCatalogCollectionNetworkResourceCustByID(modelCustomizationUUID);
+
+        assertThat(expected, sameBeanAs(actual));
+    }
+
+    @Test
+    public void getCatalogNetworkCollectionResourceCustByIDTest() throws IOException {
+        final String modelCustomizationUUID = "modelCustomizationUUID";
+        NetworkCollectionResourceCustomization expected = mapper
+                .readValue(new File(RESOURCE_PATH + "NetworkCollectionResourceCustomizationInput.json"), NetworkCollectionResourceCustomization.class);
+
+        doReturn(expected).when(MOCK_catalogDbClient)
+                .getNetworkCollectionResourceCustomizationByID(modelCustomizationUUID);
+        NetworkCollectionResourceCustomization actual =
+                bbInputSetupUtils.getCatalogNetworkCollectionResourceCustByID(modelCustomizationUUID);
+
+        assertThat(expected, sameBeanAs(actual));
+    }
+
+    @Test
+    public void getVfModuleCustomizationByModelCuztomizationUUIDTest() throws IOException{
+        final String modelCustomizationUUID = "modelCustomizationUUID";
+        VfModuleCustomization expected = mapper
+                .readValue(new File(RESOURCE_PATH + "VfModuleCustomizationInput.json"), VfModuleCustomization.class);
+
+        doReturn(expected).when(MOCK_catalogDbClient)
+                .getVfModuleCustomizationByModelCuztomizationUUID(modelCustomizationUUID);
+        VfModuleCustomization actual =
+                bbInputSetupUtils.getVfModuleCustomizationByModelCuztomizationUUID(modelCustomizationUUID);
+
+        assertThat(actual, sameBeanAs(expected));
+    }
+
+    @Test
+    public void getCvnfcConfigurationCustomizationTest() throws IOException {
+        final String serviceModelUUID = "serviceModelUUID";
+        final String vnfCustomizationUUID = "vnfCustomizationUUID";
+        final String vfModuleCustomizationUUID = "vfModuleCustomizationUUID";
+        final String cvnfcCustomizationUUID = "cvnfcCustomizationUUID";
+        CvnfcConfigurationCustomization expected = mapper
+                .readValue(new File(RESOURCE_PATH + "CvnfcConfigurationCustomizationInput.json"), CvnfcConfigurationCustomization.class);
+
+        doReturn(expected).when(MOCK_catalogDbClient).getCvnfcCustomization(serviceModelUUID, vnfCustomizationUUID,
+                vfModuleCustomizationUUID, cvnfcCustomizationUUID);
+        CvnfcConfigurationCustomization actual = bbInputSetupUtils.getCvnfcConfigurationCustomization(serviceModelUUID,
+                vnfCustomizationUUID, vfModuleCustomizationUUID, cvnfcCustomizationUUID);
+
+        assertThat(actual, sameBeanAs(expected));
+    }
+
+    @Test
+    public void getAAIVpnBindingNullTest() {
+        assertNull(bbInputSetupUtils.getAAIVpnBinding("vpnBindingId"));
+    }
+
+    @Test
+    public void getAAIVolumeGroupNullTest() {
+        VolumeGroup actualAaiVnf =
+                bbInputSetupUtils.getAAIVolumeGroup("cloudOwnerId", "cloudRegionId", "volumeGroupId");
+        assertNull(actualAaiVnf);
+    }
+
+    @Test
+    public void getAAIVfModuleNullTest() {
+        assertNull(bbInputSetupUtils.getAAIVfModule("vnfId", "vfModuleId"));
+    }
+
+    @Test
+    public void getAAIL3NetworkNullTest() {
+        assertNull(bbInputSetupUtils.getAAIL3Network("networkId"));
+    }
+
+    @Test
+    public void getAICVpnBindingFromNetworkNotFoundTest() throws IOException {
+        L3Network l3Network =
+                mapper.readValue(new File(RESOURCE_PATH + "aaiL3NetworkInputWithSubnets.json"), L3Network.class);
+
+        Optional<VpnBinding> actual = bbInputSetupUtils.getAICVpnBindingFromNetwork(l3Network);
+        assertEquals(actual, Optional.empty());
+    }
+
+    @Test
+    public void getAAIServiceInstancesGloballyByNameTest() {
+        final String serviceInstanceName = "serviceInstanceName";
+
+        doReturn(Optional.empty()).when(MOCK_aaiResourcesClient).get(isA(Class.class), isA(AAIResourceUri.class));
+        ServiceInstances actualServiceInstances =
+                bbInputSetupUtils.getAAIServiceInstancesGloballyByName(serviceInstanceName);
+
+        assertNull(actualServiceInstances);
+    }
+
+    @Test
+    public void getAAIVnfsGloballyByNameTest() {
+        final String vnfName = "vnfName";
+
+        doReturn(Optional.empty()).when(MOCK_aaiResourcesClient).get(isA(Class.class), isA(AAIResourceUri.class));
+        GenericVnfs actualGenericVnfs = bbInputSetupUtils.getAAIVnfsGloballyByName(vnfName);
+
+        assertNull(actualGenericVnfs);
+    }
+
+    public InfraActiveRequests loadExpectedInfraActiveRequest() throws IOException {
+        return mapper.readValue(new File(RESOURCE_PATH + "InfraActiveRequestExpected.json"), InfraActiveRequests.class);
     }
 }
