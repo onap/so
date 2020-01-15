@@ -21,28 +21,28 @@
 package org.onap.so.adapters.vnfmadapter.extclients.etsicatalog;
 
 import static org.slf4j.LoggerFactory.getLogger;
+import java.net.URL;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * Provides the URLs for the REST Requests to the ETSI Catalog Manager.
  * 
  * @author gareth.roper@est.tech
  */
-@Service
+@Configuration
 public class EtsiCatalogUrlProvider {
 
     private static final Logger logger = getLogger(EtsiCatalogUrlProvider.class);
 
-    @Value("${msb.endpoint:#{\"http://msb_iag.onap:80\"}}")
-    private String msbEndpoint;
-    @Value("${msb.catalogServiceUrl:#{null}}")
-    private String catalogServiceUrl;
-    @Value("${msb.vnfpkgmServiceUrl:#{\"/api/vnfpkgm/v1\"}}")
-    private String vnfpkgmServiceUrl;
+    private final String etsiCatalogManagerEndpoint;
 
-    public EtsiCatalogUrlProvider() {}
+    public EtsiCatalogUrlProvider(
+            @Value("${etsi-catalog-manager.vnfpkgm.endpoint}") final String etsiCatalogManagerEndpoint) {
+        validateUrl(etsiCatalogManagerEndpoint);
+        this.etsiCatalogManagerEndpoint = etsiCatalogManagerEndpoint;
+    }
 
     /**
      * Get the URL for retrieving the Package Content from the ETSI Catalog.".
@@ -51,7 +51,7 @@ public class EtsiCatalogUrlProvider {
      * @return the URL for the GET operation
      */
     public String getVnfPackageContentUrl(final String vnfPkgId) {
-        final String url = msbEndpoint + vnfpkgmServiceUrl + "/vnf_packages/" + vnfPkgId + "/package_content";
+        final String url = etsiCatalogManagerEndpoint + "/vnf_packages/" + vnfPkgId + "/package_content";
         logger.info("getEtsiCatalogVnfPackageContentUrl: {}", url);
         return url;
     }
@@ -62,7 +62,7 @@ public class EtsiCatalogUrlProvider {
      * @return the URL for the GET operation
      */
     public String getVnfPackagesUrl() {
-        final String url = msbEndpoint + vnfpkgmServiceUrl + "/vnf_packages";
+        final String url = etsiCatalogManagerEndpoint + "/vnf_packages";
         logger.info("getEtsiCatalogVnfPackagesEndpoint: {}", url);
         return url;
     }
@@ -74,7 +74,7 @@ public class EtsiCatalogUrlProvider {
      * @return the URL for the GET operation
      */
     public String getVnfPackageUrl(final String vnfPkgId) {
-        final String url = msbEndpoint + vnfpkgmServiceUrl + "/vnf_packages/" + vnfPkgId;
+        final String url = etsiCatalogManagerEndpoint + "/vnf_packages/" + vnfPkgId;
         logger.info("getEtsiCatalogVnfPackageEndpoint: {}", url);
         return url;
     }
@@ -87,7 +87,7 @@ public class EtsiCatalogUrlProvider {
      * @return the URL for the GET operation
      */
     public String getVnfPackageArtifactUrl(final String vnfPkgId, final String artifactPath) {
-        final String url = msbEndpoint + vnfpkgmServiceUrl + "/vnf_packages/" + vnfPkgId + "/artifacts/" + artifactPath;
+        final String url = etsiCatalogManagerEndpoint + "/vnf_packages/" + vnfPkgId + "/artifacts/" + artifactPath;
         logger.info("getVnfPackageArtifactUrl: {}", url);
         return url;
     }
@@ -99,8 +99,21 @@ public class EtsiCatalogUrlProvider {
      * @return the URL for the GET operation
      */
     public String getVnfPackageVnfdUrl(final String vnfPkgId) {
-        final String url = msbEndpoint + vnfpkgmServiceUrl + "/vnf_packages/" + vnfPkgId + "/vnfd";
+        final String url = etsiCatalogManagerEndpoint + "/vnf_packages/" + vnfPkgId + "/vnfd";
         logger.info("getEtsiCatalogVnfPackageVnfd: {}", url);
         return url;
+    }
+
+    private void validateUrl(final String url) {
+        if (url == null || url.isEmpty()) {
+            throw new IllegalArgumentException("etsi-catalog-manager.vnfpkgm.endpoint must not be empty or null");
+        }
+        try {
+            new URL(url).toURI();
+        } catch (final Exception exception) {
+            final String message = "etsi-catalog-manager.vnfpkgm.endpoint must be valid url";
+            logger.error(message, exception);
+            throw new IllegalArgumentException(message, exception);
+        }
     }
 }

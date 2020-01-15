@@ -52,3 +52,7 @@ management:
       prometheus:
         enabled: true # Whether exporting of metrics to Prometheus is enabled.
         step: 1m # Step size (i.e. reporting frequency) to use.
+
+etsi-catalog-manager:
+   vnfpkgm:
+      endpoint: http://msb-iag.onap:80/api/vnfpkgm/v1
