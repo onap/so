@@ -82,7 +82,7 @@ public class Sol003PackageManagementControllerTest {
 
     private static final String VNF_PACKAGE_ID = "myVnfPackageId";
     private static final String ARTIFACT_PATH = "myArtifactPath";
-    private static final String MSB_BASE_URL = "http://msb_iag.onap:80/api/vnfpkgm/v1/vnf_packages";
+    private static final String MSB_BASE_URL = "http://msb-iag.onap:80/api/vnfpkgm/v1/vnf_packages";
     private static final String VNFPKGM_BASE_URL = PACKAGE_MANAGEMENT_BASE_URL + "/vnf_packages";
     private static final String localhostUrl = "http://localhost:";
     private static final String GET_VNF_PACKAGES_URL = "";
