@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2020 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,14 +31,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -46,17 +44,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.onap.aai.domain.yang.CloudRegion;
-import org.onap.aai.domain.yang.Configuration;
-import org.onap.aai.domain.yang.Configurations;
-import org.onap.aai.domain.yang.GenericVnf;
-import org.onap.aai.domain.yang.GenericVnfs;
-import org.onap.aai.domain.yang.L3Network;
-import org.onap.aai.domain.yang.L3Networks;
-import org.onap.aai.domain.yang.ServiceInstance;
-import org.onap.aai.domain.yang.ServiceInstances;
-import org.onap.aai.domain.yang.VolumeGroup;
-import org.onap.aai.domain.yang.VolumeGroups;
+import org.onap.aai.domain.yang.*;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceSubscription;
@@ -69,18 +57,13 @@ import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.graphinventory.entities.uri.Depth;
-import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
+import org.onap.so.db.catalog.beans.*;
 import org.onap.so.db.catalog.beans.Service;
-import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.beans.RequestProcessingData;
 import org.onap.so.db.request.client.RequestsDbClient;
-import org.onap.so.serviceinstancebeans.CloudConfiguration;
-import org.onap.so.serviceinstancebeans.ModelInfo;
-import org.onap.so.serviceinstancebeans.RequestDetails;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import org.onap.so.serviceinstancebeans.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -112,45 +95,170 @@ public class BBInputSetupUtilsTest {
     }
 
     @Test
-    public void testGetCatalogServiceByModelUUID() throws JsonParseException, JsonMappingException, IOException {
+    public void shouldChangeInfraActiveRequestVnfId() throws IOException {
+        String vnfId = "vnfId";
+        InfraActiveRequests infraActiveRequests = mapper
+                .readValue(new File(RESOURCE_PATH + "InfraActiveRequestExpected.json"), InfraActiveRequests.class);
+
+        bbInputSetupUtils.updateInfraActiveRequestVnfId(infraActiveRequests, vnfId);
+
+        assertEquals(infraActiveRequests.getVnfId(), vnfId);
+    }
+
+    @Test
+    public void shouldChangeInfraActiveRequestVfModuleId() throws IOException {
+        String vfModuleId = "vfModuleId";
+        InfraActiveRequests infraActiveRequests = mapper
+                .readValue(new File(RESOURCE_PATH + "InfraActiveRequestExpected.json"), InfraActiveRequests.class);
+
+        bbInputSetupUtils.updateInfraActiveRequestVfModuleId(infraActiveRequests, vfModuleId);
+
+        assertEquals(infraActiveRequests.getVfModuleId(), vfModuleId);
+    }
+
+    @Test
+    public void shouldChangeInfraActiveRequestVolumeGroupId() throws IOException {
+        String volumeGroupId = "volumeGroupId";
+        InfraActiveRequests infraActiveRequests = mapper
+                .readValue(new File(RESOURCE_PATH + "InfraActiveRequestExpected.json"), InfraActiveRequests.class);
+
+        bbInputSetupUtils.updateInfraActiveRequestVolumeGroupId(infraActiveRequests, volumeGroupId);
+
+        assertEquals(infraActiveRequests.getVolumeGroupId(), volumeGroupId);
+    }
+
+    @Test
+    public void shouldChangeInfraActiveRequestNetworkId() throws IOException {
+        String networkId = "activeRequestNetworkId";
+        InfraActiveRequests infraActiveRequests = mapper
+                .readValue(new File(RESOURCE_PATH + "InfraActiveRequestExpected.json"), InfraActiveRequests.class);
+
+        bbInputSetupUtils.updateInfraActiveRequestNetworkId(infraActiveRequests, networkId);
+
+        assertEquals(infraActiveRequests.getNetworkId(), networkId);
+    }
+
+    @Test
+    public void loadOriginalFlowExecutionPathTest() {
+        String requestId = "123";
+        String flowsToExecuteString =
+                "[{\"buildingBlock\":{\"mso-id\":\"2f9ddc4b-4dcf-4129-a35f-be1625ae0176\",\"bpmn-flow-name\":\"DeactivateFabricConfigurationBB\",\"key\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"is-virtual-link\":false,\"virtual-link-key\":null},\"requestId\":\"9c944122-d161-4280-8594-48c06a9d96d5\",\"apiVersion\":\"7\",\"resourceId\":\"d1d35800-783d-42d3-82f6-d654c5054a6e\",\"requestAction\":\"deleteInstance\",\"vnfType\":\"\",\"aLaCarte\":true,\"homing\":false,\"workflowResourceIds\":{\"serviceInstanceId\":\"ff9dae72-05bb-4277-ad2b-1b082467c138\",\"vnfId\":\"84a29830-e533-4f20-a838-910c740bf24c\",\"networkId\":\"\",\"volumeGroupId\":\"\",\"vfModuleId\":\"d1d35800-783d-42d3-82f6-d654c5054a6e\",\"networkCollectionId\":null,\"configurationId\":\"10f8a3a3-91bf-4821-9515-c01b2864dff0\",\"instanceGroupId\":\"\"},\"requestDetails\":{\"modelInfo\":{\"modelCustomizationName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\",\"modelInvariantId\":\"8028fcc0-96dc-427d-a4de-4536245943da\",\"modelType\":\"vfModule\",\"modelId\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\",\"modelVersion\":\"1\",\"modelCustomizationUuid\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"modelVersionId\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelCustomizationId\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"modelUuid\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelInvariantUuid\":\"8028fcc0-96dc-427d-a4de-4536245943da\",\"modelInstanceName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\"},\"requestInfo\":{\"source\":\"VID\",\"suppressRollback\":false,\"requestorId\":\"pj8646\"},\"cloudConfiguration\":{\"tenantId\":\"e2a6af59d1cb43b2874e943bbbf8470a\",\"cloudOwner\":\"att-nc\",\"lcpCloudRegionId\":\"auk51b\"},\"requestParameters\":{\"testApi\":\"GR_API\"}},\"configurationResourceKeys\":{\"vfModuleCustomizationUUID\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"vnfResourceCustomizationUUID\":\"a80f05b8-d651-44af-b999-8ed78fb4582f\",\"cvnfcCustomizationUUID\":\"69cce457-9ffd-4359-962b-0596a1e83ad1\",\"vnfcName\":\"zauk51bmcmr01mcm001\"}},{\"buildingBlock\":{\"mso-id\":\"1ca5584e-38a9-4c3f-a4b4-99b0d42089ba\",\"bpmn-flow-name\":\"UnassignFabricConfigurationBB\",\"key\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"is-virtual-link\":false,\"virtual-link-key\":null},\"requestId\":\"9c944122-d161-4280-8594-48c06a9d96d5\",\"apiVersion\":\"7\",\"resourceId\":\"d1d35800-783d-42d3-82f6-d654c5054a6e\",\"requestAction\":\"deleteInstance\",\"vnfType\":\"\",\"aLaCarte\":true,\"homing\":false,\"workflowResourceIds\":{\"serviceInstanceId\":\"ff9dae72-05bb-4277-ad2b-1b082467c138\",\"vnfId\":\"84a29830-e533-4f20-a838-910c740bf24c\",\"networkId\":\"\",\"volumeGroupId\":\"\",\"vfModuleId\":\"d1d35800-783d-42d3-82f6-d654c5054a6e\",\"networkCollectionId\":null,\"configurationId\":\"10f8a3a3-91bf-4821-9515-c01b2864dff0\",\"instanceGroupId\":\"\"},\"requestDetails\":{\"modelInfo\":{\"modelCustomizationName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\",\"modelInvariantId\":\"8028fcc0-96dc-427d-a4de-4536245943da\",\"modelType\":\"vfModule\",\"modelId\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\",\"modelVersion\":\"1\",\"modelCustomizationUuid\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"modelVersionId\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelCustomizationId\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"modelUuid\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelInvariantUuid\":\"8028fcc0-96dc-427d-a4de-4536245943da\",\"modelInstanceName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\"},\"requestInfo\":{\"source\":\"VID\",\"suppressRollback\":false,\"requestorId\":\"pj8646\"},\"cloudConfiguration\":{\"tenantId\":\"e2a6af59d1cb43b2874e943bbbf8470a\",\"cloudOwner\":\"att-nc\",\"lcpCloudRegionId\":\"auk51b\"},\"requestParameters\":{\"testApi\":\"GR_API\"}},\"configurationResourceKeys\":{\"vfModuleCustomizationUUID\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"vnfResourceCustomizationUUID\":\"a80f05b8-d651-44af-b999-8ed78fb4582f\",\"cvnfcCustomizationUUID\":\"69cce457-9ffd-4359-962b-0596a1e83ad1\",\"vnfcName\":\"zauk51bmcmr01mcm001\"}},{\"buildingBlock\":{\"mso-id\":\"68d16097-4810-477d-803b-8322106106ef\",\"bpmn-flow-name\":\"DeactivateVfModuleBB\",\"key\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"is-virtual-link\":false,\"virtual-link-key\":null},\"requestId\":\"9c944122-d161-4280-8594-48c06a9d96d5\",\"apiVersion\":\"7\",\"resourceId\":\"d1d35800-783d-42d3-82f6-d654c5054a6e\",\"requestAction\":\"deleteInstance\",\"vnfType\":\"\",\"aLaCarte\":true,\"homing\":false,\"workflowResourceIds\":{\"serviceInstanceId\":\"ff9dae72-05bb-4277-ad2b-1b082467c138\",\"vnfId\":\"84a29830-e533-4f20-a838-910c740bf24c\",\"networkId\":\"\",\"volumeGroupId\":\"\",\"vfModuleId\":\"d1d35800-783d-42d3-82f6-d654c5054a6e\",\"networkCollectionId\":null,\"configurationId\":\"10f8a3a3-91bf-4821-9515-c01b2864dff0\",\"instanceGroupId\":\"\"},\"requestDetails\":{\"modelInfo\":{\"modelCustomizationName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\",\"modelInvariantId\":\"8028fcc0-96dc-427d-a4de-4536245943da\",\"modelType\":\"vfModule\",\"modelId\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\",\"modelVersion\":\"1\",\"modelCustomizationUuid\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"modelVersionId\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelCustomizationId\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"modelUuid\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelInvariantUuid\":\"8028fcc0-96dc-427d-a4de-4536245943da\",\"modelInstanceName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\"},\"requestInfo\":{\"source\":\"VID\",\"suppressRollback\":false,\"requestorId\":\"pj8646\"},\"cloudConfiguration\":{\"tenantId\":\"e2a6af59d1cb43b2874e943bbbf8470a\",\"cloudOwner\":\"att-nc\",\"lcpCloudRegionId\":\"auk51b\"},\"requestParameters\":{\"testApi\":\"GR_API\"}},\"configurationResourceKeys\":null},{\"buildingBlock\":{\"mso-id\":\"0b02eb09-bc23-4329-b19e-716dcca4e4a6\",\"bpmn-flow-name\":\"DeleteVfModuleBB\",\"key\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"is-virtual-link\":false,\"virtual-link-key\":null},\"requestId\":\"9c944122-d161-4280-8594-48c06a9d96d5\",\"apiVersion\":\"7\",\"resourceId\":\"d1d35800-783d-42d3-82f6-d654c5054a6e\",\"requestAction\":\"deleteInstance\",\"vnfType\":\"\",\"aLaCarte\":true,\"homing\":false,\"workflowResourceIds\":{\"serviceInstanceId\":\"ff9dae72-05bb-4277-ad2b-1b082467c138\",\"vnfId\":\"84a29830-e533-4f20-a838-910c740bf24c\",\"networkId\":\"\",\"volumeGroupId\":\"\",\"vfModuleId\":\"d1d35800-783d-42d3-82f6-d654c5054a6e\",\"networkCollectionId\":null,\"configurationId\":\"10f8a3a3-91bf-4821-9515-c01b2864dff0\",\"instanceGroupId\":\"\"},\"requestDetails\":{\"modelInfo\":{\"modelCustomizationName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\",\"modelInvariantId\":\"8028fcc0-96dc-427d-a4de-4536245943da\",\"modelType\":\"vfModule\",\"modelId\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\",\"modelVersion\":\"1\",\"modelCustomizationUuid\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"modelVersionId\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelCustomizationId\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"modelUuid\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelInvariantUuid\":\"8028fcc0-96dc-427d-a4de-4536245943da\",\"modelInstanceName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\"},\"requestInfo\":{\"source\":\"VID\",\"suppressRollback\":false,\"requestorId\":\"pj8646\"},\"cloudConfiguration\":{\"tenantId\":\"e2a6af59d1cb43b2874e943bbbf8470a\",\"cloudOwner\":\"att-nc\",\"lcpCloudRegionId\":\"auk51b\"},\"requestParameters\":{\"testApi\":\"GR_API\"}},\"configurationResourceKeys\":null},{\"buildingBlock\":{\"mso-id\":\"bcf95d05-0782-44ff-920d-d5100525c275\",\"bpmn-flow-name\":\"UnassignVfModuleBB\",\"key\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"is-virtual-link\":false,\"virtual-link-key\":null},\"requestId\":\"9c944122-d161-4280-8594-48c06a9d96d5\",\"apiVersion\":\"7\",\"resourceId\":\"d1d35800-783d-42d3-82f6-d654c5054a6e\",\"requestAction\":\"deleteInstance\",\"vnfType\":\"\",\"aLaCarte\":true,\"homing\":false,\"workflowResourceIds\":{\"serviceInstanceId\":\"ff9dae72-05bb-4277-ad2b-1b082467c138\",\"vnfId\":\"84a29830-e533-4f20-a838-910c740bf24c\",\"networkId\":\"\",\"volumeGroupId\":\"\",\"vfModuleId\":\"d1d35800-783d-42d3-82f6-d654c5054a6e\",\"networkCollectionId\":null,\"configurationId\":\"10f8a3a3-91bf-4821-9515-c01b2864dff0\",\"instanceGroupId\":\"\"},\"requestDetails\":{\"modelInfo\":{\"modelCustomizationName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\",\"modelInvariantId\":\"8028fcc0-96dc-427d-a4de-4536245943da\",\"modelType\":\"vfModule\",\"modelId\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\",\"modelVersion\":\"1\",\"modelCustomizationUuid\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"modelVersionId\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelCustomizationId\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"modelUuid\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelInvariantUuid\":\"8028fcc0-96dc-427d-a4de-4536245943da\",\"modelInstanceName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\"},\"requestInfo\":{\"source\":\"VID\",\"suppressRollback\":false,\"requestorId\":\"pj8646\"},\"cloudConfiguration\":{\"tenantId\":\"e2a6af59d1cb43b2874e943bbbf8470a\",\"cloudOwner\":\"att-nc\",\"lcpCloudRegionId\":\"auk51b\"},\"requestParameters\":{\"testApi\":\"GR_API\"}},\"configurationResourceKeys\":null}]";
+        ObjectMapper om = new ObjectMapper();
+        List<ExecuteBuildingBlock> expectedFlowsToExecute = null;
+        try {
+            ExecuteBuildingBlock[] asArray = om.readValue(flowsToExecuteString, ExecuteBuildingBlock[].class);
+            expectedFlowsToExecute = Arrays.asList(asArray);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        InfraActiveRequests request = new InfraActiveRequests();
+        request.setRequestId("requestId");
+        request.setOriginalRequestId("originalRequestId");
+        doReturn(request).when(MOCK_requestsDbClient).getInfraActiveRequestbyRequestId(anyString());
+        RequestProcessingData rpd = new RequestProcessingData();
+        rpd.setValue(flowsToExecuteString);
+        doReturn(rpd).when(MOCK_requestsDbClient).getRequestProcessingDataBySoRequestIdAndName(anyString(),
+                anyString());
+
+        List<ExecuteBuildingBlock> flowsToExecute = bbInputSetupUtils.loadOriginalFlowExecutionPath(requestId);
+        assertEquals(expectedFlowsToExecute.size(), flowsToExecute.size());
+    }
+
+    @Test
+    public void testGetCatalogServiceByModelUUID() throws IOException {
+        String modelUUID = "modelUUID";
         Service expected = mapper.readValue(new File(RESOURCE_PATH + "CatalogServiceExpected.json"), Service.class);
 
         RequestDetails requestDetails = new RequestDetails();
         ModelInfo modelInfo = new ModelInfo();
-        modelInfo.setModelVersionId("modelUUID");
+        modelInfo.setModelVersionId(modelUUID);
         requestDetails.setModelInfo(modelInfo);
-        doReturn(expected).when(MOCK_catalogDbClient).getServiceByID("modelUUID");
+
+        doReturn(expected).when(MOCK_catalogDbClient).getServiceByID(modelUUID);
         Service actual = bbInputSetupUtils.getCatalogServiceByModelUUID(modelInfo.getModelVersionId());
 
         assertThat(actual, sameBeanAs(expected));
     }
 
     @Test
-    public void testGetCatalogServiceByModelVersionAndModelInvariantUUID()
-            throws JsonParseException, JsonMappingException, IOException {
-        String modelVersion = "modelVersion";
+    public void getCatalogServiceByModelVersionAndModelInvariantUUIDTest() throws IOException {
+        String modelUUID = "modelUUID";
         String modelInvariantUUID = "modelInvariantUUID";
-        Service expectedService =
-                mapper.readValue(new File(RESOURCE_PATH + "CatalogServiceExpected.json"), Service.class);
+        Service expected = mapper.readValue(new File(RESOURCE_PATH + "CatalogServiceExpected.json"), Service.class);
 
-        doReturn(expectedService).when(MOCK_catalogDbClient)
-                .getServiceByModelVersionAndModelInvariantUUID(isA(String.class), isA(String.class));
-
-        Service actualService = bbInputSetupUtils.getCatalogServiceByModelVersionAndModelInvariantUUID(modelVersion,
+        doReturn(expected).when(MOCK_catalogDbClient).getServiceByModelVersionAndModelInvariantUUID(modelUUID,
                 modelInvariantUUID);
+        Service actual =
+                bbInputSetupUtils.getCatalogServiceByModelVersionAndModelInvariantUUID(modelUUID, modelInvariantUUID);
 
-        assertThat(actualService, sameBeanAs(expectedService));
+        assertThat(actual, sameBeanAs(expected));
     }
 
     @Test
-    public void testGetVnfcInstanceGroups() throws JsonParseException, JsonMappingException, IOException {
+    public void getCatalogCollectionNetworkResourceCustByIDTest() {
+        String modelCustomizationUUID = "modelCustomizationUUID";
+        CollectionNetworkResourceCustomization expected = new CollectionNetworkResourceCustomization();
+
+        doReturn(expected).when(MOCK_catalogDbClient)
+                .getCollectionNetworkResourceCustomizationByID(modelCustomizationUUID);
+        CollectionNetworkResourceCustomization actual =
+                bbInputSetupUtils.getCatalogCollectionNetworkResourceCustByID(modelCustomizationUUID);
+
+        assertThat(expected, sameBeanAs(actual));
+    }
+
+    @Test
+    public void getCatalogNetworkCollectionResourceCustByIDTest() {
+        String modelCustomizationUUID = "modelCustomizationUUID";
+        NetworkCollectionResourceCustomization expected = new NetworkCollectionResourceCustomization();
+
+        doReturn(expected).when(MOCK_catalogDbClient)
+                .getNetworkCollectionResourceCustomizationByID(modelCustomizationUUID);
+        NetworkCollectionResourceCustomization actual =
+                bbInputSetupUtils.getCatalogNetworkCollectionResourceCustByID(modelCustomizationUUID);
+
+        assertThat(expected, sameBeanAs(actual));
+    }
+
+    @Test
+    public void testGetVfModuleCustomizationByModelCuztomizationUUID() {
+        String modelCustomizationUUID = "modelCustomizationUUID";
+        VfModuleCustomization expected = new VfModuleCustomization();
+
+        doReturn(expected).when(MOCK_catalogDbClient)
+                .getVfModuleCustomizationByModelCuztomizationUUID(modelCustomizationUUID);
+        VfModuleCustomization actual =
+                bbInputSetupUtils.getVfModuleCustomizationByModelCuztomizationUUID(modelCustomizationUUID);
+
+        assertThat(actual, sameBeanAs(expected));
+    }
+
+    @Test
+    public void getCvnfcConfigurationCustomizationTest() {
+        String serviceModelUUID = "serviceModelUUID";
+        String vnfCustomizationUUID = "vnfCustomizationUUID";
+        String vfModuleCustomizationUUID = "vfModuleCustomizationUUID";
+        String cvnfcCustomizationUUID = "cvnfcCustomizationUUID";
+        CvnfcConfigurationCustomization expected = new CvnfcConfigurationCustomization();
+
+        doReturn(expected).when(MOCK_catalogDbClient).getCvnfcCustomization(serviceModelUUID, vnfCustomizationUUID,
+                vfModuleCustomizationUUID, cvnfcCustomizationUUID);
+        CvnfcConfigurationCustomization actual = bbInputSetupUtils.getCvnfcConfigurationCustomization(serviceModelUUID,
+                vnfCustomizationUUID, vfModuleCustomizationUUID, cvnfcCustomizationUUID);
+
+        assertThat(actual, sameBeanAs(expected));
+    }
+
+    @Test
+    public void testGetVnfcInstanceGroups() throws IOException {
         VnfcInstanceGroupCustomization vnfc = mapper.readValue(
                 new File(RESOURCE_PATH + "VnfcInstanceGroupCustomization.json"), VnfcInstanceGroupCustomization.class);
         String modelCustomizationUUID = "modelCustomizationUUID";
 
         doReturn(Arrays.asList(vnfc)).when(MOCK_catalogDbClient)
                 .getVnfcInstanceGroupsByVnfResourceCust(isA(String.class));
-
         List<VnfcInstanceGroupCustomization> actualVnfcList =
                 bbInputSetupUtils.getVnfcInstanceGroups(modelCustomizationUUID);
 
@@ -158,13 +266,14 @@ public class BBInputSetupUtilsTest {
     }
 
     @Test
-    public void testGetRequestDetails() throws JsonParseException, JsonMappingException, IOException {
+    public void testGetRequestDetails() throws IOException {
+        String requestId = "requestId";
         InfraActiveRequests infraActiveRequest = mapper
                 .readValue(new File(RESOURCE_PATH + "InfraActiveRequestExpected.json"), InfraActiveRequests.class);
 
         RequestDetails expected =
                 mapper.readValue(new File(RESOURCE_PATH + "RequestDetailsExpected.json"), RequestDetails.class);
-        String requestId = "requestId";
+
         doReturn(infraActiveRequest).when(MOCK_requestsDbClient).getInfraActiveRequestbyRequestId(requestId);
         RequestDetails actual = bbInputSetupUtils.getRequestDetails(requestId);
 
@@ -173,9 +282,24 @@ public class BBInputSetupUtilsTest {
 
     @Test
     public void getRequestDetailsNullTest() throws IOException {
-        RequestDetails requestDetails = bbInputSetupUtils.getRequestDetails("");
+        assertNull(bbInputSetupUtils.getRequestDetails(""));
+    }
 
-        assertNull(requestDetails);
+    @Test
+    public void getInfraActiveRequestNullTest() {
+        assertNull(bbInputSetupUtils.getInfraActiveRequest(""));
+    }
+
+    @Test
+    public void testGetInfraActiveRequest() throws IOException {
+        String requestId = "requestId";
+        InfraActiveRequests expected = mapper.readValue(new File(RESOURCE_PATH + "InfraActiveRequestExpected.json"),
+                InfraActiveRequests.class);
+
+        doReturn(expected).when(MOCK_requestsDbClient).getInfraActiveRequestbyRequestId(requestId);
+        InfraActiveRequests actual = bbInputSetupUtils.getInfraActiveRequest(requestId);
+
+        assertThat(actual, sameBeanAs(expected));
     }
 
     @Test
@@ -199,7 +323,6 @@ public class BBInputSetupUtilsTest {
 
     @Test
     public void testGetCloudRegionExceptionTest() {
-
         CloudConfiguration cloudConfig = new CloudConfiguration();
         cloudConfig.setLcpCloudRegionId("lcpCloudRegionId");
 
@@ -346,12 +469,10 @@ public class BBInputSetupUtilsTest {
     @Test
     public void testGetAAIServiceInstanceById() {
         String serviceInstanceId = "serviceInstanceId";
-
         ServiceInstance expectedServiceInstance = new ServiceInstance();
 
         doReturn(Optional.of(expectedServiceInstance)).when(MOCK_aaiResourcesClient).get(isA(Class.class),
                 isA(AAIResourceUri.class));
-
         ServiceInstance actualServiceInstance = bbInputSetupUtils.getAAIServiceInstanceById(serviceInstanceId);
 
         assertThat(actualServiceInstance, sameBeanAs(expectedServiceInstance));
@@ -362,7 +483,6 @@ public class BBInputSetupUtilsTest {
         String serviceInstanceId = "serviceInstanceId";
 
         doReturn(Optional.empty()).when(MOCK_aaiResourcesClient).get(isA(Class.class), isA(AAIResourceUri.class));
-
         ServiceInstance actualServiceInstance = bbInputSetupUtils.getAAIServiceInstanceById(serviceInstanceId);
 
         assertNull(actualServiceInstance);
@@ -382,7 +502,6 @@ public class BBInputSetupUtilsTest {
         this.bbInputSetupUtils.getAAIServiceInstanceByIdAndCustomer(globalCustomerId, serviceType, serviceInstanceId);
 
         verify(MOCK_aaiResourcesClient, times(1)).get(org.onap.aai.domain.yang.ServiceInstance.class, expectedUri);
-
     }
 
     @Test
@@ -518,7 +637,7 @@ public class BBInputSetupUtilsTest {
     }
 
     @Test
-    public void testGetCatalogInstanceGroup() throws JsonParseException, JsonMappingException, IOException {
+    public void testGetCatalogInstanceGroup() throws IOException {
         String modelUUID = "modelUUID";
 
         org.onap.so.db.catalog.beans.InstanceGroup expectedInstanceGroup = mapper.readValue(
@@ -535,61 +654,15 @@ public class BBInputSetupUtilsTest {
     @Test
     public void testGetCollectionResourceInstanceGroupCustomization() {
         String modelCustomizationUUID = "modelCustomizationUUID";
-
         CollectionResourceInstanceGroupCustomization expectedCollection =
                 new CollectionResourceInstanceGroupCustomization();
 
         doReturn(Arrays.asList(expectedCollection)).when(MOCK_catalogDbClient)
                 .getCollectionResourceInstanceGroupCustomizationByModelCustUUID(modelCustomizationUUID);
-
         List<CollectionResourceInstanceGroupCustomization> actualCollection =
                 bbInputSetupUtils.getCollectionResourceInstanceGroupCustomization(modelCustomizationUUID);
 
         assertThat(actualCollection, sameBeanAs(Arrays.asList(expectedCollection)));
-    }
-
-    @Test
-    public void testGetAAIGenericVnf() throws JsonParseException, JsonMappingException, IOException {
-        String vnfId = "vnfId";
-
-        GenericVnf expectedAaiVnf =
-                mapper.readValue(new File(RESOURCE_PATH + "aaiGenericVnfInput.json"), GenericVnf.class);
-
-        doReturn(Optional.of(expectedAaiVnf)).when(MOCK_aaiResourcesClient).get(isA(Class.class),
-                isA(AAIResourceUri.class));
-        AAIResourceUri expectedUri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId).depth(Depth.ONE);
-        GenericVnf actualAaiVnf = bbInputSetupUtils.getAAIGenericVnf(vnfId);
-
-        assertThat(actualAaiVnf, sameBeanAs(expectedAaiVnf));
-
-        verify(MOCK_aaiResourcesClient, times(1)).get(org.onap.aai.domain.yang.GenericVnf.class, expectedUri);
-    }
-
-    @Test
-    public void testGetAAIConfiguration() throws JsonParseException, JsonMappingException, IOException {
-        String configurationId = "configurationId";
-
-        Configuration expectedAaiConfiguration =
-                mapper.readValue(new File(RESOURCE_PATH + "ConfigurationInput.json"), Configuration.class);
-
-        doReturn(Optional.of(expectedAaiConfiguration)).when(MOCK_aaiResourcesClient).get(isA(Class.class),
-                isA(AAIResourceUri.class));
-        AAIResourceUri expectedUri =
-                AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configurationId).depth(Depth.ONE);
-        bbInputSetupUtils.getAAIConfiguration(configurationId);
-
-        verify(MOCK_aaiResourcesClient, times(1)).get(org.onap.aai.domain.yang.Configuration.class, expectedUri);
-    }
-
-    @Test
-    public void testGetAAIGenericVnfThrowNotFound() throws JsonParseException, JsonMappingException, IOException {
-        String vnfId = "vnfId";
-
-        doReturn(Optional.empty()).when(MOCK_aaiResourcesClient).get(isA(Class.class), isA(AAIResourceUri.class));
-
-        GenericVnf actualAaiVnf = bbInputSetupUtils.getAAIGenericVnf(vnfId);
-
-        assertNull(actualAaiVnf);
     }
 
     @Test
@@ -617,52 +690,46 @@ public class BBInputSetupUtilsTest {
     }
 
     @Test
-    public void getRelatedNetworkByNameFromServiceInstanceTest() throws Exception {
-        Optional<L3Networks> expected = Optional.of(new L3Networks());
-        L3Network network = new L3Network();
-        network.setNetworkId("id123");
-        network.setNetworkName("name123");
-        expected.get().getL3Network().add(network);
-        doReturn(expected).when(MOCK_aaiResourcesClient).get(eq(L3Networks.class), any(AAIResourceUri.class));
-        Optional<L3Network> actual =
-                this.bbInputSetupUtils.getRelatedNetworkByNameFromServiceInstance("id123", "name123");
-        assertEquals(actual.get().getNetworkId(), expected.get().getL3Network().get(0).getNetworkId());
+    public void testGetAAIConfiguration() throws IOException {
+        String configurationId = "configurationId";
+
+        Configuration expectedAaiConfiguration =
+                mapper.readValue(new File(RESOURCE_PATH + "ConfigurationInput.json"), Configuration.class);
+
+        doReturn(Optional.of(expectedAaiConfiguration)).when(MOCK_aaiResourcesClient).get(isA(Class.class),
+                isA(AAIResourceUri.class));
+        AAIResourceUri expectedUri =
+                AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configurationId).depth(Depth.ONE);
+        bbInputSetupUtils.getAAIConfiguration(configurationId);
+
+        verify(MOCK_aaiResourcesClient, times(1)).get(org.onap.aai.domain.yang.Configuration.class, expectedUri);
     }
 
     @Test
-    public void getRelatedNetworkByNameFromServiceInstanceMultipleNetworksExceptionTest() throws Exception {
-        expectedException.expect(MultipleObjectsFoundException.class);
-        expectedException.expectMessage(containsString(
-                "Multiple networks found for service-instance-id: serviceInstanceId and network-name: networkName."));
-
-        String serviceInstanceId = "serviceInstanceId";
-        String networkName = "networkName";
-
-        L3Network network = new L3Network();
-        network.setNetworkId("id123");
-        network.setNetworkName("name123");
-
-        L3Networks l3Networks = new L3Networks();
-        l3Networks.getL3Network().add(network);
-        l3Networks.getL3Network().add(network);
-        Optional<L3Networks> optNetworks = Optional.of(l3Networks);
-
-        doReturn(optNetworks).when(MOCK_aaiResourcesClient).get(eq(L3Networks.class), any(AAIResourceUri.class));
-
-        bbInputSetupUtils.getRelatedNetworkByNameFromServiceInstance(serviceInstanceId, networkName);
+    public void getAAIGenericVnfNullTest() {
+        assertNull(bbInputSetupUtils.getAAIGenericVnf("vnfId"));
     }
 
     @Test
-    public void getRelatedNetworkByNameFromServiceInstanceNotFoundTest() throws Exception {
-        String serviceInstanceId = "serviceInstanceId";
-        String networkName = "networkName";
+    public void getAAIVpnBindingNullTest() {
+        assertNull(bbInputSetupUtils.getAAIVpnBinding("vpnBindingId"));
+    }
 
-        doReturn(Optional.empty()).when(MOCK_aaiResourcesClient).get(eq(L3Networks.class), any(AAIResourceUri.class));
+    @Test
+    public void getAAIVolumeGroupNullTest() {
+        VolumeGroup actualAaiVnf =
+                bbInputSetupUtils.getAAIVolumeGroup("cloudOwnerId", "cloudRegionId", "volumeGroupId");
+        assertNull(actualAaiVnf);
+    }
 
-        Optional<L3Network> actualNetwork =
-                bbInputSetupUtils.getRelatedNetworkByNameFromServiceInstance(serviceInstanceId, networkName);
+    @Test
+    public void getAAIVfModuleNullTest() {
+        assertNull(bbInputSetupUtils.getAAIVfModule("vnfId", "vfModuleId"));
+    }
 
-        assertEquals(Optional.empty(), actualNetwork);
+    @Test
+    public void getAAIL3NetworkNullTest() {
+        assertNull(bbInputSetupUtils.getAAIL3Network("networkId"));
     }
 
     @Test
@@ -704,14 +771,67 @@ public class BBInputSetupUtilsTest {
     }
 
     @Test
+    public void getRelatedNetworkByNameFromServiceInstanceTest() throws Exception {
+        Optional<L3Networks> expected = Optional.of(new L3Networks());
+        L3Network network = new L3Network();
+        network.setNetworkId("id123");
+        network.setNetworkName("name123");
+
+        expected.get().getL3Network().add(network);
+        doReturn(expected).when(MOCK_aaiResourcesClient).get(eq(L3Networks.class), any(AAIResourceUri.class));
+        Optional<L3Network> actual =
+                this.bbInputSetupUtils.getRelatedNetworkByNameFromServiceInstance("id123", "name123");
+
+        assertEquals(actual.get().getNetworkId(), expected.get().getL3Network().get(0).getNetworkId());
+    }
+
+    @Test
+    public void getRelatedNetworkByNameFromServiceInstanceMultipleNetworksExceptionTest() throws Exception {
+        expectedException.expect(MultipleObjectsFoundException.class);
+        expectedException.expectMessage(containsString(
+                "Multiple networks found for service-instance-id: serviceInstanceId and network-name: networkName."));
+
+        String serviceInstanceId = "serviceInstanceId";
+        String networkName = "networkName";
+
+        L3Network network = new L3Network();
+        network.setNetworkId("id123");
+        network.setNetworkName("name123");
+
+        L3Networks l3Networks = new L3Networks();
+        l3Networks.getL3Network().add(network);
+        l3Networks.getL3Network().add(network);
+        Optional<L3Networks> optNetworks = Optional.of(l3Networks);
+
+        doReturn(optNetworks).when(MOCK_aaiResourcesClient).get(eq(L3Networks.class), any(AAIResourceUri.class));
+
+        bbInputSetupUtils.getRelatedNetworkByNameFromServiceInstance(serviceInstanceId, networkName);
+    }
+
+    @Test
+    public void getRelatedNetworkByNameFromServiceInstanceNotFoundTest() throws Exception {
+        String serviceInstanceId = "serviceInstanceId";
+        String networkName = "networkName";
+
+        doReturn(Optional.empty()).when(MOCK_aaiResourcesClient).get(eq(L3Networks.class), any(AAIResourceUri.class));
+
+        Optional<L3Network> actualNetwork =
+                bbInputSetupUtils.getRelatedNetworkByNameFromServiceInstance(serviceInstanceId, networkName);
+
+        assertEquals(Optional.empty(), actualNetwork);
+    }
+
+    @Test
     public void getRelatedVnfByNameFromServiceInstanceTest() throws Exception {
         Optional<GenericVnfs> expected = Optional.of(new GenericVnfs());
         GenericVnf vnf = new GenericVnf();
         vnf.setVnfId("id123");
         vnf.setVnfName("name123");
+
         expected.get().getGenericVnf().add(vnf);
         doReturn(expected).when(MOCK_aaiResourcesClient).get(eq(GenericVnfs.class), any(AAIResourceUri.class));
         Optional<GenericVnf> actual = this.bbInputSetupUtils.getRelatedVnfByNameFromServiceInstance("id123", "name123");
+
         assertEquals(actual.get().getVnfId(), expected.get().getGenericVnf().get(0).getVnfId());
     }
 
@@ -758,9 +878,11 @@ public class BBInputSetupUtilsTest {
         VolumeGroup volumeGroup = new VolumeGroup();
         volumeGroup.setVolumeGroupId("id123");
         volumeGroup.setVolumeGroupName("name123");
+
         expected.get().getVolumeGroup().add(volumeGroup);
         doReturn(expected).when(MOCK_aaiResourcesClient).get(eq(VolumeGroups.class), any(AAIResourceUri.class));
         Optional<VolumeGroup> actual = this.bbInputSetupUtils.getRelatedVolumeGroupByNameFromVnf("id123", "name123");
+
         assertEquals(actual.get().getVolumeGroupId(), expected.get().getVolumeGroup().get(0).getVolumeGroupId());
     }
 
@@ -815,6 +937,44 @@ public class BBInputSetupUtilsTest {
     }
 
     @Test
+    public void getRelatedVolumeGroupByNameFromVfModuleMultipleVolumeGroupsExceptionTest() throws Exception {
+        expectedException.expect(MultipleObjectsFoundException.class);
+        expectedException.expectMessage(containsString(
+                "Multiple voulme-groups found for vnf-id: vnfId, vf-module-id: volumeGroupId and volume-group-name: volumeGroupName."));
+        String vnfId = "vnfId";
+        String volumeGroupId = "volumeGroupId";
+        String volumeGroupName = "volumeGroupName";
+
+        VolumeGroup volumeGroup = new VolumeGroup();
+        volumeGroup.setVolumeGroupId("id123");
+        volumeGroup.setVolumeGroupName("name123");
+
+        VolumeGroups volumeGroups = new VolumeGroups();
+        volumeGroups.getVolumeGroup().add(volumeGroup);
+        volumeGroups.getVolumeGroup().add(volumeGroup);
+
+        Optional<VolumeGroups> optVolumeGroups = Optional.of(volumeGroups);
+
+        doReturn(optVolumeGroups).when(MOCK_aaiResourcesClient).get(eq(VolumeGroups.class), any(AAIResourceUri.class));
+
+        bbInputSetupUtils.getRelatedVolumeGroupByNameFromVfModule(vnfId, volumeGroupId, volumeGroupName);
+    }
+
+    @Test
+    public void getRelatedVolumeGroupByNameFromVfModuleNotFoundTest() throws Exception {
+        String vnfId = "vnfId";
+        String volumeGroupId = "volumeGroupId";
+        String volumeGroupName = "volumeGroupName";
+
+        doReturn(Optional.empty()).when(MOCK_aaiResourcesClient).get(eq(VolumeGroups.class), any(AAIResourceUri.class));
+
+        Optional<VolumeGroup> actualVolumeGroup =
+                bbInputSetupUtils.getRelatedVolumeGroupByNameFromVfModule(vnfId, volumeGroupId, volumeGroupName);
+
+        assertEquals(actualVolumeGroup, Optional.empty());
+    }
+
+    @Test
     public void getRelatedVolumeGroupFromVfModuleMultipleVolumeGroupsExceptionTest() throws Exception {
         expectedException.expect(Exception.class);
 
@@ -860,71 +1020,65 @@ public class BBInputSetupUtilsTest {
     }
 
     @Test
-    public void getRelatedVolumeGroupByNameFromVfModuleMultipleVolumeGroupsExceptionTest() throws Exception {
-        expectedException.expect(MultipleObjectsFoundException.class);
-        expectedException.expectMessage(containsString(
-                "Multiple voulme-groups found for vnf-id: vnfId, vf-module-id: volumeGroupId and volume-group-name: volumeGroupName."));
-        String vnfId = "vnfId";
-        String volumeGroupId = "volumeGroupId";
-        String volumeGroupName = "volumeGroupName";
+    public void getAICVpnBindingFromNetworkNotFoundTest() throws IOException {
+        L3Network l3Network =
+                mapper.readValue(new File(RESOURCE_PATH + "aaiL3NetworkInputWithSubnets.json"), L3Network.class);
 
-        VolumeGroup volumeGroup = new VolumeGroup();
-        volumeGroup.setVolumeGroupId("id123");
-        volumeGroup.setVolumeGroupName("name123");
-
-        VolumeGroups volumeGroups = new VolumeGroups();
-        volumeGroups.getVolumeGroup().add(volumeGroup);
-        volumeGroups.getVolumeGroup().add(volumeGroup);
-
-        Optional<VolumeGroups> optVolumeGroups = Optional.of(volumeGroups);
-
-        doReturn(optVolumeGroups).when(MOCK_aaiResourcesClient).get(eq(VolumeGroups.class), any(AAIResourceUri.class));
-
-        bbInputSetupUtils.getRelatedVolumeGroupByNameFromVfModule(vnfId, volumeGroupId, volumeGroupName);
+        Optional<VpnBinding> actual = bbInputSetupUtils.getAICVpnBindingFromNetwork(l3Network);
+        assertEquals(actual, Optional.empty());
     }
 
     @Test
-    public void getRelatedVolumeGroupByNameFromVfModuleNotFoundTest() throws Exception {
-        String vnfId = "vnfId";
-        String volumeGroupId = "volumeGroupId";
-        String volumeGroupName = "volumeGroupName";
+    public void getAAIServiceInstancesGloballyByNameTest() {
+        String serviceInstanceName = "serviceInstanceName";
 
-        doReturn(Optional.empty()).when(MOCK_aaiResourcesClient).get(eq(VolumeGroups.class), any(AAIResourceUri.class));
+        doReturn(Optional.empty()).when(MOCK_aaiResourcesClient).get(isA(Class.class), isA(AAIResourceUri.class));
+        ServiceInstances actualServiceInstances =
+                bbInputSetupUtils.getAAIServiceInstancesGloballyByName(serviceInstanceName);
 
-        Optional<VolumeGroup> actualVolumeGroup =
-                bbInputSetupUtils.getRelatedVolumeGroupByNameFromVfModule(vnfId, volumeGroupId, volumeGroupName);
-
-        assertEquals(actualVolumeGroup, Optional.empty());
+        assertNull(actualServiceInstances);
     }
 
+    @Test
+    public void existsAAINetworksGloballyByNameTest() {
+        AAIResourceUri expectedUri =
+                AAIUriFactory.createResourceUri(AAIObjectPlurals.L3_NETWORK).queryParam("network-name", "testNetwork");
+        bbInputSetupUtils.existsAAINetworksGloballyByName("testNetwork");
+        verify(MOCK_aaiResourcesClient, times(1)).exists(expectedUri);
+    }
 
     @Test
-    public void loadOriginalFlowExecutionPathTest() throws Exception {
+    public void existsAAIVfModuleGloballyByNameTest() {
+        AAIResourceUri expectedUri =
+                AAIUriFactory.createNodesUri(AAIObjectPlurals.VF_MODULE).queryParam("vf-module-name", "testVfModule");
+        bbInputSetupUtils.existsAAIVfModuleGloballyByName("testVfModule");
+        verify(MOCK_aaiResourcesClient, times(1)).exists(expectedUri);
+    }
 
-        String requestId = "123";
-        String flowsToExecuteString =
-                "[{\"buildingBlock\":{\"mso-id\":\"2f9ddc4b-4dcf-4129-a35f-be1625ae0176\",\"bpmn-flow-name\":\"DeactivateFabricConfigurationBB\",\"key\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"is-virtual-link\":false,\"virtual-link-key\":null},\"requestId\":\"9c944122-d161-4280-8594-48c06a9d96d5\",\"apiVersion\":\"7\",\"resourceId\":\"d1d35800-783d-42d3-82f6-d654c5054a6e\",\"requestAction\":\"deleteInstance\",\"vnfType\":\"\",\"aLaCarte\":true,\"homing\":false,\"workflowResourceIds\":{\"serviceInstanceId\":\"ff9dae72-05bb-4277-ad2b-1b082467c138\",\"vnfId\":\"84a29830-e533-4f20-a838-910c740bf24c\",\"networkId\":\"\",\"volumeGroupId\":\"\",\"vfModuleId\":\"d1d35800-783d-42d3-82f6-d654c5054a6e\",\"networkCollectionId\":null,\"configurationId\":\"10f8a3a3-91bf-4821-9515-c01b2864dff0\",\"instanceGroupId\":\"\"},\"requestDetails\":{\"modelInfo\":{\"modelCustomizationName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\",\"modelInvariantId\":\"8028fcc0-96dc-427d-a4de-4536245943da\",\"modelType\":\"vfModule\",\"modelId\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\",\"modelVersion\":\"1\",\"modelCustomizationUuid\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"modelVersionId\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelCustomizationId\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"modelUuid\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelInvariantUuid\":\"8028fcc0-96dc-427d-a4de-4536245943da\",\"modelInstanceName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\"},\"requestInfo\":{\"source\":\"VID\",\"suppressRollback\":false,\"requestorId\":\"pj8646\"},\"cloudConfiguration\":{\"tenantId\":\"e2a6af59d1cb43b2874e943bbbf8470a\",\"cloudOwner\":\"att-nc\",\"lcpCloudRegionId\":\"auk51b\"},\"requestParameters\":{\"testApi\":\"GR_API\"}},\"configurationResourceKeys\":{\"vfModuleCustomizationUUID\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"vnfResourceCustomizationUUID\":\"a80f05b8-d651-44af-b999-8ed78fb4582f\",\"cvnfcCustomizationUUID\":\"69cce457-9ffd-4359-962b-0596a1e83ad1\",\"vnfcName\":\"zauk51bmcmr01mcm001\"}},{\"buildingBlock\":{\"mso-id\":\"1ca5584e-38a9-4c3f-a4b4-99b0d42089ba\",\"bpmn-flow-name\":\"UnassignFabricConfigurationBB\",\"key\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"is-virtual-link\":false,\"virtual-link-key\":null},\"requestId\":\"9c944122-d161-4280-8594-48c06a9d96d5\",\"apiVersion\":\"7\",\"resourceId\":\"d1d35800-783d-42d3-82f6-d654c5054a6e\",\"requestAction\":\"deleteInstance\",\"vnfType\":\"\",\"aLaCarte\":true,\"homing\":false,\"workflowResourceIds\":{\"serviceInstanceId\":\"ff9dae72-05bb-4277-ad2b-1b082467c138\",\"vnfId\":\"84a29830-e533-4f20-a838-910c740bf24c\",\"networkId\":\"\",\"volumeGroupId\":\"\",\"vfModuleId\":\"d1d35800-783d-42d3-82f6-d654c5054a6e\",\"networkCollectionId\":null,\"configurationId\":\"10f8a3a3-91bf-4821-9515-c01b2864dff0\",\"instanceGroupId\":\"\"},\"requestDetails\":{\"modelInfo\":{\"modelCustomizationName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\",\"modelInvariantId\":\"8028fcc0-96dc-427d-a4de-4536245943da\",\"modelType\":\"vfModule\",\"modelId\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\",\"modelVersion\":\"1\",\"modelCustomizationUuid\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"modelVersionId\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelCustomizationId\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"modelUuid\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelInvariantUuid\":\"8028fcc0-96dc-427d-a4de-4536245943da\",\"modelInstanceName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\"},\"requestInfo\":{\"source\":\"VID\",\"suppressRollback\":false,\"requestorId\":\"pj8646\"},\"cloudConfiguration\":{\"tenantId\":\"e2a6af59d1cb43b2874e943bbbf8470a\",\"cloudOwner\":\"att-nc\",\"lcpCloudRegionId\":\"auk51b\"},\"requestParameters\":{\"testApi\":\"GR_API\"}},\"configurationResourceKeys\":{\"vfModuleCustomizationUUID\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"vnfResourceCustomizationUUID\":\"a80f05b8-d651-44af-b999-8ed78fb4582f\",\"cvnfcCustomizationUUID\":\"69cce457-9ffd-4359-962b-0596a1e83ad1\",\"vnfcName\":\"zauk51bmcmr01mcm001\"}},{\"buildingBlock\":{\"mso-id\":\"68d16097-4810-477d-803b-8322106106ef\",\"bpmn-flow-name\":\"DeactivateVfModuleBB\",\"key\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"is-virtual-link\":false,\"virtual-link-key\":null},\"requestId\":\"9c944122-d161-4280-8594-48c06a9d96d5\",\"apiVersion\":\"7\",\"resourceId\":\"d1d35800-783d-42d3-82f6-d654c5054a6e\",\"requestAction\":\"deleteInstance\",\"vnfType\":\"\",\"aLaCarte\":true,\"homing\":false,\"workflowResourceIds\":{\"serviceInstanceId\":\"ff9dae72-05bb-4277-ad2b-1b082467c138\",\"vnfId\":\"84a29830-e533-4f20-a838-910c740bf24c\",\"networkId\":\"\",\"volumeGroupId\":\"\",\"vfModuleId\":\"d1d35800-783d-42d3-82f6-d654c5054a6e\",\"networkCollectionId\":null,\"configurationId\":\"10f8a3a3-91bf-4821-9515-c01b2864dff0\",\"instanceGroupId\":\"\"},\"requestDetails\":{\"modelInfo\":{\"modelCustomizationName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\",\"modelInvariantId\":\"8028fcc0-96dc-427d-a4de-4536245943da\",\"modelType\":\"vfModule\",\"modelId\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\",\"modelVersion\":\"1\",\"modelCustomizationUuid\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"modelVersionId\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelCustomizationId\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"modelUuid\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelInvariantUuid\":\"8028fcc0-96dc-427d-a4de-4536245943da\",\"modelInstanceName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\"},\"requestInfo\":{\"source\":\"VID\",\"suppressRollback\":false,\"requestorId\":\"pj8646\"},\"cloudConfiguration\":{\"tenantId\":\"e2a6af59d1cb43b2874e943bbbf8470a\",\"cloudOwner\":\"att-nc\",\"lcpCloudRegionId\":\"auk51b\"},\"requestParameters\":{\"testApi\":\"GR_API\"}},\"configurationResourceKeys\":null},{\"buildingBlock\":{\"mso-id\":\"0b02eb09-bc23-4329-b19e-716dcca4e4a6\",\"bpmn-flow-name\":\"DeleteVfModuleBB\",\"key\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"is-virtual-link\":false,\"virtual-link-key\":null},\"requestId\":\"9c944122-d161-4280-8594-48c06a9d96d5\",\"apiVersion\":\"7\",\"resourceId\":\"d1d35800-783d-42d3-82f6-d654c5054a6e\",\"requestAction\":\"deleteInstance\",\"vnfType\":\"\",\"aLaCarte\":true,\"homing\":false,\"workflowResourceIds\":{\"serviceInstanceId\":\"ff9dae72-05bb-4277-ad2b-1b082467c138\",\"vnfId\":\"84a29830-e533-4f20-a838-910c740bf24c\",\"networkId\":\"\",\"volumeGroupId\":\"\",\"vfModuleId\":\"d1d35800-783d-42d3-82f6-d654c5054a6e\",\"networkCollectionId\":null,\"configurationId\":\"10f8a3a3-91bf-4821-9515-c01b2864dff0\",\"instanceGroupId\":\"\"},\"requestDetails\":{\"modelInfo\":{\"modelCustomizationName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\",\"modelInvariantId\":\"8028fcc0-96dc-427d-a4de-4536245943da\",\"modelType\":\"vfModule\",\"modelId\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\",\"modelVersion\":\"1\",\"modelCustomizationUuid\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"modelVersionId\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelCustomizationId\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"modelUuid\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelInvariantUuid\":\"8028fcc0-96dc-427d-a4de-4536245943da\",\"modelInstanceName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\"},\"requestInfo\":{\"source\":\"VID\",\"suppressRollback\":false,\"requestorId\":\"pj8646\"},\"cloudConfiguration\":{\"tenantId\":\"e2a6af59d1cb43b2874e943bbbf8470a\",\"cloudOwner\":\"att-nc\",\"lcpCloudRegionId\":\"auk51b\"},\"requestParameters\":{\"testApi\":\"GR_API\"}},\"configurationResourceKeys\":null},{\"buildingBlock\":{\"mso-id\":\"bcf95d05-0782-44ff-920d-d5100525c275\",\"bpmn-flow-name\":\"UnassignVfModuleBB\",\"key\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"is-virtual-link\":false,\"virtual-link-key\":null},\"requestId\":\"9c944122-d161-4280-8594-48c06a9d96d5\",\"apiVersion\":\"7\",\"resourceId\":\"d1d35800-783d-42d3-82f6-d654c5054a6e\",\"requestAction\":\"deleteInstance\",\"vnfType\":\"\",\"aLaCarte\":true,\"homing\":false,\"workflowResourceIds\":{\"serviceInstanceId\":\"ff9dae72-05bb-4277-ad2b-1b082467c138\",\"vnfId\":\"84a29830-e533-4f20-a838-910c740bf24c\",\"networkId\":\"\",\"volumeGroupId\":\"\",\"vfModuleId\":\"d1d35800-783d-42d3-82f6-d654c5054a6e\",\"networkCollectionId\":null,\"configurationId\":\"10f8a3a3-91bf-4821-9515-c01b2864dff0\",\"instanceGroupId\":\"\"},\"requestDetails\":{\"modelInfo\":{\"modelCustomizationName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\",\"modelInvariantId\":\"8028fcc0-96dc-427d-a4de-4536245943da\",\"modelType\":\"vfModule\",\"modelId\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\",\"modelVersion\":\"1\",\"modelCustomizationUuid\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"modelVersionId\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelCustomizationId\":\"7adc7c29-21a3-40a2-b8b6-5d4ad08b68e9\",\"modelUuid\":\"00d15ebb-c80e-43c1-80f0-90c40dde70b0\",\"modelInvariantUuid\":\"8028fcc0-96dc-427d-a4de-4536245943da\",\"modelInstanceName\":\"McmrNcUpVnf20191..cr_mccm_fc_base..module-0\"},\"requestInfo\":{\"source\":\"VID\",\"suppressRollback\":false,\"requestorId\":\"pj8646\"},\"cloudConfiguration\":{\"tenantId\":\"e2a6af59d1cb43b2874e943bbbf8470a\",\"cloudOwner\":\"att-nc\",\"lcpCloudRegionId\":\"auk51b\"},\"requestParameters\":{\"testApi\":\"GR_API\"}},\"configurationResourceKeys\":null}]";
-        ObjectMapper om = new ObjectMapper();
-        List<ExecuteBuildingBlock> expectedFlowsToExecute = null;
-        try {
-            ExecuteBuildingBlock[] asArray = om.readValue(flowsToExecuteString, ExecuteBuildingBlock[].class);
-            expectedFlowsToExecute = Arrays.asList(asArray);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+    @Test
+    public void existsAAIConfigurationGloballyByNameTest() {
+        AAIResourceUri expectedUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.CONFIGURATION)
+                .queryParam("configuration-name", "testConfig");
+        bbInputSetupUtils.existsAAIConfigurationGloballyByName("testConfig");
+        verify(MOCK_aaiResourcesClient, times(1)).exists(expectedUri);
+    }
 
-        InfraActiveRequests request = new InfraActiveRequests();
-        request.setRequestId("requestId");
-        request.setOriginalRequestId("originalRequestId");
-        doReturn(request).when(MOCK_requestsDbClient).getInfraActiveRequestbyRequestId(anyString());
-        RequestProcessingData rpd = new RequestProcessingData();
-        rpd.setValue(flowsToExecuteString);
-        doReturn(rpd).when(MOCK_requestsDbClient).getRequestProcessingDataBySoRequestIdAndName(anyString(),
-                anyString());
+    @Test
+    public void existsAAIVolumeGroupGloballyByNameTest() {
+        AAIResourceUri expectedUri = AAIUriFactory.createNodesUri(AAIObjectPlurals.VOLUME_GROUP)
+                .queryParam("volume-group-name", "testVoumeGroup");
+        bbInputSetupUtils.existsAAIVolumeGroupGloballyByName("testVoumeGroup");
+        verify(MOCK_aaiResourcesClient, times(1)).exists(expectedUri);
+    }
 
-        List<ExecuteBuildingBlock> flowsToExecute = bbInputSetupUtils.loadOriginalFlowExecutionPath(requestId);
-        assertEquals(expectedFlowsToExecute.size(), flowsToExecute.size());
+    @Test
+    public void getAAIVnfsGloballyByNameTest() {
+        String vnfName = "vnfName";
+
+        doReturn(Optional.empty()).when(MOCK_aaiResourcesClient).get(isA(Class.class), isA(AAIResourceUri.class));
+        GenericVnfs actualGenericVnfs = bbInputSetupUtils.getAAIVnfsGloballyByName(vnfName);
+
+        assertNull(actualGenericVnfs);
     }
 
     @Test
@@ -964,37 +1118,5 @@ public class BBInputSetupUtilsTest {
         Optional<Configuration> actual =
                 this.bbInputSetupUtils.getRelatedConfigurationByNameFromServiceInstance("id123", "name123");
         assertEquals(actual.get().getConfigurationId(), expected.get().getConfiguration().get(0).getConfigurationId());
-    }
-
-    @Test
-    public void existsAAIVfModuleGloballyByNameTest() throws Exception {
-        AAIResourceUri expectedUri =
-                AAIUriFactory.createNodesUri(AAIObjectPlurals.VF_MODULE).queryParam("vf-module-name", "testVfModule");
-        bbInputSetupUtils.existsAAIVfModuleGloballyByName("testVfModule");
-        verify(MOCK_aaiResourcesClient, times(1)).exists(expectedUri);
-    }
-
-    @Test
-    public void existsAAIConfigurationGloballyByNameTest() throws Exception {
-        AAIResourceUri expectedUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.CONFIGURATION)
-                .queryParam("configuration-name", "testConfig");
-        bbInputSetupUtils.existsAAIConfigurationGloballyByName("testConfig");
-        verify(MOCK_aaiResourcesClient, times(1)).exists(expectedUri);
-    }
-
-    @Test
-    public void existsAAINetworksGloballyByNameTest() throws Exception {
-        AAIResourceUri expectedUri =
-                AAIUriFactory.createResourceUri(AAIObjectPlurals.L3_NETWORK).queryParam("network-name", "testNetwork");
-        bbInputSetupUtils.existsAAINetworksGloballyByName("testNetwork");
-        verify(MOCK_aaiResourcesClient, times(1)).exists(expectedUri);
-    }
-
-    @Test
-    public void existsAAIVolumeGroupGloballyByNameTest() throws Exception {
-        AAIResourceUri expectedUri = AAIUriFactory.createNodesUri(AAIObjectPlurals.VOLUME_GROUP)
-                .queryParam("volume-group-name", "testVoumeGroup");
-        bbInputSetupUtils.existsAAIVolumeGroupGloballyByName("testVoumeGroup");
-        verify(MOCK_aaiResourcesClient, times(1)).exists(expectedUri);
     }
 }
