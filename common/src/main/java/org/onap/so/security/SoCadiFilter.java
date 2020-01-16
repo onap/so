@@ -38,9 +38,6 @@ public class SoCadiFilter extends CadiFilter {
 
     protected final Logger logger = LoggerFactory.getLogger(SoCadiFilter.class);
 
-    private static String AFT_ENVIRONMENT_VAR = "AFT_ENVIRONMENT";
-    private static String AAF_API_VERSION = "aaf_api_version";
-
     @Value("${mso.config.cadi.cadiLoglevel:#{null}}")
     private String cadiLoglevel;
 

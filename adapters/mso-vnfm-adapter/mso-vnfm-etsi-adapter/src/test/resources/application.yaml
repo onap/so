@@ -20,6 +20,8 @@ spring:
       - username: vnfm
         password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
         role: BPEL-Client
+  main:
+    allow-bean-definition-overriding: true
 
 mso:
   key: 07a7159d3bf51a0e53be7a8f89699be7
