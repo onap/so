@@ -1,18 +1,18 @@
-package org.onap.so.bpmn.infrastructure.pnf.tasks;
+package org.onap.so.bpmn.infrastructure.pnf.bbtasks;
 
+import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.aai.domain.yang.Pnf;
-import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CreatePnfEntryInAai extends PnfBaseTasks {
+public class CreatePnfEntryInAai extends PnfBaseDelegate {
     private static final Logger logger = LoggerFactory.getLogger(CreatePnfEntryInAai.class);
 
     @Override
-    public void execute(BuildingBlockExecution execution) throws Exception {
+    public void execute(DelegateExecution execution) throws Exception {
         try {
             org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf pnf = extractPnf(execution);
             String pnfCorrelationId = pnf.getPnfName();
