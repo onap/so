@@ -102,6 +102,30 @@
       "revId": "5ec955ce08cd3101eed327bbb6d1ceb3903f5bfc",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f950bea2_8099b62a",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/tasks/CreatePnfEntryInAaiTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-01-16T17:11:41Z",
+      "side": 1,
+      "message": "No, it should not. The method \"execute\" is a tested method. The object createdEntry is taken from map \"created\", that was implemented for test to hold created Pnfs. In other words, the pnf is put to the \"created\" map after successful invoking of method \"execute\".",
+      "parentUuid": "52903858_668fb665",
+      "range": {
+        "startLine": 44,
+        "startChar": 8,
+        "endLine": 44,
+        "endChar": 82
+      },
+      "revId": "5ec955ce08cd3101eed327bbb6d1ceb3903f5bfc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
