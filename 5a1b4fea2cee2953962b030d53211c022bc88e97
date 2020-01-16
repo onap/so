@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9cb76b83_b7b9700c",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/service/AaiConnectionService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2020-01-16T12:06:17Z",
+      "side": 1,
+      "message": "there is already AAI Client for get resources from AAI try reusing it see AaiServiceProviderImpl class in mso-vnfm-etsi-adapter module for example",
+      "range": {
+        "startLine": 51,
+        "startChar": 3,
+        "endLine": 62,
+        "endChar": 5
+      },
+      "revId": "5a1b4fea2cee2953962b030d53211c022bc88e97",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b1b6c985_82004f72",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/subscription/SubscribeSender.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2020-01-16T12:06:17Z",
+      "side": 1,
+      "message": "try to reuse class already there for HTTP request communitcation See HttpRestServiceProviderImpl",
+      "range": {
+        "startLine": 48,
+        "startChar": 8,
+        "endLine": 56,
+        "endChar": 48
+      },
+      "revId": "5a1b4fea2cee2953962b030d53211c022bc88e97",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
