@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "510751f0_5c89e399",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/test/java/org/onap/so/adapters/vnfmadapter/extclients/etsicatalog/EtsiCatalogUrlProviderTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2020-01-16T08:39:09Z",
+      "side": 1,
+      "message": "Please test these scenarios through the api, i.e through the package management endpoint, as is done for the rest of the test cases.\nThis will allow you to verify the return code to the user (i.e. the VNFM) is in accordance with the SOl003 spec resulting in a more complete test than just verifying the constructor of the EtsiCatalogUrlProvider class in isolation",
+      "range": {
+        "startLine": 33,
+        "startChar": 0,
+        "endLine": 53,
+        "endChar": 5
+      },
+      "revId": "d6762fec93257f8c9535b9ac4de46d14e83b6f34",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dc5ed1d0_2234d0a4",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/test/java/org/onap/so/adapters/vnfmadapter/rest/Sol003PackageManagementControllerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2020-01-16T08:39:09Z",
+      "side": 1,
+      "message": "This constant is part of the code we are trying to test. The value assigned to it is a part of what we are trying to verify.\nBy verifying its value against itself you are not really verifying its value at all",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 85
+      },
+      "revId": "d6762fec93257f8c9535b9ac4de46d14e83b6f34",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
