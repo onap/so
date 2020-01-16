@@ -23,7 +23,9 @@ spring:
   http:
     converters:
     preferred-json-mapper: gson
-        
+  main:
+    allow-bean-definition-overriding: true
+     
 server:
   port: 9092
   tomcat:
