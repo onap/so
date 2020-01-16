@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "de0af48e_24eea528",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/test/java/org/onap/so/adapters/vnfmadapter/extclients/etsicatalog/EtsiCatalogUrlProviderTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2020-01-16T10:17:44Z",
+      "side": 1,
+      "message": "Can\u0027t test that as api ... if url is null or empty it will fail JVM to startup",
+      "parentUuid": "510751f0_5c89e399",
+      "range": {
+        "startLine": 33,
+        "startChar": 0,
+        "endLine": 53,
+        "endChar": 5
+      },
+      "revId": "d6762fec93257f8c9535b9ac4de46d14e83b6f34",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dc5ed1d0_2234d0a4",
         "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/test/java/org/onap/so/adapters/vnfmadapter/rest/Sol003PackageManagementControllerTest.java",
         "patchSetId": 4
