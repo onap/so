@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0798be9e_906504a7",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/ExtractPojosForBBTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-16T09:01:10Z",
+      "side": 1,
+      "message": "For REFACTOR purposes (future): This test should be splitted to N separate ones.",
+      "range": {
+        "startLine": 60,
+        "startChar": 1,
+        "endLine": 155,
+        "endChar": 5
+      },
+      "revId": "5ec955ce08cd3101eed327bbb6d1ceb3903f5bfc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c599c1e7_a2ccdecc",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/ExtractPojosForBBTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-16T09:01:10Z",
+      "side": 1,
+      "message": "For future:\nI would try to use assertJ assertions since they are available and more flexible.\nThis test could look like:\n```\n    private void assertExceptionTest_WhenServiceEmpty(ResourceKey key) {\n        // given\n        setCustomerWithEmptyServiceInstance();\n        String value \u003d execution.getLookupMap().get(key);\n        // when\n        Throwable thrown \u003d catchThrowable(() -\u003e extractPojos.extractByKey(execution, key));\n        // then\n        assertThat(thrown).isInstanceOf(BBObjectNotFoundException.class)\n                .hasMessage(\"BBObject\" + key + \" was not found in gBBInput using reference value: \" + value);\n    }\n```",
+      "range": {
+        "startLine": 210,
+        "startChar": 6,
+        "endLine": 213,
+        "endChar": 50
+      },
+      "revId": "5ec955ce08cd3101eed327bbb6d1ceb3903f5bfc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
