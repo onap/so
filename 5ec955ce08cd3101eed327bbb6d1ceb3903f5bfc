@@ -45,6 +45,63 @@
       "revId": "5ec955ce08cd3101eed327bbb6d1ceb3903f5bfc",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "24e1d32a_8906fe97",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/tasks/CheckAaiForPnfCorrelationIdTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-16T12:04:20Z",
+      "side": 1,
+      "message": "then before verify",
+      "revId": "5ec955ce08cd3101eed327bbb6d1ceb3903f5bfc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4e64bf5f_b0e20532",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/tasks/CheckAaiForPnfCorrelationIdTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-16T12:04:20Z",
+      "side": 1,
+      "message": "then before verify",
+      "revId": "5ec955ce08cd3101eed327bbb6d1ceb3903f5bfc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "52903858_668fb665",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/tasks/CreatePnfEntryInAaiTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-16T12:04:20Z",
+      "side": 1,
+      "message": "This line should be moved to when.",
+      "range": {
+        "startLine": 44,
+        "startChar": 8,
+        "endLine": 44,
+        "endChar": 82
+      },
+      "revId": "5ec955ce08cd3101eed327bbb6d1ceb3903f5bfc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
