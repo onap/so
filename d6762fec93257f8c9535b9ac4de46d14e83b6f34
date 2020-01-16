@@ -69,6 +69,30 @@
       "revId": "d6762fec93257f8c9535b9ac4de46d14e83b6f34",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d7b63259_796b44c8",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/test/java/org/onap/so/adapters/vnfmadapter/rest/Sol003PackageManagementControllerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2020-01-16T10:22:40Z",
+      "side": 1,
+      "message": "i didn\u0027t add this... plus that is what constant is for, in my opinion this is correct instead of duplicating it the value...",
+      "parentUuid": "dc5ed1d0_2234d0a4",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 85
+      },
+      "revId": "d6762fec93257f8c9535b9ac4de46d14e83b6f34",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
