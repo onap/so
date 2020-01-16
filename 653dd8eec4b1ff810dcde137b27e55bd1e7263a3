@@ -1,0 +1,188 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "38770aeb_fe24d405",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-16T14:22:12Z",
+      "side": 1,
+      "message": "replace with of",
+      "range": {
+        "startLine": 7,
+        "startChar": 4,
+        "endLine": 7,
+        "endChar": 8
+      },
+      "revId": "653dd8eec4b1ff810dcde137b27e55bd1e7263a3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "eda2c7f0_1e01da60",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-16T14:22:12Z",
+      "side": 1,
+      "message": "Import concrete classes.",
+      "range": {
+        "startLine": 51,
+        "startChar": 21,
+        "endLine": 51,
+        "endChar": 34
+      },
+      "revId": "653dd8eec4b1ff810dcde137b27e55bd1e7263a3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4d55b973_cd041716",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-16T14:22:12Z",
+      "side": 1,
+      "message": "same like above",
+      "range": {
+        "startLine": 65,
+        "startChar": 36,
+        "endLine": 65,
+        "endChar": 37
+      },
+      "revId": "653dd8eec4b1ff810dcde137b27e55bd1e7263a3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0b2ce09e_f2f4d210",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1050,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-16T14:22:12Z",
+      "side": 1,
+      "message": "Test actually doesn\u0027t test anything - to consider what to do with it",
+      "range": {
+        "startLine": 1040,
+        "startChar": 4,
+        "endLine": 1050,
+        "endChar": 5
+      },
+      "revId": "653dd8eec4b1ff810dcde137b27e55bd1e7263a3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a0af547e_3fab9b58",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1063,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-16T14:22:12Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 1052,
+        "startChar": 2,
+        "endLine": 1063,
+        "endChar": 5
+      },
+      "revId": "653dd8eec4b1ff810dcde137b27e55bd1e7263a3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "db0a47ee_bd83f8ba",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1066,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-16T14:22:12Z",
+      "side": 1,
+      "message": "typo",
+      "range": {
+        "startLine": 1066,
+        "startChar": 53,
+        "endLine": 1066,
+        "endChar": 54
+      },
+      "revId": "653dd8eec4b1ff810dcde137b27e55bd1e7263a3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8ebe791c_b58063c4",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1076,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-16T14:22:12Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 1066,
+        "startChar": 2,
+        "endLine": 1076,
+        "endChar": 5
+      },
+      "revId": "653dd8eec4b1ff810dcde137b27e55bd1e7263a3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0457e6b0_2ecc955c",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1092,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-16T14:22:12Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 1078,
+        "startChar": 3,
+        "endLine": 1092,
+        "endChar": 5
+      },
+      "revId": "653dd8eec4b1ff810dcde137b27e55bd1e7263a3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
