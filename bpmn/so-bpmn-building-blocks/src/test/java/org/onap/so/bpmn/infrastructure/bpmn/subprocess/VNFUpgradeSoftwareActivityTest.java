@@ -20,21 +20,23 @@
 
 package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
 
-import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.assertThat;
+import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
+import java.util.List;
 import org.camunda.bpm.engine.delegate.BpmnError;
+import org.camunda.bpm.engine.externaltask.LockedExternalTask;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Test;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.BaseBPMNTest;
-import org.onap.appc.client.lcm.model.Action;
 
 public class VNFUpgradeSoftwareActivityTest extends BaseBPMNTest {
     @Test
     public void sunnyDayVNFUpgradeSoftwareActivity_Test() throws InterruptedException {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFUpgradeSoftwareActivity", variables);
         assertThat(pi).isNotNull();
+        processExternalTasks(pi, "TaskUpgradeSoftware");
         assertThat(pi).isStarted().hasPassedInOrder("VNFUpgradeSoftwareActivity_Start", "TaskPreProcessActivity",
                 "TaskUpgradeSoftware", "VNFUpgradeSoftwareActivity_End");
         assertThat(pi).isEnded();
@@ -42,13 +44,12 @@ public class VNFUpgradeSoftwareActivityTest extends BaseBPMNTest {
 
     @Test
     public void rainyDayVNFUpgradeSoftwareActivity_Test() throws Exception {
-        variables.put("actionUpgradeSoftware", Action.UpgradeSoftware);
-        doThrow(new BpmnError("7000", "TESTING ERRORS")).when(appcRunTasks)
-                .runAppcCommand(any(BuildingBlockExecution.class), any(Action.class));
+        doThrow(new BpmnError("7000", "TESTING ERRORS")).when(appcOrchestratorPreProcessor)
+                .buildAppcTaskRequest(any(BuildingBlockExecution.class), any(String.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFUpgradeSoftwareActivity", variables);
         assertThat(pi).isNotNull().isStarted()
-                .hasPassedInOrder("VNFUpgradeSoftwareActivity_Start", "TaskPreProcessActivity", "TaskUpgradeSoftware")
-                .hasNotPassed("VNFUpgradeSoftwareActivity_End");
+                .hasPassedInOrder("VNFUpgradeSoftwareActivity_Start", "TaskPreProcessActivity")
+                .hasNotPassed("TaskUpgradeSoftware", "VNFUpgradeSoftwareActivity_End");
     }
 
 }

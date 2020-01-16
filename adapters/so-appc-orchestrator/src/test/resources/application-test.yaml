@@ -1,0 +1,17 @@
+
+appc:
+  client:
+    key: LSl8QKolmKcC0yJR
+    response:
+      timeout: '60000'
+    secret: lgjXraD1HutKxv8jEN6tVouu
+    poolMembers: localhost:3904,localhost:3904
+    service: ueb
+    topic:
+      read:
+        name: APPC-1902-SHDEV-WRITE
+        timeout: '120000'
+      write: APPC-1902-SHDEV-READ
+      sdnc:
+        read: SDNC-LCM-READ
+        write: SDNC-LCM-WRITE

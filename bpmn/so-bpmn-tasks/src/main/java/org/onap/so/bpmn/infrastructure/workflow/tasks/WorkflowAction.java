@@ -1555,7 +1555,7 @@ public class WorkflowAction {
             if (flows == null)
                 flows = new ArrayList<>();
             for (OrchestrationFlow flow : flows) {
-                if (!flow.getFlowName().contains("BB")) {
+                if (!flow.getFlowName().contains("BB") && !flow.getFlowName().contains("Activity")) {
                     List<OrchestrationFlow> macroQueryFlows =
                             catalogDbClient.getOrchestrationFlowByAction(flow.getFlowName());
                     for (OrchestrationFlow macroFlow : macroQueryFlows) {

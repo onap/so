@@ -19,6 +19,7 @@
  */
 package org.onap.so.bpmn;
 
+import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,8 @@ import java.util.Map;
 import org.camunda.bpm.engine.ExternalTaskService;
 import org.camunda.bpm.engine.RepositoryService;
 import org.camunda.bpm.engine.RuntimeService;
+import org.camunda.bpm.engine.externaltask.LockedExternalTask;
+import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.extension.mockito.mock.FluentJavaDelegateMock;
 import org.camunda.bpm.model.bpmn.Bpmn;
 import org.camunda.bpm.model.bpmn.BpmnModelInstance;
@@ -49,6 +52,7 @@ import org.onap.so.bpmn.infrastructure.adapter.network.tasks.NetworkAdapterUpdat
 import org.onap.so.bpmn.infrastructure.adapter.vnf.tasks.VnfAdapterCreateTasks;
 import org.onap.so.bpmn.infrastructure.adapter.vnf.tasks.VnfAdapterDeleteTasks;
 import org.onap.so.bpmn.infrastructure.adapter.vnf.tasks.VnfAdapterImpl;
+import org.onap.so.bpmn.infrastructure.appc.tasks.AppcOrchestratorPreProcessor;
 import org.onap.so.bpmn.infrastructure.appc.tasks.AppcRunTasks;
 import org.onap.so.bpmn.infrastructure.audit.AuditTasks;
 import org.onap.so.bpmn.infrastructure.flowspecific.tasks.ActivateVfModule;
@@ -129,6 +133,9 @@ public abstract class BaseBPMNTest {
 
     @MockBean
     protected AppcRunTasks appcRunTasks;
+
+    @MockBean
+    protected AppcOrchestratorPreProcessor appcOrchestratorPreProcessor;
 
     @MockBean
     protected SDNCActivateTasks sdncActivateTasks;
@@ -298,5 +305,18 @@ public abstract class BaseBPMNTest {
         BpmnModelInstance modelInstance = builder.endEvent().name("End_Event").done();
         mockedSubprocessList.add(repositoryService.createDeployment()
                 .addModelInstance(fileName + ".bpmn", modelInstance).deploy().getId());
+    }
+
+    protected void processExternalTasks(ProcessInstance pi, String taskName) {
+        assertThat(pi).isWaitingAt(taskName);
+        List<LockedExternalTask> tasks =
+                externalTaskService.fetchAndLock(100, "externalWorkerId").topic("AppcService", 60L * 1000L).execute();
+        while (!tasks.isEmpty()) {
+            for (LockedExternalTask task : tasks) {
+                externalTaskService.complete(task.getId(), "externalWorkerId");
+            }
+            tasks = externalTaskService.fetchAndLock(100, "externalWorkerId").topic("AppcService", 60L * 1000L)
+                    .execute();
+        }
     }
 }
