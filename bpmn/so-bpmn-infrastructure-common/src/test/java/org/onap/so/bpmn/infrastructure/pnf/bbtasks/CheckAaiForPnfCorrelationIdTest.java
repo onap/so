@@ -1,6 +1,7 @@
-package org.onap.so.bpmn.infrastructure.pnf.tasks;
+package org.onap.so.bpmn.infrastructure.pnf.bbtasks;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
+import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -30,8 +31,8 @@ import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableName
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_CORRELATION_ID;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.PnfManagementTestImpl.ID_WITHOUT_ENTRY;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.PnfManagementTestImpl.ID_WITH_ENTRY;
-import static org.onap.so.bpmn.infrastructure.pnf.tasks.PnfTasksUtils.PNF_UUID;
-import static org.onap.so.bpmn.infrastructure.pnf.tasks.PnfTasksUtils.preparePnf;
+import static org.onap.so.bpmn.infrastructure.pnf.bbtasks.PnfTasksUtils.PNF_UUID;
+import static org.onap.so.bpmn.infrastructure.pnf.bbtasks.PnfTasksUtils.preparePnf;
 
 @RunWith(Enclosed.class)
 public class CheckAaiForPnfCorrelationIdTest {
@@ -62,9 +63,10 @@ public class CheckAaiForPnfCorrelationIdTest {
             BuildingBlockExecution execution = mock(BuildingBlockExecution.class);
             doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(eq(execution),
                     anyInt(), anyString());
-            // when, then
+            // when
             expectedException.expect(BpmnError.class);
             task.execute(execution);
+            //then
             verify(exceptionUtil).buildAndThrowWorkflowException(eq(execution), anyInt(), anyString());
         }
 
@@ -120,9 +122,10 @@ public class CheckAaiForPnfCorrelationIdTest {
             BuildingBlockExecution execution = mock(BuildingBlockExecution.class);
             doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(eq(execution),
                     anyInt(), any(IOException.class));
-            // when, then
+            // when
             expectedException.expect(BpmnError.class);
             task.execute(execution);
+            //then
             verify(exceptionUtil).buildAndThrowWorkflowException(eq(execution), anyInt(), any(IOException.class));
         }
     }

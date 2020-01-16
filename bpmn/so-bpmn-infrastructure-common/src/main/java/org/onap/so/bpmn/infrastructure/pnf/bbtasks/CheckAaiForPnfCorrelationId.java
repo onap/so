@@ -1,4 +1,4 @@
-package org.onap.so.bpmn.infrastructure.pnf.tasks;
+package org.onap.so.bpmn.infrastructure.pnf.bbtasks;
 
 import joptsimple.internal.Strings;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
@@ -11,7 +11,7 @@ import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableName
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_CORRELATION_ID;
 
 @Component
-public class CheckAaiForPnfCorrelationId extends PnfBaseTasks {
+public class CheckAaiForPnfCorrelationId extends PnfBaseDelegate {
     private static final Logger logger = LoggerFactory.getLogger(CheckAaiForPnfCorrelationId.class);
 
     @Override
