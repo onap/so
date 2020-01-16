@@ -1431,6 +1431,9 @@ public class BBInputSetup implements JavaDelegate {
             }
             String productFamilyId = requestDetails.getRequestInfo().getProductFamilyId();
             String applicationId = "";
+            if (vnfs.getApplicationId() != null) {
+                applicationId = vnfs.getApplicationId();
+            }
             this.populateGenericVnf(vnfs.getModelInfo(), vnfs.getInstanceName(), vnfs.getPlatform(),
                     vnfs.getLineOfBusiness(), service, bbName, serviceInstance, lookupKeyMap, null, vnfId, vnfType,
                     vnfs.getInstanceParams(), productFamilyId, applicationId);
