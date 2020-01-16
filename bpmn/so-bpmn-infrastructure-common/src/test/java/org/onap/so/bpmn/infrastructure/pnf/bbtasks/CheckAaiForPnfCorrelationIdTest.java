@@ -1,6 +1,7 @@
-package org.onap.so.bpmn.infrastructure.pnf.tasks;
+package org.onap.so.bpmn.infrastructure.pnf.bbtasks;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
+import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -10,7 +11,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.infrastructure.pnf.delegate.PnfManagementTestImpl;
 import org.onap.so.bpmn.infrastructure.pnf.delegate.PnfManagementThrowingException;
 import org.onap.so.bpmn.infrastructure.pnf.management.PnfManagement;
@@ -30,8 +30,8 @@ import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableName
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_CORRELATION_ID;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.PnfManagementTestImpl.ID_WITHOUT_ENTRY;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.PnfManagementTestImpl.ID_WITH_ENTRY;
-import static org.onap.so.bpmn.infrastructure.pnf.tasks.PnfTasksUtils.PNF_UUID;
-import static org.onap.so.bpmn.infrastructure.pnf.tasks.PnfTasksUtils.preparePnf;
+import static org.onap.so.bpmn.infrastructure.pnf.bbtasks.PnfTasksUtils.PNF_UUID;
+import static org.onap.so.bpmn.infrastructure.pnf.bbtasks.PnfTasksUtils.preparePnf;
 
 @RunWith(Enclosed.class)
 public class CheckAaiForPnfCorrelationIdTest {
@@ -59,7 +59,7 @@ public class CheckAaiForPnfCorrelationIdTest {
         public void shouldThrowExceptionWhenPnfCorrelationIdIsNotSet() throws Exception {
             // given
             when(extractPojosForBB.extractByKey(any(), eq(ResourceKey.PNF))).thenReturn(preparePnf(null, PNF_UUID));
-            BuildingBlockExecution execution = mock(BuildingBlockExecution.class);
+            DelegateExecution execution = mock(DelegateExecution.class);
             doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(eq(execution),
                     anyInt(), anyString());
             // when, then
@@ -73,11 +73,11 @@ public class CheckAaiForPnfCorrelationIdTest {
             // given
             when(extractPojosForBB.extractByKey(any(), eq(ResourceKey.PNF)))
                     .thenReturn(preparePnf(ID_WITHOUT_ENTRY, PNF_UUID));
-            BuildingBlockExecution execution = mock(BuildingBlockExecution.class);
+            DelegateExecution execution = mock(DelegateExecution.class);
             // when
             task.execute(execution);
             // then
-            verify(execution).setVariable(AAI_CONTAINS_INFO_ABOUT_PNF, false);
+            verify(execution).setVariableLocal(AAI_CONTAINS_INFO_ABOUT_PNF, false);
         }
 
         @Test
@@ -85,11 +85,11 @@ public class CheckAaiForPnfCorrelationIdTest {
             // given
             when(extractPojosForBB.extractByKey(any(), eq(ResourceKey.PNF)))
                     .thenReturn(preparePnf(ID_WITH_ENTRY, PNF_UUID));
-            BuildingBlockExecution execution = mock(BuildingBlockExecution.class);
+            DelegateExecution execution = mock(DelegateExecution.class);
             // when
             task.execute(execution);
             // then
-            verify(execution).setVariable(AAI_CONTAINS_INFO_ABOUT_PNF, true);
+            verify(execution).setVariableLocal(AAI_CONTAINS_INFO_ABOUT_PNF, true);
         }
     }
 
@@ -117,7 +117,7 @@ public class CheckAaiForPnfCorrelationIdTest {
         @Test
         public void shouldThrowExceptionWhenIoExceptionOnConnectionToAai() {
             // given
-            BuildingBlockExecution execution = mock(BuildingBlockExecution.class);
+            DelegateExecution execution = mock(DelegateExecution.class);
             doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(eq(execution),
                     anyInt(), any(IOException.class));
             // when, then

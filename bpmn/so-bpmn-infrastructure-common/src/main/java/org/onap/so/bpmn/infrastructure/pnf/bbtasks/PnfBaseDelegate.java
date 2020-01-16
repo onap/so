@@ -1,5 +1,7 @@
-package org.onap.so.bpmn.infrastructure.pnf.tasks;
+package org.onap.so.bpmn.infrastructure.pnf.bbtasks;
 
+import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.infrastructure.pnf.management.PnfManagement;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
@@ -9,7 +11,7 @@ import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public abstract class PnfBaseTasks {
+public abstract class PnfBaseDelegate implements JavaDelegate {
     protected PnfManagement pnfManagement;
     @Autowired
     protected ExceptionBuilder exceptionUtil;
@@ -21,9 +23,8 @@ public abstract class PnfBaseTasks {
         this.pnfManagement = pnfManagement;
     }
 
-    public abstract void execute(BuildingBlockExecution execution) throws Exception;
-
-    protected Pnf extractPnf(BuildingBlockExecution execution) throws BBObjectNotFoundException {
-        return extractPojosForBB.extractByKey(execution, ResourceKey.PNF);
+    protected Pnf extractPnf(DelegateExecution execution) throws BBObjectNotFoundException {
+        return extractPojosForBB.extractByKey((BuildingBlockExecution) execution.getVariable("gBuildingBlockExecution"),
+                ResourceKey.PNF);
     }
 }

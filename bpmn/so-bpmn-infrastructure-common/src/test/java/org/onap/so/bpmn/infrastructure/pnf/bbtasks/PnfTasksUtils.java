@@ -1,4 +1,4 @@
-package org.onap.so.bpmn.infrastructure.pnf.tasks;
+package org.onap.so.bpmn.infrastructure.pnf.bbtasks;
 
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
 import java.util.UUID;
