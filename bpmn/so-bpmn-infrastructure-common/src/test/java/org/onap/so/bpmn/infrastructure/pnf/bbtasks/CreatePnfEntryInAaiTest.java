@@ -1,5 +1,6 @@
-package org.onap.so.bpmn.infrastructure.pnf.tasks;
+package org.onap.so.bpmn.infrastructure.pnf.bbtasks;
 
+import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,9 +17,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.onap.so.bpmn.infrastructure.pnf.tasks.PnfTasksUtils.PNF_CORRELATION_ID;
-import static org.onap.so.bpmn.infrastructure.pnf.tasks.PnfTasksUtils.PNF_UUID;
-import static org.onap.so.bpmn.infrastructure.pnf.tasks.PnfTasksUtils.preparePnf;
+import static org.onap.so.bpmn.infrastructure.pnf.bbtasks.PnfTasksUtils.PNF_CORRELATION_ID;
+import static org.onap.so.bpmn.infrastructure.pnf.bbtasks.PnfTasksUtils.PNF_UUID;
+import static org.onap.so.bpmn.infrastructure.pnf.bbtasks.PnfTasksUtils.preparePnf;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CreatePnfEntryInAaiTest {
