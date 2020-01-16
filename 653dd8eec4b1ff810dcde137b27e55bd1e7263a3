@@ -71,6 +71,29 @@
     },
     {
       "key": {
+        "uuid": "55b442bc_4c45e778",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 999,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-01-16T16:52:15Z",
+      "side": 1,
+      "message": "Consider creating method like loadDefaultInfraActiveRequest",
+      "range": {
+        "startLine": 998,
+        "startChar": 50,
+        "endLine": 999,
+        "endChar": 115
+      },
+      "revId": "653dd8eec4b1ff810dcde137b27e55bd1e7263a3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0b2ce09e_f2f4d210",
         "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
         "patchSetId": 3
@@ -91,6 +114,30 @@
       "revId": "653dd8eec4b1ff810dcde137b27e55bd1e7263a3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "84a74907_c750c7eb",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1050,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-01-16T16:52:15Z",
+      "side": 1,
+      "message": "Maybe the logic of those methods could actually be moved to GraphInventoryResourcesClient to a generic method with signature like:\npublic T getConcrete(Class\u003cT\u003e clazz, Uri uri)",
+      "parentUuid": "0b2ce09e_f2f4d210",
+      "range": {
+        "startLine": 1040,
+        "startChar": 4,
+        "endLine": 1050,
+        "endChar": 5
+      },
+      "revId": "653dd8eec4b1ff810dcde137b27e55bd1e7263a3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     },
     {
       "key": {
