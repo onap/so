@@ -1,12 +1,13 @@
-{	
+{
 		"cloudSiteId" : "cloudRegionId",
-		"tenantId" : "tenantId",		
+		"tenantId" : "tenantId",
 		"vnfId"	:	"vnfId",
 		"vfModuleId" : "vfModuleId",
 		"vfModuleStackId" : "vfModuleName",
 		"skipAAI" : true,
+		"modelCustomizationUuid": "vfModuleModelCustomizationUuid",
 		"msoRequest" : {
 			"requestId" : "requestId",
-			"serviceInstanceId" : "serviceInstanceId" 
+			"serviceInstanceId" : "serviceInstanceId"
 		}
 }

@@ -211,7 +211,7 @@ public class MsoVnfMulticloudAdapterImplTest extends BaseRestTestUtils {
                 .willReturn(aResponse().withStatus(HttpStatus.SC_NO_CONTENT)));
 
         instance.deleteVfModule("MTN13", "CloudOwner", "123", "workload-id", "5aae1e49-805c-4f9f-bd78-055bf7451157",
-                "11420693-3f69-4c61-b3ee-9787c744e760", msoRequest, new Holder<>());
+                "11420693-3f69-4c61-b3ee-9787c744e760", "customizationId", msoRequest, new Holder<>());
     }
 
     @Test
