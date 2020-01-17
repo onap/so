@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "050d2a81_225b1374",
+        "filename": "common/src/main/java/org/onap/so/security/SoBasicWebSecurityConfigurerAdapter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2020-01-17T11:23:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "98762934_48cd0584",
+      "range": {
+        "startLine": 35,
+        "startChar": 3,
+        "endLine": 35,
+        "endChar": 49
+      },
+      "revId": "f47ecd0d6cd9b47ef616345d9a35c7c5603badb7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8d98c5bf_b60cdb92",
         "filename": "common/src/main/java/org/onap/so/security/SoNoAuthWebSecurityConfigurerAdapter.java",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "292798f1_4aa27e98",
+        "filename": "common/src/main/java/org/onap/so/security/SoNoAuthWebSecurityConfigurerAdapter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2020-01-17T11:23:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8d98c5bf_b60cdb92",
+      "range": {
+        "startLine": 31,
+        "startChar": 3,
+        "endLine": 31,
+        "endChar": 49
+      },
+      "revId": "f47ecd0d6cd9b47ef616345d9a35c7c5603badb7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ae99898b_4a5a3d88",
         "filename": "common/src/main/java/org/onap/so/security/SoUserCredentialConfiguration.java",
         "patchSetId": 1
@@ -68,6 +116,30 @@
       "revId": "f47ecd0d6cd9b47ef616345d9a35c7c5603badb7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e4f2f14f_969e3f2f",
+        "filename": "common/src/main/java/org/onap/so/security/SoUserCredentialConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2020-01-17T11:23:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ae99898b_4a5a3d88",
+      "range": {
+        "startLine": 32,
+        "startChar": 3,
+        "endLine": 32,
+        "endChar": 49
+      },
+      "revId": "f47ecd0d6cd9b47ef616345d9a35c7c5603badb7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
