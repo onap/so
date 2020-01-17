@@ -53,6 +53,24 @@
     },
     {
       "key": {
+        "uuid": "b0c219cc_0fc80ef0",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/NetworkFunction.java",
+        "patchSetId": 33
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-01-17T14:55:36Z",
+      "side": 1,
+      "message": "DelegateExecution is used for custom workflows, for all other BBE will be used.",
+      "parentUuid": "fee61fa5_951407a6",
+      "revId": "f7a6542f758ed925a618b59267be131dd6107dc7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4c23663a_3c1d19c8",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/PayloadConstants.java",
         "patchSetId": 33
@@ -98,6 +116,24 @@
       "writtenOn": "2020-01-17T14:49:38Z",
       "side": 1,
       "message": "Why is DelegateExecution required here? BuildingBlockExecution is our safe wrapper around DelegateExecution. If possible we should always prefer BuildingBlockExecution.",
+      "revId": "f7a6542f758ed925a618b59267be131dd6107dc7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ce4790f4_f7364e9a",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericCDSProcessing.java",
+        "patchSetId": 33
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-01-17T14:55:36Z",
+      "side": 1,
+      "message": "DelegateExecution is used for custom workflows, for all other BBE will be used.",
+      "parentUuid": "9fbe5d57_95bc2338",
       "revId": "f7a6542f758ed925a618b59267be131dd6107dc7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
