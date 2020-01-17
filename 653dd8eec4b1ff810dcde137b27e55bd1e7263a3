@@ -141,6 +141,30 @@
     },
     {
       "key": {
+        "uuid": "8ec56a49_70e4055d",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1050,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-01-17T09:53:35Z",
+      "side": 1,
+      "message": "Sorry, my comment was meant for tests like getAAIGenericVnfNullTest() and like testGetAAIGenericVnf()",
+      "parentUuid": "84a74907_c750c7eb",
+      "range": {
+        "startLine": 1040,
+        "startChar": 4,
+        "endLine": 1050,
+        "endChar": 5
+      },
+      "revId": "653dd8eec4b1ff810dcde137b27e55bd1e7263a3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a0af547e_3fab9b58",
         "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
         "patchSetId": 3
@@ -230,6 +254,29 @@
       "revId": "653dd8eec4b1ff810dcde137b27e55bd1e7263a3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f82ffa38_37ff500e",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1097,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-01-17T09:53:35Z",
+      "side": 1,
+      "message": "Similar test already exists in line 577",
+      "range": {
+        "startLine": 1094,
+        "startChar": 0,
+        "endLine": 1097,
+        "endChar": 5
+      },
+      "revId": "653dd8eec4b1ff810dcde137b27e55bd1e7263a3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
