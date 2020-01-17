@@ -23,9 +23,10 @@ package org.onap.so.db.catalog.data.repository;
 import org.onap.so.db.catalog.beans.NetworkResource;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
-@Repository
+@RepositoryRestResource(collectionResourceRel = "networkResource", path = "networkResource")
 public interface NetworkResourceRepository extends JpaRepository<NetworkResource, String> {
 
     /**
