@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "870da8c5_95856302",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupTest.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-17T09:46:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67bec698_4f2752f7",
+      "range": {
+        "startLine": 51,
+        "startChar": 0,
+        "endLine": 51,
+        "endChar": 2
+      },
+      "revId": "3d679c880fd94c94beef8949b9b93c5c0925e8bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "9fa609b4_1fdb16ef",
         "filename": "bpmn/so-bpmn-building-blocks/src/test/java/org/onap/so/bpmn/infrastructure/bpmn/subprocess/ExecuteBuildingBlockTest.java",
         "patchSetId": 9
