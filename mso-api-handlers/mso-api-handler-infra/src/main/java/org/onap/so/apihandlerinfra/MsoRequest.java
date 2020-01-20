@@ -311,9 +311,9 @@ public class MsoRequest {
                     aq.setVnfId(servInsReq.getVnfInstanceId());
                 }
 
-                if (servInsReq.getPnfId() != null) {
+                if (servInsReq.getPnfName() != null) {
                     aq.setRequestScope(requestScope);
-                    aq.setPnfId(servInsReq.getPnfId());
+                    aq.setPnfName(servInsReq.getPnfName());
                 }
 
                 if (ModelType.service.name().equalsIgnoreCase(requestScope)) {

@@ -1,20 +1,47 @@
 {
-  "requestDetails": {
-    "requestParameters": {
-        "userParams": [{
-          "nrmObj": {        
-            "EUtranGenericCell" : [
-                {"cellLocalId":1, "pci":5},
-                {"cellLocalId":2, "pci":6}
-             ],
-            "ExternalEUtranCell" : [
-                {"cellLocalId":3, "eNBId": "x"}, 
-                {"cellLocalId":4, "eNBId": "y"}
-            ],
-            "EUtranRelation": [{"scellLocalId":5, "tcellLocalId":6}]
-          }        
-        }],
-        "payload": "[{\"GNBDUFunction\":{\"gNBId\":1,\"gNBDUId\":5}}]"
-    }
-  }
+  "requestDetails":{
+    "subscriberInfo":{
+      "globalSubscriberId":"Test"
+    },
+    "requestInfo":{
+      "suppressRollback": false,
+      "productFamilyId": "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb",
+      "requestorId": "tester",
+      "instanceName":"testInstanceName",
+      "source":"test"
+    },
+    "cloudConfiguration":{
+      "lcpCloudRegionId": "RegionOne",
+      "tenantId": "7320ec4a5b9d4589ba7c4412ccfd290f",
+      "cloudOwner": "CloudOwner"
+    },
+    "requestParameters":{
+      "subscriptionServiceType": "test",
+      "userParams":[
+      {
+        "name": "key1",
+        "value": "val1"
+      },
+      {
+        "name": "key2",
+        "value": "val2"
+      }],
+      "aLaCarte": false,
+      "payload": "{\"k1\": \"v1\"}"
+      },
+      "project":{
+         "projectName": "Test"
+      },
+      "owningEntity":{
+        "owningEntityId":"67f2e84c-734d-4e90-a1e4-d2ffa2e75849",
+        "owningEntityName":"OE-Test"
+      },
+      "modelInfo":{
+        "modelVersion": "2.0",
+        "modelVersionId": "test-version-id",
+        "modelInvariantId": "test-invariantUUID",
+        "modelName": "test-name",
+        "modelType": "pnf"
+      }
+   }
 }
