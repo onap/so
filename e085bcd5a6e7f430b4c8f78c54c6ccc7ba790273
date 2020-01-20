@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7759e9f9_ec6ef7d5",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/configuration/ApplicationConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2020-01-20T16:31:51Z",
+      "side": 1,
+      "message": "wouldn\u0027t you need qualifier for this custom bean otherwise spring will inject primary bean defined in RestTemplateConfig in common module",
+      "range": {
+        "startLine": 44,
+        "startChar": 3,
+        "endLine": 44,
+        "endChar": 9
+      },
+      "revId": "e085bcd5a6e7f430b4c8f78c54c6ccc7ba790273",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c4494956_8a1b0ddb",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/configuration/SecurityConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2020-01-20T16:31:51Z",
+      "side": 1,
+      "message": "there is already WebSecurityConfigurerAdapter defined in common module see SoBasicWebSecurityConfigurerAdapter ... override it per your need",
+      "range": {
+        "startLine": 27,
+        "startChar": 1,
+        "endLine": 36,
+        "endChar": 1
+      },
+      "revId": "e085bcd5a6e7f430b4c8f78c54c6ccc7ba790273",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "73e45af8_d0b14244",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/service/AaiConnectionService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2020-01-20T16:31:51Z",
+      "side": 1,
+      "message": "as mentioned try to reuse AAIResourcesClient for getting AAI resources",
+      "range": {
+        "startLine": 50,
+        "startChar": 7,
+        "endLine": 57,
+        "endChar": 33
+      },
+      "revId": "e085bcd5a6e7f430b4c8f78c54c6ccc7ba790273",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
