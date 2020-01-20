@@ -192,11 +192,12 @@ public class InstanceManagementTest extends BaseTest {
         requestReferences.setRequestSelfLink(createExpectedSelfLink("v1", "32807a28-1a14-4b88-b7b3-2950918aa76d"));
         expectedResponse.setRequestReferences(requestReferences);
         uri = instanceManagementUri + "v1"
-                + "/serviceInstances/5df8b6de-2083-11e7-93ae-92361f002676/pnfs/testpnfcId/workflows/81526781-e55c-4cb7-adb3-97e09d9c76bf";
+                + "/serviceInstances/5df8b6de-2083-11e7-93ae-92361f002676/pnfs/testPnfName/workflows/81526781-e55c-4cb7-adb3-97e09d9c76bf";
         ResponseEntity<String> response =
                 sendRequest(inputStream("/ExecutePNFCustomWorkflow.json"), uri, HttpMethod.POST, headers);
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
+
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
     }

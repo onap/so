@@ -29,20 +29,13 @@ import com.google.common.base.Strings;
 
 public class CustomWorkflowValidation implements ValidationRule {
 
+    /**
+     * This function should be generic both for custom VNF workflow and PNF workflow
+     */
     @Override
     public ValidationInformation validate(ValidationInformation info) throws ValidationException {
         RequestParameters requestParameters = info.getSir().getRequestDetails().getRequestParameters();
-        CloudConfiguration cloudConfiguration = info.getSir().getRequestDetails().getCloudConfiguration();
 
-        if (cloudConfiguration == null) {
-            // throw new ValidationException("cloudConfiguration");
-        } else if (Strings.isNullOrEmpty((cloudConfiguration.getCloudOwner()))) {
-            // throw new ValidationException("cloudOwner");
-        } else if (Strings.isNullOrEmpty((cloudConfiguration.getLcpCloudRegionId()))) {
-            // throw new ValidationException("lcpCloudRegionId");
-        } else if (Strings.isNullOrEmpty((cloudConfiguration.getTenantId()))) {
-            // throw new ValidationException("tenantId");
-        }
         if (requestParameters == null) {
             throw new ValidationException("requestParameters");
         }
