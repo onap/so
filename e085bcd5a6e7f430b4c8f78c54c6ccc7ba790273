@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "10da6805_3d1cbada",
+        "filename": "adapters/mso-ve-vnfm-adapter/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2020-01-20T16:39:10Z",
+      "side": 1,
+      "message": "why parent is spring-boot-starter-parent?????",
+      "range": {
+        "startLine": 9,
+        "startChar": 1,
+        "endLine": 13,
+        "endChar": 13
+      },
+      "revId": "e085bcd5a6e7f430b4c8f78c54c6ccc7ba790273",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "7759e9f9_ec6ef7d5",
         "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/configuration/ApplicationConfiguration.java",
         "patchSetId": 2
