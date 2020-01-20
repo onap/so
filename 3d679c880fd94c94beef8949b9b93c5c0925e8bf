@@ -72,6 +72,53 @@
     },
     {
       "key": {
+        "uuid": "15f30fef_5acd777a",
+        "filename": "bpmn/so-bpmn-building-blocks/src/test/java/org/onap/so/bpmn/infrastructure/bpmn/subprocess/ExecuteBuildingBlockTest.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-20T13:54:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9fa609b4_1fdb16ef",
+      "range": {
+        "startLine": 44,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 2
+      },
+      "revId": "3d679c880fd94c94beef8949b9b93c5c0925e8bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "00f90524_b0c745fd",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 725,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-20T13:54:01Z",
+      "side": 1,
+      "message": "LG: Create and return locally list",
+      "range": {
+        "startLine": 725,
+        "startChar": 21,
+        "endLine": 725,
+        "endChar": 54
+      },
+      "revId": "3d679c880fd94c94beef8949b9b93c5c0925e8bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "99836dd6_01899561",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
         "patchSetId": 9
@@ -83,6 +130,30 @@
       "writtenOn": "2020-01-10T09:22:30Z",
       "side": 1,
       "message": "Wouldn\u0027t in be simpler if returned type didn\u0027t change? (If you would return executeBuildingBlock.build() instead of executeBuildingBlock).\nNow the naming is a bit confusing.",
+      "range": {
+        "startLine": 1484,
+        "startChar": 0,
+        "endLine": 1519,
+        "endChar": 35
+      },
+      "revId": "3d679c880fd94c94beef8949b9b93c5c0925e8bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "afce7495_4f7633be",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 1519,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-20T13:54:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "99836dd6_01899561",
       "range": {
         "startLine": 1484,
         "startChar": 0,
