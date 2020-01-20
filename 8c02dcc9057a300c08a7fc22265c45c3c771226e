@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "41bac43b_208b92b1",
+        "filename": "mso-catalog-db/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-01-20T17:14:52Z",
+      "side": 1,
+      "message": "i dont see any use of these, they will be imported from parent pom",
+      "range": {
+        "startLine": 110,
+        "startChar": 4,
+        "endLine": 121,
+        "endChar": 17
+      },
+      "revId": "8c02dcc9057a300c08a7fc22265c45c3c771226e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "43f5f89a_99b43706",
+        "filename": "mso-catalog-db/src/test/java/org/onap/so/db/catalog/client/CatalogDbClientTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-01-20T17:14:52Z",
+      "side": 1,
+      "message": "This file is outdated, please git pull and then change",
+      "revId": "8c02dcc9057a300c08a7fc22265c45c3c771226e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "52457a45_948fd094",
+        "filename": "mso-catalog-db/src/test/java/org/onap/so/db/catalog/client/CatalogDbClientTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-01-20T17:14:52Z",
+      "side": 1,
+      "message": "First assert that result have exactly 1 item.",
+      "range": {
+        "startLine": 203,
+        "startChar": 43,
+        "endLine": 203,
+        "endChar": 57
+      },
+      "revId": "8c02dcc9057a300c08a7fc22265c45c3c771226e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
