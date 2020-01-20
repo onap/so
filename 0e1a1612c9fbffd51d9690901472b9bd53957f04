@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ea783f0c_723e5578",
+        "filename": "common/src/main/java/org/onap/so/logger/ScheduledTasksMDCSetup.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-01-20T09:56:31Z",
+      "side": 1,
+      "message": "Hi, here you should pass Throwable object as parameter. Another thing, this should be logged as error in my opinion:\n\nlogger.error(\"Error in ScheduledTasksMDCSetup mdcSetup: \", e);",
+      "range": {
+        "startLine": 48,
+        "startChar": 12,
+        "endLine": 48,
+        "endChar": 86
+      },
+      "revId": "0e1a1612c9fbffd51d9690901472b9bd53957f04",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "65aee476_31b6d4e1",
+        "filename": "common/src/main/java/org/onap/so/logger/ScheduledTasksMDCSetup.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-01-20T09:56:31Z",
+      "side": 1,
+      "message": "the same as above",
+      "range": {
+        "startLine": 64,
+        "startChar": 12,
+        "endLine": 64,
+        "endChar": 87
+      },
+      "revId": "0e1a1612c9fbffd51d9690901472b9bd53957f04",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
