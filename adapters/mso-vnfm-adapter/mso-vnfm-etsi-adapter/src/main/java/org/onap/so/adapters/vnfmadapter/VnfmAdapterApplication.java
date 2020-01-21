@@ -27,6 +27,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
+import org.springframework.cache.annotation.EnableCaching;
 
 /**
  * The spring boot application for the VNFM (Virtual Network Function Manager) Adapter.
@@ -37,6 +38,7 @@ import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
  * @see <a href= "https://www.etsi.org/deliver/etsi_gs/NFV-SOL/001_099/003/02.05.01_60/gs_nfv-sol003v020501p.pdf">ETSI
  *      SOL003 v2.5.1</a>
  */
+@EnableCaching
 @SpringBootApplication(scanBasePackages = {"org.onap.so"})
 @EnableAutoConfiguration(exclude = {JacksonAutoConfiguration.class})
 public class VnfmAdapterApplication {

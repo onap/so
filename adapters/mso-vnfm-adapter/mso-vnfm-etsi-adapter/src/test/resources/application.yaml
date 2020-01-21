@@ -40,6 +40,7 @@ sdc:
 
 vnfmadapter:
   endpoint: https://so-vnfm-adapter.onap:30406
+  auth: D6CFE56451508B75536C5E8A1E7AE06D0346006A693BF29293A6E1C762EFD59C671911DB6E9294E4FE15E4C1C5524B
   
 #Actuator
 management:

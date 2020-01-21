@@ -21,7 +21,9 @@
 package org.onap.so.adapters.vnfmadapter.extclients.etsicatalog;
 
 import java.util.Optional;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmSubscription;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.InlineResponse2001;
+import org.springframework.http.ResponseEntity;
 
 /**
  * Provides methods for invoking REST calls to the ETSI Catalog Manager.
@@ -70,5 +72,13 @@ public interface EtsiCatalogServiceProvider {
      * @return The Package Artifact of a VNF Package ("vnfPkgId", "artifactPath").
      */
     Optional<byte[]> getVnfPackageArtifact(final String vnfPkgId, final String artifactPath);
+
+    /**
+     * Post the SubscriptionRequest Object.
+     *
+     * @return The ResponseEntity containing the ETSI Catalog Manager's PkgmSubscription object.
+     */
+    Optional<PkgmSubscription> postSubscription(
+            final org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmSubscriptionRequest etsiCatalogManagerSubscriptionRequest);
 
 }

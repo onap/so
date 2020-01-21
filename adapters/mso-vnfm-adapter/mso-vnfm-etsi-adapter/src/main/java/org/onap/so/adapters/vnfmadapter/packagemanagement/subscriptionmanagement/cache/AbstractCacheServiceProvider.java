@@ -18,29 +18,30 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.vnfmadapter;
+package org.onap.so.adapters.vnfmadapter.packagemanagement.subscriptionmanagement.cache;
+
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 
 /**
- * VNFM Adapter constants
- *
  * @author Ronan Kenny (ronan.kenny@est.tech)
  * @author Gareth Roper (gareth.roper@est.tech)
  */
-public class Constants {
+public abstract class AbstractCacheServiceProvider {
 
-    public static final String SERVICE_NAME = "vnfm-adapter";
-    public static final String SERVICE_VERSION = "v1";
-    public static final String BASE_URL = "/so/" + SERVICE_NAME + "/" + SERVICE_VERSION;
-    public static final String PACKAGE_MANAGEMENT_BASE_URL = BASE_URL + "/vnfpkgm/v1";
-    public static final String ETSI_SUBSCRIPTION_NOTIFICATION_BASE_URL = BASE_URL + "/etsicatalogmanager/notification";
-    public static final String ETSI_SUBSCRIPTION_NOTIFICATION_CONTROLLER_BASE_URL = BASE_URL + "/etsicatalogmanager";
-    public static final String APPLICATION_ZIP = "application/zip";
-    public static final String OPERATION_NOTIFICATION_ENDPOINT = "/lcn/VnfLcmOperationOccurrenceNotification";
+    private final CacheManager cacheManager;
+    private final String cacheName;
 
-    /**
-     * Name of the subscription cache
-     */
-    public static final String PACKAGE_MANAGEMENT_SUBSCRIPTION_CACHE = "PackageManagementSubscriptionCache";
+    public AbstractCacheServiceProvider(final String cacheName, final CacheManager cacheManager) {
+        this.cacheName = cacheName;
+        this.cacheManager = cacheManager;
+    }
 
-    private Constants() {}
+    public Cache getCache() {
+        final Cache cache = cacheManager.getCache(cacheName);
+        if (cache == null) {
+            throw new CacheNotFoundException("Unable to find " + cacheName + " cache");
+        }
+        return cache;
+    }
 }

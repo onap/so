@@ -21,6 +21,8 @@
 package org.onap.so.adapters.vnfmadapter.extclients.etsicatalog;
 
 import java.util.Optional;
+import javax.swing.text.html.Option;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmSubscription;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VnfPkgInfo;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.InlineResponse2001;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.*;
@@ -102,6 +104,7 @@ public class EtsiCatalogServiceProviderImpl implements EtsiCatalogServiceProvide
             if (response.getStatusCode() == HttpStatus.OK) {
                 if (response.hasBody()) {
                     final VnfPkgInfo[] vnfPackages = response.getBody();
+                    assert (vnfPackages != null);
                     final InlineResponse2001[] responses = new InlineResponse2001[vnfPackages.length];
                     for (int index = 0; index < vnfPackages.length; index++) {
                         if (conversionService.canConvert(vnfPackages[index].getClass(), InlineResponse2001.class)) {
@@ -113,7 +116,7 @@ public class EtsiCatalogServiceProviderImpl implements EtsiCatalogServiceProvide
                         }
                         logger.error("Unable to find Converter for response class: {}", vnfPackages[index].getClass());
                     }
-                    return Optional.ofNullable(responses);
+                    return Optional.of(responses);
                 }
                 logger.error("Received response without body ...");
             }
@@ -168,6 +171,33 @@ public class EtsiCatalogServiceProviderImpl implements EtsiCatalogServiceProvide
         final String vnfRequestUrl = etsiCatalogUrlProvider.getVnfPackageVnfdUrl(vnfPkgId);
         final String vnfRequestName = "getVnfPackageVnfd";
         return requestVnfElement(vnfPkgId, vnfRequestUrl, vnfRequestName);
+    }
+
+    @Override
+    public Optional<PkgmSubscription> postSubscription(
+            final org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmSubscriptionRequest etsiCatalogManagerSubscriptionRequest) {
+        try {
+            final ResponseEntity<PkgmSubscription> responseEntity =
+                    httpServiceProvider.postHttpRequest(etsiCatalogManagerSubscriptionRequest,
+                            etsiCatalogUrlProvider.getSubscriptionUrl(), PkgmSubscription.class);
+            if (responseEntity.getStatusCode() == HttpStatus.OK) {
+                if (responseEntity.hasBody()) {
+                    return Optional.of(responseEntity.getBody());
+                }
+                logger.error("Received response without body on postSubscription");
+            }
+            logger.error("Unexpected Status Code Received on postSubscription: {}", responseEntity.getStatusCode());
+            return Optional.empty();
+        } catch (final InvalidRestRequestException invalidRestRequestException) {
+            logger.error("Caught InvalidRestRequestException", invalidRestRequestException);
+            throw new EtsiCatalogManagerBadRequestException("Bad Request Received on postSubscription call.");
+        } catch (final RestProcessingException restProcessingException) {
+            logger.error("Caught RestProcessingException with Status Code: {}", restProcessingException.getStatusCode(),
+                    restProcessingException);
+            throw new EtsiCatalogManagerRequestFailureException(
+                    "Internal Server Error Occurred. On postSubscription with StatusCode: "
+                            + restProcessingException.getStatusCode());
+        }
     }
 
     private Optional<byte[]> requestVnfElement(final String vnfPkgId, final String vnfRequestUrl,

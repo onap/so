@@ -23,7 +23,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
 import java.util.Collection;
-import org.onap.so.adapters.vnfmadapter.converters.Sol003EtsiVnfPkgInfoToPkgmInlineResponse2001Converter;
+import org.onap.so.adapters.vnfmadapter.converters.etsicatalog.sol003.VnfPkgInfoConverter;
+import org.onap.so.adapters.vnfmadapter.converters.sol003.etsicatalog.PkgmSubscriptionRequestConverter;
 import org.onap.so.adapters.vnfmadapter.oauth.OAuth2AccessTokenAdapter;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.context.annotation.Bean;
@@ -43,7 +44,8 @@ public class MessageConverterConfiguration {
     @Bean
     public ConversionService conversionService() {
         final DefaultConversionService service = new DefaultConversionService();
-        service.addConverter(new Sol003EtsiVnfPkgInfoToPkgmInlineResponse2001Converter());
+        service.addConverter(new VnfPkgInfoConverter());
+        service.addConverter(new PkgmSubscriptionRequestConverter());
         return service;
     }
 

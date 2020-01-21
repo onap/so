@@ -18,28 +18,36 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.vnfmadapter.converters;
+package org.onap.so.adapters.vnfmadapter.converters.etsicatalog.sol003;
 
-import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.*;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.*;
+import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.List;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VnfPkgInfo;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.InlineResponse2001;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.VnfPackagesChecksum;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.VnfPackagesSoftwareImages;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VnfPackageSoftwareImageInfo;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.VnfPackagesAdditionalArtifacts;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VnfPackageArtifactInfo;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.VnfPackagesLinks;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.VnfPackagesLinksSelf;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VNFPKGMLinkSerializer;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.Checksum;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.UriLink;
 
 /**
- * Converter to convert from an Etsi Catalog Model {@link VnfPkgInfo} Object to a PackageManagement Model
+ * Converter to convert from an Etsi Catalog Manager {@link VnfPkgInfo} Object to its equivalent SOL003 Object
  * {@link InlineResponse2001} Object
  *
  * @author andrew.a.lamb@est.tech
  */
 @Service
-public class Sol003EtsiVnfPkgInfoToPkgmInlineResponse2001Converter
-        implements Converter<VnfPkgInfo, InlineResponse2001> {
-    private static final Logger logger =
-            LoggerFactory.getLogger(Sol003EtsiVnfPkgInfoToPkgmInlineResponse2001Converter.class);
+public class VnfPkgInfoConverter implements Converter<VnfPkgInfo, InlineResponse2001> {
+    private static final Logger logger = LoggerFactory.getLogger(VnfPkgInfoConverter.class);
 
     /**
      * Convert a {@link VnfPkgInfo} Object to an {@link InlineResponse2001} Object
