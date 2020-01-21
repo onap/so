@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1a52v2f" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.5.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1a52v2f" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.0.3">
   <bpmn:collaboration id="Collaboration_0go8wi3">
     <bpmn:participant id="Participant_1dwc5st" name="SO&#10;Assign PNF" processRef="AssignPnfBB" />
     <bpmn:participant id="Participant_0gycee4" name="AAI" />
@@ -20,7 +20,7 @@
       <bpmn:outgoing>SequenceFlow_0fn5kgz</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_1ewfz8r</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="CreatePnfEntryInAai" name="Create Pnf entry in AAI" camunda:expression="${CreatePnfEntryInAai.execute(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn:serviceTask id="CreatePnfEntryInAai" name="Create Pnf entry in AAI" camunda:expression="${AAICreateTasks.createPnf(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_0fn5kgz</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0l6rtzy</bpmn:outgoing>
     </bpmn:serviceTask>

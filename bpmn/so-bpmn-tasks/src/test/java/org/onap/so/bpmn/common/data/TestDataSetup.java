@@ -740,4 +740,11 @@ public class TestDataSetup {
         networkPolicy.setHeatStackId("testHeatStackId");
         return networkPolicy;
     }
+
+    protected Pnf preparePnf() {
+        Pnf pnf = new Pnf();
+        pnf.setPnfId("NOK6061ZW3");
+        pnf.setPnfName("example-pnf-id-val-55834");
+        return pnf;
+    }
 }
