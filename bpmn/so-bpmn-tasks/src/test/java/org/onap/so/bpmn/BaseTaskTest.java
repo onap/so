@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2020 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,6 +42,7 @@ import org.onap.so.client.orchestration.AAICollectionResources;
 import org.onap.so.client.orchestration.AAIConfigurationResources;
 import org.onap.so.client.orchestration.AAIInstanceGroupResources;
 import org.onap.so.client.orchestration.AAINetworkResources;
+import org.onap.so.client.orchestration.AAIPnfResources;
 import org.onap.so.client.orchestration.AAIServiceInstanceResources;
 import org.onap.so.client.orchestration.AAIVfModuleResources;
 import org.onap.so.client.orchestration.AAIVnfResources;
@@ -67,6 +70,9 @@ public abstract class BaseTaskTest extends TestDataSetup {
 
     @Mock
     protected AAIVnfResources aaiVnfResources;
+
+    @Mock
+    protected AAIPnfResources aaiPnfResources;
 
     @Mock
     protected AAIVfModuleResources aaiVfModuleResources;

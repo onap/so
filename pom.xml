@@ -503,16 +503,16 @@
         <version>3.0.0-M3</version>
         <executions>
           <execution>
-           <id>enforce-property</id>
-           <configuration>
-             <skip>true</skip>
-           </configuration>
+            <id>enforce-property</id>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
           </execution>
           <execution>
-           <id>enforce-no-snapshots</id>
-           <configuration>
-             <skip>true</skip>
-           </configuration>
+            <id>enforce-no-snapshots</id>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
           </execution>
           <execution>
             <id>enforce-banned-dependencies</id>
