@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2020 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -85,6 +87,10 @@ public class AAIObjectMapper {
         }
 
         return modelMapper.map(vnf, org.onap.aai.domain.yang.GenericVnf.class);
+    }
+
+    public org.onap.aai.domain.yang.Pnf mapPnf(Pnf pnf) {
+        return modelMapper.map(pnf, org.onap.aai.domain.yang.Pnf.class);
     }
 
     public org.onap.aai.domain.yang.VfModule mapVfModule(VfModule vfModule) {
