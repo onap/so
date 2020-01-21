@@ -46,6 +46,29 @@
       "revId": "86bbcec53197dc5ba3788d208b90c1d55cbcf401",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c0b7619e_2a39c96a",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/test/java/org/onap/so/adapters/vevnfm/controller/NotificationControllerTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2020-01-21T15:42:09Z",
+      "side": 1,
+      "message": "would suggest to enhance this code to using springboot framework for testing endpoints i.e. use SpringBootTest annotation ... see VnfmAdapterControllerTest or SoMonitoringControllerTest for example",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 39,
+        "endChar": 1
+      },
+      "revId": "86bbcec53197dc5ba3788d208b90c1d55cbcf401",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
