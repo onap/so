@@ -76,6 +76,8 @@ public final class CryptoUtils {
      * @throws GeneralSecurityException
      */
     public static String decrypt(String message, String keyString) throws GeneralSecurityException {
+        if (message.equals(System.getenv("PLAINTEXTPASSWORD")))
+            return message;
         SecretKeySpec sks = getSecretKeySpec(keyString);
         byte[] cipherText = hexStringToByteArray(message);
         Cipher cipher = Cipher.getInstance(AES_GCM_NO_PADDING);
