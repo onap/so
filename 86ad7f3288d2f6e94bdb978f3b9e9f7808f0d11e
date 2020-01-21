@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "1e0c92e9_a16e6c20",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/InstanceManagement.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 4801
+      },
+      "writtenOn": "2020-01-21T01:07:45Z",
+      "side": 1,
+      "message": "Since this processPNFCustomWorkflowRequest should be generic for all custom PNF workflow, user parameters which is specific for PNF Software upgrade UC will not be processed here. Instead, UC-specific user parameters should be processed in certain workflows (maybe in corresponding BBs or its preprocessing steps)",
+      "parentUuid": "4b168518_62601474",
+      "revId": "86ad7f3288d2f6e94bdb978f3b9e9f7808f0d11e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "abe655bc_e8bce6c7",
         "filename": "mso-api-handlers/mso-api-handler-infra/src/test/resources/ServiceInstanceTest/ExecutePNFCustomWorkflow.json",
         "patchSetId": 1
@@ -30,6 +48,30 @@
       "writtenOn": "2020-01-20T17:01:34Z",
       "side": 1,
       "message": "I know this is just a test case but still it should reflect correct inputs. Why are you sending blueprint information in vid request. BP information should come from PnfResourceCustomization table.\n\nThis request should somewhat look like this\n\n{ \n   \"requestDetails\":{ \n      \"subscriberInfo\":{ \n         \"globalSubscriberId\":\"Demonstration\"\n      },\n      \"requestInfo\":{ \n         \"suppressRollback\":false,\n         \"productFamilyId\":\"a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb\",\n         \"requestorId\":\"adt\",\n         \"instanceName\":\"{{cds-instance-name}}\",\n         \"source\":\"VID\"\n      },\n      \"cloudConfiguration\":{ \n         \"lcpCloudRegionId\":\"RegionOne\",\n         \"tenantId\":\"7320ec4a5b9d4589ba7c4412ccfd290f\",\n         \"cloudOwner\":\"CloudOwner\"\n      },\n      \"requestParameters\":{ \n         \"subscriptionServiceType\":\"vIMS\",\n         \"userParams\":[ \n            {\n               \"name\": \"targetSoftwareVersion\",\n               \"value\": \"v2.2\"\n            }\n         ],\n         \"aLaCarte\":false,\n         \"payload\": \"[{\\\"GNBDUFunction\\\":{\\\"gNBId\\\":1,\\\"gNBDUId\\\":5}}]\"\n      },\n      \"project\":{ \n         \"projectName\":\"Project-Demonstration\"\n      },\n      \"owningEntity\":{ \n         \"owningEntityId\":\"67f2e84c-734d-4e90-a1e4-d2ffa2e75849\",\n         \"owningEntityName\":\"OE-Demonstration\"\n      },\n      \"modelInfo\":{ \n         \"modelVersion\":\"2.0\",\n         \"modelVersionId\":\"{{service-uuid}}\",\n         \"modelInvariantId\":\"{{service-invariantUUID}}\",\n         \"modelName\":\"{{service-name}}\",\n         \"modelType\":\"service\"\n      }\n   }\n}",
+      "range": {
+        "startLine": 5,
+        "startChar": 9,
+        "endLine": 9,
+        "endChar": 26
+      },
+      "revId": "86ad7f3288d2f6e94bdb978f3b9e9f7808f0d11e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e6629bf4_f4e593b8",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/resources/ServiceInstanceTest/ExecutePNFCustomWorkflow.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 4801
+      },
+      "writtenOn": "2020-01-21T01:07:45Z",
+      "side": 1,
+      "message": "Correct! will fix it in a more generic way in following patch.",
+      "parentUuid": "abe655bc_e8bce6c7",
       "range": {
         "startLine": 5,
         "startChar": 9,
