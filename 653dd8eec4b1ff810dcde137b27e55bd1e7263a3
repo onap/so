@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "b33ef7c3_5baf36de",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-01-21T12:23:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "eda2c7f0_1e01da60",
+      "range": {
+        "startLine": 51,
+        "startChar": 21,
+        "endLine": 51,
+        "endChar": 34
+      },
+      "revId": "653dd8eec4b1ff810dcde137b27e55bd1e7263a3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4d55b973_cd041716",
         "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
         "patchSetId": 3
@@ -59,6 +83,30 @@
       "writtenOn": "2020-01-16T14:22:12Z",
       "side": 1,
       "message": "same like above",
+      "range": {
+        "startLine": 65,
+        "startChar": 36,
+        "endLine": 65,
+        "endChar": 37
+      },
+      "revId": "653dd8eec4b1ff810dcde137b27e55bd1e7263a3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7b2a2024_f759e1f5",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-01-21T12:23:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4d55b973_cd041716",
       "range": {
         "startLine": 65,
         "startChar": 36,
@@ -91,6 +139,30 @@
       "revId": "653dd8eec4b1ff810dcde137b27e55bd1e7263a3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c7aeb64f_90c8da2e",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 999,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-01-21T12:23:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "55b442bc_4c45e778",
+      "range": {
+        "startLine": 998,
+        "startChar": 50,
+        "endLine": 999,
+        "endChar": 115
+      },
+      "revId": "653dd8eec4b1ff810dcde137b27e55bd1e7263a3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -165,6 +237,30 @@
     },
     {
       "key": {
+        "uuid": "479c349b_0d578a78",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1050,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-01-21T12:23:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8ec56a49_70e4055d",
+      "range": {
+        "startLine": 1040,
+        "startChar": 4,
+        "endLine": 1050,
+        "endChar": 5
+      },
+      "revId": "653dd8eec4b1ff810dcde137b27e55bd1e7263a3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a0af547e_3fab9b58",
         "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
         "patchSetId": 3
@@ -176,6 +272,30 @@
       "writtenOn": "2020-01-16T14:22:12Z",
       "side": 1,
       "message": "same here",
+      "range": {
+        "startLine": 1052,
+        "startChar": 2,
+        "endLine": 1063,
+        "endChar": 5
+      },
+      "revId": "653dd8eec4b1ff810dcde137b27e55bd1e7263a3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27df874d_5e042f97",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1063,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-01-21T12:23:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a0af547e_3fab9b58",
       "range": {
         "startLine": 1052,
         "startChar": 2,
@@ -211,6 +331,30 @@
     },
     {
       "key": {
+        "uuid": "7b61e121_e86b20de",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1066,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-01-21T12:23:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "db0a47ee_bd83f8ba",
+      "range": {
+        "startLine": 1066,
+        "startChar": 53,
+        "endLine": 1066,
+        "endChar": 54
+      },
+      "revId": "653dd8eec4b1ff810dcde137b27e55bd1e7263a3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8ebe791c_b58063c4",
         "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
         "patchSetId": 3
@@ -222,6 +366,30 @@
       "writtenOn": "2020-01-16T14:22:12Z",
       "side": 1,
       "message": "same here",
+      "range": {
+        "startLine": 1066,
+        "startChar": 2,
+        "endLine": 1076,
+        "endChar": 5
+      },
+      "revId": "653dd8eec4b1ff810dcde137b27e55bd1e7263a3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2c8919f8_a0662f3b",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1076,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-01-21T12:23:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8ebe791c_b58063c4",
       "range": {
         "startLine": 1066,
         "startChar": 2,
@@ -257,6 +425,30 @@
     },
     {
       "key": {
+        "uuid": "8840f608_22abe013",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1092,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-01-21T12:23:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0457e6b0_2ecc955c",
+      "range": {
+        "startLine": 1078,
+        "startChar": 3,
+        "endLine": 1092,
+        "endChar": 5
+      },
+      "revId": "653dd8eec4b1ff810dcde137b27e55bd1e7263a3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f82ffa38_37ff500e",
         "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
         "patchSetId": 3
@@ -277,6 +469,30 @@
       "revId": "653dd8eec4b1ff810dcde137b27e55bd1e7263a3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "745f298e_8190623a",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1097,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-01-21T12:23:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f82ffa38_37ff500e",
+      "range": {
+        "startLine": 1094,
+        "startChar": 0,
+        "endLine": 1097,
+        "endChar": 5
+      },
+      "revId": "653dd8eec4b1ff810dcde137b27e55bd1e7263a3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
