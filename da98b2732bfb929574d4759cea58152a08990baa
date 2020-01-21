@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "860fdb43_a20d74b0",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetup.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 776,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-01-21T15:24:58Z",
+      "side": 1,
+      "message": "because you left this line it seems that code above is useless",
+      "revId": "da98b2732bfb929574d4759cea58152a08990baa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
