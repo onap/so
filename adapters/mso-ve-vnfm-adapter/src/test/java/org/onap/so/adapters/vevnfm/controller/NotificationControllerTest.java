@@ -33,8 +33,8 @@ public class NotificationControllerTest {
 
     @Test
     public void testReceiveNotification() {
-        final VnfLcmOperationOccurrenceNotification notification
-                = new VnfLcmOperationOccurrenceNotification();
+
+        final VnfLcmOperationOccurrenceNotification notification = new VnfLcmOperationOccurrenceNotification();
         final ResponseEntity response = controller.receiveNotification(notification);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }

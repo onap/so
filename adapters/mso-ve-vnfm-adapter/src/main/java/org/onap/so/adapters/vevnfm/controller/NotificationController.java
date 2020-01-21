@@ -35,6 +35,7 @@ public class NotificationController {
 
     @PostMapping("${notification.url}")
     public ResponseEntity receiveNotification(@RequestBody final VnfLcmOperationOccurrenceNotification notification) {
+
         logger.info("Notification received {}", notification);
         return ResponseEntity.ok().build();
     }
