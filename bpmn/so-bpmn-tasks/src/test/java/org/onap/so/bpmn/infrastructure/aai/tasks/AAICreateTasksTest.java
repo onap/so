@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2020 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -55,6 +57,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.LineOfBusiness;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.NetworkPolicy;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Platform;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
@@ -74,6 +77,7 @@ public class AAICreateTasksTest extends BaseTaskTest {
     private ServiceInstance serviceInstance;
     private L3Network network;
     private GenericVnf genericVnf;
+    private Pnf pnf;
     private VolumeGroup volumeGroup;
     private CloudRegion cloudRegion;
     private VfModule vfModule;
@@ -93,6 +97,7 @@ public class AAICreateTasksTest extends BaseTaskTest {
         serviceInstance = setServiceInstance();
         network = setL3Network();
         genericVnf = setGenericVnf();
+        pnf = buildPnf();
         volumeGroup = setVolumeGroup();
         cloudRegion = setCloudRegion();
         vfModule = setVfModule();
@@ -101,6 +106,7 @@ public class AAICreateTasksTest extends BaseTaskTest {
 
         when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID)))
                 .thenReturn(genericVnf);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.PNF))).thenReturn(pnf);
         when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
         when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.NETWORK_ID))).thenReturn(network);
         when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.VOLUME_GROUP_ID)))
@@ -324,6 +330,18 @@ public class AAICreateTasksTest extends BaseTaskTest {
         verify(aaiVnfResources, times(1)).createVnfandConnectServiceInstance(genericVnf, serviceInstance);
     }
 
+    @Test
+    public void createPnfShouldCallCreatePnfAndConnectServiceInstance() {
+        aaiCreateTasks.createPnf(execution);
+        verify(aaiPnfResources, times(1)).createPnfAndConnectServiceInstance(pnf, serviceInstance);
+    }
+
+    @Test
+    public void createPnfShouldThrowBpmnErrorWhenPnfIsNotFound() throws BBObjectNotFoundException {
+        expectedException.expect(BpmnError.class);
+        doThrow(BBObjectNotFoundException.class).when(extractPojosForBB).extractByKey(execution, ResourceKey.PNF);
+        aaiCreateTasks.createPnf(execution);
+    }
 
     @Test
     public void createVfModuleTest() throws Exception {
