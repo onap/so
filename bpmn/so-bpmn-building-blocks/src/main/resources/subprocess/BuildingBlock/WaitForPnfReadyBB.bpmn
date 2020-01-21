@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.5.0">
+  <bpmn:collaboration id="Collaboration_1d0w8lf">
+    <bpmn:participant id="WaitForPnfReadyBB_ID" name="SO&#10;Wait For Pnf Ready" processRef="WaitForPnfReadyBB" />
+    <bpmn:participant id="WorkflowMessageServiceForDmaap" name="Workflow Message Service&#10;(communication with DMAAP)&#10;" />
+    <bpmn:messageFlow id="MessageFlow_1vrcp2d" sourceRef="WorkflowMessageServiceForDmaap" targetRef="WaitForDmaapPnfReadyNotification" />
+    <bpmn:messageFlow id="MessageFlow_0tg4hw9" sourceRef="RegisterForPnfReadyEvent" targetRef="WorkflowMessageServiceForDmaap" />
+    <bpmn:messageFlow id="MessageFlow_1py54jr" sourceRef="UnregisterfromPnfReadyEvent" targetRef="WorkflowMessageServiceForDmaap" />
+  </bpmn:collaboration>
+  <bpmn:process id="WaitForPnfReadyBB" name="WaitForPnfReadyBB" isExecutable="true">
+    <bpmn:startEvent id="WaitForPnfReady_StartEvent">
+      <bpmn:outgoing>SequenceFlow_1jzs6dp</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="RegisterForPnfReadyEvent" name="Register for Pnf Ready Event" camunda:delegateExpression="${RegisterForPnfReadyEvent}">
+      <bpmn:incoming>SequenceFlow_1jzs6dp</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1o8od8e</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1miyzfe" sourceRef="UnregisterfromPnfReadyEvent" targetRef="ThrowTimeoutException" />
+    <bpmn:sequenceFlow id="SequenceFlow_0p09qgm" sourceRef="WaitForDmaapPnfReadyNotification" targetRef="AaiEntryUpdated" />
+    <bpmn:sequenceFlow id="SequenceFlow_1o8od8e" sourceRef="RegisterForPnfReadyEvent" targetRef="WaitForDmaapPnfReadyNotification" />
+    <bpmn:sequenceFlow id="SequenceFlow_1kc34bc" sourceRef="WaitForDmaapTimeout" targetRef="UnregisterfromPnfReadyEvent" />
+    <bpmn:sequenceFlow id="SequenceFlow_1jzs6dp" sourceRef="WaitForPnfReady_StartEvent" targetRef="RegisterForPnfReadyEvent" />
+    <bpmn:receiveTask id="WaitForDmaapPnfReadyNotification" name="Wait for DMAAP pnf-ready notification" messageRef="Message_13h1tlo">
+      <bpmn:incoming>SequenceFlow_1o8od8e</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0p09qgm</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:boundaryEvent id="WaitForDmaapTimeout" name="Timeout" attachedToRef="WaitForDmaapPnfReadyNotification">
+      <bpmn:outgoing>SequenceFlow_1kc34bc</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">#{timeoutForPnfEntryNotification}</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:serviceTask id="UnregisterfromPnfReadyEvent" name="Unregister from Pnf Ready Event" camunda:delegateExpression="${CancelDmaapSubscription}">
+      <bpmn:incoming>SequenceFlow_1kc34bc</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1miyzfe</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="ThrowTimeoutException" name="Throw timeout exception">
+      <bpmn:incoming>SequenceFlow_1miyzfe</bpmn:incoming>
+      <bpmn:errorEventDefinition errorRef="Error_1" />
+    </bpmn:endEvent>
+    <bpmn:endEvent id="AaiEntryUpdated" name="AAI entry updated">
+      <bpmn:incoming>SequenceFlow_0p09qgm</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:textAnnotation id="TextAnnotation_1eyzes8">
+      <bpmn:text>Inputs:
+ - pnf name - String</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0d7oxnz" sourceRef="WaitForPnfReady_StartEvent" targetRef="TextAnnotation_1eyzes8" />
+  </bpmn:process>
+  <bpmn:error id="Error_1" name="MSO Workflow Exception" errorCode="MSOWorkflowException" />
+  <bpmn:message id="Message_13h1tlo" name="WorkflowMessage" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1d0w8lf">
+      <bpmndi:BPMNShape id="Participant_1egg397_di" bpmnElement="WaitForPnfReadyBB_ID" isHorizontal="true">
+        <dc:Bounds x="160" y="50" width="810" height="400" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0k52gr7_di" bpmnElement="AaiEntryUpdated">
+        <dc:Bounds x="882" y="189" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="858" y="230" width="88" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_0j5ok9h_di" bpmnElement="WaitForPnfReady_StartEvent">
+        <dc:Bounds x="219" y="189" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-80" y="228" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Participant_0vmrrhf_di" bpmnElement="WorkflowMessageServiceForDmaap" isHorizontal="true">
+        <dc:Bounds x="340" y="490" width="463" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0wbx6tt_di" bpmnElement="ThrowTimeoutException">
+        <dc:Bounds x="882" y="322" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="875" y="359" width="70" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1eyzes8_di" bpmnElement="TextAnnotation_1eyzes8">
+        <dc:Bounds x="236" y="70" width="243" height="39" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0d7oxnz_di" bpmnElement="Association_0d7oxnz">
+        <di:waypoint x="237" y="189" />
+        <di:waypoint x="237" y="109" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MessageFlow_1vrcp2d_di" bpmnElement="MessageFlow_1vrcp2d">
+        <di:waypoint x="582" y="490" />
+        <di:waypoint x="582" y="247" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="996" y="380" width="90" height="10" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BoundaryEvent_15eo1k9_di" bpmnElement="WaitForDmaapTimeout">
+        <dc:Bounds x="596" y="229" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="639" y="240" width="40" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1kc34bc_di" bpmnElement="SequenceFlow_1kc34bc">
+        <di:waypoint x="614" y="265" />
+        <di:waypoint x="614" y="340" />
+        <di:waypoint x="710" y="340" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1028" y="309" width="90" height="10" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ReceiveTask_1sfysua_di" bpmnElement="WaitForDmaapPnfReadyNotification">
+        <dc:Bounds x="530" y="167" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0p09qgm_di" bpmnElement="SequenceFlow_0p09qgm">
+        <di:waypoint x="630" y="207" />
+        <di:waypoint x="882" y="207" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1106.5" y="187" width="90" height="10" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1o8od8e_di" bpmnElement="SequenceFlow_1o8od8e">
+        <di:waypoint x="440" y="207" />
+        <di:waypoint x="530" y="207" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="893.5" y="187" width="90" height="10" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MessageFlow_0tg4hw9_di" bpmnElement="MessageFlow_0tg4hw9">
+        <di:waypoint x="390" y="247" />
+        <di:waypoint x="390" y="490" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="823" y="380" width="90" height="10" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1iax11n_di" bpmnElement="RegisterForPnfReadyEvent">
+        <dc:Bounds x="340" y="167" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1miyzfe_di" bpmnElement="SequenceFlow_1miyzfe">
+        <di:waypoint x="810" y="340" />
+        <di:waypoint x="882" y="340" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1233.5" y="343" width="90" height="10" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MessageFlow_1py54jr_di" bpmnElement="MessageFlow_1py54jr">
+        <di:waypoint x="760" y="380" />
+        <di:waypoint x="760" y="490" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1165" y="458" width="90" height="10" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_12j7hox_di" bpmnElement="UnregisterfromPnfReadyEvent">
+        <dc:Bounds x="710" y="300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1jzs6dp_di" bpmnElement="SequenceFlow_1jzs6dp">
+        <di:waypoint x="255" y="207" />
+        <di:waypoint x="340" y="207" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
