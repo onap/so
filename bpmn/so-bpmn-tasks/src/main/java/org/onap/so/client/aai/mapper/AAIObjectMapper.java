@@ -87,6 +87,10 @@ public class AAIObjectMapper {
         return modelMapper.map(vnf, org.onap.aai.domain.yang.GenericVnf.class);
     }
 
+    public org.onap.aai.domain.yang.Pnf mapPnf(Pnf pnf) {
+        return modelMapper.map(pnf, org.onap.aai.domain.yang.Pnf.class);
+    }
+
     public org.onap.aai.domain.yang.VfModule mapVfModule(VfModule vfModule) {
         if (modelMapper.getTypeMap(VfModule.class, org.onap.aai.domain.yang.VfModule.class) == null) {
             modelMapper.addMappings(new PropertyMap<VfModule, org.onap.aai.domain.yang.VfModule>() {

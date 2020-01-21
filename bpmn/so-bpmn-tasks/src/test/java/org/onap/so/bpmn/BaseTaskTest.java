@@ -40,6 +40,7 @@ import org.onap.so.client.orchestration.AAICollectionResources;
 import org.onap.so.client.orchestration.AAIConfigurationResources;
 import org.onap.so.client.orchestration.AAIInstanceGroupResources;
 import org.onap.so.client.orchestration.AAINetworkResources;
+import org.onap.so.client.orchestration.AAIPnfResources;
 import org.onap.so.client.orchestration.AAIServiceInstanceResources;
 import org.onap.so.client.orchestration.AAIVfModuleResources;
 import org.onap.so.client.orchestration.AAIVnfResources;
@@ -67,6 +68,9 @@ public abstract class BaseTaskTest extends TestDataSetup {
 
     @Mock
     protected AAIVnfResources aaiVnfResources;
+
+    @Mock
+    protected AAIPnfResources aaiPnfResources;
 
     @Mock
     protected AAIVfModuleResources aaiVfModuleResources;
