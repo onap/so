@@ -6,6 +6,8 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
+ * Modifications Copyright (c) 2020 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,6 +31,7 @@ import java.util.TreeSet;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.onap.so.client.orchestration.AAIPnfResources;
 import org.onap.so.logger.LoggingAnchor;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
@@ -50,7 +53,6 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
-import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.DuplicateNameException;
 import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
@@ -86,6 +88,8 @@ public class AAICreateTasks {
     private AAIServiceInstanceResources aaiSIResources;
     @Autowired
     private AAIVnfResources aaiVnfResources;
+    @Autowired
+    private AAIPnfResources aaiPnfResources;
     @Autowired
     private ExceptionBuilder exceptionUtil;
     @Autowired
@@ -249,6 +253,18 @@ public class AAICreateTasks {
             aaiVnfResources.createVnfandConnectServiceInstance(vnf, serviceInstance);
         } catch (Exception ex) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
+    public void createPnf(BuildingBlockExecution execution) {
+        try {
+            org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf pnf =
+                    extractPojosForBB.extractByKey(execution, ResourceKey.PNF);
+            ServiceInstance serviceInstance =
+                    extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+            aaiPnfResources.createPnfandConnectServiceInstance(pnf, serviceInstance);
+        } catch (BBObjectNotFoundException e) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, e);
         }
     }
 
