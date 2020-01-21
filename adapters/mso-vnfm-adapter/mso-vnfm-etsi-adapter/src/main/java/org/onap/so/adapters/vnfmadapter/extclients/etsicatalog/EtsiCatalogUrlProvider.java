@@ -99,4 +99,15 @@ public class EtsiCatalogUrlProvider {
         logger.info("getEtsiCatalogVnfPackageVnfd: {}", url);
         return url;
     }
+
+    /**
+     * Get the URL for posting/retrieving a Subscription
+     *
+     * @return the URL for the operation
+     */
+    public String getSubscriptionUrl() {
+        final String url = etsiCatalogManagerEndpoint + "/subscriptions";
+        logger.info("getSubscriptionNotificationUrl: {}", url);
+        return url;
+    }
 }

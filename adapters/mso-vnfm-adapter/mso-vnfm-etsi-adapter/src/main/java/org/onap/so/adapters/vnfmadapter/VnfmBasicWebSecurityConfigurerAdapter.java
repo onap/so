@@ -23,14 +23,16 @@
 package org.onap.so.adapters.vnfmadapter;
 
 import org.onap.so.security.SoBasicWebSecurityConfigurerAdapter;
+import org.onap.so.security.SoUserCredentialConfiguration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
-
 /**
  * @author Waqas Ikram (waqas.ikram@est.tech)
+ * @author Gareth Roper (gareth.roper@est.tech)
  *
  */
 @EnableWebSecurity
@@ -39,6 +41,7 @@ public class VnfmBasicWebSecurityConfigurerAdapter extends SoBasicWebSecurityCon
 
     @Value("${server.ssl.client-auth:none}")
     private String clientAuth;
+    SoUserCredentialConfiguration soUserCredentialConfiguration;
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
@@ -46,8 +49,8 @@ public class VnfmBasicWebSecurityConfigurerAdapter extends SoBasicWebSecurityCon
             http.csrf().disable().authorizeRequests().anyRequest().permitAll();
         } else {
             super.configure(http);
+            http.authorizeRequests().antMatchers(HttpMethod.GET, "/etsi/subscription/notification").permitAll();
         }
     }
-
 }
 

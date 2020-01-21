@@ -48,6 +48,30 @@ public class Sol003PackageManagementControllerExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problemDetails);
     }
 
+    @ExceptionHandler(EtsiCatalogManagerBadRequestException.class)
+    public ResponseEntity<ProblemDetails> handleEtsiCatalogManagerBadRequestFailureException(
+            final EtsiCatalogManagerBadRequestException etsiCatalogManagerBadRequestException) {
+        final ProblemDetails problemDetails = new ProblemDetails();
+        problemDetails.setDetail(etsiCatalogManagerBadRequestException.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetails);
+    }
+
+    @ExceptionHandler(SubscriptionNotFoundException.class)
+    public ResponseEntity<ProblemDetails> handleSubscriptionNotFoundException(
+            final SubscriptionNotFoundException subscriptionNotFoundException) {
+        final ProblemDetails problemDetails = new ProblemDetails();
+        problemDetails.setDetail(subscriptionNotFoundException.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problemDetails);
+    }
+
+    @ExceptionHandler(SubscriptionRequestConversionException.class)
+    public ResponseEntity<ProblemDetails> handleSubscriptionRequestConversionException(
+            final SubscriptionRequestConversionException subscriptionRequestConversionException) {
+        final ProblemDetails problemDetails = new ProblemDetails();
+        problemDetails.setDetail(subscriptionRequestConversionException.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problemDetails);
+    }
+
     @ExceptionHandler(VnfPkgConflictException.class)
     public ResponseEntity<ProblemDetails> handleVnfPkgConflictException(
             final VnfPkgConflictException vnfPkgConflictException) {
