@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cb42643c_9881d79d",
+        "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/onap/so/bpmn/common/scripts/MsoUtils.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 376,
+      "author": {
+        "id": 97
+      },
+      "writtenOn": "2020-01-22T16:05:55Z",
+      "side": 1,
+      "message": "Why have these annotations been commented out?",
+      "revId": "20ddc445af0a0035f582b681b3bce3fc5e8fd668",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
