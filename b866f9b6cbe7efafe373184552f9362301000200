@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "62ecd31c_040cc4aa",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1080,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-01-22T13:01:49Z",
+      "side": 1,
+      "message": "This method only tests scenario when there are no AAI resources, while the name suggests that this is comprehensive test. Could you change the name of this test? Perhaps add \"_noAAIResources\". \n\nThis applies to other tests which only checks empty/null responses.",
+      "revId": "b866f9b6cbe7efafe373184552f9362301000200",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
