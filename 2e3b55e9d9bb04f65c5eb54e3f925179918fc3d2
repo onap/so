@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7f9cc68_33b92b30",
+        "filename": "bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/BuildingBlock/WaitForPnfReadyBB.bpmn",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-01-22T16:13:28Z",
+      "side": 1,
+      "message": "I noticed that there\u0027s this CancelDmaapClientSubscription task which uses old implementation from CancelDmaapSubscription. I think we need to migrate it too to BB-based code.",
+      "revId": "2e3b55e9d9bb04f65c5eb54e3f925179918fc3d2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "84423cb0_fba20084",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/RegisterForDmaapClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-01-22T16:13:28Z",
+      "side": 1,
+      "message": "Could we call it RegisterForDmaapEvent? It better describes what it actually does.\n\nCould we also change task name in the BPMN to something similar? Now it\u0027s called \"Register for Dmaap Client\".",
+      "revId": "2e3b55e9d9bb04f65c5eb54e3f925179918fc3d2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "00d3713d_d6703b13",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/RegisterForDmaapClientTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-01-22T16:13:28Z",
+      "side": 1,
+      "message": "excessive ;;",
+      "revId": "2e3b55e9d9bb04f65c5eb54e3f925179918fc3d2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
