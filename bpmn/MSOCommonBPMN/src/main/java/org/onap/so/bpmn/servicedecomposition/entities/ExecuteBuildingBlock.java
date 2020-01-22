@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,10 +24,8 @@ import java.io.Serializable;
 import org.onap.so.serviceinstancebeans.RequestDetails;
 
 public class ExecuteBuildingBlock implements Serializable {
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
+
+    private static final long serialVersionUID = 2L;
     private BuildingBlock buildingBlock;
     private String requestId;
     private String apiVersion;
@@ -44,87 +42,98 @@ public class ExecuteBuildingBlock implements Serializable {
         return buildingBlock;
     }
 
-    public void setBuildingBlock(BuildingBlock buildingBlock) {
+    public ExecuteBuildingBlock setBuildingBlock(BuildingBlock buildingBlock) {
         this.buildingBlock = buildingBlock;
+        return this;
     }
 
     public String getRequestId() {
         return requestId;
     }
 
-    public void setRequestId(String requestId) {
+    public ExecuteBuildingBlock setRequestId(String requestId) {
         this.requestId = requestId;
+        return this;
     }
 
     public String getApiVersion() {
         return apiVersion;
     }
 
-    public void setApiVersion(String apiVersion) {
+    public ExecuteBuildingBlock setApiVersion(String apiVersion) {
         this.apiVersion = apiVersion;
+        return this;
     }
 
     public String getResourceId() {
         return resourceId;
     }
 
-    public void setResourceId(String resourceId) {
+    public ExecuteBuildingBlock setResourceId(String resourceId) {
         this.resourceId = resourceId;
+        return this;
     }
 
     public String getRequestAction() {
         return requestAction;
     }
 
-    public void setRequestAction(String requestAction) {
+    public ExecuteBuildingBlock setRequestAction(String requestAction) {
         this.requestAction = requestAction;
+        return this;
     }
 
     public Boolean isaLaCarte() {
         return aLaCarte;
     }
 
-    public void setaLaCarte(Boolean aLaCarte) {
+    public ExecuteBuildingBlock setaLaCarte(Boolean aLaCarte) {
         this.aLaCarte = aLaCarte;
+        return this;
     }
 
     public String getVnfType() {
         return vnfType;
     }
 
-    public void setVnfType(String vnfType) {
+    public ExecuteBuildingBlock setVnfType(String vnfType) {
         this.vnfType = vnfType;
+        return this;
     }
 
     public Boolean isHoming() {
         return homing;
     }
 
-    public void setHoming(Boolean homing) {
+    public ExecuteBuildingBlock setHoming(Boolean homing) {
         this.homing = homing;
+        return this;
     }
 
     public WorkflowResourceIds getWorkflowResourceIds() {
         return workflowResourceIds;
     }
 
-    public void setWorkflowResourceIds(WorkflowResourceIds workflowResourceIds) {
+    public ExecuteBuildingBlock setWorkflowResourceIds(WorkflowResourceIds workflowResourceIds) {
         this.workflowResourceIds = workflowResourceIds;
+        return this;
     }
 
     public RequestDetails getRequestDetails() {
         return requestDetails;
     }
 
-    public void setRequestDetails(RequestDetails requestDetails) {
+    public ExecuteBuildingBlock setRequestDetails(RequestDetails requestDetails) {
         this.requestDetails = requestDetails;
+        return this;
     }
 
     public ConfigurationResourceKeys getConfigurationResourceKeys() {
         return configurationResourceKeys;
     }
 
-    public void setConfigurationResourceKeys(ConfigurationResourceKeys configurationResourceKeys) {
+    public ExecuteBuildingBlock setConfigurationResourceKeys(ConfigurationResourceKeys configurationResourceKeys) {
         this.configurationResourceKeys = configurationResourceKeys;
+        return this;
     }
 }

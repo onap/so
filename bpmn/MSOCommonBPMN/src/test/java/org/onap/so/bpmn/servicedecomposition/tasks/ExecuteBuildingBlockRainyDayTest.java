@@ -42,15 +42,13 @@ import org.onap.so.constants.Status;
 import org.onap.so.db.catalog.beans.macro.RainyDayHandlerStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class ExecuteBuildlingBlockRainyDayTest extends BaseTest {
+public class ExecuteBuildingBlockRainyDayTest extends BaseTest {
     @Autowired
     private ExecuteBuildingBlockRainyDay executeBuildingBlockRainyDay;
 
     private ServiceInstance serviceInstance;
     private Customer customer; // will build service sub
     private GenericVnf vnf;
-    private BuildingBlock buildingBlock;
-    private ExecuteBuildingBlock executeBuildingBlock;
     private static final String ASTERISK = "*";
 
     @Before
@@ -59,11 +57,8 @@ public class ExecuteBuildlingBlockRainyDayTest extends BaseTest {
         customer = setCustomer();
         vnf = setGenericVnf();
 
-        buildingBlock = new BuildingBlock();
-        buildingBlock.setBpmnFlowName("AssignServiceInstanceBB");
-
-        executeBuildingBlock = new ExecuteBuildingBlock();
-        executeBuildingBlock.setBuildingBlock(buildingBlock);
+        BuildingBlock buildingBlock = new BuildingBlock().setBpmnFlowName("AssignServiceInstanceBB");
+        ExecuteBuildingBlock executeBuildingBlock = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock);
 
         delegateExecution.setVariable("gBBInput", gBBInput);
         delegateExecution.setVariable("WorkflowException", new WorkflowException("", 7000, ""));

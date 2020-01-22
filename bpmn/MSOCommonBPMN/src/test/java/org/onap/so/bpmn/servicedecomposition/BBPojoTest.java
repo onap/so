@@ -20,7 +20,6 @@
 
 package org.onap.so.bpmn.servicedecomposition;
 
-import org.junit.Test;
 import com.openpojo.reflection.PojoClass;
 import com.openpojo.reflection.PojoClassFilter;
 import com.openpojo.reflection.filters.FilterNonConcrete;
@@ -32,6 +31,7 @@ import com.openpojo.validation.rule.impl.NoPrimitivesRule;
 import com.openpojo.validation.rule.impl.SerializableMustHaveSerialVersionUIDRule;
 import com.openpojo.validation.test.impl.GetterTester;
 import com.openpojo.validation.test.impl.SetterTester;
+import org.junit.Test;
 
 
 public class BBPojoTest {
