@@ -278,6 +278,23 @@
     },
     {
       "key": {
+        "uuid": "ba39ee2e_e41e03d1",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BaseBBInputSetupTest.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-01-22T11:08:20Z",
+      "side": 1,
+      "message": "Name of this class suggests that this is a test class but it isn\u0027t. It\u0027s just a helper class and it doesn\u0027t test anything. \n\nI would change the name to something like BaseBBInputSetupTestHelper and made those methods static.",
+      "revId": "53698292208ae0091bb35ef8d749be733a3a34eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "cd9dd711_526428e5",
         "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/ExecuteBuildlingBlockRainyDayTest.java",
         "patchSetId": 15
