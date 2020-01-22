@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "60e03668_575dc825",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/entities/ExecuteBuildingBlock.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-22T12:52:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "17b262a7_8a5e670a",
+      "range": {
+        "startLine": 27,
+        "startChar": 4,
+        "endLine": 29,
+        "endChar": 7
+      },
+      "revId": "53698292208ae0091bb35ef8d749be733a3a34eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e9a11148_215b8fce",
         "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/entities/ExecuteBuildingBlockTest.java",
         "patchSetId": 15
@@ -36,6 +60,30 @@
       "writtenOn": "2020-01-22T08:58:05Z",
       "side": 1,
       "message": "not used, remove please",
+      "range": {
+        "startLine": 36,
+        "startChar": 8,
+        "endLine": 37,
+        "endChar": 119
+      },
+      "revId": "53698292208ae0091bb35ef8d749be733a3a34eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ef342491_80701401",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/entities/ExecuteBuildingBlockTest.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-22T12:52:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e9a11148_215b8fce",
       "range": {
         "startLine": 36,
         "startChar": 8,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "e260034f_e007a59c",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/entities/ExecuteBuildingBlockTest.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-22T12:52:44Z",
+      "side": 1,
+      "message": "I will remain this part just in case of some implementation change (ex. default value).",
+      "parentUuid": "930592c9_a7f4c5dc",
+      "range": {
+        "startLine": 47,
+        "startChar": 3,
+        "endLine": 54,
+        "endChar": 67
+      },
+      "revId": "53698292208ae0091bb35ef8d749be733a3a34eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8cff3c3a_e02c8b6c",
         "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupExistingServiceTest.java",
         "patchSetId": 15
@@ -82,6 +154,30 @@
       "writtenOn": "2020-01-22T08:58:05Z",
       "side": 1,
       "message": "not used, remove it please",
+      "range": {
+        "startLine": 69,
+        "startChar": 4,
+        "endLine": 74,
+        "endChar": 0
+      },
+      "revId": "53698292208ae0091bb35ef8d749be733a3a34eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "53f9883d_ecf1f45a",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupExistingServiceTest.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-22T12:52:44Z",
+      "side": 1,
+      "message": "Ok, One of two is not needed.\nIntellij is not catching magic of Spring.",
+      "parentUuid": "8cff3c3a_e02c8b6c",
       "range": {
         "startLine": 69,
         "startChar": 4,
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "52ddbdef_16dc9d12",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupExistingServiceTest.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-22T12:52:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e33eb0cb_2a38e10f",
+      "range": {
+        "startLine": 114,
+        "startChar": 8,
+        "endLine": 114,
+        "endChar": 33
+      },
+      "revId": "53698292208ae0091bb35ef8d749be733a3a34eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "4e7b8c7d_0ba2bcdb",
         "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupPopulateMethodsTest.java",
         "patchSetId": 15
@@ -128,6 +248,30 @@
       "writtenOn": "2020-01-22T08:58:05Z",
       "side": 1,
       "message": "not used, remove it please",
+      "range": {
+        "startLine": 77,
+        "startChar": 4,
+        "endLine": 84,
+        "endChar": 46
+      },
+      "revId": "53698292208ae0091bb35ef8d749be733a3a34eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ab8fd0bb_36a9c702",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupPopulateMethodsTest.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-22T12:52:44Z",
+      "side": 1,
+      "message": "same here mapper layer only needed",
+      "parentUuid": "4e7b8c7d_0ba2bcdb",
       "range": {
         "startLine": 77,
         "startChar": 4,
@@ -163,6 +307,30 @@
     },
     {
       "key": {
+        "uuid": "82483d79_eb34f121",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupPopulateMethodsTest.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-22T12:52:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b356b391_b0d49067",
+      "range": {
+        "startLine": 106,
+        "startChar": 7,
+        "endLine": 109,
+        "endChar": 54
+      },
+      "revId": "53698292208ae0091bb35ef8d749be733a3a34eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ea4cc461_48ffd0e2",
         "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupPopulateMethodsTest.java",
         "patchSetId": 15
@@ -174,6 +342,30 @@
       "writtenOn": "2020-01-22T08:58:05Z",
       "side": 1,
       "message": "move to import",
+      "range": {
+        "startLine": 147,
+        "startChar": 8,
+        "endLine": 147,
+        "endChar": 32
+      },
+      "revId": "53698292208ae0091bb35ef8d749be733a3a34eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4a653b2a_17593c62",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupPopulateMethodsTest.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-22T12:52:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ea4cc461_48ffd0e2",
       "range": {
         "startLine": 147,
         "startChar": 8,
@@ -209,6 +401,30 @@
     },
     {
       "key": {
+        "uuid": "2f8e90ac_eba85502",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupPopulateMethodsTest.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-22T12:52:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa810422_3e9e1524",
+      "range": {
+        "startLine": 186,
+        "startChar": 8,
+        "endLine": 186,
+        "endChar": 32
+      },
+      "revId": "53698292208ae0091bb35ef8d749be733a3a34eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "bd1ebc5d_2945bbc5",
         "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupPopulateMethodsTest.java",
         "patchSetId": 15
@@ -220,6 +436,30 @@
       "writtenOn": "2020-01-22T08:58:05Z",
       "side": 1,
       "message": "move to import",
+      "range": {
+        "startLine": 223,
+        "startChar": 8,
+        "endLine": 223,
+        "endChar": 32
+      },
+      "revId": "53698292208ae0091bb35ef8d749be733a3a34eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "da64d204_d278c23c",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupPopulateMethodsTest.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-22T12:52:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bd1ebc5d_2945bbc5",
       "range": {
         "startLine": 223,
         "startChar": 8,
@@ -255,6 +495,30 @@
     },
     {
       "key": {
+        "uuid": "187793f7_30164646",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupPopulateMethodsTest.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-22T12:52:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f9f3fc2a_7800fab1",
+      "range": {
+        "startLine": 259,
+        "startChar": 8,
+        "endLine": 259,
+        "endChar": 32
+      },
+      "revId": "53698292208ae0091bb35ef8d749be733a3a34eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5aa706cb_15506139",
         "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupTest.java",
         "patchSetId": 15
@@ -266,6 +530,30 @@
       "writtenOn": "2020-01-22T08:58:05Z",
       "side": 1,
       "message": "not used, remove please",
+      "range": {
+        "startLine": 139,
+        "startChar": 4,
+        "endLine": 139,
+        "endChar": 84
+      },
+      "revId": "53698292208ae0091bb35ef8d749be733a3a34eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "090ce1ae_47cea9fd",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupTest.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-22T12:52:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5aa706cb_15506139",
       "range": {
         "startLine": 139,
         "startChar": 4,
@@ -295,6 +583,24 @@
     },
     {
       "key": {
+        "uuid": "7af26371_6995f019",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BaseBBInputSetupTest.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-22T12:52:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba39ee2e_e41e03d1",
+      "revId": "53698292208ae0091bb35ef8d749be733a3a34eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "cd9dd711_526428e5",
         "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/ExecuteBuildlingBlockRainyDayTest.java",
         "patchSetId": 15
@@ -306,6 +612,30 @@
       "writtenOn": "2020-01-22T08:58:05Z",
       "side": 1,
       "message": "I think that declaration of these variables should be also here, because they are used only in this place, just write:\n\n       BuildingBlock buildingBlock \u003d new BuildingBlock().setBpmnFlowName(\"AssignServiceInstanceBB\");\n\n        ExecuteBuildingBlock executeBuildingBlock \u003d new ExecuteBuildingBlock().setBuildingBlock(buildingBlock);\n\n... and remove field declaration from class fields.",
+      "range": {
+        "startLine": 62,
+        "startChar": 7,
+        "endLine": 64,
+        "endChar": 90
+      },
+      "revId": "53698292208ae0091bb35ef8d749be733a3a34eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dbd2afc5_435737da",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/ExecuteBuildlingBlockRainyDayTest.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-22T12:52:44Z",
+      "side": 1,
+      "message": "Good finding",
+      "parentUuid": "cd9dd711_526428e5",
       "range": {
         "startLine": 62,
         "startChar": 7,
@@ -341,6 +671,30 @@
     },
     {
       "key": {
+        "uuid": "541c9147_23fb3e52",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 374,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-22T12:52:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "998cbd68_59560a58",
+      "range": {
+        "startLine": 374,
+        "startChar": 50,
+        "endLine": 374,
+        "endChar": 59
+      },
+      "revId": "53698292208ae0091bb35ef8d749be733a3a34eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "4991c21f_197f21e4",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
         "patchSetId": 15
@@ -352,6 +706,30 @@
       "writtenOn": "2020-01-22T08:58:05Z",
       "side": 1,
       "message": "I know it is not your change, but remove this condition please, this is always true",
+      "range": {
+        "startLine": 1505,
+        "startChar": 12,
+        "endLine": 1505,
+        "endChar": 35
+      },
+      "revId": "53698292208ae0091bb35ef8d749be733a3a34eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "60ea0998_65eb7b7d",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 1505,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-22T12:52:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4991c21f_197f21e4",
       "range": {
         "startLine": 1505,
         "startChar": 12,
@@ -387,6 +765,30 @@
     },
     {
       "key": {
+        "uuid": "806acddc_fe3d26d4",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowActionBBTasksTest.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-22T12:52:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c22eac21_3a7489db",
+      "range": {
+        "startLine": 143,
+        "startChar": 0,
+        "endLine": 150,
+        "endChar": 5
+      },
+      "revId": "53698292208ae0091bb35ef8d749be733a3a34eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b76aae12_2759b899",
         "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowActionBBTasksTest.java",
         "patchSetId": 15
@@ -398,6 +800,30 @@
       "writtenOn": "2020-01-22T08:58:05Z",
       "side": 1,
       "message": "diamond operator:\nnew ArrayList\u003c\u003e();",
+      "range": {
+        "startLine": 158,
+        "startChar": 52,
+        "endLine": 158,
+        "endChar": 68
+      },
+      "revId": "53698292208ae0091bb35ef8d749be733a3a34eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "66e94935_1477b70a",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowActionBBTasksTest.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-22T12:52:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b76aae12_2759b899",
       "range": {
         "startLine": 158,
         "startChar": 52,
