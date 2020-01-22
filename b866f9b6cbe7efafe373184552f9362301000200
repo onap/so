@@ -16,6 +16,24 @@
       "revId": "b866f9b6cbe7efafe373184552f9362301000200",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "106c8d43_c0f8ac6d",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1080,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-01-22T14:18:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "62ecd31c_040cc4aa",
+      "revId": "b866f9b6cbe7efafe373184552f9362301000200",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
