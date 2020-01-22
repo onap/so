@@ -1,0 +1,84 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "af4812d5_821a967c",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-22T08:56:26Z",
+      "side": 1,
+      "message": "remove empty line",
+      "revId": "7324d3ff476cd98951ebb70ed1782e7e6a80e844",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "56bd303b_1633c7ff",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 632,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-22T08:56:26Z",
+      "side": 1,
+      "message": "It could more readable with this empty lines in this test.",
+      "revId": "7324d3ff476cd98951ebb70ed1782e7e6a80e844",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ef0964fb_660b7036",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1108,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-22T08:56:26Z",
+      "side": 1,
+      "message": "In my opinion to be removed do not test anything. To be confirmed with Łukasz Muszkieta.",
+      "range": {
+        "startLine": 1048,
+        "startChar": 0,
+        "endLine": 1108,
+        "endChar": 5
+      },
+      "revId": "7324d3ff476cd98951ebb70ed1782e7e6a80e844",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4c5923bf_5422f056",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1162,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-22T08:56:26Z",
+      "side": 1,
+      "message": "private here",
+      "range": {
+        "startLine": 1162,
+        "startChar": 4,
+        "endLine": 1162,
+        "endChar": 10
+      },
+      "revId": "7324d3ff476cd98951ebb70ed1782e7e6a80e844",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
