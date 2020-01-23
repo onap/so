@@ -799,7 +799,6 @@ public class BBInputSetup implements JavaDelegate {
                 } else {
                     modelInfo.setModelCustomizationUuid(vnfModelCustId);
                 }
-                modelInfo.setModelCustomizationUuid(vnfModelCustId);
                 vnf = vnfTemp;
                 break;
             }

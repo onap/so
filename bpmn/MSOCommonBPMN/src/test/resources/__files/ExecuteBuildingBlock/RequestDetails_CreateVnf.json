@@ -52,6 +52,15 @@
 					"modelVersion": "1.0"
 				}
 			}
+		},
+		{
+			"relatedInstance": {
+				"instanceId": "{vnfId}",
+				"modelInfo": {
+					"modelType": "vnf",
+					"modelCustomizationId": "my-test-uuid"
+				}
+			}
 		}
 	],
 	"requestParameters": {

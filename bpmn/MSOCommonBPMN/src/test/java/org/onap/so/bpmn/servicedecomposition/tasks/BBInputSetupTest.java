@@ -1430,7 +1430,6 @@ public class BBInputSetupTest {
         String instanceName = "vnfName";
         ModelInfo modelInfo = new ModelInfo();
         modelInfo.setModelType(ModelType.vnf);
-
         ServiceInstance serviceInstance = new ServiceInstance();
         GenericVnf vnf = new GenericVnf();
         vnf.setVnfId("genericVnfId");
@@ -1489,6 +1488,56 @@ public class BBInputSetupTest {
         verify(SPY_bbInputSetup, times(2)).mapCatalogVnf(vnf2, modelInfo, service);
         verify(SPY_bbInputSetup, times(2)).mapNetworkCollectionInstanceGroup(vnf2, "{instanceGroupId}");
         verify(SPY_bbInputSetup, times(2)).mapVnfcCollectionInstanceGroup(vnf2, modelInfo, service);
+
+        assertEquals("modelCustId", modelInfo.getModelCustomizationUuid());
+
+    }
+
+    @Test
+    public void testPopulateGenericVnfReplace() throws JsonParseException, JsonMappingException, IOException {
+        org.onap.so.serviceinstancebeans.Platform platform = new org.onap.so.serviceinstancebeans.Platform();
+        org.onap.so.serviceinstancebeans.LineOfBusiness lineOfBusiness =
+                new org.onap.so.serviceinstancebeans.LineOfBusiness();
+        String instanceName = "vnfName";
+        ModelInfo modelInfo = new ModelInfo();
+        modelInfo.setModelType(ModelType.vnf);
+        ServiceInstance serviceInstance = new ServiceInstance();
+        GenericVnf vnf = new GenericVnf();
+        vnf.setVnfId("genericVnfId");
+        vnf.setVnfName("vnfName");
+        serviceInstance.getVnfs().add(vnf);
+        String vnfType = "vnfType";
+        String applicationId = "applicationId";
+        RequestDetails requestDetails =
+                mapper.readValue(new File(RESOURCE_PATH + "RequestDetails_CreateVnf.json"), RequestDetails.class);
+
+        Service service = mapper.readValue(
+                new File(RESOURCE_PATH + "CatalogDBService_getServiceInstanceNOAAIInput.json"), Service.class);
+        Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
+        lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, "genericVnfId");
+        String bbName = AssignFlows.VNF.toString();
+
+        Platform expectedPlatform = new Platform();
+        LineOfBusiness expectedLineOfBusiness = new LineOfBusiness();
+        String resourceId = "123";
+        doReturn(expectedPlatform).when(bbInputSetupMapperLayer).mapRequestPlatform(platform);
+        doReturn(expectedLineOfBusiness).when(bbInputSetupMapperLayer).mapRequestLineOfBusiness(lineOfBusiness);
+        org.onap.aai.domain.yang.GenericVnf vnfAAI = new org.onap.aai.domain.yang.GenericVnf();
+        vnfAAI.setModelCustomizationId("modelCustId");
+        doReturn(vnfAAI).when(SPY_bbInputSetupUtils).getAAIGenericVnf(vnf.getVnfId());
+        doNothing().when(SPY_bbInputSetup).mapCatalogVnf(vnf, modelInfo, service);
+        org.onap.aai.domain.yang.InstanceGroup instanceGroupAAI = new org.onap.aai.domain.yang.InstanceGroup();
+        doReturn(instanceGroupAAI).when(SPY_bbInputSetupUtils).getAAIInstanceGroup(any());
+        org.onap.so.db.catalog.beans.InstanceGroup catalogInstanceGroup =
+                new org.onap.so.db.catalog.beans.InstanceGroup();
+        doReturn(catalogInstanceGroup).when(SPY_bbInputSetupUtils).getCatalogInstanceGroup(any());
+
+        SPY_bbInputSetup.populateGenericVnf(modelInfo, instanceName, platform, lineOfBusiness, service, bbName,
+                serviceInstance, lookupKeyMap, requestDetails.getRelatedInstanceList(), resourceId, vnfType, null,
+                requestDetails.getRequestInfo().getProductFamilyId(), applicationId, true);
+
+        assertEquals("my-test-uuid", modelInfo.getModelCustomizationUuid());
+
     }
 
     @Test
