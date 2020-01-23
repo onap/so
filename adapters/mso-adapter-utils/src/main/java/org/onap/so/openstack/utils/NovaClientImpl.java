@@ -33,6 +33,7 @@ import com.woorea.openstack.nova.model.Flavors;
 import com.woorea.openstack.nova.model.HostAggregate;
 import com.woorea.openstack.nova.model.HostAggregates;
 import com.woorea.openstack.nova.model.QuotaSet;
+import com.woorea.openstack.nova.model.Server;
 
 
 @Component
@@ -199,6 +200,17 @@ public class NovaClientImpl extends MsoCommonUtils {
             Nova novaClient = getNovaClient(cloudSiteId, tenantId);
             OpenStackRequest<Void> request = novaClient.keyPairs().delete(keyPairName);
             executeAndRecordOpenstackRequest(request, false);
+        } catch (MsoException e) {
+            logger.error("Error building Nova Client", e);
+            throw new NovaClientException("Error building Nova Client", e);
+        }
+    }
+
+    public Server queryServerById(String cloudSiteId, String tenantId, String id) throws NovaClientException {
+        try {
+            Nova novaClient = getNovaClient(cloudSiteId, tenantId);
+            OpenStackRequest<Server> request = novaClient.servers().show(id);
+            return executeAndRecordOpenstackRequest(request, false);
         } catch (MsoException e) {
             logger.error("Error building Nova Client", e);
             throw new NovaClientException("Error building Nova Client", e);

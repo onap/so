@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 import com.woorea.openstack.base.client.OpenStackRequest;
 import com.woorea.openstack.quantum.Quantum;
 import com.woorea.openstack.quantum.model.Networks;
+import com.woorea.openstack.quantum.model.Port;
 import com.woorea.openstack.quantum.model.Subnets;
 
 
@@ -103,6 +104,32 @@ public class NeutronClientImpl extends MsoCommonUtils {
             Quantum neutronClient = getNeutronClient(cloudSiteId, tenantId);
             OpenStackRequest<Subnets> request = neutronClient.subnets().list().queryParam("id", id)
                     .queryParam("limit", limit).queryParam("marker", marker).queryParam("name", name);
+            return executeAndRecordOpenstackRequest(request, false);
+        } catch (MsoException e) {
+            logger.error("Error building Neutron Client", e);
+            throw new NeutronClientException("Error building Neutron Client", e);
+        }
+    }
+
+    /**
+     * Query Networks
+     *
+     * 
+     * @param cloudSiteId the cloud site id
+     * @param tenantId the tenant id
+     * @param limit limits the number of records returned
+     * @param marker the last viewed record
+     * @param name of the subnet
+     * @param id of the subnet
+     * @return the list of subnets in openstack
+     * @throws MsoCloudSiteNotFound the mso cloud site not found
+     * @throws NeutronClientException if the client cannot be built this is thrown
+     */
+    public Port queryPortById(String cloudSiteId, String tenantId, String id)
+            throws MsoCloudSiteNotFound, NeutronClientException {
+        try {
+            Quantum neutronClient = getNeutronClient(cloudSiteId, tenantId);
+            OpenStackRequest<Port> request = neutronClient.ports().show(id);
             return executeAndRecordOpenstackRequest(request, false);
         } catch (MsoException e) {
             logger.error("Error building Neutron Client", e);
