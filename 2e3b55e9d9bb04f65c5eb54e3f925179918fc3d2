@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9d731e97_a5334a20",
+        "filename": "bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/BuildingBlock/WaitForPnfReadyBB.bpmn",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-01-23T14:04:13Z",
+      "side": 1,
+      "message": "The logic for BB is the same, so there is no point to duplicate code to create second class. In RegisterForPnfReadyEvent class, I will set correlationId value in execution object, to provide it for CancelDmaapSubscription class.",
+      "parentUuid": "c7f9cc68_33b92b30",
+      "revId": "2e3b55e9d9bb04f65c5eb54e3f925179918fc3d2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "84423cb0_fba20084",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/RegisterForDmaapClient.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2020-01-22T16:13:28Z",
       "side": 1,
       "message": "Could we call it RegisterForDmaapEvent? It better describes what it actually does.\n\nCould we also change task name in the BPMN to something similar? Now it\u0027s called \"Register for Dmaap Client\".",
+      "revId": "2e3b55e9d9bb04f65c5eb54e3f925179918fc3d2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ac4b3d3f_50583364",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/RegisterForDmaapClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-01-23T14:04:13Z",
+      "side": 1,
+      "message": "Agree, I will change the name.",
+      "parentUuid": "84423cb0_fba20084",
       "revId": "2e3b55e9d9bb04f65c5eb54e3f925179918fc3d2",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
@@ -50,6 +86,24 @@
       "revId": "2e3b55e9d9bb04f65c5eb54e3f925179918fc3d2",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "36be29da_ce843836",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/RegisterForDmaapClientTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-01-23T14:04:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "00d3713d_d6703b13",
+      "revId": "2e3b55e9d9bb04f65c5eb54e3f925179918fc3d2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
