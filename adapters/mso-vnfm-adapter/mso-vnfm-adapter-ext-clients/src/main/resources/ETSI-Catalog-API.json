@@ -2682,8 +2682,6 @@
       }
     },
     "Version": {
-      "title": "Versions",
-      "description": "match VNF packages that contain VNF products with certain versions",
       "required": ["vnfSoftwareVersion"],
       "type": "object",
       "properties": {
@@ -2705,8 +2703,6 @@
       }
     },
     "vnfProducts": {
-      "title": "Vnfproducts",
-      "description": "match VNF packages that contain VNF products with certain product names, from one particular provider",
       "required": ["vnfProductName"],
       "type": "object",
       "properties": {
@@ -2718,7 +2714,11 @@
           "minLength": 1
         },
         "versions": {
-          "$ref": "#/definitions/Version"
+          "description": "match VNF packages that contain VNF products with certain versions",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Version"
+          }
         }
       }
     },
@@ -2734,7 +2734,11 @@
           "minLength": 1
         },
         "vnfProducts": {
-          "$ref": "#/definitions/vnfProducts"
+          "description": "match VNF packages that contain VNF products with certain product names, from one particular provider",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/vnfProducts"
+          }
         }
       }
     },
