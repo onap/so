@@ -24,6 +24,7 @@ import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.AAIVnfResources;
 import org.onap.so.db.catalog.beans.ControllerSelectionReference;
 import org.onap.so.db.catalog.client.CatalogDbClient;
+import org.onap.so.exceptions.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,11 +78,11 @@ public class AppcOrchestratorPreProcessor {
                 if (payload == null) {
                     payload = "";
                 }
-                String existingSoftwareVersion = JsonUtils.getJsonValue(payload, "existing-software-version");
+                String existingSoftwareVersion = JsonUtils.getJsonValue(payload, "existing_software_version");
                 appcTaskRequest.setExistingSoftwareVersion(existingSoftwareVersion);
-                String newSoftwareVersion = JsonUtils.getJsonValue(payload, "new-software-version");
+                String newSoftwareVersion = JsonUtils.getJsonValue(payload, "new_software_version");
                 appcTaskRequest.setNewSoftwareVersion(newSoftwareVersion);
-                String operationsTimeout = JsonUtils.getJsonValue(payload, "operations-timeout");
+                String operationsTimeout = JsonUtils.getJsonValue(payload, "operations_timeout");
                 appcTaskRequest.setOperationsTimeout(operationsTimeout);
             }
 
@@ -123,9 +124,12 @@ public class AppcOrchestratorPreProcessor {
             applicationControllerVnf.setVnfName(vnfName);
             appcTaskRequest.setApplicationControllerVnf(applicationControllerVnf);
 
+            verifyApplicationControllerTaskRequest(execution, appcTaskRequest);
+
             execution.setVariable("appcOrchestratorRequest", appcTaskRequest);
+            logger.debug("SET APPC ORCHESTRATOR REQUEST");
         } catch (Exception e) {
-            logger.error("Error building ApplicationControllerTaskRequest Object", e);
+            logger.error("Error building ApplicationControllerTaskRequest Object", e.getMessage());
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, e);
         }
     }
@@ -185,5 +189,55 @@ public class AppcOrchestratorPreProcessor {
                 execution.setVariable("vserverIdList", vserverIds);
             }
         }
+    }
+
+    protected void verifyApplicationControllerTaskRequest(BuildingBlockExecution execution,
+            ApplicationControllerTaskRequest appcTaskRequest) throws ValidationException {
+        String errorMessage = null;
+        switch (appcTaskRequest.getAction()) {
+            case QuiesceTraffic:
+                if (appcTaskRequest.getOperationsTimeout() == null
+                        || appcTaskRequest.getOperationsTimeout().isEmpty()) {
+                    errorMessage = "APPC action QuiesceTraffic is missing operations_timeout parameter. ";
+                }
+                break;
+            case UpgradePreCheck:
+            case UpgradePostCheck:
+            case UpgradeBackup:
+            case UpgradeSoftware:
+                if (appcTaskRequest.getExistingSoftwareVersion() == null
+                        || appcTaskRequest.getExistingSoftwareVersion().isEmpty()) {
+                    errorMessage =
+                            "APPC action " + appcTaskRequest.getAction() + " is missing existing_software parameter. ";
+                }
+                if (appcTaskRequest.getNewSoftwareVersion() == null
+                        || appcTaskRequest.getNewSoftwareVersion().isEmpty()) {
+                    errorMessage =
+                            "APPC action " + appcTaskRequest.getAction() + " is missing new_software parameter. ";
+                }
+                break;
+            case Snapshot:
+                if (appcTaskRequest.getApplicationControllerVnf().getApplicationControllerVm() != null) {
+                    if (appcTaskRequest.getApplicationControllerVnf().getApplicationControllerVm().getVmId() == null
+                            || appcTaskRequest.getApplicationControllerVnf().getApplicationControllerVm().getVmId()
+                                    .isEmpty()) {
+                        errorMessage = "APPC action Snapshot is missing vmId parameter. ";
+                    }
+                    if (appcTaskRequest.getApplicationControllerVnf().getApplicationControllerVm()
+                            .getVserverId() == null
+                            || appcTaskRequest.getApplicationControllerVnf().getApplicationControllerVm().getVserverId()
+                                    .isEmpty()) {
+                        errorMessage = "APPC action Snapshot is missing vserverId parameter. ";
+                    }
+                    break;
+                }
+            default:
+                break;
+        }
+        if (errorMessage != null) {
+            logger.debug("verifyApplicationControllerTaskRequest() failed with " + errorMessage);
+            throw new ValidationException(errorMessage, false);
+        }
+        return;
     }
 }

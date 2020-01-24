@@ -37,9 +37,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.common.DelegateExecutionImpl;
+import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
+import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
+import org.onap.so.client.ticket.ExternalTicket;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 
 public class ManualHandlingTasksTest extends BaseTaskTest {
@@ -61,14 +65,36 @@ public class ManualHandlingTasksTest extends BaseTaskTest {
     @Mock
     private BuildingBlockExecution buildingBlockExecution;
 
+    @Mock
+    private GeneralBuildingBlock generalBuildingBlock;
+
+    @Mock
+    private RequestContext requestContext;
+
+    @Mock
+    private ExternalTicket MOCK_externalTicket;
+
     @Before
     public void before() throws Exception {
+        MockitoAnnotations.initMocks(this);
         delegateExecution = new DelegateExecutionFake();
         buildingBlockExecution = new DelegateExecutionImpl(delegateExecution);
+        generalBuildingBlock = new GeneralBuildingBlock();
+        requestContext = new RequestContext();
+        requestContext.setRequestorId("someRequestorId");
+        generalBuildingBlock.setRequestContext(requestContext);
+        buildingBlockExecution.setVariable("mso-request-id", ("testMsoRequestId"));
+        buildingBlockExecution.setVariable("vnfType", "testVnfType");
+        buildingBlockExecution.setVariable("gBBInput", generalBuildingBlock);
+        buildingBlockExecution.setVariable("rainyDayVnfName", "someVnfName");
+        buildingBlockExecution.setVariable("workStep", "someWorkstep");
+        buildingBlockExecution.setVariable("taskTimeout", "PT5M");
     }
 
     @Test
     public void setFalloutTaskVariables_Test() {
+        when(mockExecution.getVariable("gBuildingBlockExecution")).thenReturn(buildingBlockExecution);
+        buildingBlockExecution.setVariable("gBBInput", generalBuildingBlock);
         when(task.getId()).thenReturn("taskId");
         when(task.getExecution()).thenReturn(mockExecution);
         when(mockExecution.getProcessEngineServices()).thenReturn(processEngineServices);
@@ -103,7 +129,6 @@ public class ManualHandlingTasksTest extends BaseTaskTest {
     @Test
     public void updateRequestDbStatus_Test() throws Exception {
         InfraActiveRequests mockedRequest = new InfraActiveRequests();
-        buildingBlockExecution.setVariable("mso-request-id", "msoRequestId");
         when(requestsDbClient.getInfraActiveRequestbyRequestId(any(String.class))).thenReturn(mockedRequest);
         doNothing().when(requestsDbClient).updateInfraActiveRequests(any(InfraActiveRequests.class));
         manualHandlingTasks.updateRequestDbStatus(buildingBlockExecution, "IN_PROGRESS");
@@ -111,10 +136,4 @@ public class ManualHandlingTasksTest extends BaseTaskTest {
         assertEquals(mockedRequest.getRequestStatus(), "IN_PROGRESS");
     }
 
-    @Test
-    public void createExternalTicket_Test() throws Exception {
-        buildingBlockExecution.setVariable("mso-request-id", ("testMsoRequestId"));
-        buildingBlockExecution.setVariable("vnfType", "testVnfType");
-        manualHandlingTasks.createExternalTicket(buildingBlockExecution);
-    }
 }

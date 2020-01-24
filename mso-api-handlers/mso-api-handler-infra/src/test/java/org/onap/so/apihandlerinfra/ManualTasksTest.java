@@ -52,7 +52,7 @@ import com.github.tomakehurst.wiremock.http.Fault;
 
 public class ManualTasksTest extends BaseTest {
 
-    private final String basePath = "/tasks/v1/";
+    private final String basePath = "/onap/so/infra/tasks/v1/";
 
     @Test
     public void testCreateOpEnvObjectMapperError() throws IOException {

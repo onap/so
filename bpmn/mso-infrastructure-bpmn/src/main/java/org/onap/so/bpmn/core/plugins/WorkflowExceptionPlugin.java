@@ -58,6 +58,7 @@ public class WorkflowExceptionPlugin extends AbstractProcessEnginePlugin {
     private static final Logger logger = LoggerFactory.getLogger(WorkflowExceptionPlugin.class);
 
     private static final String WORKFLOW_EXCEPTION = "WorkflowException";
+    private static final String PAUSE_FOR_MANUAL_TASK_RAINY_DAY_ID = "PauseForManualTaskRainyDay";
 
     @Override
     public void preInit(ProcessEngineConfigurationImpl processEngineConfiguration) {
@@ -89,7 +90,8 @@ public class WorkflowExceptionPlugin extends AbstractProcessEnginePlugin {
             for (ActivityImpl activity : activities) {
                 String type = (String) activity.getProperty("type");
 
-                if ("callActivity".equals(type)) {
+                if ("callActivity".equals(type)
+                        && !PAUSE_FOR_MANUAL_TASK_RAINY_DAY_ID.equals(activity.getActivityId())) {
                     // Add a WorkflowExceptionResetListener to clear the WorkflowException
                     // variable when each Call Activity starts.
 

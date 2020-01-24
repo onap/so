@@ -63,7 +63,6 @@ public class BeansTest {
         test("org.onap.so.appc.orchestrator.service.beans");
         test("org.onap.so.client.policy.entities");
         test("org.onap.so.client.grm.beans");
-        test("org.onap.so.client.ruby.beans");
         test("org.onap.so.client.sdno.beans");
         test("org.onap.so.entity");
         test("org.onap.so.serviceinstancebeans");

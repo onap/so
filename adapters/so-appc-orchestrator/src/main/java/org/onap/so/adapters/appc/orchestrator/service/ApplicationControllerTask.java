@@ -4,6 +4,7 @@ import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
 import org.onap.so.adapters.appc.orchestrator.client.ApplicationControllerCallback;
 import org.onap.so.adapters.appc.orchestrator.client.ApplicationControllerSupport;
+import org.onap.so.adapters.appc.orchestrator.client.StatusCategory;
 import org.onap.so.appc.orchestrator.service.beans.ApplicationControllerTaskRequest;
 import org.onap.so.externaltasks.logging.AuditMDCSetup;
 import org.onap.so.utils.ExternalTaskUtils;
@@ -42,8 +43,16 @@ public class ApplicationControllerTask extends ExternalTaskUtils {
 
         try {
             status = applicationControllerTaskImpl.execute(msoRequestId, request, listener);
+            if (status != null && status.getCode() != 0
+                    && !applicationControllerSupport.getCategoryOf(status).equals(StatusCategory.NORMAL)) {
+                logger.error("The External Task Id: {} Failed locally with status {}", externalTask.getId(),
+                        status.getMessage());
+                externalTaskService.handleBpmnError(externalTask, "MSOWorkflowException", status.getMessage());
+            }
         } catch (Exception e) {
-            logger.error("Error while calling appc", e.getMessage());
+            logger.error("The External Task Id: {} Failed while calling appc with exception", externalTask.getId(),
+                    e.getMessage());
+            externalTaskService.handleBpmnError(externalTask, "MSOWorkflowException", e.getMessage());
         }
     }
 

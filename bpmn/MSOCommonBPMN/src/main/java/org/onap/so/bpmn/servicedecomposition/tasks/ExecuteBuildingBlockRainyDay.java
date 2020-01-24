@@ -49,6 +49,9 @@ public class ExecuteBuildingBlockRainyDay {
     private static final Logger logger = LoggerFactory.getLogger(ExecuteBuildingBlockRainyDay.class);
     public static final String HANDLING_CODE = "handlingCode";
     public static final String ROLLBACK_TARGET_STATE = "rollbackTargetState";
+    public static final String RAINY_DAY_SERVICE_TYPE = "rainyDayServiceType";
+    public static final String RAINY_DAY_VNF_TYPE = "rainyDayVnfType";
+    public static final String RAINY_DAY_VNF_NAME = "rainyDayVnfName";
 
     @Autowired
     private CatalogDbClient catalogDbClient;
@@ -97,8 +100,10 @@ public class ExecuteBuildingBlockRainyDay {
                 handlingCode = "Abort";
             } else {
                 try {
-                    serviceType = gBBInput.getCustomer().getServiceSubscription().getServiceInstances().get(0)
-                            .getModelInfoServiceInstance().getServiceType();
+                    if (gBBInput.getCustomer().getServiceSubscription() != null) {
+                        serviceType = gBBInput.getCustomer().getServiceSubscription().getServiceInstances().get(0)
+                                .getModelInfoServiceInstance().getServiceType();
+                    }
                     if (serviceType == null || serviceType.isEmpty()) {
                         serviceType = ASTERISK;
                     }
@@ -106,19 +111,32 @@ public class ExecuteBuildingBlockRainyDay {
                     // keep default serviceType value
                     logger.error("Exception in serviceType retrieval", ex);
                 }
+                execution.setVariable(RAINY_DAY_SERVICE_TYPE, serviceType);
                 String vnfType = ASTERISK;
+                String vnfName = ASTERISK;
                 try {
-                    for (GenericVnf vnf : gBBInput.getCustomer().getServiceSubscription().getServiceInstances().get(0)
-                            .getVnfs()) {
-                        if (vnf.getVnfId().equalsIgnoreCase(lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID))) {
-                            vnfType = vnf.getVnfType();
+                    if (gBBInput.getCustomer().getServiceSubscription() != null) {
+                        for (GenericVnf vnf : gBBInput.getCustomer().getServiceSubscription().getServiceInstances()
+                                .get(0).getVnfs()) {
+                            if (vnf.getVnfId().equalsIgnoreCase(lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID))) {
+                                vnfType = vnf.getVnfType();
+                                vnfName = vnf.getVnfName();
+                            }
+                        }
+                    } else {
+                        for (GenericVnf vnf : gBBInput.getServiceInstance().getVnfs()) {
+                            if (vnf.getVnfId().equalsIgnoreCase(lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID))) {
+                                vnfType = vnf.getVnfType();
+                                vnfName = vnf.getVnfName();
+                            }
                         }
                     }
                 } catch (Exception ex) {
                     // keep default vnfType value
                     logger.error("Exception in vnfType retrieval", ex);
                 }
-
+                execution.setVariable(RAINY_DAY_VNF_TYPE, vnfType);
+                execution.setVariable(RAINY_DAY_VNF_NAME, vnfName);
                 String errorCode = ASTERISK;
                 if (workflowException != null) {
                     errorCode = "" + workflowException.getErrorCode();
@@ -151,8 +169,10 @@ public class ExecuteBuildingBlockRainyDay {
 
                 String serviceRole = ASTERISK;
                 try {
-                    serviceRole = gBBInput.getCustomer().getServiceSubscription().getServiceInstances().get(0)
-                            .getModelInfoServiceInstance().getServiceRole();
+                    if (gBBInput.getCustomer().getServiceSubscription() != null) {
+                        serviceRole = gBBInput.getCustomer().getServiceSubscription().getServiceInstances().get(0)
+                                .getModelInfoServiceInstance().getServiceRole();
+                    }
                     if (serviceRole == null || serviceRole.isEmpty()) {
                         serviceRole = ASTERISK;
                     }

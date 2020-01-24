@@ -873,3 +873,25 @@ VALUES
 UPDATE vnf_recipe
 SET ORCHESTRATION_URI = '/mso/async/services/WorkflowActionBB'
 WHERE NF_ROLE = 'GR-API-DEFAULT' AND ACTION = 'inPlaceSoftwareUpdate';
+
+INSERT INTO rainy_day_handler_macro (FLOW_NAME, SERVICE_TYPE, VNF_TYPE, ERROR_CODE, WORK_STEP, POLICY, SECONDARY_POLICY, REG_EX_ERROR_MESSAGE, SERVICE_ROLE)
+VALUES 
+('VNFCheckPserversLockedFlagActivity','*','*','*','*','Manual','Abort','*', '*'),
+('VNFCheckInMaintFlagActivity','*','*','*','*','Manual','Abort','*', '*'),
+('VNFSetInMaintFlagActivity','*','*','*','*','Manual','Abort','*', '*'),
+('VNFCheckClosedLoopDisabledFlagActivity','*','*','*','*','Manual','Abort','*', '*'),
+('VNFSetClosedLoopDisabledFlagActivity','*','*','*','*','Manual','Abort','*', '*'),
+('VNFLockActivity','*','*','*','*','Manual','Abort','*', '*'),
+('VNFUpgradePreCheckActivity','*','*','*','*','Manual','Abort','*', '*'),
+('VNFQuiesceTrafficActivity','*','*','*','*','Manual','Abort','*', '*'),
+('VNFStopActivity','*','*','*','*','Manual','Abort','*', '*'),
+('VNFSnapShotActivity','*','*','*','*','Manual','Abort','*', '*'),
+('VNFStartActivity','*','*','*','*','Manual','Abort','*', '*'),
+('VNFUpgradeBackupActivity','*','*','*','*','Manual','Abort','*', '*'),
+('VNFUpgradeSoftwareActivity','*','*','*','*','Manual','Abort','*', '*'),
+('VNFUpgradePostCheckActivity','*','*','*','*','Manual','Abort','*', '*'),
+('VNFResumeTrafficActivity','*','*','*','*','Manual','Abort','*', '*'),
+('VNFUnlockActivity','*','*','*','*','Manual','Abort','*', '*'),
+('SDNOVnfHealthCheckBB','*','*','*','*','Manual','Abort','*', '*'),
+('VNFUnsetInMaintFlagActivity','*','*','*','*','Manual','Abort','*', '*'),
+('VNFUnsetClosedLoopDisabledActivity','*','*','*','*','Manual','Abort','*', '*');

@@ -10,7 +10,7 @@
 },
 "requestParameters": {
 "payload":
-"{\"existing-software-version\": \"3.1\",\"new-software-version\": \"3.2\", \"operations-timeout\": \"3600\"}"
+"{\"existing_software_version\": \"3.1\",\"new_software_version\": \"3.2\", \"operations_timeout\": \"3600\"}"
 }
 }
 }
