@@ -19,14 +19,27 @@
  */
 package org.onap.so.bpmn.servicedecomposition.tasks;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.onap.so.bpmn.servicedecomposition.tasks.BaseBBInputSetupTestHelper.prepareConfigurationResourceKeys;
+import static org.onap.so.bpmn.servicedecomposition.tasks.BaseBBInputSetupTestHelper.prepareLookupKeyMap;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.mockito.ArgumentMatchers;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -34,34 +47,16 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ConfigurationResourceKeys;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
-import org.onap.so.bpmn.servicedecomposition.entities.ServiceModel;
 import org.onap.so.db.catalog.beans.ConfigurationResourceCustomization;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.request.beans.InfraActiveRequests;
-import org.onap.so.serviceinstancebeans.CloudConfiguration;
-import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.RequestDetails;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.onap.so.bpmn.servicedecomposition.tasks.BaseBBInputSetupTestHelper.prepareConfigurationResourceKeys;
-import static org.onap.so.bpmn.servicedecomposition.tasks.BaseBBInputSetupTestHelper.prepareLookupKeyMap;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(Parameterized.class)
 public class BBInputSetupPopulateMethodsTest {
@@ -132,8 +127,7 @@ public class BBInputSetupPopulateMethodsTest {
         // when
         SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
         // then
-        verify(SPY_bbInputSetup, times(1)).populateL3Network(any(String.class), isA(ModelInfo.class),
-                isA(Service.class), any(String.class), isA(ServiceInstance.class), any(), any(String.class), any());
+        verify(SPY_bbInputSetup, times(1)).populateL3Network(any(BBInputSetupParameter.class));
     }
 
     @Test
@@ -165,11 +159,11 @@ public class BBInputSetupPopulateMethodsTest {
         // when
         SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
         // then
-        verify(SPY_bbInputSetup, times(1)).populateGenericVnf(isA(ModelInfo.class), any(String.class),
-                isA(org.onap.so.serviceinstancebeans.Platform.class),
-                isA(org.onap.so.serviceinstancebeans.LineOfBusiness.class), isA(Service.class), any(String.class),
-                isA(ServiceInstance.class), any(), any(), any(String.class), eq(vnfType), any(), any(String.class),
-                any(String.class), eq(false));
+        ArgumentCaptor<BBInputSetupParameter> argument = ArgumentCaptor.forClass(BBInputSetupParameter.class);
+        verify(SPY_bbInputSetup, times(1)).populateGenericVnf(argument.capture());
+
+        assertEquals(argument.getValue().getIsReplace(), false);
+        assertEquals(argument.getValue().getVnfType(), vnfType);
     }
 
     @Test
@@ -200,9 +194,7 @@ public class BBInputSetupPopulateMethodsTest {
         // when
         SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
         // then
-        verify(SPY_bbInputSetup, times(1)).populateVfModule(isA(ModelInfo.class), isA(Service.class), any(String.class),
-                isA(ServiceInstance.class), any(), any(String.class), any(), any(String.class), any(),
-                isA(CloudConfiguration.class), Mockito.anyBoolean(), isA(ServiceModel.class));
+        verify(SPY_bbInputSetup, times(1)).populateVfModule(any(BBInputSetupParameter.class));
     }
 
     @Test
@@ -232,9 +224,7 @@ public class BBInputSetupPopulateMethodsTest {
         // when
         SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
         // then
-        verify(SPY_bbInputSetup, times(1)).populateVolumeGroup(isA(ModelInfo.class), isA(Service.class),
-                any(String.class), isA(ServiceInstance.class), any(), any(String.class), ArgumentMatchers.isNull(),
-                ArgumentMatchers.isNull(), eq(vnfType), any());
+        verify(SPY_bbInputSetup, times(1)).populateVolumeGroup(any(BBInputSetupParameter.class));
     }
 
     @Test
@@ -270,14 +260,10 @@ public class BBInputSetupPopulateMethodsTest {
                 requestAction, lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID));
         doReturn(service).when(bbInputSetupUtils)
                 .getCatalogServiceByModelUUID(gBB.getServiceInstance().getModelInfoServiceInstance().getModelUuid());
-        doNothing().when(SPY_bbInputSetup).populateConfiguration(isA(ModelInfo.class), isA(Service.class),
-                any(String.class), isA(ServiceInstance.class), any(), any(String.class), ArgumentMatchers.isNull(),
-                isA(ConfigurationResourceKeys.class), isA(RequestDetails.class));
+        doNothing().when(SPY_bbInputSetup).populateConfiguration(any(BBInputSetupParameter.class));
         // when
         SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
         // then
-        verify(SPY_bbInputSetup, times(1)).populateConfiguration(isA(ModelInfo.class), isA(Service.class),
-                any(String.class), isA(ServiceInstance.class), any(), any(String.class), ArgumentMatchers.isNull(),
-                isA(ConfigurationResourceKeys.class), isA(RequestDetails.class));
+        verify(SPY_bbInputSetup, times(1)).populateConfiguration(any(BBInputSetupParameter.class));
     }
 }

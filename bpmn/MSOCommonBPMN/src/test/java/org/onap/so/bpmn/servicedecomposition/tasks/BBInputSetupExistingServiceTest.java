@@ -20,7 +20,16 @@
 
 package org.onap.so.bpmn.servicedecomposition.tasks;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.onap.so.bpmn.servicedecomposition.tasks.BaseBBInputSetupTestHelper.prepareLookupKeyMap;
+import java.io.File;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -41,16 +50,7 @@ import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.RequestDetails;
-import java.io.File;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.onap.so.bpmn.servicedecomposition.tasks.BaseBBInputSetupTestHelper.prepareLookupKeyMap;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(Parameterized.class)
 public class BBInputSetupExistingServiceTest {
@@ -126,8 +126,7 @@ public class BBInputSetupExistingServiceTest {
         doReturn(aaiServiceInstance).when(bbInputSetupUtils)
                 .getAAIServiceInstanceById(lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID));
         doReturn(serviceInstance).when(SPY_bbInputSetup).getExistingServiceInstance(aaiServiceInstance);
-        doReturn(gBB).when(SPY_bbInputSetup).populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance,
-                executeBB, requestAction, null);
+        doReturn(gBB).when(SPY_bbInputSetup).populateGBBWithSIAndAdditionalInfo(any(BBInputSetupParameter.class));
         doReturn(aaiCloudRegion).when(bbInputSetupUtils).getCloudRegion(requestDetails.getCloudConfiguration());
         // when
         SPY_bbInputSetup.getGBBMacro(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId, vnfType);
