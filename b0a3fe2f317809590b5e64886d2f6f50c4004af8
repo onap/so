@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f2e587ec_e3cf2cdd",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/resources/application.yaml",
+        "patchSetId": 13
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2020-01-27T11:30:21Z",
+      "side": 1,
+      "message": "As per my understanding and working with SOL003 adapter in SO module, i believe you are using wrong API for getting vnfms from AAI ESR, there are two APIs \n\n- ESR GUI API  https://docs.onap.org/en/latest/submodules/aai/esr-gui.git/docs/index.html\n- ESR Server API https://docs.onap.org/en/latest/submodules/aai/esr-server.git/docs/index.html\n\nI think you should be using the server API? (https://docs.onap.org/en/latest/submodules/aai/esr-server.git/docs/platform/consumedapis.html). \n\nWith the SOL003 Adapter our team implemented the ESR server API see AaiServiceProviderImpl class for example",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 36
+      },
+      "revId": "b0a3fe2f317809590b5e64886d2f6f50c4004af8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
