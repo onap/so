@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f0ac7eae_ff8b5139",
+        "filename": "bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/BuildingBlock/AssignPnfBB.bpmn",
+        "patchSetId": 5
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-01-27T08:27:05Z",
+      "side": 1,
+      "message": "Is this needed if AAIPnfResources creates pnf if it doesn\u0027t already exist?",
+      "range": {
+        "startLine": 14,
+        "startChar": 4,
+        "endLine": 14,
+        "endChar": 249
+      },
+      "revId": "48ab230d66c962698c49c8e303d5cb7bd1c858fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5d9cb70c_474d07fb",
+        "filename": "bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/BuildingBlock/AssignPnfBB.bpmn",
+        "patchSetId": 5
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-01-27T08:27:05Z",
+      "side": 1,
+      "message": "If we are going to keep using the InjectExecution, we could think of simplifying the call in camunda modeller by introducing method taking only execution as its parameter and extracting the gBuildingBlockExecution in its body. (Not necessarily in this commit)",
+      "range": {
+        "startLine": 23,
+        "startChar": 125,
+        "endLine": 23,
+        "endChar": 217
+      },
+      "revId": "48ab230d66c962698c49c8e303d5cb7bd1c858fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "643b3c00_fe11a266",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/aai/tasks/AAICreateTasks.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-01-27T08:27:05Z",
+      "side": 1,
+      "message": "It can be imported.",
+      "range": {
+        "startLine": 261,
+        "startChar": 12,
+        "endLine": 261,
+        "endChar": 63
+      },
+      "revId": "48ab230d66c962698c49c8e303d5cb7bd1c858fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
