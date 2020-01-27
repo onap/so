@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "0976e552_69349bb5",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/GeneratePayloadForVfModule.java",
+        "patchSetId": 33
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2020-01-27T15:28:51Z",
+      "side": 1,
+      "message": "Done .",
+      "parentUuid": "9902e803_e0cb9cc0",
+      "revId": "f7a6542f758ed925a618b59267be131dd6107dc7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5ffb727d_c9c35657",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/GeneratePayloadForVnf.java",
         "patchSetId": 33
@@ -30,6 +48,24 @@
       "writtenOn": "2020-01-17T14:49:38Z",
       "side": 1,
       "message": "We should never manually construct JSON payloads. You have not included proper escaping logic and this will leave us vulnerable to bugs. Please use a library to construct JSON and then convert it to a string. Either Jackson or Gson can be used for this. SO has generally preferred Jackson in the past.",
+      "revId": "f7a6542f758ed925a618b59267be131dd6107dc7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0d08d97c_37e04b70",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/GeneratePayloadForVnf.java",
+        "patchSetId": 33
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2020-01-27T15:28:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5ffb727d_c9c35657",
       "revId": "f7a6542f758ed925a618b59267be131dd6107dc7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -88,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "967b660c_3f60c619",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/PayloadConstants.java",
+        "patchSetId": 33
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2020-01-27T15:28:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4c23663a_3c1d19c8",
+      "revId": "f7a6542f758ed925a618b59267be131dd6107dc7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "97ecc050_822e5c49",
         "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/client/cds/GeneratePayloadForCdsTest.java",
         "patchSetId": 33
@@ -99,6 +153,24 @@
       "writtenOn": "2020-01-17T14:49:38Z",
       "side": 1,
       "message": "Can we assert something more than just it is valid JSON? That should not be a concern. Is there something special about the structure or keys within this JSON document that we can assert?",
+      "revId": "f7a6542f758ed925a618b59267be131dd6107dc7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7e775ba_1a41189c",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/client/cds/GeneratePayloadForCdsTest.java",
+        "patchSetId": 33
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2020-01-27T15:28:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "97ecc050_822e5c49",
       "revId": "f7a6542f758ed925a618b59267be131dd6107dc7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
