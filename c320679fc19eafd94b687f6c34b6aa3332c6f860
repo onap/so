@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ce96d99c_9aebc864",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListenerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2020-01-27T16:29:51Z",
+      "side": 1,
+      "message": "Can you explain what you are testing here ?\nApplies elsewhere.\n\nHow do you know skipCDSBuildingBlockListener is doing the job \nUsually in the unit test usually you have verify section where you make sure the source code is doing the correct thing.\n\nI am adding few references for writing a unit test case that would provide you a better picture.\nhttps://examples.javacodegeeks.com/core-java/junit/junit-best-practices/\nhttps://www.javaworld.com/article/2076265/junit-best-practices.html",
+      "range": {
+        "startLine": 76,
+        "startChar": 0,
+        "endLine": 76,
+        "endChar": 90
+      },
+      "revId": "c320679fc19eafd94b687f6c34b6aa3332c6f860",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
