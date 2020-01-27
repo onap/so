@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "5b0c7a65_d6a8a278",
+        "filename": "bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/BuildingBlock/AssignPnfBB.bpmn",
+        "patchSetId": 5
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-01-27T12:37:34Z",
+      "side": 1,
+      "message": "BTW. Hopefully \"Assignment should fail if PNF entry is already assigned to another service instance\" will be taken care of automatically by AAI. If not I\u0027ll will create separate US for that.",
+      "parentUuid": "7f557eed_2673d76e",
+      "range": {
+        "startLine": 14,
+        "startChar": 4,
+        "endLine": 14,
+        "endChar": 249
+      },
+      "revId": "48ab230d66c962698c49c8e303d5cb7bd1c858fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5d9cb70c_474d07fb",
         "filename": "bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/BuildingBlock/AssignPnfBB.bpmn",
         "patchSetId": 5
