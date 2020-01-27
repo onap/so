@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "141e5d2e_b80c6707",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-01-27T12:29:46Z",
+      "side": 1,
+      "message": "I can see you replaced test parameters with empty strings because they were not used. It\u0027s a valid change but I wonder if this is the way we want to change this test. \n\nI think it would be better if we had 2 different services with different UUIDs and we check that correct one is returned. Then those parameters would make sense and the test would be better overall.\n\nI would apply this approach to other tests too.",
+      "revId": "029e6078b3035332c0d5a6171d6152e2c2e21542",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
