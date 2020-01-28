@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "962ddd99_c794b885",
+        "filename": "bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/BuildingBlock/AssignPnfBB.bpmn",
+        "patchSetId": 5
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-01-28T10:42:00Z",
+      "side": 1,
+      "message": "I removed CheckAaiForPnfCorrelationId as discussed above and executed suggested testcases. The results are as follows:\n(Preconditions -\u003e Event -\u003e Result)\n\n- Pnf does not exist in AAI -\u003e Send a request with pnf P1 and service S1 -\u003e P1 is created in AAI and connected to S1\n\n- Pnf P1 with a connection to service S1 exist in AAI -\u003e Send a request with pnf P1 and service S2 -\u003e No changes in AAI, log from bpmn-infra: multiplicity violated:multiplicity rule violated: only one edge can exist with label: org.onap.relationships.inventory.ComposedOf between service-instance and pnf) (ec\u003dERR.5.4.6140)\"\n\n- Pnf P1 without connection to any service exists in AAI -\u003e Send a request with pnf P1 and service S1 -\u003e P1 is connected to S1 in AAI",
+      "parentUuid": "5b0c7a65_d6a8a278",
+      "range": {
+        "startLine": 14,
+        "startChar": 4,
+        "endLine": 14,
+        "endChar": 249
+      },
+      "revId": "48ab230d66c962698c49c8e303d5cb7bd1c858fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5d9cb70c_474d07fb",
         "filename": "bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/BuildingBlock/AssignPnfBB.bpmn",
         "patchSetId": 5
@@ -96,6 +120,30 @@
     },
     {
       "key": {
+        "uuid": "5144fc1c_ebebccc7",
+        "filename": "bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/BuildingBlock/AssignPnfBB.bpmn",
+        "patchSetId": 5
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-01-28T10:42:00Z",
+      "side": 1,
+      "message": "It\u0027s a good idea.",
+      "parentUuid": "5d9cb70c_474d07fb",
+      "range": {
+        "startLine": 23,
+        "startChar": 125,
+        "endLine": 23,
+        "endChar": 217
+      },
+      "revId": "48ab230d66c962698c49c8e303d5cb7bd1c858fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "643b3c00_fe11a266",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/aai/tasks/AAICreateTasks.java",
         "patchSetId": 5
@@ -107,6 +155,30 @@
       "writtenOn": "2020-01-27T08:27:05Z",
       "side": 1,
       "message": "It can be imported.",
+      "range": {
+        "startLine": 261,
+        "startChar": 12,
+        "endLine": 261,
+        "endChar": 63
+      },
+      "revId": "48ab230d66c962698c49c8e303d5cb7bd1c858fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bf3d2ab2_93f2992b",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/aai/tasks/AAICreateTasks.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-01-28T10:42:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "643b3c00_fe11a266",
       "range": {
         "startLine": 261,
         "startChar": 12,
