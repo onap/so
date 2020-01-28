@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e0aba68d_29d0e6db",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/aai/AaiConnection.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2020-01-28T16:16:17Z",
+      "side": 1,
+      "message": "do you need isEmtpy check, incase getEsrVnfm() return empty no?",
+      "range": {
+        "startLine": 49,
+        "startChar": 12,
+        "endLine": 49,
+        "endChar": 88
+      },
+      "revId": "5a075388f3a3c57142f94b6256f19dfdd906e020",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2f5437e6_f5f3570a",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/test/java/org/onap/so/adapters/vevnfm/controller/NotificationControllerTest.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2020-01-28T16:16:17Z",
+      "side": 1,
+      "message": "Subjective comment: instead of injecting NotificationController and calling method directly, you may invoke the endpoint (/lcm/v1/vnf/instances/notifications) using http request",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 46
+      },
+      "revId": "5a075388f3a3c57142f94b6256f19dfdd906e020",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7c6f9d81_f16439c1",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/test/java/org/onap/so/adapters/vevnfm/subscription/SubscribeSenderTest.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2020-01-28T16:16:17Z",
+      "side": 1,
+      "message": "Subjective comment: instead of mocking HttpRestServiceProvider you may use MockRestServiceServer to mock http requests",
+      "range": {
+        "startLine": 60,
+        "startChar": 0,
+        "endLine": 60,
+        "endChar": 3
+      },
+      "revId": "5a075388f3a3c57142f94b6256f19dfdd906e020",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
