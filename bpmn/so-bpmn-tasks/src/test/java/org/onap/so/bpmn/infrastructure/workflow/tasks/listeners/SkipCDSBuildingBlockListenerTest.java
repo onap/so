@@ -20,45 +20,60 @@
 
 package org.onap.so.bpmn.infrastructure.workflow.tasks.listeners;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.so.bpmn.BaseTaskTest;
+import org.onap.so.bpmn.common.BBConstants;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.common.DelegateExecutionImpl;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
-import org.onap.so.db.catalog.client.CatalogDbClient;
+import org.onap.so.db.catalog.beans.VfModuleCustomization;
+import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.RequestDetails;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
-public class SkipCDSBuildingBlockListenerTest {
+public class SkipCDSBuildingBlockListenerTest extends BaseTaskTest {
     private static final String VNF_SCOPE = "VNF";
     private static final String VF_SCOPE = "VFModule";
-    private static final String VFMODULEID = "vfModuleId";
-    private static final String MODELUUID = "modelUuid";
-    private static final String VNF_ACTION1 = "config-assign";
-    private static final String VNF_ACTION2 = "config-deploy";
-    private static final String VNF_ACTION3 = "configAssign";
-    private static final String VNF_ACTION4 = "configDeploy";
-    private static final String VF_ACTION1 = "configAssign";
-    private static final String VF_ACTION2 = "configDeploy";
-    private static final String MODELCUSTOMIZATIONUUID = "modelCustomizationUUID";
+    private static final String TEST_MODELUUID = "123456789";
+    private static final String VNF_TEST_ACTION = "configAssign";
+    private static final String VFModule_TEST_ACTION = "configAssign";
+    private static final String MODELCUSTOMIZATIONUUID = "123456789";
 
+    private int actual;
+    private List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
+    private List<VnfResourceCustomization> vnfResourceCustomization;
+    private List<VfModuleCustomization> vfModuleCustomization;
     private ExecuteBuildingBlock executeBuildingBlock = new ExecuteBuildingBlock();
     private RequestDetails reqDetail = new RequestDetails();
-    private BuildingBlockExecution execution = new DelegateExecutionImpl(new DelegateExecutionFake());
-    @Mock
-    private CatalogDbClient catalogDbClient;
+    private BuildingBlockExecution buildingBlockExecution = new DelegateExecutionImpl(new DelegateExecutionFake());
+    private VnfResourceCustomization vnfCust = new VnfResourceCustomization();
+    private VfModuleCustomization vfCust = new VfModuleCustomization();
+    private BuildingBlock buildingBlock = new BuildingBlock();
+
     @InjectMocks
     private SkipCDSBuildingBlockListener skipCDSBuildingBlockListener;
+
+    @Before
+    public void before() {
+        ModelInfo model = new ModelInfo();
+        model.setModelUuid(TEST_MODELUUID);
+        reqDetail.setModelInfo(model);
+        executeBuildingBlock.setRequestDetails(reqDetail);
+    }
+
 
     @Test
     public void testTrigger() {
@@ -66,74 +81,123 @@ public class SkipCDSBuildingBlockListenerTest {
         assertTrue("should be triggered",
                 skipCDSBuildingBlockListener.shouldRunFor("ControllerExecutionBB", true, execution));
         assertFalse("should not be triggered",
-                skipCDSBuildingBlockListener.shouldRunFor("ControllerExecutionBB2", true, execution));
+                skipCDSBuildingBlockListener.shouldRunFor("ControllerExecutionBB2", false, execution));
     }
 
     @Test
-    public void testProcessForSkipVnfConfigAssignAction() {
-        List<ExecuteBuildingBlock> flowsToExecute = createflowsToExecute();
-        setScopeAndAction(VNF_SCOPE, VNF_ACTION1);
-        skipCDSBuildingBlockListener.run(flowsToExecute, executeBuildingBlock, execution);
+    public void testProcessForVNFToSkipCDSBB() {
+        // given
+        setBuildingBlockAndCurrentSequence(VNF_SCOPE, VNF_TEST_ACTION, 0);
+        vnfResourceCustomization = getVnfResourceCustomizationList(true);
 
-    }
+        when(catalogDbClient.getVnfResourceCustomizationByModelUuid(
+                executeBuildingBlock.getRequestDetails().getModelInfo().getModelUuid()))
+                        .thenReturn(vnfResourceCustomization);
+        when(catalogDbClient.findVnfResourceCustomizationInList(executeBuildingBlock.getBuildingBlock().getKey(),
+                vnfResourceCustomization)).thenReturn(vnfCust);
 
-    @Test
-    public void testProcessForSkipVnfConfigDeployAction() {
-        List<ExecuteBuildingBlock> flowsToExecute = createflowsToExecute();
-        setScopeAndAction(VNF_SCOPE, VNF_ACTION2);
-        skipCDSBuildingBlockListener.run(flowsToExecute, executeBuildingBlock, execution);
-    }
+        // when
+        skipCDSBuildingBlockListener.run(flowsToExecute, executeBuildingBlock, buildingBlockExecution);
 
-    @Test
-    public void testProcessForSkipVnfConfigAssignAction1() {
-        List<ExecuteBuildingBlock> flowsToExecute = createflowsToExecute();
-        setScopeAndAction(VNF_SCOPE, VNF_ACTION3);
-        skipCDSBuildingBlockListener.run(flowsToExecute, executeBuildingBlock, execution);
+        // then
+        actual = buildingBlockExecution.getVariable(BBConstants.G_CURRENT_SEQUENCE);
+        assertEquals(1, actual);
 
     }
 
     @Test
-    public void testProcessForSkipVnfConfigAssignAction2() {
-        List<ExecuteBuildingBlock> flowsToExecute = createflowsToExecute();
-        setScopeAndAction(VNF_SCOPE, VNF_ACTION4);
-        skipCDSBuildingBlockListener.run(flowsToExecute, executeBuildingBlock, execution);
+    public void testProcessForVNFNotToSkipCDSBB() {
+        // given
+        setBuildingBlockAndCurrentSequence(VNF_SCOPE, VNF_TEST_ACTION, 0);
+        vnfResourceCustomization = getVnfResourceCustomizationList(false);
+
+        when(catalogDbClient.getVnfResourceCustomizationByModelUuid(
+                executeBuildingBlock.getRequestDetails().getModelInfo().getModelUuid()))
+                        .thenReturn(vnfResourceCustomization);
+        when(catalogDbClient.findVnfResourceCustomizationInList(executeBuildingBlock.getBuildingBlock().getKey(),
+                vnfResourceCustomization)).thenReturn(vnfCust);
+
+
+        // when
+        skipCDSBuildingBlockListener.run(flowsToExecute, executeBuildingBlock, buildingBlockExecution);
+
+        // then
+        actual = buildingBlockExecution.getVariable(BBConstants.G_CURRENT_SEQUENCE);
+        assertEquals(0, actual);
+
+    }
+
+
+    @Test
+    public void testProcessForVFToSkipCDSBB() {
+        // given
+        setBuildingBlockAndCurrentSequence(VF_SCOPE, VFModule_TEST_ACTION, 0);
+        vfModuleCustomization = getVfModuleCustomizationList(true);
+
+        when(catalogDbClient
+                .getVfModuleCustomizationByModelCuztomizationUUID(executeBuildingBlock.getBuildingBlock().getKey()))
+                        .thenReturn(vfCust);
+
+        // when
+        skipCDSBuildingBlockListener.run(flowsToExecute, executeBuildingBlock, buildingBlockExecution);
+
+        // then
+        actual = buildingBlockExecution.getVariable(BBConstants.G_CURRENT_SEQUENCE);
+        assertEquals(1, actual);
 
     }
 
     @Test
-    public void testProcessForSkipVfModuleConfigAssignAction() {
-        List<ExecuteBuildingBlock> flowsToExecute = createflowsToExecute();
-        setScopeAndAction(VF_SCOPE, VF_ACTION1);
-        skipCDSBuildingBlockListener.run(flowsToExecute, executeBuildingBlock, execution);
+    public void testProcessForVFNotToSkipCDSBB() {
+        // given
+        setBuildingBlockAndCurrentSequence(VF_SCOPE, VFModule_TEST_ACTION, 0);
+        vfModuleCustomization = getVfModuleCustomizationList(false);
+
+        when(catalogDbClient
+                .getVfModuleCustomizationByModelCuztomizationUUID(executeBuildingBlock.getBuildingBlock().getKey()))
+                        .thenReturn(vfCust);
+
+        // when
+        skipCDSBuildingBlockListener.run(flowsToExecute, executeBuildingBlock, buildingBlockExecution);
+
+        // then
+        actual = buildingBlockExecution.getVariable(BBConstants.G_CURRENT_SEQUENCE);
+        assertEquals(0, actual);
 
     }
 
-    @Test
-    public void testProcessForSkipVfModuleConfigDeployAction() {
-        List<ExecuteBuildingBlock> flowsToExecute = createflowsToExecute();
-        setScopeAndAction(VF_SCOPE, VF_ACTION2);
-        skipCDSBuildingBlockListener.run(flowsToExecute, executeBuildingBlock, execution);
-
-    }
-
-    private void setScopeAndAction(String scope, String action) {
-        BuildingBlock buildingBlock = new BuildingBlock();
+    /**
+     * setting scope action in buildingBlock and bb current sequence in BuildingBlockExecution
+     * 
+     * @param scope
+     * @param action
+     * @param squence
+     */
+    private void setBuildingBlockAndCurrentSequence(String scope, String action, int squence) {
         buildingBlock.setBpmnScope(scope);
         buildingBlock.setBpmnAction(action);
+        buildingBlock.setBpmnFlowName("ControllerExecutionBB");
         buildingBlock.setKey(MODELCUSTOMIZATIONUUID);
         executeBuildingBlock.setBuildingBlock(buildingBlock);
+        buildingBlockExecution.setVariable(BBConstants.G_CURRENT_SEQUENCE, squence);
+
 
     }
 
-    private List<ExecuteBuildingBlock> createflowsToExecute() {
-        List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
-        ModelInfo model = new ModelInfo();
-        model.setModelUuid(MODELUUID);
-        reqDetail.setModelInfo(model);
-        executeBuildingBlock.setRequestDetails(reqDetail);
-        executeBuildingBlock.setResourceId(VFMODULEID);
-        flowsToExecute.add(executeBuildingBlock);
-        return flowsToExecute;
+    private List<VnfResourceCustomization> getVnfResourceCustomizationList(boolean setSkippost) {
+        List<VnfResourceCustomization> vnfResourceCustomizations = new ArrayList<>();
+        vnfCust.setModelCustomizationUUID(MODELCUSTOMIZATIONUUID);
+        vnfCust.setSkipPostInstConf(setSkippost);
+        vnfResourceCustomizations.add(vnfCust);
+        return vnfResourceCustomizations;
+    }
+
+    private List<VfModuleCustomization> getVfModuleCustomizationList(boolean setSkippost) {
+        List<VfModuleCustomization> vfModuleCustomizations = new ArrayList<>();
+        vfCust.setModelCustomizationUUID(MODELCUSTOMIZATIONUUID);
+        vfCust.setSkipPostInstConf(setSkippost);
+        vfModuleCustomizations.add(vfCust);
+        return vfModuleCustomizations;
     }
 
 }
