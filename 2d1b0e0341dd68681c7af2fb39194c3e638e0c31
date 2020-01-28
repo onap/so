@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "47f66db1_0c429e0e",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/aai/tasks/AAICreateTasksTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-01-28T13:29:11Z",
+      "side": 1,
+      "message": "This statement is used only in one test, so there is not point to put it in the \"before\" section. Move it to createPnfShouldCallCreatePnfAndConnectServiceInstance test please.",
+      "range": {
+        "startLine": 109,
+        "startChar": 8,
+        "endLine": 109,
+        "endChar": 106
+      },
+      "revId": "2d1b0e0341dd68681c7af2fb39194c3e638e0c31",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
