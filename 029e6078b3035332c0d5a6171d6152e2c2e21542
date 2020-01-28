@@ -16,6 +16,29 @@
       "revId": "029e6078b3035332c0d5a6171d6152e2c2e21542",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bbff0438_5c583293",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-01-28T15:46:08Z",
+      "side": 1,
+      "message": "Agree with Lukasz, we should test if the method is invoked with proper parameters.\n\n\tString modelVer \u003d \"modelVTest\";\n        String modelUuid \u003d \"modelUuidTest\";\n        Service expectedService \u003d\n                mapper.readValue(new File(RESOURCE_PATH + \"CatalogServiceExpected.json\"),Service.class);\n        doReturn(expectedService).when(MOCK_catalogDbClient)\n                .getServiceByModelVersionAndModelInvariantUUID(modelVer, modelUuid);\n\n        assertThat(bbInputSetupUtils.getCatalogServiceByModelVersionAndModelInvariantUUID(modelVer, modelUuid),sameBeanAs(expectedService));\n\nPlease apply this rule to other tests.",
+      "range": {
+        "startLine": 140,
+        "startChar": 8,
+        "endLine": 140,
+        "endChar": 98
+      },
+      "revId": "029e6078b3035332c0d5a6171d6152e2c2e21542",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
