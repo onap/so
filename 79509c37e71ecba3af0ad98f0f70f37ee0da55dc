@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a25f060f_8d8d3dab",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListenerTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2020-01-28T22:28:10Z",
+      "side": 1,
+      "message": "Suggestion - This flag is not getting used in the source code so even if you set it to true for the first case and false for the second it doesn\u0027t affect the behaviour.",
+      "range": {
+        "startLine": 82,
+        "startChar": 83,
+        "endLine": 82,
+        "endChar": 87
+      },
+      "revId": "79509c37e71ecba3af0ad98f0f70f37ee0da55dc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "79d105cb_f1f6e365",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListenerTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2020-01-28T22:28:10Z",
+      "side": 1,
+      "message": "Typo",
+      "range": {
+        "startLine": 176,
+        "startChar": 85,
+        "endLine": 176,
+        "endChar": 92
+      },
+      "revId": "79509c37e71ecba3af0ad98f0f70f37ee0da55dc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
