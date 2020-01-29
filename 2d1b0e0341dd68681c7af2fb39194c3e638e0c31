@@ -22,6 +22,30 @@
       "revId": "2d1b0e0341dd68681c7af2fb39194c3e638e0c31",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "11cbc951_d44f22b5",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/aai/tasks/AAICreateTasksTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-01-29T07:03:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "47f66db1_0c429e0e",
+      "range": {
+        "startLine": 109,
+        "startChar": 8,
+        "endLine": 109,
+        "endChar": 106
+      },
+      "revId": "2d1b0e0341dd68681c7af2fb39194c3e638e0c31",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
