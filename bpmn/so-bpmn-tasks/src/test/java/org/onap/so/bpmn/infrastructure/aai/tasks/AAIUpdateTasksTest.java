@@ -20,21 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.aai.tasks;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import java.util.HashMap;
 import org.camunda.bpm.engine.delegate.BpmnError;
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
@@ -48,6 +34,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
@@ -56,6 +43,18 @@ import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoGenericVnf;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
+import java.util.HashMap;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class AAIUpdateTasksTest extends BaseTaskTest {
 
@@ -138,6 +137,27 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
                 .updateOrchestrationStatusServiceInstance(serviceInstance, OrchestrationStatus.ACTIVE);
 
         aaiUpdateTasks.updateOrchestrationStatusActiveService(execution);
+    }
+
+
+    @Test
+    public void updateOrchestrationStatusActivePnfTest() throws Exception {
+        Pnf pnf = preparePnfAndExtractForPnf();
+        doNothing().when(aaiPnfResources).updateOrchestrationStatusPnf(pnf, OrchestrationStatus.ACTIVE);
+
+        aaiUpdateTasks.updateOrchestrationStatusActivePnf(execution);
+
+        verify(aaiPnfResources, times(1)).updateOrchestrationStatusPnf(pnf, OrchestrationStatus.ACTIVE);
+    }
+
+    @Test
+    public void updateOrchestrationStatusActivePnfExceptionTest() throws Exception {
+        Pnf pnf = preparePnfAndExtractForPnf();
+        doThrow(RuntimeException.class).when(aaiPnfResources).updateOrchestrationStatusPnf(pnf,
+                OrchestrationStatus.ACTIVE);
+
+        expectedException.expect(BpmnError.class);
+        aaiUpdateTasks.updateOrchestrationStatusActivePnf(execution);
     }
 
     @Test
@@ -742,5 +762,11 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
                 OrchestrationStatus.CONFIGURED);
 
         aaiUpdateTasks.updateOrchestrationStatusConfigDeployConfiguredVnf(execution);
+    }
+
+    private Pnf preparePnfAndExtractForPnf() throws BBObjectNotFoundException {
+        Pnf pnf = buildPnf();
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.PNF))).thenReturn(pnf);
+        return pnf;
     }
 }
