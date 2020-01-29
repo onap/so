@@ -49,4 +49,14 @@ public class AAIPnfResources {
         injectionHelper.getAaiClient().createIfNotExists(pnfURI, Optional.of(aaiObjectMapper.mapPnf(pnf)))
                 .connect(pnfURI, serviceInstanceURI);
     }
+
+    public void updateOrchestrationStatusPnf(Pnf pnf, OrchestrationStatus orchestrationStatus) {
+        AAIResourceUri pnfURI = AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnf.getPnfName());
+
+        Pnf pnf_copy = pnf.shallowCopyId();
+
+        pnf.setOrchestrationStatus(orchestrationStatus);
+        pnf_copy.setOrchestrationStatus(orchestrationStatus);
+        injectionHelper.getAaiClient().update(pnfURI, aaiObjectMapper.mapPnf(pnf_copy));
+    }
 }
