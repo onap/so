@@ -32,6 +32,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
@@ -44,6 +45,7 @@ import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.AAICollectionResources;
 import org.onap.so.client.orchestration.AAIConfigurationResources;
 import org.onap.so.client.orchestration.AAINetworkResources;
+import org.onap.so.client.orchestration.AAIPnfResources;
 import org.onap.so.client.orchestration.AAIServiceInstanceResources;
 import org.onap.so.client.orchestration.AAIVfModuleResources;
 import org.onap.so.client.orchestration.AAIVnfResources;
@@ -78,6 +80,8 @@ public class AAIUpdateTasks {
     private AAICollectionResources aaiCollectionResources;
     @Autowired
     private AAIConfigurationResources aaiConfigurationResources;
+    @Autowired
+    private AAIPnfResources aaiPnfResources;
 
     /**
      * BPMN access method to update the status of Service to Assigned in AAI
@@ -110,6 +114,22 @@ public class AAIUpdateTasks {
                     OrchestrationStatus.ACTIVE);
         } catch (Exception ex) {
             logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusActiveService", ex);
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
+
+    /**
+     * BPMN access method to update status of Pnf to Active in AAI
+     *
+     * @param execution
+     */
+    public void updateOrchestrationStatusActivePnf(BuildingBlockExecution execution) {
+        try {
+            Pnf pnf = extractPojosForBB.extractByKey(execution, ResourceKey.PNF);
+            aaiPnfResources.updateOrchestrationStatusPnf(pnf, OrchestrationStatus.ACTIVE);
+        } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusActivePnf", ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
