@@ -44,14 +44,7 @@ import org.onap.so.adapters.nwrest.CreateNetworkResponse;
 import org.onap.so.adapters.nwrest.UpdateNetworkResponse;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.*;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoGenericVnf;
 import org.onap.so.client.exception.BBObjectNotFoundException;
@@ -70,6 +63,7 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     private CloudRegion cloudRegion;
     private Configuration configuration;
     private Subnet subnet;
+    private Pnf pnf;
 
     @Before
     public void before() throws BBObjectNotFoundException {
@@ -81,7 +75,9 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
         network = setL3Network();
         configuration = setConfiguration();
         subnet = buildSubnet();
+        pnf = buildPnf();
 
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.PNF))).thenReturn(pnf);
         when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID)))
                 .thenReturn(genericVnf);
         when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
@@ -138,6 +134,26 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
                 .updateOrchestrationStatusServiceInstance(serviceInstance, OrchestrationStatus.ACTIVE);
 
         aaiUpdateTasks.updateOrchestrationStatusActiveService(execution);
+    }
+
+
+    @Test
+    public void updateOrchestrationStatusActivePnfTest() throws Exception {
+        doNothing().when(aaiPnfResources).updateOrchestrationStatusPnf(pnf, OrchestrationStatus.ACTIVE);
+
+        aaiUpdateTasks.updateOrchestrationStatusActivePnf(execution);
+
+        verify(aaiPnfResources, times(1)).updateOrchestrationStatusPnf(pnf, OrchestrationStatus.ACTIVE);
+    }
+
+    @Test
+    public void updateOrchestrationStatusActivePnfExceptionTest() throws Exception {
+        expectedException.expect(BpmnError.class);
+
+        doThrow(RuntimeException.class).when(aaiPnfResources).updateOrchestrationStatusPnf(pnf,
+                OrchestrationStatus.ACTIVE);
+
+        aaiUpdateTasks.updateOrchestrationStatusActivePnf(execution);
     }
 
     @Test

@@ -21,8 +21,7 @@
 package org.onap.so.client.orchestration;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -81,6 +80,18 @@ public class AAIPnfResourcesTest extends TestDataSetup {
 
         assertEquals(OrchestrationStatus.INVENTORIED, pnf.getOrchestrationStatus());
         verify(aaiResourcesClientMock, times(1)).connect(any(AAIResourceUri.class), any(AAIResourceUri.class));
+    }
+
+    @Test
+    public void updateOrchestrationStatusPnfShouldSetStatusAndUpdatePnfInAAI() {
+        org.onap.aai.domain.yang.Pnf pnfYang = new org.onap.aai.domain.yang.Pnf();
+        doReturn(pnfYang).when(aaiObjectMapperMock).mapPnf(pnf);
+
+        aaiPnfResources.updateOrchestrationStatusPnf(pnf, OrchestrationStatus.ACTIVE);
+
+        assertEquals(OrchestrationStatus.ACTIVE, pnf.getOrchestrationStatus());
+        verify(aaiObjectMapperMock, times(1)).mapPnf(argThat(arg -> OrchestrationStatus.ACTIVE.equals(arg.getOrchestrationStatus())));
+        verify(aaiResourcesClientMock, times(1)).update(any(AAIResourceUri.class), eq(pnfYang));
     }
 
 }
