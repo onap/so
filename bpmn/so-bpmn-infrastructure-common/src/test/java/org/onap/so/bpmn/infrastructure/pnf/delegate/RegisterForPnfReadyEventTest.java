@@ -24,6 +24,8 @@ import org.onap.so.client.exception.ExceptionBuilder;
 public class RegisterForPnfReadyEventTest {
 
     private static final String PNF_NAME = "pnfNameTest";
+    private static final String PNF_ENTRY_NOTIFICATION_TIMEOUT = "P14D";
+    private static final String PROCESS_INSTANCE_ID = "testInstanceId";
 
     private DelegateExecution delegateExecution;
     private ExtractPojosForBB extractPojosForBBMock;
@@ -31,7 +33,6 @@ public class RegisterForPnfReadyEventTest {
     private MessageCorrelationBuilder messageCorrelationBuilder;
     private ExceptionBuilder exceptionBuilderMock;
     private BuildingBlockExecution buildingBlockExecution;
-    private static final String PNF_ENTRY_NOTIFICATION_TIMEOUT = "P14D";
 
     private RegisterForPnfReadyEvent testedObject;
 
@@ -103,13 +104,13 @@ public class RegisterForPnfReadyEventTest {
     private void checkIfInformConsumerThreadIsRunProperly(DmaapClientTestImpl dmaapClientTest) {
         dmaapClientTest.getInformConsumer().run();
         InOrder inOrder = inOrder(messageCorrelationBuilder);
-        inOrder.verify(messageCorrelationBuilder).processInstanceBusinessKey("testBusinessKey");
+        inOrder.verify(messageCorrelationBuilder).processInstanceId(PROCESS_INSTANCE_ID);
         inOrder.verify(messageCorrelationBuilder).correlateWithResult();
     }
 
     private DelegateExecution prepareExecution() {
         DelegateExecution delegateExecution = mock(DelegateExecution.class);
-        when(delegateExecution.getProcessBusinessKey()).thenReturn("testBusinessKey");
+        when(delegateExecution.getProcessInstanceId()).thenReturn(PROCESS_INSTANCE_ID);
         ProcessEngineServices processEngineServices = mock(ProcessEngineServices.class);
         when(delegateExecution.getProcessEngineServices()).thenReturn(processEngineServices);
         RuntimeService runtimeService = mock(RuntimeService.class);
@@ -117,7 +118,7 @@ public class RegisterForPnfReadyEventTest {
 
         messageCorrelationBuilder = mock(MessageCorrelationBuilder.class);
         when(runtimeService.createMessageCorrelation(any())).thenReturn(messageCorrelationBuilder);
-        when(messageCorrelationBuilder.processInstanceBusinessKey(any())).thenReturn(messageCorrelationBuilder);
+        when(messageCorrelationBuilder.processInstanceId(any())).thenReturn(messageCorrelationBuilder);
 
         return delegateExecution;
     }
