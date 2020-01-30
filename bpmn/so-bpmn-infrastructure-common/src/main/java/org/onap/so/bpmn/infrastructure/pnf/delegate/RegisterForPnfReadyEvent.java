@@ -70,7 +70,7 @@ public class RegisterForPnfReadyEvent implements JavaDelegate {
             fillExecution(execution, pnfName);
             RuntimeService runtimeService = execution.getProcessEngineServices().getRuntimeService();
             dmaapClient.registerForUpdate(pnfName, () -> runtimeService.createMessageCorrelation("WorkflowMessage")
-                    .processInstanceBusinessKey(execution.getProcessBusinessKey()).correlateWithResult());
+                    .processInstanceId(execution.getProcessInstanceId()).correlateWithResult());
         } catch (BBObjectNotFoundException e) {
             LOGGER.error(ERROR_MESSAGE_PNF_NOT_FOUND);
             exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, ERROR_MESSAGE_PNF_NOT_FOUND);
