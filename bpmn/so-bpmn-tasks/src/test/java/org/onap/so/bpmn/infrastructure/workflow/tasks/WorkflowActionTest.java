@@ -36,8 +36,11 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -222,6 +225,28 @@ public class WorkflowActionTest extends BaseTaskTest {
         workflowAction.selectExecutionList(execution);
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
         assertEqualsBulkFlowName(ebbs, "AssignServiceInstanceBB", "ActivateServiceInstanceBB");
+    }
+
+    @Test
+    public void selectExecutionListDuplicateNameExceptionTest() throws Exception {
+        String gAction = "createInstance";
+        execution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
+        String bpmnRequest =
+                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/Macro/ServiceMacroAssign.json")));
+        execution.setVariable("bpmnRequest", bpmnRequest);
+        execution.setVariable("aLaCarte", true);
+        execution.setVariable("apiVersion", "7");
+        execution.setVariable("requestUri", "v6/serviceInstances");
+        execution.setVariable("requestAction", gAction);
+
+        doThrow(new DuplicateNameException(
+                "serviceInstance with name (instanceName) and different version id (3c40d244-808e-42ca-b09a-256d83d19d0a) already exists. The name must be unique."))
+                        .when(SPY_workflowAction).validateResourceIdInAAI(anyString(), eq(WorkflowType.SERVICE),
+                                eq("test"), any(RequestDetails.class), any(WorkflowResourceIds.class));
+
+        SPY_workflowAction.selectExecutionList(execution);
+        assertEquals(execution.getVariable("WorkflowActionErrorMessage"),
+                "Exception while setting execution list. serviceInstance with name (instanceName) and different version id (3c40d244-808e-42ca-b09a-256d83d19d0a) already exists. The name must be unique.");
     }
 
     /**

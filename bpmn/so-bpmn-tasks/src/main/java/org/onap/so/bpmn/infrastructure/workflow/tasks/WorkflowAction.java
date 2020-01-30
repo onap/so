@@ -431,7 +431,7 @@ public class WorkflowAction {
             execution.setVariable("isRollbackComplete", false);
 
         } catch (Exception ex) {
-            buildAndThrowException(execution, "Exception in execution list. ", ex);
+            buildAndThrowException(execution, "Exception while setting execution list. ", ex);
         }
     }
 
@@ -1562,8 +1562,8 @@ public class WorkflowAction {
 
     protected void buildAndThrowException(DelegateExecution execution, String msg, Exception ex) {
         logger.error(msg, ex);
-        execution.setVariable(WORKFLOW_ACTION_ERROR_MESSAGE, msg);
-        exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, msg);
+        execution.setVariable(WORKFLOW_ACTION_ERROR_MESSAGE, msg + ex.getMessage());
+        exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, msg + ex.getMessage());
     }
 
     protected void buildAndThrowException(DelegateExecution execution, String msg) {

@@ -24,7 +24,8 @@
 			"productFamilyId": "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb",
 			"source": "VID",
 			"suppressRollback": true,
-			"requestorId": "xxxxxx"
+			"requestorId": "xxxxxx",
+			"instanceName": "test"
 		},
 		"requestParameters": {
 			"subscriptionServiceType": "VMX",
