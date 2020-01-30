@@ -71,6 +71,30 @@
     },
     {
       "key": {
+        "uuid": "ed2d16b8_2da1711c",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/resources/META-INF/services/org.onap.so.client.RestProperties",
+        "patchSetId": 15
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-01-30T10:18:01Z",
+      "side": 1,
+      "message": "It is used by this constructor\n  new AAIResourcesClient();\nwhich in turn calls\n  RestPropertyLoader::getImpl(...) from module common\nwhich in turn by using reflection creates AaiPropertiesExt",
+      "parentUuid": "f6ceba83_3b2886c6",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 48
+      },
+      "revId": "5c4d38dfdfad726ab576d69361e5a439cad6e1e8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c9b2c0c7_936f9261",
         "filename": "adapters/mso-ve-vnfm-adapter/src/test/java/org/onap/so/adapters/vevnfm/subscription/SubscribeSenderTest.java",
         "patchSetId": 15
