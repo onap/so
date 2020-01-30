@@ -21,15 +21,38 @@
 package org.onap.so.adapters.vevnfm.configuration;
 
 import org.onap.so.security.SoBasicWebSecurityConfigurerAdapter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfiguration extends SoBasicWebSecurityConfigurerAdapter {
 
+    @Value("${notification.url}")
+    private String notificationUrl;
+
+    @Value("${notification.username}")
+    private String notificationUsername;
+
+    @Value("${notification.password}")
+    private String notificationPassword;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
-    protected void configure(final HttpSecurity http) throws Exception {
-        http.authorizeRequests().antMatchers().permitAll().and().requestMatchers().antMatchers("/").and()
-                .authorizeRequests().anyRequest().authenticated();
+    protected void configure(final HttpSecurity https) throws Exception {
+        https.csrf().disable().authorizeRequests().antMatchers(notificationUrl).authenticated().and().httpBasic();
+    }
+
+    @Override
+    protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
+        auth.inMemoryAuthentication().withUser(notificationUsername)
+                .password(passwordEncoder.encode(notificationPassword)).authorities("ROLE_USER");
     }
 }
