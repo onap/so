@@ -291,8 +291,10 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
                 if (!backout) {
                     logger.info("Status is not CREATE_COMPLETE, stack deletion suppressed");
                     stackCreationFailed = true;
-                    throw new StackCreationException("Stack rollback suppressed, stack not deleted",
-                            stackCreationFailed, stackRollbackFailed);
+                    String errorMessage =
+                            "Stack Creation Failed Openstack Status: " + stack.getStackStatus() + " Status Reason: "
+                                    + stack.getStackStatusReason() + ". Stack rollback suppressed, stack not deleted";
+                    throw new StackCreationException(errorMessage, stackCreationFailed, stackRollbackFailed);
                 } else {
                     logger.info("Status is not CREATE_COMPLETE, stack deletion will be executed");
                     stackCreationFailed = true;
