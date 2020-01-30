@@ -25,12 +25,14 @@ package org.onap.so.bpmn.servicedecomposition.tasks;
 import java.util.Map;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.onap.logging.filter.base.ONAPComponents;
 import org.onap.logging.filter.base.ONAPComponentsList;
 import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
+import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.constants.Status;
 import org.onap.so.db.catalog.beans.macro.RainyDayHandlerStatus;
 import org.onap.so.db.catalog.client.CatalogDbClient;
@@ -53,6 +55,8 @@ public class ExecuteBuildingBlockRainyDay {
     public static final String RAINY_DAY_VNF_TYPE = "rainyDayVnfType";
     public static final String RAINY_DAY_VNF_NAME = "rainyDayVnfName";
 
+    @Autowired
+    private ExceptionBuilder exceptionBuilder;
     @Autowired
     private CatalogDbClient catalogDbClient;
     @Autowired
@@ -242,9 +246,15 @@ public class ExecuteBuildingBlockRainyDay {
         try {
             String requestId = (String) execution.getVariable("mso-request-id");
             WorkflowException exception = (WorkflowException) execution.getVariable("WorkflowException");
+            if (exception == null) {
+                String errorMessage = (String) execution.getVariable("WorkflowExceptionMessage");
+                exception =
+                        exceptionBuilder.buildWorkflowException(execution, 500, errorMessage, ONAPComponents.EXTERNAL);
+            }
             ONAPComponentsList extSystemErrorSource = exception.getExtSystemErrorSource();
             InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
             Boolean isRollbackFailure = (Boolean) execution.getVariable("isRollback");
+
             if (isRollbackFailure == null) {
                 isRollbackFailure = false;
             }
