@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "563cc5e2_dcaec6af",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 97
+      },
+      "writtenOn": "2020-01-30T15:15:35Z",
+      "side": 1,
+      "message": "We should convert this to a Set and use streams rather than repeat the same ors.\n\n        Set\u003cString\u003e vnfActions \u003d new HashSet\u003cString\u003e(Arrays.asList(\"config-assign\", \"config-deploy\", \"VnfConfigAssign\", \"VnfConfigDeploy\"));\n\n....\nvnfActions.stream().filter(action -\u003e action.equalsIgnoreCase(currentBB.getBuildingBlock().getBpmnAction())).findFirst().isPresent()",
+      "revId": "dd77a8b4b398c20fb0f0568b0a9008a58516b43c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27aa4337_53166bb1",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 97
+      },
+      "writtenOn": "2020-01-30T15:15:35Z",
+      "side": 1,
+      "message": "We should convert this to a Set and use streams rather than repeat the same ors.",
+      "revId": "dd77a8b4b398c20fb0f0568b0a9008a58516b43c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4960f2db_a8625e99",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListenerTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 97
+      },
+      "writtenOn": "2020-01-30T15:15:35Z",
+      "side": 1,
+      "message": "We do not need to extend BaseTaskTest here. Adding in\n\n    @Mock\n    private CatalogDbClient catalogDbClient;\n\nis enough to provide the data needed for this test. BaseTaskTest does many complicated things which are not required here.",
+      "revId": "dd77a8b4b398c20fb0f0568b0a9008a58516b43c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
