@@ -461,6 +461,11 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.onap.so.adapters</groupId>
+			<artifactId>so-appc-orchestrator</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.onap.so</groupId>
 			<artifactId>asdc-controller</artifactId>
 			<version>${project.version}</version>
