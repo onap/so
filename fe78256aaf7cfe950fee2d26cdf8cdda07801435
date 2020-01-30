@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "849d2c2f_22eaee99",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/aai/tasks/AAIUpdateTasksTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-01-30T10:15:00Z",
+      "side": 1,
+      "message": "Section \"Before\" is for common setting for all tests. Pnf is for two particular tests. so I would move these lines to tests body. Pnf field declaration is also redundant as class field, you can declare it in tests body.",
+      "range": {
+        "startLine": 84,
+        "startChar": 8,
+        "endLine": 86,
+        "endChar": 106
+      },
+      "revId": "fe78256aaf7cfe950fee2d26cdf8cdda07801435",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
