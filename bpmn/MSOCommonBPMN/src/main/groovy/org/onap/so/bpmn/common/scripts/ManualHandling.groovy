@@ -45,7 +45,6 @@ import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.client.ruby.*
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -298,60 +297,5 @@ public class ManualHandling extends AbstractServiceTaskProcessor {
 
 		logger.trace("Exit prepareRequestsDBStatusUpdate of ManualHandling ")
 	}
-
-	public void createAOTSTicket (DelegateExecution execution) {
-		String msg = ""
-		logger.trace("createAOTSTicket of ManualHandling ")
-		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		// This method will not be throwing an exception, but rather log the error
-
-		try {
-			execution.setVariable("prefix", Prefix)
-			setBasicDBAuthHeader(execution,isDebugLogEnabled)
-			// check for required input
-			String requestId = execution.getVariable("msoRequestId")
-			logger.debug("requestId is: " + requestId)
-			def currentActivity = execution.getVariable("currentActivity")
-			logger.debug("currentActivity is: " + currentActivity)
-			def workStep = execution.getVariable("workStep")
-			logger.debug("workStep is: " + workStep)
-			def failedActivity = execution.getVariable("failedActivity")
-			logger.debug("failedActivity is: " + failedActivity)
-			def errorCode = execution.getVariable("errorCode")
-			logger.debug("errorCode is: " + errorCode)
-			def errorText = execution.getVariable("errorText")
-			logger.debug("errorText is: " + errorText)
-			def vnfName = execution.getVariable("vnfName")
-			logger.debug("vnfName is: " + vnfName)
-
-			String rubyRequestId = UUID.randomUUID()
-			logger.debug("rubyRequestId: " + rubyRequestId)
-			String sourceName = vnfName
-			logger.debug("sourceName: " + sourceName)
-			String reason = "VID Workflow failed at " + failedActivity + " " + workStep + " call with error " + errorCode
-			logger.debug("reason: " + reason)
-			String workflowId = requestId
-			logger.debug("workflowId: " + workflowId)
-			String notification = "Request originated from VID | Workflow fallout on " + vnfName + " | Workflow step failure: " + workStep + " failed | VID workflow ID: " + workflowId
-			logger.debug("notification: " + notification)
-
-			logger.debug("Creating AOTS Ticket request")
-
-			RubyClient rubyClient = new RubyClient()
-			rubyClient.rubyCreateTicketCheckRequest(rubyRequestId, sourceName, reason, workflowId, notification)
-
-		} catch (BpmnError e) {
-			msg = "BPMN error in createAOTSTicket " + ex.getMessage()
-			logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-					ErrorCode.UnknownError.getValue());
-		} catch (Exception ex){
-			msg = "Exception in createAOTSTicket " + ex.getMessage()
-			logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-					ErrorCode.UnknownError.getValue());
-		}
-		logger.trace("Exit createAOTSTicket of ManualHandling ")
-	}
-
-
 
 }

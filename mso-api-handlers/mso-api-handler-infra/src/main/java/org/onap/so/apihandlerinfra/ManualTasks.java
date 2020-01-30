@@ -66,7 +66,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
-@Path("/tasks")
+@Path("/onap/so/infra/tasks")
 @Component
 public class ManualTasks {
     private static Logger logger = LoggerFactory.getLogger(ManualTasks.class);
