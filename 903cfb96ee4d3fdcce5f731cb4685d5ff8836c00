@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3bdae902_17292dce",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/configuration/SecurityConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2020-01-30T12:47:00Z",
+      "side": 1,
+      "message": "you can reuse spring.security parameter i.e SoUserCredentialConfiguration.java no?",
+      "range": {
+        "startLine": 55,
+        "startChar": 7,
+        "endLine": 56,
+        "endChar": 97
+      },
+      "revId": "903cfb96ee4d3fdcce5f731cb4685d5ff8836c00",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
