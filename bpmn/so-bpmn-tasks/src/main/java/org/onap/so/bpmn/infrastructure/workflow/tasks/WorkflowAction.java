@@ -198,7 +198,7 @@ public class WorkflowAction {
             try {
                 suppressRollback = requestDetails.getRequestInfo().getSuppressRollback();
             } catch (Exception ex) {
-                logger.error("Exception in getSuppressRollback", ex);
+                logger.warn("Exception in getSuppressRollback", ex);
                 suppressRollback = false;
             }
             execution.setVariable("suppressRollback", suppressRollback);
