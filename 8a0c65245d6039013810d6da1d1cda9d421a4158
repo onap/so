@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5c637152_d3d95656",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigPnf.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-01-30T13:42:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "398bf50e_1a8a8b7f",
+      "revId": "8a0c65245d6039013810d6da1d1cda9d421a4158",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f307da17_d0d14f9f",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigPnf.java",
         "patchSetId": 5
