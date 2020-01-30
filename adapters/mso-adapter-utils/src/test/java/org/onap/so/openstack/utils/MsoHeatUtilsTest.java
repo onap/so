@@ -153,12 +153,13 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
         stack.setId("id");
         stack.setStackName("stackName");
         stack.setStackStatus("CREATE_IN_PROGRESS");
-        stack.setStackStatusReason("Stack Finished");
+        stack.setStackStatusReason("Stack In Progress");
         CreateStackParam createStackParam = new CreateStackParam();
         createStackParam.setStackName("stackName");
 
         exceptionRule.expect(StackCreationException.class);
-        exceptionRule.expectMessage("Stack rollback suppressed, stack not deleted");
+        exceptionRule.expectMessage(
+                "Stack Creation Failed Openstack Status: CREATE_IN_PROGRESS Status Reason: Stack In Progress. Stack rollback suppressed, stack not deleted");
         heatUtils.postProcessStackCreate(stack, false, 120, false, cloudSiteId, tenantId, createStackParam);
     }
 
