@@ -9,7 +9,8 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>so-simulator</artifactId>
-  <groupId>org.onap.so</groupId>
+  <groupId>org.onap.so.simulator</groupId>
+  <name>SO REST Simulator</name>
   <packaging>jar</packaging>
 
   <properties>
@@ -42,6 +43,15 @@
       <groupId>org.onap.so</groupId>
       <artifactId>common</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.core</groupId>
+      <artifactId>jersey-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.logging-analytics</groupId>
+      <artifactId>logging-slf4j</artifactId>
+      <version>1.6.3-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.consol.citrus</groupId>

@@ -26,6 +26,7 @@ public class DeleteVServers extends AbstractTestAction {
             AAIResourceUri vserverURI = AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, cloudOwner, cloudRegion,
                     tenantId, vserverId);
             aaiResourceClient.delete(vserverURI);
+            logger.error("Delete Vservers in AAI: {}", vserverURI);
         } catch (Exception e) {
             logger.error("Error Deleting VServer in A&AI", e);
         }

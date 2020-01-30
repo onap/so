@@ -20,6 +20,9 @@
 
 package org.onap.so;
 
+import org.junit.Test;
+import org.onap.so.openpojo.rules.ToStringTester;
+import org.springframework.stereotype.Component;
 import com.openpojo.reflection.PojoClass;
 import com.openpojo.reflection.PojoClassFilter;
 import com.openpojo.reflection.filters.FilterEnum;
@@ -27,11 +30,11 @@ import com.openpojo.reflection.filters.FilterNonConcrete;
 import com.openpojo.reflection.filters.FilterPackageInfo;
 import com.openpojo.validation.Validator;
 import com.openpojo.validation.ValidatorBuilder;
-import com.openpojo.validation.rule.impl.*;
-import com.openpojo.validation.test.impl.*;
-import org.junit.Test;
-import org.onap.so.openpojo.rules.ToStringTester;
-import org.springframework.stereotype.Component;
+import com.openpojo.validation.rule.impl.NoPublicFieldsExceptStaticFinalRule;
+import com.openpojo.validation.rule.impl.NoStaticExceptFinalRule;
+import com.openpojo.validation.rule.impl.SerializableMustHaveSerialVersionUIDRule;
+import com.openpojo.validation.test.impl.GetterTester;
+import com.openpojo.validation.test.impl.SetterTester;
 
 
 public class BeansTest {
@@ -50,8 +53,6 @@ public class BeansTest {
         test("org.onap.so.adapters.vnf.async.client");
         test("org.onap.so.adapters.network");
         test("org.onap.so.adapters.vnf");
-        test("org.onap.so.adapters.valet");
-        test("org.onap.so.adapters.valet.beans");
         test("org.onap.so.vdu.utils");
     }
 
@@ -68,18 +69,21 @@ public class BeansTest {
     }
 
     private static class FilterTestClasses implements PojoClassFilter {
+        @Override
         public boolean include(PojoClass pojoClass) {
             return !pojoClass.getSourcePath().contains("/test-classes/");
         }
     }
 
     private static class FilterTestNestedClasses implements PojoClassFilter {
+        @Override
         public boolean include(PojoClass pojoClass) {
             return !pojoClass.isNestedClass();
         }
     }
 
     private static class FilterBeans implements PojoClassFilter {
+        @Override
         public boolean include(PojoClass pojoClass) {
             return pojoClass.getAnnotations().stream().filter(o -> o instanceof Component).count() <= 0;
         }

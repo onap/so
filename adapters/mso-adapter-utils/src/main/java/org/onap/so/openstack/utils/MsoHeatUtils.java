@@ -969,26 +969,6 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
         return newInputs;
     }
 
-    /*
-     * This helpful method added for Valet
-     */
-    public String getCloudSiteKeystoneUrl(String cloudSiteId) throws MsoCloudSiteNotFound {
-        String keystoneUrl = null;
-        try {
-            CloudSite cloudSite =
-                    cloudConfig.getCloudSite(cloudSiteId).orElseThrow(() -> new MsoCloudSiteNotFound(cloudSiteId));
-            CloudIdentity cloudIdentity = cloudSite.getIdentityService();
-            keystoneUrl = cloudIdentity.getIdentityUrl();
-        } catch (Exception e) {
-            throw new MsoCloudSiteNotFound(cloudSiteId);
-        }
-        if (keystoneUrl == null || keystoneUrl.isEmpty()) {
-            throw new MsoCloudSiteNotFound(cloudSiteId);
-        }
-        return keystoneUrl;
-    }
-
-
     /*******************************************************************************
      *
      * Methods (and associated utilities) to implement the VduPlugin interface

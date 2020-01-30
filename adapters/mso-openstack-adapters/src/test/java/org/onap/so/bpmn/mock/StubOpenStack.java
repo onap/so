@@ -454,35 +454,6 @@ public class StubOpenStack {
                                 .withStatus(HttpStatus.SC_OK)));
     }
 
-    public static void mockValetCreatePostResponse_200(WireMockServer wireMockServer, String requestId, String body) {
-        wireMockServer
-                .stubFor(post(urlEqualTo("/api/valet/placement/v1/?requestId=" + requestId)).willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json").withBody(body).withStatus(HttpStatus.SC_OK)));
-    }
-
-    public static void mockValetCreatePutResponse_200(WireMockServer wireMockServer, String requestId, String body) {
-        wireMockServer.stubFor(put(urlEqualTo("/api/valet/placement/v1/?requestId=" + requestId)).willReturn(aResponse()
-                .withHeader("Content-Type", "application/json").withBody(body).withStatus(HttpStatus.SC_OK)));
-    }
-
-    public static void mockValetDeleteDeleteResponse_200(WireMockServer wireMockServer, String requestId, String body) {
-        wireMockServer
-                .stubFor(delete(urlEqualTo("/api/valet/placement/v1/?requestId=" + requestId)).willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json").withBody(body).withStatus(HttpStatus.SC_OK)));
-    }
-
-    public static void mockValetConfirmPutRequest_200(WireMockServer wireMockServer, String requestId, String body) {
-        wireMockServer.stubFor(
-                put(urlPathEqualTo("/api/valet/placement/v1/" + requestId + "/confirm/")).willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json").withBody(body).withStatus(HttpStatus.SC_OK)));
-    }
-
-    public static void mockValetRollbackPutRequest_200(WireMockServer wireMockServer, String requestId, String body) {
-        wireMockServer.stubFor(
-                put(urlPathEqualTo("/api/valet/placement/v1/" + requestId + "/rollback/")).willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json").withBody(body).withStatus(HttpStatus.SC_OK)));
-    }
-
     private static String getBodyFromFileVnfAdapter(String replaceWith) throws IOException {
         String temp = readFile("src/test/resources/__files/OpenstackResponse_Stack_Created_VfModule.json");
         if (replaceWith == null) {

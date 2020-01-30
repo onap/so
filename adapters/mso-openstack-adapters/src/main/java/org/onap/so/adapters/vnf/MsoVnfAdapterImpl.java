@@ -33,15 +33,6 @@ import java.util.Optional;
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
 import org.apache.commons.collections.CollectionUtils;
-import org.onap.so.adapters.valet.GenericValetResponse;
-import org.onap.so.adapters.valet.ValetClient;
-import org.onap.so.adapters.valet.beans.HeatRequest;
-import org.onap.so.adapters.valet.beans.ValetConfirmResponse;
-import org.onap.so.adapters.valet.beans.ValetCreateResponse;
-import org.onap.so.adapters.valet.beans.ValetDeleteResponse;
-import org.onap.so.adapters.valet.beans.ValetRollbackResponse;
-import org.onap.so.adapters.valet.beans.ValetStatus;
-import org.onap.so.adapters.valet.beans.ValetUpdateResponse;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
 import org.onap.so.adapters.vnf.exceptions.VnfNotFound;
 import org.onap.so.client.aai.AAIResourcesClient;
@@ -59,8 +50,8 @@ import org.onap.so.db.catalog.data.repository.VFModuleCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.VnfResourceRepository;
 import org.onap.so.db.catalog.utils.MavenLikeVersioning;
 import org.onap.so.entity.MsoRequest;
-import org.onap.so.heatbridge.HeatBridgeException;
 import org.onap.so.heatbridge.HeatBridgeApi;
+import org.onap.so.heatbridge.HeatBridgeException;
 import org.onap.so.heatbridge.HeatBridgeImpl;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.LoggingAnchor;
@@ -109,9 +100,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     private static final String CHECK_REQD_PARAMS = "org.onap.so.adapters.vnf.checkRequiredParameters";
     private static final String ADD_GET_FILES_ON_VOLUME_REQ = "org.onap.so.adapters.vnf.addGetFilesOnVolumeReq";
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
-    private static final String VALET_ENABLED = "org.onap.so.adapters.vnf.valet_enabled";
-    private static final String FAIL_REQUESTS_ON_VALET_FAILURE =
-            "org.onap.so.adapters.vnf.fail_requests_on_valet_failure";
     private static final String OPENSTACK = "OpenStack";
     private static final String DELETE_VNF = "DeleteVNF";
     private static final String QUERY_STACK = "QueryStack";
@@ -130,8 +118,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     private MsoHeatUtilsWithUpdate heatU;
     @Autowired
     private MsoHeatUtils msoHeatUtils;
-    @Autowired
-    private ValetClient vci;
 
     /**
      * DO NOT use that constructor to instantiate this class, the msoPropertiesfactory will be NULL.
@@ -1044,26 +1030,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             String template = heatTemplate.getHeatTemplate();
             template = template.replaceAll("\r\n", "\n");
 
-            // Valet - 1806
-            boolean isValetEnabled = this.checkBooleanProperty(MsoVnfAdapterImpl.VALET_ENABLED, false);
-            boolean failRequestOnValetFailure =
-                    this.checkBooleanProperty(MsoVnfAdapterImpl.FAIL_REQUESTS_ON_VALET_FAILURE, false);
-            logger.debug("isValetEnabled={}, failRequestsOnValetFailure={}", isValetEnabled, failRequestOnValetFailure);
-            if (oldWay || isVolumeRequest) {
-                isValetEnabled = false;
-                logger.debug("do not send to valet for volume requests or brocade");
-            }
-            boolean sendResponseToValet = false;
-            if (isValetEnabled) {
-                Holder<Map<String, Object>> valetModifiedParamsHolder = new Holder<>();
-                sendResponseToValet = this.valetCreateRequest(cloudSiteId, cloudOwner, tenantId, heatFilesObjects,
-                        nestedTemplatesChecked, vfModuleName, backout, heatTemplate, newEnvironmentString, goldenInputs,
-                        msoRequest, inputs, failRequestOnValetFailure, valetModifiedParamsHolder);
-                if (sendResponseToValet) {
-                    goldenInputs = valetModifiedParamsHolder.value;
-                }
-            }
-
             // Have the tenant. Now deploy the stack itself
             // Ignore MsoTenantNotFound and MsoStackAlreadyExists exceptions
             // because we already checked for those.
@@ -1086,17 +1052,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             } catch (MsoException me) {
                 me.addContext(CREATE_VFM_MODULE);
                 logger.error("Error creating Stack", me);
-                if (isValetEnabled && sendResponseToValet) {
-                    logger.debug("valet is enabled, the orchestration failed - now sending rollback to valet");
-                    try {
-                        GenericValetResponse<ValetRollbackResponse> gvr = this.vci
-                                .callValetRollbackRequest(msoRequest.getRequestId(), null, backout, me.getMessage());
-                        // Nothing to really do here whether it succeeded or not other than log it.
-                        logger.debug("Return code from Rollback response is {}", gvr.getStatusCode());
-                    } catch (Exception e) {
-                        logger.error("Exception encountered while sending Rollback to Valet ", e);
-                    }
-                }
                 throw new VnfException(me);
             } catch (NullPointerException npe) {
                 logger.error("Error creating Stack", npe);
@@ -1113,17 +1068,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             vnfId.value = heatStack.getCanonicalName();
             outputs.value = copyStringOutputs(heatStack.getOutputs());
             rollback.value = vfRollback;
-            if (isValetEnabled && sendResponseToValet) {
-                logger.debug("valet is enabled, the orchestration succeeded - now send confirm to valet with stack id");
-                try {
-                    GenericValetResponse<ValetConfirmResponse> gvr =
-                            this.vci.callValetConfirmRequest(msoRequest.getRequestId(), heatStack.getCanonicalName());
-                    // Nothing to really do here whether it succeeded or not other than log it.
-                    logger.debug("Return code from Confirm response is {}", gvr.getStatusCode());
-                } catch (Exception e) {
-                    logger.error("Exception encountered while sending Confirm to Valet ", e);
-                }
-            }
             logger.debug("VF Module {} successfully created", vfModuleName);
             if (enableBridge != null && enableBridge) {
                 // call heatbridge
@@ -1156,17 +1100,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         // call method which handles the conversion from Map<String,Object> to Map<String,String> for our expected
         // Object types
         outputs.value = this.convertMapStringObjectToStringString(stackOutputs);
-
-        boolean isValetEnabled = this.checkBooleanProperty(MsoVnfAdapterImpl.VALET_ENABLED, false);
-        boolean failRequestOnValetFailure =
-                this.checkBooleanProperty(MsoVnfAdapterImpl.FAIL_REQUESTS_ON_VALET_FAILURE, false);
-        logger.debug("isValetEnabled={}, failRequestsOnValetFailure={}", isValetEnabled, failRequestOnValetFailure);
-        boolean valetDeleteRequestSucceeded = false;
-        if (isValetEnabled) {
-            valetDeleteRequestSucceeded = this.valetDeleteRequest(cloudSiteId, cloudOwner, tenantId, vnfName,
-                    msoRequest, failRequestOnValetFailure);
-        }
-
         int timeoutMinutes = 118;
         VfModule vf = null;
         VfModuleCustomization vfmc = null;
@@ -1201,31 +1134,8 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                     "Delete VF: " + vnfName + " in " + cloudOwner + "/" + cloudSiteId + "/" + tenantId + ": " + me;
             logger.error(LoggingAnchor.NINE, MessageEnum.RA_DELETE_VNF_ERR.toString(), vnfName, cloudOwner, cloudSiteId,
                     tenantId, OPENSTACK, "DeleteStack", ErrorCode.DataError.getValue(), "Exception - deleteStack", me);
-            logger.debug(error);
-            if (isValetEnabled && valetDeleteRequestSucceeded) {
-                logger.debug("valet is enabled, the orchestration failed - now sending rollback to valet");
-                try {
-                    GenericValetResponse<ValetRollbackResponse> gvr = this.vci
-                            .callValetRollbackRequest(msoRequest.getRequestId(), vnfName, false, me.getMessage());
-                    // Nothing to really do here whether it succeeded or not other than log it.
-                    logger.debug("Return code from Rollback response is {}", gvr.getStatusCode());
-                } catch (Exception e) {
-                    logger.error("Exception encountered while sending Rollback to Valet ", e);
-                }
-            }
+            logger.error(error);
             throw new VnfException(me);
-        }
-        if (isValetEnabled && valetDeleteRequestSucceeded) {
-            // only if the original request succeeded do we send a confirm
-            logger.debug("valet is enabled, the delete succeeded - now send confirm to valet");
-            try {
-                GenericValetResponse<ValetConfirmResponse> gvr =
-                        this.vci.callValetConfirmRequest(msoRequest.getRequestId(), vnfName);
-                // Nothing to really do here whether it succeeded or not other than log it.
-                logger.debug("Return code from Confirm response is {}", gvr.getStatusCode());
-            } catch (Exception e) {
-                logger.error("Exception encountered while sending Confirm to Valet ", e);
-            }
         }
         // call heatbridge delete
         try {
@@ -1812,30 +1722,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         String template = heatTemplate.getHeatTemplate();
         template = template.replaceAll("\r\n", "\n");
 
-        boolean isValetEnabled = this.checkBooleanProperty(MsoVnfAdapterImpl.VALET_ENABLED, false);
-        boolean failRequestOnValetFailure =
-                this.checkBooleanProperty(MsoVnfAdapterImpl.FAIL_REQUESTS_ON_VALET_FAILURE, false);
-        logger.debug("isValetEnabled={}, failRequestsOnValetFailure={}", isValetEnabled, failRequestOnValetFailure);
-        if (isVolumeRequest) {
-            isValetEnabled = false;
-            logger.debug("never send a volume request to valet");
-        }
-        boolean sendResponseToValet = false;
-        if (isValetEnabled) {
-            Holder<Map<String, Object>> valetModifiedParamsHolder = new Holder<>();
-            String parsedVfModuleName = this.getVfModuleNameFromModuleStackId(vfModuleStackId);
-            // Make sure it is set to something.
-            if (parsedVfModuleName == null || parsedVfModuleName.isEmpty()) {
-                parsedVfModuleName = "unknown";
-            }
-            sendResponseToValet = this.valetUpdateRequest(cloudSiteId, cloudOwner, tenantId, heatFilesObjects,
-                    nestedTemplatesChecked, parsedVfModuleName, false, heatTemplate, newEnvironmentString, goldenInputs,
-                    msoRequest, inputs, failRequestOnValetFailure, valetModifiedParamsHolder);
-            if (sendResponseToValet) {
-                goldenInputs = valetModifiedParamsHolder.value;
-            }
-        }
-
         // Have the tenant. Now deploy the stack itself
         // Ignore MsoTenantNotFound and MsoStackAlreadyExists exceptions
         // because we already checked for those.
@@ -1850,38 +1736,13 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                     + ": " + me;
             logger.error(LoggingAnchor.EIGHT, MessageEnum.RA_UPDATE_VNF_ERR.toString(), vfModuleType, cloudOwner,
                     cloudSiteId, tenantId, OPENSTACK, ErrorCode.DataError.getValue(), "Exception - " + error, me);
-            if (isValetEnabled && sendResponseToValet) {
-                logger.debug("valet is enabled, the orchestration failed - now sending rollback to valet");
-                try {
-                    GenericValetResponse<ValetRollbackResponse> gvr =
-                            this.vci.callValetRollbackRequest(msoRequest.getRequestId(), null, false, me.getMessage());
-                    // Nothing to really do here whether it succeeded or not other than log it.
-                    logger.debug("Return code from Rollback response is {}", gvr.getStatusCode());
-                } catch (Exception e) {
-                    logger.error("Exception encountered while sending Rollback to Valet ", e);
-                }
-            }
             throw new VnfException(me);
         }
-
 
         // Reach this point if updateStack is successful.
         // Populate remaining rollback info and response parameters.
         vfRollback.setVnfId(heatStack.getCanonicalName());
         vfRollback.setVnfCreated(true);
-
-        if (isValetEnabled && sendResponseToValet) {
-            logger.debug("valet is enabled, the update succeeded - now send confirm to valet with stack id");
-            try {
-                GenericValetResponse<ValetConfirmResponse> gvr =
-                        this.vci.callValetConfirmRequest(msoRequest.getRequestId(), heatStack.getCanonicalName());
-                // Nothing to really do here whether it succeeded or not other than log it.
-                logger.debug("Return code from Confirm response is {}", gvr.getStatusCode());
-            } catch (Exception e) {
-                logger.error("Exception encountered while sending Confirm to Valet ", e);
-            }
-        }
-
         outputs.value = copyStringOutputs(heatStack.getOutputs());
         rollback.value = vfRollback;
     }
@@ -1955,178 +1816,5 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             }
         }
         return files;
-    }
-
-    /*
-     * Valet Create request
-     */
-    private boolean valetCreateRequest(String cloudSiteId, String cloudOwner, String tenantId,
-            Map<String, Object> heatFilesObjects, Map<String, Object> nestedTemplatesChecked, String vfModuleName,
-            boolean backout, HeatTemplate heatTemplate, String newEnvironmentString, Map<String, Object> goldenInputs,
-            MsoRequest msoRequest, Map<String, Object> inputs, boolean failRequestOnValetFailure,
-            Holder<Map<String, Object>> valetModifiedParamsHolder) throws VnfException {
-        boolean valetSucceeded = false;
-        String valetErrorMessage = "more detail not available";
-        try {
-            String keystoneUrl = msoHeatUtils.getCloudSiteKeystoneUrl(cloudSiteId);
-            Map<String, Object> files =
-                    this.combineGetFilesAndNestedTemplates(heatFilesObjects, nestedTemplatesChecked);
-            HeatRequest heatRequest = new HeatRequest(vfModuleName, backout, heatTemplate.getTimeoutMinutes(),
-                    heatTemplate.getTemplateBody(), newEnvironmentString, files, goldenInputs);
-            GenericValetResponse<ValetCreateResponse> createReq = this.vci.callValetCreateRequest(
-                    msoRequest.getRequestId(), cloudSiteId, cloudOwner, tenantId, msoRequest.getServiceInstanceId(),
-                    (String) inputs.get("vnf_id"), (String) inputs.get("vnf_name"), (String) inputs.get("vf_module_id"),
-                    (String) inputs.get("vf_module_name"), keystoneUrl, heatRequest);
-            ValetCreateResponse vcr = createReq.getReturnObject();
-            if (vcr != null && createReq.getStatusCode() == 200) {
-                ValetStatus status = vcr.getStatus();
-                if (status != null) {
-                    String statusCode = status.getStatus(); // "ok" or "failed"
-                    if ("ok".equalsIgnoreCase(statusCode)) {
-                        Map<String, Object> newInputs = vcr.getParameters();
-                        if (newInputs != null) {
-                            Map<String, Object> oldGold = goldenInputs;
-                            logger.debug("parameters before being modified by valet:{}", oldGold.toString());
-                            goldenInputs = new HashMap<>();
-                            for (String key : newInputs.keySet()) {
-                                goldenInputs.put(key, newInputs.get(key));
-                            }
-                            valetModifiedParamsHolder.value = goldenInputs;
-                            logger.debug("parameters after being modified by valet:{}", goldenInputs.toString());
-                            valetSucceeded = true;
-                        }
-                    } else {
-                        valetErrorMessage = status.getMessage();
-                    }
-                }
-            } else {
-                logger.debug("Got a bad response back from valet");
-                valetErrorMessage = "Bad response back from Valet";
-                valetSucceeded = false;
-            }
-        } catch (Exception e) {
-            logger.error("An exception occurred trying to call valet ...", e);
-            valetSucceeded = false;
-            valetErrorMessage = e.getMessage();
-        }
-        if (failRequestOnValetFailure && !valetSucceeded) {
-            // The valet request failed - and property says to fail the request
-            // TODO Create a new exception class for valet?
-            throw new VnfException("A failure occurred with Valet: " + valetErrorMessage);
-        }
-        return valetSucceeded;
-    }
-
-    /*
-     * Valet update request
-     */
-
-    private boolean valetUpdateRequest(String cloudSiteId, String cloudOwnerId, String tenantId,
-            Map<String, Object> heatFilesObjects, Map<String, Object> nestedTemplatesChecked, String vfModuleName,
-            boolean backout, HeatTemplate heatTemplate, String newEnvironmentString, Map<String, Object> goldenInputs,
-            MsoRequest msoRequest, Map<String, Object> inputs, boolean failRequestOnValetFailure,
-            Holder<Map<String, Object>> valetModifiedParamsHolder) throws VnfException {
-
-        boolean valetSucceeded = false;
-        String valetErrorMessage = "more detail not available";
-        try {
-            String keystoneUrl = msoHeatUtils.getCloudSiteKeystoneUrl(cloudSiteId);
-            Map<String, Object> files =
-                    this.combineGetFilesAndNestedTemplates(heatFilesObjects, nestedTemplatesChecked);
-            HeatRequest heatRequest = new HeatRequest(vfModuleName, false, heatTemplate.getTimeoutMinutes(),
-                    heatTemplate.getTemplateBody(), newEnvironmentString, files, goldenInputs);
-            // vnf name is not sent to MSO on update requests - so we will set it to the vf module name for now
-            GenericValetResponse<ValetUpdateResponse> updateReq =
-                    this.vci.callValetUpdateRequest(msoRequest.getRequestId(), cloudSiteId, cloudOwnerId, tenantId,
-                            msoRequest.getServiceInstanceId(), (String) inputs.get("vnf_id"), vfModuleName,
-                            (String) inputs.get("vf_module_id"), vfModuleName, keystoneUrl, heatRequest);
-            ValetUpdateResponse vur = updateReq.getReturnObject();
-            if (vur != null && updateReq.getStatusCode() == 200) {
-                ValetStatus status = vur.getStatus();
-                if (status != null) {
-                    String statusCode = status.getStatus(); // "ok" or "failed"
-                    if ("ok".equalsIgnoreCase(statusCode)) {
-                        Map<String, Object> newInputs = vur.getParameters();
-                        if (newInputs != null) {
-                            Map<String, Object> oldGold = goldenInputs;
-                            logger.debug("parameters before being modified by valet:{}", oldGold);
-                            goldenInputs = new HashMap<>();
-                            for (String key : newInputs.keySet()) {
-                                goldenInputs.put(key, newInputs.get(key));
-                            }
-                            valetModifiedParamsHolder.value = goldenInputs;
-                            logger.debug("parameters after being modified by valet:{}", goldenInputs);
-                            valetSucceeded = true;
-                        }
-                    } else {
-                        valetErrorMessage = status.getMessage();
-                    }
-                }
-            } else {
-                logger.debug("Got a bad response back from valet");
-                valetErrorMessage = "Got a bad response back from valet";
-                valetSucceeded = false;
-            }
-        } catch (Exception e) {
-            logger.error("An exception occurred trying to call valet - will continue processing for now...", e);
-            valetErrorMessage = e.getMessage();
-            valetSucceeded = false;
-        }
-        if (failRequestOnValetFailure && !valetSucceeded) {
-            // The valet request failed - and property says to fail the request
-            // TODO Create a new exception class for valet?
-            throw new VnfException("A failure occurred with Valet: " + valetErrorMessage);
-        }
-        return valetSucceeded;
-    }
-
-    /*
-     * Valet delete request
-     */
-    private boolean valetDeleteRequest(String cloudSiteId, String cloudOwnerId, String tenantId, String vnfName,
-            MsoRequest msoRequest, boolean failRequestOnValetFailure) {
-        boolean valetDeleteRequestSucceeded = false;
-        String valetErrorMessage = "more detail not available";
-        try {
-            String vfModuleId = vnfName;
-            String vfModuleName = vnfName;
-            try {
-                vfModuleName = vnfName.substring(0, vnfName.indexOf('/'));
-                vfModuleId = vnfName.substring(vnfName.indexOf('/') + 1);
-            } catch (Exception e) {
-                // do nothing - send what we got for vnfName for both to valet
-                logger.error("An exception occurred trying to call MsoVnfAdapterImpl.valetDeleteRequest() method", e);
-            }
-            GenericValetResponse<ValetDeleteResponse> deleteReq = this.vci.callValetDeleteRequest(
-                    msoRequest.getRequestId(), cloudSiteId, cloudOwnerId, tenantId, vfModuleId, vfModuleName);
-            ValetDeleteResponse vdr = deleteReq.getReturnObject();
-            if (vdr != null && deleteReq.getStatusCode() == 200) {
-                ValetStatus status = vdr.getStatus();
-                if (status != null) {
-                    String statusCode = status.getStatus(); // "ok" or "failed"
-                    if ("ok".equalsIgnoreCase(statusCode)) {
-                        logger.debug("delete request to valet returned success");
-                        valetDeleteRequestSucceeded = true;
-                    } else {
-                        logger.debug("delete request to valet returned failure");
-                        valetDeleteRequestSucceeded = false;
-                        valetErrorMessage = status.getMessage();
-                    }
-                }
-            } else {
-                logger.debug("Got a bad response back from valet - delete request failed");
-                valetDeleteRequestSucceeded = false;
-                valetErrorMessage = "Got a bad response back from valet - delete request failed";
-            }
-        } catch (Exception e) {
-            logger.error("An exception occurred trying to call valet - valetDeleteRequest failed", e);
-            valetDeleteRequestSucceeded = false;
-            valetErrorMessage = e.getMessage();
-        }
-        if (!valetDeleteRequestSucceeded && failRequestOnValetFailure) {
-            logger.error("ValetDeleteRequestFailed - del req still will be sent to openstack",
-                    new VnfException("ValetDeleteRequestFailedError"));
-        }
-        return valetDeleteRequestSucceeded;
     }
 }

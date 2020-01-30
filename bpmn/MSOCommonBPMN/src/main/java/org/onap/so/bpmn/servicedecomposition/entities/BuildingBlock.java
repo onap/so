@@ -71,10 +71,12 @@ public class BuildingBlock implements Serializable {
         return this;
     }
 
+    @JsonProperty("is-virtual-link")
     public Boolean isVirtualLink() {
         return isVirtualLink;
     }
 
+    @JsonProperty("is-virtual-link")
     public BuildingBlock setIsVirtualLink(Boolean isVirtualLink) {
         this.isVirtualLink = isVirtualLink;
         return this;
