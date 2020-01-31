@@ -33,6 +33,10 @@ aai:
 vnfm:
   subscription: /vnflcm/v1/subscriptions
 
+dmaap:
+  endpoint: http://message-router:30227
+  topic: /events/unauthenticated.DCAE_CL_OUTPUT
+
 spring:
   security:
     usercredentials:
