@@ -47,6 +47,7 @@ import org.onap.aai.domain.yang.Vnfc;
 import org.onap.aai.domain.yang.VolumeGroup;
 import org.onap.aai.domain.yang.VpnBinding;
 import org.onap.so.bpmn.common.BBConstants;
+import org.onap.so.bpmn.infrastructure.workflow.tasks.utils.WorkflowResourceIdsUtils;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
@@ -185,7 +186,7 @@ public class WorkflowAction {
         List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
         WorkflowResourceIds workflowResourceIds = populateResourceIdsFromApiHandler(execution);
         List<Pair<WorkflowType, String>> aaiResourceIds = new ArrayList<>();
-        List<Resource> resourceCounter = new ArrayList<>();
+        List<Resource> resourceList = new ArrayList<>();
         execution.setVariable("sentSyncResponse", false);
         execution.setVariable("homing", false);
         execution.setVariable("calledHoming", false);
@@ -304,7 +305,7 @@ public class WorkflowAction {
                                 }
                             }
                             if (containsService) {
-                                traverseUserParamsService(execution, resourceCounter, sIRequest, requestAction);
+                                traverseUserParamsService(execution, resourceList, sIRequest, requestAction);
                             }
                         } else {
                             buildAndThrowException(execution,
@@ -327,11 +328,10 @@ public class WorkflowAction {
                             }
                         }
                         if (containsService) {
-                            foundRelated =
-                                    traverseUserParamsService(execution, resourceCounter, sIRequest, requestAction);
+                            foundRelated = traverseUserParamsService(execution, resourceList, sIRequest, requestAction);
                         }
                         if (!foundRelated) {
-                            traverseCatalogDbService(execution, sIRequest, resourceCounter, aaiResourceIds);
+                            traverseCatalogDbService(execution, sIRequest, resourceList, aaiResourceIds);
                         }
                     } else if (resourceType == WorkflowType.SERVICE
                             && ("activateInstance".equalsIgnoreCase(requestAction)
@@ -342,20 +342,20 @@ public class WorkflowAction {
                         // SERVICE-MACRO-DELETE
                         // Will never get user params with service, macro will have
                         // to query the SI in AAI to find related instances.
-                        traverseAAIService(execution, resourceCounter, resourceId, aaiResourceIds);
+                        traverseAAIService(execution, resourceList, resourceId, aaiResourceIds);
                     } else if (resourceType == WorkflowType.SERVICE
                             && "deactivateInstance".equalsIgnoreCase(requestAction)) {
-                        resourceCounter.add(new Resource(WorkflowType.SERVICE, "", false));
+                        resourceList.add(new Resource(WorkflowType.SERVICE, "", false));
                     } else if (resourceType == WorkflowType.VNF && ("replaceInstance".equalsIgnoreCase(requestAction)
                             || ("recreateInstance".equalsIgnoreCase(requestAction)))) {
-                        traverseAAIVnf(execution, resourceCounter, workflowResourceIds.getServiceInstanceId(),
+                        traverseAAIVnf(execution, resourceList, workflowResourceIds.getServiceInstanceId(),
                                 workflowResourceIds.getVnfId(), aaiResourceIds);
                     } else {
                         buildAndThrowException(execution, "Current Macro Request is not supported");
                     }
                     String foundObjects = "";
                     for (WorkflowType type : WorkflowType.values()) {
-                        foundObjects = foundObjects + type + " - " + resourceCounter.stream()
+                        foundObjects = foundObjects + type + " - " + resourceList.stream()
                                 .filter(x -> type.equals(x.getResourceType())).collect(Collectors.toList()).size()
                                 + "    ";
                     }
@@ -370,9 +370,9 @@ public class WorkflowAction {
                             || "replaceInstanceRetainAssignments".equalsIgnoreCase(requestAction))) {
                         vnfReplace = true;
                     }
-                    flowsToExecute = buildExecuteBuildingBlockList(orchFlows, resourceCounter, requestId, apiVersion,
+                    flowsToExecute = buildExecuteBuildingBlockList(orchFlows, resourceList, requestId, apiVersion,
                             resourceId, requestAction, vnfType, workflowResourceIds, requestDetails, vnfReplace);
-                    if (!resourceCounter.stream().filter(x -> WorkflowType.NETWORKCOLLECTION == x.getResourceType())
+                    if (!resourceList.stream().filter(x -> WorkflowType.NETWORKCOLLECTION == x.getResourceType())
                             .collect(Collectors.toList()).isEmpty()) {
                         logger.info("Sorting for Vlan Tagging");
                         flowsToExecute = sortExecutionPathByObjectForVlanTagging(flowsToExecute, requestAction);
@@ -380,16 +380,16 @@ public class WorkflowAction {
                     // By default, enable homing at VNF level for CREATEINSTANCE and ASSIGNINSTANCE
                     if (resourceType == WorkflowType.SERVICE
                             && (requestAction.equals(CREATEINSTANCE) || requestAction.equals(ASSIGNINSTANCE))
-                            && !resourceCounter.stream().filter(x -> WorkflowType.VNF.equals(x.getResourceType()))
+                            && !resourceList.stream().filter(x -> WorkflowType.VNF.equals(x.getResourceType()))
                                     .collect(Collectors.toList()).isEmpty()) {
                         execution.setVariable("homing", true);
                         execution.setVariable("calledHoming", false);
                     }
                     if (resourceType == WorkflowType.SERVICE && (requestAction.equalsIgnoreCase(ASSIGNINSTANCE)
                             || requestAction.equalsIgnoreCase(CREATEINSTANCE))) {
-                        generateResourceIds(flowsToExecute, resourceCounter, serviceInstanceId);
+                        generateResourceIds(flowsToExecute, resourceList, serviceInstanceId);
                     } else {
-                        updateResourceIdsFromAAITraversal(flowsToExecute, resourceCounter, aaiResourceIds,
+                        updateResourceIdsFromAAITraversal(flowsToExecute, resourceList, aaiResourceIds,
                                 serviceInstanceId);
                     }
                 }
@@ -669,18 +669,15 @@ public class WorkflowAction {
     }
 
     private void updateResourceIdsFromAAITraversal(List<ExecuteBuildingBlock> flowsToExecute,
-            List<Resource> resourceCounter, List<Pair<WorkflowType, String>> aaiResourceIds, String serviceInstanceId) {
+            List<Resource> resourceList, List<Pair<WorkflowType, String>> aaiResourceIds, String serviceInstanceId) {
         for (Pair<WorkflowType, String> pair : aaiResourceIds) {
             logger.debug(pair.getValue0() + ", " + pair.getValue1());
         }
 
         Arrays.stream(WorkflowType.values()).filter(type -> !type.equals(WorkflowType.SERVICE)).forEach(type -> {
-            List<Resource> resources =
-                    resourceCounter.stream().filter(x -> type.equals(x.getResourceType())).collect(Collectors.toList());
-            for (int i = 0; i < resources.size(); i++) {
-                updateWorkflowResourceIds(flowsToExecute, type, resources.get(i).getResourceId(),
-                        retrieveAAIResourceId(aaiResourceIds, type), null, serviceInstanceId);
-            }
+            resourceList.stream().filter(resource -> type.equals(resource.getResourceType()))
+                    .forEach(resource -> updateWorkflowResourceIds(flowsToExecute, type, resource.getResourceId(),
+                            retrieveAAIResourceId(aaiResourceIds, type), null, serviceInstanceId));
         });
     }
 
@@ -696,21 +693,16 @@ public class WorkflowAction {
         return id;
     }
 
-    private void generateResourceIds(List<ExecuteBuildingBlock> flowsToExecute, List<Resource> resourceCounter,
+    private void generateResourceIds(List<ExecuteBuildingBlock> flowsToExecute, List<Resource> resourceList,
             String serviceInstanceId) {
         Arrays.stream(WorkflowType.values()).filter(type -> !type.equals(WorkflowType.SERVICE)).forEach(type -> {
-            List<Resource> resources =
-                    resourceCounter.stream().filter(x -> type.equals(x.getResourceType())).collect(Collectors.toList());
-            for (int i = 0; i < resources.size(); i++) {
-                Resource resource = resourceCounter.stream().filter(x -> type.equals(x.getResourceType()))
-                        .collect(Collectors.toList()).get(i);
-                updateWorkflowResourceIds(flowsToExecute, type, resource.getResourceId(), null,
-                        resource.getVirtualLinkKey(), serviceInstanceId);
-            }
+            resourceList.stream().filter(resource -> type.equals(resource.getResourceType()))
+                    .forEach(resource -> updateWorkflowResourceIds(flowsToExecute, type, resource.getResourceId(), null,
+                            resource.getVirtualLinkKey(), serviceInstanceId));
         });
     }
 
-    protected void updateWorkflowResourceIds(List<ExecuteBuildingBlock> flowsToExecute, WorkflowType resource,
+    protected void updateWorkflowResourceIds(List<ExecuteBuildingBlock> flowsToExecute, WorkflowType resourceType,
             String key, String id, String virtualLinkKey, String serviceInstanceId) {
         String resourceId = id;
         if (resourceId == null) {
@@ -718,24 +710,10 @@ public class WorkflowAction {
         }
         for (ExecuteBuildingBlock ebb : flowsToExecute) {
             if (key != null && key.equalsIgnoreCase(ebb.getBuildingBlock().getKey())
-                    && ebb.getBuildingBlock().getBpmnFlowName().contains(resource.toString())) {
+                    && ebb.getBuildingBlock().getBpmnFlowName().contains(resourceType.toString())) {
                 WorkflowResourceIds workflowResourceIds = new WorkflowResourceIds();
                 workflowResourceIds.setServiceInstanceId(serviceInstanceId);
-                if (resource == WorkflowType.VNF) {
-                    workflowResourceIds.setVnfId(resourceId);
-                } else if (resource == WorkflowType.PNF) {
-                    workflowResourceIds.setPnfId(resourceId);
-                } else if (resource == WorkflowType.VFMODULE) {
-                    workflowResourceIds.setVfModuleId(resourceId);
-                } else if (resource == WorkflowType.VOLUMEGROUP) {
-                    workflowResourceIds.setVolumeGroupId(resourceId);
-                } else if (resource == WorkflowType.NETWORK) {
-                    workflowResourceIds.setNetworkId(resourceId);
-                } else if (resource == WorkflowType.NETWORKCOLLECTION) {
-                    workflowResourceIds.setNetworkCollectionId(resourceId);
-                } else if (resource == WorkflowType.CONFIGURATION) {
-                    workflowResourceIds.setConfigurationId(resourceId);
-                }
+                WorkflowResourceIdsUtils.setResourceIdByWorkflowType(workflowResourceIds, resourceType, resourceId);
                 ebb.setWorkflowResourceIds(workflowResourceIds);
             }
             if (virtualLinkKey != null && ebb.getBuildingBlock().isVirtualLink()
@@ -769,29 +747,28 @@ public class WorkflowAction {
     }
 
     protected void traverseCatalogDbService(DelegateExecution execution, ServiceInstancesRequest sIRequest,
-            List<Resource> resourceCounter, List<Pair<WorkflowType, String>> aaiResourceIds)
+            List<Resource> resourceList, List<Pair<WorkflowType, String>> aaiResourceIds)
             throws JsonProcessingException, VrfBondingServiceException {
         String modelUUID = sIRequest.getRequestDetails().getModelInfo().getModelVersionId();
         org.onap.so.db.catalog.beans.Service service = catalogDbClient.getServiceByID(modelUUID);
         if (service == null) {
             buildAndThrowException(execution, "Could not find the service model in catalog db.");
         } else {
-            resourceCounter.add(new Resource(WorkflowType.SERVICE, service.getModelUUID(), false));
+            resourceList.add(new Resource(WorkflowType.SERVICE, service.getModelUUID(), false));
             RelatedInstance relatedVpnBinding =
                     bbInputSetupUtils.getRelatedInstanceByType(sIRequest.getRequestDetails(), ModelType.vpnBinding);
             RelatedInstance relatedLocalNetwork =
                     bbInputSetupUtils.getRelatedInstanceByType(sIRequest.getRequestDetails(), ModelType.network);
             if (relatedVpnBinding != null && relatedLocalNetwork != null) {
-                traverseVrfConfiguration(aaiResourceIds, resourceCounter, service, relatedVpnBinding,
-                        relatedLocalNetwork);
+                traverseVrfConfiguration(aaiResourceIds, resourceList, service, relatedVpnBinding, relatedLocalNetwork);
             } else {
-                traverseNetworkCollection(execution, resourceCounter, service);
+                traverseNetworkCollection(execution, resourceList, service);
             }
         }
     }
 
     protected void traverseVrfConfiguration(List<Pair<WorkflowType, String>> aaiResourceIds,
-            List<Resource> resourceCounter, org.onap.so.db.catalog.beans.Service service,
+            List<Resource> resourceList, org.onap.so.db.catalog.beans.Service service,
             RelatedInstance relatedVpnBinding, RelatedInstance relatedLocalNetwork)
             throws VrfBondingServiceException, JsonProcessingException {
         org.onap.aai.domain.yang.L3Network aaiLocalNetwork =
@@ -808,7 +785,7 @@ public class WorkflowAction {
         if (existingAAIVrfConfiguration != null) {
             aaiResourceIds.add(new Pair<>(WorkflowType.CONFIGURATION, existingAAIVrfConfiguration));
         }
-        resourceCounter.add(new Resource(WorkflowType.CONFIGURATION,
+        resourceList.add(new Resource(WorkflowType.CONFIGURATION,
                 service.getConfigurationCustomizations().get(0).getModelCustomizationUUID(), false));
 
     }
@@ -859,7 +836,7 @@ public class WorkflowAction {
         return false;
     }
 
-    protected void traverseNetworkCollection(DelegateExecution execution, List<Resource> resourceCounter,
+    protected void traverseNetworkCollection(DelegateExecution execution, List<Resource> resourceList,
             org.onap.so.db.catalog.beans.Service service) {
         if (service.getVnfCustomizations() == null || service.getVnfCustomizations().isEmpty()) {
             List<CollectionResourceCustomization> customizations = service.getCollectionResourceCustomizations();
@@ -869,7 +846,7 @@ public class WorkflowAction {
                 CollectionResourceCustomization collectionResourceCustomization =
                         findCatalogNetworkCollection(execution, service);
                 if (collectionResourceCustomization != null) {
-                    resourceCounter.add(new Resource(WorkflowType.NETWORKCOLLECTION,
+                    resourceList.add(new Resource(WorkflowType.NETWORKCOLLECTION,
                             collectionResourceCustomization.getModelCustomizationUUID(), false));
                     logger.debug("Found a network collection");
                     if (collectionResourceCustomization.getCollectionResource() != null) {
@@ -911,7 +888,7 @@ public class WorkflowAction {
                                         Resource resource = new Resource(WorkflowType.VIRTUAL_LINK,
                                                 collectionNetworkResourceCust.getModelCustomizationUUID(), false);
                                         resource.setVirtualLinkKey(Integer.toString(i));
-                                        resourceCounter.add(resource);
+                                        resourceList.add(resource);
                                     }
                                 }
                             } else {
@@ -928,13 +905,13 @@ public class WorkflowAction {
                     logger.debug("No Network Collection Customization found");
                 }
             }
-            if (resourceCounter.stream().filter(x -> WorkflowType.NETWORKCOLLECTION == x.getResourceType())
+            if (resourceList.stream().filter(x -> WorkflowType.NETWORKCOLLECTION == x.getResourceType())
                     .collect(Collectors.toList()).isEmpty()) {
                 if (service.getNetworkCustomizations() == null) {
                     logger.debug("No networks were found on this service model");
                 } else {
                     for (int i = 0; i < service.getNetworkCustomizations().size(); i++) {
-                        resourceCounter.add(new Resource(WorkflowType.NETWORK,
+                        resourceList.add(new Resource(WorkflowType.NETWORK,
                                 service.getNetworkCustomizations().get(i).getModelCustomizationUUID(), false));
                     }
                 }
@@ -945,30 +922,30 @@ public class WorkflowAction {
         }
     }
 
-    protected void traverseAAIService(DelegateExecution execution, List<Resource> resourceCounter, String resourceId,
+    protected void traverseAAIService(DelegateExecution execution, List<Resource> resourceList, String resourceId,
             List<Pair<WorkflowType, String>> aaiResourceIds) {
         try {
             ServiceInstance serviceInstanceAAI = bbInputSetupUtils.getAAIServiceInstanceById(resourceId);
             org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstanceMSO =
                     bbInputSetup.getExistingServiceInstance(serviceInstanceAAI);
-            resourceCounter.add(new Resource(WorkflowType.SERVICE, serviceInstanceMSO.getServiceInstanceId(), false));
+            resourceList.add(new Resource(WorkflowType.SERVICE, serviceInstanceMSO.getServiceInstanceId(), false));
             if (serviceInstanceMSO.getVnfs() != null) {
                 for (org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf vnf : serviceInstanceMSO.getVnfs()) {
                     aaiResourceIds.add(new Pair<>(WorkflowType.VNF, vnf.getVnfId()));
-                    resourceCounter.add(new Resource(WorkflowType.VNF, vnf.getVnfId(), false));
+                    resourceList.add(new Resource(WorkflowType.VNF, vnf.getVnfId(), false));
                     if (vnf.getVfModules() != null) {
                         for (VfModule vfModule : vnf.getVfModules()) {
                             aaiResourceIds.add(new Pair<>(WorkflowType.VFMODULE, vfModule.getVfModuleId()));
                             Resource resource = new Resource(WorkflowType.VFMODULE, vfModule.getVfModuleId(), false);
                             resource.setBaseVfModule(vfModule.getModelInfoVfModule().getIsBaseBoolean());
-                            resourceCounter.add(resource);
+                            resourceList.add(resource);
                         }
                     }
                     if (vnf.getVolumeGroups() != null) {
                         for (org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup volumeGroup : vnf
                                 .getVolumeGroups()) {
                             aaiResourceIds.add(new Pair<>(WorkflowType.VOLUMEGROUP, volumeGroup.getVolumeGroupId()));
-                            resourceCounter
+                            resourceList
                                     .add(new Resource(WorkflowType.VOLUMEGROUP, volumeGroup.getVolumeGroupId(), false));
                         }
                     }
@@ -978,14 +955,14 @@ public class WorkflowAction {
                 for (org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network network : serviceInstanceMSO
                         .getNetworks()) {
                     aaiResourceIds.add(new Pair<>(WorkflowType.NETWORK, network.getNetworkId()));
-                    resourceCounter.add(new Resource(WorkflowType.NETWORK, network.getNetworkId(), false));
+                    resourceList.add(new Resource(WorkflowType.NETWORK, network.getNetworkId(), false));
                 }
             }
             if (serviceInstanceMSO.getCollection() != null) {
                 logger.debug("found networkcollection");
                 aaiResourceIds
                         .add(new Pair<>(WorkflowType.NETWORKCOLLECTION, serviceInstanceMSO.getCollection().getId()));
-                resourceCounter.add(new Resource(WorkflowType.NETWORKCOLLECTION,
+                resourceList.add(new Resource(WorkflowType.NETWORKCOLLECTION,
                         serviceInstanceMSO.getCollection().getId(), false));
             }
             if (serviceInstanceMSO.getConfigurations() != null) {
@@ -997,7 +974,7 @@ public class WorkflowAction {
                             if (relationship.getRelatedTo().contains("vnfc")
                                     || relationship.getRelatedTo().contains("vpn-binding")) {
                                 aaiResourceIds.add(new Pair<>(WorkflowType.CONFIGURATION, config.getConfigurationId()));
-                                resourceCounter.add(
+                                resourceList.add(
                                         new Resource(WorkflowType.CONFIGURATION, config.getConfigurationId(), false));
                                 break;
                             }
@@ -1012,25 +989,24 @@ public class WorkflowAction {
         }
     }
 
-    private void traverseAAIVnf(DelegateExecution execution, List<Resource> resourceCounter, String serviceId,
+    private void traverseAAIVnf(DelegateExecution execution, List<Resource> resourceList, String serviceId,
             String vnfId, List<Pair<WorkflowType, String>> aaiResourceIds) {
         try {
             ServiceInstance serviceInstanceAAI = bbInputSetupUtils.getAAIServiceInstanceById(serviceId);
             org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstanceMSO =
                     bbInputSetup.getExistingServiceInstance(serviceInstanceAAI);
-            resourceCounter.add(new Resource(WorkflowType.SERVICE, serviceInstanceMSO.getServiceInstanceId(), false));
+            resourceList.add(new Resource(WorkflowType.SERVICE, serviceInstanceMSO.getServiceInstanceId(), false));
             if (serviceInstanceMSO.getVnfs() != null) {
                 for (org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf vnf : serviceInstanceMSO.getVnfs()) {
                     if (vnf.getVnfId().equals(vnfId)) {
                         aaiResourceIds.add(new Pair<>(WorkflowType.VNF, vnf.getVnfId()));
-                        resourceCounter.add(new Resource(WorkflowType.VNF, vnf.getVnfId(), false));
+                        resourceList.add(new Resource(WorkflowType.VNF, vnf.getVnfId(), false));
                         if (vnf.getVfModules() != null) {
                             for (VfModule vfModule : vnf.getVfModules()) {
                                 aaiResourceIds.add(new Pair<>(WorkflowType.VFMODULE, vfModule.getVfModuleId()));
-                                resourceCounter
-                                        .add(new Resource(WorkflowType.VFMODULE, vfModule.getVfModuleId(), false));
+                                resourceList.add(new Resource(WorkflowType.VFMODULE, vfModule.getVfModuleId(), false));
                                 findConfigurationsInsideVfModule(execution, vnf.getVnfId(), vfModule.getVfModuleId(),
-                                        resourceCounter, aaiResourceIds);
+                                        resourceList, aaiResourceIds);
                             }
                         }
                         if (vnf.getVolumeGroups() != null) {
@@ -1038,7 +1014,7 @@ public class WorkflowAction {
                                     .getVolumeGroups()) {
                                 aaiResourceIds
                                         .add(new Pair<>(WorkflowType.VOLUMEGROUP, volumeGroup.getVolumeGroupId()));
-                                resourceCounter.add(
+                                resourceList.add(
                                         new Resource(WorkflowType.VOLUMEGROUP, volumeGroup.getVolumeGroupId(), false));
                             }
                         }
@@ -1054,7 +1030,7 @@ public class WorkflowAction {
     }
 
     private void findConfigurationsInsideVfModule(DelegateExecution execution, String vnfId, String vfModuleId,
-            List<Resource> resourceCounter, List<Pair<WorkflowType, String>> aaiResourceIds) {
+            List<Resource> resourceList, List<Pair<WorkflowType, String>> aaiResourceIds) {
         try {
             org.onap.aai.domain.yang.VfModule aaiVfModule = bbInputSetupUtils.getAAIVfModule(vnfId, vfModuleId);
             AAIResultWrapper vfModuleWrapper = new AAIResultWrapper(
@@ -1068,7 +1044,7 @@ public class WorkflowAction {
                             workflowActionUtils.extractRelationshipsConfiguration(relationshipsOp.get());
                     if (config.isPresent()) {
                         aaiResourceIds.add(new Pair<>(WorkflowType.CONFIGURATION, config.get().getConfigurationId()));
-                        resourceCounter.add(
+                        resourceList.add(
                                 new Resource(WorkflowType.CONFIGURATION, config.get().getConfigurationId(), false));
                     }
                 }
@@ -1079,7 +1055,7 @@ public class WorkflowAction {
         }
     }
 
-    protected boolean traverseUserParamsService(DelegateExecution execution, List<Resource> resourceCounter,
+    protected boolean traverseUserParamsService(DelegateExecution execution, List<Resource> resourceList,
             ServiceInstancesRequest sIRequest, String requestAction) throws IOException {
         boolean foundRelated = false;
         boolean foundVfModuleOrVG = false;
@@ -1092,11 +1068,11 @@ public class WorkflowAction {
                     ObjectMapper obj = new ObjectMapper();
                     String input = obj.writeValueAsString(params.get(USERPARAMSERVICE));
                     Service validate = obj.readValue(input, Service.class);
-                    resourceCounter.add(
+                    resourceList.add(
                             new Resource(WorkflowType.SERVICE, validate.getModelInfo().getModelVersionId(), false));
                     if (validate.getResources().getVnfs() != null) {
                         for (Vnfs vnf : validate.getResources().getVnfs()) {
-                            resourceCounter.add(new Resource(WorkflowType.VNF,
+                            resourceList.add(new Resource(WorkflowType.VNF,
                                     vnf.getModelInfo().getModelCustomizationId(), false));
                             foundRelated = true;
                             if (vnf.getModelInfo() != null && vnf.getModelInfo().getModelCustomizationUuid() != null) {
@@ -1112,7 +1088,7 @@ public class WorkflowAction {
                                         if (vfModuleCustomization.getVfModule() != null
                                                 && vfModuleCustomization.getVfModule().getVolumeHeatTemplate() != null
                                                 && vfModuleCustomization.getVolumeHeatEnv() != null) {
-                                            resourceCounter.add(new Resource(WorkflowType.VOLUMEGROUP,
+                                            resourceList.add(new Resource(WorkflowType.VOLUMEGROUP,
                                                     vfModuleCustomization.getModelCustomizationUUID(), false));
                                             foundRelated = true;
                                             foundVfModuleOrVG = true;
@@ -1131,7 +1107,7 @@ public class WorkflowAction {
                                             } else {
                                                 resource.setBaseVfModule(false);
                                             }
-                                            resourceCounter.add(resource);
+                                            resourceList.add(resource);
                                             if (vfModule.getModelInfo() != null
                                                     && vfModule.getModelInfo().getModelCustomizationUuid() != null) {
                                                 vfModuleCustomizationUUID =
@@ -1150,7 +1126,7 @@ public class WorkflowAction {
                                                             vnf.getModelInfo().getModelCustomizationId());
                                                     resource.setVfModuleCustomizationId(
                                                             vfModule.getModelInfo().getModelCustomizationId());
-                                                    resourceCounter.add(configResource);
+                                                    resourceList.add(configResource);
                                                 }
                                             }
                                         }
@@ -1165,22 +1141,21 @@ public class WorkflowAction {
                     }
                     if (validate.getResources().getPnfs() != null) {
                         for (Pnfs pnf : validate.getResources().getPnfs()) {
-                            resourceCounter.add(new Resource(WorkflowType.PNF,
+                            resourceList.add(new Resource(WorkflowType.PNF,
                                     pnf.getModelInfo().getModelCustomizationId(), false));
                             foundRelated = true;
                         }
                     }
                     if (validate.getResources().getNetworks() != null) {
                         for (Networks network : validate.getResources().getNetworks()) {
-                            resourceCounter.add(new Resource(WorkflowType.NETWORK,
+                            resourceList.add(new Resource(WorkflowType.NETWORK,
                                     network.getModelInfo().getModelCustomizationId(), false));
                             foundRelated = true;
                         }
                         if (requestAction.equals(CREATEINSTANCE)) {
                             String networkColCustId = queryCatalogDBforNetworkCollection(execution, sIRequest);
                             if (networkColCustId != null) {
-                                resourceCounter
-                                        .add(new Resource(WorkflowType.NETWORKCOLLECTION, networkColCustId, false));
+                                resourceList.add(new Resource(WorkflowType.NETWORKCOLLECTION, networkColCustId, false));
                                 foundRelated = true;
                             }
                         }
@@ -1227,14 +1202,7 @@ public class WorkflowAction {
     }
 
     protected WorkflowResourceIds populateResourceIdsFromApiHandler(DelegateExecution execution) {
-        WorkflowResourceIds workflowResourceIds = new WorkflowResourceIds();
-        workflowResourceIds.setServiceInstanceId((String) execution.getVariable("serviceInstanceId"));
-        workflowResourceIds.setNetworkId((String) execution.getVariable("networkId"));
-        workflowResourceIds.setVfModuleId((String) execution.getVariable("vfModuleId"));
-        workflowResourceIds.setVnfId((String) execution.getVariable("vnfId"));
-        workflowResourceIds.setVolumeGroupId((String) execution.getVariable("volumeGroupId"));
-        workflowResourceIds.setInstanceGroupId((String) execution.getVariable("instanceGroupId"));
-        return workflowResourceIds;
+        return WorkflowResourceIdsUtils.getWorkflowResourceIdsFromExecution(execution);
     }
 
     protected Resource extractResourceIdAndTypeFromUri(String uri) {
@@ -1390,11 +1358,10 @@ public class WorkflowAction {
             String resourceId, String requestAction, String vnfType, WorkflowResourceIds workflowResourceIds,
             RequestDetails requestDetails, boolean isVirtualLink, boolean isConfiguration) {
 
-        List<Resource> serviceResources = resourceList.stream()
-                .filter(resource -> resource.getResourceType().equals(workflowType)).collect(Collectors.toList());
-        serviceResources.forEach(resource -> flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId, resource,
-                apiVersion, resourceId, requestAction, false, vnfType, workflowResourceIds, requestDetails,
-                isVirtualLink, resource.getVirtualLinkKey(), null, isConfiguration)));
+        resourceList.stream().filter(resource -> resource.getResourceType().equals(workflowType))
+                .forEach(resource -> flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId, resource,
+                        apiVersion, resourceId, requestAction, false, vnfType, workflowResourceIds, requestDetails,
+                        isVirtualLink, resource.getVirtualLinkKey(), null, isConfiguration)));
     }
 
     protected List<ExecuteBuildingBlock> buildExecuteBuildingBlockList(List<OrchestrationFlow> orchFlows,
@@ -1524,13 +1491,8 @@ public class WorkflowAction {
                     requestAction, resourceName.toString(), aLaCarte, CLOUD_OWNER);
         }
         if (northBoundRequest == null) {
-            if (aLaCarte) {
-                buildAndThrowException(execution,
-                        "The request: ALaCarte " + resourceName + " " + requestAction + " is not supported by GR_API.");
-            } else {
-                buildAndThrowException(execution,
-                        "The request: Macro " + resourceName + " " + requestAction + " is not supported by GR_API.");
-            }
+            buildAndThrowException(execution, String.format("The request: %s %s %s is not supported by GR_API.",
+                    (aLaCarte ? "AlaCarte" : "Macro"), resourceName, requestAction));
         } else {
             if (northBoundRequest.getIsToplevelflow() != null) {
                 execution.setVariable(BBConstants.G_ISTOPLEVELFLOW, northBoundRequest.getIsToplevelflow());
@@ -1569,7 +1531,7 @@ public class WorkflowAction {
         try {
             String javaExpMsg = (String) execution.getVariable("BPMN_javaExpMsg");
             if (javaExpMsg != null && !javaExpMsg.isEmpty()) {
-                wfeExpMsg = wfeExpMsg.append(": ").append(javaExpMsg);
+                wfeExpMsg.append(": ").append(javaExpMsg);
             }
             runtimeErrorMessage = wfeExpMsg.toString();
             logger.error(runtimeErrorMessage);
