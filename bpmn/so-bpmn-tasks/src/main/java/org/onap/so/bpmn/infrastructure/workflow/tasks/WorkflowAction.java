@@ -47,6 +47,7 @@ import org.onap.aai.domain.yang.Vnfc;
 import org.onap.aai.domain.yang.VolumeGroup;
 import org.onap.aai.domain.yang.VpnBinding;
 import org.onap.so.bpmn.common.BBConstants;
+import org.onap.so.bpmn.infrastructure.workflow.tasks.utils.WorkflowResourceIdsExtension;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
@@ -566,8 +567,6 @@ public class WorkflowAction {
     protected List<OrchestrationFlow> getVfModuleReplaceBuildingBlocks(ConfigBuildingBlocksDataObject dataObj)
             throws Exception {
 
-        List<ExecuteBuildingBlock> flowsToExecuteConfigs = new ArrayList<>();
-
         String vnfId = dataObj.getWorkflowResourceIds().getVnfId();
         String vfModuleId = dataObj.getWorkflowResourceIds().getVfModuleId();
 
@@ -677,12 +676,9 @@ public class WorkflowAction {
         }
 
         Arrays.stream(WorkflowType.values()).filter(type -> !type.equals(WorkflowType.SERVICE)).forEach(type -> {
-            List<Resource> resources =
-                    resourceCounter.stream().filter(x -> type.equals(x.getResourceType())).collect(Collectors.toList());
-            for (int i = 0; i < resources.size(); i++) {
-                updateWorkflowResourceIds(flowsToExecute, type, resources.get(i).getResourceId(),
-                        retrieveAAIResourceId(aaiResourceIds, type), null, serviceInstanceId);
-            }
+            resourceCounter.stream().filter(resource -> type.equals(resource.getResourceType()))
+                    .forEach(resource -> updateWorkflowResourceIds(flowsToExecute, type, resource.getResourceId(),
+                            retrieveAAIResourceId(aaiResourceIds, type), null, serviceInstanceId));
         });
     }
 
@@ -701,18 +697,13 @@ public class WorkflowAction {
     private void generateResourceIds(List<ExecuteBuildingBlock> flowsToExecute, List<Resource> resourceCounter,
             String serviceInstanceId) {
         Arrays.stream(WorkflowType.values()).filter(type -> !type.equals(WorkflowType.SERVICE)).forEach(type -> {
-            List<Resource> resources =
-                    resourceCounter.stream().filter(x -> type.equals(x.getResourceType())).collect(Collectors.toList());
-            for (int i = 0; i < resources.size(); i++) {
-                Resource resource = resourceCounter.stream().filter(x -> type.equals(x.getResourceType()))
-                        .collect(Collectors.toList()).get(i);
-                updateWorkflowResourceIds(flowsToExecute, type, resource.getResourceId(), null,
-                        resource.getVirtualLinkKey(), serviceInstanceId);
-            }
+            resourceCounter.stream().filter(resource -> type.equals(resource.getResourceType()))
+                    .forEach(resource -> updateWorkflowResourceIds(flowsToExecute, type, resource.getResourceId(), null,
+                            resource.getVirtualLinkKey(), serviceInstanceId));
         });
     }
 
-    protected void updateWorkflowResourceIds(List<ExecuteBuildingBlock> flowsToExecute, WorkflowType resource,
+    protected void updateWorkflowResourceIds(List<ExecuteBuildingBlock> flowsToExecute, WorkflowType resourceType,
             String key, String id, String virtualLinkKey, String serviceInstanceId) {
         String resourceId = id;
         if (resourceId == null) {
@@ -720,24 +711,10 @@ public class WorkflowAction {
         }
         for (ExecuteBuildingBlock ebb : flowsToExecute) {
             if (key != null && key.equalsIgnoreCase(ebb.getBuildingBlock().getKey())
-                    && ebb.getBuildingBlock().getBpmnFlowName().contains(resource.toString())) {
-                WorkflowResourceIds workflowResourceIds = new WorkflowResourceIds();
+                    && ebb.getBuildingBlock().getBpmnFlowName().contains(resourceType.toString())) {
+                WorkflowResourceIdsExtension workflowResourceIds = new WorkflowResourceIdsExtension();
                 workflowResourceIds.setServiceInstanceId(serviceInstanceId);
-                if (resource == WorkflowType.VNF) {
-                    workflowResourceIds.setVnfId(resourceId);
-                } else if (resource == WorkflowType.PNF) {
-                    workflowResourceIds.setPnfId(resourceId);
-                } else if (resource == WorkflowType.VFMODULE) {
-                    workflowResourceIds.setVfModuleId(resourceId);
-                } else if (resource == WorkflowType.VOLUMEGROUP) {
-                    workflowResourceIds.setVolumeGroupId(resourceId);
-                } else if (resource == WorkflowType.NETWORK) {
-                    workflowResourceIds.setNetworkId(resourceId);
-                } else if (resource == WorkflowType.NETWORKCOLLECTION) {
-                    workflowResourceIds.setNetworkCollectionId(resourceId);
-                } else if (resource == WorkflowType.CONFIGURATION) {
-                    workflowResourceIds.setConfigurationId(resourceId);
-                }
+                workflowResourceIds.setResourceId(resourceType, resourceId);
                 ebb.setWorkflowResourceIds(workflowResourceIds);
             }
             if (virtualLinkKey != null && ebb.getBuildingBlock().isVirtualLink()
@@ -1234,13 +1211,8 @@ public class WorkflowAction {
     }
 
     protected WorkflowResourceIds populateResourceIdsFromApiHandler(DelegateExecution execution) {
-        WorkflowResourceIds workflowResourceIds = new WorkflowResourceIds();
-        workflowResourceIds.setServiceInstanceId((String) execution.getVariable("serviceInstanceId"));
-        workflowResourceIds.setNetworkId((String) execution.getVariable("networkId"));
-        workflowResourceIds.setVfModuleId((String) execution.getVariable("vfModuleId"));
-        workflowResourceIds.setVnfId((String) execution.getVariable("vnfId"));
-        workflowResourceIds.setVolumeGroupId((String) execution.getVariable("volumeGroupId"));
-        workflowResourceIds.setInstanceGroupId((String) execution.getVariable("instanceGroupId"));
+        WorkflowResourceIdsExtension workflowResourceIds = new WorkflowResourceIdsExtension();
+        workflowResourceIds.populateFromExecution(execution);
         return workflowResourceIds;
     }
 
@@ -1397,11 +1369,10 @@ public class WorkflowAction {
             String resourceId, String requestAction, String vnfType, WorkflowResourceIds workflowResourceIds,
             RequestDetails requestDetails, boolean isVirtualLink, boolean isConfiguration) {
 
-        List<Resource> serviceResources = resourceList.stream()
-                .filter(resource -> resource.getResourceType().equals(workflowType)).collect(Collectors.toList());
-        serviceResources.forEach(resource -> flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId, resource,
-                apiVersion, resourceId, requestAction, false, vnfType, workflowResourceIds, requestDetails,
-                isVirtualLink, resource.getVirtualLinkKey(), null, isConfiguration)));
+        resourceList.stream().filter(resource -> resource.getResourceType().equals(workflowType))
+                .forEach(resource -> flowsToExecute.add(buildExecuteBuildingBlock(orchFlow, requestId, resource,
+                        apiVersion, resourceId, requestAction, false, vnfType, workflowResourceIds, requestDetails,
+                        isVirtualLink, resource.getVirtualLinkKey(), null, isConfiguration)));
     }
 
     protected List<ExecuteBuildingBlock> buildExecuteBuildingBlockList(List<OrchestrationFlow> orchFlows,
@@ -1531,13 +1502,8 @@ public class WorkflowAction {
                     requestAction, resourceName.toString(), aLaCarte, CLOUD_OWNER);
         }
         if (northBoundRequest == null) {
-            if (aLaCarte) {
-                buildAndThrowException(execution,
-                        "The request: ALaCarte " + resourceName + " " + requestAction + " is not supported by GR_API.");
-            } else {
-                buildAndThrowException(execution,
-                        "The request: Macro " + resourceName + " " + requestAction + " is not supported by GR_API.");
-            }
+            buildAndThrowException(execution, String.format("The request: %s %s %s is not supported by GR_API.",
+                    (aLaCarte ? "AlaCarte" : "Macro"), resourceName, requestAction));
         } else {
             if (northBoundRequest.getIsToplevelflow() != null) {
                 execution.setVariable(BBConstants.G_ISTOPLEVELFLOW, northBoundRequest.getIsToplevelflow());
@@ -1549,9 +1515,7 @@ public class WorkflowAction {
                 if (!flow.getFlowName().contains("BB") && !flow.getFlowName().contains("Activity")) {
                     List<OrchestrationFlow> macroQueryFlows =
                             catalogDbClient.getOrchestrationFlowByAction(flow.getFlowName());
-                    for (OrchestrationFlow macroFlow : macroQueryFlows) {
-                        listToExecute.add(macroFlow);
-                    }
+                    listToExecute.addAll(macroQueryFlows);
                 } else {
                     listToExecute.add(flow);
                 }
@@ -1578,7 +1542,7 @@ public class WorkflowAction {
         try {
             String javaExpMsg = (String) execution.getVariable("BPMN_javaExpMsg");
             if (javaExpMsg != null && !javaExpMsg.isEmpty()) {
-                wfeExpMsg = wfeExpMsg.append(": ").append(javaExpMsg);
+                wfeExpMsg.append(": ").append(javaExpMsg);
             }
             runtimeErrorMessage = wfeExpMsg.toString();
             logger.error(runtimeErrorMessage);
