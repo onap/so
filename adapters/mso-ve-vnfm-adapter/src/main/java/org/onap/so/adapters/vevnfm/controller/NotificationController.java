@@ -20,9 +20,11 @@
 
 package org.onap.so.adapters.vevnfm.controller;
 
+import org.onap.so.adapters.vevnfm.service.DmaapService;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.VnfLcmOperationOccurrenceNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,9 +35,13 @@ public class NotificationController {
 
     private static final Logger logger = LoggerFactory.getLogger(NotificationController.class);
 
+    @Autowired
+    private DmaapService dmaapService;
+
     @PostMapping("${notification.url}")
     public ResponseEntity receiveNotification(@RequestBody final VnfLcmOperationOccurrenceNotification notification) {
         logger.info("Notification received {}", notification);
+        dmaapService.send(notification);
         return ResponseEntity.ok().build();
     }
 }
