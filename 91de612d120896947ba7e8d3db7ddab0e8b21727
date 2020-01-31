@@ -2,6 +2,121 @@
   "comments": [
     {
       "key": {
+        "uuid": "b6408806_68d41c85",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-01-31T14:30:56Z",
+      "side": 1,
+      "message": "Service expected \u003d mapper.readValue(new File(RESOURCE_PATH + \"CatalogServiceExpected.json\"), Service.class);\n        String uuid \u003d \"modelUUIDTest\";\n        \n        doReturn(expected).when(MOCK_catalogDbClient).getServiceByID(uuid);\n\n        assertThat(bbInputSetupUtils.getCatalogServiceByModelUUID(uuid), sameBeanAs(expected));",
+      "range": {
+        "startLine": 121,
+        "startChar": 0,
+        "endLine": 130,
+        "endChar": 120
+      },
+      "revId": "91de612d120896947ba7e8d3db7ddab0e8b21727",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0392785b_7393aab1",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-01-31T14:30:56Z",
+      "side": 1,
+      "message": "If you purpose is case when CloudRegion is Empty, here is null. Write:\n\n        CloudConfiguration cloudConfiguration \u003d new CloudConfiguration();\n        cloudConfiguration.setLcpCloudRegionId(\"\");\n        assertNull(bbInputSetupUtils.getCloudRegion(cloudConfiguration));",
+      "range": {
+        "startLine": 204,
+        "startChar": 4,
+        "endLine": 206,
+        "endChar": 99
+      },
+      "revId": "91de612d120896947ba7e8d3db7ddab0e8b21727",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "831d6f32_12be8047",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-01-31T14:30:56Z",
+      "side": 1,
+      "message": "this is not used, remove it please",
+      "range": {
+        "startLine": 275,
+        "startChar": 0,
+        "endLine": 276,
+        "endChar": 57
+      },
+      "revId": "91de612d120896947ba7e8d3db7ddab0e8b21727",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "141bc138_b5c120d6",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-01-31T14:30:56Z",
+      "side": 1,
+      "message": "consider to change test name -\u003e getAAIServiceInstanceById_ifEmptyReturnNull",
+      "range": {
+        "startLine": 287,
+        "startChar": 16,
+        "endLine": 287,
+        "endChar": 49
+      },
+      "revId": "91de612d120896947ba7e8d3db7ddab0e8b21727",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ffa9d9a9_5b6f0ea1",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-01-31T14:30:56Z",
+      "side": 1,
+      "message": "test is ok, but for better readability, I would add Mockito \"when\" to show the circumstances where null value is return, like this:\n\n    when(MOCK_aaiResourcesClient.get(eq(ServiceInstance.class), any(AAIResourceUri.class))).\n                thenReturn(Optional.empty());\n        assertNull(bbInputSetupUtils.getAAIServiceInstanceById(\"any\"));",
+      "range": {
+        "startLine": 288,
+        "startChar": 8,
+        "endLine": 288,
+        "endChar": 85
+      },
+      "revId": "91de612d120896947ba7e8d3db7ddab0e8b21727",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "39e9540e_1f7b2b1e",
         "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
         "patchSetId": 4
