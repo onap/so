@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d2bfbde9_16be45c9",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 540,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-01-31T09:14:39Z",
+      "side": 0,
+      "message": "Is this test unneeded?",
+      "range": {
+        "startLine": 527,
+        "startChar": 0,
+        "endLine": 540,
+        "endChar": 5
+      },
+      "revId": "8d77d8544d88dfb91e9287b1620212cc9821bd54",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ec3726bf_36e86513",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 589,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-01-31T09:14:39Z",
+      "side": 0,
+      "message": "Are those tests unneeded?",
+      "range": {
+        "startLine": 558,
+        "startChar": 4,
+        "endLine": 589,
+        "endChar": 5
+      },
+      "revId": "8d77d8544d88dfb91e9287b1620212cc9821bd54",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}

@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "39e9540e_1f7b2b1e",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 677,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-01-31T09:14:39Z",
+      "side": 1,
+      "message": "Expected value should be first. (Applies to other tests also)",
+      "range": {
+        "startLine": 677,
+        "startChar": 8,
+        "endLine": 677,
+        "endChar": 114
+      },
+      "revId": "91de612d120896947ba7e8d3db7ddab0e8b21727",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "68ae3618_e9241a93",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 696,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-01-31T09:14:39Z",
+      "side": 1,
+      "message": "Consider changing the string, it is confusing what the variable represents now.",
+      "range": {
+        "startLine": 696,
+        "startChar": 34,
+        "endLine": 696,
+        "endChar": 49
+      },
+      "revId": "91de612d120896947ba7e8d3db7ddab0e8b21727",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b4705a86_bbb8b561",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 729,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-01-31T09:14:39Z",
+      "side": 1,
+      "message": "There is object mapper already defined as a field.",
+      "range": {
+        "startLine": 729,
+        "startChar": 8,
+        "endLine": 729,
+        "endChar": 55
+      },
+      "revId": "91de612d120896947ba7e8d3db7ddab0e8b21727",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "702f12fd_ac8fc71e",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 742,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-01-31T09:14:39Z",
+      "side": 1,
+      "message": "Consider using requestId",
+      "range": {
+        "startLine": 742,
+        "startChar": 62,
+        "endLine": 742,
+        "endChar": 73
+      },
+      "revId": "91de612d120896947ba7e8d3db7ddab0e8b21727",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3ceeb1e7_7e7e77a2",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 746,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-01-31T09:14:39Z",
+      "side": 1,
+      "message": "Consider using previous naming (expectedFlowsToExecute)",
+      "range": {
+        "startLine": 746,
+        "startChar": 53,
+        "endLine": 746,
+        "endChar": 67
+      },
+      "revId": "91de612d120896947ba7e8d3db7ddab0e8b21727",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
