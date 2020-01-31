@@ -22,6 +22,30 @@
       "revId": "903cfb96ee4d3fdcce5f731cb4685d5ff8836c00",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "918b9933_fef1f925",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/configuration/SecurityConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-01-31T13:06:03Z",
+      "side": 1,
+      "message": "Thank you for this comment. I\u0027ll look into it in the near future.",
+      "parentUuid": "3bdae902_17292dce",
+      "range": {
+        "startLine": 55,
+        "startChar": 7,
+        "endLine": 56,
+        "endChar": 97
+      },
+      "revId": "903cfb96ee4d3fdcce5f731cb4685d5ff8836c00",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
