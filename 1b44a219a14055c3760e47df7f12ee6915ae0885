@@ -2,6 +2,57 @@
   "comments": [
     {
       "key": {
+        "uuid": "4bc8e30b_d6830889",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/GeneratePayloadForService.java",
+        "patchSetId": 35
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-03T14:16:33Z",
+      "side": 1,
+      "message": "blueprintName is never initialized, why do you have it here?",
+      "revId": "1b44a219a14055c3760e47df7f12ee6915ae0885",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "94e0ca0f_0044c8e8",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/GeneratePayloadForService.java",
+        "patchSetId": 35
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-03T14:16:33Z",
+      "side": 1,
+      "message": "blueprintVersion is never initialized, why do you have it here?",
+      "revId": "1b44a219a14055c3760e47df7f12ee6915ae0885",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e434f17e_9e47b49b",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/NetworkFunction.java",
+        "patchSetId": 35
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-03T14:16:33Z",
+      "side": 1,
+      "message": "I find this name very confusing. NetworkFunction suggests that this is some general domain object which should be widely used in the rest of the SO code. While this is just local, CDS-specific interface which does not even describe object but rather operation. Could you call it accordingly? i.e. CDSRequestGenerator or CDSRequestConfiguration?",
+      "revId": "1b44a219a14055c3760e47df7f12ee6915ae0885",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "aa49d496_9efada89",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/PayloadConstants.java",
         "patchSetId": 35
@@ -48,6 +99,74 @@
       "writtenOn": "2020-01-30T11:46:39Z",
       "side": 1,
       "message": "same as above",
+      "revId": "1b44a219a14055c3760e47df7f12ee6915ae0885",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b1e415cc_e39fbffa",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/PropertyPayloadBuilder.java",
+        "patchSetId": 35
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-03T14:16:33Z",
+      "side": 1,
+      "message": "is this class used anywhere?",
+      "revId": "1b44a219a14055c3760e47df7f12ee6915ae0885",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d3e37d4d_acb70e27",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/aai/tasks/cds/UpdateOrchestrationStatus.java",
+        "patchSetId": 35
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-03T14:16:33Z",
+      "side": 1,
+      "message": "I don\u0027t understands what\u0027s the benefit from having this class. You\u0027re using it in AAIUpdateTasks.updateOrchestrationStatusForCds() where you already checked whether update should be made for vnf or vfModule. But then you ignore it and you pass request here where you\u0027re making the same decision second time. Why not just call AAIVnfResources/AAIVfModuleResources in AAIUpdateTasks directly?",
+      "revId": "1b44a219a14055c3760e47df7f12ee6915ae0885",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "29fd19d0_c5646525",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/aai/tasks/cds/UpdateOrchestrationStatus.java",
+        "patchSetId": 35
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-03T14:16:33Z",
+      "side": 1,
+      "message": "unused field",
+      "revId": "1b44a219a14055c3760e47df7f12ee6915ae0885",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f0776372_f5d7add6",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/aai/tasks/cds/UpdateOrchestrationStatus.java",
+        "patchSetId": 35
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-03T14:16:33Z",
+      "side": 1,
+      "message": "typo in Status",
       "revId": "1b44a219a14055c3760e47df7f12ee6915ae0885",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
