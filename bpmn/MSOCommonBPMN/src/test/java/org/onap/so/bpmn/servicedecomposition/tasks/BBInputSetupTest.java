@@ -1262,7 +1262,7 @@ public class BBInputSetupTest {
         verify(SPY_bbInputSetup, times(1)).mapCatalogNetwork(network, modelInfo, service);
 
         instanceName = "networkName2";
-        L3Network network2 = SPY_bbInputSetup.createNetwork(lookupKeyMap, instanceName, resourceId, null);
+        L3Network network2 = SPY_bbInputSetup.createNetwork(lookupKeyMap, instanceName, resourceId, null, parameter);
         SPY_bbInputSetup.populateL3Network(parameter);
         verify(SPY_bbInputSetup, times(2)).mapCatalogNetwork(network2, modelInfo, service);
     }
@@ -2832,17 +2832,32 @@ public class BBInputSetupTest {
         expected.setNetworkId(networkId);
         expected.setNetworkName(instanceName);
         expected.setCloudParams(cloudParams);
+        Platform platform = new Platform();
+        platform.setPlatformName("platformName");
+        expected.setPlatform(platform);
+        LineOfBusiness lineOfBusiness = new LineOfBusiness();
+        lineOfBusiness.setLineOfBusinessName("lineOfBusiness");
+        expected.setLineOfBusiness(lineOfBusiness);
         expected.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
         Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
         List<Map<String, String>> instanceParams = new ArrayList<>();
         instanceParams.add(cloudParams);
-        L3Network actual = SPY_bbInputSetup.createNetwork(lookupKeyMap, instanceName, networkId, instanceParams);
+        org.onap.so.serviceinstancebeans.Platform platformRequest = new org.onap.so.serviceinstancebeans.Platform();
+        org.onap.so.serviceinstancebeans.LineOfBusiness lineOfBusinessRequest =
+                new org.onap.so.serviceinstancebeans.LineOfBusiness();
+        lineOfBusinessRequest.setLineOfBusinessName("lineOfBusiness");
+        platformRequest.setPlatformName("platformName");
+        BBInputSetupParameter parameter = new BBInputSetupParameter.Builder().setRequestId(REQUEST_ID)
+                .setPlatform(platformRequest).setLineOfBusiness(lineOfBusinessRequest).build();
+        L3Network actual =
+                SPY_bbInputSetup.createNetwork(lookupKeyMap, instanceName, networkId, instanceParams, parameter);
 
         assertThat(actual, sameBeanAs(expected));
         assertEquals("LookupKeyMap is populated", networkId, lookupKeyMap.get(ResourceKey.NETWORK_ID));
 
         expected.getCloudParams().clear();
-        actual = SPY_bbInputSetup.createNetwork(lookupKeyMap, instanceName, networkId, null);
+
+        actual = SPY_bbInputSetup.createNetwork(lookupKeyMap, instanceName, networkId, null, parameter);
         assertThat(actual, sameBeanAs(expected));
     }
 

@@ -915,7 +915,7 @@ public class BBInputSetup implements JavaDelegate {
         if (network == null && (parameter.getBbName().equalsIgnoreCase(AssignFlows.NETWORK_A_LA_CARTE.toString())
                 || parameter.getBbName().equalsIgnoreCase(AssignFlows.NETWORK_MACRO.toString()))) {
             network = createNetwork(parameter.getLookupKeyMap(), parameter.getInstanceName(), parameter.getResourceId(),
-                    parameter.getInstanceParams());
+                    parameter.getInstanceParams(), parameter);
             parameter.getServiceInstance().getNetworks().add(network);
         }
         if (network != null) {
@@ -924,12 +924,20 @@ public class BBInputSetup implements JavaDelegate {
     }
 
     protected L3Network createNetwork(Map<ResourceKey, String> lookupKeyMap, String instanceName, String networkId,
-            List<Map<String, String>> instanceParams) {
+            List<Map<String, String>> instanceParams, BBInputSetupParameter parameter) {
         lookupKeyMap.put(ResourceKey.NETWORK_ID, networkId);
         L3Network network = new L3Network();
         network.setNetworkId(networkId);
         network.setNetworkName(instanceName);
         network.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
+        if (parameter != null) {
+            if (parameter.getLineOfBusiness() != null) {
+                network.setLineOfBusiness(this.mapperLayer.mapRequestLineOfBusiness(parameter.getLineOfBusiness()));
+            }
+            if (parameter.getLineOfBusiness() != null) {
+                network.setPlatform(this.mapperLayer.mapRequestPlatform(parameter.getPlatform()));
+            }
+        }
         if (instanceParams != null) {
             for (Map<String, String> params : instanceParams) {
                 network.getCloudParams().putAll(params);
@@ -1284,7 +1292,7 @@ public class BBInputSetup implements JavaDelegate {
         if (collectionNetworkResourceCust != null) {
             if ((bbName.equalsIgnoreCase(AssignFlows.NETWORK_A_LA_CARTE.toString())
                     || bbName.equalsIgnoreCase(AssignFlows.NETWORK_MACRO.toString()))) {
-                L3Network network = createNetwork(lookupKeyMap, null, networkId, null);
+                L3Network network = createNetwork(lookupKeyMap, null, networkId, null, null);
                 serviceInstance.getNetworks().add(network);
                 return network;
             } else {
