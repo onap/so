@@ -45,26 +45,34 @@ public class MapRequestTunables {
         RequestTunables reqTunable = new RequestTunables(reqTunableOriginal);
         String error = null;
         String key;
-        if ("query".equals(reqTunable.getAction())) { // due to variable format for reqTunable.getOperation() eg
-                                                      // services/layer3-service-list/8fe4ba4f-35cf-4d9b-a04a-fd3f5d4c5cc9
-            key = Constants.REQUEST_TUNABLES + "." + reqTunable.getMsoAction() + ".." + reqTunable.getAction();
-            logger.debug(GENERATED_KEY + key);
-        } else if ("put".equals(reqTunable.getAction()) || "restdelete".equals(reqTunable.getAction())) { // due to
-                                                                                                          // variable
-                                                                                                          // format for
-                                                                                                          // reqTunable.getOperation()
-                                                                                                          // eg
-                                                                                                          // services/layer3-service-list/8fe4ba4f-35cf-4d9b-a04a-fd3f5d4c5cc9
-            key = Constants.REQUEST_TUNABLES + "..." + reqTunable.getAction();
-            logger.debug(GENERATED_KEY + key);
+        String msoAction = reqTunable.getMsoAction();
+
+        if (Constants.MSO_ACTION_LCM.equals(msoAction)) {
+            key = Constants.REQUEST_TUNABLES + "." + msoAction + "." + reqTunable.getOperation();
         } else {
-            key = Constants.REQUEST_TUNABLES + "." + reqTunable.getMsoAction() + "." + reqTunable.getOperation() + "."
-                    + reqTunable.getAction();
-            logger.debug(GENERATED_KEY + key);
+            if ("query".equals(reqTunable.getAction())) {
+                // due to variable format for reqTunable.getOperation(), eg
+                // services/layer3-service-list/8fe4ba4f-35cf-4d9b-a04a-fd3f5d4c5cc9
+                key = Constants.REQUEST_TUNABLES + "." + msoAction + ".." + reqTunable.getAction();
+            } else if ("put".equals(reqTunable.getAction()) || "restdelete".equals(reqTunable.getAction())) {
+                // due to variable format for reqTunable.getOperation(), eg
+                // services/layer3-service-list/8fe4ba4f-35cf-4d9b-a04a-fd3f5d4c5cc9
+                key = Constants.REQUEST_TUNABLES + "..." + reqTunable.getAction();
+            } else {
+                key = Constants.REQUEST_TUNABLES + "." + msoAction + "." + reqTunable.getOperation() + "."
+                        + reqTunable.getAction();
+            }
         }
+        logger.debug(GENERATED_KEY + key);
 
         String value;
         value = env.getProperty(key, "");
+
+        if (Constants.MSO_ACTION_LCM.equals(msoAction) && (value == null || value.length() == 0)) {
+            key = Constants.REQUEST_TUNABLES + "." + msoAction + ".default";
+            logger.debug("Can not find key of " + reqTunable.getOperation() + ", use default: " + key);
+            value = env.getProperty(key, "");
+        }
 
         if (value != null && value.length() > 0) {
 

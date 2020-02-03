@@ -40,4 +40,9 @@ public interface Constants {
     public static final String ENCRYPTION_KEY_PROP = "org.onap.so.adapters.network.encryptionKey";
 
     public static final String REQUEST_TUNABLES = "org.onap.so.adapters.sdnc";
+
+    public static final String MSO_ACTION_LCM = "lcm";
+    public static final String LCM_API_VER = "2.00";
+    public static final int LCM_FLAGS_TTL = 65000;
+    public static final String LCM_ORIGINATOR_ID = "MSO";
 }

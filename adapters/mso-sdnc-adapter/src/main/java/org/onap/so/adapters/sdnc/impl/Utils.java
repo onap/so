@@ -24,6 +24,8 @@ package org.onap.so.adapters.sdnc.impl;
 
 
 import java.io.StringWriter;
+import java.time.Instant;
+import java.util.UUID;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -94,7 +96,7 @@ public class Utils {
             }
 
             String s = domToStr(newdoc);
-            logger.debug("Formatted SdncReq:\n", s);
+            logger.debug("Formatted SdncReq:\n{}", s);
             return s;
 
         } catch (Exception e) {
@@ -128,12 +130,102 @@ public class Utils {
             }
 
             String s = domToStr(newdoc);
-            logger.debug("Formatted SdncPutReq:\n {}", s);
+            logger.debug("Formatted SdncPutReq:\n{}", s);
             return s;
 
         } catch (Exception e) {
             logger.error(LoggingAnchor.FOUR, MessageEnum.RA_ERROR_CREATE_SDNC_REQUEST.toString(), "SDNC",
                     ErrorCode.DataError.getValue(), "Exception in genSdncPutReq", e);
+        }
+        return null;
+    }
+
+    public static Element genLcmCommonHeader(Document doc, String requestId) {
+        Element commonHeader = doc.createElement("common-header");
+
+        Element hdrChild;
+
+        hdrChild = doc.createElement("api-ver");
+        hdrChild.appendChild(doc.createTextNode(Constants.LCM_API_VER));
+        commonHeader.appendChild(hdrChild);
+
+        hdrChild = doc.createElement("flags");
+
+        Element flagChild;
+
+        flagChild = doc.createElement("force");
+        flagChild.appendChild(doc.createTextNode("FALSE"));
+        hdrChild.appendChild(flagChild);
+
+        flagChild = doc.createElement("mode");
+        flagChild.appendChild(doc.createTextNode("NORMAL"));
+        hdrChild.appendChild(flagChild);
+
+        flagChild = doc.createElement("ttl");
+        flagChild.appendChild(doc.createTextNode(String.valueOf(Constants.LCM_FLAGS_TTL)));
+        hdrChild.appendChild(flagChild);
+
+        commonHeader.appendChild(hdrChild);
+
+        hdrChild = doc.createElement("originator-id");
+        hdrChild.appendChild(doc.createTextNode(Constants.LCM_ORIGINATOR_ID));
+        commonHeader.appendChild(hdrChild);
+
+        hdrChild = doc.createElement("request-id");
+        hdrChild.appendChild(doc.createTextNode(requestId));
+        commonHeader.appendChild(hdrChild);
+
+        hdrChild = doc.createElement("sub-request-id");
+        hdrChild.appendChild(doc.createTextNode(UUID.randomUUID().toString()));
+        commonHeader.appendChild(hdrChild);
+
+        hdrChild = doc.createElement("timestamp");
+        hdrChild.appendChild(doc.createTextNode(Instant.now().toString()));
+        commonHeader.appendChild(hdrChild);
+
+        return commonHeader;
+    }
+
+    public static String genSdncLcmReq(Document reqDoc, RequestTunables rt) {
+        try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+
+            Document newdoc = db.newDocument();
+            Element root = newdoc.createElementNS(rt.getNamespace(), "input");
+            newdoc.appendChild(root);
+
+            String elemData = rt.getReqId();
+            if (elemData == null || elemData.length() == 0) {
+                elemData = UUID.randomUUID().toString();
+            }
+
+            Element hdrChild;
+            hdrChild = genLcmCommonHeader(newdoc, elemData);
+            root.appendChild(hdrChild);
+
+            elemData = rt.getAction();
+            if (elemData != null && elemData.length() > 0) {
+                hdrChild = newdoc.createElement("action");
+                hdrChild.appendChild(newdoc.createTextNode(elemData));
+                root.appendChild(hdrChild);
+            }
+
+            // RequestData
+            NodeList nodes = reqDoc.getDocumentElement().getChildNodes();
+            for (int i = 0; i < nodes.getLength(); i++) {
+                Node n = nodes.item(i);
+                Node newNode = newdoc.importNode(n, true);
+                root.appendChild(newNode);
+            }
+
+            String s = domToStr(newdoc);
+            logger.debug("Formatted SdncLcmReq:\n{}", s);
+            return s;
+
+        } catch (Exception e) {
+            logger.error(LoggingAnchor.FOUR, MessageEnum.RA_ERROR_CREATE_SDNC_REQUEST.toString(), "SDNC",
+                    ErrorCode.BusinessProcessError.getValue(), "Exception in genSdncLcmReq", e);
         }
         return null;
     }
@@ -163,7 +255,7 @@ public class Utils {
             root.appendChild(elem3);
 
             String s = domToStr(newdoc);
-            logger.debug("Formatted SdncReq: {}", s);
+            logger.debug("Formatted MsoFailResp:\n{}", s);
             return s;
 
         } catch (Exception e) {
