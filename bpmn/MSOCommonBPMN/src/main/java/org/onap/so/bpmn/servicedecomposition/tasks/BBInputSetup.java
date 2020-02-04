@@ -6,7 +6,7 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
- * Modifications Copyright (c) 2019 Nokia
+ * Modifications Copyright (c) 2020 Nokia
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -815,13 +815,6 @@ public class BBInputSetup implements JavaDelegate {
         }
     }
 
-    private void populatePnf(Pnfs pnf, String pnfId, ServiceInstance serviceInstance) {
-        Pnf genericPnf = new Pnf();
-        genericPnf.setPnfId(pnfId);
-        genericPnf.setPnfName(pnf.getInstanceName());
-        serviceInstance.getPnfs().add(genericPnf);
-    }
-
     protected boolean instanceGroupInList(GenericVnf vnf, String instanceGroupId) {
         for (InstanceGroup instanceGroup : vnf.getInstanceGroups()) {
             if (instanceGroup.getId() != null && instanceGroup.getId().equalsIgnoreCase(instanceGroupId)) {
@@ -1494,9 +1487,11 @@ public class BBInputSetup implements JavaDelegate {
             this.populateGenericVnf(parameter);
         } else if (bbName.contains(PNF)) {
             String pnfId = lookupKeyMap.get(ResourceKey.PNF);
-            resources.getPnfs().stream()
-                    .filter(pnf -> Objects.equals(key, pnf.getModelInfo().getModelCustomizationId())).findFirst()
-                    .ifPresent(pnf -> this.populatePnf(pnf, pnfId, serviceInstance));
+            Optional<Pnfs> pnfs = resources.getPnfs().stream()
+                    .filter(pnfss -> Objects.equals(key, pnfss.getModelInfo().getModelCustomizationId())).findFirst();
+            if (pnfs.isPresent()) {
+                BBInputSetupPnf.populatePnfToServiceInstance(pnfs.get(), pnfId, serviceInstance);
+            }
         } else if (bbName.contains(VF_MODULE) || bbName.contains(VOLUME_GROUP)) {
             Pair<Vnfs, VfModules> vnfsAndVfModules = getVfModulesAndItsVnfsByKey(key, resources);
             if (vnfsAndVfModules != null) {
