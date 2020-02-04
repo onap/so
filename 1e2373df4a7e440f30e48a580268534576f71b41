@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "735cccd4_8085b99c",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/resources/ServiceInstanceTest/ExecutePNFCustomWorkflow.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-04T11:32:34Z",
+      "side": 1,
+      "message": "isn\u0027t one of the key is targetSoftwareVersion for testing purpose?",
+      "range": {
+        "startLine": 22,
+        "startChar": 17,
+        "endLine": 22,
+        "endChar": 21
+      },
+      "revId": "1e2373df4a7e440f30e48a580268534576f71b41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
