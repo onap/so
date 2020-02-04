@@ -22,6 +22,30 @@
       "revId": "1e2373df4a7e440f30e48a580268534576f71b41",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "530a8b39_b65ff73c",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/resources/ServiceInstanceTest/ExecutePNFCustomWorkflow.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 4801
+      },
+      "writtenOn": "2020-02-04T15:11:18Z",
+      "side": 1,
+      "message": "imo, any key like \"key1“ here is more generic",
+      "parentUuid": "735cccd4_8085b99c",
+      "range": {
+        "startLine": 22,
+        "startChar": 17,
+        "endLine": 22,
+        "endChar": 21
+      },
+      "revId": "1e2373df4a7e440f30e48a580268534576f71b41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
