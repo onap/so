@@ -24,6 +24,7 @@ import java.io.Serializable;
 import javax.persistence.Id;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoPnf;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -41,7 +42,7 @@ public class Pnf implements Serializable, ShallowCopy<Pnf> {
     @JsonProperty("pnf-name")
     private String pnfName;
 
-    @JsonProperty("role")
+    @JsonProperty("nf-role")
     private String role;
 
     @JsonProperty("orchestration-status")
@@ -50,6 +51,8 @@ public class Pnf implements Serializable, ShallowCopy<Pnf> {
     @JsonProperty("cloud-region")
     private CloudRegion cloudRegion;
 
+    @JsonProperty("model-info-pnf")
+    private ModelInfoPnf modelInfoPnf;
 
     public String getPnfId() {
         return pnfId;
@@ -95,6 +98,14 @@ public class Pnf implements Serializable, ShallowCopy<Pnf> {
 
     public void setCloudRegion(CloudRegion cloudRegion) {
         this.cloudRegion = cloudRegion;
+    }
+
+    public ModelInfoPnf getModelInfoPnf() {
+        return modelInfoPnf;
+    }
+
+    public void setModelInfoPnf(ModelInfoPnf modelInfoPnf) {
+        this.modelInfoPnf = modelInfoPnf;
     }
 
     @Override
