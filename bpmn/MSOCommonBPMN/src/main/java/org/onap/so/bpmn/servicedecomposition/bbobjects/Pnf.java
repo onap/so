@@ -41,7 +41,7 @@ public class Pnf implements Serializable, ShallowCopy<Pnf> {
     @JsonProperty("pnf-name")
     private String pnfName;
 
-    @JsonProperty("role")
+    @JsonProperty("nf-role")
     private String role;
 
     @JsonProperty("orchestration-status")
@@ -49,6 +49,15 @@ public class Pnf implements Serializable, ShallowCopy<Pnf> {
 
     @JsonProperty("cloud-region")
     private CloudRegion cloudRegion;
+
+    @JsonProperty("model-customization-id")
+    private String modelCustomizationId;
+
+    @JsonProperty("model-invariant-id")
+    private String modelInvariantId;
+
+    @JsonProperty("model-version-id")
+    private String modelVersionId;
 
 
     public String getPnfId() {
@@ -95,6 +104,30 @@ public class Pnf implements Serializable, ShallowCopy<Pnf> {
 
     public void setCloudRegion(CloudRegion cloudRegion) {
         this.cloudRegion = cloudRegion;
+    }
+
+    public String getModelCustomizationId() {
+        return modelCustomizationId;
+    }
+
+    public void setModelCustomizationId(String modelCustomizationId) {
+        this.modelCustomizationId = modelCustomizationId;
+    }
+
+    public String getModelInvariantId() {
+        return modelInvariantId;
+    }
+
+    public void setModelInvariantId(String modelInvariantId) {
+        this.modelInvariantId = modelInvariantId;
+    }
+
+    public String getModelVersionId() {
+        return modelVersionId;
+    }
+
+    public void setModelVersionId(String modelVersionId) {
+        this.modelVersionId = modelVersionId;
     }
 
     @Override
