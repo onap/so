@@ -41,6 +41,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.NetworkPolicy;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.OwningEntity;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Project;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.RouteTarget;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.SegmentationAssignment;
@@ -230,6 +231,33 @@ public class AAIObjectMapperTest {
         assertEquals(AAIVnf.getNfType(), vnf.getModelInfoGenericVnf().getNfType());
         assertEquals(AAIVnf.getNfFunction(), vnf.getModelInfoGenericVnf().getNfFunction());
         assertEquals(AAIVnf.getNfNamingCode(), vnf.getModelInfoGenericVnf().getNfNamingCode());
+    }
+
+    @Test
+    public void pnfMap() {
+        final String pnfId = "PNF_id1";
+        final String pnfName = "PNF_name1";
+        final String modelCustomizationId = "8421fe03-fd1b-4bf7-845a-c3fe91edb03e";
+        final String modelInvariantId = "341a6f84-2cf9-4942-8f9e-2472ffe4e1d8";
+        final String modelVersionId = "b13a0706-46b9-4a98-a9f9-5b28431235e7";
+        final OrchestrationStatus orchestrationStatus = OrchestrationStatus.PRECREATED;
+
+        Pnf pnf = new Pnf();
+        pnf.setPnfId(pnfId);
+        pnf.setPnfName(pnfName);
+        pnf.setModelCustomizationId(modelCustomizationId);
+        pnf.setModelInvariantId(modelInvariantId);
+        pnf.setModelVersionId(modelVersionId);
+        pnf.setOrchestrationStatus(orchestrationStatus);
+
+        org.onap.aai.domain.yang.Pnf aaiPnf = aaiObjectMapper.mapPnf(pnf);
+
+        assertEquals(aaiPnf.getPnfId(), pnfId);
+        assertEquals(aaiPnf.getPnfName(), pnfName);
+        assertEquals(aaiPnf.getModelCustomizationId(), modelCustomizationId);
+        assertEquals(aaiPnf.getModelInvariantId(), modelInvariantId);
+        assertEquals(aaiPnf.getModelVersionId(), modelVersionId);
+        assertEquals(aaiPnf.getOrchestrationStatus(), orchestrationStatus.toString());
     }
 
     @Test

@@ -815,13 +815,6 @@ public class BBInputSetup implements JavaDelegate {
         }
     }
 
-    private void populatePnf(Pnfs pnf, String pnfId, ServiceInstance serviceInstance) {
-        Pnf genericPnf = new Pnf();
-        genericPnf.setPnfId(pnfId);
-        genericPnf.setPnfName(pnf.getInstanceName());
-        serviceInstance.getPnfs().add(genericPnf);
-    }
-
     protected boolean instanceGroupInList(GenericVnf vnf, String instanceGroupId) {
         for (InstanceGroup instanceGroup : vnf.getInstanceGroups()) {
             if (instanceGroup.getId() != null && instanceGroup.getId().equalsIgnoreCase(instanceGroupId)) {
@@ -1496,7 +1489,7 @@ public class BBInputSetup implements JavaDelegate {
             String pnfId = lookupKeyMap.get(ResourceKey.PNF);
             resources.getPnfs().stream()
                     .filter(pnf -> Objects.equals(key, pnf.getModelInfo().getModelCustomizationId())).findFirst()
-                    .ifPresent(pnf -> this.populatePnf(pnf, pnfId, serviceInstance));
+                    .ifPresent(pnfs -> new PnfInitializer(new Pnf()).populatePnf(pnfs, pnfId, serviceInstance));
         } else if (bbName.contains(VF_MODULE) || bbName.contains(VOLUME_GROUP)) {
             Pair<Vnfs, VfModules> vnfsAndVfModules = getVfModulesAndItsVnfsByKey(key, resources);
             if (vnfsAndVfModules != null) {
