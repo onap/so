@@ -1,13 +1,16 @@
 package org.onap.so.simulator.scenarios.sdnc.grapi;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.consol.citrus.actions.AbstractTestAction;
 import com.consol.citrus.context.TestContext;
 
 public class ProcessSDNCAssignService extends AbstractTestAction {
 
-
     @Override
     public void doExecute(TestContext context) {
+        final Logger logger = LoggerFactory.getLogger(ProcessSDNCAssignService.class);
+
         try {
             String serviceName = context.getVariable("serviceName");
             String action = context.getVariable("action");
@@ -21,7 +24,7 @@ public class ProcessSDNCAssignService extends AbstractTestAction {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug("Exception in ProcessSDNCAssignService.doExecute", e);
         }
 
     }

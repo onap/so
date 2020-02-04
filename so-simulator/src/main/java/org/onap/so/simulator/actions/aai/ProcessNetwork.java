@@ -5,6 +5,8 @@ import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.consol.citrus.actions.AbstractTestAction;
 import com.consol.citrus.context.TestContext;
 
@@ -13,7 +15,7 @@ public class ProcessNetwork extends AbstractTestAction {
 
     @Override
     public void doExecute(TestContext context) {
-
+        final Logger logger = LoggerFactory.getLogger(ProcessNetwork.class);
         try {
             int random = (int) (Math.random() * 50 + 1);
 
@@ -35,7 +37,7 @@ public class ProcessNetwork extends AbstractTestAction {
                 aaiResourceClient.delete(networkURI);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug("Exception in ProcessNetwork.doExecute", e);
         }
 
     }
