@@ -1,0 +1,280 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7071d3f_6919e6be",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-04T11:46:27Z",
+      "side": 1,
+      "message": "This is cleaner:\n\nCloudConfiguration cloudConfiguration \u003d new CloudConfiguration();\ncloudConfiguration.setLcpCloudRegionId(\"\");\n\nassertNull(bbInputSetupUtils.getCloudRegion(cloudConfiguration));",
+      "range": {
+        "startLine": 203,
+        "startChar": 8,
+        "endLine": 203,
+        "endChar": 99
+      },
+      "revId": "2648d8ca447d91cd2838179f7b3e05827dfd035a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "42252a95_122646ef",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-04T11:46:27Z",
+      "side": 1,
+      "message": "remove it please, this test is already in getAAIServiceSubscriptionErrorsTest",
+      "range": {
+        "startLine": 264,
+        "startChar": 2,
+        "endLine": 266,
+        "endChar": 72
+      },
+      "revId": "2648d8ca447d91cd2838179f7b3e05827dfd035a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bef6d917_b3fef276",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 380,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-04T11:46:27Z",
+      "side": 1,
+      "message": "this is not checked in tests, remove it please",
+      "range": {
+        "startLine": 380,
+        "startChar": 7,
+        "endLine": 380,
+        "endChar": 65
+      },
+      "revId": "2648d8ca447d91cd2838179f7b3e05827dfd035a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9e41d7db_e1fe994b",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 464,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-04T11:46:27Z",
+      "side": 1,
+      "message": "In fact, if you put any string here, the test passes. This means that invoking the method with specific vnfId does not make a sense. \n\nchange the doReturn statement:\n\ndoReturn(Optional.of(expectedAaiVnf)).when(MOCK_aaiResourcesClient).get(isA(Class.class),\n                eq(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId).depth(Depth.ONE)));\n\nNow the test passes if the method is invoked with \"vnfId\".",
+      "range": {
+        "startLine": 464,
+        "startChar": 54,
+        "endLine": 464,
+        "endChar": 59
+      },
+      "revId": "2648d8ca447d91cd2838179f7b3e05827dfd035a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c8ddee79_51a92935",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 469,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-04T11:46:27Z",
+      "side": 1,
+      "message": "there is no point to declare vnfId if you do not check it later, you can create AAIResourceUri with any vnfId.",
+      "range": {
+        "startLine": 469,
+        "startChar": 8,
+        "endLine": 469,
+        "endChar": 37
+      },
+      "revId": "2648d8ca447d91cd2838179f7b3e05827dfd035a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "89a051bd_e0eb937a",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 482,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-04T11:46:27Z",
+      "side": 1,
+      "message": "the same comment as above",
+      "range": {
+        "startLine": 482,
+        "startChar": 8,
+        "endLine": 482,
+        "endChar": 37
+      },
+      "revId": "2648d8ca447d91cd2838179f7b3e05827dfd035a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bc5eaeb0_161f659c",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 508,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-04T11:46:27Z",
+      "side": 1,
+      "message": "assertTrue(actual.isPresent());\nassertEquals(networkId, actual.get().getNetworkId());\nassertEquals(networkName, actual.get().getNetworkName());",
+      "range": {
+        "startLine": 508,
+        "startChar": 8,
+        "endLine": 508,
+        "endChar": 103
+      },
+      "revId": "2648d8ca447d91cd2838179f7b3e05827dfd035a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "abe8e61d_12412a9a",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 550,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-04T11:46:27Z",
+      "side": 1,
+      "message": "before this assert add:\n\n assertTrue(actual.isPresent());",
+      "range": {
+        "startLine": 549,
+        "startChar": 7,
+        "endLine": 550,
+        "endChar": 53
+      },
+      "revId": "2648d8ca447d91cd2838179f7b3e05827dfd035a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e43f7389_ea77abc8",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 597,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-04T11:46:27Z",
+      "side": 1,
+      "message": "before this assert add:\n\n assertTrue(actual.isPresent());",
+      "range": {
+        "startLine": 597,
+        "startChar": 7,
+        "endLine": 597,
+        "endChar": 96
+      },
+      "revId": "2648d8ca447d91cd2838179f7b3e05827dfd035a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b76b1e5e_a1290e2b",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 645,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-04T11:46:27Z",
+      "side": 1,
+      "message": "before this assert add:\n\n assertTrue(actual.isPresent());",
+      "range": {
+        "startLine": 645,
+        "startChar": 7,
+        "endLine": 645,
+        "endChar": 113
+      },
+      "revId": "2648d8ca447d91cd2838179f7b3e05827dfd035a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4943201f_e1f2f1ab",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 728,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-04T11:46:27Z",
+      "side": 1,
+      "message": "before this assert add:\n\n assertTrue(actual.isPresent());",
+      "range": {
+        "startLine": 728,
+        "startChar": 7,
+        "endLine": 728,
+        "endChar": 113
+      },
+      "revId": "2648d8ca447d91cd2838179f7b3e05827dfd035a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8c1a22e4_cc2ddbb0",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtilsTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 820,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-04T11:46:27Z",
+      "side": 1,
+      "message": "before this assert add:\n\n assertTrue(actual.isPresent())",
+      "range": {
+        "startLine": 820,
+        "startChar": 6,
+        "endLine": 820,
+        "endChar": 119
+      },
+      "revId": "2648d8ca447d91cd2838179f7b3e05827dfd035a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
