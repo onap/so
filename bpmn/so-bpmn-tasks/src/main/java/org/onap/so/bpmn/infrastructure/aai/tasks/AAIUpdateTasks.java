@@ -118,18 +118,35 @@ public class AAIUpdateTasks {
         }
     }
 
-
     /**
      * BPMN access method to update status of Pnf to Active in AAI
      *
      * @param execution
      */
     public void updateOrchestrationStatusActivePnf(BuildingBlockExecution execution) {
+        updateOrchestrationStatusForPnf(execution, OrchestrationStatus.ACTIVE);
+    }
+
+    /**
+     * BPMN access method to update status of Pnf to Register in AAI
+     */
+    public void updateOrchestrationStatusRegisterPnf(BuildingBlockExecution execution) {
+        updateOrchestrationStatusForPnf(execution, OrchestrationStatus.REGISTER);
+    }
+
+    /**
+     * BPMN access method to update status of Pnf to Registered in AAI
+     */
+    public void updateOrchestrationStatusRegisteredPnf(BuildingBlockExecution execution) {
+        updateOrchestrationStatusForPnf(execution, OrchestrationStatus.REGISTERED);
+    }
+
+    private void updateOrchestrationStatusForPnf(BuildingBlockExecution execution, OrchestrationStatus status) {
         try {
             Pnf pnf = extractPojosForBB.extractByKey(execution, ResourceKey.PNF);
-            aaiPnfResources.updateOrchestrationStatusPnf(pnf, OrchestrationStatus.ACTIVE);
+            aaiPnfResources.updateOrchestrationStatusPnf(pnf, status);
         } catch (Exception ex) {
-            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusActivePnf", ex);
+            logger.error("Exception occurred in AAIUpdateTasks during update Orchestration Status to {}", status, ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
