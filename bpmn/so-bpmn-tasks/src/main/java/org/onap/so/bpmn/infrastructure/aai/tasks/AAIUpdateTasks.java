@@ -118,6 +118,20 @@ public class AAIUpdateTasks {
         }
     }
 
+    /**
+     * BPMN access method to update status of Pnf to Assigned in AAI
+     *
+     * @param execution
+     */
+    public void updateOrchestrationStatusAssignedPnf(BuildingBlockExecution execution) {
+        try {
+            Pnf pnf = extractPojosForBB.extractByKey(execution, ResourceKey.PNF);
+            aaiPnfResources.updateOrchestrationStatusPnf(pnf, OrchestrationStatus.ASSIGNED);
+        } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusAssignedPnf", ex);
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
 
     /**
      * BPMN access method to update status of Pnf to Active in AAI
