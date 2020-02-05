@@ -26,7 +26,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication(scanBasePackages = {"org.onap.so"})
 public class Application {
 
+    public static final String BASIC_PROFILE = "basic";
+
     public static void main(final String... args) {
-        SpringApplication.run(Application.class, args);
+        final SpringApplication springApplication = new SpringApplication(Application.class);
+        springApplication.setAdditionalProfiles(BASIC_PROFILE);
+        springApplication.run(args);
     }
 }
