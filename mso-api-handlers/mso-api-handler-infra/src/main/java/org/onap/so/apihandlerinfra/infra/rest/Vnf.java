@@ -32,8 +32,12 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.apihandler.filters.ResponseUpdater;
+import org.onap.so.apihandlerinfra.exceptions.ValidateException;
+import org.onap.so.apihandlerinfra.infra.rest.exception.AAIEntityNotFound;
+import org.onap.so.apihandlerinfra.infra.rest.exception.WorkflowEngineConnectionException;
 import org.onap.so.apihandlerinfra.infra.rest.handler.VnfRestHandler;
 import org.onap.so.db.catalog.beans.Recipe;
 import org.onap.so.db.request.beans.InfraActiveRequests;
@@ -69,14 +73,15 @@ public class Vnf {
     @Transactional
     public Response deleteVnfInstance(@PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
-            @Context ContainerRequestContext requestContext) throws Exception {
-        InfraActiveRequests currentRequest = null;
+            @Context ContainerRequestContext requestContext)
+            throws AAIEntityNotFound, JsonProcessingException, WorkflowEngineConnectionException, ValidateException {
+
         String requestId = vnfRestHandler.getRequestId(requestContext);
         String requestorId = "Unknown";
         String source = MDC.get(ONAPLogConstants.MDCs.PARTNER_NAME);
         String requestURL = requestContext.getUriInfo().getAbsolutePath().toString();
-        currentRequest = vnfRestHandler.createInfraActiveRequestForDelete(requestId, serviceInstanceId, vnfInstanceId,
-                requestorId, source, requestURL);
+        InfraActiveRequests currentRequest = vnfRestHandler.createInfraActiveRequestForDelete(requestId,
+                serviceInstanceId, vnfInstanceId, requestorId, source, requestURL);
         ServiceInstancesRequest request = requestBuilder.buildVnfDeleteRequest(vnfInstanceId);
         vnfRestHandler.saveInstanceName(request, currentRequest);
         vnfRestHandler.checkDuplicateRequest(serviceInstanceId, vnfInstanceId,
