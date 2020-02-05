@@ -98,19 +98,23 @@ public class SDNCRestClient {
 
         String bpelReqId = bpelRequest.getRequestHeader().getRequestId();
         String callbackUrl = bpelRequest.getRequestHeader().getCallbackUrl();
+        String msoAction = bpelRequest.getRequestHeader().getMsoAction();
 
         String sdncReqBody = null;
 
-        RequestTunables rt = new RequestTunables(bpelReqId, bpelRequest.getRequestHeader().getMsoAction(),
-                bpelRequest.getRequestHeader().getSvcOperation(), bpelRequest.getRequestHeader().getSvcAction());
+        RequestTunables rt = new RequestTunables(bpelReqId, msoAction, bpelRequest.getRequestHeader().getSvcOperation(),
+                bpelRequest.getRequestHeader().getSvcAction());
         rt = tunablesMapper.setTunables(rt);
         rt.setSdncaNotificationUrl(env.getProperty(Constants.MY_URL_PROP));
-
 
         if ("POST".equals(rt.getReqMethod())) {
             Node node = (Node) bpelRequest.getRequestData();
             Document reqDoc = node.getOwnerDocument();
-            sdncReqBody = Utils.genSdncReq(reqDoc, rt);
+            if (Constants.MSO_ACTION_LCM.equals(msoAction)) {
+                sdncReqBody = Utils.genSdncLcmReq(reqDoc, rt);
+            } else {
+                sdncReqBody = Utils.genSdncReq(reqDoc, rt);
+            }
         } else if ("PUT".equals(rt.getReqMethod())) {
             Node node = (Node) bpelRequest.getRequestData();
             Document reqDoc = node.getOwnerDocument();
@@ -317,7 +321,7 @@ public class SDNCRestClient {
 
             }
 
-            logger.debug("Invoking Bpel Callback. BpelCallbackUrl:{}", bpelUrl);
+            logger.debug("Invoking Bpel Callback. BpelCallbackUrl: {}", bpelUrl);
             cbPort.sdncAdapterCallback(cbReq);
 
         } catch (Exception e) {
@@ -325,6 +329,6 @@ public class SDNCRestClient {
             logger.error("Error {} - {} - {}", ErrorCode.BusinessProcessError.getValue(),
                     MessageEnum.RA_CALLBACK_BPEL_EXC.toString(), error, e);
         }
-        logger.info(MessageEnum.RA_CALLBACK_BPEL_COMPLETE.name(), CAMUNDA);
+        logger.info("{} : {}", MessageEnum.RA_CALLBACK_BPEL_COMPLETE.name(), CAMUNDA);
     }
 }
