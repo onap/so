@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,9 +32,14 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.apihandler.filters.ResponseUpdater;
 import org.onap.so.apihandlerinfra.Action;
+import org.onap.so.apihandlerinfra.exceptions.ValidateException;
+import org.onap.so.apihandlerinfra.infra.rest.exception.AAIEntityNotFound;
+import org.onap.so.apihandlerinfra.infra.rest.exception.NoRecipeException;
+import org.onap.so.apihandlerinfra.infra.rest.exception.WorkflowEngineConnectionException;
 import org.onap.so.apihandlerinfra.infra.rest.handler.VFModuleRestHandler;
 import org.onap.so.db.catalog.beans.Recipe;
 import org.onap.so.db.request.beans.InfraActiveRequests;
@@ -72,15 +77,15 @@ public class VfModules {
     public Response deleteVfModuleInstance(@PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
             @PathParam("vfmoduleInstanceId") String vfmoduleInstanceId, @Context ContainerRequestContext requestContext)
-            throws Exception {
-        InfraActiveRequests currentRequest = null;
+            throws AAIEntityNotFound, NoRecipeException, JsonProcessingException, WorkflowEngineConnectionException,
+            ValidateException {
 
         String requestId = restHandler.getRequestId(requestContext);
         String requestorId = "Unknown";
         String source = MDC.get(ONAPLogConstants.MDCs.PARTNER_NAME);
         String requestURL = requestContext.getUriInfo().getAbsolutePath().toString();
-        currentRequest = restHandler.createInfraActiveRequestForDelete(requestId, vfmoduleInstanceId, serviceInstanceId,
-                vnfInstanceId, requestorId, source, requestURL);
+        InfraActiveRequests currentRequest = restHandler.createInfraActiveRequestForDelete(requestId,
+                vfmoduleInstanceId, serviceInstanceId, vnfInstanceId, requestorId, source, requestURL);
         ServiceInstancesRequest request =
                 requestBuilder.buildVFModuleDeleteRequest(vnfInstanceId, vfmoduleInstanceId, ModelType.vfModule);
         restHandler.saveInstanceName(request, currentRequest);

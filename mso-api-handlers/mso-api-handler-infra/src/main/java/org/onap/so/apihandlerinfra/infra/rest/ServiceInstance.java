@@ -32,9 +32,14 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.apihandler.filters.ResponseUpdater;
 import org.onap.so.apihandlerinfra.Action;
+import org.onap.so.apihandlerinfra.exceptions.ValidateException;
+import org.onap.so.apihandlerinfra.infra.rest.exception.AAIEntityNotFound;
+import org.onap.so.apihandlerinfra.infra.rest.exception.NoRecipeException;
+import org.onap.so.apihandlerinfra.infra.rest.exception.WorkflowEngineConnectionException;
 import org.onap.so.apihandlerinfra.infra.rest.handler.ServiceInstanceRestHandler;
 import org.onap.so.db.catalog.beans.Recipe;
 import org.onap.so.db.request.beans.InfraActiveRequests;
@@ -70,14 +75,15 @@ public class ServiceInstance {
     @Transactional
     public Response deleteServiceInstance(@PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @Context ContainerRequestContext requestContext)
-            throws Exception {
-        InfraActiveRequests currentRequest = null;
+            throws AAIEntityNotFound, NoRecipeException, JsonProcessingException, WorkflowEngineConnectionException,
+            ValidateException {
+
         String requestId = requestHandler.getRequestId(requestContext);
         String requestorId = "Unknown";
         String source = MDC.get(ONAPLogConstants.MDCs.PARTNER_NAME);
         String requestURI = requestContext.getUriInfo().getAbsolutePath().toString();
-        currentRequest = requestHandler.createInfraActiveRequestForDelete(requestId, serviceInstanceId, requestorId,
-                source, requestURI);
+        InfraActiveRequests currentRequest = requestHandler.createInfraActiveRequestForDelete(requestId,
+                serviceInstanceId, requestorId, source, requestURI);
         ServiceInstancesRequest request = requestBuilder.buildServiceDeleteRequest(serviceInstanceId);
         requestHandler.saveInstanceName(request, currentRequest);
         requestHandler.checkDuplicateRequest(serviceInstanceId,
