@@ -43,11 +43,11 @@ public class SubscriberService {
     @Value("${notification.url}")
     private String notificationUrl;
 
-    @Value("${notification.username}")
-    private String notificationUsername;
+    @Value("${spring.security.usercredentials[0].username}")
+    private String username;
 
-    @Value("${notification.password}")
-    private String notificationPassword;
+    @Value("${spring.security.usercredentials[0].openpass}")
+    private String openpass;
 
     @Autowired
     private SubscribeSender sender;
@@ -62,8 +62,8 @@ public class SubscriberService {
         request.callbackUri(getCallbackUri());
         final SubscriptionsAuthenticationParamsBasic paramsBasic = new SubscriptionsAuthenticationParamsBasic();
         final SubscriptionsAuthentication authentication = new SubscriptionsAuthentication();
-        paramsBasic.setUserName(notificationUsername);
-        paramsBasic.setPassword(notificationPassword);
+        paramsBasic.setUserName(username);
+        paramsBasic.setPassword(openpass);
         authentication.setAuthType(Collections.singletonList(SubscriptionsAuthentication.AuthTypeEnum.BASIC));
         authentication.setParamsBasic(paramsBasic);
         request.authentication(authentication);
