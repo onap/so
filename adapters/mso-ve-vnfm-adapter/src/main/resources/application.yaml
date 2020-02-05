@@ -22,8 +22,6 @@ system:
 
 notification:
   url: /lcm/v1/vnf/instances/notifications
-  username: admin
-  password: a4b3c2d1
 
 mso:
   key: 07a7159d3bf51a0e53be7a8f89699be7
@@ -36,6 +34,12 @@ vnfm:
   subscription: /vnflcm/v1/subscriptions
 
 spring:
+  security:
+    usercredentials:
+      - username: admin
+        openpass: a4b3c2d1
+        password: '$2a$10$vU.mWyNTsikAxXIA5c269ewCpAbYTiyMS0m1N.kn4F2CSGEnrKN7K'
+        role: USER
   http:
     converters:
       preferred-json-mapper: gson
