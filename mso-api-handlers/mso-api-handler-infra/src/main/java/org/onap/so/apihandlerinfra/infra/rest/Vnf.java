@@ -32,8 +32,13 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.apihandler.filters.ResponseUpdater;
+import org.onap.so.apihandlerinfra.exceptions.ValidateException;
+import org.onap.so.apihandlerinfra.infra.rest.exception.AAIEntityNotFound;
+import org.onap.so.apihandlerinfra.infra.rest.exception.WorkflowEngineConnectionException;
 import org.onap.so.apihandlerinfra.infra.rest.handler.VnfRestHandler;
 import org.onap.so.db.catalog.beans.Recipe;
 import org.onap.so.db.request.beans.InfraActiveRequests;
@@ -69,7 +74,9 @@ public class Vnf {
     @Transactional
     public Response deleteVnfInstance(@PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
-            @Context ContainerRequestContext requestContext) throws Exception {
+            @Context ContainerRequestContext requestContext) throws AAIEntityNotFound, JsonProcessingException,
+            WorkflowEngineConnectionException, ValidateException, IllegalArgumentException {
+
         InfraActiveRequests currentRequest = null;
         String requestId = vnfRestHandler.getRequestId(requestContext);
         String requestorId = "Unknown";
