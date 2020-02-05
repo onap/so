@@ -69,6 +69,24 @@
       "revId": "e4f07fc3f594f72fb78a5a22420efa47236c533f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fc278b35_f0731ea9",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/utils/WorkflowResourceIdsExtension.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-02-05T11:57:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba192e78_cba2d1b2",
+      "revId": "e4f07fc3f594f72fb78a5a22420efa47236c533f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
