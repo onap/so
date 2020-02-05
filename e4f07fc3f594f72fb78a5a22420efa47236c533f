@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "06138679_7257eda7",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 706,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-05T10:28:08Z",
+      "side": 1,
+      "message": "Please change the name \u0027resource\u0027 to \u0027resourceType\u0027",
+      "revId": "e4f07fc3f594f72fb78a5a22420efa47236c533f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7539ff43_4a2840de",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/utils/WorkflowResourceIdsExtension.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-05T10:28:08Z",
+      "side": 1,
+      "message": "could you change the name to resourceType so we have consistent naming?",
+      "revId": "e4f07fc3f594f72fb78a5a22420efa47236c533f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
