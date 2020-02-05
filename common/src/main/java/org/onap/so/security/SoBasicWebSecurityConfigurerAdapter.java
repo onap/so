@@ -28,6 +28,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
 import org.springframework.util.StringUtils;
 
@@ -43,6 +45,12 @@ public class SoBasicWebSecurityConfigurerAdapter extends WebSecurityConfigurerAd
 
     @Autowired
     private SoUserCredentialConfiguration soUserCredentialConfiguration;
+
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
@@ -61,8 +69,6 @@ public class SoBasicWebSecurityConfigurerAdapter extends WebSecurityConfigurerAd
 
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(soUserCredentialConfiguration.userDetailsService())
-                .passwordEncoder(soUserCredentialConfiguration.passwordEncoder());
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
     }
-
 }
