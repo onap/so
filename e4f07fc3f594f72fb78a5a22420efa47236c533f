@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "ef43a88a_10c36c7d",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 706,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-02-05T11:57:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "06138679_7257eda7",
+      "revId": "e4f07fc3f594f72fb78a5a22420efa47236c533f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7539ff43_4a2840de",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/utils/WorkflowResourceIdsExtension.java",
         "patchSetId": 2
@@ -33,6 +51,24 @@
       "revId": "e4f07fc3f594f72fb78a5a22420efa47236c533f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ba192e78_cba2d1b2",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/utils/WorkflowResourceIdsExtension.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-02-05T11:57:05Z",
+      "side": 1,
+      "message": "Wasn\u0027t sure about that as there is an enum called ResourceType in the project.",
+      "parentUuid": "7539ff43_4a2840de",
+      "revId": "e4f07fc3f594f72fb78a5a22420efa47236c533f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
