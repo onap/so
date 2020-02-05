@@ -119,6 +119,15 @@ public class AAIUpdateTasks {
     }
 
     /**
+     * BPMN access method to update status of Pnf to Assigned in AAI
+     *
+     * @param execution
+     */
+    public void updateOrchestrationStatusAssignedPnf(BuildingBlockExecution execution) {
+        updateOrchestrationStatusForPnf(execution, OrchestrationStatus.ASSIGNED);
+    }
+
+    /**
      * BPMN access method to update status of Pnf to Active in AAI
      *
      * @param execution
