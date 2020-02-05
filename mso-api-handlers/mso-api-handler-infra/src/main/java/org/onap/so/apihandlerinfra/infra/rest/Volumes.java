@@ -32,9 +32,14 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.apihandler.filters.ResponseUpdater;
 import org.onap.so.apihandlerinfra.Action;
+import org.onap.so.apihandlerinfra.exceptions.ValidateException;
+import org.onap.so.apihandlerinfra.infra.rest.exception.AAIEntityNotFound;
+import org.onap.so.apihandlerinfra.infra.rest.exception.NoRecipeException;
+import org.onap.so.apihandlerinfra.infra.rest.exception.WorkflowEngineConnectionException;
 import org.onap.so.apihandlerinfra.infra.rest.handler.VFModuleRestHandler;
 import org.onap.so.apihandlerinfra.infra.rest.handler.VolumeRestHandler;
 import org.onap.so.db.catalog.beans.Recipe;
@@ -76,13 +81,14 @@ public class Volumes {
     public Response deleteVfModuleInstance(@PathParam("version") String version,
             @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("vnfInstanceId") String vnfInstanceId,
             @PathParam("volumeGroupInstanceId") String volumeGroupId, @Context ContainerRequestContext requestContext)
-            throws Exception {
-        InfraActiveRequests currentRequest = null;
+            throws AAIEntityNotFound, NoRecipeException, JsonProcessingException, WorkflowEngineConnectionException,
+            ValidateException {
+
         String requestId = volumeRestHandler.getRequestId(requestContext);
         String requestorId = "Unknown";
         String source = MDC.get(ONAPLogConstants.MDCs.PARTNER_NAME);
         String requestURL = requestContext.getUriInfo().getAbsolutePath().toString();
-        currentRequest = volumeRestHandler.createInfraActiveRequestForDelete(requestId, volumeGroupId,
+        InfraActiveRequests currentRequest = volumeRestHandler.createInfraActiveRequestForDelete(requestId, volumeGroupId,
                 serviceInstanceId, vnfInstanceId, requestorId, source, requestURL);
         ServiceInstancesRequest request = requestBuilder.buildVolumeGroupDeleteRequest(vnfInstanceId, volumeGroupId);
         volumeRestHandler.saveInstanceName(request, currentRequest);
