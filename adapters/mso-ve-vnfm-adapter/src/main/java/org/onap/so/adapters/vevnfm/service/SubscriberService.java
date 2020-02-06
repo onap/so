@@ -20,7 +20,10 @@
 
 package org.onap.so.adapters.vevnfm.service;
 
+import com.squareup.okhttp.Credentials;
 import java.util.Collections;
+import org.onap.aai.domain.yang.EsrSystemInfo;
+import org.onap.so.adapters.vevnfm.provider.AuthorizationHeadersProvider;
 import org.onap.so.adapters.vevnfm.subscription.SubscribeSender;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRequest;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsAuthentication;
@@ -50,11 +53,23 @@ public class SubscriberService {
     private String openpass;
 
     @Autowired
+    private AuthorizationHeadersProvider headersProvider;
+
+    @Autowired
     private SubscribeSender sender;
 
-    public boolean subscribe(final String endpoint) {
-        final LccnSubscriptionRequest request = createRequest();
-        return sender.send(endpoint, request);
+    private static String getAuthorization(final EsrSystemInfo info) {
+        return Credentials.basic(info.getUserName(), info.getPassword());
+    }
+
+    public boolean subscribe(final EsrSystemInfo info) {
+        try {
+            headersProvider.addAuthorization(getAuthorization(info));
+            final LccnSubscriptionRequest request = createRequest();
+            return sender.send(info, request);
+        } finally {
+            headersProvider.resetPrevious();
+        }
     }
 
     private LccnSubscriptionRequest createRequest() {
