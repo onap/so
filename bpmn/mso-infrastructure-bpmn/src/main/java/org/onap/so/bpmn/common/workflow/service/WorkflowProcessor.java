@@ -75,9 +75,8 @@ public class WorkflowProcessor extends ProcessEngineAwareService {
         }
     }
 
-    // Note: the business key is used to identify the process in unit tests
     protected static String getBusinessKey(Map<String, Object> inputVariables) {
-        return getOrCreate(inputVariables, "mso-business-key");
+        return getOrCreate(inputVariables, "mso-request-id");
     }
 
 

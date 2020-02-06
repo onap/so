@@ -2,10 +2,10 @@ package org.onap.so.apihandlerinfra;
 
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.DatatypeConverter;
 import org.camunda.bpm.engine.impl.persistence.entity.HistoricActivityInstanceEntity;
 import org.camunda.bpm.engine.impl.persistence.entity.HistoricProcessInstanceEntity;
@@ -42,10 +42,29 @@ public class CamundaRequestHandler {
     @Autowired
     private Environment env;
 
+    private String buildCamundaUrlString(boolean historyLookup, boolean sort, boolean active, String lookupId) {
+        UriBuilder uriBuilder = UriBuilder.fromUri(env.getProperty("mso.camundaURL"));
+        if (historyLookup) {
+            uriBuilder.path(env.getProperty("mso.camunda.rest.history.uri"));
+            uriBuilder.queryParam("processInstanceBusinessKey", lookupId);
+            if (active) {
+                uriBuilder.queryParam("active", true);
+            }
+            if (sort) {
+                uriBuilder.queryParam("sortBy", "startTime");
+                uriBuilder.queryParam("sortOrder", "desc");
+            }
+        } else {
+            uriBuilder.path(env.getProperty("mso.camunda.rest.activity.uri"));
+            uriBuilder.queryParam("processInstanceId", lookupId);
+        }
+        uriBuilder.queryParam("maxResults", 1);
+        return uriBuilder.build().toString();
+    }
+
     public ResponseEntity<List<HistoricProcessInstanceEntity>> getCamundaProcessInstanceHistory(String requestId,
-            boolean retry) {
-        String path = env.getProperty("mso.camunda.rest.history.uri") + requestId;
-        String targetUrl = env.getProperty("mso.camundaURL") + path;
+            boolean retry, boolean activeOnly, boolean sort) {
+        String targetUrl = buildCamundaUrlString(true, sort, activeOnly, requestId);
         HttpHeaders headers =
                 setCamundaHeaders(env.getRequiredProperty("mso.camundaAuth"), env.getRequiredProperty("mso.msoKey"));
 
@@ -77,8 +96,7 @@ public class CamundaRequestHandler {
 
     protected ResponseEntity<List<HistoricActivityInstanceEntity>> getCamundaActivityHistory(String processInstanceId) {
         RestTemplate restTemplate = getRestTemplate(false);
-        String path = env.getProperty("mso.camunda.rest.activity.uri") + processInstanceId;
-        String targetUrl = env.getProperty("mso.camundaURL") + path;
+        String targetUrl = buildCamundaUrlString(false, false, false, processInstanceId);
         HttpHeaders headers =
                 setCamundaHeaders(env.getRequiredProperty("mso.camundaAuth"), env.getRequiredProperty("mso.msoKey"));
         HttpEntity<?> requestEntity = new HttpEntity<>(headers);
@@ -92,7 +110,7 @@ public class CamundaRequestHandler {
 
         String taskInformation = null;
         try {
-            response = getCamundaProcessInstanceHistory(requestId, false);
+            response = getCamundaProcessInstanceHistory(requestId, false, false, true);
         } catch (RestClientException e) {
             logger.warn("Error querying Camunda for process-instance history for requestId: {}, exception: {}",
                     requestId, e.getMessage());
@@ -112,7 +130,6 @@ public class CamundaRequestHandler {
         String taskInformation = null;
 
         if (historicProcessInstanceList != null && !historicProcessInstanceList.isEmpty()) {
-            Collections.reverse(historicProcessInstanceList);
             processInstanceId = historicProcessInstanceList.get(0).getId();
         } else {
             logger.warn("No processInstances returned for requestId: {} to get TaskInformation", requestId);

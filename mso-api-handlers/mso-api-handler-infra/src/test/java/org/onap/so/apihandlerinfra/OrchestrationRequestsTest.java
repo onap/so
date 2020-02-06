@@ -101,8 +101,8 @@ public class OrchestrationRequestsTest extends BaseTest {
                 .withBody(new String(Files.readAllBytes(
                         Paths.get("src/test/resources/OrchestrationRequest/ProcessInstanceHistoryResponse.json"))))
                 .withStatus(org.apache.http.HttpStatus.SC_OK)));
-        wireMockServer.stubFor(
-                get(("/sobpmnengine/history/activity-instance?processInstanceId=c4c6b647-a26e-11e9-b144-0242ac14000b"))
+        wireMockServer.stubFor(get(
+                ("/sobpmnengine/history/activity-instance?processInstanceId=c2fd4066-a26e-11e9-b144-0242ac14000b&maxResults=1"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(new String(Files.readAllBytes(Paths.get(
                                         "src/test/resources/OrchestrationRequest/ActivityInstanceHistoryResponse.json"))))

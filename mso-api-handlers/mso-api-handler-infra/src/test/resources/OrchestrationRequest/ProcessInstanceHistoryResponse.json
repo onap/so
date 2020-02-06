@@ -19,26 +19,5 @@
       "caseInstanceId":null,
       "tenantId":null,
       "state":"COMPLETED"
-   },
-   {
-      "id":"c4c6b647-a26e-11e9-b144-0242ac14000b",
-      "businessKey":null,
-      "processDefinitionId":"ExecuteBuildingBlock:1:a46566de-a26b-11e9-b144-0242ac14000b",
-      "processDefinitionKey":"ExecuteBuildingBlock",
-      "processDefinitionName":"ExecuteBuildingBlock",
-      "processDefinitionVersion":1,
-      "startTime":"2019-07-09T17:27:04.298+0000",
-      "endTime":"2019-07-09T17:27:05.690+0000",
-      "removalTime":null,
-      "durationInMillis":1392,
-      "startUserId":null,
-      "startActivityId":"Start_ExecuteBuildingBlock",
-      "deleteReason":null,
-      "rootProcessInstanceId":"c2fd4066-a26e-11e9-b144-0242ac14000b",
-      "superProcessInstanceId":"c2fd4066-a26e-11e9-b144-0242ac14000b",
-      "superCaseInstanceId":null,
-      "caseInstanceId":null,
-      "tenantId":null,
-      "state":"COMPLETED"
    }
  ]

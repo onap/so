@@ -2440,7 +2440,7 @@ public class ServiceInstancesTest extends BaseTest {
                         .withBodyFile("InfraActiveRequests/createInfraActiveRequests.json")
                         .withStatus(HttpStatus.SC_ACCEPTED)));
         wireMockServer.stubFor(get(
-                ("/sobpmnengine/history/process-instance?variables=mso-request-id_eq_f0a35706-efc4-4e27-80ea-a995d7a2a40f"))
+                ("/sobpmnengine/history/process-instance?processInstanceBusinessKey=f0a35706-efc4-4e27-80ea-a995d7a2a40f&active=true&maxResults=1"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBodyFile("Camunda/HistoryCheckResponse.json")
                                 .withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -2463,7 +2463,7 @@ public class ServiceInstancesTest extends BaseTest {
                         .withBodyFile("InfraActiveRequests/createInfraActiveRequests.json")
                         .withStatus(HttpStatus.SC_ACCEPTED)));
         wireMockServer.stubFor(get(
-                ("/sobpmnengine/history/process-instance?variables=mso-request-id_eq_f0a35706-efc4-4e27-80ea-a995d7a2a40f"))
+                ("/sobpmnengine/history/process-instance?processInstanceBusinessKey=f0a35706-efc4-4e27-80ea-a995d7a2a40f&active=true&maxResults=1"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withStatus(org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR)));
 
@@ -2897,7 +2897,7 @@ public class ServiceInstancesTest extends BaseTest {
     @Test
     public void camundaHistoryCheckTest() throws ContactCamundaException, RequestDbFailureException {
         wireMockServer.stubFor(get(
-                ("/sobpmnengine/history/process-instance?variables=mso-request-id_eq_f0a35706-efc4-4e27-80ea-a995d7a2a40f"))
+                ("/sobpmnengine/history/process-instance?processInstanceBusinessKey=f0a35706-efc4-4e27-80ea-a995d7a2a40f&active=true&maxResults=1"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBodyFile("Camunda/HistoryCheckResponse.json")
                                 .withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -2912,24 +2912,9 @@ public class ServiceInstancesTest extends BaseTest {
     @Test
     public void camundaHistoryCheckNoneFoundTest() throws ContactCamundaException, RequestDbFailureException {
         wireMockServer.stubFor(get(
-                ("/sobpmnengine/history/process-instance?variables=mso-request-id_eq_f0a35706-efc4-4e27-80ea-a995d7a2a40f"))
+                ("/sobpmnengine/history/process-instance?processInstanceBusinessKey=f0a35706-efc4-4e27-80ea-a995d7a2a40f&active=true&maxResults=1"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody("[]").withStatus(org.apache.http.HttpStatus.SC_OK)));
-
-        InfraActiveRequests duplicateRecord = new InfraActiveRequests();
-        duplicateRecord.setRequestId("f0a35706-efc4-4e27-80ea-a995d7a2a40f");
-        boolean inProgress = false;
-        inProgress = requestHandlerUtils.camundaHistoryCheck(duplicateRecord, null);
-        assertFalse(inProgress);
-    }
-
-    @Test
-    public void camundaHistoryCheckNotInProgressTest() throws ContactCamundaException, RequestDbFailureException {
-        wireMockServer.stubFor(get(
-                ("/sobpmnengine/history/process-instance?variables=mso-request-id_eq_f0a35706-efc4-4e27-80ea-a995d7a2a40f"))
-                        .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                                .withBodyFile("Camunda/HistoryCheckResponseCompleted.json")
-                                .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         InfraActiveRequests duplicateRecord = new InfraActiveRequests();
         duplicateRecord.setRequestId("f0a35706-efc4-4e27-80ea-a995d7a2a40f");

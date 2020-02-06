@@ -44,12 +44,13 @@ public class CamundaRequestHandlerTest extends BaseTest {
     @Test
     public void timeoutTest() {
         wireMockServer.stubFor(get(
-                ("/sobpmnengine/history/process-instance?variables=mso-request-id_eq_6718de35-b9a5-4670-b19f-a0f4ac22bfaf"))
+                ("/sobpmnengine/history/process-instance?processInstanceBusinessKey=6718de35-b9a5-4670-b19f-a0f4ac22bfaf&active=true&maxResults=1"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBodyFile("Camunda/HistoryCheckResponse.json")
                                 .withStatus(org.apache.http.HttpStatus.SC_OK).withFixedDelay(40000)));
 
         thrown.expect(ResourceAccessException.class);
-        camundaRequestHandler.getCamundaProcessInstanceHistory("6718de35-b9a5-4670-b19f-a0f4ac22bfaf", false);
+        camundaRequestHandler.getCamundaProcessInstanceHistory("6718de35-b9a5-4670-b19f-a0f4ac22bfaf", false, true,
+                false);
     }
 }
