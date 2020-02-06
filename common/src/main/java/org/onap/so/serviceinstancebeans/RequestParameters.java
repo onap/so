@@ -57,9 +57,6 @@ public class RequestParameters implements Serializable {
     @JsonProperty("rebuildVolumeGroups")
     private Boolean rebuildVolumeGroups;
 
-    @JsonProperty("enforceValidNfValues")
-    private Boolean enforceValidNfValues = false;
-
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("subscriptionServiceType", subscriptionServiceType)
@@ -67,15 +64,7 @@ public class RequestParameters implements Serializable {
                 .append("usePreload", usePreload).append("autoBuildVfModules", autoBuildVfModules)
                 .append("cascadeDelete", cascadeDelete).append("testApi", testApi)
                 .append("retainAssignments", retainAssignments).append("rebuildVolumeGroups", rebuildVolumeGroups)
-                .append("enforceValidNfValues", enforceValidNfValues).toString();
-    }
-
-    public Boolean getEnforceValidNfValues() {
-        return enforceValidNfValues;
-    }
-
-    public void setEnforceValidNfValues(Boolean enforceValidNfValues) {
-        this.enforceValidNfValues = enforceValidNfValues;
+                .toString();
     }
 
     public String getSubscriptionServiceType() {
