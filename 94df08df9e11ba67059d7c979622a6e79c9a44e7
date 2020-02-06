@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "87a3d484_af149cee",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/bbobjects/Pnf.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-02-06T12:50:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "04f30cf9_53cb527d",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 2
+      },
+      "revId": "94df08df9e11ba67059d7c979622a6e79c9a44e7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2d6849eb_8a56c5a8",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetup.java",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2020-02-06T12:17:23Z",
       "side": 1,
       "message": "Maybe we could avoid side effect of populatePnf by making it actually return pnf and replacing ifPresent(...) with something like:\n.map(pnfs -\u003e new PnfInitializer(new Pnf()).populatePnf(pnfs, pnfId))\n.map(serviceInstance.getPnfs()::add)",
+      "range": {
+        "startLine": 1492,
+        "startChar": 21,
+        "endLine": 1492,
+        "endChar": 111
+      },
+      "revId": "94df08df9e11ba67059d7c979622a6e79c9a44e7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c91d7300_75f8db3a",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetup.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1492,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-02-06T12:50:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2d6849eb_8a56c5a8",
       "range": {
         "startLine": 1492,
         "startChar": 21,
