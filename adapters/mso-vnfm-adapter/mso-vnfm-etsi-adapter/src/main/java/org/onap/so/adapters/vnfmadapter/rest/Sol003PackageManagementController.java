@@ -75,7 +75,7 @@ public class Sol003PackageManagementController {
                 + " Sol003PackageManagementController from the EtsiCatalogManager using the GET \"vnf_packages\" \n"
                 + "endpoint.";
         logger.error(errorMessage);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(buildProblemDetails(errorMessage));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ProblemDetails().detail(errorMessage));
     }
 
     /**
@@ -97,7 +97,7 @@ public class Sol003PackageManagementController {
                 + " Sol003PackageManagementController from the EtsiCatalogManager using the GET \"vnf_packages\" by vnfPkgId: \""
                 + vnfPkgId + "\" \n" + "endpoint.";
         logger.error(errorMessage);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(buildProblemDetails(errorMessage));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ProblemDetails().detail(errorMessage));
     }
 
     /**
@@ -121,7 +121,7 @@ public class Sol003PackageManagementController {
                 + "endpoint.";
 
         logger.error(errorMessage);
-        return new ResponseEntity(buildProblemDetails(errorMessage), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity(new ProblemDetails().detail(errorMessage), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -144,7 +144,7 @@ public class Sol003PackageManagementController {
                 + " Sol003PackageManagementController from the EtsiCatalogManager using the GET \"package_content\" \n"
                 + "endpoint.";
         logger.error(errorMessage);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(buildProblemDetails(errorMessage));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ProblemDetails().detail(errorMessage));
     }
 
     /**
@@ -170,19 +170,9 @@ public class Sol003PackageManagementController {
                 + " Sol003PackageManagementController from the EtsiCatalogManager using the\n GET \"vnf_packages\" by vnfPkgId: \""
                 + vnfPkgId + "\" for artifactPath: \"" + artifactPath + "\"\n" + "endpoint.";
         logger.error(errorMessage);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(buildProblemDetails(errorMessage));
-    }
-
-    /**
-     * Builds the ProblemDetails Object, using the provided error message.
-     * 
-     * @param detail The error message retrieved from the exception thrown.
-     * @return ProblemDetails Object, containing error information.
-     */
-    private ProblemDetails buildProblemDetails(final String detail) {
-        final ProblemDetails problemDetails = new ProblemDetails();
-        problemDetails.setDetail(detail);
-        return problemDetails;
+        // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new
+        // ProblemDetails().detail(errorMessage));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ProblemDetails().detail(errorMessage));
     }
 
 }

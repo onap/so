@@ -2350,7 +2350,7 @@
           "type": "array",
           "items": {
             "type": "string",
-            "format": "uuid"
+            "minLength": 1
           }
         },
         "nsdId": {
@@ -2358,7 +2358,7 @@
           "type": "array",
           "items": {
             "type": "string",
-            "format": "uuid"
+            "minLength": 1
           }
         },
         "nsdName": {
@@ -2384,7 +2384,7 @@
           "type": "array",
           "items": {
             "type": "string",
-            "format": "uuid"
+            "minLength": 1
           }
         },
         "vnfPkgIds": {
@@ -2392,7 +2392,7 @@
           "type": "array",
           "items": {
             "type": "string",
-            "format": "uuid"
+            "minLength": 1
           }
         },
         "nestedNsdInfoIds": {
@@ -2400,7 +2400,7 @@
           "type": "array",
           "items": {
             "type": "string",
-            "format": "uuid"
+            "minLength": 1
           }
         },
         "nsdOnboardingState": {
@@ -2432,7 +2432,7 @@
           "type": "array",
           "items": {
             "type": "string",
-            "format": "uuid"
+            "minLength": 1
           }
         },
         "pnfdId": {
@@ -2440,7 +2440,7 @@
           "type": "array",
           "items": {
             "type": "string",
-            "format": "uuid"
+            "minLength": 1
           }
         },
         "pnfdName": {
@@ -2475,7 +2475,7 @@
           "type": "array",
           "items": {
             "type": "string",
-            "format": "uuid"
+            "minLength": 1
           }
         },
         "pnfdOnboardingState": {
@@ -2767,7 +2767,7 @@
           "type": "array",
           "items": {
             "type": "string",
-            "format": "uuid"
+            "minLength": 1
           }
         },
         "vnfPkgId": {
@@ -2775,7 +2775,7 @@
           "type": "array",
           "items": {
             "type": "string",
-            "format": "uuid"
+            "minLength": 1
           }
         },
         "operationalState": {
@@ -2804,7 +2804,7 @@
           "title": "Id",
           "description": "Identifier of this subscription resource.",
           "type": "string",
-          "format": "uuid"
+          "minLength": 1
         },
         "callbackUri": {
           "title": "Callbackuri",
