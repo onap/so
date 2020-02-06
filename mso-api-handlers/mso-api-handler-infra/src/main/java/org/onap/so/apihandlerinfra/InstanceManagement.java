@@ -7,12 +7,14 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
+ * Modifications Copyright (c) 2020 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -162,17 +164,16 @@ public class InstanceManagement {
                 currentActiveReq);
         requestHandlerUtils.setInstanceId(currentActiveReq, requestScope, null, instanceIdMap);
 
-        int requestVersion = Integer.parseInt(version.substring(1));
-        String vnfType = msoRequest.getVnfType(sir, requestScope, action, requestVersion);
+        String vnfType = msoRequest.getVnfType(sir, requestScope);
 
         if (requestScope.equalsIgnoreCase(ModelType.vnf.name()) && vnfType != null) {
             currentActiveReq.setVnfType(vnfType);
         }
 
-        InfraActiveRequests dup = null;
         boolean inProgress = false;
 
-        dup = requestHandlerUtils.duplicateCheck(action, instanceIdMap, null, requestScope, currentActiveReq);
+        InfraActiveRequests dup =
+                requestHandlerUtils.duplicateCheck(action, instanceIdMap, null, requestScope, currentActiveReq);
 
         if (dup != null) {
             inProgress = requestHandlerUtils.camundaHistoryCheck(dup, currentActiveReq);
@@ -279,10 +280,10 @@ public class InstanceManagement {
                 currentActiveReq);
         requestHandlerUtils.setInstanceId(currentActiveReq, requestScope, null, instanceIdMap);
 
-        InfraActiveRequests dup = null;
         boolean inProgress = false;
 
-        dup = requestHandlerUtils.duplicateCheck(action, instanceIdMap, null, requestScope, currentActiveReq);
+        InfraActiveRequests dup =
+                requestHandlerUtils.duplicateCheck(action, instanceIdMap, null, requestScope, currentActiveReq);
 
         if (dup != null) {
             inProgress = requestHandlerUtils.camundaHistoryCheck(dup, currentActiveReq);
@@ -305,7 +306,7 @@ public class InstanceManagement {
                     ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e).errorInfo(errorLoggerInfo).build();
         }
 
-        RequestClientParameter requestClientParameter = null;
+        RequestClientParameter requestClientParameter;
         try {
             requestClientParameter = new RequestClientParameter.Builder().setRequestId(requestId)
                     .setRecipeTimeout(recipeLookupResult.getRecipeTimeout()).setRequestAction(action.toString())
@@ -326,7 +327,7 @@ public class InstanceManagement {
 
     private RecipeLookupResult getInstanceManagementWorkflowRecipe(InfraActiveRequests currentActiveReq,
             String workflowUuid) throws ApiException {
-        RecipeLookupResult recipeLookupResult = null;
+        RecipeLookupResult recipeLookupResult;
 
         try {
             recipeLookupResult = getCustomWorkflowUri(workflowUuid);
@@ -359,14 +360,12 @@ public class InstanceManagement {
 
     private RecipeLookupResult getCustomWorkflowUri(String workflowUuid) {
 
-        String recipeUri = null;
         Workflow workflow = catalogDbClient.findWorkflowByArtifactUUID(workflowUuid);
-        if (workflow == null) {
-            return null;
-        } else {
+        if (workflow != null) {
             String workflowName = workflow.getName();
-            recipeUri = "/mso/async/services/" + workflowName;
+            String recipeUri = "/mso/async/services/" + workflowName;
+            return new RecipeLookupResult(recipeUri, 180);
         }
-        return new RecipeLookupResult(recipeUri, 180);
+        return null;
     }
 }
