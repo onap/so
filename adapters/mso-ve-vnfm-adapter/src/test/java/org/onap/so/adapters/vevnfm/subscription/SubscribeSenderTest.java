@@ -31,6 +31,7 @@ import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.so.adapters.vevnfm.configuration.StartupConfiguration;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,16 +80,17 @@ public class SubscribeSenderTest {
     @Test
     public void testSuccess() {
         // given
-        final String endpoint = "lh";
+        final EsrSystemInfo info = new EsrSystemInfo();
+        info.setServiceUrl("lh");
         final LccnSubscriptionRequest request = new LccnSubscriptionRequest();
 
-        mockRestServer.expect(once(), requestTo(SLASH + endpoint + vnfmSubscription))
+        mockRestServer.expect(once(), requestTo(SLASH + info.getServiceUrl() + vnfmSubscription))
                 .andExpect(header(CONTENT_TYPE, CoreMatchers.containsString(MediaType.APPLICATION_JSON_VALUE)))
                 .andExpect(method(HttpMethod.POST)).andExpect(content().json(GSON.toJson(request)))
                 .andRespond(withStatus(HttpStatus.CREATED).body(MINIMAL_JSON_CONTENT));
 
         // when
-        final boolean done = sender.send(endpoint, request);
+        final boolean done = sender.send(info, request);
 
         // then
         assertTrue(done);
