@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e437a588_09092700",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/bbobjects/Pnf.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-06T13:47:43Z",
+      "side": 1,
+      "message": "I think those parameters should not be here directly, but rather aggregated in ModelInfoGenericPnf object similarly as it is for GenericVnf. See GenericVnf and ModelInfoGenericVnf which extends ModelInfoMetadata.",
+      "revId": "de0cb24a40ad214d95f8bf3157db828b1c261652",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "21e698b8_e95c0197",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetup.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1491,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-06T13:47:43Z",
+      "side": 1,
+      "message": "I think we should stop on findFirst(), get \u0027Pnfs\u0027 object and delegate rest of this processing to BBInputSetupPnf.populatePnf()",
+      "revId": "de0cb24a40ad214d95f8bf3157db828b1c261652",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ce1831a8_ec41ba92",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetup.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1492,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-06T13:47:43Z",
+      "side": 1,
+      "message": "This should go to BBInputSetupPnf.populatePnf() - idea is that we delegate as much code as possible out of BBInputSetup.",
+      "revId": "de0cb24a40ad214d95f8bf3157db828b1c261652",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2ddb7b49_b1d3c02a",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/PnfInitializer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-06T13:47:43Z",
+      "side": 1,
+      "message": "I would call this class BBInputSetupPnf and delegate as much PNF-related code here as possible. Idea is that in the future we can create similar classes for other resources and by that make BBInputSetup much shorter",
+      "revId": "de0cb24a40ad214d95f8bf3157db828b1c261652",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "066e4a96_59e015fc",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/PnfInitializer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-06T13:47:43Z",
+      "side": 1,
+      "message": "I think Pnf should be created by populatePnf() method. For now there\u0027s no reason to introduce this field.",
+      "revId": "de0cb24a40ad214d95f8bf3157db828b1c261652",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "65f3f694_db2bd377",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/PnfInitializer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-06T13:47:43Z",
+      "side": 1,
+      "message": "If we move Pnf creation here then this method can be static. I think this method should take also ServiceInstance as an argument and add Pnf to ServiceInstance here (serviceInstance.getPnfs().add(pnf))",
+      "revId": "de0cb24a40ad214d95f8bf3157db828b1c261652",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
