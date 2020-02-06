@@ -163,7 +163,7 @@ public class InstanceManagement {
         requestHandlerUtils.setInstanceId(currentActiveReq, requestScope, null, instanceIdMap);
 
         int requestVersion = Integer.parseInt(version.substring(1));
-        String vnfType = msoRequest.getVnfType(sir, requestScope, action, requestVersion);
+        String vnfType = msoRequest.getVnfType(sir, requestScope);
 
         if (requestScope.equalsIgnoreCase(ModelType.vnf.name()) && vnfType != null) {
             currentActiveReq.setVnfType(vnfType);
