@@ -18,27 +18,31 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.vevnfm.configuration;
+package org.onap.so.adapters.vevnfm.provider;
 
-import org.onap.so.adapters.vevnfm.provider.AuthorizationHeadersProvider;
-import org.onap.so.configuration.rest.HttpHeadersProvider;
-import org.onap.so.rest.service.HttpRestServiceProvider;
-import org.onap.so.rest.service.HttpRestServiceProviderImpl;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.client.RestTemplate;
+import java.util.List;
+import org.apache.logging.log4j.util.Strings;
+import org.onap.so.configuration.rest.BasicHttpHeadersProvider;
+import org.springframework.http.HttpHeaders;
 
-@Configuration
-public class ApplicationConfiguration {
+public class AuthorizationHeadersProvider extends BasicHttpHeadersProvider {
 
-    @Bean
-    public AuthorizationHeadersProvider headersProvider() {
-        return new AuthorizationHeadersProvider();
+    private List<String> previousAuthorization;
+
+    public void addAuthorization(final String authorization) {
+        final HttpHeaders headers = getHttpHeaders();
+        previousAuthorization = headers.get(AUTHORIZATION_HEADER);
+        headers.set(AUTHORIZATION_HEADER, authorization);
     }
 
-    @Bean
-    public HttpRestServiceProvider restProvider(final RestTemplate restTemplate,
-            final HttpHeadersProvider headersProvider) {
-        return new HttpRestServiceProviderImpl(restTemplate, headersProvider);
+    public void resetPrevious() {
+        if (!isPreviousAuthorizationBlank()) {
+            getHttpHeaders().addAll(AUTHORIZATION_HEADER, previousAuthorization);
+        }
+    }
+
+    private boolean isPreviousAuthorizationBlank() {
+        return previousAuthorization == null || previousAuthorization.isEmpty()
+                || Strings.isBlank(previousAuthorization.get(0));
     }
 }
