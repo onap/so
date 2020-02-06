@@ -7,12 +7,14 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
+ * Modifications Copyright (c) 2020 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,7 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.StringTokenizer;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -69,7 +71,6 @@ import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.exceptions.ValidationException;
 import org.onap.so.logger.LogConstants;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
-import org.onap.so.serviceinstancebeans.InstanceDirection;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.ModelType;
 import org.onap.so.serviceinstancebeans.PolicyException;
@@ -148,7 +149,6 @@ public class MsoRequest {
     }
 
 
-
     // Parse request JSON
     public void parse(ServiceInstancesRequest sir, HashMap<String, String> instanceIdMap, Actions action,
             String version, String originalRequestJSON, int reqVersion, Boolean aLaCarteFlag)
@@ -222,44 +222,31 @@ public class MsoRequest {
         }
     }
 
-    public Map<String, List<String>> getOrchestrationFilters(MultivaluedMap<String, String> queryParams)
-            throws ValidationException {
-
-        String queryParam = null;
+    public Map<String, List<String>> getOrchestrationFilters(MultivaluedMap<String, String> queryParams) {
+        final String FILTER_KEY = "filter";
         Map<String, List<String>> orchestrationFilterParams = new HashMap<>();
 
-
-        for (Entry<String, List<String>> entry : queryParams.entrySet()) {
-            queryParam = entry.getKey();
-
-            try {
-                if ("filter".equalsIgnoreCase(queryParam)) {
-                    for (String value : entry.getValue()) {
-                        StringTokenizer st = new StringTokenizer(value, ":");
-
-                        int counter = 0;
-                        String mapKey = null;
-                        List<String> orchestrationList = new ArrayList<>();
-                        while (st.hasMoreElements()) {
-                            if (counter == 0) {
-                                mapKey = st.nextElement() + "";
-                            } else {
-                                orchestrationList.add(st.nextElement() + "");
-                            }
-                            counter++;
-                        }
-                        orchestrationFilterParams.put(mapKey, orchestrationList);
-                    }
-                }
-
-            } catch (Exception e) {
-                throw new ValidationException("QueryParam ServiceInfo", e);
-            }
-
-        }
-
+        Optional.ofNullable(queryParams.get(FILTER_KEY)).ifPresent(listValues -> listValues
+                .forEach(value -> addValueToOrchestrationFilterParamsMap(orchestrationFilterParams, value)));
 
         return orchestrationFilterParams;
+    }
+
+    private void addValueToOrchestrationFilterParamsMap(Map<String, List<String>> orchestrationFilterParams,
+            String value) {
+        final String TOKEN_DELIMITER = ":";
+        StringTokenizer stringTokenizer = new StringTokenizer(value, TOKEN_DELIMITER);
+
+        if (!stringTokenizer.hasMoreTokens()) {
+            return;
+        }
+        String mapKey = stringTokenizer.nextToken();
+        List<String> orchestrationList = new ArrayList<>();
+        while (stringTokenizer.hasMoreTokens()) {
+            orchestrationList.add(stringTokenizer.nextToken());
+        }
+
+        orchestrationFilterParams.put(mapKey, orchestrationList);
     }
 
     public InfraActiveRequests createRequestObject(ServiceInstancesRequest servInsReq, Actions action, String requestId,
@@ -465,14 +452,12 @@ public class MsoRequest {
     }
 
 
-
     public Response buildResponse(int httpResponseCode, String errorCode, InfraActiveRequests inProgress) {
         return buildResponseWithError(httpResponseCode, errorCode, inProgress, null);
     }
 
     public Response buildResponseWithError(int httpResponseCode, String errorCode, InfraActiveRequests inProgress,
             String errorString) {
-
 
 
         // Log the failed request into the MSO Requests database
@@ -485,7 +470,6 @@ public class MsoRequest {
 
         return Response.status(httpResponseCode).entity(null).build();
     }
-
 
 
     public String getServiceType(VnfInputs vnfInputs) {
@@ -625,156 +609,78 @@ public class MsoRequest {
     }
 
 
-    public String getVfModuleType(ServiceInstancesRequest sir, String requestScope, Actions action, int reqVersion) {
+    public String getVfModuleType(ServiceInstancesRequest sir, String requestScope, int reqVersion) {
 
-        String serviceInstanceType = null;
-
-        String vnfType = null;
+        String vnfType;
         String vfModuleType = null;
-        String vfModuleModelName = null;
+        String vfModuleModelName;
         ModelInfo modelInfo = sir.getRequestDetails().getModelInfo();
         RelatedInstanceList[] instanceList = sir.getRequestDetails().getRelatedInstanceList();
         String serviceModelName = null;
         String vnfModelName = null;
-        String asdcServiceModelVersion = null;
         String volumeGroupId = null;
-        boolean isRelatedServiceInstancePresent = false;
-        boolean isRelatedVnfInstancePresent = false;
-        boolean isSourceVnfPresent = false;
-        boolean isDestinationVnfPresent = false;
-        boolean isConnectionPointPresent = false;
 
-        if (instanceList != null) {
-            for (RelatedInstanceList relatedInstanceList : instanceList) {
-                RelatedInstance relatedInstance = relatedInstanceList.getRelatedInstance();
-                ModelInfo relatedInstanceModelInfo = relatedInstance.getModelInfo();
+        if (instanceList == null) {
+            return null;
+        }
+        for (RelatedInstanceList relatedInstanceList : instanceList) {
+            RelatedInstance relatedInstance = relatedInstanceList.getRelatedInstance();
+            ModelInfo relatedInstanceModelInfo = relatedInstance.getModelInfo();
 
-                if (action != Action.deleteInstance) {
-
-                    if (ModelType.configuration.name().equalsIgnoreCase(requestScope)) {
-                        if (InstanceDirection.source.equals(relatedInstance.getInstanceDirection())
-                                && relatedInstanceModelInfo.getModelType().equals(ModelType.vnf)) {
-                            isSourceVnfPresent = true;
-                        } else if (InstanceDirection.destination.equals(relatedInstance.getInstanceDirection())
-                                && (relatedInstanceModelInfo.getModelType().equals(ModelType.vnf)
-                                        || (relatedInstanceModelInfo.getModelType().equals(ModelType.pnf)
-                                                && reqVersion == 6))) {
-                            isDestinationVnfPresent = true;
-                        }
-                    }
-
-                    if (ModelType.connectionPoint.equals(relatedInstanceModelInfo.getModelType())
-                            && ModelType.configuration.name().equalsIgnoreCase(requestScope)) {
-                        isConnectionPointPresent = true;
-                    }
-                }
-
-
-                if (relatedInstanceModelInfo.getModelType().equals(ModelType.service)) {
-                    isRelatedServiceInstancePresent = true;
-                    serviceModelName = relatedInstanceModelInfo.getModelName();
-                    asdcServiceModelVersion = relatedInstanceModelInfo.getModelVersion();
-                } else if (relatedInstanceModelInfo.getModelType().equals(ModelType.vnf)
-                        && !(ModelType.configuration.name().equalsIgnoreCase(requestScope))) {
-                    isRelatedVnfInstancePresent = true;
-                    vnfModelName = relatedInstanceModelInfo.getModelCustomizationName();
-                } else if (relatedInstanceModelInfo.getModelType().equals(ModelType.volumeGroup)) {
-                    volumeGroupId = relatedInstance.getInstanceId();
-                }
+            if (relatedInstanceModelInfo.getModelType().equals(ModelType.service)) {
+                serviceModelName = relatedInstanceModelInfo.getModelName();
+            } else if (relatedInstanceModelInfo.getModelType().equals(ModelType.vnf)
+                    && !(ModelType.configuration.name().equalsIgnoreCase(requestScope))) {
+                vnfModelName = relatedInstanceModelInfo.getModelCustomizationName();
+            } else if (relatedInstanceModelInfo.getModelType().equals(ModelType.volumeGroup)) {
+                volumeGroupId = relatedInstance.getInstanceId();
             }
-
-            if (requestScope.equalsIgnoreCase(ModelType.volumeGroup.name())) {
-                serviceInstanceType = serviceModelName;
-                vnfType = serviceModelName + "/" + vnfModelName;
-            } else if (requestScope.equalsIgnoreCase(ModelType.vfModule.name())) {
-                vfModuleModelName = modelInfo.getModelName();
-                serviceInstanceType = serviceModelName;
-                vnfType = serviceModelName + "/" + vnfModelName;
-                vfModuleType = vnfType + "::" + vfModuleModelName;
-                sir.setVolumeGroupInstanceId(volumeGroupId);
-            } else if (requestScope.equalsIgnoreCase(ModelType.vnf.name()))
-                vnfType = serviceModelName + "/" + sir.getRequestDetails().getModelInfo().getModelCustomizationName();
-
+        }
+        if (requestScope.equalsIgnoreCase(ModelType.vfModule.name())) {
+            vfModuleModelName = modelInfo.getModelName();
+            vnfType = serviceModelName + "/" + vnfModelName;
+            vfModuleType = vnfType + "::" + vfModuleModelName;
+            sir.setVolumeGroupInstanceId(volumeGroupId);
         }
 
         return vfModuleType;
 
     }
 
-    public String getVnfType(ServiceInstancesRequest sir, String requestScope, Actions action, int reqVersion) {
+    public String getVnfType(ServiceInstancesRequest sir, String requestScope) {
 
-        String serviceInstanceType = null;
-        String networkType = null;
         String vnfType = null;
-        String vfModuleType = null;
-        String vfModuleModelName = null;
-        ModelInfo modelInfo = sir.getRequestDetails().getModelInfo();
         RelatedInstanceList[] instanceList = sir.getRequestDetails().getRelatedInstanceList();
         String serviceModelName = null;
         String vnfModelName = null;
-        String asdcServiceModelVersion = null;
         String volumeGroupId = null;
-        boolean isRelatedServiceInstancePresent = false;
-        boolean isRelatedVnfInstancePresent = false;
-        boolean isSourceVnfPresent = false;
-        boolean isDestinationVnfPresent = false;
-        boolean isConnectionPointPresent = false;
 
-        if (instanceList != null) {
-            for (RelatedInstanceList relatedInstanceList : instanceList) {
-                RelatedInstance relatedInstance = relatedInstanceList.getRelatedInstance();
-                ModelInfo relatedInstanceModelInfo = relatedInstance.getModelInfo();
+        if (instanceList == null) {
+            return null;
+        }
+        for (RelatedInstanceList relatedInstanceList : instanceList) {
+            RelatedInstance relatedInstance = relatedInstanceList.getRelatedInstance();
+            ModelInfo relatedInstanceModelInfo = relatedInstance.getModelInfo();
 
-                if (action != Action.deleteInstance) {
-
-                    if (ModelType.configuration.name().equalsIgnoreCase(requestScope)) {
-                        if (InstanceDirection.source.equals(relatedInstance.getInstanceDirection())
-                                && relatedInstanceModelInfo.getModelType().equals(ModelType.vnf)) {
-                            isSourceVnfPresent = true;
-                        } else if (InstanceDirection.destination.equals(relatedInstance.getInstanceDirection())
-                                && (relatedInstanceModelInfo.getModelType().equals(ModelType.vnf)
-                                        || (relatedInstanceModelInfo.getModelType().equals(ModelType.pnf)
-                                                && reqVersion == 6))) {
-                            isDestinationVnfPresent = true;
-                        }
-                    }
-
-                    if (ModelType.connectionPoint.equals(relatedInstanceModelInfo.getModelType())
-                            && ModelType.configuration.name().equalsIgnoreCase(requestScope)) {
-                        isConnectionPointPresent = true;
-                    }
-                }
-
-
-                if (relatedInstanceModelInfo.getModelType().equals(ModelType.service)) {
-                    isRelatedServiceInstancePresent = true;
-                    serviceModelName = relatedInstanceModelInfo.getModelName();
-                    asdcServiceModelVersion = relatedInstanceModelInfo.getModelVersion();
-                } else if (relatedInstanceModelInfo.getModelType().equals(ModelType.vnf)
-                        && !(ModelType.configuration.name().equalsIgnoreCase(requestScope))) {
-                    isRelatedVnfInstancePresent = true;
-                    vnfModelName = relatedInstanceModelInfo.getModelCustomizationName();
-                } else if (relatedInstanceModelInfo.getModelType().equals(ModelType.volumeGroup)) {
-                    volumeGroupId = relatedInstance.getInstanceId();
-                }
+            if (relatedInstanceModelInfo.getModelType().equals(ModelType.service)) {
+                serviceModelName = relatedInstanceModelInfo.getModelName();
+            } else if (relatedInstanceModelInfo.getModelType().equals(ModelType.vnf)
+                    && !(ModelType.configuration.name().equalsIgnoreCase(requestScope))) {
+                vnfModelName = relatedInstanceModelInfo.getModelCustomizationName();
+            } else if (relatedInstanceModelInfo.getModelType().equals(ModelType.volumeGroup)) {
+                volumeGroupId = relatedInstance.getInstanceId();
             }
-
-            if (requestScope.equalsIgnoreCase(ModelType.volumeGroup.name())) {
-                serviceInstanceType = serviceModelName;
-                vnfType = serviceModelName + "/" + vnfModelName;
-            } else if (requestScope.equalsIgnoreCase(ModelType.vfModule.name())) {
-                vfModuleModelName = modelInfo.getModelName();
-                serviceInstanceType = serviceModelName;
-                vnfType = serviceModelName + "/" + vnfModelName;
-                vfModuleType = vnfType + "::" + vfModuleModelName;
-                sir.setVolumeGroupInstanceId(volumeGroupId);
-            } else if (requestScope.equalsIgnoreCase(ModelType.vnf.name()))
-                vnfType = serviceModelName + "/" + sir.getRequestDetails().getModelInfo().getModelCustomizationName();
-
         }
 
-        return vnfType;
+        if (requestScope.equalsIgnoreCase(ModelType.volumeGroup.name())) {
+            vnfType = serviceModelName + "/" + vnfModelName;
+        } else if (requestScope.equalsIgnoreCase(ModelType.vfModule.name())) {
+            vnfType = serviceModelName + "/" + vnfModelName;
+            sir.setVolumeGroupInstanceId(volumeGroupId);
+        } else if (requestScope.equalsIgnoreCase(ModelType.vnf.name()))
+            vnfType = serviceModelName + "/" + sir.getRequestDetails().getModelInfo().getModelCustomizationName();
 
+        return vnfType;
     }
 
 }
