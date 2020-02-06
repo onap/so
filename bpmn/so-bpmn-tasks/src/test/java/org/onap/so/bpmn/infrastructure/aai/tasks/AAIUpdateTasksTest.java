@@ -161,6 +161,26 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
+    public void updateOrchestrationStatusRegisterPnfTest() throws Exception {
+        Pnf pnf = preparePnfAndExtractForPnf();
+        doNothing().when(aaiPnfResources).updateOrchestrationStatusPnf(pnf, OrchestrationStatus.REGISTER);
+
+        aaiUpdateTasks.updateOrchestrationStatusRegisterPnf(execution);
+
+        verify(aaiPnfResources, times(1)).updateOrchestrationStatusPnf(pnf, OrchestrationStatus.REGISTER);
+    }
+
+    @Test
+    public void updateOrchestrationStatusRegisteredPnfTest() throws Exception {
+        Pnf pnf = preparePnfAndExtractForPnf();
+        doNothing().when(aaiPnfResources).updateOrchestrationStatusPnf(pnf, OrchestrationStatus.REGISTERED);
+
+        aaiUpdateTasks.updateOrchestrationStatusRegisteredPnf(execution);
+
+        verify(aaiPnfResources, times(1)).updateOrchestrationStatusPnf(pnf, OrchestrationStatus.REGISTERED);
+    }
+
+    @Test
     public void updateOrchestrationStatusAssignedVnfTest() throws Exception {
         doNothing().when(aaiVnfResources).updateOrchestrationStatusVnf(genericVnf, OrchestrationStatus.ASSIGNED);
 
