@@ -251,25 +251,23 @@ public class ResumeOrchestrationRequest {
         }
 
         try {
-            requestClientParameter =
-                    new RequestClientParameter.Builder().setRequestId(currentActiveRequest.getRequestId())
-                            .setBaseVfModule(isBaseVfModule).setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
-                            .setRequestAction(infraActiveRequest.getRequestAction())
-                            .setServiceInstanceId(infraActiveRequest.getServiceInstanceId())
-                            .setPnfCorrelationId(pnfCorrelationId).setVnfId(infraActiveRequest.getVnfId())
-                            .setVfModuleId(infraActiveRequest.getVfModuleId())
-                            .setVolumeGroupId(infraActiveRequest.getVolumeGroupId())
-                            .setNetworkId(infraActiveRequest.getNetworkId())
-                            .setServiceType(infraActiveRequest.getServiceType())
-                            .setVnfType(infraActiveRequest.getVnfType())
-                            .setVfModuleType(msoRequest.getVfModuleType(sir, infraActiveRequest.getRequestScope(),
-                                    action, Integer.parseInt(version)))
-                            .setNetworkType(infraActiveRequest.getNetworkType())
-                            .setRequestDetails(requestHandlerUtils
-                                    .mapJSONtoMSOStyle(infraActiveRequest.getRequestBody(), sir, aLaCarte, action))
-                            .setApiVersion(version).setALaCarte(aLaCarte)
-                            .setRequestUri(currentActiveRequest.getRequestUrl())
-                            .setInstanceGroupId(infraActiveRequest.getInstanceGroupId()).build();
+            requestClientParameter = new RequestClientParameter.Builder()
+                    .setRequestId(currentActiveRequest.getRequestId()).setBaseVfModule(isBaseVfModule)
+                    .setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
+                    .setRequestAction(infraActiveRequest.getRequestAction())
+                    .setServiceInstanceId(infraActiveRequest.getServiceInstanceId())
+                    .setPnfCorrelationId(pnfCorrelationId).setVnfId(infraActiveRequest.getVnfId())
+                    .setVfModuleId(infraActiveRequest.getVfModuleId())
+                    .setVolumeGroupId(infraActiveRequest.getVolumeGroupId())
+                    .setNetworkId(infraActiveRequest.getNetworkId()).setServiceType(infraActiveRequest.getServiceType())
+                    .setVnfType(infraActiveRequest.getVnfType())
+                    .setVfModuleType(msoRequest
+                            .getVfModuleType(sir, infraActiveRequest.getRequestScope(), Integer.parseInt(version)))
+                    .setNetworkType(infraActiveRequest.getNetworkType())
+                    .setRequestDetails(requestHandlerUtils.mapJSONtoMSOStyle(infraActiveRequest.getRequestBody(), sir,
+                            aLaCarte, action))
+                    .setApiVersion(version).setALaCarte(aLaCarte).setRequestUri(currentActiveRequest.getRequestUrl())
+                    .setInstanceGroupId(infraActiveRequest.getInstanceGroupId()).build();
         } catch (IOException e) {
             logger.error("IOException while generating requestClientParameter to send to BPMN", e);
             ErrorLoggerInfo errorLoggerInfo =
