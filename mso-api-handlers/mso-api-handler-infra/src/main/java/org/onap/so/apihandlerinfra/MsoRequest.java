@@ -10,9 +10,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -144,7 +144,6 @@ public class MsoRequest {
     }
 
 
-
     // Parse request JSON
     public void parse(ServiceInstancesRequest sir, HashMap<String, String> instanceIdMap, Actions action,
             String version, String originalRequestJSON, int reqVersion, Boolean aLaCarteFlag)
@@ -218,42 +217,36 @@ public class MsoRequest {
 
     public Map<String, List<String>> getOrchestrationFilters(MultivaluedMap<String, String> queryParams)
             throws ValidationException {
-
-        String queryParam = null;
+        final String FILTER_KEY = "filter";
         Map<String, List<String>> orchestrationFilterParams = new HashMap<>();
 
-
-        for (Entry<String, List<String>> entry : queryParams.entrySet()) {
-            queryParam = entry.getKey();
-
-            try {
-                if ("filter".equalsIgnoreCase(queryParam)) {
-                    for (String value : entry.getValue()) {
-                        StringTokenizer st = new StringTokenizer(value, ":");
-
-                        int counter = 0;
-                        String mapKey = null;
-                        List<String> orchestrationList = new ArrayList<>();
-                        while (st.hasMoreElements()) {
-                            if (counter == 0) {
-                                mapKey = st.nextElement() + "";
-                            } else {
-                                orchestrationList.add(st.nextElement() + "");
-                            }
-                            counter++;
-                        }
-                        orchestrationFilterParams.put(mapKey, orchestrationList);
-                    }
-                }
-
-            } catch (Exception e) {
-                throw new ValidationException("QueryParam ServiceInfo", e);
-            }
-
+        try {
+            queryParams.entrySet().stream().filter(map -> map.getKey().equalsIgnoreCase(FILTER_KEY))
+                    .map(Entry::getValue).flatMap(List::stream)
+                    .forEach(value -> addValueToOrchestrationFilterParamsMap(orchestrationFilterParams, value));
+        } catch (Exception e) {
+            throw new ValidationException("QueryParam ServiceInfo", e);
         }
 
-
         return orchestrationFilterParams;
+    }
+
+    private void addValueToOrchestrationFilterParamsMap(Map<String, List<String>> orchestrationFilterParams,
+            String value) {
+        final String TOKEN_DELIMITER = ":";
+        StringTokenizer stringTokenizer = new StringTokenizer(value, TOKEN_DELIMITER);
+
+        if (!stringTokenizer.hasMoreElements()) {
+            return;
+        }
+        String mapKey = stringTokenizer.nextToken();
+
+        List<String> orchestrationList = new ArrayList<>();
+        while (stringTokenizer.hasMoreElements()) {
+            orchestrationList.add(stringTokenizer.nextToken());
+        }
+
+        orchestrationFilterParams.put(mapKey, orchestrationList);
     }
 
     public InfraActiveRequests createRequestObject(ServiceInstancesRequest servInsReq, Actions action, String requestId,
@@ -459,14 +452,12 @@ public class MsoRequest {
     }
 
 
-
     public Response buildResponse(int httpResponseCode, String errorCode, InfraActiveRequests inProgress) {
         return buildResponseWithError(httpResponseCode, errorCode, inProgress, null);
     }
 
     public Response buildResponseWithError(int httpResponseCode, String errorCode, InfraActiveRequests inProgress,
             String errorString) {
-
 
 
         // Log the failed request into the MSO Requests database
@@ -479,7 +470,6 @@ public class MsoRequest {
 
         return Response.status(httpResponseCode).entity(null).build();
     }
-
 
 
     public String getServiceType(VnfInputs vnfInputs) {
