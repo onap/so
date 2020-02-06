@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2020 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,6 +28,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
+import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.namingservice.NamingRequestObject;
 import org.onap.so.client.orchestration.NamingServiceResources;
@@ -43,7 +46,7 @@ public class NamingServiceDeleteTasks {
     @Autowired
     private NamingServiceResources namingServiceResources;
 
-    public void deleteInstanceGroupName(BuildingBlockExecution execution) throws Exception {
+    public void deleteInstanceGroupName(BuildingBlockExecution execution) throws BBObjectNotFoundException {
         InstanceGroup instanceGroup = extractPojosForBB.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID);
 
         try {
@@ -53,7 +56,7 @@ public class NamingServiceDeleteTasks {
         }
     }
 
-    public void deleteServiceInstanceName(BuildingBlockExecution execution) throws Exception {
+    public void deleteServiceInstanceName(BuildingBlockExecution execution) throws BBObjectNotFoundException {
         ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
         NamingRequestObject namingRequestObject = new NamingRequestObject();
         namingRequestObject.setExternalKeyValue(serviceInstance.getServiceInstanceId());

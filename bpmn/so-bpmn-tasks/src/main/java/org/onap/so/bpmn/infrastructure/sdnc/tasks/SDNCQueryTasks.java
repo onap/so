@@ -6,6 +6,8 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
+ * Modifications Copyright (c) 2020 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -64,7 +66,7 @@ public class SDNCQueryTasks {
      * @param execution
      * @throws Exception
      */
-    public void queryVnf(BuildingBlockExecution execution) throws Exception {
+    public void queryVnf(BuildingBlockExecution execution) throws BBObjectNotFoundException {
         ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
         GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 
@@ -99,7 +101,7 @@ public class SDNCQueryTasks {
      * @param execution
      * @throws Exception
      */
-    public void queryVfModule(BuildingBlockExecution execution) throws Exception {
+    public void queryVfModule(BuildingBlockExecution execution) throws BBObjectNotFoundException {
         ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
         GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
         VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);

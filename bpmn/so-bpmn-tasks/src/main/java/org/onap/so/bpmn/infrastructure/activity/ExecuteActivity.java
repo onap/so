@@ -24,6 +24,7 @@
 
 package org.onap.so.bpmn.infrastructure.activity;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -89,8 +90,8 @@ public class ExecuteActivity implements JavaDelegate {
     @Override
     public void execute(DelegateExecution execution) throws Exception {
         final String requestId = (String) execution.getVariable(G_REQUEST_ID);
-        WorkflowException workflowException = null;
-        String handlingCode = null;
+        WorkflowException workflowException;
+        String handlingCode;
         try {
             Boolean workflowSyncAckSent = (Boolean) execution.getVariable(WORKFLOW_SYNC_ACK_SENT);
             if (workflowSyncAckSent == null || workflowSyncAckSent == false) {
@@ -114,7 +115,7 @@ public class ExecuteActivity implements JavaDelegate {
             if (execution.getVariables() != null) {
                 execution.getVariables().forEach((key, value) -> {
                     if (value instanceof Serializable) {
-                        variables.put(key, (Serializable) value);
+                        variables.put(key, value);
                     }
                 });
             }
@@ -153,25 +154,22 @@ public class ExecuteActivity implements JavaDelegate {
     }
 
     protected BuildingBlock buildBuildingBlock(String activityName) {
-        BuildingBlock buildingBlock = new BuildingBlock().setBpmnFlowName(activityName)
-                .setMsoId(UUID.randomUUID().toString()).setKey("").setIsVirtualLink(false).setVirtualLinkKey("");
-        return buildingBlock;
+        return new BuildingBlock().setBpmnFlowName(activityName).setMsoId(UUID.randomUUID().toString()).setKey("")
+                .setIsVirtualLink(false).setVirtualLinkKey("");
     }
 
     protected ExecuteBuildingBlock buildExecuteBuildingBlock(DelegateExecution execution, String requestId,
-            BuildingBlock buildingBlock) throws Exception {
+            BuildingBlock buildingBlock) throws IOException {
         WorkflowResourceIds workflowResourceIds = new WorkflowResourceIds();
         workflowResourceIds.setServiceInstanceId((String) execution.getVariable(SERVICE_INSTANCE_ID));
         workflowResourceIds.setVnfId((String) execution.getVariable(VNF_ID));
         String bpmnRequest = (String) execution.getVariable(G_BPMN_REQUEST);
         ServiceInstancesRequest sIRequest = mapper.readValue(bpmnRequest, ServiceInstancesRequest.class);
         RequestDetails requestDetails = sIRequest.getRequestDetails();
-        ExecuteBuildingBlock executeBuildingBlock = new ExecuteBuildingBlock().setaLaCarte(true)
-                .setRequestAction((String) execution.getVariable(G_ACTION))
+        return new ExecuteBuildingBlock().setaLaCarte(true).setRequestAction((String) execution.getVariable(G_ACTION))
                 .setResourceId((String) execution.getVariable(VNF_ID))
                 .setVnfType((String) execution.getVariable(VNF_TYPE)).setWorkflowResourceIds(workflowResourceIds)
                 .setRequestId(requestId).setBuildingBlock(buildingBlock).setRequestDetails(requestDetails);
-        return executeBuildingBlock;
     }
 
     protected void buildAndThrowException(DelegateExecution execution, String msg, Exception ex) {
