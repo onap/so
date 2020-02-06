@@ -851,10 +851,10 @@ public class ServiceInstances extends AbstractRestHandler {
             instanceName = sir.getRequestDetails().getRequestInfo().getInstanceName();
         }
         boolean alaCarteFlag = msoRequest.getAlacarteFlag(sir);
-        String vnfType = msoRequest.getVnfType(sir, requestScope, action, requestVersion);
+        String vnfType = msoRequest.getVnfType(sir, requestScope);
         String networkType = msoRequest.getNetworkType(sir, requestScope);
         String sdcServiceModelVersion = msoRequest.getSDCServiceModelVersion(sir);
-        String vfModuleType = msoRequest.getVfModuleType(sir, requestScope, action, requestVersion);
+        String vfModuleType = msoRequest.getVfModuleType(sir, requestScope);
 
         if (requestScope.equalsIgnoreCase(ModelType.vnf.name()) && vnfType != null) {
             currentActiveReq.setVnfType(vnfType);
