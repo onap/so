@@ -6,6 +6,8 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
+ * Modifications Copyright (c) 2020 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -472,7 +474,7 @@ public class AAIUpdateTasks {
      * @param execution
      * @throws Exception
      */
-    public void updateNetworkCreated(BuildingBlockExecution execution) throws Exception {
+    public void updateNetworkCreated(BuildingBlockExecution execution) throws BBObjectNotFoundException {
         execution.setVariable("aaiNetworkActivateRollback", false);
         L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
         L3Network copiedl3network = l3network.shallowCopyId();
@@ -516,7 +518,7 @@ public class AAIUpdateTasks {
      * @param execution
      * @throws Exception
      */
-    public void updateNetworkUpdated(BuildingBlockExecution execution) throws Exception {
+    public void updateNetworkUpdated(BuildingBlockExecution execution) throws BBObjectNotFoundException {
         L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
         L3Network copiedl3network = l3network.shallowCopyId();
         UpdateNetworkResponse response = execution.getVariable("updateNetworkResponse");

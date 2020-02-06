@@ -6,6 +6,8 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
+ * Modifications Copyright (c) 2020 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,6 +43,7 @@ import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
+import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.AAIConfigurationResources;
 import org.onap.so.client.orchestration.AAIInstanceGroupResources;
@@ -90,7 +93,7 @@ public class AAIDeleteTasks {
      * @param execution
      * @throws Exception
      */
-    public void deleteVfModule(BuildingBlockExecution execution) throws Exception {
+    public void deleteVfModule(BuildingBlockExecution execution) throws BBObjectNotFoundException {
         GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
         VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
 
@@ -114,7 +117,7 @@ public class AAIDeleteTasks {
      * @param execution
      * @throws Exception
      */
-    public void deleteVnf(BuildingBlockExecution execution) throws Exception {
+    public void deleteVnf(BuildingBlockExecution execution) throws BBObjectNotFoundException {
         GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 
         execution.setVariable("aaiVnfRollback", false);
@@ -135,7 +138,7 @@ public class AAIDeleteTasks {
      * @param execution
      * @throws Exception
      */
-    public void deleteServiceInstance(BuildingBlockExecution execution) throws Exception {
+    public void deleteServiceInstance(BuildingBlockExecution execution) {
         try {
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
@@ -157,7 +160,7 @@ public class AAIDeleteTasks {
      * @param execution
      * @throws Exception
      */
-    public void deleteNetwork(BuildingBlockExecution execution) throws Exception {
+    public void deleteNetwork(BuildingBlockExecution execution) {
         try {
             L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
             aaiNetworkResources.deleteNetwork(l3network);
@@ -178,7 +181,7 @@ public class AAIDeleteTasks {
      * @param execution
      * @throws Exception
      */
-    public void deleteCollection(BuildingBlockExecution execution) throws Exception {
+    public void deleteCollection(BuildingBlockExecution execution) {
         try {
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
@@ -199,7 +202,7 @@ public class AAIDeleteTasks {
      * @param execution
      * @throws Exception
      */
-    public void deleteInstanceGroup(BuildingBlockExecution execution) throws Exception {
+    public void deleteInstanceGroup(BuildingBlockExecution execution) {
         try {
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);

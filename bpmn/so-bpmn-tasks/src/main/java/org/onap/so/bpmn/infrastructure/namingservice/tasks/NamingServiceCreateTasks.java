@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2020 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,25 +22,16 @@
 
 package org.onap.so.bpmn.infrastructure.namingservice.tasks;
 
-import java.util.List;
-import java.util.Optional;
-import org.onap.aai.domain.yang.Zone;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.common.InjectionHelper;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VpnBinding;
-import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
-import org.onap.so.client.aai.AAIObjectType;
-import org.onap.so.client.aai.entities.AAIResultWrapper;
-import org.onap.so.client.aai.entities.Relationships;
-import org.onap.so.client.aai.entities.uri.AAIResourceUri;
-import org.onap.so.client.aai.entities.uri.AAIUriFactory;
+import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.namingservice.NamingRequestObject;
 import org.onap.so.client.namingservice.NamingServiceConstants;
@@ -65,7 +58,7 @@ public class NamingServiceCreateTasks {
         this.bbInputSetupUtils = bbInputSetupUtils;
     }
 
-    public void createInstanceGroupName(BuildingBlockExecution execution) throws Exception {
+    public void createInstanceGroupName(BuildingBlockExecution execution) throws BBObjectNotFoundException {
         InstanceGroup instanceGroup = extractPojosForBB.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID);
         String policyInstanceName = execution.getVariable("policyInstanceName");
         String nfNamingCode = execution.getVariable("nfNamingCode");
@@ -79,7 +72,7 @@ public class NamingServiceCreateTasks {
         instanceGroup.setInstanceGroupName(generatedInstanceGroupName);
     }
 
-    public void createWanTransportServiceName(BuildingBlockExecution execution) throws Exception {
+    public void createWanTransportServiceName(BuildingBlockExecution execution) throws BBObjectNotFoundException {
         ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
         NamingRequestObject namingRequestObject = new NamingRequestObject();
         namingRequestObject.setExternalKeyValue(serviceInstance.getServiceInstanceId());
@@ -98,7 +91,7 @@ public class NamingServiceCreateTasks {
         serviceInstance.setServiceInstanceName(generatedWanTransportServiceName);
     }
 
-    public void createVpnBondingServiceName(BuildingBlockExecution execution) throws Exception {
+    public void createVpnBondingServiceName(BuildingBlockExecution execution) throws BBObjectNotFoundException {
         ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
         L3Network network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
         VpnBinding vpnBinding = extractPojosForBB.extractByKey(execution, ResourceKey.VPN_ID);

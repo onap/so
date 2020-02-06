@@ -426,7 +426,7 @@ public class AAICreateTasks {
      * @param execution
      * @throws Exception
      */
-    public void createCustomer(BuildingBlockExecution execution) throws Exception {
+    public void createCustomer(BuildingBlockExecution execution) {
         try {
             Customer customer = execution.getGeneralBuildingBlock().getCustomer();
 
