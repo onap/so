@@ -29,6 +29,7 @@ import org.onap.so.client.graphinventory.GraphInventoryCommonObjectMapperProvide
 import org.onap.so.externaltasks.logging.AuditMDCSetup;
 import org.onap.so.objects.audit.AAIObjectAuditList;
 import org.onap.so.utils.ExternalTaskUtils;
+import org.onap.so.utils.RetrySequenceLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,10 @@ public class CreateInventoryTask extends ExternalTaskUtils {
 
     @Autowired
     private AuditMDCSetup mdcSetup;
+
+    public CreateInventoryTask() {
+        super(RetrySequenceLevel.SHORT);
+    }
 
     protected void executeExternalTask(ExternalTask externalTask, ExternalTaskService externalTaskService) {
         mdcSetup.setupMDC(externalTask);

@@ -56,6 +56,10 @@ public class AuditDeleteStackService extends AbstractAuditService {
     @Autowired
     protected Environment env;
 
+    public AuditDeleteStackService() {
+        super();
+    }
+
     protected void executeExternalTask(ExternalTask externalTask, ExternalTaskService externalTaskService) {
         mdcSetup.setupMDC(externalTask);
         AuditInventory auditInventory = externalTask.getVariable("auditInventory");

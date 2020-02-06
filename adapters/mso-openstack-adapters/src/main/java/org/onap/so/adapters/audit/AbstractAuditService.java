@@ -25,6 +25,7 @@ import java.util.Optional;
 import org.onap.so.objects.audit.AAIObjectAudit;
 import org.onap.so.objects.audit.AAIObjectAuditList;
 import org.onap.so.utils.ExternalTaskUtils;
+import org.onap.so.utils.RetrySequenceLevel;
 import org.onap.logging.filter.base.ONAPComponents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +47,10 @@ public abstract class AbstractAuditService extends ExternalTaskUtils {
 
     @Autowired
     public Environment env;
+
+    public AbstractAuditService() {
+        super(RetrySequenceLevel.LONG);
+    }
 
     /**
      * @param auditHeatStackFailed
