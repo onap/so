@@ -20,6 +20,8 @@
 
 package org.onap.so.adapters.vevnfm.configuration;
 
+import org.onap.so.configuration.rest.BasicHttpHeadersProvider;
+import org.onap.so.configuration.rest.HttpHeadersProvider;
 import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.onap.so.rest.service.HttpRestServiceProviderImpl;
 import org.springframework.context.annotation.Bean;
@@ -30,7 +32,13 @@ import org.springframework.web.client.RestTemplate;
 public class ApplicationConfiguration {
 
     @Bean
-    public HttpRestServiceProvider restProvider(final RestTemplate restTemplate) {
-        return new HttpRestServiceProviderImpl(restTemplate);
+    public HttpHeadersProvider headersProvider() {
+        return new BasicHttpHeadersProvider();
+    }
+
+    @Bean
+    public HttpRestServiceProvider restProvider(final RestTemplate restTemplate,
+            final HttpHeadersProvider headersProvider) {
+        return new HttpRestServiceProviderImpl(restTemplate, headersProvider);
     }
 }
