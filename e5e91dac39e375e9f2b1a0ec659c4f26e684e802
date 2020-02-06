@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fb9373eb_f340daf1",
+        "filename": "common/src/main/java/org/onap/so/security/SoBasicWebSecurityConfigurerAdapter.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2020-02-06T19:47:17Z",
+      "side": 1,
+      "message": "revert this, this will break the authentication for all adapters",
+      "range": {
+        "startLine": 72,
+        "startChar": 8,
+        "endLine": 72,
+        "endChar": 85
+      },
+      "revId": "e5e91dac39e375e9f2b1a0ec659c4f26e684e802",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
