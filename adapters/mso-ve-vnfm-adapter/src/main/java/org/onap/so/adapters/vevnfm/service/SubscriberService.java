@@ -21,6 +21,7 @@
 package org.onap.so.adapters.vevnfm.service;
 
 import java.util.Collections;
+import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.so.adapters.vevnfm.subscription.SubscribeSender;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRequest;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsAuthentication;
@@ -52,9 +53,9 @@ public class SubscriberService {
     @Autowired
     private SubscribeSender sender;
 
-    public boolean subscribe(final String endpoint) {
+    public boolean subscribe(final EsrSystemInfo info) {
         final LccnSubscriptionRequest request = createRequest();
-        return sender.send(endpoint, request);
+        return sender.send(info, request);
     }
 
     private LccnSubscriptionRequest createRequest() {
