@@ -26,6 +26,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.so.adapters.vevnfm.aai.AaiConnection;
 import org.onap.so.adapters.vevnfm.exception.VeVnfmException;
 
@@ -44,23 +45,24 @@ public class StartupServiceTest {
     @Test
     public void testSuccess() throws Exception {
         // given
-        final String endpoint = "lh";
-
-        when(aaiConnection.receiveVnfm()).thenReturn(endpoint);
-        when(subscriberService.subscribe(endpoint)).thenReturn(true);
+        final EsrSystemInfo info = new EsrSystemInfo();
+        info.setServiceUrl("lh");
+        when(aaiConnection.receiveVnfm()).thenReturn(info);
+        when(subscriberService.subscribe(info)).thenReturn(true);
 
         // when
         startupService.run();
 
         // then
         verify(aaiConnection, times(1)).receiveVnfm();
-        verify(subscriberService, times(1)).subscribe(endpoint);
+        verify(subscriberService, times(1)).subscribe(info);
     }
 
     @Test(expected = VeVnfmException.class)
     public void testFailureAai() throws Exception {
         // given
-        when(aaiConnection.receiveVnfm()).thenReturn(null);
+        final EsrSystemInfo info = new EsrSystemInfo();
+        when(aaiConnection.receiveVnfm()).thenReturn(info);
 
         // when
         startupService.run();
@@ -69,10 +71,10 @@ public class StartupServiceTest {
     @Test(expected = VeVnfmException.class)
     public void testFailureSubscriber() throws Exception {
         // given
-        final String endpoint = "lh";
-
-        when(aaiConnection.receiveVnfm()).thenReturn(endpoint);
-        when(subscriberService.subscribe(endpoint)).thenReturn(false);
+        final EsrSystemInfo info = new EsrSystemInfo();
+        info.setServiceUrl("lh");
+        when(aaiConnection.receiveVnfm()).thenReturn(info);
+        when(subscriberService.subscribe(info)).thenReturn(false);
 
         // when
         startupService.run();

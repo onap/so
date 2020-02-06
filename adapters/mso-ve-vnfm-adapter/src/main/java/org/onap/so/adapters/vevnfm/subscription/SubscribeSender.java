@@ -20,6 +20,7 @@
 
 package org.onap.so.adapters.vevnfm.subscription;
 
+import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRequest;
 import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.slf4j.Logger;
@@ -41,8 +42,8 @@ public class SubscribeSender {
     @Autowired
     private HttpRestServiceProvider restProvider;
 
-    public boolean send(final String endpoint, final LccnSubscriptionRequest request) {
-        final ResponseEntity<String> response = restProvider.postHttpRequest(request, getUrl(endpoint), String.class);
+    public boolean send(final EsrSystemInfo info, final LccnSubscriptionRequest request) {
+        final ResponseEntity<String> response = restProvider.postHttpRequest(request, getUrl(info), String.class);
 
         final HttpStatus statusCode = response.getStatusCode();
         final String body = response.getBody();
@@ -52,7 +53,7 @@ public class SubscribeSender {
         return HttpStatus.CREATED == statusCode;
     }
 
-    private String getUrl(final String endpoint) {
-        return endpoint + vnfmSubscription;
+    private String getUrl(final EsrSystemInfo info) {
+        return info.getServiceUrl() + vnfmSubscription;
     }
 }

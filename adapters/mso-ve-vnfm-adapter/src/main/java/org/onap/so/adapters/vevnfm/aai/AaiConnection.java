@@ -40,7 +40,7 @@ public class AaiConnection {
 
     private static final int FIRST_INDEX = 0;
 
-    public String receiveVnfm() {
+    public EsrSystemInfo receiveVnfm() {
         final AAIResourcesClient resourcesClient = new AAIResourcesClient();
         final Optional<EsrVnfmList> response =
                 resourcesClient.get(EsrVnfmList.class, AAIUriFactory.createResourceUri(AAIObjectType.VNFM_LIST));
@@ -61,7 +61,7 @@ public class AaiConnection {
         return null;
     }
 
-    private String receiveVnfmServiceUrl(final AAIResourcesClient resourcesClient, final String vnfmId) {
+    private EsrSystemInfo receiveVnfmServiceUrl(final AAIResourcesClient resourcesClient, final String vnfmId) {
         final Optional<EsrVnfm> response = resourcesClient.get(EsrVnfm.class,
                 AAIUriFactory.createResourceUri(AAIObjectType.VNFM, vnfmId).depth(Depth.ONE));
 
@@ -74,7 +74,7 @@ public class AaiConnection {
                 return null;
             }
 
-            return esrSystemInfo.get(FIRST_INDEX).getServiceUrl();
+            return esrSystemInfo.get(FIRST_INDEX);
         }
 
         return null;
