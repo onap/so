@@ -43,8 +43,7 @@ public class PlatformLOBValidation implements ValidationRule {
 
         platform = info.getSir().getRequestDetails().getPlatform();
         lineOfBusiness = info.getSir().getRequestDetails().getLineOfBusiness();
-        if (reqVersion >= 5 && requestScope.equalsIgnoreCase(ModelType.vnf.name()) && action == Action.createInstance
-                && !info.getReqParameters().getEnforceValidNfValues()) {
+        if (reqVersion >= 5 && requestScope.equalsIgnoreCase(ModelType.vnf.name()) && action == Action.createInstance) {
             if (reqVersion > 5 && platform == null) {
                 throw new ValidationException("platform");
             }

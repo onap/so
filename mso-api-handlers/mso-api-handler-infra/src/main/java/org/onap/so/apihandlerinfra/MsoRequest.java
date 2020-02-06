@@ -85,6 +85,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -104,6 +105,9 @@ public class MsoRequest {
 
     @Autowired
     private ResponseBuilder builder;
+
+    @Value("${mso.enforceDLP:false}")
+    private boolean enforceDLP;
 
     private static Logger logger = LoggerFactory.getLogger(MsoRequest.class);
 
@@ -179,8 +183,10 @@ public class MsoRequest {
             rules.add(new ModelInfoValidation());
             rules.add(new CloudConfigurationValidation());
             rules.add(new SubscriberInfoValidation());
-            rules.add(new PlatformLOBValidation());
-            rules.add(new ProjectOwningEntityValidation());
+            if (!enforceDLP) {
+                rules.add(new PlatformLOBValidation());
+                rules.add(new ProjectOwningEntityValidation());
+            }
             rules.add(new RelatedInstancesValidation());
             rules.add(new ConfigurationParametersValidation());
         }
