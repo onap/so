@@ -65,16 +65,19 @@ INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FL
 ('Service-Macro-Create', '5', 'AssignVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
 ('Service-Macro-Create', '6', 'AssignVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
 ('Service-Macro-Create', '7', 'ConfigAssignVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
-('Service-Macro-Create', '8', 'CreateNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
-('Service-Macro-Create', '9', 'ActivateNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
-('Service-Macro-Create', '10', 'CreateVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
-('Service-Macro-Create', '11', 'ActivateVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
-('Service-Macro-Create', '12', 'CreateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
-('Service-Macro-Create', '13', 'ActivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
-('Service-Macro-Create', '14', 'ConfigDeployVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
-('Service-Macro-Create', '15', 'ActivateVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
-('Service-Macro-Create', '16', 'ActivateNetworkCollectionBB',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
-('Service-Macro-Create', '17', 'ActivateServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
+('Service-Macro-Create', '8', 'AssignPnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
+('Service-Macro-Create', '9', 'WaitForPnfReadyBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
+('Service-Macro-Create', '10', 'ActivatePnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
+('Service-Macro-Create', '11', 'CreateNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
+('Service-Macro-Create', '12', 'ActivateNetworkBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
+('Service-Macro-Create', '13', 'CreateVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
+('Service-Macro-Create', '14', 'ActivateVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
+('Service-Macro-Create', '15', 'CreateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
+('Service-Macro-Create', '16', 'ActivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
+('Service-Macro-Create', '17', 'ConfigDeployVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
+('Service-Macro-Create', '18', 'ActivateVnfBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
+('Service-Macro-Create', '19', 'ActivateNetworkCollectionBB',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
+('Service-Macro-Create', '20', 'ActivateServiceInstanceBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Create' and CLOUD_OWNER = 'DEFAULT')),
 ('Service-Macro-Delete', '1', 'DeactivateVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'DEFAULT')),
 ('Service-Macro-Delete', '2', 'DeleteVfModuleBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'DEFAULT')),
 ('Service-Macro-Delete', '3', 'DeactivateVolumeGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'Service-Macro-Delete' and CLOUD_OWNER = 'DEFAULT')),
@@ -249,6 +252,7 @@ VALUES
 ('AssignVolumeGroupBB', 'VOLUME_GROUP', 'ASSIGN'),
 ('AssignVfModuleBB', 'VF_MODULE', 'ASSIGN'),
 ('AssignNetworkBB', 'NETWORK', 'ASSIGN'),
+('AssignPnfBB', 'NO_VALIDATE', 'ASSIGN'),
 
 ('UnassignServiceInstanceBB', 'SERVICE', 'UNASSIGN'),
 ('UnassignVnfBB', 'VNF', 'UNASSIGN'),
@@ -261,6 +265,7 @@ VALUES
 ('ActivateVfModuleBB', 'VF_MODULE', 'ACTIVATE'),
 ('ActivateNetworkBB', 'NETWORK', 'ACTIVATE'),
 ('ActivateNetworkCollectionBB', 'NETWORK', 'ACTIVATE'),
+('ActivatePnfBB', 'NO_VALIDATE', 'ACTIVATE'),
 
 ('DeactivateServiceInstanceBB', 'SERVICE', 'DEACTIVATE'),
 ('DeactivateVnfBB', 'VNF', 'DEACTIVATE'),
@@ -285,7 +290,9 @@ VALUES
 ('DeleteNetworkCollectionBB', 'NETWORK', 'DELETE'),
 
 ('ConfigurationScaleOutBB', 'NO_VALIDATE', 'CUSTOM'),
-('GenericVnfHealthCheckBB', 'NO_VALIDATE', 'CUSTOM');
+('GenericVnfHealthCheckBB', 'NO_VALIDATE', 'CUSTOM'),
+
+('WaitForPnfReadyBB', 'NO_VALIDATE', 'CUSTOM');
 
 INSERT INTO orchestration_status_state_transition_directive (resource_type, orchestration_status, target_action, flow_directive)
 VALUES
