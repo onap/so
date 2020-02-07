@@ -143,6 +143,15 @@ public class SubscriptionManager {
         return response;
     }
 
+    public boolean deleteSubscription(final String subscriptionId) {
+        if (getSubscription(subscriptionId).isPresent()) {
+            if (etsiCatalogServiceProvider.deleteSubscription(subscriptionId)) {
+                return packageManagementCacheServiceProvider.deleteSubscription(subscriptionId);
+            }
+        }
+        return false;
+    }
+
     public URI getSubscriptionUri(final String subscriptionId) {
         return URI.create(
                 vnfmAdapterEndpoint + Constants.PACKAGE_MANAGEMENT_BASE_URL + "/subscriptions/" + subscriptionId);
