@@ -1,6 +1,7 @@
 package org.onap.so.adapters.appc.orchestrator.service;
 
 import javax.annotation.PostConstruct;
+import org.camunda.bpm.client.ExternalTaskClient;
 import org.onap.so.utils.ExternalTaskServiceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -23,8 +24,9 @@ public class ApplicationControllerTaskService {
     @PostConstruct
     public void appcOrchestrator() throws Exception {
         for (int i = 0; i < externalTaskServiceUtils.getMaxClients(); i++) {
-            externalTaskServiceUtils.createExternalTaskClient().subscribe("AppcService").lockDuration(604800000)
-                    .handler(appcOrchestrator::executeExternalTask).open();
+            ExternalTaskClient client = externalTaskServiceUtils.createExternalTaskClient();
+            client.subscribe("AppcService").lockDuration(604800000).handler(appcOrchestrator::executeExternalTask)
+                    .open();
         }
     }
 
