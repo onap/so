@@ -22,6 +22,30 @@
       "revId": "03917c8d8227e7f7ff9712205257d1224f6801c0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "248f8a30_4e87f75b",
+        "filename": "bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/BuildingBlock/AssignPnfBB.bpmn",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-02-07T10:32:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1b46a3dd_aeb889ea",
+      "range": {
+        "startLine": 19,
+        "startChar": 75,
+        "endLine": 19,
+        "endChar": 91
+      },
+      "revId": "03917c8d8227e7f7ff9712205257d1224f6801c0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
