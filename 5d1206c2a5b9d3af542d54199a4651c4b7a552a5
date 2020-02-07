@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c9a42e7a_85aec7ab",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupPnf.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-07T12:58:36Z",
+      "side": 1,
+      "message": "I think we should remove return value here since we\u0027re relying on side-effect of this method. Returning a value may be confusing",
+      "revId": "5d1206c2a5b9d3af542d54199a4651c4b7a552a5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
