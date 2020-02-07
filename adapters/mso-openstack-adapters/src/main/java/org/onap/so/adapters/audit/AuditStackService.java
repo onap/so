@@ -34,11 +34,14 @@ import org.springframework.stereotype.Component;
 @Profile("!test")
 public class AuditStackService {
 
+    private static final String MSO_AUDIT_LOCK_TIME = "mso.audit.lock-time";
+
     private static final Logger logger = LoggerFactory.getLogger(AuditStackService.class);
 
     private static final String DEFAULT_AUDIT_LOCK_TIME = "60000";
 
     private static final String DEFAULT_MAX_CLIENTS_FOR_TOPIC = "10";
+
 
     @Autowired
     public Environment env;
@@ -60,7 +63,7 @@ public class AuditStackService {
         for (int i = 0; i < externalTaskServiceUtils.getMaxClients(); i++) {
             ExternalTaskClient client = externalTaskServiceUtils.createExternalTaskClient();
             client.subscribe("InventoryAddAudit")
-                    .lockDuration(Long.parseLong(env.getProperty("mso.audit.lock-time", DEFAULT_AUDIT_LOCK_TIME)))
+                    .lockDuration(Long.parseLong(env.getProperty(MSO_AUDIT_LOCK_TIME, DEFAULT_AUDIT_LOCK_TIME)))
                     .handler(auditCreateStack::executeExternalTask).open();
         }
     }
@@ -70,7 +73,7 @@ public class AuditStackService {
         for (int i = 0; i < externalTaskServiceUtils.getMaxClients(); i++) {
             ExternalTaskClient client = externalTaskServiceUtils.createExternalTaskClient();
             client.subscribe("InventoryDeleteAudit")
-                    .lockDuration(Long.parseLong(env.getProperty("mso.audit.lock-time", DEFAULT_AUDIT_LOCK_TIME)))
+                    .lockDuration(Long.parseLong(env.getProperty(MSO_AUDIT_LOCK_TIME, DEFAULT_AUDIT_LOCK_TIME)))
                     .handler(auditDeleteStack::executeExternalTask).open();
         }
     }
@@ -80,7 +83,7 @@ public class AuditStackService {
         for (int i = 0; i < externalTaskServiceUtils.getMaxClients(); i++) {
             ExternalTaskClient client = externalTaskServiceUtils.createExternalTaskClient();
             client.subscribe("InventoryQueryAudit")
-                    .lockDuration(Long.parseLong(env.getProperty("mso.audit.lock-time", DEFAULT_AUDIT_LOCK_TIME)))
+                    .lockDuration(Long.parseLong(env.getProperty(MSO_AUDIT_LOCK_TIME, DEFAULT_AUDIT_LOCK_TIME)))
                     .handler(auditQueryStack::executeExternalTask).open();
         }
     }
