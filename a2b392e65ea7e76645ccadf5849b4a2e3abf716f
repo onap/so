@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e5766994_83444af9",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetup.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1494,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-07T16:57:38Z",
+      "side": 1,
+      "message": "Previous structure of the code was more clear, here is additional if statement, intellij also displays warning that it can be simpler. \nPlease use previous structure and invoke your method populatePnfToServiceInstance.\n\n            resources.getPnfs().stream()\n                    .filter(pnf -\u003e Objects.equals(key, pnf.getModelInfo().getModelCustomizationId())).findFirst()\n                    .ifPresent(pnf -\u003e BBInputSetupPnf.populatePnfToServiceInstance(pnf, pnfId, serviceInstance))",
+      "range": {
+        "startLine": 1490,
+        "startChar": 0,
+        "endLine": 1494,
+        "endChar": 13
+      },
+      "revId": "a2b392e65ea7e76645ccadf5849b4a2e3abf716f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "62932eee_d27193b5",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupPnf.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-07T16:57:38Z",
+      "side": 1,
+      "message": "Utility classes should not have public constructors (sonar will detect that). Make a private constructor with:\nthrow new IllegalStateException(\"Utility class\");\n\nChange the class name to be clear that it is utility class -\u003e PnfSetupUtils",
+      "range": {
+        "startLine": 30,
+        "startChar": 12,
+        "endLine": 30,
+        "endChar": 27
+      },
+      "revId": "a2b392e65ea7e76645ccadf5849b4a2e3abf716f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
