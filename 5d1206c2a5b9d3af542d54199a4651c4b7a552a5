@@ -34,6 +34,24 @@
       "revId": "5d1206c2a5b9d3af542d54199a4651c4b7a552a5",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "28510e49_5390b048",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupPnf.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-02-07T13:55:03Z",
+      "side": 1,
+      "message": "Tested through serviceInstance.getPnfs(), as discussed f2f",
+      "parentUuid": "6434b018_05dcd71d",
+      "revId": "5d1206c2a5b9d3af542d54199a4651c4b7a552a5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
