@@ -20,55 +20,26 @@
 package org.onap.so.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.core.annotation.Order;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.firewall.StrictHttpFirewall;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 /**
  * @author Waqas Ikram (waqas.ikram@est.tech)
  *
  */
-@EnableWebSecurity
-@Configuration
-@Order(1)
-@Profile({"basic"})
-public class SoBasicWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
+@Component
+public class SoBasicHttpSecurityConfigurer implements HttpSecurityConfigurer {
 
     @Autowired
     private SoUserCredentialConfiguration soUserCredentialConfiguration;
 
-    @Autowired
-    private UserDetailsService userDetailsService;
-
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
-
     @Override
-    protected void configure(final HttpSecurity http) throws Exception {
+    public void configure(final HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests().antMatchers("/manage/health", "/manage/info").permitAll()
                 .antMatchers("/**")
                 .hasAnyRole(StringUtils.collectionToDelimitedString(soUserCredentialConfiguration.getRoles(), ","))
                 .and().httpBasic();
     }
 
-    @Override
-    public void configure(final WebSecurity web) throws Exception {
-        super.configure(web);
-        final StrictHttpFirewall firewall = new MSOSpringFirewall();
-        web.httpFirewall(firewall);
-    }
-
-    @Override
-    protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
-    }
 }

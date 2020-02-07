@@ -1,6 +1,6 @@
 /*-
  * ============LICENSE_START=======================================================
- *  Copyright (C) 2020 Nordix Foundation.
+ *  Copyright (C) 2020 Ericsson. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,25 +19,14 @@
  */
 package org.onap.so.security;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.core.annotation.Order;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.web.firewall.StrictHttpFirewall;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
 /**
- * @author Waqas Ikram (waqas.ikram@est.tech)
+ * @author waqas.ikram@ericsson.com
  *
  */
-@Configuration
-@Order(2)
-@Profile({"aaf", "test"})
-public class SoNoAuthWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
-    @Override
-    public void configure(final WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/**");
-        final StrictHttpFirewall firewall = new MSOSpringFirewall();
-        web.httpFirewall(firewall);
-    }
+public interface HttpSecurityConfigurer {
+
+    void configure(final HttpSecurity http) throws Exception;
+
 }
