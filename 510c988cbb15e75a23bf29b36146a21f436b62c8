@@ -16,6 +16,98 @@
       "revId": "510c988cbb15e75a23bf29b36146a21f436b62c8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5f442164_b57537d4",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/MsoRequest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-07T14:00:38Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 220,
+        "startChar": 11,
+        "endLine": 220,
+        "endChar": 38
+      },
+      "revId": "510c988cbb15e75a23bf29b36146a21f436b62c8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9accf6c1_030d72e0",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/MsoRequest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-07T14:00:38Z",
+      "side": 1,
+      "message": "Remove this try catch, no checked ex is thrown in this logic.",
+      "range": {
+        "startLine": 224,
+        "startChar": 7,
+        "endLine": 224,
+        "endChar": 13
+      },
+      "revId": "510c988cbb15e75a23bf29b36146a21f436b62c8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5bed7d96_97336b38",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/MsoRequest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-07T14:00:38Z",
+      "side": 1,
+      "message": "If you want to get value from map by key, there is no point to use stream to search value by key in the map. Another thing is that I would check if this value is not null. I would write:\n\n Optional.ofNullable(queryParams.get(FILTER_KEY)).ifPresent(list -\u003e list.forEach((value -\u003e\n                addValueToOrchestrationFilterParamsMap(orchestrationFilterParams, value))));",
+      "range": {
+        "startLine": 225,
+        "startChar": 12,
+        "endLine": 227,
+        "endChar": 112
+      },
+      "revId": "510c988cbb15e75a23bf29b36146a21f436b62c8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "987a3fe0_848d3384",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/MsoRequest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-07T14:00:38Z",
+      "side": 1,
+      "message": "I have a following problem with this logic:\nThis logic takes string for example;\n\"aaa:bbb:ccc\", and first element \"aaa\" is a key, and the rest of strings is put as list value. That is ok. \n\nBut this logic also allows two cases which I do not like:\n1. Put null key and empty list to the map if parameter value is empty\n2. Put the key and empty list to the map if the parameter value is like \"aaa:\"\n\nI think we should check first, if stringTokenizer.countTokens()\u003d\u003d2, the we have a guarantee that if we put entry to the map, the key is not null and the list of strings will not be empty.",
+      "range": {
+        "startLine": 235,
+        "startChar": 17,
+        "endLine": 235,
+        "endChar": 55
+      },
+      "revId": "510c988cbb15e75a23bf29b36146a21f436b62c8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
