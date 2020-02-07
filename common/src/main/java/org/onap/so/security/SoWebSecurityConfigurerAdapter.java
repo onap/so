@@ -1,6 +1,6 @@
 /*-
  * ============LICENSE_START=======================================================
- *  Copyright (C) 2020 Nordix Foundation.
+ *  Copyright (C) 2020 Ericsson. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@
  */
 package org.onap.so.security;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -31,7 +33,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
-import org.springframework.util.StringUtils;
 
 /**
  * @author Waqas Ikram (waqas.ikram@est.tech)
@@ -40,11 +41,12 @@ import org.springframework.util.StringUtils;
 @EnableWebSecurity
 @Configuration
 @Order(1)
-@Profile({"basic"})
-public class SoBasicWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
+@Profile({"basic", "test"})
+public class SoWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SoWebSecurityConfigurerAdapter.class);
 
     @Autowired
-    private SoUserCredentialConfiguration soUserCredentialConfiguration;
+    private HttpSecurityConfigurer httpSecurityConfigurer;
 
     @Autowired
     private UserDetailsService userDetailsService;
@@ -54,10 +56,9 @@ public class SoBasicWebSecurityConfigurerAdapter extends WebSecurityConfigurerAd
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests().antMatchers("/manage/health", "/manage/info").permitAll()
-                .antMatchers("/**")
-                .hasAnyRole(StringUtils.collectionToDelimitedString(soUserCredentialConfiguration.getRoles(), ","))
-                .and().httpBasic();
+        LOGGER.debug("Injecting {} configuration ...", httpSecurityConfigurer.getClass());
+
+        httpSecurityConfigurer.configure(http);
     }
 
     @Override
