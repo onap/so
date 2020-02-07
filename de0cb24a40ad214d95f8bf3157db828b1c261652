@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "233a63a7_4ea83558",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/bbobjects/Pnf.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-02-07T12:07:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e437a588_09092700",
+      "revId": "de0cb24a40ad214d95f8bf3157db828b1c261652",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "21e698b8_e95c0197",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetup.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2020-02-06T13:47:43Z",
       "side": 1,
       "message": "I think we should stop on findFirst(), get \u0027Pnfs\u0027 object and delegate rest of this processing to BBInputSetupPnf.populatePnf()",
+      "revId": "de0cb24a40ad214d95f8bf3157db828b1c261652",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "157aa72d_7569dc58",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetup.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1491,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-02-07T12:07:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "21e698b8_e95c0197",
       "revId": "de0cb24a40ad214d95f8bf3157db828b1c261652",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "fc026f26_f570e908",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetup.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1492,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-02-07T12:07:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ce1831a8_ec41ba92",
+      "revId": "de0cb24a40ad214d95f8bf3157db828b1c261652",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2ddb7b49_b1d3c02a",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/PnfInitializer.java",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2020-02-06T13:47:43Z",
       "side": 1,
       "message": "I would call this class BBInputSetupPnf and delegate as much PNF-related code here as possible. Idea is that in the future we can create similar classes for other resources and by that make BBInputSetup much shorter",
+      "revId": "de0cb24a40ad214d95f8bf3157db828b1c261652",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2d8d3ce7_e2dd8c3e",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/PnfInitializer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-02-07T12:07:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2ddb7b49_b1d3c02a",
       "revId": "de0cb24a40ad214d95f8bf3157db828b1c261652",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "57d13596_a51a0770",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/PnfInitializer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-02-07T12:07:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "066e4a96_59e015fc",
+      "revId": "de0cb24a40ad214d95f8bf3157db828b1c261652",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "65f3f694_db2bd377",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/PnfInitializer.java",
         "patchSetId": 2
@@ -98,6 +188,24 @@
       "writtenOn": "2020-02-06T13:47:43Z",
       "side": 1,
       "message": "If we move Pnf creation here then this method can be static. I think this method should take also ServiceInstance as an argument and add Pnf to ServiceInstance here (serviceInstance.getPnfs().add(pnf))",
+      "revId": "de0cb24a40ad214d95f8bf3157db828b1c261652",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7377685f_37c1fe1a",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/PnfInitializer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-02-07T12:07:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "65f3f694_db2bd377",
       "revId": "de0cb24a40ad214d95f8bf3157db828b1c261652",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
