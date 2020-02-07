@@ -16,6 +16,24 @@
       "revId": "5d1206c2a5b9d3af542d54199a4651c4b7a552a5",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6434b018_05dcd71d",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupPnf.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-02-07T13:02:39Z",
+      "side": 1,
+      "message": "I can do that, but won\u0027t be testable then. There are just getters and setters after all, so maybe a junit test is not so important here.",
+      "parentUuid": "c9a42e7a_85aec7ab",
+      "revId": "5d1206c2a5b9d3af542d54199a4651c4b7a552a5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
