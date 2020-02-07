@@ -22,6 +22,30 @@
       "revId": "e5e91dac39e375e9f2b1a0ec659c4f26e684e802",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ff825a4a_bdde43f1",
+        "filename": "common/src/main/java/org/onap/so/security/SoBasicWebSecurityConfigurerAdapter.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-02-07T08:29:18Z",
+      "side": 1,
+      "message": "Why?\nHave you tested it?\nAll the unit tests pass.\nI\u0027m re-using the @Beans which were created in SoUserCredentialConfiguration anyway. Why should I create new objects rather the use the existing ones? The way it was, they were not the @Beans, they were not initialised.",
+      "parentUuid": "fb9373eb_f340daf1",
+      "range": {
+        "startLine": 72,
+        "startChar": 8,
+        "endLine": 72,
+        "endChar": 85
+      },
+      "revId": "e5e91dac39e375e9f2b1a0ec659c4f26e684e802",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
