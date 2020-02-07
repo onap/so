@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "60c591df_1787863d",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/InstanceManagement.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-07T12:40:48Z",
+      "side": 1,
+      "message": "seems requestVersion is no longer needed",
+      "revId": "510c988cbb15e75a23bf29b36146a21f436b62c8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
