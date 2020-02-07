@@ -46,6 +46,30 @@
       "revId": "d4840173ea129167cd53145a2bb95433420047d0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e3c82440_2c4f1966",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/service/SubscriberService.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2020-02-07T09:46:18Z",
+      "side": 1,
+      "message": "i missed that you are adding new property \"openpass\"",
+      "parentUuid": "5972f7f3_a0aba014",
+      "range": {
+        "startLine": 66,
+        "startChar": 0,
+        "endLine": 66,
+        "endChar": 3
+      },
+      "revId": "d4840173ea129167cd53145a2bb95433420047d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
