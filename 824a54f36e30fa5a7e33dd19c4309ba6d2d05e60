@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "24e6faad_2df585c7",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-07T15:52:29Z",
+      "side": 1,
+      "message": "It seems you\u0027re missing @Component annotation.",
+      "revId": "824a54f36e30fa5a7e33dd19c4309ba6d2d05e60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4236d04d_d01d7630",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-07T15:52:29Z",
+      "side": 1,
+      "message": "This class has clearly implements 2 different paths - one for VNF, one for VF module. Is there any reason why we can\u0027t have 2 separate listeners?",
+      "revId": "824a54f36e30fa5a7e33dd19c4309ba6d2d05e60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "29154315_135e0444",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-07T15:52:29Z",
+      "side": 1,
+      "message": "This \u0027if\u0027 condition is very difficult to read. \n\nIt seems that both this \u0027if\u0027 and \u0027else if\u0027 below are checking if customizationUUID is not null. Could you do this check at the beginning of this method and return immediately if it fails?",
+      "revId": "824a54f36e30fa5a7e33dd19c4309ba6d2d05e60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "84868843_6499f4ca",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-07T15:52:29Z",
+      "side": 1,
+      "message": "If I read it right I think this actually implements Set.contains() method. If it\u0027s true could you use it instead of stream processing?",
+      "revId": "824a54f36e30fa5a7e33dd19c4309ba6d2d05e60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
