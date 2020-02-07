@@ -46,6 +46,30 @@
       "revId": "e5e91dac39e375e9f2b1a0ec659c4f26e684e802",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7ed9f54d_0ba80990",
+        "filename": "common/src/main/java/org/onap/so/security/SoBasicWebSecurityConfigurerAdapter.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2020-02-07T09:46:18Z",
+      "side": 1,
+      "message": "Yes you are right!!",
+      "parentUuid": "ff825a4a_bdde43f1",
+      "range": {
+        "startLine": 72,
+        "startChar": 8,
+        "endLine": 72,
+        "endChar": 85
+      },
+      "revId": "e5e91dac39e375e9f2b1a0ec659c4f26e684e802",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
