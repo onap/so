@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ff98ef6d_1a467ddd",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/MsoRequest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 613,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-10T12:16:56Z",
+      "side": 1,
+      "message": "is reqVersion still used in this method?",
+      "revId": "e860c6f78a7cc555071739c3f10b5172d31071d2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
