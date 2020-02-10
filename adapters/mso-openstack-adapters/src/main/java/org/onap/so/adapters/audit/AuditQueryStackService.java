@@ -28,6 +28,10 @@ public class AuditQueryStackService extends AbstractAuditService {
     @Autowired
     protected AuditDataService auditDataService;
 
+    public AuditQueryStackService() {
+        super();
+    }
+
     protected void executeExternalTask(ExternalTask externalTask, ExternalTaskService externalTaskService) {
         mdcSetup.setupMDC(externalTask);
         AuditInventory auditInventory = externalTask.getVariable("auditInventory");

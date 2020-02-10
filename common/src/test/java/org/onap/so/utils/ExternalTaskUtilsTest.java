@@ -16,7 +16,7 @@ public class ExternalTaskUtilsTest {
     private Environment mockenv;
 
     @InjectMocks
-    private ExternalTaskUtils externalTaskUtilsAnony = new ExternalTaskUtils() {
+    private ExternalTaskUtils externalTaskUtilsAnony = new ExternalTaskUtils(RetrySequenceLevel.LONG) {
 
     };
 
