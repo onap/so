@@ -21,6 +21,7 @@
 package org.onap.so.adapters.vevnfm.service;
 
 import org.apache.logging.log4j.util.Strings;
+import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.so.adapters.vevnfm.aai.AaiConnection;
 import org.onap.so.adapters.vevnfm.exception.VeVnfmException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,16 +36,16 @@ public class StartupService {
     @Autowired
     private SubscriberService subscriberService;
 
-    private static void isValid(final String endpoint) throws VeVnfmException {
-        if (Strings.isBlank(endpoint)) {
+    private static void isValid(final EsrSystemInfo info) throws VeVnfmException {
+        if (Strings.isBlank(info.getServiceUrl())) {
             throw new VeVnfmException("No 'url' field in VNFM info");
         }
     }
 
     public void run() throws Exception {
-        final String endpoint = aaiConnection.receiveVnfm();
-        isValid(endpoint);
-        final boolean done = subscriberService.subscribe(endpoint);
+        final EsrSystemInfo info = aaiConnection.receiveVnfm();
+        isValid(info);
+        final boolean done = subscriberService.subscribe(info);
 
         if (!done) {
             throw new VeVnfmException("Could not subscribe to VNFM");
