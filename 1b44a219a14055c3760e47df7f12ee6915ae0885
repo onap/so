@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "4cfdab55_20339e4e",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/GeneratePayloadForService.java",
+        "patchSetId": 35
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-10T14:48:07Z",
+      "side": 1,
+      "message": "Removed",
+      "parentUuid": "4bc8e30b_d6830889",
+      "revId": "1b44a219a14055c3760e47df7f12ee6915ae0885",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "94e0ca0f_0044c8e8",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/GeneratePayloadForService.java",
         "patchSetId": 35
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "3acad957_007cb4de",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/GeneratePayloadForService.java",
+        "patchSetId": 35
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-10T14:48:07Z",
+      "side": 1,
+      "message": "Removed",
+      "parentUuid": "94e0ca0f_0044c8e8",
+      "revId": "1b44a219a14055c3760e47df7f12ee6915ae0885",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e434f17e_9e47b49b",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/NetworkFunction.java",
         "patchSetId": 35
@@ -47,6 +83,24 @@
       "writtenOn": "2020-02-03T14:16:33Z",
       "side": 1,
       "message": "I find this name very confusing. NetworkFunction suggests that this is some general domain object which should be widely used in the rest of the SO code. While this is just local, CDS-specific interface which does not even describe object but rather operation. Could you call it accordingly? i.e. CDSRequestGenerator or CDSRequestConfiguration?",
+      "revId": "1b44a219a14055c3760e47df7f12ee6915ae0885",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "59257cf0_b81e09d5",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/NetworkFunction.java",
+        "patchSetId": 35
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-10T14:48:07Z",
+      "side": 1,
+      "message": "Changed it to CDSRequestProvider",
+      "parentUuid": "e434f17e_9e47b49b",
       "revId": "1b44a219a14055c3760e47df7f12ee6915ae0885",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
@@ -88,6 +142,24 @@
     },
     {
       "key": {
+        "uuid": "6603c1e4_d9196174",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/PayloadConstants.java",
+        "patchSetId": 35
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-10T14:48:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "997dcc44_b187cd76",
+      "revId": "1b44a219a14055c3760e47df7f12ee6915ae0885",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "10161cfe_c34b2d29",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/PayloadConstants.java",
         "patchSetId": 35
@@ -105,6 +177,24 @@
     },
     {
       "key": {
+        "uuid": "797ed6e9_f057aaa3",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/PayloadConstants.java",
+        "patchSetId": 35
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-10T14:48:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "10161cfe_c34b2d29",
+      "revId": "1b44a219a14055c3760e47df7f12ee6915ae0885",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b1e415cc_e39fbffa",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/PropertyPayloadBuilder.java",
         "patchSetId": 35
@@ -116,6 +206,24 @@
       "writtenOn": "2020-02-03T14:16:33Z",
       "side": 1,
       "message": "is this class used anywhere?",
+      "revId": "1b44a219a14055c3760e47df7f12ee6915ae0885",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e9cf2f10_d549ef4d",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/PropertyPayloadBuilder.java",
+        "patchSetId": 35
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-10T14:48:07Z",
+      "side": 1,
+      "message": "removed",
+      "parentUuid": "b1e415cc_e39fbffa",
       "revId": "1b44a219a14055c3760e47df7f12ee6915ae0885",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
@@ -139,6 +247,24 @@
     },
     {
       "key": {
+        "uuid": "a621b109_72a085c8",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/aai/tasks/cds/UpdateOrchestrationStatus.java",
+        "patchSetId": 35
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-10T14:48:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d3e37d4d_acb70e27",
+      "revId": "1b44a219a14055c3760e47df7f12ee6915ae0885",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "29fd19d0_c5646525",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/aai/tasks/cds/UpdateOrchestrationStatus.java",
         "patchSetId": 35
@@ -150,6 +276,24 @@
       "writtenOn": "2020-02-03T14:16:33Z",
       "side": 1,
       "message": "unused field",
+      "revId": "1b44a219a14055c3760e47df7f12ee6915ae0885",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "df0b2e6a_bfef3618",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/aai/tasks/cds/UpdateOrchestrationStatus.java",
+        "patchSetId": 35
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-10T14:48:07Z",
+      "side": 1,
+      "message": "removed.",
+      "parentUuid": "29fd19d0_c5646525",
       "revId": "1b44a219a14055c3760e47df7f12ee6915ae0885",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
@@ -170,6 +314,24 @@
       "revId": "1b44a219a14055c3760e47df7f12ee6915ae0885",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1fb353b2_862ad905",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/aai/tasks/cds/UpdateOrchestrationStatus.java",
+        "patchSetId": 35
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-10T14:48:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f0776372_f5d7add6",
+      "revId": "1b44a219a14055c3760e47df7f12ee6915ae0885",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
