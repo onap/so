@@ -1,0 +1,1778 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.2.0-impl:etsi.org:ETSI_NFV_OpenAPI:1",
+    "title": "SOL003 - VNF Package Management Notification interface",
+    "description": "SOL003 - VNF Package Management Notification interface\n\nIMPORTANT: Please note that this file might be not aligned to the current version of the ETSI Group Specification it refers to. In case of discrepancies the published ETSI Group Specification takes precedence.\n\nIn clause 4.3.2 of ETSI GS NFV-SOL 003 v2.4.1, an attribute-based filtering mechanism is defined. This mechanism is currently not included in the corresponding OpenAPI design for this GS version. Changes to the attribute-based filtering mechanism are being considered in v2.5.1 of this GS for inclusion in the corresponding future ETSI NFV OpenAPI design.\nPlease report bugs to https://forge.etsi.org/bugzilla/buglist.cgi?component=Nfv-Openapis&list_id=61&product=NFV&resolution=\n",
+    "license": {
+      "name": "ETSI Forge copyright notice",
+      "url": "https://forge.etsi.org/etsi-forge-copyright-notice.txt"
+    }
+  },
+  "externalDocs": {
+    "description": "ETSI GS NFV-SOL 003 V2.5.1",
+    "url": "https://www.etsi.org/deliver/etsi_gs/NFV-SOL/001_099/003/02.05.01_60/gs_nfv-sol003v020501p.pdf"
+  },
+  "basePath": "/callback/v1",
+  "schemes": ["https"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "paths": {
+    "/URI-is-provided-by-the-client-when-creating-the-subscription-VnfPackageOnboardingNotification": {
+      "post": {
+        "description": "Notify\n\nThe POST method delivers a notification from the server to the client.\n",
+        "parameters": [{
+          "name": "VnfPackageOnboardingNotification",
+          "description": "A notification about on-boarding of a VNF package.",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "description": "This type represents a VNF package management notification, which informs the receiver that the onboarding process of a VNF package is complete and the package is ready for use. The notification shall be triggered by the NFVO when the \"onboardingState\" attribute of a new VNF package has changed to \"ONBOARDED\".\n",
+            "type": "object",
+            "required": ["id", "notificationType", "subscriptionId", "timeStamp", "vnfPkgId", "vnfdId", "_links"],
+            "properties": {
+              "id": {
+                "description": "An identifier with the intention of being globally unique.\n",
+                "type": "string"
+              },
+              "notificationType": {
+                "description": "Discriminator for the different notification types. Shall be set to \"VnfPackageOnboardingNotification\" for this notification type.\n",
+                "type": "string",
+                "enum": ["VnfPackageOnboardingNotification"]
+              },
+              "subscriptionId": {
+                "description": "An identifier with the intention of being globally unique.\n",
+                "type": "string"
+              },
+              "timeStamp": {
+                "description": "Date-time stamp. Representation: String formatted according to IETF RFC 3339.\n",
+                "type": "string",
+                "format": "date-time"
+              },
+              "vnfPkgId": {
+                "description": "An identifier with the intention of being globally unique.\n",
+                "type": "string"
+              },
+              "vnfdId": {
+                "description": "An identifier with the intention of being globally unique.\n",
+                "type": "string"
+              },
+              "_links": {
+                "description": "This type represents the links to resources that a VNF package management notification can contain.\n",
+                "type": "object",
+                "required": ["vnfPackage", "subscription"],
+                "properties": {
+                  "vnfPackage": {
+                    "description": "This type represents a link to a resource in a notification, using an absolute or relative URI. It shall comply with the provisions defined in table 4.4.1.3a-1.\n",
+                    "type": "object",
+                    "required": ["href"],
+                    "properties": {
+                      "href": {
+                        "description": "String formatted according to IETF RFC 3986.\n",
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "subscription": {
+                    "description": "This type represents a link to a resource in a notification, using an absolute or relative URI. It shall comply with the provisions defined in table 4.4.1.3a-1.\n",
+                    "type": "object",
+                    "required": ["href"],
+                    "properties": {
+                      "href": {
+                        "description": "String formatted according to IETF RFC 3986.\n",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }, {
+          "name": "Authorization",
+          "description": "The authorization token for the request. Reference: IETF RFC 7235\n",
+          "in": "header",
+          "required": false,
+          "type": "string"
+        }, {
+          "name": "Content-Type",
+          "description": "The MIME type of the body of the request. Reference: IETF RFC 7231\n",
+          "in": "header",
+          "required": true,
+          "type": "string"
+        }, {
+          "name": "Version",
+          "description": "Version of the API requested to use when responding to this request.\n",
+          "in": "header",
+          "required": true,
+          "type": "string"
+        }],
+        "responses": {
+          "204": {
+            "description": "204 NO CONTENT\nThe notification was delivered successfully.\n",
+            "headers": {
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            }
+          },
+          "400": {
+            "description": "400 BAD REQUEST\n400 code can be returned in the following specified cases, the specific cause has to be proper specified in the \"ProblemDetails\" structure to be returned.\nIf the request is malformed or syntactically incorrect (e.g. if the request URI contains incorrect query parameters or the payload body contains a syntactically incorrect data structure), the API producer shall respond with this response code. The \"ProblemDetails\" structure shall be provided, and should include in the \"detail\" attribute more information about the source of the problem.\nIf the response to a GET request which queries a container resource would be so big that the performance of the API producer is adversely affected, and the API producer does not support paging for the affected resource, it shall respond with this response code. The \"ProblemDetails\" structure shall be provided, and should include in the \"detail\" attribute more information about the source of the problem.\nIf there is an application error related to the client's input that cannot be easily mapped to any other HTTP response code (\"catch all error\"), the API producer shall respond with this response code. The \"ProblemDetails\" structure shall be provided, and shall include in the \"detail\" attribute more information about the source of the problem.\nIf the request contains a malformed access token, the API producer should respond with this response. The details of the error shall be returned in the WWW Authenticate HTTP header, as defined in IETF RFC 6750 and IETF RFC 7235. The ProblemDetails structure may be provided.\nThe use of this HTTP error response code described above is applicable to the use of the OAuth 2.0 for the authorization of API requests and notifications, as defined in clauses 4.5.3.3 and 4.5.3.4.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": ["status", "detail"],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401 UNAUTHORIZED\nIf the request contains no access token even though one is required, or if the request contains an authorization token that is invalid (e.g. expired or revoked), the API producer should respond with this response. The details of the error shall be returned in the WWW-Authenticate HTTP header, as defined in IETF RFC 6750 and IETF RFC 7235. The ProblemDetails structure may be provided.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": ["status", "detail"],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403 FORBIDDEN\nIf the API consumer is not allowed to perform a particular request to a particular resource, the API producer shall respond with this response code. The \"ProblemDetails\" structure shall be provided. It should include in the \"detail\" attribute information about the source of the problem, and may indicate how to solve it.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": ["status", "detail"],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404 NOT FOUND\nIf the API producer did not find a current representation for the resource addressed by the URI passed in the request or is not willing to disclose that one exists, it shall respond with this response code. The \"ProblemDetails\" structure may be provided, including in the \"detail\" attribute information about the source of the problem, e.g. a wrong resource URI variable.\nThis response code is not appropriate in case the resource addressed by the URI is a container resource which is designed to contain child resources, but does not contain any child resource at the time the request is received. For a GET request to an existing empty container resource, a typical response contains a 200 OK response code and a payload body with an empty array.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": ["status", "detail"],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "406 NOT ACCEPTABLE\nIf the \"Accept\" header does not contain at least one name of a content type that is acceptable to the API producer, the API producer shall respond with this response code. The \"ProblemDetails\" structure may be omitted.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": ["status", "detail"],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "500 INTERNAL SERVER ERROR\nIf there is an application error not related to the client's input that cannot be easily mapped to any other HTTP response code (\"catch all error\"), the API producer shall respond with this response code. The \"ProblemDetails\" structure shall be provided, and shall include in the \"detail\" attribute more information about the source of the problem.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": ["status", "detail"],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "503 SERVICE UNAVAILABLE\nIf the API producer encounters an internal overload situation of itself or of a system it relies on, it should respond with this response code, following the provisions in IETF RFC 7231 for the use of the \"Retry-After\" HTTP header and for the alternative to refuse the connection. The \"ProblemDetails\" structure may be omitted.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": ["status", "detail"],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "description": "The GET method allows the server to test the notification endpoint that is provided by the client, e.g. during subscription.\n",
+        "parameters": [{
+          "name": "Authorization",
+          "description": "The authorization token for the request. Reference: IETF RFC 7235\n",
+          "in": "header",
+          "required": false,
+          "type": "string"
+        }, {
+          "name": "Version",
+          "description": "Version of the API requested to use when responding to this request.\n",
+          "in": "header",
+          "required": true,
+          "type": "string"
+        }],
+        "responses": {
+          "204": {
+            "description": "204 NO CONTENT\nThe notification endpoint was tested successfully. The response body shall be empty.\n",
+            "headers": {
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            }
+          },
+          "400": {
+            "description": "400 BAD REQUEST\n400 code can be returned in the following specified cases, the specific cause has to be proper specified in the \"ProblemDetails\" structure to be returned.\nIf the request is malformed or syntactically incorrect (e.g. if the request URI contains incorrect query parameters or the payload body contains a syntactically incorrect data structure), the API producer shall respond with this response code. The \"ProblemDetails\" structure shall be provided, and should include in the \"detail\" attribute more information about the source of the problem.\nIf the response to a GET request which queries a container resource would be so big that the performance of the API producer is adversely affected, and the API producer does not support paging for the affected resource, it shall respond with this response code. The \"ProblemDetails\" structure shall be provided, and should include in the \"detail\" attribute more information about the source of the problem.\nIf there is an application error related to the client's input that cannot be easily mapped to any other HTTP response code (\"catch all error\"), the API producer shall respond with this response code. The \"ProblemDetails\" structure shall be provided, and shall include in the \"detail\" attribute more information about the source of the problem.\nIf the request contains a malformed access token, the API producer should respond with this response. The details of the error shall be returned in the WWW Authenticate HTTP header, as defined in IETF RFC 6750 and IETF RFC 7235. The ProblemDetails structure may be provided.\nThe use of this HTTP error response code described above is applicable to the use of the OAuth 2.0 for the authorization of API requests and notifications, as defined in clauses 4.5.3.3 and 4.5.3.4.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": ["status", "detail"],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401 UNAUTHORIZED\nIf the request contains no access token even though one is required, or if the request contains an authorization token that is invalid (e.g. expired or revoked), the API producer should respond with this response. The details of the error shall be returned in the WWW-Authenticate HTTP header, as defined in IETF RFC 6750 and IETF RFC 7235. The ProblemDetails structure may be provided.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": ["status", "detail"],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403 FORBIDDEN\nIf the API consumer is not allowed to perform a particular request to a particular resource, the API producer shall respond with this response code. The \"ProblemDetails\" structure shall be provided. It should include in the \"detail\" attribute information about the source of the problem, and may indicate how to solve it.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": ["status", "detail"],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404 NOT FOUND\nIf the API producer did not find a current representation for the resource addressed by the URI passed in the request or is not willing to disclose that one exists, it shall respond with this response code. The \"ProblemDetails\" structure may be provided, including in the \"detail\" attribute information about the source of the problem, e.g. a wrong resource URI variable.\nThis response code is not appropriate in case the resource addressed by the URI is a container resource which is designed to contain child resources, but does not contain any child resource at the time the request is received. For a GET request to an existing empty container resource, a typical response contains a 200 OK response code and a payload body with an empty array.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": ["status", "detail"],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "406 NOT ACCEPTABLE\nIf the \"Accept\" header does not contain at least one name of a content type that is acceptable to the API producer, the API producer shall respond with this response code. The \"ProblemDetails\" structure may be omitted.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": ["status", "detail"],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "500 INTERNAL SERVER ERROR\nIf there is an application error not related to the client's input that cannot be easily mapped to any other HTTP response code (\"catch all error\"), the API producer shall respond with this response code. The \"ProblemDetails\" structure shall be provided, and shall include in the \"detail\" attribute more information about the source of the problem.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": ["status", "detail"],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "503 SERVICE UNAVAILABLE\nIf the API producer encounters an internal overload situation of itself or of a system it relies on, it should respond with this response code, following the provisions in IETF RFC 7231 for the use of the \"Retry-After\" HTTP header and for the alternative to refuse the connection. The \"ProblemDetails\" structure may be omitted.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": ["status", "detail"],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/URI-is-provided-by-the-client-when-creating-the-subscription-VnfPackageChangeNotification": {
+      "post": {
+        "description": "Notify\n\nThe POST method delivers a notification from the server to the client.\n",
+        "parameters": [{
+          "name": "VnfPackageChangeNotification",
+          "description": "A notification about changes of status in a VNF package.\n",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "description": "This type represents a VNF package management notification, which informs the receiver of a change of the status in an on-boarded VNF package. Only changes in the \"operationalState\" attribute of an on-boarded VNF package and the deletion NF package will be reported. Changes in the \"usageState\" and \"onboardingState\" attributes are not reported. The notification shall be triggered by the NFVO when there is a change in the status of an onboarded VNF package, as follows: * The \"operationalState\" attribute of a VNF package has changed, and the  \"onboardingState\" attribute of the package has the value \"ONBOARDED\"\n  (i.e. the package has been onboarded previously).\n* The on-boarded VNF package has been deleted.\n",
+            "type": "object",
+            "required": ["id", "notificationType", "subscriptionId", "timeStamp", "vnfPkgId", "vnfdId", "changeType", "_links"],
+            "properties": {
+              "id": {
+                "description": "An identifier with the intention of being globally unique.\n",
+                "type": "string"
+              },
+              "notificationType": {
+                "description": "Discriminator for the different notification types.  Shall be set to \"VnfPackageChangeNotification\" for this notification type.\n",
+                "type": "string",
+                "enum": ["VnfPackageChangeNotification"]
+              },
+              "subscriptionId": {
+                "description": "An identifier with the intention of being globally unique.\n",
+                "type": "string"
+              },
+              "timeStamp": {
+                "description": "Date-time stamp. Representation: String formatted according to IETF RFC 3339.\n",
+                "type": "string",
+                "format": "date-time"
+              },
+              "vnfPkgId": {
+                "description": "An identifier with the intention of being globally unique.\n",
+                "type": "string"
+              },
+              "vnfdId": {
+                "description": "An identifier with the intention of being globally unique.\n",
+                "type": "string"
+              },
+              "changeType": {
+                "description": "- OP_STATE_CHANGE: The \"operationalState\" attribute has been changed. - PKG_DELETE: The VNF package has been deleted.\n",
+                "type": "string",
+                "enum": ["OP_STATE_CHANGE", "PKG_DELETE"]
+              },
+              "operationalState": {
+                "description": "- ENABLED: The VNF package is enabled, i.e. it can be used for  instantiation of new VNF instances.\n- DISABLED: The VNF package is disabled, i.e. it cannot be used for  further VNF instantiation requests (unless and until the VNF package\n  is re-enabled).\n",
+                "type": "string",
+                "enum": ["ENABLED", "DISABLED"]
+              },
+              "_links": {
+                "description": "This type represents the links to resources that a VNF package management notification can contain.\n",
+                "type": "object",
+                "required": ["vnfPackage", "subscription"],
+                "properties": {
+                  "vnfPackage": {
+                    "description": "This type represents a link to a resource in a notification, using an absolute or relative URI. It shall comply with the provisions defined in table 4.4.1.3a-1.\n",
+                    "type": "object",
+                    "required": ["href"],
+                    "properties": {
+                      "href": {
+                        "description": "String formatted according to IETF RFC 3986.\n",
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "subscription": {
+                    "description": "This type represents a link to a resource in a notification, using an absolute or relative URI. It shall comply with the provisions defined in table 4.4.1.3a-1.\n",
+                    "type": "object",
+                    "required": ["href"],
+                    "properties": {
+                      "href": {
+                        "description": "String formatted according to IETF RFC 3986.\n",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }, {
+          "name": "Authorization",
+          "description": "The authorization token for the request. Reference: IETF RFC 7235\n",
+          "in": "header",
+          "required": false,
+          "type": "string"
+        }, {
+          "name": "Content-Type",
+          "description": "The MIME type of the body of the request. Reference: IETF RFC 7231\n",
+          "in": "header",
+          "required": true,
+          "type": "string"
+        }, {
+          "name": "Version",
+          "description": "Version of the API requested to use when responding to this request.\n",
+          "in": "header",
+          "required": true,
+          "type": "string"
+        }],
+        "responses": {
+          "204": {
+            "description": "204 NO CONTENT\nThe notification was delivered successfully.\n",
+            "headers": {
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            }
+          },
+          "400": {
+            "description": "400 BAD REQUEST\n400 code can be returned in the following specified cases, the specific cause has to be proper specified in the \"ProblemDetails\" structure to be returned.\nIf the request is malformed or syntactically incorrect (e.g. if the request URI contains incorrect query parameters or the payload body contains a syntactically incorrect data structure), the API producer shall respond with this response code. The \"ProblemDetails\" structure shall be provided, and should include in the \"detail\" attribute more information about the source of the problem.\nIf the response to a GET request which queries a container resource would be so big that the performance of the API producer is adversely affected, and the API producer does not support paging for the affected resource, it shall respond with this response code. The \"ProblemDetails\" structure shall be provided, and should include in the \"detail\" attribute more information about the source of the problem.\nIf there is an application error related to the client's input that cannot be easily mapped to any other HTTP response code (\"catch all error\"), the API producer shall respond with this response code. The \"ProblemDetails\" structure shall be provided, and shall include in the \"detail\" attribute more information about the source of the problem.\nIf the request contains a malformed access token, the API producer should respond with this response. The details of the error shall be returned in the WWW Authenticate HTTP header, as defined in IETF RFC 6750 and IETF RFC 7235. The ProblemDetails structure may be provided.\nThe use of this HTTP error response code described above is applicable to the use of the OAuth 2.0 for the authorization of API requests and notifications, as defined in clauses 4.5.3.3 and 4.5.3.4.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": ["status", "detail"],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401 UNAUTHORIZED\nIf the request contains no access token even though one is required, or if the request contains an authorization token that is invalid (e.g. expired or revoked), the API producer should respond with this response. The details of the error shall be returned in the WWW-Authenticate HTTP header, as defined in IETF RFC 6750 and IETF RFC 7235. The ProblemDetails structure may be provided.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": ["status", "detail"],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403 FORBIDDEN\nIf the API consumer is not allowed to perform a particular request to a particular resource, the API producer shall respond with this response code. The \"ProblemDetails\" structure shall be provided. It should include in the \"detail\" attribute information about the source of the problem, and may indicate how to solve it.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": ["status", "detail"],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404 NOT FOUND\nIf the API producer did not find a current representation for the resource addressed by the URI passed in the request or is not willing to disclose that one exists, it shall respond with this response code. The \"ProblemDetails\" structure may be provided, including in the \"detail\" attribute information about the source of the problem, e.g. a wrong resource URI variable.\nThis response code is not appropriate in case the resource addressed by the URI is a container resource which is designed to contain child resources, but does not contain any child resource at the time the request is received. For a GET request to an existing empty container resource, a typical response contains a 200 OK response code and a payload body with an empty array.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": ["status", "detail"],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "406 NOT ACCEPTABLE\nIf the \"Accept\" header does not contain at least one name of a content type that is acceptable to the API producer, the API producer shall respond with this response code. The \"ProblemDetails\" structure may be omitted.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": ["status", "detail"],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "500 INTERNAL SERVER ERROR\nIf there is an application error not related to the client's input that cannot be easily mapped to any other HTTP response code (\"catch all error\"), the API producer shall respond with this response code. The \"ProblemDetails\" structure shall be provided, and shall include in the \"detail\" attribute more information about the source of the problem.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": ["status", "detail"],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "503 SERVICE UNAVAILABLE\nIf the API producer encounters an internal overload situation of itself or of a system it relies on, it should respond with this response code, following the provisions in IETF RFC 7231 for the use of the \"Retry-After\" HTTP header and for the alternative to refuse the connection. The \"ProblemDetails\" structure may be omitted.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": ["status", "detail"],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "description": "The GET method allows the server to test the notification endpoint that is provided by the client, e.g. during subscription.\n",
+        "parameters": [{
+          "name": "Authorization",
+          "description": "The authorization token for the request. Reference: IETF RFC 7235\n",
+          "in": "header",
+          "required": false,
+          "type": "string"
+        }, {
+          "name": "Version",
+          "description": "Version of the API requested to use when responding to this request.\n",
+          "in": "header",
+          "required": true,
+          "type": "string"
+        }],
+        "responses": {
+          "204": {
+            "description": "204 NO CONTENT\nThe notification endpoint was tested successfully. The response body shall be empty.\n",
+            "headers": {
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            }
+          },
+          "400": {
+            "description": "400 BAD REQUEST\n400 code can be returned in the following specified cases, the specific cause has to be proper specified in the \"ProblemDetails\" structure to be returned.\nIf the request is malformed or syntactically incorrect (e.g. if the request URI contains incorrect query parameters or the payload body contains a syntactically incorrect data structure), the API producer shall respond with this response code. The \"ProblemDetails\" structure shall be provided, and should include in the \"detail\" attribute more information about the source of the problem.\nIf the response to a GET request which queries a container resource would be so big that the performance of the API producer is adversely affected, and the API producer does not support paging for the affected resource, it shall respond with this response code. The \"ProblemDetails\" structure shall be provided, and should include in the \"detail\" attribute more information about the source of the problem.\nIf there is an application error related to the client's input that cannot be easily mapped to any other HTTP response code (\"catch all error\"), the API producer shall respond with this response code. The \"ProblemDetails\" structure shall be provided, and shall include in the \"detail\" attribute more information about the source of the problem.\nIf the request contains a malformed access token, the API producer should respond with this response. The details of the error shall be returned in the WWW Authenticate HTTP header, as defined in IETF RFC 6750 and IETF RFC 7235. The ProblemDetails structure may be provided.\nThe use of this HTTP error response code described above is applicable to the use of the OAuth 2.0 for the authorization of API requests and notifications, as defined in clauses 4.5.3.3 and 4.5.3.4.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": ["status", "detail"],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401 UNAUTHORIZED\nIf the request contains no access token even though one is required, or if the request contains an authorization token that is invalid (e.g. expired or revoked), the API producer should respond with this response. The details of the error shall be returned in the WWW-Authenticate HTTP header, as defined in IETF RFC 6750 and IETF RFC 7235. The ProblemDetails structure may be provided.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": ["status", "detail"],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403 FORBIDDEN\nIf the API consumer is not allowed to perform a particular request to a particular resource, the API producer shall respond with this response code. The \"ProblemDetails\" structure shall be provided. It should include in the \"detail\" attribute information about the source of the problem, and may indicate how to solve it.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": ["status", "detail"],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404 NOT FOUND\nIf the API producer did not find a current representation for the resource addressed by the URI passed in the request or is not willing to disclose that one exists, it shall respond with this response code. The \"ProblemDetails\" structure may be provided, including in the \"detail\" attribute information about the source of the problem, e.g. a wrong resource URI variable.\nThis response code is not appropriate in case the resource addressed by the URI is a container resource which is designed to contain child resources, but does not contain any child resource at the time the request is received. For a GET request to an existing empty container resource, a typical response contains a 200 OK response code and a payload body with an empty array.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": ["status", "detail"],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "406 NOT ACCEPTABLE\nIf the \"Accept\" header does not contain at least one name of a content type that is acceptable to the API producer, the API producer shall respond with this response code. The \"ProblemDetails\" structure may be omitted.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": ["status", "detail"],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "500 INTERNAL SERVER ERROR\nIf there is an application error not related to the client's input that cannot be easily mapped to any other HTTP response code (\"catch all error\"), the API producer shall respond with this response code. The \"ProblemDetails\" structure shall be provided, and shall include in the \"detail\" attribute more information about the source of the problem.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": ["status", "detail"],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "503 SERVICE UNAVAILABLE\nIf the API producer encounters an internal overload situation of itself or of a system it relies on, it should respond with this response code, following the provisions in IETF RFC 7231 for the use of the \"Retry-After\" HTTP header and for the alternative to refuse the connection. The \"ProblemDetails\" structure may be omitted.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              },
+              "Version": {
+                "description": "Version of the API used in the response.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": ["status", "detail"],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
