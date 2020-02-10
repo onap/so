@@ -22,6 +22,7 @@ package org.onap.so.adapters.appc.orchestrator;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * @since Version 1.0
@@ -29,6 +30,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 
 @SpringBootApplication(scanBasePackages = {"org.onap"})
+@EnableScheduling
 public class AppcOrchestratorApplication {
 
     private static final String LOGS_DIR = "logs_dir";

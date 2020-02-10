@@ -43,7 +43,6 @@ public class CreateInventoryService {
 
     @PostConstruct
     public void auditAAIInventory() throws Exception {
-
         ExternalTaskClient client = externalTaskServiceUtils.createExternalTaskClient();
         client.subscribe("InventoryCreate")
                 .lockDuration(Long.parseLong(env.getProperty("mso.audit.lock-time", "60000")))

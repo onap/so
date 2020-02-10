@@ -1,6 +1,8 @@
 package org.onap.so.utils;
 
 import java.security.GeneralSecurityException;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import org.camunda.bpm.client.ExternalTaskClient;
 import org.camunda.bpm.client.interceptor.ClientRequestInterceptor;
 import org.camunda.bpm.client.interceptor.auth.BasicAuthProvider;
@@ -8,7 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+
 
 @Component
 public class ExternalTaskServiceUtils {
@@ -16,13 +21,19 @@ public class ExternalTaskServiceUtils {
     @Autowired
     public Environment env;
 
+    protected Set<ExternalTaskClient> taskClients = ConcurrentHashMap.newKeySet();
+
+
     private static final Logger logger = LoggerFactory.getLogger(ExternalTaskServiceUtils.class);
 
     public ExternalTaskClient createExternalTaskClient() throws Exception {
         String auth = getAuth();
         ClientRequestInterceptor interceptor = createClientInterceptor(auth);
-        return ExternalTaskClient.create().baseUrl(env.getRequiredProperty("mso.workflow.endpoint")).maxTasks(1)
-                .addInterceptor(interceptor).asyncResponseTimeout(120000).build();
+        ExternalTaskClient client =
+                ExternalTaskClient.create().baseUrl(env.getRequiredProperty("mso.workflow.endpoint")).maxTasks(1)
+                        .addInterceptor(interceptor).asyncResponseTimeout(120000).build();
+        taskClients.add(client);
+        return client;
     }
 
     protected ClientRequestInterceptor createClientInterceptor(String auth) {
@@ -42,5 +53,13 @@ public class ExternalTaskServiceUtils {
         return Integer.parseInt(env.getProperty("workflow.topics.maxClients", "3"));
     }
 
+    @Scheduled(fixedDelay = 30000)
+    public void checkAllClientsActive() {
+        getClients().stream().filter(client -> !client.isActive()).forEach(ExternalTaskClient::start);
+    }
+
+    protected Set<ExternalTaskClient> getClients() {
+        return taskClients;
+    }
 
 }
