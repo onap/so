@@ -16,6 +16,23 @@
       "revId": "192027abbd6a96dfac44016f0d374297712ef84c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7977f5d6_609957d6",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericCDSProcessing.java",
+        "patchSetId": 36
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2020-02-10T16:44:37Z",
+      "side": 1,
+      "message": "the logic here is to construct the executionObject and set in the ExecutionContext. Presume it require another service block to actually send executionObject to CDS server. IMO, sending request to CDS can be done here as well. e.g, in CdsControllerDE, it will do both construction and sending request.",
+      "revId": "192027abbd6a96dfac44016f0d374297712ef84c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
