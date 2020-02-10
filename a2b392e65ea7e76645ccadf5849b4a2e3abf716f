@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "7b71674f_c5dca39b",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetup.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1494,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-02-10T07:20:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e5766994_83444af9",
+      "range": {
+        "startLine": 1490,
+        "startChar": 0,
+        "endLine": 1494,
+        "endChar": 13
+      },
+      "revId": "a2b392e65ea7e76645ccadf5849b4a2e3abf716f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "62932eee_d27193b5",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupPnf.java",
         "patchSetId": 4
@@ -36,6 +60,30 @@
       "writtenOn": "2020-02-07T16:57:38Z",
       "side": 1,
       "message": "Utility classes should not have public constructors (sonar will detect that). Make a private constructor with:\nthrow new IllegalStateException(\"Utility class\");\n\nChange the class name to be clear that it is utility class -\u003e PnfSetupUtils",
+      "range": {
+        "startLine": 30,
+        "startChar": 12,
+        "endLine": 30,
+        "endChar": 27
+      },
+      "revId": "a2b392e65ea7e76645ccadf5849b4a2e3abf716f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6be337b8_d4445014",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupPnf.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-02-10T07:20:10Z",
+      "side": 1,
+      "message": "Private constructor - done.\nBBInputSetupPnf is the name suggested by LG. I can change it if you both come to an agreement.",
+      "parentUuid": "62932eee_d27193b5",
       "range": {
         "startLine": 30,
         "startChar": 12,
