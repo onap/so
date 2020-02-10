@@ -58,7 +58,7 @@ public class ProcessVnfc extends AbstractTestAction {
                 aaiResourceClient.connect(vfModuleURI, vnfcURI);
             }
         } catch (Exception e) {
-            logger.debug(e.getMessage());
+            logger.debug("Exception in ProcessVnfc.doExecute", e);
         }
     }
 }
