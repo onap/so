@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "c3da9f2a_4ac86923",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/test/java/org/onap/so/adapters/vevnfm/service/StartupServiceTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-02-10T14:43:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e49e6d53_d0f4b6f1",
+      "revId": "98e113a77aec92a98a2b720d4c7d0eb5a6a77974",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0c17760a_278ba17d",
         "filename": "adapters/mso-ve-vnfm-adapter/src/test/java/org/onap/so/adapters/vevnfm/service/StartupServiceTest.java",
         "patchSetId": 7
@@ -30,6 +48,24 @@
       "writtenOn": "2020-02-10T13:59:30Z",
       "side": 1,
       "message": "When testing failures we should use the ExpectedException rule from JUnit. This class offers better support than the annotation style.",
+      "revId": "98e113a77aec92a98a2b720d4c7d0eb5a6a77974",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67a78213_64710b65",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/test/java/org/onap/so/adapters/vevnfm/service/StartupServiceTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-02-10T14:43:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0c17760a_278ba17d",
       "revId": "98e113a77aec92a98a2b720d4c7d0eb5a6a77974",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
