@@ -7,6 +7,7 @@ DELETE FROM activity_spec;
 DELETE FROM activity_spec_categories;
 DELETE FROM activity_spec_parameters;
 DELETE FROM user_parameters;
+DELETE FROM workflow;
 
 INSERT INTO activity_spec (NAME, DESCRIPTION, VERSION) 
 VALUES 
