@@ -31,8 +31,6 @@ import java.util.TreeSet;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.onap.so.client.orchestration.AAIPnfResources;
-import org.onap.so.logger.LoggingAnchor;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
@@ -62,12 +60,14 @@ import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.AAIConfigurationResources;
 import org.onap.so.client.orchestration.AAIInstanceGroupResources;
 import org.onap.so.client.orchestration.AAINetworkResources;
+import org.onap.so.client.orchestration.AAIPnfResources;
 import org.onap.so.client.orchestration.AAIServiceInstanceResources;
 import org.onap.so.client.orchestration.AAIVfModuleResources;
 import org.onap.so.client.orchestration.AAIVnfResources;
 import org.onap.so.client.orchestration.AAIVolumeGroupResources;
 import org.onap.so.client.orchestration.AAIVpnBindingResources;
 import org.onap.so.logger.ErrorCode;
+import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -274,23 +274,57 @@ public class AAICreateTasks {
      * @param str
      * @throws @return
      */
+    public void createPlatformForNetwork(BuildingBlockExecution execution) {
+        try {
+            L3Network network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
+            if (network != null) {
+                createPlatformNetwork(network);
+            }
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
+    /**
+     * This method is used for separating (,) from the string.
+     *
+     * @param str
+     * @throws @return
+     */
     public void createPlatform(BuildingBlockExecution execution) {
         try {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
-            Platform platform = vnf.getPlatform();
-            if (platform != null) {
-                if (platform.getPlatformName() == null || "".equals(platform.getPlatformName())) {
-                    logger.debug("PlatformName is null in input. Skipping create platform...");
-                } else {
-                    List<String> platforms = splitCDL(platform.getPlatformName());
-                    platforms.stream().forEach(platformName -> aaiVnfResources
-                            .createPlatformandConnectVnf(new Platform(platformName), vnf));
-                }
+            if (vnf != null) {
+                createPlatformVnf(vnf);
             }
         } catch (Exception ex) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
 
+    }
+
+    protected void createPlatformVnf(GenericVnf vnf) {
+        Platform platform = vnf.getPlatform();
+        if (Strings.isNullOrEmpty(platform.getPlatformName())) {
+            logger.debug("PlatformName is null in input. Skipping create platform...");
+        } else {
+            List<String> platforms = splitCDL(platform.getPlatformName());
+            platforms.stream().forEach(
+                    platformName -> aaiVnfResources.createPlatformandConnectVnf(new Platform(platformName), vnf));
+        }
+    }
+
+    protected void createPlatformNetwork(L3Network network) {
+        Platform platform = network.getPlatform();
+        if (platform != null) {
+            if (Strings.isNullOrEmpty(platform.getPlatformName())) {
+                logger.debug("PlatformName is null in input. Skipping create platform...");
+            } else {
+                List<String> platforms = splitCDL(platform.getPlatformName());
+                platforms.stream().forEach(
+                        platformName -> aaiNetworkResources.createPlatformAndConnectNetwork(platform, network));
+            }
+        }
     }
 
     /**
@@ -312,19 +346,48 @@ public class AAICreateTasks {
     public void createLineOfBusiness(BuildingBlockExecution execution) {
         try {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
-            LineOfBusiness lineOfBusiness = vnf.getLineOfBusiness();
-            if (lineOfBusiness != null) {
-                if (lineOfBusiness.getLineOfBusinessName() == null
-                        || "".equals(lineOfBusiness.getLineOfBusinessName())) {
-                    logger.info("lineOfBusiness is null in input. Skipping create lineOfBusiness...");
-                } else {
-                    List<String> lineOfBussinesses = splitCDL(lineOfBusiness.getLineOfBusinessName());
-                    lineOfBussinesses.stream().forEach(lobName -> aaiVnfResources
-                            .createLineOfBusinessandConnectVnf(new LineOfBusiness(lobName), vnf));
-                }
+            if (vnf != null) {
+                createLineOfBusinessVnf(vnf);
             }
         } catch (Exception ex) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
+    public void createLineOfBusinessForNetwork(BuildingBlockExecution execution) {
+        try {
+            L3Network network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
+            if (network != null) {
+                createLineOfBusinessNetwork(network);
+            }
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
+    protected void createLineOfBusinessVnf(GenericVnf vnf) {
+        LineOfBusiness lineOfBusiness = vnf.getLineOfBusiness();
+        if (lineOfBusiness != null) {
+            if (Strings.isNullOrEmpty(lineOfBusiness.getLineOfBusinessName())) {
+                logger.info("lineOfBusiness is null in input. Skipping create lineOfBusiness...");
+            } else {
+                List<String> lineOfBussinesses = splitCDL(lineOfBusiness.getLineOfBusinessName());
+                lineOfBussinesses.stream().forEach(
+                        lobName -> aaiVnfResources.createLineOfBusinessandConnectVnf(new LineOfBusiness(lobName), vnf));
+            }
+        }
+    }
+
+    protected void createLineOfBusinessNetwork(L3Network network) {
+        LineOfBusiness lineOfBusiness = network.getLineOfBusiness();
+        if (lineOfBusiness != null) {
+            if (Strings.isNullOrEmpty(lineOfBusiness.getLineOfBusinessName())) {
+                logger.info("lineOfBusiness is null in input. Skipping create lineOfBusiness...");
+            } else {
+                List<String> lineOfBussinesses = splitCDL(lineOfBusiness.getLineOfBusinessName());
+                lineOfBussinesses.stream().forEach(lobName -> aaiNetworkResources
+                        .createLineOfBusinessAndConnectNetwork(new LineOfBusiness(lobName), network));
+            }
         }
     }
 

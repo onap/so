@@ -30,6 +30,8 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.LineOfBusiness;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Platform;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet;
 import org.onap.so.client.aai.AAIObjectPlurals;
@@ -38,8 +40,8 @@ import org.onap.so.client.aai.entities.AAIEdgeLabel;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
-import org.onap.so.client.graphinventory.entities.uri.Depth;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
+import org.onap.so.client.graphinventory.entities.uri.Depth;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -74,6 +76,22 @@ public class AAINetworkResources {
         org.onap.aai.domain.yang.L3Network aaiL3Network = aaiObjectMapper.mapNetwork(network);
         injectionHelper.getAaiClient().createIfNotExists(networkURI, Optional.of(aaiL3Network)).connect(networkURI,
                 serviceInstanceURI);
+    }
+
+    public void createLineOfBusinessAndConnectNetwork(LineOfBusiness lineOfBusiness, L3Network network) {
+        AAIResourceUri lineOfBusinessURI =
+                AAIUriFactory.createResourceUri(AAIObjectType.LINE_OF_BUSINESS, lineOfBusiness.getLineOfBusinessName());
+        AAIResourceUri networkURI = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, network.getNetworkId());
+        injectionHelper.getAaiClient().createIfNotExists(lineOfBusinessURI, Optional.of(lineOfBusiness))
+                .connect(networkURI, lineOfBusinessURI);
+    }
+
+    public void createPlatformAndConnectNetwork(Platform platform, L3Network network) {
+        AAIResourceUri platformURI =
+                AAIUriFactory.createResourceUri(AAIObjectType.PLATFORM, platform.getPlatformName());
+        AAIResourceUri networkURI = AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, network.getNetworkId());
+        injectionHelper.getAaiClient().createIfNotExists(platformURI, Optional.of(platform)).connect(networkURI,
+                platformURI);
     }
 
     public void deleteNetwork(L3Network network) {
