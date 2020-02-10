@@ -6,6 +6,8 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
+ * Modifications Copyright (c) 2020 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,14 +35,11 @@ import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.namingservice.NamingClient;
 import org.onap.so.client.namingservice.NamingRequestObject;
 import org.onap.so.client.namingservice.NamingRequestObjectBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class NamingServiceResources {
-    private static final Logger logger = LoggerFactory.getLogger(NamingServiceResources.class);
     private static final String NAMING_TYPE = "instanceGroup";
 
     @Autowired
@@ -53,14 +52,14 @@ public class NamingServiceResources {
             throws BadResponseException, IOException {
         Element element = namingRequestObjectBuilder.elementMapper(instanceGroup.getId(), policyInstanceName,
                 NAMING_TYPE, nfNamingCode, instanceGroup.getInstanceGroupName());
-        List<Element> elements = new ArrayList<Element>();
+        List<Element> elements = new ArrayList<>();
         elements.add(element);
         return (namingClient.postNameGenRequest(namingRequestObjectBuilder.nameGenRequestMapper(elements)));
     }
 
     public String deleteInstanceGroupName(InstanceGroup instanceGroup) throws BadResponseException, IOException {
         Deleteelement deleteElement = namingRequestObjectBuilder.deleteElementMapper(instanceGroup.getId());
-        List<Deleteelement> deleteElements = new ArrayList<Deleteelement>();
+        List<Deleteelement> deleteElements = new ArrayList<>();
         deleteElements.add(deleteElement);
         return (namingClient
                 .deleteNameGenRequest(namingRequestObjectBuilder.nameGenDeleteRequestMapper(deleteElements)));
@@ -70,8 +69,8 @@ public class NamingServiceResources {
             throws BadResponseException, IOException {
         HashMap<String, String> nsRequestObject = namingRequestObject.getNamingRequestObjectMap();
         Element element = new Element();
-        nsRequestObject.forEach((k, v) -> element.put(k, v));
-        List<Element> elements = new ArrayList<Element>();
+        nsRequestObject.forEach(element::put);
+        List<Element> elements = new ArrayList<>();
         elements.add(element);
         return (namingClient.postNameGenRequest(namingRequestObjectBuilder.nameGenRequestMapper(elements)));
     }
@@ -81,7 +80,7 @@ public class NamingServiceResources {
         HashMap<String, String> nsRequestObject = namingRequestObject.getNamingRequestObjectMap();
         Deleteelement delElement = new Deleteelement();
         nsRequestObject.forEach((k, v) -> delElement.setExternalKey(v));
-        List<Deleteelement> delElements = new ArrayList<Deleteelement>();
+        List<Deleteelement> delElements = new ArrayList<>();
         delElements.add(delElement);
         return (namingClient.deleteNameGenRequest(namingRequestObjectBuilder.nameGenDeleteRequestMapper(delElements)));
     }

@@ -4,12 +4,14 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2020 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -65,8 +67,7 @@ public class NetworkAdapterObjectMapper {
 
     public CreateNetworkRequest createNetworkRequestMapper(RequestContext requestContext, CloudRegion cloudRegion,
             OrchestrationContext orchestrationContext, ServiceInstance serviceInstance, L3Network l3Network,
-            Map<String, String> userInput, String cloudRegionPo, Customer customer)
-            throws UnsupportedEncodingException {
+            Map<String, String> userInput, String cloudRegionPo, Customer customer) {
         CreateNetworkRequest createNetworkRequest = new CreateNetworkRequest();
 
         // set cloudSiteId as determined for cloud region PO instead of cloudRegion.getLcpCloudRegionId()
@@ -119,7 +120,7 @@ public class NetworkAdapterObjectMapper {
     }
 
     public DeleteNetworkRequest deleteNetworkRequestMapper(RequestContext requestContext, CloudRegion cloudRegion,
-            ServiceInstance serviceInstance, L3Network l3Network) throws UnsupportedEncodingException {
+            ServiceInstance serviceInstance, L3Network l3Network) {
         DeleteNetworkRequest deleteNetworkRequest = new DeleteNetworkRequest();
 
         deleteNetworkRequest.setCloudSiteId(cloudRegion.getLcpCloudRegionId());
@@ -150,14 +151,14 @@ public class NetworkAdapterObjectMapper {
 
     /**
      * Access method to build Rollback Network Request
-     * 
+     *
      * @return
      * @throws UnsupportedEncodingException
      */
     public RollbackNetworkRequest createNetworkRollbackRequestMapper(RequestContext requestContext,
             CloudRegion cloudRegion, OrchestrationContext orchestrationContext, ServiceInstance serviceInstance,
             L3Network l3Network, Map<String, String> userInput, String cloudRegionPo,
-            CreateNetworkResponse createNetworkResponse) throws UnsupportedEncodingException {
+            CreateNetworkResponse createNetworkResponse) {
         RollbackNetworkRequest rollbackNetworkRequest = new RollbackNetworkRequest();
 
         rollbackNetworkRequest = setCommonRollbackRequestFields(rollbackNetworkRequest, requestContext);
@@ -171,7 +172,7 @@ public class NetworkAdapterObjectMapper {
 
     public UpdateNetworkRequest createNetworkUpdateRequestMapper(RequestContext requestContext, CloudRegion cloudRegion,
             OrchestrationContext orchestrationContext, ServiceInstance serviceInstance, L3Network l3Network,
-            Map<String, String> userInput, Customer customer) throws UnsupportedEncodingException {
+            Map<String, String> userInput, Customer customer) {
         UpdateNetworkRequest updateNetworkRequest = new UpdateNetworkRequest();
 
         updateNetworkRequest.setCloudSiteId(cloudRegion.getLcpCloudRegionId());
@@ -198,11 +199,10 @@ public class NetworkAdapterObjectMapper {
     }
 
     private RollbackNetworkRequest setCommonRollbackRequestFields(RollbackNetworkRequest request,
-            RequestContext requestContext) throws UnsupportedEncodingException {
+            RequestContext requestContext) {
         request.setSkipAAI(true);
         String messageId = requestContext.getMsoRequestId();
         request.setMessageId(messageId);
-        // request.setNotificationUrl(createCallbackUrl("NetworkAResponse", messageId));
         return request;
     }
 
@@ -240,7 +240,7 @@ public class NetworkAdapterObjectMapper {
         return UUID.randomUUID().toString();
     }
 
-    protected String createCallbackUrl(String messageType, String correlator) throws UnsupportedEncodingException {
+    protected String createCallbackUrl(String messageType, String correlator) {
         String endpoint = this.getEndpoint();
 
         while (endpoint.endsWith("/")) {
@@ -256,14 +256,14 @@ public class NetworkAdapterObjectMapper {
 
     /**
      * Use BB L3Network object to build subnets list of type org.onap.so.openstack.beans.Subnet
-     * 
+     *
      * @param L3Network
      * @return List<org.onap.so.openstack.beans.Subnet>
      */
     protected List<Subnet> buildOpenstackSubnetList(L3Network l3Network) {
 
         List<org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet> subnets = l3Network.getSubnets();
-        List<org.onap.so.openstack.beans.Subnet> subnetList = new ArrayList<org.onap.so.openstack.beans.Subnet>();
+        List<org.onap.so.openstack.beans.Subnet> subnetList = new ArrayList<>();
         // create mapper from onap Subnet to openstack bean Subnet
         if (modelMapper.getTypeMap(org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet.class,
                 org.onap.so.openstack.beans.Subnet.class) == null) {
@@ -319,7 +319,7 @@ public class NetworkAdapterObjectMapper {
     private ProviderVlanNetwork buildProviderVlanNetwork(L3Network l3Network) {
         ProviderVlanNetwork providerVlanNetwork = new ProviderVlanNetwork();
         providerVlanNetwork.setPhysicalNetworkName(l3Network.getPhysicalNetworkName());
-        List<Integer> vlans = new ArrayList<Integer>();
+        List<Integer> vlans = new ArrayList<>();
         List<org.onap.so.bpmn.servicedecomposition.bbobjects.SegmentationAssignment> segmentationAssignments =
                 l3Network.getSegmentationAssignments();
         for (org.onap.so.bpmn.servicedecomposition.bbobjects.SegmentationAssignment assignment : segmentationAssignments) {
@@ -401,7 +401,7 @@ public class NetworkAdapterObjectMapper {
 
     private Map<String, String> addSharedAndExternal(Map<String, String> userInput, L3Network l3Network) {
         if (userInput == null)
-            userInput = new HashMap<String, String>();
+            userInput = new HashMap<>();
         if (!userInput.containsKey("shared")) {
             userInput.put("shared", Optional.ofNullable(l3Network.isIsSharedNetwork()).orElse(false).toString());
         }

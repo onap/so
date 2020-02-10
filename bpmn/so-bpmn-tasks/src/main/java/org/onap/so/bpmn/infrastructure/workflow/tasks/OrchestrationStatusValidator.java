@@ -6,6 +6,8 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
+ * Modifications Copyright (c) 2020 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,11 +31,9 @@ import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.exception.OrchestrationStatusValidationException;
 import org.onap.so.db.catalog.beans.BuildingBlockDetail;
-import org.onap.so.db.catalog.beans.OrchestrationAction;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.db.catalog.beans.OrchestrationStatusStateTransitionDirective;
 import org.onap.so.db.catalog.beans.OrchestrationStatusValidationDirective;
-import org.onap.so.db.catalog.beans.ResourceType;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,8 +52,6 @@ public class OrchestrationStatusValidator {
             "Orchestration Status Validation failed. ResourceType=(%s), TargetAction=(%s), OrchestrationStatus=(%s)";
     private static final String ORCHESTRATION_STATUS_VALIDATION_RESULT = "orchestrationStatusValidationResult";
     private static final String ALACARTE = "aLaCarte";
-    private static final String MULTI_STAGE_DESIGN_OFF = "false";
-    private static final String MULTI_STAGE_DESIGN_ON = "true";
 
     @Autowired
     private ExtractPojosForBB extractPojosForBB;
@@ -86,7 +84,7 @@ public class OrchestrationStatusValidator {
                         String.format(BUILDING_BLOCK_DETAIL_NOT_FOUND, buildingBlockFlowName));
             }
 
-            OrchestrationStatus orchestrationStatus = null;
+            OrchestrationStatus orchestrationStatus;
 
             switch (buildingBlockDetail.getResourceType()) {
                 case SERVICE:
