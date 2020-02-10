@@ -356,7 +356,7 @@ public class RequestHandlerUtils extends AbstractRestHandler {
         String requestId = duplicateRecord.getRequestId();
         ResponseEntity<List<HistoricProcessInstanceEntity>> response = null;
         try {
-            response = camundaRequestHandler.getCamundaProcessInstanceHistory(requestId, true);
+            response = camundaRequestHandler.getCamundaProcessInstanceHistory(requestId, true, true, false);
         } catch (RestClientException e) {
             logger.error("Error querying Camunda for process-instance history for requestId: {}, exception: {}",
                     requestId, e.getMessage());
@@ -370,13 +370,8 @@ public class RequestHandlerUtils extends AbstractRestHandler {
 
         if (response.getBody().isEmpty()) {
             updateStatus(duplicateRecord, Status.COMPLETE, "Request Completed");
-        }
-        for (HistoricProcessInstance instance : response.getBody()) {
-            if (("ACTIVE").equals(instance.getState())) {
-                return true;
-            } else {
-                updateStatus(duplicateRecord, Status.COMPLETE, "Request Completed");
-            }
+        } else {
+            return true;
         }
         return false;
     }

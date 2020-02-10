@@ -105,10 +105,8 @@ public class CamundaRequestHandlerUnitTest {
         activityInstanceResponse =
                 new ResponseEntity<List<HistoricActivityInstanceEntity>>(activityInstanceList, HttpStatus.ACCEPTED);
 
-        doReturn("/sobpmnengine/history/process-instance?variables=mso-request-id_eq_").when(env)
-                .getProperty("mso.camunda.rest.history.uri");
-        doReturn("/sobpmnengine/history/activity-instance?processInstanceId=").when(env)
-                .getProperty("mso.camunda.rest.activity.uri");
+        doReturn("/sobpmnengine/history/process-instance").when(env).getProperty("mso.camunda.rest.history.uri");
+        doReturn("/sobpmnengine/history/activity-instance").when(env).getProperty("mso.camunda.rest.activity.uri");
         doReturn("auth").when(env).getRequiredProperty("mso.camundaAuth");
         doReturn("key").when(env).getRequiredProperty("mso.msoKey");
         doReturn("http://localhost:8089").when(env).getProperty("mso.camundaURL");
@@ -208,9 +206,9 @@ public class CamundaRequestHandlerUnitTest {
     @Test
     public void getTaskName() throws IOException, ContactCamundaException {
         doReturn(processInstanceResponse).when(camundaRequestHandler).getCamundaProcessInstanceHistory(REQUEST_ID,
-                false);
+                false, false, true);
         doReturn(activityInstanceResponse).when(camundaRequestHandler)
-                .getCamundaActivityHistory("c4c6b647-a26e-11e9-b144-0242ac14000b");
+                .getCamundaActivityHistory("c2fd4066-a26e-11e9-b144-0242ac14000b");
         doReturn("Last task executed: BB to Execute").when(camundaRequestHandler).getActivityName(activityInstanceList);
         String expectedTaskName = "Last task executed: BB to Execute";
 
@@ -255,7 +253,7 @@ public class CamundaRequestHandlerUnitTest {
     @Test
     public void getTaskNameProcessInstanceLookupFailureTest() throws IOException, ContactCamundaException {
         doThrow(HttpClientErrorException.class).when(camundaRequestHandler).getCamundaProcessInstanceHistory(REQUEST_ID,
-                false);
+                false, false, true);
 
         String result = camundaRequestHandler.getTaskName(REQUEST_ID);
         assertNull(result);
@@ -265,8 +263,8 @@ public class CamundaRequestHandlerUnitTest {
     public void getCamundaActivityHistoryTest() throws IOException, ContactCamundaException {
         HttpHeaders headers = setHeaders();
         HttpEntity<?> requestEntity = new HttpEntity<>(headers);
-        String targetUrl = "http://localhost:8089/sobpmnengine/history/activity-instance?processInstanceId="
-                + "c4c6b647-a26e-11e9-b144-0242ac14000b";
+        String targetUrl =
+                "http://localhost:8089/sobpmnengine/history/activity-instance?processInstanceId=c4c6b647-a26e-11e9-b144-0242ac14000b&maxResults=1";
         doReturn(activityInstanceResponse).when(restTemplate).exchange(targetUrl, HttpMethod.GET, requestEntity,
                 new ParameterizedTypeReference<List<HistoricActivityInstanceEntity>>() {});
         doReturn(headers).when(camundaRequestHandler).setCamundaHeaders("auth", "key");
@@ -279,8 +277,8 @@ public class CamundaRequestHandlerUnitTest {
     public void getCamundaActivityHistoryErrorTest() {
         HttpHeaders headers = setHeaders();
         HttpEntity<?> requestEntity = new HttpEntity<>(headers);
-        String targetUrl = "http://localhost:8089/sobpmnengine/history/activity-instance?processInstanceId="
-                + "c4c6b647-a26e-11e9-b144-0242ac14000b";
+        String targetUrl =
+                "http://localhost:8089/sobpmnengine/history/activity-instance?processInstanceId=c4c6b647-a26e-11e9-b144-0242ac14000b&maxResults=1";
         doThrow(new ResourceAccessException("IOException")).when(restTemplate).exchange(targetUrl, HttpMethod.GET,
                 requestEntity, new ParameterizedTypeReference<List<HistoricActivityInstanceEntity>>() {});
         doReturn(headers).when(camundaRequestHandler).setCamundaHeaders("auth", "key");
@@ -296,14 +294,14 @@ public class CamundaRequestHandlerUnitTest {
     public void getCamundaProccesInstanceHistoryTest() throws IOException, ContactCamundaException {
         HttpHeaders headers = setHeaders();
         HttpEntity<?> requestEntity = new HttpEntity<>(headers);
-        String targetUrl =
-                "http://localhost:8089/sobpmnengine/history/process-instance?variables=mso-request-id_eq_" + REQUEST_ID;
+        String targetUrl = "http://localhost:8089/sobpmnengine/history/process-instance?processInstanceBusinessKey="
+                + REQUEST_ID + "&active=true&maxResults=1";
         doReturn(processInstanceResponse).when(restTemplate).exchange(targetUrl, HttpMethod.GET, requestEntity,
                 new ParameterizedTypeReference<List<HistoricProcessInstanceEntity>>() {});
         doReturn(headers).when(camundaRequestHandler).setCamundaHeaders("auth", "key");
 
         ResponseEntity<List<HistoricProcessInstanceEntity>> actualResponse =
-                camundaRequestHandler.getCamundaProcessInstanceHistory(REQUEST_ID, false);
+                camundaRequestHandler.getCamundaProcessInstanceHistory(REQUEST_ID, false, true, false);
         assertEquals(processInstanceResponse, actualResponse);
     }
 
@@ -311,14 +309,14 @@ public class CamundaRequestHandlerUnitTest {
     public void getCamundaProccesInstanceHistoryRetryTest() {
         HttpHeaders headers = setHeaders();
         HttpEntity<?> requestEntity = new HttpEntity<>(headers);
-        String targetUrl =
-                "http://localhost:8089/sobpmnengine/history/process-instance?variables=mso-request-id_eq_" + REQUEST_ID;
+        String targetUrl = "http://localhost:8089/sobpmnengine/history/process-instance?processInstanceBusinessKey="
+                + REQUEST_ID + "&active=true&maxResults=1";
         doThrow(new ResourceAccessException("I/O error")).when(restTemplateRetry).exchange(targetUrl, HttpMethod.GET,
                 requestEntity, new ParameterizedTypeReference<List<HistoricProcessInstanceEntity>>() {});
         doReturn(headers).when(camundaRequestHandler).setCamundaHeaders("auth", "key");
 
         thrown.expect(ResourceAccessException.class);
-        camundaRequestHandler.getCamundaProcessInstanceHistory(REQUEST_ID, true);
+        camundaRequestHandler.getCamundaProcessInstanceHistory(REQUEST_ID, true, true, false);
 
         verify(restTemplateRetry, times(2)).exchange(targetUrl, HttpMethod.GET, requestEntity,
                 new ParameterizedTypeReference<List<HistoricProcessInstanceEntity>>() {});
@@ -328,14 +326,14 @@ public class CamundaRequestHandlerUnitTest {
     public void getCamundaProccesInstanceHistoryNoRetryTest() {
         HttpHeaders headers = setHeaders();
         HttpEntity<?> requestEntity = new HttpEntity<>(headers);
-        String targetUrl =
-                "http://localhost:8089/sobpmnengine/history/process-instance?variables=mso-request-id_eq_" + REQUEST_ID;
+        String targetUrl = "http://localhost:8089/sobpmnengine/history/process-instance?processInstanceBusinessKey="
+                + REQUEST_ID + "&sortBy=startTime&sortOrder=desc&maxResults=1";
         doThrow(HttpClientErrorException.class).when(restTemplate).exchange(targetUrl, HttpMethod.GET, requestEntity,
                 new ParameterizedTypeReference<List<HistoricProcessInstanceEntity>>() {});
         doReturn(headers).when(camundaRequestHandler).setCamundaHeaders("auth", "key");
 
         thrown.expect(HttpStatusCodeException.class);
-        camundaRequestHandler.getCamundaProcessInstanceHistory(REQUEST_ID, false);
+        camundaRequestHandler.getCamundaProcessInstanceHistory(REQUEST_ID, false, false, true);
 
         verify(restTemplate, times(1)).exchange(targetUrl, HttpMethod.GET, requestEntity,
                 new ParameterizedTypeReference<List<HistoricProcessInstanceEntity>>() {});
@@ -345,15 +343,15 @@ public class CamundaRequestHandlerUnitTest {
     public void getCamundaProccesInstanceHistoryFailThenSuccessTest() throws IOException, ContactCamundaException {
         HttpHeaders headers = setHeaders();
         HttpEntity<?> requestEntity = new HttpEntity<>(headers);
-        String targetUrl =
-                "http://localhost:8089/sobpmnengine/history/process-instance?variables=mso-request-id_eq_" + REQUEST_ID;
+        String targetUrl = "http://localhost:8089/sobpmnengine/history/process-instance?processInstanceBusinessKey="
+                + REQUEST_ID + "&sortBy=startTime&sortOrder=desc&maxResults=1";
         when(restTemplateRetry.exchange(targetUrl, HttpMethod.GET, requestEntity,
                 new ParameterizedTypeReference<List<HistoricProcessInstanceEntity>>() {}))
                         .thenThrow(new ResourceAccessException("I/O Exception")).thenReturn(processInstanceResponse);
         doReturn(headers).when(camundaRequestHandler).setCamundaHeaders("auth", "key");
 
         ResponseEntity<List<HistoricProcessInstanceEntity>> actualResponse =
-                camundaRequestHandler.getCamundaProcessInstanceHistory(REQUEST_ID, true);
+                camundaRequestHandler.getCamundaProcessInstanceHistory(REQUEST_ID, true, false, true);
 
         assertEquals(processInstanceResponse, actualResponse);
         verify(restTemplateRetry, times(2)).exchange(targetUrl, HttpMethod.GET, requestEntity,

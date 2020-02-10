@@ -1534,6 +1534,18 @@ public abstract class WorkflowTest {
         }
     }
 
+    protected Object getVariableFromHistoryByProcessInstanceId(String processInstanceId, String variableName) {
+        try {
+            HistoricVariableInstance v = historyService.createHistoricVariableInstanceQuery()
+                    .processInstanceId(processInstanceId).variableName(variableName).singleResult();
+            return v == null ? null : v.getValue();
+        } catch (Exception e) {
+            logger.debug("Error retrieving variable {} from historical process with processInstanceId {}: ",
+                    variableName, processInstanceId, e);
+            return null;
+        }
+    }
+
     /**
      * Gets a variable value from a process instance based on businessKey and process name. Must be used when multiple
      * instances exist with the same business key such as when business key is passed to subflows or shared across
