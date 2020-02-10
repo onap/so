@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "04e8ea59_37ae5991",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericCDSProcessing.java",
+        "patchSetId": 36
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2020-02-10T16:11:17Z",
+      "side": 1,
+      "message": "This component won\u0027t be injected by autowire. it\u0027s better to create two components, \n1. GenericCDSProcessingBB implements ControllerRunnable\u003cBuildingBlockExecution\u003e\n2. GenericCDSProcessingDE implements ControllerRunnable\u003cDelegateExecution\u003e\noptional to use Abstract class as parent for both components. \n\nin the run() method, if condition won\u0027t be required and can be handled in each component.\n\nYou can use ControllerExecutionBBTestIT for some integration tests, e.g, testExecution_cdsConfigAssign_actionExecuted can be used to test pnf config-assign. Feel free to add more test cases or new test classes.",
+      "revId": "192027abbd6a96dfac44016f0d374297712ef84c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
