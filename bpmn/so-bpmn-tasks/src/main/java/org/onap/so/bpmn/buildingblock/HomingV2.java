@@ -28,9 +28,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class HomingV2 {
 
-    static final String HOMING_SNIRO = "sniro";
-    static final String HOMING_OOF = "oof";
-    static final String HOMING_SOLUTION = "Homing_Solution";
+    public static final String HOMING_SNIRO = "sniro";
+    public static final String HOMING_OOF = "oof";
+    public static final String HOMING_SOLUTION = "Homing_Solution";
 
     private SniroHomingV2 sniroHomingV2;
     private OofHomingV2 oofHomingV2;
@@ -59,6 +59,6 @@ public class HomingV2 {
 
     private boolean isSniro(BuildingBlockExecution execution) {
         return execution.getGeneralBuildingBlock().getRequestContext().getRequestParameters().getUserParams().stream()
-                .anyMatch(params -> HOMING_SNIRO.equals(params.get(HOMING_SOLUTION)));
+                .anyMatch(params -> HomingV2.HOMING_SNIRO.equals(params.get(HomingV2.HOMING_SOLUTION)));
     }
 }
