@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2019 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2020 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,7 +26,7 @@ import java.util.HashMap;
 
 public class NamingRequestObject {
 
-    private HashMap<String, String> namingRequestMap = new HashMap<String, String>();
+    private HashMap<String, String> namingRequestMap = new HashMap<>();
 
     public HashMap<String, String> getNamingRequestObjectMap() {
         return this.namingRequestMap;
