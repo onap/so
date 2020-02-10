@@ -45,8 +45,7 @@ public class ProjectOwningEntityValidation implements ValidationRule {
         project = info.getSir().getRequestDetails().getProject();
         owningEntity = info.getSir().getRequestDetails().getOwningEntity();
         if (reqVersion >= 5 && requestScope.equalsIgnoreCase(ModelType.service.name())
-                && !info.getReqParameters().getEnforceValidNfValues() && action == Action.createInstance
-                || action == Action.assignInstance) {
+                && action == Action.createInstance || action == Action.assignInstance) {
             if (reqVersion > 5 && owningEntity == null) {
                 throw new ValidationException("owningEntity");
             }
