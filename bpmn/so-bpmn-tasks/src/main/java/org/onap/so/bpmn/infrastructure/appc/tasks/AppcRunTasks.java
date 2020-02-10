@@ -6,12 +6,14 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
+ * Modifications Copyright (c) 2020 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,7 +31,6 @@ import java.util.Optional;
 import org.onap.so.logger.LoggingAnchor;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.onap.aai.domain.yang.Vserver;
 import org.onap.appc.client.lcm.model.Action;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.core.json.JsonUtils;
@@ -143,7 +144,7 @@ public class AppcRunTasks {
 
             ControllerSelectionReference controllerSelectionReference = catalogDbClient
                     .getControllerSelectionReferenceByVnfTypeAndActionCategory(vnfType, action.toString());
-            String controllerType = null;
+            String controllerType;
             if (controllerSelectionReference != null) {
                 controllerType = controllerSelectionReference.getControllerName();
             } else {
@@ -191,13 +192,13 @@ public class AppcRunTasks {
         logger.error("Error Message: {}", appcMessage);
         logger.error("ERROR CODE: {}", appcCode);
         logger.trace("End of runAppCommand ");
-        if (appcCode != null && !appcCode.equals("0")) {
+        if (appcCode != null && !"0".equals(appcCode)) {
             exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(appcCode), appcMessage);
         }
     }
 
     protected void mapRollbackVariables(BuildingBlockExecution execution, Action action, String appcCode) {
-        if (appcCode != null && appcCode.equals("0") && action != null) {
+        if ("0".equals(appcCode) && action != null) {
             if (action.equals(Action.Lock)) {
                 execution.setVariable(ROLLBACK_VNF_LOCK, true);
             } else if (action.equals(Action.Unlock)) {
@@ -216,7 +217,7 @@ public class AppcRunTasks {
 
     private HashMap<String, String> buildPayloadInfo(String vnfName, String aicIdentity, String vnfHostIpAddress,
             String vmIdList, String vserverIdList, String identityUrl, String vfModuleId) {
-        HashMap<String, String> payloadInfo = new HashMap<String, String>();
+        HashMap<String, String> payloadInfo = new HashMap<>();
         payloadInfo.put("vnfName", vnfName);
         payloadInfo.put("aicIdentity", aicIdentity);
         payloadInfo.put("vnfHostIpAddress", vnfHostIpAddress);
@@ -242,44 +243,39 @@ public class AppcRunTasks {
         return payload;
     }
 
-    protected void getVserversForAppc(BuildingBlockExecution execution, GenericVnf vnf) throws Exception {
+    protected void getVserversForAppc(BuildingBlockExecution execution, GenericVnf vnf) throws RuntimeException {
         AAIResultWrapper aaiRW = aaiVnfResources.queryVnfWrapperById(vnf);
 
-        if (aaiRW != null && aaiRW.getRelationships() != null && aaiRW.getRelationships().isPresent()) {
-            Relationships relationships = aaiRW.getRelationships().get();
-            if (relationships != null) {
-                List<AAIResourceUri> vserverUris = relationships.getRelatedAAIUris(AAIObjectType.VSERVER);
-                JSONArray vserverIds = new JSONArray();
-                JSONArray vserverSelfLinks = new JSONArray();
-                if (vserverUris != null) {
-                    for (AAIResourceUri j : vserverUris) {
-                        if (j != null) {
-                            if (j.getURIKeys() != null) {
-                                String vserverId = j.getURIKeys().get("vserver-id");
-                                vserverIds.put(vserverId);
-                            }
-                            Optional<Vserver> oVserver = aaiVnfResources.getVserver(j);
-                            if (oVserver.isPresent()) {
-                                Vserver vserver = oVserver.get();
-                                if (vserver != null) {
-                                    String vserverSelfLink = vserver.getVserverSelflink();
-                                    vserverSelfLinks.put(vserverSelfLink);
-                                }
-                            }
-                        }
+        if (aaiRW == null || aaiRW.getRelationships() == null || !aaiRW.getRelationships().isPresent()) {
+            return;
+        }
+        Relationships relationships = aaiRW.getRelationships().get();
+        List<AAIResourceUri> vserverUris = relationships.getRelatedAAIUris(AAIObjectType.VSERVER);
+        JSONArray vserverIds = new JSONArray();
+        JSONArray vserverSelfLinks = new JSONArray();
+        if (vserverUris != null) {
+            for (AAIResourceUri j : vserverUris) {
+                if (j != null) {
+                    if (j.getURIKeys() != null) {
+                        String vserverId = j.getURIKeys().get("vserver-id");
+                        vserverIds.put(vserverId);
                     }
+                    aaiVnfResources.getVserver(j).ifPresent((vserver) -> {
+                        String vserverSelfLink = vserver.getVserverSelflink();
+                        vserverSelfLinks.put(vserverSelfLink);
+                    });
                 }
-
-                JSONObject vmidsArray = new JSONObject();
-                JSONObject vserveridsArray = new JSONObject();
-                vmidsArray.put("vmIds", vserverSelfLinks.toString());
-                vserveridsArray.put("vserverIds", vserverIds.toString());
-                logger.debug("vmidsArray is: {}", vmidsArray.toString());
-                logger.debug("vserveridsArray is: {}", vserveridsArray.toString());
-
-                execution.setVariable("vmIdList", vmidsArray.toString());
-                execution.setVariable("vserverIdList", vserveridsArray.toString());
             }
         }
+
+        JSONObject vmidsArray = new JSONObject();
+        JSONObject vserveridsArray = new JSONObject();
+        vmidsArray.put("vmIds", vserverSelfLinks.toString());
+        vserveridsArray.put("vserverIds", vserverIds.toString());
+        logger.debug("vmidsArray is: {}", vmidsArray.toString());
+        logger.debug("vserveridsArray is: {}", vserveridsArray.toString());
+
+        execution.setVariable("vmIdList", vmidsArray.toString());
+        execution.setVariable("vserverIdList", vserveridsArray.toString());
     }
 }
