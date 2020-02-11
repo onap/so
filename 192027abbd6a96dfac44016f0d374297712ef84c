@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "0f3ebaeb_31898dc1",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericCDSProcessing.java",
+        "patchSetId": 36
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-11T15:12:18Z",
+      "side": 1,
+      "message": "I agree with Henry. I think we should go even further. Actually content of this and GeneratePayloadForCds classes are mostly switches and ifs that decide what to do based on:\n- type of the scope (VNF, PNF, etc.)\n- type of the execution (BuildingBlockExecution vs DelegateExecution)\n\nWhy we can\u0027t just make VnfCDSRequestProvider, VfModuleCDSRequestProvider, ServiceCDSRequestProvider implement ControllerRunnable directly? \nAnd all the decisions mentioned earlier could be made:\n- in the understand() method of each xxxCDSRequestProvider class (to match type of the scope),\n- by using proper execution type when implementing ControllerRunnable\u003cT\u003e (where T will be either BuildingBlockExecution or DelegateExecution)\n\nThe only \"valuable\" method in this and GeneratePayloadForCds classes is buildCdsPropertiesBean() which could be implemented in some utility class or in a base class for all xxxCDSRequestProviders.\n\n------------------------\n@Henry, side question - how this implementation relates to CdsControllerDE that you provided? Isn\u0027t it an overlap?",
+      "parentUuid": "04e8ea59_37ae5991",
+      "revId": "192027abbd6a96dfac44016f0d374297712ef84c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "7977f5d6_609957d6",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericCDSProcessing.java",
         "patchSetId": 36
