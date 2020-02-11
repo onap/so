@@ -20,15 +20,28 @@
 
 package org.onap.so.adapters.vevnfm.provider;
 
-import org.onap.so.configuration.rest.BasicHttpHeadersProvider;
+import static org.junit.Assert.*;
+import static org.onap.so.configuration.rest.BasicHttpHeadersProvider.AUTHORIZATION_HEADER;
+import org.junit.Test;
+import org.springframework.http.HttpHeaders;
 
-public class AuthorizationHeadersProvider extends BasicHttpHeadersProvider {
+public class AuthorizationHeadersProviderTest {
 
-    public void addAuthorization(final String authorization) {
-        getHttpHeaders().set(AUTHORIZATION_HEADER, authorization);
-    }
+    private static final String AUTHORIZATION_EXAMPLE = "authorization";
 
-    public void removeAuthorization() {
-        getHttpHeaders().remove(AUTHORIZATION_HEADER);
+    private final AuthorizationHeadersProvider provider = new AuthorizationHeadersProvider();
+
+    @Test
+    public void testSuccessValidAuthorizationAndRemoval() {
+        final HttpHeaders headers = provider.getHttpHeaders();
+        final int size = headers.size();
+
+        provider.addAuthorization(AUTHORIZATION_EXAMPLE);
+        assertEquals(size + 1, headers.size());
+        assertTrue(headers.containsKey(AUTHORIZATION_HEADER));
+
+        provider.removeAuthorization();
+        assertEquals(size, headers.size());
+        assertFalse(headers.containsKey(AUTHORIZATION_HEADER));
     }
 }
