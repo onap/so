@@ -46,6 +46,30 @@
       "revId": "903cfb96ee4d3fdcce5f731cb4685d5ff8836c00",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2b3bdfe9_91b58a79",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/configuration/SecurityConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 3957
+      },
+      "writtenOn": "2020-02-11T19:33:34Z",
+      "side": 1,
+      "message": "is this already done is some future commits?",
+      "parentUuid": "918b9933_fef1f925",
+      "range": {
+        "startLine": 55,
+        "startChar": 7,
+        "endLine": 56,
+        "endChar": 97
+      },
+      "revId": "903cfb96ee4d3fdcce5f731cb4685d5ff8836c00",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
