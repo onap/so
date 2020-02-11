@@ -1,0 +1,20 @@
+{
+    "jobId": "57c13120-0a03-4d2e-837a-7c41d61e4a30",
+    "responseDescriptor": 
+    {
+        "status": "error",
+        "progress": "255",
+        "statusDescription": "VNF package() already exists.",
+        "errorCode": "1",
+        "responseId": "2",
+        "responseHistoryList": [
+            {
+                "status": "processing",
+                "progress": "5",
+                "statusDescription": "Start CSAR(8f0b72e1-b6d6-42b6-a808-c60b17f04d7a) distribute.",
+                "errorCode": "0",
+                "responseId": "1"
+            }
+        ]
+    }
+}

@@ -1,0 +1,27 @@
+{
+    "jobId": "57c13120-0a03-4d2e-837a-7c41d61e4a30",
+    "responseDescriptor": 
+    {
+        "status": "finished",
+        "progress": "100",
+        "statusDescription": "CSAR(8f0b72e1-b6d6-42b6-a808-c60b17f04d7a) distribute successfully.",
+        "errorCode": "0",
+        "responseId": "3",
+        "responseHistoryList": [
+            {
+                "status": "processing",
+                "progress": "30",
+                "statusDescription": "Save CSAR(8f0b72e1-b6d6-42b6-a808-c60b17f04d7a) to database.",
+                "errorCode": "0",
+                "responseId": "2"
+            },
+            {
+                "status": "processing",
+                "progress": "5",
+                "statusDescription": "Start CSAR(8f0b72e1-b6d6-42b6-a808-c60b17f04d7a) distribute.",
+                "errorCode": "0",
+                "responseId": "1"
+            }
+        ]
+    }
+}

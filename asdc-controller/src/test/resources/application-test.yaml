@@ -102,3 +102,11 @@ mso:
     endpoint: http://localhost:${wiremock.server.port}
   config:
     defaultpath: src/test/resources
+
+sdc:
+  endpoint: http://localhost:${wiremock.server.port}
+  
+etsi-catalog-manager:
+  endpoint:  http://localhost:${wiremock.server.port}/api/catalog/v1
+  rest:
+    timeoutInSeconds: 5
