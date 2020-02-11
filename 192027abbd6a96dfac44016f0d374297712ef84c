@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "a105a6ef_14f61fd3",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericCDSProcessing.java",
+        "patchSetId": 36
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2020-02-11T19:30:05Z",
+      "side": 1,
+      "message": "Hi Lukasz, CdsControllerDE is being used in the configurePnfResource.bpmn. the intention is to show how the new ControllerRunnable interface can be used. I talked to Rahul and he could refactor the CdsControllerDE to support generic SO-CDS for PNF configuration and upgrade, camunda DelegateExecution API based implementation.",
+      "parentUuid": "0f3ebaeb_31898dc1",
+      "revId": "192027abbd6a96dfac44016f0d374297712ef84c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "7977f5d6_609957d6",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericCDSProcessing.java",
         "patchSetId": 36
