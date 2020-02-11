@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d0655bec_1cfe1c7c",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/service/DmaapService.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 3957
+      },
+      "writtenOn": "2020-02-11T19:23:52Z",
+      "side": 1,
+      "message": "so you are sending whole LCM notification class into dmaap? That\u0027s the contract?\nIs there something written to wiki?",
+      "range": {
+        "startLine": 27,
+        "startChar": 27,
+        "endLine": 27,
+        "endChar": 64
+      },
+      "revId": "37dad48713382ce04354e2231bd2938246f45340",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
