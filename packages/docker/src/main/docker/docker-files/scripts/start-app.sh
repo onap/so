@@ -83,6 +83,26 @@ fi
 
 jvmargs="${JVM_ARGS} -Dspring.profiles.active=${ACTIVE_PROFILE} -Djava.security.egd=file:/dev/./urandom -Dlogs_dir=${LOG_PATH} -Dlogging.config=/app/logback-spring.xml $jksargs -Dspring.config.additional-location=$CONFIG_PATH ${SSL_DEBUG} ${DISABLE_SNI}"
 
+
+read_properties(){
+    while IFS="=" read -r key value; do
+        case "${key}" in
+          '#'*) ;;
+             *)
+               eKey=$(echo $key | tr '[:lower:]' '[:upper:]')
+               export "$eKey"="$value"
+        esac
+    done <<-EOF
+	$1
+	EOF
+}
+
+
+
+if [ -n ${AAF_SSL_CERTS_ENABLED} ]; then
+read_properties "$(head -n 4 /app/certs/.passphrases)"
+fi
+
 echo "JVM Arguments: ${jvmargs}"
 
 java ${jvmargs} -jar app.jar
