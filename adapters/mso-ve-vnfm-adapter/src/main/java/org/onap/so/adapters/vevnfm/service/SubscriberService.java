@@ -68,7 +68,7 @@ public class SubscriberService {
             final LccnSubscriptionRequest request = createRequest();
             return sender.send(info, request);
         } finally {
-            headersProvider.resetPrevious();
+            headersProvider.removeAuthorization();
         }
     }
 

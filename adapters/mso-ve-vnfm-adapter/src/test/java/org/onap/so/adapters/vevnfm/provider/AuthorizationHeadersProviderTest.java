@@ -20,15 +20,21 @@
 
 package org.onap.so.adapters.vevnfm.provider;
 
-import org.onap.so.configuration.rest.BasicHttpHeadersProvider;
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
-public class AuthorizationHeadersProvider extends BasicHttpHeadersProvider {
+public class AuthorizationHeadersProviderTest {
 
-    public void addAuthorization(final String authorization) {
-        getHttpHeaders().set(AUTHORIZATION_HEADER, authorization);
-    }
+    private final AuthorizationHeadersProvider provider = new AuthorizationHeadersProvider();
 
-    public void removeAuthorization() {
-        getHttpHeaders().remove(AUTHORIZATION_HEADER);
+    @Test
+    public void testSuccess() {
+        final int size = provider.getHttpHeaders().size();
+
+        provider.addAuthorization("authorization");
+        assertEquals(size + 1, provider.getHttpHeaders().size());
+
+        provider.removeAuthorization();
+        assertEquals(size, provider.getHttpHeaders().size());
     }
 }
