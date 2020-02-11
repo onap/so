@@ -90,6 +90,17 @@ public class AAIObjectMapper {
     }
 
     public org.onap.aai.domain.yang.Pnf mapPnf(Pnf pnf) {
+        if (modelMapper.getTypeMap(Pnf.class, org.onap.aai.domain.yang.Pnf.class) == null) {
+            modelMapper.addMappings(new PropertyMap<Pnf, org.onap.aai.domain.yang.Pnf>() {
+                @Override
+                protected void configure() {
+                    map().setModelCustomizationId(source.getModelInfoPnf().getModelCustomizationUuid());
+                    map().setModelInvariantId(source.getModelInfoPnf().getModelInvariantUuid());
+                    map().setModelVersionId(source.getModelInfoPnf().getModelUuid());
+                }
+            });
+        }
+
         return modelMapper.map(pnf, org.onap.aai.domain.yang.Pnf.class);
     }
 
