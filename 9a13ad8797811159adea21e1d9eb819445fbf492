@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "042958da_d4ab092d",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/service/StartupService.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 3957
+      },
+      "writtenOn": "2020-02-11T19:17:52Z",
+      "side": 1,
+      "message": "this should be done periodically, not just one time.",
+      "range": {
+        "startLine": 33,
+        "startChar": 3,
+        "endLine": 52,
+        "endChar": 9
+      },
+      "revId": "9a13ad8797811159adea21e1d9eb819445fbf492",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
