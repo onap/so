@@ -6,6 +6,8 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
+ * Modifications Copyright (c) 2020 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,6 +29,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Enumeration;
@@ -107,18 +110,15 @@ public class BpmnInstaller {
             logger.error(LoggingAnchor.FIVE, MessageEnum.ASDC_ARTIFACT_NOT_DEPLOYED_DETAIL.toString(), csarFilePath,
                     ex.getMessage(), ErrorCode.DataError.getValue(), "ASDC reading CSAR with workflows failed");
         }
-        return;
     }
 
     public boolean containsWorkflows(String csarFilePath) {
-        boolean workflowsInCsar = false;
         try (ZipFile zipFile = new ZipFile(csarFilePath)) {
             Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
             while (zipEntries.hasMoreElements()) {
                 String fileName = zipEntries.nextElement().getName();
                 if (fileName.endsWith(BPMN_SUFFIX)) {
-                    workflowsInCsar = true;
-                    break;
+                    return true;
                 }
             }
         } catch (Exception e) {
@@ -126,10 +126,11 @@ public class BpmnInstaller {
             logger.error(LoggingAnchor.FIVE, MessageEnum.ASDC_ARTIFACT_CHECK_EXC.toString(), csarFilePath,
                     e.getMessage(), ErrorCode.DataError.getValue(), "ASDC Unable to check CSAR entries");
         }
-        return workflowsInCsar;
+        return false;
     }
 
-    protected HttpResponse sendDeploymentRequest(String bpmnFileName, String version) throws Exception {
+    protected HttpResponse sendDeploymentRequest(String bpmnFileName, String version)
+            throws IOException, URISyntaxException {
         HttpClient client = HttpClientBuilder.create().build();
         URI deploymentUri = new URI(this.env.getProperty(CAMUNDA_URL) + CREATE_DEPLOYMENT_PATH);
         HttpPost post = new HttpPost(deploymentUri);
@@ -141,7 +142,7 @@ public class BpmnInstaller {
         return client.execute(post);
     }
 
-    protected HttpEntity buildMimeMultipart(String bpmnFileName, String version) throws Exception {
+    protected HttpEntity buildMimeMultipart(String bpmnFileName, String version) throws IOException {
         FileInputStream bpmnFileStream = new FileInputStream(
                 Paths.get(getMsoConfigPath(), "ASDC", version, bpmnFileName).normalize().toString());
 
@@ -182,17 +183,14 @@ public class BpmnInstaller {
         return requestEntity;
     }
 
-    /* protected void extractBpmnFileFromCsar(ZipInputStream zipIn, String fileName) throws IOException */
     protected void extractBpmnFileFromCsar(ZipInputStream zipIn, String fileName) {
         String filePath = Paths.get(System.getProperty("mso.config.path"), "ASDC", fileName).normalize().toString();
-        /* BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(filePath)); */
         try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(filePath))) {
             byte[] bytesIn = new byte[4096];
-            int read = 0;
+            int read;
             while ((read = zipIn.read(bytesIn)) != -1) {
                 outputStream.write(bytesIn, 0, read);
             }
-            /* outputStream.close(); */
         } catch (IOException e) {
             logger.error("Unable to open file.", e);
         }

@@ -6,12 +6,14 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
+ * Modifications Copyright (c) 2020 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -52,21 +54,25 @@ public final class ASDCStatusCallBack implements IStatusCallback {
 
         try {
 
-            if (iStatus.getStatus() != null) {
-                if (iStatus.getStatus().equals(DistributionStatusEnum.COMPONENT_DONE_OK)
-                        || iStatus.getStatus().equals(DistributionStatusEnum.COMPONENT_DONE_ERROR)) {
-                    WatchdogDistributionStatus watchdogDistributionStatus = watchdogDistributionStatusRepository
-                            .findById(iStatus.getDistributionID()).orElseGet(() -> null);
-                    if (watchdogDistributionStatus == null) {
-                        watchdogDistributionStatus = new WatchdogDistributionStatus();
-                        watchdogDistributionStatus.setDistributionId(iStatus.getDistributionID());
-                        watchdogDistributionStatusRepository.save(watchdogDistributionStatus);
-                    }
-                    logger.debug(event);
-                    toscaInstaller.installTheComponentStatus(iStatus);
-
-                }
+            if (iStatus.getStatus() == null) {
+                logger.info("Missing status on Status Object. ");
+                return;
             }
+            if (!iStatus.getStatus().equals(DistributionStatusEnum.COMPONENT_DONE_OK)
+                    && !iStatus.getStatus().equals(DistributionStatusEnum.COMPONENT_DONE_ERROR)) {
+                logger.info("Status is not 'Component Done OK' or 'Component Done Error'");
+                return;
+            }
+            WatchdogDistributionStatus watchdogDistributionStatus =
+                    watchdogDistributionStatusRepository.findById(iStatus.getDistributionID()).orElseGet(() -> null);
+            if (watchdogDistributionStatus == null) {
+                watchdogDistributionStatus = new WatchdogDistributionStatus();
+                watchdogDistributionStatus.setDistributionId(iStatus.getDistributionID());
+                watchdogDistributionStatusRepository.save(watchdogDistributionStatus);
+            }
+            logger.debug(event);
+            toscaInstaller.installTheComponentStatus(iStatus);
+
         } catch (ArtifactInstallerException e) {
             logger.error("Error in ASDCStatusCallback {}", e.getMessage(), e);
             logger.debug("Error in ASDCStatusCallback {}", e.getMessage());
