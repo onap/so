@@ -520,6 +520,40 @@ public class RequestsDbClient {
                 .getBody();
     }
 
+    public List<OrchestrationTask> getAllOrchestrationTasks() {
+        String url = UriBuilder.fromUri(getUri(orchestrationTasksURI)).build().toString();
+        HttpEntity<?> entity = getHttpEntity();
+        return restTemplate
+                .exchange(url, HttpMethod.GET, entity, new ParameterizedTypeReference<List<OrchestrationTask>>() {})
+                .getBody();
+    }
+
+    public OrchestrationTask getOrchestrationTask(String taskId) {
+        String url = UriBuilder.fromUri(getUri(orchestrationTasksURI + "/" + taskId)).build().toString();
+        HttpEntity<?> entity = getHttpEntity();
+        return restTemplate.exchange(url, HttpMethod.GET, entity, OrchestrationTask.class).getBody();
+    }
+
+    public OrchestrationTask createOrchestrationTask(OrchestrationTask orchestrationTask) {
+        String url = UriBuilder.fromUri(getUri(orchestrationTasksURI + "/")).build().toString();
+        HttpHeaders headers = getHttpHeaders();
+        HttpEntity<OrchestrationTask> entity = new HttpEntity<>(orchestrationTask, headers);
+        return restTemplate.exchange(url, HttpMethod.POST, entity, OrchestrationTask.class).getBody();
+    }
+
+    public OrchestrationTask updateOrchestrationTask(String taskId, OrchestrationTask orchestrationTask) {
+        String url = getUri(orchestrationTasksURI + "/" + taskId).toString();
+        HttpHeaders headers = getHttpHeaders();
+        HttpEntity<OrchestrationTask> entity = new HttpEntity<>(orchestrationTask, headers);
+        return restTemplate.exchange(url, HttpMethod.PUT, entity, OrchestrationTask.class).getBody();
+    }
+
+    public void deleteOrchestrationTask(String taskId) {
+        String url = getUri(orchestrationTasksURI + "/" + taskId).toString();
+        HttpEntity<?> entity = getHttpEntity();
+        restTemplate.exchange(url, HttpMethod.DELETE, entity, Void.class).getBody();
+    }
+
     @Component
     static class ClassURLMapper {
         private static final Map<Class, String> classURLMap = new HashMap<>();
