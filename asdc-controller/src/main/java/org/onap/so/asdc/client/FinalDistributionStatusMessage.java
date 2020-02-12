@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2020 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,7 +39,6 @@ public class FinalDistributionStatusMessage implements IFinalDistrStatusMessage 
 
     public FinalDistributionStatusMessage(String distributionId, final DistributionStatusEnum distributionStatusEnum,
             final long timestampL, String consumerId) {
-        // componentName = componentname;
         consumerID = consumerId;
         distributionID = distributionId;
         status = distributionStatusEnum;
@@ -68,6 +69,7 @@ public class FinalDistributionStatusMessage implements IFinalDistrStatusMessage 
         this.timestamp = timestamp;
     }
 
+    @Override
     public String getComponentName() {
         return componentName;
     }
@@ -76,6 +78,7 @@ public class FinalDistributionStatusMessage implements IFinalDistrStatusMessage 
         this.componentName = componentName;
     }
 
+    @Override
     public String getConsumerID() {
         return consumerID;
     }

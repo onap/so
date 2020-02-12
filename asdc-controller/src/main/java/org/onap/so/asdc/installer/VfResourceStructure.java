@@ -7,6 +7,8 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
+ * Modifications Copyright (c) 2020 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -77,39 +79,39 @@ public class VfResourceStructure extends ResourceStructure {
     private Service catalogService;
 
 
-    public VfResourceStructure(INotificationData notificationdata, IResourceInstance resourceinstance) {
-        super(notificationdata, resourceinstance);
+    public VfResourceStructure(INotificationData notificationData, IResourceInstance resourceInstance) {
+        super(notificationData, resourceInstance);
         this.resourceType = ResourceType.VF_RESOURCE;
         vfModulesStructureList = new LinkedList<>();
         vfModulesMetadataList = new ArrayList<>();
     }
 
-    public void addArtifactToStructure(IDistributionClient distributionClient, IArtifactInfo artifactinfo,
+    public void addArtifactToStructure(IDistributionClient distributionClient, IArtifactInfo artifactInfo,
             IDistributionClientDownloadResult clientResult) throws UnsupportedEncodingException {
-        this.addArtifactToStructure(distributionClient, artifactinfo, clientResult, null);
+        this.addArtifactToStructure(artifactInfo, clientResult, null);
     }
 
-    public void addArtifactToStructure(IDistributionClient distributionClient, IArtifactInfo artifactinfo,
-            IDistributionClientDownloadResult clientResult, String modifiedHeatTemplate)
+    public void addArtifactToStructure(IArtifactInfo artifactInfo,
+                                       IDistributionClientDownloadResult clientResult, String modifiedHeatTemplate)
             throws UnsupportedEncodingException {
-        VfModuleArtifact vfModuleArtifact = new VfModuleArtifact(artifactinfo, clientResult, modifiedHeatTemplate);
-        addArtifactByType(artifactinfo, clientResult, vfModuleArtifact);
-        if (ASDCConfiguration.VF_MODULES_METADATA.equals(artifactinfo.getArtifactType())) {
+        VfModuleArtifact vfModuleArtifact = new VfModuleArtifact(artifactInfo, clientResult, modifiedHeatTemplate);
+        addArtifactByType(artifactInfo, clientResult, vfModuleArtifact);
+        if (ASDCConfiguration.VF_MODULES_METADATA.equals(artifactInfo.getArtifactType())) {
             logger.debug("VF_MODULE_ARTIFACT: " + new String(clientResult.getArtifactPayload(), "UTF-8"));
             logger.debug(ASDCNotificationLogging.dumpVfModuleMetaDataList(vfModulesMetadataList));
         }
     }
 
-    public void addWorkflowArtifactToStructure(IArtifactInfo artifactinfo,
+    public void addWorkflowArtifactToStructure(IArtifactInfo artifactInfo,
             IDistributionClientDownloadResult clientResult) throws UnsupportedEncodingException {
-        WorkflowArtifact workflowArtifact = new WorkflowArtifact(artifactinfo, clientResult);
-        workflowArtifactsMapByUUID.put(artifactinfo.getArtifactUUID(), workflowArtifact);
+        WorkflowArtifact workflowArtifact = new WorkflowArtifact(artifactInfo, clientResult);
+        workflowArtifactsMapByUUID.put(artifactInfo.getArtifactUUID(), workflowArtifact);
     }
 
-    protected void addArtifactByType(IArtifactInfo artifactinfo, IDistributionClientDownloadResult clientResult,
+    protected void addArtifactByType(IArtifactInfo artifactInfo, IDistributionClientDownloadResult clientResult,
             VfModuleArtifact vfModuleArtifact) {
 
-        switch (artifactinfo.getArtifactType()) {
+        switch (artifactInfo.getArtifactType()) {
             case ASDCConfiguration.HEAT:
             case ASDCConfiguration.HEAT_ENV:
             case ASDCConfiguration.HEAT_VOL:
@@ -118,7 +120,7 @@ public class VfResourceStructure extends ResourceStructure {
             case ASDCConfiguration.HEAT_NET:
             case ASDCConfiguration.OTHER:
             case ASDCConfiguration.CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT:
-                artifactsMapByUUID.put(artifactinfo.getArtifactUUID(), vfModuleArtifact);
+                artifactsMapByUUID.put(artifactInfo.getArtifactUUID(), vfModuleArtifact);
                 break;
             case ASDCConfiguration.VF_MODULES_METADATA:
                 vfModulesMetadataList = this.decodeVfModuleArtifact(clientResult.getArtifactPayload());
@@ -196,9 +198,7 @@ public class VfResourceStructure extends ResourceStructure {
 
     public List<IVfModuleData> decodeVfModuleArtifact(byte[] arg0) {
         try {
-            List<IVfModuleData> listVFModuleMetaData =
-                    new ObjectMapper().readValue(arg0, new TypeReference<List<VfModuleMetaData>>() {});
-            return listVFModuleMetaData;
+            return new ObjectMapper().readValue(arg0, new TypeReference<List<VfModuleMetaData>>() {});
 
         } catch (JsonParseException e) {
             logger.debug("JsonParseException : ", e);
