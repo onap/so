@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "27937ee9_fc6d8ca9",
+        "filename": "packages/docker/pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-02-12T08:28:04Z",
+      "side": 1,
+      "message": "This pom.xml file has been formatted only. I haven\u0027t changed this part exept for the formatting. The only added blocks were:\n1. dependency on the ve-vnfm adapter\n2. building the docker image for the ve-vnfm adapter",
+      "parentUuid": "55c8ab15_25396083",
+      "range": {
+        "startLine": 45,
+        "startChar": 5,
+        "endLine": 58,
+        "endChar": 16
+      },
+      "revId": "7453a0338ecc79a43b4cf67ef06b315f94942e3f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8d86a362_f3a180c1",
         "filename": "packages/docker/pom.xml",
         "patchSetId": 5
@@ -36,6 +60,30 @@
       "writtenOn": "2020-02-11T19:45:10Z",
       "side": 1,
       "message": "is this name correct?",
+      "range": {
+        "startLine": 100,
+        "startChar": 60,
+        "endLine": 100,
+        "endChar": 64
+      },
+      "revId": "7453a0338ecc79a43b4cf67ef06b315f94942e3f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4794414c_9c223104",
+        "filename": "packages/docker/pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-02-12T08:28:04Z",
+      "side": 1,
+      "message": "yes, the name here is corrent, it refers to the old adapter\nthe next one, ve-vnfm-adapter, refers to the new adapter",
+      "parentUuid": "8d86a362_f3a180c1",
       "range": {
         "startLine": 100,
         "startChar": 60,
