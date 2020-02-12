@@ -4,12 +4,15 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2020 Nokia
+ * ================================================================================
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,7 +32,6 @@ import org.onap.so.asdc.activity.beans.ActivitySpec;
 import org.onap.so.asdc.activity.beans.ActivitySpecCreateResponse;
 import org.onap.so.client.HttpClient;
 import org.onap.so.client.HttpClientFactory;
-import org.onap.so.logger.LoggingAnchor;
 import org.onap.logging.filter.base.ONAPComponents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,8 +55,6 @@ public class ActivitySpecsActions {
             return null;
         }
 
-        String activitySpecId = null;
-
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.setSerializationInclusion(Include.NON_NULL);
@@ -71,30 +71,34 @@ public class ActivitySpecsActions {
             int statusCode = response.getStatus();
             if (statusCode == HttpStatus.SC_UNPROCESSABLE_ENTITY) {
                 logger.warn(LoggingAnchor.THREE, "ActivitySpec", activitySpec.getName(), "already exists in SDC");
-            } else if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_CREATED) {
-                logger.warn(LoggingAnchor.THREE, "Error creating activity spec", activitySpec.getName(), statusCode);
-            } else {
-                if (response.getEntity() != null) {
-                    ActivitySpecCreateResponse activitySpecCreateResponse =
-                            response.readEntity(ActivitySpecCreateResponse.class);
-                    if (activitySpecCreateResponse != null) {
-                        activitySpecId = activitySpecCreateResponse.getId();
-                    } else {
-                        logger.warn(LoggingAnchor.TWO, "Unable to read activity spec", activitySpec.getName());
-                    }
-                } else {
-                    logger.warn(LoggingAnchor.TWO, "No activity spec response returned", activitySpec.getName());
-                }
+                return null;
             }
+            if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_CREATED) {
+                logger.warn(LoggingAnchor.THREE, "Error creating activity spec", activitySpec.getName(), statusCode);
+                return null;
+            }
+
+            if (response.getEntity() == null) {
+                logger.warn(LoggingAnchor.TWO, "No activity spec response returned", activitySpec.getName());
+                return null;
+            }
+            ActivitySpecCreateResponse activitySpecCreateResponse =
+                    response.readEntity(ActivitySpecCreateResponse.class);
+            if (activitySpecCreateResponse == null) {
+                logger.warn(LoggingAnchor.TWO, "Unable to read activity spec", activitySpec.getName());
+                return null;
+            }
+            return activitySpecCreateResponse.getId();
+
+
         } catch (Exception e) {
             logger.warn(LoggingAnchor.TWO, "Exception creating activitySpec", e);
         }
 
-        return activitySpecId;
+        return null;
     }
 
     public boolean certifyActivitySpec(String hostname, String activitySpecId) {
-        boolean certificationResult = false;
         if (activitySpecId == null) {
             return false;
         }
@@ -114,16 +118,19 @@ public class ActivitySpecsActions {
 
             if (statusCode == HttpStatus.SC_UNPROCESSABLE_ENTITY) {
                 logger.warn(LoggingAnchor.THREE, "ActivitySpec with id", activitySpecId, "is already certified in SDC");
-            } else if (statusCode != HttpStatus.SC_OK) {
+                return false;
+            }
+            if (statusCode != HttpStatus.SC_OK) {
                 logger.warn(LoggingAnchor.THREE, "Error certifying activity", activitySpecId, statusCode);
+                return false;
             } else {
-                certificationResult = true;
+                return true;
             }
 
         } catch (Exception e) {
             logger.warn(LoggingAnchor.TWO, "Exception certifying activitySpec", e);
         }
 
-        return certificationResult;
+        return false;
     }
 }

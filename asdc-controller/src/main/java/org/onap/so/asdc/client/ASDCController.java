@@ -7,6 +7,8 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
+ * Modifications Copyright (c) 2020 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,6 +35,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
@@ -162,18 +165,22 @@ public class ASDCController {
                 break;
 
             case IDLE:
-                if (this.nbOfNotificationsOngoing > 1) {
-                    --this.nbOfNotificationsOngoing;
-                } else {
-                    this.nbOfNotificationsOngoing = 0;
-                    this.controllerStatus = newControllerStatus;
-                }
+                changeOnStatusIDLE(newControllerStatus);
 
                 break;
             default:
                 this.controllerStatus = newControllerStatus;
                 break;
 
+        }
+    }
+
+    private void changeOnStatusIDLE(ASDCControllerStatus newControllerStatus) {
+        if (this.nbOfNotificationsOngoing > 1) {
+            --this.nbOfNotificationsOngoing;
+        } else {
+            this.nbOfNotificationsOngoing = 0;
+            this.controllerStatus = newControllerStatus;
         }
     }
 
@@ -296,13 +303,12 @@ public class ASDCController {
     protected void notifyErrorToAsdc(INotificationData iNotif, ToscaResourceStructure toscaResourceStructure,
             DistributionStatusEnum deployStatus, VfResourceStructure resourceStructure, String errorMessage) {
         // do csar lever first
-        this.sendCsarDeployNotification(iNotif, resourceStructure, toscaResourceStructure, deployStatus, errorMessage);
+        this.sendCsarDeployNotification(resourceStructure, toscaResourceStructure, deployStatus, errorMessage);
         // at resource level
         for (IResourceInstance resource : iNotif.getResources()) {
             resourceStructure = new VfResourceStructure(iNotif, resource);
             errorMessage = String.format("Resource with UUID: %s already exists", resource.getResourceUUID());
-            this.sendCsarDeployNotification(iNotif, resourceStructure, toscaResourceStructure, deployStatus,
-                    errorMessage);
+            this.sendCsarDeployNotification(resourceStructure, toscaResourceStructure, deployStatus, errorMessage);
         }
     }
 
@@ -363,8 +369,7 @@ public class ASDCController {
 
         if (DistributionActionResultEnum.SUCCESS.equals(downloadResult.getDistributionActionResult())) {
             logger.info(LoggingAnchor.FOUR, MessageEnum.ASDC_ARTIFACT_DOWNLOAD_SUC.toString(),
-                    artifact.getArtifactURL(), artifact.getArtifactUUID(),
-                    String.valueOf(downloadResult.getArtifactPayload().length));
+                    artifact.getArtifactURL(), artifact.getArtifactUUID(), downloadResult.getArtifactPayload().length);
 
         } else {
             logger.error(LoggingAnchor.SEVEN, MessageEnum.ASDC_ARTIFACT_DOWNLOAD_FAIL.toString(),
@@ -447,7 +452,7 @@ public class ASDCController {
         }
     }
 
-    protected void sendCsarDeployNotification(INotificationData iNotif, ResourceStructure resourceStructure,
+    protected void sendCsarDeployNotification(ResourceStructure resourceStructure,
             ToscaResourceStructure toscaResourceStructure, DistributionStatusEnum statusEnum, String errorReason) {
 
         IArtifactInfo csarArtifact = toscaResourceStructure.getToscaArtifact();
@@ -471,8 +476,8 @@ public class ASDCController {
         } catch (ArtifactInstallerException e) {
             logger.info(LoggingAnchor.SIX, MessageEnum.ASDC_ARTIFACT_DOWNLOAD_FAIL.toString(),
                     resourceStructure.getResourceInstance().getResourceName(),
-                    resourceStructure.getResourceInstance().getResourceUUID(),
-                    String.valueOf(resourceStructure.getNumberOfResources()), "ASDC", "deployResourceStructure");
+                    resourceStructure.getResourceInstance().getResourceUUID(), resourceStructure.getNumberOfResources(),
+                    "ASDC", "deployResourceStructure");
             sendDeployNotificationsForResource(resourceStructure, DistributionStatusEnum.DEPLOY_ERROR, e.getMessage());
             throw e;
         }
@@ -480,8 +485,8 @@ public class ASDCController {
         if (resourceStructure.isDeployedSuccessfully() || toscaResourceStructure.isDeployedSuccessfully()) {
             logger.info(LoggingAnchor.SIX, MessageEnum.ASDC_ARTIFACT_DEPLOY_SUC.toString(),
                     resourceStructure.getResourceInstance().getResourceName(),
-                    resourceStructure.getResourceInstance().getResourceUUID(),
-                    String.valueOf(resourceStructure.getNumberOfResources()), "ASDC", "deployResourceStructure");
+                    resourceStructure.getResourceInstance().getResourceUUID(), resourceStructure.getNumberOfResources(),
+                    "ASDC", "deployResourceStructure");
             sendDeployNotificationsForResource(resourceStructure, DistributionStatusEnum.DEPLOY_OK, null);
         }
 
@@ -509,31 +514,42 @@ public class ASDCController {
         try {
             IDistributionStatusMessage message =
                     new DistributionStatusMessage(artifactURL, consumerID, distributionID, status, timestamp);
-
-            switch (notificationType) {
-                case DOWNLOAD:
-                    if (errorReason != null) {
-                        this.distributionClient.sendDownloadStatus(message, errorReason);
-                    } else {
-                        this.distributionClient.sendDownloadStatus(message);
-                    }
-
-                    break;
-                case DEPLOY:
-                    if (errorReason != null) {
-                        this.distributionClient.sendDeploymentStatus(message, errorReason);
-                    } else {
-                        this.distributionClient.sendDeploymentStatus(message);
-                    }
-
-                    break;
-                default:
-                    break;
+            if (errorReason != null) {
+                sendNotificationWithMessageAndErrorReason(notificationType, errorReason, message);
+            } else {
+                sendNotificationWithMessage(notificationType, message);
             }
         } catch (RuntimeException e) {
             logger.warn(LoggingAnchor.FIVE, MessageEnum.ASDC_SEND_NOTIF_ASDC_EXEC.toString(), "ASDC",
                     "sendASDCNotification", ErrorCode.SchemaError.getValue(), "RuntimeException - sendASDCNotification",
                     e);
+        }
+    }
+
+    private void sendNotificationWithMessage(NotificationType notificationType, IDistributionStatusMessage message) {
+        switch (notificationType) {
+            case DOWNLOAD:
+                this.distributionClient.sendDownloadStatus(message);
+                break;
+            case DEPLOY:
+                this.distributionClient.sendDeploymentStatus(message);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void sendNotificationWithMessageAndErrorReason(NotificationType notificationType, String errorReason,
+            IDistributionStatusMessage message) {
+        switch (notificationType) {
+            case DOWNLOAD:
+                this.distributionClient.sendDownloadStatus(message, errorReason);
+                break;
+            case DEPLOY:
+                this.distributionClient.sendDeploymentStatus(message, errorReason);
+                break;
+            default:
+                break;
         }
     }
 
@@ -587,8 +603,8 @@ public class ASDCController {
         for (IResourceInstance resource : iNotif.getResources()) {
             noOfArtifacts += resource.getArtifacts().size();
         }
-        logger.info(LoggingAnchor.FOUR, MessageEnum.ASDC_RECEIVE_CALLBACK_NOTIF.toString(),
-                String.valueOf(noOfArtifacts), iNotif.getServiceUUID(), "ASDC");
+        logger.info(LoggingAnchor.FOUR, MessageEnum.ASDC_RECEIVE_CALLBACK_NOTIF.toString(), noOfArtifacts,
+                iNotif.getServiceUUID(), "ASDC");
         try {
 
             if (iNotif.getDistributionID() != null && !iNotif.getDistributionID().isEmpty()) {
@@ -721,7 +737,6 @@ public class ASDCController {
 
     protected void processResourceNotification(INotificationData iNotif) {
         // For each artifact, create a structure describing the VFModule in a ordered flat level
-        ResourceStructure resourceStructure = null;
         String msoConfigPath = getMsoConfigPath();
         ToscaResourceStructure toscaResourceStructure = new ToscaResourceStructure(msoConfigPath);
         DistributionStatusEnum deployStatus = DistributionStatusEnum.DEPLOY_OK;
@@ -734,6 +749,7 @@ public class ASDCController {
                 return;
             }
 
+            ResourceStructure resourceStructure = null;
             for (IResourceInstance resource : iNotif.getResources()) {
 
                 String resourceType = resource.getResourceType();
@@ -741,21 +757,11 @@ public class ASDCController {
 
                 logger.info("Processing Resource Type: {}, Model UUID: {}", resourceType, resource.getResourceUUID());
 
-                if ("VF".equals(resourceType)) {
-                    resourceStructure = new VfResourceStructure(iNotif, resource);
-                } else if ("PNF".equals(resourceType)) {
-                    resourceStructure = new PnfResourceStructure(iNotif, resource);
-                } else {
-                    // There are cases where the Service has no VF resources, those are handled here
-                    logger.info("No resources found for Service: {}", iNotif.getServiceUUID());
-                    resourceStructure = new VfResourceStructure(iNotif, new ResourceInstance());
-                    resourceStructure.setResourceType(ResourceType.OTHER);
-                }
+                resourceStructure = getResourceStructure(iNotif, resource, resourceType);
 
                 try {
 
                     if (!this.checkResourceAlreadyDeployed(resourceStructure, serviceDeployed)) {
-
                         logger.debug("Processing Resource Type: " + resourceType + " and Model UUID: "
                                 + resourceStructure.getResourceInstance().getResourceUUID());
 
@@ -765,25 +771,27 @@ public class ASDCController {
                             for (IArtifactInfo artifact : resource.getArtifacts()) {
                                 IDistributionClientDownloadResult resultArtifact =
                                         this.downloadTheArtifact(artifact, iNotif.getDistributionID());
-                                if (resultArtifact != null) {
-
-                                    if (ASDCConfiguration.VF_MODULES_METADATA.equals(artifact.getArtifactType())) {
-                                        logger.debug("VF_MODULE_ARTIFACT: "
-                                                + new String(resultArtifact.getArtifactPayload(), "UTF-8"));
-                                        logger.debug(ASDCNotificationLogging
-                                                .dumpVfModuleMetaDataList(((VfResourceStructure) resourceStructure)
-                                                        .decodeVfModuleArtifact(resultArtifact.getArtifactPayload())));
-                                    }
-                                    if (!ASDCConfiguration.WORKFLOW.equals(artifact.getArtifactType())) {
-                                        resourceStructure.addArtifactToStructure(distributionClient, artifact,
-                                                resultArtifact);
-                                    } else {
-                                        writeArtifactToFile(artifact, resultArtifact);
-                                        logger.debug(
-                                                "Adding workflow artifact to structure: " + artifact.getArtifactName());
-                                        resourceStructure.addWorkflowArtifactToStructure(artifact, resultArtifact);
-                                    }
+                                if (resultArtifact == null) {
+                                    continue;
                                 }
+
+                                if (ASDCConfiguration.VF_MODULES_METADATA.equals(artifact.getArtifactType())) {
+                                    logger.debug("VF_MODULE_ARTIFACT: "
+                                            + new String(resultArtifact.getArtifactPayload(), StandardCharsets.UTF_8));
+                                    logger.debug(ASDCNotificationLogging
+                                            .dumpVfModuleMetaDataList(((VfResourceStructure) resourceStructure)
+                                                    .decodeVfModuleArtifact(resultArtifact.getArtifactPayload())));
+                                }
+                                if (!ASDCConfiguration.WORKFLOW.equals(artifact.getArtifactType())) {
+                                    resourceStructure.addArtifactToStructure(distributionClient, artifact,
+                                            resultArtifact);
+                                } else {
+                                    writeArtifactToFile(artifact, resultArtifact);
+                                    logger.debug(
+                                            "Adding workflow artifact to structure: " + artifact.getArtifactName());
+                                    resourceStructure.addWorkflowArtifactToStructure(artifact, resultArtifact);
+                                }
+
                             }
 
                             // Deploy VF resource and artifacts
@@ -817,14 +825,27 @@ public class ASDCController {
                 }
             }
 
-            this.sendCsarDeployNotification(iNotif, resourceStructure, toscaResourceStructure, deployStatus,
-                    errorMessage);
+            this.sendCsarDeployNotification(resourceStructure, toscaResourceStructure, deployStatus, errorMessage);
 
         } catch (ASDCDownloadException | UnsupportedEncodingException e) {
             logger.error(LoggingAnchor.SIX, MessageEnum.ASDC_GENERAL_EXCEPTION_ARG.toString(),
                     "Exception caught during Installation of artifact", "ASDC", "processResourceNotification",
                     ErrorCode.BusinessProcessError.getValue(), "Exception in processResourceNotification", e);
         }
+    }
+
+    private ResourceStructure getResourceStructure(INotificationData iNotif, IResourceInstance resource,
+            String resourceType) {
+        if ("VF".equals(resourceType)) {
+            return new VfResourceStructure(iNotif, resource);
+        }
+        if ("PNF".equals(resourceType)) {
+            return new PnfResourceStructure(iNotif, resource);
+        }
+        logger.info("No resources found for Service: {}", iNotif.getServiceUUID());
+        ResourceStructure resourceStructure = new VfResourceStructure(iNotif, new ResourceInstance());
+        resourceStructure.setResourceType(ResourceType.OTHER);
+        return resourceStructure;
     }
 
     private String getMsoConfigPath() {
@@ -898,7 +919,6 @@ public class ASDCController {
 
         }
     }
-
 
 
     /**
