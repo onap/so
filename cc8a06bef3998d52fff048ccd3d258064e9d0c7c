@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba0f8340_50fc6b9c",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericCDSProcessingDE.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2020-02-12T14:46:52Z",
+      "side": 1,
+      "message": "doesn\u0027t seem right, is it supposed to be DeleteExecution is being used?",
+      "revId": "cc8a06bef3998d52fff048ccd3d258064e9d0c7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ac087fbf_d102c9e1",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericCDSProcessingDE.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2020-02-12T14:46:52Z",
+      "side": 1,
+      "message": "wrong class",
+      "revId": "cc8a06bef3998d52fff048ccd3d258064e9d0c7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4db46cff_3725688f",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericCDSProcessingDE.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2020-02-12T14:46:52Z",
+      "side": 1,
+      "message": "change to private",
+      "revId": "cc8a06bef3998d52fff048ccd3d258064e9d0c7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "def88aa7_676fa14b",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericCDSProcessingDE.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2020-02-12T14:46:52Z",
+      "side": 1,
+      "message": "dispatcher",
+      "revId": "cc8a06bef3998d52fff048ccd3d258064e9d0c7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
