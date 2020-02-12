@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7b18b0f2_2dcb1a28",
+        "filename": "packages/docker/src/main/docker/docker-files/scripts/start-app.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 97
+      },
+      "writtenOn": "2020-02-12T19:22:18Z",
+      "side": 1,
+      "message": "We should wrap the variable reference in double quotes",
+      "revId": "1218385b07f1c9b8664c1c8a1815d67f77b35ef6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
