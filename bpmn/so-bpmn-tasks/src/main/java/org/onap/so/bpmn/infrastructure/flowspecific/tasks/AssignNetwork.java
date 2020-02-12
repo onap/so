@@ -6,6 +6,8 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
+ * Modifications Copyright (c) 2020 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,17 +48,16 @@ public class AssignNetwork {
      * @return
      */
     public boolean networkFoundByName(BuildingBlockExecution execution) {
-        boolean networkFound = false;
         try {
             L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
 
             if (!OrchestrationStatus.PRECREATED.equals(l3network.getOrchestrationStatus())) {
-                networkFound = true;
                 logger.debug("network found in NOT PRECREATED status");
+                return true;
             }
         } catch (Exception ex) {
-            // return false if no network present
+            return false;
         }
-        return networkFound;
+        return false;
     }
 }
