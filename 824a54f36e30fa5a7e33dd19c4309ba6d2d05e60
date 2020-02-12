@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "3fd6e3c0_dd0aeaa8",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 2937
+      },
+      "writtenOn": "2020-02-12T06:06:18Z",
+      "side": 1,
+      "message": "As this is Generic workflow, we won\u0027t get to know whether current BB is VNF or VF Module, Hence we won\u0027t be able to create two listeners.",
+      "parentUuid": "4236d04d_d01d7630",
+      "revId": "824a54f36e30fa5a7e33dd19c4309ba6d2d05e60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "29154315_135e0444",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
         "patchSetId": 8
@@ -64,6 +82,24 @@
       "writtenOn": "2020-02-07T15:52:29Z",
       "side": 1,
       "message": "If I read it right I think this actually implements Set.contains() method. If it\u0027s true could you use it instead of stream processing?",
+      "revId": "824a54f36e30fa5a7e33dd19c4309ba6d2d05e60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f7338fff_199bb0ea",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 2937
+      },
+      "writtenOn": "2020-02-12T06:06:18Z",
+      "side": 1,
+      "message": "As we wanted to check String with ignore case also, hence we used stream.",
+      "parentUuid": "84868843_6499f4ca",
       "revId": "824a54f36e30fa5a7e33dd19c4309ba6d2d05e60",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
