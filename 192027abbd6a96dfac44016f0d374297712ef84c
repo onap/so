@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "659c82ed_b7236b36",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericCDSProcessing.java",
+        "patchSetId": 36
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-12T09:54:55Z",
+      "side": 1,
+      "message": "@Henry Done\n@Lukas I\u0027ll prefer to keep GeneratePayloadForCds class because of code cohesivness and loose coupling.",
+      "parentUuid": "a105a6ef_14f61fd3",
+      "revId": "192027abbd6a96dfac44016f0d374297712ef84c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "7977f5d6_609957d6",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericCDSProcessing.java",
         "patchSetId": 36
@@ -66,6 +84,24 @@
       "writtenOn": "2020-02-10T16:44:37Z",
       "side": 1,
       "message": "the logic here is to construct the executionObject and set in the ExecutionContext. Presume it require another service block to actually send executionObject to CDS server. IMO, sending request to CDS can be done here as well. e.g, in CdsControllerDE, it will do both construction and sending request.",
+      "revId": "192027abbd6a96dfac44016f0d374297712ef84c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1a898bac_fd1297a6",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericCDSProcessing.java",
+        "patchSetId": 36
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-12T09:54:55Z",
+      "side": 1,
+      "message": "Done for BB, will do it for DE child commit.",
+      "parentUuid": "7977f5d6_609957d6",
       "revId": "192027abbd6a96dfac44016f0d374297712ef84c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
