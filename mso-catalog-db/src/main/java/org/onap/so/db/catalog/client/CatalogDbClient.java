@@ -764,8 +764,61 @@ public class CatalogDbClient {
         return this.getSingleResource(cloudSiteClient, getUri(uri + id));
     }
 
-    public void postCloudSite(CloudSite cloudSite) {
-        this.postSingleResource(cloudSiteClient, cloudSite);
+    public CloudSite postCloudSite(CloudSite cloudSite) {
+        if (cloudSite == null) {
+            throw new EntityNotFoundException("CloudSite passed as null");
+        }
+        try {
+            HttpHeaders headers = getHttpHeaders();
+            HttpEntity<CloudSite> entity = new HttpEntity<>(cloudSite, headers);
+            CloudSite updatedCloudSite = restTemplate
+                    .exchange(UriComponentsBuilder.fromUriString(endpoint + "/cloudSite").build().encode().toString(),
+                            HttpMethod.POST, entity, CloudSite.class)
+                    .getBody();
+            return updatedCloudSite;
+        } catch (HttpClientErrorException e) {
+            if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
+                throw new EntityNotFoundException("Unable to find CloudSite with Cloud Site Id: " + cloudSite.getId());
+            }
+            throw e;
+        }
+    }
+
+    public CloudSite updateCloudSite(CloudSite cloudSite) {
+        if (cloudSite == null) {
+            throw new EntityNotFoundException("CloudSite passed as null");
+        }
+        try {
+            HttpHeaders headers = getHttpHeaders();
+            HttpEntity<CloudSite> entity = new HttpEntity<>(cloudSite, headers);
+            CloudSite updatedCloudSite = restTemplate
+                    .exchange(UriComponentsBuilder.fromUriString(endpoint + "/cloudSite/" + cloudSite.getId()).build()
+                            .encode().toString(), HttpMethod.PUT, entity, CloudSite.class)
+                    .getBody();
+            return updatedCloudSite;
+        } catch (HttpClientErrorException e) {
+            if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
+                throw new EntityNotFoundException("Unable to find CloudSite with Cloud Site Id: " + cloudSite.getId());
+            }
+            throw e;
+        }
+    }
+
+    public void deleteCloudSite(String cloudSiteId) {
+        if (cloudSiteId == null) {
+            throw new EntityNotFoundException("CloudSiteId passed as null");
+        }
+        try {
+            HttpHeaders headers = getHttpHeaders();
+            HttpEntity<String> entity = new HttpEntity<>(null, headers);
+            restTemplate.exchange(UriComponentsBuilder.fromUriString(endpoint + "/cloudSite/" + cloudSiteId).build()
+                    .encode().toString(), HttpMethod.DELETE, entity, CloudSite.class).getBody();
+        } catch (HttpClientErrorException e) {
+            if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
+                throw new EntityNotFoundException("Unable to find CloudSite with Cloud Site Id: " + cloudSiteId);
+            }
+            throw e;
+        }
     }
 
     public List<CloudSite> getCloudSites() {
