@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "26ad5cfe_66f7b3e5",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/utils/WorkflowResourceIdsExtension.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-02-12T10:00:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9446432b_cc2eb356",
+      "revId": "3ef8439608b55805aa0a0bc19ca72ab1551cc7de",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8bce1e3d_60c15e39",
         "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/utils/WorkflowResourceIdsExtensionTest.java",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2020-02-12T03:07:30Z",
       "side": 1,
       "message": "Provide the cpyright information",
+      "revId": "3ef8439608b55805aa0a0bc19ca72ab1551cc7de",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9005c70c_1e189bcb",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/utils/WorkflowResourceIdsExtensionTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-02-12T10:00:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8bce1e3d_60c15e39",
       "revId": "3ef8439608b55805aa0a0bc19ca72ab1551cc7de",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
