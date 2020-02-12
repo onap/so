@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2a72bdac_e2a5de66",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-12T08:25:11Z",
+      "side": 1,
+      "message": "Could you check this at the beginning of this method and return immediately if UUID is empty.\n\nif (Strings.isEmpty(customizationUUID))\n    return;\n\nIt\u0027s much more readable than multiple nested ifs. We have so many nested ifs all over the SO code, do we need to add more?",
+      "revId": "8cfbfa2daf46e25377a807bb77929e49b9c3ffa0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9884484b_ac1310f7",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-12T08:25:11Z",
+      "side": 1,
+      "message": "Could you at least extract this filtering to separate method (containsIgnoreCase() perhaps)? It\u0027s difficult to read right now and there\u0027s duplication with \u0027else if\u0027.",
+      "revId": "8cfbfa2daf46e25377a807bb77929e49b9c3ffa0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
