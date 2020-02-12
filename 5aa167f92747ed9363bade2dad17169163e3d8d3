@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a8e0f7c6_909e63b4",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/ServiceInstances.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 848,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-12T11:15:18Z",
+      "side": 1,
+      "message": "this will not be useful if param requestVersion is deleted",
+      "range": {
+        "startLine": 848,
+        "startChar": 7,
+        "endLine": 848,
+        "endChar": 68
+      },
+      "revId": "5aa167f92747ed9363bade2dad17169163e3d8d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
