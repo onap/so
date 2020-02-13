@@ -20,24 +20,24 @@
 
 package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
 
-import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.assertThat;
+import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import org.camunda.bpm.engine.ManagementService;
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.Job;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
-import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.onap.so.bpmn.BaseBPMNTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.springframework.beans.factory.annotation.Autowired;
 
-
+@Ignore
 public class PauseForManualTaskRainyDayTest extends BaseBPMNTest {
     private static final String TIMEOUT_10_S = "PT10S";
 
