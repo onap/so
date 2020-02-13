@@ -32,6 +32,7 @@ import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.swagger.Swagger2Feature;
 import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.cxf.transport.servlet.CXFServlet;
+import org.onap.so.adapters.cloudregion.CloudRegionRestV1;
 import org.onap.so.adapters.network.MsoNetworkAdapterAsyncImpl;
 import org.onap.so.adapters.network.MsoNetworkAdapterImpl;
 import org.onap.so.adapters.network.NetworkAdapterRest;
@@ -47,10 +48,12 @@ import org.onap.so.adapters.vnf.VolumeAdapterRestV2;
 import org.onap.so.client.policy.JettisonStyleMapperProvider;
 import org.onap.so.logging.cxf.interceptor.SOAPLoggingInInterceptor;
 import org.onap.so.logging.cxf.interceptor.SOAPLoggingOutInterceptor;
+import org.onap.so.logging.jaxrs.filter.SOAuditLogContainerFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 
@@ -81,7 +84,14 @@ public class CXFConfiguration {
     @Autowired
     private MsoVnfCloudifyAdapterImpl vnfCloudifyAdapterImpl;
     @Autowired
+    private CloudRegionRestV1 cloudRegionRestV1;
+    @Autowired
     private JettisonStyleMapperProvider jettisonStyleObjectMapper;
+    @Autowired
+    private ObjectMapper mapper;
+    @Autowired
+    private SOAuditLogContainerFilter soAuditLogContainerFilter;
+
 
     @Bean(name = Bus.DEFAULT_BUS_ID)
     public SpringBus springBus() {
@@ -170,6 +180,7 @@ public class CXFConfiguration {
         return endpoint;
     }
 
+    // Uses Jettson Style marshalling semantics
     @Bean
     public Server rsServer() {
         JAXRSServerFactoryBean endpoint = new JAXRSServerFactoryBean();
@@ -178,7 +189,20 @@ public class CXFConfiguration {
                 vnfAdapterRestV2, volumeAdapterRest, volumeAdapterRestV2));
         endpoint.setAddress("/rest");
         endpoint.setFeatures(Arrays.asList(createSwaggerFeature(), new LoggingFeature()));
-        endpoint.setProvider(new JacksonJsonProvider(jettisonStyleObjectMapper.getMapper()));
+        endpoint.setProviders(Arrays.asList(new JacksonJsonProvider(jettisonStyleObjectMapper.getMapper()),
+                soAuditLogContainerFilter));
+        return endpoint.create();
+    }
+
+    // Uses normal Jackson marshalling semantics
+    @Bean
+    public Server rsServerApi() {
+        JAXRSServerFactoryBean endpoint = new JAXRSServerFactoryBean();
+        endpoint.setBus(springBus());
+        endpoint.setServiceBeans(Arrays.<Object>asList(cloudRegionRestV1));
+        endpoint.setAddress("/api");
+        endpoint.setFeatures(Arrays.asList(new LoggingFeature()));
+        endpoint.setProviders(Arrays.asList(new JacksonJsonProvider(mapper), soAuditLogContainerFilter));
         return endpoint.create();
     }
 
