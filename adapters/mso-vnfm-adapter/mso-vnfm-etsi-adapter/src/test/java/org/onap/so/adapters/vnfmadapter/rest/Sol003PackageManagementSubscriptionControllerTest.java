@@ -68,6 +68,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.http.HttpMethod;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 /**
@@ -197,6 +198,41 @@ public class Sol003PackageManagementSubscriptionControllerTest {
         assert (subscriptionsList != null);
         assertNotEquals('0', subscriptionsList.size());
         assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    public void testSuccessDeleteSubscriptionWithSubscriptionId() throws GeneralSecurityException {
+        final PkgmSubscriptionRequest pkgmSubscriptionRequest = buildPkgmSubscriptionRequest();
+        final PkgmSubscription pkgmSubscription = buildPkgmSubscription();
+        final String subscriptionId = pkgmSubscription.getId();
+
+        mockRestServer.expect(requestTo(msbEndpoint)).andExpect(method(HttpMethod.POST))
+                .andRespond(withSuccess(gson.toJson(pkgmSubscription), MediaType.APPLICATION_JSON));
+        mockRestServer.expect(requestTo(msbEndpoint + "/" + subscriptionId)).andExpect(method(HttpMethod.DELETE))
+                .andRespond(withStatus(HttpStatus.NO_CONTENT));
+
+        final ResponseEntity<InlineResponse2002> responsePost =
+                (ResponseEntity<InlineResponse2002>) sol003PackageManagementSubscriptionController
+                        .postSubscriptionRequest(pkgmSubscriptionRequest);
+
+
+        final ResponseEntity responseDelete =
+                sol003PackageManagementSubscriptionController.deleteSubscription(subscriptionId);
+
+        // Attempt to retrieve the subscription after delete
+        final ResponseEntity<InlineResponse2002> responseGetSubscription =
+                (ResponseEntity<InlineResponse2002>) sol003PackageManagementSubscriptionController
+                        .getSubscription(subscriptionId);
+
+        assertEquals(HttpStatus.NOT_FOUND, responseGetSubscription.getStatusCode());
+        assertEquals(HttpStatus.NO_CONTENT, responseDelete.getStatusCode());
+    }
+
+    @Test
+    public void testFailDeleteSubscriptionWithInvalidSubscriptionId() throws URISyntaxException, InterruptedException {
+        final ResponseEntity<Void> responseDelete = (ResponseEntity<Void>) sol003PackageManagementSubscriptionController
+                .deleteSubscription("invalidSubscriptionId");
+        assertEquals(HttpStatus.NOT_FOUND, responseDelete.getStatusCode());
     }
 
     private PkgmSubscriptionRequest buildPkgmSubscriptionRequest() {

@@ -21,11 +21,14 @@
 package org.onap.so.adapters.vnfmadapter.extclients.etsicatalog;
 
 import java.util.Optional;
-import javax.swing.text.html.Option;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmSubscription;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VnfPkgInfo;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.InlineResponse2001;
-import org.onap.so.adapters.vnfmadapter.rest.exceptions.*;
+import org.onap.so.adapters.vnfmadapter.rest.exceptions.EtsiCatalogManagerBadRequestException;
+import org.onap.so.adapters.vnfmadapter.rest.exceptions.EtsiCatalogManagerRequestFailureException;
+import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfPkgBadRequestException;
+import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfPkgConflictException;
+import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfPkgNotFoundException;
 import org.onap.so.rest.exceptions.HttpResouceNotFoundException;
 import org.onap.so.rest.exceptions.InvalidRestRequestException;
 import org.onap.so.rest.exceptions.RestProcessingException;
@@ -190,7 +193,8 @@ public class EtsiCatalogServiceProviderImpl implements EtsiCatalogServiceProvide
             return Optional.empty();
         } catch (final InvalidRestRequestException invalidRestRequestException) {
             logger.error("Caught InvalidRestRequestException", invalidRestRequestException);
-            throw new EtsiCatalogManagerBadRequestException("Bad Request Received on postSubscription call.");
+            throw new EtsiCatalogManagerBadRequestException(
+                    "Bad Request Received on postSubscription call to ETSI Catalog Manager.");
         } catch (final RestProcessingException restProcessingException) {
             logger.error("Caught RestProcessingException with Status Code: {}", restProcessingException.getStatusCode(),
                     restProcessingException);
@@ -199,6 +203,28 @@ public class EtsiCatalogServiceProviderImpl implements EtsiCatalogServiceProvide
                             + restProcessingException.getStatusCode());
         }
     }
+
+    public Boolean deleteSubscription(final String subscriptionId) {
+        try {
+            final ResponseEntity<Void> responseEntity = httpServiceProvider
+                    .deleteHttpRequest(etsiCatalogUrlProvider.getSubscriptionUrl() + "/" + subscriptionId, Void.class);
+
+            if (responseEntity.getStatusCode() == HttpStatus.NO_CONTENT) {
+                logger.info("Subscription with ID: {} has been successfully deleted from the ETSI Catalog Manager",
+                        subscriptionId);
+                return true;
+            }
+            logger.error("Unexpected Status Code Received on deleteSubscription: {}", responseEntity.getStatusCode());
+            return false;
+        } catch (final InvalidRestRequestException invalidRestRequestException) {
+            logger.error("Caught InvalidRestRequestException on deleteSubscription call to ETSI Catalog Manager.",
+                    invalidRestRequestException);
+            throw new EtsiCatalogManagerBadRequestException(
+                    "Bad Request Received on deleteSubscription call to ETSI Catalog Manager.");
+        }
+    }
+
+
 
     private Optional<byte[]> requestVnfElement(final String vnfPkgId, final String vnfRequestUrl,
             final String vnfRequestName) {

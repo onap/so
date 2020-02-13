@@ -60,7 +60,7 @@ public interface PackageManagementCacheServiceProvider {
      * Delete subscription from cache
      * 
      * @param subscriptionId
-     * @return true if subscription exists and able to be removed, otherwise returns false
+     * @return Boolean
      */
     boolean deleteSubscription(final String subscriptionId);
 

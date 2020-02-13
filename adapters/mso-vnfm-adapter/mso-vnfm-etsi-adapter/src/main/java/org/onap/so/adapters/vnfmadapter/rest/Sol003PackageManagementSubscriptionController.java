@@ -23,14 +23,13 @@ package org.onap.so.adapters.vnfmadapter.rest;
 import static org.onap.so.adapters.vnfmadapter.Constants.PACKAGE_MANAGEMENT_BASE_URL;
 import static org.slf4j.LoggerFactory.getLogger;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Optional;
 import javax.ws.rs.core.MediaType;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.ProblemDetails;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.InlineResponse2002;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.PkgmSubscriptionRequest;
-import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.ProblemDetails;
 import org.onap.so.adapters.vnfmadapter.packagemanagement.subscriptionmanagement.SubscriptionManager;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +37,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -135,6 +135,24 @@ public class Sol003PackageManagementSubscriptionController {
         }
         final String errorMessage =
                 "The requested subscription: " + subscriptionId + " was not found on call getSubscription";
+        logger.error(errorMessage);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ProblemDetails().detail(errorMessage));
+    }
+
+    /**
+     * DELETE a specific subscription, by subscriptionId. Section Number: 10.4.8.3.5
+     *
+     * @param subscriptionId The ID of the subscription that you wish to delete.
+     * @return Empty response if successful. Object: Void Response Code: 204 No Content
+     */
+    @DeleteMapping(value = "/subscriptions/{subscriptionId}")
+    public ResponseEntity<?> deleteSubscription(@PathVariable("subscriptionId") final String subscriptionId) {
+        if (subscriptionManager.deleteSubscription(subscriptionId)) {
+            logger.debug("Successfully deleted subscription with id {}", subscriptionId);
+            return ResponseEntity.noContent().build();
+        }
+        final String errorMessage =
+                "The requested subscription: " + subscriptionId + " was not found on call deleteSubscription";
         logger.error(errorMessage);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ProblemDetails().detail(errorMessage));
     }
