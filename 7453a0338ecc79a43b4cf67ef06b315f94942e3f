@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9955d34e_7c81d2c5",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/test/java/org/onap/so/adapters/vevnfm/provider/AuthorizationHeadersProviderTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-02-13T15:29:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fe5dd63e_bc9ee950",
+      "revId": "7453a0338ecc79a43b4cf67ef06b315f94942e3f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "797854da_7984a518",
         "filename": "adapters/mso-ve-vnfm-adapter/src/test/java/org/onap/so/adapters/vevnfm/provider/AuthorizationHeadersProviderTest.java",
         "patchSetId": 5
@@ -30,6 +48,24 @@
       "writtenOn": "2020-02-13T14:36:52Z",
       "side": 1,
       "message": "We should verify that the authorization header name is not in the current headers. Verifying the size does not confirm what actually happened within the method.",
+      "revId": "7453a0338ecc79a43b4cf67ef06b315f94942e3f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8ad4ba6b_c36351ca",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/test/java/org/onap/so/adapters/vevnfm/provider/AuthorizationHeadersProviderTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-02-13T15:29:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "797854da_7984a518",
       "revId": "7453a0338ecc79a43b4cf67ef06b315f94942e3f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
