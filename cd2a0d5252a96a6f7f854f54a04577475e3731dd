@@ -157,6 +157,24 @@
       "revId": "cd2a0d5252a96a6f7f854f54a04577475e3731dd",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3d27e2dd_fd43d88e",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericCDSProcessingDE.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-13T14:51:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e3591e86_c64dca40",
+      "revId": "cd2a0d5252a96a6f7f854f54a04577475e3731dd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
