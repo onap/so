@@ -23,6 +23,8 @@ package org.onap.so.apihandlerinfra;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.TreeSet;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -90,21 +92,40 @@ public class WorkflowSpecificationsHandler {
     @Transactional
 
     public Response queryWorkflowSpecifications(@QueryParam("vnfModelVersionId") String vnfModelVersionId,
-            @PathParam("version") String version) throws Exception {
-
+            @QueryParam("pnfModelVersionId") String pnfModelVersionId, @PathParam("version") String version)
+            throws Exception {
         String apiVersion = version.substring(1);
 
-        ObjectMapper mapper1 = new ObjectMapper();
-        mapper1.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        List<Workflow> workflows = new ArrayList<>();
+        if (vnfModelVersionId == null && pnfModelVersionId == null) {
+            workflows.addAll(queryWorkflowSpecificationsForAll());
+        } else {
+            // 1. query workflow specifications for given vnfModelVersionId if need.
+            if (vnfModelVersionId != null) {
+                List<Workflow> vnfWorkflows = queryWorkflowSpecificationsForVnf(vnfModelVersionId);
+                logger.debug("Retrieved " + vnfWorkflows.size() + " workflows for given vnfModelVersionId.");
+                if (vnfWorkflows.size() > 0) {
+                    workflows.addAll(vnfWorkflows);
+                }
+            }
 
-        List<Workflow> workflows = catalogDbClient.findWorkflowByModelUUID(vnfModelVersionId);
-
-        List<Workflow> nativeWorkflows = catalogDbClient.findWorkflowBySource(NATIVE_WORKFLOW);
-        if (nativeWorkflows != null && !nativeWorkflows.isEmpty()) {
-            workflows.addAll(nativeWorkflows);
+            // 2. query workflow specifications for given pnfModelVersionId if need.
+            if (pnfModelVersionId != null) {
+                List<Workflow> pnfWorkflows = queryWorkflowSpecificationsForPnf(pnfModelVersionId);
+                logger.debug("Retrieved " + pnfWorkflows.size() + " workflows for given pnfModelVerionId.");
+                if (pnfWorkflows.size() > 0) {
+                    workflows.addAll(pnfWorkflows);
+                }
+            }
         }
 
-        WorkflowSpecifications workflowSpecifications = mapWorkflowsToWorkflowSpecifications(workflows);
+        // Deduplication
+        List<Workflow> retWorkflows = workflows.stream()
+                .collect(Collectors.collectingAndThen(
+                        Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(Workflow::getArtifactUUID))),
+                        ArrayList::new));
+
+        WorkflowSpecifications workflowSpecifications = mapWorkflowsToWorkflowSpecifications(retWorkflows);
 
         String jsonResponse;
         try {
@@ -238,5 +259,25 @@ public class WorkflowSpecificationsHandler {
             validationList.add(validation);
         }
         return validationList;
+    }
+
+    private List<Workflow> queryWorkflowSpecificationsForAll() {
+        List<Workflow> workflows = catalogDbClient.findWorkflowBySource(NATIVE_WORKFLOW);
+        return workflows;
+    }
+
+    private List<Workflow> queryWorkflowSpecificationsForVnf(String vnfModelVersionId) {
+        List<Workflow> workflows = catalogDbClient.findWorkflowByVnfModelUUID(vnfModelVersionId);
+
+        List<Workflow> nativeWorkflows = catalogDbClient.findWorkflowBySource(NATIVE_WORKFLOW);
+        if (!nativeWorkflows.isEmpty()) {
+            workflows.addAll(nativeWorkflows);
+        }
+        return workflows;
+    }
+
+    private List<Workflow> queryWorkflowSpecificationsForPnf(String pnfModelVersionId) {
+        List<Workflow> workflows = catalogDbClient.findWorkflowByPnfModelUUID(pnfModelVersionId);
+        return workflows;
     }
 }
