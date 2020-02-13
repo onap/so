@@ -23,16 +23,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Exception for an ETSI Catalog Manager Request Failure
+ * Exception for an unsupported authentication type
  * 
- * @author gareth.roper@est.tech
+ * @author Andrew Lamb (andrew.a.lamb@est.tech)
  */
 @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
-public class SubscriptionRequestConversionException extends RuntimeException {
+public class AuthenticationTypeNotSupportedException extends RuntimeException {
 
-    private static final long serialVersionUID = 45898561453196895L;
+    private static final long serialVersionUID = 2939423208362066902L;
 
-    public SubscriptionRequestConversionException(final String message) {
+    public AuthenticationTypeNotSupportedException(final String message) {
         super(message);
     }
 
@@ -40,4 +40,5 @@ public class SubscriptionRequestConversionException extends RuntimeException {
     public synchronized Throwable fillInStackTrace() {
         return this;
     }
+
 }

@@ -22,10 +22,6 @@ package org.onap.so.adapters.vnfmadapter.rest.exceptions;
 
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.ProblemDetails;
 import org.onap.so.adapters.vnfmadapter.rest.Sol003PackageManagementController;
-import org.onap.so.adapters.vnfmadapter.rest.exceptions.EtsiCatalogManagerRequestFailureException;
-import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfPkgBadRequestException;
-import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfPkgConflictException;
-import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfPkgNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -64,11 +60,11 @@ public class Sol003PackageManagementControllerExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problemDetails);
     }
 
-    @ExceptionHandler(SubscriptionRequestConversionException.class)
-    public ResponseEntity<ProblemDetails> handleSubscriptionRequestConversionException(
-            final SubscriptionRequestConversionException subscriptionRequestConversionException) {
+    @ExceptionHandler(ConversionFailedException.class)
+    public ResponseEntity<ProblemDetails> handleConversionFailedException(
+            final ConversionFailedException conversionFailedException) {
         final ProblemDetails problemDetails = new ProblemDetails();
-        problemDetails.setDetail(subscriptionRequestConversionException.getMessage());
+        problemDetails.setDetail(conversionFailedException.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problemDetails);
     }
 
