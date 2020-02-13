@@ -1,0 +1,164 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a516b843_9e092da5",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-13T15:38:04Z",
+      "side": 1,
+      "message": "I didn\u0027t see any change in WorkflowSpecificationsHandlerTest. Are you planning to write testcases for this change?",
+      "revId": "b72529b61b7cfab9434a9c33d609e3d2b60a442a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "199d0958_47c7c306",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-13T15:38:04Z",
+      "side": 1,
+      "message": "remove stale code",
+      "range": {
+        "startLine": 99,
+        "startChar": 8,
+        "endLine": 102,
+        "endChar": 11
+      },
+      "revId": "b72529b61b7cfab9434a9c33d609e3d2b60a442a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "299e30a6_c0e29ad1",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-13T15:38:04Z",
+      "side": 1,
+      "message": "as here is not much add/remove operations here so i\u0027ll suggest use ArrayList here.",
+      "range": {
+        "startLine": 103,
+        "startChar": 39,
+        "endLine": 103,
+        "endChar": 51
+      },
+      "revId": "b72529b61b7cfab9434a9c33d609e3d2b60a442a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "adef53b5_c83249e7",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-13T15:38:04Z",
+      "side": 1,
+      "message": "Is it possible that vnfModelVersionId and pnfModelVersionId come together in the url, if not then consider it as \nif (all)\nelse if (case 1)\nelse if (case 2)",
+      "revId": "b72529b61b7cfab9434a9c33d609e3d2b60a442a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c9b5bb0d_03beee1b",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-13T15:38:04Z",
+      "side": 1,
+      "message": "List\u003cWorkflow\u003e retWorkflows \u003d workflows.stream().\n                collect(Collectors.collectingAndThen(Collectors.toCollection(() -\u003e new TreeSet\u003c\u003e(Comparator.comparing(Workflow::getArtifactUUID))),\n                ArrayList::new));\n\nThis will give you same result",
+      "range": {
+        "startLine": 126,
+        "startChar": 8,
+        "endLine": 137,
+        "endChar": 30
+      },
+      "revId": "b72529b61b7cfab9434a9c33d609e3d2b60a442a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9a7c2a16_abca87f9",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-13T15:38:04Z",
+      "side": 1,
+      "message": "acc to code convention all private methods should be at the end of the class.\n\ncomment apply on below 2 privates too",
+      "revId": "b72529b61b7cfab9434a9c33d609e3d2b60a442a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5110e204_2af0c55a",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/WorkflowSpecificationsHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-13T15:38:04Z",
+      "side": 1,
+      "message": "this can never be null, redundant check",
+      "range": {
+        "startLine": 164,
+        "startChar": 12,
+        "endLine": 164,
+        "endChar": 35
+      },
+      "revId": "b72529b61b7cfab9434a9c33d609e3d2b60a442a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d082e726_454b7a46",
+        "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/client/CatalogDbClient.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-13T15:38:04Z",
+      "side": 1,
+      "message": "Please make sure it doesnt break any legacy behavior",
+      "revId": "b72529b61b7cfab9434a9c33d609e3d2b60a442a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
