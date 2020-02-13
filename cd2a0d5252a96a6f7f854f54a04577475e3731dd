@@ -139,6 +139,24 @@
       "revId": "cd2a0d5252a96a6f7f854f54a04577475e3731dd",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e3591e86_c64dca40",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericCDSProcessingDE.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-13T13:24:00Z",
+      "side": 1,
+      "message": "Thank you for your answers. You\u0027re right I didn\u0027t notice negation there. However it still supports only PNF (not VNF nor VF module). Could you include PNF in the class name then? It\u0027s not mentioned anywhere else except class comment. It would be much more clear if class name included PNF. There are so many other CDS-releated generic classes, VNF-related classes that this information would be very useful.",
+      "parentUuid": "3b0ace0d_e4eabe8c",
+      "revId": "cd2a0d5252a96a6f7f854f54a04577475e3731dd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
