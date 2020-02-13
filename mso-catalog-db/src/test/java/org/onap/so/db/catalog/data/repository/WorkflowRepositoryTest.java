@@ -36,7 +36,8 @@ public class WorkflowRepositoryTest extends BaseTest {
 
     @Test
     public void findByVnfResourceModelUUIDTest() throws Exception {
-        List<Workflow> workflows = workflowRepository.findWorkflowByModelUUID("ff2ae348-214a-11e7-93ae-92361f002671");
+        List<Workflow> workflows =
+                workflowRepository.findWorkflowByVnfModelUUID("ff2ae348-214a-11e7-93ae-92361f002671");
 
         Assert.assertTrue(workflows != null);
         Assert.assertTrue(workflows.size() != 0);
