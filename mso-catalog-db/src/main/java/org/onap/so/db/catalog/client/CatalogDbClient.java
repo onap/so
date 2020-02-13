@@ -201,7 +201,7 @@ public class CatalogDbClient {
     private String findServiceByServiceInstanceId = "/findServiceByServiceInstanceId";
     private String findPnfResourceCustomizationByModelUuid = "/findPnfResourceCustomizationByModelUuid";
     private String findWorkflowByArtifactUUID = "/findByArtifactUUID";
-    private String findWorkflowByModelUUID = "/findWorkflowByModelUUID";
+    private String findWorkflowByVnfModelUUID = "/findWorkflowByVnfModelUUID";
     private String findWorkflowByPnfModelUUID = "/findWorkflowByPnfModelUUID";
     private String findWorkflowBySource = "/findBySource";
     private String findVnfResourceCustomizationByModelUuid = "/findVnfResourceCustomizationByModelUuid";
@@ -339,7 +339,7 @@ public class CatalogDbClient {
                 endpoint + PNF_RESOURCE_CUSTOMIZATION + SEARCH + findPnfResourceCustomizationByModelUuid;
 
         findWorkflowByArtifactUUID = endpoint + WORKFLOW + SEARCH + findWorkflowByArtifactUUID;
-        findWorkflowByModelUUID = endpoint + WORKFLOW + SEARCH + findWorkflowByModelUUID;
+        findWorkflowByVnfModelUUID = endpoint + WORKFLOW + SEARCH + findWorkflowByVnfModelUUID;
         findWorkflowByPnfModelUUID = endpoint + WORKFLOW + SEARCH + findWorkflowByPnfModelUUID;
         findWorkflowBySource = endpoint + WORKFLOW + SEARCH + findWorkflowBySource;
 
@@ -1049,8 +1049,8 @@ public class CatalogDbClient {
                 .queryParam(ARTIFACT_UUID, artifactUUID).build().toString()));
     }
 
-    public List<Workflow> findWorkflowByModelUUID(String vnfResourceModelUUID) {
-        return this.getMultipleResources(workflowClient, getUri(UriBuilder.fromUri(findWorkflowByModelUUID)
+    public List<Workflow> findWorkflowByVnfModelUUID(String vnfResourceModelUUID) {
+        return this.getMultipleResources(workflowClient, getUri(UriBuilder.fromUri(findWorkflowByVnfModelUUID)
                 .queryParam(VNF_RESOURCE_MODEL_UUID, vnfResourceModelUUID).build().toString()));
     }
 

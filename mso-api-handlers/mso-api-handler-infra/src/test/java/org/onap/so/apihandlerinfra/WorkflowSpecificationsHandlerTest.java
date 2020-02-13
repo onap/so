@@ -68,7 +68,7 @@ public class WorkflowSpecificationsHandlerTest extends BaseTest {
     private final String basePath = "onap/so/infra/workflowSpecifications/v1/workflows";
 
     @Test
-    public void queryWorkflowSpecifications_Test_Success()
+    public void queryWorkflowSpecificationsByVnfModelUUID_Test_Success()
             throws ParseException, JSONException, JsonParseException, JsonMappingException, IOException {
 
         HttpHeaders headers = new HttpHeaders();
@@ -77,7 +77,7 @@ public class WorkflowSpecificationsHandlerTest extends BaseTest {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
 
         wireMockServer.stubFor(get(urlMatching(
-                "/workflow/search/findWorkflowByModelUUID[?]vnfResourceModelUUID=b5fa707a-f55a-11e7-a796-005056856d52"))
+                "/workflow/search/findWorkflowByVnfModelUUID[?]vnfResourceModelUUID=b5fa707a-f55a-11e7-a796-005056856d52"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("WorkflowSpecificationsQuery_Response.json"))
                                 .withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -322,6 +322,52 @@ public class WorkflowSpecificationsHandlerTest extends BaseTest {
 
         JSONAssert.assertEquals(expectedResultJson, workflowSpecificationsJson, false);
         assertThat(expectedResult, sameBeanAs(workflowSpecifications).ignoring(WorkflowInputParameter.class));
+    }
+
+    @Test
+    public void queryWorkflowSpecificationsByPnfModelUUID_Test_Success()
+            throws ParseException, JSONException, JsonParseException, JsonMappingException, IOException {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Accept", MediaType.APPLICATION_JSON);
+        headers.set("Content-Type", MediaType.APPLICATION_JSON);
+        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+
+        wireMockServer.stubFor(get(urlMatching(
+                "/workflow/search/findWorkflowByPnfModelUUID[?]pnfResourceModelUUID=f2d1f2b2-88bb-49da-b716-36ae420ccbff"))
+                        .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                                .withBody(getWiremockResponseForCatalogdb(
+                                        "WorkflowSpecificationsForPnfQuery_Response.json"))
+                                .withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        wireMockServer.stubFor(get(urlMatching("/workflow/4/workflowActivitySpecSequence"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(getWiremockResponseForCatalogdb("Empty_workflowActivitySpecSequence_Response.json"))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(basePath))
+                .queryParam("pnfModelVersionId", "f2d1f2b2-88bb-49da-b716-36ae420ccbff");
+
+        ResponseEntity<String> response =
+                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        WorkflowSpecifications expectedResponse = mapper.readValue(
+                new String(Files.readAllBytes(
+                        Paths.get("src/test/resources/__files/catalogdb/WorkflowSpecificationsForPnf.json"))),
+                WorkflowSpecifications.class);
+        WorkflowSpecifications realResponse = mapper.readValue(response.getBody(), WorkflowSpecifications.class);
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        assertThat(expectedResponse, sameBeanAs(realResponse));
+        assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
+        assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
+        assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
+        assertEquals("1.0.0", response.getHeaders().get("X-LatestVersion").get(0));
     }
 
     private String getWiremockResponseForCatalogdb(String file) {

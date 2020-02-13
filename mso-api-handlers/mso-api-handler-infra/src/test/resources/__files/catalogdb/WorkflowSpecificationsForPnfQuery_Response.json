@@ -1,0 +1,41 @@
+{
+    "_embedded": {
+        "workflow": [
+            {
+                "artifactChecksum": "MANUAL RECORD",
+                "artifactName": "DummyPnfWorkflow",
+                "artifactUUID": "b2fd5627-55e4-4f4f-8064-9e6f443e9152",
+                "body": null,
+                "created": "2020-02-18T08:28:15.000+0000",
+                "description": "Dummy Pnf Workflow to test custom Pnf workflow",
+                "id": 4,
+                "name": "Dummy Pnf Workflow",
+                "operationName": "DummyPnfWorkflow",
+                "pnfResourceWorkflow": null,
+                "resourceTarget": "pnf",
+                "source": "native",
+                "timeoutMinutes": null,
+                "version": 1.0,
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:8090/workflow/search/findWorkflowByPnfModelUUID?pnfResourceModelUUID=f2d1f2b2-88bb-49da-b716-36ae420ccbff"
+                    },
+                    "workflow": {
+                        "href": "http://localhost:8090/workflow/4"
+                    },
+                    "workflowActivitySpecSequence": {
+                        "href": "http://localhost:8090/workflow/4/workflowActivitySpecSequence"
+                    }
+                }
+            }
+        ]
+    },
+    "_links": {
+        "self": {
+            "href": "http://localhost:8090/workflow/search/findWorkflowByPnfModelUUID?pnfResourceModelUUID=f2d1f2b2-88bb-49da-b716-36ae420ccbff"
+        },
+        "workflowActivitySpecSequence": {
+            "href": "http://localhost:8090/workflow/4/workflowActivitySpecSequence"
+        }
+    }
+}

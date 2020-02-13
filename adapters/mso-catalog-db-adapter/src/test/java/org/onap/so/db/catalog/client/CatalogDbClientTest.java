@@ -718,8 +718,8 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
     }
 
     @Test
-    public void getWorkflowByModelUUID_validUuid_expectedOutput() {
-        List<Workflow> workflows = client.findWorkflowByModelUUID("ff2ae348-214a-11e7-93ae-92361f002671");
+    public void getWorkflowByVnfModelUUID_validUuid_expectedOutput() {
+        List<Workflow> workflows = client.findWorkflowByVnfModelUUID("ff2ae348-214a-11e7-93ae-92361f002671");
         assertTrue(workflows != null);
         assertTrue(workflows.size() != 0);
 
