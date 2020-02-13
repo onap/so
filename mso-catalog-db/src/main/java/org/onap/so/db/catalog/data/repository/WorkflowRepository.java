@@ -37,14 +37,14 @@ public interface WorkflowRepository extends JpaRepository<Workflow, Integer> {
      * Used to fetch the @{link Workflow} by the Model UUID.
      *
      * This operation is required by {@link org.onap.so.db.catalog.client.CatalogDbClient} to provide Workflow based on
-     * model UUID without projection.
+     * vnf model UUID without projection.
      *
      * @param vnfResourceModelUUID UUID
      * @return List of Workflow
      */
     @Query(value = "select b.* from vnf_resource_to_workflow a join workflow b where a.WORKFLOW_ID = b.ID and a.VNF_RESOURCE_MODEL_UUID = ?1",
             nativeQuery = true)
-    List<Workflow> findWorkflowByModelUUID(String vnfResourceModelUUID);
+    List<Workflow> findWorkflowByVnfModelUUID(String vnfResourceModelUUID);
 
     /**
      * Used to fetch the @{link Workflow} by the Pnf Model UUID.
