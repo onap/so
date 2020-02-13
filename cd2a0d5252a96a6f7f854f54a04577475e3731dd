@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "57d7a446_8d905d2f",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/GeneratePayloadForCds.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-13T10:45:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3d994895_69a26640",
+      "revId": "cd2a0d5252a96a6f7f854f54a04577475e3731dd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b41c732a_2f65e9bc",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/GeneratePayloadForCds.java",
         "patchSetId": 10
@@ -30,6 +48,24 @@
       "writtenOn": "2020-02-13T10:18:51Z",
       "side": 1,
       "message": "To be honest I still don\u0027t understand why you need to use this class if you could add this implementation to GenericCDSProcessingDE which is focused solely on PNFs. Now you need to add more string-based \u0027cases\u0027 and \u0027ifs\u0027 which are later very difficult to find by other developers. I know how much time it took me to find all those VNF/PNF related implementations hidden all over the SO code in similar \u0027cases\u0027 and \u0027ifs\u0027. Anyway this is just a comment, if you feel this better suits your needs then I won\u0027t argue here.",
+      "revId": "cd2a0d5252a96a6f7f854f54a04577475e3731dd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "41a172cf_ebc51a27",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/GeneratePayloadForCds.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-13T10:45:16Z",
+      "side": 1,
+      "message": "I want these implementations to be inline with BuildingBlock. And this class will carry all the possible network function resources . So IMO it \u0027ll be easy to track any impl in future from here.",
+      "parentUuid": "b41c732a_2f65e9bc",
       "revId": "cd2a0d5252a96a6f7f854f54a04577475e3731dd",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "c0cb25f5_fbda0ed1",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/controller/cds/CdsControllerDE.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-13T10:45:16Z",
+      "side": 1,
+      "message": "This class is only serve legacy config related cases i.e. when config-assign and config-deploy fetch ip-addresses from aai. \n\nIn upcoming actions this is not the case. If any action needs any parameter from aai, CDS has capability to fetch it directly from AAI. \n\nIMO, this class will be removed in future. \n\nI\u0027ll change the name anyway.",
+      "parentUuid": "a09d37da_81cb77c5",
+      "revId": "cd2a0d5252a96a6f7f854f54a04577475e3731dd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "246a0e7f_086accbc",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericCDSProcessingDE.java",
         "patchSetId": 10
@@ -64,6 +118,24 @@
       "writtenOn": "2020-02-13T10:18:51Z",
       "side": 1,
       "message": "This class is called GenericCDSProcessing but it only works for PNFs and only for config related actions. Could you call it accordingly (perhaps PnfConfigCDSProcessingDE)?",
+      "revId": "cd2a0d5252a96a6f7f854f54a04577475e3731dd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3b0ace0d_e4eabe8c",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericCDSProcessingDE.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-13T10:45:16Z",
+      "side": 1,
+      "message": "I humbly want to correct you here that this class will work for every pnf actions except config-assign and config-deploy (which are legacy). \n\nI think in future this class will start severing these 2 legacy cases too. \n\nSo this class serving every action going to CDS with DelegateExecute except above stated two.",
+      "parentUuid": "246a0e7f_086accbc",
       "revId": "cd2a0d5252a96a6f7f854f54a04577475e3731dd",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
