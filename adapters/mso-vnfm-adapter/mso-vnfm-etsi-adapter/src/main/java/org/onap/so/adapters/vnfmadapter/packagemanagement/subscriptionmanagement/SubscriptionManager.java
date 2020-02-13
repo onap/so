@@ -41,12 +41,11 @@ import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.
 import org.onap.so.adapters.vnfmadapter.packagemanagement.subscriptionmanagement.cache.PackageManagementCacheServiceProvider;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.InternalServerErrorException;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.SubscriptionNotFoundException;
-import org.onap.so.adapters.vnfmadapter.rest.exceptions.SubscriptionRequestConversionException;
+import org.onap.so.adapters.vnfmadapter.rest.exceptions.ConversionFailedException;
 import org.onap.so.utils.CryptoUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.convert.ConversionException;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
@@ -66,7 +65,6 @@ public class SubscriptionManager {
     private final String vnfmAdapterEndpoint;
     private final String msoKeyString;
     private final String vnfmAdapterAuth;
-
 
     @Autowired
     public SubscriptionManager(final PackageManagementCacheServiceProvider packageManagementCacheServiceProvider,
@@ -111,7 +109,6 @@ public class SubscriptionManager {
         throw new InternalServerErrorException(
                 "Received empty response from POST to ETSI Catalog Manager Subscription Endpoint.");
     }
-
 
     public Optional<String> getSubscriptionId(final PkgmSubscriptionRequest pkgmSubscriptionRequest) {
         return packageManagementCacheServiceProvider.getSubscriptionId(pkgmSubscriptionRequest);
@@ -174,6 +171,10 @@ public class SubscriptionManager {
                 vnfmAdapterEndpoint + Constants.PACKAGE_MANAGEMENT_BASE_URL + "/subscriptions/" + subscriptionId);
     }
 
+    public Optional<PkgmSubscriptionRequest> getSubscriptionRequest(final String subscriptionId) {
+        return packageManagementCacheServiceProvider.getSubscription(subscriptionId);
+    }
+
     private InlineResponse2002 getInlineResponse2002(final String id, final PkgmSubscriptionRequest subscription) {
         return new InlineResponse2002().id(id).filter(subscription.getFilter())
                 .callbackUri(subscription.getCallbackUri());
@@ -186,9 +187,9 @@ public class SubscriptionManager {
         try {
             etsiCatalogManagerSubscriptionRequest = conversionService.convert(pkgmSubscriptionRequest,
                     org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmSubscriptionRequest.class);
-        } catch (final ConversionException conversionException) {
+        } catch (final org.springframework.core.convert.ConversionException conversionException) {
             logger.error(conversionException.getMessage());
-            throw new SubscriptionRequestConversionException(
+            throw new ConversionFailedException(
                     "Could not convert Sol003 PkgmSubscriptionRequest to ETSI-Catalog Manager PkgmSubscriptionRequest");
         } catch (final Exception exception) {
             logger.error(exception.getMessage());
@@ -209,7 +210,7 @@ public class SubscriptionManager {
                             .addAuthTypeItem(BASIC).paramsBasic(new BasicAuth().userName(username).password(password)));
             return etsiCatalogManagerSubscriptionRequest;
         }
-        throw new SubscriptionRequestConversionException(
+        throw new ConversionFailedException(
                 "Failed to convert Sol003 PkgmSubscriptionRequest to ETSI-Catalog Manager PkgmSubscriptionRequest");
     }
 

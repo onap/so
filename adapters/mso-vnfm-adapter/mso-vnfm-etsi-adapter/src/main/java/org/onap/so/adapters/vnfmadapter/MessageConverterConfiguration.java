@@ -23,6 +23,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
 import java.util.Collection;
+import org.onap.so.adapters.vnfmadapter.converters.etsicatalog.sol003.PkgChangeNotificationConverter;
+import org.onap.so.adapters.vnfmadapter.converters.etsicatalog.sol003.PkgOnboardingNotificationConverter;
 import org.onap.so.adapters.vnfmadapter.converters.etsicatalog.sol003.VnfPkgInfoConverter;
 import org.onap.so.adapters.vnfmadapter.converters.sol003.etsicatalog.PkgmSubscriptionRequestConverter;
 import org.onap.so.adapters.vnfmadapter.oauth.OAuth2AccessTokenAdapter;
@@ -46,6 +48,8 @@ public class MessageConverterConfiguration {
         final DefaultConversionService service = new DefaultConversionService();
         service.addConverter(new VnfPkgInfoConverter());
         service.addConverter(new PkgmSubscriptionRequestConverter());
+        service.addConverter(new PkgChangeNotificationConverter());
+        service.addConverter(new PkgOnboardingNotificationConverter());
         return service;
     }
 
