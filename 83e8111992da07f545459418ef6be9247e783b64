@@ -25,6 +25,29 @@
     },
     {
       "key": {
+        "uuid": "8116be9d_2083b625",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/activity/ActivitySpecsActions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-02-13T08:45:28Z",
+      "side": 1,
+      "message": "Why change it? It doesn\u0027t really improve readability, but changes behaviour (minor difference but now for status HttpStatus.SC_UNPROCESSABLE_ENTITY two things are going to be logged instead of one)",
+      "range": {
+        "startLine": 122,
+        "startChar": 13,
+        "endLine": 123,
+        "endChar": 15
+      },
+      "revId": "83e8111992da07f545459418ef6be9247e783b64",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "133d4371_556cc779",
         "filename": "asdc-controller/src/main/java/org/onap/so/asdc/activity/DeployActivitySpecs.java",
         "patchSetId": 4
@@ -87,6 +110,29 @@
         "startChar": 16,
         "endLine": 766,
         "endChar": 18
+      },
+      "revId": "83e8111992da07f545459418ef6be9247e783b64",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eed24ff7_2deb6b50",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/client/ASDCController.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 777,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-02-13T08:45:28Z",
+      "side": 1,
+      "message": "Not sure about the full logic of this method, but using continue makes it skip \"if (!hasVFResource)\" case.",
+      "range": {
+        "startLine": 775,
+        "startChar": 0,
+        "endLine": 777,
+        "endChar": 21
       },
       "revId": "83e8111992da07f545459418ef6be9247e783b64",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
