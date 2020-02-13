@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "20ab385d_03f64549",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/adapter/network/mapper/NetworkAdapterObjectMapper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 269,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-02-13T11:21:23Z",
+      "side": 1,
+      "message": "Consider remove it\u0027s already defined in imports line 56",
+      "range": {
+        "startLine": 269,
+        "startChar": 16,
+        "endLine": 269,
+        "endChar": 44
+      },
+      "revId": "6f8af1cf2f2053517239dce6afb5ac1a33bbb16d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "afb679bb_2f80895f",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/adapter/network/mapper/NetworkAdapterObjectMapper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 323,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-02-13T11:21:23Z",
+      "side": 1,
+      "message": "Move to imports",
+      "range": {
+        "startLine": 323,
+        "startChar": 13,
+        "endLine": 323,
+        "endChar": 83
+      },
+      "revId": "6f8af1cf2f2053517239dce6afb5ac1a33bbb16d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
