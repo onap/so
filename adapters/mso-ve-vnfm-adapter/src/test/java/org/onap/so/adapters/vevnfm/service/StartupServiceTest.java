@@ -35,6 +35,9 @@ import org.onap.so.adapters.vevnfm.exception.VeVnfmException;
 @RunWith(MockitoJUnitRunner.class)
 public class StartupServiceTest {
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     @Mock
     private AaiConnection aaiConnection;
 
@@ -43,9 +46,6 @@ public class StartupServiceTest {
 
     @InjectMocks
     private StartupService startupService;
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void testSuccess() throws Exception {
@@ -56,7 +56,8 @@ public class StartupServiceTest {
         when(subscriberService.subscribe(info)).thenReturn(true);
 
         // when
-        startupService.run();
+        final EsrSystemInfo systemInfo = startupService.receiveVnfm();
+        startupService.subscribe(systemInfo);
 
         // then
         verify(aaiConnection, times(1)).receiveVnfm();
@@ -72,7 +73,8 @@ public class StartupServiceTest {
         thrown.expect(VeVnfmException.class);
 
         // when
-        startupService.run();
+        final EsrSystemInfo systemInfo = startupService.receiveVnfm();
+        startupService.subscribe(systemInfo);
     }
 
     @Test
@@ -86,6 +88,7 @@ public class StartupServiceTest {
         thrown.expect(VeVnfmException.class);
 
         // when
-        startupService.run();
+        final EsrSystemInfo systemInfo = startupService.receiveVnfm();
+        startupService.subscribe(systemInfo);
     }
 }

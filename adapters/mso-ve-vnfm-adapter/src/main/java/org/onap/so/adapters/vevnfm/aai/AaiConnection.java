@@ -22,9 +22,11 @@ package org.onap.so.adapters.vevnfm.aai;
 
 import java.util.List;
 import java.util.Optional;
+import org.apache.logging.log4j.util.Strings;
 import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.aai.domain.yang.EsrVnfm;
 import org.onap.aai.domain.yang.EsrVnfmList;
+import org.onap.so.adapters.vevnfm.exception.VeVnfmException;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
@@ -40,7 +42,27 @@ public class AaiConnection {
 
     private static final int FIRST_INDEX = 0;
 
-    public EsrSystemInfo receiveVnfm() {
+    private static void isValid(final EsrSystemInfo info) throws VeVnfmException {
+        if (info == null || Strings.isBlank(info.getServiceUrl())) {
+            throw new VeVnfmException("No 'url' field in VNFM info");
+        }
+    }
+
+    public EsrSystemInfo receiveVnfm() throws VeVnfmException {
+        EsrSystemInfo info;
+
+        try {
+            info = receiveVnfmInternal();
+        } catch (Exception e) {
+            throw new VeVnfmException(e);
+        }
+
+        isValid(info);
+
+        return info;
+    }
+
+    private EsrSystemInfo receiveVnfmInternal() {
         final AAIResourcesClient resourcesClient = new AAIResourcesClient();
         final Optional<EsrVnfmList> response =
                 resourcesClient.get(EsrVnfmList.class, AAIUriFactory.createResourceUri(AAIObjectType.VNFM_LIST));

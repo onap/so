@@ -20,29 +20,20 @@
 
 package org.onap.so.adapters.vevnfm.provider;
 
-import java.util.List;
 import org.apache.logging.log4j.util.Strings;
 import org.onap.so.configuration.rest.BasicHttpHeadersProvider;
-import org.springframework.http.HttpHeaders;
 
 public class AuthorizationHeadersProvider extends BasicHttpHeadersProvider {
 
-    private List<String> previousAuthorization;
-
     public void addAuthorization(final String authorization) {
-        final HttpHeaders headers = getHttpHeaders();
-        previousAuthorization = headers.get(AUTHORIZATION_HEADER);
-        headers.set(AUTHORIZATION_HEADER, authorization);
-    }
-
-    public void resetPrevious() {
-        if (!isPreviousAuthorizationBlank()) {
-            getHttpHeaders().addAll(AUTHORIZATION_HEADER, previousAuthorization);
+        if (Strings.isBlank(authorization)) {
+            return;
         }
+
+        getHttpHeaders().set(AUTHORIZATION_HEADER, authorization);
     }
 
-    private boolean isPreviousAuthorizationBlank() {
-        return previousAuthorization == null || previousAuthorization.isEmpty()
-                || Strings.isBlank(previousAuthorization.get(0));
+    public void removeAuthorization() {
+        getHttpHeaders().remove(AUTHORIZATION_HEADER);
     }
 }
