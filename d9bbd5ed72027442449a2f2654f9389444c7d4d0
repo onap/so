@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "089032a3_3bd05295",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/MsoRequest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2020-02-14T13:03:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7cc524b6_57ef4c97",
+      "range": {
+        "startLine": 74,
+        "startChar": 0,
+        "endLine": 74,
+        "endChar": 2
+      },
+      "revId": "d9bbd5ed72027442449a2f2654f9389444c7d4d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7006379e_9a8d8fd5",
         "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/MsoRequest.java",
         "patchSetId": 5
@@ -45,6 +69,30 @@
       "revId": "d9bbd5ed72027442449a2f2654f9389444c7d4d0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f0842636_cf20e09f",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/MsoRequest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2020-02-14T13:03:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7006379e_9a8d8fd5",
+      "range": {
+        "startLine": 226,
+        "startChar": 58,
+        "endLine": 226,
+        "endChar": 99
+      },
+      "revId": "d9bbd5ed72027442449a2f2654f9389444c7d4d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "8b86db6f_dec9c2db",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/MsoRequest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2020-02-14T13:03:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6a792c86_3d66f997",
+      "range": {
+        "startLine": 241,
+        "startChar": 29,
+        "endLine": 241,
+        "endChar": 46
+      },
+      "revId": "d9bbd5ed72027442449a2f2654f9389444c7d4d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ec3f6137_946bf17d",
         "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/MsoRequest.java",
         "patchSetId": 5
@@ -91,6 +163,30 @@
       "revId": "d9bbd5ed72027442449a2f2654f9389444c7d4d0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7b80f08e_aef7deb9",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/MsoRequest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 251,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2020-02-14T13:03:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ec3f6137_946bf17d",
+      "range": {
+        "startLine": 238,
+        "startChar": 1,
+        "endLine": 251,
+        "endChar": 65
+      },
+      "revId": "d9bbd5ed72027442449a2f2654f9389444c7d4d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "b50be384_f449213b",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/MsoRequest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 614,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2020-02-14T13:03:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bf3fc8f3_b902cd6f",
+      "range": {
+        "startLine": 614,
+        "startChar": 3,
+        "endLine": 614,
+        "endChar": 115
+      },
+      "revId": "d9bbd5ed72027442449a2f2654f9389444c7d4d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4ab6467d_eb2a5cdf",
         "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/MsoRequest.java",
         "patchSetId": 5
@@ -137,6 +257,30 @@
       "revId": "d9bbd5ed72027442449a2f2654f9389444c7d4d0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9061d498_33c42214",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/MsoRequest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 652,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2020-02-14T13:03:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4ab6467d_eb2a5cdf",
+      "range": {
+        "startLine": 652,
+        "startChar": 4,
+        "endLine": 652,
+        "endChar": 110
+      },
+      "revId": "d9bbd5ed72027442449a2f2654f9389444c7d4d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
