@@ -48,6 +48,54 @@
     },
     {
       "key": {
+        "uuid": "dbfd2f41_36d8bad6",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/activity/ActivitySpecsActions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2020-02-14T14:24:26Z",
+      "side": 1,
+      "message": "I added return statement it\u0027s make same complexity",
+      "parentUuid": "b126b435_e4e0b31a",
+      "range": {
+        "startLine": 123,
+        "startChar": 12,
+        "endLine": 123,
+        "endChar": 14
+      },
+      "revId": "83e8111992da07f545459418ef6be9247e783b64",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e086c681_a121390d",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/activity/ActivitySpecsActions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2020-02-14T14:24:26Z",
+      "side": 1,
+      "message": "I think that now it is less nested. I added return statement to improve readability",
+      "parentUuid": "8116be9d_2083b625",
+      "range": {
+        "startLine": 122,
+        "startChar": 13,
+        "endLine": 123,
+        "endChar": 15
+      },
+      "revId": "83e8111992da07f545459418ef6be9247e783b64",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "133d4371_556cc779",
         "filename": "asdc-controller/src/main/java/org/onap/so/asdc/activity/DeployActivitySpecs.java",
         "patchSetId": 4
@@ -59,6 +107,30 @@
       "writtenOn": "2020-02-13T08:15:47Z",
       "side": 1,
       "message": "Consider to bring back the else statement to keep same the complexity level as in code base version",
+      "range": {
+        "startLine": 138,
+        "startChar": 12,
+        "endLine": 138,
+        "endChar": 15
+      },
+      "revId": "83e8111992da07f545459418ef6be9247e783b64",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "73b06eee_ec44c0ec",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/activity/DeployActivitySpecs.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2020-02-14T14:24:26Z",
+      "side": 1,
+      "message": "I added continue; to keep same complexity.",
+      "parentUuid": "133d4371_556cc779",
       "range": {
         "startLine": 138,
         "startChar": 12,
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "47331ea0_94bd6b1c",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/client/ASDCController.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 763,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2020-02-14T14:24:26Z",
+      "side": 1,
+      "message": "I extracted it to separate method.",
+      "parentUuid": "1bc36b62_eb8fce00",
+      "range": {
+        "startLine": 763,
+        "startChar": 15,
+        "endLine": 763,
+        "endChar": 18
+      },
+      "revId": "83e8111992da07f545459418ef6be9247e783b64",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "9643af7e_736f421e",
         "filename": "asdc-controller/src/main/java/org/onap/so/asdc/client/ASDCController.java",
         "patchSetId": 4
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "fbb81613_10886605",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/client/ASDCController.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 766,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2020-02-14T14:24:26Z",
+      "side": 1,
+      "message": "I extracted it to separate method.",
+      "parentUuid": "9643af7e_736f421e",
+      "range": {
+        "startLine": 766,
+        "startChar": 16,
+        "endLine": 766,
+        "endChar": 18
+      },
+      "revId": "83e8111992da07f545459418ef6be9247e783b64",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "eed24ff7_2deb6b50",
         "filename": "asdc-controller/src/main/java/org/onap/so/asdc/client/ASDCController.java",
         "patchSetId": 4
@@ -128,6 +248,30 @@
       "writtenOn": "2020-02-13T08:45:28Z",
       "side": 1,
       "message": "Not sure about the full logic of this method, but using continue makes it skip \"if (!hasVFResource)\" case.",
+      "range": {
+        "startLine": 775,
+        "startChar": 0,
+        "endLine": 777,
+        "endChar": 21
+      },
+      "revId": "83e8111992da07f545459418ef6be9247e783b64",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7812ca6c_84735840",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/client/ASDCController.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 777,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2020-02-14T14:24:26Z",
+      "side": 1,
+      "message": "You have right. I revert it to previous version.",
+      "parentUuid": "eed24ff7_2deb6b50",
       "range": {
         "startLine": 775,
         "startChar": 0,
