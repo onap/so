@@ -1,0 +1,11 @@
+{
+  "_embedded": {
+    "workflows": [
+    ]
+  },
+  "_links": {
+    "self": {
+      "href": "http://localhost:8090/workflow/search/findBySource?source=native"
+    }
+  }
+}

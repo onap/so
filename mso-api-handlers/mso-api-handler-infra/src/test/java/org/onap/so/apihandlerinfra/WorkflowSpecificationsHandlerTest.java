@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2020 Nordix
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,30 +22,15 @@
 
 package org.onap.so.apihandlerinfra;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONException;
 import org.junit.Test;
 import org.onap.so.apihandlerinfra.workflowspecificationbeans.WorkflowInputParameter;
 import org.onap.so.apihandlerinfra.workflowspecificationbeans.WorkflowSpecifications;
-import org.onap.so.db.catalog.beans.ActivitySpec;
-import org.onap.so.db.catalog.beans.ActivitySpecUserParameters;
-import org.onap.so.db.catalog.beans.UserParameters;
-import org.onap.so.db.catalog.beans.Workflow;
-import org.onap.so.db.catalog.beans.WorkflowActivitySpecSequence;
+import org.onap.so.db.catalog.beans.*;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,10 +40,19 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.util.UriComponentsBuilder;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class WorkflowSpecificationsHandlerTest extends BaseTest {
     @Autowired
@@ -65,12 +61,12 @@ public class WorkflowSpecificationsHandlerTest extends BaseTest {
     @Value("${wiremock.server.port}")
     private String wiremockPort;
 
-    private final String basePath = "onap/so/infra/workflowSpecifications/v1/workflows";
+    private final String basePath = "onap/so/infra/workflowSpecifications";
 
     @Test
-    public void queryWorkflowSpecifications_Test_Success()
-            throws ParseException, JSONException, JsonParseException, JsonMappingException, IOException {
+    public void queryWorkflowSpecifications_Test_Success() throws JSONException, IOException {
 
+        final String urlPath = basePath + "/v1/workflows";
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
@@ -147,7 +143,7 @@ public class WorkflowSpecificationsHandlerTest extends BaseTest {
                         .withBody(getWiremockResponseForCatalogdb("UserParameters6_Response.json"))
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(basePath))
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(urlPath))
                 .queryParam("vnfModelVersionId", "b5fa707a-f55a-11e7-a796-005056856d52");
 
         ResponseEntity<String> response =
@@ -322,6 +318,59 @@ public class WorkflowSpecificationsHandlerTest extends BaseTest {
 
         JSONAssert.assertEquals(expectedResultJson, workflowSpecificationsJson, false);
         assertThat(expectedResult, sameBeanAs(workflowSpecifications).ignoring(WorkflowInputParameter.class));
+    }
+
+    @Test
+    public void testWorkflowSpecificationsForPnf_Success() throws JSONException, IOException {
+
+        final String urlPath = basePath + "/v1/pnfWorkFlows";
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Accept", MediaType.APPLICATION_JSON);
+        headers.set("Content-Type", MediaType.APPLICATION_JSON);
+        HttpEntity<String> entity = new HttpEntity(null, headers);
+
+        wireMockServer.stubFor(get(urlMatching("/workflow/search/findByResourceTarget[?]resource_target=pnf"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(
+                                getWiremockResponseForCatalogdb("WorkflowSpecificationsForPnfWorkflows_Response.json"))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        wireMockServer.stubFor(get(urlMatching("/workflow/search/findBySource[?]source=native"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(getWiremockResponseForCatalogdb("Empty_WorkflowSpecifications.json"))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        wireMockServer.stubFor(get(urlMatching("/infraActiveRequests.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        wireMockServer.stubFor(get(urlMatching("/workflow/1/workflowActivitySpecSequence"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(getWiremockResponseForCatalogdb("Empty_workflowActivitySpecSequence_Response.json"))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(urlPath));
+
+        ResponseEntity<String> response =
+                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        WorkflowSpecifications expectedResponse = mapper.readValue(
+                new String(Files.readAllBytes(
+                        Paths.get("src/test/resources/__files/catalogdb/WorkflowSpec_pnf_Expected.json"))),
+                WorkflowSpecifications.class);
+        WorkflowSpecifications realResponse = mapper.readValue(response.getBody(), WorkflowSpecifications.class);
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        assertThat(expectedResponse, sameBeanAs(realResponse));
+        assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
+        assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
+        assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
+        assertEquals("1.0.0", response.getHeaders().get("X-LatestVersion").get(0));
     }
 
     private String getWiremockResponseForCatalogdb(String file) {

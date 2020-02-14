@@ -1,0 +1,20 @@
+{
+  "workflowSpecificationList": [
+    {
+      "workflowSpecification": {
+        "artifactInfo": {
+          "artifactType": "workflow",
+          "artifactUuid": "b2fd5627-55e4-4f4f-8064-9e6f443e9152",
+          "artifactName": "DummyPnfWorkflow1",
+          "artifactVersion": "1.0",
+          "artifactDescription": "Dummy Pnf Workflow to test custom Pnf workflow1",
+          "workflowName": "DummyPnfWorkflow1",
+          "operationName": "DummyPnfWorkflow1",
+          "workflowSource": "test",
+          "workflowResourceTarget": "pnf"
+        },
+        "workflowInputParameters": []
+      }
+    }
+  ]
+}

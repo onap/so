@@ -6,6 +6,8 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
+ * Modifications Copyright (c) 2020 Nordix
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,41 +23,6 @@
  */
 package org.onap.so.apihandlerinfra;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import javax.transaction.Transactional;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Response;
-import org.apache.http.HttpStatus;
-import org.onap.so.apihandler.common.ErrorNumbers;
-import org.onap.so.apihandler.common.ResponseBuilder;
-import org.onap.so.apihandlerinfra.exceptions.ValidateException;
-import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
-import org.onap.so.apihandlerinfra.workflowspecificationbeans.ActivitySequence;
-import org.onap.so.apihandlerinfra.workflowspecificationbeans.ArtifactInfo;
-import org.onap.so.apihandlerinfra.workflowspecificationbeans.Validation;
-import org.onap.so.apihandlerinfra.workflowspecificationbeans.WorkflowInputParameter;
-import org.onap.so.apihandlerinfra.workflowspecificationbeans.WorkflowSpecification;
-import org.onap.so.apihandlerinfra.workflowspecificationbeans.WorkflowSpecificationList;
-import org.onap.so.apihandlerinfra.workflowspecificationbeans.WorkflowSpecifications;
-import org.onap.so.db.catalog.beans.ActivitySpec;
-import org.onap.so.db.catalog.beans.ActivitySpecUserParameters;
-import org.onap.so.db.catalog.beans.UserParameters;
-import org.onap.so.db.catalog.beans.Workflow;
-import org.onap.so.db.catalog.beans.WorkflowActivitySpecSequence;
-import org.onap.so.db.catalog.client.CatalogDbClient;
-import org.onap.so.logger.ErrorCode;
-import org.onap.so.logger.MessageEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -66,6 +33,28 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.apache.http.HttpStatus;
+import org.onap.so.apihandler.common.ErrorNumbers;
+import org.onap.so.apihandler.common.ResponseBuilder;
+import org.onap.so.apihandlerinfra.exceptions.ValidateException;
+import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
+import org.onap.so.apihandlerinfra.workflowspecificationbeans.*;
+import org.onap.so.db.catalog.beans.*;
+import org.onap.so.db.catalog.client.CatalogDbClient;
+import org.onap.so.logger.ErrorCode;
+import org.onap.so.logger.MessageEnum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import javax.transaction.Transactional;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Response;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Path("onap/so/infra/workflowSpecifications")
 @OpenAPIDefinition(info = @Info(title = "onap/so/infra/workflowSpecifications",
@@ -104,24 +93,34 @@ public class WorkflowSpecificationsHandler {
             workflows.addAll(nativeWorkflows);
         }
 
-        WorkflowSpecifications workflowSpecifications = mapWorkflowsToWorkflowSpecifications(workflows);
+        Optional<String> optional = getResponseByWorkflowSpec(workflows);
+        return builder.buildResponse(HttpStatus.SC_OK, "", optional.get(), apiVersion);
+    }
 
-        String jsonResponse;
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            jsonResponse = mapper.writeValueAsString(workflowSpecifications);
-        } catch (JsonProcessingException e) {
-            ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError)
-                            .build();
-            ValidateException validateException =
-                    new ValidateException.Builder("Mapping of request to JSON object failed : " + e.getMessage(),
-                            HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
-                                    .errorInfo(errorLoggerInfo).build();
-            throw validateException;
+    @Path("/{version:[vV]1}/pnfWorkFlows")
+    @GET
+    @Operation(description = "Finds pnf workflow specifications", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Transactional
+    public Response getWorkflowsSpecForPnf(@PathParam("version") String version) throws Exception {
+
+        final String pnf_resource = "pnf";
+        final String empty_body = "";
+        String apiVersion = version.substring(1);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        List<Workflow> workflows = catalogDbClient.findWorkflowByResourceTarget(pnf_resource);
+
+        List<Workflow> nativeWorkflows = catalogDbClient.findWorkflowBySource(NATIVE_WORKFLOW);
+        if (nativeWorkflows != null && !nativeWorkflows.isEmpty()) {
+            workflows.addAll(nativeWorkflows);
         }
 
-        return builder.buildResponse(HttpStatus.SC_OK, "", jsonResponse, apiVersion);
+        Optional<String> optional = getResponseByWorkflowSpec(workflows);
+        return builder.buildResponse(HttpStatus.SC_OK, "", optional.isPresent() ? optional.get() : empty_body,
+                apiVersion);
     }
 
     protected WorkflowSpecifications mapWorkflowsToWorkflowSpecifications(List<Workflow> workflows) {
@@ -142,6 +141,28 @@ public class WorkflowSpecificationsHandler {
         }
         workflowSpecifications.setWorkflowSpecificationList(workflowSpecificationList);
         return workflowSpecifications;
+    }
+
+    private Optional<String> getResponseByWorkflowSpec(List<Workflow> workflows) throws ValidateException {
+        WorkflowSpecifications workflowSpecifications = mapWorkflowsToWorkflowSpecifications(workflows);
+
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            return Optional.of(mapper.writeValueAsString(workflowSpecifications));
+        } catch (JsonProcessingException e) {
+            catchAndThrowValidationEx(e);
+        }
+        return Optional.empty();
+    }
+
+    private Response catchAndThrowValidationEx(JsonProcessingException e) throws ValidateException {
+        ErrorLoggerInfo errorLoggerInfo =
+                new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError).build();
+        ValidateException validateException =
+                new ValidateException.Builder("Mapping of request to JSON object failed : " + e.getMessage(),
+                        HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo)
+                                .build();
+        throw validateException;
     }
 
     private ArtifactInfo buildArtifactInfo(Workflow workflow) {
