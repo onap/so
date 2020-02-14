@@ -20,11 +20,16 @@
 
 package org.onap.so.adapters.vevnfm.provider;
 
+import org.apache.logging.log4j.util.Strings;
 import org.onap.so.configuration.rest.BasicHttpHeadersProvider;
 
 public class AuthorizationHeadersProvider extends BasicHttpHeadersProvider {
 
     public void addAuthorization(final String authorization) {
+        if (Strings.isBlank(authorization)) {
+            return;
+        }
+
         getHttpHeaders().set(AUTHORIZATION_HEADER, authorization);
     }
 

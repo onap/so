@@ -20,7 +20,9 @@
 
 package org.onap.so.adapters.vevnfm.configuration;
 
+import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.so.adapters.vevnfm.service.StartupService;
+import org.onap.so.adapters.vevnfm.service.SubscriptionScheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
@@ -39,10 +41,14 @@ public class StartupConfiguration {
     @Autowired
     private StartupService startupService;
 
+    @Autowired
+    private SubscriptionScheduler subscriptionScheduler;
+
     @EventListener(ApplicationReadyEvent.class)
     public void onApplicationReadyEvent() throws Exception {
         if (!environment.acceptsProfiles(Profiles.of(TEST_PROFILE))) {
-            startupService.run();
+            final EsrSystemInfo info = startupService.receiveVnfm();
+            subscriptionScheduler.setInfo(info);
         }
     }
 }

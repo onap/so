@@ -53,8 +53,8 @@ public class NotificationControllerTest {
     private static final String MINIMAL_JSON_CONTENT = "{}";
     private static final int ZERO = 0;
 
-    @Value("${notification.url}")
-    private String notificationUrl;
+    @Value("${vnfm.notification}")
+    private String notification;
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -74,7 +74,7 @@ public class NotificationControllerTest {
     @Test
     public void testReceiveNotification() throws Exception {
         // given
-        final MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(notificationUrl)
+        final MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(notification)
                 .contentType(MediaType.APPLICATION_JSON).content(MINIMAL_JSON_CONTENT);
 
         mockRestServer.expect(once(), anything()).andRespond(withSuccess());

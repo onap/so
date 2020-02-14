@@ -18,9 +18,10 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.vevnfm.subscription;
+package org.onap.so.adapters.vevnfm.service;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.onap.so.adapters.vevnfm.service.SubscribeSender.SLASH;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.test.web.client.ExpectedCount.once;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
@@ -33,6 +34,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.so.adapters.vevnfm.configuration.StartupConfiguration;
+import org.onap.so.adapters.vevnfm.exception.VeVnfmException;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,8 +52,9 @@ import org.springframework.web.client.RestTemplate;
 @ActiveProfiles(StartupConfiguration.TEST_PROFILE)
 public class SubscribeSenderTest {
 
-    private static final String SLASH = "/";
-    private static final String MINIMAL_JSON_CONTENT = "{}";
+    private static final String URL = "lh";
+    private static final String ID = "1a2s3d4f";
+    private static final String JSON = "{\"id\":\"" + ID + "\"}";
 
     private static final Gson GSON;
 
@@ -78,22 +81,22 @@ public class SubscribeSenderTest {
     }
 
     @Test
-    public void testSuccess() {
+    public void testSuccess() throws VeVnfmException {
         // given
         final EsrSystemInfo info = new EsrSystemInfo();
-        info.setServiceUrl("lh");
+        info.setServiceUrl(URL);
         final LccnSubscriptionRequest request = new LccnSubscriptionRequest();
 
         mockRestServer.expect(once(), requestTo(SLASH + info.getServiceUrl() + vnfmSubscription))
                 .andExpect(header(CONTENT_TYPE, CoreMatchers.containsString(MediaType.APPLICATION_JSON_VALUE)))
                 .andExpect(method(HttpMethod.POST)).andExpect(content().json(GSON.toJson(request)))
-                .andRespond(withStatus(HttpStatus.CREATED).body(MINIMAL_JSON_CONTENT));
+                .andRespond(withStatus(HttpStatus.CREATED).body(JSON).contentType(MediaType.APPLICATION_JSON));
 
         // when
-        final boolean done = sender.send(info, request);
+        final String id = sender.send(info, request);
 
         // then
-        assertTrue(done);
         mockRestServer.verify();
+        assertEquals(ID, id);
     }
 }

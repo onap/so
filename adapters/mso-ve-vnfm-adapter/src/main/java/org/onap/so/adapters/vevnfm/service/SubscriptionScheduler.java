@@ -21,42 +21,51 @@
 package org.onap.so.adapters.vevnfm.service;
 
 import org.onap.aai.domain.yang.EsrSystemInfo;
-import org.onap.so.adapters.vevnfm.aai.AaiConnection;
 import org.onap.so.adapters.vevnfm.exception.VeVnfmException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.EnableRetry;
-import org.springframework.retry.annotation.Recover;
-import org.springframework.retry.annotation.Retryable;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
-@EnableRetry
-public class StartupService {
+@EnableScheduling
+public class SubscriptionScheduler {
 
-    private static final Logger logger = LoggerFactory.getLogger(StartupService.class);
-
-    @Value("${vnfm.default-endpoint}")
-    private String vnfmDefaultEndpoint;
+    private static final Logger logger = LoggerFactory.getLogger(SubscriptionScheduler.class);
 
     @Autowired
-    private AaiConnection aaiConnection;
+    private SubscriberService subscriberService;
 
-    @Retryable(value = {VeVnfmException.class}, maxAttempts = 5, backoff = @Backoff(delay = 5000, multiplier = 10))
-    public EsrSystemInfo receiveVnfm() throws VeVnfmException {
-        return aaiConnection.receiveVnfm();
+    private String subscribedId;
+
+    private EsrSystemInfo info;
+
+    public void setInfo(final EsrSystemInfo info) {
+        this.info = info;
     }
 
-    @Recover
-    public EsrSystemInfo recoverReceiveVnfm(final Throwable e) {
-        logger.warn("Connection to AAI failed");
-        final EsrSystemInfo info = new EsrSystemInfo();
-        info.setServiceUrl(vnfmDefaultEndpoint);
-        logger.warn("This EsrSystemInfo is used by default: {}", info);
+    @Scheduled(fixedRate = 5000, initialDelay = 2000)
+    void subscribeTask() throws VeVnfmException {
+        if (info != null) {
+            if (subscribedId == null) {
+                logger.info("Starting subscribe task");
+                subscribedId = subscriberService.subscribe(info);
+            }
+        }
+    }
 
-        return info;
+    @Scheduled(fixedRate = 20000)
+    void checkSubscribeTask() throws VeVnfmException {
+        if (info != null) {
+            if (subscribedId != null) {
+                logger.info("Checking subscription: {}", subscribedId);
+                if (!subscriberService.checkSubscription(info, subscribedId)) {
+                    logger.info("Subscription {} not available", subscribedId);
+                    subscribedId = null;
+                }
+            }
+        }
     }
 }
