@@ -163,36 +163,20 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
         String serInput = jsonUtil.getJsonValue(resourceInputTmp, "requestsInputs")
 
         switch (modelName) {
-            case ~/[\w\s\W]*OLT[\w\s\W]*/ :
+            case ~/[\w\s\W]*OLT[\w\s\W]*/ : // for backward compatibilty only, this case will be deprecated
+            case ~/[\w\s\W]*AccessConnectivity[\w\s\W]*/ :
                 // get the required properties and update in resource input
 
                 def resourceInput = resourceInputObj.getResourceParameters()
                 String incomingRequest = resourceInputObj.getRequestsInputs()
                 String serviceParameters = JsonUtils.getJsonValue(incomingRequest, "service.parameters")
                 String requestInputs = JsonUtils.getJsonValue(serviceParameters, "requestInputs")
-                String cvlan
-                String svlan
-                String remoteId
-
-                List<Metadatum> metadatum = getMetaDatum(resourceInputObj.getGlobalSubscriberId(),
-                        resourceInputObj.getServiceType(),
-                        resourceInputObj.getServiceInstanceId())
-                for(Metadatum datum: metadatum) {
-                    if (datum.getMetaname().equalsIgnoreCase("cvlan")) {
-                        cvlan = datum.getMetaval()
-                    }
-
-                    if (datum.getMetaname().equalsIgnoreCase("svlan")) {
-                        svlan = datum.getMetaval()
-                    }
-
-                    if (datum.getMetaname().equalsIgnoreCase("remoteId")) {
-                        remoteId = datum.getMetaval()
-                    }
-                }
-
-                logger.debug("cvlan: "+cvlan+" | svlan: "+svlan+" | remoteId: "+remoteId)
-
+                String cvlan = jsonUtil.getJsonValue(serInput,
+                        "service.parameters.requestInputs.cvlan")
+                String svlan = jsonUtil.getJsonValue(serInput,
+                        "service.parameters.requestInputs.svlan")
+                String remoteId = jsonUtil.getJsonValue(serInput,
+                        "service.parameters.requestInputs.edgeinternetprofile_ip_remote_id")
                 String manufacturer = jsonUtil.getJsonValue(serInput,
                         "service.parameters.requestInputs.ont_ont_manufacturer")
                 String ontsn = jsonUtil.getJsonValue(serInput,
@@ -209,7 +193,8 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                 logger.debug("new resource Input :" + resourceInputObj.toString())
                 break
 
-            case ~/[\w\s\W]*EdgeInternetProfile[\w\s\W]*/ :
+            case ~/[\w\s\W]*EdgeInternetProfile[\w\s\W]*/ : // for backward compatibilty only, this case will be deprecated
+            case ~/[\w\s\W]*InternetProfile[\w\s\W]*/ :
                 // get the required properties and update in resource input
                 def resourceInput = resourceInputObj.getResourceParameters()
                 String incomingRequest = resourceInputObj.getRequestsInputs()
@@ -217,37 +202,34 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                 String requestInputs = JsonUtils.getJsonValue(serviceParameters, "requestInputs")
                 JSONObject inputParameters = new JSONObject(requestInputs)
 
-                String cvlan
-                String svlan
-                String remoteId
+                String cvlan = jsonUtil.getJsonValue(serInput,
+                        "service.parameters.requestInputs.cvlan")
+                String svlan = jsonUtil.getJsonValue(serInput,
+                        "service.parameters.requestInputs.svlan")
                 String manufacturer = jsonUtil.getJsonValue(serInput,
                         "service.parameters.requestInputs.ont_ont_manufacturer")
-
+                String remoteId = jsonUtil.getJsonValue(serInput,
+                        "service.parameters.requestInputs.edgeinternetprofile_ip_remote_id")
                 String ontsn = jsonUtil.getJsonValue(serInput,
                         "service.parameters.requestInputs.ont_ont_serial_num")
-
-                List<Metadatum> metadatum = getMetaDatum(resourceInputObj.getGlobalSubscriberId(),
-                        resourceInputObj.getServiceType(),
-                        resourceInputObj.getServiceInstanceId())
-                for(Metadatum datum: metadatum) {
-                    if (datum.getMetaname().equalsIgnoreCase("cvlan")) {
-                        cvlan = datum.getMetaval()
-                    }
-
-                    if (datum.getMetaname().equalsIgnoreCase("svlan")) {
-                        svlan = datum.getMetaval()
-                    }
-
-                    if (datum.getMetaname().equalsIgnoreCase("remoteId")) {
-                        remoteId = datum.getMetaval()
-                    }
-                }
+                String serviceType = jsonUtil.getJsonValue(serInput,
+                        "service.parameters.requestInputs.edgeinternetprofile_ip_service_type")
+                String macAddr = jsonUtil.getJsonValue(serInput,
+                        "service.parameters.requestInputs.edgeinternetprofile_ip_rg_mac_addr")
+                String upStream = jsonUtil.getJsonValue(serInput,
+                        "service.parameters.requestInputs.edgeinternetprofile_ip_upstream_speed")
+                String downStream = jsonUtil.getJsonValue(serInput,
+                        "service.parameters.requestInputs.edgeinternetprofile_ip_downstream_speed")
 
                 String uResourceInput = jsonUtil.addJsonValue(resourceInput, "requestInputs.c_vlan", cvlan)
                 uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.s_vlan", svlan)
                 uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.manufacturer", manufacturer)
-                uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.ip_access_id", remoteId)
+                uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.ip_remote_id", remoteId)
                 uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.ont_sn", ontsn)
+                uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.ip_service_type", serviceType)
+                uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.ip_rg_mac_addr", macAddr)
+                uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.ip_upstream_speed", upStream)
+                uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.ip_downstream_speed", downStream)
                 logger.debug("old resource input:" + resourceInputObj.toString())
                 resourceInputObj.setResourceParameters(uResourceInput)
                 execution.setVariable(Prefix + "resourceInput", resourceInputObj.toString())
