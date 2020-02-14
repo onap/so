@@ -55,4 +55,14 @@ public class WorkflowRepositoryTest extends BaseTest {
         Assert.assertTrue("testingWorkflow.bpmn".equals(workflows.get(0).getArtifactName()));
     }
 
+    @Test
+    public void findByResourceTargetTest() {
+        List<Workflow> workflows = workflowRepository.findByResourceTarget("pnf");
+
+        Assert.assertTrue(workflows != null);
+        Assert.assertTrue(workflows.size() == 1);
+
+        Assert.assertTrue("DummyPnfWorkflow".equals(workflows.get(0).getArtifactName()));
+    }
+
 }

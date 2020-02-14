@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -156,6 +156,7 @@ public class CatalogDbClient {
     protected static final String HOMING_INSTANCE = "/homingInstance";
     protected static final String ARTIFACT_UUID = "artifactUUID";
     protected static final String SOURCE = "source";
+    protected static final String RESOURCE_TARGET = "resource_target";
 
     private static final String TARGET_ENTITY = "SO:CatalogDB";
     private static final String ASTERISK = "*";
@@ -205,6 +206,7 @@ public class CatalogDbClient {
     private String findWorkflowByPnfModelUUID = "/findWorkflowByPnfModelUUID";
     private String findWorkflowBySource = "/findBySource";
     private String findVnfResourceCustomizationByModelUuid = "/findVnfResourceCustomizationByModelUuid";
+    private String findWorkflowByResourceTarget = "/findByResourceTarget";
 
     private String serviceURI;
     private String vfModuleURI;
@@ -342,6 +344,7 @@ public class CatalogDbClient {
         findWorkflowByVnfModelUUID = endpoint + WORKFLOW + SEARCH + findWorkflowByVnfModelUUID;
         findWorkflowByPnfModelUUID = endpoint + WORKFLOW + SEARCH + findWorkflowByPnfModelUUID;
         findWorkflowBySource = endpoint + WORKFLOW + SEARCH + findWorkflowBySource;
+        findWorkflowByResourceTarget = endpoint + WORKFLOW + SEARCH + findWorkflowByResourceTarget;
 
         findVnfResourceCustomizationByModelUuid =
                 endpoint + VNF_RESOURCE_CUSTOMIZATION + SEARCH + findVnfResourceCustomizationByModelUuid;
@@ -1062,6 +1065,11 @@ public class CatalogDbClient {
     public List<Workflow> findWorkflowBySource(String source) {
         return this.getMultipleResources(workflowClient,
                 getUri(UriBuilder.fromUri(findWorkflowBySource).queryParam(SOURCE, source).build().toString()));
+    }
+
+    public List<Workflow> findWorkflowByResourceTarget(String resourceTarget) {
+        return this.getMultipleResources(workflowClient, getUri(UriBuilder.fromUri(findWorkflowByResourceTarget)
+                .queryParam(RESOURCE_TARGET, resourceTarget).build().toString()));
     }
 
     public String getEndpoint() {
