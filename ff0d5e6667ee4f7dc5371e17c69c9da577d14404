@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "f344f03a_0ea6b6aa",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 2937
+      },
+      "writtenOn": "2020-02-14T04:21:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "af81ed54_68a8319a",
+      "range": {
+        "startLine": 77,
+        "startChar": 83,
+        "endLine": 77,
+        "endChar": 95
+      },
+      "revId": "ff0d5e6667ee4f7dc5371e17c69c9da577d14404",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4fc0d432_b7e34b76",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2020-01-10T16:18:57Z",
       "side": 1,
       "message": "can you change this to: o\tvfModuleConfigDeploy\n\nalso update your test case",
+      "range": {
+        "startLine": 78,
+        "startChar": 90,
+        "endLine": 78,
+        "endChar": 102
+      },
+      "revId": "ff0d5e6667ee4f7dc5371e17c69c9da577d14404",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9f5e5fe2_048f8894",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 2937
+      },
+      "writtenOn": "2020-02-14T04:21:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4fc0d432_b7e34b76",
       "range": {
         "startLine": 78,
         "startChar": 90,
