@@ -22,6 +22,30 @@
       "revId": "00ba764f619848bcd4a384e26b0806bd5fb80749",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "41fffa24_7d694f84",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/MsoRequest.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 628,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2020-02-14T13:03:49Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "4024bc26_0342869c",
+      "range": {
+        "startLine": 628,
+        "startChar": 100,
+        "endLine": 628,
+        "endChar": 114
+      },
+      "revId": "00ba764f619848bcd4a384e26b0806bd5fb80749",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
