@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3db46335_0e7e4c39",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/service/StartupService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 3957
+      },
+      "writtenOn": "2020-02-14T10:00:41Z",
+      "side": 1,
+      "message": "why it has only 5 attempts? What is the problem of doing it a forever loop?\n\nNote that MANO credentials may also come invalid at any time and connection to MANO fails and it must be all the time reconnected. When user just fixes credentials to ERS then it starts to work again.",
+      "range": {
+        "startLine": 51,
+        "startChar": 3,
+        "endLine": 68,
+        "endChar": 63
+      },
+      "revId": "666b12c11dfa1e66a985fcb3e68028d1f664b144",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
