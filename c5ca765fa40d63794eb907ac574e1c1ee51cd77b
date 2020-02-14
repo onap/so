@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a81cf30d_fcc0f8a5",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/activity/ActivitySpecsActions.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-14T15:21:13Z",
+      "side": 1,
+      "message": "let\u0027s get rid of this else statement, just use:\nreturn true;",
+      "range": {
+        "startLine": 126,
+        "startChar": 14,
+        "endLine": 128,
+        "endChar": 13
+      },
+      "revId": "c5ca765fa40d63794eb907ac574e1c1ee51cd77b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "12fa0f31_9f870a16",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/activity/ActivitySpecsActions.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-14T15:21:13Z",
+      "side": 1,
+      "message": "this line is invoked only when Exception is thrown, let\u0027s move it to the catch statement",
+      "range": {
+        "startLine": 134,
+        "startChar": 8,
+        "endLine": 134,
+        "endChar": 21
+      },
+      "revId": "c5ca765fa40d63794eb907ac574e1c1ee51cd77b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
