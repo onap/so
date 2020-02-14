@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a437b9d6_26be1281",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 673,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-14T10:36:43Z",
+      "side": 1,
+      "message": "I know it is not your code, but please change this name, like resources or resourceList, and adapt this change everywhere in this class.",
+      "range": {
+        "startLine": 673,
+        "startChar": 27,
+        "endLine": 673,
+        "endChar": 42
+      },
+      "revId": "6edbb9e3d773ed8ac6a920b6a7ea995921965998",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "78b345c3_06605889",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/utils/WorkflowResourceIdsExtension.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-14T10:36:43Z",
+      "side": 1,
+      "message": "I think that Consumer as return type in this example is overcomplicated. Especially default statement is a little bit confusing. This is a simple logic, and I would write just void method with switch case:\n\n    private void getSetterForResourceType(WorkflowType resourceType, String resourceId) {\n        switch (resourceType) {\n            case SERVICE:\n                 setServiceInstanceId(resourceId);\n            case VNF:\n                setVnfId(resourceId);\n            case PNF:\n                setPnfId(resourceId);\n            case VFMODULE:\n                setVfModuleId(resourceId);\n            case VOLUMEGROUP:\n                setVolumeGroupId(resourceId);\n            case NETWORK:\n                setNetworkId(resourceId);\n            case NETWORKCOLLECTION:\n                setNetworkCollectionId(resourceId);\n            case CONFIGURATION:\n                setConfigurationId(resourceId);\n            case INSTANCE_GROUP:\n                setInstanceGroupId(resourceId);\n        }\n    }",
+      "range": {
+        "startLine": 43,
+        "startChar": 0,
+        "endLine": 67,
+        "endChar": 5
+      },
+      "revId": "6edbb9e3d773ed8ac6a920b6a7ea995921965998",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
