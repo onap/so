@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "e86c0d5b_1d9e429a",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 2937
+      },
+      "writtenOn": "2020-02-14T04:21:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "563cc5e2_dcaec6af",
+      "revId": "dd77a8b4b398c20fb0f0568b0a9008a58516b43c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27aa4337_53166bb1",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
         "patchSetId": 7
@@ -30,6 +48,24 @@
       "writtenOn": "2020-01-30T15:15:35Z",
       "side": 1,
       "message": "We should convert this to a Set and use streams rather than repeat the same ors.",
+      "revId": "dd77a8b4b398c20fb0f0568b0a9008a58516b43c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bda48825_55bca98c",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 2937
+      },
+      "writtenOn": "2020-02-14T04:21:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27aa4337_53166bb1",
       "revId": "dd77a8b4b398c20fb0f0568b0a9008a58516b43c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
