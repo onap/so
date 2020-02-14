@@ -844,17 +844,15 @@ public class ServiceInstances extends AbstractRestHandler {
         }
         requestHandlerUtils.setInstanceId(currentActiveReq, requestScope, null, instanceIdMap);
 
-
-        int requestVersion = Integer.parseInt(version.substring(1));
         String instanceName = null;
         if (sir.getRequestDetails().getRequestInfo() != null) {
             instanceName = sir.getRequestDetails().getRequestInfo().getInstanceName();
         }
         boolean alaCarteFlag = msoRequest.getAlacarteFlag(sir);
-        String vnfType = msoRequest.getVnfType(sir, requestScope, action, requestVersion);
+        String vnfType = msoRequest.getVnfType(sir, requestScope);
         String networkType = msoRequest.getNetworkType(sir, requestScope);
         String sdcServiceModelVersion = msoRequest.getSDCServiceModelVersion(sir);
-        String vfModuleType = msoRequest.getVfModuleType(sir, requestScope, action, requestVersion);
+        String vfModuleType = msoRequest.getVfModuleType(sir, requestScope);
 
         if (requestScope.equalsIgnoreCase(ModelType.vnf.name()) && vnfType != null) {
             currentActiveReq.setVnfType(vnfType);
@@ -935,7 +933,7 @@ public class ServiceInstances extends AbstractRestHandler {
         }
 
 
-        RequestClientParameter requestClientParameter = null;
+        RequestClientParameter requestClientParameter;
         try {
             requestClientParameter = new RequestClientParameter.Builder().setRequestId(requestId)
                     .setBaseVfModule(isBaseVfModule).setRecipeTimeout(recipeLookupResult.getRecipeTimeout())
