@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5e17732f_bc89ee1a",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/adapter/network/mapper/NetworkAdapterObjectMapper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 269,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2020-02-14T12:55:35Z",
+      "side": 1,
+      "message": "Current version is more readable in my opinion",
+      "parentUuid": "20ab385d_03f64549",
+      "range": {
+        "startLine": 269,
+        "startChar": 16,
+        "endLine": 269,
+        "endChar": 44
+      },
+      "revId": "6f8af1cf2f2053517239dce6afb5ac1a33bbb16d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "afb679bb_2f80895f",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/adapter/network/mapper/NetworkAdapterObjectMapper.java",
         "patchSetId": 2
@@ -45,6 +69,30 @@
       "revId": "6f8af1cf2f2053517239dce6afb5ac1a33bbb16d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7db2e8b7_a93cda8b",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/client/adapter/network/mapper/NetworkAdapterObjectMapper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 323,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2020-02-14T12:55:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "afb679bb_2f80895f",
+      "range": {
+        "startLine": 323,
+        "startChar": 13,
+        "endLine": 323,
+        "endChar": 83
+      },
+      "revId": "6f8af1cf2f2053517239dce6afb5ac1a33bbb16d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
