@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "08a984d3_48cbfdee",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 2937
+      },
+      "writtenOn": "2020-02-14T04:21:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2a72bdac_e2a5de66",
+      "revId": "8cfbfa2daf46e25377a807bb77929e49b9c3ffa0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "9884484b_ac1310f7",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
         "patchSetId": 9
@@ -30,6 +48,24 @@
       "writtenOn": "2020-02-12T08:25:11Z",
       "side": 1,
       "message": "Could you at least extract this filtering to separate method (containsIgnoreCase() perhaps)? It\u0027s difficult to read right now and there\u0027s duplication with \u0027else if\u0027.",
+      "revId": "8cfbfa2daf46e25377a807bb77929e49b9c3ffa0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1771dbbc_26697899",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 2937
+      },
+      "writtenOn": "2020-02-14T04:21:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9884484b_ac1310f7",
       "revId": "8cfbfa2daf46e25377a807bb77929e49b9c3ffa0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
