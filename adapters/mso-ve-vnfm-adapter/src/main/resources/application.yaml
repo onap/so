@@ -15,13 +15,10 @@
 # limitations under the License.
 
 server:
-  port: 8080
+  port: 9098
 
-system:
-  url: http://localhost
-
-notification:
-  url: /lcm/v1/vnf/instances/notifications
+vevnfmadapter:
+  endpoint: http://so-ve-vnfm-adapter.onap:9098
 
 mso:
   key: 07a7159d3bf51a0e53be7a8f89699be7
@@ -31,10 +28,12 @@ aai:
   auth: 75C4483F9C05E2C33A8602635FA532397EC44AB667A2B64DED4FEE08DD932F2E3C1FEE
 
 vnfm:
+  default-endpoint: https://so-vnfm-simulator.onap:9093
   subscription: /vnflcm/v1/subscriptions
+  notification: /lcm/v1/vnf/instances/notifications
 
 dmaap:
-  endpoint: http://message-router:30227
+  endpoint: http://message-router.onap:30227
   topic: /events/unauthenticated.DCAE_CL_OUTPUT
 
 spring:

@@ -22,7 +22,9 @@ package org.onap.so.adapters.vevnfm.service;
 
 import com.squareup.okhttp.Credentials;
 import java.util.Collections;
+import org.apache.logging.log4j.util.Strings;
 import org.onap.aai.domain.yang.EsrSystemInfo;
+import org.onap.so.adapters.vevnfm.exception.VeVnfmException;
 import org.onap.so.adapters.vevnfm.provider.AuthorizationHeadersProvider;
 import org.onap.so.adapters.vevnfm.subscription.SubscribeSender;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRequest;
@@ -35,16 +37,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class SubscriberService {
 
-    private static final char COLON = ':';
+    @Value("${vevnfmadapter.endpoint}")
+    private String endpoint;
 
-    @Value("${system.url}")
-    private String systemUrl;
-
-    @Value("${server.port}")
-    private String serverPort;
-
-    @Value("${notification.url}")
-    private String notificationUrl;
+    @Value("${vnfm.notification}")
+    private String notification;
 
     @Value("${spring.security.usercredentials[0].username}")
     private String username;
@@ -59,14 +56,27 @@ public class SubscriberService {
     private SubscribeSender sender;
 
     private static String getAuthorization(final EsrSystemInfo info) {
-        return Credentials.basic(info.getUserName(), info.getPassword());
+        if (info == null) {
+            return null;
+        }
+
+        final String userName = info.getUserName();
+
+        if (Strings.isBlank(userName)) {
+            return null;
+        }
+
+        final String password = info.getPassword();
+        return Credentials.basic(userName, password);
     }
 
-    public boolean subscribe(final EsrSystemInfo info) {
+    public boolean subscribe(final EsrSystemInfo info) throws VeVnfmException {
         try {
             headersProvider.addAuthorization(getAuthorization(info));
             final LccnSubscriptionRequest request = createRequest();
             return sender.send(info, request);
+        } catch (Exception e) {
+            throw new VeVnfmException(e);
         } finally {
             headersProvider.removeAuthorization();
         }
@@ -87,6 +97,6 @@ public class SubscriberService {
     }
 
     private String getCallbackUri() {
-        return systemUrl + COLON + serverPort + notificationUrl;
+        return endpoint + notification;
     }
 }

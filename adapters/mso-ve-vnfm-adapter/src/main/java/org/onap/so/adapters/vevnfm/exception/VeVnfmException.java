@@ -25,4 +25,8 @@ public class VeVnfmException extends Exception {
     public VeVnfmException(final String message) {
         super(message);
     }
+
+    public VeVnfmException(final Throwable cause) {
+        super(cause);
+    }
 }
