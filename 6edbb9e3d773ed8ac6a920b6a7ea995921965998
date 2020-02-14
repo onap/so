@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a744bf06_047c8a7e",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 673,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-02-14T14:01:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a437b9d6_26be1281",
+      "range": {
+        "startLine": 673,
+        "startChar": 27,
+        "endLine": 673,
+        "endChar": 42
+      },
+      "revId": "6edbb9e3d773ed8ac6a920b6a7ea995921965998",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "78b345c3_06605889",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/utils/WorkflowResourceIdsExtension.java",
         "patchSetId": 6
@@ -45,6 +69,30 @@
       "revId": "6edbb9e3d773ed8ac6a920b6a7ea995921965998",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b46505f5_5dd1145a",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/utils/WorkflowResourceIdsExtension.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-02-14T14:01:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "78b345c3_06605889",
+      "range": {
+        "startLine": 43,
+        "startChar": 0,
+        "endLine": 67,
+        "endChar": 5
+      },
+      "revId": "6edbb9e3d773ed8ac6a920b6a7ea995921965998",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
