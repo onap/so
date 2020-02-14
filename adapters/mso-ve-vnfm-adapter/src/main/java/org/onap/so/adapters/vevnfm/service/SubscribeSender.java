@@ -18,9 +18,11 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.vevnfm.subscription;
+package org.onap.so.adapters.vevnfm.service;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.onap.aai.domain.yang.EsrSystemInfo;
+import org.onap.so.adapters.vevnfm.exception.VeVnfmException;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRequest;
 import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.slf4j.Logger;
@@ -29,10 +31,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import lombok.ToString;
 
-@Component
+@Service
 public class SubscribeSender {
+
+    public static final String SLASH = "/";
 
     private static final Logger logger = LoggerFactory.getLogger(SubscribeSender.class);
 
@@ -42,18 +47,37 @@ public class SubscribeSender {
     @Autowired
     private HttpRestServiceProvider restProvider;
 
-    public boolean send(final EsrSystemInfo info, final LccnSubscriptionRequest request) {
-        final ResponseEntity<String> response = restProvider.postHttpRequest(request, getUrl(info), String.class);
+    public String send(final EsrSystemInfo info, final LccnSubscriptionRequest request) throws VeVnfmException {
+        final ResponseEntity<SubscribeToManoResponse> response =
+                restProvider.postHttpRequest(request, getUrl(info), SubscribeToManoResponse.class);
 
         final HttpStatus statusCode = response.getStatusCode();
-        final String body = response.getBody();
+        final SubscribeToManoResponse body = response.getBody();
 
         logger.info("The VNFM replied with the code {} and the body {}", statusCode, body);
 
-        return HttpStatus.CREATED == statusCode;
+        if (HttpStatus.CREATED != statusCode) {
+            throw new VeVnfmException("The status code was different than " + HttpStatus.CREATED);
+        }
+
+        return body.id;
+    }
+
+    public boolean check(final EsrSystemInfo info, final String id) {
+        final ResponseEntity<SubscribeToManoResponse> response =
+                restProvider.getHttpResponse(getUrl(info) + SLASH + id, SubscribeToManoResponse.class);
+        return response.getBody() != null && response.getBody().id.equals(id);
     }
 
     private String getUrl(final EsrSystemInfo info) {
         return info.getServiceUrl() + vnfmSubscription;
+    }
+
+    @ToString
+    static class SubscribeToManoResponse {
+        @JsonProperty("id")
+        String id;
+        @JsonProperty("callbackUri")
+        String callbackUri;
     }
 }

@@ -38,7 +38,7 @@ public class NotificationController {
     @Autowired
     private DmaapService dmaapService;
 
-    @PostMapping("${notification.url}")
+    @PostMapping("${vnfm.notification}")
     public ResponseEntity receiveNotification(@RequestBody final VnfLcmOperationOccurrenceNotification notification) {
         logger.info("Notification received {}", notification);
         dmaapService.send(notification);
