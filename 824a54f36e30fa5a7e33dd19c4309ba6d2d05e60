@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "d96d5c77_f5752752",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 2937
+      },
+      "writtenOn": "2020-02-14T04:21:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "24e6faad_2df585c7",
+      "revId": "824a54f36e30fa5a7e33dd19c4309ba6d2d05e60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "4236d04d_d01d7630",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
         "patchSetId": 8
@@ -65,6 +83,24 @@
       "writtenOn": "2020-02-07T15:52:29Z",
       "side": 1,
       "message": "This \u0027if\u0027 condition is very difficult to read. \n\nIt seems that both this \u0027if\u0027 and \u0027else if\u0027 below are checking if customizationUUID is not null. Could you do this check at the beginning of this method and return immediately if it fails?",
+      "revId": "824a54f36e30fa5a7e33dd19c4309ba6d2d05e60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b204791f_6bd920b9",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListener.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 2937
+      },
+      "writtenOn": "2020-02-14T04:21:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "29154315_135e0444",
       "revId": "824a54f36e30fa5a7e33dd19c4309ba6d2d05e60",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
