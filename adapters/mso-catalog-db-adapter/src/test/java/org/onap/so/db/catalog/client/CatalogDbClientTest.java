@@ -22,8 +22,8 @@ package org.onap.so.db.catalog.client;
 
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -33,6 +33,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onap.so.adapters.catalogdb.CatalogDbAdapterBaseTest;
 import org.onap.so.db.catalog.beans.AuthenticationType;
+import org.onap.so.db.catalog.beans.BBNameSelectionReference;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.CloudifyManager;
@@ -428,7 +429,7 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
     }
 
     @Test
-    public void testCloudSiteClient() {
+    public void testPostCloudSite() {
         CatalogDbClientPortChanger localClient = new CatalogDbClientPortChanger(
                 "http://localhost:" + client.wiremockPort, msoAdaptersAuth, client.wiremockPort);
         CloudSite cloudSite = new CloudSite();
@@ -455,19 +456,6 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         assertEquals("TESTCLLI", getCloudSite.getClli());
         assertEquals("regionId", getCloudSite.getRegionId());
         assertEquals("RANDOMID", getCloudSite.getIdentityServiceId());
-
-        getCloudSite.setClli("clli2");
-        getCloudSite.setRegionId("region2");
-
-        CloudSite updatedCloudSite = this.client.updateCloudSite(getCloudSite);
-        assertNotNull(updatedCloudSite);
-        assertNotNull(updatedCloudSite.getIdentityService());
-        assertEquals("clli2", updatedCloudSite.getClli());
-        assertEquals("region2", updatedCloudSite.getRegionId());
-
-        this.client.deleteCloudSite(getCloudSite.getId());
-        getCloudSite = this.client.getCloudSite("MTN6");
-        assertNull(getCloudSite);
     }
 
     @Test
@@ -752,6 +740,22 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         List<CloudSite> cloudSites = client.getCloudSites();
         assertNotNull(cloudSites);
         assertNotEquals(0, cloudSites.size());
+    }
+
+    @Test
+    public void getBBNameSelectionReference_validData_expectedOutput() {
+        BBNameSelectionReference bbNameSelectionReference =
+                client.getBBNameSelectionReference("APPC", "vfModule", "healthCheck");
+        assertNotNull(bbNameSelectionReference);
+        assertEquals("GenericVnfHealthCheckBB", bbNameSelectionReference.getBbName());
+    }
+
+    @Test
+    public void getBBNameSelectionReference_invalidData_nullOutput() {
+        BBNameSelectionReference bbNameSelectionReference =
+                client.getBBNameSelectionReference("ABC", "vfModule", "healthCheck");
+        assertNull(bbNameSelectionReference);
+
     }
 
 

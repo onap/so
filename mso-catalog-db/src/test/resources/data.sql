@@ -957,3 +957,11 @@ VALUES
 (select ID from user_parameters where NAME='existing_software_version')),
 ((select ID from activity_spec where NAME='VNFUpgradeSoftwareActivity' and VERSION=1.0),
 (select ID from user_parameters where NAME='new_software_version'));
+
+
+
+INSERT INTO bbname_selection_reference (CONTROLLER_ACTOR,SCOPE,ACTION,BB_NAME)
+VALUES
+('APPC', 'vfModule', 'healthCheck','GenericVnfHealthCheckBB'),
+('APPC', 'vfModule', 'configScaleOut','ConfigurationScaleOutBB'),
+('APPC', 'vnf', 'healthCheck','GenericVnfHealthCheckBB');

@@ -32,6 +32,7 @@ import javax.ws.rs.core.UriBuilder;
 import org.apache.http.HttpStatus;
 import org.onap.logging.filter.base.Constants;
 import org.onap.logging.filter.spring.SpringClientPayloadFilter;
+import org.onap.so.db.catalog.beans.BBNameSelectionReference;
 import org.onap.so.db.catalog.beans.BuildingBlockDetail;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.CloudifyManager;
@@ -119,43 +120,44 @@ public class CatalogDbClient {
     private static final String PNF_RESOURCE = "/pnfResource";
     private static final String PNF_RESOURCE_CUSTOMIZATION = "/pnfResourceCustomization";
     private static final String WORKFLOW = "/workflow";
+    private static final String BB_NAME_SELECTION_REFERENCE = "/bbNameSelectionReference";
+
 
 
     private static final String SEARCH = "/search";
     private static final String URI_SEPARATOR = "/";
 
-    protected static final String SERVICE_MODEL_UUID = "serviceModelUUID";
-    protected static final String SERVICE_NAME = "serviceName";
-    protected static final String MODEL_UUID = "modelUUID";
-    protected static final String MODEL_CUSTOMIZATION_UUID = "modelCustomizationUUID";
-    protected static final String ACTION = "action";
-    protected static final String MODEL_NAME = "modelName";
-    protected static final String MODEL_VERSION = "modelVersion";
-    protected static final String MODEL_INVARIANT_UUID = "modelInvariantUUID";
-    protected static final String VNF_RESOURCE_MODEL_UUID = "vnfResourceModelUUID";
-    protected static final String PNF_RESOURCE_MODEL_UUID = "pnfResourceModelUUID";
-    protected static final String NF_ROLE = "nfRole";
-    protected static final String VF_MODULE_MODEL_UUID = "vfModuleModelUUID";
-    protected static final String VNF_COMPONENT_TYPE = "vnfComponentType";
-    protected static final String BUILDING_BLOCK_NAME = "buildingBlockName";
-    protected static final String RESOURCE_TYPE = "resourceType";
-    protected static final String ORCHESTRATION_STATUS = "orchestrationStatus";
-    protected static final String TARGET_ACTION = "targetAction";
-    protected static final String REQUEST_SCOPE = "requestScope";
-    protected static final String IS_ALACARTE = "isALaCarte";
-    protected static final String CLOUD_OWNER = "cloudOwner";
-    protected static final String FLOW_NAME = "flowName";
-    protected static final String ERROR_MESSAGE = "errorMessage";
-    protected static final String SERVICE_ROLE = "serviceRole";
-    protected static final String SERVICE_TYPE = "serviceType";
-    protected static final String VNF_TYPE = "vnfType";
-    protected static final String ERROR_CODE = "errorCode";
-    protected static final String WORK_STEP = "workStep";
-    protected static final String CLLI = "clli";
-    protected static final String CLOUD_VERSION = "cloudVersion";
-    protected static final String HOMING_INSTANCE = "/homingInstance";
-    protected static final String ARTIFACT_UUID = "artifactUUID";
-    protected static final String SOURCE = "source";
+    private static final String SERVICE_MODEL_UUID = "serviceModelUUID";
+    private static final String SERVICE_NAME = "serviceName";
+    private static final String MODEL_UUID = "modelUUID";
+    private static final String MODEL_CUSTOMIZATION_UUID = "modelCustomizationUUID";
+    private static final String ACTION = "action";
+    private static final String MODEL_NAME = "modelName";
+    private static final String MODEL_VERSION = "modelVersion";
+    private static final String MODEL_INVARIANT_UUID = "modelInvariantUUID";
+    private static final String VNF_RESOURCE_MODEL_UUID = "vnfResourceModelUUID";
+    private static final String NF_ROLE = "nfRole";
+    private static final String VF_MODULE_MODEL_UUID = "vfModuleModelUUID";
+    private static final String VNF_COMPONENT_TYPE = "vnfComponentType";
+    private static final String BUILDING_BLOCK_NAME = "buildingBlockName";
+    private static final String RESOURCE_TYPE = "resourceType";
+    private static final String ORCHESTRATION_STATUS = "orchestrationStatus";
+    private static final String TARGET_ACTION = "targetAction";
+    private static final String REQUEST_SCOPE = "requestScope";
+    private static final String IS_ALACARTE = "isALaCarte";
+    private static final String CLOUD_OWNER = "cloudOwner";
+    private static final String FLOW_NAME = "flowName";
+    private static final String ERROR_MESSAGE = "errorMessage";
+    private static final String SERVICE_ROLE = "serviceRole";
+    private static final String SERVICE_TYPE = "serviceType";
+    private static final String VNF_TYPE = "vnfType";
+    private static final String ERROR_CODE = "errorCode";
+    private static final String WORK_STEP = "workStep";
+    private static final String CLLI = "clli";
+    private static final String CLOUD_VERSION = "cloudVersion";
+    private static final String HOMING_INSTANCE = "/homingInstance";
+    private static final String ARTIFACT_UUID = "artifactUUID";
+    private static final String SOURCE = "source";
 
     private static final String TARGET_ENTITY = "SO:CatalogDB";
     private static final String ASTERISK = "*";
@@ -202,9 +204,10 @@ public class CatalogDbClient {
     private String findPnfResourceCustomizationByModelUuid = "/findPnfResourceCustomizationByModelUuid";
     private String findWorkflowByArtifactUUID = "/findByArtifactUUID";
     private String findWorkflowByModelUUID = "/findWorkflowByModelUUID";
-    private String findWorkflowByPnfModelUUID = "/findWorkflowByPnfModelUUID";
     private String findWorkflowBySource = "/findBySource";
     private String findVnfResourceCustomizationByModelUuid = "/findVnfResourceCustomizationByModelUuid";
+    private String findBBNameSelectionReferenceByControllerActorAndScopeAndAction =
+            "/findBBNameSelectionReferenceByControllerActorAndScopeAndAction";
 
     private String serviceURI;
     private String vfModuleURI;
@@ -277,6 +280,8 @@ public class CatalogDbClient {
 
     private final Client<Workflow> workflowClient;
 
+    private final Client<BBNameSelectionReference> bbNameSelectionReferenceClient;
+
     @Value("${mso.catalog.db.spring.endpoint:#{null}}")
     private String endpoint;
 
@@ -340,11 +345,13 @@ public class CatalogDbClient {
 
         findWorkflowByArtifactUUID = endpoint + WORKFLOW + SEARCH + findWorkflowByArtifactUUID;
         findWorkflowByModelUUID = endpoint + WORKFLOW + SEARCH + findWorkflowByModelUUID;
-        findWorkflowByPnfModelUUID = endpoint + WORKFLOW + SEARCH + findWorkflowByPnfModelUUID;
         findWorkflowBySource = endpoint + WORKFLOW + SEARCH + findWorkflowBySource;
 
         findVnfResourceCustomizationByModelUuid =
                 endpoint + VNF_RESOURCE_CUSTOMIZATION + SEARCH + findVnfResourceCustomizationByModelUuid;
+
+        findBBNameSelectionReferenceByControllerActorAndScopeAndAction = endpoint + BB_NAME_SELECTION_REFERENCE + SEARCH
+                + findBBNameSelectionReferenceByControllerActorAndScopeAndAction;
 
         serviceURI = endpoint + SERVICE + URI_SEPARATOR;
         vfModuleURI = endpoint + VFMODULE + URI_SEPARATOR;
@@ -412,6 +419,7 @@ public class CatalogDbClient {
         pnfResourceClient = clientFactory.create(PnfResource.class);
         pnfResourceCustomizationClient = clientFactory.create(PnfResourceCustomization.class);
         workflowClient = clientFactory.create(Workflow.class);
+        bbNameSelectionReferenceClient = clientFactory.create(BBNameSelectionReference.class);
     }
 
     public CatalogDbClient(String baseUri, String auth) {
@@ -462,6 +470,7 @@ public class CatalogDbClient {
         pnfResourceClient = clientFactory.create(PnfResource.class);
         pnfResourceCustomizationClient = clientFactory.create(PnfResourceCustomization.class);
         workflowClient = clientFactory.create(Workflow.class);
+        bbNameSelectionReferenceClient = clientFactory.create(BBNameSelectionReference.class);
     }
 
     public NetworkCollectionResourceCustomization getNetworkCollectionResourceCustomizationByID(
@@ -684,6 +693,14 @@ public class CatalogDbClient {
                 .queryParam("VNF_TYPE", vnfType).queryParam("ACTION_CATEGORY", actionCategory).build());
     }
 
+    public BBNameSelectionReference getBBNameSelectionReference(String controllerActor, String scope, String action) {
+
+        return this.getSingleResource(bbNameSelectionReferenceClient,
+                getUri(UriBuilder.fromUri(findBBNameSelectionReferenceByControllerActorAndScopeAndAction)
+                        .queryParam("CONTROLLER_ACTOR", controllerActor).queryParam("SCOPE", scope)
+                        .queryParam("ACTION", action).build().toString()));
+    }
+
     public Service getFirstByModelNameOrderByModelVersionDesc(String modelName) {
         return this.getSingleResource(serviceClient,
                 UriBuilder.fromUri(findFirstByModelNameURI).queryParam(MODEL_NAME, modelName).build());
@@ -764,61 +781,8 @@ public class CatalogDbClient {
         return this.getSingleResource(cloudSiteClient, getUri(uri + id));
     }
 
-    public CloudSite postCloudSite(CloudSite cloudSite) {
-        if (cloudSite == null) {
-            throw new EntityNotFoundException("CloudSite passed as null");
-        }
-        try {
-            HttpHeaders headers = getHttpHeaders();
-            HttpEntity<CloudSite> entity = new HttpEntity<>(cloudSite, headers);
-            CloudSite updatedCloudSite = restTemplate
-                    .exchange(UriComponentsBuilder.fromUriString(endpoint + "/cloudSite").build().encode().toString(),
-                            HttpMethod.POST, entity, CloudSite.class)
-                    .getBody();
-            return updatedCloudSite;
-        } catch (HttpClientErrorException e) {
-            if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
-                throw new EntityNotFoundException("Unable to find CloudSite with Cloud Site Id: " + cloudSite.getId());
-            }
-            throw e;
-        }
-    }
-
-    public CloudSite updateCloudSite(CloudSite cloudSite) {
-        if (cloudSite == null) {
-            throw new EntityNotFoundException("CloudSite passed as null");
-        }
-        try {
-            HttpHeaders headers = getHttpHeaders();
-            HttpEntity<CloudSite> entity = new HttpEntity<>(cloudSite, headers);
-            CloudSite updatedCloudSite = restTemplate
-                    .exchange(UriComponentsBuilder.fromUriString(endpoint + "/cloudSite/" + cloudSite.getId()).build()
-                            .encode().toString(), HttpMethod.PUT, entity, CloudSite.class)
-                    .getBody();
-            return updatedCloudSite;
-        } catch (HttpClientErrorException e) {
-            if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
-                throw new EntityNotFoundException("Unable to find CloudSite with Cloud Site Id: " + cloudSite.getId());
-            }
-            throw e;
-        }
-    }
-
-    public void deleteCloudSite(String cloudSiteId) {
-        if (cloudSiteId == null) {
-            throw new EntityNotFoundException("CloudSiteId passed as null");
-        }
-        try {
-            HttpHeaders headers = getHttpHeaders();
-            HttpEntity<String> entity = new HttpEntity<>(null, headers);
-            restTemplate.exchange(UriComponentsBuilder.fromUriString(endpoint + "/cloudSite/" + cloudSiteId).build()
-                    .encode().toString(), HttpMethod.DELETE, entity, CloudSite.class).getBody();
-        } catch (HttpClientErrorException e) {
-            if (HttpStatus.SC_NOT_FOUND == e.getStatusCode().value()) {
-                throw new EntityNotFoundException("Unable to find CloudSite with Cloud Site Id: " + cloudSiteId);
-            }
-            throw e;
-        }
+    public void postCloudSite(CloudSite cloudSite) {
+        this.postSingleResource(cloudSiteClient, cloudSite);
     }
 
     public List<CloudSite> getCloudSites() {
@@ -873,7 +837,7 @@ public class CatalogDbClient {
         return client.get(uri);
     }
 
-    protected <T> List<T> getMultipleResources(Client<T> client, URI uri) {
+    private <T> List<T> getMultipleResources(Client<T> client, URI uri) {
         Iterable<T> iterator = client.getAll(uri);
         List<T> list = new ArrayList<>();
         Iterator<T> it = iterator.iterator();
@@ -1052,11 +1016,6 @@ public class CatalogDbClient {
     public List<Workflow> findWorkflowByModelUUID(String vnfResourceModelUUID) {
         return this.getMultipleResources(workflowClient, getUri(UriBuilder.fromUri(findWorkflowByModelUUID)
                 .queryParam(VNF_RESOURCE_MODEL_UUID, vnfResourceModelUUID).build().toString()));
-    }
-
-    public List<Workflow> findWorkflowByPnfModelUUID(String pnfResourceModelUUID) {
-        return this.getMultipleResources(workflowClient, getUri(UriBuilder.fromUri(findWorkflowByPnfModelUUID)
-                .queryParam(PNF_RESOURCE_MODEL_UUID, pnfResourceModelUUID).build().toString()));
     }
 
     public List<Workflow> findWorkflowBySource(String source) {
