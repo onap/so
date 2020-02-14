@@ -28,6 +28,8 @@ import org.springframework.http.HttpHeaders;
 public class AuthorizationHeadersProviderTest {
 
     private static final String AUTHORIZATION_EXAMPLE = "authorization";
+    private static final String BLANK_EXAMPLE = "\t\n";
+    private static final String EMPTY = "";
 
     private final AuthorizationHeadersProvider provider = new AuthorizationHeadersProvider();
 
@@ -43,5 +45,42 @@ public class AuthorizationHeadersProviderTest {
         provider.removeAuthorization();
         assertEquals(size, headers.size());
         assertFalse(headers.containsKey(AUTHORIZATION_HEADER));
+    }
+
+    @Test
+    public void testBlankAuthorization() {
+        final HttpHeaders headers = provider.getHttpHeaders();
+        final int size = headers.size();
+
+        provider.addAuthorization(BLANK_EXAMPLE);
+        assertEquals(size, headers.size());
+    }
+
+    @Test
+    public void testEmptyAuthorization() {
+        final HttpHeaders headers = provider.getHttpHeaders();
+        final int size = headers.size();
+
+        provider.addAuthorization(EMPTY);
+        assertEquals(size, headers.size());
+    }
+
+    @Test
+    public void testNullAuthorization() {
+        final HttpHeaders headers = provider.getHttpHeaders();
+        final int size = headers.size();
+
+        provider.addAuthorization(null);
+        assertEquals(size, headers.size());
+    }
+
+    @Test
+    public void testRemoveAuthorization() {
+        final HttpHeaders headers = provider.getHttpHeaders();
+        final int size = headers.size();
+
+        provider.removeAuthorization();
+        provider.removeAuthorization();
+        assertEquals(size, headers.size());
     }
 }

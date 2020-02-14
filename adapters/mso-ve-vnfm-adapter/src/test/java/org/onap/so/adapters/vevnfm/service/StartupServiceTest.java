@@ -20,7 +20,9 @@
 
 package org.onap.so.adapters.vevnfm.service;
 
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -30,62 +32,34 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.so.adapters.vevnfm.aai.AaiConnection;
-import org.onap.so.adapters.vevnfm.exception.VeVnfmException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StartupServiceTest {
 
-    @Mock
-    private AaiConnection aaiConnection;
-
-    @Mock
-    private SubscriberService subscriberService;
-
-    @InjectMocks
-    private StartupService startupService;
+    private static final String URL = "rt";
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
+
+    @Mock
+    private AaiConnection aaiConnection;
+
+    @InjectMocks
+    private StartupService startupService;
 
     @Test
     public void testSuccess() throws Exception {
         // given
         final EsrSystemInfo info = new EsrSystemInfo();
-        info.setServiceUrl("lh");
+        info.setServiceUrl(URL);
+
         when(aaiConnection.receiveVnfm()).thenReturn(info);
-        when(subscriberService.subscribe(info)).thenReturn(true);
 
         // when
-        startupService.run();
+        final EsrSystemInfo systemInfo = startupService.receiveVnfm();
 
         // then
-        verify(aaiConnection, times(1)).receiveVnfm();
-        verify(subscriberService, times(1)).subscribe(info);
-    }
-
-    @Test
-    public void testFailureAai() throws Exception {
-        // given
-        final EsrSystemInfo info = new EsrSystemInfo();
-        when(aaiConnection.receiveVnfm()).thenReturn(info);
-
-        thrown.expect(VeVnfmException.class);
-
-        // when
-        startupService.run();
-    }
-
-    @Test
-    public void testFailureSubscriber() throws Exception {
-        // given
-        final EsrSystemInfo info = new EsrSystemInfo();
-        info.setServiceUrl("lh");
-        when(aaiConnection.receiveVnfm()).thenReturn(info);
-        when(subscriberService.subscribe(info)).thenReturn(false);
-
-        thrown.expect(VeVnfmException.class);
-
-        // when
-        startupService.run();
+        verify(aaiConnection).receiveVnfm();
+        assertEquals(info, systemInfo);
     }
 }
