@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "e43f8ba7_5216b785",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListenerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 2937
+      },
+      "writtenOn": "2020-02-14T04:21:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9daa96c3_222f71d6",
+      "range": {
+        "startLine": 83,
+        "startChar": 1,
+        "endLine": 84,
+        "endChar": 95
+      },
+      "revId": "eb619b15d4070343d98655a88cbd55cc020efefa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ecf6eb29_a6745932",
         "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListenerTest.java",
         "patchSetId": 3
@@ -36,6 +60,30 @@
       "writtenOn": "2020-01-26T22:37:02Z",
       "side": 1,
       "message": "private void getVnf() {\n        List\u003cVnfResourceCustomization\u003e vnfResourceCustomizations \u003d\n                catalogDbClient.getVnfResourceCustomizationByModelUuid(reqDetail.getModelInfo().getModelUuid());\n        vnfCust.setModelCustomizationUUID(MODELCUSTOMIZATIONUUID);\n        vnfCust.setSkipPostInstConf(true);\n        execution.setVariable(BBConstants.G_CURRENT_SEQUENCE, 0);\n        when(catalogDbClient.findVnfResourceCustomizationInList(executeBuildingBlock.getBuildingBlock().getKey(),\n                vnfResourceCustomizations)).thenReturn(vnfCust);\n\n    }\n\nThe above code you have written in the test block \nand you have assertTrue condition for   vnfCust.isSkipPostInstConf()\n\nThis is the wrong way to write test case.\n\nThe objective of the unit test is to test against source code not against test methods.\n\n\nThis applies elsewhere. Please take a look and fix it",
+      "range": {
+        "startLine": 85,
+        "startChar": 8,
+        "endLine": 85,
+        "endChar": 14
+      },
+      "revId": "eb619b15d4070343d98655a88cbd55cc020efefa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "572740b7_0a4fbbe6",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/listeners/SkipCDSBuildingBlockListenerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 2937
+      },
+      "writtenOn": "2020-02-14T04:21:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ecf6eb29_a6745932",
       "range": {
         "startLine": 85,
         "startChar": 8,
