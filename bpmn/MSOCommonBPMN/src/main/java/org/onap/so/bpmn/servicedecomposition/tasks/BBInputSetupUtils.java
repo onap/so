@@ -24,9 +24,10 @@ package org.onap.so.bpmn.servicedecomposition.tasks;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Optional;git
 import org.onap.aai.domain.yang.CloudRegion;
 import org.onap.aai.domain.yang.Configuration;
 import org.onap.aai.domain.yang.Configurations;
@@ -398,68 +399,37 @@ public class BBInputSetupUtils {
     }
 
     public Configuration getAAIConfiguration(String configurationId) {
-        return this.injectionHelper.getAaiClient()
-                .get(Configuration.class,
-                        AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configurationId).depth(Depth.ONE))
-                .orElseGet(() -> {
-                    logger.debug("No Configuration matched by id");
-                    return null;
-                });
+        return this.getConcreteAAIResource(Configuration.class, AAIObjectType.CONFIGURATION, configurationId);
     }
 
     public GenericVnf getAAIGenericVnf(String vnfId) {
-
-        return this.injectionHelper.getAaiClient()
-                .get(GenericVnf.class,
-                        AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId).depth(Depth.ONE))
-                .orElseGet(() -> {
-                    logger.debug("No Generic Vnf matched by id");
-                    return null;
-                });
+        return getConcreteAAIResource(GenericVnf.class, AAIObjectType.GENERIC_VNF, vnfId);
     }
 
     public VpnBinding getAAIVpnBinding(String vpnBindingId) {
-
-        return this.injectionHelper.getAaiClient()
-                .get(VpnBinding.class,
-                        AAIUriFactory.createResourceUri(AAIObjectType.VPN_BINDING, vpnBindingId).depth(Depth.ONE))
-                .orElseGet(() -> {
-                    logger.debug("No VpnBinding matched by id");
-                    return null;
-                });
+        return getConcreteAAIResource(VpnBinding.class, AAIObjectType.VPN_BINDING, vpnBindingId);
     }
 
     public VolumeGroup getAAIVolumeGroup(String cloudOwnerId, String cloudRegionId, String volumeGroupId) {
-        return this.injectionHelper.getAaiClient()
-                .get(VolumeGroup.class, AAIUriFactory
-                        .createResourceUri(AAIObjectType.VOLUME_GROUP, cloudOwnerId, cloudRegionId, volumeGroupId)
-                        .depth(Depth.ONE))
-                .orElseGet(() -> {
-                    logger.debug("No Generic Vnf matched by id");
-                    return null;
-                });
+        return getConcreteAAIResource(VolumeGroup.class, AAIObjectType.VOLUME_GROUP, cloudOwnerId, cloudRegionId,
+                volumeGroupId);
     }
 
     public VfModule getAAIVfModule(String vnfId, String vfModuleId) {
-        return this.injectionHelper.getAaiClient()
-                .get(VfModule.class,
-                        AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId).depth(Depth.ONE))
-                .orElseGet(() -> {
-                    logger.debug("No Generic Vnf matched by id");
-                    return null;
-                });
+        return getConcreteAAIResource(VfModule.class, AAIObjectType.VF_MODULE, vnfId, vfModuleId);
     }
 
     public L3Network getAAIL3Network(String networkId) {
+        return getConcreteAAIResource(L3Network.class, AAIObjectType.L3_NETWORK, networkId);
+    }
 
-        return this.injectionHelper.getAaiClient()
-                .get(L3Network.class,
-                        AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId).depth(Depth.ONE))
-                .orElseGet(() -> {
-                    logger.debug("No Generic Vnf matched by id");
+    private <T> T getConcreteAAIResource(Class<T> clazz, AAIObjectType objectType, Object... ids) {
+        return injectionHelper.getAaiClient()
+                .get(clazz, AAIUriFactory.createResourceUri(objectType, ids).depth(Depth.ONE)).orElseGet(() -> {
+                    logger.debug("No resource of type: {} matched by ids: {}", objectType.typeName(),
+                            Arrays.toString(ids));
                     return null;
                 });
-
     }
 
     public Optional<ServiceInstance> getRelatedServiceInstanceFromInstanceGroup(String instanceGroupId)
