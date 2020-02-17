@@ -397,7 +397,7 @@
                     <dependencySets>
                       <dependencySet>
                         <includes>
-                          <include>org.onap.so:so-simulator</include>
+                          <include>org.onap.so.simulator:so-simulator</include>
                         </includes>
                         <outputFileNameMapping>app.jar</outputFileNameMapping>
                       </dependencySet>
@@ -516,7 +516,7 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onap.so</groupId>
+      <groupId>org.onap.so.simulator</groupId>
       <artifactId>so-simulator</artifactId>
       <version>${project.version}</version>
     </dependency>
