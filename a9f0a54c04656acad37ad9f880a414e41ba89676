@@ -34,6 +34,24 @@
       "revId": "a9f0a54c04656acad37ad9f880a414e41ba89676",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "75711318_d7a3da16",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSProcessingDE.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2020-02-17T12:51:15Z",
+      "side": 1,
+      "message": "sounds good.",
+      "parentUuid": "e483f5ef_3c710b18",
+      "revId": "a9f0a54c04656acad37ad9f880a414e41ba89676",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
