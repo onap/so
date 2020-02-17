@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bd4fc71c_5aee580f",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/utils/WorkflowResourceIdsUtils.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-02-17T07:26:29Z",
+      "side": 1,
+      "message": "I would rename it to avoid using \"Utils\". I think its good idea to replace it with \"Helper\"\nI am not sure if its better to leave it in workflow.tasks package.\nConsider it with Łukasz Muszkieta.",
+      "range": {
+        "startLine": 27,
+        "startChar": 18,
+        "endLine": 27,
+        "endChar": 43
+      },
+      "revId": "6200df9409e70c29a5892bd700f41c4925be02ed",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "585a7aae_25ba2de7",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/utils/WorkflowResourceIdsUtilsTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-02-17T07:26:29Z",
+      "side": 1,
+      "message": "I would rename it to resultSupplier or something similar to avoid: getter.get()",
+      "range": {
+        "startLine": 119,
+        "startChar": 103,
+        "endLine": 119,
+        "endChar": 109
+      },
+      "revId": "6200df9409e70c29a5892bd700f41c4925be02ed",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
