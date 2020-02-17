@@ -41,6 +41,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -225,6 +226,77 @@ public class WorkflowActionTest extends BaseTaskTest {
         workflowAction.selectExecutionList(execution);
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
         assertEqualsBulkFlowName(ebbs, "AssignServiceInstanceBB", "ActivateServiceInstanceBB");
+    }
+
+    @Test
+    public void selectExecutionListExceptionAlreadyBuiltTest() throws Exception {
+        DelegateExecution delegateExecution = new DelegateExecutionFake();
+        String gAction = "deleteInstance";
+        String resource = "VfModule";
+        delegateExecution.setVariable("mso-request-id", "00f704ca-c5e5-4f95-a72c-6889db7b0688");
+        delegateExecution.setVariable("requestAction", gAction);
+        String bpmnRequest =
+                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/VfModuleCreateWithFabric.json")));
+        delegateExecution.setVariable("bpmnRequest", bpmnRequest);
+        delegateExecution.setVariable("aLaCarte", true);
+        delegateExecution.setVariable("apiVersion", "7");
+        delegateExecution.setVariable("requestUri",
+                "v7/serviceInstances/f647e3ef-6d2e-4cd3-bff4-8df4634208de/vnfs/b80b16a5-f80d-4ffa-91c8-bd47c7438a3d/vfModules");
+
+        NorthBoundRequest northBoundRequest = new NorthBoundRequest();
+        List<OrchestrationFlow> orchFlows = createFlowList("DeactivateVfModuleBB", "DeleteVfModuleBB",
+                "UnassignVfModuleBB", "DeactivateFabricConfigurationBB", "UnassignFabricConfigurationBB");
+        northBoundRequest.setOrchestrationFlowList(orchFlows);
+
+        when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction, resource,
+                true, "my-custom-cloud-owner")).thenReturn(northBoundRequest);
+
+        doAnswer(invocation -> {
+            DelegateExecutionFake execution = invocation.getArgument(0);
+            execution.setVariable("WorkflowException", "exception");
+            execution.setVariable("WorkflowExceptionErrorMessage", "errorMessage");
+            throw new BpmnError("WorkflowException");
+        }).when(exceptionUtil).buildAndThrowWorkflowException(delegateExecution, 7000,
+                "Exception in getConfigBuildingBlock: Multiple relationships exist from VNFC testVnfcName to Configurations");
+
+
+        org.onap.aai.domain.yang.GenericVnf vnf = new org.onap.aai.domain.yang.GenericVnf();
+        vnf.setVnfId("vnf0");
+        vnf.setModelCustomizationId("modelCustomizationId");
+        when(bbSetupUtils.getAAIGenericVnf(any())).thenReturn(vnf);
+
+        org.onap.aai.domain.yang.VfModule vfModule = new org.onap.aai.domain.yang.VfModule();
+        vfModule.setModelCustomizationId("modelCustomizationId");
+        when(bbSetupUtils.getAAIVfModule(any(), any())).thenReturn(vfModule);
+
+        List<org.onap.aai.domain.yang.Vnfc> vnfcs = new ArrayList<org.onap.aai.domain.yang.Vnfc>();
+        org.onap.aai.domain.yang.Vnfc vnfc = new org.onap.aai.domain.yang.Vnfc();
+        vnfc.setModelInvariantId("modelInvariantId");
+        vnfc.setVnfcName("testVnfcName");
+        vnfcs.add(vnfc);
+        doReturn(vnfcs).when(SPY_workflowAction).getRelatedResourcesInVfModule(any(), any(), any(), any());
+
+        List<org.onap.aai.domain.yang.Configuration> configurations =
+                new ArrayList<org.onap.aai.domain.yang.Configuration>();
+        org.onap.aai.domain.yang.Configuration configuration = new org.onap.aai.domain.yang.Configuration();
+        configuration.setConfigurationId("configurationId");
+        configuration.setModelCustomizationId("modelCustimizationId");
+        configuration.setConfigurationName("testConfigurationName");
+        configurations.add(configuration);
+        org.onap.aai.domain.yang.Configuration configuration1 = new org.onap.aai.domain.yang.Configuration();
+        configuration1.setConfigurationId("configurationId");
+        configuration1.setModelCustomizationId("modelCustimizationId");
+        configuration1.setConfigurationName("testConfigurationName");
+        configurations.add(configuration1);
+        doReturn(configurations).when(SPY_workflowAction).getRelatedResourcesInVnfc(any(), any(), any());
+
+        doReturn("testName").when(SPY_workflowAction).getVnfcNameForConfiguration(any());
+
+        thrown.expect(BpmnError.class);
+        SPY_workflowAction.selectExecutionList(delegateExecution);
+        assertEquals(
+                "Exception in getConfigBuildingBlock: Multiple relationships exist from VNFC testVnfcName to Configurations",
+                delegateExecution.getVariable("WorkflowException"));
     }
 
     @Test

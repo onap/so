@@ -431,7 +431,12 @@ public class WorkflowAction {
             execution.setVariable("isRollbackComplete", false);
 
         } catch (Exception ex) {
-            buildAndThrowException(execution, "Exception while setting execution list. ", ex);
+            if (!(execution.hasVariable("WorkflowException")
+                    || execution.hasVariable("WorkflowExceptionExceptionMessage"))) {
+                buildAndThrowException(execution, "Exception while setting execution list. ", ex);
+            } else {
+                throw ex;
+            }
         }
     }
 
@@ -537,7 +542,7 @@ public class WorkflowAction {
             if (configurations.size() > 1) {
                 String multipleRelationshipsError =
                         "Multiple relationships exist from VNFC " + vnfc.getVnfcName() + " to Configurations";
-                buildAndThrowException(dataObj.getExecution(), multipleRelationshipsError,
+                buildAndThrowException(dataObj.getExecution(), "Exception in getConfigBuildingBlock: ",
                         new Exception(multipleRelationshipsError));
             }
             for (org.onap.aai.domain.yang.Configuration configuration : configurations) {
