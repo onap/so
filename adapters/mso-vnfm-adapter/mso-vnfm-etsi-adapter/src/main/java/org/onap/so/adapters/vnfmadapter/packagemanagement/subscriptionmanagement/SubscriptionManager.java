@@ -31,7 +31,6 @@ import java.util.Objects;
 import java.util.Optional;
 import org.onap.so.adapters.vnfmadapter.Constants;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.EtsiCatalogServiceProvider;
-import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.EtsiCatalogUrlProvider;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.BasicAuth;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmSubscription;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.InlineResponse2002;
@@ -41,7 +40,6 @@ import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.
 import org.onap.so.adapters.vnfmadapter.packagemanagement.subscriptionmanagement.cache.PackageManagementCacheServiceProvider;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.InternalServerErrorException;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.SubscriptionRequestConversionException;
-import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.onap.so.utils.CryptoUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,15 +53,12 @@ import org.springframework.stereotype.Service;
  *
  * @author Ronan Kenny (ronan.kenny@est.tech)
  * @author Gareth Roper (gareth.roper@est.tech)
- *
  */
 @Service
 public class SubscriptionManager {
 
     private static final Logger logger = getLogger(SubscriptionManager.class);
     private final PackageManagementCacheServiceProvider packageManagementCacheServiceProvider;
-    private final EtsiCatalogUrlProvider etsiCatalogUrlProvider;
-    private final HttpRestServiceProvider httpServiceProvider;
     private final ConversionService conversionService;
     private final EtsiCatalogServiceProvider etsiCatalogServiceProvider;
     private final String vnfmAdapterEndpoint;
@@ -73,16 +68,12 @@ public class SubscriptionManager {
 
     @Autowired
     public SubscriptionManager(final PackageManagementCacheServiceProvider packageManagementCacheServiceProvider,
-            final ConversionService conversionService, final HttpRestServiceProvider httpServiceProvider,
-            final EtsiCatalogUrlProvider etsiCatalogUrlProvider,
-            final EtsiCatalogServiceProvider etsiCatalogServiceProvider,
+            final ConversionService conversionService, final EtsiCatalogServiceProvider etsiCatalogServiceProvider,
             @Value("${vnfmadapter.endpoint}") final String vnfmAdapterEndpoint,
             @Value("${mso.key}") final String msoKeyString,
-            @Value("${vnfmadapter.auth:D6CFE56451508B75536C5E8A1E7AE06D0346006A693BF29293A6E1C762EFD59C671911DB6E9294E4FE15E4C1C5524B}") final String vnfmAdapterAuth) {
+            @Value("${vnfmadapter.auth:BF29BA36F0CFE1C05507781F6B97EFBCA7EFAC9F595954D465FC43F646883EF585C20A58CBB02528A6FAAC}") final String vnfmAdapterAuth) {
         this.packageManagementCacheServiceProvider = packageManagementCacheServiceProvider;
-        this.etsiCatalogUrlProvider = etsiCatalogUrlProvider;
         this.conversionService = conversionService;
-        this.httpServiceProvider = httpServiceProvider;
         this.etsiCatalogServiceProvider = etsiCatalogServiceProvider;
         this.vnfmAdapterEndpoint = vnfmAdapterEndpoint;
         this.vnfmAdapterAuth = vnfmAdapterAuth;
@@ -101,8 +92,8 @@ public class SubscriptionManager {
         if (optionalEtsiCatalogManagerSubscription.isPresent()) {
             PkgmSubscription etsiCatalogManagerSubscription = optionalEtsiCatalogManagerSubscription.get();
             logger.debug("postPkgmSubscriptionRequest Response SubscriptionId: {}",
-                    Objects.requireNonNull(etsiCatalogManagerSubscription.getId().toString()));
-            final String subscriptionId = etsiCatalogManagerSubscription.getId().toString();
+                    Objects.requireNonNull(etsiCatalogManagerSubscription.getId()));
+            final String subscriptionId = etsiCatalogManagerSubscription.getId();
 
             packageManagementCacheServiceProvider.addSubscription(subscriptionId, pkgmSubscriptionRequest);
 
@@ -118,7 +109,6 @@ public class SubscriptionManager {
         throw new InternalServerErrorException(
                 "Received empty response from POST to ETSI Catalog Manager Subscription Endpoint.");
     }
-
 
 
     public Optional<String> getSubscriptionId(final PkgmSubscriptionRequest pkgmSubscriptionRequest) {

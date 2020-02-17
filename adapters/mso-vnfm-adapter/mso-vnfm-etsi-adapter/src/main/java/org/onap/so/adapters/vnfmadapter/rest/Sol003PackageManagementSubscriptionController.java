@@ -79,7 +79,7 @@ public class Sol003PackageManagementSubscriptionController {
     @PostMapping(value = "/subscriptions")
     public ResponseEntity<?> postSubscriptionRequest(@RequestBody final PkgmSubscriptionRequest pkgmSubscriptionRequest)
             throws GeneralSecurityException {
-        logger.info(LOG_REQUEST_RECEIVED, " postSubscriptionRequest Endpoint Called");
+        logger.info(LOG_REQUEST_RECEIVED, " postSubscriptionRequest Endpoint Called", pkgmSubscriptionRequest);
 
         // Check if subscription exists already.
         final Optional<String> exists = subscriptionManager.getSubscriptionId(pkgmSubscriptionRequest);

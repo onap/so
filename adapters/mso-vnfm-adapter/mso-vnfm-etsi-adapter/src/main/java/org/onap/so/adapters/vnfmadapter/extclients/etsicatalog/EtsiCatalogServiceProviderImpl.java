@@ -79,7 +79,7 @@ public class EtsiCatalogServiceProviderImpl implements EtsiCatalogServiceProvide
                     etsiCatalogUrlProvider.getVnfPackageArtifactUrl(vnfPkgId, artifactPath), byte[].class);
             logger.info("getVnfPackageArtifact Request to ETSI Catalog Manager Status Code: {}",
                     response.getStatusCodeValue());
-            if (response.getStatusCode() == HttpStatus.OK) {
+            if (response.getStatusCode().is2xxSuccessful()) {
                 return Optional.ofNullable(response.getBody());
             }
         } catch (final HttpResouceNotFoundException httpResouceNotFoundException) {
@@ -104,7 +104,7 @@ public class EtsiCatalogServiceProviderImpl implements EtsiCatalogServiceProvide
                     httpServiceProvider.getHttpResponse(etsiCatalogUrlProvider.getVnfPackagesUrl(), VnfPkgInfo[].class);
             logger.info("getVnfPackages Request to ETSI Catalog Manager Status Code: {}",
                     response.getStatusCodeValue());
-            if (response.getStatusCode() == HttpStatus.OK) {
+            if (response.getStatusCode().is2xxSuccessful()) {
                 if (response.hasBody()) {
                     final VnfPkgInfo[] vnfPackages = response.getBody();
                     assert (vnfPackages != null);
@@ -145,7 +145,7 @@ public class EtsiCatalogServiceProviderImpl implements EtsiCatalogServiceProvide
                     .getHttpResponse(etsiCatalogUrlProvider.getVnfPackageUrl(vnfPkgId), VnfPkgInfo.class);
             logger.info("getVnfPackage Request for vnfPkgId {} to ETSI Catalog Manager Status Code: {}", vnfPkgId,
                     response.getStatusCodeValue());
-            if (response.getStatusCode() == HttpStatus.OK) {
+            if (response.getStatusCode().is2xxSuccessful()) {
                 if (response.hasBody()) {
                     final VnfPkgInfo vnfPkgInfo = response.getBody();
                     if (conversionService.canConvert(vnfPkgInfo.getClass(), InlineResponse2001.class)) {
@@ -183,7 +183,7 @@ public class EtsiCatalogServiceProviderImpl implements EtsiCatalogServiceProvide
             final ResponseEntity<PkgmSubscription> responseEntity =
                     httpServiceProvider.postHttpRequest(etsiCatalogManagerSubscriptionRequest,
                             etsiCatalogUrlProvider.getSubscriptionUrl(), PkgmSubscription.class);
-            if (responseEntity.getStatusCode() == HttpStatus.OK) {
+            if (responseEntity.getStatusCode().is2xxSuccessful()) {
                 if (responseEntity.hasBody()) {
                     return Optional.of(responseEntity.getBody());
                 }
@@ -209,7 +209,7 @@ public class EtsiCatalogServiceProviderImpl implements EtsiCatalogServiceProvide
             final ResponseEntity<Void> responseEntity = httpServiceProvider
                     .deleteHttpRequest(etsiCatalogUrlProvider.getSubscriptionUrl() + "/" + subscriptionId, Void.class);
 
-            if (responseEntity.getStatusCode() == HttpStatus.NO_CONTENT) {
+            if (responseEntity.getStatusCode().is2xxSuccessful()) {
                 logger.info("Subscription with ID: {} has been successfully deleted from the ETSI Catalog Manager",
                         subscriptionId);
                 return true;

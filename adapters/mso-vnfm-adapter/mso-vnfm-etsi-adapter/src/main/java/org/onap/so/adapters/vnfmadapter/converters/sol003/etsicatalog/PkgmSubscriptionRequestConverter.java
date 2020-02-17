@@ -20,14 +20,10 @@
 
 package org.onap.so.adapters.vnfmadapter.converters.sol003.etsicatalog;
 
-import static org.slf4j.LoggerFactory.getLogger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import javax.swing.text.html.Option;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.Version;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VnfProducts;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VnfProductsProviders;
@@ -38,7 +34,6 @@ import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.SubscriptionsFilterVersions;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.SubscriptionsFilterVnfProducts;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.SubscriptionsFilterVnfProductsFromProviders;
-import org.slf4j.Logger;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Service;
 
@@ -48,13 +43,10 @@ import org.springframework.stereotype.Service;
  *
  * @author Ronan Kenny (ronan.kenny@est.tech)
  * @author Gareth Roper (gareth.roper@est.tech)
- *
  */
 @Service
 public class PkgmSubscriptionRequestConverter implements
         Converter<PkgmSubscriptionRequest, org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmSubscriptionRequest> {
-
-    private static final Logger logger = getLogger(PkgmSubscriptionRequestConverter.class);
 
     @Override
     public org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmSubscriptionRequest convert(
@@ -133,7 +125,8 @@ public class PkgmSubscriptionRequestConverter implements
             final List<VnfProductsProviders> etsiCatalogManagerVnfProductsProviders = new ArrayList<>();
             filterProductsFromProvider.forEach(vnfProduct -> {
                 etsiCatalogManagerVnfProductsProviders
-                        .add(new VnfProductsProviders().vnfProducts(getVnfProducts(vnfProduct.getVnfProducts())));
+                        .add(new VnfProductsProviders().vnfProvider(vnfProduct.getVnfProvider())
+                                .vnfProducts(getVnfProducts(vnfProduct.getVnfProducts())));
             });
             return etsiCatalogManagerVnfProductsProviders;
         }

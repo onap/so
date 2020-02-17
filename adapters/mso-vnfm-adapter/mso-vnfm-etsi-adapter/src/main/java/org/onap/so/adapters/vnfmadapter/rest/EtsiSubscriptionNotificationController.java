@@ -36,9 +36,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @author Gareth Roper (gareth.roper@est.tech)
  */
 @Controller
-@RequestMapping(value = ETSI_SUBSCRIPTION_NOTIFICATION_CONTROLLER_BASE_URL,
-        produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML},
-        consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+@RequestMapping(value = ETSI_SUBSCRIPTION_NOTIFICATION_CONTROLLER_BASE_URL)
 public class EtsiSubscriptionNotificationController {
 
     private static final Logger logger = getLogger(EtsiSubscriptionNotificationController.class);
