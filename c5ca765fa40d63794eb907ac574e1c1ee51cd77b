@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "f52077a8_b36fd7ad",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/activity/ActivitySpecsActions.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2020-02-17T08:29:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a81cf30d_fcc0f8a5",
+      "range": {
+        "startLine": 126,
+        "startChar": 14,
+        "endLine": 128,
+        "endChar": 13
+      },
+      "revId": "c5ca765fa40d63794eb907ac574e1c1ee51cd77b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "12fa0f31_9f870a16",
         "filename": "asdc-controller/src/main/java/org/onap/so/asdc/activity/ActivitySpecsActions.java",
         "patchSetId": 5
@@ -45,6 +69,30 @@
       "revId": "c5ca765fa40d63794eb907ac574e1c1ee51cd77b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1a7e7d0f_15b1109a",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/activity/ActivitySpecsActions.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2020-02-17T08:29:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "12fa0f31_9f870a16",
+      "range": {
+        "startLine": 134,
+        "startChar": 8,
+        "endLine": 134,
+        "endChar": 21
+      },
+      "revId": "c5ca765fa40d63794eb907ac574e1c1ee51cd77b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
