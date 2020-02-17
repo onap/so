@@ -22,6 +22,30 @@
       "revId": "71e90d3ef31c63ab230129dc9cc43a27693f6c64",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "21dbcb58_f97d53eb",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 635,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2020-02-17T12:00:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e3799624_e5323e70",
+      "range": {
+        "startLine": 625,
+        "startChar": 0,
+        "endLine": 635,
+        "endChar": 20
+      },
+      "revId": "71e90d3ef31c63ab230129dc9cc43a27693f6c64",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
