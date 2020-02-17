@@ -16,6 +16,24 @@
       "revId": "a9f0a54c04656acad37ad9f880a414e41ba89676",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e483f5ef_3c710b18",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSProcessingDE.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-17T12:26:16Z",
+      "side": 1,
+      "message": "@Henry, we can create one when migrating ConfigurePnfResource.bpmn to BBs. No need to prolong this review any more.",
+      "parentUuid": "bb7862ea_9ddcf693",
+      "revId": "a9f0a54c04656acad37ad9f880a414e41ba89676",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
