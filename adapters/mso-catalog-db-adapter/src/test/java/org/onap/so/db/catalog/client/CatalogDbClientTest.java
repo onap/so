@@ -33,6 +33,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onap.so.adapters.catalogdb.CatalogDbAdapterBaseTest;
 import org.onap.so.db.catalog.beans.AuthenticationType;
+import org.onap.so.db.catalog.beans.BBNameSelectionReference;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.CloudifyManager;
@@ -752,6 +753,22 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         List<CloudSite> cloudSites = client.getCloudSites();
         assertNotNull(cloudSites);
         assertNotEquals(0, cloudSites.size());
+    }
+
+    @Test
+    public void getBBNameSelectionReference_validData_expectedOutput() {
+        BBNameSelectionReference bbNameSelectionReference =
+                client.getBBNameSelectionReference("APPC", "vfModule", "healthCheck");
+        assertNotNull(bbNameSelectionReference);
+        assertEquals("GenericVnfHealthCheckBB", bbNameSelectionReference.getBbName());
+    }
+
+    @Test
+    public void getBBNameSelectionReference_invalidData_nullOutput() {
+        BBNameSelectionReference bbNameSelectionReference =
+                client.getBBNameSelectionReference("ABC", "vfModule", "healthCheck");
+        assertNull(bbNameSelectionReference);
+
     }
 
 
