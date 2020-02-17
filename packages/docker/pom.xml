@@ -397,7 +397,7 @@
                     <dependencySets>
                       <dependencySet>
                         <includes>
-                          <include>org.onap.so:so-simulator</include>
+                          <include>org.onap.so.simulator:so-simulator</include>
                         </includes>
                         <outputFileNameMapping>app.jar</outputFileNameMapping>
                       </dependencySet>
