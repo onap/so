@@ -22,7 +22,6 @@ package org.onap.so.adapters.vnfmadapter.rest;
 
 import static org.onap.so.adapters.vnfmadapter.Constants.ETSI_SUBSCRIPTION_NOTIFICATION_CONTROLLER_BASE_URL;
 import static org.slf4j.LoggerFactory.getLogger;
-import javax.ws.rs.core.MediaType;
 import org.slf4j.Logger;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
