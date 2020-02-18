@@ -286,7 +286,7 @@
 							<build>
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
-								<dockerFile>Dockerfile.so-app</dockerFile>
+								<dockerFile>Dockerfile.so-bpmn-infra</dockerFile>
 								<tags>
 									<tag>${project.version}</tag>
 									<tag>${project.version}-${maven.build.timestamp}</tag>
@@ -297,9 +297,9 @@
 										<dependencySets>
 											<dependencySet>
 												<includes>
-													<include>org.onap.so:mso-infrastructure-bpmn</include>
+													<include>org.onap.so:mso-infrastructure-bpmn:war</include>
 												</includes>
-												<outputFileNameMapping>app.jar</outputFileNameMapping>
+												<outputFileNameMapping>app.war</outputFileNameMapping>
 											</dependencySet>
 										</dependencySets>
 									</inline>
@@ -468,6 +468,7 @@
 		<dependency>
 			<groupId>org.onap.so</groupId>
 			<artifactId>mso-infrastructure-bpmn</artifactId>
+			<type>war</type>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

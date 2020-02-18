@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,6 +40,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
@@ -48,19 +50,33 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import javax.annotation.PostConstruct;
+import java.util.List;
+import java.util.concurrent.Executor;
+
+import static java.util.Collections.singletonMap;
+import static org.springframework.boot.context.config.ConfigFileApplicationListener.*;
+
 /**
  * @since Version 1.0
- *
  */
 
 @SpringBootApplication
 @EnableAsync
 @ComponentScan(basePackages = {"org.onap"}, nameGenerator = DefaultToShortClassNameBeanNameGenerator.class,
         excludeFilters = {@Filter(type = FilterType.ANNOTATION, classes = SpringBootApplication.class)})
+public class MSOInfrastructureApplication extends SpringBootServletInitializer {
 
-public class MSOInfrastructureApplication {
-
+    private static final String ADDITIONAL_CONFIG = "file:/camunda/app/config/override.yaml";
     private static final Logger logger = LoggerFactory.getLogger(MSOInfrastructureApplication.class);
+
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application
+                .sources(MSOInfrastructureApplication.class)
+                .properties(singletonMap(CONFIG_ADDITIONAL_LOCATION_PROPERTY, ADDITIONAL_CONFIG));
+    }
+
     @Autowired
     private ProcessEngine processEngine;
 
@@ -93,19 +109,18 @@ public class MSOInfrastructureApplication {
         setLogsDir();
     }
 
+
+
     @PostConstruct
     public void postConstruct() {
-        try {
-            DeploymentBuilder deploymentBuilder = processEngine.getRepositoryService().createDeployment();
-            deployCustomWorkflows(deploymentBuilder);
-        } catch (Exception e) {
-            logger.warn("Unable to invoke deploymentBuilder ", e);
-        }
+        DeploymentBuilder deploymentBuilder = processEngine.getRepositoryService().createDeployment();
+//        try {
+//            DeploymentBuilder deploymentBuilder = processEngine.getRepositoryService().createDeployment();
+//            deployCustomWorkflows(deploymentBuilder);
+//        } catch (Exception e) {
+//            logger.warn("Unable to invoke deploymentBuilder: " + e.getMessage());
+//        }
     }
-
-    @PreUndeploy
-    public void cleanup(ProcessEngine processEngine, ProcessApplicationInfo processApplicationInfo,
-            List<ProcessEngine> processEngines) {}
 
     @Bean
     @Primary
@@ -121,9 +136,10 @@ public class MSOInfrastructureApplication {
     }
 
     public void deployCustomWorkflows(DeploymentBuilder deploymentBuilder) {
-        logger.debug("Attempting to deploy custom workflows");
+        logger.info("Attempting to deploy custom workflows");
         try {
             List<Workflow> workflows = catalogDbClient.findWorkflowBySource(SDC_SOURCE);
+            logger.info("SDC workflows: {}", workflows );
             if (workflows != null && !workflows.isEmpty()) {
                 for (Workflow workflow : workflows) {
                     String workflowName = workflow.getName();
@@ -140,7 +156,7 @@ public class MSOInfrastructureApplication {
                 deploymentBuilder.deploy();
             }
         } catch (Exception e) {
-            logger.warn("Unable to deploy custom workflows ", e);
+            logger.error("Unable to deploy custom workflows", e);
         }
     }
 }

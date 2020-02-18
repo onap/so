@@ -76,7 +76,7 @@ public class CXFConfiguration {
 
     @Bean
     public ServletRegistrationBean cxfServlet() {
-        return new ServletRegistrationBean(new CXFServlet(), "/mso/*");
+        return new ServletRegistrationBean(new CXFServlet(), "/*");
     }
 
     @Bean

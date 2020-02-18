@@ -7,7 +7,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>mso-infrastructure-bpmn</artifactId>
-  <packaging>jar</packaging>
+  <packaging>war</packaging>
   <build>
     <plugins>
       <plugin>
@@ -20,8 +20,17 @@
               <goal>unpack</goal>
             </goals>
             <configuration>
-              <skip>true</skip>
+<!--              <skip>true</skip>-->
               <artifactItems>
+                <artifactItem>
+                  <groupId>org.onap.so</groupId>
+                  <artifactId>so-bpmn-tasks</artifactId>
+                  <version>${project.version}</version>
+                  <type>jar</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                  <includes>**/*</includes>
+                </artifactItem>
                 <artifactItem>
                   <groupId>org.onap.so</groupId>
                   <artifactId>MSOCommonBPMN</artifactId>
@@ -142,6 +151,12 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
+      </plugin>
     </plugins>
     <resources>
       <resource>
@@ -176,30 +191,9 @@
   </dependencyManagement>
   <dependencies>
     <dependency>
-      <groupId>org.camunda.bpm.springboot</groupId>
-      <artifactId>camunda-bpm-spring-boot-starter-rest</artifactId>
-      <version>${camunda.springboot.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.camunda.bpmn</groupId>
-          <artifactId>camunda-engine-rest-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-fileupload</groupId>
-          <artifactId>commons-fileupload</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.camunda.bpm.springboot</groupId>
-      <artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
-      <version>${camunda.springboot.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.camunda.bpmn</groupId>
-          <artifactId>camunda-engine-rest-core</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-tomcat</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -215,6 +209,20 @@
         </exclusion>
       </exclusions>
       <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.camunda.bpm</groupId>
+      <artifactId>camunda-engine</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.camunda.spin</groupId>
+      <artifactId>camunda-spin-core</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.camunda.bpm</groupId>
+      <artifactId>camunda-engine-spring</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>

@@ -1,0 +1,13 @@
+FROM camunda/camunda-bpm-platform:7.10.0
+
+RUN rm -r /camunda/webapps/examples /camunda/webapps/docs /camunda/webapps/camunda-invoice
+
+USER root
+COPY ca-certificates/onap-ca.crt /usr/local/share/ca-certificates/onap-ca.crt
+RUN update-ca-certificates --fresh
+USER camunda
+
+# Springboot configuration (required)
+VOLUME /camunda/app/config
+
+COPY maven/app.war /camunda/webapps/mso.war
