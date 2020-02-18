@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7ce21d08_761f48e1",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigureInstanceParamsForVfModule.java",
+        "patchSetId": 39
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 97
+      },
+      "writtenOn": "2020-02-18T20:44:28Z",
+      "side": 1,
+      "message": "We should convert this to a spring component",
+      "revId": "6c97e5df59c7cdf83b72675545a382ca88ef12a0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "45251968_662e39a9",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigureInstanceParamsForVnf.java",
+        "patchSetId": 39
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 97
+      },
+      "writtenOn": "2020-02-18T20:44:28Z",
+      "side": 1,
+      "message": "We should convert this to a spring component",
+      "revId": "6c97e5df59c7cdf83b72675545a382ca88ef12a0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d882a01d_39ff89a0",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ExtractServiceFromUserParameters.java",
+        "patchSetId": 39
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 97
+      },
+      "writtenOn": "2020-02-18T20:44:28Z",
+      "side": 1,
+      "message": "We should convert this to a component and Autowire object mapper. Object mapper instances are expensive to setup.",
+      "revId": "6c97e5df59c7cdf83b72675545a382ca88ef12a0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4e29c88b_681d5b58",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/VfModuleCDSRequestProvider.java",
+        "patchSetId": 39
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 97
+      },
+      "writtenOn": "2020-02-18T20:44:28Z",
+      "side": 1,
+      "message": "Is there a technical reason why this is not a bean? Are there additional fields dynamically added to this object?",
+      "revId": "6c97e5df59c7cdf83b72675545a382ca88ef12a0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
