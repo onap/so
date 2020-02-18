@@ -20,21 +20,25 @@
 
 package org.onap.so.adapters.vnfmadapter.rest;
 
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.onap.so.adapters.vnfmadapter.Constants.PACKAGE_MANAGEMENT_BASE_URL;
 import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import java.security.GeneralSecurityException;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import com.google.gson.Gson;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import com.google.gson.Gson;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,13 +55,13 @@ import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.SubscriptionsFilterVnfProductsFromProviders;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.SubscriptionsLinks;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.VnfPackagesLinksSelf;
-import org.onap.so.utils.CryptoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -65,36 +69,24 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.http.HttpMethod;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
-import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 /**
  * @author Ronan Kenny (ronan.kenny@est.tech)
  * @author Gareth Roper (gareth.roper@est.tech)
- *
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = VnfmAdapterApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-@SuppressWarnings("unchecked")
 public class Sol003PackageManagementSubscriptionControllerTest {
 
-    private static String subscriptionId;
     private final Gson gson = new Gson();
-
+    private final URI msbEndpoint = URI.create("http://msb-iag.onap:80/api/vnfpkgm/v1/subscriptions");
     @Autowired
     @Qualifier(CONFIGURABLE_REST_TEMPLATE)
     private RestTemplate testRestTemplate;
-
     private MockRestServiceServer mockRestServer;
-
     @Autowired
     private CacheManager cacheServiceProvider;
-    private final URI msbEndpoint = URI.create("http://msb-iag.onap:80/api/vnfpkgm/v1/subscriptions");
-
     @Autowired
     private Sol003PackageManagementSubscriptionController sol003PackageManagementSubscriptionController;
 
@@ -135,7 +127,6 @@ public class Sol003PackageManagementSubscriptionControllerTest {
         final ResponseEntity<InlineResponse2002> response =
                 (ResponseEntity<InlineResponse2002>) sol003PackageManagementSubscriptionController
                         .postSubscriptionRequest(pkgmSubscriptionRequest);
-        subscriptionId = Objects.requireNonNull(response.getBody()).getId();
 
         // Create duplicate entry
         final PkgmSubscriptionRequest pkgmSubscriptionRequest2 = buildPkgmSubscriptionRequest();
@@ -154,7 +145,7 @@ public class Sol003PackageManagementSubscriptionControllerTest {
         final ResponseEntity<InlineResponse2002> response =
                 (ResponseEntity<InlineResponse2002>) sol003PackageManagementSubscriptionController
                         .postSubscriptionRequest(pkgmSubscriptionRequest);
-        subscriptionId = Objects.requireNonNull(response.getBody()).getId();
+        final String subscriptionId = response.getBody().getId();
 
         final ResponseEntity<InlineResponse2002> response2002 =
                 (ResponseEntity<InlineResponse2002>) sol003PackageManagementSubscriptionController
@@ -162,9 +153,8 @@ public class Sol003PackageManagementSubscriptionControllerTest {
 
         final HttpHeaders headers = buildHttpHeaders(response.getBody().getCallbackUri());
 
-
         assertEquals(response.getBody().getFilter(), pkgmSubscriptionRequest.getFilter());
-        assert (response.getHeaders().equals(headers));
+        assertEquals(response.getHeaders(), headers);
         assertEquals(HttpStatus.OK, response2002.getStatusCode());
         assertEquals(pkgmSubscriptionRequest.getFilter(), response.getBody().getFilter());
         // Ensure CallBackUri is set to new URI
@@ -214,7 +204,6 @@ public class Sol003PackageManagementSubscriptionControllerTest {
         final ResponseEntity<InlineResponse2002> responsePost =
                 (ResponseEntity<InlineResponse2002>) sol003PackageManagementSubscriptionController
                         .postSubscriptionRequest(pkgmSubscriptionRequest);
-
 
         final ResponseEntity responseDelete =
                 sol003PackageManagementSubscriptionController.deleteSubscription(subscriptionId);
