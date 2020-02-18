@@ -1,7 +1,7 @@
 use requestdb;
 
-insert into operation_status(service_id, operation_id, service_name, user_id, result, operation_content, progress, reason, operate_at, finished_at) values
-('serviceid', 'operationid', 'servicename', 'userid', 'result', 'operationcontent', 'progress', 'reason', '2016-11-24 13:19:10', '2016-11-24 13:19:10'); 
+insert into operation_status(service_id, operation_id, service_name, user_id, result, operation_content, progress, reason, access_service_id, operate_at, finished_at) values
+('serviceid', 'operationid', 'servicename', 'userid', 'result', 'operationcontent', 'progress', 'reason', 'access_service_id', '2016-11-24 13:19:10', '2016-11-24 13:19:10'); 
 
 
 insert into infra_active_requests(request_id, request_status, status_message, progress, start_time, end_time, source, vnf_id, vnf_name, vnf_type, service_type, tenant_id, vnf_params, vnf_outputs, request_body, response_body, last_modified_by, modify_time, volume_group_id, volume_group_name, vf_module_id, vf_module_name, vf_module_model_name, cloud_region, callback_url, correlator, network_id, network_name, network_type, request_scope, request_action, service_instance_id, service_instance_name, requestor_id, configuration_id, configuration_name, operational_env_id, operational_env_name, request_url) values

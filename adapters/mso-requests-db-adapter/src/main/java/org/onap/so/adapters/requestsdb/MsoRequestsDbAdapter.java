@@ -27,6 +27,8 @@ import javax.xml.bind.annotation.XmlElement;
 import org.onap.so.adapters.requestsdb.exceptions.MsoRequestsDbException;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.beans.ResourceOperationStatus;
+import java.util.List;
+import org.onap.so.db.request.beans.OperationStatus;
 
 /**
  * MSO Request DB Adapter Web Service
@@ -108,5 +110,44 @@ public interface MsoRequestsDbAdapter {
             @WebParam(name = "progress") @XmlElement(required = false) String progress,
             @WebParam(name = "errorCode") @XmlElement(required = false) String errorCode,
             @WebParam(name = "statusDescription") @XmlElement(required = false) String statusDescription)
+            throws MsoRequestsDbException;
+
+    @WebMethod
+    public void initAccessServiceOperationStatus(
+            @WebParam(name = "serviceId") @XmlElement(required = true) String serviceId,
+            @WebParam(name = "operationId") @XmlElement(required = false) String operationId,
+            @WebParam(name = "serviceName") @XmlElement(required = false) String serviceName,
+            @WebParam(name = "operationType") @XmlElement(required = false) String operationType,
+            @WebParam(name = "userId") @XmlElement(required = false) String userId,
+            @WebParam(name = "result") @XmlElement(required = false) String result,
+            @WebParam(name = "operationContent") @XmlElement(required = false) String operationContent,
+            @WebParam(name = "progress") @XmlElement(required = false) String progress,
+            @WebParam(name = "reason") @XmlElement(required = false) String reason) throws MsoRequestsDbException;
+
+    @WebMethod
+    public void initServiceOperationStatusWithAccessService(
+
+            @WebParam(name = "serviceId") @XmlElement(required = true) String serviceId,
+            @WebParam(name = "operationId") @XmlElement(required = false) String operationId,
+            @WebParam(name = "serviceName") @XmlElement(required = false) String serviceName,
+            @WebParam(name = "operationType") @XmlElement(required = false) String operationType,
+            @WebParam(name = "userId") @XmlElement(required = false) String userId,
+            @WebParam(name = "result") @XmlElement(required = false) String result,
+            @WebParam(name = "operationContent") @XmlElement(required = false) String operationContent,
+            @WebParam(name = "progress") @XmlElement(required = false) String progress,
+            @WebParam(name = "reason") @XmlElement(required = false) String reason,
+            @WebParam(name = "accessServiceId") @XmlElement(required = false) String accessServiceId)
+            throws MsoRequestsDbException;
+
+    @WebMethod
+    public List<OperationStatus> getControllerServiceOperationStatus(
+
+            @WebParam(name = "accessServiceId") @XmlElement(required = true) String accessServiceId)
+            throws MsoRequestsDbException;
+
+    @WebMethod
+    public OperationStatus getOperationStatusByOperationId(
+
+            @WebParam(name = "operationId") @XmlElement(required = true) String operationId)
             throws MsoRequestsDbException;
 }

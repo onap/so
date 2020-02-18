@@ -25,6 +25,9 @@ import org.onap.so.bpmn.core.domain.ConfigResource;
 import org.onap.so.bpmn.core.domain.NetworkResource;
 import org.onap.so.bpmn.core.domain.ServiceDecomposition;
 import org.onap.so.bpmn.core.domain.VnfResource;
+import org.onap.so.bpmn.core.domain.PInterface;
+import org.onap.so.bpmn.core.domain.LogicalLink;
+import org.onap.so.bpmn.core.domain.EsrThirdpartySdnc;
 
 public class DecomposeJsonUtilTest {
 
@@ -33,6 +36,9 @@ public class DecomposeJsonUtilTest {
     private AllottedResource allottedResource;
     private ConfigResource configResource;
     private ServiceDecomposition serviceDecomposition;
+    private PInterface pInterface;
+    private LogicalLink logicalLink;
+    private EsrThirdpartySdnc esrThirdpartySdnc;
 
     private String serviceInstanceId = "serviceInstanceId";
 
@@ -80,6 +86,48 @@ public class DecomposeJsonUtilTest {
         expectedException.expect(JsonDecomposingException.class);
         networkResource = createNetworkResourceData(); // wrong object
         VnfResource vnfResourceObj = DecomposeJsonUtil.jsonToVnfResource(networkResource.toString());
+    }
+
+    @Test
+    public void testJsonToPifResource() throws JsonDecomposingException {
+        pInterface = createPInterfaceData();
+        PInterface pInterfaceObj = DecomposeJsonUtil.jsonToPifResource(pInterface.toString());
+        assertEquals(pInterface.getInterfaceName(), pInterfaceObj.getInterfaceName());
+    }
+
+    @Test
+    public void testJsonToPifResource_JsonDecomposingException() throws JsonDecomposingException {
+        expectedException.expect(JsonDecomposingException.class);
+        networkResource = createNetworkResourceData(); // wrong object
+        PInterface pInterfaceObj = DecomposeJsonUtil.jsonToPifResource(networkResource.toString());
+    }
+
+    @Test
+    public void testJsonToSdncResource() throws JsonDecomposingException {
+        esrThirdpartySdnc = createEsrThirdpartySdncData();
+        EsrThirdpartySdnc esrThirdpartySdncObj = DecomposeJsonUtil.jsonToSdncResource(esrThirdpartySdnc.toString());
+        assertEquals(esrThirdpartySdnc.getThirdpartySdncId(), esrThirdpartySdncObj.getThirdpartySdncId());
+    }
+
+    @Test
+    public void testJsonToSdncResource_JsonDecomposingException() throws JsonDecomposingException {
+        expectedException.expect(JsonDecomposingException.class);
+        networkResource = createNetworkResourceData(); // wrong object
+        EsrThirdpartySdnc esrThirdpartySdncObj = DecomposeJsonUtil.jsonToSdncResource(networkResource.toString());
+    }
+
+    @Test
+    public void testJsonToLLResource() throws JsonDecomposingException {
+        logicalLink = createLogicalLinkData();
+        LogicalLink logicalLinkObj = DecomposeJsonUtil.jsonToLLResource(logicalLink.toString());
+        assertEquals(logicalLink.getLinkName(), logicalLinkObj.getLinkName());
+    }
+
+    @Test
+    public void testJsonToLLResource_JsonDecomposingException() throws JsonDecomposingException {
+        expectedException.expect(JsonDecomposingException.class);
+        networkResource = createNetworkResourceData(); // wrong object
+        LogicalLink logicalLinkObj = DecomposeJsonUtil.jsonToLLResource(networkResource.toString());
     }
 
     @Test
@@ -139,6 +187,33 @@ public class DecomposeJsonUtilTest {
         networkResource.setNetworkRole("networkRole");
         networkResource.setResourceId("resourceId");
         return networkResource;
+    }
+
+    private PInterface createPInterfaceData() {
+        pInterface = new PInterface();
+        pInterface.setInterfaceName("interfaceName");
+        pInterface.setPortDescription("portDescription");
+        pInterface.setSpeedValue("speedValue");
+        pInterface.setSpeedUnits("speedUnits");
+        pInterface.setInterfaceType("interfaceType");
+        return pInterface;
+    }
+
+    private EsrThirdpartySdnc createEsrThirdpartySdncData() {
+        esrThirdpartySdnc = new EsrThirdpartySdnc();
+        esrThirdpartySdnc.setThirdpartySdncId("thirdpartySdncId");
+        esrThirdpartySdnc.setProductName("productName");
+        esrThirdpartySdnc.setDomainType("domainType");
+        return esrThirdpartySdnc;
+    }
+
+    private LogicalLink createLogicalLinkData() {
+        logicalLink = new LogicalLink();
+        logicalLink.setLinkName("linkName");
+        logicalLink.setlinkType("linkType");
+        logicalLink.setSpeedValue("speedValue");
+        logicalLink.setSpeedUnits("speedUnits");
+        return logicalLink;
     }
 
     private AllottedResource createAllottedResourceData() {

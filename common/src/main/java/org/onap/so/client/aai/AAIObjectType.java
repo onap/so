@@ -36,6 +36,7 @@ import org.onap.aai.domain.yang.Configuration;
 import org.onap.aai.domain.yang.Connector;
 import org.onap.aai.domain.yang.Customer;
 import org.onap.aai.domain.yang.Device;
+import org.onap.aai.domain.yang.EsrThirdpartySdnc;
 import org.onap.aai.domain.yang.EsrVnfm;
 import org.onap.aai.domain.yang.ExtAaiNetwork;
 import org.onap.aai.domain.yang.Flavor;
@@ -45,6 +46,7 @@ import org.onap.aai.domain.yang.InstanceGroup;
 import org.onap.aai.domain.yang.L3Network;
 import org.onap.aai.domain.yang.LInterface;
 import org.onap.aai.domain.yang.LineOfBusiness;
+import org.onap.aai.domain.yang.LogicalLink;
 import org.onap.aai.domain.yang.ModelVer;
 import org.onap.aai.domain.yang.NetworkPolicy;
 import org.onap.aai.domain.yang.NetworkTechnology;
@@ -148,10 +150,17 @@ public class AAIObjectType implements GraphInventoryObjectType, Serializable {
             new AAIObjectType(AAIObjectType.ALLOTTED_RESOURCE.uriTemplate(), TunnelXconnect.class);
     public static final AAIObjectType P_INTERFACE =
             new AAIObjectType(AAIObjectType.PSERVER.uriTemplate(), PInterface.class);
+    public static final AAIObjectType P_INTERFACE_PNF =
+            new AAIObjectType(AAINamespaceConstants.NETWORK, PInterface.class);
     public static final AAIObjectType SRIOV_PF =
             new AAIObjectType(AAIObjectType.P_INTERFACE.uriTemplate(), SriovPf.class);
     public static final AAIObjectType PHYSICAL_LINK =
             new AAIObjectType(AAINamespaceConstants.NETWORK, PhysicalLink.class);
+    public static final AAIObjectType LOGICAL_LINK =
+            new AAIObjectType(AAINamespaceConstants.NETWORK, LogicalLink.class);
+    public static final AAIObjectType ESR_THIRDPARTY_SDNC =
+            new AAIObjectType(AAINamespaceConstants.EXTERNAL_SYSTEM, "", "esr-third-party-sdnc");
+    public static final AAIObjectType NETWORK_PNF = new AAIObjectType("/network", "", "network_pnf");
     public static final AAIObjectType INSTANCE_GROUP =
             new AAIObjectType(AAINamespaceConstants.NETWORK, InstanceGroup.class);
     public static final AAIObjectType COLLECTION = new AAIObjectType(AAINamespaceConstants.NETWORK, Collection.class);

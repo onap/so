@@ -183,6 +183,90 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
     }
 
     /**
+     * Init operation status <br>
+     *
+     * @param serviceId
+     * @param operationId
+     * @param serviceName
+     * @param operationType
+     * @param userId
+     * @param result
+     * @param operationContent
+     * @param progress
+     * @param reason
+     * @throws MsoRequestsDbException
+     * @since ONAP Frankfurt Release
+     */
+    @Override
+    @Transactional
+    public void initAccessServiceOperationStatus(String serviceId, String operationId, String serviceName,
+            String operationType, String userId, String result, String operationContent, String progress, String reason)
+            throws MsoRequestsDbException {
+        OperationStatus operStatus = new OperationStatus();
+
+        operStatus.setOperationId(operationId);
+        operStatus.setServiceId(serviceId);
+        operStatus.setServiceName(serviceName);
+        operStatus.setUserId(userId);
+        operStatus.setOperation(operationType);
+        operStatus.setReason(reason);
+        operStatus.setProgress(progress);
+        operStatus.setResult(result);
+        operStatus.setOperationContent(operationContent);
+        operationStatusRepository.save(operStatus);
+    }
+
+    /**
+     * Init operation status with Access service Id <br>
+     *
+     * @param serviceId
+     * @param operationId
+     * @param serviceName
+     * @param operationType
+     * @param userId
+     * @param result
+     * @param operationContent
+     * @param progress
+     * @param reason
+     * @param accessServiceId
+     * @throws MsoRequestsDbException
+     * @since ONAP Casablanca Release
+     */
+
+    @Override
+
+    @Transactional
+    public void initServiceOperationStatusWithAccessService(String serviceId, String operationId, String serviceName,
+            String operationType, String userId, String result, String operationContent, String progress, String reason,
+            String accessServiceId) throws MsoRequestsDbException {
+        OperationStatus operStatus = new OperationStatus();
+
+        operStatus.setOperationId(operationId);
+        operStatus.setServiceId(serviceId);
+        operStatus.setServiceName(serviceName);
+        operStatus.setUserId(userId);
+        operStatus.setOperation(operationType);
+        operStatus.setReason(reason);
+        operStatus.setProgress(progress);
+        operStatus.setResult(result);
+        operStatus.setOperationContent(operationContent);
+        // operStatus.setResult(result);
+        operStatus.setAccessServiceId(accessServiceId);
+        logger.debug("DB Payload: " + operStatus.toString());
+        operationStatusRepository.save(operStatus);
+    }
+
+    @Override
+    public List<OperationStatus> getControllerServiceOperationStatus(String accessServiceId) {
+        return operationStatusRepository.findByAccessServiceId(accessServiceId);
+    }
+
+    @Override
+    public OperationStatus getOperationStatusByOperationId(String operationId) {
+        return operationStatusRepository.findByOperationId(operationId);
+    }
+
+    /**
      * update operation status <br>
      *
      * @param serviceId

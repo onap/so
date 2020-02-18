@@ -61,6 +61,20 @@ csi.prepareCompletionRequest(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:callActivity id="CallActivity_1wx4ihe" name="Call CompleteMsoProcess" calledElement="CompleteMsoProcess">
       <bpmn:extensionElements>
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:in source="msoRequestId" target="msoRequestId" />
+        <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
+        <camunda:in source="serviceInstanceName" target="serviceInstanceName" />
+        <camunda:in source="serviceModelInfo" target="serviceModelInfo" />
+        <camunda:in source="productFamilyId" target="productFamilyId" />
+        <camunda:in source="disableRollback" target="disableRollback" />
+        <camunda:in source="serviceInputParams" target="serviceInputParams" />
+        <camunda:in source="failIfExists" target="failIfExists" />
+        <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
+        <camunda:in source="serviceType" target="serviceType" />
+        <camunda:in sourceExpression="1610" target="sdncVersion" />
+        <camunda:in source="operationId" target="operationId" />
+        <camunda:in source="operationType" target="operationType" />
         <camunda:in source="completionRequest" target="CompleteMsoProcessRequest" />
         <camunda:in source="mso-request-id" target="mso-request-id" />
         <camunda:in source="mso-service-instance-id" target="mso-service-instance-id" />

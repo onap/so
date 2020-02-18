@@ -30,6 +30,9 @@ import org.onap.so.bpmn.core.domain.NetworkResource;
 import org.onap.so.bpmn.core.domain.ServiceDecomposition;
 import org.onap.so.bpmn.core.domain.ServiceInstance;
 import org.onap.so.bpmn.core.domain.VnfResource;
+import org.onap.so.bpmn.core.domain.PInterface;
+import org.onap.so.bpmn.core.domain.LogicalLink;
+import org.onap.so.bpmn.core.domain.EsrThirdpartySdnc;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -110,11 +113,57 @@ public class DecomposeJsonUtil implements Serializable {
      * @return decoded object
      * @throws JsonDecomposingException thrown when decoding json fails
      */
+    public static PInterface jsonToPifResource(String jsonString) throws JsonDecomposingException {
+        try {
+            return OBJECT_MAPPER.readValue(jsonString, PInterface.class);
+        } catch (IOException e) {
+            throw new JsonDecomposingException("Exception while converting json to PInterface resource", e);
+        }
+    }
+
+    /**
+     * Method to construct Resource Decomposition object converting JSON structure
+     * 
+     * @param jsonString input in JSON format confirming ResourceDecomposition
+     * @return decoded object
+     * @throws JsonDecomposingException thrown when decoding json fails
+     */
+    public static EsrThirdpartySdnc jsonToSdncResource(String jsonString) throws JsonDecomposingException {
+        try {
+            return OBJECT_MAPPER.readValue(jsonString, EsrThirdpartySdnc.class);
+        } catch (IOException e) {
+            throw new JsonDecomposingException("Exception while converting json to EsrThirdpartySdnc resource", e);
+        }
+    }
+
+    /**
+     * Method to construct Resource Decomposition object converting JSON structure
+     * 
+     * @param jsonString input in JSON format confirming ResourceDecomposition
+     * @return decoded object
+     * @throws JsonDecomposingException thrown when decoding json fails
+     */
+    public static LogicalLink jsonToLLResource(String jsonString) throws JsonDecomposingException {
+        try {
+            return OBJECT_MAPPER.readValue(jsonString, LogicalLink.class);
+        } catch (IOException e) {
+            throw new JsonDecomposingException("Exception while converting json to LogicalLink resource", e);
+        }
+    }
+
+
+    /**
+     * Method to construct Resource Decomposition object converting JSON structure
+     * 
+     * @param jsonString input in JSON format confirming ResourceDecomposition
+     * @return decoded object
+     * @throws JsonDecomposingException thrown when decoding json fails
+     */
     public static NetworkResource jsonToNetworkResource(String jsonString) throws JsonDecomposingException {
         try {
             return OBJECT_MAPPER.readValue(jsonString, NetworkResource.class);
         } catch (IOException e) {
-            throw new JsonDecomposingException("Exception while converting json to network resource", e);
+            throw new JsonDecomposingException("Exception while converting json to NetworkResource resource", e);
         }
     }
 

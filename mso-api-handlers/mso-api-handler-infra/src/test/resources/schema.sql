@@ -1415,6 +1415,7 @@ create table operation_status (
   OPERATION_CONTENT varchar(255),
   PROGRESS varchar(255),
   REASON varchar(255),
+  ACCESS_SERVICE_ID varchar(255),
   OPERATE_AT datetime NOT NULL,
   FINISHED_AT datetime NOT NULL,
   primary key (SERVICE_ID,OPERATION_ID)

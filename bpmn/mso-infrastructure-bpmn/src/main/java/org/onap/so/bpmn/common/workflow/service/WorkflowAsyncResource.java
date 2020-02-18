@@ -47,6 +47,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.onap.so.bpmn.common.adapter.vnf.SDNCResponse;
+import org.onap.so.bpmn.core.UrnPropertiesReader;
+import org.onap.so.client.HttpClient;
+import org.onap.so.client.HttpClientFactory;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.ContentType;
+import org.springframework.web.bind.annotation.RequestBody;
 
 
 /**
@@ -114,6 +126,160 @@ public class WorkflowAsyncResource extends ProcessEngineAwareService {
             WorkflowResponse response = buildUnkownError(getRequestId(inputVariables), e.getMessage());
             return Response.status(500).entity(response).build();
         }
+    }
+
+    @POST
+    @Consumes("application/json")
+    @Path("/services/updateStatus")
+    @Produces("application/json")
+
+    public Response processAsyncResponse(@RequestBody SDNCResponse response) throws Exception {
+        logger.debug("SDNC RESPONSE recived: \n" + response.toString());
+        if (response != null && response.getResponseCode() != "") {
+            try {
+                String dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.db.endpoint");
+                logger.debug("DB Adapter Endpoint is: " + dbAdapterEndpoint);
+                String operationId = response.getRequestId();
+                String payload = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"\r\n"
+                        + "    		                        xmlns:ns=\"http://org.onap.so/requestsdb\">\r\n"
+                        + "    		                        <soapenv:Header/>\r\n"
+                        + "    		                        <soapenv:Body>\r\n"
+                        + "    		                            <ns:getOperationStatusByOperationId xmlns:ns=\"http://org.onap.so/requestsdb\">\r\n"
+                        + "    									<operationId>$operationId</operationId>\r\n"
+                        + "    		                        </ns:getOperationStatusByOperationId>\r\n"
+                        + "    		                    </soapenv:Body>\r\n"
+                        + "    		                </soapenv:Envelope>";
+
+                payload = payload.replace("$operationId", operationId);
+
+                logger.debug("Before format Outgoing getOperationStatyus Payload: \n" + payload);
+                HttpPost httpPost = new HttpPost(dbAdapterEndpoint);
+                httpPost.addHeader("Authorization", "Basic YnBlbDpwYXNzd29yZDEk");
+                httpPost.addHeader("Content-type", "application/soap+xml");
+                httpPost.setEntity(new StringEntity(payload, ContentType.APPLICATION_XML));
+                String result = httpPostCall(dbAdapterEndpoint, httpPost);
+                logger.debug("Result returned from request DB: \n" + result);
+                if (validateDBResponse(result)) {
+                    if (response.getResponseCode().equals("200")) {
+                        logger.debug("SDNC RESPONSE code recived: \n" + response.getResponseCode());
+                        logger.debug("domain service SDNC response is success");
+                        updateOperationStatus(result, "SUCCESS");
+                    } else {
+                        logger.debug("SDNC RESPONSE code recived: \n" + response.getResponseCode());
+                        logger.debug("domain service SDNC response is failed");
+                        updateOperationStatus(result, "FAILED");
+                    }
+                } else {
+                    logger.debug("Result retruned is null or empty");
+                    throw new Exception("Result returned from req db is empty or null");
+                }
+            } catch (Exception e) {
+                logger.debug("Exception occured" + e.getMessage());
+                throw new Exception("Exception occured at processAsyncResponse due to " + e.getMessage());
+            }
+
+        } else {
+            return Response.status(500).entity(response).build();
+        }
+        return Response.status(200).entity(response).build();
+
+    }
+
+
+
+    public String getUpdatePayload(String opStatus, String status) {
+        String userId = "";
+        String progress = "100";
+        String payload = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"\r\n"
+                + "                        xmlns:ns=\"http://org.onap.so/requestsdb\">\r\n"
+                + "                        <soapenv:Header/>\r\n" + "                        <soapenv:Body>\r\n"
+                + "                            <ns:updateServiceOperationStatus xmlns:ns=\"http://org.onap.so/requestsdb\">\r\n"
+                + "                            <serviceId>$serviceId</serviceId>\r\n"
+                + "                            <operationId>$operationId</operationId>\r\n"
+                + "                            <operationType>$operationType</operationType>\r\n"
+                + "                            <userId>$userId</userId>\r\n"
+                + "                            <result>$result</result>\r\n"
+                + "                            <operationContent>$operationContent</operationContent>\r\n"
+                + "                            <progress>$progress</progress>\r\n"
+                + "                            <reason>$reason</reason>\r\n"
+                + "                        </ns:updateServiceOperationStatus>\r\n"
+                + "                    </soapenv:Body>\r\n" + "                </soapenv:Envelope>";
+
+        payload = payload.replace("$serviceId", getValueByName("serviceId", opStatus));
+        payload = payload.replace("$operationId", getValueByName("operationId", opStatus));
+        payload = payload.replace("$operationType", getValueByName("operation", opStatus));
+        payload = payload.replace("$userId", userId);
+        payload = payload.replace("$result", status);
+        if (status.equals("SUCCESS")) {
+            payload = payload.replace("$progress", progress);
+        } else {
+            payload = payload.replace("$progress", getValueByName("progress", opStatus));
+        }
+        payload = payload.replace("$reason", "SDNC Asyncrespnse Updated as" + status);
+        payload = payload.replace("$operationContent", "Recived SDNC Async Response");
+
+        return payload;
+    }
+
+    public void updateOperationStatus(String opStatus, String status) {
+        logger.debug(" ======== STARTED updateOperationStatus Process ======== ");
+        try {
+
+            String dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.db.endpoint");
+            String payload = getUpdatePayload(opStatus, status);
+
+            HttpPost httpPost = new HttpPost(dbAdapterEndpoint);
+            httpPost.addHeader("Authorization", "Basic YnBlbDpwYXNzd29yZDEk");
+            httpPost.addHeader("Content-type", "application/soap+xml");
+            httpPost.setEntity(new StringEntity(payload, ContentType.APPLICATION_XML));
+            String dbresult = httpPostCall(dbAdapterEndpoint, httpPost);
+
+        } catch (Exception e) {
+            logger.error("Exception Occured Processing updateOperationStatus. Exception is:\n" + e);
+
+        }
+        logger.debug("======== COMPLETED updateOperationStatus Process ======== ");
+    }
+
+    private boolean validateDBResponse(String xml) {
+        if (xml != null && xml != "" && xml.contains("return")) {
+            return true;
+        }
+        return false;
+    }
+
+    private String getValueByName(String name, String xml) {
+        if (xml != "" && xml.contains(name)) {
+            String start = "<" + name + ">";
+            String end = "</" + name + ">";
+            return xml.substring(xml.indexOf(start), xml.indexOf(end)).replace(start, "");
+        }
+        return "";
+    }
+
+    protected String httpPostCall(String url, HttpPost httpPost) throws Exception {
+        String result = null;
+
+        String errorMsg;
+        try {
+            CloseableHttpClient httpClient = HttpClients.createDefault();
+            CloseableHttpResponse closeableHttpResponse = httpClient.execute(httpPost);
+            result = EntityUtils.toString(closeableHttpResponse.getEntity());
+            logger.debug("result = {}", result);
+            if (closeableHttpResponse.getStatusLine().getStatusCode() != 200) {
+                logger.info("exception: fail for status code = {}",
+                        closeableHttpResponse.getStatusLine().getStatusCode());
+                throw new Exception(result);
+            }
+
+            closeableHttpResponse.close();
+        } catch (Exception e) {
+            errorMsg = url + ":httpPostWithJSON connect faild";
+            logger.debug("exception: POST_CONNECT_FAILD : {}", errorMsg);
+            throw e;
+        }
+
+        return result;
     }
 
     protected WorkflowResponse waitForResponse(Map<String, Object> inputVariables) throws Exception {
