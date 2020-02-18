@@ -23,11 +23,16 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+
+
 import static org.apache.commons.lang3.StringUtils.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
+import org.onap.so.bpmn.common.resource.ResourceRequestBuilder
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
@@ -150,9 +155,37 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			execution.setVariable("serviceInputParams", inputMap)
 			execution.setVariable("uuiRequest", inputMap.get("UUIRequest"))
 
-			//TODO
-			//execution.setVariable("serviceInputParams", jsonUtil.getJsonValue(siRequest, "requestDetails.requestParameters.userParams"))
-			//execution.setVariable("failExists", true)
+            //MDONS Usecase-Frankfurt Release R6 changes
+			String serviceType = execution.getVariable("serviceType")
+			logger.debug("Service Type: " + serviceType)
+			if(serviceType.equals("MDONS_OTN")){
+                String uuiRequest = execution.getVariable("uuiRequest");
+                logger.debug("Its an MDONS service Type request");
+				String serviceName = jsonUtil.getJsonValue(uuiRequest, "service.name")
+				execution.setVariable("serviceInstanceName", serviceName)
+				logger.debug("Service Name = " + serviceName)
+				String requestInput = jsonUtil.getJsonValue(uuiRequest, "service.parameters.requestInputs");
+				Map<String, String> requestInputObject = ResourceRequestBuilder.getJsonObject(requestInput, Map.class);
+				if(requestInputObject.containsKey("uni_id") && requestInputObject.get("uni_id") != null){
+					logger.debug("uni_id is available")
+					if(requestInputObject.containsKey("enni_id") && requestInputObject.get("enni_id") != null){
+						logger.debug("enni_id is available")
+					} else {
+                         logger.debug("uni_id/enni_id are unavailable")
+                         logger.debug(" send failure SyncResponse to APIH ")
+                         String errorMessage = "Invalid Request Parameters"
+                         sendWorkflowResponse(execution, 403, errorMessage)
+                         execution.setVariable("sentSyncResponse", true)
+                    }              
+				}
+				else {
+						logger.debug("uni_id and enni_id are un available")
+						logger.debug(" send failure SyncResponse to APIH ")
+						String errorMessage = "Invalid Request Parameters"
+						sendWorkflowResponse(execution, 403, errorMessage)
+						execution.setVariable("sentSyncResponse", true)
+				}
+		}		
 		} catch (BpmnError e) {
 			throw e
 		} catch (Exception ex){
@@ -161,6 +194,19 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
 		logger.trace("finished preProcessRequest")
+	}
+
+
+        private static <T> T getJsonObject(String jsonstr, Class<T> type) {
+		ObjectMapper mapper = new ObjectMapper()
+		mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true)
+		try {
+			return mapper.readValue(jsonstr, type)
+		} catch (IOException e) {
+			logger.error("{} {} fail to unMarshal json", MessageEnum.RA_NS_EXC.toString(),
+					ErrorCode.BusinessProcesssError.getValue(), e)
+		}
+		return null
 	}
 
 	public void sendSyncResponse (DelegateExecution execution) {
@@ -214,8 +260,26 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			String requestId = execution.getVariable("msoRequestId")
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			String source = execution.getVariable("source")
-			
-			String msoCompletionRequest =
+			String msoCompletionRequest = ""
+			String serviceType = execution.getVariable("serviceType")
+			logger.debug("Service Type: " + serviceType)
+			if(serviceType.equals("MDONS_OTN")){
+				source = "SO"
+				msoCompletionRequest =
+				"""<aetgt:MsoCompletionRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
+								xmlns:ns="http://org.onap/so/request/types/v1">
+						<request-info xmlns="http://org.onap/so/infra/e2eServiceInstances/v3">
+							<request-id>${MsoUtils.xmlEscape(requestId)}</request-id>
+							<action>CREATE</action>
+							<source>${MsoUtils.xmlEscape(source)}</source>
+			   			</request-info>
+						<status-message>Service Instance was created successfully.</status-message>
+						<serviceInstanceId>${MsoUtils.xmlEscape(serviceInstanceId)}</serviceInstanceId>
+			   			<mso-bpel-name>CreateCustomE2EServiceInstance</mso-bpel-name>
+					</aetgt:MsoCompletionRequest>"""
+			}
+			else{
+				msoCompletionRequest =
 					"""<aetgt:MsoCompletionRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
 								xmlns:ns="http://org.onap/so/request/types/v1">
 						<request-info xmlns="http://org.onap/so/infra/vnf-request/v1">
@@ -227,7 +291,7 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 						<serviceInstanceId>${MsoUtils.xmlEscape(serviceInstanceId)}</serviceInstanceId>
 			   			<mso-bpel-name>CreateGenericALaCarteServiceInstance</mso-bpel-name>
 					</aetgt:MsoCompletionRequest>"""
-
+			}
 			// Format Response
 			String xmlMsoCompletionRequest = utils.formatXml(msoCompletionRequest)
 
@@ -289,6 +353,7 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 		logger.trace("start prepareInitServiceOperationStatus")
         try{
             String serviceId = execution.getVariable("serviceInstanceId")
+			String serviceName = execution.getVariable("serviceInstanceName")
             String operationId = UUID.randomUUID().toString()
             String operationType = "CREATE"
             String userId = ""
@@ -302,7 +367,7 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
             execution.setVariable("operationId", operationId)
             execution.setVariable("operationType", operationType)
 
-            def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint",execution)
+            def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.db.endpoint", execution)
             execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
             logger.debug("DB Adapter Endpoint is: " + dbAdapterEndpoint)
 
@@ -311,20 +376,21 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
                         xmlns:ns="http://org.onap.so/requestsdb">
                         <soapenv:Header/>
                         <soapenv:Body>
-                            <ns:initServiceOperationStatus xmlns:ns="http://org.onap.so/requestsdb">
+                            <ns:initAccessServiceOperationStatus xmlns:ns="http://org.onap.so/requestsdb">
                             <serviceId>${MsoUtils.xmlEscape(serviceId)}</serviceId>
                             <operationId>${MsoUtils.xmlEscape(operationId)}</operationId>
+							<serviceName>${MsoUtils.xmlEscape(serviceName)}</serviceName>
                             <operationType>${MsoUtils.xmlEscape(operationType)}</operationType>
                             <userId>${MsoUtils.xmlEscape(userId)}</userId>
                             <result>${MsoUtils.xmlEscape(result)}</result>
                             <operationContent>${MsoUtils.xmlEscape(operationContent)}</operationContent>
                             <progress>${MsoUtils.xmlEscape(progress)}</progress>
                             <reason>${MsoUtils.xmlEscape(reason)}</reason>
-                        </ns:initServiceOperationStatus>
+                        </ns:initAccessServiceOperationStatus>
                     </soapenv:Body>
                 </soapenv:Envelope>"""
 
-            payload = utils.formatXml(payload)
+            //payload = utils.formatXml(payload)
             execution.setVariable("CVFMI_updateServiceOperStatusRequest", payload)
             logger.debug("Outgoing updateServiceOperStatusRequest: \n" + payload)
             logger.debug("CreateVfModuleInfra Outgoing updateServiceOperStatusRequest Request: " + payload)
@@ -343,23 +409,34 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 		String msg = ""
 		String serviceInstanceId = execution.getVariable("serviceInstanceId")
 		logger.debug("serviceInstanceId: "+serviceInstanceId)
-		ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
 
 		try {
 			ServiceInstance si = execution.getVariable("serviceInstanceData")
-			boolean allActive = true
-			for (VnfResource resource : serviceDecomposition.vnfResources) {
-				logger.debug("resource.modelInfo.getModelName: " + resource.modelInfo.getModelName() +" | resource.getOrchestrationStatus: "+resource.getOrchestrationStatus())
-				if (resource.getOrchestrationStatus() != "Active") {
-					allActive = false
-				}
-			}
+	                if(execution.getVariable("serviceType").equals("MDONS_OTN")){
+						def status = execution.getVariable("isAllDomainServiceSuccess")
+						logger.debug("isAllDomainServiceSuccess: " + status)
+						if (status == "true"){
+							si.setOrchestrationStatus("Created")
+						}else{
+							si.setOrchestrationStatus("Pending")
+						}
+        	        }
+                	else{
+                		ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
+						boolean allActive = true
+						for (VnfResource resource : serviceDecomposition.vnfResources) {
+							logger.debug("resource.modelInfo.getModelName: " + resource.modelInfo.getModelName() +" | resource.getOrchestrationStatus: "+resource.getOrchestrationStatus())
+							if (resource.getOrchestrationStatus() != "Active") {
+								allActive = false
+							}	
+						}	
 
-			if (allActive){
-				si.setOrchestrationStatus("Assigned")
-			}else {
-				si.setOrchestrationStatus("Pending")
-			}
+						if (allActive){
+							si.setOrchestrationStatus("Assigned")
+						}else {
+							si.setOrchestrationStatus("Pending")
+						}
+					}
 			AAIResourcesClient client = new AAIResourcesClient()
 			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
 			client.update(uri, si)

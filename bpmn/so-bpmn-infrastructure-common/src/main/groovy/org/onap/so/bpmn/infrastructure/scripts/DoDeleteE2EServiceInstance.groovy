@@ -44,6 +44,7 @@ import org.onap.so.bpmn.core.domain.ResourceType
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.domain.VnfcResource
+import org.onap.so.bpmn.core.RollbackData
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
@@ -55,11 +56,25 @@ import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.msb.sdk.discovery.common.RouteException
 import org.springframework.web.util.UriUtils
 
 import javax.ws.rs.NotFoundException
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
+
+import org.apache.http.client.methods.CloseableHttpResponse
+import org.apache.http.client.methods.HttpPost
+import org.apache.http.impl.client.CloseableHttpClient
+import org.apache.http.impl.client.HttpClients
+import org.apache.http.util.EntityUtils
+import org.apache.http.entity.StringEntity
+import org.apache.http.entity.ContentType
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.onap.so.bpmn.core.domain.OperationStatus
 
 import static org.apache.commons.lang3.StringUtils.isBlank
 
@@ -114,7 +129,9 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
             if (serviceType == null)
             {
                 execution.setVariable("serviceType", "")
+				logger.info("ServiceType variable is null")
             }
+			logger.info(" serviceType Variable set "+execution.getVariable("serviceType"))
 
             //Generated in parent for AAI PUT
             String serviceInstanceId = execution.getVariable("serviceInstanceId")
@@ -219,6 +236,7 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
             logger.debug(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
+		
         logger.debug(" *** Exit postProcessAAIGET *** ")
     }
 
@@ -656,6 +674,373 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
             exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Error occured during deleteServiceInstance from aai")
         }
     }
+	
+	public void checkServiceType(DelegateExecution execution) {
+		logger.debug(">>> Inside checkServiceType >>>")
+		String serviceType = execution.getVariable("serviceType")
+		if (serviceType == null)
+		{
+			execution.setVariable("serviceType", "")
+			logger.info("ServiceType variable is null")
+		}
+		logger.info("checkServiceType serviceType Variable set "+execution.getVariable("serviceType"))
+		logger.debug("<<< checkServiceType Ends <<<")
+	}
+	
+	public void getDeleteAccessServiceDetails(DelegateExecution execution) {
+		logger.debug(">>> Inside getDeleteAccessServiceDetails >>>")
+		try {
+			String accessServiceId = execution.getVariable("serviceInstanceId")
+			
+			String globalSubScriberId = execution.getVariable("globalSubscriberId")
+			logger.debug("globalSubScriberId : " + globalSubScriberId)
+			def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.db.endpoint", execution)
+			execution.setVariable("MDONS_dbAdapterEndpoint", dbAdapterEndpoint)
+			
+			String payload =
+			"""<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+	                        xmlns:ns="http://org.onap.so/requestsdb">
+	                        <soapenv:Header/>
+	                        <soapenv:Body>
+	                            <ns:getControllerServiceOperationStatus xmlns:ns="http://org.onap.so/requestsdb">
+								<accessServiceId>${MsoUtils.xmlEscape(accessServiceId)}</accessServiceId>
+	                        </ns:getControllerServiceOperationStatus>
+	                    </soapenv:Body>
+	                </soapenv:Envelope>"""
+			
+			logger.debug("Before format Outgoing getAccessService Payload: \n" + payload)
+			execution.setVariable("MDONS_getAccessServiceReq", payload)
+			
+			HttpPost httpPost = new HttpPost(dbAdapterEndpoint)
+			httpPost.addHeader("Authorization", "Basic YnBlbDpwYXNzd29yZDEk")
+			httpPost.addHeader("Content-type", "application/soap+xml")
+			httpPost.setEntity(new StringEntity(payload, ContentType.APPLICATION_XML))
+			String result = httpPostCall(dbAdapterEndpoint, httpPost)
+			logger.debug("Result returned from request DB: \n" + result)
+			if(validateDBResponse(result)) {
+				List<OperationStatus> opStatusList = getOperationStatus(result)
+				
+				String isAllServiceSuccess = "true"
+				String ds = execution.getVariable("Optical_Service_Status")
+				if(ds.equals("FAILURE")){
+					isAllServiceSuccess = "true"
+					RollbackData rollbackData = new RollbackData()
+					def disableRollback = execution.getVariable("disableRollback")
+					rollbackData.put("SERVICEINSTANCE", "disableRollback", disableRollback.toString())
+					rollbackData.put("SERVICEINSTANCE", "rollbackAAI", "true")
+					rollbackData.put("SERVICEINSTANCE", "rollbackSDNC", "false")
+					rollbackData.put("SERVICEINSTANCE", "serviceInstanceId", accessServiceId)
+					rollbackData.put("SERVICEINSTANCE", "subscriptionServiceType", execution.getVariable("serviceType"))
+					rollbackData.put("SERVICEINSTANCE", "globalSubscriberId", execution.getVariable("globalSubscriberId"))
+					execution.setVariable("rollbackData", rollbackData)
+					logger.debug("Rollback data: " + rollbackData.toString())
+					throw new Exception("Unable to reach SDNC")
+				}else{
+				for(OperationStatus opStatus : opStatusList) {
+					if(opStatus.getOperation().equals("DELETE") && opStatus.getResult() == "SUCCESS") {
+						logger.debug("operation Completed " + opStatus.getOperationId() + " is " + opStatus.getResult() + " serviceStatus " + isAllServiceSuccess)
+						execution.setVariable("opStatusList", opStatusList)
+						
+					}else if(opStatus.getResult() == "FAILED"){
+						isAllServiceSuccess = "true";
+						logger.debug("Delete service result of " + opStatus.getOperationId() + " is error " + opStatus.getResult() + " serviceStatus " + isAllServiceSuccess)
+						throw new Exception("Delete service result of " + opStatus.getOperationId() + " is error " + opStatus.getResult())
+					}else if(opStatus.getResult() == "processing"){
+						isAllServiceSuccess = "false";
+						logger.debug("Progress of operation " + opStatus.getOperationId() + " is " + opStatus.getResult() + " serviceStatus " + isAllServiceSuccess)
+					}
+				}
+				execution.setVariable("isAllServiceSuccess",isAllServiceSuccess)
+				execution.setVariable("opStatusList", opStatusList)
+			} 
+			} else {
+					logger.debug("Result returned is null or empty")
+					throw new Exception("Result returned from req db is empty or null")
+			}	
+			
+		} catch(Exception e){
+			logger.debug("Error occured within getDeleteAccessServiceDetails method: " + e.printStackTrace())
+			logger.debug(e.printStackTrace())
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Error occured during getAccessServiceDetails due to "+e.getMessage())
+		}		
+		logger.debug("<<< getDeleteAccessServiceDetails Ends <<<")
+	}
+	
+	public void getAccessServiceDetails(DelegateExecution execution) {
+		logger.debug(">>> Inside getAccessServiceDetails >>>")
+		try {
+			String accessServiceId = execution.getVariable("serviceInstanceId")
+			String globalSubScriberId = execution.getVariable("globalSubscriberId")
+			def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.db.endpoint", execution)
+			execution.setVariable("MDONS_dbAdapterEndpoint", dbAdapterEndpoint)
+			String payload =
+			"""<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+	                        xmlns:ns="http://org.onap.so/requestsdb">
+	                        <soapenv:Header/>
+	                        <soapenv:Body>
+	                            <ns:getControllerServiceOperationStatus xmlns:ns="http://org.onap.so/requestsdb">
+								<accessServiceId>${MsoUtils.xmlEscape(accessServiceId)}</accessServiceId>
+	                        </ns:getControllerServiceOperationStatus>
+	                    </soapenv:Body>
+	                </soapenv:Envelope>"""
+			
+			logger.debug("Before format Outgoing getAccessService Payload: \n" + payload)
+			execution.setVariable("MDONS_getAccessServiceReq", payload)
+			
+			HttpPost httpPost = new HttpPost(dbAdapterEndpoint);
+			httpPost.addHeader("Authorization", "Basic YnBlbDpwYXNzd29yZDEk");
+			httpPost.addHeader("Content-type", "application/soap+xml");
+			httpPost.setEntity(new StringEntity(payload, ContentType.APPLICATION_XML));
+			String result = httpPostCall(dbAdapterEndpoint, httpPost);
+			logger.debug("Result returned from request DB: \n" + result)
+			if(validateDBResponse(result)) {
+				List<OperationStatus> opStatusList = getOperationStatus(result);
+				logger.debug("Operation Status returned from request DB: \n" + opStatusList.toString())
+				String domainServiceName = getValueByName("serviceName", result)
+				execution.setVariable("domainServiceName", domainServiceName)		
+				
+				String isAllServiceSuccess = "true";
+				for(OperationStatus opStatus : opStatusList) {
+						if(opStatus.getOperation().equals("CREATE") && opStatus.getResult() == "SUCCESS") {
+							logger.debug("Operation Completed " + opStatus.getOperationId()+ " is " + opStatus.getResult() + " serviceStatus " + isAllServiceSuccess)
+							execution.setVariable("opStatusList", opStatusList)	
+						}else if(opStatus.getResult() == "FAILED"){
+							isAllServiceSuccess = "true";
+							logger.debug("Create service result of "+opStatus.getOperationId()+" is error "+opStatus.getResult()+" serviceStatus "+isAllServiceSuccess)
+							throw new Exception("Create service result of "+opStatus.getOperationId()+" is error "+opStatus.getResult())
+						}else if(opStatus.getResult() == "processing"){
+							isAllServiceSuccess = "false";
+							logger.debug("Progress of operation "+opStatus.getOperationId()+" is "+opStatus.getResult()+" serviceStatus "+isAllServiceSuccess)
+						}
+				}
+				execution.setVariable("isAllServiceSuccess",isAllServiceSuccess)
+				execution.setVariable("opStatusList", opStatusList)
+				} else {
+					logger.debug("Result returned is null or empty")
+					throw new Exception("Result returned from req db is empty or null")
+				}	
+		} catch(Exception e){
+			logger.debug("Error occured within getAccessServiceDetails method: " + e.printStackTrace())
+			logger.debug(e.printStackTrace())
+            exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Error occured during getAccessServiceDetails due to "+e.getMessage())
+			RollbackData rollbackData = new RollbackData()
+			def disableRollback = execution.getVariable("disableRollback")
+			rollbackData.put("SERVICEINSTANCE", "disableRollback", disableRollback.toString())
+			rollbackData.put("SERVICEINSTANCE", "rollbackAAI", "true")
+			rollbackData.put("SERVICEINSTANCE", "serviceInstanceId", accessServiceId)
+			rollbackData.put("SERVICEINSTANCE", "subscriptionServiceType", execution.getVariable("serviceType"))
+			rollbackData.put("SERVICEINSTANCE", "globalSubscriberId", execution.getVariable("globalSubscriberId"))
+			execution.setVariable("rollbackData", rollbackData)
+		}
+		
+		logger.debug("<<< getAccessServiceDetails Ends <<<")
+	}
+	
+	public void preProcessDomainList(DelegateExecution execution) {
+		List<OperationStatus> opStatusList = execution.getVariable("opStatusList")
+		int totalDomains = opStatusList.size()
+		if(totalDomains == 1) {
+			execution.setVariable("isMultiDomain","false")
+		} else {
+			execution.setVariable("isMultiDomain","true")
+		}		
+		execution.setVariable("currentDomainIndex", 0)
+		execution.setVariable("totalDomains", totalDomains)
+		
+	}
+	
+	public void processCurrentDomain(DelegateExecution execution) {
+		List<OperationStatus> opStatusList = execution.getVariable("opStatusList")
+		OperationStatus opStatus = opStatusList.get(execution.getVariable("currentDomainIndex"))
+		String serviceType = execution.getVariable("serviceType")
+		String serviceId = opStatus.getServiceId()
+		String operationId = opStatus.getOperationId()
+		String result = "Processing"
+		String progress = "0"
+		String operationContent = "Prepare service Deletion"
+		
+		execution.setVariable("dcServiceId",serviceId)
+		execution.setVariable("dcOperationId",operationId)
+		execution.setVariable("dcResult",result)
+		execution.setVariable("dcProgress",progress)
+		execution.setVariable("dcOperationContent",operationContent)
+		execution.setVariable("dcServiceType", serviceType)
+
+	}
+	
+	public void processNextDomain(DelegateExecution execution) {
+	String progress = "50"
+	String serviceDeletionStatus = execution.getVariable("Optical_Service_DELETE_Status")
+	try {
+		if (serviceDeletionStatus == "SUCCESS") {
+			if (execution.getVariable("isMultiDomain") == "false") {
+				execution.setVariable("allDomainsFinished", "true")
+				execution.setVariable("dcProgress", progress)
+				execution.setVariable("dcResult", "processing")
+				execution.setVariable("dcOperationType", "DELETE")
+				execution.setVariable("dcOperationContent", "Delete Request Sent")
+				prepareUpdateDomainControllerServiceOperationStatus(execution);
+			} else {
+				def currentIndex = execution.getVariable("currentDomainIndex")
+				def nextIndex = currentIndex + 1
+				execution.setVariable("currentDomainIndex", nextIndex)
+				List < OperationStatus > opStatusList = execution.getVariable("opStatusList")
+				opStatusList.get(currentIndex).setSyncStatus(serviceDeletionStatus)
+				execution.setVariable("opStatusList", opStatusList)
+				execution.setVariable("dcProgress", progress)
+				execution.setVariable("dcResult", "processing")
+				execution.setVariable("dcOperationType", "DELETE")
+				execution.setVariable("dcOperationContent", "Delete Request Sent")
+				prepareUpdateDomainControllerServiceOperationStatus(execution);
+				if (nextIndex >= opStatusList.size()) {
+					execution.setVariable("allDomainsFinished", "true")
+					logger.info("allDomainsFinished" + execution.getVariable("allDomainsFinished"))
+					
+				} else {
+					execution.setVariable("allDomainsFinished", "false")
+					logger.info("Still pending domains" + execution.getVariable("allDomainsFinished"))
+				}
+			}
+		} else {
+			if (execution.getVariable("isMultiDomain") == "true") {
+				logger.info("Do Roll Back and Send Work")
+				List < OperationStatus > opStatusList = execution.getVariable("opStatusList")
+				for (OperationStatus opStatus: opStatusList) {
+					if (opStatus.getSyncStatus() == "SUCCESS") {
+						execution.setVariable("dcProgress", "100")
+						execution.setVariable("dcResult", "finished")
+						execution.setVariable("dcOperationType", "CREATE")
+						execution.setVariable("dcOperationContent", "Delete Request Failed")
+						prepareUpdateDomainControllerServiceOperationStatus(execution);
+					}
+				}
+			}
+			throw new Exception("Error occured during Service creation at SDNC")
+		}
+	} catch(Exception e) {
+		logger.debug("Error occured within processing domainservice method: " + e.printStackTrace())
+		logger.debug(e.printStackTrace())
+		exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Error occured during processing domain service due to " + e.getMessage());
+	}
+
+}
+	
+	public void prepareUpdateDomainControllerServiceOperationStatus(DelegateExecution execution){
+		logger.debug(" ======== STARTED prepareUpdateServiceOperationStatus Process ======== ")
+		try{
+			String serviceId = execution.getVariable("dcServiceId")
+			String operationId = execution.getVariable("dcOperationId")
+			String userId = ""
+			String result = execution.getVariable("dcResult")
+			String progress = execution.getVariable("dcProgress")
+			String reason = ""
+			String operationContent = execution.getVariable("dcOperationContent")
+			String operationType = execution.getVariable("dcOperationType")
+			serviceId = UriUtils.encode(serviceId,"UTF-8")
+
+			def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.db.endpoint", execution)
+			execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
+			logger.debug("DB Adapter Endpoint is: " + dbAdapterEndpoint)
+
+			String payload =
+					"""<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                        xmlns:ns="http://org.onap.so/requestsdb">
+                        <soapenv:Header/>
+                        <soapenv:Body>
+                            <ns:updateServiceOperationStatus xmlns:ns="http://org.onap.so/requestsdb">
+                            <serviceId>${MsoUtils.xmlEscape(serviceId)}</serviceId>
+                            <operationId>${MsoUtils.xmlEscape(operationId)}</operationId>
+                            <operationType>${MsoUtils.xmlEscape(operationType)}</operationType>
+                            <userId>${MsoUtils.xmlEscape(userId)}</userId>
+                            <result>${MsoUtils.xmlEscape(result)}</result>
+                            <operationContent>${MsoUtils.xmlEscape(operationContent)}</operationContent>
+                            <progress>${MsoUtils.xmlEscape(progress)}</progress>
+                            <reason>${MsoUtils.xmlEscape(reason)}</reason>
+                        </ns:updateServiceOperationStatus>
+                    </soapenv:Body>
+                </soapenv:Envelope>"""
+
+		HttpPost httpPost = new HttpPost(dbAdapterEndpoint);
+		httpPost.addHeader("Authorization", "Basic YnBlbDpwYXNzd29yZDEk");
+		httpPost.addHeader("Content-type", "application/soap+xml");
+		httpPost.setEntity(new StringEntity(payload, ContentType.APPLICATION_XML));
+		String dbresult = httpPostCall(dbAdapterEndpoint, httpPost);
+		logger.debug("Result returned from request DB: \n" + dbresult)
+
+		}catch(Exception e){
+			logger.error("Exception Occured Processing prepareUpdateServiceOperationStatus. Exception is:\n" + e)
+			execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during prepareUpdateServiceOperationStatus Method:\n" + e.getMessage())
+		}
+		logger.debug("======== COMPLETED prepareUpdateServiceOperationStatus Process ======== ")
+	}
+	
+	protected String httpPostCall(String url, HttpPost httpPost) throws Exception {
+		String result = null;
+
+		String errorMsg;
+		try {
+			CloseableHttpClient httpClient = HttpClients.createDefault();
+			CloseableHttpResponse closeableHttpResponse = httpClient.execute(httpPost);
+			result = EntityUtils.toString(closeableHttpResponse.getEntity());
+			logger.debug("result = {}", result);
+			if (closeableHttpResponse.getStatusLine().getStatusCode() != 200) {
+				logger.info("exception: fail for status code = {}",
+						closeableHttpResponse.getStatusLine().getStatusCode());
+				throw new Exception(result);
+			}
+
+			closeableHttpResponse.close();
+		} catch (Exception e) {
+			errorMsg = url + ":httpPostWithJSON connect faild";
+			logger.debug("exception: POST_CONNECT_FAILD : {}", errorMsg);
+			throw e;
+		}
+		return result;
+	}
+	
+	public List<OperationStatus> getOperationStatus(String result) {
+		List<OperationStatus> statusList = new ArrayList<OperationStatus>();
+		List<String> stringList = getValuesByName("return",result);
+		for (String opStatus : stringList) {
+			OperationStatus status = new OperationStatus(getValueByName("serviceId", opStatus), getValueByName("operationId", opStatus), getValueByName("operation", opStatus), getValueByName("userId", opStatus),getValueByName("result", opStatus), getValueByName("progress", opStatus), getValueByName("reason", opStatus), getValueByName("accessServiceId", opStatus))
+		logger.debug("Operation Status extracted " + status)
+				statusList.add(status);
+		}
+		return statusList;
+	}
+	
+	private List<String> getValuesByName(String name, String xml) {
+		List<String> stringList = new ArrayList<String>();
+		if (!StringUtils.isBlank(xml) && xml.contains(name)) {
+			String start = "<" + name + ">";
+			String end = "</" + name + ">";
+			int startIndex = xml.indexOf(start);
+			int endIndex = xml.indexOf(end);
+			while(startIndex >= 0) {
+				stringList.add(xml.substring(startIndex, endIndex).replace(start, ""))
+				startIndex = xml.indexOf(start, startIndex+1)
+				endIndex = xml.indexOf(end, endIndex+1)
+			}
+		}
+		return stringList;
+		
+	}
+	
+	private String getValueByName(String name, String xml) {
+		if (!StringUtils.isBlank(xml) && xml.contains(name)) {
+			String start = "<" + name + ">";
+			String end = "</" + name + ">";
+			return xml.substring(xml.indexOf(start), xml.indexOf(end)).replace(start, "");
+		}
+		return "";
+	}
+	
+	private boolean validateDBResponse(String xml) {
+		if(xml != null && xml != "" && xml.contains("return")) {
+			return true
+		}
+		return false
+	}
 
 
 }

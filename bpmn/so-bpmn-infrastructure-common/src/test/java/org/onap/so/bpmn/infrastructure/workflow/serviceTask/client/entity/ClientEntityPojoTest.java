@@ -57,6 +57,15 @@ public class ClientEntityPojoTest {
         test(PojoClassFactory.getPojoClass(ServiceTopologyOperationInputEntity.class));
         test(PojoClassFactory.getPojoClass(ServiceTopologyOperationOutputEntity.class));
         test(PojoClassFactory.getPojoClass(RpcNetworkTopologyOperationOutputEntity.class));
+        test(PojoClassFactory.getPojoClass(OpticalServiceCreateOutput.class));
+        test(PojoClassFactory.getPojoClass(OpticalServiceDeleteInput.class));
+        test(PojoClassFactory.getPojoClass(OpticalServiceDeletePayload.class));
+        test(PojoClassFactory.getPojoClass(OpticalServiceEnd.class));
+        test(PojoClassFactory.getPojoClass(OpticalServiceInput.class));
+        test(PojoClassFactory.getPojoClass(OpticalServicePayload.class));
+        test(PojoClassFactory.getPojoClass(RpcOpticalServiceCreateInputEntity.class));
+        test(PojoClassFactory.getPojoClass(RpcOpticalServiceCreateOutputEntity.class));
+        test(PojoClassFactory.getPojoClass(RpcOpticalServiceDeleteInputEntity.class));
     }
 
     private void test(PojoClass pojoClass) {

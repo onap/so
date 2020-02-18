@@ -83,6 +83,20 @@ public class AAIObjectTypeTest {
     }
 
     @Test
+    public void esrThirdpartySdncTest() {
+        AAIObjectType type = AAIObjectType.ESR_THIRDPARTY_SDNC;
+        assertEquals("/external-system", type.uriTemplate());
+        assertEquals("", type.partialUri());
+    }
+
+    @Test
+    public void logicalLinkTest() {
+        AAIObjectType type = AAIObjectType.LOGICAL_LINK;
+        assertEquals("/network/logical-links/logical-link/{link-name}", type.uriTemplate());
+        assertEquals("/logical-links/logical-link/{link-name}", type.partialUri());
+    }
+
+    @Test
     public void networkPolicyObjectTypeTest() {
         final String id = "test1";
         AAIUri aaiUri = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, id);

@@ -104,7 +104,6 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			if (isBlank(subscriptionServiceType)) {
 				msg = "Input subscriptionServiceType is null"
 				logger.debug(msg)
-				//exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			} else {
 				execution.setVariable("subscriptionServiceType", subscriptionServiceType)
 			}
@@ -344,16 +343,15 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			String serviceId = execution.getVariable("serviceInstanceId")
 			String operationId = execution.getVariable("operationId")
 			String userId = ""
-			String result = "processing"
+			String result = "Processing"
 			String progress = "0"
 			String reason = ""
-			String operationContent = "Prepare service creation"
+			String operationContent = "Prepare service deletion"
 			logger.debug("Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId)
 			serviceId = UriUtils.encode(serviceId,"UTF-8")
 
 			def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)
 			execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
-			logger.debug("DB Adapter Endpoint is: " + dbAdapterEndpoint)
 
 			String payload =
 					"""<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"

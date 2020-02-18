@@ -81,6 +81,9 @@ public class OperationStatus implements Serializable {
     @Column(name = "REASON", length = 256)
     private String reason;
 
+    @Column(name = "ACCESS_SERVICE_ID", length = 256, updatable = false)
+    private String accessServiceId;
+
     @Column(name = "OPERATE_AT", length = 256, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date operateAt;
@@ -186,6 +189,13 @@ public class OperationStatus implements Serializable {
         this.reason = reason;
     }
 
+    public String getAccessServiceId() {
+        return accessServiceId;
+    }
+
+    public void setAccessServiceId(String accessServiceId) {
+        this.accessServiceId = accessServiceId;
+    }
 
     public Date getOperateAt() {
         return operateAt;
@@ -228,8 +238,8 @@ public class OperationStatus implements Serializable {
         return new ToStringBuilder(this).append("serviceId", getServiceId()).append("operationId", getOperationId())
                 .append("operation", getOperation()).append("userId", getUserId()).append("result", getResult())
                 .append("operationContent", getOperationContent()).append("progress", getProgress())
-                .append("reason", getReason()).append("operateAt", getOperateAt()).append("finishedAt", getFinishedAt())
-                .toString();
+                .append("reason", getReason()).append("accessServiceid", getAccessServiceId())
+                .append("operateAt", getOperateAt()).append("finishedAt", getFinishedAt()).toString();
     }
 
 

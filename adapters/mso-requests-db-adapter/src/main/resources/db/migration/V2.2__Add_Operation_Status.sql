@@ -10,6 +10,7 @@ create table if not exists operation_status (
         OPERATION_CONTENT varchar(255),
         PROGRESS varchar(255),
         REASON varchar(255),
+	ACCESS_SERVICE_ID varchar(255),
         OPERATE_AT datetime,
         FINISHED_AT datetime,
         primary key (SERVICE_ID,OPERATION_ID)

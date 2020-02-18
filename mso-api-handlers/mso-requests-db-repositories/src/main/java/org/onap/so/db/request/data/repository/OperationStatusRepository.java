@@ -25,6 +25,7 @@ import org.onap.so.db.request.beans.OperationStatusId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import java.util.List;
 
 @RepositoryRestResource(collectionResourceRel = "operationStatus", path = "operationStatus")
 public interface OperationStatusRepository extends JpaRepository<OperationStatus, OperationStatusId> {
@@ -35,4 +36,8 @@ public interface OperationStatusRepository extends JpaRepository<OperationStatus
     public OperationStatus findOneByServiceName(String serviceName);
 
     public OperationStatus findOneByServiceId(String serviceId);
+
+    public List<OperationStatus> findByAccessServiceId(String accessServiceId);
+
+    public OperationStatus findByOperationId(String operationId);
 }
