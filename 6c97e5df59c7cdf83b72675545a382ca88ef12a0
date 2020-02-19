@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "ad007372_d65c46b7",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigureInstanceParamsForVfModule.java",
+        "patchSetId": 39
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-19T18:37:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7ce21d08_761f48e1",
+      "revId": "6c97e5df59c7cdf83b72675545a382ca88ef12a0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "45251968_662e39a9",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigureInstanceParamsForVnf.java",
         "patchSetId": 39
@@ -30,6 +48,24 @@
       "writtenOn": "2020-02-18T20:44:28Z",
       "side": 1,
       "message": "We should convert this to a spring component",
+      "revId": "6c97e5df59c7cdf83b72675545a382ca88ef12a0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e70d1849_2bd0a71b",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ConfigureInstanceParamsForVnf.java",
+        "patchSetId": 39
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-19T18:37:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "45251968_662e39a9",
       "revId": "6c97e5df59c7cdf83b72675545a382ca88ef12a0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "ec2c0ffb_b8be038d",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/ExtractServiceFromUserParameters.java",
+        "patchSetId": 39
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-19T18:37:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d882a01d_39ff89a0",
+      "revId": "6c97e5df59c7cdf83b72675545a382ca88ef12a0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4e29c88b_681d5b58",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/VfModuleCDSRequestProvider.java",
         "patchSetId": 39
@@ -64,6 +118,24 @@
       "writtenOn": "2020-02-18T20:44:28Z",
       "side": 1,
       "message": "Is there a technical reason why this is not a bean? Are there additional fields dynamically added to this object?",
+      "revId": "6c97e5df59c7cdf83b72675545a382ca88ef12a0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a0ba9f50_a1116a25",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/VfModuleCDSRequestProvider.java",
+        "patchSetId": 39
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-19T18:37:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4e29c88b_681d5b58",
       "revId": "6c97e5df59c7cdf83b72675545a382ca88ef12a0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
