@@ -45,6 +45,7 @@ import org.onap.so.db.request.beans.SiteStatus;
 import org.onap.so.db.request.beans.WatchdogComponentDistributionStatus;
 import org.onap.so.db.request.beans.WatchdogDistributionStatus;
 import org.onap.so.db.request.beans.WatchdogServiceModVerIdLookup;
+import org.onap.so.db.request.beans.OrchestrationTask;
 import org.onap.so.db.request.data.controller.InstanceNameDuplicateCheckRequest;
 import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,6 +120,8 @@ public class RequestsDbClient {
 
     private String getInProgressVolumeGroupsAndVfModules = "/infraActiveRequests/getInProgressVolumeGroupsAndVfModules";
 
+    private String orchestrationTasksURI = "/orchestrationTask";
+
     private static final String findBySoRequestIdAndGroupIdAndName =
             "/requestProcessingData/search/findOneBySoRequestIdAndGroupingIdAndName";
 
@@ -156,6 +159,7 @@ public class RequestsDbClient {
         findAllByOperationalEnvIdAndRequestIdURI =
                 endpoint + OPERATIONAL_ENV_SERVICE_MODEL_STATUS_SEARCH + findAllByOperationalEnvIdAndRequestIdURI;
         findOneByRequestId = endpoint + findOneByRequestId;
+        orchestrationTasksURI = endpoint + orchestrationTasksURI;
     }
 
     protected String getEndpoint() {
@@ -518,6 +522,40 @@ public class RequestsDbClient {
         return restTemplate
                 .exchange(url, HttpMethod.POST, entity, new ParameterizedTypeReference<List<InfraActiveRequests>>() {})
                 .getBody();
+    }
+
+    public List<OrchestrationTask> getAllOrchestrationTasks() {
+        String url = UriBuilder.fromUri(getUri(orchestrationTasksURI)).build().toString();
+        HttpEntity<?> entity = getHttpEntity();
+        return restTemplate
+                .exchange(url, HttpMethod.GET, entity, new ParameterizedTypeReference<List<OrchestrationTask>>() {})
+                .getBody();
+    }
+
+    public OrchestrationTask getOrchestrationTask(String taskId) {
+        String url = UriBuilder.fromUri(getUri(orchestrationTasksURI + "/" + taskId)).build().toString();
+        HttpEntity<?> entity = getHttpEntity();
+        return restTemplate.exchange(url, HttpMethod.GET, entity, OrchestrationTask.class).getBody();
+    }
+
+    public OrchestrationTask createOrchestrationTask(OrchestrationTask orchestrationTask) {
+        String url = UriBuilder.fromUri(getUri(orchestrationTasksURI + "/")).build().toString();
+        HttpHeaders headers = getHttpHeaders();
+        HttpEntity<OrchestrationTask> entity = new HttpEntity<>(orchestrationTask, headers);
+        return restTemplate.exchange(url, HttpMethod.POST, entity, OrchestrationTask.class).getBody();
+    }
+
+    public OrchestrationTask updateOrchestrationTask(String taskId, OrchestrationTask orchestrationTask) {
+        String url = getUri(orchestrationTasksURI + "/" + taskId).toString();
+        HttpHeaders headers = getHttpHeaders();
+        HttpEntity<OrchestrationTask> entity = new HttpEntity<>(orchestrationTask, headers);
+        return restTemplate.exchange(url, HttpMethod.PUT, entity, OrchestrationTask.class).getBody();
+    }
+
+    public void deleteOrchestrationTask(String taskId) {
+        String url = getUri(orchestrationTasksURI + "/" + taskId).toString();
+        HttpEntity<?> entity = getHttpEntity();
+        restTemplate.exchange(url, HttpMethod.DELETE, entity, Void.class).getBody();
     }
 
     @Component
