@@ -32,6 +32,7 @@ import java.util.Optional;
 import org.onap.so.adapters.vnfmadapter.Constants;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.EtsiCatalogServiceProvider;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.BasicAuth;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.NsdmSubscription;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmSubscription;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.InlineResponse2002;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.PkgmSubscriptionRequest;
@@ -39,6 +40,7 @@ import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.VnfPackagesLinksSelf;
 import org.onap.so.adapters.vnfmadapter.packagemanagement.subscriptionmanagement.cache.PackageManagementCacheServiceProvider;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.InternalServerErrorException;
+import org.onap.so.adapters.vnfmadapter.rest.exceptions.SubscriptionNotFoundException;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.SubscriptionRequestConversionException;
 import org.onap.so.utils.CryptoUtils;
 import org.slf4j.Logger;
@@ -90,7 +92,7 @@ public class SubscriptionManager {
                 etsiCatalogServiceProvider.postSubscription(etsiCatalogManagerSubscriptionRequest);
 
         if (optionalEtsiCatalogManagerSubscription.isPresent()) {
-            PkgmSubscription etsiCatalogManagerSubscription = optionalEtsiCatalogManagerSubscription.get();
+            final PkgmSubscription etsiCatalogManagerSubscription = optionalEtsiCatalogManagerSubscription.get();
             logger.debug("postPkgmSubscriptionRequest Response SubscriptionId: {}",
                     Objects.requireNonNull(etsiCatalogManagerSubscription.getId()));
             final String subscriptionId = etsiCatalogManagerSubscription.getId();
@@ -116,6 +118,19 @@ public class SubscriptionManager {
     }
 
     public Optional<InlineResponse2002> getSubscription(final String subscriptionId) {
+
+        logger.debug("Checking if subscrition with id: {} exists in ETSI Catalog Manager", subscriptionId);
+        final Optional<NsdmSubscription> etsiCatalogSubscriptionOption =
+                etsiCatalogServiceProvider.getSubscription(subscriptionId);
+
+        if (!etsiCatalogSubscriptionOption.isPresent()) {
+            logger.debug("Unable to find subscription in ETSI Catalog Manager using id: {}", subscriptionId);
+            if (packageManagementCacheServiceProvider.getSubscription(subscriptionId).isPresent()) {
+                logger.debug("will remove subcription with id: {} from local cache", subscriptionId);
+                packageManagementCacheServiceProvider.deleteSubscription(subscriptionId);
+            }
+        }
+
         final Optional<PkgmSubscriptionRequest> optional =
                 packageManagementCacheServiceProvider.getSubscription(subscriptionId);
         if (optional.isPresent()) {
@@ -129,13 +144,25 @@ public class SubscriptionManager {
         final Map<String, PkgmSubscriptionRequest> subscriptions =
                 packageManagementCacheServiceProvider.getSubscriptions();
         final List<InlineResponse2002> response = new ArrayList<>();
-        subscriptions.forEach((key, value) -> response.add(getInlineResponse2002(key, value)));
+        subscriptions.forEach((key, value) -> {
+            final Optional<InlineResponse2002> optional = getSubscription(key);
+            if (optional.isPresent()) {
+                response.add(optional.get());
+            }
+        });
         return response;
     }
 
     public boolean deleteSubscription(final String subscriptionId) {
-        if (getSubscription(subscriptionId).isPresent()) {
-            if (etsiCatalogServiceProvider.deleteSubscription(subscriptionId)) {
+        if (packageManagementCacheServiceProvider.getSubscription(subscriptionId).isPresent()) {
+            try {
+                if (etsiCatalogServiceProvider.deleteSubscription(subscriptionId)) {
+                    return packageManagementCacheServiceProvider.deleteSubscription(subscriptionId);
+                }
+            } catch (final SubscriptionNotFoundException subscriptionNotFoundException) {
+                logger.error(
+                        "Unable to find subscription in ETSI Catalog Manager using id: {} will delete it from local cache",
+                        subscriptionId);
                 return packageManagementCacheServiceProvider.deleteSubscription(subscriptionId);
             }
         }
@@ -153,17 +180,17 @@ public class SubscriptionManager {
     }
 
     private org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmSubscriptionRequest buildEtsiCatalogManagerPkgmSubscriptionRequest(
-            PkgmSubscriptionRequest pkgmSubscriptionRequest) throws GeneralSecurityException {
+            final PkgmSubscriptionRequest pkgmSubscriptionRequest) throws GeneralSecurityException {
 
         final org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmSubscriptionRequest etsiCatalogManagerSubscriptionRequest;
         try {
             etsiCatalogManagerSubscriptionRequest = conversionService.convert(pkgmSubscriptionRequest,
                     org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmSubscriptionRequest.class);
-        } catch (ConversionException conversionException) {
+        } catch (final ConversionException conversionException) {
             logger.error(conversionException.getMessage());
             throw new SubscriptionRequestConversionException(
                     "Could not convert Sol003 PkgmSubscriptionRequest to ETSI-Catalog Manager PkgmSubscriptionRequest");
-        } catch (Exception exception) {
+        } catch (final Exception exception) {
             logger.error(exception.getMessage());
             throw new InternalServerErrorException(
                     "Could not convert Sol003 PkgmSubscriptionRequest to ETSI-Catalog Manager PkgmSubscriptionRequest");

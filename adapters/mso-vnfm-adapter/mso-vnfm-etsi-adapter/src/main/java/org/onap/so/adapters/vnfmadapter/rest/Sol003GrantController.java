@@ -50,8 +50,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(value = BASE_URL, produces = MediaType.APPLICATION_JSON, consumes = MediaType.APPLICATION_JSON)
 public class Sol003GrantController {
 
-    private static final String SEPARATOR = "_";
-    private static final String VIM_TYPE = "OPENSTACK";
     private static final Logger logger = LoggerFactory.getLogger(Sol003GrantController.class);
     public final AaiServiceProvider aaiServiceProvider;
     public final AaiHelper aaiHelper;

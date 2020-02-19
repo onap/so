@@ -24,6 +24,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.onap.so.adapters.vnfmadapter.Constants.PACKAGE_MANAGEMENT_BASE_URL;
 import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
@@ -31,7 +32,6 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
-import com.google.gson.Gson;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
@@ -45,6 +45,7 @@ import org.junit.runner.RunWith;
 import org.onap.so.adapters.vnfmadapter.Constants;
 import org.onap.so.adapters.vnfmadapter.VnfmAdapterApplication;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.LinkSelf;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.NsdmSubscription;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmNotificationsFilter;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmSubscription;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.InlineResponse2002;
@@ -69,6 +70,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
+import com.google.gson.Gson;
 
 /**
  * @author Ronan Kenny (ronan.kenny@est.tech)
@@ -83,16 +85,18 @@ public class Sol003PackageManagementSubscriptionControllerTest {
     private final URI msbEndpoint = URI.create("http://msb-iag.onap:80/api/vnfpkgm/v1/subscriptions");
     @Autowired
     @Qualifier(CONFIGURABLE_REST_TEMPLATE)
-    private RestTemplate testRestTemplate;
-    private MockRestServiceServer mockRestServer;
+    private RestTemplate restTemplate;
+    private MockRestServiceServer mockRestServiceServer;
     @Autowired
     private CacheManager cacheServiceProvider;
     @Autowired
     private Sol003PackageManagementSubscriptionController sol003PackageManagementSubscriptionController;
 
+    private static final String ID = UUID.randomUUID().toString();
+
     @Before
     public void setUp() {
-        mockRestServer = MockRestServiceServer.bindTo(testRestTemplate).build();
+        mockRestServiceServer = MockRestServiceServer.bindTo(restTemplate).build();
         final Cache cache = cacheServiceProvider.getCache(Constants.PACKAGE_MANAGEMENT_SUBSCRIPTION_CACHE);
         cache.clear();
     }
@@ -106,8 +110,8 @@ public class Sol003PackageManagementSubscriptionControllerTest {
 
         final HttpHeaders headers = buildHttpHeaders(Objects.requireNonNull(response.getBody()).getCallbackUri());
 
-        SubscriptionsLinks subscriptionsLinks = new SubscriptionsLinks();
-        VnfPackagesLinksSelf vnfPackagesLinksSelf = new VnfPackagesLinksSelf();
+        final SubscriptionsLinks subscriptionsLinks = new SubscriptionsLinks();
+        final VnfPackagesLinksSelf vnfPackagesLinksSelf = new VnfPackagesLinksSelf();
         vnfPackagesLinksSelf.setHref("https://so-vnfm-adapter.onap:30406" + PACKAGE_MANAGEMENT_BASE_URL
                 + "/subscriptions/" + response.getBody().getId());
         subscriptionsLinks.setSelf(vnfPackagesLinksSelf);
@@ -140,12 +144,18 @@ public class Sol003PackageManagementSubscriptionControllerTest {
 
     @Test
     public void testSuccessGetSubscriptionWithSubscriptionId() throws GeneralSecurityException, URISyntaxException {
+
         final PkgmSubscriptionRequest pkgmSubscriptionRequest = postSubscriptionForTest();
+
+        mockRestServiceServer.expect(requestTo(msbEndpoint + "/" + ID)).andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(gson.toJson(new NsdmSubscription().id(ID)), MediaType.APPLICATION_JSON));
 
         final ResponseEntity<InlineResponse2002> response =
                 (ResponseEntity<InlineResponse2002>) sol003PackageManagementSubscriptionController
                         .postSubscriptionRequest(pkgmSubscriptionRequest);
         final String subscriptionId = response.getBody().getId();
+
+
 
         final ResponseEntity<InlineResponse2002> response2002 =
                 (ResponseEntity<InlineResponse2002>) sol003PackageManagementSubscriptionController
@@ -163,9 +173,12 @@ public class Sol003PackageManagementSubscriptionControllerTest {
 
     @Test
     public void testFailGetSubscriptionWithInvalidSubscriptionId() {
+        final String invalidId = "invalidSubscriptionId";
+        mockRestServiceServer.expect(requestTo(msbEndpoint + "/" + invalidId)).andExpect(method(HttpMethod.GET))
+                .andRespond(withStatus(HttpStatus.NOT_FOUND));
         final ResponseEntity<InlineResponse2002> response =
                 (ResponseEntity<InlineResponse2002>) sol003PackageManagementSubscriptionController
-                        .getSubscription("invalidSubscriptionId");
+                        .getSubscription(invalidId);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
@@ -174,14 +187,16 @@ public class Sol003PackageManagementSubscriptionControllerTest {
         final PkgmSubscription pkgmSubscription = buildPkgmSubscription();
         final PkgmSubscriptionRequest pkgmSubscriptionRequest = buildPkgmSubscriptionRequest();
 
-        mockRestServer.expect(requestTo(msbEndpoint)).andExpect(method(HttpMethod.POST))
+        mockRestServiceServer.expect(requestTo(msbEndpoint)).andExpect(method(HttpMethod.POST))
                 .andRespond(withSuccess(gson.toJson(pkgmSubscription), MediaType.APPLICATION_JSON));
+        mockRestServiceServer.expect(requestTo(msbEndpoint + "/" + ID)).andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(gson.toJson(new NsdmSubscription().id(ID)), MediaType.APPLICATION_JSON));
 
         sol003PackageManagementSubscriptionController.postSubscriptionRequest(pkgmSubscriptionRequest);
-        ResponseEntity<List<InlineResponse2002>> response =
+        final ResponseEntity<List<InlineResponse2002>> response =
                 sol003PackageManagementSubscriptionController.getSubscriptions();
 
-        List<InlineResponse2002> subscriptionsList = response.getBody();
+        final List<InlineResponse2002> subscriptionsList = response.getBody();
 
         assertEquals(Objects.requireNonNull(response.getBody()).get(0).getFilter(),
                 pkgmSubscriptionRequest.getFilter());
@@ -196,10 +211,14 @@ public class Sol003PackageManagementSubscriptionControllerTest {
         final PkgmSubscription pkgmSubscription = buildPkgmSubscription();
         final String subscriptionId = pkgmSubscription.getId();
 
-        mockRestServer.expect(requestTo(msbEndpoint)).andExpect(method(HttpMethod.POST))
+        mockRestServiceServer.expect(requestTo(msbEndpoint)).andExpect(method(HttpMethod.POST))
                 .andRespond(withSuccess(gson.toJson(pkgmSubscription), MediaType.APPLICATION_JSON));
-        mockRestServer.expect(requestTo(msbEndpoint + "/" + subscriptionId)).andExpect(method(HttpMethod.DELETE))
+
+        mockRestServiceServer.expect(requestTo(msbEndpoint + "/" + subscriptionId)).andExpect(method(HttpMethod.DELETE))
                 .andRespond(withStatus(HttpStatus.NO_CONTENT));
+        mockRestServiceServer.expect(requestTo(msbEndpoint + "/" + subscriptionId)).andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(gson.toJson(new NsdmSubscription().id(subscriptionId)),
+                        MediaType.APPLICATION_JSON));
 
         final ResponseEntity<InlineResponse2002> responsePost =
                 (ResponseEntity<InlineResponse2002>) sol003PackageManagementSubscriptionController
@@ -215,6 +234,32 @@ public class Sol003PackageManagementSubscriptionControllerTest {
 
         assertEquals(HttpStatus.NOT_FOUND, responseGetSubscription.getStatusCode());
         assertEquals(HttpStatus.NO_CONTENT, responseDelete.getStatusCode());
+    }
+
+    @Test
+    public void testDeleteSubscription_SubscripitonNotFoundInEtsiCatalogManager_SubscriptionDeletedFromLocalCache()
+            throws GeneralSecurityException {
+        final PkgmSubscriptionRequest pkgmSubscriptionRequest = buildPkgmSubscriptionRequest();
+        final PkgmSubscription pkgmSubscription = buildPkgmSubscription();
+
+        mockRestServiceServer.expect(requestTo(msbEndpoint)).andExpect(method(HttpMethod.POST))
+                .andRespond(withSuccess(gson.toJson(pkgmSubscription), MediaType.APPLICATION_JSON));
+
+        mockRestServiceServer.expect(requestTo(msbEndpoint + "/" + ID)).andExpect(method(HttpMethod.DELETE))
+                .andRespond(withStatus(HttpStatus.NOT_FOUND));
+
+        final ResponseEntity<InlineResponse2002> responsePost =
+                (ResponseEntity<InlineResponse2002>) sol003PackageManagementSubscriptionController
+                        .postSubscriptionRequest(pkgmSubscriptionRequest);
+
+        final Cache cache = cacheServiceProvider.getCache(Constants.PACKAGE_MANAGEMENT_SUBSCRIPTION_CACHE);
+        assertNotNull(cache.get(ID));
+
+        final ResponseEntity responseDelete = sol003PackageManagementSubscriptionController.deleteSubscription(ID);
+
+        assertEquals(HttpStatus.NO_CONTENT, responseDelete.getStatusCode());
+        assertNull(cache.get(ID));
+
     }
 
     @Test
@@ -252,11 +297,11 @@ public class Sol003PackageManagementSubscriptionControllerTest {
     }
 
     private PkgmSubscription buildPkgmSubscription() {
-        PkgmSubscription pkgmSubscription = new PkgmSubscription();
-        PkgmNotificationsFilter pkgmNotificationsFilter = new PkgmNotificationsFilter();
-        LinkSelf linkSelf = new LinkSelf();
-        String id = UUID.randomUUID().toString();
-        pkgmSubscription.setId(id);
+        final PkgmSubscription pkgmSubscription = new PkgmSubscription();
+        final PkgmNotificationsFilter pkgmNotificationsFilter = new PkgmNotificationsFilter();
+        final LinkSelf linkSelf = new LinkSelf();
+
+        pkgmSubscription.setId(ID);
         pkgmSubscription.setCallbackUri(msbEndpoint + "/" + pkgmSubscription.getId().toString());
         pkgmSubscription.setFilter(pkgmNotificationsFilter);
         pkgmSubscription.setLinks(linkSelf);
@@ -267,14 +312,14 @@ public class Sol003PackageManagementSubscriptionControllerTest {
         final PkgmSubscriptionRequest pkgmSubscriptionRequest = buildPkgmSubscriptionRequest();
         final PkgmSubscription pkgmSubscription = buildPkgmSubscription();
 
-        mockRestServer.expect(requestTo(msbEndpoint)).andExpect(method(HttpMethod.POST))
+        mockRestServiceServer.expect(requestTo(msbEndpoint)).andExpect(method(HttpMethod.POST))
                 .andRespond(withSuccess(gson.toJson(pkgmSubscription), MediaType.APPLICATION_JSON));
         return pkgmSubscriptionRequest;
     }
 
-    private HttpHeaders buildHttpHeaders(String uri) throws URISyntaxException {
+    private HttpHeaders buildHttpHeaders(final String uri) throws URISyntaxException {
         final HttpHeaders headers = new HttpHeaders();
-        URI myUri = new URI(uri);
+        final URI myUri = new URI(uri);
         headers.setLocation(myUri);
         return headers;
     }

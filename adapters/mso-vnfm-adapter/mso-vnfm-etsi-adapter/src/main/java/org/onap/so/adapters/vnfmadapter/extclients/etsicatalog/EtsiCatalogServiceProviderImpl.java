@@ -21,11 +21,13 @@
 package org.onap.so.adapters.vnfmadapter.extclients.etsicatalog;
 
 import java.util.Optional;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.NsdmSubscription;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmSubscription;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VnfPkgInfo;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.InlineResponse2001;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.EtsiCatalogManagerBadRequestException;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.EtsiCatalogManagerRequestFailureException;
+import org.onap.so.adapters.vnfmadapter.rest.exceptions.SubscriptionNotFoundException;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfPkgBadRequestException;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfPkgConflictException;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfPkgNotFoundException;
@@ -204,7 +206,8 @@ public class EtsiCatalogServiceProviderImpl implements EtsiCatalogServiceProvide
         }
     }
 
-    public Boolean deleteSubscription(final String subscriptionId) {
+    @Override
+    public boolean deleteSubscription(final String subscriptionId) {
         try {
             final ResponseEntity<Void> responseEntity = httpServiceProvider
                     .deleteHttpRequest(etsiCatalogUrlProvider.getSubscriptionUrl() + "/" + subscriptionId, Void.class);
@@ -216,6 +219,10 @@ public class EtsiCatalogServiceProviderImpl implements EtsiCatalogServiceProvide
             }
             logger.error("Unexpected Status Code Received on deleteSubscription: {}", responseEntity.getStatusCode());
             return false;
+        } catch (final HttpResouceNotFoundException resouceNotFoundException) {
+            final String message = "Unable to find subscription in ETSI Catalog Manager using id: " + subscriptionId;
+            logger.error(message);
+            throw new SubscriptionNotFoundException(message);
         } catch (final InvalidRestRequestException invalidRestRequestException) {
             logger.error("Caught InvalidRestRequestException on deleteSubscription call to ETSI Catalog Manager.",
                     invalidRestRequestException);
@@ -224,7 +231,27 @@ public class EtsiCatalogServiceProviderImpl implements EtsiCatalogServiceProvide
         }
     }
 
+    @Override
+    public Optional<NsdmSubscription> getSubscription(final String subscriptionId) {
+        try {
+            final ResponseEntity<NsdmSubscription> responseEntity = httpServiceProvider.getHttpResponse(
+                    etsiCatalogUrlProvider.getSubscriptionUrl() + "/" + subscriptionId, NsdmSubscription.class);
 
+            if (responseEntity.getStatusCode().is2xxSuccessful()) {
+                logger.debug("Found subscription with ID: {} in ETSI Catalog Manager", subscriptionId);
+                return Optional.ofNullable(responseEntity.getBody());
+            }
+            logger.error("Unexpected Status Code Received on getting subscription from ETSI Catalog Manager: {}",
+                    responseEntity.getStatusCode());
+        } catch (final HttpResouceNotFoundException resouceNotFoundException) {
+            logger.error("Unable to find subscription in ETSI Catalog Manager using id: {}", subscriptionId);
+            return Optional.empty();
+        } catch (final RestProcessingException | InvalidRestRequestException exception) {
+            logger.error("Unable to query ETSI Catalog Manager for subscription using id: {}", subscriptionId,
+                    exception);
+        }
+        throw new EtsiCatalogManagerRequestFailureException("Internal Server Error Occurred.");
+    }
 
     private Optional<byte[]> requestVnfElement(final String vnfPkgId, final String vnfRequestUrl,
             final String vnfRequestName) {

@@ -143,6 +143,18 @@ public class HttpRestServiceProviderImpl implements HttpRestServiceProvider {
             final HttpEntity<?> request = new HttpEntity<>(getHttpHeaders());
             return restTemplate.exchange(url, HttpMethod.DELETE, request, clazz);
 
+        } catch (final HttpStatusCodeException httpStatusCodeException) {
+            final String message = "Unable to invoke HTTP " + HttpMethod.DELETE + " using url: " + url + ", Response: "
+                    + httpStatusCodeException.getRawStatusCode();
+            LOGGER.error(message, httpStatusCodeException);
+            final int rawStatusCode = httpStatusCodeException.getRawStatusCode();
+            if (rawStatusCode == HttpStatus.BAD_REQUEST.value()) {
+                throw new InvalidRestRequestException("No result found for given url: " + url);
+            } else if (rawStatusCode == HttpStatus.NOT_FOUND.value()) {
+                throw new HttpResouceNotFoundException("No result found for given url: " + url);
+            }
+            throw new RestProcessingException("Unable to invoke HTTP " + HttpMethod.DELETE + " using URL: " + url,
+                    httpStatusCodeException, rawStatusCode);
         } catch (final RestClientException restClientException) {
             LOGGER.error("Unable to invoke HTTP DELETE using url: " + url, restClientException);
             throw new InvalidRestRequestException("Unable to invoke HTTP DELETE using URL: " + url,

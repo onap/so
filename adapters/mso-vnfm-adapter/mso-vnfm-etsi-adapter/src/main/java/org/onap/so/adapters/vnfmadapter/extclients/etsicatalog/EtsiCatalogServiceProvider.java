@@ -21,6 +21,7 @@
 package org.onap.so.adapters.vnfmadapter.extclients.etsicatalog;
 
 import java.util.Optional;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.NsdmSubscription;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmSubscription;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.InlineResponse2001;
 
@@ -81,10 +82,18 @@ public interface EtsiCatalogServiceProvider {
             final org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmSubscriptionRequest etsiCatalogManagerSubscriptionRequest);
 
     /**
+     * Get the Subscription from ETSI Catalog.
+     * 
+     * @param subscriptionId Subscription ID
+     * @return The Subscription {@link NsdmSubscription} from ETSI Catalog
+     */
+    Optional<NsdmSubscription> getSubscription(final String subscriptionId);
+
+    /**
      * DELETE the SubscriptionRequest Object.
      *
      * @return A Boolean representing if the delete was successful or not.
      */
-    Boolean deleteSubscription(final String subscriptionId);
+    boolean deleteSubscription(final String subscriptionId);
 
 }
