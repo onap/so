@@ -1,0 +1,12 @@
+USE `requestdb`;
+
+CREATE TABLE `orchestration_task` (
+  `TASK_ID` varchar(200) NOT NULL,
+  `REQUEST_ID` varchar(200) NOT NULL,
+  `NAME` varchar(200) NOT NULL,
+  `CREATED_TIME` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `STATUS` varchar(200) NOT NULL,
+  `IS_MANUAL` varchar(20) NOT NULL,
+  `PARAMS` varchar(20000) DEFAULT NULL,
+  PRIMARY KEY (`TASK_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
