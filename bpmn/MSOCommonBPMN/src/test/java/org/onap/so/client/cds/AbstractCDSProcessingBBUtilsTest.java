@@ -34,6 +34,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.client.cds.beans.AbstractCDSPropertiesBean;
 import org.onap.so.client.exception.ExceptionBuilder;
 
@@ -69,7 +70,7 @@ public class AbstractCDSProcessingBBUtilsTest {
     }
 
     @Test
-    public void preProcessRequestTest() throws Exception {
+    public void preProcessRequestDETest() throws Exception {
 
         DelegateExecution execution = mock(DelegateExecution.class);
         when(execution.getVariable("executionObject")).thenReturn(abstractCDSPropertiesBean);
@@ -80,12 +81,34 @@ public class AbstractCDSProcessingBBUtilsTest {
     }
 
     @Test
-    public void sendRequestToCDSClientTest() {
+    public void sendRequestToCDSClientDETest() {
 
         DelegateExecution execution = mock(DelegateExecution.class);
         when(execution.getVariable("executionServiceInput")).thenReturn(abstractCDSPropertiesBean);
         abstractCDSProcessingBBUtils.sendRequestToCDSClient(execution);
         verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(any(DelegateExecution.class), anyInt(),
+                any(Exception.class));
+
+    }
+
+    @Test
+    public void preProcessRequestBBTest() throws Exception {
+
+        BuildingBlockExecution execution = mock(BuildingBlockExecution.class);
+        when(execution.getVariable("executionObject")).thenReturn(abstractCDSPropertiesBean);
+
+        abstractCDSProcessingBBUtils.constructExecutionServiceInputObject(execution);
+        verify(exceptionUtil, times(0)).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), anyInt(),
+                any(Exception.class));
+    }
+
+    @Test
+    public void sendRequestToCDSClientBBTest() {
+
+        BuildingBlockExecution execution = mock(BuildingBlockExecution.class);
+        when(execution.getVariable("executionServiceInput")).thenReturn(abstractCDSPropertiesBean);
+        abstractCDSProcessingBBUtils.sendRequestToCDSClient(execution);
+        verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), anyInt(),
                 any(Exception.class));
 
     }
