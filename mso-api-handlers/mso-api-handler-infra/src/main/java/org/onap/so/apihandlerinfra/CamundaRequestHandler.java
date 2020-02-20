@@ -9,9 +9,11 @@ import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.DatatypeConverter;
 import org.camunda.bpm.engine.impl.persistence.entity.HistoricActivityInstanceEntity;
 import org.camunda.bpm.engine.impl.persistence.entity.HistoricProcessInstanceEntity;
+import org.json.JSONObject;
 import org.onap.logging.filter.spring.SpringClientPayloadFilter;
 import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
 import org.onap.so.utils.CryptoUtils;
+import org.onap.so.apihandlerinfra.exceptions.ContactCamundaException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 
 @Component
 public class CamundaRequestHandler {
@@ -200,6 +205,20 @@ public class CamundaRequestHandler {
         SimpleRetryPolicy policy = new SimpleRetryPolicy(2, retryableExceptions);
         retryTemplate.setRetryPolicy(policy);
         return retryTemplate;
+    }
+
+    protected void sendCamundaMessages(JSONObject msgJson) {
+        String url = env.getProperty("mso.camundaURL") + "/sobpmnengine/message";
+        HttpHeaders headers =
+                setCamundaHeaders(env.getRequiredProperty("mso.camundaAuth"), env.getRequiredProperty("mso.msoKey"));
+        headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
+        // Workflow may take a long time so use non-blocking request
+        Flux<String> flux = WebClient.create().post().uri(url).headers(httpHeaders -> {
+            httpHeaders.set(httpHeaders.AUTHORIZATION, headers.get(httpHeaders.AUTHORIZATION).get(0));
+            httpHeaders.set(httpHeaders.ACCEPT, headers.get(httpHeaders.ACCEPT).get(0));
+            httpHeaders.set(httpHeaders.CONTENT_TYPE, headers.get(httpHeaders.CONTENT_TYPE).get(0));
+        }).body(BodyInserters.fromObject(msgJson.toString())).retrieve().bodyToFlux(String.class);
+        flux.subscribe(res -> logger.debug("Send Camunda Message: " + res));
     }
 
     protected RestTemplate getRestTemplate(boolean retry) {
