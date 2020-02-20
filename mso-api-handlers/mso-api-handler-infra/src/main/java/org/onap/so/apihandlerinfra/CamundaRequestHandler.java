@@ -29,6 +29,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 
 @Component
 public class CamundaRequestHandler {
@@ -200,6 +203,26 @@ public class CamundaRequestHandler {
         SimpleRetryPolicy policy = new SimpleRetryPolicy(2, retryableExceptions);
         retryTemplate.setRetryPolicy(policy);
         return retryTemplate;
+    }
+
+    protected void sendCamundaMessages(String requestId, JSONObject msgJson) throws ContactCamundaException {
+        String url = env.getProperty("mso.camundaURL") + "/sobpmnengine/message";
+        HttpHeaders headers =
+                setCamundaHeaders(env.getRequiredProperty("mso.camundaAuth"), env.getRequiredProperty("mso.msoKey"));
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        try {
+            // Workflow may take a long time so use non-blocking request
+            Flux<String> flux = WebClient.create().post().uri(url).headers(httpHeaders -> {
+                httpHeaders.set(httpHeaders.AUTHORIZATION, headers.get(httpHeaders.AUTHORIZATION).get(0));
+                httpHeaders.set(httpHeaders.ACCEPT, headers.get(httpHeaders.ACCEPT).get(0));
+                httpHeaders.set(httpHeaders.CONTENT_TYPE, headers.get(httpHeaders.CONTENT_TYPE).get(0));
+            }).body(BodyInserters.fromObject(msgJson.toString())).retrieve().bodyToFlux(String.class);
+            flux.subscribe(res -> logger.debug("Send Camunda Message: " + res));
+        } catch (RestClientException e) {
+            logger.error("Error sending message to Camunda engine, message: {}", msgJson.toString());
+            throw new ContactCamundaException.Builder("send message", requestId, e.toString(),
+                    HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e).build();
+        }
     }
 
     protected RestTemplate getRestTemplate(boolean retry) {
