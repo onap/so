@@ -116,4 +116,26 @@ public class OrchestrationTasks {
         }
     }
 
+    @POST
+    @Path("/{version:[vV][4-7]}/")
+    @Operation(description = "Create an Orchestrated Task", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
+    public Response CreateOrchestrationTask(String requestJson, @PathParam("version") String version) {
+        try {
+            OrchestrationTask orchestrationTask = mapper.readValue(requestJson, OrchestrationTask.class);
+            requestsDbClient.createOrchestrationTask(orchestrationTask);
+            return builder.buildResponse(HttpStatus.SC_OK, null, orchestrationTask, version);
+        } catch (Exception e) {
+            logger.error(LoggingAnchor.FOUR, MessageEnum.APIH_DB_ACCESS_EXC.toString(), MSO_PROP_APIHANDLER_INFRA,
+                    ErrorCode.AvailabilityError.getValue(),
+                    "Exception while communciate with Request DB - Orchestration Task Create", e);
+            Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR,
+                    MsoException.ServiceException, e.getMessage(), ErrorNumbers.COULD_NOT_WRITE_TO_REQUESTS_DB, null,
+                    version);
+            return response;
+        }
+    }
+
 }
