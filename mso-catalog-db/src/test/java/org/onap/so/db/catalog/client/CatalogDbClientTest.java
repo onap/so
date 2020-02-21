@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2020 Nordix
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -179,7 +181,7 @@ public class CatalogDbClientTest {
     }
 
     @Test
-    public final void testFindWorkflowByPnfModelUUID() throws Exception {
+    public final void testFindWorkflowByPnfModelUUID() {
         String pnfResourceModelUUID = "f2d1f2b2-88bb-49da-b716-36ae420ccbff";
 
         doReturn(new ArrayList()).when(catalogDbClient).getMultipleResources(any(), any());
@@ -188,6 +190,18 @@ public class CatalogDbClientTest {
                 eq(UriBuilder.fromUri("/findWorkflowByPnfModelUUID")
                         .queryParam(CatalogDbClient.PNF_RESOURCE_MODEL_UUID, pnfResourceModelUUID).build()));
 
+    }
+
+    @Test
+    public final void testFindWorkflowByResourceTarget() {
+        // when
+        final String pnf_resource = "pnf";
+        doReturn(new ArrayList()).when(catalogDbClient).getMultipleResources(any(), any());
+        catalogDbClient.findWorkflowByResourceTarget(pnf_resource);
+
+        // verify
+        verify(catalogDbClient).getMultipleResources(any(Client.class), eq(UriBuilder.fromUri("/findByResourceTarget")
+                .queryParam(CatalogDbClient.RESOURCE_TARGET, pnf_resource).build()));
     }
 
 }
