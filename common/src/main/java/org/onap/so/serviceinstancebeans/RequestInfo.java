@@ -43,6 +43,8 @@ public class RequestInfo implements Serializable {
     protected String orderNumber;
     @JsonProperty("productFamilyId")
     protected String productFamilyId;
+    @JsonProperty("productFamilyName")
+    protected String productFamilyName;
     @JsonProperty("orderVersion")
     protected Integer orderVersion;
     @JsonSerialize(include = Inclusion.ALWAYS)
@@ -180,6 +182,14 @@ public class RequestInfo implements Serializable {
 
     public void setProductFamilyId(String productFamilyId) {
         this.productFamilyId = productFamilyId;
+    };
+
+    public String getProductFamilyName() {
+        return productFamilyName;
+    }
+
+    public void setProductFamilyName(String productFamilyName) {
+        this.productFamilyName = productFamilyName;
     }
 
     /**
@@ -215,9 +225,9 @@ public class RequestInfo implements Serializable {
     public String toString() {
         return "RequestInfo [billingAccountNumber=" + billingAccountNumber + ", callbackUrl=" + callbackUrl
                 + ", correlator=" + correlator + ", orderNumber=" + orderNumber + ", productFamilyId=" + productFamilyId
-                + ", orderVersion=" + orderVersion + ", source=" + source + ", instanceName=" + instanceName
-                + ", suppressRollback=" + suppressRollback + ", requestorId=" + requestorId + ", applicationId="
-                + applicationId + "]";
+                + ", productFamilyName=" + productFamilyName + ", orderVersion=" + orderVersion + ", source=" + source
+                + ", instanceName=" + instanceName + ", suppressRollback=" + suppressRollback + ", requestorId="
+                + requestorId + ", applicationId=" + applicationId + "]";
     }
 
 

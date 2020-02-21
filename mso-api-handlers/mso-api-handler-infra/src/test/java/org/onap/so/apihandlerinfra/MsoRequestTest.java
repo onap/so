@@ -22,6 +22,7 @@ package org.onap.so.apihandlerinfra;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.doReturn;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Files;
@@ -34,12 +35,19 @@ import javax.ws.rs.core.Response;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.http.HttpStatus;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.onap.aai.domain.yang.Service;
+import org.onap.aai.domain.yang.Tenant;
 import org.onap.so.apihandler.common.ErrorNumbers;
+import org.onap.so.apihandlerinfra.infra.rest.AAIDataRetrieval;
 import org.onap.so.exceptions.ValidationException;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
@@ -74,6 +82,17 @@ public class MsoRequestTest extends BaseTest {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
+
+    @Mock
+    private AAIDataRetrieval aaiDataRet;
+
+    @InjectMocks
+    private MsoRequest msoRequestMock;
+
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+    }
 
     public String inputStream(String JsonInput) throws IOException {
         JsonInput = "src/test/resources/MsoRequestTest" + JsonInput;
@@ -1054,6 +1073,38 @@ public class MsoRequestTest extends BaseTest {
         Document document = builder.parse(new InputSource(new StringReader(xmlStr)));
         String result = MsoRequest.domToStr(document);
         assertNotNull(result);
+    }
+
+    @Test
+    public void getTenantNameFromAAITest() throws Exception {
+        this.sir = mapper.readValue(inputStream("/SuccessfulValidation/ServiceAssign.json"),
+                ServiceInstancesRequest.class);
+        String tenantId = "88a6ca3ee0394ade9403f075db23167e";
+        String tenantNameFromAAI = "testTenantName";
+        String cloudRegion = "mdt1";
+        String cloudOwner = "cloudOwner";
+        this.sir.getRequestDetails().getCloudConfiguration().setCloudOwner(cloudOwner);
+        Tenant tenant = new Tenant();
+        tenant.setTenantId(tenantId);
+        tenant.setTenantName(tenantNameFromAAI);
+        doReturn(tenant).when(aaiDataRet).getTenant(cloudOwner, cloudRegion, tenantId);
+        String tenantName = msoRequestMock.getTenantNameFromAAI(this.sir);
+        assertEquals(tenantNameFromAAI, tenantName);
+    }
+
+
+    @Test
+    public void getProductFamilyNameFromAAITest() throws Exception {
+        this.sir = mapper.readValue(inputStream("/SuccessfulValidation/ServiceAssign.json"),
+                ServiceInstancesRequest.class);
+        String serviceId = "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb";
+        String serviceDescription = "testServiceDescription";
+        Service service = new Service();
+        service.setServiceId(serviceId);
+        service.setServiceDescription(serviceDescription);
+        doReturn(service).when(aaiDataRet).getService(serviceId);
+        String productFamilyName = msoRequestMock.getProductFamilyNameFromAAI(this.sir);
+        assertEquals(serviceDescription, productFamilyName);
     }
 
 

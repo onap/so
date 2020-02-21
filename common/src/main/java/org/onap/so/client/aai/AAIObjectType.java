@@ -58,6 +58,7 @@ import org.onap.aai.domain.yang.PortGroup;
 import org.onap.aai.domain.yang.Project;
 import org.onap.aai.domain.yang.Pserver;
 import org.onap.aai.domain.yang.RouteTableReference;
+import org.onap.aai.domain.yang.Service;
 import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aai.domain.yang.ServiceSubscription;
 import org.onap.aai.domain.yang.SpPartner;
@@ -122,6 +123,8 @@ public class AAIObjectType implements GraphInventoryObjectType, Serializable {
     public static final AAIObjectType SERVICE_INSTANCE_METADATA = new AAIObjectType(
             AAIObjectType.SERVICE_INSTANCE + "/metadata", org.onap.aai.domain.yang.v13.Metadata.class);
 
+    public static final AAIObjectType SERVICE = new AAIObjectType(
+            AAINamespaceConstants.SERVICE_DESIGN_AND_CREATION + "/services/service/{service-id}", Service.class);
     public static final AAIObjectType SERVICE_INSTANCE =
             new AAIObjectType(AAIObjectType.SERVICE_SUBSCRIPTION.uriTemplate(), ServiceInstance.class);
     public static final AAIObjectType PROJECT = new AAIObjectType(AAINamespaceConstants.BUSINESS, Project.class);

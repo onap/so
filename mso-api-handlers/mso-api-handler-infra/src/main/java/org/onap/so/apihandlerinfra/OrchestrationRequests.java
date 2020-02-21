@@ -347,6 +347,13 @@ public class OrchestrationRequests {
                 } else {
                     requestDetails = mapper.readValue(requestBody, RequestDetails.class);
                 }
+                if (requestDetails.getRequestInfo() != null && iar.getProductFamilyName() != null) {
+                    requestDetails.getRequestInfo().setProductFamilyName(iar.getProductFamilyName());
+                }
+                if (requestDetails.getCloudConfiguration() != null && iar.getTenantName() != null) {
+                    requestDetails.getCloudConfiguration().setTenantName(iar.getTenantName());
+                }
+
             } catch (IOException e) {
                 logger.error("Exception occurred", e);
                 ErrorLoggerInfo errorLoggerInfo =

@@ -42,7 +42,11 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import org.onap.aai.domain.yang.GenericVnf;
+import org.onap.aai.domain.yang.ServiceInstance;
+import org.onap.aai.domain.yang.Tenant;
 import org.onap.so.apihandler.common.ResponseBuilder;
+import org.onap.so.apihandlerinfra.infra.rest.AAIDataRetrieval;
 import org.onap.so.apihandlerinfra.tasksbeans.TasksRequest;
 import org.onap.so.apihandlerinfra.validation.ApplyUpdatedConfigValidation;
 import org.onap.so.apihandlerinfra.validation.CloudConfigurationValidation;
@@ -97,7 +101,6 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
 @Component
 public class MsoRequest {
 
@@ -106,6 +109,9 @@ public class MsoRequest {
 
     @Autowired
     private ResponseBuilder builder;
+
+    @Autowired
+    private AAIDataRetrieval aaiDataRet;
 
     @Value("${mso.enforceDLP:false}")
     private boolean enforceDLP;
@@ -315,6 +321,25 @@ public class MsoRequest {
                     aq.setRequestScope(requestScope);
                     aq.setPnfName(servInsReq.getPnfName());
                 }
+
+                if (servInsReq.getRequestDetails() != null && servInsReq.getRequestDetails().getRequestInfo() != null
+                        && servInsReq.getRequestDetails().getRequestInfo().getProductFamilyId() != null) {
+                    logger.debug("Retrieving productFamilyName to put into requests db");
+
+                    org.onap.aai.domain.yang.Service service =
+                            aaiDataRet.getService(servInsReq.getRequestDetails().getRequestInfo().getProductFamilyId());
+                    if (service != null) {
+                        logger.debug("Found service by service-id");
+                        String productFamilyName = service.getServiceDescription();
+                        if (productFamilyName != null) {
+                            aq.setProductFamilyName(productFamilyName);
+                        }
+                    }
+                }
+
+                aq.setProductFamilyName(getProductFamilyNameFromAAI(servInsReq));
+
+                aq.setTenantName(getTenantNameFromAAI(servInsReq));
 
                 if (ModelType.service.name().equalsIgnoreCase(requestScope)) {
                     if (servInsReq.getRequestDetails().getRequestInfo() != null) {
@@ -681,6 +706,33 @@ public class MsoRequest {
             vnfType = serviceModelName + "/" + sir.getRequestDetails().getModelInfo().getModelCustomizationName();
 
         return vnfType;
+    }
+
+    protected String getTenantNameFromAAI(ServiceInstancesRequest servInsReq) {
+        String tenantName = null;
+        if (servInsReq.getRequestDetails() != null && servInsReq.getRequestDetails().getCloudConfiguration() != null
+                && servInsReq.getRequestDetails().getCloudConfiguration().getTenantId() != null) {
+            Tenant tenant = aaiDataRet.getTenant(servInsReq.getRequestDetails().getCloudConfiguration().getCloudOwner(),
+                    servInsReq.getRequestDetails().getCloudConfiguration().getLcpCloudRegionId(),
+                    servInsReq.getRequestDetails().getCloudConfiguration().getTenantId());
+            if (tenant != null) {
+                tenantName = tenant.getTenantName();
+            }
+        }
+        return tenantName;
+    }
+
+    protected String getProductFamilyNameFromAAI(ServiceInstancesRequest servInsReq) {
+        String productFamilyName = null;
+        if (servInsReq.getRequestDetails() != null && servInsReq.getRequestDetails().getRequestInfo() != null
+                && servInsReq.getRequestDetails().getRequestInfo().getProductFamilyId() != null) {
+            org.onap.aai.domain.yang.Service service =
+                    aaiDataRet.getService(servInsReq.getRequestDetails().getRequestInfo().getProductFamilyId());
+            if (service != null) {
+                productFamilyName = service.getServiceDescription();
+            }
+        }
+        return productFamilyName;
     }
 
 }

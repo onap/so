@@ -441,6 +441,10 @@ public class ServiceInstancesTest extends BaseTest {
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
 
+        wireMockServer.stubFor(get(urlMatching(".*/service-design-and-creation/services/service/.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBodyFile("/aai/ServiceFromAAI.json").withStatus(HttpStatus.SC_OK)));
+
         wireMockServer.stubFor(get(urlMatching(".*/service/search/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
@@ -483,6 +487,10 @@ public class ServiceInstancesTest extends BaseTest {
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
 
+        wireMockServer.stubFor(get(urlMatching(".*/service-design-and-creation/services/service/.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBodyFile("/aai/ServiceFromAAI.json").withStatus(HttpStatus.SC_OK)));
+
         wireMockServer.stubFor(get(urlMatching(".*/service/search/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
@@ -523,6 +531,10 @@ public class ServiceInstancesTest extends BaseTest {
         wireMockServer.stubFor(get(urlMatching(".*/service/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+
+        wireMockServer.stubFor(get(urlMatching(".*/service-design-and-creation/services/service/.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBodyFile("/aai/ServiceFromAAI.json").withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/service/search/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -1939,6 +1951,10 @@ public class ServiceInstancesTest extends BaseTest {
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
 
+        wireMockServer.stubFor(get(urlMatching(".*/service-design-and-creation/services/service/.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBodyFile("/aai/ServiceFromAAI.json").withStatus(HttpStatus.SC_OK)));
+
         wireMockServer.stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(serviceRecipe)).withStatus(HttpStatus.SC_OK)));
@@ -2113,6 +2129,10 @@ public class ServiceInstancesTest extends BaseTest {
         wireMockServer.stubFor(get(urlMatching(".*/service/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(defaultService)).withStatus(HttpStatus.SC_OK)));
+
+        wireMockServer.stubFor(get(urlMatching(".*/service-design-and-creation/services/service/.*"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBodyFile("/aai/ServiceFromAAI.json").withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)

@@ -145,6 +145,8 @@ public class ArchiveInfraRequestsScheduler {
                 archivedInfra.setVnfType(iar.getVnfType());
                 archivedInfra.setVolumeGroupId(iar.getVolumeGroupId());
                 archivedInfra.setVolumeGroupName(iar.getVolumeGroupName());
+                archivedInfra.setProductFamilyName(iar.getProductFamilyName());
+                archivedInfra.setTenantName(iar.getTenantName());
 
                 newArchivedReqs.add(archivedInfra);
                 oldInfraReqs.add(iar);
