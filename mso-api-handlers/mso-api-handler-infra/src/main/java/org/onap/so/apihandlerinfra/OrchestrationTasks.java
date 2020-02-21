@@ -138,4 +138,95 @@ public class OrchestrationTasks {
         }
     }
 
+    @POST
+    @Path("/{version:[vV][4-7]}/{taskId}/commit")
+    @Operation(description = "Commit an Orchestrated Task", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
+    public Response CommitOrchestrationTask(@PathParam("taskId") String taskId, @PathParam("version") String version) {
+        OrchestrationTask orchestrationTask;
+        try {
+            orchestrationTask = requestsDbClient.getOrchestrationTask(taskId);
+        } catch (Exception e) {
+            logger.error(LoggingAnchor.FOUR, MessageEnum.APIH_DB_ACCESS_EXC.toString(), MSO_PROP_APIHANDLER_INFRA,
+                    ErrorCode.AvailabilityError.getValue(),
+                    "Exception while communciate with Request DB - Orchestration Task Commit", e);
+            Response response =
+                    msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND, MsoException.ServiceException,
+                            e.getMessage(), ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB, null, version);
+            return response;
+        }
+        try {
+            String taskName = orchestrationTask.getName();
+            Map<String, String> commitVar = new HashMap<>();
+            commitVar.put("taskAction", "commit");
+            JSONObject msgJson = createMessageBody(taskId, taskName, commitVar);
+            camundaRequestHandler.sendCamundaMessages(msgJson);
+            return builder.buildResponse(HttpStatus.SC_OK, null, orchestrationTask, version);
+        } catch (Exception e) {
+            logger.error(LoggingAnchor.FOUR, MessageEnum.APIH_DB_ACCESS_EXC.toString(), MSO_PROP_APIHANDLER_INFRA,
+                    ErrorCode.AvailabilityError.getValue(),
+                    "Exception while communciate with Request DB - Orchestration Task Delete", e);
+            Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR,
+                    MsoException.ServiceException, e.getMessage(), ErrorNumbers.ERROR_FROM_BPEL, null, version);
+            return response;
+        }
+
+    }
+
+    @POST
+    @Path("/{version:[vV][4-7]}/{taskId}/abort")
+    @Operation(description = "Commit an Orchestrated Task", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
+    public Response AbortOrchestrationTask(@PathParam("taskId") String taskId, @PathParam("version") String version) {
+        OrchestrationTask orchestrationTask;
+        try {
+            orchestrationTask = requestsDbClient.getOrchestrationTask(taskId);
+        } catch (Exception e) {
+            logger.error(LoggingAnchor.FOUR, MessageEnum.APIH_DB_ACCESS_EXC.toString(), MSO_PROP_APIHANDLER_INFRA,
+                    ErrorCode.AvailabilityError.getValue(),
+                    "Exception while communciate with Request DB - Orchestration Task Commit", e);
+            Response response =
+                    msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND, MsoException.ServiceException,
+                            e.getMessage(), ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB, null, version);
+            return response;
+        }
+        try {
+            String taskName = orchestrationTask.getName();
+            Map<String, String> commitVar = new HashMap<>();
+            commitVar.put("taskAction", "abort");
+            JSONObject msgJson = createMessageBody(taskId, taskName, commitVar);
+            camundaRequestHandler.sendCamundaMessages(msgJson);
+            return builder.buildResponse(HttpStatus.SC_OK, null, orchestrationTask, version);
+        } catch (Exception e) {
+            logger.error(LoggingAnchor.FOUR, MessageEnum.APIH_DB_ACCESS_EXC.toString(), MSO_PROP_APIHANDLER_INFRA,
+                    ErrorCode.AvailabilityError.getValue(),
+                    "Exception while communciate with Request DB - Orchestration Task Delete", e);
+            Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR,
+                    MsoException.ServiceException, e.getMessage(), ErrorNumbers.ERROR_FROM_BPEL, null, version);
+            return response;
+        }
+
+    }
+
+    private JSONObject createMessageBody(String taskId, String taskName, Map<String, ?> variables) {
+        JSONObject msgJson = new JSONObject();
+        msgJson.put("messageName", taskName);
+        msgJson.put("businessKey", taskId);
+        JSONObject processVariables = new JSONObject();
+        for (Map.Entry<String, ?> entry : variables.entrySet()) {
+            JSONObject valueInfo = new JSONObject();
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            valueInfo.put("value", value.toString());
+            valueInfo.put("type", value.getClass().getSimpleName());
+            processVariables.put(key, valueInfo);
+        }
+        msgJson.put("processVariables", processVariables);
+        return msgJson;
+    }
+
 }
