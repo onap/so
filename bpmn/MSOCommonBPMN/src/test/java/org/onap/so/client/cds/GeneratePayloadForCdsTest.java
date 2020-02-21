@@ -19,9 +19,6 @@
  */
 package org.onap.so.client.cds;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonParser;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;
 import org.junit.Before;
@@ -30,7 +27,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.omg.Messaging.SYNC_WITH_TRANSPORT;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.common.DelegateExecutionImpl;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
@@ -38,28 +34,19 @@ import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestParameters;
-import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.cds.beans.AbstractCDSPropertiesBean;
-import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.client.exception.PayloadGenerationException;
 import org.onap.so.serviceinstancebeans.*;
 import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.ThrowableAssert.catchThrowable;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class GeneratePayloadForCdsTest {
-    private static final String GENERIC_VNF_ID = "vnfId_configVnfTest1";
-    private static final String VF_MODULE_ID = "vf-module-id-1";
-    private static final String VF_MODULE_NAME = "vf-module-name-1";
     private static final String VF_MODULE_CUSTOMIZATION_UUID = "23ce9ac4-e5dd-11e9-81b4-2a2ae2dbcce1";
-    private static final String GENERIC_VNF_NAME = "vnf-name-1";
-    private static final String SERVICE_INSTANCE_ID = "serviceInst_configTest";
-    private static final String SERVICE_MODEL_UUID = "b45b5780-e5dd-11e9-81b4-2a2ae2dbcce4";
-    private static final String SERVICE_INSTANCE_NAME = "test-service-instance";
     private static final String VNF_MODEL_CUSTOMIZATION_UUID = "23ce9ac4-e5dd-11e9-81b4-2a2ae2dbcce4";
     private static final String GENERAL_BLOCK_EXECUTION_MAP_KEY = "gBBInput";
     private static final String VNF_SCOPE = "vnf";
@@ -68,10 +55,34 @@ public class GeneratePayloadForCdsTest {
     private static final String VF_SCOPE = "vfModule";
     private static final String ASSIGN_ACTION = "configAssign";
     private static final String DEPLOY_ACTION = "configDeploy";
+    private static final String DOWNLOAD_ACTION = "downloadNeSw";
     private static final String MSO_REQUEST_ID = "1234";
     private static final String BUILDING_BLOCK = "buildingBlock";
     private static final String PUBLIC_NET_ID = "public-net-id";
     private static final String CLOUD_REGION = "acl-cloud-region";
+    private static final String TEST_MODEL_UUID = "6bc0b04d-1873-4721-b53d-6615225b2a28";
+    private static final String TEST_SERVICE_INSTANCE_ID = "test_service_id";
+    private static final String TEST_PROCESS_KEY = "processKey1";
+    private static final String TEST_PNF_RESOURCE_INSTANCE_NAME = "PNF_demo_resource";
+    private static final String TEST_PNF_CORRELATION_ID = "PNFDemo";
+    private static final String TEST_PNF_RESOURCE_CUSTOMIZATION_UUID = "9acb3a83-8a52-412c-9a45-901764938144";
+    private static final String TEST_MSO_REQUEST_ID = "ff874603-4222-11e7-9252-005056850d2e";
+    private static final String TEST_PNF_UUID = "5df8b6de-2083-11e7-93ae-92361f002671";
+    private static final String TEST_SOFTWARE_VERSION = "demo-sw-ver2.0.0";
+    private static final String PNF_CORRELATION_ID = "pnfCorrelationId";
+    private static final String PNF_UUID = "pnfUuid";
+    private static final String SERVICE_INSTANCE_ID = "serviceInstanceId";
+    private static final String MODEL_UUID = "modelUuid";
+    private static final String PRC_CUSTOMIZATION_UUID = "PRC_customizationUuid";
+    private static final String PRC_INSTANCE_NAME = "PRC_instanceName";
+    private static final String PRC_TARGET_SOFTWARE_VERSION = "targetSoftwareVersion";
+    private static final String SCOPE = "scope";
+    private static final String ACTION = "action";
+    private static final String PROCESS_KEY = "testProcessKey";
+    private static final String PRC_BLUEPRINT_NAME = "PRC_blueprintName";
+    private static final String PRC_BLUEPRINT_VERSION = "PRC_blueprintVersion";
+    private static final String TEST_PNF_RESOURCE_BLUEPRINT_NAME = "blueprintOnap";
+    private static final String TEST_PNF_RESOURCE_BLUEPRINT_VERSION = "1.0.1";
 
     private BuildingBlockExecution buildingBlockExecution;
     private ExecuteBuildingBlock executeBuildingBlock;
@@ -88,6 +99,9 @@ public class GeneratePayloadForCdsTest {
     @Mock
     private ServiceCDSRequestProvider serviceCDSRequestProvider;
 
+    @Mock
+    private PnfCDSRequestProvider pnfCDSRequestProvider;
+
 
     @Before
     public void setup() {
@@ -100,9 +114,7 @@ public class GeneratePayloadForCdsTest {
         // given
         final String assignPayload =
                 "{\"configAssign-request\":{\"resolution-key\":\"vnf-name-1\",\"configAssign-properties\":{\"service-instance-id\":\"serviceInst_configTest\",\"service-model-uuid\":\"b45b5780-e5dd-11e9-81b4-2a2ae2dbcce4\",\"vnf-id\":\"vnfId_configVnfTest1\",\"vnf-name\":\"vnf-name-1\",\"vnf-customization-uuid\":\"23ce9ac4-e5dd-11e9-81b4-2a2ae2dbcce4\",\"acl-cloud-region\":\"acl-cloud-region\",\"public_net_id\":\"public-net-id\"}}}";
-
         setScopeAndAction(VNF_SCOPE, ASSIGN_ACTION);
-
         doReturn(Optional.of(assignPayload)).when(vnfCDSRequestProvider).buildRequestPayload(ASSIGN_ACTION);
 
         // when
@@ -125,7 +137,6 @@ public class GeneratePayloadForCdsTest {
         final String deployPayload =
                 "{\"configDeploy-request\":{\"resolution-key\":\"vnf-name-1\",\"configDeploy-properties\":{\"service-instance-id\":\"serviceInst_configTest\",\"service-model-uuid\":\"b45b5780-e5dd-11e9-81b4-2a2ae2dbcce4\",\"vnf-id\":\"vnfId_configVnfTest1\",\"vnf-name\":\"vnf-name-1\",\"vnf-customization-uuid\":\"23ce9ac4-e5dd-11e9-81b4-2a2ae2dbcce4\",\"acl-cloud-region\":\"acl-cloud-region\",\"public_net_id\":\"public-net-id\"}}}";
         setScopeAndAction(VNF_SCOPE, DEPLOY_ACTION);
-
         doReturn(Optional.of(deployPayload)).when(vnfCDSRequestProvider).buildRequestPayload(DEPLOY_ACTION);
 
         // when
@@ -188,10 +199,35 @@ public class GeneratePayloadForCdsTest {
     }
 
     @Test
+    public void testBuildCdsPropertiesBeanDownloadPnf() throws Exception {
+        // given
+        final String downloadPayload =
+                "{\"downloadNeSw-request\":{\"resolution-key\":\"PNFDemo\",\"downloadNeSw-properties\":{\"service-instance-id\":\"test_service_id\",\"service-model-uuid\":\"6bc0b04d-1873-4721-b53d-6615225b2a28\",\"pnf-id\":\"5df8b6de-2083-11e7-93ae-92361f002671\",\"pnf-name\":\"PNFDemo\",\"pnf-customization-uuid\":\"9acb3a83-8a52-412c-9a45-901764938144\",\"target-software-version\":\"demo-sw-ver2.0.0\"}}}";
+        DelegateExecution execution = prepareDelegateExecutionObj(PayloadConstants.PNF_SCOPE, DOWNLOAD_ACTION);
+        doReturn(Optional.of(downloadPayload)).when(pnfCDSRequestProvider).buildRequestPayload(DOWNLOAD_ACTION);
+        doReturn(TEST_PNF_RESOURCE_BLUEPRINT_NAME).when(pnfCDSRequestProvider).getBlueprintName();
+        doReturn(TEST_PNF_RESOURCE_BLUEPRINT_VERSION).when(pnfCDSRequestProvider).getBlueprintVersion();
+
+        // when
+        AbstractCDSPropertiesBean propertyBean = configurePayloadForCds.buildCdsPropertiesBean(execution);
+
+        // verify
+        assertNotNull(propertyBean);
+        String payload = propertyBean.getRequestObject();
+        assertThat(downloadPayload.equals(payload));
+        assertThat(propertyBean.getRequestId().equals(MSO_REQUEST_ID));
+        assertThat(propertyBean.getOriginatorId().equals("SO"));
+        assertNotNull(propertyBean.getSubRequestId());
+        assertThat(propertyBean.getActionName().equals(DOWNLOAD_ACTION));
+        assertThat(propertyBean.getMode().equalsIgnoreCase("async"));
+        assertThat(propertyBean.getBlueprintName().equalsIgnoreCase(TEST_PNF_RESOURCE_BLUEPRINT_NAME));
+        assertThat(propertyBean.getBlueprintVersion().equalsIgnoreCase(TEST_PNF_RESOURCE_BLUEPRINT_VERSION));
+    }
+
+    @Test
     public void testFailureWhenServiceInstanceIsNotPresent() throws Exception {
         // given
         setScopeAndAction(VNF_SCOPE, ASSIGN_ACTION);
-
         doThrow(PayloadGenerationException.class).when(serviceCDSRequestProvider).buildRequestPayload(ASSIGN_ACTION);
 
         // when
@@ -283,5 +319,24 @@ public class GeneratePayloadForCdsTest {
         buildingBlock.setBpmnAction(action);
         executeBuildingBlock.setBuildingBlock(buildingBlock);
         buildingBlockExecution.setVariable(BUILDING_BLOCK, executeBuildingBlock);
+    }
+
+    private DelegateExecution prepareDelegateExecutionObj(String scope, String action) {
+        DelegateExecution execution = new DelegateExecutionFake();
+        execution.setVariable(PROCESS_KEY, TEST_PROCESS_KEY);
+        execution.setVariable(PNF_CORRELATION_ID, TEST_PNF_CORRELATION_ID);
+        execution.setVariable(MODEL_UUID, TEST_MODEL_UUID);
+        execution.setVariable(SERVICE_INSTANCE_ID, TEST_SERVICE_INSTANCE_ID);
+        execution.setVariable(MSO_REQUEST_ID, TEST_MSO_REQUEST_ID);
+        execution.setVariable(PNF_UUID, TEST_PNF_UUID);
+        execution.setVariable(PRC_INSTANCE_NAME, TEST_PNF_RESOURCE_INSTANCE_NAME);
+        execution.setVariable(PRC_CUSTOMIZATION_UUID, TEST_PNF_RESOURCE_CUSTOMIZATION_UUID);
+        execution.setVariable(PRC_TARGET_SOFTWARE_VERSION, TEST_SOFTWARE_VERSION);
+        execution.setVariable(PRC_BLUEPRINT_NAME, TEST_PNF_RESOURCE_BLUEPRINT_NAME);
+        execution.setVariable(PRC_BLUEPRINT_VERSION, TEST_PNF_RESOURCE_BLUEPRINT_VERSION);
+        execution.setVariable(SCOPE, scope);
+        execution.setVariable(ACTION, action);
+        execution.setVariable("mode", "async");
+        return execution;
     }
 }
