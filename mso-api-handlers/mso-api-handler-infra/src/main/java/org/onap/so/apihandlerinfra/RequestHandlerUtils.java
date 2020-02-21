@@ -506,8 +506,8 @@ public class RequestHandlerUtils extends AbstractRestHandler {
             if (instanceIdMap.get(CommonConstants.INSTANCE_GROUP_INSTANCE_ID) != null) {
                 currentActiveReq.setInstanceGroupId(instanceIdMap.get(CommonConstants.INSTANCE_GROUP_INSTANCE_ID));
             }
-            if (instanceIdMap.get("PnfId") != null) {
-                currentActiveReq.setPnfId(instanceIdMap.get("PnfId"));
+            if (instanceIdMap.get("pnfName") != null) {
+                currentActiveReq.setPnfName(instanceIdMap.get("pnfName"));
             }
         }
     }

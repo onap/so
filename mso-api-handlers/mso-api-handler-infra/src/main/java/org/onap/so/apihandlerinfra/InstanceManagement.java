@@ -95,7 +95,7 @@ public class InstanceManagement {
     @Path("/{version:[vV][1]}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/workflows/{workflowUuid}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Execute custom workflow", responses = @ApiResponse(
+    @Operation(description = "Execute custom VNF workflow", responses = @ApiResponse(
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response executeVNFCustomWorkflow(String request, @PathParam("version") String version,
@@ -112,20 +112,20 @@ public class InstanceManagement {
     }
 
     @POST
-    @Path("/{version:[vV][1]}/serviceInstances/{serviceInstanceId}/pnfs/{pnfId}/workflows/{workflowUuid}")
+    @Path("/{version:[vV][1]}/serviceInstances/{serviceInstanceId}/pnfs/{pnfName}/workflows/{workflowUuid}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Execute custom workflow", responses = @ApiResponse(
+    @Operation(description = "Execute custom PNF workflow", responses = @ApiResponse(
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Transactional
     public Response executePNFCustomWorkflow(String request, @PathParam("version") String version,
-            @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("pnfId") String pnfId,
+            @PathParam("serviceInstanceId") String serviceInstanceId, @PathParam("pnfName") String pnfName,
             @PathParam("workflowUuid") String workflowUuid, @Context ContainerRequestContext requestContext)
             throws ApiException {
         String requestId = requestHandlerUtils.getRequestId(requestContext);
         HashMap<String, String> instanceIdMap = new HashMap<>();
         instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-        instanceIdMap.put("pnfId", pnfId);
+        instanceIdMap.put("pnfName", pnfName);
         instanceIdMap.put("workflowUuid", workflowUuid);
         return processPNFCustomWorkflowRequest(request, Action.forCustomWorkflow, instanceIdMap, version, requestId,
                 requestContext);
@@ -255,18 +255,18 @@ public class InstanceManagement {
         String apiVersion = version.substring(1);
 
         String serviceInstanceId = "";
-        String pnfId = "";
+        String pnfName = "";
         String workflowUuid = "";
         if (instanceIdMap != null) {
             serviceInstanceId = instanceIdMap.get("serviceInstanceId");
-            pnfId = instanceIdMap.get("pnfId");
+            pnfName = instanceIdMap.get("pnfName");
             workflowUuid = instanceIdMap.get("workflowUuid");
         }
 
         String requestUri = requestHandlerUtils.getRequestUri(requestContext, uriPrefix);
         sir = requestHandlerUtils.convertJsonToServiceInstanceRequest(requestJSON, action, requestId, requestUri);
         sir.setServiceInstanceId(serviceInstanceId);
-        sir.setPnfId(pnfId);
+        sir.setPnfName(pnfName);
         String requestScope = ModelType.pnf.name();
         InfraActiveRequests currentActiveReq =
                 msoRequest.createRequestObject(sir, action, requestId, Status.IN_PROGRESS, requestJSON, requestScope);
@@ -299,7 +299,7 @@ public class InstanceManagement {
         try {
             requestClientParameter = new RequestClientParameter.Builder().setRequestId(requestId)
                     .setRecipeTimeout(recipeLookupResult.getRecipeTimeout()).setRequestAction(action.toString())
-                    .setServiceInstanceId(serviceInstanceId).setPnfCorrelationId(pnfId)
+                    .setServiceInstanceId(serviceInstanceId).setPnfCorrelationId(pnfName)
                     .setRequestDetails(requestHandlerUtils.mapJSONtoMSOStyle(requestJSON, null, aLaCarte, action))
                     .setApiVersion(apiVersion).setRequestUri(requestUri).build();
         } catch (IOException e) {

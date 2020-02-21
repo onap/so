@@ -1262,7 +1262,7 @@ CREATE TABLE `infra_active_requests` (
   `END_TIME` datetime DEFAULT NULL,
   `SOURCE` varchar(45) DEFAULT NULL,
   `VNF_ID` varchar(45) DEFAULT NULL,
-  `PNF_ID` varchar(45) DEFAULT NULL,
+  `PNF_NAME` varchar(45) DEFAULT NULL,
   `VNF_NAME` varchar(80) DEFAULT NULL,
   `VNF_TYPE` varchar(200) DEFAULT NULL,
   `SERVICE_TYPE` varchar(45) DEFAULT NULL,
