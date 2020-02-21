@@ -138,4 +138,37 @@ public class OrchestrationTasks {
         }
     }
 
+    @DELETE
+    @Path("/{version:[vV][4-7]}/{taskId}")
+    @Operation(description = "Delete an Orchestrated Task", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
+    public Response DeleteOrchestrationTask(@PathParam("taskId") String taskId, @PathParam("version") String version) {
+        try {
+            OrchestrationTask orchestrationTask = requestsDbClient.getOrchestrationTask(taskId);
+        } catch (Exception e) {
+            logger.error(LoggingAnchor.FOUR, MessageEnum.APIH_DB_ACCESS_EXC.toString(), MSO_PROP_APIHANDLER_INFRA,
+                    ErrorCode.AvailabilityError.getValue(),
+                    "Exception while communciate with Request DB - Orchestration Task Delete", e);
+            Response response =
+                    msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND, MsoException.ServiceException,
+                            e.getMessage(), ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB, null, version);
+            return response;
+        }
+
+        try {
+            requestsDbClient.deleteOrchestrationTask(taskId);
+            return builder.buildResponse(HttpStatus.SC_OK, null, null, version);
+        } catch (Exception e) {
+            logger.error(LoggingAnchor.FOUR, MessageEnum.APIH_DB_ACCESS_EXC.toString(), MSO_PROP_APIHANDLER_INFRA,
+                    ErrorCode.AvailabilityError.getValue(),
+                    "Exception while communciate with Request DB - Orchestration Task Delete", e);
+            Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR,
+                    MsoException.ServiceException, e.getMessage(), ErrorNumbers.COULD_NOT_WRITE_TO_REQUESTS_DB, null,
+                    version);
+            return response;
+        }
+    }
+
 }
