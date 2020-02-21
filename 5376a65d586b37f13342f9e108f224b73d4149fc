@@ -22,6 +22,29 @@
       "revId": "5376a65d586b37f13342f9e108f224b73d4149fc",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "75902655_97e0d465",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDETestIT.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-21T15:56:49Z",
+      "side": 0,
+      "message": "revert",
+      "range": {
+        "startLine": 122,
+        "startChar": 41,
+        "endLine": 122,
+        "endChar": 56
+      },
+      "revId": "5376a65d586b37f13342f9e108f224b73d4149fc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }

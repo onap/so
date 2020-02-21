@@ -85,6 +85,592 @@
       "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "503b180a_9045b036",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-21T15:56:49Z",
+      "side": 1,
+      "message": "this object is expensive you can pull this in into spring context.",
+      "range": {
+        "startLine": 74,
+        "startChar": 8,
+        "endLine": 74,
+        "endChar": 49
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "476a4f35_39c36bbc",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-21T15:56:49Z",
+      "side": 1,
+      "message": "bpmnRequestDetails",
+      "range": {
+        "startLine": 78,
+        "startChar": 23,
+        "endLine": 78,
+        "endChar": 34
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "318cda61_97b18b90",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-21T15:56:49Z",
+      "side": 1,
+      "message": "susceptible for null pointer",
+      "range": {
+        "startLine": 89,
+        "startChar": 49,
+        "endLine": 89,
+        "endChar": 65
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "42d34a40_3d581398",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-21T15:56:49Z",
+      "side": 1,
+      "message": "same",
+      "range": {
+        "startLine": 90,
+        "startChar": 51,
+        "endLine": 90,
+        "endChar": 59
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d0087c6d_a7a2feeb",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-21T15:56:49Z",
+      "side": 1,
+      "message": "final, make all strings final which u r setting in DE",
+      "range": {
+        "startLine": 91,
+        "startChar": 7,
+        "endLine": 91,
+        "endChar": 8
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ef2efdf4_b679d568",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-21T15:56:49Z",
+      "side": 1,
+      "message": "can you iterate all avbl props and set them in DE , this will make this class generic for pnf",
+      "range": {
+        "startLine": 92,
+        "startChar": 74,
+        "endLine": 92,
+        "endChar": 119
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "645ea2b5_6f041592",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-21T15:56:49Z",
+      "side": 1,
+      "message": "if(not present)\n{throw}\n..\n...\n\nNo need for else.",
+      "range": {
+        "startLine": 115,
+        "startChar": 12,
+        "endLine": 121,
+        "endChar": 13
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1b77f78b_1fd26d7e",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegateTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-21T15:56:49Z",
+      "side": 1,
+      "message": "2020",
+      "range": {
+        "startLine": 3,
+        "startChar": 17,
+        "endLine": 3,
+        "endChar": 21
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "27924fdc_d53b767d",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegateTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-21T15:56:49Z",
+      "side": 1,
+      "message": "final",
+      "range": {
+        "startLine": 70,
+        "startChar": 18,
+        "endLine": 70,
+        "endChar": 19
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "659f69f8_e353cbd4",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegateTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-21T15:56:49Z",
+      "side": 1,
+      "message": "PnfManagement is not a bean, when you do MockBean, mockito adds extra functionality for bean mocking , which u dont need. @Mock should work",
+      "range": {
+        "startLine": 91,
+        "startChar": 3,
+        "endLine": 91,
+        "endChar": 13
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "08643345_eb228dcd",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegateTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-21T15:56:49Z",
+      "side": 1,
+      "message": "same",
+      "range": {
+        "startLine": 94,
+        "startChar": 5,
+        "endLine": 94,
+        "endChar": 13
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "44ae2df9_e2879fce",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegateTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-21T15:56:49Z",
+      "side": 1,
+      "message": "same",
+      "range": {
+        "startLine": 97,
+        "startChar": 5,
+        "endLine": 97,
+        "endChar": 13
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "02636b90_3b48f24d",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegateTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-21T15:56:49Z",
+      "side": 1,
+      "message": "not needed.",
+      "range": {
+        "startLine": 100,
+        "startChar": 5,
+        "endLine": 100,
+        "endChar": 14
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c5dff55a_077982b3",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegateTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-21T15:56:49Z",
+      "side": 1,
+      "message": "should fail in case of exception",
+      "range": {
+        "startLine": 144,
+        "startChar": 12,
+        "endLine": 144,
+        "endChar": 32
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "24053977_d823645c",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegateTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-21T15:56:49Z",
+      "side": 1,
+      "message": "u should fail in case of exception",
+      "range": {
+        "startLine": 160,
+        "startChar": 12,
+        "endLine": 160,
+        "endChar": 32
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "28dd7768_9d76ad8e",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegateTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-21T15:56:49Z",
+      "side": 1,
+      "message": "final",
+      "range": {
+        "startLine": 182,
+        "startChar": 7,
+        "endLine": 182,
+        "endChar": 9
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9d6f15c4_37c0bf8d",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/PNFSoftwareUpgrade.bpmn",
+        "patchSetId": 2
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-21T15:56:49Z",
+      "side": 1,
+      "message": "//TODO add an update AAI block with activate.",
+      "range": {
+        "startLine": 82,
+        "startChar": 3,
+        "endLine": 82,
+        "endChar": 13
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1ac38eb5_d2045426",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/PNFSoftwareUpgrade.bpmn",
+        "patchSetId": 2
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-21T15:56:49Z",
+      "side": 1,
+      "message": "async. if you compare it with configDeploy it has async action there. Applies to all 4 blocks.",
+      "range": {
+        "startLine": 88,
+        "startChar": 46,
+        "endLine": 88,
+        "endChar": 50
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "adca0a37_5976fd87",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/PNFSoftwareUpgrade.bpmn",
+        "patchSetId": 2
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-21T15:56:49Z",
+      "side": 1,
+      "message": "postCheck",
+      "range": {
+        "startLine": 98,
+        "startChar": 48,
+        "endLine": 98,
+        "endChar": 57
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e2025759_e1044f73",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/PNFSoftwareUpgrade.bpmn",
+        "patchSetId": 2
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-21T15:56:49Z",
+      "side": 1,
+      "message": "preCheck",
+      "range": {
+        "startLine": 111,
+        "startChar": 48,
+        "endLine": 111,
+        "endChar": 56
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4138fdbb_10cc9a42",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/test/java/org/onap/so/bpmn/infrastructure/process/PNFSoftwareUpgradeTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-21T15:56:49Z",
+      "side": 1,
+      "message": "2020",
+      "range": {
+        "startLine": 3,
+        "startChar": 18,
+        "endLine": 3,
+        "endChar": 22
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2d5dba2a_bec6beef",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/test/resources/request/PNFSoftwareUpgradeTest.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-21T15:56:49Z",
+      "side": 1,
+      "message": "targetSoftwareVersion",
+      "range": {
+        "startLine": 28,
+        "startChar": 18,
+        "endLine": 28,
+        "endChar": 41
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2b7dca42_7bebefca",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDETestIT.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-21T15:56:49Z",
+      "side": 1,
+      "message": "restore this file",
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1575b1af_7b51d78e",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDETestIT.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-21T15:56:49Z",
+      "side": 1,
+      "message": "rm",
+      "range": {
+        "startLine": 120,
+        "startChar": 25,
+        "endLine": 120,
+        "endChar": 74
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "70844c69_c1500ee6",
+        "filename": "common/src/main/java/org/onap/so/serviceinstancebeans/RequestParameters.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-21T15:56:49Z",
+      "side": 1,
+      "message": "is this an agreed param to add here. why this param cant be part of userparams.",
+      "range": {
+        "startLine": 44,
+        "startChar": 3,
+        "endLine": 45,
+        "endChar": 36
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6ebf3d7a_35ee7c1e",
+        "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/beans/PnfResourceCustomization.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-21T15:56:49Z",
+      "side": 1,
+      "message": "restore",
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
