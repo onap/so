@@ -92,6 +92,7 @@ public class JerseyConfiguration extends ResourceConfig {
         register(NoRecipeExceptionMapper.class);
         register(RequestConflictMapper.class);
         register(WorkflowEngineConnectionMapper.class);
+        register(OrchestrationTasks.class);
         // this registration seems to be needed to get predictable
         // execution behavior for the above JSON Exception Mappers
         register(com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider.class);
