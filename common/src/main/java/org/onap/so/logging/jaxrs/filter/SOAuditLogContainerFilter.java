@@ -3,6 +3,7 @@ package org.onap.so.logging.jaxrs.filter;
 import javax.annotation.Priority;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.PreMatching;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.logger.HttpHeadersConstants;
 import org.onap.so.logger.LogConstants;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.onap.logging.filter.base.AuditLogContainerFilter;
 
 @Priority(1)
+@PreMatching
 @Component
 public class SOAuditLogContainerFilter extends AuditLogContainerFilter {
 
@@ -25,10 +27,5 @@ public class SOAuditLogContainerFilter extends AuditLogContainerFilter {
             MDC.put(HttpHeadersConstants.REQUESTOR_ID, requestorId);
         }
         MDC.put(LogConstants.URI_BASE, request.getUriInfo().getBaseUri().toString());
-    }
-
-    @Override
-    protected void additionalPostHandling(ContainerResponseContext response) {
-        // override to add additional post handling
     }
 }
