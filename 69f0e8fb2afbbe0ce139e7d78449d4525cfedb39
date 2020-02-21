@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "f5819335_91c1ae8e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-21T16:03:54Z",
+      "side": 1,
+      "message": "Issue-ID: SO-2514\nIssue-ID: SO-2089\nIssue-ID: SO-2515",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 17
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c7ffe79f_2f950dbb",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/beans/PreCheckPropertiesForPnf.java",
         "patchSetId": 2
