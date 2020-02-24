@@ -119,7 +119,13 @@ public class VfcAdapterRest {
             ValidateUtil.assertObjectNotNull(data);
             logger.debug(REQUEST_DEBUG_MSG + data);
             NsOperationKey nsOperationKey = JsonUtil.unMarshal(data, NsOperationKey.class);
-            RestfulResponse rsp = driverMgr.deleteNs(nsOperationKey, nsInstanceId);
+            RestfulResponse rsp;
+            InstanceNfvoMapping instanceNfvoMapping = instanceNfvoMappingRepository.findOneByInstanceId(nsInstanceId);
+            if (instanceNfvoMapping != null) {
+                rsp = vfcManagerSol005.deleteNs(nsOperationKey, nsInstanceId);
+            } else {
+                rsp = driverMgr.deleteNs(nsOperationKey, nsInstanceId);
+            }
             return buildResponse(rsp);
         } catch (ApplicationException e) {
             logger.debug(APPLICATION_EXCEPTION, e);

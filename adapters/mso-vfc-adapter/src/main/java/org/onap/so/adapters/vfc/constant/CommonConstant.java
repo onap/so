@@ -42,6 +42,7 @@ public class CommonConstant {
     public static final String SOL005_NFVO_TERMINATE_URL = "/api/nslcm/v1/ns_instances/%s/terminate";
 
     public static final String NFVO_DELETE_URL = "/api/nslcm/v1/ns/%s";
+    public static final String SOL005_NFVO_DELETE_URL = "/api/nslcm/v1/ns_instances/%s";
 
     public static final String NFVO_QUERY_URL = "/api/nslcm/v1/jobs/%s";
     public static final String SOL005_NFVO_QUERY_URL = "/api/nslcm/v1/ns_lcm_op_occs/%s";

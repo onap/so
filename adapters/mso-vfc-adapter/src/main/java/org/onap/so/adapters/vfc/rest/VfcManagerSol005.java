@@ -74,7 +74,7 @@ public class VfcManagerSol005 {
         nfvoUrlMap.put(Step.CREATE, CommonConstant.SOL005_NFVO_CREATE_URL);
         nfvoUrlMap.put(Step.INSTANTIATE, CommonConstant.SOL005_NFVO_INSTANTIATE_URL);
         nfvoUrlMap.put(Step.TERMINATE, CommonConstant.SOL005_NFVO_TERMINATE_URL);
-        nfvoUrlMap.put(Step.DELETE, CommonConstant.NFVO_DELETE_URL);
+        nfvoUrlMap.put(Step.DELETE, CommonConstant.SOL005_NFVO_DELETE_URL);
         nfvoUrlMap.put(Step.QUERY, CommonConstant.SOL005_NFVO_QUERY_URL);
         nfvoUrlMap.put(Step.SCALE, CommonConstant.NFVO_SCALE_URL);
     }
@@ -95,7 +95,7 @@ public class VfcManagerSol005 {
         LOGGER.info("serviceTemplateId is {}, id is {}", nsdId, nsdId);
 
 
-        LOGGER.info("create ns -> begin");
+        LOGGER.info("SOL005 create ns -> begin");
         // Step2: Prepare url and method type
         String url = getUrl(null, CommonConstant.Step.CREATE);
         String methodType = CommonConstant.MethodType.POST;
@@ -188,7 +188,7 @@ public class VfcManagerSol005 {
      * @since ONAP Dublin Release
      */
     public RestfulResponse deleteNs(NsOperationKey nsOperationKey, String nsInstanceId) throws ApplicationException {
-        LOGGER.info("delete ns -> begin");
+        LOGGER.info("SOL005 delete ns -> begin");
         // Step1: prepare url and methodType
         String url = getUrl(nsInstanceId, CommonConstant.Step.DELETE);
         String methodType = CommonConstant.MethodType.DELETE;
@@ -240,7 +240,7 @@ public class VfcManagerSol005 {
     public RestfulResponse instantiateNs(String nsInstanceId, NSResourceInputParameter segInput)
             throws ApplicationException {
         // Call the NFVO or SDNO service to instantiate service
-        LOGGER.info("instantiate ns -> begin");
+        LOGGER.info("SOL005 instantiate ns -> begin");
 
         // Step1: Prepare restful parameters and options
         InstantiateNsRequest instantiateNsRequest = new InstantiateNsRequest();
@@ -365,7 +365,7 @@ public class VfcManagerSol005 {
         status.setStatus(RequestsDbConstant.Status.PROCESSING);
         resourceOperationStatusRepository.save(status);
 
-        LOGGER.info("terminate ns -> begin");
+        LOGGER.info("SOL005 terminate ns -> begin");
         // Step2: prepare url and method type
         String url = getUrl(nsInstanceId, CommonConstant.Step.TERMINATE);
         String methodType = CommonConstant.MethodType.POST;
@@ -400,9 +400,9 @@ public class VfcManagerSol005 {
             throw new ApplicationException(HttpCode.INTERNAL_SERVER_ERROR, DriverExceptionID.FAIL_TO_TERMINATE_NS);
         }
         // @SuppressWarnings("unchecked")
+        String jobId = null;
         Map<String, String> rsp = new HashMap<>();
         if (terminateRsp.getStatus() == 202) {
-            String jobId = null;
             String jobUri = terminateRsp.getRespHeaderStr(CommonConstant.JOB_URI);
             jobId = jobUri.split("/")[4];
             jobId.split("/");
@@ -447,6 +447,8 @@ public class VfcManagerSol005 {
             }
 
         }
+        instanceNfvoMapping.setJobId(jobId);
+        instanceNfvoMappingRepository.save(instanceNfvoMapping);
         terminateRsp.setResponseContent(rsp.toString());
         return terminateRsp;
     }
@@ -472,7 +474,7 @@ public class VfcManagerSol005 {
         instanceNfvoMapping = instanceNfvoMappingRepository.findOneByJobId(jobId);
 
         // Step 2: start query
-        LOGGER.info("query ns status -> begin");
+        LOGGER.info("SOL005 query ns status -> begin");
         String url = getUrl(jobId, CommonConstant.Step.QUERY);
         String methodType = CommonConstant.MethodType.GET;
         if (instanceNfvoMapping != null) {
