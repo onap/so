@@ -30,10 +30,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
-public class ServiceCDSRequestProviderTest extends AbstractVnfCDSRequestProviderTest {
+public class ServiceCDSRequestProviderBBTest extends AbstractVnfCDSRequestProviderBBTest {
 
     @InjectMocks
-    private ServiceCDSRequestProvider serviceCDSRequestProvider;
+    private ServiceCDSRequestProviderBB serviceCDSRequestProviderBB;
 
     @Test
     public void testRequestPayloadForCreateService() throws Exception {
@@ -44,8 +44,8 @@ public class ServiceCDSRequestProviderTest extends AbstractVnfCDSRequestProvider
                 ResourceKey.SERVICE_INSTANCE_ID);
 
         // when
-        serviceCDSRequestProvider.setExecutionObject(buildingBlockExecution);
-        String payload = serviceCDSRequestProvider.buildRequestPayload(SERVICE_ACTION).get();
+        serviceCDSRequestProviderBB.setExecutionObject(buildingBlockExecution);
+        String payload = serviceCDSRequestProviderBB.buildRequestPayload(SERVICE_ACTION).get();
 
         // verify
         ObjectMapper mapper = new ObjectMapper();

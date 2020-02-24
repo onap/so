@@ -22,7 +22,6 @@ package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.bpmn.infrastructure.decisionpoint.api.ControllerContext;
 import org.onap.so.bpmn.infrastructure.decisionpoint.api.ControllerRunnable;
-import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.cds.AbstractCDSProcessingBBUtils;
 import org.onap.so.client.cds.GeneratePayloadForCds;
 import org.onap.so.client.cds.PayloadConstants;
@@ -39,8 +38,8 @@ import org.springframework.stereotype.Component;
  * @param - DelegateExecution
  */
 @Component
-public class GenericPnfCDSProcessingDE implements ControllerRunnable<DelegateExecution> {
-    private static final Logger logger = LoggerFactory.getLogger(GenericPnfCDSProcessingDE.class);
+public class GenericPnfCDSControllerRunnableDE implements ControllerRunnable<DelegateExecution> {
+    private static final Logger logger = LoggerFactory.getLogger(GenericPnfCDSControllerRunnableDE.class);
     private static final String EXECUTION_OBJECT = "executionObject";
     private static final String ASSIGN_ACTION = "config-assign";
     private static final String DEPLOY_ACTION = "config-deploy";

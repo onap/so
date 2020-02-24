@@ -42,19 +42,19 @@ public class GeneratePayloadForCds {
     private static final String MSO_REQUEST_ID = "msoRequestId";
 
     @Autowired
-    private VnfCDSRequestProvider vnfCDSRequestProvider;
+    private VnfCDSRequestProviderBB vnfCDSRequestProviderBB;
 
     @Autowired
-    private VfModuleCDSRequestProvider vfModuleCDSRequestProvider;
+    private VfModuleCDSRequestProviderBB vfModuleCDSRequestProviderBB;
 
     @Autowired
-    private ServiceCDSRequestProvider serviceCDSRequestProvider;
+    private ServiceCDSRequestProviderBB serviceCDSRequestProviderBB;
 
     @Autowired
     private ExtractPojosForBB extractPojosForBB;
 
     @Autowired
-    private PnfCDSRequestProvider pnfCDSRequestProvider;
+    private PnfCDSRequestProviderDE pnfCDSRequestProviderDE;
 
     /**
      * Build properties like (blueprint name, version, action etc..) along with the request payload for vnf, vf-module
@@ -134,16 +134,16 @@ public class GeneratePayloadForCds {
         CDSRequestProvider requestProvider;
         switch (scope) {
             case PayloadConstants.VNF_SCOPE:
-                requestProvider = vnfCDSRequestProvider;
+                requestProvider = vnfCDSRequestProviderBB;
                 break;
             case PayloadConstants.VF_MODULE_SCOPE:
-                requestProvider = vfModuleCDSRequestProvider;
+                requestProvider = vfModuleCDSRequestProviderBB;
                 break;
             case PayloadConstants.SERVICE_SCOPE:
-                requestProvider = serviceCDSRequestProvider;
+                requestProvider = serviceCDSRequestProviderBB;
                 break;
             case PayloadConstants.PNF_SCOPE:
-                requestProvider = pnfCDSRequestProvider;
+                requestProvider = pnfCDSRequestProviderDE;
                 break;
             default:
                 throw new PayloadGenerationException("No scope defined with " + scope);

@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2019 Bell Canada
+ * Copyright (C) 2020 Bell Canada
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,7 @@ package org.onap.so.client.cds;
 
 import com.google.gson.JsonObject;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
-import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.exception.PayloadGenerationException;
@@ -32,33 +30,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import static org.onap.so.client.cds.PayloadConstants.PROPERTIES;
 import static org.onap.so.client.cds.PayloadConstants.SEPARATOR;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class VnfCDSRequestProvider implements CDSRequestProvider {
-    private String blueprintName;
-    private String blueprintVersion;
+public class ServiceCDSRequestProviderBB implements CDSRequestProvider {
+
+    private static final String EMPTY_STRING = "";
+    private String resolutionKey;
     private BuildingBlockExecution execution;
 
     @Autowired
     private ExtractPojosForBB extractPojosForBB;
 
-    @Autowired
-    private ConfigureInstanceParamsForVnf configureInstanceParamsForVnf;
-
     @Override
     public String getBlueprintName() {
-        return blueprintName;
+        return EMPTY_STRING;
     }
 
     @Override
     public String getBlueprintVersion() {
-        return blueprintVersion;
+        return EMPTY_STRING;
     }
 
     @Override
@@ -69,38 +63,27 @@ public class VnfCDSRequestProvider implements CDSRequestProvider {
     @Override
     public Optional<String> buildRequestPayload(String action) throws PayloadGenerationException {
         JsonObject cdsPropertyObject = new JsonObject();
-        JsonObject vnfObject = new JsonObject();
-        String resolutionKey;
+        JsonObject serviceObject = new JsonObject();
         try {
             ServiceInstance serviceInstance =
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
-            GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 
-            final String modelCustomizationUuid = genericVnf.getModelInfoGenericVnf().getModelCustomizationUuid();
+            resolutionKey = serviceInstance.getServiceInstanceName();
 
-            resolutionKey = genericVnf.getVnfName();
-            blueprintName = genericVnf.getBlueprintName();
-            blueprintVersion = genericVnf.getBlueprintVersion();
+            // TODO Need to figure out how to populate blueprint name and version for service.
 
-            vnfObject.addProperty("service-instance-id", serviceInstance.getServiceInstanceId());
-            vnfObject.addProperty("service-model-uuid", serviceInstance.getModelInfoServiceInstance().getModelUuid());
-            vnfObject.addProperty("vnf-id", genericVnf.getVnfId());
-            vnfObject.addProperty("vnf-name", genericVnf.getVnfName());
-            vnfObject.addProperty("vnf-customization-uuid", modelCustomizationUuid);
+            serviceObject.addProperty("service-instance-id", serviceInstance.getServiceInstanceId());
+            serviceObject.addProperty("service-model-uuid",
+                    serviceInstance.getModelInfoServiceInstance().getModelUuid());
 
-            final GeneralBuildingBlock buildingBlock = execution.getGeneralBuildingBlock();
-            List<Map<String, Object>> userParamsFromRequest =
-                    buildingBlock.getRequestContext().getRequestParameters().getUserParams();
-
-            configureInstanceParamsForVnf.populateInstanceParams(vnfObject, userParamsFromRequest,
-                    modelCustomizationUuid);
         } catch (Exception e) {
-            throw new PayloadGenerationException("Failed to buildPropertyObjectForVnf", e);
+            throw new PayloadGenerationException("Failed to buildPropertyObjectForService", e);
         }
 
         cdsPropertyObject.addProperty("resolution-key", resolutionKey);
-        cdsPropertyObject.add(action + SEPARATOR + PROPERTIES, vnfObject);
+        cdsPropertyObject.add(action + SEPARATOR + PROPERTIES, serviceObject);
 
         return Optional.of(buildRequestJsonObject(cdsPropertyObject, action));
     }
+
 }

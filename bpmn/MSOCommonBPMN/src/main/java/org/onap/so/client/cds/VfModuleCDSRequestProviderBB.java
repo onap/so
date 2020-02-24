@@ -42,7 +42,7 @@ import static org.onap.so.client.cds.PayloadConstants.SEPARATOR;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class VfModuleCDSRequestProvider implements CDSRequestProvider {
+public class VfModuleCDSRequestProviderBB implements CDSRequestProvider {
     private String blueprintName;
     private String blueprintVersion;
     private BuildingBlockExecution execution;

@@ -28,7 +28,7 @@ import static org.onap.so.client.cds.PayloadConstants.*;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class PnfCDSRequestProvider implements CDSRequestProvider {
+public class PnfCDSRequestProviderDE implements CDSRequestProvider {
     private String blueprintName;
     private String blueprintVersion;
     private DelegateExecution execution;

@@ -47,7 +47,7 @@ import java.util.List;
 import java.util.Map;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
-public abstract class AbstractVnfCDSRequestProviderTest {
+public abstract class AbstractVnfCDSRequestProviderBBTest {
 
     protected static final String GENERIC_VNF_ID = "vnfId_configVnfTest1";
     protected static final String VF_MODULE_ID = "vf-module-id-1";

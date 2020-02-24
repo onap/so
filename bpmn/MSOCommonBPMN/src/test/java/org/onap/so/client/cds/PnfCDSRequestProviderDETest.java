@@ -35,10 +35,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
-public class PnfCDSRequestProviderTest {
+public class PnfCDSRequestProviderDETest {
 
     @InjectMocks
-    private PnfCDSRequestProvider pnfCDSRequestProvider;
+    private PnfCDSRequestProviderDE pnfCDSRequestProviderDE;
 
     private static final String DOWNLOAD_ACTION = "downloadNeSw";
     private static final String ACTIVATE_ACTION = "activateNeSw";
@@ -90,8 +90,8 @@ public class PnfCDSRequestProviderTest {
         DelegateExecution execution = prepareDelegateExecutionObj(PayloadConstants.PNF_SCOPE, action);
 
         // when
-        pnfCDSRequestProvider.setExecutionObject(execution);
-        String payload = pnfCDSRequestProvider.buildRequestPayload(action).get();
+        pnfCDSRequestProviderDE.setExecutionObject(execution);
+        String payload = pnfCDSRequestProviderDE.buildRequestPayload(action).get();
         System.out.println(payload);
 
         // verify
@@ -109,8 +109,8 @@ public class PnfCDSRequestProviderTest {
         assertThat(propertiesNode.get("pnf-customization-uuid").asText())
                 .isEqualTo(TEST_PNF_RESOURCE_CUSTOMIZATION_UUID);
         assertThat(propertiesNode.get("target-software-version").asText()).isEqualTo(TEST_SOFTWARE_VERSION);
-        assertThat(pnfCDSRequestProvider.getBlueprintName().equals(TEST_PNF_RESOURCE_BLUEPRINT_NAME));
-        assertThat(pnfCDSRequestProvider.getBlueprintVersion().equals(TEST_PNF_RESOURCE_BLUEPRINT_VERSION));
+        assertThat(pnfCDSRequestProviderDE.getBlueprintName().equals(TEST_PNF_RESOURCE_BLUEPRINT_NAME));
+        assertThat(pnfCDSRequestProviderDE.getBlueprintVersion().equals(TEST_PNF_RESOURCE_BLUEPRINT_VERSION));
     }
 
     private DelegateExecution prepareDelegateExecutionObj(String scope, String action) {
