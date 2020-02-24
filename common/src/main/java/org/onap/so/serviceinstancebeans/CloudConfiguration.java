@@ -37,6 +37,8 @@ public class CloudConfiguration implements Serializable {
     protected String aicNodeClli;
     @JsonProperty("tenantId")
     protected String tenantId;
+    @JsonProperty("tenantName")
+    protected String tenantName;
     @JsonProperty("cloudOwner")
     protected String cloudOwner = Defaults.CLOUD_OWNER.toString();
     @JsonProperty("lcpCloudRegionId")
@@ -82,6 +84,13 @@ public class CloudConfiguration implements Serializable {
         this.tenantId = value;
     }
 
+    public String getTenantName() {
+        return tenantName;
+    }
+
+    public void setTenantName(String tenantName) {
+        this.tenantName = tenantName;
+    }
 
     public String getLcpCloudRegionId() {
         return lcpCloudRegionId;
@@ -102,7 +111,8 @@ public class CloudConfiguration implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("aicNodeClli", getAicNodeClli()).append("tenantId", getTenantId())
-                .append("cloudOwner", getCloudOwner()).append("lcpCloudRegionId", getLcpCloudRegionId()).toString();
+                .append("tenantName", getTenantName()).append("cloudOwner", getCloudOwner())
+                .append("lcpCloudRegionId", getLcpCloudRegionId()).toString();
     }
 
 

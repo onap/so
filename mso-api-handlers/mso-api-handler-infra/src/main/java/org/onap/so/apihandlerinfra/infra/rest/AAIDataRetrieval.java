@@ -3,7 +3,9 @@ package org.onap.so.apihandlerinfra.infra.rest;
 import java.util.Optional;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.L3Network;
+import org.onap.aai.domain.yang.Service;
 import org.onap.aai.domain.yang.ServiceInstance;
+import org.onap.aai.domain.yang.Tenant;
 import org.onap.aai.domain.yang.VfModule;
 import org.onap.aai.domain.yang.VolumeGroup;
 import org.onap.so.apihandlerinfra.infra.rest.exception.AAIEntityNotFound;
@@ -33,7 +35,6 @@ public class AAIDataRetrieval {
                     return null;
                 });
     }
-
 
     public VfModule getAAIVfModule(String vnfId, String vfModuleId) {
         return this.getAaiResourcesClient()
@@ -71,6 +72,24 @@ public class AAIDataRetrieval {
                 .get(L3Network.class, AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId))
                 .orElseGet(() -> {
                     logger.debug("No Network found in A&AI NetworkId: {}", networkId);
+                    return null;
+                });
+    }
+
+    public Service getService(String serviceId) {
+        return this.getAaiResourcesClient()
+                .get(Service.class, AAIUriFactory.createResourceUri(AAIObjectType.SERVICE, serviceId)).orElseGet(() -> {
+                    logger.debug("No Service found in A&AI ServiceId: {}", serviceId);
+                    return null;
+                });
+    }
+
+    public Tenant getTenant(String cloudOwner, String cloudRegion, String tenantId) {
+        return this.getAaiResourcesClient()
+                .get(Tenant.class,
+                        AAIUriFactory.createResourceUri(AAIObjectType.TENANT, cloudOwner, cloudRegion, tenantId))
+                .orElseGet(() -> {
+                    logger.debug("No Tenant found in A&AI TenantId: {}", tenantId);
                     return null;
                 });
     }
