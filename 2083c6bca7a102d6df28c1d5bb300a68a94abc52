@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8133212c_067d57dc",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/bpmn/servicedecomposition/tasks/BBInputSetupUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 428,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-24T13:44:59Z",
+      "side": 1,
+      "message": "it would be good to mention ids in the log message",
+      "revId": "2083c6bca7a102d6df28c1d5bb300a68a94abc52",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
