@@ -56,6 +56,8 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VpnBinding;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VpnBondingLink;
+import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
+import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.License;
@@ -104,6 +106,10 @@ public class TestDataSetup {
 
     protected DelegateExecution delegateExecution;
 
+    protected ExecuteBuildingBlock executeBuildingBlock;
+
+    protected BuildingBlock buildingBlock;
+
     @Before
     public void buildingBlockTestDataSetupBefore() {
         collectionCounter = 0;
@@ -123,8 +129,15 @@ public class TestDataSetup {
         vpnBindingCounter = 0;
         vpnBondingLinkCounter = 0;
 
+        buildingBlock = new BuildingBlock();
+        buildingBlock.setBpmnAction("action");
+
+        executeBuildingBlock = new ExecuteBuildingBlock();
+        executeBuildingBlock.setBuildingBlock(buildingBlock);
+
         execution = new DelegateExecutionImpl(new ExecutionImpl());
         execution.setVariable("testProcessKey", "testProcessKeyValue");
+        execution.setVariable("buildingBlock", executeBuildingBlock);
 
         gBBInput = new GeneralBuildingBlock();
         execution.setVariable("gBBInput", gBBInput);
