@@ -91,16 +91,16 @@ public class GeneratePayloadForCdsTest {
     private GeneratePayloadForCds configurePayloadForCds;
 
     @Mock
-    private VnfCDSRequestProvider vnfCDSRequestProvider;
+    private VnfCDSRequestProviderBB vnfCDSRequestProviderBB;
 
     @Mock
-    private VfModuleCDSRequestProvider vfModuleCDSRequestProvider;
+    private VfModuleCDSRequestProviderBB vfModuleCDSRequestProviderBB;
 
     @Mock
-    private ServiceCDSRequestProvider serviceCDSRequestProvider;
+    private ServiceCDSRequestProviderBB serviceCDSRequestProviderBB;
 
     @Mock
-    private PnfCDSRequestProvider pnfCDSRequestProvider;
+    private PnfCDSRequestProviderDE pnfCDSRequestProviderDE;
 
 
     @Before
@@ -115,7 +115,7 @@ public class GeneratePayloadForCdsTest {
         final String assignPayload =
                 "{\"configAssign-request\":{\"resolution-key\":\"vnf-name-1\",\"configAssign-properties\":{\"service-instance-id\":\"serviceInst_configTest\",\"service-model-uuid\":\"b45b5780-e5dd-11e9-81b4-2a2ae2dbcce4\",\"vnf-id\":\"vnfId_configVnfTest1\",\"vnf-name\":\"vnf-name-1\",\"vnf-customization-uuid\":\"23ce9ac4-e5dd-11e9-81b4-2a2ae2dbcce4\",\"acl-cloud-region\":\"acl-cloud-region\",\"public_net_id\":\"public-net-id\"}}}";
         setScopeAndAction(VNF_SCOPE, ASSIGN_ACTION);
-        doReturn(Optional.of(assignPayload)).when(vnfCDSRequestProvider).buildRequestPayload(ASSIGN_ACTION);
+        doReturn(Optional.of(assignPayload)).when(vnfCDSRequestProviderBB).buildRequestPayload(ASSIGN_ACTION);
 
         // when
         AbstractCDSPropertiesBean propertyBean = configurePayloadForCds.buildCdsPropertiesBean(buildingBlockExecution);
@@ -137,7 +137,7 @@ public class GeneratePayloadForCdsTest {
         final String deployPayload =
                 "{\"configDeploy-request\":{\"resolution-key\":\"vnf-name-1\",\"configDeploy-properties\":{\"service-instance-id\":\"serviceInst_configTest\",\"service-model-uuid\":\"b45b5780-e5dd-11e9-81b4-2a2ae2dbcce4\",\"vnf-id\":\"vnfId_configVnfTest1\",\"vnf-name\":\"vnf-name-1\",\"vnf-customization-uuid\":\"23ce9ac4-e5dd-11e9-81b4-2a2ae2dbcce4\",\"acl-cloud-region\":\"acl-cloud-region\",\"public_net_id\":\"public-net-id\"}}}";
         setScopeAndAction(VNF_SCOPE, DEPLOY_ACTION);
-        doReturn(Optional.of(deployPayload)).when(vnfCDSRequestProvider).buildRequestPayload(DEPLOY_ACTION);
+        doReturn(Optional.of(deployPayload)).when(vnfCDSRequestProviderBB).buildRequestPayload(DEPLOY_ACTION);
 
         // when
         AbstractCDSPropertiesBean propertyBean = configurePayloadForCds.buildCdsPropertiesBean(buildingBlockExecution);
@@ -159,7 +159,7 @@ public class GeneratePayloadForCdsTest {
         final String servicePayload =
                 "{\"create-request\":{\"resolution-key\":\"test-service-instance\",\"create-properties\":{\"service-instance-id\":\"serviceInst_configTest\",\"service-model-uuid\":\"b45b5780-e5dd-11e9-81b4-2a2ae2dbcce4\"}}}";
         setScopeAndAction(SERVICE_SCOPE, SERVICE_ACTION);
-        doReturn(Optional.of(servicePayload)).when(serviceCDSRequestProvider).buildRequestPayload(SERVICE_ACTION);
+        doReturn(Optional.of(servicePayload)).when(serviceCDSRequestProviderBB).buildRequestPayload(SERVICE_ACTION);
 
         // when
         AbstractCDSPropertiesBean propertyBean = configurePayloadForCds.buildCdsPropertiesBean(buildingBlockExecution);
@@ -181,7 +181,7 @@ public class GeneratePayloadForCdsTest {
         final String deployVfModulePayload =
                 "{\"configDeploy-request\":{\"resolution-key\":\"vf-module-name-1\",\"template-prefix\":\"vf-module-name-1configDeploy\",\"configDeploy-properties\":{\"service-instance-id\":\"serviceInst_configTest\",\"service-model-uuid\":\"b45b5780-e5dd-11e9-81b4-2a2ae2dbcce4\",\"vnf-id\":\"vnfId_configVnfTest1\",\"vnf-name\":\"vnf-name-1\",\"vf-module-id\":\"vf-module-id-1\",\"vf-module-name\":\"vf-module-name-1\",\"vf-module-customization-uuid\":\"23ce9ac4-e5dd-11e9-81b4-2a2ae2dbcce1\",\"aci-cloud-region-vf-module\":\"acl-cloud-region\",\"public-net-vf-module-id\":\"public-net-id\"}}}";
         setScopeAndAction(VF_SCOPE, DEPLOY_ACTION);
-        doReturn(Optional.of(deployVfModulePayload)).when(vfModuleCDSRequestProvider)
+        doReturn(Optional.of(deployVfModulePayload)).when(vfModuleCDSRequestProviderBB)
                 .buildRequestPayload(DEPLOY_ACTION);
 
         // when
@@ -204,9 +204,9 @@ public class GeneratePayloadForCdsTest {
         final String downloadPayload =
                 "{\"downloadNeSw-request\":{\"resolution-key\":\"PNFDemo\",\"downloadNeSw-properties\":{\"service-instance-id\":\"test_service_id\",\"service-model-uuid\":\"6bc0b04d-1873-4721-b53d-6615225b2a28\",\"pnf-id\":\"5df8b6de-2083-11e7-93ae-92361f002671\",\"pnf-name\":\"PNFDemo\",\"pnf-customization-uuid\":\"9acb3a83-8a52-412c-9a45-901764938144\",\"target-software-version\":\"demo-sw-ver2.0.0\"}}}";
         DelegateExecution execution = prepareDelegateExecutionObj(PayloadConstants.PNF_SCOPE, DOWNLOAD_ACTION);
-        doReturn(Optional.of(downloadPayload)).when(pnfCDSRequestProvider).buildRequestPayload(DOWNLOAD_ACTION);
-        doReturn(TEST_PNF_RESOURCE_BLUEPRINT_NAME).when(pnfCDSRequestProvider).getBlueprintName();
-        doReturn(TEST_PNF_RESOURCE_BLUEPRINT_VERSION).when(pnfCDSRequestProvider).getBlueprintVersion();
+        doReturn(Optional.of(downloadPayload)).when(pnfCDSRequestProviderDE).buildRequestPayload(DOWNLOAD_ACTION);
+        doReturn(TEST_PNF_RESOURCE_BLUEPRINT_NAME).when(pnfCDSRequestProviderDE).getBlueprintName();
+        doReturn(TEST_PNF_RESOURCE_BLUEPRINT_VERSION).when(pnfCDSRequestProviderDE).getBlueprintVersion();
 
         // when
         AbstractCDSPropertiesBean propertyBean = configurePayloadForCds.buildCdsPropertiesBean(execution);
@@ -228,7 +228,7 @@ public class GeneratePayloadForCdsTest {
     public void testFailureWhenServiceInstanceIsNotPresent() throws Exception {
         // given
         setScopeAndAction(VNF_SCOPE, ASSIGN_ACTION);
-        doThrow(PayloadGenerationException.class).when(serviceCDSRequestProvider).buildRequestPayload(ASSIGN_ACTION);
+        doThrow(PayloadGenerationException.class).when(serviceCDSRequestProviderBB).buildRequestPayload(ASSIGN_ACTION);
 
         // when
         final Throwable throwable =

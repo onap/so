@@ -20,7 +20,6 @@ package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,9 +32,6 @@ import org.onap.so.bpmn.infrastructure.decisionpoint.api.ControllerContext;
 import org.onap.so.client.cds.AbstractCDSProcessingBBUtils;
 import org.onap.so.client.cds.GeneratePayloadForCds;
 import org.onap.so.client.cds.beans.AbstractCDSPropertiesBean;
-import org.onap.so.client.exception.ExceptionBuilder;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import java.util.Arrays;
@@ -48,7 +44,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.*;
 
 @RunWith(Parameterized.class)
-public class GenericPnfCDSProcessingDETest extends BaseTaskTest {
+public class GenericPnfCDSControllerRunnableDETest extends BaseTaskTest {
 
     @ClassRule
     public static final SpringClassRule springClassRule = new SpringClassRule();
@@ -57,7 +53,7 @@ public class GenericPnfCDSProcessingDETest extends BaseTaskTest {
     public final SpringMethodRule smr = new SpringMethodRule();
 
     @InjectMocks
-    private GenericPnfCDSProcessingDE controllerRunnable;
+    private GenericPnfCDSControllerRunnableDE controllerRunnable;
 
     @Mock
     private GeneratePayloadForCds generatePayloadForCds;
@@ -75,7 +71,7 @@ public class GenericPnfCDSProcessingDETest extends BaseTaskTest {
     private String scope;
     private String expectedJson;
 
-    public GenericPnfCDSProcessingDETest(String desc, String action, String scope, String expectedJson) {
+    public GenericPnfCDSControllerRunnableDETest(String desc, String action, String scope, String expectedJson) {
         this.description = desc;
         this.action = action;
         this.scope = scope;

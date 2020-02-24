@@ -32,10 +32,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
-public class VfModuleCDSRequestProviderTest extends AbstractVnfCDSRequestProviderTest {
+public class VfModuleCDSRequestProviderBBTest extends AbstractVnfCDSRequestProviderBBTest {
 
     @InjectMocks
-    private VfModuleCDSRequestProvider vfModuleCDSRequestProvider;
+    private VfModuleCDSRequestProviderBB vfModuleCDSRequestProviderBB;
 
     @Mock
     protected ConfigureInstanceParamsForVfModule configureInstanceParamsForVfModule;
@@ -56,8 +56,8 @@ public class VfModuleCDSRequestProviderTest extends AbstractVnfCDSRequestProvide
                 anyString());
 
         // when
-        vfModuleCDSRequestProvider.setExecutionObject(buildingBlockExecution);
-        String payload = vfModuleCDSRequestProvider.buildRequestPayload(DEPLOY_ACTION).get();
+        vfModuleCDSRequestProviderBB.setExecutionObject(buildingBlockExecution);
+        String payload = vfModuleCDSRequestProviderBB.buildRequestPayload(DEPLOY_ACTION).get();
 
         // verify
         ObjectMapper mapper = new ObjectMapper();

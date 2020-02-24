@@ -32,10 +32,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
-public class VnfCDSRequestProviderTest extends AbstractVnfCDSRequestProviderTest {
+public class VnfCDSRequestProviderBBTest extends AbstractVnfCDSRequestProviderBBTest {
 
     @InjectMocks
-    private VnfCDSRequestProvider vnfCDSRequestProvider;
+    private VnfCDSRequestProviderBB vnfCDSRequestProviderBB;
 
     @Mock
     protected ConfigureInstanceParamsForVnf configureInstanceParamsForVnf;
@@ -53,8 +53,8 @@ public class VnfCDSRequestProviderTest extends AbstractVnfCDSRequestProviderTest
         doNothing().when(configureInstanceParamsForVnf).populateInstanceParams(any(), any(), anyString());
 
         // when
-        vnfCDSRequestProvider.setExecutionObject(buildingBlockExecution);
-        String payload = vnfCDSRequestProvider.buildRequestPayload(ASSIGN_ACTION).get();
+        vnfCDSRequestProviderBB.setExecutionObject(buildingBlockExecution);
+        String payload = vnfCDSRequestProviderBB.buildRequestPayload(ASSIGN_ACTION).get();
 
         // verify
         ObjectMapper mapper = new ObjectMapper();
@@ -84,8 +84,8 @@ public class VnfCDSRequestProviderTest extends AbstractVnfCDSRequestProviderTest
         doNothing().when(configureInstanceParamsForVnf).populateInstanceParams(any(), any(), any());
 
         // when
-        vnfCDSRequestProvider.setExecutionObject(buildingBlockExecution);
-        String payload = vnfCDSRequestProvider.buildRequestPayload(DEPLOY_ACTION).get();
+        vnfCDSRequestProviderBB.setExecutionObject(buildingBlockExecution);
+        String payload = vnfCDSRequestProviderBB.buildRequestPayload(DEPLOY_ACTION).get();
 
         // verify
         ObjectMapper mapper = new ObjectMapper();
