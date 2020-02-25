@@ -22,6 +22,8 @@ package org.onap.so.adapters.vfc.util;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.Header;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
@@ -59,21 +61,27 @@ public class RestfulUtilTest {
     private HttpEntity httpEntity;
     private HttpResponse httpResponse;
     private StatusLine statusLine;
+    private Header httpResponseHeader;
 
     @Before
     public void setUp() {
         httpEntity = mock(HttpEntity.class);
         httpResponse = mock(HttpResponse.class);
         statusLine = mock(StatusLine.class);
+        httpResponseHeader = mock(Header.class);
     }
 
     private void sendInit() throws IOException {
 
+        Header[] headerList = new BasicHeader[2];
+        headerList[0] = new BasicHeader("Content-Type", "application/json");
+        headerList[1] = new BasicHeader("cache-control", "no-cache");
         doReturn("https://testHost/").when(restfulUtil).getMsbHost();
 
         when(statusLine.getStatusCode()).thenReturn(HttpStatus.OK.value());
         when(httpResponse.getStatusLine()).thenReturn(statusLine);
         when(httpResponse.getEntity()).thenReturn(httpEntity);
+        when(httpResponse.getAllHeaders()).thenReturn(headerList);
     }
 
     @Test

@@ -39,8 +39,10 @@ import org.onap.so.adapters.requestsdb.exceptions.MsoRequestsDbException;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.beans.OperationStatus;
 import org.onap.so.db.request.beans.ResourceOperationStatus;
+import org.onap.so.db.request.beans.InstanceNfvoMapping;
 import org.onap.so.db.request.data.repository.OperationStatusRepository;
 import org.onap.so.db.request.data.repository.ResourceOperationStatusRepository;
+import org.onap.so.db.request.data.repository.InstanceNfvoMappingRepository;
 import org.onap.so.requestsdb.RequestsDbConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -57,6 +59,9 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
 
     @Autowired
     private ResourceOperationStatusRepository resourceOperationStatusRepo;
+
+    @Autowired
+    private InstanceNfvoMappingRepository instanceNfvoMappingRepository;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -255,6 +260,29 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
         // Then
         assertEquals(siteDisabled, false);
     }
+
+    @Test
+    public void setInstanceNfvoMappingRepository() throws MsoRequestsDbException {
+        InstanceNfvoMapping instanceNfvoMapping = new InstanceNfvoMapping();
+        String instanceId = "9b9f02c0-298b-458a-bc9c-be3692e4f354";
+        String nfvoName = "testNFVO";
+        String endpoint = "http://127.0.0.1:80/";
+        String username = "admin";
+        String password = "admin";
+        String apiRoot = "v1";
+
+        instanceNfvoMapping.setApiRoot(apiRoot);
+        instanceNfvoMapping.setEndpoint(endpoint);
+        instanceNfvoMapping.setInstanceId(instanceId);
+        instanceNfvoMapping.setNfvoName(nfvoName);
+        instanceNfvoMapping.setUsername(username);
+        instanceNfvoMapping.setPassword(password);
+
+        dbAdapter.setInstanceNfvoMappingRepository(instanceId, nfvoName, endpoint, username, password, apiRoot);
+        InstanceNfvoMapping dbInstNfvoMap = dbAdapter.getInstanceNfvoMapping(instanceId);
+        assertThat(dbInstNfvoMap, sameBeanAs(instanceNfvoMapping));
+    }
+
 
     @Test
     public void updateServiceOperation() throws MsoRequestsDbException {

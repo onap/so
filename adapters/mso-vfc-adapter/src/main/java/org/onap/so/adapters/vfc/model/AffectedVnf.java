@@ -18,7 +18,16 @@ public class AffectedVnf {
     private String vnfName;
 
     private enum changeType {
-        ADD, REMOVE, INSTANTIATE, TERMINATE, SCALE, CHANGE_FLAVOUR, HEAL, OPERATE, MODIFY_INFORMATION, CHANGE_EXTERNAL_VNF_CONNECTIVITY
+        ADD,
+        REMOVE,
+        INSTANTIATE,
+        TERMINATE,
+        SCALE,
+        CHANGE_FLAVOUR,
+        HEAL,
+        OPERATE,
+        MODIFY_INFORMATION,
+        CHANGE_EXTERNAL_VNF_CONNECTIVITY
     };
     private enum changeResult {
         COMPLETED, ROLLED_BACK, FAILED
