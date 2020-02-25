@@ -26,14 +26,20 @@ import org.onap.so.openstack.exceptions.MsoException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.woorea.openstack.base.client.Entity;
+import com.woorea.openstack.base.client.HttpMethod;
 import com.woorea.openstack.base.client.OpenStackRequest;
 import com.woorea.openstack.nova.Nova;
 import com.woorea.openstack.nova.model.Flavor;
 import com.woorea.openstack.nova.model.Flavors;
 import com.woorea.openstack.nova.model.HostAggregate;
 import com.woorea.openstack.nova.model.HostAggregates;
+import com.woorea.openstack.nova.model.Hypervisors;
 import com.woorea.openstack.nova.model.QuotaSet;
 import com.woorea.openstack.nova.model.Server;
+import com.woorea.openstack.nova.model.VolumeAttachment;
 
 
 @Component
@@ -216,4 +222,61 @@ public class NovaClientImpl extends MsoCommonUtils {
             throw new NovaClientException("Error building Nova Client", e);
         }
     }
+
+    public void postActionToServer(String cloudSiteId, String tenantId, String id, String request)
+            throws NovaClientException {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode actualObj = mapper.readTree(request);
+            Entity<JsonNode> openstackEntity = new Entity<>(actualObj, "application/json");
+            CharSequence actionPath = "/servers/" + id + "/action";
+            Nova novaClient = getNovaClient(cloudSiteId, tenantId);
+            OpenStackRequest<Void> OSRequest =
+                    new OpenStackRequest<>(novaClient, HttpMethod.POST, actionPath, openstackEntity, Void.class);
+            executeAndRecordOpenstackRequest(OSRequest, false);
+        } catch (Exception e) {
+            logger.error("Error building Nova Client", e);
+            throw new NovaClientException("Error building Nova Client", e);
+        }
+    }
+
+    public void attachVolume(String cloudSiteId, String tenantId, String serverId, VolumeAttachment volumeAttachment)
+            throws NovaClientException {
+        Nova novaClient;
+        try {
+            novaClient = getNovaClient(cloudSiteId, tenantId);
+            OpenStackRequest<Void> request = novaClient.servers().attachVolume(serverId, volumeAttachment.getVolumeId(),
+                    volumeAttachment.getDevice());
+            executeAndRecordOpenstackRequest(request, false);
+        } catch (MsoException e) {
+            logger.error("Error building Nova Client", e);
+            throw new NovaClientException("Error building Nova Client", e);
+        }
+    }
+
+    public void detachVolume(String cloudSiteId, String tenantId, String serverId, String volumeId)
+            throws NovaClientException {
+        Nova novaClient;
+        try {
+            novaClient = getNovaClient(cloudSiteId, tenantId);
+            OpenStackRequest<Void> request = novaClient.servers().detachVolume(serverId, volumeId);
+            executeAndRecordOpenstackRequest(request, false);
+        } catch (MsoException e) {
+            logger.error("Error building Nova Client", e);
+            throw new NovaClientException("Error building Nova Client", e);
+        }
+    }
+
+    public Hypervisors getHypervisorDetails(String cloudSiteId, String tenantId) throws NovaClientException {
+        Nova novaClient;
+        try {
+            novaClient = getNovaClient(cloudSiteId, tenantId);
+            OpenStackRequest<Hypervisors> request = novaClient.hypervisors().listDetail();
+            return executeAndRecordOpenstackRequest(request, false);
+        } catch (MsoException e) {
+            logger.error("Error building Nova Client", e);
+            throw new NovaClientException("Error building Nova Client", e);
+        }
+    }
+
 }
