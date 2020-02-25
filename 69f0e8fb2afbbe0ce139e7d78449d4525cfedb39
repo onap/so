@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1f87ea04_7f18c342",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f5819335_91c1ae8e",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 17
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7ffe79f_2f950dbb",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/beans/PreCheckPropertiesForPnf.java",
         "patchSetId": 2
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "94da0efa_01539d5c",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/beans/PreCheckPropertiesForPnf.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7ffe79f_2f950dbb",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 0
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6ae32780_107709c5",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/beans/PreCheckPropertiesForPnf.java",
         "patchSetId": 2
@@ -62,6 +110,24 @@
       "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "88a02fe0_a1808067",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/beans/PreCheckPropertiesForPnf.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6ae32780_107709c5",
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -88,6 +154,30 @@
     },
     {
       "key": {
+        "uuid": "00c5c33e_9bc59230",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/beans/PreCheckRequestPnf.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f98df3b2_f8060706",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 2
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "619c9954_ed272229",
         "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/client/cds/beans/PreCheckPropertiesForPnfTest.java",
         "patchSetId": 2
@@ -108,6 +198,30 @@
       "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "728882cf_d9888702",
+        "filename": "bpmn/MSOCommonBPMN/src/test/java/org/onap/so/client/cds/beans/PreCheckPropertiesForPnfTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "619c9954_ed272229",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 3
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -134,6 +248,30 @@
     },
     {
       "key": {
+        "uuid": "1d058fcf_4a1e4a2e",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "503b180a_9045b036",
+      "range": {
+        "startLine": 74,
+        "startChar": 8,
+        "endLine": 74,
+        "endChar": 49
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "476a4f35_39c36bbc",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegate.java",
         "patchSetId": 2
@@ -154,6 +292,30 @@
       "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e18f994b_90c2b069",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "476a4f35_39c36bbc",
+      "range": {
+        "startLine": 78,
+        "startChar": 23,
+        "endLine": 78,
+        "endChar": 34
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -180,6 +342,30 @@
     },
     {
       "key": {
+        "uuid": "1fb72871_67673015",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "318cda61_97b18b90",
+      "range": {
+        "startLine": 89,
+        "startChar": 49,
+        "endLine": 89,
+        "endChar": 65
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "42d34a40_3d581398",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegate.java",
         "patchSetId": 2
@@ -200,6 +386,30 @@
       "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "52efdb3e_7d45f26c",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "42d34a40_3d581398",
+      "range": {
+        "startLine": 90,
+        "startChar": 51,
+        "endLine": 90,
+        "endChar": 59
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -226,6 +436,30 @@
     },
     {
       "key": {
+        "uuid": "1271a187_0cd69da5",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d0087c6d_a7a2feeb",
+      "range": {
+        "startLine": 91,
+        "startChar": 7,
+        "endLine": 91,
+        "endChar": 8
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ef2efdf4_b679d568",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegate.java",
         "patchSetId": 2
@@ -246,6 +480,30 @@
       "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6ffd8f2e_718c3aae",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ef2efdf4_b679d568",
+      "range": {
+        "startLine": 92,
+        "startChar": 74,
+        "endLine": 92,
+        "endChar": 119
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -272,6 +530,30 @@
     },
     {
       "key": {
+        "uuid": "76d5395a_32952187",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "645ea2b5_6f041592",
+      "range": {
+        "startLine": 115,
+        "startChar": 12,
+        "endLine": 121,
+        "endChar": 13
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1b77f78b_1fd26d7e",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegateTest.java",
         "patchSetId": 2
@@ -292,6 +574,30 @@
       "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "216b5225_3e1f691b",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegateTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1b77f78b_1fd26d7e",
+      "range": {
+        "startLine": 3,
+        "startChar": 17,
+        "endLine": 3,
+        "endChar": 21
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -318,6 +624,30 @@
     },
     {
       "key": {
+        "uuid": "83f42c59_8537a483",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegateTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27924fdc_d53b767d",
+      "range": {
+        "startLine": 70,
+        "startChar": 18,
+        "endLine": 70,
+        "endChar": 19
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "659f69f8_e353cbd4",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegateTest.java",
         "patchSetId": 2
@@ -338,6 +668,30 @@
       "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eff0238f_1cdaa494",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegateTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "659f69f8_e353cbd4",
+      "range": {
+        "startLine": 91,
+        "startChar": 3,
+        "endLine": 91,
+        "endChar": 13
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -364,6 +718,30 @@
     },
     {
       "key": {
+        "uuid": "9d2cb96f_a82d93ee",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegateTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "08643345_eb228dcd",
+      "range": {
+        "startLine": 94,
+        "startChar": 5,
+        "endLine": 94,
+        "endChar": 13
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "44ae2df9_e2879fce",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegateTest.java",
         "patchSetId": 2
@@ -384,6 +762,30 @@
       "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4c185329_a98b55c7",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegateTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "44ae2df9_e2879fce",
+      "range": {
+        "startLine": 97,
+        "startChar": 5,
+        "endLine": 97,
+        "endChar": 13
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -410,6 +812,30 @@
     },
     {
       "key": {
+        "uuid": "1fc12175_e560057d",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegateTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "02636b90_3b48f24d",
+      "range": {
+        "startLine": 100,
+        "startChar": 5,
+        "endLine": 100,
+        "endChar": 14
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c5dff55a_077982b3",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegateTest.java",
         "patchSetId": 2
@@ -430,6 +856,30 @@
       "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5e1d7a6f_17c66045",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegateTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c5dff55a_077982b3",
+      "range": {
+        "startLine": 144,
+        "startChar": 12,
+        "endLine": 144,
+        "endChar": 32
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -456,6 +906,30 @@
     },
     {
       "key": {
+        "uuid": "4ba56d9f_a8730c75",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegateTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "24053977_d823645c",
+      "range": {
+        "startLine": 160,
+        "startChar": 12,
+        "endLine": 160,
+        "endChar": 32
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "28dd7768_9d76ad8e",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegateTest.java",
         "patchSetId": 2
@@ -476,6 +950,30 @@
       "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cbaf1c8a_b529a50e",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/NfSoftwareUpgradeCheckerDelegateTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "28dd7768_9d76ad8e",
+      "range": {
+        "startLine": 182,
+        "startChar": 7,
+        "endLine": 182,
+        "endChar": 9
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -502,6 +1000,30 @@
     },
     {
       "key": {
+        "uuid": "45d2aafd_c6d123a1",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/PNFSoftwareUpgrade.bpmn",
+        "patchSetId": 2
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9d6f15c4_37c0bf8d",
+      "range": {
+        "startLine": 82,
+        "startChar": 3,
+        "endLine": 82,
+        "endChar": 13
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1ac38eb5_d2045426",
         "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/PNFSoftwareUpgrade.bpmn",
         "patchSetId": 2
@@ -522,6 +1044,30 @@
       "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6e9718d0_2e32a688",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/PNFSoftwareUpgrade.bpmn",
+        "patchSetId": 2
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1ac38eb5_d2045426",
+      "range": {
+        "startLine": 88,
+        "startChar": 46,
+        "endLine": 88,
+        "endChar": 50
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -548,6 +1094,30 @@
     },
     {
       "key": {
+        "uuid": "1e42555f_01d17584",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/PNFSoftwareUpgrade.bpmn",
+        "patchSetId": 2
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "adca0a37_5976fd87",
+      "range": {
+        "startLine": 98,
+        "startChar": 48,
+        "endLine": 98,
+        "endChar": 57
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e2025759_e1044f73",
         "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/PNFSoftwareUpgrade.bpmn",
         "patchSetId": 2
@@ -568,6 +1138,30 @@
       "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "24029b58_3e3ac503",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/PNFSoftwareUpgrade.bpmn",
+        "patchSetId": 2
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e2025759_e1044f73",
+      "range": {
+        "startLine": 111,
+        "startChar": 48,
+        "endLine": 111,
+        "endChar": 56
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -594,6 +1188,30 @@
     },
     {
       "key": {
+        "uuid": "8f888c07_f3fb67fb",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/test/java/org/onap/so/bpmn/infrastructure/process/PNFSoftwareUpgradeTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4138fdbb_10cc9a42",
+      "range": {
+        "startLine": 3,
+        "startChar": 18,
+        "endLine": 3,
+        "endChar": 22
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2d5dba2a_bec6beef",
         "filename": "bpmn/so-bpmn-infrastructure-flows/src/test/resources/request/PNFSoftwareUpgradeTest.json",
         "patchSetId": 2
@@ -617,6 +1235,30 @@
     },
     {
       "key": {
+        "uuid": "1bfee252_db41e24b",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/test/resources/request/PNFSoftwareUpgradeTest.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2d5dba2a_bec6beef",
+      "range": {
+        "startLine": 28,
+        "startChar": 18,
+        "endLine": 28,
+        "endChar": 41
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2b7dca42_7bebefca",
         "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDETestIT.java",
         "patchSetId": 2
@@ -631,6 +1273,24 @@
       "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "93606be2_ea67fd3f",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDETestIT.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2b7dca42_7bebefca",
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -654,6 +1314,30 @@
       "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6a97981e_8a6d200c",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDETestIT.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1575b1af_7b51d78e",
+      "range": {
+        "startLine": 120,
+        "startChar": 25,
+        "endLine": 120,
+        "endChar": 74
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -718,6 +1402,24 @@
       "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "24b6f793_99eb66e5",
+        "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/beans/PnfResourceCustomization.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6ebf3d7a_35ee7c1e",
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }

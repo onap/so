@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "6a2435e9_56c34e47",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/PayloadConstants.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "ee8cdb5d_09b6b2cc",
+      "range": {
+        "startLine": 47,
+        "startChar": 62,
+        "endLine": 47,
+        "endChar": 83
+      },
+      "revId": "5376a65d586b37f13342f9e108f224b73d4149fc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "75902655_97e0d465",
         "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDETestIT.java",
         "patchSetId": 2
@@ -45,6 +69,30 @@
       "revId": "5376a65d586b37f13342f9e108f224b73d4149fc",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4690dc42_15a414fd",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/decisionpoint/impl/camunda/ControllerExecutionDETestIT.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-25T13:51:56Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "75902655_97e0d465",
+      "range": {
+        "startLine": 122,
+        "startChar": 41,
+        "endLine": 122,
+        "endChar": 56
+      },
+      "revId": "5376a65d586b37f13342f9e108f224b73d4149fc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
