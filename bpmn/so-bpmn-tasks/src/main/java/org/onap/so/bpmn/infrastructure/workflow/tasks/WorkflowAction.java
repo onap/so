@@ -471,9 +471,7 @@ public class WorkflowAction {
             List<AAIResultWrapper> vnfcResultWrappers = relationships.getByType(type);
             for (AAIResultWrapper vnfcResultWrapper : vnfcResultWrappers) {
                 Optional<T> vnfcOp = vnfcResultWrapper.asBean(resultClass);
-                if (vnfcOp.isPresent()) {
-                    vnfcs.add(vnfcOp.get());
-                }
+                vnfcOp.ifPresent(vnfcs::add);
             }
         }
         return vnfcs;
@@ -493,9 +491,7 @@ public class WorkflowAction {
                     this.getResultWrappersFromRelationships(relationships, type);
             for (AAIResultWrapper configurationResultWrapper : configurationResultWrappers) {
                 Optional<T> configurationOp = configurationResultWrapper.asBean(resultClass);
-                if (configurationOp.isPresent()) {
-                    configurations.add(configurationOp.get());
-                }
+                configurationOp.ifPresent(configurations::add);
             }
         }
         return configurations;
@@ -574,8 +570,6 @@ public class WorkflowAction {
     protected List<OrchestrationFlow> getVfModuleReplaceBuildingBlocks(ConfigBuildingBlocksDataObject dataObj)
             throws Exception {
 
-        List<ExecuteBuildingBlock> flowsToExecuteConfigs = new ArrayList<>();
-
         String vnfId = dataObj.getWorkflowResourceIds().getVnfId();
         String vfModuleId = dataObj.getWorkflowResourceIds().getVfModuleId();
 
@@ -639,19 +633,15 @@ public class WorkflowAction {
         if (!relationshipsOp.isPresent()) {
             logger.debug("No relationships were found for Configuration in AAI");
             return null;
-        } else {
-            Relationships relationships = relationshipsOp.get();
-            List<AAIResultWrapper> vnfcResultWrappers = relationships.getByType(AAIObjectType.VNFC);
-            if (vnfcResultWrappers.size() > 1 || vnfcResultWrappers.isEmpty()) {
-                logger.debug("Too many vnfcs or no vnfc found that are related to configuration");
-            }
-            Optional<Vnfc> vnfcOp = vnfcResultWrappers.get(0).asBean(Vnfc.class);
-            if (vnfcOp.isPresent()) {
-                return vnfcOp.get().getVnfcName();
-            } else {
-                return null;
-            }
         }
+        Relationships relationships = relationshipsOp.get();
+        List<AAIResultWrapper> vnfcResultWrappers = relationships.getByType(AAIObjectType.VNFC);
+        if (vnfcResultWrappers.size() > 1 || vnfcResultWrappers.isEmpty()) {
+            logger.debug("Too many vnfcs or no vnfc found that are related to configuration");
+        }
+        Optional<Vnfc> vnfcOp = vnfcResultWrappers.get(0).asBean(Vnfc.class);
+        return vnfcOp.map(Vnfc::getVnfcName).orElse(null);
+
     }
 
     protected List<Resource> sortVfModulesByBaseFirst(List<Resource> vfModuleResources) {
@@ -816,7 +806,7 @@ public class WorkflowAction {
         vrfValidation.aaiRouteTargetValidation(aaiLocalNetwork);
         String existingAAIVrfConfiguration = getExistingAAIVrfConfiguration(relatedVpnBinding, aaiLocalNetwork);
         if (existingAAIVrfConfiguration != null) {
-            aaiResourceIds.add(new Pair<WorkflowType, String>(WorkflowType.CONFIGURATION, existingAAIVrfConfiguration));
+            aaiResourceIds.add(new Pair<>(WorkflowType.CONFIGURATION, existingAAIVrfConfiguration));
         }
         resourceCounter.add(new Resource(WorkflowType.CONFIGURATION,
                 service.getConfigurationCustomizations().get(0).getModelCustomizationUUID(), false));
@@ -964,12 +954,11 @@ public class WorkflowAction {
             resourceCounter.add(new Resource(WorkflowType.SERVICE, serviceInstanceMSO.getServiceInstanceId(), false));
             if (serviceInstanceMSO.getVnfs() != null) {
                 for (org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf vnf : serviceInstanceMSO.getVnfs()) {
-                    aaiResourceIds.add(new Pair<WorkflowType, String>(WorkflowType.VNF, vnf.getVnfId()));
+                    aaiResourceIds.add(new Pair<>(WorkflowType.VNF, vnf.getVnfId()));
                     resourceCounter.add(new Resource(WorkflowType.VNF, vnf.getVnfId(), false));
                     if (vnf.getVfModules() != null) {
                         for (VfModule vfModule : vnf.getVfModules()) {
-                            aaiResourceIds.add(
-                                    new Pair<WorkflowType, String>(WorkflowType.VFMODULE, vfModule.getVfModuleId()));
+                            aaiResourceIds.add(new Pair<>(WorkflowType.VFMODULE, vfModule.getVfModuleId()));
                             Resource resource = new Resource(WorkflowType.VFMODULE, vfModule.getVfModuleId(), false);
                             resource.setBaseVfModule(vfModule.getModelInfoVfModule().getIsBaseBoolean());
                             resourceCounter.add(resource);
@@ -978,8 +967,7 @@ public class WorkflowAction {
                     if (vnf.getVolumeGroups() != null) {
                         for (org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup volumeGroup : vnf
                                 .getVolumeGroups()) {
-                            aaiResourceIds.add(new Pair<WorkflowType, String>(WorkflowType.VOLUMEGROUP,
-                                    volumeGroup.getVolumeGroupId()));
+                            aaiResourceIds.add(new Pair<>(WorkflowType.VOLUMEGROUP, volumeGroup.getVolumeGroupId()));
                             resourceCounter
                                     .add(new Resource(WorkflowType.VOLUMEGROUP, volumeGroup.getVolumeGroupId(), false));
                         }
@@ -989,14 +977,14 @@ public class WorkflowAction {
             if (serviceInstanceMSO.getNetworks() != null) {
                 for (org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network network : serviceInstanceMSO
                         .getNetworks()) {
-                    aaiResourceIds.add(new Pair<WorkflowType, String>(WorkflowType.NETWORK, network.getNetworkId()));
+                    aaiResourceIds.add(new Pair<>(WorkflowType.NETWORK, network.getNetworkId()));
                     resourceCounter.add(new Resource(WorkflowType.NETWORK, network.getNetworkId(), false));
                 }
             }
             if (serviceInstanceMSO.getCollection() != null) {
                 logger.debug("found networkcollection");
-                aaiResourceIds.add(new Pair<WorkflowType, String>(WorkflowType.NETWORKCOLLECTION,
-                        serviceInstanceMSO.getCollection().getId()));
+                aaiResourceIds
+                        .add(new Pair<>(WorkflowType.NETWORKCOLLECTION, serviceInstanceMSO.getCollection().getId()));
                 resourceCounter.add(new Resource(WorkflowType.NETWORKCOLLECTION,
                         serviceInstanceMSO.getCollection().getId(), false));
             }
@@ -1008,8 +996,7 @@ public class WorkflowAction {
                         for (Relationship relationship : aaiConfig.get().getRelationshipList().getRelationship()) {
                             if (relationship.getRelatedTo().contains("vnfc")
                                     || relationship.getRelatedTo().contains("vpn-binding")) {
-                                aaiResourceIds.add(new Pair<WorkflowType, String>(WorkflowType.CONFIGURATION,
-                                        config.getConfigurationId()));
+                                aaiResourceIds.add(new Pair<>(WorkflowType.CONFIGURATION, config.getConfigurationId()));
                                 resourceCounter.add(
                                         new Resource(WorkflowType.CONFIGURATION, config.getConfigurationId(), false));
                                 break;
@@ -1035,12 +1022,11 @@ public class WorkflowAction {
             if (serviceInstanceMSO.getVnfs() != null) {
                 for (org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf vnf : serviceInstanceMSO.getVnfs()) {
                     if (vnf.getVnfId().equals(vnfId)) {
-                        aaiResourceIds.add(new Pair<WorkflowType, String>(WorkflowType.VNF, vnf.getVnfId()));
+                        aaiResourceIds.add(new Pair<>(WorkflowType.VNF, vnf.getVnfId()));
                         resourceCounter.add(new Resource(WorkflowType.VNF, vnf.getVnfId(), false));
                         if (vnf.getVfModules() != null) {
                             for (VfModule vfModule : vnf.getVfModules()) {
-                                aaiResourceIds.add(new Pair<WorkflowType, String>(WorkflowType.VFMODULE,
-                                        vfModule.getVfModuleId()));
+                                aaiResourceIds.add(new Pair<>(WorkflowType.VFMODULE, vfModule.getVfModuleId()));
                                 resourceCounter
                                         .add(new Resource(WorkflowType.VFMODULE, vfModule.getVfModuleId(), false));
                                 findConfigurationsInsideVfModule(execution, vnf.getVnfId(), vfModule.getVfModuleId(),
@@ -1050,8 +1036,8 @@ public class WorkflowAction {
                         if (vnf.getVolumeGroups() != null) {
                             for (org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup volumeGroup : vnf
                                     .getVolumeGroups()) {
-                                aaiResourceIds.add(new Pair<WorkflowType, String>(WorkflowType.VOLUMEGROUP,
-                                        volumeGroup.getVolumeGroupId()));
+                                aaiResourceIds
+                                        .add(new Pair<>(WorkflowType.VOLUMEGROUP, volumeGroup.getVolumeGroupId()));
                                 resourceCounter.add(
                                         new Resource(WorkflowType.VOLUMEGROUP, volumeGroup.getVolumeGroupId(), false));
                             }
@@ -1081,8 +1067,7 @@ public class WorkflowAction {
                     Optional<Configuration> config =
                             workflowActionUtils.extractRelationshipsConfiguration(relationshipsOp.get());
                     if (config.isPresent()) {
-                        aaiResourceIds.add(new Pair<WorkflowType, String>(WorkflowType.CONFIGURATION,
-                                config.get().getConfigurationId()));
+                        aaiResourceIds.add(new Pair<>(WorkflowType.CONFIGURATION, config.get().getConfigurationId()));
                         resourceCounter.add(
                                 new Resource(WorkflowType.CONFIGURATION, config.get().getConfigurationId(), false));
                     }
@@ -1256,7 +1241,7 @@ public class WorkflowAction {
         Pattern patt = Pattern.compile("[vV]\\d+.*?(?:(?:/(?<type>" + SUPPORTEDTYPES
                 + ")(?:/(?<id>[^/]+))?)(?:/(?<action>[^/]+))?(?:/resume)?)?$");
         Matcher m = patt.matcher(uri);
-        Boolean generated = false;
+        boolean generated = false;
 
         if (m.find()) {
             logger.debug("found match on {} : {} ", uri, m);
@@ -1366,7 +1351,7 @@ public class WorkflowAction {
                 } else if (ebb.getBuildingBlock().getBpmnFlowName().equals(CREATENETWORKBB)
                         || ebb.getBuildingBlock().getBpmnFlowName().equals(ACTIVATENETWORKBB)) {
                     continue;
-                } else if (!ebb.getBuildingBlock().getBpmnFlowName().equals("")) {
+                } else if (!"".equals(ebb.getBuildingBlock().getBpmnFlowName())) {
                     sortedOrchFlows.add(ebb);
                 }
             }
@@ -1557,9 +1542,7 @@ public class WorkflowAction {
                 if (!flow.getFlowName().contains("BB") && !flow.getFlowName().contains("Activity")) {
                     List<OrchestrationFlow> macroQueryFlows =
                             catalogDbClient.getOrchestrationFlowByAction(flow.getFlowName());
-                    for (OrchestrationFlow macroFlow : macroQueryFlows) {
-                        listToExecute.add(macroFlow);
-                    }
+                    listToExecute.addAll(macroQueryFlows);
                 } else {
                     listToExecute.add(flow);
                 }
@@ -1582,7 +1565,7 @@ public class WorkflowAction {
 
     public void handleRuntimeException(DelegateExecution execution) {
         StringBuilder wfeExpMsg = new StringBuilder("Runtime error ");
-        String runtimeErrorMessage = null;
+        String runtimeErrorMessage;
         try {
             String javaExpMsg = (String) execution.getVariable("BPMN_javaExpMsg");
             if (javaExpMsg != null && !javaExpMsg.isEmpty()) {
