@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "bd7f6bdf_996f968c",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/utils/WorkflowResourceIdsUtils.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-25T17:29:53Z",
+      "side": 1,
+      "message": "There are no a naming convention related to utility classes. There are differences between utility and helper class, here you have:\nhttps://stackoverflow.com/questions/12192050/what-are-the-differences-between-helper-and-utility-classes\nAccording to the article, helper can be instantiated, so I would not call this class helper. The question is if \u0027utils\u0027 should be a part of the name of utility classes. In the project, there are many utility classes with name \u0027utils\u0027, so let us leave this name as it is.\nAccording to the package, we should gather utility classes with package utils, so it is good as it is now.",
+      "parentUuid": "bd4fc71c_5aee580f",
+      "range": {
+        "startLine": 27,
+        "startChar": 18,
+        "endLine": 27,
+        "endChar": 43
+      },
+      "revId": "6200df9409e70c29a5892bd700f41c4925be02ed",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "585a7aae_25ba2de7",
         "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/utils/WorkflowResourceIdsUtilsTest.java",
         "patchSetId": 7
@@ -45,6 +69,30 @@
       "revId": "6200df9409e70c29a5892bd700f41c4925be02ed",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5eec8ef6_54f9ada3",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/workflow/tasks/utils/WorkflowResourceIdsUtilsTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-25T17:29:53Z",
+      "side": 1,
+      "message": "The name like \"resultSupplier\" means a result of tested method for me, so it not the best name. I think a good name would be testedObjectField.",
+      "parentUuid": "585a7aae_25ba2de7",
+      "range": {
+        "startLine": 119,
+        "startChar": 103,
+        "endLine": 119,
+        "endChar": 109
+      },
+      "revId": "6200df9409e70c29a5892bd700f41c4925be02ed",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
