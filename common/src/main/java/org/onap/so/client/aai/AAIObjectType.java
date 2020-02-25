@@ -17,6 +17,25 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+/*-
+ * ============LICENSE_START=======================================================
+ * ONAP - SO
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
 
 package org.onap.so.client.aai;
 
@@ -58,7 +77,6 @@ import org.onap.aai.domain.yang.PortGroup;
 import org.onap.aai.domain.yang.Project;
 import org.onap.aai.domain.yang.Pserver;
 import org.onap.aai.domain.yang.RouteTableReference;
-import org.onap.aai.domain.yang.Service;
 import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aai.domain.yang.ServiceSubscription;
 import org.onap.aai.domain.yang.SpPartner;
@@ -74,6 +92,8 @@ import org.onap.aai.domain.yang.VolumeGroup;
 import org.onap.aai.domain.yang.VpnBinding;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.aai.domain.yang.Zone;
+import org.onap.aai.domain.yang.v16.ServiceProfile;
+import org.onap.aai.domain.yang.v16.SliceProfile;
 import org.onap.so.client.graphinventory.GraphInventoryObjectType;
 import org.onap.so.constants.Defaults;
 import org.reflections.Reflections;
@@ -123,8 +143,6 @@ public class AAIObjectType implements GraphInventoryObjectType, Serializable {
     public static final AAIObjectType SERVICE_INSTANCE_METADATA = new AAIObjectType(
             AAIObjectType.SERVICE_INSTANCE + "/metadata", org.onap.aai.domain.yang.v13.Metadata.class);
 
-    public static final AAIObjectType SERVICE = new AAIObjectType(
-            AAINamespaceConstants.SERVICE_DESIGN_AND_CREATION + "/services/service/{service-id}", Service.class);
     public static final AAIObjectType SERVICE_INSTANCE =
             new AAIObjectType(AAIObjectType.SERVICE_SUBSCRIPTION.uriTemplate(), ServiceInstance.class);
     public static final AAIObjectType PROJECT = new AAIObjectType(AAINamespaceConstants.BUSINESS, Project.class);
@@ -191,6 +209,13 @@ public class AAIObjectType implements GraphInventoryObjectType, Serializable {
     public static final AAIObjectType CLOUD_ESR_SYSTEM_INFO_LIST = new AAIObjectType(
             AAIObjectType.CLOUD_REGION.uriTemplate(), "/esr-system-info-list", "cloud-esr-system-info-list");
     public static final AAIObjectType ZONE = new AAIObjectType(AAINamespaceConstants.NETWORK, Zone.class);
+
+    public static final AAIObjectType SERVICE_PROFILE =
+            new AAIObjectType(AAIObjectType.SERVICE_SUBSCRIPTION.uriTemplate(), ServiceProfile.class);
+    public static final AAIObjectType SLICE_PROFILE =
+            new AAIObjectType(AAIObjectType.SERVICE_SUBSCRIPTION.uriTemplate(), SliceProfile.class);
+    public static final AAIObjectType QUERY_ALLOTTED_RESOURCE =
+            new AAIObjectType(AAIObjectType.SERVICE_INSTANCE.uriTemplate(), "?depth=2", "service-Instance");
 
     private final String uriTemplate;
     private final String parentUri;
