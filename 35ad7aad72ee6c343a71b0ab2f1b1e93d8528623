@@ -347,6 +347,29 @@
     },
     {
       "key": {
+        "uuid": "47a533e6_ae963f65",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/test/java/org/onap/so/bpmn/infrastructure/process/PNFSWUPDownloadTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-25T18:56:28Z",
+      "side": 1,
+      "message": "need to verify download and postcheck as well",
+      "range": {
+        "startLine": 132,
+        "startChar": 16,
+        "endLine": 132,
+        "endChar": 29
+      },
+      "revId": "35ad7aad72ee6c343a71b0ab2f1b1e93d8528623",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c40954d5_4488b1f9",
         "filename": "bpmn/so-bpmn-infrastructure-flows/src/test/java/org/onap/so/bpmn/infrastructure/process/PNFSoftwareUpgradeTest.java",
         "patchSetId": 4
@@ -386,6 +409,29 @@
         "startChar": 21,
         "endLine": 93,
         "endChar": 37
+      },
+      "revId": "35ad7aad72ee6c343a71b0ab2f1b1e93d8528623",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8833284c_ec11a6e2",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/test/java/org/onap/so/bpmn/infrastructure/process/PNFSoftwareUpgradeTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-02-25T18:56:28Z",
+      "side": 1,
+      "message": "only preCheck is verified here, need to verify download, activate, postcheck",
+      "range": {
+        "startLine": 132,
+        "startChar": 15,
+        "endLine": 132,
+        "endChar": 51
       },
       "revId": "35ad7aad72ee6c343a71b0ab2f1b1e93d8528623",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
