@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3bb1d902_3ba88b92",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSProcessingBB.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-25T10:28:32Z",
+      "side": 1,
+      "message": "Please rename this class to GenericPnfCDSControllerRunnableBB\nSimilarly rename GenericPnfCDSProcessingDE to GenericPnfCDSControllerRunnableDE",
+      "revId": "cc032cdcd1a106f7ec3583b9058e3238fe4a70ba",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d5fdc4b9_b63bca43",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSProcessingBB.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-25T10:28:32Z",
+      "side": 1,
+      "message": "please remove it for now",
+      "revId": "cc032cdcd1a106f7ec3583b9058e3238fe4a70ba",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3dc293f6_84f2580c",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSProcessingBB.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-25T10:28:32Z",
+      "side": 1,
+      "message": "please remove it for now",
+      "revId": "cc032cdcd1a106f7ec3583b9058e3238fe4a70ba",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6e173160_0c7f828d",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSProcessingBB.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-25T10:28:32Z",
+      "side": 1,
+      "message": "please remove it for now",
+      "revId": "cc032cdcd1a106f7ec3583b9058e3238fe4a70ba",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d864eb6f_062d425d",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSProcessingBB.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-25T10:28:32Z",
+      "side": 1,
+      "message": "We can\u0027t use GeneratePayloadForCds, internally it uses PnfCDSRequestProvider which works only for DE (see PnfCDSRequestProvider.setExecutionObject() - you\u0027ll get ClassCastException)\n\nPlease prepare AbstractCDSPropertiesBean directly in this method - use PnfCDSRequestProvider.buildRequestPayload() to understand which parameters needs to be set in the payload.\n\nPlease also rename:\n- PnfCDSRequestProvider -\u003e PnfCDSRequestProviderDE\n- ServiceCDSRequestProvider -\u003e ServiceCDSRequestProviderBB\n- VfModuleCDSRequestProvider -\u003e VfModuleCDSRequestProviderBB\n- VnfCDSRequestProvider -\u003e VnfCDSRequestProviderBB",
+      "revId": "cc032cdcd1a106f7ec3583b9058e3238fe4a70ba",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8e4264f0_5277ed2f",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSProcessingBBTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-02-25T10:28:32Z",
+      "side": 1,
+      "message": "please use some java api to build this json - JsonObject perhaps?",
+      "revId": "cc032cdcd1a106f7ec3583b9058e3238fe4a70ba",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
