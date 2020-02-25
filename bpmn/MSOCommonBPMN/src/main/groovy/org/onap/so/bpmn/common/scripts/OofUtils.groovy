@@ -22,6 +22,7 @@
 
 package org.onap.so.bpmn.common.scripts
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
@@ -528,5 +529,49 @@ class OofUtils {
         Integer msbPort = UrnPropertiesReader.getVariable("mso.msb.port", execution, "80").toInteger()
 
         return UriBuilder.fromPath("").host(msbHost).port(msbPort).scheme("http").build().toString()
+    }
+
+    public String buildSelectNSIRequest(DelegateExecution execution, String requestId, String nstInfo, Map<String, Object> profileInfo){
+
+        def transactionId = requestId
+        logger.debug( "transactionId is: " + transactionId)
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(profileInfo);
+        StringBuilder response = new StringBuilder();
+        response.append(
+                "{\n" +
+                        "  \"requestInfo\": {\n" +
+                        "    \"transactionId\": \"${transactionId}\",\n" +
+                        "    \"requestId\": \"${requestId}\",\n" +
+                        "    \"sourceId\": \"so\",\n" +
+                        "    \"timeout\": 600\n" +
+                        "    },\n")
+        response.append(nstInfo);
+        response.append(",\n \"serviceProfile\": \n")
+        response.append(json);
+        response.append("\n  }\n")
+        return response.toString()
+    }
+
+    public String buildSelectNSSIRequest(DelegateExecution execution, String requestId, String nsstInfo, Map<String, Object> profileInfo){
+
+        def transactionId = requestId
+        logger.debug( "transactionId is: " + transactionId)
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(profileInfo);
+        StringBuilder response = new StringBuilder();
+        response.append(
+                "{\n" +
+                        "  \"requestInfo\": {\n" +
+                        "    \"transactionId\": \"${transactionId}\",\n" +
+                        "    \"requestId\": \"${requestId}\",\n" +
+                        "    \"sourceId\": \"so\",\n" +
+                        "    \"timeout\": 600\n" +
+                        "    },\n")
+        response.append(nsstInfo);
+        response.append(",\n  \"serviceProfile\": \n")
+        response.append(json);
+        response.append("\n  }\n")
+        return response.toString()
     }
 }
