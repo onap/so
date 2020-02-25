@@ -680,6 +680,30 @@
     },
     {
       "key": {
+        "uuid": "dcd87cd8_5b2ce8ce",
+        "filename": "common/src/main/java/org/onap/so/serviceinstancebeans/RequestParameters.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2020-02-25T10:09:33Z",
+      "side": 1,
+      "message": "There is another class called ServiceInstancesRequest that already has pnfName attribute. Do you need pnfName here as well? Also I think \u0027pnfCorrelationId\u0027 should be avoided.",
+      "parentUuid": "70844c69_c1500ee6",
+      "range": {
+        "startLine": 44,
+        "startChar": 3,
+        "endLine": 45,
+        "endChar": 36
+      },
+      "revId": "69f0e8fb2afbbe0ce139e7d78449d4525cfedb39",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6ebf3d7a_35ee7c1e",
         "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/beans/PnfResourceCustomization.java",
         "patchSetId": 2
