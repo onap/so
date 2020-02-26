@@ -58,7 +58,6 @@ import org.onap.aai.domain.yang.PortGroup;
 import org.onap.aai.domain.yang.Project;
 import org.onap.aai.domain.yang.Pserver;
 import org.onap.aai.domain.yang.RouteTableReference;
-import org.onap.aai.domain.yang.Service;
 import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aai.domain.yang.ServiceSubscription;
 import org.onap.aai.domain.yang.SpPartner;
@@ -74,6 +73,9 @@ import org.onap.aai.domain.yang.VolumeGroup;
 import org.onap.aai.domain.yang.VpnBinding;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.aai.domain.yang.Zone;
+import org.onap.aai.domain.yang.v16.CommunicationServiceProfile;
+import org.onap.aai.domain.yang.v16.ServiceProfile;
+import org.onap.aai.domain.yang.v16.SliceProfile;
 import org.onap.so.client.graphinventory.GraphInventoryObjectType;
 import org.onap.so.constants.Defaults;
 import org.reflections.Reflections;
@@ -123,8 +125,6 @@ public class AAIObjectType implements GraphInventoryObjectType, Serializable {
     public static final AAIObjectType SERVICE_INSTANCE_METADATA = new AAIObjectType(
             AAIObjectType.SERVICE_INSTANCE + "/metadata", org.onap.aai.domain.yang.v13.Metadata.class);
 
-    public static final AAIObjectType SERVICE = new AAIObjectType(
-            AAINamespaceConstants.SERVICE_DESIGN_AND_CREATION + "/services/service/{service-id}", Service.class);
     public static final AAIObjectType SERVICE_INSTANCE =
             new AAIObjectType(AAIObjectType.SERVICE_SUBSCRIPTION.uriTemplate(), ServiceInstance.class);
     public static final AAIObjectType PROJECT = new AAIObjectType(AAINamespaceConstants.BUSINESS, Project.class);
@@ -135,6 +135,9 @@ public class AAIObjectType implements GraphInventoryObjectType, Serializable {
             new AAIObjectType(AAINamespaceConstants.BUSINESS, OwningEntity.class);
     public static final AAIObjectType ALLOTTED_RESOURCE =
             new AAIObjectType(AAIObjectType.SERVICE_INSTANCE.uriTemplate(), AllottedResource.class);
+    public static final AAIObjectType ALLOTTED_RESOURCE_ALL =
+            new AAIObjectType(AAIObjectType.SERVICE_INSTANCE.uriTemplate(), "/allotted-resources",
+                    "allottedResources");
     public static final AAIObjectType PNF = new AAIObjectType(AAINamespaceConstants.NETWORK, Pnf.class);
     public static final AAIObjectType OPERATIONAL_ENVIRONMENT =
             new AAIObjectType(AAINamespaceConstants.CLOUD_INFRASTRUCTURE, OperationalEnvironment.class);
@@ -190,7 +193,27 @@ public class AAIObjectType implements GraphInventoryObjectType, Serializable {
                     "/esr-vnfm/{vnfm-id}/esr-system-info-list", "vnfm-esr-system-info-list");
     public static final AAIObjectType CLOUD_ESR_SYSTEM_INFO_LIST = new AAIObjectType(
             AAIObjectType.CLOUD_REGION.uriTemplate(), "/esr-system-info-list", "cloud-esr-system-info-list");
+    public static final AAIObjectType THIRDPARTY_SDNC_LIST = new AAIObjectType(AAINamespaceConstants.EXTERNAL_SYSTEM,
+            "/esr-thirdparty-sdnc-list", "thirdparty-sdnc-list");
+    public static final AAIObjectType THIRDPARTY_SDNC_SYSTEM_INFO_LIST =
+            new AAIObjectType(AAINamespaceConstants.EXTERNAL_SYSTEM + "/esr-thirdparty-sdnc-list",
+                    "/esr-thirdparty-sdnc/{sdnc-id}/esr-system-info-list", "thirdparty-sdnc-system-info-list");
     public static final AAIObjectType ZONE = new AAIObjectType(AAINamespaceConstants.NETWORK, Zone.class);
+    public static final AAIObjectType COMMUNICATION_SERVICE_PROFILE =
+            new AAIObjectType(AAIObjectType.SERVICE_SUBSCRIPTION.uriTemplate(), CommunicationServiceProfile.class);
+    public static final AAIObjectType SERVICE_PROFILE =
+            new AAIObjectType(AAIObjectType.SERVICE_SUBSCRIPTION.uriTemplate(), ServiceProfile.class);
+    public static final AAIObjectType SERVICE_PROFILE_ALL =
+            new AAIObjectType(AAIObjectType.SERVICE_INSTANCE.uriTemplate(), "/service-profiles",
+                    "serviceProfiles");
+    public static final AAIObjectType SLICE_PROFILE =
+            new AAIObjectType(AAIObjectType.SERVICE_SUBSCRIPTION.uriTemplate(), SliceProfile.class);
+    public static final AAIObjectType SLICE_PROFILE_ALL =
+            new AAIObjectType(AAIObjectType.SERVICE_INSTANCE.uriTemplate(), "/slice-profiles",
+                    "sliceProfiles");
+    public static final AAIObjectType COMMUNICATION_PROFILE_ALL =
+            new AAIObjectType(AAIObjectType.SERVICE_INSTANCE.uriTemplate(),"/communication-service-profiles",
+                    "communicationProfiles");
 
     private final String uriTemplate;
     private final String parentUri;
