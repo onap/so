@@ -136,8 +136,7 @@ public class AAIObjectType implements GraphInventoryObjectType, Serializable {
     public static final AAIObjectType ALLOTTED_RESOURCE =
             new AAIObjectType(AAIObjectType.SERVICE_INSTANCE.uriTemplate(), AllottedResource.class);
     public static final AAIObjectType ALLOTTED_RESOURCE_ALL =
-            new AAIObjectType(AAIObjectType.SERVICE_INSTANCE.uriTemplate(), "/allotted-resources",
-                    "allottedResources");
+            new AAIObjectType(AAIObjectType.SERVICE_INSTANCE.uriTemplate(), "/allotted-resources", "allottedResources");
     public static final AAIObjectType PNF = new AAIObjectType(AAINamespaceConstants.NETWORK, Pnf.class);
     public static final AAIObjectType OPERATIONAL_ENVIRONMENT =
             new AAIObjectType(AAINamespaceConstants.CLOUD_INFRASTRUCTURE, OperationalEnvironment.class);
@@ -204,16 +203,13 @@ public class AAIObjectType implements GraphInventoryObjectType, Serializable {
     public static final AAIObjectType SERVICE_PROFILE =
             new AAIObjectType(AAIObjectType.SERVICE_SUBSCRIPTION.uriTemplate(), ServiceProfile.class);
     public static final AAIObjectType SERVICE_PROFILE_ALL =
-            new AAIObjectType(AAIObjectType.SERVICE_INSTANCE.uriTemplate(), "/service-profiles",
-                    "serviceProfiles");
+            new AAIObjectType(AAIObjectType.SERVICE_INSTANCE.uriTemplate(), "/service-profiles", "serviceProfiles");
     public static final AAIObjectType SLICE_PROFILE =
             new AAIObjectType(AAIObjectType.SERVICE_SUBSCRIPTION.uriTemplate(), SliceProfile.class);
     public static final AAIObjectType SLICE_PROFILE_ALL =
-            new AAIObjectType(AAIObjectType.SERVICE_INSTANCE.uriTemplate(), "/slice-profiles",
-                    "sliceProfiles");
-    public static final AAIObjectType COMMUNICATION_PROFILE_ALL =
-            new AAIObjectType(AAIObjectType.SERVICE_INSTANCE.uriTemplate(),"/communication-service-profiles",
-                    "communicationProfiles");
+            new AAIObjectType(AAIObjectType.SERVICE_INSTANCE.uriTemplate(), "/slice-profiles", "sliceProfiles");
+    public static final AAIObjectType COMMUNICATION_PROFILE_ALL = new AAIObjectType(
+            AAIObjectType.SERVICE_INSTANCE.uriTemplate(), "/communication-service-profiles", "communicationProfiles");
 
     private final String uriTemplate;
     private final String parentUri;
