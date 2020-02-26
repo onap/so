@@ -1,0 +1,66 @@
+{
+    "distributionID": "35f20eb9-238a-4cc2-96dc-0a08f71bc209",
+    "serviceName": "VgwServiceV1",
+    "serviceVersion": "1.0",
+    "serviceUUID": "e051ff77-fb79-451c-8457-1cbf94e4db8f",
+    "serviceDescription": "Test VGW Service",
+    "serviceInvariantUUID": "c2ce924f-0aa1-4777-9b42-c0fec006a883",
+    "resources": [
+        {
+            "resourceInstanceName": "VgwVspV1 0",
+            "resourceName": "VgwVspV1",
+            "resourceVersion": "1.0",
+            "resourceType": "VF",
+            "resourceUUID": "655aa939-d589-4333-8cc6-8fcb15db858a",
+            "resourceInvariantUUID": "c53a0c91-35f6-40ff-bcda-f75030cfaf2d",
+            "resourceCustomizationUUID": "db1673e1-351a-4d04-8e2f-84b2b4c52cc7",
+            "category": "Generic",
+            "subcategory": "Network Service",
+            "artifacts": [
+                {
+                    "artifactName": "vf-license-model.xml",
+                    "artifactType": "VF_LICENSE",
+                    "artifactURL": "/VF_LICENSE/vf-license-model.xml",
+                    "artifactChecksum": "NjMwZDc0YzhiNDRlZDAyYjIxMmFlM2M0MWRkZjFmNDA\u003d",
+                    "artifactDescription": "VF license file",
+                    "artifactTimeout": 120,
+                    "artifactUUID": "8dda263d-90bb-4b3d-b8e0-0048222dc658",
+                    "artifactVersion": "1"
+                },
+                {
+                    "artifactName": "vgw6.csar",
+                    "artifactType": "ONBOARDED_PACKAGE",
+                    "artifactURL": "/ONBOARDED_PACKAGE/vgw6.csar",
+                    "artifactChecksum": "NjdmNGU3ZDlkODQ0YTUzMTU5NjZmOThiYjMxNTJiNGI\u003d",
+                    "artifactDescription": "Artifact created from csar",
+                    "artifactTimeout": 120,
+                    "artifactUUID": "9e9930b8-898e-4b8b-999e-66c43e1611f4",
+                    "artifactVersion": "1"
+                },
+                {
+                    "artifactName": "vendor-license-model.xml",
+                    "artifactType": "VENDOR_LICENSE",
+                    "artifactURL": "/VENDOR_LICENSE/vendor-license-model.xml",
+                    "artifactChecksum": "NGNmNzU4MDhjN2FjMTJkNWIxMjNkZDZhOWQyYzU0ZjA\u003d",
+                    "artifactDescription": " Vendor license file",
+                    "artifactTimeout": 120,
+                    "artifactUUID": "b3f7a4cf-6a35-4f66-b800-cd4a9a0e9719",
+                    "artifactVersion": "1"
+                }
+            ]
+        }
+    ],
+    "serviceArtifacts": [
+        {
+            "artifactName": "service-Vgwservicev1-csar.csar",
+            "artifactType": "TOSCA_CSAR",
+            "artifactURL": "/service-Vgwservicev1-csar.csar",
+            "artifactChecksum": "MzcxNTMwMDhmNGY0MjRkMjFkNzk1MDNjOTVhNjQzMmE\u003d",
+            "artifactDescription": "TOSCA definition package of the asset",
+            "artifactTimeout": 0,
+            "artifactUUID": "0cc70c6e-6ddc-4ecc-8052-d9f1433c14b8",
+            "artifactVersion": "1"
+        }
+    ],
+    "workloadContext": "Production"
+}

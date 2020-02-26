@@ -20,8 +20,6 @@
 
 package org.onap.so.rest.service;
 
-import com.google.common.base.Optional;
-import org.onap.so.configuration.rest.BasicHttpHeadersProvider;
 import org.onap.so.configuration.rest.HttpHeadersProvider;
 import org.onap.so.rest.exceptions.HttpResouceNotFoundException;
 import org.onap.so.rest.exceptions.InvalidRestRequestException;
@@ -36,6 +34,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import com.google.common.base.Optional;
 
 /**
  * A Service to perform HTTP requests
@@ -46,16 +45,27 @@ public class HttpRestServiceProviderImpl implements HttpRestServiceProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpRestServiceProviderImpl.class);
     private final RestTemplate restTemplate;
-    private final HttpHeadersProvider httpHeadersProvider;
+    private final HttpHeaders defaultHttpHeaders;
 
     public HttpRestServiceProviderImpl(final RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
-        this.httpHeadersProvider = new BasicHttpHeadersProvider();
+        this.defaultHttpHeaders = new HttpHeaders();
     }
 
+    public HttpRestServiceProviderImpl(final RestTemplate restTemplate, final HttpHeaders defaultHttpHeaders) {
+        this.restTemplate = restTemplate;
+        this.defaultHttpHeaders = defaultHttpHeaders;
+    }
+
+    /**
+     * 
+     * @deprecated this constructor is deprecated in favor of using {@link HttpRestServiceProviderImpl(RestTemplate
+     *             restTemplate, HttpHeaders defaultHttpHeaders)}
+     */
+    @Deprecated
     public HttpRestServiceProviderImpl(final RestTemplate restTemplate, final HttpHeadersProvider httpHeadersProvider) {
         this.restTemplate = restTemplate;
-        this.httpHeadersProvider = httpHeadersProvider;
+        this.defaultHttpHeaders = httpHeadersProvider.getHttpHeaders();
     }
 
     @Override
@@ -64,10 +74,21 @@ public class HttpRestServiceProviderImpl implements HttpRestServiceProvider {
         return createOptional(response, url, HttpMethod.GET);
     }
 
+    @Override
+    public <T> Optional<T> get(final String url, final HttpHeaders headers, final Class<T> clazz) {
+        final ResponseEntity<T> response = invokeHttpRequest(new HttpEntity<>(headers), HttpMethod.GET, url, clazz);
+        return createOptional(response, url, HttpMethod.GET);
+    }
 
     @Override
     public <T> ResponseEntity<T> getHttpResponse(final String url, final Class<T> clazz) {
-        final HttpEntity<?> request = new HttpEntity<>(getHttpHeaders());
+        final HttpEntity<?> request = new HttpEntity<>(getDefaultHttpHeaders());
+        return invokeHttpRequest(request, HttpMethod.GET, url, clazz);
+    }
+
+    @Override
+    public <T> ResponseEntity<T> getHttpResponse(final String url, final HttpHeaders headers, final Class<T> clazz) {
+        final HttpEntity<?> request = new HttpEntity<>(headers);
         return invokeHttpRequest(request, HttpMethod.GET, url, clazz);
     }
 
@@ -79,7 +100,14 @@ public class HttpRestServiceProviderImpl implements HttpRestServiceProvider {
 
     @Override
     public <T> ResponseEntity<T> postHttpRequest(final Object object, final String url, final Class<T> clazz) {
-        final HttpEntity<?> request = new HttpEntity<>(object, getHttpHeaders());
+        final HttpEntity<?> request = new HttpEntity<>(object, getDefaultHttpHeaders());
+        return invokeHttpRequest(request, HttpMethod.POST, url, clazz);
+    }
+
+    @Override
+    public <T> ResponseEntity<T> postHttpRequest(final Object object, final String url, final HttpHeaders headers,
+            final Class<T> clazz) {
+        final HttpEntity<?> request = new HttpEntity<>(object, headers);
         return invokeHttpRequest(request, HttpMethod.POST, url, clazz);
     }
 
@@ -91,7 +119,7 @@ public class HttpRestServiceProviderImpl implements HttpRestServiceProvider {
 
     @Override
     public <T> ResponseEntity<T> putHttpRequest(final Object object, final String url, final Class<T> clazz) {
-        final HttpEntity<?> request = new HttpEntity<>(object, getHttpHeaders());
+        final HttpEntity<?> request = new HttpEntity<>(object, getDefaultHttpHeaders());
         return invokeHttpRequest(request, HttpMethod.PUT, url, clazz);
     }
 
@@ -140,7 +168,7 @@ public class HttpRestServiceProviderImpl implements HttpRestServiceProvider {
     @Override
     public <T> ResponseEntity<T> deleteHttpRequest(final String url, final Class<T> clazz) {
         try {
-            final HttpEntity<?> request = new HttpEntity<>(getHttpHeaders());
+            final HttpEntity<?> request = new HttpEntity<>(getDefaultHttpHeaders());
             return restTemplate.exchange(url, HttpMethod.DELETE, request, clazz);
 
         } catch (final HttpStatusCodeException httpStatusCodeException) {
@@ -162,7 +190,7 @@ public class HttpRestServiceProviderImpl implements HttpRestServiceProvider {
         }
     }
 
-    private HttpHeaders getHttpHeaders() {
-        return httpHeadersProvider.getHttpHeaders();
+    private HttpHeaders getDefaultHttpHeaders() {
+        return defaultHttpHeaders;
     }
 }

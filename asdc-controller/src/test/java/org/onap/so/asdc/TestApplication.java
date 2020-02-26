@@ -31,12 +31,14 @@ import org.springframework.context.annotation.Profile;
 
 @SpringBootApplication
 @Profile("test")
-@ComponentScan(basePackages = {"org.onap.so.asdc", "org.onap.so.security"},
+@ComponentScan(
+        basePackages = {"org.onap.so.asdc", "org.onap.so.security", "org.onap.so.rest.service",
+                "org.onap.so.configuration.rest", "org.onap.so.client"},
         excludeFilters = {@Filter(type = FilterType.ANNOTATION, classes = SpringBootApplication.class),
                 @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = RequestsDBHelper.class),
                 @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = InfraActiveRequestsRepositoryImpl.class)})
 public class TestApplication {
-    public static void main(String... args) {
+    public static void main(final String... args) {
         SpringApplication.run(TestApplication.class, args);
         System.getProperties().setProperty("mso.db", "MARIADB");
         System.getProperties().setProperty("server.name", "Springboot");

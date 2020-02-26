@@ -39,7 +39,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import org.onap.so.logger.LoggingAnchor;
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.exception.LockAcquisitionException;
 import org.onap.sdc.api.notification.IArtifactInfo;
@@ -63,6 +62,7 @@ import org.onap.sdc.toscaparser.api.parameters.Input;
 import org.onap.sdc.utils.DistributionStatusEnum;
 import org.onap.so.asdc.client.ASDCConfiguration;
 import org.onap.so.asdc.client.exceptions.ArtifactInstallerException;
+import org.onap.so.asdc.etsi.pkg.processor.EtsiResourcePackageProcessor;
 import org.onap.so.asdc.installer.ASDCElementInfo;
 import org.onap.so.asdc.installer.BigDecimalVersion;
 import org.onap.so.asdc.installer.IVfModuleData;
@@ -113,7 +113,6 @@ import org.onap.so.db.catalog.data.repository.CollectionResourceCustomizationRep
 import org.onap.so.db.catalog.data.repository.CollectionResourceRepository;
 import org.onap.so.db.catalog.data.repository.ConfigurationResourceCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.ConfigurationResourceRepository;
-import org.onap.so.db.catalog.data.repository.CvnfcConfigurationCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.CvnfcCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.ExternalServiceToInternalServiceRepository;
 import org.onap.so.db.catalog.data.repository.HeatEnvironmentRepository;
@@ -140,6 +139,7 @@ import org.onap.so.db.request.data.repository.WatchdogComponentDistributionStatu
 import org.onap.so.db.request.data.repository.WatchdogDistributionStatusRepository;
 import org.onap.so.db.request.data.repository.WatchdogServiceModVerIdLookupRepository;
 import org.onap.so.logger.ErrorCode;
+import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -147,9 +147,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.util.CollectionUtils;
 
 @Component
 public class ToscaResourceInstaller {
@@ -272,6 +272,9 @@ public class ToscaResourceInstaller {
 
     @Autowired
     protected WorkflowResource workflowResource;
+
+    @Autowired
+    protected EtsiResourcePackageProcessor etsiResourcePackageProcessor;
 
     protected static final Logger logger = LoggerFactory.getLogger(ToscaResourceInstaller.class);
 
@@ -456,6 +459,8 @@ public class ToscaResourceInstaller {
                 if (ALLOTTED_RESOURCE.equalsIgnoreCase(category)) {
                     arEntityDetails.add(vfEntityDetails);
                 }
+                final String vnfUuid = metadata.getValue(SdcPropertyNames.PROPERTY_NAME_UUID);
+                etsiResourcePackageProcessor.processPackageIfExists(vnfUuid);
 
                 processVfModules(vfEntityDetails, toscaResourceStruct, vfResourceStructure, service, metadata);
             }
