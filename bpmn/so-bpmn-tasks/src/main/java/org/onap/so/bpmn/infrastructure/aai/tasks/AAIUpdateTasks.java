@@ -6,6 +6,7 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  *  Modifications Copyright (c) 2019 Bell Canada.
+ * Modifications Copyright (c) 2020 Nokia
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,43 +71,21 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update the status of Service to Assigned in AAI
-     *
-     * @param execution
      */
     public void updateOrchestrationStatusAssignedService(BuildingBlockExecution execution) {
-        try {
-            ServiceInstance serviceInstance =
-                    extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
-            aaiServiceInstanceResources.updateOrchestrationStatusServiceInstance(serviceInstance,
-                    OrchestrationStatus.ASSIGNED);
-            execution.setVariable("aaiServiceInstanceRollback", true);
-        } catch (Exception ex) {
-            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusAssignedService", ex);
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-        }
+        updateOrchestrationStatusForService(execution, OrchestrationStatus.ASSIGNED);
+        execution.setVariable("aaiServiceInstanceRollback", true);
     }
 
     /**
      * BPMN access method to update status of Service to Active in AAI
-     *
-     * @param execution
      */
     public void updateOrchestrationStatusActiveService(BuildingBlockExecution execution) {
-        try {
-            ServiceInstance serviceInstance =
-                    extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
-            aaiServiceInstanceResources.updateOrchestrationStatusServiceInstance(serviceInstance,
-                    OrchestrationStatus.ACTIVE);
-        } catch (Exception ex) {
-            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusActiveService", ex);
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-        }
+        updateOrchestrationStatusForService(execution, OrchestrationStatus.ACTIVE);
     }
 
     /**
      * BPMN access method to update status of Pnf to Assigned in AAI
-     *
-     * @param execution
      */
     public void updateOrchestrationStatusAssignedPnf(BuildingBlockExecution execution) {
         updateOrchestrationStatusForPnf(execution, OrchestrationStatus.ASSIGNED);
@@ -114,8 +93,6 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update status of Pnf to Active in AAI
-     *
-     * @param execution
      */
     public void updateOrchestrationStatusActivePnf(BuildingBlockExecution execution) {
         updateOrchestrationStatusForPnf(execution, OrchestrationStatus.ACTIVE);
@@ -135,44 +112,18 @@ public class AAIUpdateTasks {
         updateOrchestrationStatusForPnf(execution, OrchestrationStatus.REGISTERED);
     }
 
-    private void updateOrchestrationStatusForPnf(BuildingBlockExecution execution, OrchestrationStatus status) {
-        try {
-            Pnf pnf = extractPojosForBB.extractByKey(execution, ResourceKey.PNF);
-            aaiPnfResources.updateOrchestrationStatusPnf(pnf, status);
-        } catch (Exception ex) {
-            logger.error("Exception occurred in AAIUpdateTasks during update Orchestration Status to {}", status, ex);
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-        }
-    }
-
     /**
      * BPMN access method to update status of Vnf to Assigned in AAI
-     *
-     * @param execution
      */
     public void updateOrchestrationStatusAssignedVnf(BuildingBlockExecution execution) {
-        try {
-            GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
-            aaiVnfResources.updateOrchestrationStatusVnf(vnf, OrchestrationStatus.ASSIGNED);
-        } catch (Exception ex) {
-            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusAssignedVnf", ex);
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-        }
+        updateOrchestrationStatusForVnf(execution, OrchestrationStatus.ASSIGNED);
     }
 
     /**
      * BPMN access method to update status of Vnf to Active in AAI
-     *
-     * @param execution
      */
     public void updateOrchestrationStatusActiveVnf(BuildingBlockExecution execution) {
-        try {
-            GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
-            aaiVnfResources.updateOrchestrationStatusVnf(vnf, OrchestrationStatus.ACTIVE);
-        } catch (Exception ex) {
-            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusActiveVnf", ex);
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-        }
+        updateOrchestrationStatusForVnf(execution, OrchestrationStatus.ACTIVE);
     }
 
     /**
@@ -839,4 +790,38 @@ public class AAIUpdateTasks {
                 throw new IllegalArgumentException("Invalid action to set Orchestration status: " + action);
         }
     }
+
+    private void updateOrchestrationStatusForService(BuildingBlockExecution execution, OrchestrationStatus status) {
+        try {
+            ServiceInstance serviceInstance =
+                    extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+            aaiServiceInstanceResources.updateOrchestrationStatusServiceInstance(serviceInstance, status);
+        } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks during update orchestration status to {} for service",
+                    status, ex);
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
+    private void updateOrchestrationStatusForPnf(BuildingBlockExecution execution, OrchestrationStatus status) {
+        try {
+            Pnf pnf = extractPojosForBB.extractByKey(execution, ResourceKey.PNF);
+            aaiPnfResources.updateOrchestrationStatusPnf(pnf, status);
+        } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks during update Orchestration Status to {}", status, ex);
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
+    private void updateOrchestrationStatusForVnf(BuildingBlockExecution execution, OrchestrationStatus status) {
+        try {
+            GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
+            aaiVnfResources.updateOrchestrationStatusVnf(vnf, status);
+        } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks during update orchestration status to {} for vnf",
+                    status, ex);
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
 }
