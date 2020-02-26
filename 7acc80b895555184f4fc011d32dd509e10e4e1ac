@@ -22,6 +22,30 @@
       "revId": "7acc80b895555184f4fc011d32dd509e10e4e1ac",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a37f445e_5e3d58e7",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/aai/tasks/AAIUpdateTasks.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-26T11:10:01Z",
+      "side": 0,
+      "message": "Very good point, i forgot about this.",
+      "parentUuid": "f23fdb5d_d6ba11fb",
+      "range": {
+        "startLine": 82,
+        "startChar": 0,
+        "endLine": 82,
+        "endChar": 70
+      },
+      "revId": "7acc80b895555184f4fc011d32dd509e10e4e1ac",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }

@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "e34036a3_de1062a2",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/aai/tasks/AAIUpdateTasks.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-26T11:10:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "91d9c782_03c6c3d2",
+      "revId": "b2efdc201451ba41716bc85cadabd7e5724ed40b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2d7cacd2_84f8efee",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/aai/tasks/AAIUpdateTasks.java",
         "patchSetId": 1
@@ -39,6 +57,30 @@
       "revId": "b2efdc201451ba41716bc85cadabd7e5724ed40b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "22a1e9db_74080447",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/aai/tasks/AAIUpdateTasks.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-26T11:10:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2d7cacd2_84f8efee",
+      "range": {
+        "startLine": 106,
+        "startChar": 66,
+        "endLine": 106,
+        "endChar": 67
+      },
+      "revId": "b2efdc201451ba41716bc85cadabd7e5724ed40b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
