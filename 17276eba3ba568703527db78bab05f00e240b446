@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6b0d91ad_3e08852e",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/PNFSWUPDownload.bpmn",
+        "patchSetId": 5
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5302
+      },
+      "writtenOn": "2020-02-26T12:22:22Z",
+      "side": 1,
+      "message": "downloadNESw\nAlign with the wiki of PNF SW Upgrade in Frankfurt, and *NE* are all capitals.",
+      "range": {
+        "startLine": 45,
+        "startChar": 48,
+        "endLine": 45,
+        "endChar": 60
+      },
+      "revId": "17276eba3ba568703527db78bab05f00e240b446",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "618873d0_b679f08a",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/PNFSoftwareUpgrade.bpmn",
+        "patchSetId": 5
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 5302
+      },
+      "writtenOn": "2020-02-26T12:22:22Z",
+      "side": 1,
+      "message": "downloadNESw\nAlign with the wiki of PNF SW Upgrade in Frankfurt, and *NE* are all capitals.",
+      "range": {
+        "startLine": 72,
+        "startChar": 48,
+        "endLine": 72,
+        "endChar": 60
+      },
+      "revId": "17276eba3ba568703527db78bab05f00e240b446",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0f619912_e0103daa",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/PNFSoftwareUpgrade.bpmn",
+        "patchSetId": 5
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 5302
+      },
+      "writtenOn": "2020-02-26T12:22:22Z",
+      "side": 1,
+      "message": "activateNESw\nAlign with the wiki of PNF SW Upgrade in Frankfurt, and *NE* are all capitals.",
+      "range": {
+        "startLine": 84,
+        "startChar": 48,
+        "endLine": 84,
+        "endChar": 60
+      },
+      "revId": "17276eba3ba568703527db78bab05f00e240b446",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
