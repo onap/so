@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "16f13191_8349ff4d",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/PNFSWUPDownload.bpmn",
+        "patchSetId": 8
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-27T15:48:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8215cd9d_d9c9c4ed",
+      "range": {
+        "startLine": 78,
+        "startChar": 91,
+        "endLine": 78,
+        "endChar": 100
+      },
+      "revId": "f69147d1d59ef73695e4acfb7e8a14f214d4f253",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0867ce58_e47cd127",
         "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/PNFSWUPDownload.bpmn",
         "patchSetId": 8
@@ -45,6 +69,30 @@
       "revId": "f69147d1d59ef73695e4acfb7e8a14f214d4f253",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6f5bc8c4_b27cea99",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/PNFSWUPDownload.bpmn",
+        "patchSetId": 8
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-27T15:48:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0867ce58_e47cd127",
+      "range": {
+        "startLine": 84,
+        "startChar": 91,
+        "endLine": 84,
+        "endChar": 100
+      },
+      "revId": "f69147d1d59ef73695e4acfb7e8a14f214d4f253",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "e1c38c02_39a48131",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/PNFSoftwareUpgrade.bpmn",
+        "patchSetId": 8
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-27T15:48:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9b0032c0_f8d90aa8",
+      "range": {
+        "startLine": 32,
+        "startChar": 91,
+        "endLine": 32,
+        "endChar": 100
+      },
+      "revId": "f69147d1d59ef73695e4acfb7e8a14f214d4f253",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "34fa6f06_68db084e",
         "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/PNFSoftwareUpgrade.bpmn",
         "patchSetId": 8
@@ -91,6 +163,30 @@
       "revId": "f69147d1d59ef73695e4acfb7e8a14f214d4f253",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b4d3be5c_03b4582d",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/PNFSoftwareUpgrade.bpmn",
+        "patchSetId": 8
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 5099
+      },
+      "writtenOn": "2020-02-27T15:48:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "34fa6f06_68db084e",
+      "range": {
+        "startLine": 61,
+        "startChar": 91,
+        "endLine": 61,
+        "endChar": 100
+      },
+      "revId": "f69147d1d59ef73695e4acfb7e8a14f214d4f253",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
