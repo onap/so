@@ -168,7 +168,7 @@ class ActivateCommunicationService extends AbstractServiceTaskProcessor {
                     }
                 } else {
                     msg = "the communication service has no e2e service"
-                    exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+                    exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
                 }
             }
 
