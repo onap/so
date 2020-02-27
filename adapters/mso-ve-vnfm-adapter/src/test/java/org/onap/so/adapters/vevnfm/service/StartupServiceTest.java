@@ -23,6 +23,8 @@ package org.onap.so.adapters.vevnfm.service;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import java.util.Collections;
+import java.util.List;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -52,14 +54,15 @@ public class StartupServiceTest {
         // given
         final EsrSystemInfo info = new EsrSystemInfo();
         info.setServiceUrl(URL);
+        final List<EsrSystemInfo> infos = Collections.singletonList(info);
 
-        when(aaiConnection.receiveVnfm()).thenReturn(info);
+        when(aaiConnection.receiveVnfm()).thenReturn(infos);
 
         // when
-        final EsrSystemInfo systemInfo = startupService.receiveVnfm();
+        final List<EsrSystemInfo> systemInfo = startupService.receiveVnfm();
 
         // then
         verify(aaiConnection).receiveVnfm();
-        assertEquals(info, systemInfo);
+        assertEquals(infos, systemInfo);
     }
 }
