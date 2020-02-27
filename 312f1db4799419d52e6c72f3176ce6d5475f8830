@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c1d103a0_cfd240bb",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBB.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-27T17:24:01Z",
+      "side": 1,
+      "message": "Why the return type is Optional? If you check the action param, you never get null value as result. I see no point in optional here.",
+      "range": {
+        "startLine": 106,
+        "startChar": 12,
+        "endLine": 106,
+        "endChar": 28
+      },
+      "revId": "312f1db4799419d52e6c72f3176ce6d5475f8830",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "52a7ab4e_afa150c0",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBB.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-27T17:24:01Z",
+      "side": 1,
+      "message": "shorter:\n\nreturn executeBuildingBlock.getBuildingBlock().getBpmnAction();",
+      "range": {
+        "startLine": 156,
+        "startChar": 8,
+        "endLine": 158,
+        "endChar": 45
+      },
+      "revId": "312f1db4799419d52e6c72f3176ce6d5475f8830",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
