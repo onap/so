@@ -25,12 +25,15 @@ public class DmaapService {
     private HttpRestServiceProvider restProvider;
 
     public void send(final VnfLcmOperationOccurrenceNotification notification) {
-        final ResponseEntity<String> response = restProvider.postHttpRequest(notification, getUrl(), String.class);
+        try {
+            final ResponseEntity<String> response = restProvider.postHttpRequest(notification, getUrl(), String.class);
+            final HttpStatus statusCode = response.getStatusCode();
+            final String body = response.getBody();
 
-        final HttpStatus statusCode = response.getStatusCode();
-        final String body = response.getBody();
-
-        logger.info("The DMaaP replied with the code {} and the body {}", statusCode, body);
+            logger.info("The DMaaP replied with the code {} and the body {}", statusCode, body);
+        } catch (Exception e) {
+            logger.warn("An issue connecting to DMaaP", e);
+        }
     }
 
     private String getUrl() {

@@ -20,6 +20,7 @@
 
 package org.onap.so.adapters.vevnfm.configuration;
 
+import java.util.List;
 import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.so.adapters.vevnfm.service.StartupService;
 import org.onap.so.adapters.vevnfm.service.SubscriptionScheduler;
@@ -47,8 +48,8 @@ public class StartupConfiguration {
     @EventListener(ApplicationReadyEvent.class)
     public void onApplicationReadyEvent() throws Exception {
         if (!environment.acceptsProfiles(Profiles.of(TEST_PROFILE))) {
-            final EsrSystemInfo info = startupService.receiveVnfm();
-            subscriptionScheduler.setInfo(info);
+            final List<EsrSystemInfo> infos = startupService.receiveVnfm();
+            subscriptionScheduler.setInfos(infos);
         }
     }
 }

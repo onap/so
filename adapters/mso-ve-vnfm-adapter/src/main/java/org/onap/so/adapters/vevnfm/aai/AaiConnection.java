@@ -20,6 +20,8 @@
 
 package org.onap.so.adapters.vevnfm.aai;
 
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import org.apache.logging.log4j.util.Strings;
@@ -43,27 +45,27 @@ public class AaiConnection {
 
     private static final int FIRST_INDEX = 0;
 
-    private static void isValid(final EsrSystemInfo info) throws VeVnfmException {
-        if (info == null || Strings.isBlank(info.getServiceUrl())) {
+    private static void isValid(final List<EsrSystemInfo> infos) throws VeVnfmException {
+        if (infos == null || infos.isEmpty() || Strings.isBlank(infos.get(FIRST_INDEX).getServiceUrl())) {
             throw new VeVnfmException("No 'url' field in VNFM info");
         }
     }
 
-    public EsrSystemInfo receiveVnfm() throws VeVnfmException {
-        EsrSystemInfo info;
+    public List<EsrSystemInfo> receiveVnfm() throws VeVnfmException {
+        List<EsrSystemInfo> infos;
 
         try {
-            info = receiveVnfmInternal();
+            infos = receiveVnfmInternal();
         } catch (Exception e) {
             throw new VeVnfmException(e);
         }
 
-        isValid(info);
+        isValid(infos);
 
-        return info;
+        return infos;
     }
 
-    private EsrSystemInfo receiveVnfmInternal() {
+    private List<EsrSystemInfo> receiveVnfmInternal() {
         final AAIResourcesClient resourcesClient = new AAIResourcesClient();
         final AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.VNFM_LIST);
         final Optional<EsrVnfmList> response = resourcesClient.get(EsrVnfmList.class, resourceUri);
@@ -73,33 +75,29 @@ public class AaiConnection {
             logger.info("The VNFM replied with: {}", esrVnfmList);
             final List<EsrVnfm> esrVnfm = esrVnfmList.getEsrVnfm();
 
-            if (esrVnfm.isEmpty()) {
-                return null;
+            final List<EsrSystemInfo> infos = new LinkedList<>();
+
+            for (final EsrVnfm vnfm : esrVnfm) {
+                final String vnfmId = vnfm.getVnfmId();
+                infos.addAll(receiveVnfmServiceUrl(resourcesClient, vnfmId));
             }
 
-            final String vnfmId = esrVnfm.get(FIRST_INDEX).getVnfmId();
-            return receiveVnfmServiceUrl(resourcesClient, vnfmId);
+            return infos;
         }
 
         return null;
     }
 
-    private EsrSystemInfo receiveVnfmServiceUrl(final AAIResourcesClient resourcesClient, final String vnfmId) {
+    private List<EsrSystemInfo> receiveVnfmServiceUrl(final AAIResourcesClient resourcesClient, final String vnfmId) {
         final Optional<EsrVnfm> response = resourcesClient.get(EsrVnfm.class,
                 AAIUriFactory.createResourceUri(AAIObjectType.VNFM, vnfmId).depth(Depth.ONE));
 
         if (response.isPresent()) {
             final EsrVnfm esrVnfm = response.get();
             logger.info("The VNFM replied with: {}", esrVnfm);
-            final List<EsrSystemInfo> esrSystemInfo = esrVnfm.getEsrSystemInfoList().getEsrSystemInfo();
-
-            if (esrSystemInfo.isEmpty()) {
-                return null;
-            }
-
-            return esrSystemInfo.get(FIRST_INDEX);
+            return esrVnfm.getEsrSystemInfoList().getEsrSystemInfo();
         }
 
-        return null;
+        return Collections.emptyList();
     }
 }

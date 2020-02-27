@@ -20,49 +20,50 @@
 
 package org.onap.so.adapters.vevnfm.service;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.List;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.EsrSystemInfo;
-import org.onap.so.adapters.vevnfm.aai.AaiConnection;
 
 @RunWith(MockitoJUnitRunner.class)
-public class StartupServiceTest {
+public class SubscriptionSchedulerTest {
 
-    private static final String URL = "rt";
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
+    private static final String URL = "url";
+    private static final String ID = "id044";
 
     @Mock
-    private AaiConnection aaiConnection;
+    private SubscriberService subscriberService;
 
     @InjectMocks
-    private StartupService startupService;
+    private SubscriptionScheduler subscriptionScheduler;
 
     @Test
-    public void testSuccess() throws Exception {
+    public void testFullScenario() throws Exception {
         // given
         final EsrSystemInfo info = new EsrSystemInfo();
         info.setServiceUrl(URL);
         final List<EsrSystemInfo> infos = Collections.singletonList(info);
 
-        when(aaiConnection.receiveVnfm()).thenReturn(infos);
+        when(subscriberService.subscribe(eq(info))).thenReturn(ID);
+        when(subscriberService.checkSubscription(eq(info), eq(ID))).thenReturn(false);
 
         // when
-        final List<EsrSystemInfo> systemInfo = startupService.receiveVnfm();
+        subscriptionScheduler.setInfos(infos);
+        subscriptionScheduler.subscribeTask();
+        subscriptionScheduler.checkSubscribeTask();
 
         // then
-        verify(aaiConnection).receiveVnfm();
-        assertEquals(infos, systemInfo);
+        verify(subscriberService).subscribe(info);
+        verify(subscriberService).checkSubscription(info, ID);
+
+        assertNull(subscriptionScheduler.getEsrIds().get(0).getId());
     }
 }
