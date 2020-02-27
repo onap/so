@@ -191,6 +191,11 @@ public class AAIObjectType implements GraphInventoryObjectType, Serializable {
     public static final AAIObjectType CLOUD_ESR_SYSTEM_INFO_LIST = new AAIObjectType(
             AAIObjectType.CLOUD_REGION.uriTemplate(), "/esr-system-info-list", "cloud-esr-system-info-list");
     public static final AAIObjectType ZONE = new AAIObjectType(AAINamespaceConstants.NETWORK, Zone.class);
+    public static final AAIObjectType THIRDPARTY_SDNC_LIST = new AAIObjectType(AAINamespaceConstants.EXTERNAL_SYSTEM,
+            "/esr-thirdparty-sdnc-list", "thirdparty-sdnc-list");
+    public static final AAIObjectType THIRDPARTY_SDNC_SYSTEM_INFO_LIST =
+            new AAIObjectType(AAINamespaceConstants.EXTERNAL_SYSTEM + "/esr-thirdparty-sdnc-list",
+                    "/esr-thirdparty-sdnc/{sdnc-id}/esr-system-info-list", "thirdparty-sdnc-system-info-list");
 
     private final String uriTemplate;
     private final String parentUri;
