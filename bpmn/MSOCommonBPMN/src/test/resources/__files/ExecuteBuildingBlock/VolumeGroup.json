@@ -4,5 +4,8 @@
 	"vnf-type":"vnfType",	
 	"orchestration-status":"PRECREATED",	
 	"cloud-params":{},	
-	"heat-stack-id":"heatStackId"
+	"heat-stack-id":"heatStackId",
+	"model-info-vf-module": {
+		"modelCustomizationUUID": "modelCustomizationId"
+	}
 }
