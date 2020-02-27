@@ -23,6 +23,7 @@
     <module>mso-openstack-adapters</module>
     <module>mso-vnfm-adapter</module>
     <module>mso-ve-vnfm-adapter</module>
+    <module>mso-nssmf-adapter</module>
     <module>so-appc-orchestrator</module>
   </modules>
 
