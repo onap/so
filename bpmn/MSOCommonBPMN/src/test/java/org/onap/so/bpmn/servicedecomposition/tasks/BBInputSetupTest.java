@@ -888,7 +888,6 @@ public class BBInputSetupTest {
         verify(SPY_bbInputSetup, times(1)).populateGenericVnf(parameter);
         assertEquals("VnfId populated", true,
                 lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID).equalsIgnoreCase(resourceId));
-
         doReturn(ModelType.volumeGroup).when(modelInfo).getModelType();
         resourceId = "volumeGroupId";
         parameter.setResourceId(resourceId);
@@ -1159,12 +1158,13 @@ public class BBInputSetupTest {
         ModelInfo mi = new ModelInfo();
         mi.setModelType(ModelType.vnf);
         mi.setModelCustomizationUuid("vnfModelCustomizationUUID");
+        mi.setModelCustomizationId("vnfModelCustomizationUUID");
         ri.setModelInfo(mi);
         ril.setRelatedInstance(ri);
         requestDetails.setRelatedInstanceList(new RelatedInstanceList[] {ril});
 
         ModelInfo modelInfo = new ModelInfo();
-        modelInfo.setModelType(ModelType.volumeGroup);
+        modelInfo.setModelCustomizationId("volumeGroupCustId");
 
         RequestInfo reqInfo = new RequestInfo();
         reqInfo.setInstanceName("volumeGroupName");
@@ -1178,6 +1178,8 @@ public class BBInputSetupTest {
         VolumeGroup vg = new VolumeGroup();
         vg.setVolumeGroupName("volumeGroupName");
         vg.setVolumeGroupId("volumeGroupId");
+        vg.setModelInfoVfModule(new ModelInfoVfModule());
+        vg.getModelInfoVfModule().setModelCustomizationUUID("volumeGroupCustId");
         vnf.getVolumeGroups().add(vg);
         serviceInstance.getVnfs().add(vnf);
 
@@ -1186,6 +1188,8 @@ public class BBInputSetupTest {
         Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
         lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, "genericVnfId");
 
+        ServiceModel serviceModel = new ServiceModel();
+        serviceModel.setCurrentService(service);
         String bbName = AssignFlows.VOLUME_GROUP.toString();
         String resourceId = "123";
         doNothing().when(SPY_bbInputSetup).mapCatalogVolumeGroup(isA(VolumeGroup.class), eq(modelInfo), eq(service),
@@ -1198,9 +1202,10 @@ public class BBInputSetupTest {
         BBInputSetupParameter parameter = new BBInputSetupParameter.Builder().setRequestId(REQUEST_ID)
                 .setModelInfo(modelInfo).setService(service).setBbName(bbName).setServiceInstance(serviceInstance)
                 .setLookupKeyMap(lookupKeyMap).setResourceId(resourceId).setRequestDetails(requestDetails)
-                .setInstanceName(reqInfo.getInstanceName()).build();
+                .setInstanceName(reqInfo.getInstanceName()).setServiceModel(serviceModel).build();
         SPY_bbInputSetup.populateVolumeGroup(parameter);
-        verify(SPY_bbInputSetup, times(1)).mapCatalogVolumeGroup(vg, modelInfo, service, "vnfModelCustomizationUUID");
+        verify(SPY_bbInputSetup, times(1)).mapCatalogVolumeGroup(eq(vg), isA(ModelInfo.class), eq(service),
+                eq("vnfModelCustomizationUUID"));
         vnf.getVolumeGroups().clear();
         SPY_bbInputSetup.populateVolumeGroup(parameter);
         verify(SPY_bbInputSetup, times(1)).mapCatalogVolumeGroup(vnf.getVolumeGroups().get(0), modelInfo, service,
