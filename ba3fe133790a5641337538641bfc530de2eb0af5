@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "52c02191_688ee182",
+        "filename": "adapters/mso-requests-db-adapter/src/main/resources/db/migration/V2.2__Add_Operation_Status.sql",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2020-02-27T11:37:37Z",
+      "side": 1,
+      "message": "this new entry should go in new migration file.",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 32
+      },
+      "revId": "ba3fe133790a5641337538641bfc530de2eb0af5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
