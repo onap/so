@@ -20,6 +20,8 @@
 
 package org.onap.so.adapters.vevnfm.service;
 
+import java.util.Collections;
+import java.util.List;
 import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.so.adapters.vevnfm.aai.AaiConnection;
 import org.onap.so.adapters.vevnfm.exception.VeVnfmException;
@@ -45,18 +47,17 @@ public class StartupService {
     @Autowired
     private AaiConnection aaiConnection;
 
-    @Retryable(value = {VeVnfmException.class}, maxAttempts = 5, backoff = @Backoff(delay = 5000, multiplier = 10))
-    public EsrSystemInfo receiveVnfm() throws VeVnfmException {
+    @Retryable(value = {Exception.class}, maxAttempts = 5, backoff = @Backoff(delay = 5000, multiplier = 2))
+    public List<EsrSystemInfo> receiveVnfm() throws VeVnfmException {
         return aaiConnection.receiveVnfm();
     }
 
     @Recover
-    public EsrSystemInfo recoverReceiveVnfm(final Throwable e) {
+    public List<EsrSystemInfo> recoverReceiveVnfm(final Throwable t) {
         logger.warn("Connection to AAI failed");
         final EsrSystemInfo info = new EsrSystemInfo();
         info.setServiceUrl(vnfmDefaultEndpoint);
         logger.warn("This EsrSystemInfo is used by default: {}", info);
-
-        return info;
+        return Collections.singletonList(info);
     }
 }
