@@ -662,6 +662,7 @@ public class BBInputSetup implements JavaDelegate {
     }
 
     protected void populateVolumeGroup(BBInputSetupParameter parameter) throws Exception {
+        String replaceVnfModelCustomizationUUID = null;
         VolumeGroup volumeGroup = null;
         GenericVnf vnf = null;
         String vnfModelCustomizationUUID = null;
@@ -674,7 +675,11 @@ public class BBInputSetup implements JavaDelegate {
             for (RelatedInstanceList relatedInstList : parameter.getRelatedInstanceList()) {
                 RelatedInstance relatedInstance = relatedInstList.getRelatedInstance();
                 if (relatedInstance.getModelInfo().getModelType().equals(ModelType.vnf)) {
-                    vnfModelCustomizationUUID = relatedInstance.getModelInfo().getModelCustomizationUuid();
+                    if (parameter.getIsReplace()) {
+                        replaceVnfModelCustomizationUUID = relatedInstance.getModelInfo().getModelCustomizationId();
+                    } else {
+                        vnfModelCustomizationUUID = relatedInstance.getModelInfo().getModelCustomizationId();
+                    }
                     break;
                 }
             }
@@ -685,8 +690,13 @@ public class BBInputSetup implements JavaDelegate {
                 vnfModelCustomizationUUID =
                         bbInputSetupUtils.getAAIGenericVnf(vnf.getVnfId()).getModelCustomizationId();
                 ModelInfo vnfModelInfo = new ModelInfo();
-                vnfModelInfo.setModelCustomizationUuid(vnfModelCustomizationUUID);
-                mapCatalogVnf(tempVnf, vnfModelInfo, parameter.getService());
+                if (parameter.getIsReplace()) {
+                    vnfModelInfo.setModelCustomizationUuid(replaceVnfModelCustomizationUUID);
+                    mapCatalogVnf(tempVnf, vnfModelInfo, parameter.getServiceModel().getNewService());
+                } else {
+                    vnfModelInfo.setModelCustomizationUuid(vnfModelCustomizationUUID);
+                    mapCatalogVnf(tempVnf, vnfModelInfo, parameter.getServiceModel().getCurrentService());
+                }
                 break;
             }
         }
@@ -696,6 +706,22 @@ public class BBInputSetup implements JavaDelegate {
                         && volumeGroupTemp.getVolumeGroupId()
                                 .equalsIgnoreCase(parameter.getLookupKeyMap().get(ResourceKey.VOLUME_GROUP_ID))) {
                     volumeGroup = volumeGroupTemp;
+                    if (volumeGroup.getModelInfoVfModule() == null) {
+                        throw new Exception(
+                                "ModelInfoVfModule is null for VolumeGroup: " + volumeGroup.getVolumeGroupId());
+                    }
+                    String volumeGroupCustId = volumeGroup.getModelInfoVfModule().getModelCustomizationUUID();
+                    ModelInfo modelInfoVolumeGroup = new ModelInfo();
+                    modelInfoVolumeGroup.setModelCustomizationId(volumeGroupCustId);
+                    if (parameter.getIsReplace() && parameter.getLookupKeyMap().get(ResourceKey.VOLUME_GROUP_ID) != null
+                            && volumeGroupTemp.getVolumeGroupId()
+                                    .equalsIgnoreCase(parameter.getLookupKeyMap().get(ResourceKey.VOLUME_GROUP_ID))) {
+                        mapCatalogVolumeGroup(volumeGroupTemp, modelInfoVolumeGroup,
+                                parameter.getServiceModel().getNewService(), replaceVnfModelCustomizationUUID);
+                    } else {
+                        mapCatalogVolumeGroup(volumeGroupTemp, modelInfoVolumeGroup,
+                                parameter.getServiceModel().getCurrentService(), vnfModelCustomizationUUID);
+                    }
                     break;
                 }
             }
@@ -705,8 +731,13 @@ public class BBInputSetup implements JavaDelegate {
                 vnf.getVolumeGroups().add(volumeGroup);
             }
             if (volumeGroup != null) {
-                mapCatalogVolumeGroup(volumeGroup, parameter.getModelInfo(), parameter.getService(),
-                        vnfModelCustomizationUUID);
+                if (parameter.getIsReplace()) {
+                    mapCatalogVolumeGroup(volumeGroup, parameter.getModelInfo(),
+                            parameter.getServiceModel().getNewService(), replaceVnfModelCustomizationUUID);
+                } else {
+                    mapCatalogVolumeGroup(volumeGroup, parameter.getModelInfo(),
+                            parameter.getServiceModel().getCurrentService(), vnfModelCustomizationUUID);
+                }
             }
         } else {
             logger.debug("Related VNF instance Id not found: {}",
@@ -1514,6 +1545,9 @@ public class BBInputSetup implements JavaDelegate {
                 parameter.setInstanceName(vfModules.getVolumeGroupInstanceName());
                 parameter.setVnfType(vnfType);
                 parameter.setInstanceParams(vfModules.getInstanceParams());
+                ServiceModel serviceModel = new ServiceModel();
+                serviceModel.setCurrentService(service);
+                parameter.setServiceModel(serviceModel);
                 this.populateVolumeGroup(parameter);
             } else {
                 parameter.setResourceId(lookupKeyMap.get(ResourceKey.VF_MODULE_ID));

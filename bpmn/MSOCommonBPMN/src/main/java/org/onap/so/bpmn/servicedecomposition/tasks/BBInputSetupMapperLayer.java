@@ -186,6 +186,9 @@ public class BBInputSetupMapperLayer {
 
     protected VolumeGroup mapAAIVolumeGroup(org.onap.aai.domain.yang.VolumeGroup aaiVolumeGroup) {
         VolumeGroup volumeGroup = modelMapper.map(aaiVolumeGroup, VolumeGroup.class);
+        ModelInfoVfModule modelInfo = new ModelInfoVfModule();
+        modelInfo.setModelCustomizationUUID(aaiVolumeGroup.getModelCustomizationId());
+        volumeGroup.setModelInfoVfModule(modelInfo);
         volumeGroup.setOrchestrationStatus(this.mapOrchestrationStatusFromAAI(aaiVolumeGroup.getOrchestrationStatus()));
         return volumeGroup;
     }
