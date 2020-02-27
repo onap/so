@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "858a9114_3c738c38",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBB.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-27T17:24:01Z",
+      "side": 1,
+      "message": "Here you get the string representation of Optional object, not the value.",
+      "range": {
+        "startLine": 73,
+        "startChar": 38,
+        "endLine": 73,
+        "endChar": 111
+      },
+      "revId": "312f1db4799419d52e6c72f3176ce6d5475f8830",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c1d103a0_cfd240bb",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBB.java",
         "patchSetId": 2
@@ -25,6 +48,29 @@
     },
     {
       "key": {
+        "uuid": "18be6808_f5b932a1",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBB.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-27T17:24:01Z",
+      "side": 1,
+      "message": "First of all, you should check if action is not null, otherwise you get npe.",
+      "range": {
+        "startLine": 106,
+        "startChar": 49,
+        "endLine": 106,
+        "endChar": 62
+      },
+      "revId": "312f1db4799419d52e6c72f3176ce6d5475f8830",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "52a7ab4e_afa150c0",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBB.java",
         "patchSetId": 2
@@ -41,6 +87,29 @@
         "startChar": 8,
         "endLine": 158,
         "endChar": 45
+      },
+      "revId": "312f1db4799419d52e6c72f3176ce6d5475f8830",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b903f7a8_15fa66fe",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBB.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-02-27T17:24:01Z",
+      "side": 1,
+      "message": "This methods are redundant. Just use in the place where it is invoked:\nbuildingBlockExecution.getVariable(param).",
+      "range": {
+        "startLine": 165,
+        "startChar": 0,
+        "endLine": 175,
+        "endChar": 5
       },
       "revId": "312f1db4799419d52e6c72f3176ce6d5475f8830",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
