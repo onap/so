@@ -35,6 +35,10 @@ vnfm:
 dmaap:
   endpoint: http://message-router.onap:30227
   topic: /events/unauthenticated.DCAE_CL_OUTPUT
+  closed-loop:
+    control:
+      name: ClosedLoopControlName
+  version: 1.0.2
 
 spring:
   security:
