@@ -45,6 +45,7 @@ public class RequestClientParameter {
     private String requestUri;
     private String instanceGroupId;
     private boolean generateIdsOnly;
+    private String operationType;
 
     private RequestClientParameter(Builder builder) {
         requestId = builder.requestId;
@@ -69,6 +70,11 @@ public class RequestClientParameter {
         requestUri = builder.requestUri;
         instanceGroupId = builder.instanceGroupId;
         generateIdsOnly = builder.generateIdsOnly;
+        operationType = builder.operationType;
+    }
+
+    public String getOperationType() {
+        return operationType;
     }
 
     public String getRequestId() {
@@ -186,6 +192,12 @@ public class RequestClientParameter {
         private String requestUri;
         private String instanceGroupId;
         private boolean generateIdsOnly;
+        private String operationType;
+
+        public Builder setOperationType(String operationType) {
+            this.operationType = operationType;
+            return this;
+        }
 
         public Builder setRequestId(String requestId) {
             this.requestId = requestId;
@@ -302,4 +314,6 @@ public class RequestClientParameter {
         }
 
     }
+
+
 }
