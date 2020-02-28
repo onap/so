@@ -58,7 +58,7 @@ public class AbstractCDSProcessingBBUtils {
     private static final String FAILED = "Failed";
     private static final String PROCESSING = "Processing";
     private static final String RESPONSE_PAYLOAD = "CDSResponsePayload";
-    private static final String CDS_STATUS = "CDSStatus";
+    private static final String CDS_STATUS = "ControllerStatus";
     private static final String EXEC_INPUT = "executionServiceInput";
     private static final String EXECUTION_OBJECT = "executionObject";
     private static final String EXCEPTION = "Exception";

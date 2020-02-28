@@ -30,5 +30,7 @@ public interface PnfManagement {
 
     void createEntry(String pnfCorrelationId, Pnf entry) throws IOException;
 
+    void updateEntry(String pnfCorrelationId, Pnf entry) throws IOException;
+
     void createRelation(String serviceInstanceId, String pnfName) throws IOException;
 }

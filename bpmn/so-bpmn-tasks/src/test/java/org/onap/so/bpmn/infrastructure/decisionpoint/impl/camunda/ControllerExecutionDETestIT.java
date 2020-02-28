@@ -56,8 +56,8 @@ public class ControllerExecutionDETestIT extends BaseIntegrationTest {
     @Rule
     public final SpringMethodRule smr = new SpringMethodRule();
 
-    private static final String DOWNLOAD_ACTION = "downloadNeSw";
-    private static final String ACTIVATE_ACTION = "activateNeSw";
+    private static final String DOWNLOAD_ACTION = "downloadNESw";
+    private static final String ACTIVATE_ACTION = "activateNESw";
     private static final String PRECHECK_ACTION = "precheck";
     private static final String POSTCHECK_ACTION = "postcheck";
     private static final String ASSIGN_ACTION = "config-assign";

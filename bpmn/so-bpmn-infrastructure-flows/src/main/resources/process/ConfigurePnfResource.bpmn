@@ -22,7 +22,7 @@
       <bpmn:outgoing>SequenceFlow_1w4p9f7</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="SequenceFlow_1owbpsy" name="Success" sourceRef="ExclusiveGateway_0vtv1wi" targetRef="Task_14cwhgk">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("CDSStatus").equals("Success")}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("ControllerStatus").equals("Success")}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:exclusiveGateway id="ExclusiveGateway_01jwwmc" default="SequenceFlow_0d24h26">
       <bpmn:incoming>SequenceFlow_02919fh</bpmn:incoming>
@@ -30,7 +30,7 @@
       <bpmn:outgoing>SequenceFlow_0d24h26</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="SequenceFlow_1n080up" name="Success" sourceRef="ExclusiveGateway_01jwwmc" targetRef="EndEvent_0xky46v">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("CDSStatus").equals("Success")}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("ControllerStatus").equals("Success")}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_1w4p9f7" name="Failure" sourceRef="ExclusiveGateway_0vtv1wi" targetRef="EndEvent_16620h9" />
     <bpmn:endEvent id="EndEvent_16620h9">
