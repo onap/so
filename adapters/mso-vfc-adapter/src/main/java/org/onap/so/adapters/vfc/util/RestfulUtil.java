@@ -26,8 +26,13 @@ package org.onap.so.adapters.vfc.util;
 
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.ws.rs.core.UriBuilder;
 import org.onap.so.logger.LoggingAnchor;
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -102,9 +107,10 @@ public class RestfulUtil {
 
     }
 
-    public RestfulResponse send(String url, String methodType, String content) {
-        String msbUrl = getMsbHost() + url;
-        logger.debug("Begin to sent message {}: {}", methodType, msbUrl);
+
+    public RestfulResponse send(String msbUrl, String methodType, String content, Map<String, String> requestHeader) {
+        // String msbUrl = getMsbHost() + url;
+        logger.debug("Begin to sent message " + methodType + ": " + msbUrl);
 
         HttpRequestBase method = null;
         HttpResponse httpResponse = null;
@@ -115,9 +121,14 @@ public class RestfulUtil {
             RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(timeout).setConnectTimeout(timeout)
                     .setConnectionRequestTimeout(timeout).build();
 
+            HttpClient client = HttpClientBuilder.create().build();
+
             if ("POST".equalsIgnoreCase(methodType)) {
                 HttpPost httpPost = new HttpPost(msbUrl);
                 httpPost.setConfig(requestConfig);
+                for (String key : requestHeader.keySet()) {
+                    httpPost.setHeader(key, requestHeader.get(key));
+                }
                 httpPost.setEntity(new StringEntity(content, ContentType.APPLICATION_JSON));
                 method = httpPost;
             } else if ("PUT".equalsIgnoreCase(methodType)) {
@@ -135,11 +146,24 @@ public class RestfulUtil {
                 method = httpDelete;
             }
 
-            httpResponse = client.execute(method);
+            // now VFC have no auth
+            // String userCredentials =
+            // SDNCAdapterProperties.getEncryptedProperty(Constants.SDNC_AUTH_PROP,
+            // Constants.DEFAULT_SDNC_AUTH, Constants.ENCRYPTION_KEY);
+            // String authorization = "Basic " +
+            // DatatypeConverter.printBase64Binary(userCredentials.getBytes());
+            // method.setHeader("Authorization", authorization);
 
+            httpResponse = client.execute(method);
+            Map<String, String> responseHeader = new HashMap<>();
             String responseContent = null;
             if (httpResponse.getEntity() != null) {
                 responseContent = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
+                Header[] httpResponseAllHeaders = httpResponse.getAllHeaders();
+                for (Header header : httpResponseAllHeaders) {
+                    responseHeader.put(header.getName(), header.getValue());
+
+                }
             }
 
             int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -163,7 +187,7 @@ public class RestfulUtil {
             }
 
             method = null;
-            return createResponse(statusCode, responseContent);
+            return createResponse(statusCode, responseContent, responseHeader);
 
         } catch (SocketTimeoutException | ConnectTimeoutException e) {
             String errMsg = "Request to VFC timed out";
@@ -194,6 +218,154 @@ public class RestfulUtil {
         }
     }
 
+    public RestfulResponse send(String msbUrl, String methodType, String content) {
+        if (!msbUrl.contains("http")) {
+            msbUrl = getMsbHost() + msbUrl;
+        }
+        // String msbUrl = getMsbHost() + url;
+        logger.debug("Begin to sent message " + methodType + ": " + msbUrl);
+
+        HttpRequestBase method = null;
+        HttpResponse httpResponse = null;
+
+        try {
+            int timeout = DEFAULT_TIME_OUT;
+
+            RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(timeout).setConnectTimeout(timeout)
+                    .setConnectionRequestTimeout(timeout).build();
+
+            if ("POST".equalsIgnoreCase(methodType)) {
+                HttpPost httpPost = new HttpPost(msbUrl);
+                httpPost.setConfig(requestConfig);
+                httpPost.setEntity(new StringEntity(content, ContentType.APPLICATION_JSON));
+                method = httpPost;
+            } else if ("PUT".equalsIgnoreCase(methodType)) {
+                HttpPut httpPut = new HttpPut(msbUrl);
+                httpPut.setConfig(requestConfig);
+                httpPut.setEntity(new StringEntity(content, ContentType.APPLICATION_JSON));
+                method = httpPut;
+            } else if ("GET".equalsIgnoreCase(methodType)) {
+                HttpGet httpGet = new HttpGet(msbUrl);
+                httpGet.setConfig(requestConfig);
+                method = httpGet;
+            } else if ("DELETE".equalsIgnoreCase(methodType)) {
+                HttpDelete httpDelete = new HttpDelete(msbUrl);
+                httpDelete.setConfig(requestConfig);
+                method = httpDelete;
+            }
+
+            // now VFC have no auth
+            // String userCredentials =
+            // SDNCAdapterProperties.getEncryptedProperty(Constants.SDNC_AUTH_PROP,
+            // Constants.DEFAULT_SDNC_AUTH, Constants.ENCRYPTION_KEY);
+            // String authorization = "Basic " +
+            // DatatypeConverter.printBase64Binary(userCredentials.getBytes());
+            // method.setHeader("Authorization", authorization);
+
+            httpResponse = client.execute(method);
+            Map<String, String> responseHeader = new HashMap<>();
+            String responseContent = null;
+            if (httpResponse.getEntity() != null) {
+                responseContent = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
+                Header[] httpResponseAllHeaders = httpResponse.getAllHeaders();
+                for (Header header : httpResponseAllHeaders) {
+                    responseHeader.put(header.getName(), header.getValue());
+
+                }
+            }
+
+            int statusCode = httpResponse.getStatusLine().getStatusCode();
+            String statusMessage = httpResponse.getStatusLine().getReasonPhrase();
+
+            logger.debug("VFC Response: " + statusCode + " " + statusMessage
+                    + (responseContent == null ? "" : System.lineSeparator() + responseContent));
+
+            if (httpResponse.getStatusLine().getStatusCode() >= 300) {
+                String errMsg = "VFC returned " + statusCode + " " + statusMessage;
+                logError(errMsg);
+                return createResponse(statusCode, errMsg);
+            }
+
+            httpResponse = null;
+
+            if (null != method) {
+                method.reset();
+            } else {
+                logger.debug("method is NULL:");
+            }
+
+            method = null;
+            return createResponse(statusCode, responseContent, responseHeader);
+
+        } catch (SocketTimeoutException | ConnectTimeoutException e) {
+            String errMsg = "Request to VFC timed out";
+            logError(errMsg, e);
+            return createResponse(HttpURLConnection.HTTP_CLIENT_TIMEOUT, errMsg);
+
+        } catch (Exception e) {
+            String errMsg = "Error processing request to VFC";
+            logError(errMsg, e);
+            return createResponse(HttpURLConnection.HTTP_INTERNAL_ERROR, errMsg);
+
+        } finally {
+            if (httpResponse != null) {
+                try {
+                    EntityUtils.consume(httpResponse.getEntity());
+                } catch (Exception e) {
+                    logger.debug("Exception :", e);
+                }
+            }
+
+            if (method != null) {
+                try {
+                    method.reset();
+                } catch (Exception e) {
+                    logger.debug("Exception :", e);
+                }
+            }
+        }
+    }
+
+    public RestfulResponse getNfvoFromAAI(String nfvo) {
+        HttpRequestBase method = null;
+        HttpResponse httpResponse = null;
+        String endPoint = getMsbHost() + "/api/aai-esr-server/v1/nfvos/" + nfvo;
+        logger.info("Endpoint URL" + endPoint);
+        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(DEFAULT_TIME_OUT)
+                .setConnectTimeout(DEFAULT_TIME_OUT).setConnectionRequestTimeout(DEFAULT_TIME_OUT).build();
+        HttpClient client = HttpClientBuilder.create().build();
+        HttpGet httpGet = new HttpGet(endPoint);
+        httpGet.setConfig(requestConfig);
+        String encoding = Base64.getEncoder().encodeToString(("AAI:AAI").getBytes());
+        httpGet.setHeader("Authorization", "Basic " + encoding);
+        method = httpGet;
+        String responseContent = null;
+        Map<String, String> responseHeader = null;
+        try {
+            httpResponse = client.execute(method);
+            if (httpResponse.getEntity() != null) {
+                responseContent = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
+            }
+
+            int statusCode = httpResponse.getStatusLine().getStatusCode();
+            String statusMessage = httpResponse.getStatusLine().getReasonPhrase();
+
+            logger.debug("AAI Response: " + statusCode + " " + statusMessage
+                    + (responseContent == null ? "" : System.lineSeparator() + responseContent));
+
+            if (httpResponse.getStatusLine().getStatusCode() >= 300) {
+                String errMsg = "AAI returned " + statusCode + " " + statusMessage;
+                logError(errMsg);
+                return createResponse(statusCode, errMsg);
+            }
+        } catch (Exception e) {
+            String errMsg = "Error processing request to AAI";
+            logError(errMsg, e);
+            return createResponse(HttpURLConnection.HTTP_INTERNAL_ERROR, errMsg);
+        }
+        return createResponse(200, responseContent);
+    }
+
     private static void logError(String errMsg, Throwable t) {
         logger.error(LoggingAnchor.FOUR, MessageEnum.RA_NS_EXC.toString(), VFC_ADAPTER,
                 ErrorCode.AvailabilityError.getValue(), errMsg, t);
@@ -207,6 +379,14 @@ public class RestfulUtil {
     private static RestfulResponse createResponse(int statusCode, String content) {
         RestfulResponse rsp = new RestfulResponse();
         rsp.setStatus(statusCode);
+        rsp.setResponseContent(content);
+        return rsp;
+    }
+
+    private static RestfulResponse createResponse(int statusCode, String content, Map<String, String> responseHeader) {
+        RestfulResponse rsp = new RestfulResponse();
+        rsp.setStatus(statusCode);
+        rsp.setRespHeaderMap(responseHeader);
         rsp.setResponseContent(content);
         return rsp;
     }
