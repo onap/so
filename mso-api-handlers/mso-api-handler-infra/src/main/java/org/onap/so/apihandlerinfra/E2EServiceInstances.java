@@ -23,11 +23,7 @@
 package org.onap.so.apihandlerinfra;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -38,6 +34,12 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.onap.so.apihandlerinfra.e2eserviceinstancebeans.*;
+import org.onap.aai.domain.yang.v16.ServiceInstance;
+import org.onap.so.client.aai.AAIObjectType;
+import org.onap.so.client.aai.AAIResourcesClient;
+import org.onap.so.client.aai.entities.uri.AAIResourceUri;
+import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.logger.LoggingAnchor;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -370,7 +372,15 @@ public class E2EServiceInstances {
         RecipeLookupResult recipeLookupResult;
         try {
             // TODO Get the service template model version uuid from AAI.
-            recipeLookupResult = getServiceInstanceOrchestrationURI(null, action);
+            String modelVersionId = null;
+            AAIResourcesClient client = new AAIResourcesClient();
+            AAIResourceUri url = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
+                    e2eDelReq.getGlobalSubscriberId(), e2eDelReq.getServiceType(), instanceIdMap.get(SERVICE_ID));
+            Optional<ServiceInstance> serviceInstanceOpt = client.get(ServiceInstance.class, url);
+            if (serviceInstanceOpt.isPresent()) {
+                modelVersionId = serviceInstanceOpt.get().getModelVersionId();
+            }
+            recipeLookupResult = getServiceInstanceOrchestrationURI(modelVersionId, action);
         } catch (Exception e) {
             logger.error(MessageEnum.APIH_DB_ACCESS_EXC.toString(), MSO_PROP_APIHANDLER_INFRA,
                     ErrorCode.AvailabilityError.getValue(), "Exception while communciate with Catalog DB", e);
