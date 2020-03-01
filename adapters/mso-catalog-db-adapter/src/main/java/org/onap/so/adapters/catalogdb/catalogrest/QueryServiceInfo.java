@@ -73,8 +73,8 @@ public class QueryServiceInfo extends CatalogQuery {
         put(valueMap, "ID", null == serviceInfo ? null : serviceInfo.getId());
         put(valueMap, "SERVICE_INPUT", null == serviceInfo ? null : serviceInfo.getServiceInput());
         put(valueMap, "SERVICE_PROPERTIES", null == serviceInfo ? null : serviceInfo.getServiceProperties());
-        // String subitem = new QueryServiceArtifact(service.getServiceArtifactList()).JSON2(true, true);
-        // valueMap.put("_SERVICEARTIFACT_", subitem.replaceAll("(?m)^", "\t\t"));m
+        String subitem = new QueryServiceArtifact(service.getServiceArtifactList()).JSON2(true, true);
+        valueMap.put("_SERVICEARTIFACT_", subitem.replaceAll("(?m)^", "\t\t"));
         sb.append(this.setTemplate(TEMPLATE, valueMap));
         sb.append("}");
         return sb.toString();

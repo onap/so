@@ -20,14 +20,10 @@
 
 package org.onap.so.db.catalog.rest.beans;
 
+import com.openpojo.business.annotation.BusinessKey;
+import org.onap.so.db.catalog.beans.*;
 import java.io.Serializable;
 import java.util.ArrayList;
-import org.onap.so.db.catalog.beans.AllottedResourceCustomization;
-import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
-import org.onap.so.db.catalog.beans.Service;
-import org.onap.so.db.catalog.beans.VnfResource;
-import org.onap.so.db.catalog.beans.VnfResourceCustomization;
-import com.openpojo.business.annotation.BusinessKey;
 
 /*
  * A simple holder for Service and its associated elements: VnfResource, 1-n VfModule, Network TBD
@@ -42,6 +38,8 @@ public class ServiceMacroHolder implements Serializable {
     private ArrayList<NetworkResourceCustomization> networkResourceCustomizations;
     private ArrayList<AllottedResourceCustomization> allottedResourceCustomizations;
     private ArrayList<VnfResourceCustomization> vnfResourceCustomizations;
+    private ArrayList<ServiceProxyResourceCustomization> serviceProxyResourceCustomizations;
+    private ServiceInfo serviceInfo;
 
 
     public ServiceMacroHolder() {
@@ -51,6 +49,8 @@ public class ServiceMacroHolder implements Serializable {
         this.networkResourceCustomizations = new ArrayList<>();
         this.allottedResourceCustomizations = new ArrayList<>();
         this.vnfResourceCustomizations = new ArrayList<>();
+        this.serviceProxyResourceCustomizations = new ArrayList<>();
+        this.serviceInfo = null;
     }
 
     public ServiceMacroHolder(Service service) {
@@ -64,6 +64,14 @@ public class ServiceMacroHolder implements Serializable {
 
     public void setService(Service service) {
         this.service = service;
+    }
+
+    public ServiceInfo getServiceInfo() {
+        return serviceInfo;
+    }
+
+    public void setServiceInfo(ServiceInfo serviceInfo) {
+        this.serviceInfo = serviceInfo;
     }
 
     public void setVnfResources(ArrayList<VnfResource> vnfResources) {
@@ -139,6 +147,15 @@ public class ServiceMacroHolder implements Serializable {
         }
     }
 
+    public void addServiceProxyResourceCustomization(ServiceProxyResourceCustomization sprc) {
+        if (this.serviceProxyResourceCustomizations != null) {
+            this.serviceProxyResourceCustomizations.add(sprc);
+        } else {
+            this.serviceProxyResourceCustomizations = new ArrayList<>();
+            this.serviceProxyResourceCustomizations.add(sprc);
+        }
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -147,6 +164,11 @@ public class ServiceMacroHolder implements Serializable {
             sb.append("service: " + this.service.toString());
         } else {
             sb.append("service: null");
+        }
+        if (this.serviceInfo != null) {
+            sb.append("serviceInfo: " + this.serviceInfo.toString());
+        } else {
+            sb.append("serviceInfo: null");
         }
         if (this.vnfResourceCustomizations != null && this.vnfResourceCustomizations.size() > 0) {
             int i = 0;
@@ -180,6 +202,13 @@ public class ServiceMacroHolder implements Serializable {
                 sb.append("ARC[" + i++ + "]: " + arc.toString());
             }
         }
+        if (this.serviceProxyResourceCustomizations != null && this.serviceProxyResourceCustomizations.size() > 0) {
+            int i = 0;
+            sb.append("ServiceProxyResourceCustomizations:");
+            for (ServiceProxyResourceCustomization sprc : this.serviceProxyResourceCustomizations) {
+                sb.append("SPRC[" + i++ + "]: " + sprc.toString());
+            }
+        }
 
         return sb.toString();
     }
@@ -202,6 +231,12 @@ public class ServiceMacroHolder implements Serializable {
         this.allottedResourceCustomizations = allottedResourceCustomizations;
     }
 
+    public ArrayList<ServiceProxyResourceCustomization> getServiceProxyResourceCustomizations() {
+        return serviceProxyResourceCustomizations;
+    }
 
-
+    public void setServiceProxyResourceCustomizations(
+            ArrayList<ServiceProxyResourceCustomization> serviceProxyResourceCustomizations) {
+        this.serviceProxyResourceCustomizations = serviceProxyResourceCustomizations;
+    }
 }

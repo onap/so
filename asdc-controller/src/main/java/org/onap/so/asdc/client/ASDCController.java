@@ -39,6 +39,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
+import org.onap.sdc.toscaparser.api.elements.Metadata;
+import org.onap.so.asdc.util.ZipParser;
 import org.onap.so.logger.LoggingAnchor;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.sdc.api.IDistributionClient;
@@ -737,6 +740,7 @@ public class ASDCController {
 
     protected void processResourceNotification(INotificationData iNotif) {
         // For each artifact, create a structure describing the VFModule in a ordered flat level
+        ResourceStructure resourceStructure = null;
         String msoConfigPath = getMsoConfigPath();
         ToscaResourceStructure toscaResourceStructure = new ToscaResourceStructure(msoConfigPath);
         DistributionStatusEnum deployStatus = DistributionStatusEnum.DEPLOY_OK;
@@ -748,8 +752,8 @@ public class ASDCController {
             if (isCsarAlreadyDeployed(iNotif, toscaResourceStructure)) {
                 return;
             }
-
-            ResourceStructure resourceStructure = null;
+            // process NsstResource
+            this.processNsstNotification(iNotif, toscaResourceStructure);
             for (IResourceInstance resource : iNotif.getResources()) {
 
                 String resourceType = resource.getResourceType();
@@ -914,6 +918,23 @@ public class ASDCController {
                             "processCsarServiceArtifacts", ErrorCode.BusinessProcessError.getValue(),
                             "Exception in processCsarServiceArtifacts", e);
                 }
+            } else if (artifact.getArtifactType().equals(ASDCConfiguration.OTHER)) {
+                try {
+                    IDistributionClientDownloadResult resultArtifact =
+                            this.downloadTheArtifact(artifact, iNotif.getDistributionID());
+
+                    writeArtifactToFile(artifact, resultArtifact);
+
+                    toscaResourceStructure.setToscaArtifact(artifact);
+
+                    toscaResourceStructure.setServiceVersion(iNotif.getServiceVersion());
+
+                } catch (ASDCDownloadException e) {
+                    logger.error(LoggingAnchor.SIX, MessageEnum.ASDC_GENERAL_EXCEPTION_ARG.toString(),
+                            "Exception caught during processCsarServiceArtifacts", "ASDC",
+                            "processCsarServiceArtifacts", ErrorCode.BusinessProcessError.getValue(),
+                            "Exception in processCsarServiceArtifacts", e);
+                }
             }
 
 
@@ -939,5 +960,39 @@ public class ASDCController {
             return asdcConfig.getEnvironmentName();
         }
         return UNKNOWN;
+    }
+
+    private void processNsstNotification(INotificationData iNotif, ToscaResourceStructure toscaResourceStructure) {
+        Metadata serviceMetadata = toscaResourceStructure.getServiceMetadata();
+        try {
+            if (serviceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_CATEGORY).equalsIgnoreCase("NSST")) {
+
+                String artifactContent = null;
+                List<IArtifactInfo> serviceArtifacts = iNotif.getServiceArtifacts();
+                Optional<IArtifactInfo> artifactOpt = serviceArtifacts.stream()
+                        .filter(e -> e.getArtifactType().equalsIgnoreCase("OTHER")).findFirst();
+                if (artifactOpt.isPresent()) {
+                    IArtifactInfo artifactInfo = artifactOpt.get();
+                    logger.debug("Ready to parse this serviceArtifactUUID:  " + artifactInfo.getArtifactUUID());
+                    String filePath = Paths.get(getMsoConfigPath(), "ASDC", artifactInfo.getArtifactVersion(),
+                            artifactInfo.getArtifactName()).normalize().toString();
+                    ZipParser zipParserInstance = ZipParser.getInstance();
+                    artifactContent = zipParserInstance.parseJsonForZip(filePath);
+                    logger.debug(
+                            "serviceArtifact parsing success! serviceArtifactUUID: " + artifactInfo.getArtifactUUID());
+                } else {
+                    logger.debug("serviceArtifact is null");
+                }
+                ResourceStructure resourceStructure = new VfResourceStructure(iNotif, new ResourceInstance());
+                resourceStructure.setResourceType(ResourceType.OTHER);
+                toscaInstaller.installTheNsstService(toscaResourceStructure, (VfResourceStructure) resourceStructure,
+                        artifactContent);
+            }
+        } catch (IOException e) {
+            logger.error("serviceArtifact parse failure for service uuid:  "
+                    + serviceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_CATEGORY));
+        } catch (Exception e) {
+            logger.error("error NSST process resource failure ", e);
+        }
     }
 }
