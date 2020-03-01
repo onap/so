@@ -75,19 +75,8 @@ import org.onap.so.asdc.installer.ToscaResourceStructure;
 import org.onap.so.asdc.installer.VfModuleStructure;
 import org.onap.so.asdc.installer.VfResourceStructure;
 import org.onap.so.asdc.installer.bpmn.WorkflowResource;
-import org.onap.so.db.catalog.beans.ConfigurationResource;
-import org.onap.so.db.catalog.beans.ConfigurationResourceCustomization;
-import org.onap.so.db.catalog.beans.Service;
-import org.onap.so.db.catalog.beans.ServiceProxyResourceCustomization;
-import org.onap.so.db.catalog.beans.ToscaCsar;
-import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
-import org.onap.so.db.catalog.data.repository.ConfigurationResourceCustomizationRepository;
-import org.onap.so.db.catalog.data.repository.InstanceGroupRepository;
-import org.onap.so.db.catalog.data.repository.ServiceRepository;
-import org.onap.so.db.catalog.data.repository.ToscaCsarRepository;
-import org.onap.so.db.catalog.data.repository.VFModuleRepository;
-import org.onap.so.db.catalog.data.repository.VnfResourceRepository;
-import org.onap.so.db.catalog.data.repository.VnfcInstanceGroupCustomizationRepository;
+import org.onap.so.db.catalog.beans.*;
+import org.onap.so.db.catalog.data.repository.*;
 import org.onap.so.db.request.beans.WatchdogComponentDistributionStatus;
 import org.onap.so.db.request.data.repository.WatchdogComponentDistributionStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -325,8 +314,6 @@ public class ToscaResourceInstallerTest extends BaseTest {
         notificationData.setServiceUUID("serviceUUID1");
         notificationData.setWorkloadContext("workloadContext1");
 
-
-
         String serviceType = "test-type1";
         String serviceRole = "test-role1";
         String category = "Network L3+";
@@ -356,6 +343,7 @@ public class ToscaResourceInstallerTest extends BaseTest {
         doReturn(resourceCustomizationUUID).when(metadata).getValue("vfModuleModelCustomizationUUID");
 
         ServiceRepository serviceRepo = spy(ServiceRepository.class);
+        ServiceInfoRepository serviceInfoRepo = spy(ServiceInfoRepository.class);
 
         VnfResourceRepository vnfRepo = spy(VnfResourceRepository.class);
         doReturn(null).when(vnfRepo).findResourceByModelUUID(uuid);
@@ -366,6 +354,7 @@ public class ToscaResourceInstallerTest extends BaseTest {
         WorkflowResource workflowResource = spy(WorkflowResource.class);
 
         ReflectionTestUtils.setField(toscaInstaller, "serviceRepo", serviceRepo);
+        ReflectionTestUtils.setField(toscaInstaller, "serviceInfoRepository", serviceInfoRepo);
         ReflectionTestUtils.setField(toscaInstaller, "vnfRepo", vnfRepo);
         ReflectionTestUtils.setField(toscaInstaller, "vfModuleRepo", vfModuleRepo);
         ReflectionTestUtils.setField(toscaInstaller, "instanceGroupRepo", instanceGroupRepo);
@@ -436,7 +425,10 @@ public class ToscaResourceInstallerTest extends BaseTest {
         assertNotNull(service);
         service.setModelVersion("1.0");
 
+        ServiceInfo serviceInfo = new ServiceInfo();
+        serviceInfo.setService(service);
         doReturn(service).when(serviceRepo).save(service);
+        doReturn(serviceInfo).when(serviceInfoRepo).save(any(ServiceInfo.class));
 
         WatchdogComponentDistributionStatusRepository watchdogCDStatusRepository =
                 spy(WatchdogComponentDistributionStatusRepository.class);
