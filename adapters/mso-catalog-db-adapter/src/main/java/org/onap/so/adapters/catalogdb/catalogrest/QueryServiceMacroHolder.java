@@ -40,7 +40,7 @@ public class QueryServiceMacroHolder extends CatalogQuery {
             + "\t\"serviceType\"        : <SERVICE_TYPE>,\n" + "\t\"serviceRole\"        : <SERVICE_ROLE>,\n"
             + "\t\"environmentContext\" : <ENVIRONMENT_CONTEXT>,\n" + "\t\"resourceOrder\"      : <RESOURCE_ORDER>,\n"
             + "\t\"workloadContext\"    : <WORKLOAD_CONTEXT>,\n" + "<_SERVICEVNFS_>,\n" + "<_SERVICENETWORKS_>,\n"
-            + "<_SERVICEALLOTTEDRESOURCES_>\n" + "\t}}";
+            + "<_SERVICEINFO_>,\n" + "<_SERVICEPROXY_>,\n" + "<_SERVICEALLOTTEDRESOURCES_>\n" + "\t}}";
 
     public QueryServiceMacroHolder() {
         super();
@@ -93,6 +93,12 @@ public class QueryServiceMacroHolder extends CatalogQuery {
 
         subitem = new QueryAllottedResourceCustomization(service.getAllottedCustomizations()).JSON2(true, true);
         valueMap.put("_SERVICEALLOTTEDRESOURCES_", subitem.replaceAll(LINE_BEGINNING, "\t"));
+
+        subitem = new QueryServiceInfo(serviceMacroHolder.getServiceInfo()).JSON2(true, true);
+        valueMap.put("_SERVICEINFO_", subitem.replaceAll(LINE_BEGINNING, "\t"));
+
+        subitem = new QueryServiceProxyCustomization(service.getServiceProxyCustomizations()).JSON2(true, true);
+        valueMap.put("_SERVICEPROXY_", subitem.replaceAll(LINE_BEGINNING, "\t"));
 
         buf.append(this.setTemplate(TEMPLATE, valueMap));
         return buf.toString();
