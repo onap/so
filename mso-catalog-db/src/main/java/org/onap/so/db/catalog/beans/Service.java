@@ -136,6 +136,9 @@ public class Service implements Serializable {
     @JoinColumn(name = "TOSCA_CSAR_ARTIFACT_UUID")
     private ToscaCsar csar;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "service")
+    private List<ServiceArtifact> serviceArtifactList;
+
     @Column(name = "NAMING_POLICY")
     private String namingPolicy;
 
@@ -369,6 +372,17 @@ public class Service implements Serializable {
 
     public void setCsar(ToscaCsar csar) {
         this.csar = csar;
+    }
+
+    public List<ServiceArtifact> getServiceArtifactList() {
+        if (serviceArtifactList == null) {
+            serviceArtifactList = new ArrayList<>();
+        }
+        return serviceArtifactList;
+    }
+
+    public void setServiceArtifactList(List<ServiceArtifact> serviceArtifactList) {
+        this.serviceArtifactList = serviceArtifactList;
     }
 
     public String getWorkloadContext() {
