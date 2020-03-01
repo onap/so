@@ -54,6 +54,7 @@ import org.onap.sdc.tosca.parser.enums.EntityTemplateType;
 import org.onap.sdc.tosca.parser.enums.SdcTypes;
 import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
 import org.onap.sdc.toscaparser.api.CapabilityAssignment;
+import org.onap.sdc.toscaparser.api.NodeTemplate;
 import org.onap.sdc.toscaparser.api.Property;
 import org.onap.sdc.toscaparser.api.RequirementAssignment;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
@@ -74,64 +75,8 @@ import org.onap.so.asdc.installer.VfModuleStructure;
 import org.onap.so.asdc.installer.VfResourceStructure;
 import org.onap.so.asdc.installer.bpmn.WorkflowResource;
 import org.onap.so.asdc.util.YamlEditor;
-import org.onap.so.db.catalog.beans.AllottedResource;
-import org.onap.so.db.catalog.beans.AllottedResourceCustomization;
-import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
-import org.onap.so.db.catalog.beans.CollectionResource;
-import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
-import org.onap.so.db.catalog.beans.ConfigurationResource;
-import org.onap.so.db.catalog.beans.ConfigurationResourceCustomization;
-import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
-import org.onap.so.db.catalog.beans.CvnfcCustomization;
-import org.onap.so.db.catalog.beans.HeatEnvironment;
-import org.onap.so.db.catalog.beans.HeatFiles;
-import org.onap.so.db.catalog.beans.HeatTemplate;
-import org.onap.so.db.catalog.beans.HeatTemplateParam;
-import org.onap.so.db.catalog.beans.InstanceGroup;
-import org.onap.so.db.catalog.beans.InstanceGroupType;
-import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
-import org.onap.so.db.catalog.beans.NetworkInstanceGroup;
-import org.onap.so.db.catalog.beans.NetworkResource;
-import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
-import org.onap.so.db.catalog.beans.PnfResource;
-import org.onap.so.db.catalog.beans.PnfResourceCustomization;
-import org.onap.so.db.catalog.beans.Service;
-import org.onap.so.db.catalog.beans.ServiceProxyResourceCustomization;
-import org.onap.so.db.catalog.beans.SubType;
-import org.onap.so.db.catalog.beans.TempNetworkHeatTemplateLookup;
-import org.onap.so.db.catalog.beans.ToscaCsar;
-import org.onap.so.db.catalog.beans.VFCInstanceGroup;
-import org.onap.so.db.catalog.beans.VfModule;
-import org.onap.so.db.catalog.beans.VfModuleCustomization;
-import org.onap.so.db.catalog.beans.VnfResource;
-import org.onap.so.db.catalog.beans.VnfResourceCustomization;
-import org.onap.so.db.catalog.beans.VnfcCustomization;
-import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
-import org.onap.so.db.catalog.data.repository.AllottedResourceCustomizationRepository;
-import org.onap.so.db.catalog.data.repository.AllottedResourceRepository;
-import org.onap.so.db.catalog.data.repository.CollectionResourceCustomizationRepository;
-import org.onap.so.db.catalog.data.repository.CollectionResourceRepository;
-import org.onap.so.db.catalog.data.repository.ConfigurationResourceCustomizationRepository;
-import org.onap.so.db.catalog.data.repository.ConfigurationResourceRepository;
-import org.onap.so.db.catalog.data.repository.CvnfcCustomizationRepository;
-import org.onap.so.db.catalog.data.repository.ExternalServiceToInternalServiceRepository;
-import org.onap.so.db.catalog.data.repository.HeatEnvironmentRepository;
-import org.onap.so.db.catalog.data.repository.HeatFilesRepository;
-import org.onap.so.db.catalog.data.repository.HeatTemplateRepository;
-import org.onap.so.db.catalog.data.repository.InstanceGroupRepository;
-import org.onap.so.db.catalog.data.repository.NetworkResourceCustomizationRepository;
-import org.onap.so.db.catalog.data.repository.NetworkResourceRepository;
-import org.onap.so.db.catalog.data.repository.PnfCustomizationRepository;
-import org.onap.so.db.catalog.data.repository.PnfResourceRepository;
-import org.onap.so.db.catalog.data.repository.ServiceProxyResourceCustomizationRepository;
-import org.onap.so.db.catalog.data.repository.ServiceRepository;
-import org.onap.so.db.catalog.data.repository.TempNetworkHeatTemplateRepository;
-import org.onap.so.db.catalog.data.repository.ToscaCsarRepository;
-import org.onap.so.db.catalog.data.repository.VFModuleCustomizationRepository;
-import org.onap.so.db.catalog.data.repository.VFModuleRepository;
-import org.onap.so.db.catalog.data.repository.VnfResourceRepository;
-import org.onap.so.db.catalog.data.repository.VnfcCustomizationRepository;
-import org.onap.so.db.catalog.data.repository.VnfcInstanceGroupCustomizationRepository;
+import org.onap.so.db.catalog.beans.*;
+import org.onap.so.db.catalog.data.repository.*;
 import org.onap.so.db.request.beans.WatchdogComponentDistributionStatus;
 import org.onap.so.db.request.beans.WatchdogDistributionStatus;
 import org.onap.so.db.request.beans.WatchdogServiceModVerIdLookup;
@@ -269,6 +214,9 @@ public class ToscaResourceInstaller {
 
     @Autowired
     protected PnfCustomizationRepository pnfCustomizationRepository;
+
+    @Autowired
+    protected ServiceInfoRepository serviceInfoRepository;
 
     @Autowired
     protected WorkflowResource workflowResource;
@@ -445,6 +393,7 @@ public class ToscaResourceInstaller {
             createToscaCsar(toscaResourceStruct);
             createService(toscaResourceStruct, vfResourceStruct);
             Service service = toscaResourceStruct.getCatalogService();
+            ServiceInfo serviceInfo = createServiceInfo(toscaResourceStruct, service);
 
             List<IEntityDetails> vfEntityList = getEntityDetails(toscaResourceStruct,
                     EntityQuery.newBuilder(SdcTypes.VF), TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE), false);
@@ -474,8 +423,9 @@ public class ToscaResourceInstaller {
             processServiceProxyAndConfiguration(toscaResourceStruct, service);
 
             logger.info("Saving Service: {} ", service.getModelName());
-            service = serviceRepo.save(service);
-            correlateConfigCustomResources(service);
+            ServiceInfo serviceResult = serviceInfoRepository.save(serviceInfo);
+            Service resultService = serviceResult.getService();
+            correlateConfigCustomResources(resultService);
 
             workflowResource.processWorkflows(vfResourceStructure);
 
@@ -2912,5 +2862,122 @@ public class ToscaResourceInstaller {
         return new Timestamp(new Date().getTime());
     }
 
+    private String getServiceInput(ToscaResourceStructure toscaResourceStructure) {
+        String serviceInput = null;
+
+        List<Object> serviceInputList;
+        ISdcCsarHelper sdcCsarHelper = toscaResourceStructure.getSdcCsarHelper();
+        List<Input> serviceInputs = sdcCsarHelper.getServiceInputs();
+        if (!serviceInputs.isEmpty()) {
+            serviceInputList = new ArrayList<>();
+            serviceInputs.forEach(input -> {
+                Map<String, Object> serviceInputMap = new HashMap<>();
+                serviceInputMap.put("name", input.getName());
+                serviceInputMap.put("type", input.getType());
+                serviceInputMap.put("default", input.getDefault() == null ? "" : input.getDefault());
+                serviceInputMap.put("required", input.isRequired());
+                serviceInputList.add(serviceInputMap);
+
+            });
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                serviceInput = objectMapper.writeValueAsString(serviceInputList);
+                serviceInput = serviceInput.replace("\"", "\\\"");
+            } catch (JsonProcessingException e) {
+                logger.error("service input could not be deserialized for service uuid:  "
+                        + sdcCsarHelper.getServiceMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
+            }
+        } else {
+            logger.debug("serviceInput is null");
+        }
+        return serviceInput;
+    }
+
+    @Transactional(rollbackFor = {ArtifactInstallerException.class})
+    public void installTheNsstService(ToscaResourceStructure toscaResourceStruct, VfResourceStructure vfResourceStruct,
+            String artifactContent) {
+        createToscaCsar(toscaResourceStruct);
+        createService(toscaResourceStruct, vfResourceStruct);
+        Service service = toscaResourceStruct.getCatalogService();
+        ServiceInfo serviceInfo = createServiceInfo(toscaResourceStruct, service);
+        createServiceArtifact(service, vfResourceStruct, artifactContent);
+        serviceInfoRepository.save(serviceInfo);
+    }
+
+    private void createServiceArtifact(Service service, VfResourceStructure vfResourceStruct, String artifactContent) {
+        List<ServiceArtifact> serviceArtifactList = new ArrayList<>();
+        ServiceArtifact serviceArtifact;
+        List<IArtifactInfo> artifactInfoList = vfResourceStruct.getNotification().getServiceArtifacts().stream()
+                .filter(artifact -> artifact.getArtifactType().equalsIgnoreCase("OTHER")).collect(Collectors.toList());
+        for (IArtifactInfo artifactInfo : artifactInfoList) {
+            serviceArtifact = new ServiceArtifact();
+            serviceArtifact.setArtifactUUID(artifactInfo.getArtifactUUID());
+            serviceArtifact.setName(artifactInfo.getArtifactName());
+            serviceArtifact.setType(artifactInfo.getArtifactType());
+            serviceArtifact.setVersion(artifactInfo.getArtifactVersion());
+            serviceArtifact.setDescription(artifactInfo.getArtifactDescription());
+            serviceArtifact.setChecksum(artifactInfo.getArtifactChecksum());
+            serviceArtifact.setContent(artifactContent);
+            serviceArtifact.setService(service);
+            serviceArtifactList.add(serviceArtifact);
+        }
+        service.setServiceArtifactList(serviceArtifactList);
+    }
+
+    private ServiceInfo createServiceInfo(ToscaResourceStructure toscaResourceStruct, Service service) {
+        ServiceInfo serviceInfo = new ServiceInfo();
+        String serviceInput = getServiceInput(toscaResourceStruct);
+        serviceInfo.setServiceInput(serviceInput);
+
+        String serviceProperties = getServiceProperties(toscaResourceStruct);
+        serviceInfo.setServiceProperties(serviceProperties);
+
+        serviceInfo.setService(service);
+        return serviceInfo;
+    }
+
+    private String getServiceProperties(ToscaResourceStructure toscaResourceStruct) {
+        String propertiesJson = null;
+        ObjectMapper objectMapper = new ObjectMapper();
+        ISdcCsarHelper helper = toscaResourceStruct.getSdcCsarHelper();
+        String typeName = helper.getServiceSubstitutionMappingsTypeName();
+        Optional<NodeTemplate> nodeTemplate = helper.getServiceNodeTemplates().stream().findAny();
+        List<Object> serviceProperties = new ArrayList<>();
+        Map<String, Object> servicePropertiesMap;
+        if (nodeTemplate.isPresent()) {
+            LinkedHashMap<String, Object> customDef = nodeTemplate.get().getCustomDef();
+            Optional<String> machKey =
+                    customDef.keySet().stream().filter(key -> key.equalsIgnoreCase(typeName)).findFirst();
+            if (machKey.isPresent()) {
+                Object obj = customDef.get(machKey.get());
+                try {
+                    if (obj instanceof Map) {
+                        Object properties = ((HashMap) obj).get("properties");
+                        if (null != properties) {
+                            for (Object propertyName : ((Map) properties).keySet()) {
+                                servicePropertiesMap = new HashMap<>();
+                                servicePropertiesMap.put("name", propertyName);
+                                Object object = ((Map) properties).get(propertyName);
+                                for (Object entry : ((Map) object).entrySet()) {
+                                    servicePropertiesMap.put((String) ((Map.Entry) entry).getKey(),
+                                            ((Map.Entry) entry).getValue());
+                                }
+                                servicePropertiesMap.remove("description");
+                                serviceProperties.add(servicePropertiesMap);
+                            }
+                            propertiesJson = objectMapper.writeValueAsString(serviceProperties);
+                            propertiesJson = propertiesJson.replace("\"", "\\\"");
+                        }
+                    }
+                } catch (JsonProcessingException e) {
+                    logger.error("serviceProperties could not be deserialized for service uuid:  "
+                            + nodeTemplate.get().getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
+                }
+            }
+        } else {
+            logger.debug("ServiceNodeTemplates is null");
+        }
+        return propertiesJson;
+    }
 }
 
