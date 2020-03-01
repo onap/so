@@ -65,6 +65,9 @@ public class QueryServiceInfo extends CatalogQuery {
 
     @Override
     public String JSON2(boolean isArray, boolean isEmbed) {
+        if (serviceInfo == null) {
+            return "\"serviceInfo\": null";
+        }
         StringBuilder sb = new StringBuilder();
         sb.append("\"serviceInfo\": ");
         sb.append("\n");
@@ -73,8 +76,8 @@ public class QueryServiceInfo extends CatalogQuery {
         put(valueMap, "ID", null == serviceInfo ? null : serviceInfo.getId());
         put(valueMap, "SERVICE_INPUT", null == serviceInfo ? null : serviceInfo.getServiceInput());
         put(valueMap, "SERVICE_PROPERTIES", null == serviceInfo ? null : serviceInfo.getServiceProperties());
-        // String subitem = new QueryServiceArtifact(service.getServiceArtifactList()).JSON2(true, true);
-        // valueMap.put("_SERVICEARTIFACT_", subitem.replaceAll("(?m)^", "\t\t"));m
+        String subitem = new QueryServiceArtifact(service.getServiceArtifactList()).JSON2(true, true);
+        valueMap.put("_SERVICEARTIFACT_", subitem.replaceAll("(?m)^", "\t\t"));
         sb.append(this.setTemplate(TEMPLATE, valueMap));
         sb.append("}");
         return sb.toString();
