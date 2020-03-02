@@ -20,67 +20,22 @@
 
 package org.onap.so.client.aai;
 
-import java.io.Serializable;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
+import com.google.common.base.CaseFormat;
 import org.onap.aai.annotations.Metadata;
-import org.onap.aai.domain.yang.AggregateRoute;
-import org.onap.aai.domain.yang.AllottedResource;
-import org.onap.aai.domain.yang.CloudRegion;
-import org.onap.aai.domain.yang.Collection;
-import org.onap.aai.domain.yang.Complex;
-import org.onap.aai.domain.yang.Configuration;
-import org.onap.aai.domain.yang.Connector;
-import org.onap.aai.domain.yang.Customer;
-import org.onap.aai.domain.yang.Device;
-import org.onap.aai.domain.yang.EsrVnfm;
-import org.onap.aai.domain.yang.ExtAaiNetwork;
-import org.onap.aai.domain.yang.Flavor;
-import org.onap.aai.domain.yang.GenericVnf;
-import org.onap.aai.domain.yang.Image;
-import org.onap.aai.domain.yang.InstanceGroup;
-import org.onap.aai.domain.yang.L3Network;
-import org.onap.aai.domain.yang.LInterface;
-import org.onap.aai.domain.yang.LineOfBusiness;
-import org.onap.aai.domain.yang.ModelVer;
-import org.onap.aai.domain.yang.NetworkPolicy;
-import org.onap.aai.domain.yang.NetworkTechnology;
-import org.onap.aai.domain.yang.OperationalEnvironment;
-import org.onap.aai.domain.yang.OwningEntity;
-import org.onap.aai.domain.yang.PInterface;
-import org.onap.aai.domain.yang.PhysicalLink;
-import org.onap.aai.domain.yang.Platform;
-import org.onap.aai.domain.yang.Pnf;
-import org.onap.aai.domain.yang.PortGroup;
-import org.onap.aai.domain.yang.Project;
-import org.onap.aai.domain.yang.Pserver;
-import org.onap.aai.domain.yang.RouteTableReference;
-import org.onap.aai.domain.yang.Service;
-import org.onap.aai.domain.yang.ServiceInstance;
-import org.onap.aai.domain.yang.ServiceSubscription;
-import org.onap.aai.domain.yang.SpPartner;
-import org.onap.aai.domain.yang.SriovPf;
-import org.onap.aai.domain.yang.Subnet;
-import org.onap.aai.domain.yang.Tenant;
-import org.onap.aai.domain.yang.TunnelXconnect;
-import org.onap.aai.domain.yang.Vce;
-import org.onap.aai.domain.yang.VfModule;
-import org.onap.aai.domain.yang.VlanTag;
-import org.onap.aai.domain.yang.Vnfc;
-import org.onap.aai.domain.yang.VolumeGroup;
-import org.onap.aai.domain.yang.VpnBinding;
-import org.onap.aai.domain.yang.Vserver;
-import org.onap.aai.domain.yang.Zone;
+import org.onap.aai.domain.yang.*;
 import org.onap.so.client.graphinventory.GraphInventoryObjectType;
 import org.onap.so.constants.Defaults;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
-import com.google.common.base.CaseFormat;
+
+import java.io.Serializable;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 public class AAIObjectType implements GraphInventoryObjectType, Serializable {
 
@@ -135,6 +90,8 @@ public class AAIObjectType implements GraphInventoryObjectType, Serializable {
             new AAIObjectType(AAINamespaceConstants.BUSINESS, OwningEntity.class);
     public static final AAIObjectType ALLOTTED_RESOURCE =
             new AAIObjectType(AAIObjectType.SERVICE_INSTANCE.uriTemplate(), AllottedResource.class);
+    public static final AAIObjectType ALLOTTED_RESOURCE_ALL =
+            new AAIObjectType(AAIObjectType.SERVICE_INSTANCE.uriTemplate(), "/allotted-resources", "allottedResources");
     public static final AAIObjectType PNF = new AAIObjectType(AAINamespaceConstants.NETWORK, Pnf.class);
     public static final AAIObjectType OPERATIONAL_ENVIRONMENT =
             new AAIObjectType(AAINamespaceConstants.CLOUD_INFRASTRUCTURE, OperationalEnvironment.class);
@@ -196,6 +153,18 @@ public class AAIObjectType implements GraphInventoryObjectType, Serializable {
     public static final AAIObjectType THIRDPARTY_SDNC_SYSTEM_INFO_LIST =
             new AAIObjectType(AAINamespaceConstants.EXTERNAL_SYSTEM + "/esr-thirdparty-sdnc-list",
                     "/esr-thirdparty-sdnc/{sdnc-id}/esr-system-info-list", "thirdparty-sdnc-system-info-list");
+    public static final AAIObjectType COMMUNICATION_SERVICE_PROFILE =
+            new AAIObjectType(AAIObjectType.SERVICE_SUBSCRIPTION.uriTemplate(), CommunicationServiceProfile.class);
+    public static final AAIObjectType SERVICE_PROFILE =
+            new AAIObjectType(AAIObjectType.SERVICE_SUBSCRIPTION.uriTemplate(), ServiceProfile.class);
+    public static final AAIObjectType SERVICE_PROFILE_ALL =
+            new AAIObjectType(AAIObjectType.SERVICE_INSTANCE.uriTemplate(), "/service-profiles", "serviceProfiles");
+    public static final AAIObjectType SLICE_PROFILE =
+            new AAIObjectType(AAIObjectType.SERVICE_SUBSCRIPTION.uriTemplate(), SliceProfile.class);
+    public static final AAIObjectType SLICE_PROFILE_ALL =
+            new AAIObjectType(AAIObjectType.SERVICE_INSTANCE.uriTemplate(), "/slice-profiles", "sliceProfiles");
+    public static final AAIObjectType COMMUNICATION_PROFILE_ALL = new AAIObjectType(
+            AAIObjectType.SERVICE_INSTANCE.uriTemplate(), "/communication-service-profiles", "communicationProfiles");
 
     private final String uriTemplate;
     private final String parentUri;
