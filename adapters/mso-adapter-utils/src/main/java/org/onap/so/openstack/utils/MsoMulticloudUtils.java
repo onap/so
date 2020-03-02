@@ -81,7 +81,9 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
     private static final Integer DEFAULT_MSB_PORT = 80;
     private static final String DEFAULT_MSB_IP = "127.0.0.1";
+    private static final String DEFAULT_MSB_SCHEME = "http";
     private static final String ONAP_IP = "ONAP_IP";
+    private static final String MSB_SCHEME = "MSB_SCHEME";
     private final HttpClientFactory httpClientFactory = new HttpClientFactory();
 
     @Autowired
@@ -795,10 +797,14 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
             msbIp = environment.getProperty("mso.msb-ip", DEFAULT_MSB_IP);
         }
         Integer msbPort = environment.getProperty("mso.msb-port", Integer.class, DEFAULT_MSB_PORT);
+        String msbScheme = System.getenv().get(MSB_SCHEME);
+        if (null == msbScheme || msbScheme.isEmpty()) {
+            msbScheme = environment.getProperty("mso.msb-scheme", DEFAULT_MSB_SCHEME);
+        }
 
         String path = "/api/multicloud/v1/" + cloudOwner + "/" + cloudSiteId + "/infra_workload";
 
-        String endpoint = UriBuilder.fromPath(path).host(msbIp).port(msbPort).scheme("http").build().toString();
+        String endpoint = UriBuilder.fromPath(path).host(msbIp).port(msbPort).scheme(msbScheme).build().toString();
         if (workloadId != null) {
             String middlepart = null;
             if (isName) {

@@ -66,6 +66,7 @@ mso:
   logPath: logs
   msb-ip: localhost
   msb-port: ${wiremock.server.port}
+  msb-scheme: http
   catalog:
     db:
       spring:
