@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "55944a36_1a2bd634",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/event/DmaapEvent.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-03-02T16:29:14Z",
+      "side": 1,
+      "message": "private static final",
+      "range": {
+        "startLine": 31,
+        "startChar": 4,
+        "endLine": 35,
+        "endChar": 45
+      },
+      "revId": "54a4057295ea8883dcf7b06aa390d6de2f69b20f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b484d66c_2b48534e",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/event/DmaapEvent.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-03-02T16:29:14Z",
+      "side": 1,
+      "message": "Do you really need these field if you assign constant string value?",
+      "range": {
+        "startLine": 53,
+        "startChar": 7,
+        "endLine": 54,
+        "endChar": 43
+      },
+      "revId": "54a4057295ea8883dcf7b06aa390d6de2f69b20f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d9ba566e_86b47069",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/event/DmaapEvent.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-03-02T16:29:14Z",
+      "side": 1,
+      "message": "Most of getters are not used. If you are not going to use them in future, please delete them.",
+      "range": {
+        "startLine": 64,
+        "startChar": 0,
+        "endLine": 78,
+        "endChar": 5
+      },
+      "revId": "54a4057295ea8883dcf7b06aa390d6de2f69b20f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
