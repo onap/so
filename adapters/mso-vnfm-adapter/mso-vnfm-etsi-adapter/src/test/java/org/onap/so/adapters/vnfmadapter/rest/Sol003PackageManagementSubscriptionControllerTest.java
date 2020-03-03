@@ -26,28 +26,38 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.onap.so.adapters.vnfmadapter.Constants.PACKAGE_MANAGEMENT_BASE_URL;
 import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.adapters.vnfmadapter.Constants;
 import org.onap.so.adapters.vnfmadapter.VnfmAdapterApplication;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.BasicAuth;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.LinkSelf;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.NsdmSubscription;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmNotificationsFilter;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmSubscription;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.SubscriptionAuthentication;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.Version;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VnfProducts;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VnfProductsProviders;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.InlineResponse2002;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.PkgmSubscriptionRequest;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.SubscriptionsAuthentication;
@@ -59,6 +69,8 @@ import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.http.HttpHeaders;
@@ -69,6 +81,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.test.web.client.match.MockRestRequestMatchers;
 import org.springframework.web.client.RestTemplate;
 import com.google.gson.Gson;
 
@@ -83,6 +96,10 @@ public class Sol003PackageManagementSubscriptionControllerTest {
 
     private final Gson gson = new Gson();
     private final URI msbEndpoint = URI.create("http://msb-iag.onap:80/api/vnfpkgm/v1/subscriptions");
+    private static final String _NOTIFICATION_CALLBACK_URI =
+            "https://so-vnfm-adapter.onap:30406" + Constants.ETSI_SUBSCRIPTION_NOTIFICATION_BASE_URL;
+    private static final String LOCALHOST_URL = "http://localhost:";
+
     @Autowired
     @Qualifier(CONFIGURABLE_REST_TEMPLATE)
     private RestTemplate restTemplate;
@@ -92,6 +109,12 @@ public class Sol003PackageManagementSubscriptionControllerTest {
     @Autowired
     private Sol003PackageManagementSubscriptionController sol003PackageManagementSubscriptionController;
 
+    @Autowired
+    private TestRestTemplate testRestTemplate;
+
+    @LocalServerPort
+    private int port;
+
     private static final String ID = UUID.randomUUID().toString();
 
     @Before
@@ -99,6 +122,11 @@ public class Sol003PackageManagementSubscriptionControllerTest {
         mockRestServiceServer = MockRestServiceServer.bindTo(restTemplate).build();
         final Cache cache = cacheServiceProvider.getCache(Constants.PACKAGE_MANAGEMENT_SUBSCRIPTION_CACHE);
         cache.clear();
+    }
+
+    @After
+    public void after() {
+        mockRestServiceServer.reset();
     }
 
     @Test
@@ -269,6 +297,47 @@ public class Sol003PackageManagementSubscriptionControllerTest {
         assertEquals(HttpStatus.NOT_FOUND, responseDelete.getStatusCode());
     }
 
+
+    @Test
+    public void testSuccessPostSubscriptionWithValidNotificationTypes() throws Exception {
+
+        final String file = getAbsolutePath("src/test/resources/requests/SubscriptionRequest.json");
+        final String json = new String(Files.readAllBytes(Paths.get(file)));
+        final PkgmSubscriptionRequest request = gson.fromJson(json, PkgmSubscriptionRequest.class);
+
+        mockRestServiceServer.expect(requestTo(msbEndpoint)).andExpect(method(HttpMethod.POST))
+                .andExpect(MockRestRequestMatchers.content().json(gson.toJson(getEtsiCatalogPkgmSubscriptionRequest())))
+                .andRespond(withSuccess(gson.toJson(buildPkgmSubscription()), MediaType.APPLICATION_JSON));
+
+
+        final ResponseEntity<InlineResponse2002> responseEntity = testRestTemplate.postForEntity(
+                LOCALHOST_URL + port + Constants.PACKAGE_MANAGEMENT_BASE_URL + "/subscriptions", request,
+                InlineResponse2002.class);
+
+        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
+        assertTrue(responseEntity.hasBody());
+        final InlineResponse2002 actual = responseEntity.getBody();
+        assertEquals(ID, actual.getId());
+
+
+    }
+
+    private org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmSubscriptionRequest getEtsiCatalogPkgmSubscriptionRequest() {
+        return new org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmSubscriptionRequest()
+                .filters(new PkgmNotificationsFilter()
+                        .addNotificationTypesItem(
+                                PkgmNotificationsFilter.NotificationTypesEnum.VNFPACKAGEONBOARDINGNOTIFICATION)
+                        .addVnfdIdItem("VNFDID").addVnfPkgIdItem("VNFPKGID")
+                        .addOperationalStateItem(PkgmNotificationsFilter.OperationalStateEnum.ENABLED)
+                        .addVnfProductsFromProvidersItem(new VnfProductsProviders().vnfProvider("EST")
+                                .addVnfProductsItem(new VnfProducts().vnfProductName("VnfProducts")
+                                        .addVersionsItem(new Version().vnfSoftwareVersion("vnfSoftwareVersion")
+                                                .addVnfdVersionsItem("version1")))))
+                .callbackUri(_NOTIFICATION_CALLBACK_URI).authentication(
+                        new SubscriptionAuthentication().addAuthTypeItem(SubscriptionAuthentication.AuthTypeEnum.BASIC)
+                                .paramsBasic(new BasicAuth().userName("vnfm").password("password1$")));
+    }
+
     private PkgmSubscriptionRequest buildPkgmSubscriptionRequest() {
         final PkgmSubscriptionRequest pkgmSubscriptionRequest = new PkgmSubscriptionRequest();
         final SubscriptionsFilter sub = buildSubscriptionsFilter();
@@ -281,8 +350,8 @@ public class Sol003PackageManagementSubscriptionControllerTest {
 
     private SubscriptionsFilter buildSubscriptionsFilter() {
         final SubscriptionsFilter sub = new SubscriptionsFilter();
-        final List<String> vnfdIdList = new ArrayList();
-        final List<String> vnfPkgIdList = new ArrayList();
+        final List<String> vnfdIdList = new ArrayList<>();
+        final List<String> vnfPkgIdList = new ArrayList<>();
         final List<NotificationTypesEnum> notificationTypes = new ArrayList<>();
         final SubscriptionsFilterVnfProductsFromProviders subscriptionsFilterVnfProductsFromProviders =
                 new SubscriptionsFilterVnfProductsFromProviders();
@@ -322,6 +391,11 @@ public class Sol003PackageManagementSubscriptionControllerTest {
         final URI myUri = new URI(uri);
         headers.setLocation(myUri);
         return headers;
+    }
+
+    private String getAbsolutePath(final String path) {
+        final File file = new File(path);
+        return file.getAbsolutePath();
     }
 
 }
