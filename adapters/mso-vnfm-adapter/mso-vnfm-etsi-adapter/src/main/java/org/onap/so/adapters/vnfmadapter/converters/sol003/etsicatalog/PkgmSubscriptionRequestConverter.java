@@ -50,7 +50,7 @@ public class PkgmSubscriptionRequestConverter implements
 
     @Override
     public org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmSubscriptionRequest convert(
-            PkgmSubscriptionRequest pkgmSubscriptionRequest) {
+            final PkgmSubscriptionRequest pkgmSubscriptionRequest) {
         final org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmSubscriptionRequest etsiCatalogManagerSubscriptionRequest =
                 new org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmSubscriptionRequest();
 
@@ -86,8 +86,10 @@ public class PkgmSubscriptionRequestConverter implements
         return etsiCatalogManagerFilters;
     }
 
-    // TODO 'operationalState' in the Sol003 Swagger is type 'OperationalStateEnum'. The ETSI Catalog Manager Swagger
-    // 'operationalState' is type 'List<OperationalStateEnum>'. This method needs to be updated once swagger is updated.
+    // TODO 'operationalState' in the Sol003 Swagger is type 'OperationalStateEnum'. The ETSI
+    // Catalog Manager Swagger
+    // 'operationalState' is type 'List<OperationalStateEnum>'. This method needs to be updated once
+    // swagger is updated.
     private List<org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmNotificationsFilter.OperationalStateEnum> getOperationalState(
             final OperationalStateEnum operationalState) {
         if (operationalState != null) {
@@ -104,6 +106,7 @@ public class PkgmSubscriptionRequestConverter implements
             vnfPkgId.forEach(type -> {
                 etsiCatalogManagerVnfPkgId.add(type);
             });
+            return etsiCatalogManagerVnfPkgId;
         }
         return Collections.emptyList();
     }
@@ -114,6 +117,7 @@ public class PkgmSubscriptionRequestConverter implements
             vnfdId.forEach(type -> {
                 etsiCatalogManagerVnfdId.add(type);
             });
+            return etsiCatalogManagerVnfdId;
         }
         return Collections.emptyList();
     }
@@ -147,7 +151,7 @@ public class PkgmSubscriptionRequestConverter implements
 
     private List<Version> getVersion(final List<SubscriptionsFilterVersions> sol003FilterVersions) {
         if (sol003FilterVersions != null && !sol003FilterVersions.isEmpty()) {
-            List<Version> etsiCatalogVersionList = new ArrayList<>();
+            final List<Version> etsiCatalogVersionList = new ArrayList<>();
             sol003FilterVersions.forEach(vnfFilterVersion -> {
                 etsiCatalogVersionList.add(new Version().vnfSoftwareVersion(vnfFilterVersion.getVnfSoftwareVersion())
                         .vnfdVersions(vnfFilterVersion.getVnfdVersions()));
@@ -166,6 +170,7 @@ public class PkgmSubscriptionRequestConverter implements
             notificationTypes.forEach(type -> etsiCatalogManagerNotificationTypes.add(
                     org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmNotificationsFilter.NotificationTypesEnum
                             .fromValue(type.getValue())));
+            return etsiCatalogManagerNotificationTypes;
         }
         return Collections.emptyList();
     }

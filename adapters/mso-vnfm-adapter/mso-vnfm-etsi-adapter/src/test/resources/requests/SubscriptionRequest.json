@@ -1,0 +1,45 @@
+{
+    "filter": 
+    {
+        "notificationTypes": [
+            "VnfPackageOnboardingNotification"
+        ],
+        "vnfProductsFromProviders": [
+            {
+                "vnfProvider": "EST",
+                "vnfProducts": [
+                    {
+                        "vnfProductName": "VnfProducts",
+                        "versions": [
+                            {
+                                "vnfSoftwareVersion": "vnfSoftwareVersion",
+                                "vnfdVersions": [
+                                    "version1"
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "vnfdId": [
+            "VNFDID"
+        ],
+        "vnfPkgId": [
+            "VNFPKGID"
+        ],
+        "operationalState": "ENABLED"
+    },
+    "callbackUri": "http://so-vnfm-adapter:9093/api/vnfpkgm/v1/subscriptions",
+    "authentication": 
+    {
+        "authType": [
+            "BASIC"
+        ],
+        "paramsBasic": 
+        {
+            "userName": "vnfm",
+            "password": "vnfm"
+        }
+    }
+}
