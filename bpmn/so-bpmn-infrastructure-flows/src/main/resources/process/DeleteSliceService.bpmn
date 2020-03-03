@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_0prw6yo" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.4.1">
+  <bpmn:process id="DeleteSliceService" name="DeleteSliceService" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="start">
+      <bpmn:outgoing>SequenceFlow_1ti9sxe</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0xmiev9" sourceRef="Task_1f3k0gq" targetRef="Task_0gsr9fu" />
+    <bpmn:sequenceFlow id="SequenceFlow_1ti9sxe" sourceRef="StartEvent_1" targetRef="Task_1f3k0gq" />
+    <bpmn:scriptTask id="Task_1f3k0gq" name="PreProcess Incoming Request" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1ti9sxe</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0xmiev9</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def dss= new DeleteSliceService()
+dss.preProcessRequest(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:serviceTask id="Task_0gsr9fu" name="Init Service Operation Status">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
+                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">${updateOperationStatus}</camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:outputParameter name="NSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
+            <camunda:outputParameter name="NSMF_dbResponse">${response}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0xmiev9</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0uehx9h</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0uehx9h" sourceRef="Task_0gsr9fu" targetRef="Task_0walqr6" />
+    <bpmn:scriptTask id="Task_0walqr6" name="Send Async Ack Response" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0uehx9h</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_16lh6o6</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def dss= new DeleteSliceService()
+dss.sendAsyncResponse(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_16lh6o6" sourceRef="Task_0walqr6" targetRef="Task_04n2tl9" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1mcgr3m" name="success?">
+      <bpmn:incoming>SequenceFlow_0nl4kfh</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0wel7ie</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0eqx2y2</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_0nl4kfh" sourceRef="Task_04n2tl9" targetRef="ExclusiveGateway_1mcgr3m" />
+    <bpmn:sequenceFlow id="SequenceFlow_0wel7ie" name="yes" sourceRef="ExclusiveGateway_1mcgr3m" targetRef="Task_01siwzc">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("WorkflowException") == null}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_0eqx2y2" name="no" sourceRef="ExclusiveGateway_1mcgr3m" targetRef="EndEvent_02ix4tc" />
+    <bpmn:endEvent id="EndEvent_02ix4tc">
+      <bpmn:incoming>SequenceFlow_0eqx2y2</bpmn:incoming>
+      <bpmn:errorEventDefinition errorRef="Error_1jz8wj7" />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_18oizb2" sourceRef="Task_0k1pi3g" targetRef="Task_1vklzip" />
+    <bpmn:scriptTask id="Task_0k1pi3g" name="Delete slice service From AAI" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0wel7ie</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_18oizb2</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def dss= new DeleteSliceService()
+dss.deleteSliceServiceInstance(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:serviceTask id="Task_1vklzip" name="Update Service Operation Status to Success">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
+                <camunda:entry key="Authorization">${UrnPropertiesReader.getVariable("mso.adapters.requestDb.auth", execution)}</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">${updateOperationStatus}</camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:outputParameter name="CVFMI_dbResponseCode">${statusCode}</camunda:outputParameter>
+            <camunda:outputParameter name="CVFMI_dbResponse">${response}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_18oizb2</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1oxmm7d</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="EndEvent_0tyqdpw" name="End">
+      <bpmn:incoming>SequenceFlow_1oxmm7d</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1oxmm7d" sourceRef="Task_1vklzip" targetRef="EndEvent_0tyqdpw" />
+    <bpmn:callActivity id="Task_04n2tl9" name="Do Delete SliceServiceV1" calledElement="DoDeleteSliceServiceV1">
+      <bpmn:extensionElements>
+        <camunda:in source="msoRequestId" target="msoRequestId" />
+        <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
+        <camunda:in source="serviceModelInfo" target="serviceModelInfo" />
+        <camunda:in source="globalSubscriberId" target="globalSubscriberId" />
+        <camunda:in source="serviceType" target="serviceType" />
+        <camunda:in source="operationId" target="operationId" />
+        <camunda:in source="operationType" target="operationType" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_16lh6o6</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0nl4kfh</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:scriptTask id="Task_01siwzc" name="Delete Service Profile From AAI" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0wel7ie</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_142j1q2</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def dss= new DeleteSliceService()
+dss.delServiceProfileFromAAI(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_142j1q2" sourceRef="Task_01siwzc" targetRef="Task_0k1pi3g" />
+    <bpmn:subProcess id="SubProcess_07kf25g" name="Java Exception Handling Sub Process" triggeredByEvent="true">
+      <bpmn:startEvent id="StartEvent_1qskwib">
+        <bpmn:outgoing>SequenceFlow_0x8msq9</bpmn:outgoing>
+        <bpmn:errorEventDefinition id="ErrorEventDefinition_1mmlos4" />
+      </bpmn:startEvent>
+      <bpmn:endEvent id="EndEvent_086jahv">
+        <bpmn:incoming>SequenceFlow_10lwgo7</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_0x8msq9" sourceRef="StartEvent_1qskwib" targetRef="ScriptTask_19sjlk2" />
+      <bpmn:scriptTask id="ScriptTask_19sjlk2" name="Send Error Response" scriptFormat="groovy">
+        <bpmn:incoming>SequenceFlow_0x8msq9</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_1ihiv5k</bpmn:outgoing>
+        <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def dss = new DeleteCustomE2EServiceInstance()
+dss.sendSyncError(execution)</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:sequenceFlow id="SequenceFlow_1ihiv5k" sourceRef="ScriptTask_19sjlk2" targetRef="Task_1fxg7am" />
+      <bpmn:sequenceFlow id="SequenceFlow_0zvzs12" sourceRef="Task_1fxg7am" targetRef="ServiceTask_17jq3cx" />
+      <bpmn:scriptTask id="Task_1fxg7am" name="Termination Service Operation Status" scriptFormat="groovy">
+        <bpmn:incoming>SequenceFlow_1ihiv5k</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_0zvzs12</bpmn:outgoing>
+        <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def dss = new DeleteSliceService()
+dss.prepareEndOperationStatus(execution)</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:serviceTask id="ServiceTask_17jq3cx" name="Update Service Operation Status To Terminate">
+        <bpmn:extensionElements>
+          <camunda:connector>
+            <camunda:inputOutput>
+              <camunda:inputParameter name="url">${CVFMI_dbAdapterEndpoint}</camunda:inputParameter>
+              <camunda:inputParameter name="headers">
+                <camunda:map>
+                  <camunda:entry key="content-type">application/soap+xml</camunda:entry>
+                  <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
+                </camunda:map>
+              </camunda:inputParameter>
+              <camunda:inputParameter name="payload">${CVFMI_updateServiceOperStatusRequest}</camunda:inputParameter>
+              <camunda:inputParameter name="method">POST</camunda:inputParameter>
+              <camunda:outputParameter name="CVFMI_dbResponseCode">${statusCode}</camunda:outputParameter>
+              <camunda:outputParameter name="CVFMI_dbResponse">${response}</camunda:outputParameter>
+            </camunda:inputOutput>
+            <camunda:connectorId>http-connector</camunda:connectorId>
+          </camunda:connector>
+        </bpmn:extensionElements>
+        <bpmn:incoming>SequenceFlow_0zvzs12</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_10lwgo7</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:sequenceFlow id="SequenceFlow_10lwgo7" sourceRef="ServiceTask_17jq3cx" targetRef="EndEvent_086jahv" />
+    </bpmn:subProcess>
+    <bpmn:subProcess id="SubProcess_0so7l00" name="Sub-process for UnexpectedErrors" triggeredByEvent="true">
+      <bpmn:startEvent id="StartEvent_1jknl5k">
+        <bpmn:outgoing>SequenceFlow_0rasmiu</bpmn:outgoing>
+        <bpmn:errorEventDefinition />
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_0rasmiu" sourceRef="StartEvent_1jknl5k" targetRef="Task_0c422xd" />
+      <bpmn:endEvent id="EndEvent_1vr9nc9">
+        <bpmn:incoming>SequenceFlow_1jipldf</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_1jipldf" sourceRef="Task_0c422xd" targetRef="EndEvent_1vr9nc9" />
+      <bpmn:scriptTask id="Task_0c422xd" name="Handle Unexpected Error" scriptFormat="groovy">
+        <bpmn:incoming>SequenceFlow_0rasmiu</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_1jipldf</bpmn:outgoing>
+        <bpmn:script>import org.onap.so.bpmn.common.scripts.*
+ExceptionUtil ex = new ExceptionUtil()
+ex.processJavaException(execution)</bpmn:script>
+      </bpmn:scriptTask>
+    </bpmn:subProcess>
+  </bpmn:process>
+  <bpmn:error id="Error_1jz8wj7" name="MSO Workflow Exception" errorCode="MSOWorkflowException" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DeleteSliceService">
+      <bpmndi:BPMNEdge id="SequenceFlow_1ti9sxe_di" bpmnElement="SequenceFlow_1ti9sxe">
+        <di:waypoint x="188" y="117" />
+        <di:waypoint x="290" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0xmiev9_di" bpmnElement="SequenceFlow_0xmiev9">
+        <di:waypoint x="390" y="117" />
+        <di:waypoint x="480" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="159" y="142" width="23" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0aqhg4z_di" bpmnElement="Task_1f3k0gq">
+        <dc:Bounds x="290" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1n9ja9t_di" bpmnElement="Task_0gsr9fu">
+        <dc:Bounds x="480" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0uehx9h_di" bpmnElement="SequenceFlow_0uehx9h">
+        <di:waypoint x="580" y="117" />
+        <di:waypoint x="660" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_13qpvgg_di" bpmnElement="Task_0walqr6">
+        <dc:Bounds x="660" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_16lh6o6_di" bpmnElement="SequenceFlow_16lh6o6">
+        <di:waypoint x="760" y="117" />
+        <di:waypoint x="840" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1mcgr3m_di" bpmnElement="ExclusiveGateway_1mcgr3m" isMarkerVisible="true">
+        <dc:Bounds x="1025" y="92" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1026" y="73" width="47" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0nl4kfh_di" bpmnElement="SequenceFlow_0nl4kfh">
+        <di:waypoint x="940" y="117" />
+        <di:waypoint x="1025" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0wel7ie_di" bpmnElement="SequenceFlow_0wel7ie">
+        <di:waypoint x="1075" y="117" />
+        <di:waypoint x="1164" y="117" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1100" y="98" width="17" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0eqx2y2_di" bpmnElement="SequenceFlow_0eqx2y2">
+        <di:waypoint x="1050" y="142" />
+        <di:waypoint x="1050" y="202" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1059" y="169" width="13" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_169jlln_di" bpmnElement="EndEvent_02ix4tc">
+        <dc:Bounds x="1032" y="202" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_18oizb2_di" bpmnElement="SequenceFlow_18oizb2">
+        <di:waypoint x="1440" y="117" />
+        <di:waypoint x="1530" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_10g3cz7_di" bpmnElement="Task_0k1pi3g">
+        <dc:Bounds x="1340" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0pct2ne_di" bpmnElement="Task_1vklzip">
+        <dc:Bounds x="1530" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0tyqdpw_di" bpmnElement="EndEvent_0tyqdpw">
+        <dc:Bounds x="1562" y="202" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1570" y="245" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1oxmm7d_di" bpmnElement="SequenceFlow_1oxmm7d">
+        <di:waypoint x="1580" y="157" />
+        <di:waypoint x="1580" y="202" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_1igxzig_di" bpmnElement="Task_04n2tl9">
+        <dc:Bounds x="840" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0qqsp7x_di" bpmnElement="Task_01siwzc">
+        <dc:Bounds x="1164" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_142j1q2_di" bpmnElement="SequenceFlow_142j1q2">
+        <di:waypoint x="1264" y="117" />
+        <di:waypoint x="1340" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="SubProcess_07kf25g_di" bpmnElement="SubProcess_07kf25g" isExpanded="true">
+        <dc:Bounds x="340" y="430" width="637" height="162" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_1qskwib_di" bpmnElement="StartEvent_1qskwib">
+        <dc:Bounds x="377" y="497" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_086jahv_di" bpmnElement="EndEvent_086jahv">
+        <dc:Bounds x="902" y="497" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0x8msq9_di" bpmnElement="SequenceFlow_0x8msq9">
+        <di:waypoint x="413" y="515" />
+        <di:waypoint x="456" y="515" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_19sjlk2_di" bpmnElement="ScriptTask_19sjlk2">
+        <dc:Bounds x="456" y="475" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ihiv5k_di" bpmnElement="SequenceFlow_1ihiv5k">
+        <di:waypoint x="556" y="515" />
+        <di:waypoint x="615" y="515" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0zvzs12_di" bpmnElement="SequenceFlow_0zvzs12">
+        <di:waypoint x="715" y="515" />
+        <di:waypoint x="765" y="515" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0bjcnd3_di" bpmnElement="Task_1fxg7am">
+        <dc:Bounds x="615" y="475" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_17jq3cx_di" bpmnElement="ServiceTask_17jq3cx">
+        <dc:Bounds x="765" y="475" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_10lwgo7_di" bpmnElement="SequenceFlow_10lwgo7">
+        <di:waypoint x="865" y="515" />
+        <di:waypoint x="902" y="515" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="SubProcess_1dd77tu_di" bpmnElement="SubProcess_0so7l00" isExpanded="true">
+        <dc:Bounds x="470" y="650" width="350" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_14mwxm0_di" bpmnElement="StartEvent_1jknl5k">
+        <dc:Bounds x="510" y="732" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0rasmiu_di" bpmnElement="SequenceFlow_0rasmiu">
+        <di:waypoint x="546" y="750" />
+        <di:waypoint x="600" y="750" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1vr9nc9_di" bpmnElement="EndEvent_1vr9nc9">
+        <dc:Bounds x="762" y="732" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1jipldf_di" bpmnElement="SequenceFlow_1jipldf">
+        <di:waypoint x="700" y="750" />
+        <di:waypoint x="762" y="750" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0vb5d51_di" bpmnElement="Task_0c422xd">
+        <dc:Bounds x="600" y="710" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
