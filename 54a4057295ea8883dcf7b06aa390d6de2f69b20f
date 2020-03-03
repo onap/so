@@ -68,6 +68,30 @@
       "revId": "54a4057295ea8883dcf7b06aa390d6de2f69b20f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "54f4c62a_2bf8e24b",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/event/DmaapEvent.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-03-03T08:28:51Z",
+      "side": 1,
+      "message": "Of course they are used. Json builder uses them (it may not be visible in an IDE). If you get rid of any of the getters, the outgoing json will be devoid of the corresponding value.",
+      "parentUuid": "d9ba566e_86b47069",
+      "range": {
+        "startLine": 64,
+        "startChar": 0,
+        "endLine": 78,
+        "endChar": 5
+      },
+      "revId": "54a4057295ea8883dcf7b06aa390d6de2f69b20f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
