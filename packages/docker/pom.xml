@@ -42,20 +42,20 @@
             </goals>
             <configuration>
               <source>
-								println 'Project version: ' + project.properties['so.project.version'];
-								def versionArray;
-								if ( project.properties['so.project.version'] != null ) {
-									versionArray = project.properties['so.project.version'].split('-');
-								}
+                println 'Project version: ' + project.properties['so.project.version'];
+                def versionArray;
+                if ( project.properties['so.project.version'] != null ) {
+                  versionArray = project.properties['so.project.version'].split('-');
+                }
 
-								if ( project.properties['so.project.version'].endsWith("-SNAPSHOT") ) {
-									project.properties['project.docker.latesttag.version']=versionArray[0] + "-SNAPSHOT-latest";
-								} else {
-									project.properties['project.docker.latesttag.version']=versionArray[0] + "-STAGING-latest";
-								}
+                if ( project.properties['so.project.version'].endsWith("-SNAPSHOT") ) {
+                  project.properties['project.docker.latesttag.version']=versionArray[0] + "-SNAPSHOT-latest";
+                } else {
+                  project.properties['project.docker.latesttag.version']=versionArray[0] + "-STAGING-latest";
+                }
 
-								println 'New tag for docker: ' + project.properties['project.docker.latesttag.version'];
-							</source>
+                println 'New tag for docker: ' + project.properties['project.docker.latesttag.version'];
+              </source>
             </configuration>
           </execution>
         </executions>

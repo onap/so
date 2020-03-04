@@ -19,16 +19,13 @@
  */
 package org.onap.so.adapters.vnfmadapter.packagemanagement.subscriptionmanagement;
 
-import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
+import static org.onap.so.adapters.vnfmadapter.extclients.vnfm.VnfmHttpServiceProviderConfiguration.VNFM_ADAPTER_HTTP_SERVICE_PROVIDER_BEAN;
 import java.nio.charset.StandardCharsets;
 import org.apache.commons.codec.binary.Base64;
 import org.onap.so.configuration.rest.BasicHttpHeadersProvider;
-import org.onap.so.configuration.rest.HttpHeadersProvider;
 import org.onap.so.rest.service.HttpRestServiceProvider;
-import org.onap.so.rest.service.HttpRestServiceProviderImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * A base class that can be extended by classes for providing notification services. Provides common methods that will
@@ -40,12 +37,10 @@ import org.springframework.web.client.RestTemplate;
 public abstract class AbstractNotificationServiceProvider {
 
     @Autowired
-    @Qualifier(CONFIGURABLE_REST_TEMPLATE)
-    private RestTemplate restTemplate;
+    @Qualifier(VNFM_ADAPTER_HTTP_SERVICE_PROVIDER_BEAN)
+    private HttpRestServiceProvider httpRestServiceProvider;
 
-    protected HttpRestServiceProvider getHttpRestServiceProvider(final HttpHeadersProvider httpHeadersProvider) {
-        final HttpRestServiceProvider httpRestServiceProvider =
-                new HttpRestServiceProviderImpl(restTemplate, httpHeadersProvider);
+    protected HttpRestServiceProvider getHttpRestServiceProvider() {
         return httpRestServiceProvider;
     }
 

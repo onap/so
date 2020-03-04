@@ -25,7 +25,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.onap.so.adapters.vnfmadapter.Constants.PACKAGE_MANAGEMENT_BASE_URL;
-import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
+import static org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.EtsiCatalogServiceProviderConfiguration.ETSI_CATALOG_REST_TEMPLATE_BEAN;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
@@ -74,11 +74,11 @@ public class Sol003PackageManagementControllerTest {
     private int port;
 
     @Autowired
-    @Qualifier(CONFIGURABLE_REST_TEMPLATE)
-    private RestTemplate testRestTemplate;
+    @Qualifier(ETSI_CATALOG_REST_TEMPLATE_BEAN)
+    private RestTemplate restTemplate;
 
     @Autowired
-    private TestRestTemplate restTemplate;
+    private TestRestTemplate testRestTemplate;
 
     private static final String VNF_PACKAGE_ID = "myVnfPackageId";
     private static final String ARTIFACT_PATH = "myArtifactPath";
@@ -104,8 +104,7 @@ public class Sol003PackageManagementControllerTest {
 
     @Before
     public void setUp() {
-        final MockRestServiceServer.MockRestServiceServerBuilder builder =
-                MockRestServiceServer.bindTo(testRestTemplate);
+        final MockRestServiceServer.MockRestServiceServerBuilder builder = MockRestServiceServer.bindTo(restTemplate);
         builder.ignoreExpectOrder(true);
         mockRestServer = builder.build();
         basicHttpHeadersProvider = new BasicHttpHeadersProvider();
@@ -123,7 +122,7 @@ public class Sol003PackageManagementControllerTest {
                 + VNF_PACKAGE_ID + "/package_content";
         final HttpEntity<?> request = new HttpEntity<>(basicHttpHeadersProvider.getHttpHeaders());
         final ResponseEntity<byte[]> responseEntity =
-                restTemplate.withBasicAuth("test", "test").exchange(testURL, HttpMethod.GET, request, byte[].class);
+                testRestTemplate.withBasicAuth("test", "test").exchange(testURL, HttpMethod.GET, request, byte[].class);
 
         assertEquals(byte[].class, responseEntity.getBody().getClass());
         assertArrayEquals(responseEntity.getBody(), responseArray);
@@ -164,7 +163,7 @@ public class Sol003PackageManagementControllerTest {
 
 
         final ResponseEntity<ProblemDetails> responseEntity =
-                restTemplate.exchange(testURL, HttpMethod.GET, request, ProblemDetails.class);
+                testRestTemplate.exchange(testURL, HttpMethod.GET, request, ProblemDetails.class);
 
         assertTrue(responseEntity.getBody() instanceof ProblemDetails);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
@@ -226,7 +225,7 @@ public class Sol003PackageManagementControllerTest {
                 + VNF_PACKAGE_ID + "/artifacts/" + ARTIFACT_PATH;
         final HttpEntity<?> request = new HttpEntity<>(basicHttpHeadersProvider.getHttpHeaders());
         final ResponseEntity<byte[]> responseEntity =
-                restTemplate.withBasicAuth("test", "test").exchange(testURL, HttpMethod.GET, request, byte[].class);
+                testRestTemplate.withBasicAuth("test", "test").exchange(testURL, HttpMethod.GET, request, byte[].class);
 
         assertEquals(byte[].class, responseEntity.getBody().getClass());
         assertArrayEquals(responseEntity.getBody(), responseArray);
@@ -267,7 +266,7 @@ public class Sol003PackageManagementControllerTest {
 
         final HttpEntity<?> request = new HttpEntity<>(basicHttpHeadersProvider.getHttpHeaders());
         final ResponseEntity<ProblemDetails> responseEntity =
-                restTemplate.exchange(testURL, HttpMethod.GET, request, ProblemDetails.class);
+                testRestTemplate.exchange(testURL, HttpMethod.GET, request, ProblemDetails.class);
 
         assertNotNull(responseEntity.getBody());
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
@@ -331,7 +330,7 @@ public class Sol003PackageManagementControllerTest {
         final String testURL = localhostUrl + port + VNFPKGM_BASE_URL;
         final HttpEntity<?> request = new HttpEntity<>(basicHttpHeadersProvider.getHttpHeaders());
 
-        final ResponseEntity<InlineResponse2001[]> responseEntity = restTemplate.withBasicAuth("test", "test")
+        final ResponseEntity<InlineResponse2001[]> responseEntity = testRestTemplate.withBasicAuth("test", "test")
                 .exchange(testURL, HttpMethod.GET, request, InlineResponse2001[].class);
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -412,7 +411,7 @@ public class Sol003PackageManagementControllerTest {
 
         final String testURL = localhostUrl + port + VNFPKGM_BASE_URL + "/" + VNF_PACKAGE_ID;
         final HttpEntity<?> request = new HttpEntity<>(basicHttpHeadersProvider.getHttpHeaders());
-        final ResponseEntity<InlineResponse2001> responseEntity = restTemplate.withBasicAuth("test", "test")
+        final ResponseEntity<InlineResponse2001> responseEntity = testRestTemplate.withBasicAuth("test", "test")
                 .exchange(testURL, HttpMethod.GET, request, InlineResponse2001.class);
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -484,7 +483,8 @@ public class Sol003PackageManagementControllerTest {
                 + VNF_PACKAGE_ID + "\" \n" + "endpoint.", problemDetails.getDetail());
     }
 
-    // The below test method is here to improve code coverage and provide a foundation for writing future tests
+    // The below test method is here to improve code coverage and provide a foundation for writing
+    // future tests
     @Test
     public void testGetPackageVnfd_ValidArray_Success() {
         final byte[] responseArray = buildByteArrayWithRandomData(10);
@@ -497,7 +497,7 @@ public class Sol003PackageManagementControllerTest {
                 "http://localhost:" + port + PACKAGE_MANAGEMENT_BASE_URL + "/vnf_packages/" + VNF_PACKAGE_ID + "/vnfd";
         final HttpEntity<?> request = new HttpEntity<>(basicHttpHeadersProvider.getHttpHeaders());
         final ResponseEntity<byte[]> responseEntity =
-                restTemplate.withBasicAuth("test", "test").exchange(testURL, HttpMethod.GET, request, byte[].class);
+                testRestTemplate.withBasicAuth("test", "test").exchange(testURL, HttpMethod.GET, request, byte[].class);
 
         assertEquals(byte[].class, responseEntity.getBody().getClass());
         assertArrayEquals(responseEntity.getBody(), responseArray);
@@ -592,7 +592,7 @@ public class Sol003PackageManagementControllerTest {
     private ResponseEntity<ProblemDetails> sendHttpRequest(final String url) {
         final String testURL = localhostUrl + port + VNFPKGM_BASE_URL + "/" + url;
         final HttpEntity<?> request = new HttpEntity<>(basicHttpHeadersProvider.getHttpHeaders());
-        return restTemplate.withBasicAuth("test", "test").exchange(testURL, HttpMethod.GET, request,
+        return testRestTemplate.withBasicAuth("test", "test").exchange(testURL, HttpMethod.GET, request,
                 ProblemDetails.class);
     }
 
@@ -652,4 +652,5 @@ public class Sol003PackageManagementControllerTest {
         final VNFPKGMLinkSerializer vnfpkgmLinkSerializer = new VNFPKGMLinkSerializer().self(uriLink);
         return vnfpkgmLinkSerializer;
     }
+
 }

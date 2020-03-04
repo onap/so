@@ -17,7 +17,14 @@ COPY maven/app.jar /app
 COPY configs/logging/logback-spring.xml /app
 COPY scripts/start-app.sh /app
 COPY scripts/wait-for.sh /app
-COPY ca-certificates/onap-ca.crt /app/ca-certificates/onap-ca.crt
+COPY ca-certificates/onap-ca.crt /usr/local/share/ca-certificates/onap-ca.crt
+COPY ca-certificates/msb-ca.crt /usr/local/share/ca-certificates/msb-ca.crt
+
+RUN echo 'Installing CA certificates ...'
+RUN chmod 644 /usr/local/share/ca-certificates/onap-ca.crt /usr/local/share/ca-certificates/msb-ca.crt
+RUN update-ca-certificates --fresh
+RUN echo 'Finished installing CA certificates ...'
+
 RUN chown -R so:so /app
 
 USER so
