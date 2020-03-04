@@ -69,7 +69,7 @@ public class NfSoftwareUpgradeDispatcher implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution delegateExecution) throws Exception {
-        logger.debug("Running execute block for activity id:{}, name:{}", delegateExecution.getCurrentActivityId(),
+        logger.debug("Running execute block for activity id: {}, name: {}", delegateExecution.getCurrentActivityId(),
                 delegateExecution.getCurrentActivityName());
 
         RequestDetails bpmnRequestDetails = requestVerification(delegateExecution);
@@ -82,9 +82,10 @@ public class NfSoftwareUpgradeDispatcher implements JavaDelegate {
         final List<PnfResourceCustomization> pnfCustomizations =
                 getPnfResourceCustomizations(delegateExecution, serviceModelUuid);
         final PnfResourceCustomization pnfResourceCustomization = pnfCustomizations.get(0);
+        final String payload = bpmnRequestDetails.getRequestParameters().getPayload();
 
         populateExecution(delegateExecution, bpmnRequestDetails, pnfResourceCustomization, pnf, serviceInstanceName,
-                pnfName, serviceModelUuid, userParams);
+                pnfName, serviceModelUuid, userParams, payload);
 
         logger.trace("Completed preProcessRequest PnfSoftwareUpgradeServiceRequest Request ");
     }
@@ -104,7 +105,7 @@ public class NfSoftwareUpgradeDispatcher implements JavaDelegate {
 
     private void populateExecution(DelegateExecution delegateExecution, RequestDetails bpmnRequestDetails,
             PnfResourceCustomization pnfResourceCustomization, Pnf pnf, String serviceInstanceName, String pnfName,
-            String serviceModelUuid, List<Map<String, Object>> userParams) {
+            String serviceModelUuid, List<Map<String, Object>> userParams, String payload) {
 
         delegateExecution.setVariable(SERVICE_MODEL_INFO, bpmnRequestDetails.getModelInfo());
         delegateExecution.setVariable(SERVICE_INSTANCE_NAME, serviceInstanceName);
@@ -124,6 +125,8 @@ public class NfSoftwareUpgradeDispatcher implements JavaDelegate {
                 delegateExecution.setVariable(param.get("name").toString(), param.get("value").toString());
             }
         }
+
+        delegateExecution.setVariable(REQUEST_PAYLOAD, payload);
     }
 
     private Pnf getPnfByPnfName(DelegateExecution delegateExecution, String pnfName) {
