@@ -35,8 +35,10 @@ public class ExecutionVariableNames {
     public final static String TIMEOUT_FOR_NOTIFICATION = "timeoutForPnfEntryNotification";
     public final static String PNF_UUID = "pnfUuid";
     public final static String SERVICE_INSTANCE_ID = "serviceInstanceId";
+    public final static String REQUEST_ID = "requestId";
     public final static String MSO_REQUEST_ID = "msoRequestId";
     public final static String MODEL_UUID = "modelUuid";
+    public final static String REQUEST_PAYLOAD = "requestPayload";
 
     public final static String SERVICE_MODEL_INFO = "serviceModelInfo";
 

@@ -18,32 +18,11 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.client.sdnc.common;
+package org.onap.so.client.sdnc.lcm;
 
-public interface SDNCConstants {
-    String SYSTEM_NAME = "MSO";
-
-    String LCM_API_VER = "2.00";
-
-    String LCM_FLAGS_MODE_NORMAL = "NORMAL";
-    String LCM_FLAGS_MODE_EXCLUSIVE = "EXCLUSIVE";
-
-    String LCM_FLAGS_FORCE_TRUE = "TRUE";
-    String LCM_FLAGS_FORCE_FALSE = "FALSE";
-
-    int LCM_FLAGS_TTL = 65000;
-
-    String LCM_API_BASE_PATH = "/restconf/operations/LCM:";
-
-    String LCM_DMAAP_MSG_VER = "1.0";
-    String LCM_DMAAP_MSG_TYPE_REQUEST = "request";
-    String LCM_DMAAP_MSG_TYPE_RESPONSE = "response";
-
-    String LCM_DMAAP_PARTITION = "MSOLCM";
-    String LCM_DMAAP_TIMEOUT = "20000";
-    String LCM_DMAAP_ENVIRONMENT = "TEST";
-    String LCM_DMAAP_READ_TOPIC = "SDNC-LCM-WRITE";
-    String LCM_DMAAP_WRITE_TOPIC = "SDNC-LCM-READ";
-
-    int LCM_OUTPUT_SUCCESS_CODE = 400;
+public interface SDNCLcmActionConstants {
+    String ACTIVATE_N_E_SW = "ActivateNESw";
+    String DOWNLOAD_N_E_SW = "DownloadNESw";
+    String UPGRADE_POST_CHECK = "UpgradePostCheck";
+    String UPGRADE_PRE_CHECK = "UpgradePreCheck";
 }

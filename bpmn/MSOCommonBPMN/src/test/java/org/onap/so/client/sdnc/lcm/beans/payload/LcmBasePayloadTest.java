@@ -18,32 +18,25 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.client.sdnc.common;
+package org.onap.so.client.sdnc.lcm.beans.payload;
 
-public interface SDNCConstants {
-    String SYSTEM_NAME = "MSO";
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-    String LCM_API_VER = "2.00";
+public class LcmBasePayloadTest {
+    private static Logger logger = LoggerFactory.getLogger(LcmBasePayloadTest.class);
 
-    String LCM_FLAGS_MODE_NORMAL = "NORMAL";
-    String LCM_FLAGS_MODE_EXCLUSIVE = "EXCLUSIVE";
+    protected String ipaddressV4Oam = "192.168.1.10";
+    protected String playbookName = "test_playbook";
 
-    String LCM_FLAGS_FORCE_TRUE = "TRUE";
-    String LCM_FLAGS_FORCE_FALSE = "FALSE";
+    public String convertToSting(Object msgObject) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
 
-    int LCM_FLAGS_TTL = 65000;
+        String msgString = mapper.writeValueAsString(msgObject);
+        logger.debug(msgObject.getClass().getSimpleName() + "\n" + msgString);
 
-    String LCM_API_BASE_PATH = "/restconf/operations/LCM:";
-
-    String LCM_DMAAP_MSG_VER = "1.0";
-    String LCM_DMAAP_MSG_TYPE_REQUEST = "request";
-    String LCM_DMAAP_MSG_TYPE_RESPONSE = "response";
-
-    String LCM_DMAAP_PARTITION = "MSOLCM";
-    String LCM_DMAAP_TIMEOUT = "20000";
-    String LCM_DMAAP_ENVIRONMENT = "TEST";
-    String LCM_DMAAP_READ_TOPIC = "SDNC-LCM-WRITE";
-    String LCM_DMAAP_WRITE_TOPIC = "SDNC-LCM-READ";
-
-    int LCM_OUTPUT_SUCCESS_CODE = 400;
+        return msgString;
+    }
 }
