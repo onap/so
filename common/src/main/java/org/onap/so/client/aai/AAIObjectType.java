@@ -164,6 +164,8 @@ public class AAIObjectType implements GraphInventoryObjectType, Serializable {
             new AAIObjectType(AAIObjectType.SERVICE_INSTANCE.uriTemplate(), "/slice-profiles", "sliceProfiles");
     public static final AAIObjectType COMMUNICATION_PROFILE_ALL = new AAIObjectType(
             AAIObjectType.SERVICE_INSTANCE.uriTemplate(), "/communication-service-profiles", "communicationProfiles");
+    public static final AAIObjectType QUERY_ALLOTTED_RESOURCE =
+            new AAIObjectType(AAIObjectType.SERVICE_INSTANCE.uriTemplate(), "?depth=2", "service-Instance");
 
     private final String uriTemplate;
     private final String parentUri;
