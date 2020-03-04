@@ -16,9 +16,9 @@ then
 		update-ca-certificates --fresh
 	fi
 
-	# Re-exec this script as the 'so' user.
+	# Re-exec this script as the 'onap' user.
 	this=`readlink -f $0`
-	exec su so -c  "$this"
+	exec su onap -c  "$this"
 fi
 
 touch /app/app.jar

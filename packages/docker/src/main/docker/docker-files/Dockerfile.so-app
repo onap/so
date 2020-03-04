@@ -1,4 +1,4 @@
-FROM onap/so/base-image:1.0
+FROM registry.gitlab.com/onap-integration/docker/onap-java
 
 ARG http_proxy
 ENV HTTP_PROXY=$http_proxy
@@ -7,22 +7,18 @@ ARG https_proxy
 ENV HTTPS_PROXY=$https_proxy
 ENV https_proxy=$HTTPS_PROXY
 
-RUN mkdir /app && mkdir /app/config && mkdir /app/certificates && mkdir /app/logs  && mkdir /app/ca-certificates
+USER root
+RUN mkdir -p /app/{config,certificates,logs,ca-certificates}
+RUN chown -R onap:onap /app && chmod 700 /app/*.sh
 
+USER onap
 COPY maven/app.jar /app
 COPY configs/logging/logback-spring.xml /app
 COPY scripts/start-app.sh /app
 COPY scripts/wait-for.sh /app
 COPY ca-certificates/onap-ca.crt /app/ca-certificates/onap-ca.crt
 
-RUN chown -R so:so /app && chmod 700 /app/*.sh
-
-## TODO for Casablanca: install this in the openstack-adapter container
-## Install heatbridge
-#RUN apt-get install -y python && apt-get install -y python-pip && echo 'PIP Installed, doing upgrade' && pip install --upgrade pip
-#RUN mkdir /opt/mso/heatbridge
-#COPY heatbridge/heatbridge-0.3.0.dev0-py2-none-any.whl /opt/mso/heatbridge
-#RUN pip install /opt/mso/heatbridge/heatbridge-0.3.0.dev0-py2-none-any.whl
+RUN chmod 700 /app/*.sh
 
 # Springboot configuration (required)
 VOLUME /app/config
