@@ -278,7 +278,7 @@ public class EtsiSubscriptionNotificationControllerTest {
         mockRestServer.expect(requestTo(CALLBACK_URI)).andExpect(method(HttpMethod.POST))
                 .andExpect(jsonPath("$.id").value(NOTIFICATION_ID))
                 .andExpect(jsonPath("$.notificationType").value(
-                        VnfPackageChangeNotification.NotificationTypeEnum.VNFPACKAGECHANGENOTIFICATION.toString()))
+                        VnfPackageChangeNotification.NotificationTypeEnum.VNFPACKAGECHANGENOTIFICATION.getValue()))
                 .andExpect(jsonPath("$.subscriptionId").value(SUBSCRIPTION_ID))
                 .andExpect(jsonPath("$.timeStamp").value(TIMESTAMP.toString()))
                 .andExpect(jsonPath("$.vnfPkgId").value(VNFPKG_ID.toString()))

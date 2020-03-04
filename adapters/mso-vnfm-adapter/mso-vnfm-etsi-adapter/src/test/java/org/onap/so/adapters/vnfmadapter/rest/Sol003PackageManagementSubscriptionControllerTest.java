@@ -28,7 +28,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.onap.so.adapters.vnfmadapter.Constants.PACKAGE_MANAGEMENT_BASE_URL;
-import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
+import static org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.EtsiCatalogServiceProviderConfiguration.ETSI_CATALOG_REST_TEMPLATE_BEAN;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
@@ -102,7 +102,7 @@ public class Sol003PackageManagementSubscriptionControllerTest {
     private static final String LOCALHOST_URL = "http://localhost:";
 
     @Autowired
-    @Qualifier(CONFIGURABLE_REST_TEMPLATE)
+    @Qualifier(ETSI_CATALOG_REST_TEMPLATE_BEAN)
     private RestTemplate restTemplate;
     private MockRestServiceServer mockRestServiceServer;
     @Autowired
