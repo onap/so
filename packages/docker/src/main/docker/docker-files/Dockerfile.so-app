@@ -18,6 +18,7 @@ COPY configs/logging/logback-spring.xml /app
 COPY scripts/start-app.sh /app
 COPY scripts/wait-for.sh /app
 COPY ca-certificates/onap-ca.crt /app/ca-certificates/onap-ca.crt
+COPY ca-certificates/msb-ca.crt /app/ca-certificates/msb-ca.crt
 RUN chown -R so:so /app
 
 USER so

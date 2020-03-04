@@ -20,6 +20,7 @@
 
 package org.onap.so.adapters.vnfmadapter.extclients.etsicatalog;
 
+import static org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.EtsiCatalogServiceProviderConfiguration.ETSI_CATALOG_SERVICE_PROVIDER_BEAN;
 import java.util.Optional;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.NsdmSubscription;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmSubscription;
@@ -53,14 +54,14 @@ import org.springframework.stereotype.Service;
 public class EtsiCatalogServiceProviderImpl implements EtsiCatalogServiceProvider {
     private static final Logger logger = LoggerFactory.getLogger(EtsiCatalogServiceProviderImpl.class);
 
-    @Qualifier("etsiCatalogServiceProvider")
     private final HttpRestServiceProvider httpServiceProvider;
     private final EtsiCatalogUrlProvider etsiCatalogUrlProvider;
     private final ConversionService conversionService;
 
     @Autowired
     public EtsiCatalogServiceProviderImpl(final EtsiCatalogUrlProvider etsiCatalogUrlProvider,
-            final HttpRestServiceProvider httpServiceProvider, final ConversionService conversionService) {
+            @Qualifier(ETSI_CATALOG_SERVICE_PROVIDER_BEAN) final HttpRestServiceProvider httpServiceProvider,
+            final ConversionService conversionService) {
         this.etsiCatalogUrlProvider = etsiCatalogUrlProvider;
         this.httpServiceProvider = httpServiceProvider;
         this.conversionService = conversionService;
@@ -118,8 +119,10 @@ public class EtsiCatalogServiceProviderImpl implements EtsiCatalogServiceProvide
                             if (inlineResponse2001 != null) {
                                 responses[index] = inlineResponse2001;
                             }
+                        } else {
+                            logger.error("Unable to find Converter for response class: {}",
+                                    vnfPackages[index].getClass());
                         }
-                        logger.error("Unable to find Converter for response class: {}", vnfPackages[index].getClass());
                     }
                     return Optional.of(responses);
                 }
