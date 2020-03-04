@@ -20,30 +20,9 @@
 
 package org.onap.so.client.sdnc.lcm;
 
-import org.onap.so.client.RestProperties;
-
-public interface SDNCLcmProperties extends RestProperties {
-    String getHost();
-
-    String getPath();
-
-    long getActionTimeout();
-
-    String getBasicAuth();
-
-    String getDmaapHost();
-
-    String getDmaapAuth();
-
-    String getDmaapPartition();
-
-    String getDmaapTimeout();
-
-    String getDmaapEnvironment();
-
-    String getDmaaPLcmReadTopic();
-
-    String getDmaaPLcmWriteTopic();
-
-    String getKey();
+public interface SDNCLcmActionConstants {
+    String ACTIVATE_N_E_SW = "ActivateNESw";
+    String DOWNLOAD_N_E_SW = "DownloadNESw";
+    String UPGRADE_POST_CHECK = "UpgradePostCheck";
+    String UPGRADE_PRE_CHECK = "UpgradePreCheck";
 }

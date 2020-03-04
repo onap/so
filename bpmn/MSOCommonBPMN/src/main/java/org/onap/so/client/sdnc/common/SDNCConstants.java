@@ -45,5 +45,6 @@ public interface SDNCConstants {
     String LCM_DMAAP_READ_TOPIC = "SDNC-LCM-WRITE";
     String LCM_DMAAP_WRITE_TOPIC = "SDNC-LCM-READ";
 
-    int LCM_TIMEOUT = 300;
+    long LCM_ACTION_TIMEOUT = 300000; // Millisecond
+    int LCM_OUTPUT_SUCCESS_CODE = 400;
 }

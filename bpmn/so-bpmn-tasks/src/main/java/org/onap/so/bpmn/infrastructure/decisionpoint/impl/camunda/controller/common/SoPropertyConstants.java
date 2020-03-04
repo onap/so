@@ -18,32 +18,18 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.client.sdnc.lcm;
+package org.onap.so.bpmn.infrastructure.decisionpoint.impl.camunda.controller.common;
 
-import org.onap.so.client.RestProperties;
+public interface SoPropertyConstants {
+    String TARGET_SOFTWARE_VERSION = "targetSoftwareVersion";
 
-public interface SDNCLcmProperties extends RestProperties {
-    String getHost();
+    String SO_ACTION = "action";
+    String SO_ACTION_MODE = "mode";
 
-    String getPath();
+    String ACTION_ACTIVATE_N_E_SW = "activateNESw";
+    String ACTION_DOWNLOAD_N_E_SW = "downloadNESw";
+    String ACTION_POST_CHECK = "postCheck";
+    String ACTION_PRE_CHECK = "preCheck";
 
-    long getActionTimeout();
-
-    String getBasicAuth();
-
-    String getDmaapHost();
-
-    String getDmaapAuth();
-
-    String getDmaapPartition();
-
-    String getDmaapTimeout();
-
-    String getDmaapEnvironment();
-
-    String getDmaaPLcmReadTopic();
-
-    String getDmaaPLcmWriteTopic();
-
-    String getKey();
+    String CONTROLLER_STATUS = "ControllerStatus";
 }
