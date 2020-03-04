@@ -1297,6 +1297,9 @@ public class ToscaResourceInstaller {
             heatTemplate.setParameters(heatParam);
             vfModuleArtifact.setHeatTemplate(heatTemplate);
         } else {
+            if (vfModuleArtifact.getArtifactInfo().getArtifactTimeout() != null) {
+                existingHeatTemplate.setTimeoutMinutes(vfModuleArtifact.getArtifactInfo().getArtifactTimeout());
+            }
             vfModuleArtifact.setHeatTemplate(existingHeatTemplate);
         }
     }
