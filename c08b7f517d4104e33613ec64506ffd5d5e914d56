@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "089a3c9b_cf82444e",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/client/ASDCStatusCallBack.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2020-03-04T05:05:32Z",
+      "side": 1,
+      "message": "Please log the early return conditions for better tracability.",
+      "revId": "c08b7f517d4104e33613ec64506ffd5d5e914d56",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "99aee2c3_c5749020",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/client/ASDCStatusCallBack.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2020-03-04T05:05:32Z",
+      "side": 1,
+      "message": "Please log the early return conditions for better tracability.",
+      "revId": "c08b7f517d4104e33613ec64506ffd5d5e914d56",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
