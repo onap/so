@@ -39,6 +39,10 @@ public class SDNCLcmClientBuilder {
         sdncLcmProperties = pros;
     }
 
+    public SDNCLcmProperties getSDNCLcmProperties() {
+        return sdncLcmProperties;
+    }
+
     public SDNCLcmRestClient newSDNCLcmRestClient(String operation) throws SDNCLcmClientBuilderException {
         URI pathUri;
         try {

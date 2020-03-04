@@ -42,7 +42,7 @@ public class SDNCLcmDmaapClientTest extends BaseTest {
     protected static final String DMAAP_HOST_PROP = SDNCLcmPropertiesImpl.DMAAP_HOST;
     protected static final String DMAAP_WRITE_TOPIC_PROP = SDNCLcmPropertiesImpl.LCM_DMAAP_WRITE_TOPIC;
     protected static final String DMAAP_READ_TOPIC_PROP = SDNCLcmPropertiesImpl.LCM_DMAAP_READ_TOPIC;
-    protected static final String DMAAP_PARTITION_PROP = SDNCLcmPropertiesImpl.DMAAP_PARTITION;
+    protected static final String DMAAP_PARTITION_PROP = SDNCLcmPropertiesImpl.LCM_DMAAP_PARTITION;
 
     protected String testWriteTopic = "TEST-WRITE-TOPIC";
     protected String testReadTopic = "TEST-READ-TOPIC";
