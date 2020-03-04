@@ -328,8 +328,6 @@ public class OrchestrationRequests {
             ir.setVolumeGroupInstanceId(iar.getVolumeGroupId());
         if (iar.getVolumeGroupName() != null)
             ir.setVolumeGroupInstanceName(iar.getVolumeGroupName());
-        if (iar.getRequestorId() != null)
-            ir.setRequestorId(iar.getRequestorId());
         if (iar.getInstanceGroupId() != null)
             ir.setInstanceGroupId(iar.getInstanceGroupId());
         if (iar.getInstanceGroupName() != null)

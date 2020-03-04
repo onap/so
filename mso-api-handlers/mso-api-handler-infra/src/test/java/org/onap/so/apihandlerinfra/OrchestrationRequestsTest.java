@@ -32,6 +32,7 @@ import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -155,6 +156,7 @@ public class OrchestrationRequestsTest extends BaseTest {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         assertThat(response.getBody(), sameBeanAs(testResponse).ignoring("request.startTime")
                 .ignoring("request.finishTime").ignoring("request.requestStatus.timeStamp"));
+        assertNull(response.getBody().getRequest().getInstanceReferences().getRequestorId());
         assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
         assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
         assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
