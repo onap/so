@@ -273,7 +273,6 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
         execution.setVariable("orchestrationTaskId", taskId)
         logger.debug("BusinessKey: " + taskId)
         String serviceInstanceId = execution.getVariable("serviceInstanceId")
-        String operationId = execution.getVariable("operationId")
         String serviceInstanceName = execution.getVariable("serviceInstanceName")
         String taskName = "SliceServiceTask"
         String taskStatus = "Planning"
@@ -286,17 +285,11 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
         execution.setVariable("CSSOT_requestMethod", requestMethod)
 
         Map<String, Object> serviceProfile = execution.getVariable("serviceProfile")
-        Map<String, Object> sliceProfileTn = execution.getVariable("sliceProfileTn")
-        Map<String, Object> sliceProfileCn = execution.getVariable("sliceProfileCn")
-        Map<String, Object> sliceProfileAn = execution.getVariable("sliceProfileAn")
 
         SliceTaskParams sliceTaskParams = new SliceTaskParams()
         sliceTaskParams.setServiceId(serviceInstanceId)
         sliceTaskParams.setServiceName(serviceInstanceName)
         sliceTaskParams.setServiceProfile(serviceProfile)
-        sliceTaskParams.setSliceProfileTn(sliceProfileTn)
-        sliceTaskParams.setSliceProfileCn(sliceProfileCn)
-        sliceTaskParams.setSliceProfileAn(sliceProfileAn)
         execution.setVariable("sliceTaskParams", sliceTaskParams)
 
         String paramJson = sliceTaskParams.convertToJson()
