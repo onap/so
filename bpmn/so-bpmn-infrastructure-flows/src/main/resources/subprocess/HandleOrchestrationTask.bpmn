@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1gbzu9i" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.1.2">
+  <bpmn:process id="HandleOrchestrationTask" name="HandleOrchestrationTask" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Start">
+      <bpmn:outgoing>SequenceFlow_0lbtmuu</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:scriptTask id="ScriptTask_0r0a9ga" name="Preprocess Request" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0lbtmuu</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0uzjpd6</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def hot = new HandleOrchestrationTask()
+hot.preProcessRequest(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:serviceTask id="ServiceTask_1iat8g5" name="Send Orchestration Task Request">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">${url}</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:script scriptFormat="groovy">execution.getVariable("headerMap")</camunda:script>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">${payload}</camunda:inputParameter>
+            <camunda:inputParameter name="method">${method}</camunda:inputParameter>
+            <camunda:outputParameter name="statusCode">${statusCode}</camunda:outputParameter>
+            <camunda:outputParameter name="response">${response}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0uzjpd6</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_06rrzml</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:scriptTask id="ScriptTask_119zm52" name="Post Process" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_06rrzml</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1qthzdo</bpmn:outgoing>
+      <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
+def hot = new HandleOrchestrationTask()
+hot.postProcess(execution)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0uzjpd6" sourceRef="ScriptTask_0r0a9ga" targetRef="ServiceTask_1iat8g5" />
+    <bpmn:sequenceFlow id="SequenceFlow_06rrzml" sourceRef="ServiceTask_1iat8g5" targetRef="ScriptTask_119zm52" />
+    <bpmn:sequenceFlow id="SequenceFlow_0lbtmuu" sourceRef="StartEvent_1" targetRef="ScriptTask_0r0a9ga" />
+    <bpmn:endEvent id="EndEvent_18t5h42" name="End">
+      <bpmn:incoming>SequenceFlow_1qthzdo</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1qthzdo" sourceRef="ScriptTask_119zm52" targetRef="EndEvent_18t5h42" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="HandleOrchestrationTask">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="103" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="185" y="146" width="25" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0r0a9ga_di" bpmnElement="ScriptTask_0r0a9ga">
+        <dc:Bounds x="284" y="81" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1iat8g5_di" bpmnElement="ServiceTask_1iat8g5">
+        <dc:Bounds x="466" y="81" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_119zm52_di" bpmnElement="ScriptTask_119zm52">
+        <dc:Bounds x="644" y="81" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0uzjpd6_di" bpmnElement="SequenceFlow_0uzjpd6">
+        <di:waypoint x="384" y="121" />
+        <di:waypoint x="466" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_06rrzml_di" bpmnElement="SequenceFlow_06rrzml">
+        <di:waypoint x="566" y="121" />
+        <di:waypoint x="644" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0lbtmuu_di" bpmnElement="SequenceFlow_0lbtmuu">
+        <di:waypoint x="215" y="121" />
+        <di:waypoint x="284" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_18t5h42_di" bpmnElement="EndEvent_18t5h42">
+        <dc:Bounds x="820" y="103" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="828" y="146" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1qthzdo_di" bpmnElement="SequenceFlow_1qthzdo">
+        <di:waypoint x="744" y="121" />
+        <di:waypoint x="820" y="121" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
+
