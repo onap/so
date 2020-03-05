@@ -277,17 +277,22 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
                 mapKey = "startTime";
             }
 
+            final String operator = entry.getValue().get(0);
             final String propertyValue = entry.getValue().get(1);
             if ("startTime".equals(mapKey)) {
                 final SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy");
                 try {
                     final Date thisDate = format.parse(propertyValue);
                     final Timestamp minTime = new Timestamp(thisDate.getTime());
-                    final Timestamp maxTime = new Timestamp(thisDate.getTime() + TimeUnit.DAYS.toMillis(1));
+                    Timestamp maxTime = new Timestamp(thisDate.getTime() + TimeUnit.DAYS.toMillis(1));
 
-                    if ("DOES_NOT_EQUAL".equalsIgnoreCase(entry.getValue().get(0))) {
+                    if ("DOES_NOT_EQUAL".equalsIgnoreCase(operator)) {
                         predicates.add(cb.or(cb.lessThan(tableRoot.get(mapKey), minTime),
                                 cb.greaterThanOrEqualTo(tableRoot.get(mapKey), maxTime)));
+                    } else if ("BETWEEN_DATES".equalsIgnoreCase(operator)) {
+                        Date endDate = format.parse(entry.getValue().get(2));
+                        maxTime = new Timestamp(endDate.getTime());
+                        predicates.add(cb.between(tableRoot.get(mapKey), minTime, maxTime));
                     } else {
                         predicates.add(cb.between(tableRoot.get(mapKey), minTime, maxTime));
                     }
@@ -295,7 +300,7 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
                     logger.debug("Exception in getOrchestrationFiltersFromInfraActive(): {}", e.getMessage(), e);
                     return null;
                 }
-            } else if ("DOES_NOT_EQUAL".equalsIgnoreCase(entry.getValue().get(0))) {
+            } else if ("DOES_NOT_EQUAL".equalsIgnoreCase(operator)) {
                 predicates.add(cb.notEqual(tableRoot.get(mapKey), propertyValue));
             } else {
                 predicates.add(cb.equal(tableRoot.get(mapKey), propertyValue));
