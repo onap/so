@@ -428,10 +428,7 @@ css.sendSyncResponse(execution)</bpmn:script>
         <camunda:in source="nstModelUuid" target="nstModelUuid" />
         <camunda:in source="nstModelInvariantUuid" target="nstModelInvariantUuid" />
         <camunda:in source="serviceProfile" target="serviceProfile" />
-        <camunda:in source="sliceProfileTn" target="sliceProfileTn" />
         <camunda:in source="msoRequestId" target="msoRequestId" />
-        <camunda:in source="sliceProfileCn" target="sliceProfileCn" />
-        <camunda:in source="sliceProfileAn" target="sliceProfileAn" />
         <camunda:in source="sliceTaskParams" target="sliceTaskParams" />
         <camunda:in source="resourceSharingLevel" target="resourceSharingLevel" />
         <camunda:out source="sliceTaskParams" target="sliceTaskParams" />
