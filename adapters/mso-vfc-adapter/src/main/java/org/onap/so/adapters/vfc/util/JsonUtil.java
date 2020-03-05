@@ -27,7 +27,7 @@ import java.io.IOException;
 import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.adapters.vfc.constant.HttpCode;
 import org.onap.so.adapters.vfc.exceptions.ApplicationException;
-import org.onap.so.logger.ErrorCode;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.type.TypeReference;

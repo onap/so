@@ -23,7 +23,7 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 import org.onap.so.logger.LoggingAnchor
-import org.onap.so.logger.ErrorCode
+import org.onap.logging.filter.base.ErrorCode
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor

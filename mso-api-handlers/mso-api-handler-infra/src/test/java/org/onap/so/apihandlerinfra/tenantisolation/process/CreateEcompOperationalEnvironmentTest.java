@@ -46,7 +46,7 @@ import org.onap.so.apihandlerinfra.tenantisolationbeans.RequestInfo;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.RequestParameters;
 import org.onap.so.client.aai.AAIVersion;
 import org.onap.so.db.request.beans.InfraActiveRequests;
-import org.onap.so.logger.ErrorCode;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.fasterxml.jackson.core.JsonProcessingException;

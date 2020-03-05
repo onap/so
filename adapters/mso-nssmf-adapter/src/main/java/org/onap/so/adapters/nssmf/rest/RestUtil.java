@@ -59,7 +59,7 @@ import static org.onap.so.adapters.nssmf.rest.HttpMethod.POST;
 import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.BAD_REQUEST;
 import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.marshal;
 import static org.onap.so.adapters.nssmf.util.NssmfAdapterUtil.unMarshal;
-import static org.onap.so.logger.ErrorCode.AvailabilityError;
+import static org.onap.logging.filter.base.ErrorCode.AvailabilityError;
 import static org.onap.so.logger.LoggingAnchor.FOUR;
 import static org.onap.so.logger.MessageEnum.RA_NS_EXC;
 

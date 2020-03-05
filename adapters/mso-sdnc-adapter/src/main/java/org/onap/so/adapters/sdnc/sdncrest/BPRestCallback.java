@@ -28,7 +28,7 @@ import java.net.URI;
 import javax.xml.bind.DatatypeConverter;
 import org.onap.logging.filter.spring.SpringClientPayloadFilter;
 import org.onap.so.adapters.sdnc.impl.Constants;
-import org.onap.so.logger.ErrorCode;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;

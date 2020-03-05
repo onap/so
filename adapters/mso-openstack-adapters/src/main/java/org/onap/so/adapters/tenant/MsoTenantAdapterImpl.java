@@ -33,7 +33,7 @@ import org.onap.so.adapters.tenant.exceptions.TenantAlreadyExists;
 import org.onap.so.adapters.tenant.exceptions.TenantException;
 import org.onap.so.adapters.tenantrest.TenantRollback;
 import org.onap.so.entity.MsoRequest;
-import org.onap.so.logger.ErrorCode;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.openstack.beans.MsoTenant;
 import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
