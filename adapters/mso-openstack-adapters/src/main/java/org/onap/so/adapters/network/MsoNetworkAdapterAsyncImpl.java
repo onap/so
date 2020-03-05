@@ -46,7 +46,7 @@ import org.onap.so.adapters.network.async.client.QueryNetworkNotification;
 import org.onap.so.adapters.network.async.client.UpdateNetworkNotification;
 import org.onap.so.adapters.network.exceptions.NetworkException;
 import org.onap.so.entity.MsoRequest;
-import org.onap.so.logger.ErrorCode;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.openstack.beans.NetworkRollback;

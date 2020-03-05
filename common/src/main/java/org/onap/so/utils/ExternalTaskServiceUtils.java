@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.camunda.bpm.client.ExternalTaskClient;
 import org.camunda.bpm.client.interceptor.ClientRequestInterceptor;
 import org.camunda.bpm.client.interceptor.auth.BasicAuthProvider;
+import org.onap.logging.filter.base.ScheduledLogging;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,7 @@ public class ExternalTaskServiceUtils {
         return Integer.parseInt(env.getProperty("workflow.topics.maxClients", "3"));
     }
 
+    @ScheduledLogging
     @Scheduled(fixedDelay = 30000)
     public void checkAllClientsActive() {
         getClients().stream().filter(client -> !client.isActive()).forEach(ExternalTaskClient::start);

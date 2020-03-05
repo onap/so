@@ -39,7 +39,7 @@ import org.onap.so.db.request.data.repository.OperationStatusRepository;
 import org.onap.so.db.request.data.repository.ResourceOperationStatusRepository;
 import org.onap.so.db.request.data.repository.SiteStatusRepository;
 import org.onap.so.db.request.data.repository.InstanceNfvoMappingRepository;
-import org.onap.so.logger.ErrorCode;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.requestsdb.RequestsDbConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

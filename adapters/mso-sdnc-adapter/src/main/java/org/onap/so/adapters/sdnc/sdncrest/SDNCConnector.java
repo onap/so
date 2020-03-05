@@ -51,7 +51,7 @@ import org.apache.http.util.EntityUtils;
 import org.onap.so.adapters.sdnc.impl.Constants;
 import org.onap.so.adapters.sdncrest.SDNCErrorCommon;
 import org.onap.so.adapters.sdncrest.SDNCResponseCommon;
-import org.onap.so.logger.ErrorCode;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

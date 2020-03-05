@@ -57,7 +57,7 @@ import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.beans.RequestProcessingData;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.exceptions.ValidationException;
-import org.onap.so.logger.ErrorCode;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.serviceinstancebeans.CloudRequestData;
 import org.onap.so.serviceinstancebeans.GetOrchestrationListResponse;

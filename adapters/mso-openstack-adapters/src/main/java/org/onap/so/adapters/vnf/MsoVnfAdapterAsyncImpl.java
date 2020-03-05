@@ -44,7 +44,7 @@ import org.onap.so.adapters.vnf.async.client.VnfAdapterNotify;
 import org.onap.so.adapters.vnf.async.client.VnfAdapterNotify_Service;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
 import org.onap.so.entity.MsoRequest;
-import org.onap.so.logger.ErrorCode;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.openstack.beans.VnfRollback;

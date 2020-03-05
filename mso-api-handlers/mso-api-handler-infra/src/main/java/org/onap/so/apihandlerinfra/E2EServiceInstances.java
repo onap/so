@@ -64,7 +64,7 @@ import org.onap.so.db.catalog.beans.ServiceRecipe;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.OperationStatus;
 import org.onap.so.db.request.client.RequestsDbClient;
-import org.onap.so.logger.ErrorCode;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.ModelType;

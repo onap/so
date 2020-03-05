@@ -43,7 +43,7 @@ import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
 import org.onap.so.constants.Status;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
-import org.onap.so.logger.ErrorCode;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.HttpHeadersConstants;
 import org.onap.so.logger.LogConstants;
 import org.onap.so.logger.MdcConstants;

@@ -26,7 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 
 import org.onap.so.logger.LoggingAnchor
-import org.onap.so.logger.ErrorCode
+import org.onap.logging.filter.base.ErrorCode
 
 import static org.apache.commons.lang3.StringUtils.*
 

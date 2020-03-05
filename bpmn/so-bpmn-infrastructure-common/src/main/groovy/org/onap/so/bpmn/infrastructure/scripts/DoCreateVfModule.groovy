@@ -25,7 +25,7 @@ package org.onap.so.bpmn.infrastructure.scripts
 import org.onap.so.logger.LoggingAnchor
 import org.onap.so.bpmn.common.scripts.CatalogDbUtilsFactory
 import org.onap.so.client.HttpClientFactory
-import org.onap.so.logger.ErrorCode
+import org.onap.logging.filter.base.ErrorCode
 
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response

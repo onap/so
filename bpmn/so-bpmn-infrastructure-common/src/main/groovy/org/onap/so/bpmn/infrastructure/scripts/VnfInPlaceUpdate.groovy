@@ -39,7 +39,7 @@ import org.onap.so.client.aai.entities.uri.AAIUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.client.appc.ApplicationControllerClient
 import org.onap.so.client.appc.ApplicationControllerSupport
-import org.onap.so.logger.ErrorCode
+import org.onap.logging.filter.base.ErrorCode
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

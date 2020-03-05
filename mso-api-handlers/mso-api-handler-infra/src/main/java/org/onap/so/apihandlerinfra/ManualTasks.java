@@ -50,7 +50,7 @@ import org.onap.so.apihandlerinfra.tasksbeans.TasksRequest;
 import org.onap.so.apihandlerinfra.tasksbeans.Value;
 import org.onap.so.apihandlerinfra.tasksbeans.Variables;
 import org.onap.so.exceptions.ValidationException;
-import org.onap.so.logger.ErrorCode;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
