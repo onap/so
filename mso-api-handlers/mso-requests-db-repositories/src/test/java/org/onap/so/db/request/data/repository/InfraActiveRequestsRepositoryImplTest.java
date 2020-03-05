@@ -19,26 +19,6 @@
  */
 package org.onap.so.db.request.data.repository;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.onap.so.db.request.data.repository.InfraActiveRequestsRepositoryImpl.REQUEST_ID;
-import static org.onap.so.db.request.data.repository.InfraActiveRequestsRepositoryImpl.SERVICE_INSTANCE_ID;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.TestApplication;
@@ -47,6 +27,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.onap.so.db.request.data.repository.InfraActiveRequestsRepositoryImpl.REQUEST_ID;
+import static org.onap.so.db.request.data.repository.InfraActiveRequestsRepositoryImpl.SERVICE_INSTANCE_ID;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -169,6 +165,15 @@ public class InfraActiveRequestsRepositoryImplTest {
         assertEquals(3, actualRequests.size());
         assertEquals("ShouldReturnInSearchQuery_1,ShouldReturnInSearchQuery_2,ShouldReturnInSearchQuery_3",
                 actualRequests.stream().map(item -> item.getServiceInstanceName()).collect(Collectors.joining(",")));
+    }
+
+    @Test
+    public void test_getOrchestrationFiltersFromInfraActive_between_dates() {
+        Map<String, List<String>> orchestrationMap = new HashMap<>();
+        orchestrationMap.put("startTime", Arrays.asList("BETWEEN_DATES", "12-01-2018", "12-31-2018"));
+        List<InfraActiveRequests> result = objUnderTest.getOrchestrationFiltersFromInfraActive(orchestrationMap);
+
+        assertEquals(1, result.size());
     }
 
 }
