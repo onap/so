@@ -21,5 +21,5 @@
 package org.onap.so.constants;
 
 public enum OrchestrationRequestFormat {
-    DETAIL, STATUSDETAIL, SIMPLE
+    DETAIL, STATUSDETAIL, SIMPLE, SIMPLENOTASKINFO
 }

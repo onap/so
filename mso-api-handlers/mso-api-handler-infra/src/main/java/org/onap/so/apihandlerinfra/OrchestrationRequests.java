@@ -439,11 +439,13 @@ public class OrchestrationRequests {
         String retryStatusMessage = iar.getRetryStatusMessage();
         String taskName = null;
 
-        if (flowStatusMessage != null && !flowStatusMessage.equals("Successfully completed all Building Blocks")
-                && !flowStatusMessage.equals("All Rollback flows have completed successfully")) {
-            taskName = camundaRequestHandler.getTaskName(iar.getRequestId());
-            if (taskName != null) {
-                flowStatusMessage = flowStatusMessage + " TASK INFORMATION: " + taskName;
+        if (format == null || !format.equalsIgnoreCase(OrchestrationRequestFormat.SIMPLENOTASKINFO.toString())) {
+            if (flowStatusMessage != null && !flowStatusMessage.equals("Successfully completed all Building Blocks")
+                    && !flowStatusMessage.equals("All Rollback flows have completed successfully")) {
+                taskName = camundaRequestHandler.getTaskName(iar.getRequestId());
+                if (taskName != null) {
+                    flowStatusMessage = flowStatusMessage + " TASK INFORMATION: " + taskName;
+                }
             }
         }
 
@@ -544,7 +546,8 @@ public class OrchestrationRequests {
     }
 
     protected boolean isRequestProcessingDataRequired(String format) {
-        if (StringUtils.isNotEmpty(format) && format.equalsIgnoreCase(OrchestrationRequestFormat.SIMPLE.name())) {
+        if (StringUtils.isNotEmpty(format) && (format.equalsIgnoreCase(OrchestrationRequestFormat.SIMPLE.name())
+                || format.equalsIgnoreCase(OrchestrationRequestFormat.SIMPLENOTASKINFO.toString()))) {
             return false;
         } else {
             return true;

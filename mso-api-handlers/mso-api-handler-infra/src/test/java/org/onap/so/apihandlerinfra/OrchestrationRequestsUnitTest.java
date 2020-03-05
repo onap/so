@@ -27,6 +27,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.doReturn;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
@@ -187,6 +188,50 @@ public class OrchestrationRequestsUnitTest {
     }
 
     @Test
+    public void mapRequestStatusNoTaskInfoTest() throws ApiException {
+        InstanceReferences instanceReferences = new InstanceReferences();
+        instanceReferences.setServiceInstanceId(SERVICE_INSTANCE_ID);
+        RequestStatus requestStatus = new RequestStatus();
+        requestStatus.setRequestState(iar.getRequestStatus());
+        requestStatus.setStatusMessage(
+                "FLOW STATUS: FlowStatus RETRY STATUS: RetryStatusMessage ROLLBACK STATUS: RollbackStatusMessage");
+
+        Request expected = new Request();
+        expected.setRequestId(REQUEST_ID);
+        expected.setInstanceReferences(instanceReferences);
+        expected.setRequestStatus(requestStatus);
+        expected.setRequestScope(SERVICE);
+
+        includeCloudRequest = false;
+
+        Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
+                OrchestrationRequestFormat.SIMPLENOTASKINFO.toString());
+        assertThat(expected, sameBeanAs(actual));
+    }
+
+    @Test
+    public void mapRequestStatusNullFormatTest() throws ApiException {
+        doReturn("TaskName").when(camundaRequestHandler).getTaskName(REQUEST_ID);
+        InstanceReferences instanceReferences = new InstanceReferences();
+        instanceReferences.setServiceInstanceId(SERVICE_INSTANCE_ID);
+        RequestStatus requestStatus = new RequestStatus();
+        requestStatus.setRequestState(iar.getRequestStatus());
+        requestStatus.setStatusMessage(
+                "FLOW STATUS: FlowStatus TASK INFORMATION: TaskName RETRY STATUS: RetryStatusMessage ROLLBACK STATUS: RollbackStatusMessage");
+
+        Request expected = new Request();
+        expected.setRequestId(REQUEST_ID);
+        expected.setInstanceReferences(instanceReferences);
+        expected.setRequestStatus(requestStatus);
+        expected.setRequestScope(SERVICE);
+
+        includeCloudRequest = false;
+
+        Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest, null);
+        assertThat(expected, sameBeanAs(actual));
+    }
+
+    @Test
     public void mapRequestStatusAndExtSysErrSrcToRequestDetailTest() throws ApiException {
         doReturn("Last task executed: Call SDNC").when(camundaRequestHandler).getTaskName(REQUEST_ID);
         InstanceReferences instanceReferences = new InstanceReferences();
@@ -336,6 +381,12 @@ public class OrchestrationRequestsUnitTest {
         thrown.expect(ValidateException.class);
         thrown.expectMessage(containsString("Null response from RequestDB when searching by RequestId " + REQUEST_ID));
         orchestrationRequests.infraActiveRequestLookup(iar.getRequestId());
+    }
+
+    @Test
+    public void isRequestProcessingDataRequiredTest() {
+        boolean required = orchestrationRequests.isRequestProcessingDataRequired("simpleNoTaskInfo");
+        assertFalse(required);
     }
 
 }
