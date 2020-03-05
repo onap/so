@@ -55,7 +55,7 @@ import org.onap.so.adapters.vnfrest.UpdateVfModuleResponse;
 import org.onap.so.adapters.vnfrest.VfModuleExceptionResponse;
 import org.onap.so.adapters.vnfrest.VfModuleRollback;
 import org.onap.so.entity.MsoRequest;
-import org.onap.so.logger.ErrorCode;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.openstack.beans.VnfRollback;
 import org.onap.so.openstack.beans.VnfStatus;

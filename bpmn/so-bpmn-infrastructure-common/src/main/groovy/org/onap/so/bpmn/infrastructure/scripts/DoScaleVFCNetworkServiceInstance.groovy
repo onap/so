@@ -34,7 +34,7 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.camunda.bpm.engine.delegate.BpmnError
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.onap.so.client.HttpClientFactory
-import org.onap.so.logger.ErrorCode
+import org.onap.logging.filter.base.ErrorCode
 
 import javax.ws.rs.core.Response
 
