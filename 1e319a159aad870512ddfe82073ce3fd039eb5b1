@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67d8c0ba_27803fdb",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBB.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-03-05T13:48:10Z",
+      "side": 1,
+      "message": "there is no extraction here in this method, could you change the name?",
+      "revId": "1e319a159aad870512ddfe82073ce3fd039eb5b1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ce8f7612_5c09d0f3",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBBTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-03-05T13:48:10Z",
+      "side": 1,
+      "message": "Please first assign (AbstractCDSPropertiesBean) execution.getVariable(EXECUTION_OBJECT) to a variable and then use it in all assertions.",
+      "revId": "1e319a159aad870512ddfe82073ce3fd039eb5b1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2d6fdda2_c5fb6251",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBBTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-03-05T13:48:10Z",
+      "side": 1,
+      "message": "I think those 2 assertions should go as first in the assertion block :)",
+      "revId": "1e319a159aad870512ddfe82073ce3fd039eb5b1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f10d6a7a_6736224f",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBBTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-03-05T13:48:10Z",
+      "side": 1,
+      "message": "It\u0027s very important to check if parameters set here are sent in the request payload going to CDS. Please add assertions for them as well. \n\nIn other words we need to test whatever happens in GenericPnfCDSControllerRunnableBB.buildRequestPayload(). You can add those assertions to prepareTest()",
+      "revId": "1e319a159aad870512ddfe82073ce3fd039eb5b1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
