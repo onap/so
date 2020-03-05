@@ -30,6 +30,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.onap.so.db.request.data.repository.InfraActiveRequestsRepositoryImpl.REQUEST_ID;
 import static org.onap.so.db.request.data.repository.InfraActiveRequestsRepositoryImpl.SERVICE_INSTANCE_ID;
+
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -169,6 +171,15 @@ public class InfraActiveRequestsRepositoryImplTest {
         assertEquals(3, actualRequests.size());
         assertEquals("ShouldReturnInSearchQuery_1,ShouldReturnInSearchQuery_2,ShouldReturnInSearchQuery_3",
                 actualRequests.stream().map(item -> item.getServiceInstanceName()).collect(Collectors.joining(",")));
+    }
+
+    @Test
+    public void test_getOrchestrationFiltersFromInfraActive_between_dates() {
+        Map<String, List<String>> orchestrationMap = new HashMap<>();
+        orchestrationMap.put("startTime", Arrays.asList("BETWEEN_DATES", "12-01-2018", "12-31-2018"));
+        List<InfraActiveRequests> result = objUnderTest.getOrchestrationFiltersFromInfraActive(orchestrationMap);
+
+        assertEquals(1, result.size());
     }
 
 }
