@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "fdede4f4_74140556",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBB.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-03-06T13:31:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b065e687_2af523a9",
+      "range": {
+        "startLine": 122,
+        "startChar": 45,
+        "endLine": 122,
+        "endChar": 61
+      },
+      "revId": "fb7481f183895e1561e3b5ab0b941a2425ee0c5b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f9e6fa88_ff6afe4a",
         "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBBTest.java",
         "patchSetId": 6
@@ -45,6 +69,30 @@
       "revId": "fb7481f183895e1561e3b5ab0b941a2425ee0c5b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f389d06f_4a4ec760",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBBTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-03-06T13:31:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f9e6fa88_ff6afe4a",
+      "range": {
+        "startLine": 47,
+        "startChar": 74,
+        "endLine": 47,
+        "endChar": 100
+      },
+      "revId": "fb7481f183895e1561e3b5ab0b941a2425ee0c5b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -94,6 +142,54 @@
     },
     {
       "key": {
+        "uuid": "fa869037_339d09b4",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBBTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-03-06T13:31:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "11547d6b_1b23513d",
+      "range": {
+        "startLine": 91,
+        "startChar": 44,
+        "endLine": 91,
+        "endChar": 49
+      },
+      "revId": "fb7481f183895e1561e3b5ab0b941a2425ee0c5b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cf39baaf_359c9663",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBBTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-03-06T13:31:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9c57eef3_42906b76",
+      "range": {
+        "startLine": 91,
+        "startChar": 8,
+        "endLine": 91,
+        "endChar": 106
+      },
+      "revId": "fb7481f183895e1561e3b5ab0b941a2425ee0c5b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "aa9fad8f_042212d2",
         "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBBTest.java",
         "patchSetId": 6
@@ -114,6 +210,30 @@
       "revId": "fb7481f183895e1561e3b5ab0b941a2425ee0c5b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6d75c8f2_da8124f0",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBBTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-03-06T13:31:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "aa9fad8f_042212d2",
+      "range": {
+        "startLine": 94,
+        "startChar": 22,
+        "endLine": 94,
+        "endChar": 58
+      },
+      "revId": "fb7481f183895e1561e3b5ab0b941a2425ee0c5b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
