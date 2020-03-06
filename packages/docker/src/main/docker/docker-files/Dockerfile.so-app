@@ -8,23 +8,24 @@ ENV HTTPS_PROXY=$https_proxy
 ENV https_proxy=$HTTPS_PROXY
 
 USER root
-RUN mkdir -p /app/{config,certificates,logs,ca-certificates}
-RUN chown -R onap:onap /app && chmod 700 /app/*.sh
+RUN mkdir -p /opt/onap/config
+RUN mkdir -p /opt/onap/certificates
+RUN mkdir -p /opt/onap/logs
+RUN mkdir -p /opt/onap/ca-certificates
+
+COPY maven/app.jar /opt/onap
+COPY configs/logging/logback-spring.xml /opt/onap
+COPY scripts/start-app.sh /opt/onap
+COPY scripts/wait-for.sh /opt/onap
+COPY ca-certificates/onap-ca.crt /opt/onap/ca-certificates/onap-ca.crt
+RUN chown -R onap:onap /opt/onap
 
 USER onap
-COPY maven/app.jar /app
-COPY configs/logging/logback-spring.xml /app
-COPY scripts/start-app.sh /app
-COPY scripts/wait-for.sh /app
-COPY ca-certificates/onap-ca.crt /app/ca-certificates/onap-ca.crt
-
-RUN chmod 700 /app/*.sh
-
 # Springboot configuration (required)
-VOLUME /app/config
+VOLUME /opt/onap/config
 
 #  Root certificates (optional)
-VOLUME /app/ca-certificates
+VOLUME /opt/onap/ca-certificates
 
-WORKDIR /app
-CMD ["/app/start-app.sh"]
+WORKDIR /opt/onap
+ENTRYPOINT ["/opt/onap/start-app.sh"]

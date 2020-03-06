@@ -2,13 +2,13 @@
 
 if [ `id -u` = 0 ]
 then
-	# Install certificates found in the /app/ca-certificates volume, if any.
+	# Install certificates found in the /opt/onap/ca-certificates volume, if any.
 
 	needUpdate=FALSE
 
-	for certificate in `ls -1 /app/ca-certificates`; do
+	for certificate in `ls -1 /opt/onap/ca-certificates`; do
 		echo "Installing $certificate in /usr/local/share/ca-certificates"
-		cp /app/ca-certificates/$certificate /usr/local/share/ca-certificates/$certificate
+		cp /opt/onap/ca-certificates/$certificate /usr/local/share/ca-certificates/$certificate
 		needUpdate=TRUE
 	done
 
@@ -21,7 +21,7 @@ then
 	exec su onap -c  "$this"
 fi
 
-touch /app/app.jar
+touch /opt/onap/opt/onap.jar
 
 if [ -z "$APP" ]; then
 	echo "CONFIG ERROR: APP environment variable not set"
@@ -33,7 +33,7 @@ if [ ! -z "$DB_HOST" -a -z "$DB_PORT" ]; then
 fi
 
 if [ -z "${CONFIG_PATH}" ]; then
-	export CONFIG_PATH=/app/config/override.yaml
+	export CONFIG_PATH=/opt/onap/config/override.yaml
 fi
 
 if [ -z "${LOG_PATH}" ]; then
@@ -46,7 +46,7 @@ fi
 
 if [ ${APP} = "bpmn-infra" ]; then
 	ln -s ${LOG_PATH} BPMN
-fi 
+fi
 
 if [ ${APP} = "so-monitoring" ]; then
 	ln -s ${LOG_PATH} MONITORING
@@ -81,7 +81,7 @@ if [ -z "${ACTIVE_PROFILE}" ]; then
 	export ACTIVE_PROFILE="basic"
 fi
 
-jvmargs="${JVM_ARGS} -Dspring.profiles.active=${ACTIVE_PROFILE} -Djava.security.egd=file:/dev/./urandom -Dlogs_dir=${LOG_PATH} -Dlogging.config=/app/logback-spring.xml $jksargs -Dspring.config.additional-location=$CONFIG_PATH ${SSL_DEBUG} ${DISABLE_SNI}"
+jvmargs="${JVM_ARGS} -Dspring.profiles.active=${ACTIVE_PROFILE} -Djava.security.egd=file:/dev/./urandom -Dlogs_dir=${LOG_PATH} -Dlogging.config=/opt/onap/logback-spring.xml $jksargs -Dspring.config.additional-location=$CONFIG_PATH ${SSL_DEBUG} ${DISABLE_SNI}"
 
 
 read_properties(){
@@ -100,7 +100,7 @@ read_properties(){
 
 
 if [ -n "${AAF_SSL_CERTS_ENABLED}" ]; then
-read_properties "$(head -n 4 /app/certs/.passphrases)"
+read_properties "$(head -n 4 /opt/onap/certs/.passphrases)"
 fi
 
 echo "JVM Arguments: ${jvmargs}"
