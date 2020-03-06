@@ -46,7 +46,7 @@ fi
 
 if [ ${APP} = "bpmn-infra" ]; then
 	ln -s ${LOG_PATH} BPMN
-fi 
+fi
 
 if [ ${APP} = "so-monitoring" ]; then
 	ln -s ${LOG_PATH} MONITORING
