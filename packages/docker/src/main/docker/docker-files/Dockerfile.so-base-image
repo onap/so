@@ -1,0 +1,14 @@
+FROM docker.io/openjdk:8-jdk-alpine
+
+ARG http_proxy
+ARG https_proxy
+ENV HTTP_PROXY=$http_proxy
+ENV HTTPS_PROXY=$https_proxy
+ENV http_proxy=$HTTP_PROXY
+ENV https_proxy=$HTTPS_PROXY
+
+# Install commonly needed tools
+RUN apk --no-cache add curl netcat-openbsd nss
+
+# Create 'so' user
+RUN addgroup -g 1000 so && adduser -S -u 1000 -G so -s /bin/sh so

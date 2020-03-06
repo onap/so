@@ -18,7 +18,7 @@ then
 
 	# Re-exec this script as the 'onap' user.
 	this=`readlink -f $0`
-	exec su onap -c  "$this"
+	exec su so -c  "$this"
 fi
 
 touch /app/app.jar
@@ -46,7 +46,7 @@ fi
 
 if [ ${APP} = "bpmn-infra" ]; then
 	ln -s ${LOG_PATH} BPMN
-fi 
+fi
 
 if [ ${APP} = "so-monitoring" ]; then
 	ln -s ${LOG_PATH} MONITORING
