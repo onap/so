@@ -39,7 +39,7 @@ import static org.junit.Assert.assertNotNull
 import static org.mockito.ArgumentMatchers.eq
 import static org.mockito.Mockito.*
 
-public class DeleteCommunicationServiceTest extends MsoGroovyTest {
+class DeleteCommunicationServiceTest extends MsoGroovyTest {
 
     @Before
     void init() throws IOException {
@@ -79,7 +79,7 @@ public class DeleteCommunicationServiceTest extends MsoGroovyTest {
         DeleteCommunicationService delCS = new DeleteCommunicationService()
         delCS.preInitUpdateOperationStatus(mockExecution)
         Mockito.verify(mockExecution,times(1)).setVariable(eq("updateOperationStatus"), captor.capture())
-        String updateOperationStatus= captor.getAllValues()
+        String updateOperationStatus= captor.getValue()
         assertNotNull(updateOperationStatus)
     }
 
@@ -145,7 +145,7 @@ public class DeleteCommunicationServiceTest extends MsoGroovyTest {
         DeleteCommunicationService dcs = new DeleteCommunicationService()
         dcs.prepareFailureStatus(mockExecution)
         Mockito.verify(mockExecution,times(1)).setVariable(eq("updateOperationStatus"), captor.capture())
-        String updateOperationStatus= captor.getAllValues()
+        String updateOperationStatus= captor.getValue()
         assertNotNull(updateOperationStatus)
     }
 
@@ -162,7 +162,7 @@ public class DeleteCommunicationServiceTest extends MsoGroovyTest {
 
         obj.delCSFromAAI(mockExecution)
         Mockito.verify(mockExecution,times(1)).setVariable(eq("updateOperationStatus"), captor.capture())
-        String updateOperationStatus= captor.getAllValues()
+        String updateOperationStatus= captor.getValue()
         assertNotNull(updateOperationStatus)
     }
 
@@ -182,7 +182,7 @@ public class DeleteCommunicationServiceTest extends MsoGroovyTest {
         deleteCommunicationService.preFailedOperationStatus(mockExecution)
 
         Mockito.verify(mockExecution,times(1)).setVariable(eq("updateOperationStatus"), captor.capture())
-        String updateOperationStatus= captor.getAllValues()
+        String updateOperationStatus= captor.getValue()
         assertNotNull(updateOperationStatus)
     }
 
