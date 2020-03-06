@@ -1,0 +1,107 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f31089b4_8b8d7ba4",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBB.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-03-06T14:48:43Z",
+      "side": 1,
+      "message": "Test this class with ControllerExecutionBBTestIT",
+      "revId": "a86fc30c248eae554d1afb90f3707145e947276d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f6722986_a89dc4af",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBB.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-03-06T14:48:43Z",
+      "side": 1,
+      "message": "as there are stateless classes can be annotated @autowired",
+      "range": {
+        "startLine": 53,
+        "startChar": 6,
+        "endLine": 55,
+        "endChar": 17
+      },
+      "revId": "a86fc30c248eae554d1afb90f3707145e947276d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b4df1291_de5606f5",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBB.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-03-06T14:48:43Z",
+      "side": 1,
+      "message": "Prefer the route of GeneratePayloadForCds class. There from buildCdsPropertiesBean return PnfRequestProviderBB for buildCdsPropertiesBean(BuildingBlockExecution execution) \nChange needed in getRequestProviderByScope \n\nand \n\nbuildCdsPropertiesBean(DelegateExecution execution) \nCDSRequestProvider requestProvider \u003d  pnfCdsRequestProvider can be hardcoded as only pnf uses DelegateExecution now.",
+      "range": {
+        "startLine": 79,
+        "startChar": 14,
+        "endLine": 80,
+        "endChar": 69
+      },
+      "revId": "a86fc30c248eae554d1afb90f3707145e947276d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7061afdc_e430b756",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBB.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-03-06T14:48:43Z",
+      "side": 1,
+      "message": "this whole code will be transferred to PnfCdsRequestProviderBB",
+      "range": {
+        "startLine": 92,
+        "startChar": 1,
+        "endLine": 157,
+        "endChar": 5
+      },
+      "revId": "a86fc30c248eae554d1afb90f3707145e947276d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ec30f781_ee48c3e4",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBBTest.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-03-06T14:48:43Z",
+      "side": 1,
+      "message": "why u r not testing rest of the method like run, understand",
+      "revId": "a86fc30c248eae554d1afb90f3707145e947276d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
