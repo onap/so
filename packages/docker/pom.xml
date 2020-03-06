@@ -74,18 +74,10 @@
 
           <images>
             <image>
-              <name>${docker.image.prefix}/base-image:1.0</name>
-              <build>
-                <cleanup>try</cleanup>
-                <dockerFileDir>docker-files</dockerFileDir>
-                <dockerFile>Dockerfile.so-base-image</dockerFile>
-              </build>
-            </image>
-            <image>
               <name>${docker.image.prefix}/vnfm-adapter</name>
               <build>
                 <cleanup>try</cleanup>
-                <dockerFileDir>docker-files</dockerFileDir>
+                <contextDir>docker-files</contextDir>
                 <dockerFile>Dockerfile.so-app</dockerFile>
                 <tags>
                   <tag>${project.version}</tag>
@@ -110,7 +102,7 @@
               <name>${docker.image.prefix}/ve-vnfm-adapter</name>
               <build>
                 <cleanup>try</cleanup>
-                <dockerFileDir>docker-files</dockerFileDir>
+                <contextDir>docker-files</contextDir>
                 <dockerFile>Dockerfile.so-app</dockerFile>
                 <tags>
                   <tag>${project.version}</tag>
@@ -135,7 +127,7 @@
               <name>${docker.image.prefix}/catalog-db-adapter</name>
               <build>
                 <cleanup>try</cleanup>
-                <dockerFileDir>docker-files</dockerFileDir>
+                <contextDir>docker-files</contextDir>
                 <dockerFile>Dockerfile.so-app</dockerFile>
                 <tags>
                   <tag>${project.version}</tag>
@@ -160,7 +152,7 @@
               <name>${docker.image.prefix}/request-db-adapter</name>
               <build>
                 <cleanup>try</cleanup>
-                <dockerFileDir>docker-files</dockerFileDir>
+                <contextDir>docker-files</contextDir>
                 <dockerFile>Dockerfile.so-app</dockerFile>
                 <tags>
                   <tag>${project.version}</tag>
@@ -185,7 +177,7 @@
               <name>${docker.image.prefix}/sdnc-adapter</name>
               <build>
                 <cleanup>try</cleanup>
-                <dockerFileDir>docker-files</dockerFileDir>
+                <contextDir>docker-files</contextDir>
                 <dockerFile>Dockerfile.so-app</dockerFile>
                 <tags>
                   <tag>${project.version}</tag>
@@ -210,7 +202,7 @@
               <name>${docker.image.prefix}/openstack-adapter</name>
               <build>
                 <cleanup>try</cleanup>
-                <dockerFileDir>docker-files</dockerFileDir>
+                <contextDir>docker-files</contextDir>
                 <dockerFile>Dockerfile.so-app</dockerFile>
                 <tags>
                   <tag>${project.version}</tag>
@@ -235,7 +227,7 @@
               <name>${docker.image.prefix}/vfc-adapter</name>
               <build>
                 <cleanup>try</cleanup>
-                <dockerFileDir>docker-files</dockerFileDir>
+                <contextDir>docker-files</contextDir>
                 <dockerFile>Dockerfile.so-app</dockerFile>
                 <tags>
                   <tag>${project.version}</tag>
@@ -260,7 +252,7 @@
              <name>${docker.image.prefix}/nssmf-adapter</name>
               <build>
                <cleanup>try</cleanup>
-               <dockerFileDir>docker-files</dockerFileDir>
+               <contextDir>docker-files</contextDir>
                <dockerFile>Dockerfile.so-app</dockerFile>
                <tags>
                 <tag>${project.version}</tag>
@@ -285,7 +277,7 @@
               <name>${docker.image.prefix}/so-appc-orchestrator</name>
               <build>
                 <cleanup>try</cleanup>
-                <dockerFileDir>docker-files</dockerFileDir>
+                <contextDir>docker-files</contextDir>
                 <dockerFile>Dockerfile.so-app</dockerFile>
                 <tags>
                   <tag>${project.version}</tag>
@@ -310,7 +302,7 @@
               <name>${docker.image.prefix}/sdc-controller</name>
               <build>
                 <cleanup>try</cleanup>
-                <dockerFileDir>docker-files</dockerFileDir>
+                <contextDir>docker-files</contextDir>
                 <dockerFile>Dockerfile.so-app</dockerFile>
                 <tags>
                   <tag>${project.version}</tag>
@@ -335,7 +327,7 @@
               <name>${docker.image.prefix}/bpmn-infra</name>
               <build>
                 <cleanup>try</cleanup>
-                <dockerFileDir>docker-files</dockerFileDir>
+                <contextDir>docker-files</contextDir>
                 <dockerFile>Dockerfile.so-app</dockerFile>
                 <tags>
                   <tag>${project.version}</tag>
@@ -360,7 +352,7 @@
               <name>${docker.image.prefix}/api-handler-infra</name>
               <build>
                 <cleanup>try</cleanup>
-                <dockerFileDir>docker-files</dockerFileDir>
+                <contextDir>docker-files</contextDir>
                 <dockerFile>Dockerfile.so-app</dockerFile>
                 <tags>
                   <tag>${project.version}</tag>
@@ -385,7 +377,7 @@
               <name>${docker.image.prefix}/so-monitoring</name>
               <build>
                 <cleanup>try</cleanup>
-                <dockerFileDir>docker-files</dockerFileDir>
+                <contextDir>docker-files</contextDir>
                 <dockerFile>Dockerfile.so-app</dockerFile>
                 <tags>
                   <tag>${project.version}</tag>
@@ -410,7 +402,7 @@
               <name>${docker.image.prefix}/so-simulator</name>
               <build>
                 <cleanup>try</cleanup>
-                <dockerFileDir>docker-files</dockerFileDir>
+                <contextDir>docker-files</contextDir>
                 <dockerFile>Dockerfile.so-app</dockerFile>
                 <tags>
                   <tag>${project.version}</tag>
