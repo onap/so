@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7f30cabc_d09dd9ee",
+        "filename": "adapters/mso-nssmf-adapter/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 2319
+      },
+      "writtenOn": "2020-03-06T12:14:47Z",
+      "side": 1,
+      "message": "trailing",
+      "revId": "7dda65136c6796772583e3b6ece63a2bf1ae31b7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
