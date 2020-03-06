@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cb18f6f0_d76bf9a1",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBBTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-03-06T13:38:28Z",
+      "side": 1,
+      "message": "it seems it\u0027s not needed anymore, line 96 will \"verify\" the type ;)",
+      "revId": "761b8ff7125644929cb6024afe2a8cdb10e915fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
