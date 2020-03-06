@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "0a68091e_440db222",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBB.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-03-06T08:48:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8550fbb0_a5030b2a",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 56
+      },
+      "revId": "1e319a159aad870512ddfe82073ce3fd039eb5b1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "13332665_e795bb24",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBB.java",
         "patchSetId": 5
@@ -45,6 +69,30 @@
       "revId": "1e319a159aad870512ddfe82073ce3fd039eb5b1",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "057d5cb2_806defd0",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBB.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-03-06T08:48:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "13332665_e795bb24",
+      "range": {
+        "startLine": 91,
+        "startChar": 12,
+        "endLine": 91,
+        "endChar": 45
+      },
+      "revId": "1e319a159aad870512ddfe82073ce3fd039eb5b1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -111,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "8f54aff8_f48914d9",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBB.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-03-06T08:48:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67d8c0ba_27803fdb",
+      "revId": "1e319a159aad870512ddfe82073ce3fd039eb5b1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ce8f7612_5c09d0f3",
         "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBBTest.java",
         "patchSetId": 5
@@ -125,6 +191,24 @@
       "revId": "1e319a159aad870512ddfe82073ce3fd039eb5b1",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "81d30de9_0f266650",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBBTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-03-06T08:48:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ce8f7612_5c09d0f3",
+      "revId": "1e319a159aad870512ddfe82073ce3fd039eb5b1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -145,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "3b79ae1a_ca1fc92f",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBBTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-03-06T08:48:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2d6fdda2_c5fb6251",
+      "revId": "1e319a159aad870512ddfe82073ce3fd039eb5b1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f10d6a7a_6736224f",
         "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBBTest.java",
         "patchSetId": 5
@@ -159,6 +261,24 @@
       "revId": "1e319a159aad870512ddfe82073ce3fd039eb5b1",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ef916ba8_ff4ec565",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBBTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-03-06T08:48:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f10d6a7a_6736224f",
+      "revId": "1e319a159aad870512ddfe82073ce3fd039eb5b1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
