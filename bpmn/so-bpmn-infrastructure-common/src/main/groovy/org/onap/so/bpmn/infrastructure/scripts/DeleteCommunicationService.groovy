@@ -141,7 +141,7 @@ class DeleteCommunicationService extends AbstractServiceTaskProcessor {
      * save e2eslice-service instance id and service name
      * @param execution
      */
-    private void queryCommunicationSeriveFromAAI(DelegateExecution execution)
+    void queryCommunicationSeriveFromAAI(DelegateExecution execution)
     {
         LOGGER.trace(" ***** begin queryCommunicationSeriveFromAAI *****")
         String serviceInstanceId = execution.getVariable("serviceInstanceId")
@@ -186,12 +186,11 @@ class DeleteCommunicationService extends AbstractServiceTaskProcessor {
         String globalSubscriberId = execution.getVariable("globalSubscriberId")
         String serviceType = execution.getVariable("serviceType")
 
-        AAIResourcesClient resourceClient = new AAIResourcesClient()
         AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(aaiObjectType, globalSubscriberId, serviceType, instanceId)
-        if (!resourceClient.exists(resourceUri)) {
+        if (!getAAIClient().exists(resourceUri)) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 2500, errorMsg)
         }
-        AAIResultWrapper wrapper = resourceClient.get(resourceUri, NotFoundException.class)
+        AAIResultWrapper wrapper = getAAIClient().get(resourceUri, NotFoundException.class)
         return wrapper
     }
 
@@ -230,6 +229,41 @@ class DeleteCommunicationService extends AbstractServiceTaskProcessor {
         }
 
         LOGGER.trace("exit preRequestSend2NSMF")
+    }
+
+    /**
+     * prepare update operation status
+     * @param execution
+     */
+    private void handleNSSMFWFResponse(Response httpResponse, DelegateExecution execution){
+        LOGGER.debug(" ======== STARTED prepareUpdateOperationStatus Process ======== ")
+
+        int nsmfResponseCode = httpResponse.getStatus()
+        LOGGER.debug("nsmfResponseCode${nsmfResponseCode}")
+
+        if (nsmfResponseCode >= 200 && nsmfResponseCode < 204 && httpResponse.hasEntity()) {
+            String nsmfResponse = httpResponse.readEntity(String.class)
+            def e2eOperationId = jsonUtil.getJsonValue(nsmfResponse, "operationId")
+            execution.setVariable("e2eOperationId", e2eOperationId)
+            execution.setVariable("progress","20")
+            execution.setVariable("operationContent","waiting nsmf service delete finished")
+
+            execution.setVariable("currentCycle",0)
+            execution.setVariable("isNSMFTimeOut", "no")
+            execution.setVariable("isNSMFWFRspSucceed","yes")
+        }
+        else
+        {
+            String serviceName = execution.getVariable("serviceInstanceName")
+            execution.setVariable("progress", "100")
+            execution.setVariable("result", "error")
+            execution.setVariable("operationContent", "terminate service failure.")
+            execution.setVariable("reason","NSMF WF asynchronous response failed, status Code:${nsmfResponseCode}")
+            execution.setVariable("isNSMFWFRspSucceed","no")
+            LOGGER.error("nsmf async response error，nsmfResponseCode：${nsmfResponseCode}，serivceName:${serviceName}")
+        }
+        setOperationStatus(execution)
+        LOGGER.debug("======== COMPLETED prepareUpdateOperationStatus Process ======== ")
     }
 
     /**
@@ -272,22 +306,20 @@ class DeleteCommunicationService extends AbstractServiceTaskProcessor {
         String profileId
         try
         {
-            AAIResourcesClient resourceClient = new AAIResourcesClient()
             AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.COMMUNICATION_PROFILE_ALL, globalSubscriberId, serviceType, serviceInstanceId)
-            AAIResultWrapper wrapper = resourceClient.get(resourceUri, NotFoundException.class)
+            AAIResultWrapper wrapper = getAAIClient().get(resourceUri, NotFoundException.class)
             Optional<CommunicationServiceProfiles> csProfilesOpt = wrapper.asBean(CommunicationServiceProfiles.class)
             if(csProfilesOpt.isPresent()){
-                CommunicationServiceProfiles csProf
-                iles = csProfilesOpt.get()
+                CommunicationServiceProfiles csProfiles = csProfilesOpt.get()
                 CommunicationServiceProfile csProfile = csProfiles.getCommunicationServiceProfile().get(0)
                 profileId = csProfile ? csProfile.getProfileId() : ""
             }
             resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.COMMUNICATION_SERVICE_PROFILE, globalSubscriberId, serviceType, serviceInstanceId, profileId)
-            if (!resourceClient.exists(resourceUri)) {
+            if (!getAAIClient().exists(resourceUri)) {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "communication service profile was not found in aai")
             }
-            
-            resourceClient.delete(resourceUri)
+
+            getAAIClient().delete(resourceUri)
             LOGGER.debug("end delete communication service profile from AAI")
         }
         catch (any)
@@ -308,9 +340,8 @@ class DeleteCommunicationService extends AbstractServiceTaskProcessor {
         try
         {
             LOGGER.debug("start delete communication service from AAI")
-            AAIResourcesClient resourceClient = new AAIResourcesClient()
             AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), execution.getVariable("serviceType"), execution.getVariable("serviceInstanceId"))
-            resourceClient.delete(serviceInstanceUri)
+            getAAIClient().delete(serviceInstanceUri)
 
             execution.setVariable("progress", "100")
             execution.setVariable("result", "finished")
@@ -330,12 +361,10 @@ class DeleteCommunicationService extends AbstractServiceTaskProcessor {
         LOGGER.debug("Starting sendSyncError")
 
         try {
-            String errorMessage
+            String errorMessage = "Sending Sync Error."
             if (execution.getVariable("WorkflowException") instanceof WorkflowException) {
                 WorkflowException wfe = execution.getVariable("WorkflowException")
                 errorMessage = wfe.getErrorMessage()
-            } else {
-                errorMessage = "Sending Sync Error."
             }
 
             String buildworkflowException =
@@ -397,6 +426,7 @@ class DeleteCommunicationService extends AbstractServiceTaskProcessor {
 
     void prepareFailureStatus(DelegateExecution execution)
     {
+        execution.setVariable("result", "finished")
         execution.setVariable("progress", "100")
         execution.setVariable("operationContent", "terminate service failure.")
         setOperationStatus(execution)
@@ -426,4 +456,5 @@ class DeleteCommunicationService extends AbstractServiceTaskProcessor {
             execution.setVariable(paraName, paramValue)
         }
     }
+
 }
