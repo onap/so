@@ -45,19 +45,19 @@ import static org.apache.commons.lang3.StringUtils.isBlank
 
 class DeleteSliceService extends AbstractServiceTaskProcessor {
 
-    String Prefix="DELSS_"
+    private final String PREFIX ="DeleteSliceService"
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     JsonUtils jsonUtil = new JsonUtils()
     private RequestDBUtil requestDBUtil = new RequestDBUtil()
 
-    private static final Logger logger = LoggerFactory.getLogger( DeleteSliceService.class)
+    private static final Logger LOGGER = LoggerFactory.getLogger( DeleteSliceService.class)
 
     @Override
     void preProcessRequest(DelegateExecution execution) {
-        execution.setVariable("prefix", Prefix)
+        execution.setVariable("prefix", PREFIX)
         String msg = ""
 
-        logger.trace("Starting preProcessRequest")
+        LOGGER.debug("*****${PREFIX} preProcessRequest *****")
 
         try {
             // check for incoming json message/input
@@ -71,7 +71,7 @@ class DeleteSliceService extends AbstractServiceTaskProcessor {
                 msg = "e2eslice-service id is null"
                 exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
             }
-            logger.info("Input Request: ${siRequest}, reqId: ${requestId}, e2eslice-service: ${serviceInstanceId}")
+            LOGGER.info("Input Request: ${siRequest}, reqId: ${requestId}, e2eslice-service: ${serviceInstanceId}")
 
             //subscriberInfo
             checkAndSetRequestParam(siRequest,"globalSubscriberId",false, execution)
@@ -82,17 +82,17 @@ class DeleteSliceService extends AbstractServiceTaskProcessor {
             execution.setVariable("progress", "0")
             execution.setVariable("result", "processing")
             execution.setVariable("operationType", "DELETE")
-            execution.setVariable("operationContent", "Prepare init service")
+            execution.setVariable("operationContent", "Delete Slice service operation start")
             updateServiceOperationStatus(execution)
 
         } catch (BpmnError e) {
             throw e
         } catch (Exception ex) {
             msg = "Exception in preProcessRequest " + ex.getMessage()
-            logger.debug(msg)
+            LOGGER.debug(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
-        logger.trace("Exit preProcessRequest")
+        LOGGER.debug("*****${PREFIX} Exit preProcessRequest *****")
     }
 
     /**
@@ -100,40 +100,39 @@ class DeleteSliceService extends AbstractServiceTaskProcessor {
      * @param execution
      */
     void sendAsyncResponse(DelegateExecution execution) {
-        logger.trace("Staring sendSyncResponse")
+        LOGGER.trace("${PREFIX} Start sendSyncResponse ")
 
         try {
             String operationId = execution.getVariable("operationId")
             String syncResponse = """{"operationId":"${operationId}"}""".trim()
-            logger.info("sendSynchResponse: xmlSyncResponse - " + "\n" + syncResponse)
+            LOGGER.info("sendSynchResponse: xmlSyncResponse - " + "\n" + syncResponse)
             sendWorkflowResponse(execution, 202, syncResponse)
 
         } catch (Exception ex) {
             String msg  = "Exception in sendSyncResponse: " + ex.getMessage()
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
-        logger.trace("Exit sendSyncResponse")
+        LOGGER.trace("${PREFIX} Exit sendSyncResponse")
     }
 
     /**
      * Deletes the slice service instance in aai
      */
     void deleteSliceServiceInstance(DelegateExecution execution) {
-        logger.trace("Entered deleteSliceServiceInstance")
+        LOGGER.trace("${PREFIX} Start deleteSliceServiceInstance")
         try {
 
-            AAIResourcesClient resourceClient = new AAIResourcesClient()
             AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, execution.getVariable("globalSubscriberId"), execution.getVariable("serviceType"), execution.getVariable("serviceInstanceId"))
-            resourceClient.delete(serviceInstanceUri)
+            getAAIClient().delete(serviceInstanceUri)
 
             execution.setVariable("progress", "100")
             execution.setVariable("result", "finished")
             execution.setVariable("operationContent", "NSMF completes slicing service termination.")
             updateServiceOperationStatus(execution)
 
-            logger.trace("Exited deleteSliceServiceInstance")
+            LOGGER.trace("${PREFIX} Exited deleteSliceServiceInstance")
         }catch(Exception e){
-            logger.debug("Error occured within deleteSliceServiceInstance method: " + e)
+            LOGGER.debug("Error occured within deleteSliceServiceInstance method: " + e)
             exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Error occured during deleteSliceServiceInstance from aai")
         }
     }
@@ -161,7 +160,7 @@ class DeleteSliceService extends AbstractServiceTaskProcessor {
      * delete service profile from aai
      * @param execution
      */
-    private void delServiceProfileFromAAI(DelegateExecution execution)
+    void delServiceProfileFromAAI(DelegateExecution execution)
     {
         String globalSubscriberId = execution.getVariable("globalSubscriberId")
         String serviceType = execution.getVariable("serviceType")
@@ -170,9 +169,8 @@ class DeleteSliceService extends AbstractServiceTaskProcessor {
 
         try
         {
-            AAIResourcesClient resourceClient = new AAIResourcesClient()
             AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_PROFILE_ALL, globalSubscriberId, serviceType, serviceInstanceId)
-            AAIResultWrapper wrapper = resourceClient.get(resourceUri, NotFoundException.class)
+            AAIResultWrapper wrapper = getAAIClient().get(resourceUri, NotFoundException.class)
             Optional<ServiceProfiles> serviceProfilesOpt =wrapper.asBean(ServiceProfiles.class)
             if(serviceProfilesOpt.isPresent()){
                 ServiceProfiles serviceProfiles = serviceProfilesOpt.get()
@@ -180,29 +178,27 @@ class DeleteSliceService extends AbstractServiceTaskProcessor {
                 profileId = serviceProfile ? serviceProfile.getProfileId() : ""
             }
             resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_PROFILE, globalSubscriberId, serviceType, serviceInstanceId, profileId)
-            if (!resourceClient.exists(resourceUri)) {
+            if (!getAAIClient().exists(resourceUri)) {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service Instance was not found in aai")
             }
-            resourceClient.delete(resourceUri)
+            getAAIClient().delete(resourceUri)
         }
         catch (any)
         {
             String msg = "delete service profile from aai failed! cause-"+any.getCause()
-            logger.error(any.printStackTrace())
+            LOGGER.error(any.printStackTrace())
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg);
         }
     }
 
      void sendSyncError(DelegateExecution execution) {
-        logger.info("Starting sendSyncError")
+        LOGGER.debug("${PREFIX} Start sendSyncError")
 
         try {
-            String errorMessage
+            String errorMessage = "Sending Sync Error."
             if (execution.getVariable("WorkflowException") instanceof WorkflowException) {
                 WorkflowException wfe = execution.getVariable("WorkflowException")
                 errorMessage = wfe.getErrorMessage()
-            } else {
-                errorMessage = "Sending Sync Error."
             }
 
             String buildworkflowException =
@@ -211,17 +207,17 @@ class DeleteSliceService extends AbstractServiceTaskProcessor {
 					<aetgt:ErrorCode>7000</aetgt:ErrorCode>
 				   </aetgt:WorkflowException>"""
 
-            logger.debug(buildworkflowException)
+            LOGGER.debug(buildworkflowException)
             sendWorkflowResponse(execution, 500, buildworkflowException)
 
         } catch (Exception ex) {
-            logger.error("Sending Sync Error Activity Failed. " + "\n" + ex.getMessage())
+            LOGGER.error("Sending Sync Error Activity Failed. " + "\n" + ex.getMessage())
         }
 
     }
 
     void prepareEndOperationStatus(DelegateExecution execution){
-        logger.debug(" ======== STARTED prepareEndOperationStatus Process ======== ")
+        LOGGER.debug(" ======== ${PREFIX} STARTED prepareEndOperationStatus Process ======== ")
 
         execution.setVariable("progress", "100")
         execution.setVariable("result", "error")
@@ -233,7 +229,7 @@ class DeleteSliceService extends AbstractServiceTaskProcessor {
         execution.setVariable("reason",errorMessage)
         updateServiceOperationStatus(execution)
 
-        logger.debug("======== COMPLETED prepareEndOperationStatus Process ======== ")
+        LOGGER.debug("======== ${PREFIX} COMPLETED prepareEndOperationStatus Process ======== ")
     }
 
     /**
@@ -250,7 +246,7 @@ class DeleteSliceService extends AbstractServiceTaskProcessor {
         String paramValue = jsonUtil.getJsonValue(siRequest, paraName)
         if (isBlank(paramValue)) {
             msg = "Input ${paraName} is null"
-            logger.error(msg)
+            LOGGER.error(msg)
             if(isErrorException)
             {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
