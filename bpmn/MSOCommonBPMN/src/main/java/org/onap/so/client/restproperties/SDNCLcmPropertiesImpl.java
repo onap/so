@@ -31,12 +31,14 @@ public class SDNCLcmPropertiesImpl implements SDNCLcmProperties {
     public static final String SDNC_HOST = "sdnc.host";
     public static final String SDNC_AUTH = "sdnc.auth";
     public static final String LCM_PATH = "sdnc.lcm.path";
+    public static final String LCM_ACTION_TIMEOUT = "sdnc.lcm.actionTimeout";
 
     public static final String DMAAP_HOST = "sdnc.dmaap.host";
     public static final String DMAAP_AUTH = "sdnc.dmaap.auth";
-    public static final String DMAAP_PARTITION = "sdnc.dmaap.partition";
     public static final String DMAAP_TIMEOUT = "sdnc.dmaap.timeout";
     public static final String DMAAP_ENVIRONMENT = "sdnc.dmaap.environment";
+
+    public static final String LCM_DMAAP_PARTITION = "sdnc.lcm.dmaap.partition";
     public static final String LCM_DMAAP_READ_TOPIC = "sdnc.lcm.dmapp.readTopic";
     public static final String LCM_DMAAP_WRITE_TOPIC = "sdnc.lcm.dmaap.writeTopic";
 
@@ -56,6 +58,12 @@ public class SDNCLcmPropertiesImpl implements SDNCLcmProperties {
     }
 
     @Override
+    public long getActionTimeout() {
+        String actionTimeout = UrnPropertiesReader.getVariable(LCM_ACTION_TIMEOUT);
+        return (actionTimeout != null) ? Long.parseLong(actionTimeout) : SDNCConstants.LCM_ACTION_TIMEOUT;
+    }
+
+    @Override
     public String getBasicAuth() {
         return UrnPropertiesReader.getVariable(SDNC_AUTH);
     }
@@ -72,7 +80,7 @@ public class SDNCLcmPropertiesImpl implements SDNCLcmProperties {
 
     @Override
     public String getDmaapPartition() {
-        String partition = UrnPropertiesReader.getVariable(DMAAP_PARTITION);
+        String partition = UrnPropertiesReader.getVariable(LCM_DMAAP_PARTITION);
         return (partition != null) ? partition : SDNCConstants.LCM_DMAAP_PARTITION;
     }
 

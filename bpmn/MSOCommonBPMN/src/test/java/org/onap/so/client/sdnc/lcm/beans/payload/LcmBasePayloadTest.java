@@ -18,32 +18,25 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.client.sdnc.lcm;
+package org.onap.so.client.sdnc.lcm.beans.payload;
 
-import org.onap.so.client.RestProperties;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public interface SDNCLcmProperties extends RestProperties {
-    String getHost();
+public class LcmBasePayloadTest {
+    private static Logger logger = LoggerFactory.getLogger(LcmBasePayloadTest.class);
 
-    String getPath();
+    protected String ipaddressV4Oam = "192.168.1.10";
+    protected String playbookName = "test_playbook";
 
-    long getActionTimeout();
+    public String convertToSting(Object msgObject) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
 
-    String getBasicAuth();
+        String msgString = mapper.writeValueAsString(msgObject);
+        logger.debug(msgObject.getClass().getSimpleName() + "\n" + msgString);
 
-    String getDmaapHost();
-
-    String getDmaapAuth();
-
-    String getDmaapPartition();
-
-    String getDmaapTimeout();
-
-    String getDmaapEnvironment();
-
-    String getDmaaPLcmReadTopic();
-
-    String getDmaaPLcmWriteTopic();
-
-    String getKey();
+        return msgString;
+    }
 }
