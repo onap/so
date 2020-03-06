@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b065e687_2af523a9",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBB.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-03-06T12:27:18Z",
+      "side": 1,
+      "message": "You extracted it to resolutionKey, please use it here.",
+      "range": {
+        "startLine": 122,
+        "startChar": 45,
+        "endLine": 122,
+        "endChar": 61
+      },
+      "revId": "fb7481f183895e1561e3b5ab0b941a2425ee0c5b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f9e6fa88_ff6afe4a",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBBTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-03-06T12:27:18Z",
+      "side": 1,
+      "message": "make a @Before method and put ControllerContext creation and execution setting:\n...\ncontrollerContext \u003d new ControllerContext\u003c\u003e();\ncontrollerContext.setExecution(execution);",
+      "range": {
+        "startLine": 47,
+        "startChar": 74,
+        "endLine": 47,
+        "endChar": 100
+      },
+      "revId": "fb7481f183895e1561e3b5ab0b941a2425ee0c5b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "11547d6b_1b23513d",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBBTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-03-06T12:27:18Z",
+      "side": 1,
+      "message": "not any, here should be a reference to execution that takes a part in your test",
+      "range": {
+        "startLine": 91,
+        "startChar": 44,
+        "endLine": 91,
+        "endChar": 49
+      },
+      "revId": "fb7481f183895e1561e3b5ab0b941a2425ee0c5b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9c57eef3_42906b76",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBBTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-03-06T12:27:18Z",
+      "side": 1,
+      "message": "move this line under pnf creation, at the bottom",
+      "range": {
+        "startLine": 91,
+        "startChar": 8,
+        "endLine": 91,
+        "endChar": 106
+      },
+      "revId": "fb7481f183895e1561e3b5ab0b941a2425ee0c5b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aa9fad8f_042212d2",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBBTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-03-06T12:27:18Z",
+      "side": 1,
+      "message": "If you use string value more than once in your class, make constant value (private final static) as class field. Please adapt this change everywhere where it is needed.",
+      "range": {
+        "startLine": 94,
+        "startChar": 22,
+        "endLine": 94,
+        "endChar": 58
+      },
+      "revId": "fb7481f183895e1561e3b5ab0b941a2425ee0c5b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
