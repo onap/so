@@ -29,7 +29,6 @@ import org.onap.aai.domain.yang.SliceProfiles
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.client.aai.AAIObjectType
-import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.entities.AAIResultWrapper
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
@@ -309,12 +308,11 @@ class DoDeleteSliceService extends AbstractServiceTaskProcessor {
         String globalSubscriberId = execution.getVariable("globalSubscriberId")
         String serviceType = execution.getVariable("serviceType")
 
-        AAIResourcesClient resourceClient = new AAIResourcesClient()
         AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(aaiObjectType, globalSubscriberId, serviceType, instanceId)
-        if (!resourceClient.exists(resourceUri)) {
+        if (!getAAIClient().exists(resourceUri)) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 2500, errorMsg)
         }
-        AAIResultWrapper wrapper = resourceClient.get(resourceUri, NotFoundException.class)
+        AAIResultWrapper wrapper = getAAIClient().get(resourceUri, NotFoundException.class)
         LOGGER.trace(" *****${PREFIX} Exit queryAAI *****")
         return wrapper
     }
