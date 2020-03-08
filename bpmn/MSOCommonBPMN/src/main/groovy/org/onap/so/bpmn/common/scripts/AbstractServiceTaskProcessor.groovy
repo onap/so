@@ -32,6 +32,7 @@ import org.onap.so.bpmn.common.workflow.context.WorkflowCallbackResponse
 import org.onap.so.bpmn.common.workflow.context.WorkflowContextHolder
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
+import org.onap.so.client.HttpClientFactory
 import org.onap.so.client.aai.AAIResourcesClient
 import org.springframework.web.util.UriUtils
 import org.slf4j.Logger
@@ -676,5 +677,9 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	}
     public AAIResourcesClient getAAIClient(){
         return  new AAIResourcesClient();
+    }
+
+    HttpClientFactory getHttpClientFactory(){
+        return new HttpClientFactory()
     }
 }

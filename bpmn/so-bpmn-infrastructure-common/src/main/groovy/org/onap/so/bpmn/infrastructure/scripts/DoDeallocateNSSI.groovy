@@ -76,7 +76,7 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
      *
      * @param execution
      */
-    private void prepareDecomposeService(DelegateExecution execution)
+    void prepareDecomposeService(DelegateExecution execution)
     {
         LOGGER.trace(" *****${PREFIX} Start prepareDecomposeService *****")
         try
@@ -103,7 +103,7 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
      * get vendor Info
      * @param execution
      */
-    private void processDecomposition(DelegateExecution execution) {
+     void processDecomposition(DelegateExecution execution) {
         LOGGER.debug("*****${PREFIX} start processDecomposition *****")
 
         try {
@@ -130,7 +130,7 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
      * send deallocate request to nssmf
      * @param execution
      */
-    private void sendRequestToNSSMF(DelegateExecution execution)
+    void sendRequestToNSSMF(DelegateExecution execution)
     {
         LOGGER.debug("*****${PREFIX} start sendRequestToNSSMF *****")
         def currentNSSI = execution.getVariable("currentNSSI")
@@ -160,7 +160,7 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
         URL url = new URL(nssmfRequest)
         LOGGER.info("deallocate nssmfRequest:${nssmfRequest}, reqBody: ${json}")
 
-        HttpClient httpClient = new HttpClientFactory().newJsonClient(url, ONAPComponents.EXTERNAL)
+        HttpClient httpClient = getHttpClientFactory().newJsonClient(url, ONAPComponents.EXTERNAL)
         Response httpResponse = httpClient.post(json)
         checkNssmfResponse(httpResponse, execution)
 
@@ -176,7 +176,7 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
      * send to nssmf query progress
      * @param execution
      */
-    private void getJobStatus(DelegateExecution execution)
+    void getJobStatus(DelegateExecution execution)
     {
         def currentNSSI = execution.getVariable("currentNSSI")
         String jobId = currentNSSI['jobId']
@@ -198,7 +198,7 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
         URL url = new URL(nssmfRequest)
         LOGGER.info("get deallocate job status, nssmfRequest:${nssmfRequest}, requestBody: ${json}")
 
-        HttpClient httpClient = new HttpClientFactory().newJsonClient(url, ONAPComponents.EXTERNAL)
+        HttpClient httpClient = getHttpClientFactory().newJsonClient(url, ONAPComponents.EXTERNAL)
         Response httpResponse = httpClient.post(json)
         checkNssmfResponse(httpResponse, execution)
 
@@ -248,7 +248,7 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
      * prepare update requestdb
      * @param execution
      */
-    private void handleJobStatus(DelegateExecution execution)
+    void handleJobStatus(DelegateExecution execution)
     {
         def currentNSSI = execution.getVariable("currentNSSI")
         int currentProgress = currentNSSI["jobProgress"]
@@ -267,7 +267,7 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
         LOGGER.debug("update operation, currentProgress=${currentProgress}, proportion=${proportion}, progress = ${progress}" )
     }
 
-    private void timeDelay(DelegateExecution execution) {
+    void timeDelay(DelegateExecution execution) {
         try {
             Thread.sleep(10000);
         } catch(InterruptedException e) {
@@ -279,7 +279,7 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
      * delete slice profile from aai
      * @param execution
      */
-    private void delSliceProfileFromAAI(DelegateExecution execution)
+    void delSliceProfileFromAAI(DelegateExecution execution)
     {
         LOGGER.debug("*****${PREFIX} start delSliceProfileFromAAI *****")
         def currentNSSI = execution.getVariable("currentNSSI")
@@ -291,12 +291,11 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
         try
         {
             LOGGER.debug("delete nssiServiceInstanceId:${nssiServiceInstanceId}, profileId:${profileId}")
-            AAIResourcesClient resourceClient = new AAIResourcesClient()
             AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.SLICE_PROFILE, globalSubscriberId, serviceType, nssiServiceInstanceId, profileId)
-            if (!resourceClient.exists(resourceUri)) {
+            if (!getAAIClient().exists(resourceUri)) {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service Instance was not found in aai")
             }
-            resourceClient.delete(resourceUri)
+            getAAIClient().delete(resourceUri)
         }
         catch (any)
         {
