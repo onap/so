@@ -677,4 +677,8 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
     public AAIResourcesClient getAAIClient(){
         return  new AAIResourcesClient();
     }
+
+    HttpClientFactory getHttpClientFactory(){
+        return new HttpClientFactory()
+    }
 }
