@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,9 +25,9 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.doReturn;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
@@ -92,6 +92,7 @@ public class OrchestrationRequestsUnitTest {
         iar.setFlowStatus(FLOW_STATUS);
         iar.setRollbackStatusMessage(ROLLBACK_STATUS_MESSAGE);
         iar.setRetryStatusMessage(RETRY_STATUS_MESSAGE);
+        iar.setResourceStatusMessage("The vf module already exist");
     }
 
     @Test
@@ -101,8 +102,10 @@ public class OrchestrationRequestsUnitTest {
         instanceReferences.setServiceInstanceId(SERVICE_INSTANCE_ID);
         RequestStatus requestStatus = new RequestStatus();
         requestStatus.setRequestState(iar.getRequestStatus());
-        requestStatus.setStatusMessage(String.format("FLOW STATUS: %s RETRY STATUS: %s ROLLBACK STATUS: %s",
-                FLOW_STATUS + TASK_INFORMATION, RETRY_STATUS_MESSAGE, ROLLBACK_STATUS_MESSAGE));
+        requestStatus.setStatusMessage(
+                String.format("FLOW STATUS: %s RETRY STATUS: %s ROLLBACK STATUS: %s RESOURCE STATUS: %s",
+                        FLOW_STATUS + TASK_INFORMATION, RETRY_STATUS_MESSAGE, ROLLBACK_STATUS_MESSAGE,
+                        "The vf module already exist"));
 
         Request expected = new Request();
         expected.setRequestId(REQUEST_ID);
@@ -114,7 +117,7 @@ public class OrchestrationRequestsUnitTest {
         iar.setOriginalRequestId(ORIGINAL_REQUEST_ID);
 
         Request result = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
-                OrchestrationRequestFormat.DETAIL.toString());
+                OrchestrationRequestFormat.DETAIL.toString(), "v7");
         assertThat(result, sameBeanAs(expected));
     }
 
@@ -125,8 +128,11 @@ public class OrchestrationRequestsUnitTest {
         instanceReferences.setServiceInstanceId(SERVICE_INSTANCE_ID);
         RequestStatus requestStatus = new RequestStatus();
         requestStatus.setRequestState(iar.getRequestStatus());
-        requestStatus.setStatusMessage(String.format("FLOW STATUS: %s RETRY STATUS: %s ROLLBACK STATUS: %s",
-                FLOW_STATUS + TASK_INFORMATION, RETRY_STATUS_MESSAGE, ROLLBACK_STATUS_MESSAGE));
+        requestStatus.setStatusMessage(
+                String.format("FLOW STATUS: %s RETRY STATUS: %s ROLLBACK STATUS: %s RESOURCE STATUS: %s",
+                        FLOW_STATUS + TASK_INFORMATION, RETRY_STATUS_MESSAGE, ROLLBACK_STATUS_MESSAGE,
+                        "The vf module already exist"));
+
         Request expected = new Request();
         expected.setRequestId(REQUEST_ID);
         expected.setInstanceReferences(instanceReferences);
@@ -134,7 +140,7 @@ public class OrchestrationRequestsUnitTest {
         expected.setRequestScope(SERVICE);
 
         Request result = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
-                OrchestrationRequestFormat.DETAIL.toString());
+                OrchestrationRequestFormat.DETAIL.toString(), "v7");
         assertThat(result, sameBeanAs(expected));
     }
 
@@ -145,8 +151,10 @@ public class OrchestrationRequestsUnitTest {
         instanceReferences.setServiceInstanceId(SERVICE_INSTANCE_ID);
         RequestStatus requestStatus = new RequestStatus();
         requestStatus.setRequestState(iar.getRequestStatus());
-        requestStatus.setStatusMessage(String.format("FLOW STATUS: %s RETRY STATUS: %s ROLLBACK STATUS: %s",
-                FLOW_STATUS + TASK_INFORMATION, RETRY_STATUS_MESSAGE, ROLLBACK_STATUS_MESSAGE));
+        requestStatus.setStatusMessage(
+                String.format("FLOW STATUS: %s RETRY STATUS: %s ROLLBACK STATUS: %s RESOURCE STATUS: %s",
+                        FLOW_STATUS + TASK_INFORMATION, RETRY_STATUS_MESSAGE, ROLLBACK_STATUS_MESSAGE,
+                        "The vf module already exist"));
 
         Request expected = new Request();
         expected.setRequestId(REQUEST_ID);
@@ -157,7 +165,7 @@ public class OrchestrationRequestsUnitTest {
         includeCloudRequest = false;
 
         Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
-                OrchestrationRequestFormat.DETAIL.toString());
+                OrchestrationRequestFormat.DETAIL.toString(), "v7");
         assertThat(actual, sameBeanAs(expected));
     }
 
@@ -183,18 +191,23 @@ public class OrchestrationRequestsUnitTest {
         includeCloudRequest = false;
 
         Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
-                OrchestrationRequestFormat.STATUSDETAIL.toString());
+                OrchestrationRequestFormat.STATUSDETAIL.toString(), "v7");
         assertThat(actual, sameBeanAs(expected));
     }
 
     @Test
-    public void mapRequestStatusNoTaskInfoTest() throws ApiException {
+    public void mapRequestStatusAndExtSysErrSrcToRequestStatusDetailV8Test() throws ApiException {
+        doReturn(null).when(camundaRequestHandler).getTaskName(REQUEST_ID);
         InstanceReferences instanceReferences = new InstanceReferences();
         instanceReferences.setServiceInstanceId(SERVICE_INSTANCE_ID);
         RequestStatus requestStatus = new RequestStatus();
+        requestStatus.setExtSystemErrorSource(EXT_SYSTEM_ERROR_SOURCE);
+        requestStatus.setRollbackExtSystemErrorSource(ROLLBACK_EXT_SYSTEM_ERROR_SOURCE);
         requestStatus.setRequestState(iar.getRequestStatus());
-        requestStatus.setStatusMessage(
-                "FLOW STATUS: FlowStatus RETRY STATUS: RetryStatusMessage ROLLBACK STATUS: RollbackStatusMessage");
+        requestStatus.setFlowStatus(FLOW_STATUS);
+        requestStatus.setRollbackStatusMessage(ROLLBACK_STATUS_MESSAGE);
+        requestStatus.setRetryStatusMessage(RETRY_STATUS_MESSAGE);
+        requestStatus.setResourceStatusMessage("The vf module already exist");
 
         Request expected = new Request();
         expected.setRequestId(REQUEST_ID);
@@ -205,7 +218,29 @@ public class OrchestrationRequestsUnitTest {
         includeCloudRequest = false;
 
         Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
-                OrchestrationRequestFormat.SIMPLENOTASKINFO.toString());
+                OrchestrationRequestFormat.STATUSDETAIL.toString(), "v8");
+        assertThat(actual, sameBeanAs(expected));
+    }
+
+    @Test
+    public void mapRequestStatusNoTaskInfoTest() throws ApiException {
+        InstanceReferences instanceReferences = new InstanceReferences();
+        instanceReferences.setServiceInstanceId(SERVICE_INSTANCE_ID);
+        RequestStatus requestStatus = new RequestStatus();
+        requestStatus.setRequestState(iar.getRequestStatus());
+        requestStatus.setStatusMessage(
+                "FLOW STATUS: FlowStatus RETRY STATUS: RetryStatusMessage ROLLBACK STATUS: RollbackStatusMessage RESOURCE STATUS: The vf module already exist");
+
+        Request expected = new Request();
+        expected.setRequestId(REQUEST_ID);
+        expected.setInstanceReferences(instanceReferences);
+        expected.setRequestStatus(requestStatus);
+        expected.setRequestScope(SERVICE);
+
+        includeCloudRequest = false;
+
+        Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
+                OrchestrationRequestFormat.SIMPLENOTASKINFO.toString(), "v7");
         assertThat(expected, sameBeanAs(actual));
     }
 
@@ -217,7 +252,7 @@ public class OrchestrationRequestsUnitTest {
         RequestStatus requestStatus = new RequestStatus();
         requestStatus.setRequestState(iar.getRequestStatus());
         requestStatus.setStatusMessage(
-                "FLOW STATUS: FlowStatus TASK INFORMATION: TaskName RETRY STATUS: RetryStatusMessage ROLLBACK STATUS: RollbackStatusMessage");
+                "FLOW STATUS: FlowStatus TASK INFORMATION: TaskName RETRY STATUS: RetryStatusMessage ROLLBACK STATUS: RollbackStatusMessage RESOURCE STATUS: The vf module already exist");
 
         Request expected = new Request();
         expected.setRequestId(REQUEST_ID);
@@ -227,7 +262,7 @@ public class OrchestrationRequestsUnitTest {
 
         includeCloudRequest = false;
 
-        Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest, null);
+        Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest, null, "v7");
         assertThat(expected, sameBeanAs(actual));
     }
 
@@ -238,8 +273,10 @@ public class OrchestrationRequestsUnitTest {
         instanceReferences.setServiceInstanceId(SERVICE_INSTANCE_ID);
         RequestStatus requestStatus = new RequestStatus();
         requestStatus.setRequestState(iar.getRequestStatus());
-        requestStatus.setStatusMessage(String.format("FLOW STATUS: %s RETRY STATUS: %s ROLLBACK STATUS: %s",
-                FLOW_STATUS + TASK_INFORMATION, RETRY_STATUS_MESSAGE, ROLLBACK_STATUS_MESSAGE));
+        requestStatus.setStatusMessage(
+                String.format("FLOW STATUS: %s RETRY STATUS: %s ROLLBACK STATUS: %s RESOURCE STATUS: %s",
+                        FLOW_STATUS + TASK_INFORMATION, RETRY_STATUS_MESSAGE, ROLLBACK_STATUS_MESSAGE,
+                        "The vf module already exist"));
 
         Request expected = new Request();
         expected.setRequestId(REQUEST_ID);
@@ -250,7 +287,7 @@ public class OrchestrationRequestsUnitTest {
         includeCloudRequest = false;
 
         Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
-                OrchestrationRequestFormat.DETAIL.toString());
+                OrchestrationRequestFormat.DETAIL.toString(), "v7");
 
         assertThat(actual, sameBeanAs(expected));
     }
@@ -272,9 +309,10 @@ public class OrchestrationRequestsUnitTest {
 
         includeCloudRequest = false;
         iar.setFlowStatus(null);
+        iar.setResourceStatusMessage(null);
 
         Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
-                OrchestrationRequestFormat.DETAIL.toString());
+                OrchestrationRequestFormat.DETAIL.toString(), "v7");
 
         assertThat(actual, sameBeanAs(expected));
     }
@@ -288,7 +326,7 @@ public class OrchestrationRequestsUnitTest {
         iar.setStatusMessage("Error retrieving cloud region from AAI");
 
         Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
-                OrchestrationRequestFormat.DETAIL.toString());
+                OrchestrationRequestFormat.DETAIL.toString(), "v7");
 
         assertTrue(actual.getRequestStatus().getStatusMessage()
                 .contains("Error Source: " + ROLLBACK_EXT_SYSTEM_ERROR_SOURCE));
@@ -300,8 +338,10 @@ public class OrchestrationRequestsUnitTest {
         instanceReferences.setServiceInstanceId(SERVICE_INSTANCE_ID);
         RequestStatus requestStatus = new RequestStatus();
         requestStatus.setRequestState(iar.getRequestStatus());
-        requestStatus.setStatusMessage(String.format("FLOW STATUS: %s RETRY STATUS: %s ROLLBACK STATUS: %s",
-                "Successfully completed all Building Blocks", RETRY_STATUS_MESSAGE, ROLLBACK_STATUS_MESSAGE));
+        requestStatus.setStatusMessage(
+                String.format("FLOW STATUS: %s RETRY STATUS: %s ROLLBACK STATUS: %s RESOURCE STATUS: %s",
+                        "Successfully completed all Building Blocks", RETRY_STATUS_MESSAGE, ROLLBACK_STATUS_MESSAGE,
+                        "The vf module already exist"));
 
         Request expected = new Request();
         expected.setRequestId(REQUEST_ID);
@@ -313,7 +353,7 @@ public class OrchestrationRequestsUnitTest {
         iar.setFlowStatus("Successfully completed all Building Blocks");
 
         Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
-                OrchestrationRequestFormat.DETAIL.toString());
+                OrchestrationRequestFormat.DETAIL.toString(), "v7");
 
         assertThat(actual, sameBeanAs(expected));
     }
@@ -324,8 +364,10 @@ public class OrchestrationRequestsUnitTest {
         instanceReferences.setServiceInstanceId(SERVICE_INSTANCE_ID);
         RequestStatus requestStatus = new RequestStatus();
         requestStatus.setRequestState(iar.getRequestStatus());
-        requestStatus.setStatusMessage(String.format("FLOW STATUS: %s RETRY STATUS: %s ROLLBACK STATUS: %s",
-                "All Rollback flows have completed successfully", RETRY_STATUS_MESSAGE, ROLLBACK_STATUS_MESSAGE));
+        requestStatus.setStatusMessage(
+                String.format("FLOW STATUS: %s RETRY STATUS: %s ROLLBACK STATUS: %s RESOURCE STATUS: %s",
+                        "All Rollback flows have completed successfully", RETRY_STATUS_MESSAGE, ROLLBACK_STATUS_MESSAGE,
+                        "The vf module already exist"));
 
         Request expected = new Request();
         expected.setRequestId(REQUEST_ID);
@@ -337,7 +379,7 @@ public class OrchestrationRequestsUnitTest {
         iar.setFlowStatus("All Rollback flows have completed successfully");
 
         Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
-                OrchestrationRequestFormat.DETAIL.toString());
+                OrchestrationRequestFormat.DETAIL.toString(), "v7");
 
         assertThat(actual, sameBeanAs(expected));
     }

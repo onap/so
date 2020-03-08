@@ -92,6 +92,13 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     private static final String NEUTRON_MODE = "NEUTRON";
     private static final String CLOUD_OWNER = "CloudOwner";
     private static final String LOG_DEBUG_MSG = "Got Network definition from Catalog: {}";
+    private static final String NETWORK_EXIST_STATUS_MESSAGE =
+            "The network was found to already exist, thus no new network was created in the cloud via this request";
+    private static final String NETWORK_CREATED_STATUS_MESSAGE =
+            "The new network was successfully created in the cloud";
+    private static final String NETWORK_NOT_EXIST_STATUS_MESSAGE =
+            "The network as not found, thus no network was deleted in the cloud via this request";
+    private static final String NETWORK_DELETED_STATUS_MESSAGE = "The network was successfully deleted in the cloud";
 
     private static final Logger logger = LoggerFactory.getLogger(MsoNetworkAdapterImpl.class);
 
@@ -225,7 +232,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
             // See if the Network already exists (by name)
             NetworkInfo netInfo = null;
-            long queryNetworkStarttime = System.currentTimeMillis();
             try {
                 netInfo = neutron.queryNetwork(networkName, tenantId, cloudSiteId);
             } catch (MsoException me) {
@@ -254,10 +260,10 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                     logger.warn("{} {} Found Existing network, status={} for Neutron mode ",
                             MessageEnum.RA_NETWORK_ALREADY_EXIST, ErrorCode.DataError.getValue(), netInfo.getStatus());
                 }
+                heat.updateResourceStatus(msoRequest.getRequestId(), NETWORK_EXIST_STATUS_MESSAGE);
                 return;
             }
 
-            long createNetworkStarttime = System.currentTimeMillis();
             try {
                 netInfo = neutron.createNetwork(cloudSiteId, tenantId, neutronNetworkType, networkName,
                         physicalNetworkName, vlans);
@@ -360,6 +366,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                             MessageEnum.RA_NETWORK_ALREADY_EXIST, ErrorCode.DataError.getValue(), heatStack.getStatus(),
                             networkName, cloudSiteId, tenantId);
                 }
+                heat.updateResourceStatus(msoRequest.getRequestId(), NETWORK_EXIST_STATUS_MESSAGE);
                 return;
             }
 
@@ -472,6 +479,12 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             networkRollback.setNetworkStackId(heatStack.getCanonicalName());
             networkRollback.setNetworkCreated(true);
             networkRollback.setNetworkType(networkType);
+
+            try {
+                heat.updateResourceStatus(msoRequest.getRequestId(), NETWORK_CREATED_STATUS_MESSAGE);
+            } catch (Exception e) {
+                logger.warn("Exception while updating infra active request", e);
+            }
 
             logger.debug("Network {} successfully created via HEAT", networkName);
         }
@@ -1055,14 +1068,20 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             }
         } else {
             try {
-                heat.deleteStack(tenantId, CLOUD_OWNER, cloudSiteId, networkId, true, timeoutMinutes);
-                networkDeleted.value = true;
+                StackInfo stack = heat.deleteStack(tenantId, CLOUD_OWNER, cloudSiteId, networkId, true, timeoutMinutes);
+                networkDeleted.value = stack.isOperationPerformed();
             } catch (MsoException me) {
                 me.addContext("DeleteNetwork");
                 logger.error("{} {} Delete Network (heat): {} in {}/{} ", MessageEnum.RA_DELETE_NETWORK_EXC,
                         ErrorCode.DataError.getValue(), networkId, cloudSiteId, tenantId, me);
                 throw new NetworkException(me);
             }
+        }
+        try {
+            heat.updateResourceStatus(msoRequest.getRequestId(),
+                    networkDeleted.value ? NETWORK_DELETED_STATUS_MESSAGE : NETWORK_NOT_EXIST_STATUS_MESSAGE);
+        } catch (Exception e) {
+            logger.warn("Exception while updating infra active request", e);
         }
     }
 

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,6 +20,9 @@
 
 package org.onap.so.adapters.network;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.patch;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.junit.Assert.assertEquals;
 import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackDeleteNeutronNetwork;
 import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackDeleteStack_200;
@@ -52,6 +55,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
+import com.github.tomakehurst.wiremock.WireMockServer;
 
 public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 
@@ -112,6 +116,8 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
     @Test
     public void createNetworkByModelNameAlreadyExistNeutronMode() throws IOException {
 
+        mockUpdateRequestDb(wireMockServer, "9733c8d1-2668-4e5f-8b51-2cacc9b662c0");
+
         mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
         mockOpenStackGetAllNeutronNetworks_200(wireMockServer, "OpenstackGetNeutronNetworks.json");
@@ -140,6 +146,8 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
     @Test
     public void createNetworkByModelNameHeatMode() throws IOException {
 
+        mockUpdateRequestDb(wireMockServer, "9733c8d1-2668-4e5f-8b51-2cacc9b662c0");
+
         mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
         mockOpenStackGetStack_404(wireMockServer, "DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/stackId");
@@ -157,6 +165,8 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 
     @Test
     public void createNetworkByModelNameAlreadyExistHeatMode() throws IOException {
+
+        mockUpdateRequestDb(wireMockServer, "9733c8d1-2668-4e5f-8b51-2cacc9b662c0");
 
         mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
@@ -236,6 +246,8 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
     @Test
     public void deleteNetworkHeatModeSuccess() throws IOException {
 
+        mockUpdateRequestDb(wireMockServer, "5a29d907-b8c7-47bf-85f3-3940c0cce0f7");
+
         mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
         mockOpenStackGetStackDeleteOrUpdateComplete_200(wireMockServer, "OpenstackResponse_Stack_DeleteComplete.json");
@@ -291,6 +303,8 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 
     @Test
     public void deleteNetworkNeureonMode() throws IOException {
+
+        mockUpdateRequestDb(wireMockServer, "5a29d907-b8c7-47bf-85f3-3940c0cce0f7");
 
         mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
@@ -505,5 +519,10 @@ public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
         JsonInput = "src/test/resources/" + JsonInput;
         String input = new String(Files.readAllBytes(Paths.get(JsonInput)));
         return input;
+    }
+
+    public static void mockUpdateRequestDb(WireMockServer wireMockServer, String requestId) throws IOException {
+        wireMockServer.stubFor(patch(urlPathEqualTo("/infraActiveRequests/" + requestId))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_OK)));
     }
 }

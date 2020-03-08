@@ -23,6 +23,7 @@ package org.onap.so.adapters.vnf;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.patch;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.mockito.Mockito.when;
 import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackGetStackVfModule_200;
@@ -30,6 +31,7 @@ import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackGetStackVfModule_
 import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackPutStack;
 import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackResponseAccess;
 import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenstackGetWithResponse;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -53,6 +55,7 @@ import org.onap.so.openstack.beans.VnfRollback;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.utils.MsoHeatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.stubbing.Scenario;
 
 
@@ -73,6 +76,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
     public void createVnfTest() throws Exception {
         mockOpenStackResponseAccess(wireMockServer, wireMockPort);
         mockOpenStackGetStackVfModule_200(wireMockServer);
+        mockUpdateRequestDb(wireMockServer, "12345");
 
         MsoRequest msoRequest = getMsoRequest();
 
@@ -88,6 +92,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
     public void createVnfTest_NullFailIfExists() throws Exception {
         mockOpenStackResponseAccess(wireMockServer, wireMockPort);
         mockOpenStackGetStackVfModule_200(wireMockServer);
+        mockUpdateRequestDb(wireMockServer, "12345");
 
         MsoRequest msoRequest = getMsoRequest();
 
@@ -117,6 +122,8 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
                         .inScenario("HeatStatusFailure").whenScenarioStateIs("HeatStackFailed")
                         .willSetStateTo("HeatStackSuccess"));
 
+        mockUpdateRequestDb(wireMockServer, "12345");
+
         MsoRequest msoRequest = getMsoRequest();
 
         Map<String, Object> map = new HashMap<>();
@@ -133,6 +140,8 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
     public void createVnfTest_HeatStatusCreated() throws Exception {
         mockOpenStackResponseAccess(wireMockServer, wireMockPort);
         mockOpenStackGetStackVfModule_200(wireMockServer);
+        mockUpdateRequestDb(wireMockServer, "12345");
+
         MsoRequest msoRequest = getMsoRequest();
         Map<String, Object> map = new HashMap<>();
         map.put("key1", "value1");
@@ -514,6 +523,11 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
         heatEnvironment.setEnvironment("parameters:ist");
         vfModuleCustomization.setHeatEnvironment(heatEnvironment);
         return vfModuleCustomization;
+    }
+
+    public static void mockUpdateRequestDb(WireMockServer wireMockServer, String requestId) throws IOException {
+        wireMockServer.stubFor(patch(urlPathEqualTo("/infraActiveRequests/" + requestId))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_OK)));
     }
 
 
