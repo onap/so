@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.ws.rs.core.MediaType;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.ProblemDetails;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.InlineResponse2002;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.InlineResponse201;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.PkgmSubscriptionRequest;
 import org.onap.so.adapters.vnfmadapter.packagemanagement.subscriptionmanagement.SubscriptionManager;
 import org.slf4j.Logger;
@@ -92,15 +92,15 @@ public class Sol003PackageManagementSubscriptionController {
         }
 
         logger.debug("No duplicate Subscription exists, continuing with POST.");
-        final Optional<InlineResponse2002> optionalInlineResponse2002 =
+        final Optional<InlineResponse201> optionalInlineResponse =
                 subscriptionManager.createSubscription(pkgmSubscriptionRequest);
 
-        if (optionalInlineResponse2002.isPresent()) {
-            InlineResponse2002 inlineResponse2002 = optionalInlineResponse2002.get();
-            final URI subscriptionUri = subscriptionManager.getSubscriptionUri(inlineResponse2002.getId());
+        if (optionalInlineResponse.isPresent()) {
+            InlineResponse201 inlineResponse = optionalInlineResponse.get();
+            final URI subscriptionUri = subscriptionManager.getSubscriptionUri(inlineResponse.getId());
             final HttpHeaders headers = createLocationHeader(subscriptionUri);
             logger.debug("Sending response with uri {} ", subscriptionUri);
-            return new ResponseEntity<>(inlineResponse2002, headers, HttpStatus.CREATED);
+            return new ResponseEntity<>(inlineResponse, headers, HttpStatus.CREATED);
         }
         final String errorMessage = "A null response was received during the postSubscriptionRequest call.";
         logger.error(errorMessage);
@@ -113,9 +113,9 @@ public class Sol003PackageManagementSubscriptionController {
      * @return All of the current active subscriptions. Object: List<InlineResponse2002> Response Code: 200 OK
      */
     @GetMapping(value = "/subscriptions")
-    public ResponseEntity<List<InlineResponse2002>> getSubscriptions() {
+    public ResponseEntity<List<InlineResponse201>> getSubscriptions() {
         logger.info(LOG_REQUEST_RECEIVED, " getSubscriptions.");
-        List<InlineResponse2002> subscriptionsList = subscriptionManager.getSubscriptions();
+        List<InlineResponse201> subscriptionsList = subscriptionManager.getSubscriptions();
         return new ResponseEntity<>(subscriptionsList, HttpStatus.OK);
     }
 
@@ -128,7 +128,7 @@ public class Sol003PackageManagementSubscriptionController {
     @GetMapping(value = "/subscriptions/{subscriptionId}")
     public ResponseEntity<?> getSubscription(@PathVariable("subscriptionId") final String subscriptionId) {
         logger.info(LOG_REQUEST_RECEIVED, " Getting Subscription: ", subscriptionId);
-        final Optional<InlineResponse2002> optional = subscriptionManager.getSubscription(subscriptionId);
+        final Optional<InlineResponse201> optional = subscriptionManager.getSubscription(subscriptionId);
         if (optional.isPresent()) {
             logger.debug("Return subscription with id {} and body {}", subscriptionId, optional);
             return new ResponseEntity<>(optional.get(), HttpStatus.OK);

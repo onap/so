@@ -21,16 +21,16 @@
 package org.onap.so.adapters.vnfmadapter.converters.sol003.etsicatalog;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.Version;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VnfProducts;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VnfProductsProviders;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.PkgmSubscriptionRequest;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.SubscriptionsFilter;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.SubscriptionsFilter.NotificationTypesEnum;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.SubscriptionsFilter.OperationalStateEnum;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.SubscriptionsFilter1;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.SubscriptionsFilter1.NotificationTypesEnum;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.SubscriptionsFilter1.OperationalStateEnum;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.SubscriptionsFilter1.UsageStateEnum;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.SubscriptionsFilterVersions;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.SubscriptionsFilterVnfProducts;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.SubscriptionsFilterVnfProductsFromProviders;
@@ -62,7 +62,7 @@ public class PkgmSubscriptionRequestConverter implements
 
 
     private org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmNotificationsFilter getPkgmNotificationsFilter(
-            final SubscriptionsFilter sol003SubscriptionsFilter) {
+            final SubscriptionsFilter1 sol003SubscriptionsFilter) {
         final org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmNotificationsFilter etsiCatalogManagerFilters =
                 new org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmNotificationsFilter();
 
@@ -81,21 +81,40 @@ public class PkgmSubscriptionRequestConverter implements
         etsiCatalogManagerFilters
                 .setOperationalState(getOperationalState(sol003SubscriptionsFilter.getOperationalState()));
 
-        etsiCatalogManagerFilters.setUsageState(null);
+        etsiCatalogManagerFilters.setUsageState(getUsageState(sol003SubscriptionsFilter.getUsageState()));
 
         return etsiCatalogManagerFilters;
     }
 
-    // TODO 'operationalState' in the Sol003 Swagger is type 'OperationalStateEnum'. The ETSI
-    // Catalog Manager Swagger
-    // 'operationalState' is type 'List<OperationalStateEnum>'. This method needs to be updated once
-    // swagger is updated.
+
+    private List<org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmNotificationsFilter.UsageStateEnum> getUsageState(
+            final List<UsageStateEnum> usageStates) {
+        if (usageStates != null) {
+            final List<org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmNotificationsFilter.UsageStateEnum> etsiCatalogUsageStates =
+                    new ArrayList<>();
+            usageStates.stream().forEach(state -> {
+                etsiCatalogUsageStates.add(
+                        org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmNotificationsFilter.UsageStateEnum
+                                .fromValue(state.getValue()));
+            });
+            return etsiCatalogUsageStates;
+        }
+        return Collections.emptyList();
+    }
+
+
     private List<org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmNotificationsFilter.OperationalStateEnum> getOperationalState(
-            final OperationalStateEnum operationalState) {
-        if (operationalState != null) {
-            return Arrays.asList(
-                    org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmNotificationsFilter.OperationalStateEnum
-                            .fromValue(operationalState.getValue()));
+            final List<OperationalStateEnum> operationalStates) {
+        if (operationalStates != null) {
+            final List<org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmNotificationsFilter.OperationalStateEnum> etsiCatalogOperationalStates =
+                    new ArrayList<>();
+            operationalStates.forEach(state -> {
+                etsiCatalogOperationalStates.add(
+                        org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmNotificationsFilter.OperationalStateEnum
+                                .fromValue(state.getValue()));
+            });
+
+            return etsiCatalogOperationalStates;
         }
         return Collections.emptyList();
     }
@@ -165,12 +184,12 @@ public class PkgmSubscriptionRequestConverter implements
             final List<NotificationTypesEnum> notificationTypes) {
 
         if (notificationTypes != null && !notificationTypes.isEmpty()) {
-            final List<org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmNotificationsFilter.NotificationTypesEnum> etsiCatalogManagerNotificationTypes =
+            final List<org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmNotificationsFilter.NotificationTypesEnum> etsiCatalogNotificationTypes =
                     new ArrayList<>();
-            notificationTypes.forEach(type -> etsiCatalogManagerNotificationTypes.add(
+            notificationTypes.forEach(type -> etsiCatalogNotificationTypes.add(
                     org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmNotificationsFilter.NotificationTypesEnum
                             .fromValue(type.getValue())));
-            return etsiCatalogManagerNotificationTypes;
+            return etsiCatalogNotificationTypes;
         }
         return Collections.emptyList();
     }

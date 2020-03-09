@@ -1187,8 +1187,14 @@
                       "DISABLED"
                     ]
                   },
-                  "usageState": {
-                    "description": "- IN_USE: VNF instances instantiated from this VNF package exist. - NOT_IN_USE: No existing VNF instance is instantiated from this VNF  package.\n"
+                  "usageState": 
+                  {
+                    "description": "- IN_USE: VNF instances instantiated from this VNF package exist. - NOT_IN_USE: No existing VNF instance is instantiated from this VNF  package.\n",
+                    "type": "string",
+                    "enum": [
+                      "IN_USE",
+                      "NOT_IN_USE"
+                    ]
                   },
                   "userDefinedData": {
                     "description": "This type represents a list of key-value pairs. The order of the pairs in the list is not significant. In JSON, a set of key- value pairs is represented as an object. It shall comply with the provisions defined in clause 4 of IETF RFC 7159.\n",
@@ -2024,8 +2030,14 @@
                     "DISABLED"
                   ]
                 },
-                "usageState": {
-                  "description": "- IN_USE: VNF instances instantiated from this VNF package exist. - NOT_IN_USE: No existing VNF instance is instantiated from this VNF  package.\n"
+                "usageState": 
+                {
+                  "description": "- IN_USE: VNF instances instantiated from this VNF package exist. - NOT_IN_USE: No existing VNF instance is instantiated from this VNF  package.\n",
+                  "type": "string",
+                  "enum": [
+                    "IN_USE",
+                    "NOT_IN_USE"
+                  ]
                 },
                 "userDefinedData": {
                   "description": "This type represents a list of key-value pairs. The order of the pairs in the list is not significant. In JSON, a set of key- value pairs is represented as an object. It shall comply with the provisions defined in clause 4 of IETF RFC 7159.\n",
@@ -4572,16 +4584,31 @@
                         "type": "string"
                       }
                     },
-                    "operationalState": {
+                    "operationalState": 
+                    {
                       "description": "- ENABLED: The VNF package is enabled, i.e. it can be used for  instantiation of new VNF instances.\n- DISABLED: The VNF package is disabled, i.e. it cannot be used for  further VNF instantiation requests (unless and until the VNF package\n  is re-enabled).\n",
-                      "type": "string",
-                      "enum": [
-                        "ENABLED",
-                        "DISABLED"
-                      ]
+                      "type": "array",
+                      "items": 
+                      {
+                        "type": "string",
+                        "enum": [
+                          "ENABLED",
+                          "DISABLED"
+                        ]
+                      }
                     },
-                    "usageState": {
-                      "description": "- IN_USE: VNF instances instantiated from this VNF package exist. - NOT_IN_USE: No existing VNF instance is instantiated from this VNF  package.\n"
+                    "usageState": 
+                    {
+                      "description": "- IN_USE: VNF instances instantiated from this VNF package exist. - NOT_IN_USE: No existing VNF instance is instantiated from this VNF  package.\n",
+                      "type": "array",
+                      "items": 
+                      {
+                        "type": "string",
+                        "enum": [
+                          "IN_USE",
+                          "NOT_IN_USE"
+                        ]
+                      }
                     }
                   }
                 },
@@ -4803,18 +4830,32 @@
                           "type": "string"
                         }
                       },
-                      "operationalState": {
+                      "operationalState": 
+                      {
                         "description": "- ENABLED: The VNF package is enabled, i.e. it can be used for  instantiation of new VNF instances.\n- DISABLED: The VNF package is disabled, i.e. it cannot be used for  further VNF instantiation requests (unless and until the VNF package\n  is re-enabled).\n",
-                        "type": "string",
-                        "enum": [
-                          "ENABLED",
-                          "DISABLED"
-                        ]
+                        "type": "array",
+                        "items": 
+                        {
+                          "type": "string",
+                          "enum": [
+                            "ENABLED",
+                            "DISABLED"
+                          ]
+                        }
                       },
-                      "usageState": {
-                        "description": "- IN_USE: VNF instances instantiated from this VNF package exist. - NOT_IN_USE: No existing VNF instance is instantiated from this VNF  package.\n"
-                      }
-                    }
+                      "usageState": 
+                      {
+                        "description": "- IN_USE: VNF instances instantiated from this VNF package exist. - NOT_IN_USE: No existing VNF instance is instantiated from this VNF  package.\n",
+                        "type": "array",
+                        "items": 
+                        {
+                          "type": "string",
+                          "enum": [
+                            "IN_USE",
+                            "NOT_IN_USE"
+                          ]
+                        }
+                      }                    }
                   },
                   "callbackUri": {
                     "description": "String formatted according to IETF RFC 3986.\n",

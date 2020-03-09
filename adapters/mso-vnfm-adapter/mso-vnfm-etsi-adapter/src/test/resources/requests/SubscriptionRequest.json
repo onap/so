@@ -28,7 +28,7 @@
         "vnfPkgId": [
             "VNFPKGID"
         ],
-        "operationalState": "ENABLED"
+        "operationalState": ["ENABLED"]
     },
     "callbackUri": "http://so-vnfm-adapter:9093/api/vnfpkgm/v1/subscriptions",
     "authentication": 
