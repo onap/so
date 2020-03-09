@@ -25,14 +25,18 @@ import org.junit.Test
 import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mockito
+import org.onap.logging.filter.base.ONAPComponents
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
 import org.onap.so.bpmn.core.WorkflowException
+import org.onap.so.client.HttpClient
+import org.onap.so.client.HttpClientFactory
 import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.entities.AAIResultWrapper
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 
 import javax.ws.rs.NotFoundException
+import javax.ws.rs.core.Response
 
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNotNull
@@ -40,6 +44,9 @@ import static org.mockito.ArgumentMatchers.eq
 import static org.mockito.Mockito.*
 
 class DeleteCommunicationServiceTest extends MsoGroovyTest {
+
+    private HttpClientFactory httpClientFactoryMock
+    private HttpClient httpClientMock
 
     @Before
     void init() throws IOException {
@@ -186,6 +193,47 @@ class DeleteCommunicationServiceTest extends MsoGroovyTest {
         assertNotNull(updateOperationStatus)
     }
 
+    @Test
+    void testSendRequest2NSMFWF(){
+        httpClientMock = mock(HttpClient.class)
+        httpClientFactoryMock = mock(HttpClientFactory.class)
+        String url ="http://so.onap:8080/onap/so/infra/e2eServiceInstances/v3/5G-777"
+        when(mockExecution.getVariable("serviceInstanceId")).thenReturn("5ad89cf9-0569-4a93-9306-d8324321e2be")
+        when(mockExecution.getVariable("operationId")).thenReturn("998c2081-5a71-4a39-9ae6-d6b7c5bb50c0")
+        when(mockExecution.getVariable("progress")).thenReturn("20")
+        when(mockExecution.getVariable("operationContent")).thenReturn("waiting nsmf service delete finished")
+        when(mockExecution.getVariable("globalSubscriberId")).thenReturn("5GCustomer")
+        when(mockExecution.getVariable("mso.infra.endpoint.url")).thenReturn("http://so.onap:8080/onap/so/infra")
+        when(mockExecution.getVariable("e2eSliceServiceInstanceId")).thenReturn("5G-777")
+        when(mockExecution.getVariable("e2eOperationId")).thenReturn("e151059a-d924-4629-845f-264db19e50b3")
+        when(httpClientFactoryMock.newJsonClient(new URL(url), ONAPComponents.SO)).thenReturn(httpClientMock)
+        DeleteCommunicationService obj = spy(DeleteCommunicationService.class)
+
+        Response responseMock = mock(Response.class)
+        when(responseMock.getStatus()).thenReturn(200)
+        when(responseMock.hasEntity()).thenReturn(true)
+        when(responseMock.getEntity()).thenReturn(getNSSMFResponse())
+        when(obj.getHttpClientFactory()).thenReturn(httpClientFactoryMock)
+        when(httpClientMock.delete(anyString())).thenReturn(responseMock)
+
+        obj.sendRequest2NSMFWF(mockExecution)
+        Mockito.verify(mockExecution,times(1)).setVariable(eq("updateOperationStatus"), captor.capture())
+        String updateOperationStatus= captor.getValue()
+        assertNotNull(updateOperationStatus)
+    }
+
+    private String getNSSMFResponse(){
+        String response = """{
+            "service":{        
+                "serviceId":"e151059a-d924-4629-845f-264db19e50b4",        
+                "operationId":"e151059a-d924-4629-845f-264db19e50b3"        
+            }
+        }"""
+        return response
+    }
+
+
+
 
     private String mockQueryCommunicationServiceReturn()
     {
@@ -257,8 +305,4 @@ class DeleteCommunicationServiceTest extends MsoGroovyTest {
         }"""
         return expect
     }
-
-
-
-
 }
