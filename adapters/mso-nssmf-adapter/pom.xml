@@ -28,7 +28,7 @@
     <artifactId>adapters</artifactId>
     <version>1.6.0-SNAPSHOT</version>
   </parent>
- <groupId>org.onap.so.adapters</groupId>
+  <groupId>org.onap.so.adapters</groupId>
   <artifactId>mso-nssmf-adapter</artifactId>
   <packaging>jar</packaging>
   <name>mso-nssmf-adapter</name>

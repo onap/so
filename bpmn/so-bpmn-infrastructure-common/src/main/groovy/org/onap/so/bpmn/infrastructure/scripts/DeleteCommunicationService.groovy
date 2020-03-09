@@ -214,7 +214,7 @@ class DeleteCommunicationService extends AbstractServiceTaskProcessor {
             requestBody.replaceAll("\\s+", "")
 
             String basicAuthValue =  UrnPropertiesReader.getVariable("mso.infra.endpoint.auth", execution)
-            HttpClient httpClient = new HttpClientFactory().newJsonClient(new URL(url), ONAPComponents.SO)
+            HttpClient httpClient = getHttpClientFactory().newJsonClient(new URL(url), ONAPComponents.SO)
             httpClient.addAdditionalHeader("Authorization", basicAuthValue)
             httpClient.addAdditionalHeader("Accept", "application/json")
             Response httpResponse = httpClient.delete(requestBody)
