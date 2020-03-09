@@ -33,6 +33,7 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -43,6 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,15 +56,16 @@ import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.LinkSelf;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.NsdmSubscription;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmNotificationsFilter;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmSubscription;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.ProblemDetails;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.SubscriptionAuthentication;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.Version;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VnfProducts;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VnfProductsProviders;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.InlineResponse2002;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.InlineResponse201;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.PkgmSubscriptionRequest;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.SubscriptionsAuthentication;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.SubscriptionsFilter;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.SubscriptionsFilter.NotificationTypesEnum;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.SubscriptionsFilter1;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.SubscriptionsFilterVnfProductsFromProviders;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.SubscriptionsLinks;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.VnfPackagesLinksSelf;
@@ -83,6 +86,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.client.match.MockRestRequestMatchers;
 import org.springframework.web.client.RestTemplate;
+
 import com.google.gson.Gson;
 
 /**
@@ -132,8 +136,8 @@ public class Sol003PackageManagementSubscriptionControllerTest {
     @Test
     public void testSuccessPostSubscription() throws GeneralSecurityException, URISyntaxException {
         final PkgmSubscriptionRequest pkgmSubscriptionRequest = postSubscriptionForTest();
-        final ResponseEntity<InlineResponse2002> response =
-                (ResponseEntity<InlineResponse2002>) sol003PackageManagementSubscriptionController
+        final ResponseEntity<InlineResponse201> response =
+                (ResponseEntity<InlineResponse201>) sol003PackageManagementSubscriptionController
                         .postSubscriptionRequest(pkgmSubscriptionRequest);
 
         final HttpHeaders headers = buildHttpHeaders(Objects.requireNonNull(response.getBody()).getCallbackUri());
@@ -178,22 +182,22 @@ public class Sol003PackageManagementSubscriptionControllerTest {
         mockRestServiceServer.expect(requestTo(msbEndpoint + "/" + ID)).andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(gson.toJson(new NsdmSubscription().id(ID)), MediaType.APPLICATION_JSON));
 
-        final ResponseEntity<InlineResponse2002> response =
-                (ResponseEntity<InlineResponse2002>) sol003PackageManagementSubscriptionController
+        final ResponseEntity<InlineResponse201> response =
+                (ResponseEntity<InlineResponse201>) sol003PackageManagementSubscriptionController
                         .postSubscriptionRequest(pkgmSubscriptionRequest);
         final String subscriptionId = response.getBody().getId();
 
 
 
-        final ResponseEntity<InlineResponse2002> response2002 =
-                (ResponseEntity<InlineResponse2002>) sol003PackageManagementSubscriptionController
+        final ResponseEntity<InlineResponse201> responseEntity =
+                (ResponseEntity<InlineResponse201>) sol003PackageManagementSubscriptionController
                         .getSubscription(subscriptionId);
 
         final HttpHeaders headers = buildHttpHeaders(response.getBody().getCallbackUri());
 
         assertEquals(response.getBody().getFilter(), pkgmSubscriptionRequest.getFilter());
         assertEquals(response.getHeaders(), headers);
-        assertEquals(HttpStatus.OK, response2002.getStatusCode());
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(pkgmSubscriptionRequest.getFilter(), response.getBody().getFilter());
         // Ensure CallBackUri is set to new URI
         assertNotEquals(pkgmSubscriptionRequest.getCallbackUri(), response.getBody().getCallbackUri());
@@ -204,10 +208,9 @@ public class Sol003PackageManagementSubscriptionControllerTest {
         final String invalidId = "invalidSubscriptionId";
         mockRestServiceServer.expect(requestTo(msbEndpoint + "/" + invalidId)).andExpect(method(HttpMethod.GET))
                 .andRespond(withStatus(HttpStatus.NOT_FOUND));
-        final ResponseEntity<InlineResponse2002> response =
-                (ResponseEntity<InlineResponse2002>) sol003PackageManagementSubscriptionController
-                        .getSubscription(invalidId);
+        final ResponseEntity<?> response = sol003PackageManagementSubscriptionController.getSubscription(invalidId);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertTrue(response.getBody() instanceof ProblemDetails);
     }
 
     @Test
@@ -221,14 +224,14 @@ public class Sol003PackageManagementSubscriptionControllerTest {
                 .andRespond(withSuccess(gson.toJson(new NsdmSubscription().id(ID)), MediaType.APPLICATION_JSON));
 
         sol003PackageManagementSubscriptionController.postSubscriptionRequest(pkgmSubscriptionRequest);
-        final ResponseEntity<List<InlineResponse2002>> response =
+        final ResponseEntity<List<InlineResponse201>> response =
                 sol003PackageManagementSubscriptionController.getSubscriptions();
 
-        final List<InlineResponse2002> subscriptionsList = response.getBody();
+        final List<InlineResponse201> subscriptionsList = response.getBody();
 
         assertEquals(Objects.requireNonNull(response.getBody()).get(0).getFilter(),
                 pkgmSubscriptionRequest.getFilter());
-        assert (subscriptionsList != null);
+        assertNotNull(subscriptionsList != null);
         assertNotEquals('0', subscriptionsList.size());
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
@@ -310,13 +313,13 @@ public class Sol003PackageManagementSubscriptionControllerTest {
                 .andRespond(withSuccess(gson.toJson(buildPkgmSubscription()), MediaType.APPLICATION_JSON));
 
 
-        final ResponseEntity<InlineResponse2002> responseEntity = testRestTemplate.postForEntity(
+        final ResponseEntity<InlineResponse201> responseEntity = testRestTemplate.postForEntity(
                 LOCALHOST_URL + port + Constants.PACKAGE_MANAGEMENT_BASE_URL + "/subscriptions", request,
-                InlineResponse2002.class);
+                InlineResponse201.class);
 
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
         assertTrue(responseEntity.hasBody());
-        final InlineResponse2002 actual = responseEntity.getBody();
+        final InlineResponse201 actual = responseEntity.getBody();
         assertEquals(ID, actual.getId());
 
 
@@ -340,7 +343,7 @@ public class Sol003PackageManagementSubscriptionControllerTest {
 
     private PkgmSubscriptionRequest buildPkgmSubscriptionRequest() {
         final PkgmSubscriptionRequest pkgmSubscriptionRequest = new PkgmSubscriptionRequest();
-        final SubscriptionsFilter sub = buildSubscriptionsFilter();
+        final SubscriptionsFilter1 sub = buildSubscriptionsFilter();
         final SubscriptionsAuthentication auth = new SubscriptionsAuthentication();
         pkgmSubscriptionRequest.setFilter(sub);
         pkgmSubscriptionRequest.setCallbackUri(msbEndpoint.toString());
@@ -348,11 +351,11 @@ public class Sol003PackageManagementSubscriptionControllerTest {
         return pkgmSubscriptionRequest;
     }
 
-    private SubscriptionsFilter buildSubscriptionsFilter() {
-        final SubscriptionsFilter sub = new SubscriptionsFilter();
+    private SubscriptionsFilter1 buildSubscriptionsFilter() {
+        final SubscriptionsFilter1 sub = new SubscriptionsFilter1();
         final List<String> vnfdIdList = new ArrayList<>();
         final List<String> vnfPkgIdList = new ArrayList<>();
-        final List<NotificationTypesEnum> notificationTypes = new ArrayList<>();
+        final List<SubscriptionsFilter1.NotificationTypesEnum> notificationTypes = new ArrayList<>();
         final SubscriptionsFilterVnfProductsFromProviders subscriptionsFilterVnfProductsFromProviders =
                 new SubscriptionsFilterVnfProductsFromProviders();
         final List<SubscriptionsFilterVnfProductsFromProviders> vnfProductsFromProviders = new ArrayList<>();

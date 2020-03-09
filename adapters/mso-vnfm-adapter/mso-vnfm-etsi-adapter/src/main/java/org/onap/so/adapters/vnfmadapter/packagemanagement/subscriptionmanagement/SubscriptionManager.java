@@ -34,14 +34,14 @@ import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.EtsiCatalogServic
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.BasicAuth;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.NsdmSubscription;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmSubscription;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.InlineResponse2002;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.InlineResponse201;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.PkgmSubscriptionRequest;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.SubscriptionsLinks;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.VnfPackagesLinksSelf;
 import org.onap.so.adapters.vnfmadapter.packagemanagement.subscriptionmanagement.cache.PackageManagementCacheServiceProvider;
+import org.onap.so.adapters.vnfmadapter.rest.exceptions.ConversionFailedException;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.InternalServerErrorException;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.SubscriptionNotFoundException;
-import org.onap.so.adapters.vnfmadapter.rest.exceptions.ConversionFailedException;
 import org.onap.so.utils.CryptoUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,7 +80,7 @@ public class SubscriptionManager {
         this.msoKeyString = msoKeyString;
     }
 
-    public Optional<InlineResponse2002> createSubscription(final PkgmSubscriptionRequest pkgmSubscriptionRequest)
+    public Optional<InlineResponse201> createSubscription(final PkgmSubscriptionRequest pkgmSubscriptionRequest)
             throws GeneralSecurityException {
 
         final org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmSubscriptionRequest etsiCatalogManagerSubscriptionRequest =
@@ -97,14 +97,14 @@ public class SubscriptionManager {
 
             packageManagementCacheServiceProvider.addSubscription(subscriptionId, pkgmSubscriptionRequest);
 
-            final InlineResponse2002 response2002 = new InlineResponse2002();
-            response2002.setId(subscriptionId);
-            response2002.setFilter(pkgmSubscriptionRequest.getFilter());
-            response2002.setCallbackUri(getSubscriptionUri(subscriptionId).toString());
-            response2002.setLinks(new SubscriptionsLinks()
+            final InlineResponse201 response = new InlineResponse201();
+            response.setId(subscriptionId);
+            response.setFilter(pkgmSubscriptionRequest.getFilter());
+            response.setCallbackUri(getSubscriptionUri(subscriptionId).toString());
+            response.setLinks(new SubscriptionsLinks()
                     .self(new VnfPackagesLinksSelf().href(getSubscriptionUri(subscriptionId).toString())));
 
-            return Optional.of(response2002);
+            return Optional.of(response);
         }
         throw new InternalServerErrorException(
                 "Received empty response from POST to ETSI Catalog Manager Subscription Endpoint.");
@@ -114,7 +114,7 @@ public class SubscriptionManager {
         return packageManagementCacheServiceProvider.getSubscriptionId(pkgmSubscriptionRequest);
     }
 
-    public Optional<InlineResponse2002> getSubscription(final String subscriptionId) {
+    public Optional<InlineResponse201> getSubscription(final String subscriptionId) {
 
         logger.debug("Checking if subscrition with id: {} exists in ETSI Catalog Manager", subscriptionId);
         final Optional<NsdmSubscription> etsiCatalogSubscriptionOption =
@@ -137,12 +137,12 @@ public class SubscriptionManager {
         return Optional.empty();
     }
 
-    public List<InlineResponse2002> getSubscriptions() {
+    public List<InlineResponse201> getSubscriptions() {
         final Map<String, PkgmSubscriptionRequest> subscriptions =
                 packageManagementCacheServiceProvider.getSubscriptions();
-        final List<InlineResponse2002> response = new ArrayList<>();
+        final List<InlineResponse201> response = new ArrayList<>();
         subscriptions.forEach((key, value) -> {
-            final Optional<InlineResponse2002> optional = getSubscription(key);
+            final Optional<InlineResponse201> optional = getSubscription(key);
             if (optional.isPresent()) {
                 response.add(optional.get());
             }
@@ -175,8 +175,8 @@ public class SubscriptionManager {
         return packageManagementCacheServiceProvider.getSubscription(subscriptionId);
     }
 
-    private InlineResponse2002 getInlineResponse2002(final String id, final PkgmSubscriptionRequest subscription) {
-        return new InlineResponse2002().id(id).filter(subscription.getFilter())
+    private InlineResponse201 getInlineResponse2002(final String id, final PkgmSubscriptionRequest subscription) {
+        return new InlineResponse201().id(id).filter(subscription.getFilter())
                 .callbackUri(subscription.getCallbackUri());
     }
 
