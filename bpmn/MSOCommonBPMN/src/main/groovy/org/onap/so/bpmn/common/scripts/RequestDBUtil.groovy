@@ -49,8 +49,8 @@ class RequestDBUtil {
             String operationType = operationStatus.getOperation()
             String result = operationStatus.getResult()
             String progress = operationStatus.getProgress()
-            String operationContent = operationStatus.getOperationContent()
-            String reason = operationStatus.getReason()
+            String operationContent = operationStatus.getOperationContent()?: ""
+            String reason = operationStatus.getReason()?: ""
 
             String payload =
                     """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
