@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3478d7ee_8f43a084",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBB.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-03-09T12:38:28Z",
+      "side": 1,
+      "message": "we can take a look at this but perhaps in the separate merge request, we have a unit test for this for now and we\u0027d like to merge it if possible",
+      "parentUuid": "f31089b4_8b8d7ba4",
+      "revId": "a86fc30c248eae554d1afb90f3707145e947276d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f6722986_a89dc4af",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBB.java",
         "patchSetId": 9
@@ -53,6 +71,30 @@
       "writtenOn": "2020-03-06T14:48:43Z",
       "side": 1,
       "message": "Prefer the route of GeneratePayloadForCds class. There from buildCdsPropertiesBean return PnfRequestProviderBB for buildCdsPropertiesBean(BuildingBlockExecution execution) \nChange needed in getRequestProviderByScope \n\nand \n\nbuildCdsPropertiesBean(DelegateExecution execution) \nCDSRequestProvider requestProvider \u003d  pnfCdsRequestProvider can be hardcoded as only pnf uses DelegateExecution now.",
+      "range": {
+        "startLine": 79,
+        "startChar": 14,
+        "endLine": 80,
+        "endChar": 69
+      },
+      "revId": "a86fc30c248eae554d1afb90f3707145e947276d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "22c1840a_dce682b0",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBB.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 4027
+      },
+      "writtenOn": "2020-03-09T12:38:28Z",
+      "side": 1,
+      "message": "I think I would prefer to leave it as it is to be honest. As I already commented when reviewing your merge request I\u0027m not sure why we\u0027re mixing all possible models (VNF, VF module, PNF) and types of executions (DE, BB) in 1 class (GeneratePayloadForCds). I don\u0027t understand to be honest why we need routing through this class as it only adds another layer of complexity. Practically the only thing that our implementation has in common is prepareAndSetCdsPropertyBean() which could be extracted to separate class. In my personal opinion current class hierarchy is bit complex with additional switches and routings.",
+      "parentUuid": "b4df1291_de5606f5",
       "range": {
         "startLine": 79,
         "startChar": 14,
