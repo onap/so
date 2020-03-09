@@ -24,10 +24,15 @@ package org.onap.so.bpmn.infrastructure.adapter.network.tasks;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.JAXBException;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;
+import org.glassfish.jersey.message.internal.OutboundJaxrsResponse;
+import org.glassfish.jersey.message.internal.OutboundMessageContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -39,8 +44,8 @@ import org.onap.so.adapters.nwrest.DeleteNetworkResponse;
 import org.onap.so.adapters.nwrest.UpdateNetworkError;
 import org.onap.so.adapters.nwrest.UpdateNetworkRequest;
 import org.onap.so.adapters.nwrest.UpdateNetworkResponse;
-import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.client.exception.ExceptionBuilder;
+import org.onap.so.client.orchestration.NetworkAdapterResources;
 import org.onap.so.utils.Components;
 import org.onap.logging.filter.base.ONAPComponents;
 import static org.junit.Assert.assertTrue;
@@ -54,13 +59,19 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
-public class NetworkAdapterRestV1Test extends BaseTaskTest {
+public class NetworkAdapterRestV1Test {
 
-    @InjectMocks
-    NetworkAdapterRestV1 networkAdapterRestV1Tasks = new NetworkAdapterRestV1();
     @Mock
-    ExceptionBuilder exceptionBuilder = new ExceptionBuilder();
+    private ExceptionBuilder exceptionBuilder;
+    @Mock
+    private NetworkAdapterResources networkAdapterResources;
+    @InjectMocks
+    private NetworkAdapterRestV1 networkAdapterRestV1Tasks;
+
+    private DelegateExecution delegateExecution;
 
     private static final String CREATE_NETWORK_RESPONSE = "createNetworkResponse";
     private static final String DELETE_NETWORK_RESPONSE = "deleteNetworkResponse";
@@ -73,6 +84,7 @@ public class NetworkAdapterRestV1Test extends BaseTaskTest {
 
     @Before
     public void setup() {
+        initMocks(this);
         delegateExecution = new DelegateExecutionFake();
     }
 
@@ -185,6 +197,53 @@ public class NetworkAdapterRestV1Test extends BaseTaskTest {
         } catch (Exception e) {
             assertEquals(e.getMessage(), DELETE_NETWORK_ERROR_MESSAGE);
         }
+    }
+
+    @Test
+    public void callNetworkAdapter_CreateNetworkRequestSuccess() throws Exception {
+        // given
+        String messageId = "createNetReqMessageId";
+        CreateNetworkRequest createNetworkRequest = new CreateNetworkRequest();
+        createNetworkRequest.setMessageId(messageId);
+        delegateExecution.setVariable("networkAdapterRequest", createNetworkRequest);
+        Status status = Status.OK;
+        String responseEntity = "createNetworkResponse";
+        Optional<Response> response = Optional.of(createResponse(status, responseEntity));
+        when(networkAdapterResources.createNetworkAsync(createNetworkRequest)).thenReturn(response);
+        // when
+        networkAdapterRestV1Tasks.callNetworkAdapter(delegateExecution);
+        // then
+        verifyExecutionContent(status, responseEntity, messageId);
+    }
+
+    @Test
+    public void callNetworkAdapter_DeleteNetworkRequestSuccess() throws Exception {
+        // given
+        String messageId = "DeleteNetReqMessageId";
+        DeleteNetworkRequest deleteNetworkRequest = new DeleteNetworkRequest();
+        deleteNetworkRequest.setMessageId(messageId);
+        delegateExecution.setVariable("networkAdapterRequest", deleteNetworkRequest);
+        Status status = Status.OK;
+        String responseEntity = "createNetworkResponse";
+        Optional<Response> response = Optional.of(createResponse(status, responseEntity));
+        when(networkAdapterResources.deleteNetworkAsync(deleteNetworkRequest)).thenReturn(response);
+        // when
+        networkAdapterRestV1Tasks.callNetworkAdapter(delegateExecution);
+        // then
+        verifyExecutionContent(status, responseEntity, messageId);
+    }
+
+    private void verifyExecutionContent(Status status, String responseEntity, String messageId) {
+        assertEquals(delegateExecution.getVariable("NETWORKREST_networkAdapterStatusCode"),
+                Integer.toString(status.getStatusCode()));
+        assertEquals(delegateExecution.getVariable("NETWORKREST_networkAdapterResponse"), responseEntity);
+        assertEquals(delegateExecution.getVariable("NetworkAResponse_CORRELATOR"), messageId);
+    }
+
+    private Response createResponse(Status status, String responseEntity) {
+        OutboundMessageContext outboundMessageContext = new OutboundMessageContext();
+        outboundMessageContext.setEntity(responseEntity);
+        return new OutboundJaxrsResponse(status, outboundMessageContext);
     }
 
     private String createNetworkResponse(String networkResponseType, String networkId) {
