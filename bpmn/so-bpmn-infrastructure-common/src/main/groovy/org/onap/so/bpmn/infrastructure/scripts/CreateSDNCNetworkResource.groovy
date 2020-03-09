@@ -255,6 +255,42 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                 }
 
                 break
+				
+				case ~/[\w\s\W]*UNI[\w\s\W]*/ :
+				
+					def resourceInput = resourceInputObj.getResourceParameters()
+					String incomingRequest = resourceInputObj.getRequestsInputs()
+					String serviceParameters = JsonUtils.getJsonValue(incomingRequest, "service.parameters")
+					String requestInputs = JsonUtils.getJsonValue(serviceParameters, "requestInputs")
+					JSONObject inputParameters = new JSONObject(requestInputs)
+					if(inputParameters.has("vf_uni1_id") && inputParameters.has("vf_uni2_id")) {
+						String[] temp = inputParameters.get("vf_uni1_id").split(" ")
+						String uni1_id= temp[0]
+						String uResourceInput = jsonUtil.updJsonValue(resourceInput, "requestInputs.uni1_id", uni1_id)
+						uResourceInput = jsonUtil.updJsonValue(uResourceInput, "requestInputs.uni1_coding_func", inputParameters.get("vf_uni1_coding_func"))
+						String value = (inputParameters.get("vf_uni1_client_proto")== null)? "" : inputParameters.get("vf_uni1_client_proto")
+						uResourceInput = jsonUtil.updJsonValue(uResourceInput, "requestInputs.uni1_client_proto", value)
+						value = (inputParameters.get("vf_uni1_optical_interface")== null)? "" : inputParameters.get("vf_uni1_optical_interface")
+						uResourceInput = jsonUtil.updJsonValue(uResourceInput, "requestInputs.uni1_optical_interface", value)
+						String[] temp1 = inputParameters.get("vf_uni2_id").split(" ")
+						String uni2_id= temp1[0]
+						uResourceInput = jsonUtil.updJsonValue(uResourceInput, "requestInputs.uni2_id", uni2_id)
+						uResourceInput = jsonUtil.updJsonValue(uResourceInput, "requestInputs.uni2_coding_func", inputParameters.get("vf_uni2_coding_func"))
+						value = (inputParameters.get("vf_uni2_client_proto")== null)? "" : inputParameters.get("vf_uni2_client_proto")
+						uResourceInput = jsonUtil.updJsonValue(uResourceInput, "requestInputs.uni2_client_proto", value)
+						value = (inputParameters.get("vf_uni2_optical_interface")== null)? "" : inputParameters.get("vf_uni2_optical_interface")
+						uResourceInput = jsonUtil.updJsonValue(uResourceInput, "requestInputs.uni2_optical_interface", value)
+						uResourceInput = jsonUtil.delJsonValue(uResourceInput, "requestInputs.nf_naming")
+						uResourceInput = jsonUtil.delJsonValue(uResourceInput, "requestInputs.skip_post_instantiation_configuration")
+						uResourceInput = jsonUtil.delJsonValue(uResourceInput, "requestInputs.multi_stage_design")
+						uResourceInput = jsonUtil.delJsonValue(uResourceInput, "requestInputs.availability_zone_max_count")
+						
+						resourceInputObj.setResourceParameters(uResourceInput)
+						execution.setVariable(Prefix + "resourceInput", resourceInputObj.toString())
+						resourceInputObj.getResourceModelInfo().setModelType("UNI-UNI")
+				}
+		
+				break
 
             case ~/[\w\s\W]*sdwanvpnattachment[\w\s\W]*/ :
             case ~/[\w\s\W]*sotnvpnattachment[\w\s\W]*/ :
@@ -342,6 +378,9 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             String sdncTopologyCreateRequest = ""
 
             String modelType = resourceInputObj.getResourceModelInfo().getModelType()
+			if(serviceType.equals("MDONS_OTN")){
+				modelType = "UNI-UNI"
+			}
 
             switch (modelType) {
                 case "VNF" :
@@ -524,6 +563,33 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                              </aetgt:SDNCAdapterWorkflowRequest>""".trim()
 
                     break
+					
+					case ~/[\w\s\W]*UNI[\w\s\W]*/ :
+					source = "SO"
+					sdncTopologyCreateRequest = """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
+                                                              xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1"
+                                                              xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
+                                 <sdncadapter:RequestHeader>
+                                    <sdncadapter:RequestId>${msoUtils.xmlEscape(hdrRequestId)}</sdncadapter:RequestId>
+                                    <sdncadapter:SvcInstanceId>${msoUtils.xmlEscape(serviceInstanceId)}</sdncadapter:SvcInstanceId>
+                                    <sdncadapter:SvcAction>${msoUtils.xmlEscape(sdnc_svcAction)}</sdncadapter:SvcAction>
+                                    <sdncadapter:SvcOperation>optical-service-create</sdncadapter:SvcOperation>
+                                    <sdncadapter:CallbackUrl>sdncCallback</sdncadapter:CallbackUrl>
+                                    <sdncadapter:MsoAction>opticalservice</sdncadapter:MsoAction>
+                                 </sdncadapter:RequestHeader>
+                                 <sdncadapterworkflow:SDNCRequestData>
+									<request-id>${msoUtils.xmlEscape(hdrRequestId)}</request-id>
+									<global-customer-id>${msoUtils.xmlEscape(globalCustomerId)}</global-customer-id>
+									<service-type>${msoUtils.xmlEscape(serviceType)}</service-type>
+									<notification-url></notification-url>
+									<source>${msoUtils.xmlEscape(source)}</source>
+									<service-id>${msoUtils.xmlEscape(serviceInstanceId)}</service-id>
+                                     <payload>
+                                         $netowrkInputParameters
+                                     </payload>
+                                </sdncadapterworkflow:SDNCRequestData>
+                             </aetgt:SDNCAdapterWorkflowRequest>""".trim()
+					break
 
                 // for SDWANConnectivity and SOTNConnectivity:
                 default:

@@ -42,10 +42,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.json.XML;
+import org.json.JSONObject;
 
 public class Utils {
 
     private static Logger logger = LoggerFactory.getLogger(Utils.class);
+    private static int MSOJsonIndentFactor = 3;
 
     private Utils() {}
 
@@ -229,6 +232,87 @@ public class Utils {
         }
         return null;
     }
+    
+    public static String genOpticalSdncReq(Document reqDoc, RequestTunables rt) {
+        try {
+        	DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+
+            // NewDoc for output
+            // Root
+            Document newdoc = db.newDocument();
+            Element root = newdoc.createElementNS(rt.getNamespace(), "input");
+            newdoc.appendChild(root);
+            // RequestData
+            NodeList nodes = reqDoc.getDocumentElement().getChildNodes();
+            for (int i = 0; i < nodes.getLength(); i++) {
+                Node n = nodes.item(i);
+                Node newNode = newdoc.importNode(n, true);
+                root.appendChild(newNode);
+            }
+    		logger.info("Namespace is: " + rt.getNamespace());
+        	logger.info("opticalservice");
+        	String req = domToStr(newdoc);
+        	String s = xml2json(req, true);
+            logger.debug("Formatted SdncReq:\n", s);
+            return s;
+
+        } catch (Exception e) {
+            logger.error(LoggingAnchor.FOUR, MessageEnum.RA_ERROR_CREATE_SDNC_REQUEST.toString(), "SDNC",
+                    ErrorCode.BusinessProcesssError.getValue(), "Exception in genOpticalSdncReq", e);
+        }
+        return null;
+    }
+            
+    /**
+     * Uses the JSONObject static method to convert a XML doc to JSON.
+     *
+     * @param xml String containing the XML doc
+     * @param pretty flag to determine if the output should be formatted
+     * @return String containing the JSON translation
+     */
+    public static String xml2json(String xml, boolean pretty) {
+        try {
+            // name spaces cause problems, so just remove them
+            JSONObject jsonObj = XML.toJSONObject(removeNamespaces(xml));
+            if (!pretty) {
+                return jsonObj.toString();
+            } else {
+                // add an indent to make it 'pretty'
+                return jsonObj.toString(MSOJsonIndentFactor);
+            }
+        } catch (Exception e) {
+            logger.debug("xml2json(): unable to parse xml and convert to json. Exception was: {}", e.toString(), e);
+            return null;
+        }
+    }
+
+    /**
+     * Removes namespaces and namespace declarations from an XML document.
+     *
+     * @param xml the XML document
+     * @return a possibly modified document
+     */
+    public static String removeNamespaces(Object xml) {
+        if (xml == null) {
+            logger.debug("removeNamespaces input object is null , returning null");
+            return null;
+        }
+
+        String text = String.valueOf(xml);
+
+        // remove xmlns declaration
+        text = text.replaceAll("xmlns.*?(\"|\').*?(\"|\')", "");
+        // remove opening tag prefix
+        text = text.replaceAll("(<)(\\w+:)(.*?>)", "$1$3");
+        // remove closing tags prefix
+        text = text.replaceAll("(</)(\\w+:)(.*?>)", "$1$3");
+        // remove extra spaces left when xmlns declarations are removed
+        text = text.replaceAll("\\s+>", ">");
+
+        return text;
+    }
+
 
     public static String genMsoFailResp(SDNCResponse resp) {
         try {
