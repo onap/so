@@ -112,6 +112,8 @@ public class SDNCRestClient {
             Document reqDoc = node.getOwnerDocument();
             if (Constants.MSO_ACTION_LCM.equals(msoAction)) {
                 sdncReqBody = Utils.genSdncLcmReq(reqDoc, rt);
+            } else if (Constants.MSO_ACTION_MDONS.equals(msoAction)) {
+                sdncReqBody = Utils.genOpticalSdncReq(reqDoc, rt);
             } else {
                 sdncReqBody = Utils.genSdncReq(reqDoc, rt);
             }
