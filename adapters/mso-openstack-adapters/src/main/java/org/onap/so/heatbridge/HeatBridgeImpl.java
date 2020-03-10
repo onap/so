@@ -76,7 +76,7 @@ import org.onap.so.heatbridge.helpers.AaiHelper;
 import org.onap.so.heatbridge.openstack.api.OpenstackClient;
 import org.onap.so.heatbridge.openstack.factory.OpenstackClientFactoryImpl;
 import org.onap.so.heatbridge.utils.HeatBridgeUtils;
-import org.onap.so.logger.ErrorCode;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.openstack4j.model.compute.Server;

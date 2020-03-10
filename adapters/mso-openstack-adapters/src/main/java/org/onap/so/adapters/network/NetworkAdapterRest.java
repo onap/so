@@ -62,7 +62,7 @@ import org.onap.so.adapters.nwrest.UpdateNetworkRequest;
 import org.onap.so.adapters.nwrest.UpdateNetworkResponse;
 import org.onap.so.adapters.vnf.BpelRestClient;
 import org.onap.so.entity.MsoRequest;
-import org.onap.so.logger.ErrorCode;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.openstack.beans.NetworkRollback;
 import org.onap.so.openstack.beans.NetworkStatus;

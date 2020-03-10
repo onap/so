@@ -24,7 +24,7 @@ package org.onap.so.bpmn.common.scripts
 
 import org.onap.so.logger.LoggingAnchor
 import org.onap.so.client.HttpClientFactory
-import org.onap.so.logger.ErrorCode
+import org.onap.logging.filter.base.ErrorCode
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern

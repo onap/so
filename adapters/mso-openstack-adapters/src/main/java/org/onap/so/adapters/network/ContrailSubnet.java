@@ -27,7 +27,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
-import org.onap.so.logger.ErrorCode;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.openstack.beans.HostRoute;
 import org.onap.so.openstack.beans.Pool;

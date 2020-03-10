@@ -34,7 +34,7 @@ import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.BPMNFailureException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
-import org.onap.so.logger.ErrorCode;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;

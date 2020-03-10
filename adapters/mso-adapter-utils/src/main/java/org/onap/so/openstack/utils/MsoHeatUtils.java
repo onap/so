@@ -52,7 +52,7 @@ import org.onap.so.db.catalog.beans.HeatTemplateParam;
 import org.onap.so.db.request.beans.CloudApiRequests;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
-import org.onap.so.logger.ErrorCode;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.openstack.beans.CreateStackRequest;
 import org.onap.so.openstack.beans.HeatStatus;

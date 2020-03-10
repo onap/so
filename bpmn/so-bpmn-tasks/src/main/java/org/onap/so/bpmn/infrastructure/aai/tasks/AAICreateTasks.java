@@ -66,7 +66,7 @@ import org.onap.so.client.orchestration.AAIVfModuleResources;
 import org.onap.so.client.orchestration.AAIVnfResources;
 import org.onap.so.client.orchestration.AAIVolumeGroupResources;
 import org.onap.so.client.orchestration.AAIVpnBindingResources;
-import org.onap.so.logger.ErrorCode;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;

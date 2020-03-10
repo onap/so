@@ -46,7 +46,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 import org.onap.so.logger.LoggingAnchor;
-import org.onap.so.logger.ErrorCode;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.utils.CryptoUtils;
 import org.onap.so.adapters.sdnc.SDNCAdapterRequest;
 import org.onap.so.adapters.sdnc.client.CallbackHeader;

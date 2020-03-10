@@ -47,7 +47,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.onap.so.adapters.vfc.model.RestfulResponse;
-import org.onap.so.logger.ErrorCode;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -25,7 +25,7 @@ import java.io.IOException;
 import org.onap.so.adapters.nssmf.exceptions.ApplicationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.onap.so.logger.ErrorCode;
+import org.onap.logging.filter.base.ErrorCode;
 import static org.onap.so.logger.LoggingAnchor.THREE;
 import static org.onap.so.logger.MessageEnum.RA_NS_EXC;
 

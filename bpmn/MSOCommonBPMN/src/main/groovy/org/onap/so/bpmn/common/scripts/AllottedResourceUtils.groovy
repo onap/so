@@ -24,7 +24,7 @@ package org.onap.so.bpmn.common.scripts
 
 import org.onap.so.logger.LoggingAnchor
 import org.onap.so.client.aai.entities.AAIResultWrapper
-import org.onap.so.logger.ErrorCode
+import org.onap.logging.filter.base.ErrorCode
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 

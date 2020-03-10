@@ -53,7 +53,7 @@ import org.onap.so.entity.MsoRequest;
 import org.onap.so.heatbridge.HeatBridgeApi;
 import org.onap.so.heatbridge.HeatBridgeException;
 import org.onap.so.heatbridge.HeatBridgeImpl;
-import org.onap.so.logger.ErrorCode;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.openstack.beans.HeatStatus;

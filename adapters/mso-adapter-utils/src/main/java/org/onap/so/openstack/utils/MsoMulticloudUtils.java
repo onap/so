@@ -43,7 +43,7 @@ import org.onap.so.adapters.vdu.VduStatus;
 import org.onap.so.client.HttpClient;
 import org.onap.so.client.HttpClientFactory;
 import org.onap.so.client.RestClient;
-import org.onap.so.logger.ErrorCode;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.openstack.beans.HeatStatus;
 import org.onap.so.openstack.beans.StackInfo;

@@ -29,7 +29,7 @@ import java.util.Optional;
 import org.onap.so.cloud.authentication.AuthenticationMethodFactory;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
-import org.onap.so.logger.ErrorCode;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.openstack.beans.MsoTenant;
 import org.onap.so.openstack.exceptions.MsoAdapterException;

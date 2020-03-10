@@ -30,7 +30,7 @@ import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
-import org.onap.so.logger.ErrorCode
+import org.onap.logging.filter.base.ErrorCode
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
