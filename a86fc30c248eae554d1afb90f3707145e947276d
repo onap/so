@@ -60,6 +60,30 @@
     },
     {
       "key": {
+        "uuid": "78c48498_e7bbfd1b",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBB.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-03-10T07:46:13Z",
+      "side": 1,
+      "message": "Those fields are already annotated as @Autowired. There\u0027s been used constructor-based dependency injection lines 57-63.",
+      "parentUuid": "f6722986_a89dc4af",
+      "range": {
+        "startLine": 53,
+        "startChar": 6,
+        "endLine": 55,
+        "endChar": 17
+      },
+      "revId": "a86fc30c248eae554d1afb90f3707145e947276d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b4df1291_de5606f5",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBB.java",
         "patchSetId": 9
