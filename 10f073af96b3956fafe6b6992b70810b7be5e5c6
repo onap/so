@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "91a9bcf0_67bbe984",
+        "filename": "adapters/mso-sdnc-adapter/src/main/java/org/onap/so/adapters/sdnc/impl/Utils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2020-03-10T08:31:29Z",
+      "side": 1,
+      "message": "this should be debug log",
+      "range": {
+        "startLine": 253,
+        "startChar": 12,
+        "endLine": 253,
+        "endChar": 62
+      },
+      "revId": "10f073af96b3956fafe6b6992b70810b7be5e5c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d25a875a_459f1b16",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/CreateSDNCNetworkResource.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2020-03-10T08:31:29Z",
+      "side": 1,
+      "message": "please remove tab character",
+      "range": {
+        "startLine": 259,
+        "startChar": 0,
+        "endLine": 259,
+        "endChar": 3
+      },
+      "revId": "10f073af96b3956fafe6b6992b70810b7be5e5c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "edf0d469_1ba5e465",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/CreateSDNCNetworkResource.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 270,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2020-03-10T08:31:29Z",
+      "side": 1,
+      "message": "We need not to update all the \u003ckey,value\u003e to uResouceInput. If these keys are already defined in the SDC then we need to pick it specifically here and assign it.\n\nHere we update \u003ckey, value\u003e if it is not defined in the csar distribution.",
+      "range": {
+        "startLine": 269,
+        "startChar": 6,
+        "endLine": 270,
+        "endChar": 138
+      },
+      "revId": "10f073af96b3956fafe6b6992b70810b7be5e5c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "41b1eb8a_f1207a31",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/CreateSDNCNetworkResource.groovy",
+        "patchSetId": 2
+      },
+      "lineNbr": 383,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2020-03-10T08:31:29Z",
+      "side": 1,
+      "message": "I think we can define model type using previous logic.",
+      "range": {
+        "startLine": 381,
+        "startChar": 0,
+        "endLine": 383,
+        "endChar": 4
+      },
+      "revId": "10f073af96b3956fafe6b6992b70810b7be5e5c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
