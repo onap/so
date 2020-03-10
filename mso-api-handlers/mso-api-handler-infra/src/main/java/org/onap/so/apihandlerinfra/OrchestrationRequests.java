@@ -106,7 +106,7 @@ public class OrchestrationRequests {
     private CamundaRequestHandler camundaRequestHandler;
 
     @GET
-    @Path("/{version:[vV][4-7]}/{requestId}")
+    @Path("/{version:[vV][4-8]}/{requestId}")
     @Operation(description = "Find Orchestrated Requests for a given requestId", responses = @ApiResponse(
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Produces(MediaType.APPLICATION_JSON)
@@ -115,7 +115,6 @@ public class OrchestrationRequests {
             @PathParam("version") String version, @QueryParam("includeCloudRequest") boolean includeCloudRequest,
             @QueryParam(value = "format") String format) throws ApiException {
 
-        String apiVersion = version.substring(1);
         GetOrchestrationResponse orchestrationResponse = new GetOrchestrationResponse();
 
         InfraActiveRequests infraActiveRequest = null;
@@ -152,7 +151,7 @@ public class OrchestrationRequests {
             }
         }
 
-        Request request = mapInfraActiveRequestToRequest(infraActiveRequest, includeCloudRequest, format);
+        Request request = mapInfraActiveRequestToRequest(infraActiveRequest, includeCloudRequest, format, version);
 
         if (null != requestProcessingData && !requestProcessingData.isEmpty()) {
             request.setRequestProcessingData(mapRequestProcessingData(requestProcessingData));
@@ -161,11 +160,11 @@ public class OrchestrationRequests {
         orchestrationResponse.setRequest(request);
 
         return builder.buildResponse(HttpStatus.SC_OK, MDC.get(ONAPLogConstants.MDCs.REQUEST_ID), orchestrationResponse,
-                apiVersion);
+                version);
     }
 
     @GET
-    @Path("/{version:[vV][4-7]}")
+    @Path("/{version:[vV][4-8]}")
     @Operation(description = "Find Orchestrated Requests for a URI Information", responses = @ApiResponse(
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @Produces(MediaType.APPLICATION_JSON)
@@ -206,7 +205,7 @@ public class OrchestrationRequests {
 
         for (InfraActiveRequests infraActive : activeRequests) {
             RequestList requestList = new RequestList();
-            Request request = mapInfraActiveRequestToRequest(infraActive, includeCloudRequest, format);
+            Request request = mapInfraActiveRequestToRequest(infraActive, includeCloudRequest, format, version);
 
             if (isRequestProcessingDataRequired(format)) {
                 List<RequestProcessingData> requestProcessingData =
@@ -292,7 +291,7 @@ public class OrchestrationRequests {
     }
 
     protected Request mapInfraActiveRequestToRequest(InfraActiveRequests iar, boolean includeCloudRequest,
-            String format) throws ApiException {
+            String format, String version) throws ApiException {
         String requestBody = iar.getRequestBody();
         Request request = new Request();
 
@@ -402,7 +401,7 @@ public class OrchestrationRequests {
             });
         }
 
-        mapRequestStatusAndExtSysErrSrcToRequest(iar, status, format);
+        mapRequestStatusAndExtSysErrSrcToRequest(iar, status, format, version);
 
         request.setRequestStatus(status);
         return request;
@@ -431,7 +430,7 @@ public class OrchestrationRequests {
     }
 
     protected void mapRequestStatusAndExtSysErrSrcToRequest(InfraActiveRequests iar, RequestStatus status,
-            String format) {
+            String format, String version) {
         String rollbackStatusMessage = iar.getRollbackStatusMessage();
         String flowStatusMessage = iar.getFlowStatus();
         String retryStatusMessage = iar.getRetryStatusMessage();
@@ -467,6 +466,12 @@ public class OrchestrationRequests {
             if (rollbackStatusMessage != null) {
                 status.setRollbackStatusMessage(rollbackStatusMessage);
             }
+            if (version.matches("v[8-9]|v[1-9][0-9]")) {
+                if (iar.getResourceStatusMessage() != null) {
+                    status.setResourceStatusMessage(iar.getResourceStatusMessage());
+                }
+            }
+
             status.setExtSystemErrorSource(iar.getExtSystemErrorSource());
             status.setRollbackExtSystemErrorSource(iar.getRollbackExtSystemErrorSource());
         } else {
@@ -490,6 +495,13 @@ public class OrchestrationRequests {
                     statusMessages = statusMessages + " " + "ROLLBACK STATUS: " + rollbackStatusMessage;
                 } else {
                     statusMessages = "ROLLBACK STATUS: " + rollbackStatusMessage;
+                }
+            }
+            if (iar.getResourceStatusMessage() != null) {
+                if (statusMessages != null) {
+                    statusMessages = statusMessages + " " + "RESOURCE STATUS: " + iar.getResourceStatusMessage();
+                } else {
+                    statusMessages = "RESOURCE STATUS: " + iar.getResourceStatusMessage();
                 }
             }
         }

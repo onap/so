@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,6 +22,8 @@ package org.onap.so.adapters.vnf;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.github.tomakehurst.wiremock.WireMockServer;
+import org.apache.http.HttpStatus;
 import org.json.JSONException;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -49,6 +51,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.patch;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
@@ -111,6 +116,8 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
         mockOpenStackPostStacks_200(wireMockServer);
 
         mockOpenStackGetStackVfModule_200(wireMockServer);
+
+        mockUpdateRequestDb(wireMockServer, "62265093-277d-4388-9ba6-449838ade586");
 
         headers.add("Accept", MediaType.APPLICATION_JSON);
         HttpEntity<CreateVfModuleRequest> entity = new HttpEntity<CreateVfModuleRequest>(request, headers);
@@ -207,6 +214,8 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
         mockOpenStackPostStacks_200(wireMockServer);
 
         mockOpenStackGetStackVfModule_200(wireMockServer);
+
+        mockUpdateRequestDb(wireMockServer, "62265093-277d-4388-9ba6-449838ade586");
 
 
         headers.add("Accept", MediaType.APPLICATION_JSON);
@@ -342,6 +351,7 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
 
         mockOpenStackDeletePublicUrlStackByNameAndID_204(wireMockServer);
 
+        mockUpdateRequestDb(wireMockServer, "62265093-277d-4388-9ba6-449838ade586");
 
         headers.add("Accept", MediaType.APPLICATION_JSON);
         HttpEntity<DeleteVfModuleRequest> entity = new HttpEntity<DeleteVfModuleRequest>(request, headers);
@@ -538,5 +548,10 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
         request.setMessageId(MESSAGE_ID);
 
         return request;
+    }
+
+    public static void mockUpdateRequestDb(WireMockServer wireMockServer, String requestId) throws IOException {
+        wireMockServer.stubFor(patch(urlPathEqualTo("/infraActiveRequests/" + requestId))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_OK)));
     }
 }

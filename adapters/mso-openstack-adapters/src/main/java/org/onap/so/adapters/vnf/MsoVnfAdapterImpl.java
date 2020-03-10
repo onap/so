@@ -109,6 +109,12 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     private static final String USER_ERROR = "USER ERROR";
     private static final String VERSION_MIN = "VersionMin";
     private static final String VERSION_MAX = "VersionMax";
+    private static final String VF_EXIST_STATUS_MESSAGE =
+            "The vf module was found to already exist, thus no new vf module was created in the cloud via this request";
+    private static final String VF_CREATED_STATUS_MESSAGE = "The new vf module was successfully created in the cloud";
+    private static final String VF_NOT_EXIST_STATUS_MESSAGE =
+            "The vf module was not, thus no vf module was deleted in the cloud via this request";
+    private static final String VF_DELETED_STATUS_MESSAGE = "The vf module was successfully deleted in the cloud";
 
     @Autowired
     private VFModuleCustomizationRepository vfModuleCustomRepo;
@@ -1046,6 +1052,9 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                     heatStack = msoHeatUtils.createStack(cloudSiteId, cloudOwner, tenantId, vfModuleName, null,
                             template, goldenInputs, true, heatTemplate.getTimeoutMinutes(), newEnvironmentString,
                             nestedTemplatesChecked, heatFilesObjects, backout.booleanValue(), failIfExists);
+
+                    msoHeatUtils.updateResourceStatus(msoRequest.getRequestId(),
+                            heatStack.isOperationPerformed() ? VF_EXIST_STATUS_MESSAGE : VF_CREATED_STATUS_MESSAGE);
                 } else {
                     throw new MsoHeatNotFoundException();
                 }
@@ -1125,7 +1134,10 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         }
 
         try {
-            msoHeatUtils.deleteStack(tenantId, cloudOwner, cloudSiteId, vnfName, true, timeoutMinutes);
+            StackInfo stackInfo =
+                    msoHeatUtils.deleteStack(tenantId, cloudOwner, cloudSiteId, vnfName, true, timeoutMinutes);
+            msoHeatUtils.updateResourceStatus(msoRequest.getRequestId(),
+                    stackInfo.isOperationPerformed() ? VF_DELETED_STATUS_MESSAGE : VF_NOT_EXIST_STATUS_MESSAGE);
         } catch (MsoException me) {
             me.addContext(DELETE_VNF);
             // Failed to query the Stack due to an openstack exception.

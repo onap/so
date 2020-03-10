@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,7 +26,7 @@ import java.util.Map;
 
 /*
  * This Java bean class relays Heat stack status information to ActiveVOS processes.
- * 
+ *
  * This bean is returned by all Heat-specific adapter operations (create, query, delete)
  */
 
@@ -36,6 +36,7 @@ public class StackInfo {
     private String canonicalName = "";
     private HeatStatus status = HeatStatus.UNKNOWN;
     private String statusMessage = "";
+    private boolean operationPerformed;
     private Map<String, Object> outputs = new HashMap<>();
     private Map<String, Object> parameters = new HashMap<>();
 
@@ -105,6 +106,16 @@ public class StackInfo {
     public void setParameters(Map<String, Object> parameters) {
         this.parameters = parameters;
     }
+
+    public boolean isOperationPerformed() {
+        return operationPerformed;
+    }
+
+    public void setOperationPerformed(boolean operationPerformed) {
+        this.operationPerformed = operationPerformed;
+    }
+
+
 
 }
 

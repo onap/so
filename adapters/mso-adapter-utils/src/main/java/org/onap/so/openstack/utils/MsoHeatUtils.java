@@ -101,8 +101,6 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
 
     private static final String CREATE_IN_PROGRESS = "CREATE_IN_PROGRESS";
 
-    private static final String DELETE_STACK = "DeleteStack";
-
     protected static final String HEAT_ERROR = "HeatError";
 
     protected static final String CREATE_STACK = "CreateStack";
@@ -115,13 +113,13 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
     private Environment environment;
 
     @Autowired
-    RequestsDbClient requestDBClient;
-
-    @Autowired
     StackStatusHandler statusHandler;
 
     @Autowired
     NovaClientImpl novaClient;
+
+    @Autowired
+    RequestsDbClient requestDBClient;
 
     private static final Logger logger = LoggerFactory.getLogger(MsoHeatUtils.class);
 
@@ -182,6 +180,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
         CreateStackParam createStack = createStackParam(stackName, heatTemplate, stackInputs, timeoutMinutes,
                 environment, nestedTemplates, heatFiles);
         Stack currentStack = queryHeatStack(stackName, cloudSiteId, tenantId);
+        boolean operationPerformed = false;
         if (currentStack != null) {
             logger.debug("Existing Stack found with Status: {} ", currentStack.getStackStatus());
             if (CREATE_COMPLETE.equals(currentStack.getStackStatus())) {
@@ -220,8 +219,11 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
                 currentStack =
                         queryHeatStack(currentStack.getStackName() + "/" + currentStack.getId(), cloudSiteId, tenantId);
             }
+            operationPerformed = true;
         }
-        return new StackInfoMapper(currentStack).map();
+        StackInfo stackInfo = new StackInfoMapper(currentStack).map();
+        stackInfo.setOperationPerformed(operationPerformed);
+        return stackInfo;
     }
 
     /**
@@ -497,14 +499,17 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
     public StackInfo deleteStack(String tenantId, String cloudOwner, String cloudSiteId, String stackName,
             boolean pollForCompletion, int timeoutMinutes) throws MsoException {
         Stack currentStack = queryHeatStack(stackName, cloudSiteId, tenantId);
+        StackInfo stackInfo = null;
         if (currentStack == null || DELETE_COMPLETE.equals(currentStack.getStackStatus())) {
-            return new StackInfo(stackName, HeatStatus.NOTFOUND);
+            stackInfo = new StackInfo(stackName, HeatStatus.NOTFOUND);
+            stackInfo.setOperationPerformed(false);
         } else {
             currentStack = deleteStack(currentStack, timeoutMinutes, cloudSiteId, tenantId);
-            StackInfo stackInfo = new StackInfoMapper(currentStack).map();
+            stackInfo = new StackInfoMapper(currentStack).map();
             stackInfo.setName(stackName);
-            return stackInfo;
+            stackInfo.setOperationPerformed(true);
         }
+        return stackInfo;
     }
 
     /**
@@ -1180,6 +1185,13 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
             logger.debug("Thread interrupted while sleeping", e);
             Thread.currentThread().interrupt();
         }
+    }
+
+    public void updateResourceStatus(String requestId, String resourceStatusMessage) {
+        InfraActiveRequests request = new InfraActiveRequests();
+        request.setRequestId(requestId);
+        request.setResourceStatusMessage(resourceStatusMessage);
+        requestDBClient.patchInfraActiveRequests(request);
     }
 
 }

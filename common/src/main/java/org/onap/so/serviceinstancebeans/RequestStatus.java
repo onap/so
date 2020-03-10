@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,6 +32,8 @@ public class RequestStatus {
     protected String requestState;
     @JsonProperty("statusMessage")
     protected String statusMessage;
+    @JsonProperty("resourceStatusMessage")
+    protected String resourceStatusMessage;
     @JsonProperty("percentProgress")
     protected Integer percentProgress;
     @JsonProperty("timestamp")
@@ -95,6 +97,14 @@ public class RequestStatus {
         this.statusMessage = statusMessage;
     }
 
+    public String getResourceStatusMessage() {
+        return resourceStatusMessage;
+    }
+
+    public void setResourceStatusMessage(String resourceStatusMessage) {
+        this.resourceStatusMessage = resourceStatusMessage;
+    }
+
     public Integer getPercentProgress() {
         return percentProgress;
     }
@@ -122,8 +132,8 @@ public class RequestStatus {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("requestState", requestState).append("statusMessage", statusMessage)
-                .append("percentProgress", percentProgress).append("timestamp", timeStamp)
-                .append("extSystemErrorSource", extSystemErrorSource)
+                .append("resourceStatusMessage", resourceStatusMessage).append("percentProgress", percentProgress)
+                .append("timestamp", timeStamp).append("extSystemErrorSource", extSystemErrorSource)
                 .append("rollbackExtSystemErrorSource", rollbackExtSystemErrorSource).append("flowStatus", flowStatus)
                 .append("retryStatusMessage", retryStatusMessage).append("rollbackStatusMessage", rollbackStatusMessage)
                 .toString();

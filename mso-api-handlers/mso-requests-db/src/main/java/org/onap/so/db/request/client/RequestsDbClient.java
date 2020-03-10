@@ -360,6 +360,7 @@ public class RequestsDbClient {
         restTemplate.postForLocation(uri, entity);
     }
 
+    // TODO really this should be called save as its doing a put
     public void updateInfraActiveRequests(InfraActiveRequests request) {
         HttpHeaders headers = getHttpHeaders();
         URI uri = getUri(infraActiveRequestURI + request.getRequestId());
@@ -371,8 +372,7 @@ public class RequestsDbClient {
         HttpHeaders headers = getHttpHeaders();
         URI uri = getUri(infraActiveRequestURI + request.getRequestId());
         HttpEntity<InfraActiveRequests> entity = new HttpEntity<>(request, headers);
-        restTemplate.exchange(uri, HttpMethod.PATCH, new HttpEntity<InfraActiveRequests>(request, headers),
-                String.class);
+        restTemplate.exchange(uri, HttpMethod.PATCH, entity, String.class);
     }
 
     public InfraActiveRequests getInfraActiveRequests(String requestId, String basicAuth, String host) {

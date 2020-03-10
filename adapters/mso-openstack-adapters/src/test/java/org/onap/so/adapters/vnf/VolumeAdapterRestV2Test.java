@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,6 +20,7 @@
 
 package org.onap.so.adapters.vnf;
 
+import org.apache.http.HttpStatus;
 import org.junit.Test;
 import org.onap.so.adapters.vnfrest.CreateVolumeGroupRequest;
 import org.onap.so.adapters.vnfrest.CreateVolumeGroupResponse;
@@ -37,6 +38,9 @@ import org.springframework.http.ResponseEntity;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.patch;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.junit.Assert.assertEquals;
 import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackGetStackVfModule_200;
 import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackGetStackWithBody_200;
@@ -52,6 +56,9 @@ public class VolumeAdapterRestV2Test extends VolumeGroupAdapterCommon {
         mockOpenStackResponseAccess(wireMockServer, wireMockPort);
         mockOpenStackPostStacks_200(wireMockServer);
         mockOpenStackGetStackVfModule_200(wireMockServer);
+        wireMockServer.stubFor(patch(urlPathEqualTo("/infraActiveRequests/62265093-277d-4388-9ba6-449838ade586"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_OK)));
+
         CreateVolumeGroupRequest request = buildCreateVfModuleRequest();
 
         HttpEntity<CreateVolumeGroupRequest> entity = new HttpEntity<>(request, headers);

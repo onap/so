@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,6 +55,8 @@ public abstract class InfraRequests implements java.io.Serializable {
     private String requestId;
     @Column(name = "REQUEST_STATUS", length = 20)
     private String requestStatus;
+    @Column(name = "RESOURCE_STATUS_MESSAGE", length = 2000)
+    private String resourceStatusMessage;
     @Column(name = "STATUS_MESSAGE", length = 2000)
     private String statusMessage;
     @Column(name = "ROLLBACK_STATUS_MESSAGE", length = 2000)
@@ -177,6 +179,14 @@ public abstract class InfraRequests implements java.io.Serializable {
 
     public void setRequestStatus(String requestStatus) {
         this.requestStatus = requestStatus;
+    }
+
+    public String getResourceStatusMessage() {
+        return resourceStatusMessage;
+    }
+
+    public void setResourceStatusMessage(String resourceStatusMessage) {
+        this.resourceStatusMessage = resourceStatusMessage;
     }
 
     public String getStatusMessage() {
@@ -608,11 +618,12 @@ public abstract class InfraRequests implements java.io.Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("requestId", getRequestId()).append("requestStatus", getRequestStatus())
-                .append("statusMessage", getStatusMessage()).append("rollbackStatusMessage", getRollbackStatusMessage())
-                .append("flowStatus", getFlowStatus()).append("retryStatusMessage", getRetryStatusMessage())
-                .append("progress", getProgress()).append("startTime", getStartTime()).append("endTime", getEndTime())
-                .append("source", getSource()).append("vnfId", getVnfId()).append("vnfName", getVnfName())
-                .append("pnfName", getPnfName()).append("vnfType", getVnfType()).append("serviceType", getServiceType())
+                .append("resourceStatusMessage", getResourceStatusMessage()).append("statusMessage", getStatusMessage())
+                .append("rollbackStatusMessage", getRollbackStatusMessage()).append("flowStatus", getFlowStatus())
+                .append("retryStatusMessage", getRetryStatusMessage()).append("progress", getProgress())
+                .append("startTime", getStartTime()).append("endTime", getEndTime()).append("source", getSource())
+                .append("vnfId", getVnfId()).append("vnfName", getVnfName()).append("pnfName", getPnfName())
+                .append("vnfType", getVnfType()).append("serviceType", getServiceType())
                 .append("tenantId", getTenantId()).append("vnfParams", getVnfParams())
                 .append("vnfOutputs", getVnfOutputs()).append("requestBody", getRequestBody())
                 .append("responseBody", getResponseBody()).append("lastModifiedBy", getLastModifiedBy())
