@@ -127,7 +127,11 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             String key = iterator.next()
             HashMap<String, String> hashMap = new HashMap()
             hashMap.put("name", key)
-            hashMap.put("value", jsonObject.get(key))
+            if(jsonObject.get(key)==null){
+                 hashMap.put("value", "")
+             }else{
+                 hashMap.put("value", jsonObject.get(key))
+             }
             paramList.add(hashMap)
         }
         Map<String, List<Map<String, Object>>> paramMap = new HashMap()
@@ -345,6 +349,32 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
 
             switch (modelType) {
                 case "VNF" :
+					if(modelName.contains("UNI") && "MDONS_OTN".equals(serviceType)){
+						source = "SO"
+						sdncTopologyCreateRequest = """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
+                                                              xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1"
+                                                              xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
+                                 <sdncadapter:RequestHeader>
+                                    <sdncadapter:RequestId>${msoUtils.xmlEscape(hdrRequestId)}</sdncadapter:RequestId>
+                                    <sdncadapter:SvcInstanceId>${msoUtils.xmlEscape(serviceInstanceId)}</sdncadapter:SvcInstanceId>
+                                    <sdncadapter:SvcAction>${msoUtils.xmlEscape(sdnc_svcAction)}</sdncadapter:SvcAction>
+                                    <sdncadapter:SvcOperation>optical-service-create</sdncadapter:SvcOperation>
+                                    <sdncadapter:CallbackUrl>sdncCallback</sdncadapter:CallbackUrl>
+                                    <sdncadapter:MsoAction>opticalservice</sdncadapter:MsoAction>
+                                 </sdncadapter:RequestHeader>
+                                 <sdncadapterworkflow:SDNCRequestData>
+                                    <request-id>${msoUtils.xmlEscape(hdrRequestId)}</request-id>
+                                    <global-customer-id>${msoUtils.xmlEscape(globalCustomerId)}</global-customer-id>
+                                    <service-type>${msoUtils.xmlEscape(serviceType)}</service-type>
+                                    <notification-url>sdncCallback</notification-url>
+                                    <source>${msoUtils.xmlEscape(source)}</source>
+                                    <service-id>${msoUtils.xmlEscape(serviceInstanceId)}</service-id>
+                                     <payload>
+                                         $netowrkInputParameters
+                                     </payload>
+                                </sdncadapterworkflow:SDNCRequestData>
+                             </aetgt:SDNCAdapterWorkflowRequest>""".trim()
+					} else{
                     sdncTopologyCreateRequest = """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
                                                               xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1"
                                                               xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
@@ -399,6 +429,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                                       </vnf-request-input>
                                 </sdncadapterworkflow:SDNCRequestData>
                              </aetgt:SDNCAdapterWorkflowRequest>""".trim()
+					}
                     break
                 case "GROUP" :
                     String vnfid = resourceInputObj.getVnfId()
