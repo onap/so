@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5d3cfdb1_a6da983a",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/CreateSDNCNetworkResource.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2020-03-11T12:33:51Z",
+      "side": 1,
+      "message": "i think it will not create any issue sending nf_naming to sdnc.",
+      "range": {
+        "startLine": 267,
+        "startChar": 29,
+        "endLine": 267,
+        "endChar": 92
+      },
+      "revId": "c99f989ace02dd878ee201153114ae1244266cef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ecf0c2e3_333a71f0",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/CreateSDNCNetworkResource.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 270,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2020-03-11T12:33:51Z",
+      "side": 1,
+      "message": "same for these values",
+      "range": {
+        "startLine": 268,
+        "startChar": 5,
+        "endLine": 270,
+        "endChar": 104
+      },
+      "revId": "c99f989ace02dd878ee201153114ae1244266cef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2e469c96_0ca2e9cd",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/CreateSDNCNetworkResource.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2020-03-11T12:33:51Z",
+      "side": 1,
+      "message": "Why we are setting modeltype once again?",
+      "range": {
+        "startLine": 273,
+        "startChar": 5,
+        "endLine": 273,
+        "endChar": 66
+      },
+      "revId": "c99f989ace02dd878ee201153114ae1244266cef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
