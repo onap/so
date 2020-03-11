@@ -95,6 +95,7 @@ class ActivateSliceService extends AbstractServiceTaskProcessor {
             if (isBlank(globalSubscriberId)) {
                 msg = "Input globalSubscriberId' is null"
                 logger.info(msg)
+                execution.setVariable("globalSubscriberId", "5GCustomer")
             } else {
                 execution.setVariable("globalSubscriberId", globalSubscriberId)
             }
@@ -104,14 +105,16 @@ class ActivateSliceService extends AbstractServiceTaskProcessor {
             if (isBlank(subscriptionServiceType)) {
                 msg = "Input subscriptionServiceType is null"
                 logger.debug(msg)
-                //exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
+                execution.setVariable("subscriptionServiceType", "5G")
             } else {
                 execution.setVariable("subscriptionServiceType", subscriptionServiceType)
             }
             String operationId = jsonUtil.getJsonValue(siRequest, "operationId")
             execution.setVariable("operationId", operationId)
 
-            execution.getVariable("operationType")
+            String operationType = execution.getVariable("operationType")
+            execution.setVariable("operationType", operationType.toUpperCase())
+
             logger.info("operationType is " + execution.getVariable("operationType") )
         } catch (BpmnError e) {
             throw e
@@ -308,7 +311,7 @@ class ActivateSliceService extends AbstractServiceTaskProcessor {
             String nssiid = nssi.getNssiId()
             updateStratus(execution, globalCustId, serviceType, nssiid, operationType)
         }
-        if (operationType == "activation") {
+        if (operationType.equalsIgnoreCase("activation")) {
             //update the s-nssai
             updateStratus(execution, globalCustId, serviceType, e2eserviceInstanceId, operationType)
             //update the nsi
@@ -345,7 +348,7 @@ class ActivateSliceService extends AbstractServiceTaskProcessor {
             Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
 
             if (si.isPresent()) {
-                if (operationType == "activation") {
+                if (operationType.equalsIgnoreCase("activation")) {
                     if (si.get().getOrchestrationStatus() == "deactivated") {
                         si.get().setOrchestrationStatus("activated")
                         client.update(uri, si.get())
@@ -484,15 +487,14 @@ class ActivateSliceService extends AbstractServiceTaskProcessor {
                 Optional<ServiceInstance> si = wrapper.asBean(ServiceInstance.class)
                 if (si.isPresent()) {
                     if (si.get().getOrchestrationStatus().toLowerCase() == "activated" &&
-                            operationType == "deactivation") {
+                            operationType.equalsIgnoreCase("deactivation")) {
                         logger.info("Service is in active state")
                         execution.setVariable("e2eservicestatus", "activated")
                         execution.setVariable("isContinue", "true")
                         String snssai = si.get().getEnvironmentContext()
                         execution.setVariable("snssai", snssai)
-                    } else if ((si.get().getOrchestrationStatus().toLowerCase() == "deactivated" ||
-                            si.get().getOrchestrationStatus().toLowerCase() == "created") &&
-                            operationType == "activation") {
+                    } else if (si.get().getOrchestrationStatus().toLowerCase() == "deactivated" &&
+                            operationType.equalsIgnoreCase("activation")) {
                         logger.info("Service is  in de-activated state")
                         execution.setVariable("e2eservicestatus", "deactivated")
                         execution.setVariable("isContinue", "true")

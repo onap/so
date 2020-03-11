@@ -102,6 +102,9 @@ class ActivateCommunicationService extends AbstractServiceTaskProcessor {
             String operationId = jsonUtil.getJsonValue(siRequest, "operationId")
             execution.setVariable("operationId", operationId)
 
+            String operationType = execution.getVariable("operationType")
+            execution.setVariable("operationType", operationType.toUpperCase())
+
         } catch (BpmnError e) {
             throw e
         } catch (Exception ex) {
@@ -139,14 +142,14 @@ class ActivateCommunicationService extends AbstractServiceTaskProcessor {
             if(si.isPresent()) {
 
                 if (si.get().getOrchestrationStatus().toLowerCase() == "activated" &&
-                        operationType == "deactivation") {
+                        operationType.equalsIgnoreCase("deactivation")) {
                     logger.info("Service is in active state")
                     execution.setVariable("serviceExpectStatus", "deactivated")
                     execution.setVariable("isContinue", "true")
                     execution.setVariable("requestParam", "deactivate")
 
                 } else if (si.get().getOrchestrationStatus().toLowerCase()  == "deactivated" &&
-                        operationType == "activation"){
+                        operationType.equalsIgnoreCase("activation")){
                     logger.info("Service is  in de-activated state")
                     execution.setVariable("serviceExpectStatus", "activated")
                     execution.setVariable("isContinue", "true")
