@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "7e9265d2_1a16005e",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBB.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-03-11T14:03:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ff781e2d_4a27f125",
+      "range": {
+        "startLine": 46,
+        "startChar": 65,
+        "endLine": 46,
+        "endChar": 90
+      },
+      "revId": "8525eefa0d694154409ff21952c61a0bc23a0ba0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8a319747_3499d946",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBB.java",
         "patchSetId": 10
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "67d2b15b_93cb6223",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBB.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-03-11T14:03:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8a319747_3499d946",
+      "range": {
+        "startLine": 119,
+        "startChar": 78,
+        "endLine": 119,
+        "endChar": 100
+      },
+      "revId": "8525eefa0d694154409ff21952c61a0bc23a0ba0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0c813ba8_6909cb4e",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBB.java",
         "patchSetId": 10
@@ -68,6 +116,30 @@
       "revId": "8525eefa0d694154409ff21952c61a0bc23a0ba0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9be3b33e_f660a401",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericPnfCDSControllerRunnableBB.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 6222
+      },
+      "writtenOn": "2020-03-11T14:03:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0c813ba8_6909cb4e",
+      "range": {
+        "startLine": 119,
+        "startChar": 12,
+        "endLine": 120,
+        "endChar": 104
+      },
+      "revId": "8525eefa0d694154409ff21952c61a0bc23a0ba0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
