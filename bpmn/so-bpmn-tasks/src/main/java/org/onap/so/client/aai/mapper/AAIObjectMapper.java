@@ -282,6 +282,7 @@ public class AAIObjectMapper {
                     map().setConfigurationType(source.getModelInfoConfiguration().getConfigurationType());
                     map().setConfigurationSubType(source.getModelInfoConfiguration().getConfigurationRole());
                     map().setConfigPolicyName(source.getModelInfoConfiguration().getPolicyName());
+                    skip().setConfigurationRole(null);
                 }
             });
         }
