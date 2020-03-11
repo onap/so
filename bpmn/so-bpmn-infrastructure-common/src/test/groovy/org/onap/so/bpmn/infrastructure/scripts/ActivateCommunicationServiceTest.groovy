@@ -57,11 +57,11 @@ class ActivateCommunicationServiceTest extends MsoGroovyTest  {
         when(mockExecution.getVariable("bpmnRequest")).thenReturn(req)
         when(mockExecution.getVariable("mso-request-id")).thenReturn("54321")
         when(mockExecution.getVariable("serviceInstanceId")).thenReturn("12345")
-
+        when(mockExecution.getVariable("operationType")).thenReturn("activation")
 
         ActivateCommunicationService service = new ActivateCommunicationService()
         service.preProcessRequest(mockExecution)
-        Mockito.verify(mockExecution, times(5)).setVariable(captor.capture(), captor.capture())
+        Mockito.verify(mockExecution, times(6)).setVariable(captor.capture(), captor.capture())
     }
 
     @Test
