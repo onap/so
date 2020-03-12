@@ -5,7 +5,7 @@
     "description": "\n\nThe `swagger-ui` view can be found [here](/api/catalog/v1/swagger).\nThe `ReDoc` view can be found [here](/api/catalog/v1/redoc).\nThe swagger YAML document can be found [here](/api/catalog/v1/swagger.yaml).\nThe swagger JSON document can be found [here](/api/catalog/v1/swagger.json).",
     "version": "v1"
   },
-  "host": "127.0.0.1:8000",
+  "host": "127.0.0.1:8806",
   "schemes": ["http"],
   "basePath": "/",
   "consumes": ["application/json"],
@@ -2641,7 +2641,7 @@
         "inputs": {
           "title": "Inputs",
           "description": "Inputs",
-          "type": "string"
+          "type": "object"
         }
       }
     },
@@ -2652,7 +2652,7 @@
         "model": {
           "title": "Model",
           "description": "Model",
-          "type": "string"
+          "type": "object"
         }
       }
     },
@@ -2825,7 +2825,7 @@
       "required": ["callbackUri"],
       "type": "object",
       "properties": {
-        "filters": {
+        "filter": {
           "$ref": "#/definitions/PkgmNotificationsFilter"
         },
         "callbackUri": {

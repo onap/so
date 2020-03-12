@@ -324,7 +324,7 @@ public class Sol003PackageManagementSubscriptionControllerTest {
 
     private org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmSubscriptionRequest getEtsiCatalogPkgmSubscriptionRequest() {
         return new org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmSubscriptionRequest()
-                .filters(new PkgmNotificationsFilter()
+                .filter(new PkgmNotificationsFilter()
                         .addNotificationTypesItem(
                                 PkgmNotificationsFilter.NotificationTypesEnum.VNFPACKAGEONBOARDINGNOTIFICATION)
                         .addVnfdIdItem("VNFDID").addVnfPkgIdItem("VNFPKGID")
