@@ -29,6 +29,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
@@ -41,6 +46,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.apihandler.common.ResponseBuilder;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
+import org.onap.so.apihandlerinfra.exceptions.ContactCamundaException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.constants.OrchestrationRequestFormat;
 import org.onap.so.constants.Status;
@@ -49,6 +55,7 @@ import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.serviceinstancebeans.InstanceReferences;
 import org.onap.so.serviceinstancebeans.Request;
 import org.onap.so.serviceinstancebeans.RequestStatus;
+import org.springframework.core.env.Environment;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrchestrationRequestsUnitTest {
@@ -62,6 +69,8 @@ public class OrchestrationRequestsUnitTest {
     private Response response;
     @Mock
     private CamundaRequestHandler camundaRequestHandler;
+    @Mock
+    private Environment env;
     @Rule
     public ExpectedException thrown = ExpectedException.none();
     @InjectMocks
@@ -79,6 +88,7 @@ public class OrchestrationRequestsUnitTest {
     private InfraActiveRequests iar;
     boolean includeCloudRequest = false;
     private static final String ROLLBACK_EXT_SYSTEM_ERROR_SOURCE = "SDNC";
+    private Timestamp startTime = new Timestamp(System.currentTimeMillis());
 
 
     @Before
@@ -93,6 +103,7 @@ public class OrchestrationRequestsUnitTest {
         iar.setRollbackStatusMessage(ROLLBACK_STATUS_MESSAGE);
         iar.setRetryStatusMessage(RETRY_STATUS_MESSAGE);
         iar.setResourceStatusMessage("The vf module already exist");
+        iar.setStartTime(startTime);
     }
 
     @Test
@@ -113,6 +124,7 @@ public class OrchestrationRequestsUnitTest {
         expected.setInstanceReferences(instanceReferences);
         expected.setRequestStatus(requestStatus);
         expected.setRequestScope(SERVICE);
+        expected.setStartTime(new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(startTime) + " GMT");
 
         iar.setOriginalRequestId(ORIGINAL_REQUEST_ID);
 
@@ -138,6 +150,7 @@ public class OrchestrationRequestsUnitTest {
         expected.setInstanceReferences(instanceReferences);
         expected.setRequestStatus(requestStatus);
         expected.setRequestScope(SERVICE);
+        expected.setStartTime(new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(startTime) + " GMT");
 
         Request result = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
                 OrchestrationRequestFormat.DETAIL.toString(), "v7");
@@ -161,6 +174,7 @@ public class OrchestrationRequestsUnitTest {
         expected.setInstanceReferences(instanceReferences);
         expected.setRequestStatus(requestStatus);
         expected.setRequestScope(SERVICE);
+        expected.setStartTime(new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(startTime) + " GMT");
 
         includeCloudRequest = false;
 
@@ -187,6 +201,7 @@ public class OrchestrationRequestsUnitTest {
         expected.setInstanceReferences(instanceReferences);
         expected.setRequestStatus(requestStatus);
         expected.setRequestScope(SERVICE);
+        expected.setStartTime(new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(startTime) + " GMT");
 
         includeCloudRequest = false;
 
@@ -214,6 +229,7 @@ public class OrchestrationRequestsUnitTest {
         expected.setInstanceReferences(instanceReferences);
         expected.setRequestStatus(requestStatus);
         expected.setRequestScope(SERVICE);
+        expected.setStartTime(new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(startTime) + " GMT");
 
         includeCloudRequest = false;
 
@@ -236,6 +252,7 @@ public class OrchestrationRequestsUnitTest {
         expected.setInstanceReferences(instanceReferences);
         expected.setRequestStatus(requestStatus);
         expected.setRequestScope(SERVICE);
+        expected.setStartTime(new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(startTime) + " GMT");
 
         includeCloudRequest = false;
 
@@ -259,6 +276,7 @@ public class OrchestrationRequestsUnitTest {
         expected.setInstanceReferences(instanceReferences);
         expected.setRequestStatus(requestStatus);
         expected.setRequestScope(SERVICE);
+        expected.setStartTime(new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(startTime) + " GMT");
 
         includeCloudRequest = false;
 
@@ -283,6 +301,7 @@ public class OrchestrationRequestsUnitTest {
         expected.setInstanceReferences(instanceReferences);
         expected.setRequestStatus(requestStatus);
         expected.setRequestScope(SERVICE);
+        expected.setStartTime(new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(startTime) + " GMT");
 
         includeCloudRequest = false;
 
@@ -306,6 +325,7 @@ public class OrchestrationRequestsUnitTest {
         expected.setInstanceReferences(instanceReferences);
         expected.setRequestStatus(requestStatus);
         expected.setRequestScope(SERVICE);
+        expected.setStartTime(new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(startTime) + " GMT");
 
         includeCloudRequest = false;
         iar.setFlowStatus(null);
@@ -348,6 +368,7 @@ public class OrchestrationRequestsUnitTest {
         expected.setInstanceReferences(instanceReferences);
         expected.setRequestStatus(requestStatus);
         expected.setRequestScope(SERVICE);
+        expected.setStartTime(new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(startTime) + " GMT");
 
         includeCloudRequest = false;
         iar.setFlowStatus("Successfully completed all Building Blocks");
@@ -374,6 +395,7 @@ public class OrchestrationRequestsUnitTest {
         expected.setInstanceReferences(instanceReferences);
         expected.setRequestStatus(requestStatus);
         expected.setRequestScope(SERVICE);
+        expected.setStartTime(new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(startTime) + " GMT");
 
         includeCloudRequest = false;
         iar.setFlowStatus("All Rollback flows have completed successfully");
@@ -431,4 +453,35 @@ public class OrchestrationRequestsUnitTest {
         assertFalse(required);
     }
 
+    @Test
+    public void taskNameLookup() throws ContactCamundaException {
+        InfraActiveRequests req = new InfraActiveRequests();
+        req.setRequestId("70debc2a-d6bc-4795-87ba-38a94d9b0b99");
+        Instant startInstant = Instant.now().minus(1, ChronoUnit.DAYS);
+        req.setStartTime(Timestamp.from(startInstant));
+        when(env.getProperty("mso.camundaCleanupInterval")).thenReturn(null);
+        when(camundaRequestHandler.getTaskName("70debc2a-d6bc-4795-87ba-38a94d9b0b99")).thenReturn("taskName");
+
+        RequestStatus requestStatus = new RequestStatus();
+        req.setFlowStatus("Building blocks 1 of 3 completed.");
+
+        orchestrationRequests.mapRequestStatusAndExtSysErrSrcToRequest(req, requestStatus, null, "v7");
+        assertEquals("FLOW STATUS: Building blocks 1 of 3 completed. TASK INFORMATION: taskName",
+                requestStatus.getStatusMessage());
+    }
+
+    @Test
+    public void noCamundaLookupAfterInterval() throws ContactCamundaException {
+        InfraActiveRequests req = new InfraActiveRequests();
+        req.setRequestId("70debc2a-d6bc-4795-87ba-38a94d9b0b99");
+        Instant startInstant = Instant.now().minus(36, ChronoUnit.DAYS);
+        req.setStartTime(Timestamp.from(startInstant));
+        when(env.getProperty("mso.camundaCleanupInterval")).thenReturn("35");
+
+        RequestStatus requestStatus = new RequestStatus();
+        req.setFlowStatus("Building blocks 1 of 3 completed.");
+
+        orchestrationRequests.mapRequestStatusAndExtSysErrSrcToRequest(req, requestStatus, null, "v7");
+        assertEquals("FLOW STATUS: Building blocks 1 of 3 completed.", requestStatus.getStatusMessage());
+    }
 }

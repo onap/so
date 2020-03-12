@@ -61,7 +61,7 @@
         },
         "requestStatus": {
           "requestState": "COMPLETE",
-          "statusMessage": "STATUS: Vf Module has been deleted successfully. FLOW STATUS: Building blocks 1 of 3 completed. TASK INFORMATION: Last task executed: BB to Execute ROLLBACK STATUS: Rollback has been completed successfully.",
+          "statusMessage": "STATUS: Vf Module has been deleted successfully. FLOW STATUS: Building blocks 1 of 3 completed. ROLLBACK STATUS: Rollback has been completed successfully.",
           "percentProgress": 100,
           "timestamp": "Thu, 22 Dec 2016 08:30:28 GMT"
         }
