@@ -54,7 +54,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank
  */
 class CreateCommunicationService extends AbstractServiceTaskProcessor {
 
-    String Prefix="CRESI_"
+    String Prefix="CCS_"
 
     ExceptionUtil exceptionUtil = new ExceptionUtil()
 
