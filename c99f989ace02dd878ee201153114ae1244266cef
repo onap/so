@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "d0fc5686_ed31a8c5",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/CreateSDNCNetworkResource.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 5745
+      },
+      "writtenOn": "2020-03-12T07:17:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8f41d913_9d1d5f7a",
+      "range": {
+        "startLine": 267,
+        "startChar": 29,
+        "endLine": 267,
+        "endChar": 92
+      },
+      "revId": "c99f989ace02dd878ee201153114ae1244266cef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ecf0c2e3_333a71f0",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/CreateSDNCNetworkResource.groovy",
         "patchSetId": 4
@@ -60,6 +84,30 @@
       "writtenOn": "2020-03-11T12:33:51Z",
       "side": 1,
       "message": "same for these values",
+      "range": {
+        "startLine": 268,
+        "startChar": 5,
+        "endLine": 270,
+        "endChar": 104
+      },
+      "revId": "c99f989ace02dd878ee201153114ae1244266cef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3916d72d_ebd55120",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/CreateSDNCNetworkResource.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 270,
+      "author": {
+        "id": 5745
+      },
+      "writtenOn": "2020-03-12T07:17:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ecf0c2e3_333a71f0",
       "range": {
         "startLine": 268,
         "startChar": 5,
@@ -116,6 +164,30 @@
       "revId": "c99f989ace02dd878ee201153114ae1244266cef",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1d4c143a_0e8fdc4f",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/CreateSDNCNetworkResource.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 5745
+      },
+      "writtenOn": "2020-03-12T07:17:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5876cfc2_f130aab8",
+      "range": {
+        "startLine": 273,
+        "startChar": 5,
+        "endLine": 273,
+        "endChar": 66
+      },
+      "revId": "c99f989ace02dd878ee201153114ae1244266cef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
