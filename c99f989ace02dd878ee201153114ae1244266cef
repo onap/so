@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "8f41d913_9d1d5f7a",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/CreateSDNCNetworkResource.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 5745
+      },
+      "writtenOn": "2020-03-12T07:16:46Z",
+      "side": 1,
+      "message": "We have limited parameters in SDNC request format accepted. So, I did not want to send additional parameters. If it is not required, I can leave these as it is without deleting.",
+      "parentUuid": "5d3cfdb1_a6da983a",
+      "range": {
+        "startLine": 267,
+        "startChar": 29,
+        "endLine": 267,
+        "endChar": 92
+      },
+      "revId": "c99f989ace02dd878ee201153114ae1244266cef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ecf0c2e3_333a71f0",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/CreateSDNCNetworkResource.groovy",
         "patchSetId": 4
@@ -68,6 +92,30 @@
       "revId": "c99f989ace02dd878ee201153114ae1244266cef",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5876cfc2_f130aab8",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/CreateSDNCNetworkResource.groovy",
+        "patchSetId": 4
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 5745
+      },
+      "writtenOn": "2020-03-12T07:16:46Z",
+      "side": 1,
+      "message": "The modeltype comes as VNF as the template has followed vnf resource modeling. I am not able to find out how it can be changed otherwise. (Changing in other classes where request is built will be a dirty patch)",
+      "parentUuid": "2e469c96_0ca2e9cd",
+      "range": {
+        "startLine": 273,
+        "startChar": 5,
+        "endLine": 273,
+        "endChar": 66
+      },
+      "revId": "c99f989ace02dd878ee201153114ae1244266cef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
