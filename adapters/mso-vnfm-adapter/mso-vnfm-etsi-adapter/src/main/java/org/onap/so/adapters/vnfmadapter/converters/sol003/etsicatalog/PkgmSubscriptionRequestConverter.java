@@ -55,7 +55,7 @@ public class PkgmSubscriptionRequestConverter implements
                 new org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.PkgmSubscriptionRequest();
 
         etsiCatalogManagerSubscriptionRequest
-                .setFilters(getPkgmNotificationsFilter(pkgmSubscriptionRequest.getFilter()));
+                .setFilter(getPkgmNotificationsFilter(pkgmSubscriptionRequest.getFilter()));
 
         return etsiCatalogManagerSubscriptionRequest;
     }
