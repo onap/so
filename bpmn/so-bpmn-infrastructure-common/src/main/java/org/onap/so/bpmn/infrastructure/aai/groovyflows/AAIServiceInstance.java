@@ -30,7 +30,7 @@ public class AAIServiceInstance {
     String environmentContext;
     String workloadContext;
 
-    public class AAIServiceInstanceBuilder {
+    public static class AAIServiceInstanceBuilder {
         private String serviceInstanceName;
         private String serviceType;
         private String serviceRole;
