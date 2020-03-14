@@ -32,7 +32,7 @@ public class SwToBeDownloadedElement {
     private String swLocation;
 
     @JsonProperty(value = "swFileSize")
-    private long swFileSize;
+    private Long swFileSize;
 
     @JsonProperty(value = "swFileCompression")
     private String swFileCompression;
@@ -48,11 +48,11 @@ public class SwToBeDownloadedElement {
         this.swLocation = value;
     }
 
-    public long getSwFileSize() {
+    public Long getSwFileSize() {
         return swFileSize;
     }
 
-    public void setSwFileSize(long value) {
+    public void setSwFileSize(Long value) {
         this.swFileSize = value;
     }
 

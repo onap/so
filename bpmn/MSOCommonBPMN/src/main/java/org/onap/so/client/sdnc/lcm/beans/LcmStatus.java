@@ -29,16 +29,16 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 public class LcmStatus {
 
     @JsonProperty(value = "code", required = true)
-    private int code;
+    private Integer code;
 
     @JsonProperty(value = "message", required = true)
     private String message;
 
-    public int getCode() {
+    public Integer getCode() {
         return code;
     }
 
-    public void setCode(int value) {
+    public void setCode(Integer value) {
         this.code = value;
     }
 

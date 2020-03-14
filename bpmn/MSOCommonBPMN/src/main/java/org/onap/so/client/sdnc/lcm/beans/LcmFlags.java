@@ -35,7 +35,7 @@ public class LcmFlags {
     private String force;
 
     @JsonProperty("ttl")
-    private int ttl;
+    private Integer ttl;
 
     public String getMode() {
         return mode;
