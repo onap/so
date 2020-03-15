@@ -70,6 +70,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
@@ -1191,7 +1192,11 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
         InfraActiveRequests request = new InfraActiveRequests();
         request.setRequestId(requestId);
         request.setResourceStatusMessage(resourceStatusMessage);
-        requestDBClient.patchInfraActiveRequests(request);
+        try {
+            requestDBClient.patchInfraActiveRequests(request);
+        } catch (HttpClientErrorException e) {
+            logger.warn("Unable to update active request resource status");
+        }
     }
 
 }
