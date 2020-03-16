@@ -128,62 +128,23 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update status of VolumeGroup to Assigned in AAI
-     *
-     * @param execution
      */
     public void updateOrchestrationStatusAssignedVolumeGroup(BuildingBlockExecution execution) {
-        try {
-            GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
-
-            VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID);
-            CloudRegion cloudRegion = gBBInput.getCloudRegion();
-            volumeGroup.setHeatStackId("");
-            aaiVolumeGroupResources.updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion,
-                    OrchestrationStatus.ASSIGNED);
-        } catch (Exception ex) {
-            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusAssignedVolumeGroup", ex);
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-        }
+        updateOrchestrationStatusForVolumeGroup(execution, OrchestrationStatus.ASSIGNED);
     }
 
     /**
      * BPMN access method to update status of VolumeGroup to Active in AAI
-     *
-     * @param execution
      */
     public void updateOrchestrationStatusActiveVolumeGroup(BuildingBlockExecution execution) {
-        try {
-            GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
-
-            VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID);
-            CloudRegion cloudRegion = gBBInput.getCloudRegion();
-
-            aaiVolumeGroupResources.updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion,
-                    OrchestrationStatus.ACTIVE);
-        } catch (Exception ex) {
-            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusActiveVolumeGroup", ex);
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-        }
+        updateOrchestrationStatusForVolumeGroup(execution, OrchestrationStatus.ACTIVE);
     }
 
     /**
      * BPMN access method to update status of VolumeGroup to Created in AAI
-     *
-     * @param execution
      */
     public void updateOrchestrationStatusCreatedVolumeGroup(BuildingBlockExecution execution) {
-        try {
-            GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
-
-            VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID);
-            CloudRegion cloudRegion = gBBInput.getCloudRegion();
-
-            aaiVolumeGroupResources.updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion,
-                    OrchestrationStatus.CREATED);
-        } catch (Exception ex) {
-            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusCreatedVolumeGroup", ex);
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-        }
+        updateOrchestrationStatusForVolumeGroup(execution, OrchestrationStatus.CREATED);
     }
 
     /**
@@ -820,6 +781,21 @@ public class AAIUpdateTasks {
         } catch (Exception ex) {
             logger.error("Exception occurred in AAIUpdateTasks during update orchestration status to {} for vnf",
                     status, ex);
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
+    private void updateOrchestrationStatusForVolumeGroup(BuildingBlockExecution execution, OrchestrationStatus status) {
+        try {
+            VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID);
+            if (status.equals(OrchestrationStatus.ASSIGNED)) {
+                volumeGroup.setHeatStackId("");
+            }
+            aaiVolumeGroupResources.updateOrchestrationStatusVolumeGroup(volumeGroup,
+                    execution.getGeneralBuildingBlock().getCloudRegion(), status);
+        } catch (Exception ex) {
+            logger.error("Exception occurred in AAIUpdateTasks during update orchestration status to {} for "
+                    + "volume group", status, ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
