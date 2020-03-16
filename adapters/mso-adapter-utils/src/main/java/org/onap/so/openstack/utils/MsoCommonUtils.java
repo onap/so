@@ -198,7 +198,9 @@ public class MsoCommonUtils {
 
             // Generate an alarm for 5XX and higher errors.
             if (re.getStatus() >= 500) {
-
+                logger.error("{} {} OpenStackResponseException with response code {} on {}: ",
+                        MessageEnum.RA_CONNECTION_EXCEPTION, ErrorCode.DataError.getValue(), re.getStatus(), context,
+                        e);
             }
         } else if (e instanceof OpenStackConnectException) {
             OpenStackConnectException ce = (OpenStackConnectException) e;
@@ -281,7 +283,9 @@ public class MsoCommonUtils {
 
             // Generate an alarm for 5XX and higher errors.
             if (re.getStatus() >= 500) {
-
+                logger.error("{} {} OpenStackBaseException with response code {} on {}: ",
+                        MessageEnum.RA_CONNECTION_EXCEPTION, ErrorCode.DataError.getValue(), re.getStatus(), context,
+                        e);
             }
         } else if (e instanceof OpenStackConnectException) {
             OpenStackConnectException ce = (OpenStackConnectException) e;
@@ -334,32 +338,6 @@ public class MsoCommonUtils {
     protected CreateStackParam createStackParam(String stackName, String heatTemplate, Map<String, ?> stackInputs,
             int timeoutMinutes, String environment, Map<String, Object> files, Map<String, Object> heatFiles) {
 
-        // Create local variables checking to see if we have an environment, nested, get_files
-        // Could later add some checks to see if it's valid.
-        boolean haveEnvtVariable = true;
-        if (environment == null || "".equalsIgnoreCase(environment.trim())) {
-            haveEnvtVariable = false;
-            logger.debug("createStackParam called with no environment variable");
-        } else {
-            logger.debug("createStackParam called with an environment variable: {}", environment);
-        }
-
-        boolean haveFiles = true;
-        if (files == null || files.isEmpty()) {
-            haveFiles = false;
-            logger.debug("createStackParam called with no files / child template ids");
-        } else {
-            logger.debug("createStackParam called with {} files / child template ids", files.size());
-        }
-
-        boolean haveHeatFiles = true;
-        if (heatFiles == null || heatFiles.isEmpty()) {
-            haveHeatFiles = false;
-            logger.debug("createStackParam called with no heatFiles");
-        } else {
-            logger.debug("createStackParam called with {} heatFiles", heatFiles.size());
-        }
-
         // force entire stackInput object to generic Map<String, Object> for openstack compatibility
         ObjectMapper mapper = new ObjectMapper();
         Map<String, Object> normalized = new HashMap<>();
@@ -370,6 +348,28 @@ public class MsoCommonUtils {
             logger.debug("could not map json", e1);
         }
 
+        CreateStackParam stack =
+                createStack(stackName, heatTemplate, timeoutMinutes, environment, files, heatFiles, normalized);
+
+        // 1802 - attempt to add better formatted printout of request to openstack
+        try {
+            Map<String, Object> inputs = new HashMap<>();
+            for (Entry<String, ?> entry : stackInputs.entrySet()) {
+                if (entry.getValue() != null) {
+                    inputs.put(entry.getKey(), entry.getValue());
+                }
+            }
+            logger.debug("stack request: {}", stack);
+        } catch (Exception e) {
+            // that's okay - this is a nice-to-have
+            logger.debug("(had an issue printing nicely formatted request to debuglog) {}", e);
+        }
+
+        return stack;
+    }
+
+    private CreateStackParam createStack(String stackName, String heatTemplate, int timeoutMinutes, String environment,
+            Map<String, Object> files, Map<String, Object> heatFiles, Map<String, Object> normalized) {
         // Build up the stack to create
         // Disable auto-rollback, because error reason is lost. Always rollback in the code.
         CreateStackParam stack = new CreateStackParam();
@@ -379,13 +379,13 @@ public class MsoCommonUtils {
         stack.setTemplate(heatTemplate);
         stack.setDisableRollback(true);
         // TJM New for PO Adapter - add envt variable
-        if (haveEnvtVariable) {
+        if (isEnvVariablePresent(environment)) {
             logger.debug("Found an environment variable - value: {}", environment);
             stack.setEnvironment(environment);
         }
         // Now handle nested templates or get_files - have to combine if we have both
         // as they're both treated as "files:" on the stack.
-        if (haveFiles && haveHeatFiles) {
+        if (isFilesPresent(files) && isHeatFilesPresent(heatFiles)) {
             // Let's do this here - not in the bean
             logger.debug("Found files AND heatFiles - combine and add!");
             Map<String, Object> combinedFiles = new HashMap<>();
@@ -398,32 +398,50 @@ public class MsoCommonUtils {
             stack.setFiles(combinedFiles);
         } else {
             // Handle if we only have one or neither:
-            if (haveFiles) {
+            if (isFilesPresent(files)) {
                 logger.debug("Found files - adding to stack");
                 stack.setFiles(files);
             }
-            if (haveHeatFiles) {
+            if (isHeatFilesPresent(heatFiles)) {
                 logger.debug("Found heatFiles - adding to stack");
                 // the setFiles was modified to handle adding the entries
                 stack.setFiles(heatFiles);
             }
         }
-
-        // 1802 - attempt to add better formatted printout of request to openstack
-        try {
-            Map<String, Object> inputs = new HashMap<>();
-            for (Entry<String, ?> entry : stackInputs.entrySet()) {
-                if (entry.getValue() != null) {
-                    inputs.put(entry.getKey(), entry.getValue());
-                }
-            }
-            logger.debug("stack request: {}", stack.toString());
-        } catch (Exception e) {
-            // that's okay - this is a nice-to-have
-            logger.debug("(had an issue printing nicely formatted request to debuglog) {}", e.getMessage());
-        }
-
         return stack;
+    }
+
+    private boolean isEnvVariablePresent(String environment) {
+        boolean haveEnvVariable = true;
+        if (environment == null || "".equalsIgnoreCase(environment.trim())) {
+            haveEnvVariable = false;
+            logger.debug("createStackParam called with no environment variable");
+        } else {
+            logger.debug("createStackParam called with an environment variable: {}", environment);
+        }
+        return haveEnvVariable;
+    }
+
+    private boolean isFilesPresent(Map<String, Object> files) {
+        boolean haveFile = true;
+        if (files == null || files.isEmpty()) {
+            haveFile = false;
+            logger.debug("createStackParam called with no files / child template ids");
+        } else {
+            logger.debug("createStackParam called with {} files / child template ids", files.size());
+        }
+        return haveFile;
+    }
+
+    private boolean isHeatFilesPresent(Map<String, Object> heatFiles) {
+        boolean haveHeatFile = true;
+        if (heatFiles == null || heatFiles.isEmpty()) {
+            haveHeatFile = false;
+            logger.debug("createStackParam called with no heatFiles");
+        } else {
+            logger.debug("createStackParam called with {} heatFiles", heatFiles.size());
+        }
+        return haveHeatFile;
     }
 
 
