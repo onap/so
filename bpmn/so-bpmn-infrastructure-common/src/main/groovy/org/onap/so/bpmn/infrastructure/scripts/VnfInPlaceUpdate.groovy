@@ -21,28 +21,28 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import org.onap.so.logger.LoggingAnchor
-import groovy.json.JsonOutput
-import groovy.json.JsonSlurper
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.appc.client.lcm.model.Action
 import org.onap.appc.client.lcm.model.ActionIdentifiers
 import org.onap.appc.client.lcm.model.Flags
 import org.onap.appc.client.lcm.model.Status
+import org.onap.logging.filter.base.ErrorCode
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.aai.*
 import org.onap.so.client.aai.entities.AAIResultWrapper
-import org.onap.so.client.aai.entities.uri.AAIUri
+import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.client.appc.ApplicationControllerClient
 import org.onap.so.client.appc.ApplicationControllerSupport
-import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.logger.LoggingAnchor
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
 
 public class VnfInPlaceUpdate extends VnfCmBase {
     private static final Logger logger = LoggerFactory.getLogger(VnfInPlaceUpdate.class)
@@ -380,7 +380,7 @@ public class VnfInPlaceUpdate extends VnfCmBase {
 			def vnfId = execution.getVariable("vnfId")
 			logger.debug("vnfId is: " + vnfId)
 			AAIResourcesClient client = new AAIResourcesClient()
-			AAIUri genericVnfUri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+			AAIResourceUri genericVnfUri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
 			AAIResultWrapper aaiRW = client.get(genericVnfUri)
 			Map<String, Object> result = aaiRW.asMap()
 			boolean isClosedLoopDisabled = result.getOrDefault("is-closed-loop-disabled", false)
@@ -431,7 +431,7 @@ public class VnfInPlaceUpdate extends VnfCmBase {
 			def transactionLoggingUuid = UUID.randomUUID().toString()
 			def vnfId = execution.getVariable("vnfId")
 			AAIResourcesClient client = new AAIResourcesClient()
-			AAIUri genericVnfUri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+			AAIResourceUri genericVnfUri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
 
 			Map<String, Boolean> request = new HashMap<>()
 			request.put("is-closed-loop-disabled", setDisabled)

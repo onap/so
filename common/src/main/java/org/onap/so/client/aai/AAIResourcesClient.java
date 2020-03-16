@@ -24,13 +24,14 @@ import java.util.Optional;
 import org.onap.aai.domain.yang.Relationship;
 import org.onap.so.client.aai.entities.AAIEdgeLabel;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
+import org.onap.so.client.aai.entities.uri.AAIBaseResourceUri;
+import org.onap.so.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.graphinventory.GraphInventoryResourcesClient;
 import org.onap.so.client.graphinventory.entities.GraphInventoryEdgeLabel;
-import org.onap.so.client.graphinventory.entities.uri.GraphInventoryResourceUri;
 
 public class AAIResourcesClient extends
-        GraphInventoryResourcesClient<AAIResourcesClient, AAIResourceUri, AAIEdgeLabel, AAIResultWrapper, AAITransactionalClient, AAISingleTransactionClient> {
+        GraphInventoryResourcesClient<AAIResourcesClient, AAIBaseResourceUri<?, ?>, AAIResourceUri, AAIPluralResourceUri, AAIEdgeLabel, AAIResultWrapper, AAITransactionalClient, AAISingleTransactionClient> {
 
     private AAIClient aaiClient;
 
@@ -55,6 +56,11 @@ public class AAIResourcesClient extends
     }
 
     @Override
+    public AAIResultWrapper createWrapper(Object obj) {
+        return new AAIResultWrapper(obj);
+    }
+
+    @Override
     public AAITransactionalClient beginTransaction() {
         return new AAITransactionalClient(this, aaiClient);
     }
@@ -65,17 +71,17 @@ public class AAIResourcesClient extends
     }
 
     @Override
-    protected Relationship buildRelationship(GraphInventoryResourceUri uri) {
+    protected Relationship buildRelationship(AAIResourceUri uri) {
         return super.buildRelationship(uri, Optional.empty());
     }
 
     @Override
-    protected Relationship buildRelationship(GraphInventoryResourceUri uri, GraphInventoryEdgeLabel label) {
+    protected Relationship buildRelationship(AAIResourceUri uri, GraphInventoryEdgeLabel label) {
         return super.buildRelationship(uri, Optional.of(label));
     }
 
     @Override
-    protected Relationship buildRelationship(GraphInventoryResourceUri uri, Optional<GraphInventoryEdgeLabel> label) {
+    protected Relationship buildRelationship(AAIResourceUri uri, Optional<GraphInventoryEdgeLabel> label) {
         return super.buildRelationship(uri, label);
     }
 

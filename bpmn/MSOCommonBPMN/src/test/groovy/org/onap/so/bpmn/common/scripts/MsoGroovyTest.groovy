@@ -37,6 +37,7 @@ import org.onap.so.client.aai.AAIObjectPlurals
 import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.entities.AAIResultWrapper
+import org.onap.so.client.aai.entities.uri.AAIPluralResourceUri
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.client.graphinventory.entities.uri.Depth
@@ -118,8 +119,8 @@ abstract class MsoGroovyTest {
     }
 
     protected Optional<GenericVnf> mockAAIGenericVnfByName(String vnfName){
-        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", vnfName)
-        AAIResourceUri resourceUriDepthOne = AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", vnfName).depth(Depth.ONE)
+        AAIPluralResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", vnfName)
+        AAIPluralResourceUri resourceUriDepthOne = AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", vnfName).depth(Depth.ONE)
         Optional<GenericVnf> genericVnf = getAAIObjectFromJson(GenericVnf.class,"__files/aai/GenericVnf.json");
         when(client.get(GenericVnf.class, resourceUri)).thenReturn(genericVnf)
         when(client.get(GenericVnf.class, resourceUriDepthOne)).thenReturn(genericVnf)
@@ -134,8 +135,8 @@ abstract class MsoGroovyTest {
     }
 
     protected void mockAAIGenericVnfByNameNotFound(String vnfName){
-        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", vnfName)
-        AAIResourceUri resourceUriDepthOne = AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", vnfName).depth(Depth.ONE)
+        AAIPluralResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", vnfName)
+        AAIPluralResourceUri resourceUriDepthOne = AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", vnfName).depth(Depth.ONE)
         when(client.get(GenericVnf.class, resourceUri)).thenReturn(Optional.empty())
         when(client.get(GenericVnf.class, resourceUriDepthOne)).thenReturn(Optional.empty())
     }

@@ -20,54 +20,49 @@
 
 package org.onap.so.client.aai.entities.uri;
 
-import java.net.URI;
 import javax.ws.rs.core.UriBuilder;
 import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
-import org.onap.so.client.graphinventory.entities.uri.SimpleUri;
+import org.onap.so.client.graphinventory.entities.uri.SimplePluralUri;
 
-public class AAISimpleUri extends SimpleUri<AAIResourceUri, AAIPluralResourceUri, AAIObjectType, AAIObjectPlurals>
-        implements AAIResourceUri {
+public class AAISimplePluralUri
+        extends SimplePluralUri<AAIPluralResourceUri, AAIResourceUri, AAIObjectPlurals, AAIObjectType>
+        implements AAIPluralResourceUri {
 
     private static final long serialVersionUID = -6397024057188453229L;
 
-    protected AAISimpleUri(AAIObjectType type, Object... values) {
-        super(type, values);
-
-    }
-
-    protected AAISimpleUri(AAIObjectType type, URI uri) {
-        super(type, uri);
-    }
-
-    protected AAISimpleUri(AAIObjectType type, UriBuilder builder, Object... values) {
+    protected AAISimplePluralUri(AAIObjectPlurals type, UriBuilder builder, Object... values) {
         super(type, builder, values);
     }
 
-    protected AAISimpleUri(AAIResourceUri parentUri, AAIObjectType childType, Object... childValues) {
-        super(parentUri, childType, childValues);
+    protected AAISimplePluralUri(AAIObjectPlurals type) {
+        super(type);
     }
 
-    // copy constructor
-    protected AAISimpleUri(AAISimpleUri copy) {
+    protected AAISimplePluralUri(AAIObjectPlurals type, Object... values) {
+        super(type, values);
+    }
+
+    protected AAISimplePluralUri(AAIObjectPlurals type, AAIResourceUri uri) {
+        super(type, uri);
+    }
+
+    protected AAISimplePluralUri(AAIResourceUri parentUri, AAIObjectPlurals childType) {
+        super(parentUri, childType);
+    }
+
+    protected AAISimplePluralUri(AAISimplePluralUri copy) {
         super(copy);
     }
 
     @Override
-    public AAISimpleUri clone() {
-        return new AAISimpleUri(this);
+    public AAISimplePluralUri clone() {
+        return new AAISimplePluralUri(this);
     }
 
     @Override
-    public AAISimpleUri relatedTo(AAIObjectType type, String... values) {
-        this.internalURI = internalURI.path(relatedTo);
-        return new AAISimpleUri(this, type, values);
-    }
-
-    @Override
-    public AAISimplePluralUri relatedTo(AAIObjectPlurals plural) {
-        this.internalURI.path(relatedTo);
-        return new AAISimplePluralUri(this, plural);
+    public AAIObjectPlurals getObjectType() {
+        return this.pluralType;
     }
 
 }

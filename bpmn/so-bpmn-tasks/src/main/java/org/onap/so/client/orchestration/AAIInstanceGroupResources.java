@@ -28,6 +28,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.entities.AAIEdgeLabel;
+import org.onap.so.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
@@ -87,7 +88,7 @@ public class AAIInstanceGroupResources {
     }
 
     public boolean checkInstanceGroupNameInUse(String instanceGroupName) {
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.INSTANCE_GROUP)
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.INSTANCE_GROUP)
                 .queryParam("instance-group-name", instanceGroupName);
         return injectionHelper.getAaiClient().exists(uri);
     }

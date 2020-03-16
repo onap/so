@@ -41,6 +41,7 @@ import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.aai.AAIObjectPlurals
 import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIPluralResourceUri
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MessageEnum
@@ -489,7 +490,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 				for (i in 0..fqdnCount-1) {
 					String fqdn = fqdnList[i]
 					// Query AAI for this network policy FQDN
-					AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
+					AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
 					uri.queryParam("network-policy-fqdn", fqdn)
 					try {
 						Optional<NetworkPolicies> networkPolicies = getAAIClient().get(NetworkPolicies.class, uri)

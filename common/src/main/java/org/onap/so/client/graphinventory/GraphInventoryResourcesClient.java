@@ -21,6 +21,11 @@
 package org.onap.so.client.graphinventory;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javax.ws.rs.NotFoundException;
@@ -32,9 +37,13 @@ import org.onap.so.client.RestClient;
 import org.onap.so.client.RestProperties;
 import org.onap.so.client.graphinventory.entities.GraphInventoryEdgeLabel;
 import org.onap.so.client.graphinventory.entities.GraphInventoryResultWrapper;
+import org.onap.so.client.graphinventory.entities.uri.GraphInventoryPluralResourceUri;
 import org.onap.so.client.graphinventory.entities.uri.GraphInventoryResourceUri;
+import org.onap.so.client.graphinventory.entities.uri.GraphInventorySingleResourceUri;
+import org.onap.so.client.graphinventory.entities.uri.HttpAwareUri;
+import org.onap.so.client.graphinventory.exceptions.GraphInventoryMultipleItemsException;
 
-public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInventoryResourceUri, EdgeLabel extends GraphInventoryEdgeLabel, Wrapper extends GraphInventoryResultWrapper, TransactionalClient, SingleTransactionClient> {
+public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInventoryResourceUri<?, ?>, SingleUri extends GraphInventorySingleResourceUri<?, ?, ?, ?>, PluralUri extends GraphInventoryPluralResourceUri<?, ?>, EdgeLabel extends GraphInventoryEdgeLabel, Wrapper extends GraphInventoryResultWrapper, TransactionalClient, SingleTransactionClient> {
 
     protected GraphInventoryClient client;
 
@@ -49,7 +58,7 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
      * @param uri
      * @return
      */
-    public void create(Uri uri, Object obj) {
+    public void create(SingleUri uri, Object obj) {
         RestClient giRC = client.createClient(uri);
         giRC.put(obj);
     }
@@ -60,7 +69,7 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
      * @param uri
      * @return
      */
-    public void createEmpty(Uri uri) {
+    public void createEmpty(SingleUri uri) {
         RestClient giRC = client.createClient(uri);
         giRC.put("");
     }
@@ -72,7 +81,7 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
      * @return
      */
     public boolean exists(Uri uri) {
-        GraphInventoryResourceUri forceMinimal = uri.clone();
+        GraphInventoryResourceUri<?, ?> forceMinimal = (Uri) uri.clone();
         forceMinimal.format(Format.COUNT);
         forceMinimal.limit(1);
         try {
@@ -91,8 +100,8 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
      * @param uriB
      * @return
      */
-    public void connect(Uri uriA, Uri uriB) {
-        GraphInventoryResourceUri uriAClone = uriA.clone();
+    public void connect(SingleUri uriA, SingleUri uriB) {
+        GraphInventorySingleResourceUri<?, ?, ?, ?> uriAClone = (SingleUri) uriA.clone();
         RestClient giRC = client.createClient(uriAClone.relationshipAPI());
         giRC.put(this.buildRelationship(uriB));
     }
@@ -105,8 +114,8 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
      * @param edge label
      * @return
      */
-    public void connect(Uri uriA, Uri uriB, EdgeLabel label) {
-        GraphInventoryResourceUri uriAClone = uriA.clone();
+    public void connect(SingleUri uriA, SingleUri uriB, EdgeLabel label) {
+        GraphInventorySingleResourceUri<?, ?, ?, ?> uriAClone = (SingleUri) uriA.clone();
         RestClient giRC = client.createClient(uriAClone.relationshipAPI());
         giRC.put(this.buildRelationship(uriB, label));
     }
@@ -118,8 +127,8 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
      * @param uriB
      * @return
      */
-    public void disconnect(Uri uriA, Uri uriB) {
-        GraphInventoryResourceUri uriAClone = uriA.clone();
+    public void disconnect(SingleUri uriA, SingleUri uriB) {
+        GraphInventorySingleResourceUri<?, ?, ?, ?> uriAClone = (SingleUri) uriA.clone();
         RestClient giRC = client.createClient(uriAClone.relationshipAPI());
         giRC.delete(this.buildRelationship(uriB));
     }
@@ -130,8 +139,8 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
      * @param uri
      * @return
      */
-    public void delete(Uri uri) {
-        GraphInventoryResourceUri clone = uri.clone();
+    public void delete(SingleUri uri) {
+        GraphInventorySingleResourceUri<?, ?, ?, ?> clone = (SingleUri) uri.clone();
         RestClient giRC = client.createClient(clone);
         Map<String, Object> result = giRC.get(new GenericType<Map<String, Object>>() {}).orElseThrow(
                 () -> new NotFoundException(clone.build() + " does not exist in " + client.getGraphDBName()));
@@ -145,7 +154,7 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
      * @param uri
      * @return
      */
-    public void update(Uri uri, Object obj) {
+    public void update(SingleUri uri, Object obj) {
         RestClient giRC = client.createClient(uri);
         giRC.patch(obj);
     }
@@ -197,6 +206,88 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
     public <T> Optional<T> get(GenericType<T> resultClass, Uri uri) {
         try {
             return client.createClient(uri).get(resultClass);
+        } catch (NotFoundException e) {
+            if (this.getRestProperties().mapNotFoundToEmpty()) {
+                return Optional.empty();
+            } else {
+                throw e;
+            }
+        }
+    }
+
+    public <T, R> Optional<R> getOne(Class<T> pluralClass, Class<R> resultClass, PluralUri uri) {
+        Optional<List<R>> result = unwrapPlural(pluralClass, resultClass, uri);
+
+        if (result.isPresent()) {
+            if (result.get().size() == 1) {
+                return Optional.of(result.get().get(0));
+            } else {
+                throw new GraphInventoryMultipleItemsException(result.get().size(), uri);
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    public <T, R> Optional<R> getFirst(Class<T> pluralClass, Class<R> resultClass, PluralUri uri) {
+        Optional<List<R>> result = unwrapPlural(pluralClass, resultClass, uri);
+
+        if (result.isPresent() && !result.get().isEmpty()) {
+            return Optional.of(result.get().get(0));
+        }
+
+        return Optional.empty();
+    }
+
+    public <T, R> Optional<Wrapper> getFirstWrapper(Class<T> pluralClass, Class<R> resultClass, PluralUri uri) {
+
+        Optional<R> result = getFirst(pluralClass, resultClass, uri);
+        if (result.isPresent()) {
+            return Optional.of(this.createWrapper(result.get()));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    public <T, R> Optional<Wrapper> getOneWrapper(Class<T> pluralClass, Class<R> resultClass, PluralUri uri) {
+
+        Optional<R> result = getOne(pluralClass, resultClass, uri);
+        if (result.isPresent()) {
+            return Optional.of(this.createWrapper(result.get()));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    protected <T, R> Optional<List<R>> unwrapPlural(Class<T> pluralClass, Class<R> resultClass, PluralUri uri) {
+        try {
+            PluralUri clone = (PluralUri) uri.clone().limit(1);
+            Optional<T> obj = client.createClient(clone).get(pluralClass);
+            if (obj.isPresent()) {
+                Optional<Method> listMethod = Arrays.stream(obj.get().getClass().getMethods()).filter(method -> {
+
+                    Type returnType = method.getGenericReturnType();
+                    if (returnType instanceof ParameterizedType) {
+                        Type[] types = ((ParameterizedType) returnType).getActualTypeArguments();
+                        if (types != null && types[0] instanceof Class) {
+                            Class<?> listClass = (Class<?>) types[0];
+                            return resultClass.equals(listClass);
+                        }
+                    }
+
+                    return false;
+                }).findFirst();
+                if (listMethod.isPresent()) {
+                    try {
+                        return Optional.of((List<R>) listMethod.get().invoke(obj.get()));
+
+                    } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+            return Optional.empty();
+
         } catch (NotFoundException e) {
             if (this.getRestProperties().mapNotFoundToEmpty()) {
                 return Optional.empty();
@@ -269,8 +360,8 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
      * @param uri
      * @return
      */
-    public Self createIfNotExists(Uri uri, Optional<Object> obj) {
-        if (!this.exists(uri)) {
+    public Self createIfNotExists(SingleUri uri, Optional<Object> obj) {
+        if (!this.exists((Uri) uri)) {
             if (obj.isPresent()) {
                 this.create(uri, obj.get());
             } else {
@@ -281,17 +372,21 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
         return (Self) this;
     }
 
-    protected Relationship buildRelationship(GraphInventoryResourceUri uri) {
+    protected Relationship buildRelationship(SingleUri uri) {
         return buildRelationship(uri, Optional.empty());
     }
 
-    protected Relationship buildRelationship(GraphInventoryResourceUri uri, GraphInventoryEdgeLabel label) {
+    protected Relationship buildRelationship(SingleUri uri, GraphInventoryEdgeLabel label) {
         return buildRelationship(uri, Optional.of(label));
     }
 
-    protected Relationship buildRelationship(GraphInventoryResourceUri uri, Optional<GraphInventoryEdgeLabel> label) {
+    protected Relationship buildRelationship(SingleUri uri, Optional<GraphInventoryEdgeLabel> label) {
         final Relationship result = new Relationship();
-        result.setRelatedLink(uri.build().toString());
+        if (uri instanceof HttpAwareUri) {
+            result.setRelatedLink(((HttpAwareUri) uri).locateAndBuild().toString());
+        } else {
+            result.setRelatedLink(uri.build().toString());
+        }
         if (label.isPresent()) {
             result.setRelationshipLabel(label.get().toString());
         }
@@ -299,6 +394,8 @@ public abstract class GraphInventoryResourcesClient<Self, Uri extends GraphInven
     }
 
     public abstract Wrapper createWrapper(String json);
+
+    public abstract Wrapper createWrapper(Object json);
 
     /**
      * Starts a transaction which encloses multiple GraphInventory mutations

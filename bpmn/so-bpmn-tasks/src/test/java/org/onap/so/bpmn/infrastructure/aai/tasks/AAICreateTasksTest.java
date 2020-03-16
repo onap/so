@@ -64,6 +64,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoGenericVnf;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
+import org.onap.so.client.aai.entities.uri.AAIBaseResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
@@ -586,7 +587,7 @@ public class AAICreateTasksTest extends BaseTaskTest {
         execution.setVariable("heatStackId", "testHeatStackId");
         execution.setVariable("contrailNetworkPolicyFqdnList", "ABC123");
         NetworkPolicy networkPolicy = new NetworkPolicy();
-        doReturn(Optional.of(networkPolicy)).when(aaiNetworkResources).getNetworkPolicy(any(AAIResourceUri.class));
+        doReturn(Optional.of(networkPolicy)).when(aaiNetworkResources).getNetworkPolicy(any(AAIBaseResourceUri.class));
         doNothing().when(aaiNetworkResources).createNetworkPolicy(any(NetworkPolicy.class));
         aaiCreateTasks.createNetworkPolicies(execution);
         verify(aaiNetworkResources, times(0)).createNetworkPolicy(any(NetworkPolicy.class));

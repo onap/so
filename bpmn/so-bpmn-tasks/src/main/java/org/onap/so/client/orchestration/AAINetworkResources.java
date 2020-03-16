@@ -38,6 +38,8 @@ import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.entities.AAIEdgeLabel;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
+import org.onap.so.client.aai.entities.uri.AAIBaseResourceUri;
+import org.onap.so.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
@@ -103,11 +105,11 @@ public class AAINetworkResources {
         return injectionHelper.getAaiClient().get(netBindingUri.depth(Depth.TWO)).asBean(VpnBinding.class);
     }
 
-    public Optional<NetworkPolicy> getNetworkPolicy(AAIResourceUri netPolicyUri) {
+    public Optional<NetworkPolicy> getNetworkPolicy(AAIBaseResourceUri netPolicyUri) {
         return injectionHelper.getAaiClient().get(netPolicyUri).asBean(NetworkPolicy.class);
     }
 
-    public Optional<NetworkPolicies> getNetworkPolicies(AAIResourceUri netPoliciesUri) {
+    public Optional<NetworkPolicies> getNetworkPolicies(AAIBaseResourceUri netPoliciesUri) {
         return injectionHelper.getAaiClient().get(netPoliciesUri).asBean(NetworkPolicies.class);
     }
 
@@ -227,7 +229,7 @@ public class AAINetworkResources {
     }
 
     public boolean checkNetworkNameInUse(String networkName) {
-        AAIResourceUri uri =
+        AAIPluralResourceUri uri =
                 AAIUriFactory.createResourceUri(AAIObjectPlurals.L3_NETWORK).queryParam("network-name", networkName);
         return injectionHelper.getAaiClient().exists(uri);
     }

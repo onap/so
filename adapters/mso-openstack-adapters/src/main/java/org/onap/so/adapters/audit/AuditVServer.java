@@ -24,9 +24,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.onap.aai.domain.yang.LInterface;
+import org.onap.aai.domain.yang.VfModule;
+import org.onap.aai.domain.yang.VfModules;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
+import org.onap.so.client.aai.entities.AAIResultWrapper;
+import org.onap.so.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
@@ -53,11 +57,12 @@ public class AuditVServer extends AbstractAudit {
 
     public Optional<AAIObjectAuditList> auditVserversThroughRelationships(String genericVnfId, String vfModuleName) {
         AAIObjectAuditList auditList = new AAIObjectAuditList();
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VF_MODULE, genericVnfId)
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VF_MODULE, genericVnfId)
                 .queryParam("vf-module-name", vfModuleName);
-        if (getAaiClient().get(uri).getRelationships().isPresent()) {
+        Optional<AAIResultWrapper> wrapper = getAaiClient().getFirstWrapper(VfModules.class, VfModule.class, uri);
+        if (wrapper.isPresent() && wrapper.get().getRelationships().isPresent()) {
             List<AAIResourceUri> relatedVservers =
-                    getAaiClient().get(uri).getRelationships().get().getRelatedUris(AAIObjectType.VSERVER);
+                    wrapper.get().getRelationships().get().getRelatedUris(AAIObjectType.VSERVER);
             if (!relatedVservers.isEmpty()) {
                 relatedVservers.forEach(vserverUri -> {
                     Optional<Vserver> vserver = getAaiClient().get(vserverUri).asBean(Vserver.class);

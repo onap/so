@@ -24,7 +24,6 @@ import java.util.Optional;
 import javax.ws.rs.core.UriBuilder;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
-import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.entities.AAIEdgeLabel;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
@@ -237,12 +236,6 @@ public class AAIConfigurationResources {
         org.onap.aai.domain.yang.Configuration aaiConfiguration = new org.onap.aai.domain.yang.Configuration();
         aaiConfiguration.setOrchestrationStatus(orchestrationStatus.name());
         injectionHelper.getAaiClient().update(aaiResourceUri, aaiConfiguration);
-    }
-
-    public boolean checkConfigurationNameInUse(String configurationName) {
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.CONFIGURATION)
-                .queryParam("configuration-name", configurationName);
-        return injectionHelper.getAaiClient().exists(uri);
     }
 
 }

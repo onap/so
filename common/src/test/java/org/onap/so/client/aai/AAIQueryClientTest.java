@@ -48,7 +48,6 @@ import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.CustomQuery;
 import org.onap.so.client.aai.entities.Results;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
-import org.onap.so.client.aai.entities.uri.AAIUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.graphinventory.Format;
 import org.onap.so.client.graphinventory.GraphInventoryClient;
@@ -83,10 +82,10 @@ public class AAIQueryClientTest {
         Format format = Format.SIMPLE;
         CustomQuery query = new CustomQuery(uris);
 
-        doReturn(restClient).when(client).createClient(isA(AAIUri.class));
+        doReturn(restClient).when(client).createClient(isA(AAIResourceUri.class));
         aaiQueryClient.query(format, query);
-        verify(client, times(1)).createClient(
-                AAIUriFactory.createResourceUri(AAIObjectType.CUSTOM_QUERY).queryParam("format", format.toString()));
+        verify(client, times(1))
+                .createClient(AAIUriFactory.createResourceUri(AAIObjectType.CUSTOM_QUERY).format(format));
         verify(restClient, times(1)).put(query, String.class);
     }
 
@@ -99,7 +98,7 @@ public class AAIQueryClientTest {
         aaiQueryClient.nodesOnly();
         aaiQueryClient.subgraph(subgraph);
 
-        AAIUri aaiUri = spy(AAIUriFactory.createResourceUri(AAIObjectType.CUSTOM_QUERY));
+        AAIResourceUri aaiUri = spy(AAIUriFactory.createResourceUri(AAIObjectType.CUSTOM_QUERY));
         doReturn(aaiUri).when(aaiUri).clone();
         aaiQueryClient.setupQueryParams(aaiUri);
 
@@ -133,7 +132,7 @@ public class AAIQueryClientTest {
 
     @Test
     public void querySingleTypeTest() throws IOException {
-        when(client.createClient(isA(AAIUri.class))).thenReturn(restClient);
+        when(client.createClient(isA(AAIResourceUri.class))).thenReturn(restClient);
         when(restClient.put(any(Object.class), any(GenericType.class))).thenReturn(
                 mapper.readValue(getJson("pathed-result.json"), new TypeReference<Results<Map<String, Object>>>() {}));
 

@@ -95,7 +95,7 @@ public class AAITransactionalClientTest {
 
     @Test
     public void testConnect() throws IOException {
-        List<AAIResourceUri> uris = new ArrayList<AAIResourceUri>();
+        List<AAIResourceUri> uris = new ArrayList<>();
         uris.add(uriB);
 
         Map<String, Object> map = new HashMap<>();
@@ -117,7 +117,7 @@ public class AAITransactionalClientTest {
 
     @Test
     public void testDisconnect() throws IOException {
-        List<AAIResourceUri> uris = new ArrayList<AAIResourceUri>();
+        List<AAIResourceUri> uris = new ArrayList<>();
         uris.add(uriB);
 
         AAITransactionalClient transactions = aaiClient.beginTransaction().disconnect(uriA, uris);

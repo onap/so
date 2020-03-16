@@ -20,11 +20,10 @@
 
 package org.onap.so.client.orchestration;
 
-import static org.mockito.ArgumentMatchers.eq;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -37,8 +36,8 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.common.InjectionHelper;
+import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
@@ -46,10 +45,10 @@ import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.AAIEdgeLabel;
+import org.onap.so.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
-import org.onap.so.db.catalog.beans.OrchestrationStatus;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class AAIInstanceGroupResourcesTest extends TestDataSetup {
@@ -136,7 +135,7 @@ public class AAIInstanceGroupResourcesTest extends TestDataSetup {
 
     @Test
     public void checkInstanceGroupNameInUseTrueTest() throws Exception {
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.INSTANCE_GROUP)
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.INSTANCE_GROUP)
                 .queryParam("instance-group-name", "instanceGroupName");
         doReturn(true).when(MOCK_aaiResourcesClient).exists(eq(uri));
         boolean nameInUse = aaiInstanceGroupResources.checkInstanceGroupNameInUse("instanceGroupName");
@@ -145,7 +144,7 @@ public class AAIInstanceGroupResourcesTest extends TestDataSetup {
 
     @Test
     public void checkInstanceGroupNameInUseFalseTest() throws Exception {
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.INSTANCE_GROUP)
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.INSTANCE_GROUP)
                 .queryParam("instance-group-name", "instanceGroupName");
         doReturn(false).when(MOCK_aaiResourcesClient).exists(eq(uri));
         boolean nameInUse = aaiInstanceGroupResources.checkInstanceGroupNameInUse("instanceGroupName");

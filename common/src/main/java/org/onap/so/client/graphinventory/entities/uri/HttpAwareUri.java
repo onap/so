@@ -21,9 +21,12 @@
 package org.onap.so.client.graphinventory.entities.uri;
 
 import java.net.URI;
+import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 
-public interface HttpAwareUri {
+public interface HttpAwareUri extends AAIResourceUri {
 
 
     public URI buildNoNetwork();
+
+    public URI locateAndBuild();
 }

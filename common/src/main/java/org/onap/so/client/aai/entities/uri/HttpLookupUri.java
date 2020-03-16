@@ -111,8 +111,24 @@ public abstract class HttpLookupUri extends AAISimpleUri implements HttpAwareUri
         try {
             if (this.values.length == 1) {
                 String uri = getObjectById(this.values[0]);
-                Map<String, String> map = getURIKeys(uri);
-                return super.build(map.values().toArray(values));
+                Map<String, String> map = super.getURIKeys(uri);
+                this.values = map.values().toArray(values);
+                return super.build(values);
+            }
+        } catch (GraphInventoryUriNotFoundException | GraphInventoryPayloadException e) {
+            throw new GraphInventoryUriComputationException(e);
+        }
+        return super.build();
+    }
+
+    @Override
+    public URI locateAndBuild() {
+        try {
+            if (this.values.length == 1) {
+                String uri = getObjectById(this.values[0]);
+                Map<String, String> map = super.getURIKeys(uri);
+                this.values = map.values().toArray(values);
+                return super.build(values);
             }
         } catch (GraphInventoryUriNotFoundException | GraphInventoryPayloadException e) {
             throw new GraphInventoryUriComputationException(e);
@@ -155,7 +171,4 @@ public abstract class HttpLookupUri extends AAISimpleUri implements HttpAwareUri
         }
 
     }
-
-    @Override
-    public abstract URI buildNoNetwork();
 }

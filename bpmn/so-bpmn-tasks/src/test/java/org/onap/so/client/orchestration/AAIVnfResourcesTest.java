@@ -43,8 +43,8 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.common.InjectionHelper;
+import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.LineOfBusiness;
@@ -56,6 +56,7 @@ import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.AAIRestClientImpl;
 import org.onap.so.client.aai.AAIValidatorImpl;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
+import org.onap.so.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
@@ -243,7 +244,7 @@ public class AAIVnfResourcesTest extends TestDataSetup {
 
     @Test
     public void checkNameInUseTrueTest() {
-        AAIResourceUri vnfUri =
+        AAIPluralResourceUri vnfUri =
                 AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", "vnfName");
         doReturn(true).when(MOCK_aaiResourcesClient).exists(eq(vnfUri));
         boolean nameInUse = aaiVnfResources.checkNameInUse("vnfName");
@@ -252,7 +253,7 @@ public class AAIVnfResourcesTest extends TestDataSetup {
 
     @Test
     public void checkNameInUseFalseTest() {
-        AAIResourceUri vnfUri =
+        AAIPluralResourceUri vnfUri =
                 AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", "vnfName");
         doReturn(false).when(MOCK_aaiResourcesClient).exists(eq(vnfUri));
         boolean nameInUse = aaiVnfResources.checkNameInUse("vnfName");

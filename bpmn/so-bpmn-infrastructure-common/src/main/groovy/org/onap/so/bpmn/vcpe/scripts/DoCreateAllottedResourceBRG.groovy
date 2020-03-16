@@ -22,7 +22,8 @@
 
 package org.onap.so.bpmn.vcpe.scripts
 
-import org.onap.so.logger.LoggingAnchor
+import static org.apache.commons.lang3.StringUtils.isBlank
+import javax.ws.rs.core.UriBuilder
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.AllottedResource
@@ -36,14 +37,10 @@ import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.logger.LoggingAnchor
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
-import javax.ws.rs.NotFoundException
-import javax.ws.rs.core.UriBuilder
-
-import static org.apache.commons.lang3.StringUtils.isBlank
 
 /**
  * This groovy class supports the <class>DoCreateAllottedResourceBRG.bpmn</class> process.
@@ -235,11 +232,10 @@ public class DoCreateAllottedResourceBRG extends AbstractServiceTaskProcessor{
 			AAIResourcesClient resourceClient = new AAIResourcesClient()
 			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
 
-			try {
 				//just to make sure the serviceInstance exists
-				uri.build()
+				if (resourceClient.exists(uri)) {
 				execution.setVariable("PSI_resourceLink", uri)
-			} catch (NotFoundException e) {
+			} else {
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Service instance was not found in aai")
 			}
 

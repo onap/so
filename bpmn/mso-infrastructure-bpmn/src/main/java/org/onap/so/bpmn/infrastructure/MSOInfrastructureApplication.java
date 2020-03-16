@@ -24,16 +24,16 @@ package org.onap.so.bpmn.infrastructure;
 
 import java.util.List;
 import java.util.concurrent.Executor;
-import org.onap.so.logger.LoggingAnchor;
 import javax.annotation.PostConstruct;
 import org.camunda.bpm.application.PreUndeploy;
 import org.camunda.bpm.application.ProcessApplicationInfo;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.repository.DeploymentBuilder;
+import org.onap.logging.filter.spring.MDCTaskDecorator;
 import org.onap.so.bpmn.common.DefaultToShortClassNameBeanNameGenerator;
 import org.onap.so.db.catalog.beans.Workflow;
 import org.onap.so.db.catalog.client.CatalogDbClient;
-import org.onap.logging.filter.spring.MDCTaskDecorator;;
+import org.onap.so.logger.LoggingAnchor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

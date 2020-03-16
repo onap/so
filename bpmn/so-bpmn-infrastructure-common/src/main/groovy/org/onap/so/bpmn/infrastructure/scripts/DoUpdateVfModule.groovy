@@ -22,10 +22,10 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import org.onap.so.logger.LoggingAnchor
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.GenericVnf
+import org.onap.logging.filter.base.ErrorCode
 import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.CatalogDbUtils
 import org.onap.so.bpmn.common.scripts.CatalogDbUtilsFactory
@@ -37,15 +37,14 @@ import org.onap.so.bpmn.common.scripts.VfModuleBase
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils;
-import org.onap.so.client.graphinventory.entities.uri.Depth
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.entities.AAIResultWrapper
-import org.onap.so.client.aai.entities.uri.AAIUri
-import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.so.client.aai.entities.uri.AAIUriFactory;
+import org.onap.so.client.graphinventory.entities.uri.Depth
 import org.onap.so.constants.Defaults
-import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.logger.LoggingAnchor
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -274,7 +273,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 				}
 
 				try{
-					AAIUri serviceInstanceURI = AAIUriFactory.create(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId,serviceType,serviceInstanceId)
+					AAIResourceUri serviceInstanceURI = AAIUriFactory.create(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId,serviceType,serviceInstanceId)
 					AAIResourcesClient aaiRC = new AAIResourcesClient()
 					AAIResultWrapper aaiRW = aaiRC.get(serviceInstanceURI)
 					Map<String, Object> aaiJson = aaiRW.asMap()

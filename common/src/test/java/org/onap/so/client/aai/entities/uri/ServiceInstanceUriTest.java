@@ -56,11 +56,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.client.aai.AAIClient;
-import org.onap.so.client.aai.AAIObjectType;
+import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.defaultproperties.DefaultAAIPropertiesImpl;
-import org.onap.so.client.graphinventory.entities.uri.Depth;
+import org.onap.so.client.graphinventory.entities.uri.HttpAwareUri;
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryPayloadException;
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryUriComputationException;
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryUriNotFoundException;
@@ -111,7 +111,7 @@ public class ServiceInstanceUriTest {
                 "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3")
                         .when(spy).getObjectById(any(Object.class));
 
-        final URI result = spy.build();
+        final URI result = spy.locateAndBuild();
         final URI expected = UriBuilder.fromPath(
                 "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3")
                 .build();
@@ -129,7 +129,7 @@ public class ServiceInstanceUriTest {
                 "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3")
                         .when(spy).getObjectById(any(Object.class));
 
-        final URI result = spy.resourceVersion("1234").build();
+        final URI result = ((HttpAwareUri) spy.resourceVersion("1234")).locateAndBuild();
         final URI expected = UriBuilder.fromUri(
                 "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3?resource-version=1234")
                 .build();
@@ -147,7 +147,7 @@ public class ServiceInstanceUriTest {
                 "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3%20space")
                         .when(spy).getObjectById(any(Object.class));
 
-        final URI result = spy.build();
+        final URI result = spy.locateAndBuild();
         final URI expected = UriBuilder.fromUri(
                 "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3%20space")
                 .build();
@@ -175,9 +175,8 @@ public class ServiceInstanceUriTest {
         ServiceInstanceUri spy = spy(instance);
         String uri =
                 "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3";
-        doReturn(uri).when(spy).getObjectById(any(Object.class));
         doReturn(Optional.of(uri)).when(spy).getCachedValue();
-        final URI result = spy.resourceVersion("1234").clone().build();
+        final URI result = ((HttpAwareUri) spy.resourceVersion("1234").clone()).locateAndBuild();
         final URI expected = UriBuilder.fromUri(
                 "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3?resource-version=1234")
                 .build();
@@ -210,7 +209,7 @@ public class ServiceInstanceUriTest {
         when(wrapper.getJson()).thenReturn(content);
         when(spy.getResourcesClient()).thenReturn(mockResourcesClient);
         exception.expect(GraphInventoryUriComputationException.class);
-        spy.build();
+        spy.locateAndBuild();
 
     }
 
@@ -233,7 +232,7 @@ public class ServiceInstanceUriTest {
                 .stubFor(get(urlPathMatching("/aai/v[0-9]+/nodes/service-instances/service-instance/key3")).willReturn(
                         aResponse().withStatus(404).withHeader("Content-Type", "application/json").withBodyFile("")));
         exception.expect(NotFoundException.class);
-        spy.build();
+        spy.locateAndBuild();
     }
 
     @Test
@@ -250,7 +249,7 @@ public class ServiceInstanceUriTest {
                 ArgumentMatchers.<Class<NotFoundException>>any())).thenReturn(wrapper);
         when(wrapper.getJson()).thenReturn(content);
         when(spy.getResourcesClient()).thenReturn(mockResourcesClient);
-        spy.build();
+        spy.locateAndBuild();
         instance = spy.clone();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
@@ -271,6 +270,32 @@ public class ServiceInstanceUriTest {
 
         // use the cached value do not call out to external system
         verify(spy2, times(0)).getResourcesClient();
+    }
 
+    @Test
+    public void relatedToTest() throws GraphInventoryUriNotFoundException, GraphInventoryPayloadException {
+        ServiceInstanceUri instance = new ServiceInstanceUri("key1");
+        ServiceInstanceUri spy = spy(instance);
+        doReturn(
+                "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3")
+                        .when(spy).getObjectById(any(Object.class));
+
+        final URI result = spy.relatedTo(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", "my-vnf-name").build();
+        final URI expected = UriBuilder.fromUri(
+                "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3/related-to/generic-vnfs?vnf-name=my-vnf-name")
+                .build();
+        assertEquals("result is equal", expected, result);
+    }
+
+    @Test
+    public void relatedToEqualityTestBeforeBuildTest()
+            throws GraphInventoryUriNotFoundException, GraphInventoryPayloadException {
+        ServiceInstanceUri instance = new ServiceInstanceUri("key1");
+        ServiceInstanceUri spy = spy(instance);
+
+        final AAIPluralResourceUri result =
+                spy.relatedTo(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", "my-vnf-name");
+
+        assertEquals("result is equal", result, result);
     }
 }

@@ -20,52 +20,13 @@
 
 package org.onap.so.client.aai.entities.uri;
 
-import org.onap.so.client.aai.AAIObjectType;
-import org.onap.so.client.graphinventory.entities.uri.Depth;
+import java.util.regex.Pattern;
+import org.onap.so.client.aai.AAIObjectBase;
 import org.onap.so.client.graphinventory.entities.uri.GraphInventoryUri;
 
-public interface AAIUri extends GraphInventoryUri {
+public interface AAIUri<T extends AAIUri<?, ?>, OP extends AAIObjectBase> extends GraphInventoryUri<T, OP> {
 
-    /**
-     * By default A&AI enforces a depth of 1. Some objects can be told to retrieve objects nested beneath them by
-     * increasing this number.
-     * 
-     * You can use 0 to restrict the returned information to only the object you requested You can use all to retrieve
-     * all nested objects (this should only be used if you really need a massive amount of information and are caching
-     * the retrieval)
-     * 
-     * @param depth
-     * @return
-     */
-    @Override
-    public AAIUri depth(Depth depth);
-
-    /**
-     * Makes client only return object fields, no relationships
-     * 
-     * @return
-     */
-    @Override
-    public AAIUri nodesOnly(boolean nodesOnly);
-
-    @Override
-    public AAIUri queryParam(String name, String... values);
-
-    @Override
-    public AAIUri replaceQueryParam(String name, String... values);
-
-    @Override
-    public AAIUri resultIndex(int index);
-
-    @Override
-    public AAIUri resultSize(int size);
-
-    @Override
-    public AAIUri limit(int size);
-
-    @Override
-    public AAIUri clone();
-
-    @Override
-    public AAIObjectType getObjectType();
+    public default Pattern getPrefixPattern() {
+        return Pattern.compile("/aai/v\\d+");
+    }
 }

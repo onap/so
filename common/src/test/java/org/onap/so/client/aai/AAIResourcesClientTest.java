@@ -31,8 +31,12 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import java.util.Optional;
 import javax.ws.rs.BadRequestException;
 import org.junit.Before;
 import org.junit.Rule;
@@ -42,12 +46,17 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.aai.domain.yang.GenericVnf;
+import org.onap.aai.domain.yang.GenericVnfs;
 import org.onap.aai.domain.yang.Relationship;
+import org.onap.so.client.RestClient;
 import org.onap.so.client.aai.entities.AAIEdgeLabel;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
+import org.onap.so.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.defaultproperties.DefaultAAIPropertiesImpl;
+import org.onap.so.client.graphinventory.exceptions.GraphInventoryMultipleItemsException;
 import com.github.tomakehurst.wiremock.admin.NotFoundException;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
@@ -196,6 +205,104 @@ public class AAIResourcesClientTest {
         actual = client.buildRelationship(uri, AAIEdgeLabel.USES);
         assertThat("expect equal has label", actual, sameBeanAs(relationship));
 
+    }
+
+    @Test
+    public void testGetOne() {
+        GenericVnf vnf = new GenericVnf();
+        vnf.setVnfId("my-vnf-id");
+        GenericVnfs vnfs = new GenericVnfs();
+        vnfs.getGenericVnf().add(vnf);
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF);
+        RestClient restClientMock = mock(RestClient.class);
+        doReturn(restClientMock).when(client).createClient(uri);
+        when(restClientMock.get(GenericVnfs.class)).thenReturn(Optional.of(vnfs));
+
+        Optional<GenericVnf> result = aaiClient.getOne(GenericVnfs.class, GenericVnf.class, uri);
+
+        assertEquals("my-vnf-id", result.get().getVnfId());
+    }
+
+    @Test
+    public void testGetOneMultipleResults() {
+        GenericVnf vnf = new GenericVnf();
+        vnf.setVnfId("my-vnf-id");
+        GenericVnf vnf2 = new GenericVnf();
+        vnf.setVnfId("my-vnf-id2");
+        GenericVnfs vnfs = new GenericVnfs();
+        vnfs.getGenericVnf().add(vnf);
+        vnfs.getGenericVnf().add(vnf2);
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF);
+        RestClient restClientMock = mock(RestClient.class);
+        doReturn(restClientMock).when(client).createClient(uri);
+        when(restClientMock.get(GenericVnfs.class)).thenReturn(Optional.of(vnfs));
+
+        thrown.expect(GraphInventoryMultipleItemsException.class);
+        aaiClient.getOne(GenericVnfs.class, GenericVnf.class, uri);
+    }
+
+    @Test
+    public void testGetFirstMultipleResults() {
+        GenericVnf vnf = new GenericVnf();
+        vnf.setVnfId("my-vnf-id");
+        GenericVnf vnf2 = new GenericVnf();
+        vnf2.setVnfId("my-vnf-id2");
+        GenericVnfs vnfs = new GenericVnfs();
+        vnfs.getGenericVnf().add(vnf);
+        vnfs.getGenericVnf().add(vnf2);
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF);
+        RestClient restClientMock = mock(RestClient.class);
+        doReturn(restClientMock).when(client).createClient(uri);
+        when(restClientMock.get(GenericVnfs.class)).thenReturn(Optional.of(vnfs));
+
+        Optional<GenericVnf> result = aaiClient.getFirst(GenericVnfs.class, GenericVnf.class, uri);
+
+        assertEquals("my-vnf-id", result.get().getVnfId());
+    }
+
+    @Test
+    public void testGetOneNoResults() {
+        GenericVnf vnf = new GenericVnf();
+        vnf.setVnfId("my-vnf-id");
+        GenericVnfs vnfs = new GenericVnfs();
+        vnfs.getGenericVnf().add(vnf);
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF);
+        RestClient restClientMock = mock(RestClient.class);
+        doReturn(restClientMock).when(client).createClient(uri);
+        when(restClientMock.get(GenericVnfs.class)).thenReturn(Optional.empty());
+
+        Optional<GenericVnf> result = aaiClient.getOne(GenericVnfs.class, GenericVnf.class, uri);
+
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    public void testGetFirstNoResults() {
+        GenericVnf vnf = new GenericVnf();
+        vnf.setVnfId("my-vnf-id");
+        GenericVnfs vnfs = new GenericVnfs();
+        vnfs.getGenericVnf().add(vnf);
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF);
+        RestClient restClientMock = mock(RestClient.class);
+        doReturn(restClientMock).when(client).createClient(uri);
+        when(restClientMock.get(GenericVnfs.class)).thenReturn(Optional.empty());
+
+        Optional<GenericVnf> result = aaiClient.getFirst(GenericVnfs.class, GenericVnf.class, uri);
+
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    public void testGetFirstWrongPluralClass() {
+        GenericVnf vnf = new GenericVnf();
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF);
+        RestClient restClientMock = mock(RestClient.class);
+        doReturn(restClientMock).when(client).createClient(uri);
+        when(restClientMock.get(GenericVnf.class)).thenReturn(Optional.of(vnf));
+
+        Optional<GenericVnf> result = aaiClient.getFirst(GenericVnf.class, GenericVnf.class, uri);
+
+        assertFalse(result.isPresent());
     }
 
 }

@@ -22,17 +22,12 @@ package org.onap.so.adapters.audit;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Stream;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,9 +38,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.LInterface;
 import org.onap.aai.domain.yang.LInterfaces;
-import org.onap.aai.domain.yang.Relationship;
-import org.onap.aai.domain.yang.RelationshipList;
 import org.onap.aai.domain.yang.VfModule;
+import org.onap.aai.domain.yang.VfModules;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
@@ -60,8 +54,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.woorea.openstack.heat.model.Resource;
-import com.woorea.openstack.heat.model.Resources;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class AuditVServerTest extends AuditVServer {
@@ -399,9 +391,9 @@ public class AuditVServerTest extends AuditVServer {
 
         AAIResultWrapper wrapper = new AAIResultWrapper(vfModule);
 
-        doReturn(wrapper).when(aaiResourcesMock)
-                .get(AAIUriFactory.createResourceUri(AAIObjectPlurals.VF_MODULE, "genericVnfId")
-                        .queryParam("vf-module-name", "vfModuleName"));
+        doReturn(Optional.of(wrapper)).when(aaiResourcesMock).getFirstWrapper(VfModules.class, VfModule.class,
+                AAIUriFactory.createResourceUri(AAIObjectPlurals.VF_MODULE, "genericVnfId").queryParam("vf-module-name",
+                        "vfModuleName"));
 
         Optional<AAIObjectAuditList> auditList =
                 auditNova.auditVserversThroughRelationships("genericVnfId", "vfModuleName");
@@ -417,9 +409,9 @@ public class AuditVServerTest extends AuditVServer {
         AAIResultWrapper wrapper = new AAIResultWrapper(vfModule);
         AAIResultWrapper vserverWrapper = new AAIResultWrapper(new Vserver());
 
-        doReturn(wrapper).when(aaiResourcesMock)
-                .get(AAIUriFactory.createResourceUri(AAIObjectPlurals.VF_MODULE, "genericVnfId")
-                        .queryParam("vf-module-name", "vfModuleName"));
+        doReturn(Optional.of(wrapper)).when(aaiResourcesMock).getFirstWrapper(VfModules.class, VfModule.class,
+                AAIUriFactory.createResourceUri(AAIObjectPlurals.VF_MODULE, "genericVnfId").queryParam("vf-module-name",
+                        "vfModuleName"));
 
         doReturn(vserverWrapper).when(aaiResourcesMock).get(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER,
                 "cloud-owner", "cloud-region-id", "tenant-id", "VUSCHGA1"));

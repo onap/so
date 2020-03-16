@@ -21,8 +21,6 @@
 package org.onap.so.client.aai.entities.uri;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -48,7 +46,7 @@ public class IncorrectNumberOfUriKeysTest {
     public void verifyIncorrectNumberOfKeysPlural() {
 
         thrown.expect(IncorrectNumberOfUriKeys.class);
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VOLUME_GROUP, "my-cloud-owner");
+        AAISimplePluralUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VOLUME_GROUP, "my-cloud-owner");
 
     }
 

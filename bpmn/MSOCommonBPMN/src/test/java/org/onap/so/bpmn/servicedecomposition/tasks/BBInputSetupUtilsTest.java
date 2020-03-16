@@ -74,6 +74,7 @@ import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.NoServiceInstanceF
 import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
+import org.onap.so.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.graphinventory.entities.uri.Depth;
@@ -317,38 +318,14 @@ public class BBInputSetupUtilsTest {
         ServiceInstances serviceInstances = new ServiceInstances();
         serviceInstances.getServiceInstance().add(expectedServiceInstance);
 
-        doReturn(Optional.of(serviceInstances)).when(MOCK_aaiResourcesClient).get(isA(Class.class),
-                isA(AAIResourceUri.class));
-
-        assertThat(bbInputSetupUtils.getAAIServiceInstanceByName(serviceInstanceName, customer),
-                sameBeanAs(serviceInstances.getServiceInstance().get(0)));
-    }
-
-    @Test
-    public void getAAIServiceInstanceByNameExceptionTest() throws Exception {
-        final String serviceInstanceName = "serviceInstanceName";
-
-        expectedException.expect(Exception.class);
-        expectedException.expectMessage("Multiple Service Instances Returned");
-
-        ServiceInstance serviceInstance = new ServiceInstance();
-        serviceInstance.setServiceInstanceId("serviceInstanceId");
-
-        ServiceSubscription serviceSubscription = new ServiceSubscription();
-        serviceSubscription.setServiceType("serviceType");
-
-        Customer customer = new Customer();
-        customer.setGlobalCustomerId("globalCustomerId");
-        customer.setServiceSubscription(serviceSubscription);
-
-        ServiceInstances serviceInstances = new ServiceInstances();
-        serviceInstances.getServiceInstance().add(serviceInstance);
-        serviceInstances.getServiceInstance().add(serviceInstance);
-
-        doReturn(Optional.of(serviceInstances)).when(MOCK_aaiResourcesClient).get(isA(Class.class),
-                isA(AAIResourceUri.class));
-
+        AAIPluralResourceUri expectedUri = AAIUriFactory
+                .createResourceUri(AAIObjectPlurals.SERVICE_INSTANCE, customer.getGlobalCustomerId(),
+                        customer.getServiceSubscription().getServiceType())
+                .queryParam("service-instance-name", serviceInstanceName).depth(Depth.TWO);
         bbInputSetupUtils.getAAIServiceInstanceByName(serviceInstanceName, customer);
+
+        verify(MOCK_aaiResourcesClient, times(1)).getOne(org.onap.aai.domain.yang.ServiceInstances.class,
+                org.onap.aai.domain.yang.ServiceInstance.class, expectedUri);
     }
 
     @Test
@@ -357,30 +334,6 @@ public class BBInputSetupUtilsTest {
         customer.setServiceSubscription(new ServiceSubscription());
 
         assertNull(bbInputSetupUtils.getAAIServiceInstanceByName("", customer));
-    }
-
-    @Test
-    public void getOptionalAAIServiceInstanceByNameExceptionTest() throws Exception {
-        expectedException.expect(MultipleObjectsFoundException.class);
-        expectedException.expectMessage(containsString(
-                "Multiple service instances found for customer-id: globalCustomerId, service-type: serviceType and service-instance-name: serviceInstanceId."));
-
-        final String globalCustomerId = "globalCustomerId";
-        final String serviceType = "serviceType";
-        final String serviceInstanceId = "serviceInstanceId";
-
-        ServiceInstance serviceInstance = new ServiceInstance();
-        serviceInstance.setServiceInstanceId(serviceInstanceId);
-        serviceInstance.setServiceType(serviceType);
-
-        ServiceInstances serviceInstances = new ServiceInstances();
-        serviceInstances.getServiceInstance().add(serviceInstance);
-        serviceInstances.getServiceInstance().add(serviceInstance);
-
-        doReturn(Optional.of(serviceInstances)).when(MOCK_aaiResourcesClient).get(isA(Class.class),
-                isA(AAIResourceUri.class));
-
-        bbInputSetupUtils.getAAIServiceInstanceByName(globalCustomerId, serviceType, serviceInstanceId);
     }
 
     @Test
@@ -487,8 +440,7 @@ public class BBInputSetupUtilsTest {
         network.setNetworkId(networkId);
         network.setNetworkName(networkName);
         expected.get().getL3Network().add(network);
-
-        doReturn(expected).when(MOCK_aaiResourcesClient).get(eq(L3Networks.class), any(AAIResourceUri.class));
+        doReturn(expected).when(MOCK_aaiResourcesClient).get(eq(L3Networks.class), any(AAIPluralResourceUri.class));
         Optional<L3Network> actual =
                 bbInputSetupUtils.getRelatedNetworkByNameFromServiceInstance(networkId, networkName);
 
@@ -499,31 +451,17 @@ public class BBInputSetupUtilsTest {
     }
 
     @Test
-    public void getRelatedNetworkByNameFromServiceInstanceMultipleNetworksExceptionTest() throws Exception {
-        final String serviceInstanceId = "serviceInstanceId";
-        final String networkName = "networkName";
-        expectedException.expect(MultipleObjectsFoundException.class);
-        expectedException.expectMessage(
-                String.format("Multiple networks found for service-instance-id: %s and network-name: %s.",
-                        serviceInstanceId, networkName));
-
-        L3Network network = new L3Network();
-        network.setNetworkId("id123");
-        network.setNetworkName("name123");
-
-        L3Networks l3Networks = new L3Networks();
-        l3Networks.getL3Network().add(network);
-        l3Networks.getL3Network().add(network);
-        Optional<L3Networks> optNetworks = Optional.of(l3Networks);
-
-        doReturn(optNetworks).when(MOCK_aaiResourcesClient).get(eq(L3Networks.class), any(AAIResourceUri.class));
-
-        bbInputSetupUtils.getRelatedNetworkByNameFromServiceInstance(serviceInstanceId, networkName);
-    }
-
-    @Test
     public void getRelatedNetworkByNameFromServiceInstanceNotFoundTest() throws Exception {
-        assertEquals(Optional.empty(), bbInputSetupUtils.getRelatedNetworkByNameFromServiceInstance("", ""));
+        String serviceInstanceId = "serviceInstanceId";
+        String networkName = "networkName";
+
+        doReturn(Optional.empty()).when(MOCK_aaiResourcesClient).get(eq(L3Networks.class),
+                any(AAIPluralResourceUri.class));
+
+        Optional<L3Network> actualNetwork =
+                bbInputSetupUtils.getRelatedNetworkByNameFromServiceInstance(serviceInstanceId, networkName);
+
+        assertEquals(Optional.empty(), actualNetwork);
     }
 
     @Test
@@ -534,7 +472,8 @@ public class BBInputSetupUtilsTest {
         serviceInstance.setServiceInstanceName("serviceInstanceName");
         expected.get().getServiceInstance().add(serviceInstance);
 
-        doReturn(expected).when(MOCK_aaiResourcesClient).get(eq(ServiceInstances.class), any(AAIResourceUri.class));
+        doReturn(expected).when(MOCK_aaiResourcesClient).get(eq(ServiceInstances.class),
+                any(AAIPluralResourceUri.class));
         Optional<ServiceInstance> actual = this.bbInputSetupUtils.getRelatedServiceInstanceFromInstanceGroup("ig-001");
 
         assertTrue(actual.isPresent());
@@ -546,9 +485,6 @@ public class BBInputSetupUtilsTest {
     public void getRelatedServiceInstanceFromInstanceGroupMultipleExceptionTest() throws Exception {
         final String instanceGroupId = "ig-001";
         expectedException.expect(MultipleObjectsFoundException.class);
-        expectedException.expectMessage(
-                String.format("Mulitple service instances were found for instance-group-id: %s.", instanceGroupId));
-
         Optional<ServiceInstances> serviceInstances = Optional.of(new ServiceInstances());
         ServiceInstance si1 = Mockito.mock(ServiceInstance.class);
         ServiceInstance si2 = Mockito.mock(ServiceInstance.class);
@@ -556,60 +492,35 @@ public class BBInputSetupUtilsTest {
         serviceInstances.get().getServiceInstance().add(si2);
 
         doReturn(serviceInstances).when(MOCK_aaiResourcesClient).get(eq(ServiceInstances.class),
-                any(AAIResourceUri.class));
-        bbInputSetupUtils.getRelatedServiceInstanceFromInstanceGroup(instanceGroupId);
+                any(AAIPluralResourceUri.class));
+        this.bbInputSetupUtils.getRelatedServiceInstanceFromInstanceGroup(instanceGroupId);
     }
 
     @Test
     public void getRelatedServiceInstanceFromInstanceGroupNotFoundExceptionTest() throws Exception {
         expectedException.expect(NoServiceInstanceFoundException.class);
-        expectedException.expectMessage("No ServiceInstances Returned");
-
         Optional<ServiceInstances> serviceInstances = Optional.of(new ServiceInstances());
 
         doReturn(serviceInstances).when(MOCK_aaiResourcesClient).get(eq(ServiceInstances.class),
-                any(AAIResourceUri.class));
-        bbInputSetupUtils.getRelatedServiceInstanceFromInstanceGroup("ig-001");
+                any(AAIPluralResourceUri.class));
+        this.bbInputSetupUtils.getRelatedServiceInstanceFromInstanceGroup("ig-001");
     }
 
     @Test
     public void getRelatedVnfByNameFromServiceInstanceTest() throws Exception {
         final String vnfId = "id123";
         final String vnfName = "name123";
-
-        Optional<GenericVnfs> expected = Optional.of(new GenericVnfs());
+        final String serviceInstanceId = "service-instance-id123";
         GenericVnf vnf = new GenericVnf();
         vnf.setVnfId(vnfId);
         vnf.setVnfName(vnfName);
-        expected.get().getGenericVnf().add(vnf);
-
-        doReturn(expected).when(MOCK_aaiResourcesClient).get(eq(GenericVnfs.class), any(AAIResourceUri.class));
-        Optional<GenericVnf> actual = this.bbInputSetupUtils.getRelatedVnfByNameFromServiceInstance(vnfId, vnfName);
-
+        doReturn(Optional.of(vnf)).when(MOCK_aaiResourcesClient).getOne(GenericVnfs.class, GenericVnf.class,
+                AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
+                        .relatedTo(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", vnfName));
+        Optional<GenericVnf> actual =
+                this.bbInputSetupUtils.getRelatedVnfByNameFromServiceInstance(serviceInstanceId, vnfName);
         assertTrue(actual.isPresent());
-        assertEquals(expected.get().getGenericVnf().get(0).getVnfId(), actual.get().getVnfId());
-    }
-
-    @Test
-    public void getRelatedVnfByNameFromServiceInstanceMultipleVnfsExceptionTest() throws Exception {
-        final String serviceInstanceId = "serviceInstanceId";
-        final String vnfName = "vnfName";
-        expectedException.expect(MultipleObjectsFoundException.class);
-        expectedException.expectMessage(String.format(
-                "Multiple vnfs found for service-instance-id: %s and vnf-name: %s.", serviceInstanceId, vnfName));
-
-        GenericVnf vnf = new GenericVnf();
-        vnf.setVnfId("id123");
-        vnf.setVnfName("name123");
-
-        GenericVnfs vnfs = new GenericVnfs();
-        vnfs.getGenericVnf().add(vnf);
-        vnfs.getGenericVnf().add(vnf);
-
-        Optional<GenericVnfs> optVnfs = Optional.of(vnfs);
-        doReturn(optVnfs).when(MOCK_aaiResourcesClient).get(eq(GenericVnfs.class), any(AAIResourceUri.class));
-
-        bbInputSetupUtils.getRelatedVnfByNameFromServiceInstance(serviceInstanceId, vnfName);
+        assertEquals(vnf.getVnfId(), actual.get().getVnfId());
     }
 
     @Test
@@ -617,69 +528,56 @@ public class BBInputSetupUtilsTest {
         final String serviceInstanceId = "serviceInstanceId";
         final String vnfName = "vnfName";
 
+        doReturn(Optional.empty()).when(MOCK_aaiResourcesClient).getOne(eq(GenericVnfs.class), eq(GenericVnf.class),
+                any(AAIPluralResourceUri.class));
+
         assertEquals(Optional.empty(),
                 bbInputSetupUtils.getRelatedVnfByNameFromServiceInstance(serviceInstanceId, vnfName));
     }
 
     @Test
     public void getRelatedVolumeGroupByNameFromVnfTest() throws Exception {
-        final String vnfId = "id123";
-        final String vnfName = "name123";
-
-        Optional<VolumeGroups> expected = Optional.of(new VolumeGroups());
+        final String vnfId = "vnf-id123";
+        final String volumeGroupId = "id123";
+        final String volumeGroupName = "volume-group-name123";
         VolumeGroup volumeGroup = new VolumeGroup();
-        volumeGroup.setVolumeGroupId(vnfId);
-        volumeGroup.setVolumeGroupName(vnfName);
-        expected.get().getVolumeGroup().add(volumeGroup);
-
-        doReturn(expected).when(MOCK_aaiResourcesClient).get(eq(VolumeGroups.class), any(AAIResourceUri.class));
-        Optional<VolumeGroup> actual = this.bbInputSetupUtils.getRelatedVolumeGroupByNameFromVnf(vnfId, vnfName);
-
-        assertTrue(actual.isPresent());
-        assertEquals(expected.get().getVolumeGroup().get(0).getVolumeGroupId(), actual.get().getVolumeGroupId());
-    }
-
-    @Test
-    public void getRelatedVolumeGroupByNameFromVnfMultipleVolumeGroupsExceptionTest() throws Exception {
-        final String vnfId = "vnfId";
-        final String volumeGroupName = "volumeGroupName";
-        expectedException.expect(MultipleObjectsFoundException.class);
-        expectedException.expectMessage(String.format(
-                "Multiple volume-groups found for vnf-id: %s and volume-group-name: %s.", vnfId, volumeGroupName));
-
-        VolumeGroup volumeGroup = new VolumeGroup();
-        volumeGroup.setVolumeGroupId("id123");
-        volumeGroup.setVolumeGroupName("name123");
-
-        VolumeGroups volumeGroups = new VolumeGroups();
-        volumeGroups.getVolumeGroup().add(volumeGroup);
-        volumeGroups.getVolumeGroup().add(volumeGroup);
-        Optional<VolumeGroups> optVolumeGroups = Optional.of(volumeGroups);
-
-        doReturn(optVolumeGroups).when(MOCK_aaiResourcesClient).get(eq(VolumeGroups.class), any(AAIResourceUri.class));
-
-        bbInputSetupUtils.getRelatedVolumeGroupByNameFromVnf(vnfId, volumeGroupName);
+        volumeGroup.setVolumeGroupId(volumeGroupId);
+        volumeGroup.setVolumeGroupName(volumeGroupName);
+        doReturn(Optional.of(volumeGroup)).when(MOCK_aaiResourcesClient).getOne(VolumeGroups.class, VolumeGroup.class,
+                AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+                        .relatedTo(AAIObjectPlurals.VOLUME_GROUP).queryParam("volume-group-name", volumeGroupName));
+        Optional<VolumeGroup> actual =
+                this.bbInputSetupUtils.getRelatedVolumeGroupByNameFromVnf(vnfId, volumeGroupName);
+        assertEquals(volumeGroup.getVolumeGroupId(), actual.get().getVolumeGroupId());
     }
 
     @Test
     public void getRelatedVolumeGroupByNameFromVnfNotFoundTest() throws Exception {
-        assertEquals(Optional.empty(), bbInputSetupUtils.getRelatedVolumeGroupByNameFromVnf("", ""));
+        String vnfId = "vnfId";
+        String volumeGroupName = "volumeGroupName";
+
+        doReturn(Optional.empty()).when(MOCK_aaiResourcesClient).getOne(eq(VolumeGroups.class), eq(VolumeGroup.class),
+                any(AAIPluralResourceUri.class));
+
+        Optional<VolumeGroup> actualVolumeGroup =
+                bbInputSetupUtils.getRelatedVolumeGroupByNameFromVnf(vnfId, volumeGroupName);
+
+        assertEquals(Optional.empty(), actualVolumeGroup);
     }
 
     @Test
     public void getRelatedVolumeGroupByNameFromVfModuleTest() throws Exception {
-        Optional<VolumeGroups> expected = Optional.of(new VolumeGroups());
         VolumeGroup volumeGroup = new VolumeGroup();
         volumeGroup.setVolumeGroupId("id123");
         volumeGroup.setVolumeGroupName("name123");
-        expected.get().getVolumeGroup().add(volumeGroup);
-
-        doReturn(expected).when(MOCK_aaiResourcesClient).get(eq(VolumeGroups.class), any(AAIResourceUri.class));
-        Optional<VolumeGroup> actual =
-                this.bbInputSetupUtils.getRelatedVolumeGroupByNameFromVfModule("id123", "id123", "name123");
-
+        doReturn(Optional.of(volumeGroup)).when(MOCK_aaiResourcesClient).getOne(VolumeGroups.class, VolumeGroup.class,
+                AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, "vnf-id123", "vf-module-id123")
+                        .relatedTo(AAIObjectPlurals.VOLUME_GROUP)
+                        .queryParam("volume-group-name", "volume-group-name123"));
+        Optional<VolumeGroup> actual = this.bbInputSetupUtils.getRelatedVolumeGroupByNameFromVfModule("vnf-id123",
+                "vf-module-id123", "volume-group-name123");
         assertTrue(actual.isPresent());
-        assertEquals(expected.get().getVolumeGroup().get(0).getVolumeGroupId(), actual.get().getVolumeGroupId());
+        assertEquals(volumeGroup.getVolumeGroupId(), actual.get().getVolumeGroupId());
     }
 
     @Test
@@ -707,51 +605,41 @@ public class BBInputSetupUtilsTest {
         final String vnfId = "vnfId";
         final String volumeGroupId = "volumeGroupId";
 
-        assertEquals(Optional.empty(), bbInputSetupUtils.getRelatedVolumeGroupFromVfModule(vnfId, volumeGroupId));
+        doReturn(Optional.empty()).when(MOCK_aaiResourcesClient).getOne(eq(VolumeGroups.class), eq(VolumeGroup.class),
+                any(AAIPluralResourceUri.class));
+
+        Optional<VolumeGroup> actualVolumeGroup =
+                bbInputSetupUtils.getRelatedVolumeGroupFromVfModule(vnfId, volumeGroupId);
+
+        assertEquals(Optional.empty(), actualVolumeGroup);
     }
 
     @Test
     public void getRelatedVolumeGroupFromVfModuleTest() throws Exception {
-        Optional<VolumeGroups> expected = Optional.of(new VolumeGroups());
         VolumeGroup volumeGroup = new VolumeGroup();
         volumeGroup.setVolumeGroupId("id123");
-        expected.get().getVolumeGroup().add(volumeGroup);
-
-        doReturn(expected).when(MOCK_aaiResourcesClient).get(eq(VolumeGroups.class), any(AAIResourceUri.class));
-        Optional<VolumeGroup> actual = bbInputSetupUtils.getRelatedVolumeGroupFromVfModule("id123", "id123");
-
+        doReturn(Optional.of(volumeGroup)).when(MOCK_aaiResourcesClient).getOne(VolumeGroups.class, VolumeGroup.class,
+                AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, "vnf-id123", "vf-module-id123")
+                        .relatedTo(AAIObjectPlurals.VOLUME_GROUP));
+        Optional<VolumeGroup> actual =
+                this.bbInputSetupUtils.getRelatedVolumeGroupFromVfModule("vnf-id123", "vf-module-id123");
         assertTrue(actual.isPresent());
-        assertEquals(expected.get().getVolumeGroup().get(0).getVolumeGroupId(), actual.get().getVolumeGroupId());
-    }
-
-    @Test
-    public void getRelatedVolumeGroupByNameFromVfModuleMultipleVolumeGroupsExceptionTest() throws Exception {
-        final String vnfId = "vnfId";
-        final String vfModuleId = "vfModuleId";
-        final String volumeGroupName = "volumeGroupName";
-
-        expectedException.expect(MultipleObjectsFoundException.class);
-        expectedException.expectMessage(String.format(
-                "Multiple voulme-groups found for vnf-id: %s, vf-module-id: %s and volume-group-name: %s.", vnfId,
-                vfModuleId, volumeGroupName));
-
-        VolumeGroup volumeGroup = new VolumeGroup();
-        volumeGroup.setVolumeGroupId("id123");
-        volumeGroup.setVolumeGroupName("name123");
-
-        VolumeGroups volumeGroups = new VolumeGroups();
-        volumeGroups.getVolumeGroup().add(volumeGroup);
-        volumeGroups.getVolumeGroup().add(volumeGroup);
-
-        Optional<VolumeGroups> optVolumeGroups = Optional.of(volumeGroups);
-        doReturn(optVolumeGroups).when(MOCK_aaiResourcesClient).get(eq(VolumeGroups.class), any(AAIResourceUri.class));
-
-        bbInputSetupUtils.getRelatedVolumeGroupByNameFromVfModule(vnfId, vfModuleId, volumeGroupName);
+        assertEquals(volumeGroup.getVolumeGroupId(), actual.get().getVolumeGroupId());
     }
 
     @Test
     public void getRelatedVolumeGroupByNameFromVfModuleNotFoundTest() throws Exception {
-        assertEquals(Optional.empty(), bbInputSetupUtils.getRelatedVolumeGroupByNameFromVfModule("", "", ""));
+        String vnfId = "vnfId";
+        String volumeGroupId = "volumeGroupId";
+        String volumeGroupName = "volumeGroupName";
+
+        doReturn(Optional.empty()).when(MOCK_aaiResourcesClient).getOne(eq(VolumeGroups.class), eq(VolumeGroup.class),
+                any(AAIPluralResourceUri.class));
+
+        Optional<VolumeGroup> actualVolumeGroup =
+                bbInputSetupUtils.getRelatedVolumeGroupByNameFromVfModule(vnfId, volumeGroupId, volumeGroupName);
+
+        assertEquals(Optional.empty(), actualVolumeGroup);
     }
 
     @Test
@@ -780,46 +668,28 @@ public class BBInputSetupUtilsTest {
     }
 
     @Test
-    public void getRelatedConfigurationByNameFromServiceInstanceExceptionTest() throws Exception {
-        Configuration configuration = new Configuration();
-        configuration.setConfigurationId("id123");
-
-        Configurations configurations = new Configurations();
-        configurations.getConfiguration().add(configuration);
-        configurations.getConfiguration().add(configuration);
-
-        Optional<Configurations> optConfigurations = Optional.of(configurations);
-
-        doReturn(optConfigurations).when(MOCK_aaiResourcesClient).get(eq(Configurations.class),
-                any(AAIResourceUri.class));
-
-        expectedException.expect(MultipleObjectsFoundException.class);
-        this.bbInputSetupUtils.getRelatedConfigurationByNameFromServiceInstance("id123", "name123");
-    }
-
-    @Test
     public void getRelatedConfigurationByNameFromServiceInstanceNotFoundTest() throws Exception {
         assertEquals(Optional.empty(), bbInputSetupUtils.getRelatedConfigurationByNameFromServiceInstance("", ""));
     }
 
     @Test
     public void getRelatedConfigurationByNameFromServiceInstanceTest() throws Exception {
-        Optional<Configurations> expected = Optional.of(new Configurations());
         Configuration configuration = new Configuration();
         configuration.setConfigurationId("id123");
-        expected.get().getConfiguration().add(configuration);
-
-        doReturn(expected).when(MOCK_aaiResourcesClient).get(eq(Configurations.class), any(AAIResourceUri.class));
-        Optional<Configuration> actual =
-                this.bbInputSetupUtils.getRelatedConfigurationByNameFromServiceInstance("id123", "name123");
-
+        doReturn(Optional.of(configuration)).when(MOCK_aaiResourcesClient).getOne(Configurations.class,
+                Configuration.class,
+                AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, "service-instance-id123")
+                        .relatedTo(AAIObjectPlurals.CONFIGURATION)
+                        .queryParam("configuration-name", "configuration-name123"));
+        Optional<Configuration> actual = this.bbInputSetupUtils
+                .getRelatedConfigurationByNameFromServiceInstance("service-instance-id123", "configuration-name123");
         assertTrue(actual.isPresent());
-        assertEquals(expected.get().getConfiguration().get(0).getConfigurationId(), actual.get().getConfigurationId());
+        assertEquals(configuration.getConfigurationId(), actual.get().getConfigurationId());
     }
 
     @Test
     public void existsAAIVfModuleGloballyByNameTest() {
-        AAIResourceUri expectedUri =
+        AAIPluralResourceUri expectedUri =
                 AAIUriFactory.createNodesUri(AAIObjectPlurals.VF_MODULE).queryParam("vf-module-name", "testVfModule");
         bbInputSetupUtils.existsAAIVfModuleGloballyByName("testVfModule");
 
@@ -828,7 +698,7 @@ public class BBInputSetupUtilsTest {
 
     @Test
     public void existsAAIConfigurationGloballyByNameTest() {
-        AAIResourceUri expectedUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.CONFIGURATION)
+        AAIPluralResourceUri expectedUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.CONFIGURATION)
                 .queryParam("configuration-name", "testConfig");
         bbInputSetupUtils.existsAAIConfigurationGloballyByName("testConfig");
 
@@ -837,7 +707,7 @@ public class BBInputSetupUtilsTest {
 
     @Test
     public void existsAAINetworksGloballyByNameTest() {
-        AAIResourceUri expectedUri =
+        AAIPluralResourceUri expectedUri =
                 AAIUriFactory.createResourceUri(AAIObjectPlurals.L3_NETWORK).queryParam("network-name", "testNetwork");
         bbInputSetupUtils.existsAAINetworksGloballyByName("testNetwork");
 
@@ -846,7 +716,7 @@ public class BBInputSetupUtilsTest {
 
     @Test
     public void existsAAIVolumeGroupGloballyByNameTest() {
-        AAIResourceUri expectedUri = AAIUriFactory.createNodesUri(AAIObjectPlurals.VOLUME_GROUP)
+        AAIPluralResourceUri expectedUri = AAIUriFactory.createNodesUri(AAIObjectPlurals.VOLUME_GROUP)
                 .queryParam("volume-group-name", "testVoumeGroup");
 
         bbInputSetupUtils.existsAAIVolumeGroupGloballyByName("testVoumeGroup");
@@ -860,7 +730,7 @@ public class BBInputSetupUtilsTest {
 
         bbInputSetupUtils.updateInfraActiveRequestVnfId(infraActiveRequests, vnfId);
 
-        assertEquals(infraActiveRequests.getVnfId(), vnfId);
+        assertEquals(vnfId, infraActiveRequests.getVnfId());
     }
 
     @Test
@@ -870,7 +740,7 @@ public class BBInputSetupUtilsTest {
 
         bbInputSetupUtils.updateInfraActiveRequestVfModuleId(infraActiveRequests, vfModuleId);
 
-        assertEquals(infraActiveRequests.getVfModuleId(), vfModuleId);
+        assertEquals(vfModuleId, infraActiveRequests.getVfModuleId());
     }
 
     @Test
@@ -880,7 +750,7 @@ public class BBInputSetupUtilsTest {
 
         bbInputSetupUtils.updateInfraActiveRequestVolumeGroupId(infraActiveRequests, volumeGroupId);
 
-        assertEquals(infraActiveRequests.getVolumeGroupId(), volumeGroupId);
+        assertEquals(volumeGroupId, infraActiveRequests.getVolumeGroupId());
     }
 
     @Test
@@ -890,7 +760,7 @@ public class BBInputSetupUtilsTest {
 
         bbInputSetupUtils.updateInfraActiveRequestNetworkId(infraActiveRequests, networkId);
 
-        assertEquals(infraActiveRequests.getNetworkId(), networkId);
+        assertEquals(networkId, infraActiveRequests.getNetworkId());
     }
 
     @Test
@@ -921,14 +791,14 @@ public class BBInputSetupUtilsTest {
                 mapper.readValue(new File(RESOURCE_PATH + "aaiL3NetworkInputWithSubnets.json"), L3Network.class);
 
         Optional<VpnBinding> actual = bbInputSetupUtils.getAICVpnBindingFromNetwork(l3Network);
-        assertEquals(actual, Optional.empty());
+        assertEquals(Optional.empty(), actual);
     }
 
     @Test
     public void getAAIServiceInstancesGloballyByName_noAAIResourceTest() {
         final String serviceInstanceName = "serviceInstanceName";
 
-        doReturn(Optional.empty()).when(MOCK_aaiResourcesClient).get(isA(Class.class), isA(AAIResourceUri.class));
+        doReturn(Optional.empty()).when(MOCK_aaiResourcesClient).get(isA(Class.class), isA(AAIPluralResourceUri.class));
         ServiceInstances actualServiceInstances =
                 bbInputSetupUtils.getAAIServiceInstancesGloballyByName(serviceInstanceName);
 
@@ -939,7 +809,7 @@ public class BBInputSetupUtilsTest {
     public void getAAIVnfsGloballyByName_noAAIResourceTest() {
         final String vnfName = "vnfName";
 
-        doReturn(Optional.empty()).when(MOCK_aaiResourcesClient).get(isA(Class.class), isA(AAIResourceUri.class));
+        doReturn(Optional.empty()).when(MOCK_aaiResourcesClient).get(isA(Class.class), isA(AAIPluralResourceUri.class));
         GenericVnfs actualGenericVnfs = bbInputSetupUtils.getAAIVnfsGloballyByName(vnfName);
 
         assertNull(actualGenericVnfs);

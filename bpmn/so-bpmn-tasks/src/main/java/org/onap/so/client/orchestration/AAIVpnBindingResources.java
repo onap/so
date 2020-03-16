@@ -27,6 +27,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VpnBinding;
 import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
+import org.onap.so.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
@@ -55,7 +56,7 @@ public class AAIVpnBindingResources {
      * @return
      */
     public Optional<VpnBindings> getVpnBindingByCustomerVpnId(String customerVpnId) {
-        AAIResourceUri aaiVpnBindingsResourceUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VPN_BINDING)
+        AAIPluralResourceUri aaiVpnBindingsResourceUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VPN_BINDING)
                 .queryParam("customer-vpn-id", customerVpnId);
         return injectionHelper.getAaiClient().get(VpnBindings.class, aaiVpnBindingsResourceUri);
 
