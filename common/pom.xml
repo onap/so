@@ -16,7 +16,7 @@
     <protobuf.version>3.6.1</protobuf.version>
     <grpc.netty.version>4.1.30.Final</grpc.netty.version>
     <ccsdk.version>0.4.2</ccsdk.version>
-    <appc.client.version>1.6.0-SNAPSHOT</appc.client.version>
+    <appc.client.version>1.7.1-SNAPSHOT</appc.client.version>
   </properties>
 
   <dependencies>
