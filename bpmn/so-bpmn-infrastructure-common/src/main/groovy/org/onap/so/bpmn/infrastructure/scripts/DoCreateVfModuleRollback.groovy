@@ -36,6 +36,7 @@ import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.client.aai.AAIObjectPlurals
 import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIPluralResourceUri
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.logging.filter.base.ErrorCode
@@ -507,7 +508,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 
                     try {
                         // Query AAI for this network policy FQDN
-                        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
+                        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
                         uri.queryParam("network-policy-fqdn", fqdn)
                         Optional<NetworkPolicies> networkPolicies = getAAIClient().get(NetworkPolicies.class, uri)
 

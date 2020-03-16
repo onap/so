@@ -32,6 +32,7 @@ import org.onap.so.bpmn.core.RollbackData
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.aai.AAIObjectPlurals
 import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIPluralResourceUri
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.constants.Defaults
@@ -132,7 +133,7 @@ public class DoCreateVfModuleVolumeRollback extends AbstractServiceTaskProcessor
 			volumeGroupName = testVolumeGroupName
 		}
 
-		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), cloudRegion).queryParam("volume-group-name", volumeGroupName)
+		AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), cloudRegion).queryParam("volume-group-name", volumeGroupName)
 		try {
 			Optional<VolumeGroups> volumeGroups = getAAIClient().get(VolumeGroups.class, uri)
 			if (volumeGroups.isPresent()) {

@@ -20,11 +20,15 @@
 
 package org.onap.so.client.graphinventory.entities.uri;
 
+import java.io.Serializable;
 import java.net.URI;
 import java.util.Map;
+import java.util.regex.Pattern;
+import org.onap.so.client.graphinventory.GraphInventoryObjectBase;
 import org.onap.so.client.graphinventory.GraphInventoryObjectType;
 
-public interface GraphInventoryUri {
+public interface GraphInventoryUri<T extends GraphInventoryUri<?, ?>, OT extends GraphInventoryObjectBase>
+        extends Serializable {
 
     public URI build();
 
@@ -39,26 +43,26 @@ public interface GraphInventoryUri {
      * @param depth
      * @return
      */
-    public GraphInventoryUri depth(Depth depth);
+    public T depth(Depth depth);
 
     /**
      * Makes client only return object fields, no relationships
      * 
      * @return
      */
-    public GraphInventoryUri nodesOnly(boolean nodesOnly);
+    public T nodesOnly(boolean nodesOnly);
 
-    public GraphInventoryUri queryParam(String name, String... values);
+    public T queryParam(String name, String... values);
 
-    public GraphInventoryUri replaceQueryParam(String name, String... values);
+    public T replaceQueryParam(String name, String... values);
 
-    public GraphInventoryUri resultIndex(int index);
+    public T resultIndex(int index);
 
-    public GraphInventoryUri resultSize(int size);
+    public T resultSize(int size);
 
-    public GraphInventoryUri limit(int size);
+    public T limit(int size);
 
-    public GraphInventoryUri clone();
+    public T clone();
 
     /**
      * returns all key values of the URI as a map. Key names can be found in {@link GraphInventoryObjectType}
@@ -67,9 +71,11 @@ public interface GraphInventoryUri {
      */
     public Map<String, String> getURIKeys();
 
-    public GraphInventoryObjectType getObjectType();
+    public OT getObjectType();
 
     public boolean equals(Object o);
 
     public int hashCode();
+
+    public Pattern getPrefixPattern();
 }

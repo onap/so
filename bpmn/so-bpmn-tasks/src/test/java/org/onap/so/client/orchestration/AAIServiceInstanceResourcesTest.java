@@ -24,8 +24,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -39,8 +39,8 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.common.InjectionHelper;
+import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.OwningEntity;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Project;
@@ -48,6 +48,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceSubscription;
 import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIResourcesClient;
+import org.onap.so.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
@@ -194,7 +195,7 @@ public class AAIServiceInstanceResourcesTest extends TestDataSetup {
 
     @Test
     public void checkInstanceServiceNameInUseTrueTest() throws Exception {
-        AAIResourceUri uri = AAIUriFactory.createNodesUri(AAIObjectPlurals.SERVICE_INSTANCE)
+        AAIPluralResourceUri uri = AAIUriFactory.createNodesUri(AAIObjectPlurals.SERVICE_INSTANCE)
                 .queryParam("service-instance-name", serviceInstance.getServiceInstanceName());
         doReturn(true).when(MOCK_aaiResourcesClient).exists(eq(uri));
         boolean nameInUse = aaiServiceInstanceResources.checkInstanceServiceNameInUse(serviceInstance);
@@ -203,7 +204,7 @@ public class AAIServiceInstanceResourcesTest extends TestDataSetup {
 
     @Test
     public void checkInstanceServiceNameInUseFalseTest() throws Exception {
-        AAIResourceUri uri = AAIUriFactory.createNodesUri(AAIObjectPlurals.SERVICE_INSTANCE)
+        AAIPluralResourceUri uri = AAIUriFactory.createNodesUri(AAIObjectPlurals.SERVICE_INSTANCE)
                 .queryParam("service-instance-name", serviceInstance.getServiceInstanceName());
         doReturn(false).when(MOCK_aaiResourcesClient).exists(eq(uri));
         boolean nameInUse = aaiServiceInstanceResources.checkInstanceServiceNameInUse(serviceInstance);

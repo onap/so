@@ -20,14 +20,10 @@
 
 package org.onap.so.client.aai.entities.uri;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsEmptyCollection.empty;
-import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -36,7 +32,6 @@ import org.junit.Test;
 import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.graphinventory.entities.uri.Depth;
-import org.onap.so.client.graphinventory.entities.uri.SimpleUri;
 
 public class AAISimpleUriTest {
 
@@ -44,34 +39,52 @@ public class AAISimpleUriTest {
 
     @Test
     public void relatedToTestPlural() {
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test1");
-        uri.relatedTo(AAIObjectPlurals.PSERVER);
+        AAIPluralResourceUri uri =
+                AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test1").relatedTo(AAIObjectPlurals.PSERVER);
         String uriOutput = uri.build().toString();
-        assertEquals(true, uriOutput.contains("related-to"));
+        assertEquals("/network/generic-vnfs/generic-vnf/test1/related-to/pservers", uriOutput);
     }
 
     @Test
     public void relatedToTestSingular() {
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test1");
-        uri.relatedTo(AAIObjectType.PSERVER, "test2");
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test1")
+                .relatedTo(AAIObjectType.PSERVER, "test2");
         String uriOutput = uri.build().toString();
-        assertEquals(true, uriOutput.contains("related-to"));
+        assertEquals("/network/generic-vnfs/generic-vnf/test1/related-to/pservers/pserver/test2", uriOutput);
     }
 
     @Test
     public void cloneTestSingular() {
         AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test1");
         AAIResourceUri cloned = uri.clone();
-        Map<String, String> keys = cloned.getURIKeys();
-        assertThat(keys.values(), contains("test1"));
+        assertEquals("/network/generic-vnfs/generic-vnf/test1", cloned.build().toString());
+
+        cloned.limit(2);
+
+        assertNotEquals(uri.build().toString(), cloned.build().toString());
     }
 
     @Test
     public void cloneTestPlural() {
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF);
-        AAIResourceUri cloned = uri.clone();
-        Map<String, String> keys = cloned.getURIKeys();
-        assertThat(keys.values(), empty());
+        AAISimplePluralUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF);
+        AAISimplePluralUri cloned = uri.clone();
+        assertEquals("/network/generic-vnfs", cloned.build().toString());
+    }
+
+    @Test
+    public void cloneTestWithRelatedTo() {
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test1")
+                .relatedTo(AAIObjectType.PSERVER, "test2");
+        String uriOutput = uri.clone().build().toString();
+        assertEquals("/network/generic-vnfs/generic-vnf/test1/related-to/pservers/pserver/test2", uriOutput);
+    }
+
+    @Test
+    public void cloneTestPluralWithRelatedTo() {
+        AAIPluralResourceUri uri =
+                AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test1").relatedTo(AAIObjectPlurals.PSERVER);
+        String uriOutput = uri.clone().build().toString();
+        assertEquals("/network/generic-vnfs/generic-vnf/test1/related-to/pservers", uriOutput);
     }
 
     @Test

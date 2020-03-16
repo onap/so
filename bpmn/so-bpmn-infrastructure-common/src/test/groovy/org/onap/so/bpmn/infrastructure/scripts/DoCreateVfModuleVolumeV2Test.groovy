@@ -40,6 +40,7 @@ import org.onap.so.bpmn.common.scripts.MsoGroovyTest
 import org.onap.so.bpmn.core.RollbackData
 import org.onap.so.client.aai.AAIObjectPlurals
 import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIPluralResourceUri
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.constants.Defaults
@@ -160,7 +161,7 @@ class DoCreateVfModuleVolumeV2Test extends MsoGroovyTest {
 		String lcpCloudRegionId = "lcpCloudRegionId"
 		when(mockExecution.getVariable(volumeGroupName)).thenReturn(volumeGroupName)
 		when(mockExecution.getVariable(lcpCloudRegionId)).thenReturn(lcpCloudRegionId)
-		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), lcpCloudRegionId).queryParam("volume-group-name", volumeGroupName)
+		AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), lcpCloudRegionId).queryParam("volume-group-name", volumeGroupName)
 		VolumeGroups volumeGroups = new VolumeGroups();
 		VolumeGroup volumeGroup = new  VolumeGroup()
 		volumeGroup.setVolumeGroupId("volumeGroupId")
@@ -176,7 +177,7 @@ class DoCreateVfModuleVolumeV2Test extends MsoGroovyTest {
 		String lcpCloudRegionId = "lcpCloudRegionId"
 		when(mockExecution.getVariable(volumeGroupName)).thenReturn(volumeGroupName)
 		when(mockExecution.getVariable(lcpCloudRegionId)).thenReturn(lcpCloudRegionId)
-		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), lcpCloudRegionId).queryParam("volume-group-name", volumeGroupName)
+		AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), lcpCloudRegionId).queryParam("volume-group-name", volumeGroupName)
 		when(client.get(VolumeGroup.class,uri)).thenReturn(Optional.empty())
 		thrown.expect(BpmnError.class)
 		doCreateVfModuleVolumeV2.callRESTQueryAAIVolGrpName(mockExecution,null)

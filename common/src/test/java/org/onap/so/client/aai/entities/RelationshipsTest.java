@@ -43,14 +43,11 @@ public class RelationshipsTest {
         Relationships relationships = wrapper.getRelationships().get();
 
         List<AAIResourceUri> test = relationships.getRelatedUris(AAIObjectType.VCE);
-
-        System.out.println(test.get(0).build());
         List<AAIResourceUri> uris = Arrays.asList(
                 AAIUriFactory.createResourceUri(AAIObjectType.VCE, "a9fec18e-1ea3-40e4-a6c0-a89b3de07053"),
                 AAIUriFactory.createResourceUri(AAIObjectType.VCE, "8ae1e5f8-61f1-4c71-913a-b40cc4593cb9"),
                 AAIUriFactory.createResourceUri(AAIObjectType.VCE, "a2935fa9-b743-49f4-9813-a127f13c4e93"),
                 AAIUriFactory.createResourceUri(AAIObjectType.VCE, "c7fe7698-8063-4e26-8bd3-ca3edde0b0d4"));
-
 
         assertTrue(uris.containsAll(test) && test.containsAll(uris));
 

@@ -22,24 +22,21 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import org.onap.so.logger.LoggingAnchor
-import org.onap.so.bpmn.common.scripts.CatalogDbUtilsFactory
-import org.onap.so.client.HttpClientFactory
-import org.onap.logging.filter.base.ErrorCode
-
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
-
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONArray
 import org.json.JSONObject
 import org.onap.aai.domain.yang.GenericVnf
 import org.onap.aai.domain.yang.NetworkPolicy
+import org.onap.logging.filter.base.ErrorCode
+import org.onap.logging.filter.base.ONAPComponents;
 import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.CatalogDbUtils
+import org.onap.so.bpmn.common.scripts.CatalogDbUtilsFactory
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.common.scripts.NetworkUtils
@@ -53,28 +50,27 @@ import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.DecomposeJsonUtil
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
+import org.onap.so.client.HttpClientFactory
 import org.onap.so.client.aai.AAIObjectPlurals
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.entities.AAIResultWrapper
+import org.onap.so.client.aai.entities.uri.AAIPluralResourceUri
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
-import org.onap.so.client.aai.entities.uri.AAIUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.graphinventory.entities.uri.Depth
 import org.onap.so.constants.Defaults
 import org.onap.so.db.catalog.beans.HomingInstance
+import org.onap.so.logger.LoggingAnchor
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
-import org.onap.logging.filter.base.ONAPComponents;
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.NamedNodeMap
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import org.xml.sax.InputSource
-
 import com.fasterxml.jackson.databind.ObjectMapper
 
 
@@ -307,7 +303,7 @@ public class DoCreateVfModule extends VfModuleBase {
 				}
 
 				try{
-					AAIUri serviceInstanceURI = AAIUriFactory.create(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId,serviceType,serviceInstanceId)
+					AAIResourceUri serviceInstanceURI = AAIUriFactory.create(AAIObjectType.SERVICE_INSTANCE, globalSubscriberId,serviceType,serviceInstanceId)
 					AAIResourcesClient aaiRC = new AAIResourcesClient()
 					AAIResultWrapper aaiRW = aaiRC.get(serviceInstanceURI)
 					Map<String, Object> aaiJson = aaiRW.asMap()
@@ -778,7 +774,7 @@ public class DoCreateVfModule extends VfModuleBase {
 			def vfModuleName = execution.getVariable('DCVFM_vfModuleName')
 
 			AaiUtil aaiUriUtil = new AaiUtil(this)
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VF_MODULE, vnfId).queryParam("vf-module-name",vfModuleName)
+			AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VF_MODULE, vnfId).queryParam("vf-module-name",vfModuleName)
 			String endPoint = aaiUriUtil.createAaiUri(uri)
 
 			HttpClient client = httpClientFactory.newXmlClient(new URL(endPoint), ONAPComponents.AAI)
@@ -1927,7 +1923,7 @@ public class DoCreateVfModule extends VfModuleBase {
 					String fqdn = fqdnList[i]
 
 					// Query AAI for this network policy FQDN
-					AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
+					AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
 					uri.queryParam("network-policy-fqdn", fqdn)
 
 					AAIResourcesClient resourceClient = new AAIResourcesClient()

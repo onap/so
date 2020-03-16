@@ -37,6 +37,7 @@ import org.onap.aai.domain.yang.VpnBindings;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VpnBinding;
+import org.onap.so.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 
 
@@ -90,12 +91,12 @@ public class AAIVpnBindingResourcesTest extends BaseTaskTest {
 
     @Test
     public void getVpnBindingByCustomerVpnIdTest() {
-        when(MOCK_aaiResourcesClient.get(eq(VpnBindings.class), isA(AAIResourceUri.class)))
+        when(MOCK_aaiResourcesClient.get(eq(VpnBindings.class), isA(AAIPluralResourceUri.class)))
                 .thenReturn(Optional.of(new VpnBindings()));
         Optional<VpnBindings> vpnBindings = aaiVpnBindingResources.getVpnBindingByCustomerVpnId("testCustomerVpnId");
         assertNotNull(vpnBindings.get());
         verify(MOCK_aaiResourcesClient, times(1)).get(eq(org.onap.aai.domain.yang.VpnBindings.class),
-                isA(AAIResourceUri.class));
+                isA(AAIPluralResourceUri.class));
     }
 
     @Test

@@ -41,6 +41,7 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.aai.AAIObjectPlurals
 import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.AAIResourcesClient
+import org.onap.so.client.aai.entities.uri.AAIPluralResourceUri
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.client.aai.entities.AAIResultWrapper
@@ -379,7 +380,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 			String networkName   = utils.getNodeText(networkInputs, "network-name")
 
 			AAIResourcesClient client = new AAIResourcesClient()
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.L3_NETWORK).queryParam("network-name", networkName)
+			AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.L3_NETWORK).queryParam("network-name", networkName)
 			L3Networks networks = client.get(uri, NotFoundException.class).asBean(L3Networks.class).get()
 			L3Network network = networks.getL3Network().get(0)
 

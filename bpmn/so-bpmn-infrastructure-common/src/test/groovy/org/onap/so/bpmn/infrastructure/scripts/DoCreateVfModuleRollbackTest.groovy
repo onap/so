@@ -45,6 +45,7 @@ import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.mock.FileUtil
 import org.onap.so.client.aai.AAIObjectPlurals
 import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIPluralResourceUri
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryUriComputationException
@@ -168,7 +169,7 @@ class DoCreateVfModuleRollbackTest extends MsoGroovyTest{
         fqdnList.add("test")
         when(mockExecution.getVariable(prefix + "createdNetworkPolicyFqdnList")).thenReturn(fqdnList)
 
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
         uri.queryParam("network-policy-fqdn", "test")
         NetworkPolicies networkPolicies = new NetworkPolicies();
         NetworkPolicy networkPolicy = new NetworkPolicy();
@@ -198,7 +199,7 @@ class DoCreateVfModuleRollbackTest extends MsoGroovyTest{
         fqdnList.add("test")
         when(mockExecution.getVariable(prefix + "createdNetworkPolicyFqdnList")).thenReturn(fqdnList)
 
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
         uri.queryParam("network-policy-fqdn", "test")
         NetworkPolicies networkPolicies = new NetworkPolicies();
         NetworkPolicy networkPolicy = new NetworkPolicy();
@@ -228,7 +229,7 @@ class DoCreateVfModuleRollbackTest extends MsoGroovyTest{
         fqdnList.add("test")
         when(mockExecution.getVariable(prefix + "createdNetworkPolicyFqdnList")).thenReturn(fqdnList)
 
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
         uri.queryParam("network-policy-fqdn", "test")
         NetworkPolicies networkPolicies = new NetworkPolicies();
         NetworkPolicy networkPolicy = new NetworkPolicy();

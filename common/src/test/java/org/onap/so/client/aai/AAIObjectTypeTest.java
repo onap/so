@@ -22,7 +22,7 @@ package org.onap.so.client.aai;
 
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-import org.onap.so.client.aai.entities.uri.AAIUri;
+import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 
 public class AAIObjectTypeTest {
@@ -56,14 +56,14 @@ public class AAIObjectTypeTest {
     @Test
     public void instanceGroupObjectTypeTest() {
         final String id = "test1";
-        AAIUri aaiUri = AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, id);
+        AAIResourceUri aaiUri = AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, id);
         assertEquals("/network/instance-groups/instance-group/test1", aaiUri.build().toString());
     }
 
     @Test
     public void collectionObjectTypeTest() {
         final String id = "test1";
-        AAIUri aaiUri = AAIUriFactory.createResourceUri(AAIObjectType.COLLECTION, id);
+        AAIResourceUri aaiUri = AAIUriFactory.createResourceUri(AAIObjectType.COLLECTION, id);
         assertEquals("/network/collections/collection/test1", aaiUri.build().toString());
     }
 
@@ -85,7 +85,7 @@ public class AAIObjectTypeTest {
     @Test
     public void networkPolicyObjectTypeTest() {
         final String id = "test1";
-        AAIUri aaiUri = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, id);
+        AAIResourceUri aaiUri = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, id);
         assertEquals("/network/network-policies/network-policy/test1", aaiUri.build().toString());
     }
 }

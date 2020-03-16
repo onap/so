@@ -47,6 +47,7 @@ import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.mock.FileUtil
 import org.onap.so.client.aai.AAIObjectPlurals
 import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.entities.uri.AAIPluralResourceUri
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 
@@ -104,7 +105,7 @@ class DoDeleteVfModuleTest extends MsoGroovyTest{
         NetworkPolicy networkPolicy = new NetworkPolicy()
         networkPolicy.setNetworkPolicyId("NP1")
         networkPolicies.getNetworkPolicy().add(networkPolicy)
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
         uri.queryParam("network-policy-fqdn", "test")
         when(client.get(NetworkPolicies.class, uri)).thenReturn(Optional.of(networkPolicies))
         doDeleteVfModule.deleteNetworkPoliciesFromAAI(mockExecution)
@@ -120,7 +121,7 @@ class DoDeleteVfModuleTest extends MsoGroovyTest{
         NetworkPolicy networkPolicy = new NetworkPolicy()
         networkPolicy.setNetworkPolicyId("NP1")
         networkPolicies.getNetworkPolicy().add(networkPolicy)
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY)
         uri.queryParam("network-policy-fqdn", "test")
         when(client.get(NetworkPolicies.class, uri)).thenReturn(Optional.of(networkPolicies))
         AAIResourceUri delUri = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, "NP1")

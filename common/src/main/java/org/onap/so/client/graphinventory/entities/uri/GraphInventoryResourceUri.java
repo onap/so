@@ -21,42 +21,11 @@
 package org.onap.so.client.graphinventory.entities.uri;
 
 import org.onap.so.client.graphinventory.Format;
-import org.onap.so.client.graphinventory.entities.uri.Depth;
-import org.onap.so.client.graphinventory.GraphInventoryObjectPlurals;
-import org.onap.so.client.graphinventory.GraphInventoryObjectType;
+import org.onap.so.client.graphinventory.GraphInventoryObjectBase;
 
-public interface GraphInventoryResourceUri extends GraphInventoryUri {
-    public GraphInventoryResourceUri relationshipAPI();
+public interface GraphInventoryResourceUri<T extends GraphInventoryResourceUri<?, ?>, OT extends GraphInventoryObjectBase>
+        extends GraphInventoryUri<T, OT> {
 
-    public GraphInventoryResourceUri relatedTo(GraphInventoryObjectPlurals plural);
+    public T format(Format format);
 
-    public GraphInventoryResourceUri relatedTo(GraphInventoryObjectType type, String... values);
-
-    public GraphInventoryResourceUri resourceVersion(String version);
-
-    public GraphInventoryResourceUri format(Format format);
-
-    @Override
-    public GraphInventoryResourceUri depth(Depth depth);
-
-    @Override
-    public GraphInventoryResourceUri nodesOnly(boolean nodesOnly);
-
-    @Override
-    public GraphInventoryResourceUri queryParam(String name, String... values);
-
-    @Override
-    public GraphInventoryResourceUri replaceQueryParam(String name, String... values);
-
-    @Override
-    public GraphInventoryResourceUri resultIndex(int index);
-
-    @Override
-    public GraphInventoryResourceUri resultSize(int size);
-
-    @Override
-    public GraphInventoryResourceUri limit(int size);
-
-    @Override
-    public GraphInventoryResourceUri clone();
 }

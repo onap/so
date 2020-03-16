@@ -44,7 +44,7 @@ public class AllottedResourceLookupUriTest {
                 "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3/allotted-resources/allotted-resource/key4")
                         .when(spy).getObjectById(any(Object.class));
 
-        final URI result = spy.build();
+        final URI result = spy.locateAndBuild();
         final URI expected = UriBuilder.fromPath(
                 "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3/allotted-resources/allotted-resource/key4")
                 .build();

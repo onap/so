@@ -25,6 +25,7 @@ import org.onap.so.client.RestClient;
 import org.onap.so.client.RestProperties;
 import org.onap.so.client.RestPropertiesLoader;
 import org.onap.so.client.graphinventory.entities.uri.GraphInventoryUri;
+import org.onap.so.client.graphinventory.entities.uri.HttpAwareUri;
 
 public abstract class GraphInventoryClient {
 
@@ -36,9 +37,22 @@ public abstract class GraphInventoryClient {
         this.props = props;
     }
 
-    protected abstract URI constructPath(GraphInventoryUri uri);
+    protected abstract URI constructPath(URI uri);
 
-    public abstract RestClient createClient(GraphInventoryUri uri);
+    protected abstract RestClient createClient(URI uri);
+
+    public RestClient createClient(GraphInventoryUri uri) {
+        final URI result;
+        if (uri instanceof HttpAwareUri) {
+            result = ((HttpAwareUri) uri).locateAndBuild();
+        } else {
+            result = uri.build();
+        }
+
+        return createClient(result);
+
+    }
+
 
     public <T extends RestProperties> T getRestProperties() {
         if (props == null) {

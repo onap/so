@@ -27,6 +27,7 @@ import org.onap.aai.domain.yang.VolumeGroup
 import org.onap.aai.domain.yang.VolumeGroups;
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
 import org.onap.so.client.aai.AAIObjectPlurals
+import org.onap.so.client.aai.entities.uri.AAIPluralResourceUri
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.constants.Defaults
@@ -50,7 +51,7 @@ public class DoCreateVfModuleVolumeRollbackTest extends MsoGroovyTest {
         String cloudRegionId = "cloudRegionId"
         when(mockExecution.getVariable("DCVFMODVOLRBK_volumeGroupName")).thenReturn(volumeGroupName)
         when(mockExecution.getVariable("DCVFMODVOLRBK_lcpCloudRegionId")).thenReturn(cloudRegionId)
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), cloudRegionId).queryParam("volume-group-name", volumeGroupName)
+        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), cloudRegionId).queryParam("volume-group-name", volumeGroupName)
         VolumeGroup volumeGroup = new VolumeGroup();
         volumeGroup.setVolumeGroupId("volumeGroupId")
         VolumeGroups groups = new VolumeGroups();

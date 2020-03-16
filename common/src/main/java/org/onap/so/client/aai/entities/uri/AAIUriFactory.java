@@ -47,13 +47,13 @@ public class AAIUriFactory {
         }
     }
 
-    public static AAIResourceUri createNodesUri(AAIObjectType type, Object... values) {
-        return new NodesUri(type, values);
+    public static NodesSingleUri createNodesUri(AAIObjectType type, Object... values) {
+        return new NodesSingleUri(type, values);
 
     }
 
-    public static AAIResourceUri createNodesUri(AAIObjectPlurals type) {
-        return new NodesUri(type);
+    public static NodesPluralUri createNodesUri(AAIObjectPlurals type) {
+        return new NodesPluralUri(type);
 
     }
 
@@ -64,7 +64,7 @@ public class AAIUriFactory {
      * @param uri
      * @return
      */
-    public static AAIResourceUri createResourceFromExistingURI(AAIObjectType type, URI uri) {
+    public static AAISimpleUri createResourceFromExistingURI(AAIObjectType type, URI uri) {
         return new AAISimpleUri(type, uri);
     }
 
@@ -77,15 +77,15 @@ public class AAIUriFactory {
      * @param childValues
      * @return
      */
-    public static AAIResourceUri createResourceFromParentURI(AAIResourceUri parentUri, AAIObjectType childType,
+    public static AAISimpleUri createResourceFromParentURI(AAIResourceUri parentUri, AAIObjectType childType,
             Object... childValues) {
 
         return new AAISimpleUri(parentUri, childType, childValues);
     }
 
-    public static AAIResourceUri createResourceFromParentURI(AAIResourceUri parentUri, AAIObjectPlurals childType) {
+    public static AAISimplePluralUri createResourceFromParentURI(AAIResourceUri parentUri, AAIObjectPlurals childType) {
 
-        return new AAISimpleUri(parentUri, childType);
+        return new AAISimplePluralUri(parentUri, childType);
     }
 
     /**
@@ -94,9 +94,9 @@ public class AAIUriFactory {
      * @param type
      * @return
      */
-    public static AAIResourceUri createResourceUri(AAIObjectPlurals type) {
+    public static AAISimplePluralUri createResourceUri(AAIObjectPlurals type) {
 
-        return new AAISimpleUri(type);
+        return new AAISimplePluralUri(type);
 
     }
 
@@ -106,9 +106,9 @@ public class AAIUriFactory {
      * @param type
      * @return
      */
-    public static AAIResourceUri createResourceUri(AAIObjectPlurals type, Object... values) {
+    public static AAISimplePluralUri createResourceUri(AAIObjectPlurals type, Object... values) {
 
-        return new AAISimpleUri(type, values);
+        return new AAISimplePluralUri(type, values);
 
     }
 }

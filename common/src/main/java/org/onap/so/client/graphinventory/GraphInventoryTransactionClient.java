@@ -29,11 +29,12 @@ import javax.ws.rs.core.GenericType;
 import org.onap.aai.domain.yang.Relationship;
 import org.onap.so.client.graphinventory.entities.GraphInventoryEdgeLabel;
 import org.onap.so.client.graphinventory.entities.uri.GraphInventoryResourceUri;
+import org.onap.so.client.graphinventory.entities.uri.GraphInventorySingleResourceUri;
 import org.onap.so.client.graphinventory.exceptions.BulkProcessFailed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInventoryResourceUri, EdgeLabel extends GraphInventoryEdgeLabel> {
+public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInventoryResourceUri<?, ?>, SingleUri extends GraphInventorySingleResourceUri<?, ?, ?, ?>, EdgeLabel extends GraphInventoryEdgeLabel> {
 
     protected static Logger logger = LoggerFactory.getLogger(GraphInventoryTransactionClient.class);
 
@@ -50,7 +51,7 @@ public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInv
      * @param uri
      * @return
      */
-    public Self create(Uri uri, Object obj) {
+    public Self create(SingleUri uri, Object obj) {
         this.put(uri.build().toString(), obj);
         incrementActionAmount();
         return (Self) this;
@@ -62,7 +63,7 @@ public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInv
      * @param uri
      * @return
      */
-    public Self createEmpty(Uri uri) {
+    public Self createEmpty(SingleUri uri) {
         this.put(uri.build().toString(), new HashMap<String, String>());
         incrementActionAmount();
         return (Self) this;
@@ -75,8 +76,8 @@ public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInv
      * @param uri
      * @return
      */
-    public Self createIfNotExists(Uri uri, Optional<Object> obj) {
-        if (!this.exists(uri)) {
+    public Self createIfNotExists(SingleUri uri, Optional<Object> obj) {
+        if (!this.exists((Uri) uri)) {
             if (obj.isPresent()) {
                 this.create(uri, obj.get());
             } else {
@@ -94,8 +95,8 @@ public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInv
      * @param uriB
      * @return
      */
-    public Self connect(Uri uriA, Uri uriB) {
-        GraphInventoryResourceUri uriAClone = uriA.clone();
+    public Self connect(SingleUri uriA, SingleUri uriB) {
+        GraphInventorySingleResourceUri uriAClone = uriA.clone();
         this.put(uriAClone.relationshipAPI().build().toString(), this.buildRelationship(uriB));
         incrementActionAmount();
         return (Self) this;
@@ -108,8 +109,8 @@ public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInv
      * @param uris
      * @return
      */
-    public Self connect(Uri uriA, List<Uri> uris) {
-        for (Uri uri : uris) {
+    public Self connect(SingleUri uriA, List<SingleUri> uris) {
+        for (SingleUri uri : uris) {
             this.connect(uriA, uri);
         }
         return (Self) this;
@@ -122,8 +123,8 @@ public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInv
      * @param uris
      * @return
      */
-    public Self connect(Uri uriA, Uri uriB, EdgeLabel label) {
-        GraphInventoryResourceUri uriAClone = uriA.clone();
+    public Self connect(SingleUri uriA, SingleUri uriB, EdgeLabel label) {
+        GraphInventorySingleResourceUri uriAClone = uriA.clone();
         this.put(uriAClone.relationshipAPI().build().toString(), this.buildRelationship(uriB, label));
         return (Self) this;
     }
@@ -135,8 +136,8 @@ public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInv
      * @param uris
      * @return
      */
-    public Self connect(Uri uriA, List<Uri> uris, EdgeLabel label) {
-        for (Uri uri : uris) {
+    public Self connect(SingleUri uriA, List<SingleUri> uris, EdgeLabel label) {
+        for (SingleUri uri : uris) {
             this.connect(uriA, uri, label);
         }
         return (Self) this;
@@ -149,8 +150,8 @@ public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInv
      * @param uriB
      * @return
      */
-    public Self disconnect(Uri uriA, Uri uriB) {
-        GraphInventoryResourceUri uriAClone = uriA.clone();
+    public Self disconnect(SingleUri uriA, SingleUri uriB) {
+        GraphInventorySingleResourceUri uriAClone = uriA.clone();
         this.delete(uriAClone.relationshipAPI().build().toString(), this.buildRelationship(uriB));
         incrementActionAmount();
         return (Self) this;
@@ -163,8 +164,8 @@ public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInv
      * @param uris
      * @return
      */
-    public Self disconnect(Uri uriA, List<Uri> uris) {
-        for (Uri uri : uris) {
+    public Self disconnect(SingleUri uriA, List<SingleUri> uris) {
+        for (SingleUri uri : uris) {
             this.disconnect(uriA, uri);
         }
         return (Self) this;
@@ -176,8 +177,8 @@ public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInv
      * @param uri
      * @return
      */
-    public Self delete(Uri uri) {
-        Map<String, Object> result = this.get(new GenericType<Map<String, Object>>() {}, (Uri) uri.clone())
+    public Self delete(SingleUri uri) {
+        Map<String, Object> result = this.get(new GenericType<Map<String, Object>>() {}, (Uri) uri)
                 .orElseThrow(() -> new NotFoundException(uri.build() + " does not exist in " + this.getGraphDBName()));
         String resourceVersion = (String) result.get("resource-version");
         this.delete(uri.resourceVersion(resourceVersion).build().toString());
@@ -223,15 +224,15 @@ public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInv
      */
     public abstract void execute() throws BulkProcessFailed;
 
-    private Relationship buildRelationship(Uri uri) {
+    private Relationship buildRelationship(SingleUri uri) {
         return buildRelationship(uri, Optional.empty());
     }
 
-    private Relationship buildRelationship(Uri uri, EdgeLabel label) {
+    private Relationship buildRelationship(SingleUri uri, EdgeLabel label) {
         return buildRelationship(uri, Optional.of(label));
     }
 
-    private Relationship buildRelationship(Uri uri, Optional<EdgeLabel> label) {
+    private Relationship buildRelationship(SingleUri uri, Optional<EdgeLabel> label) {
         final Relationship result = new Relationship();
         result.setRelatedLink(uri.build().toString());
         if (label.isPresent()) {

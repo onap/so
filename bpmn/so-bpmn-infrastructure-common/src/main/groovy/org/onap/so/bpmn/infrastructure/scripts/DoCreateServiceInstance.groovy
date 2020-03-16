@@ -23,7 +23,6 @@
 package org.onap.so.bpmn.infrastructure.scripts;
 
 import static org.apache.commons.lang3.StringUtils.*;
-
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.OwningEntity
@@ -44,7 +43,6 @@ import org.onap.so.bpmn.infrastructure.aai.groovyflows.AAICreateResources
 import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
-import org.onap.so.client.aai.entities.uri.AAIUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -293,7 +291,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			String globalCustomerId = execution.getVariable("globalSubscriberId") //VID to AAI name map
 			logger.debug(" ***** getAAICustomerById ***** globalCustomerId:" + globalCustomerId)
 
-			AAIUri uri = AAIUriFactory.createResourceUri(AAIObjectType.CUSTOMER, globalCustomerId)
+			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.CUSTOMER, globalCustomerId)
 			if(!getAAIClient().exists(uri)){
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "GlobalCustomerId:" + globalCustomerId + " not found (404) in AAI")
 			}

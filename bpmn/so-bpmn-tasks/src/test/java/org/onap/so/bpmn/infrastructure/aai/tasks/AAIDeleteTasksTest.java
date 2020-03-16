@@ -40,7 +40,6 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.onap.aai.domain.yang.NetworkPolicies;
-import org.onap.aai.domain.yang.NetworkPolicy;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
@@ -53,7 +52,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
-import org.onap.so.client.aai.entities.uri.AAIResourceUri;
+import org.onap.so.client.aai.entities.uri.AAIBaseResourceUri;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 
 
@@ -223,7 +222,7 @@ public class AAIDeleteTasksTest extends BaseTaskTest {
         NetworkPolicies networkPolicies1 = aaiResultWrapper1.asBean(NetworkPolicies.class).get();
 
         doReturn(Optional.of(networkPolicies0), Optional.of(networkPolicies1)).when(aaiNetworkResources)
-                .getNetworkPolicies(any(AAIResourceUri.class));
+                .getNetworkPolicies(any(AAIBaseResourceUri.class));
         doNothing().when(aaiNetworkResources).deleteNetworkPolicy(any(String.class));
         aaiDeleteTasks.deleteNetworkPolicies(execution);
         verify(aaiNetworkResources, times(2)).deleteNetworkPolicy(stringCaptor.capture());
@@ -235,7 +234,7 @@ public class AAIDeleteTasksTest extends BaseTaskTest {
     public void deleteNetworkPolicyNeedToDeleteNoneTest() throws Exception {
         execution.setVariable("contrailNetworkPolicyFqdnList", "ABC123");
         Optional<NetworkPolicies> networkPolicies = Optional.empty();
-        doReturn(networkPolicies).when(aaiNetworkResources).getNetworkPolicies(any(AAIResourceUri.class));
+        doReturn(networkPolicies).when(aaiNetworkResources).getNetworkPolicies(any(AAIBaseResourceUri.class));
         aaiDeleteTasks.deleteNetworkPolicies(execution);
         verify(aaiNetworkResources, times(0)).deleteNetworkPolicy(any(String.class));
     }

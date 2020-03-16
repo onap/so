@@ -22,10 +22,10 @@
 
 package org.onap.so.bpmn.common.scripts
 
-import org.onap.so.logger.LoggingAnchor
 import org.apache.commons.lang.StringUtils
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.GenericVnf
+import org.onap.aai.domain.yang.GenericVnfs
 import org.onap.so.bpmn.core.RollbackData
 import org.onap.so.client.aai.AAIObjectPlurals
 import org.onap.so.client.aai.AAIObjectType
@@ -34,6 +34,7 @@ import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.client.graphinventory.entities.uri.Depth
 import org.onap.so.db.catalog.beans.OrchestrationStatus
 import org.onap.logging.filter.base.ErrorCode
+import org.onap.so.logger.LoggingAnchor
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -151,15 +152,13 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 		AAIResourceUri uri
 		def vnfId = execution.getVariable("CAAIVfMod_vnfId")
 		def vnfName = execution.getVariable("CAAIVfMod_vnfName")
+        Optional<GenericVnf> genericVnfOp
 		if (vnfId == null || vnfId.isEmpty()) {
-			uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF)
-			uri.queryParam("vnf-name", vnfName)
+			genericVnfOp = getAAIClient().getFirst(GenericVnfs.class, GenericVnf.class, AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", vnfName).depth(Depth.ONE))
 		} else {
-			uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+			genericVnfOp = getAAIClient().get(GenericVnf.class,  AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId))
 		}
-		uri.depth(Depth.ONE)
 		try {
-			Optional<GenericVnf> genericVnfOp = getAAIClient().get(GenericVnf.class,  uri)
             if(genericVnfOp.isPresent()){
                 execution.setVariable("CAAIVfMod_queryGenericVnfResponseCode", 200)
                 execution.setVariable("CAAIVfMod_queryGenericVnfResponse", genericVnfOp.get())

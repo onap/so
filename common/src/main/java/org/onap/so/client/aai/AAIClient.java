@@ -25,7 +25,6 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.UriBuilder;
 import org.onap.so.client.RestClient;
 import org.onap.so.client.graphinventory.GraphInventoryClient;
-import org.onap.so.client.graphinventory.entities.uri.GraphInventoryUri;
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryUriComputationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,14 +45,15 @@ public class AAIClient extends GraphInventoryClient {
     }
 
     @Override
-    protected URI constructPath(GraphInventoryUri uri) {
+    protected URI constructPath(URI uri) {
 
-        return UriBuilder.fromUri(AAI_ROOT + "/" + this.getVersion().toString() + uri.build().toString()).build();
+        return UriBuilder.fromUri(AAI_ROOT + "/" + this.getVersion().toString() + uri.toString()).build();
     }
 
     @Override
-    public RestClient createClient(GraphInventoryUri uri) {
+    protected RestClient createClient(URI uri) {
         try {
+
             return new AAIRestClient(getRestProperties(), constructPath(uri));
         } catch (GraphInventoryUriComputationException | NotFoundException e) {
             logger.debug("failed to construct A&AI uri", e);

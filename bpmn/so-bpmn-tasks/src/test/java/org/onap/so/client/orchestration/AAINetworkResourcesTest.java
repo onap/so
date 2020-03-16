@@ -61,6 +61,7 @@ import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.AAIEdgeLabel;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.Relationships;
+import org.onap.so.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
@@ -203,11 +204,11 @@ public class AAINetworkResourcesTest extends TestDataSetup {
                 new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "queryAaiNetworkPolicies.json")));
         AAIResultWrapper aaiResultWrapper = new AAIResultWrapper(content);
         Optional<org.onap.aai.domain.yang.NetworkPolicies> oNetPolicies = Optional.empty();
-        AAIResourceUri netPoliciesUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY);
+        AAIPluralResourceUri netPoliciesUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY);
 
-        doReturn(aaiResultWrapper).when(MOCK_aaiResourcesClient).get(isA(AAIResourceUri.class));
+        doReturn(aaiResultWrapper).when(MOCK_aaiResourcesClient).get(isA(AAIPluralResourceUri.class));
         oNetPolicies = aaiNetworkResources.getNetworkPolicies(netPoliciesUri);
-        verify(MOCK_aaiResourcesClient, times(1)).get(any(AAIResourceUri.class));
+        verify(MOCK_aaiResourcesClient, times(1)).get(any(AAIPluralResourceUri.class));
         if (oNetPolicies.isPresent()) {
             org.onap.aai.domain.yang.NetworkPolicies networkPolicies = oNetPolicies.get();
             assertThat(aaiResultWrapper.asBean(org.onap.aai.domain.yang.NetworkPolicies.class).get(),
@@ -428,7 +429,7 @@ public class AAINetworkResourcesTest extends TestDataSetup {
 
     @Test
     public void checkInstanceGroupNameInUseTrueTest() throws Exception {
-        AAIResourceUri uri =
+        AAIPluralResourceUri uri =
                 AAIUriFactory.createResourceUri(AAIObjectPlurals.L3_NETWORK).queryParam("network-name", "networkName");
         doReturn(true).when(MOCK_aaiResourcesClient).exists(eq(uri));
         boolean nameInUse = aaiNetworkResources.checkNetworkNameInUse("networkName");
@@ -437,7 +438,7 @@ public class AAINetworkResourcesTest extends TestDataSetup {
 
     @Test
     public void checkInstanceGroupNameInUseFalseTest() throws Exception {
-        AAIResourceUri uri =
+        AAIPluralResourceUri uri =
                 AAIUriFactory.createResourceUri(AAIObjectPlurals.L3_NETWORK).queryParam("network-name", "networkName");
         doReturn(false).when(MOCK_aaiResourcesClient).exists(eq(uri));
         boolean nameInUse = aaiNetworkResources.checkNetworkNameInUse("networkName");

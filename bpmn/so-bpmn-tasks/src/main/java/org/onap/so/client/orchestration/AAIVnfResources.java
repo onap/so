@@ -36,6 +36,7 @@ import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIRestClientImpl;
 import org.onap.so.client.aai.AAIValidatorImpl;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
+import org.onap.so.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
@@ -159,7 +160,7 @@ public class AAIVnfResources {
     }
 
     public boolean checkNameInUse(String vnfName) {
-        AAIResourceUri vnfUri =
+        AAIPluralResourceUri vnfUri =
                 AAIUriFactory.createResourceUri(AAIObjectPlurals.GENERIC_VNF).queryParam("vnf-name", vnfName);
         return injectionHelper.getAaiClient().exists(vnfUri);
     }

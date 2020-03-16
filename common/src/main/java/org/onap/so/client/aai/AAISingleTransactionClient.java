@@ -32,6 +32,7 @@ import org.onap.so.client.aai.entities.singletransaction.OperationBodyRequest;
 import org.onap.so.client.aai.entities.singletransaction.OperationBodyResponse;
 import org.onap.so.client.aai.entities.singletransaction.SingleTransactionRequest;
 import org.onap.so.client.aai.entities.singletransaction.SingleTransactionResponse;
+import org.onap.so.client.aai.entities.uri.AAIBaseResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.graphinventory.GraphInventoryPatchConverter;
@@ -40,8 +41,8 @@ import org.onap.so.client.graphinventory.exceptions.BulkProcessFailed;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
 
-public class AAISingleTransactionClient
-        extends GraphInventoryTransactionClient<AAISingleTransactionClient, AAIResourceUri, AAIEdgeLabel> {
+public class AAISingleTransactionClient extends
+        GraphInventoryTransactionClient<AAISingleTransactionClient, AAIBaseResourceUri<?, ?>, AAIResourceUri, AAIEdgeLabel> {
 
     private final SingleTransactionRequest request;
     private AAIResourcesClient resourcesClient;
@@ -137,12 +138,12 @@ public class AAISingleTransactionClient
     }
 
     @Override
-    protected <T> Optional<T> get(GenericType<T> genericType, AAIResourceUri clone) {
+    protected <T> Optional<T> get(GenericType<T> genericType, AAIBaseResourceUri<?, ?> clone) {
         return resourcesClient.get(genericType, clone);
     }
 
     @Override
-    protected boolean exists(AAIResourceUri uri) {
+    protected boolean exists(AAIBaseResourceUri<?, ?> uri) {
         return resourcesClient.exists(uri);
     }
 

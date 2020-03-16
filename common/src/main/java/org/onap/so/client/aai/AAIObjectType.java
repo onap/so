@@ -22,7 +22,58 @@ package org.onap.so.client.aai;
 
 import com.google.common.base.CaseFormat;
 import org.onap.aai.annotations.Metadata;
-import org.onap.aai.domain.yang.*;
+import org.onap.aai.domain.yang.AggregateRoute;
+import org.onap.aai.domain.yang.AllottedResource;
+import org.onap.aai.domain.yang.AvailabilityZone;
+import org.onap.aai.domain.yang.CloudRegion;
+import org.onap.aai.domain.yang.Collection;
+import org.onap.aai.domain.yang.CommunicationServiceProfile;
+import org.onap.aai.domain.yang.Complex;
+import org.onap.aai.domain.yang.Configuration;
+import org.onap.aai.domain.yang.Connector;
+import org.onap.aai.domain.yang.Customer;
+import org.onap.aai.domain.yang.Device;
+import org.onap.aai.domain.yang.EsrVnfm;
+import org.onap.aai.domain.yang.ExtAaiNetwork;
+import org.onap.aai.domain.yang.Flavor;
+import org.onap.aai.domain.yang.GenericVnf;
+import org.onap.aai.domain.yang.Image;
+import org.onap.aai.domain.yang.InstanceGroup;
+import org.onap.aai.domain.yang.L3Network;
+import org.onap.aai.domain.yang.LInterface;
+import org.onap.aai.domain.yang.LineOfBusiness;
+import org.onap.aai.domain.yang.LogicalLink;
+import org.onap.aai.domain.yang.ModelVer;
+import org.onap.aai.domain.yang.NetworkPolicy;
+import org.onap.aai.domain.yang.NetworkTechnology;
+import org.onap.aai.domain.yang.OperationalEnvironment;
+import org.onap.aai.domain.yang.OwningEntity;
+import org.onap.aai.domain.yang.PInterface;
+import org.onap.aai.domain.yang.PhysicalLink;
+import org.onap.aai.domain.yang.Platform;
+import org.onap.aai.domain.yang.Pnf;
+import org.onap.aai.domain.yang.PortGroup;
+import org.onap.aai.domain.yang.Project;
+import org.onap.aai.domain.yang.Pserver;
+import org.onap.aai.domain.yang.RouteTableReference;
+import org.onap.aai.domain.yang.Service;
+import org.onap.aai.domain.yang.ServiceInstance;
+import org.onap.aai.domain.yang.ServiceProfile;
+import org.onap.aai.domain.yang.ServiceSubscription;
+import org.onap.aai.domain.yang.SliceProfile;
+import org.onap.aai.domain.yang.SpPartner;
+import org.onap.aai.domain.yang.SriovPf;
+import org.onap.aai.domain.yang.Subnet;
+import org.onap.aai.domain.yang.Tenant;
+import org.onap.aai.domain.yang.TunnelXconnect;
+import org.onap.aai.domain.yang.Vce;
+import org.onap.aai.domain.yang.VfModule;
+import org.onap.aai.domain.yang.VlanTag;
+import org.onap.aai.domain.yang.Vnfc;
+import org.onap.aai.domain.yang.VolumeGroup;
+import org.onap.aai.domain.yang.VpnBinding;
+import org.onap.aai.domain.yang.Vserver;
+import org.onap.aai.domain.yang.Zone;
 import org.onap.so.client.graphinventory.GraphInventoryObjectType;
 import org.onap.so.constants.Defaults;
 import org.reflections.Reflections;
@@ -36,7 +87,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-public class AAIObjectType implements GraphInventoryObjectType, Serializable {
+public class AAIObjectType implements AAIObjectBase, GraphInventoryObjectType, Serializable {
 
     private static final long serialVersionUID = -2877184776691514600L;
     private static Map<String, AAIObjectType> map = new HashMap<>();
@@ -109,6 +160,8 @@ public class AAIObjectType implements GraphInventoryObjectType, Serializable {
             new AAIObjectType(AAIObjectType.PSERVER.uriTemplate(), PInterface.class);
     public static final AAIObjectType SRIOV_PF =
             new AAIObjectType(AAIObjectType.P_INTERFACE.uriTemplate(), SriovPf.class);
+    public static final AAIObjectType LOGICAL_LINK =
+            new AAIObjectType(AAINamespaceConstants.NETWORK, LogicalLink.class);
     public static final AAIObjectType PHYSICAL_LINK =
             new AAIObjectType(AAINamespaceConstants.NETWORK, PhysicalLink.class);
     public static final AAIObjectType INSTANCE_GROUP =
@@ -135,7 +188,15 @@ public class AAIObjectType implements GraphInventoryObjectType, Serializable {
     public static final AAIObjectType IMAGE = new AAIObjectType(AAIObjectType.CLOUD_REGION.uriTemplate(), Image.class);
     public static final AAIObjectType FLAVOR =
             new AAIObjectType(AAIObjectType.CLOUD_REGION.uriTemplate(), Flavor.class);
-    public static final AAIObjectType UNKNOWN = new AAIObjectType("", "", "unknown");
+    public static final AAIObjectType UNKNOWN = new AAIObjectType("", "", "unknown") {
+
+        private static final long serialVersionUID = 9208984071038447607L;
+
+        @Override
+        public boolean passThrough() {
+            return true;
+        }
+    };
     public static final AAIObjectType DSL = new AAIObjectType("/dsl", "", "dsl");
     public static final AAIObjectType VNFM = new AAIObjectType(
             AAINamespaceConstants.EXTERNAL_SYSTEM + "/esr-vnfm-list/esr-vnfm/{vnfm-id}", EsrVnfm.class);
@@ -147,6 +208,8 @@ public class AAIObjectType implements GraphInventoryObjectType, Serializable {
     public static final AAIObjectType CLOUD_ESR_SYSTEM_INFO_LIST = new AAIObjectType(
             AAIObjectType.CLOUD_REGION.uriTemplate(), "/esr-system-info-list", "cloud-esr-system-info-list");
     public static final AAIObjectType ZONE = new AAIObjectType(AAINamespaceConstants.NETWORK, Zone.class);
+    public static final AAIObjectType AVAILIBILITY_ZONE =
+            new AAIObjectType(AAIObjectType.CLOUD_REGION.uriTemplate(), AvailabilityZone.class);
     public static final AAIObjectType THIRDPARTY_SDNC_LIST = new AAIObjectType(AAINamespaceConstants.EXTERNAL_SYSTEM,
             "/esr-thirdparty-sdnc-list", "thirdparty-sdnc-list");
     public static final AAIObjectType THIRDPARTY_SDNC_SYSTEM_INFO_LIST =
@@ -180,12 +243,13 @@ public class AAIObjectType implements GraphInventoryObjectType, Serializable {
                 new Reflections(new ConfigurationBuilder().setUrls(packages).setScanners(new SubTypesScanner()));
 
         Set<Class<? extends AAIObjectType>> resources = r.getSubTypesOf(AAIObjectType.class);
-        try {
-            for (Class<? extends AAIObjectType> customTypeClass : resources) {
-                AAIObjectType customType;
+
+        for (Class<? extends AAIObjectType> customTypeClass : resources) {
+            AAIObjectType customType;
+            try {
                 customType = customTypeClass.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
             }
-        } catch (InstantiationException | IllegalAccessException e) {
         }
     }
 

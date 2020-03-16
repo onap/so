@@ -23,50 +23,45 @@ package org.onap.so.client.graphinventory.entities.uri;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.URI;
+import java.io.Serializable;
 import javax.ws.rs.core.UriBuilder;
 import org.onap.so.client.graphinventory.GraphInventoryObjectPlurals;
 import org.onap.so.client.graphinventory.GraphInventoryObjectType;
 
-public abstract class SimpleUri<T extends GraphInventorySingleResourceUri<?, ?, ?, ?>, PT extends GraphInventoryPluralResourceUri<?, ?>, S extends GraphInventoryObjectType, P extends GraphInventoryObjectPlurals>
-        extends SimpleBaseUri<T, T, S> implements GraphInventorySingleResourceUri<T, PT, S, P> {
+public abstract class SimplePluralUri<T extends GraphInventoryPluralResourceUri<?, ?>, Parent extends GraphInventorySingleResourceUri<?, ?, ?, ?>, PT extends GraphInventoryObjectPlurals, OT extends GraphInventoryObjectType>
+        extends SimpleBaseUri<T, Parent, PT> implements GraphInventoryPluralResourceUri<T, PT>, Serializable {
 
     private static final long serialVersionUID = -337701171277616439L;
-    protected static final String relationshipAPI = "/relationship-list/relationship";
-    protected static final String relatedTo = "/related-to";
 
-    protected SimpleUri(S type, Object... values) {
-        super(type, values);
-    }
+    protected final PT pluralType;
 
-    protected SimpleUri(S type, URI uri) {
-        super(type, uri);
-
-    }
-
-    protected SimpleUri(S type, UriBuilder builder, Object... values) {
+    protected SimplePluralUri(PT type, UriBuilder builder, Object... values) {
         super(type, builder, values);
-
+        this.pluralType = type;
     }
 
-    protected SimpleUri(T parentUri, S childType, Object... childValues) {
-        super(parentUri, childType, childValues);
+    protected SimplePluralUri(PT type) {
+        super(type, new Object[0]);
+        this.pluralType = type;
     }
 
-    protected SimpleUri(SimpleBaseUri<T, T, S> copy) {
+    protected SimplePluralUri(PT type, Object... values) {
+        super(type, values);
+        this.pluralType = type;
+    }
+
+    protected SimplePluralUri(Parent parentUri, PT childType) {
+        super(parentUri, childType, new Object[0]);
+        this.pluralType = childType;
+    }
+
+    public SimplePluralUri(SimplePluralUri<T, Parent, PT, OT> copy) {
         super(copy);
+        this.pluralType = copy.pluralType;
     }
 
-    @Override
-    public T resourceVersion(String version) {
-        this.internalURI = internalURI.replaceQueryParam("resource-version", version);
-        return (T) this;
-    }
-
-    @Override
-    public T relationshipAPI() {
-        this.internalURI = internalURI.path(relationshipAPI);
-        return (T) this;
+    protected void setInternalURI(UriBuilder builder) {
+        this.internalURI = builder;
     }
 
     private void writeObject(ObjectOutputStream oos) throws IOException {
@@ -79,5 +74,4 @@ public abstract class SimpleUri<T extends GraphInventorySingleResourceUri<?, ?, 
         String uri = ois.readUTF();
         this.setInternalURI(UriBuilder.fromUri(uri));
     }
-
 }

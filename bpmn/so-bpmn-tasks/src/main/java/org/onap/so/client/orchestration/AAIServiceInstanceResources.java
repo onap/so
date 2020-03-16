@@ -35,6 +35,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
+import org.onap.so.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
@@ -115,7 +116,7 @@ public class AAIServiceInstanceResources {
     }
 
     public boolean existsOwningEntityName(String owningEntityName) {
-        AAIResourceUri owningEntityUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.OWNING_ENTITY)
+        AAIPluralResourceUri owningEntityUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.OWNING_ENTITY)
                 .queryParam("owning-entity-name", owningEntityName);
         AAIResourcesClient aaiRC = injectionHelper.getAaiClient();
         return aaiRC.exists(owningEntityUri);
@@ -123,7 +124,7 @@ public class AAIServiceInstanceResources {
 
     public org.onap.aai.domain.yang.OwningEntity getOwningEntityByName(String owningEntityName)
             throws AAIEntityNotFoundException {
-        AAIResourceUri owningEntityUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.OWNING_ENTITY)
+        AAIPluralResourceUri owningEntityUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.OWNING_ENTITY)
                 .queryParam("owning-entity-name", owningEntityName);
         AAIResourcesClient aaiRC = injectionHelper.getAaiClient();
         Optional<OwningEntities> owningEntities = aaiRC.get(OwningEntities.class, owningEntityUri);
@@ -178,7 +179,7 @@ public class AAIServiceInstanceResources {
     }
 
     public boolean checkInstanceServiceNameInUse(ServiceInstance serviceInstance) {
-        AAIResourceUri uriSI = AAIUriFactory.createNodesUri(AAIObjectPlurals.SERVICE_INSTANCE)
+        AAIPluralResourceUri uriSI = AAIUriFactory.createNodesUri(AAIObjectPlurals.SERVICE_INSTANCE)
                 .queryParam("service-instance-name", serviceInstance.getServiceInstanceName());
         return injectionHelper.getAaiClient().exists(uriSI);
     }

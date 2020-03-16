@@ -37,14 +37,14 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.common.InjectionHelper;
+import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIResourcesClient;
-import org.onap.so.client.aai.entities.AAIResultWrapper;
+import org.onap.so.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
@@ -155,7 +155,7 @@ public class AAIVolumeGroupResourcesTest extends TestDataSetup {
 
     @Test
     public void checkNameInUseTrueTest() {
-        AAIResourceUri volumeGroupUri = AAIUriFactory.createNodesUri(AAIObjectPlurals.VOLUME_GROUP)
+        AAIPluralResourceUri volumeGroupUri = AAIUriFactory.createNodesUri(AAIObjectPlurals.VOLUME_GROUP)
                 .queryParam("volume-group-name", "testVolumeGroupName1");
         doReturn(true).when(MOCK_aaiResourcesClient).exists(eq(volumeGroupUri));
         boolean nameInUse = aaiVolumeGroupResources.checkNameInUse(volumeGroup);
@@ -164,7 +164,7 @@ public class AAIVolumeGroupResourcesTest extends TestDataSetup {
 
     @Test
     public void checkNameInUseFalseTest() {
-        AAIResourceUri volumeGroupUri = AAIUriFactory.createNodesUri(AAIObjectPlurals.VOLUME_GROUP)
+        AAIPluralResourceUri volumeGroupUri = AAIUriFactory.createNodesUri(AAIObjectPlurals.VOLUME_GROUP)
                 .queryParam("volume-group-name", "testVolumeGroupName1");
         doReturn(false).when(MOCK_aaiResourcesClient).exists(eq(volumeGroupUri));
         boolean nameInUse = aaiVolumeGroupResources.checkNameInUse(volumeGroup);

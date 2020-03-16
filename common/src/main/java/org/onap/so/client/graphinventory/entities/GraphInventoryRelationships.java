@@ -30,12 +30,12 @@ import java.util.function.Predicate;
 import org.onap.so.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
 import org.onap.so.client.graphinventory.GraphInventoryObjectName;
 import org.onap.so.client.graphinventory.GraphInventoryObjectType;
-import org.onap.so.client.graphinventory.entities.uri.GraphInventoryResourceUri;
+import org.onap.so.client.graphinventory.entities.uri.GraphInventorySingleResourceUri;
 import org.onap.so.jsonpath.JsonPathUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public abstract class GraphInventoryRelationships<Wrapper extends GraphInventoryResultWrapper, Uri extends GraphInventoryResourceUri, Type extends GraphInventoryObjectType> {
+public abstract class GraphInventoryRelationships<Wrapper extends GraphInventoryResultWrapper<?>, Uri extends GraphInventorySingleResourceUri<?, ?, ?, ?>, Type extends GraphInventoryObjectType> {
 
     protected final ObjectMapper mapper;
     protected Map<String, Object> map;
