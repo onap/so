@@ -58,7 +58,7 @@
             },
             "requestStatus":{
                "requestState":"PENDING",
-               "statusMessage":"FLOW STATUS: Building blocks 1 of 3 completed. TASK INFORMATION: Last task executed: BB to Execute RETRY STATUS: Retry 2/5 will be started in 8 min. ROLLBACK STATUS: Rollback has been completed successfully.",
+               "statusMessage":"FLOW STATUS: Building blocks 1 of 3 completed. RETRY STATUS: Retry 2/5 will be started in 8 min. ROLLBACK STATUS: Rollback has been completed successfully.",
                "percentProgress":0,
                "timestamp": "Thu, 22 Dec 2016 08:30:28 GMT"
             }
@@ -321,7 +321,7 @@
             },
             "requestStatus":{
                "requestState":"PENDING",
-               "statusMessage":"STATUS: Adding members. FLOW STATUS: Building blocks 1 of 3 completed. TASK INFORMATION: Last task executed: BB to Execute RETRY STATUS: Retry 2/5 will be started in 8 min. ROLLBACK STATUS: Rollback has been completed successfully.",
+               "statusMessage":"STATUS: Adding members. FLOW STATUS: Building blocks 1 of 3 completed. RETRY STATUS: Retry 2/5 will be started in 8 min. ROLLBACK STATUS: Rollback has been completed successfully.",
                "percentProgress":0,
                "timestamp": "Thu, 22 Dec 2016 08:30:28 GMT"
             }

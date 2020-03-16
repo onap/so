@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -73,6 +74,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -104,6 +106,9 @@ public class OrchestrationRequests {
 
     @Autowired
     private CamundaRequestHandler camundaRequestHandler;
+
+    @Autowired
+    private Environment env;
 
     @GET
     @Path("/{version:[vV][4-8]}/{requestId}")
@@ -436,12 +441,14 @@ public class OrchestrationRequests {
         String retryStatusMessage = iar.getRetryStatusMessage();
         String taskName = null;
 
-        if (format == null || !format.equalsIgnoreCase(OrchestrationRequestFormat.SIMPLENOTASKINFO.toString())) {
-            if (flowStatusMessage != null && !flowStatusMessage.equals("Successfully completed all Building Blocks")
-                    && !flowStatusMessage.equals("All Rollback flows have completed successfully")) {
-                taskName = camundaRequestHandler.getTaskName(iar.getRequestId());
-                if (taskName != null) {
-                    flowStatusMessage = flowStatusMessage + " TASK INFORMATION: " + taskName;
+        if (daysSinceRequest(iar) <= camundaCleanupInterval()) {
+            if (format == null || !format.equalsIgnoreCase(OrchestrationRequestFormat.SIMPLENOTASKINFO.toString())) {
+                if (flowStatusMessage != null && !flowStatusMessage.equals("Successfully completed all Building Blocks")
+                        && !flowStatusMessage.equals("All Rollback flows have completed successfully")) {
+                    taskName = camundaRequestHandler.getTaskName(iar.getRequestId());
+                    if (taskName != null) {
+                        flowStatusMessage = flowStatusMessage + " TASK INFORMATION: " + taskName;
+                    }
                 }
             }
         }
@@ -593,5 +600,21 @@ public class OrchestrationRequests {
             throw validateException;
         }
         return infraActiveRequest;
+    }
+
+    protected long daysSinceRequest(InfraActiveRequests request) {
+        long startTime = request.getStartTime().getTime();
+        long now = System.currentTimeMillis();
+
+        return TimeUnit.MILLISECONDS.toDays(now - startTime);
+    }
+
+    protected int camundaCleanupInterval() {
+        String cleanupInterval = env.getProperty("mso.camundaCleanupInterval");
+        int days = 30;
+        if (cleanupInterval != null) {
+            days = Integer.parseInt(cleanupInterval);
+        }
+        return days;
     }
 }
