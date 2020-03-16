@@ -5,6 +5,8 @@ target
 **/.buildpath
 **/.factorypath
 **/.springBeans
+**/.project
+**/.classpath
 .idea
 .checkstyle
 .DS_Store

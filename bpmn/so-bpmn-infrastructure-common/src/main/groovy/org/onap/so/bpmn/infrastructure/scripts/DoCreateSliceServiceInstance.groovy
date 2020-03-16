@@ -1,7 +1,6 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 
-import org.onap.so.bpmn.core.domain.AllottedResource
 import org.onap.aai.domain.yang.AllottedResource
 
 import static org.apache.commons.lang3.StringUtils.*;
