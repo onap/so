@@ -25,7 +25,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <sdnc.northbound.version>1.5.2</sdnc.northbound.version>
-    <appc.client.version>1.6.0-SNAPSHOT</appc.client.version>
+    <appc.client.version>1.7.1-SNAPSHOT</appc.client.version>
   </properties>
 
   <modules>
