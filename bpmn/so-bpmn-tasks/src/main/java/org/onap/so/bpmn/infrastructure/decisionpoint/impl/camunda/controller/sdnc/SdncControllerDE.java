@@ -26,7 +26,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
-import org.onap.so.bpmn.core.json.JsonUtils;
 import org.onap.so.bpmn.infrastructure.decisionpoint.api.ControllerContext;
 import org.onap.so.bpmn.infrastructure.decisionpoint.impl.camunda.controller.common.SoPropertyConstants;
 import org.onap.so.bpmn.infrastructure.decisionpoint.impl.camunda.controller.LcmControllerDE;
@@ -102,13 +101,14 @@ public class SdncControllerDE extends LcmControllerDE {
     }
 
     private LcmOutput selectLcmOutputFromDmaapResponses(List<LcmDmaapResponse> lcmDmaapResponses, LcmInput lcmInput) {
-        String expectedCorrelationId =
-                lcmInput.getCommonHeader().getRequestId() + "-" + lcmInput.getCommonHeader().getSubRequestId();
+        String requestId = lcmInput.getCommonHeader().getRequestId();
+        String subRequestId = lcmInput.getCommonHeader().getSubRequestId();
 
         for (LcmDmaapResponse lcmDmaapResponse : lcmDmaapResponses) {
-            String correlationId = lcmDmaapResponse.getCorrelationId();
-            if (expectedCorrelationId.equals(correlationId)) {
-                return lcmDmaapResponse.getBody().getOutput();
+            LcmOutput lcmOutput = lcmDmaapResponse.getBody().getOutput();
+            if (requestId.equals(lcmOutput.getCommonHeader().getRequestId())
+                    && subRequestId.equals(lcmOutput.getCommonHeader().getSubRequestId())) {
+                return lcmOutput;
             }
         }
 
@@ -204,15 +204,13 @@ public class SdncControllerDE extends LcmControllerDE {
                 return null;
         }
 
-        logger.debug("SDNC LCM payload for {}: {}", lcmAction, lcmPayload);
-
         String subRequestId = UUID.randomUUID().toString();
         LcmInput lcmInput =
                 SDNCLcmMessageBuilder.buildLcmInputForPnf(requestId, subRequestId, pnfName, lcmAction, lcmPayload);
 
         ObjectMapper mapper = new ObjectMapper();
         String lcmInputMsg = mapper.writeValueAsString(lcmInput);
-        logger.debug("SDNC input message:\n" + lcmInputMsg);
+        logger.debug("SDNC input message for {}: {}", lcmAction, lcmInputMsg);
 
         return lcmInput;
     }
@@ -224,27 +222,16 @@ public class SdncControllerDE extends LcmControllerDE {
         }
 
         LcmStatus lcmStatus = lcmOutput.getStatus();
+        String outputPayload = lcmOutput.getPayload();
+        logger.debug("SDNC LCM output payload of action {}: {}", lcmAction, outputPayload);
 
         if (lcmStatus.getCode() == SDNCConstants.LCM_OUTPUT_SUCCESS_CODE) {
-            logger.debug("Call SDNC LCM API success: " + lcmStatus.getMessage());
+            logger.debug("Call SDNC LCM API for {} success, message: {}", lcmAction, lcmStatus.getMessage());
+            return true;
         } else {
-            logger.error("Call SDNC LCM API failure: " + lcmStatus.getMessage());
+            logger.error("Call SDNC LCM API for {} failure, message: {}", lcmAction, lcmStatus.getMessage());
+            return false;
         }
-
-        String outputPayload = lcmOutput.getPayload();
-        logger.debug("SDNC LCM action: {}, result: {}", lcmAction, outputPayload);
-        if (outputPayload != null) {
-            String result = JsonUtils.getJsonValue(outputPayload, "result");
-            if ("Success".equals(result)) {
-                logger.debug("Run SDNC LCM action {} success", lcmAction);
-                return true;
-            } else {
-                String reason = JsonUtils.getJsonValue(outputPayload, "reason");
-                logger.error("Run SDNC LCM action {} failure, reason: {}", lcmAction, reason);
-            }
-        }
-
-        return false;
     }
 
     private boolean sendLcmRequest(DelegateExecution execution, LcmInput lcmInput) {

@@ -26,7 +26,7 @@ import org.onap.so.client.sdnc.lcm.beans.*;
 
 public class SDNCLcmMessageBuilder {
 
-    public static LcmFlags getSDNCFlags() {
+    public static LcmFlags buildLcmFlags() {
         LcmFlags lcmFlags = new LcmFlags();
 
         lcmFlags.setMode(SDNCConstants.LCM_FLAGS_MODE_NORMAL);
@@ -43,7 +43,7 @@ public class SDNCLcmMessageBuilder {
         lcmCommonHeader.setOriginatorId(SDNCConstants.SYSTEM_NAME);
         lcmCommonHeader.setRequestId(requestId);
         lcmCommonHeader.setSubRequestId(subRequestId);
-        lcmCommonHeader.setFlags(getSDNCFlags());
+        lcmCommonHeader.setFlags(buildLcmFlags());
         lcmCommonHeader.setTimestamp(Instant.now().toString());
 
         return lcmCommonHeader;

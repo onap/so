@@ -37,7 +37,7 @@ public class DownloadNESwPayloadTest extends LcmBasePayloadTest {
         SwToBeDownloadedElement swToBeDownloadedElement = new SwToBeDownloadedElement();
 
         swToBeDownloadedElement.setSwLocation("http://192.168.1.20/test.zip");
-        swToBeDownloadedElement.setSwFileSize(123456);
+        swToBeDownloadedElement.setSwFileSize(123456L);
         swToBeDownloadedElement.setSwFileCompression("ZIP");
         swToBeDownloadedElement.setSwFileFormat("binary");
 

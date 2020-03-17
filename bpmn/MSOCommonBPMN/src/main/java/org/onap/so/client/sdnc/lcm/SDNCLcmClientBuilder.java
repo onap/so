@@ -48,8 +48,6 @@ public class SDNCLcmClientBuilder {
         try {
             String path = sdncLcmProperties.getPath() + operation;
             pathUri = new URI(path);
-            logger.debug("SDNC host: " + sdncLcmProperties.getHost());
-            logger.debug("SDNC API path: " + pathUri.getPath());
         } catch (Exception e) {
             String msg = "Error API path syntax: ";
             logger.error(msg, e);
@@ -57,9 +55,7 @@ public class SDNCLcmClientBuilder {
         }
 
         try {
-            SDNCLcmRestClient sdncLcmRestClient = new SDNCLcmRestClient(sdncLcmProperties, pathUri);
-            logger.debug("Create SDNCLcmRestClient success");
-            return sdncLcmRestClient;
+            return new SDNCLcmRestClient(sdncLcmProperties, pathUri);
         } catch (Exception e) {
             String msg = "Create SDNCLcmRestClient failure: ";
             logger.error(msg, e);
@@ -69,9 +65,7 @@ public class SDNCLcmClientBuilder {
 
     public SDNCLcmDmaapClient newSDNCLcmDmaapClient() throws SDNCLcmClientBuilderException {
         try {
-            SDNCLcmDmaapClient sdncLcmDmaapClient = new SDNCLcmDmaapClient(sdncLcmProperties);
-            logger.debug("Create SDNCLcmDmaapClient success");
-            return sdncLcmDmaapClient;
+            return new SDNCLcmDmaapClient(sdncLcmProperties);
         } catch (Exception e) {
             String msg = "Create SDNCLcmDmaapClient failure: ";
             logger.error(msg, e);
