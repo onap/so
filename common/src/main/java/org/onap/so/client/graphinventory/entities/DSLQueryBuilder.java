@@ -27,35 +27,31 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.onap.so.client.aai.entities.QueryStep;
 import org.onap.so.client.graphinventory.GraphInventoryObjectName;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.google.common.base.Joiner;
 
-
-public class DSLQueryBuilder<S, E> implements QueryStep {
+public class DSLQueryBuilder<S, E> {
 
     private List<QueryStep> steps = new ArrayList<>();
     private String suffix = "";
-    private static final Logger logger = LoggerFactory.getLogger(DSLQueryBuilder.class);
 
-    public DSLQueryBuilder() {
+    protected DSLQueryBuilder() {
 
     }
 
-    public DSLQueryBuilder(DSLNode node) {
+    protected DSLQueryBuilder(QueryStep node) {
         steps.add(node);
     }
 
-    public DSLQueryBuilder<S, DSLNode> node(DSLNode node) {
+    public <T> DSLQueryBuilder<S, DSLNodeBase<?>> node(DSLNodeBase<?> node) {
         steps.add(node);
 
-        return (DSLQueryBuilder<S, DSLNode>) this;
+        return (DSLQueryBuilder<S, DSLNodeBase<?>>) this;
     }
 
-    public DSLQueryBuilder<S, E> output() {
+    public DSLQueryBuilder<S, Node> output() {
         Object obj = steps.get(steps.size() - 1);
-        if (obj instanceof DSLNode) {
-            ((DSLNode) steps.get(steps.size() - 1)).output();
+        if (obj instanceof DSLNodeBase) {
+            ((DSLNodeBase) steps.get(steps.size() - 1)).output();
         } else if (obj.getClass().getName().contains("$$Lambda$")) {
             // process lambda expressions
             for (Field f : obj.getClass().getDeclaredFields()) {
@@ -63,27 +59,28 @@ public class DSLQueryBuilder<S, E> implements QueryStep {
                 Object o;
                 try {
                     o = f.get(obj);
-                    if (o instanceof DSLQueryBuilder && ((DSLQueryBuilder) o).steps.get(0) instanceof DSLNode) {
-                        ((DSLNode) ((DSLQueryBuilder) o).steps.get(0)).output();
+                    if (o instanceof DSLQueryBuilder && ((DSLQueryBuilder) o).steps.get(0) instanceof DSLNodeBase) {
+                        ((DSLNodeBase) ((DSLQueryBuilder) o).steps.get(0)).output();
                     }
                 } catch (IllegalArgumentException | IllegalAccessException e) {
-                    logger.error("Exception occured", e);
                 }
                 f.setAccessible(false);
                 break;
             }
         }
-        return this;
+        return (DSLQueryBuilder<S, Node>) this;
     }
 
-    public <E2> DSLQueryBuilder<S, E2> union(final DSLQueryBuilder<?, E2>... union) {
+    @SafeVarargs
+    public final <E2> DSLQueryBuilder<S, E2> union(final DSLQueryBuilder<?, E2>... union) {
 
         List<DSLQueryBuilder<?, ?>> unions = Arrays.asList(union);
         steps.add(() -> {
             StringBuilder query = new StringBuilder();
 
-            query.append("> [ ").append(
-                    Joiner.on(", ").join(unions.stream().map(item -> item.build()).collect(Collectors.toList())))
+            query.append("> [ ")
+                    .append(Joiner.on(", ")
+                            .join(unions.stream().map(item -> item.compile()).collect(Collectors.toList())))
                     .append(" ]");
             return query.toString();
         });
@@ -95,7 +92,7 @@ public class DSLQueryBuilder<S, E> implements QueryStep {
 
         steps.add(() -> {
             StringBuilder query = new StringBuilder();
-            query.append(where.build()).append(")");
+            query.append(where.compile()).append(")");
             String result = query.toString();
             if (!result.startsWith(">")) {
                 result = "> " + result;
@@ -105,22 +102,22 @@ public class DSLQueryBuilder<S, E> implements QueryStep {
         return this;
     }
 
-    public DSLQueryBuilder<S, E> to(DSLQueryBuilder<?, ?> to) {
+    public <E2> DSLQueryBuilder<S, E2> to(DSLQueryBuilder<?, E2> to) {
         steps.add(() -> {
             StringBuilder query = new StringBuilder();
 
-            query.append("> ").append(to.build());
+            query.append("> ").append(to.compile());
             return query.toString();
         });
-        return this;
+        return (DSLQueryBuilder<S, E2>) this;
     }
 
     public DSLQueryBuilder<S, E> to(GraphInventoryObjectName name) {
-        return to(__.node(name));
+        return (DSLQueryBuilder<S, E>) to(__.node(name));
     }
 
     public DSLQueryBuilder<S, E> to(GraphInventoryObjectName name, DSLNodeKey... key) {
-        return to(__.node(name, key));
+        return (DSLQueryBuilder<S, E>) to(__.node(name, key));
     }
 
     public DSLQueryBuilder<S, E> limit(int limit) {
@@ -128,24 +125,19 @@ public class DSLQueryBuilder<S, E> implements QueryStep {
         return this;
     }
 
-    @Override
-    public String build() {
-        return compile();
+    public DSLTraversal<E> build() {
+        return new DSLTraversal<>(compile());
     }
 
     @Override
     public String toString() {
-        return build();
+        return build().get();
     }
 
     @Override
     public boolean equals(Object o) {
         if (o != null) {
-            if (o instanceof QueryStep) {
-                return ((QueryStep) o).build().equals(this.build());
-            } else if (o instanceof String) {
-                return o.equals(this.build());
-            }
+            return o.toString().equals(toString());
         }
         return false;
     }
@@ -153,11 +145,11 @@ public class DSLQueryBuilder<S, E> implements QueryStep {
     @Override
     public int hashCode() {
 
-        return build().hashCode();
+        return compile().hashCode();
     }
 
     private String compile() {
-        return Joiner.on(" ").join(steps.stream().map(item -> item.build()).collect(Collectors.toList())) + suffix;
+        return String.join(" ", steps.stream().map(item -> item.build()).collect(Collectors.toList())) + suffix;
     }
 
     protected QueryStep getFirst() {

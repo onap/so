@@ -23,17 +23,19 @@ package org.onap.so.client.aai;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import org.onap.so.client.graphinventory.entities.DSLNode;
 import org.onap.so.client.graphinventory.entities.DSLNodeKey;
 import org.onap.so.client.graphinventory.entities.DSLQueryBuilder;
+import org.onap.so.client.graphinventory.entities.DSLStartNode;
+import org.onap.so.client.graphinventory.entities.Output;
+import org.onap.so.client.graphinventory.entities.Start;
+import org.onap.so.client.graphinventory.entities.TraversalBuilder;
 import org.onap.so.client.graphinventory.entities.__;
 
 public class DSLQueryBuilderTest {
 
-
     @Test
     public void whereTest() {
-        DSLQueryBuilder<DSLNode, DSLNode> builder = new DSLQueryBuilder<>(new DSLNode(AAIObjectType.CLOUD_REGION,
+        DSLQueryBuilder<Start, Start> builder = TraversalBuilder.fragment(new DSLStartNode(AAIObjectType.CLOUD_REGION,
                 __.key("cloud-owner", "att-nc"), __.key("cloud-region-id", "test")));
 
         builder.to(__.node(AAIObjectType.VLAN_TAG))
@@ -42,13 +44,13 @@ public class DSLQueryBuilderTest {
 
         assertEquals("cloud-region('cloud-owner', 'att-nc')('cloud-region-id', 'test') > "
                 + "vlan-tag (> owning-entity('owning-entity-name', 'name')) > " + "vlan-tag*('vlan-id-outer', '108')",
-                builder.build());
+                builder.build().get());
     }
 
     @Test
     public void unionTest() {
-        DSLQueryBuilder<DSLNode, DSLNode> builder =
-                new DSLQueryBuilder<>(new DSLNode(AAIObjectType.GENERIC_VNF, __.key("vnf-id", "vnfId")).output());
+        DSLQueryBuilder<Output, Output> builder = TraversalBuilder
+                .traversal(new DSLStartNode(AAIObjectType.GENERIC_VNF, __.key("vnf-id", "vnfId")).output());
 
         builder.union(__.node(AAIObjectType.PSERVER).output().to(__.node(AAIObjectType.COMPLEX).output()),
                 __.node(AAIObjectType.VSERVER)
@@ -56,53 +58,53 @@ public class DSLQueryBuilderTest {
 
         assertEquals(
                 "generic-vnf*('vnf-id', 'vnfId') > " + "[ pserver* > complex*, " + "vserver > pserver* > complex* ]",
-                builder.build());
+                builder.build().get());
     }
 
     @Test
     public void whereUnionTest() {
-        DSLQueryBuilder<DSLNode, DSLNode> builder =
-                new DSLQueryBuilder<>(new DSLNode(AAIObjectType.GENERIC_VNF, __.key("vnf-id", "vnfId")).output());
+        DSLQueryBuilder<Output, Output> builder = TraversalBuilder
+                .traversal(new DSLStartNode(AAIObjectType.GENERIC_VNF, __.key("vnf-id", "vnfId")).output());
 
         builder.where(__.union(__.node(AAIObjectType.PSERVER, __.key("hostname", "hostname1")),
                 __.node(AAIObjectType.VSERVER).to(__.node(AAIObjectType.PSERVER, __.key("hostname", "hostname1")))));
 
         assertEquals("generic-vnf*('vnf-id', 'vnfId') (> [ pserver('hostname', 'hostname1'), "
-                + "vserver > pserver('hostname', 'hostname1') ])", builder.build());
+                + "vserver > pserver('hostname', 'hostname1') ])", builder.build().get());
     }
 
     @Test
     public void notNullTest() {
-        DSLQueryBuilder<DSLNode, DSLNode> builder = new DSLQueryBuilder<>(
-                new DSLNode(AAIObjectType.CLOUD_REGION, __.key("cloud-owner", "", "null").not()).output());
+        DSLQueryBuilder<Output, Output> builder = TraversalBuilder.traversal(
+                new DSLStartNode(AAIObjectType.CLOUD_REGION, __.key("cloud-owner", "", "null").not()).output());
 
-        assertEquals("cloud-region* !('cloud-owner', ' ', ' null ')", builder.build());
+        assertEquals("cloud-region* !('cloud-owner', ' ', ' null ')", builder.build().get());
     }
 
     @Test
     public void shortCutToTest() {
-        DSLQueryBuilder<DSLNode, DSLNode> builder =
-                new DSLQueryBuilder<>(new DSLNode(AAIObjectType.PSERVER, __.key("hostname", "my-hostname")).output());
+        DSLQueryBuilder<Output, Output> builder = TraversalBuilder
+                .traversal(new DSLStartNode(AAIObjectType.PSERVER, __.key("hostname", "my-hostname")).output());
 
         builder.to(AAIObjectType.P_INTERFACE).to(AAIObjectType.SRIOV_PF, __.key("pf-pci-id", "my-id"));
         assertEquals("pserver*('hostname', 'my-hostname') > p-interface > sriov-pf('pf-pci-id', 'my-id')",
-                builder.build());
+                builder.build().get());
     }
 
     @Test
     public void limitTest() {
-        DSLQueryBuilder<DSLNode, DSLNode> builder =
-                new DSLQueryBuilder<>(new DSLNode(AAIObjectType.PSERVER, __.key("hostname", "my-hostname")).output());
+        DSLQueryBuilder<Output, Output> builder = TraversalBuilder
+                .traversal(new DSLStartNode(AAIObjectType.PSERVER, __.key("hostname", "my-hostname")).output());
 
         builder.to(AAIObjectType.P_INTERFACE).limit(2).to(AAIObjectType.SRIOV_PF, __.key("pf-pci-id", "my-id"));
         assertEquals("pserver*('hostname', 'my-hostname') > p-interface > sriov-pf('pf-pci-id', 'my-id') LIMIT 2",
-                builder.build());
+                builder.build().get());
     }
 
     @Test
     public void equalsTest() {
-        DSLQueryBuilder<DSLNode, DSLNode> builder =
-                new DSLQueryBuilder<>(new DSLNode(AAIObjectType.PSERVER, __.key("hostname", "my-hostname")).output());
+        DSLQueryBuilder<Output, Output> builder = TraversalBuilder
+                .traversal(new DSLStartNode(AAIObjectType.PSERVER, __.key("hostname", "my-hostname")).output());
 
         builder.to(AAIObjectType.P_INTERFACE).to(AAIObjectType.SRIOV_PF, __.key("pf-pci-id", "my-id"));
         assertTrue(
@@ -110,10 +112,9 @@ public class DSLQueryBuilderTest {
         assertTrue(builder.equals(builder));
     }
 
-
     @Test
     public void mixedTypeTest() {
-        DSLQueryBuilder<DSLNode, DSLNode> builder = new DSLQueryBuilder<>(new DSLNode(AAIObjectType.CLOUD_REGION,
+        DSLQueryBuilder<Start, Start> builder = TraversalBuilder.fragment(new DSLStartNode(AAIObjectType.CLOUD_REGION,
                 __.key("cloud-owner", "owner"), __.key("cloud-region-id", "id")));
         builder.to(__.node(AAIObjectType.VLAN_TAG, __.key("vlan-id-outer", 167), __.key("my-boolean", true)).output());
         assertTrue(builder.equals(
@@ -122,19 +123,19 @@ public class DSLQueryBuilderTest {
 
     @Test
     public void outputOnNodeLambdasTest() {
-        DSLQueryBuilder<DSLNode, DSLNode> builder =
-                new DSLQueryBuilder<>(new DSLNode(AAIObjectType.L_INTERFACE, new DSLNodeKey("interface-id", "myId")));
+        DSLQueryBuilder<Start, Start> builder = TraversalBuilder
+                .fragment(new DSLStartNode(AAIObjectType.L_INTERFACE, new DSLNodeKey("interface-id", "myId")));
 
         builder.to(AAIObjectType.VSERVER, __.key("vserver-name", "myName")).output().to(AAIObjectType.P_INTERFACE)
                 .output();
         assertEquals("l-interface('interface-id', 'myId') > vserver*('vserver-name', 'myName') > p-interface*",
-                builder.build());
+                builder.build().get());
     }
 
     @Test
     public void skipOutputOnUnionTest() {
-        DSLQueryBuilder<DSLNode, DSLNode> builder =
-                new DSLQueryBuilder<>(new DSLNode(AAIObjectType.GENERIC_VNF, __.key("vnf-id", "vnfId")).output());
+        DSLQueryBuilder<Output, Output> builder = TraversalBuilder
+                .traversal(new DSLStartNode(AAIObjectType.GENERIC_VNF, __.key("vnf-id", "vnfId")).output());
 
         builder.union(__.node(AAIObjectType.PSERVER).output().to(__.node(AAIObjectType.COMPLEX).output()),
                 __.node(AAIObjectType.VSERVER)
@@ -143,6 +144,6 @@ public class DSLQueryBuilderTest {
 
         assertEquals(
                 "generic-vnf*('vnf-id', 'vnfId') > " + "[ pserver* > complex*, " + "vserver > pserver* > complex* ]",
-                builder.build());
+                builder.build().get());
     }
 }
