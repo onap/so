@@ -450,6 +450,16 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
             execution.setVariable("serviceModelInfo", serviceDecomposition.getModelInfo())
 
             List<Resource> deleteResourceList = serviceDecomposition.getServiceResources()
+			if (serviceDecomposition.getServiceType().equals("MDONS_OTN")){
+			   for (Resource resource : deleteResourceList) {
+			        String serviceName = execution.getVariable("serviceInstanceName")
+			        String serviceInstanceId = execution.getVariable("serviceInstanceId")
+			        resource.setResourceId(serviceInstanceId)
+			        resource.setResourceInstanceName(serviceName)
+			        def delMap = new ImmutablePair(resource, null)
+			        deleteRealResourceList.add(delMap)
+			   }
+			} else{
             String serviceRelationShip = execution.getVariable("serviceRelationShip")
             def jsonSlurper = new JsonSlurper()
             def jsonOutput = new JsonOutput()
@@ -492,6 +502,7 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
                     }
                 }
             }
+			}
 
             // only delete real existing resources
             execution.setVariable("deleteResourceList", deleteRealResourceList)
