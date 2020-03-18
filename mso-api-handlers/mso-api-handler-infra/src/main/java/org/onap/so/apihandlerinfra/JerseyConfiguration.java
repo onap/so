@@ -23,9 +23,7 @@ package org.onap.so.apihandlerinfra;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.PostConstruct;
-import javax.servlet.ServletConfig;
 import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Context;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.onap.logging.filter.base.Constants;
@@ -96,6 +94,7 @@ public class JerseyConfiguration extends ResourceConfig {
         // this registration seems to be needed to get predictable
         // execution behavior for the above JSON Exception Mappers
         register(com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider.class);
+
         register(ModelDistributionRequest.class);
         property(ServletProperties.FILTER_FORWARD_ON_404, true);
 
