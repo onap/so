@@ -59,7 +59,7 @@
     <dependency>
       <groupId>org.onap.aai.schema-service</groupId>
       <artifactId>aai-schema</artifactId>
-      <version>1.6.4-SNAPSHOT</version>
+      <version>1.6.5</version>
     </dependency>
     <dependency>
       <groupId>org.modelmapper</groupId>
