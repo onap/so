@@ -127,11 +127,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             String key = iterator.next()
             HashMap<String, String> hashMap = new HashMap()
             hashMap.put("name", key)
-            if(jsonObject.get(key)==null){
-                 hashMap.put("value", "")
-             }else{
-                 hashMap.put("value", jsonObject.get(key))
-             }
+            hashMap.put("value", jsonObject.get(key))
             paramList.add(hashMap)
         }
         Map<String, List<Map<String, Object>>> paramMap = new HashMap()
@@ -260,6 +256,17 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
 
                 break
 
+            case ~/[\w\s\W]*UNI[\w\s\W]*/ :
+                def resourceInput = resourceInputObj.getResourceParameters()
+                String incomingRequest = resourceInputObj.getRequestsInputs()
+                String serviceParameters = JsonUtils.getJsonValue(incomingRequest, "service.parameters")
+                String requestInputs = JsonUtils.getJsonValue(serviceParameters, "requestInputs")
+                JSONObject inputParameters = new JSONObject(requestInputs)
+                String uResourceInput = jsonUtil.addJsonValue(resourceInput, "requestInputs.service-name", inputParameters.get("name"))
+                resourceInputObj.setResourceParameters(uResourceInput)
+                execution.setVariable(Prefix + "resourceInput", resourceInputObj.toString())
+                break
+
             case ~/[\w\s\W]*sdwanvpnattachment[\w\s\W]*/ :
             case ~/[\w\s\W]*sotnvpnattachment[\w\s\W]*/ :
             case ~/[\w\s\W]*SOTN-Attachment[\w\s\W]*/ :
@@ -363,7 +370,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                                     <sdncadapter:MsoAction>opticalservice</sdncadapter:MsoAction>
                                  </sdncadapter:RequestHeader>
                                  <sdncadapterworkflow:SDNCRequestData>
-                                    <request-id>${msoUtils.xmlEscape(hdrRequestId)}</request-id>
+                                    <request-id>${msoUtils.xmlEscape(serviceInstanceId)}</request-id>
                                     <global-customer-id>${msoUtils.xmlEscape(globalCustomerId)}</global-customer-id>
                                     <service-type>${msoUtils.xmlEscape(serviceType)}</service-type>
                                     <notification-url>sdncCallback</notification-url>
