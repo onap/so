@@ -221,6 +221,30 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
 
             switch (modelType) {
                 case "VNF":
+				    if(modelName.contains("UNI") && "MDONS_OTN".equals(serviceType)){
+						String serviceInstanceName = resourceInputObj.getResourceInstanceName()
+						sdncTopologyDeleteRequest = """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
+                                                              xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1" 
+                                                              xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
+                                 <sdncadapter:RequestHeader>
+                                    <sdncadapter:RequestId>${MsoUtils.xmlEscape(hdrRequestId)}</sdncadapter:RequestId>
+                                    <sdncadapter:SvcInstanceId>${MsoUtils.xmlEscape(serviceInstanceId)}</sdncadapter:SvcInstanceId>
+                                    <sdncadapter:SvcAction>${MsoUtils.xmlEscape(sdnc_svcAction)}</sdncadapter:SvcAction>
+                                    <sdncadapter:SvcOperation>optical-service-delete</sdncadapter:SvcOperation>
+                                    <sdncadapter:CallbackUrl>sdncCallback</sdncadapter:CallbackUrl>
+                                    <sdncadapter:MsoAction>opticalservice</sdncadapter:MsoAction>
+                                 </sdncadapter:RequestHeader>
+                                 <sdncadapterworkflow:SDNCRequestData>
+                                 <request-id>${msoUtils.xmlEscape(serviceInstanceId)}</request-id>
+                                     <payload>
+                                       <param>
+                                         <name>service-name</name>
+										 <value>${msoUtils.xmlEscape(serviceInstanceName)}</value>
+                                       </param>
+                                     </payload>
+                                </sdncadapterworkflow:SDNCRequestData>
+                             </aetgt:SDNCAdapterWorkflowRequest>""".trim()
+					} else{
                     sdncTopologyDeleteRequest = """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
                                                               xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1" 
                                                               xmlns:sdncadapterworkflow="http://org.onap/so/workflow/schema/v1">
@@ -275,6 +299,7 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
                                       </vnf-request-input>
                                 </sdncadapterworkflow:SDNCRequestData>
                              </aetgt:SDNCAdapterWorkflowRequest>""".trim()
+					} 
                     break
                 case "GROUP" :
                     //When a new resource creation request reaches SO, the parent resources information needs to be provided
