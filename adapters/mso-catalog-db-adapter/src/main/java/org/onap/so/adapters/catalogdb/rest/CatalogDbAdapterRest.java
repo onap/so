@@ -46,32 +46,8 @@ import org.onap.so.adapters.catalogdb.catalogrest.QueryServiceMacroHolder;
 import org.onap.so.adapters.catalogdb.catalogrest.QueryServiceNetworks;
 import org.onap.so.adapters.catalogdb.catalogrest.QueryServiceVnfs;
 import org.onap.so.adapters.catalogdb.catalogrest.QueryVfModule;
-import org.onap.so.db.catalog.beans.AllottedResource;
-import org.onap.so.db.catalog.beans.AllottedResourceCustomization;
-import org.onap.so.db.catalog.beans.InstanceGroup;
-import org.onap.so.db.catalog.beans.NetworkResource;
-import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
-import org.onap.so.db.catalog.beans.Recipe;
-import org.onap.so.db.catalog.beans.Service;
-import org.onap.so.db.catalog.beans.ToscaCsar;
-import org.onap.so.db.catalog.beans.VfModule;
-import org.onap.so.db.catalog.beans.VfModuleCustomization;
-import org.onap.so.db.catalog.beans.VnfRecipe;
-import org.onap.so.db.catalog.beans.VnfResource;
-import org.onap.so.db.catalog.beans.VnfResourceCustomization;
-import org.onap.so.db.catalog.data.repository.AllottedResourceCustomizationRepository;
-import org.onap.so.db.catalog.data.repository.AllottedResourceRepository;
-import org.onap.so.db.catalog.data.repository.ArRecipeRepository;
-import org.onap.so.db.catalog.data.repository.InstanceGroupRepository;
-import org.onap.so.db.catalog.data.repository.NetworkRecipeRepository;
-import org.onap.so.db.catalog.data.repository.NetworkResourceCustomizationRepository;
-import org.onap.so.db.catalog.data.repository.NetworkResourceRepository;
-import org.onap.so.db.catalog.data.repository.ServiceRepository;
-import org.onap.so.db.catalog.data.repository.ToscaCsarRepository;
-import org.onap.so.db.catalog.data.repository.VFModuleRepository;
-import org.onap.so.db.catalog.data.repository.VnfCustomizationRepository;
-import org.onap.so.db.catalog.data.repository.VnfRecipeRepository;
-import org.onap.so.db.catalog.data.repository.VnfResourceRepository;
+import org.onap.so.db.catalog.beans.*;
+import org.onap.so.db.catalog.data.repository.*;
 import org.onap.so.db.catalog.rest.beans.ServiceMacroHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,6 +101,9 @@ public class CatalogDbAdapterRest {
 
     @Autowired
     private InstanceGroupRepository instanceGroupRepository;
+
+    @Autowired
+    private ServiceInfoRepository serviceInfoRepository;
 
     private static final String NO_MATCHING_PARAMETERS = "no matching parameters";
 
@@ -328,6 +307,8 @@ public class CatalogDbAdapterRest {
                 respStatus = HttpStatus.SC_NOT_FOUND;
                 qryResp = new QueryServiceMacroHolder();
             } else {
+                ServiceInfo serviceInfo = serviceInfoRepository.findByService(ret.getService());
+                ret.setServiceInfo(serviceInfo);
                 qryResp = new QueryServiceMacroHolder(ret);
                 logger.debug("serviceMacroHolder qryResp= {}", qryResp);
             }
