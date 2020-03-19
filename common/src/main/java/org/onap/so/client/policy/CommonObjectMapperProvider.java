@@ -20,13 +20,16 @@
 
 package org.onap.so.client.policy;
 
+import javax.ws.rs.ext.ContextResolver;
+import javax.ws.rs.ext.Provider;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-public class CommonObjectMapperProvider {
+@Provider
+public class CommonObjectMapperProvider implements ContextResolver<ObjectMapper> {
 
     protected ObjectMapper mapper;
 
@@ -41,6 +44,12 @@ public class CommonObjectMapperProvider {
     }
 
     public ObjectMapper getMapper() {
+        return mapper;
+    }
+
+    @Override
+    public ObjectMapper getContext(Class<?> type) {
+
         return mapper;
     }
 }

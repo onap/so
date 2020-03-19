@@ -188,8 +188,7 @@ public abstract class RestClient {
             client.register(new PayloadLoggingClientFilter(this.getMaxPayloadSize()));
         }
         CommonObjectMapperProvider provider = this.getCommonObjectMapperProvider();
-        client.register(new JacksonJsonProvider(provider.getMapper()));
-
+        client.register(provider).register(new JacksonJsonProvider(provider.getMapper()));
         metricLogClientFilter = new SOMetricLogClientFilter();
         mdcSetup.setTargetEntity(getTargetEntity());
         client.register(metricLogClientFilter);
