@@ -32,24 +32,25 @@ public class __ {
         return new DSLQueryBuilder<>();
     }
 
-    public static <A> DSLQueryBuilder<A, A> start(DSLNode node) {
+    public static <A> DSLQueryBuilder<A, A> start(Start node) {
         return new DSLQueryBuilder<>(node);
     }
 
-    public static DSLQueryBuilder<DSLNode, DSLNode> node(GraphInventoryObjectName name) {
+    public static DSLQueryBuilder<DSLStartNode, DSLStartNode> node(GraphInventoryObjectName name) {
 
-        return __.<DSLNode>start(new DSLNode(name));
+        return __.<DSLStartNode>start(new DSLStartNode(name));
     }
 
-    public static DSLQueryBuilder<DSLNode, DSLNode> node(GraphInventoryObjectName name, DSLNodeKey... key) {
-        return __.<DSLNode>start(new DSLNode(name, key));
+    public static DSLQueryBuilder<DSLStartNode, DSLStartNode> node(GraphInventoryObjectName name, DSLNodeKey... key) {
+        return __.<DSLStartNode>start(new DSLStartNode(name, key));
     }
 
     public static DSLNodeKey key(String keyName, Object... value) {
         return new DSLNodeKey(keyName, value);
     }
 
-    public static <A, B> DSLQueryBuilder<A, B> union(final DSLQueryBuilder<?, B>... traversal) {
+    @SafeVarargs
+    public static final <A, B> DSLQueryBuilder<A, B> union(final DSLQueryBuilder<?, B>... traversal) {
 
         return __.<A>identity().union(traversal);
     }

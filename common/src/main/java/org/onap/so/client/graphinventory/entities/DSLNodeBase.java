@@ -26,41 +26,51 @@ import java.util.List;
 import org.onap.so.client.aai.entities.QueryStep;
 import org.onap.so.client.graphinventory.GraphInventoryObjectName;
 
-public class DSLNode implements QueryStep {
+public abstract class DSLNodeBase<T extends DSLNodeBase<?>> implements QueryStep {
 
-    private final String nodeName;
-    private final List<DSLNodeKey> nodeKeys;
-    private final StringBuilder query = new StringBuilder();
-    private boolean output = false;
+    protected final String nodeName;
+    protected final List<DSLNodeKey> nodeKeys;
+    protected final StringBuilder query;
+    protected boolean output = false;
 
-    public DSLNode() {
+    public DSLNodeBase() {
         this.nodeName = "";
         this.nodeKeys = new ArrayList<>();
+        this.query = new StringBuilder();
 
     }
 
-    public DSLNode(GraphInventoryObjectName name) {
+    public DSLNodeBase(GraphInventoryObjectName name) {
         this.nodeName = name.typeName();
         this.nodeKeys = new ArrayList<>();
+        this.query = new StringBuilder();
         query.append(nodeName);
     }
 
-    public DSLNode(GraphInventoryObjectName name, DSLNodeKey... key) {
+    public DSLNodeBase(GraphInventoryObjectName name, DSLNodeKey... key) {
         this.nodeName = name.typeName();
         this.nodeKeys = Arrays.asList(key);
+        this.query = new StringBuilder();
         query.append(nodeName);
     }
 
-    public DSLNode output() {
-        this.output = true;
-
-        return this;
+    public DSLNodeBase(DSLNodeBase<?> copy) {
+        this.nodeName = copy.nodeName;
+        this.nodeKeys = copy.nodeKeys;
+        this.query = new StringBuilder(copy.query);
+        this.output = copy.output;
     }
 
-    public DSLNode and(DSLNodeKey... key) {
+    public DSLOutputNode output() {
+        this.output = true;
+
+        return new DSLOutputNode(this);
+    }
+
+    public T and(DSLNodeKey... key) {
         this.nodeKeys.addAll(Arrays.asList(key));
 
-        return this;
+        return (T) this;
     }
 
     @Override

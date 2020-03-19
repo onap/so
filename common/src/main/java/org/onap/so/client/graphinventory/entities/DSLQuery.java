@@ -31,17 +31,11 @@ public class DSLQuery {
 
     }
 
-    public DSLQuery(String dsl) {
-        this.dsl = dsl;
+    public DSLQuery(DSLTraversal<? extends Output> dsl) {
+        this.dsl = dsl.get();
     }
 
     public String getDsl() {
         return dsl;
     }
-
-    public void setDsl(String dsl) {
-        this.dsl = dsl;
-    }
-
-
 }
