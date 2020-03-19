@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a3175076_5900a70b",
+        "filename": "adapters/mso-sdnc-adapter/src/main/java/org/onap/so/adapters/sdnc/sdncrest/SDNCConnector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-03-19T12:34:03Z",
+      "side": 1,
+      "message": "Describe or remove.",
+      "range": {
+        "startLine": 172,
+        "startChar": 3,
+        "endLine": 178,
+        "endChar": 7
+      },
+      "revId": "c2033d0cd6829ccd368385d93d8029b1107743c4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c4f56acb_a1c4ef5a",
+        "filename": "adapters/mso-sdnc-adapter/src/main/java/org/onap/so/adapters/sdnc/sdncrest/SDNCConnector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-03-19T12:34:03Z",
+      "side": 1,
+      "message": "why protected?",
+      "range": {
+        "startLine": 179,
+        "startChar": 4,
+        "endLine": 179,
+        "endChar": 13
+      },
+      "revId": "c2033d0cd6829ccd368385d93d8029b1107743c4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a0b37c4a_78bfe797",
+        "filename": "adapters/mso-sdnc-adapter/src/main/java/org/onap/so/adapters/sdnc/sdncrest/SDNCConnector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-03-19T12:34:03Z",
+      "side": 1,
+      "message": "This parameter is always null, there is no point to put it as parameter. Declare this object inside the method.",
+      "range": {
+        "startLine": 179,
+        "startChar": 92,
+        "endLine": 179,
+        "endChar": 114
+      },
+      "revId": "c2033d0cd6829ccd368385d93d8029b1107743c4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5875b504_47dd1fa6",
+        "filename": "adapters/mso-sdnc-adapter/src/main/java/org/onap/so/adapters/sdnc/sdncrest/SDNCConnector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 298,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-03-19T12:34:03Z",
+      "side": 1,
+      "message": "extract this whole code to the separate private method",
+      "range": {
+        "startLine": 298,
+        "startChar": 12,
+        "endLine": 298,
+        "endChar": 64
+      },
+      "revId": "c2033d0cd6829ccd368385d93d8029b1107743c4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9eb39f21_656d6c71",
+        "filename": "adapters/mso-sdnc-adapter/src/main/java/org/onap/so/adapters/sdnc/sdncrest/SDNCConnector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 301,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-03-19T12:34:03Z",
+      "side": 1,
+      "message": "From java specification:\n\"For simple string concatenation, you need not use StringBuilder, java compiler will do the trick for you. However, if you need to concatenate inside a loop, you need to manually apply StringBuilder.\"\n\nYuo need to use StringBuilder here.",
+      "range": {
+        "startLine": 301,
+        "startChar": 24,
+        "endLine": 301,
+        "endChar": 69
+      },
+      "revId": "c2033d0cd6829ccd368385d93d8029b1107743c4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e6e87ba7_64c1e10e",
+        "filename": "adapters/mso-sdnc-adapter/src/main/java/org/onap/so/adapters/sdnc/sdncrest/SDNCServiceRequestConnector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-03-19T12:34:03Z",
+      "side": 1,
+      "message": "remove or describe",
+      "range": {
+        "startLine": 180,
+        "startChar": 0,
+        "endLine": 188,
+        "endChar": 7
+      },
+      "revId": "c2033d0cd6829ccd368385d93d8029b1107743c4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4eebce02_a1015be0",
+        "filename": "adapters/mso-sdnc-adapter/src/main/java/org/onap/so/adapters/sdnc/sdncrest/SDNCServiceRequestConnector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-03-19T12:34:03Z",
+      "side": 1,
+      "message": "why protected and static?",
+      "range": {
+        "startLine": 189,
+        "startChar": 4,
+        "endLine": 189,
+        "endChar": 13
+      },
+      "revId": "c2033d0cd6829ccd368385d93d8029b1107743c4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
