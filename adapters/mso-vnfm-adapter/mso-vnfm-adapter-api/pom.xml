@@ -103,6 +103,8 @@
             </goals>
             <configuration>
               <sources>
+                <source>${project.basedir}/target/generated-sources/etsicatalog/notification/src/gen/java/main</source>
+                <source>${project.basedir}/target/generated-sources/sol003-vnf-packagemanagement/notification/src/gen/java/main</source>
                 <source>${project.basedir}/target/generated-sources/vnfmadapter/src/gen/java/main</source>
               </sources>
             </configuration>
@@ -110,6 +112,36 @@
         </executions>
       </plugin>
     </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>io.swagger</groupId>
+                    <artifactId>swagger-codegen-maven-plugin</artifactId>
+                    <goals>
+                      <goal>generate</goal>
+                    </goals>
+                    <versionRange>[2.2.0,)</versionRange>
+                  </pluginExecutionFilter>
+                  <action>
+                    <execute>
+                      <runOnIncremental>false</runOnIncremental>
+                    </execute>
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
   <dependencies>
     <dependency>
