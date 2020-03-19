@@ -11,9 +11,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -59,9 +59,6 @@ public class SDNCServiceRequestConnector extends SDNCConnector {
             TypedRequestTunables rt) {
         try {
             return parseResponseContent(responseContent);
-        } catch (ParseException e) {
-            logger.error("Error occured:", e);
-            return createErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR, e.getMessage(), rt);
         } catch (Exception e) {
             logger.error("Error occured:", e);
             return createErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR, e.getMessage(), rt);
@@ -79,7 +76,7 @@ public class SDNCServiceRequestConnector extends SDNCConnector {
      * response code contained in the content. For 2XX response codes, an SDNCServiceResponse is returned. Otherwise, an
      * SDNCServiceError is returned. If the content cannot be parsed, or if the content does not contain all required
      * elements, a parse exception is thrown. This method performs no logging or alarming.
-     * 
+     *
      * @throws ParseException on error
      */
     public static SDNCResponseCommon parseResponseContent(String responseContent)
@@ -119,16 +116,24 @@ public class SDNCServiceRequestConnector extends SDNCConnector {
         List<Element> responseParameters = new ArrayList<>();
 
         for (Element child : SDNCAdapterUtils.childElements(configurationResponseCommon)) {
-            if ("response-code".equals(child.getNodeName())) {
-                responseCode = child.getTextContent();
-            } else if ("response-message".equals(child.getNodeName())) {
-                responseMessage = child.getTextContent();
-            } else if ("svc-request-id".equals(child.getNodeName())) {
-                svcRequestId = child.getTextContent();
-            } else if ("ack-final-indicator".equals(child.getNodeName())) {
-                ackFinalIndicator = child.getTextContent();
-            } else if ("response-parameters".equals(child.getNodeName())) {
-                responseParameters.add(child);
+
+            switch (child.getNodeName()) {
+                case "response-code":
+                    responseCode = child.getTextContent();
+                    break;
+                case "response-message":
+                    responseMessage = child.getTextContent();
+                    break;
+                case "svc-request-id":
+                    svcRequestId = child.getTextContent();
+                    break;
+                case "ack-final-indicator":
+                    ackFinalIndicator = child.getTextContent();
+                    break;
+                case "response-parameters":
+                    responseParameters.add(child);
+                    break;
+                default:
             }
         }
 
@@ -167,8 +172,15 @@ public class SDNCServiceRequestConnector extends SDNCConnector {
             return new SDNCServiceError(svcRequestId, responseCode, responseMessage, ackFinalIndicator);
         }
 
-        // Create a success response object.
+        return createSDNCServiceResponse(responseCode, responseMessage, svcRequestId, ackFinalIndicator,
+                responseParameters);
 
+    }
+
+    public static SDNCServiceResponse createSDNCServiceResponse(String responseCode, String responseMessage,
+            String svcRequestId, String ackFinalIndicator, List<Element> responseParameters) throws ParseException {
+
+        // Create a success response object.
         SDNCServiceResponse response =
                 new SDNCServiceResponse(svcRequestId, responseCode, responseMessage, ackFinalIndicator);
 
@@ -201,8 +213,6 @@ public class SDNCServiceRequestConnector extends SDNCConnector {
 
             response.addParam(tagName, tagValue);
         }
-
         return response;
-
     }
 }
