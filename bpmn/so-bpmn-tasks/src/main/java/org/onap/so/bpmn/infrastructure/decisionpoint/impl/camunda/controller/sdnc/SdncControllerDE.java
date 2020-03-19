@@ -1,7 +1,7 @@
 /*-
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2019 Nordix
- *  Modifications Copyright (C) 2020 Huawei
+ *  Modifications Copyright (C) 2020 Huawei Technologies Co., Ltd.
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,6 +29,8 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.bpmn.infrastructure.decisionpoint.api.ControllerContext;
 import org.onap.so.bpmn.infrastructure.decisionpoint.impl.camunda.controller.common.SoPropertyConstants;
 import org.onap.so.bpmn.infrastructure.decisionpoint.impl.camunda.controller.LcmControllerDE;
+import org.onap.so.client.exception.BadResponseException;
+import org.onap.so.client.exception.PayloadGenerationException;
 import org.onap.so.client.sdnc.common.SDNCConstants;
 import org.onap.so.client.sdnc.lcm.*;
 import org.onap.so.client.sdnc.lcm.beans.*;
@@ -59,25 +61,19 @@ public class SdncControllerDE extends LcmControllerDE {
         logger.debug("Running activity for id: {}, name: {}", execution.getCurrentActivityId(),
                 execution.getCurrentActivityName());
 
-        boolean result;
         try {
             LcmInput lcmInput = buildLcmInput(execution);
-            if (lcmInput != null) {
-                result = sendLcmRequest(execution, lcmInput);
-            } else {
-                logger.error("Build LCM Input error");
-                result = false;
-            }
+            sendLcmRequest(execution, lcmInput);
+
+            execution.setVariable(SoPropertyConstants.CONTROLLER_STATUS, "Success");
         } catch (Exception e) {
-            logger.error("Call SDNC LCM Client failure: ", e);
-            result = false;
+            execution.setVariable(SoPropertyConstants.CONTROLLER_STATUS, "Failure");
+
+            exceptionUtil.buildAndThrowWorkflowException(execution, SDNC_DELEGATE_EXECUTION_ERROR_CODE, e);
         }
 
-        if (result) {
-            execution.setVariable(SoPropertyConstants.CONTROLLER_STATUS, "Success");
-        } else {
-            execution.setVariable(SoPropertyConstants.CONTROLLER_STATUS, "Failure");
-        }
+        logger.debug("Finish activity for id: {}, name: {}", execution.getCurrentActivityId(),
+                execution.getCurrentActivityName());
 
         return 0;
     }
@@ -158,7 +154,15 @@ public class SdncControllerDE extends LcmControllerDE {
         return lcmAction.replaceAll(regex, replacement).toLowerCase();
     }
 
-    private LcmInput buildLcmInput(DelegateExecution execution) throws JsonProcessingException {
+    private String convertToSting(Object msgObject) throws PayloadGenerationException {
+        try {
+            return SDNCLcmPayloadBuilder.convertToSting(msgObject);
+        } catch (JsonProcessingException e) {
+            throw new PayloadGenerationException(e.getMessage());
+        }
+    }
+
+    private LcmInput buildLcmInput(DelegateExecution execution) throws PayloadGenerationException {
         String requestId = String.valueOf(execution.getVariable(REQUEST_ID));
         String requestAction = String.valueOf(execution.getVariable(SoPropertyConstants.SO_ACTION));
         String pnfName = String.valueOf(execution.getVariable(PNF_CORRELATION_ID));
@@ -176,32 +180,33 @@ public class SdncControllerDE extends LcmControllerDE {
 
                 UpgradePreCheckPayload upgradePreCheckPayload;
                 upgradePreCheckPayload = SDNCLcmPayloadBuilder.buildUpgradePreCheckPayload(execution);
-                lcmPayload = SDNCLcmPayloadBuilder.convertToSting(upgradePreCheckPayload);
+                lcmPayload = convertToSting(upgradePreCheckPayload);
                 break;
             case SoPropertyConstants.ACTION_DOWNLOAD_N_E_SW:
                 lcmAction = SDNCLcmActionConstants.DOWNLOAD_N_E_SW;
 
                 DownloadNESwPayload downloadNESwPayload;
                 downloadNESwPayload = SDNCLcmPayloadBuilder.buildDownloadNESwPayload(execution);
-                lcmPayload = SDNCLcmPayloadBuilder.convertToSting(downloadNESwPayload);
+                lcmPayload = convertToSting(downloadNESwPayload);
                 break;
             case SoPropertyConstants.ACTION_ACTIVATE_N_E_SW:
                 lcmAction = SDNCLcmActionConstants.ACTIVATE_N_E_SW;
 
                 ActivateNESwPayload activateNESwPayload;
                 activateNESwPayload = SDNCLcmPayloadBuilder.buildActivateNESwPayload(execution);
-                lcmPayload = SDNCLcmPayloadBuilder.convertToSting(activateNESwPayload);
+                lcmPayload = convertToSting(activateNESwPayload);
                 break;
             case SoPropertyConstants.ACTION_POST_CHECK:
                 lcmAction = SDNCLcmActionConstants.UPGRADE_POST_CHECK;
 
                 UpgradePostCheckPayload upgradePostCheckPayload;
                 upgradePostCheckPayload = SDNCLcmPayloadBuilder.buildUpgradePostCheckPayload(execution);
-                lcmPayload = SDNCLcmPayloadBuilder.convertToSting(upgradePostCheckPayload);
+                lcmPayload = convertToSting(upgradePostCheckPayload);
                 break;
             default:
-                logger.error("Unsupported SO Action: " + requestAction);
-                return null;
+                String msg = "Unsupported SO Action: " + requestAction;
+                logger.error(msg);
+                throw new PayloadGenerationException(msg);
         }
 
         String subRequestId = UUID.randomUUID().toString();
@@ -209,32 +214,39 @@ public class SdncControllerDE extends LcmControllerDE {
                 SDNCLcmMessageBuilder.buildLcmInputForPnf(requestId, subRequestId, pnfName, lcmAction, lcmPayload);
 
         ObjectMapper mapper = new ObjectMapper();
-        String lcmInputMsg = mapper.writeValueAsString(lcmInput);
-        logger.debug("SDNC input message for {}: {}", lcmAction, lcmInputMsg);
+        try {
+            String lcmInputMsg = mapper.writeValueAsString(lcmInput);
+            logger.debug("SDNC input message for {}: {}", lcmAction, lcmInputMsg);
+        } catch (JsonProcessingException e) {
+            throw new PayloadGenerationException(e.getMessage());
+        }
 
         return lcmInput;
     }
 
-    private boolean parseLcmOutput(LcmOutput lcmOutput, String lcmAction) {
+    private void parseLcmOutput(LcmOutput lcmOutput, String lcmAction) throws BadResponseException {
         if (lcmOutput == null) {
-            logger.error("Call SDNC LCM API failure");
-            return false;
+            String msg = "Call SDNC LCM API failure, can not get output from SDNC";
+            logger.error(msg);
+            throw new BadResponseException(msg);
         }
 
         LcmStatus lcmStatus = lcmOutput.getStatus();
+        int lcmStatusCode = lcmStatus.getCode();
         String outputPayload = lcmOutput.getPayload();
-        logger.debug("SDNC LCM output payload of action {}: {}", lcmAction, outputPayload);
 
-        if (lcmStatus.getCode() == SDNCConstants.LCM_OUTPUT_SUCCESS_CODE) {
-            logger.debug("Call SDNC LCM API for {} success, message: {}", lcmAction, lcmStatus.getMessage());
-            return true;
+        if (lcmStatusCode == SDNCConstants.LCM_OUTPUT_SUCCESS_CODE) {
+            logger.debug("Call SDNC LCM API for {} success, code: {}, message: {}, payload: {}", lcmAction,
+                    lcmStatusCode, lcmStatus.getMessage(), outputPayload);
         } else {
-            logger.error("Call SDNC LCM API for {} failure, message: {}", lcmAction, lcmStatus.getMessage());
-            return false;
+            String msg = String.format("Call SDNC LCM API for %s failure, code: %d, message: %s, payload: %s",
+                    lcmAction, lcmStatusCode, lcmStatus.getMessage(), outputPayload);
+            logger.error(msg);
+            throw new BadResponseException(msg);
         }
     }
 
-    private boolean sendLcmRequest(DelegateExecution execution, LcmInput lcmInput) {
+    private void sendLcmRequest(DelegateExecution execution, LcmInput lcmInput) throws BadResponseException {
         String actionMode = String.valueOf(execution.getVariable(SoPropertyConstants.SO_ACTION_MODE));
         String lcmOperation = toLowerHyphen(lcmInput.getAction());
 
@@ -245,6 +257,6 @@ public class SdncControllerDE extends LcmControllerDE {
             lcmOutput = sendSyncRequest(lcmOperation, lcmInput);
         }
 
-        return parseLcmOutput(lcmOutput, lcmInput.getAction());
+        parseLcmOutput(lcmOutput, lcmInput.getAction());
     }
 }
