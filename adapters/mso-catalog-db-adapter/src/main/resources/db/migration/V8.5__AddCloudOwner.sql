@@ -1,0 +1,13 @@
+use catalogdb;
+
+
+ALTER TABLE cloud_sites
+    ADD COLUMN IF NOT EXISTS CLOUD_OWNER varchar(255);
+
+
+CREATE TABLE IF NOT EXISTS `network_technology_reference` (
+  `ID` INT(11) NOT NULL AUTO_INCREMENT,
+  `NETWORK_TECHNOLOGY` varchar(200) NOT NULL ,
+  `CLOUD_OWNER` varchar(200) NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;

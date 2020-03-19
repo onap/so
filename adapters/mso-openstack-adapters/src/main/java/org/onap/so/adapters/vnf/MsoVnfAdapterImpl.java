@@ -33,6 +33,7 @@ import java.util.Optional;
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
 import org.apache.commons.collections.CollectionUtils;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
 import org.onap.so.adapters.vnf.exceptions.VnfNotFound;
 import org.onap.so.client.aai.AAIResourcesClient;
@@ -53,7 +54,6 @@ import org.onap.so.entity.MsoRequest;
 import org.onap.so.heatbridge.HeatBridgeApi;
 import org.onap.so.heatbridge.HeatBridgeException;
 import org.onap.so.heatbridge.HeatBridgeImpl;
-import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.openstack.beans.HeatStatus;
@@ -1052,9 +1052,10 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                     heatStack = msoHeatUtils.createStack(cloudSiteId, cloudOwner, tenantId, vfModuleName, null,
                             template, goldenInputs, true, heatTemplate.getTimeoutMinutes(), newEnvironmentString,
                             nestedTemplatesChecked, heatFilesObjects, backout.booleanValue(), failIfExists);
-
-                    msoHeatUtils.updateResourceStatus(msoRequest.getRequestId(),
-                            heatStack.isOperationPerformed() ? VF_EXIST_STATUS_MESSAGE : VF_CREATED_STATUS_MESSAGE);
+                    if (msoRequest.getRequestId() != null) {
+                        msoHeatUtils.updateResourceStatus(msoRequest.getRequestId(),
+                                heatStack.isOperationPerformed() ? VF_EXIST_STATUS_MESSAGE : VF_CREATED_STATUS_MESSAGE);
+                    }
                 } else {
                     throw new MsoHeatNotFoundException();
                 }

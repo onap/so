@@ -93,6 +93,11 @@ public class CloudSite {
     @Column(name = "CLOUDIFY_ID")
     private String cloudifyId;
 
+    @JsonProperty("cloud_owner")
+    @BusinessKey
+    @Column(name = "CLOUD_OWNER")
+    private String cloudOwner;
+
     // Derived property (set by CloudConfig loader based on identityServiceId)
     @BusinessKey
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -266,12 +271,20 @@ public class CloudSite {
         this.identityServiceId = identityServiceId;
     }
 
+    public String getCloudOwner() {
+        return cloudOwner;
+    }
+
+    public void setCloudOwner(String cloudOwner) {
+        this.cloudOwner = cloudOwner;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("regionId", getRegionId())
                 .append("identityServiceId", getIdentityServiceId()).append("cloudVersion", getCloudVersion())
                 .append("clli", getClli()).append("cloudifyId", getCloudifyId()).append("platform", getPlatform())
-                .append("orchestrator", getOrchestrator()).toString();
+                .append("orchestrator", getOrchestrator()).append("cloud-owner", getCloudOwner()).toString();
     }
 
     @Override

@@ -56,7 +56,6 @@ public class CloudRegionRestV1 {
     private CloudRestImpl cloudRestImpl;
 
     @POST
-    @Path("{cloud-region-id}/{cloud-owner}")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     @ApiOperation(value = "CreateCloudRegion", response = Response.class,
@@ -65,9 +64,8 @@ public class CloudRegionRestV1 {
             @ApiResponse(code = 500, message = "Create Cloud Region has failed")})
     public Response createCloudRegion(
             @ApiParam(value = "cloud-region-id", required = true) @PathParam("cloud-region-id") String cloudRegionId,
-            @ApiParam(value = "cloud-owner", required = true) @PathParam("cloud-owner") String cloudOwner,
             @ApiParam(value = "CloudSite", required = true) final CloudSite cloudSite) {
-        cloudRestImpl.createCloudRegion(cloudSite, cloudOwner);
+        cloudRestImpl.createCloudRegion(cloudSite);
         return Response.status(HttpStatus.SC_CREATED).build();
     }
 
@@ -96,7 +94,7 @@ public class CloudRegionRestV1 {
             @ApiParam(value = "cloud-region-id", required = true) @PathParam("cloud-region-id") String cloudRegionId,
             @ApiParam(value = "cloud-owner", required = true) @PathParam("cloud-owner") String cloudOwner,
             @ApiParam(value = "CloudSite", required = true) final CloudSite cloudSite) {
-        cloudRestImpl.updateCloudRegion(cloudSite, cloudOwner);
+        cloudRestImpl.updateCloudRegion(cloudSite);
         return Response.status(HttpStatus.SC_OK).build();
     }
 }
