@@ -188,6 +188,15 @@ public class AAIUpdateTasks {
     }
 
     /**
+     * BPMN access method to update status of VfModule to Active in AAI
+     */
+    public void updateOrchestrationStatusActivateVfModule(BuildingBlockExecution execution) {
+        execution.setVariable("aaiActivateVfModuleRollback", false);
+        updateOrchestrationStatusForVfModule(execution, OrchestrationStatus.ACTIVE);
+        execution.setVariable("aaiActivateVfModuleRollback", true);
+    }
+
+    /**
      * BPMN access method to update aaiDeactivateVfModuleRollback to true for deactivating the VfModule
      */
     public void updateOrchestrationStatusDeactivateVfModule(BuildingBlockExecution execution) {
@@ -205,9 +214,6 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update status of L3Network to Assigned in AAI
-     *
-     * @param execution
-     * @throws BBObjectNotFoundException
      */
     public void updateOrchestrationStatusAssignedNetwork(BuildingBlockExecution execution) {
         updateNetwork(execution, OrchestrationStatus.ASSIGNED);
@@ -215,9 +221,6 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update status of L3Network to Active in AAI
-     *
-     * @param execution
-     * @throws BBObjectNotFoundException
      */
     public void updateOrchestrationStatusActiveNetwork(BuildingBlockExecution execution) {
         updateNetwork(execution, OrchestrationStatus.ACTIVE);
@@ -225,9 +228,6 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update status of L3Network to Created in AAI
-     *
-     * @param execution
-     * @throws BBObjectNotFoundException
      */
     public void updateOrchestrationStatusCreatedNetwork(BuildingBlockExecution execution) {
         updateNetwork(execution, OrchestrationStatus.CREATED);
@@ -262,9 +262,6 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update status of L3Network Collection to Active in AAI
-     *
-     * @param execution
-     * @throws BBObjectNotFoundException
      */
     public void updateOrchestrationStatusActiveNetworkCollection(BuildingBlockExecution execution) {
         execution.setVariable("aaiNetworkCollectionActivateRollback", false);
@@ -285,27 +282,7 @@ public class AAIUpdateTasks {
     }
 
     /**
-     * BPMN access method to update status of VfModule to Active in AAI
-     *
-     * @param execution
-     */
-    public void updateOrchestrationStatusActivateVfModule(BuildingBlockExecution execution) {
-        execution.setVariable("aaiActivateVfModuleRollback", false);
-        try {
-            VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
-            GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
-            aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule, vnf, OrchestrationStatus.ACTIVE);
-            execution.setVariable("aaiActivateVfModuleRollback", true);
-        } catch (Exception ex) {
-            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusActivateVfModule", ex);
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-        }
-    }
-
-    /**
      * BPMN access method to update HeatStackId of VfModule in AAI
-     *
-     * @param execution
      */
     public void updateHeatStackIdVfModule(BuildingBlockExecution execution) {
         try {
@@ -325,9 +302,6 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update L3Network after it was created in cloud
-     *
-     * @param execution
-     * @throws Exception
      */
     public void updateNetworkCreated(BuildingBlockExecution execution) throws Exception {
         execution.setVariable("aaiNetworkActivateRollback", false);
@@ -369,9 +343,6 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update L3Network after it was updated in cloud
-     *
-     * @param execution
-     * @throws Exception
      */
     public void updateNetworkUpdated(BuildingBlockExecution execution) throws Exception {
         L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
@@ -399,8 +370,6 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update L3Network Object
-     *
-     * @param execution
      */
     public void updateObjectNetwork(BuildingBlockExecution execution) {
         try {
@@ -414,8 +383,6 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update ServiceInstance
-     *
-     * @param execution
      */
     public void updateServiceInstance(BuildingBlockExecution execution) {
         try {
@@ -430,8 +397,6 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update Vnf Object
-     *
-     * @param execution
      */
     public void updateObjectVnf(BuildingBlockExecution execution) {
         try {
@@ -445,8 +410,6 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update status of VfModuleRollback as true
-     *
-     * @param execution
      */
     public void updateOrchestrationStatusDeleteVfModule(BuildingBlockExecution execution) {
         execution.setVariable("aaiDeleteVfModuleRollback", false);
@@ -454,9 +417,6 @@ public class AAIUpdateTasks {
             VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
             vfModule.setHeatStackId("");
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
-
-            VfModule copiedVfModule = vfModule.shallowCopyId();
-            copiedVfModule.setHeatStackId("");
             aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule, vnf, OrchestrationStatus.ASSIGNED);
             execution.setVariable("aaiDeleteVfModuleRollback", true);
         } catch (Exception ex) {
@@ -467,8 +427,6 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update Model of VfModule
-     *
-     * @param execution
      */
     public void updateModelVfModule(BuildingBlockExecution execution) {
         try {
@@ -483,8 +441,6 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update status of FabricConfiguration to Assigned in AAI
-     *
-     * @param execution
      */
     public void updateOrchestrationStatusAssignFabricConfiguration(BuildingBlockExecution execution) {
         try {
@@ -499,8 +455,6 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update status of FabricConfiguration to Active in AAI
-     *
-     * @param execution
      */
     public void updateOrchestrationStatusActivateFabricConfiguration(BuildingBlockExecution execution) {
         try {
@@ -515,8 +469,6 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update status of FabricConfiguration to deactive in AAI
-     *
-     * @param execution
      */
     public void updateOrchestrationStatusDeactivateFabricConfiguration(BuildingBlockExecution execution) {
         try {
@@ -532,8 +484,6 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update Ipv4OamAddress of Vnf
-     *
-     * @param execution
      */
     public void updateIpv4OamAddressVnf(BuildingBlockExecution execution) {
         try {
@@ -555,8 +505,6 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update ManagementV6Address of Vnf
-     *
-     * @param execution
      */
     public void updateManagementV6AddressVnf(BuildingBlockExecution execution) {
         try {
@@ -578,8 +526,6 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update ContrailServiceInstanceFqdn of VfModule
-     *
-     * @param execution
      */
     public void updateContrailServiceInstanceFqdnVfModule(BuildingBlockExecution execution) {
         try {
@@ -598,8 +544,6 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update status of Vnf to ConfigAssigned in AAI
-     *
-     * @param execution
      */
     public void updateOrchestrationStatusConfigAssignedVnf(BuildingBlockExecution execution) {
         try {
@@ -613,79 +557,16 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update status of Vnf to Configure in AAI
-     *
-     * @param execution
      */
     public void updateOrchestrationStatusConfigDeployConfigureVnf(BuildingBlockExecution execution) {
-        try {
-            GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
-            aaiVnfResources.updateOrchestrationStatusVnf(vnf, OrchestrationStatus.CONFIGURE);
-
-        } catch (Exception ex) {
-            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusConfigDeployConfigureVnf", ex);
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-        }
+        updateOrchestrationStatusForVnf(execution, OrchestrationStatus.CONFIGURE);
     }
 
     /**
      * BPMN access method to update status of Vnf to configured in AAI
-     *
-     * @param execution
      */
     public void updateOrchestrationStatusConfigDeployConfiguredVnf(BuildingBlockExecution execution) {
-        try {
-            GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
-            aaiVnfResources.updateOrchestrationStatusVnf(vnf, OrchestrationStatus.CONFIGURED);
-        } catch (Exception ex) {
-            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusConfigDeployConfiguredVnf", ex);
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-        }
-    }
-
-    /**
-     * BPMN access method to update status of VNF/VF-Module based on SO scope and action.
-     *
-     * @param execution - BuildingBlockExecution
-     * @param scope - SO scope (vnf/vfModule)
-     * @param action - action (configAssign/configDeploy/configUndeploy etc..)
-     */
-    public void updateOrchestrationStatusForCds(BuildingBlockExecution execution, String scope, String action) {
-        try {
-            GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
-            OrchestrationStatus status = getOrchestrationStatus(action);
-            switch (scope) {
-                case "vnf":
-                    aaiVnfResources.updateOrchestrationStatusVnf(vnf, status);
-                    break;
-                case "vfModule":
-                    VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
-                    aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule, vnf, status);
-                    break;
-                default:
-                    throw new IllegalArgumentException(
-                            "Invalid scope to update orchestration status for CDS : " + action);
-            }
-        } catch (Exception ex) {
-            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusForCds", ex);
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-        }
-    }
-
-    private OrchestrationStatus getOrchestrationStatus(String action) {
-        /**
-         * At this state, OrcherstationStatus enum associated with configAssign and configDeploy. I am not sure which is
-         * the correct approach. 1. Are we going to map each specific action to OrchestrationStauts ? 2. We will have
-         * only one generic status for all actions ?
-         */
-
-        switch (action) {
-            case "configAssign":
-                return OrchestrationStatus.ASSIGNED;
-            case "configDeploy":
-                return OrchestrationStatus.CONFIGURED;
-            default:
-                throw new IllegalArgumentException("Invalid action to set Orchestration status: " + action);
-        }
+        updateOrchestrationStatusForVnf(execution, OrchestrationStatus.CONFIGURED);
     }
 
     private void updateOrchestrationStatusForService(BuildingBlockExecution execution, OrchestrationStatus status) {
@@ -751,5 +632,4 @@ public class AAIUpdateTasks {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
-
 }
