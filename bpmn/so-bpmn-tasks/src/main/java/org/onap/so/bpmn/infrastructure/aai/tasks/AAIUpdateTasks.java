@@ -45,9 +45,7 @@ import java.util.Map;
 @Component
 public class AAIUpdateTasks {
     private static final Logger logger = LoggerFactory.getLogger(AAIUpdateTasks.class);
-    private static final String ALACARTE = "aLaCarte";
-    private static final String MULTI_STAGE_DESIGN_OFF = "false";
-    private static final String MULTI_STAGE_DESIGN_ON = "true";
+
     @Autowired
     private AAIServiceInstanceResources aaiServiceInstanceResources;
     @Autowired
@@ -149,8 +147,6 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update HeatStackId and VolumeGroup in AAI
-     *
-     * @param execution
      */
     public void updateHeatStackIdVolumeGroup(BuildingBlockExecution execution) {
         try {
@@ -172,87 +168,27 @@ public class AAIUpdateTasks {
 
     /**
      * BPMN access method to update status of VfModule to Assigned in AAI
-     *
-     * @param execution
      */
     public void updateOrchestrationStatusAssignedVfModule(BuildingBlockExecution execution) {
-        try {
-            VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
-            vfModule.setHeatStackId("");
-            GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
-            aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule, vnf, OrchestrationStatus.ASSIGNED);
-        } catch (Exception ex) {
-            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusAssignedVfModule", ex);
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-        }
+        updateOrchestrationStatusForVfModule(execution, OrchestrationStatus.ASSIGNED);
     }
 
     /**
      * BPMN access method to update status of VfModule to PendingActivation in AAI
-     *
-     * @param execution
      */
     public void updateOrchestrationStatusPendingActivationVfModule(BuildingBlockExecution execution) {
-        try {
-            VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
-            GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
-            aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule, vnf,
-                    OrchestrationStatus.PENDING_ACTIVATION);
-        } catch (Exception ex) {
-            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusPendingActivationVfModule", ex);
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-        }
-    }
-
-    /**
-     * BPMN access method to update status of VfModule to AssignedOrPendingActivation in AAI
-     *
-     * @param execution
-     */
-    public void updateOrchestrationStatusAssignedOrPendingActivationVfModule(BuildingBlockExecution execution) {
-        try {
-            VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
-            vfModule.setHeatStackId("");
-            GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
-            String multiStageDesign = MULTI_STAGE_DESIGN_OFF;
-            if (vnf.getModelInfoGenericVnf() != null) {
-                multiStageDesign = vnf.getModelInfoGenericVnf().getMultiStageDesign();
-            }
-            boolean aLaCarte = (boolean) execution.getVariable(ALACARTE);
-            if (aLaCarte && multiStageDesign != null && multiStageDesign.equalsIgnoreCase(MULTI_STAGE_DESIGN_ON)) {
-                aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule, vnf,
-                        OrchestrationStatus.PENDING_ACTIVATION);
-            } else {
-                aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule, vnf, OrchestrationStatus.ASSIGNED);
-            }
-        } catch (Exception ex) {
-            logger.error(
-                    "Exception occurred in AAIUpdateTasks updateOrchestrationStatusAssignedOrPendingActivationVfModule",
-                    ex);
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-        }
+        updateOrchestrationStatusForVfModule(execution, OrchestrationStatus.PENDING_ACTIVATION);
     }
 
     /**
      * BPMN access method to update status of VfModule to Created in AAI
-     *
-     * @param execution
      */
     public void updateOrchestrationStatusCreatedVfModule(BuildingBlockExecution execution) {
-        try {
-            VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
-            GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
-            aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule, vnf, OrchestrationStatus.CREATED);
-        } catch (Exception ex) {
-            logger.error("Exception occurred in AAIUpdateTasks updateOrchestrationStatusCreatedVfModule", ex);
-            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-        }
+        updateOrchestrationStatusForVfModule(execution, OrchestrationStatus.CREATED);
     }
 
     /**
      * BPMN access method to update aaiDeactivateVfModuleRollback to true for deactivating the VfModule
-     *
-     * @param execution
      */
     public void updateOrchestrationStatusDeactivateVfModule(BuildingBlockExecution execution) {
         execution.setVariable("aaiDeactivateVfModuleRollback", false);
@@ -796,6 +732,22 @@ public class AAIUpdateTasks {
         } catch (Exception ex) {
             logger.error("Exception occurred in AAIUpdateTasks during update orchestration status to {} for "
                     + "volume group", status, ex);
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
+    private void updateOrchestrationStatusForVfModule(BuildingBlockExecution execution, OrchestrationStatus status) {
+        try {
+            VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
+            if (status.equals(OrchestrationStatus.ASSIGNED)) {
+                vfModule.setHeatStackId("");
+            }
+            GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
+            aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule, vnf, status);
+        } catch (Exception ex) {
+            logger.error(
+                    "Exception occurred in AAIUpdateTasks during update orchestration status to {} for " + "vf module",
+                    status, ex);
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }

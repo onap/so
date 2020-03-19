@@ -40,7 +40,6 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
-import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoGenericVnf;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import java.util.HashMap;
@@ -255,60 +254,6 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
         expectedException.expect(BpmnError.class);
 
         aaiUpdateTasks.updateOrchestrationStatusAssignedVfModule(execution);
-    }
-
-    @Test
-    public void updateOrchestrationStatusAssignedOrPendingActivationVfModuleNoMultiStageTest() throws Exception {
-        execution.setVariable("aLaCarte", true);
-        ModelInfoGenericVnf modelInfoGenericVnf = new ModelInfoGenericVnf();
-        modelInfoGenericVnf.setMultiStageDesign("false");
-        genericVnf.setModelInfoGenericVnf(modelInfoGenericVnf);
-        doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
-                OrchestrationStatus.ASSIGNED);
-        aaiUpdateTasks.updateOrchestrationStatusAssignedOrPendingActivationVfModule(execution);
-        verify(aaiVfModuleResources, times(1)).updateOrchestrationStatusVfModule(vfModule, genericVnf,
-                OrchestrationStatus.ASSIGNED);
-        assertEquals("", vfModule.getHeatStackId());
-    }
-
-    @Test
-    public void updateOrchestrationStatusAssignedOrPendingActivationVfModuleMultiStageButNotAlacarteTest()
-            throws Exception {
-        execution.setVariable("aLaCarte", false);
-        ModelInfoGenericVnf modelInfoGenericVnf = new ModelInfoGenericVnf();
-        modelInfoGenericVnf.setMultiStageDesign("true");
-        genericVnf.setModelInfoGenericVnf(modelInfoGenericVnf);
-        doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
-                OrchestrationStatus.ASSIGNED);
-        aaiUpdateTasks.updateOrchestrationStatusAssignedOrPendingActivationVfModule(execution);
-        verify(aaiVfModuleResources, times(1)).updateOrchestrationStatusVfModule(vfModule, genericVnf,
-                OrchestrationStatus.ASSIGNED);
-        assertEquals("", vfModule.getHeatStackId());
-    }
-
-    @Test
-    public void updateOrchestrationStatusAssignedOrPendingActivationVfModuleWithMultiStageTest() throws Exception {
-        execution.setVariable("aLaCarte", true);
-        ModelInfoGenericVnf modelInfoGenericVnf = new ModelInfoGenericVnf();
-        modelInfoGenericVnf.setMultiStageDesign("true");
-        genericVnf.setModelInfoGenericVnf(modelInfoGenericVnf);
-        doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
-                OrchestrationStatus.PENDING_ACTIVATION);
-        aaiUpdateTasks.updateOrchestrationStatusAssignedOrPendingActivationVfModule(execution);
-        verify(aaiVfModuleResources, times(1)).updateOrchestrationStatusVfModule(vfModule, genericVnf,
-                OrchestrationStatus.PENDING_ACTIVATION);
-        assertEquals("", vfModule.getHeatStackId());
-    }
-
-    @Test
-    public void updateOrchestrationStatusAssignedOrPendingActivationVfModuleExceptionTest() throws Exception {
-        execution.setVariable("aLaCarte", true);
-        doThrow(RuntimeException.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule,
-                genericVnf, OrchestrationStatus.ASSIGNED);
-
-        expectedException.expect(BpmnError.class);
-
-        aaiUpdateTasks.updateOrchestrationStatusAssignedOrPendingActivationVfModule(execution);
     }
 
     @Test
