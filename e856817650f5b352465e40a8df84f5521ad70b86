@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b31516d4_61087ea6",
+        "filename": "adapters/mso-sdnc-adapter/src/main/java/org/onap/so/adapters/sdnc/sdncrest/SDNCConnector.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-03-20T17:47:55Z",
+      "side": 1,
+      "message": "private",
+      "range": {
+        "startLine": 172,
+        "startChar": 4,
+        "endLine": 172,
+        "endChar": 10
+      },
+      "revId": "e856817650f5b352465e40a8df84f5521ad70b86",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ba84e143_14092642",
+        "filename": "adapters/mso-sdnc-adapter/src/main/java/org/onap/so/adapters/sdnc/sdncrest/SDNCConnector.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-03-20T17:47:55Z",
+      "side": 1,
+      "message": "private",
+      "range": {
+        "startLine": 254,
+        "startChar": 4,
+        "endLine": 254,
+        "endChar": 13
+      },
+      "revId": "e856817650f5b352465e40a8df84f5521ad70b86",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f8daf729_d51e9297",
+        "filename": "adapters/mso-sdnc-adapter/src/main/java/org/onap/so/adapters/sdnc/sdncrest/SDNCConnector.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-03-20T17:47:55Z",
+      "side": 1,
+      "message": "\"\" is redundant here",
+      "range": {
+        "startLine": 303,
+        "startChar": 51,
+        "endLine": 303,
+        "endChar": 53
+      },
+      "revId": "e856817650f5b352465e40a8df84f5521ad70b86",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9f47759e_86718969",
+        "filename": "adapters/mso-sdnc-adapter/src/main/java/org/onap/so/adapters/sdnc/sdncrest/SDNCServiceRequestConnector.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-03-20T17:47:55Z",
+      "side": 1,
+      "message": "make this private please, remove static from caller - parseResponseContent method",
+      "range": {
+        "startLine": 180,
+        "startChar": 4,
+        "endLine": 180,
+        "endChar": 17
+      },
+      "revId": "e856817650f5b352465e40a8df84f5521ad70b86",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
