@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "55ac519f_b46764eb",
+        "filename": "adapters/mso-sdnc-adapter/src/main/java/org/onap/so/adapters/sdnc/sdncrest/SDNCConnector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 2493
+      },
+      "writtenOn": "2020-03-20T04:58:02Z",
+      "side": 1,
+      "message": "Removed",
+      "parentUuid": "a3175076_5900a70b",
+      "range": {
+        "startLine": 172,
+        "startChar": 3,
+        "endLine": 178,
+        "endChar": 7
+      },
+      "revId": "c2033d0cd6829ccd368385d93d8029b1107743c4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c4f56acb_a1c4ef5a",
         "filename": "adapters/mso-sdnc-adapter/src/main/java/org/onap/so/adapters/sdnc/sdncrest/SDNCConnector.java",
         "patchSetId": 1
@@ -71,6 +95,54 @@
     },
     {
       "key": {
+        "uuid": "d6b3b980_4c7a527e",
+        "filename": "adapters/mso-sdnc-adapter/src/main/java/org/onap/so/adapters/sdnc/sdncrest/SDNCConnector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 2493
+      },
+      "writtenOn": "2020-03-20T04:58:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a0b37c4a_78bfe797",
+      "range": {
+        "startLine": 179,
+        "startChar": 92,
+        "endLine": 179,
+        "endChar": 114
+      },
+      "revId": "c2033d0cd6829ccd368385d93d8029b1107743c4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "217deb95_6507b5bf",
+        "filename": "adapters/mso-sdnc-adapter/src/main/java/org/onap/so/adapters/sdnc/sdncrest/SDNCConnector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 2493
+      },
+      "writtenOn": "2020-03-20T04:58:02Z",
+      "side": 1,
+      "message": "Updated",
+      "parentUuid": "c4f56acb_a1c4ef5a",
+      "range": {
+        "startLine": 179,
+        "startChar": 4,
+        "endLine": 179,
+        "endChar": 13
+      },
+      "revId": "c2033d0cd6829ccd368385d93d8029b1107743c4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5875b504_47dd1fa6",
         "filename": "adapters/mso-sdnc-adapter/src/main/java/org/onap/so/adapters/sdnc/sdncrest/SDNCConnector.java",
         "patchSetId": 1
@@ -82,6 +154,30 @@
       "writtenOn": "2020-03-19T12:34:03Z",
       "side": 1,
       "message": "extract this whole code to the separate private method",
+      "range": {
+        "startLine": 298,
+        "startChar": 12,
+        "endLine": 298,
+        "endChar": 64
+      },
+      "revId": "c2033d0cd6829ccd368385d93d8029b1107743c4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5783327d_c71aa002",
+        "filename": "adapters/mso-sdnc-adapter/src/main/java/org/onap/so/adapters/sdnc/sdncrest/SDNCConnector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 298,
+      "author": {
+        "id": 2493
+      },
+      "writtenOn": "2020-03-20T04:58:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5875b504_47dd1fa6",
       "range": {
         "startLine": 298,
         "startChar": 12,
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "fc5a545f_59c95893",
+        "filename": "adapters/mso-sdnc-adapter/src/main/java/org/onap/so/adapters/sdnc/sdncrest/SDNCConnector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 301,
+      "author": {
+        "id": 2493
+      },
+      "writtenOn": "2020-03-20T04:58:02Z",
+      "side": 1,
+      "message": "Both info \u0026 output updated to StringBuilder as both are in for loop.",
+      "parentUuid": "9eb39f21_656d6c71",
+      "range": {
+        "startLine": 301,
+        "startChar": 24,
+        "endLine": 301,
+        "endChar": 69
+      },
+      "revId": "c2033d0cd6829ccd368385d93d8029b1107743c4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e6e87ba7_64c1e10e",
         "filename": "adapters/mso-sdnc-adapter/src/main/java/org/onap/so/adapters/sdnc/sdncrest/SDNCServiceRequestConnector.java",
         "patchSetId": 1
@@ -140,6 +260,30 @@
     },
     {
       "key": {
+        "uuid": "63e72665_72b7120f",
+        "filename": "adapters/mso-sdnc-adapter/src/main/java/org/onap/so/adapters/sdnc/sdncrest/SDNCServiceRequestConnector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 2493
+      },
+      "writtenOn": "2020-03-20T04:58:02Z",
+      "side": 1,
+      "message": "removed.",
+      "parentUuid": "e6e87ba7_64c1e10e",
+      "range": {
+        "startLine": 180,
+        "startChar": 0,
+        "endLine": 188,
+        "endChar": 7
+      },
+      "revId": "c2033d0cd6829ccd368385d93d8029b1107743c4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "4eebce02_a1015be0",
         "filename": "adapters/mso-sdnc-adapter/src/main/java/org/onap/so/adapters/sdnc/sdncrest/SDNCServiceRequestConnector.java",
         "patchSetId": 1
@@ -151,6 +295,30 @@
       "writtenOn": "2020-03-19T12:34:03Z",
       "side": 1,
       "message": "why protected and static?",
+      "range": {
+        "startLine": 189,
+        "startChar": 4,
+        "endLine": 189,
+        "endChar": 13
+      },
+      "revId": "c2033d0cd6829ccd368385d93d8029b1107743c4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a32c555d_dae405f1",
+        "filename": "adapters/mso-sdnc-adapter/src/main/java/org/onap/so/adapters/sdnc/sdncrest/SDNCServiceRequestConnector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 2493
+      },
+      "writtenOn": "2020-03-20T04:58:02Z",
+      "side": 1,
+      "message": "As existing caller method parseResponseContent is public static, have updated extracted method createSDNCServiceResponse also as public static.",
+      "parentUuid": "4eebce02_a1015be0",
       "range": {
         "startLine": 189,
         "startChar": 4,
