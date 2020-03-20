@@ -23,10 +23,6 @@
 package org.onap.so.bpmn.core.domain;
 
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -35,6 +31,10 @@ import org.onap.so.bpmn.core.json.DecomposeJsonUtil;
 import org.onap.so.bpmn.core.json.JsonDecomposingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 
 
@@ -71,6 +71,10 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
     private List<AllottedResource> allottedResources;
     @JsonProperty("configResource")
     private List<ConfigResource> configResources;
+    @JsonProperty("serviceInfo")
+    private ServiceInfo serviceInfo;
+    @JsonProperty("serviceProxy")
+    private List<ServiceProxy> serviceProxy;
 
     public ServiceDecomposition() {
         super();
@@ -85,6 +89,8 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
         this.serviceRole = serviceDecomposition.getServiceRole();
         this.serviceType = serviceDecomposition.getServiceType();
         this.configResources = serviceDecomposition.getConfigResources();
+        this.serviceProxy = serviceDecomposition.getServiceProxy();
+        this.serviceInfo = serviceDecomposition.getServiceInfo();
     }
 
     /**
@@ -109,11 +115,13 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 
         this.project = serviceDecomposition.getProject();
         this.owningEntity = serviceDecomposition.getOwningEntity();
+        this.serviceProxy = serviceDecomposition.getServiceProxy();
+        this.serviceInfo = serviceDecomposition.getServiceInfo();
     }
 
     /**
      * Constructor taking a Service Decomposition JSON serialization
-     * 
+     *
      * @param catalogRestOutput
      * @param serviceInstanceId
      */
@@ -128,7 +136,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
      * Return just the service model portion of the Service Decomposition as a Java object. The service model object
      * should support retrieval as JSON string that is formatted correctly for sending serviceModelInfo to Building
      * Blocks.
-     * 
+     *
      * @return
      */
     public ModelInfo getModelInfo() {
@@ -235,6 +243,22 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
         this.sdncVersion = sdncVersion;
     }
 
+    public ServiceInfo getServiceInfo() {
+        return serviceInfo;
+    }
+
+    public void setServiceInfo(ServiceInfo serviceInfo) {
+        this.serviceInfo = serviceInfo;
+    }
+
+    public List<ServiceProxy> getServiceProxy() {
+        return serviceProxy;
+    }
+
+    public void setServiceProxy(List<ServiceProxy> serviceProxy) {
+        this.serviceProxy = serviceProxy;
+    }
+
     // *****
 
     // *****
@@ -243,7 +267,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 
     /**
      * This method returns one combined list of Resources of All Types
-     * 
+     *
      * @return
      */
     @JsonIgnore
@@ -275,7 +299,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 
     /**
      * Returns a JSON list of all Network Resource structures (i.e. the serialized NetworkDecomposition objects).
-     * 
+     *
      * @return
      */
     @JsonIgnore
@@ -285,7 +309,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 
     /**
      * Returns a JSON list of all VnfResource structures (i.e. the serialized VnfResource objects).
-     * 
+     *
      * @return
      */
     @JsonIgnore
@@ -295,7 +319,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 
     /**
      * Returns a JSON list of all Allotted Resource structures (i.e. the serialized AllottedResource objects).
-     * 
+     *
      * @return
      */
     @JsonIgnore
@@ -305,7 +329,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 
     /**
      * Returns a JSON list of all Config Resource structures (i.e. the serialized ConfigResource objects).
-     * 
+     *
      * @return
      */
     @JsonIgnore
@@ -328,7 +352,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
     // Methods to add Resource to the list
     /**
      * Add VNF resource to the list
-     * 
+     *
      * @param vnfResource
      */
     public void addVnfResource(Resource vnfResource) {
@@ -340,7 +364,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 
     /**
      * Add Network resource to the list
-     * 
+     *
      * @param networkResource
      */
     public void addNetworkResource(Resource networkResource) {
@@ -352,7 +376,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 
     /**
      * Add Allotted resource to the list
-     * 
+     *
      * @param allottedResource
      */
     public void addAllottedResource(Resource allottedResource) {
@@ -364,7 +388,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 
     /**
      * Add Config resource to the list
-     * 
+     *
      * @param allottedResource
      */
     public void addConfigResource(Resource configResource) {
@@ -378,7 +402,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
      * Add resource to the list Given a ResourceDecomposition (subclass) object, add it to the Service Decomposition (in
      * the appropriate category, e.g. as a VNF, Network, or Allotted Resource). As dependencies are not currently
      * supported, add it to the end of any ordered lists.
-     * 
+     *
      * @param resource
      */
     public void addResource(Resource resource) {
@@ -403,7 +427,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 
     /**
      * Add resource to the list
-     * 
+     *
      * @param jsonResource
      */
     public void addVnfResource(String jsonResource) throws JsonDecomposingException {
@@ -414,7 +438,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 
     /**
      * Add resource to the list
-     * 
+     *
      * @param jsonResource
      */
     public void addNetworkResource(String jsonResource) throws JsonDecomposingException {
@@ -425,7 +449,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 
     /**
      * Add resource to the list
-     * 
+     *
      * @param Resource
      */
     public void addAllottedResource(String jsonResource) throws JsonDecomposingException {
@@ -436,7 +460,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 
     /**
      * Add resource to the list
-     * 
+     *
      * @param Resource
      */
     public void addConfigResource(String jsonResource) throws JsonDecomposingException {
@@ -449,7 +473,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
      * Given a ResourceDecomposition (subclass) object, locate it in the Service Decomposition by its unique ID, and
      * replace the current version with the new one. This method should support concurrency control via an
      * auto-incrementing field in the ResourceDecomposition class.
-     * 
+     *
      * @param newResource
      * @return TRUE if replacement was a success
      */
@@ -474,7 +498,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
     /**
      * Given a ResourceDecomposition as a JSON string, locate it in the Service Decomposition by its unique ID, and
      * replace the current version with the new one.
-     * 
+     *
      * @param jsonString
      * @return
      */
@@ -485,7 +509,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 
     /**
      * Given a resource object ID, locate it in the Service Decomposition by its unique ID, and delete it.
-     * 
+     *
      * @param resource
      * @return TRUE if delete was a success
      */
@@ -503,7 +527,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 
     /**
      * Generic method to get List of Resource objects based on input resource's resourceType
-     * 
+     *
      * @param resource
      * @return List matching the resourceType of resource
      */
@@ -530,7 +554,7 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 
     /**
      * Generic method to set List of ResourceDecomposition objects
-     * 
+     *
      * @param resources
      * @return
      */
