@@ -375,7 +375,7 @@ public class WorkflowSpecificationsHandlerTest extends BaseTest {
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity(null, headers);
 
-        wireMockServer.stubFor(get(urlMatching("/workflow/search/findByResourceTarget[?]resource_target=pnf"))
+        wireMockServer.stubFor(get(urlMatching("/workflow/search/findByResourceTarget[?]resourceTarget=pnf"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(
                                 getWiremockResponseForCatalogdb("WorkflowSpecificationsForPnfWorkflows_Response.json"))
