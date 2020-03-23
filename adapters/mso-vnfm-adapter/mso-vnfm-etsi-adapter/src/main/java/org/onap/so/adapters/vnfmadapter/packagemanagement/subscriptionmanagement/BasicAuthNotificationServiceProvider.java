@@ -47,10 +47,10 @@ public class BasicAuthNotificationServiceProvider extends AbstractNotificationSe
         final HttpHeadersProvider httpHeadersProvider =
                 getBasicHttpHeadersProviderWithBasicAuth(subscriptionsAuthentication.getParamsBasic().getUserName(),
                         subscriptionsAuthentication.getParamsBasic().getPassword());
-        final HttpRestServiceProvider httpRestServiceProvider = getHttpRestServiceProvider(httpHeadersProvider);
+        final HttpRestServiceProvider httpRestServiceProvider = getHttpRestServiceProvider();
 
-        final ResponseEntity<Void> responseEntity =
-                httpRestServiceProvider.postHttpRequest(notification, callbackUri, Void.class);
+        final ResponseEntity<Void> responseEntity = httpRestServiceProvider.postHttpRequest(notification, callbackUri,
+                httpHeadersProvider.getHttpHeaders(), Void.class);
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
             logger.info("Notification sent successfully.");
             return true;

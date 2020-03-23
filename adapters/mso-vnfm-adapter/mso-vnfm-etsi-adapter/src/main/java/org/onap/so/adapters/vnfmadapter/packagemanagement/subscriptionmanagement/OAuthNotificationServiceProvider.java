@@ -48,13 +48,14 @@ public class OAuthNotificationServiceProvider extends AbstractNotificationServic
         final String token = getAccessToken(subscriptionsAuthentication);
 
         if (token == null) {
+            logger.error("Failed to get access token");
             return false;
         }
 
         final HttpHeadersProvider httpHeadersProvider = getHttpHeadersProvider(token);
-        final HttpRestServiceProvider httpRestServiceProvider = getHttpRestServiceProvider(httpHeadersProvider);
-        final ResponseEntity<Void> responseEntity =
-                httpRestServiceProvider.postHttpRequest(notification, callbackUri, Void.class);
+        final HttpRestServiceProvider httpRestServiceProvider = getHttpRestServiceProvider();
+        final ResponseEntity<Void> responseEntity = httpRestServiceProvider.postHttpRequest(notification, callbackUri,
+                httpHeadersProvider.getHttpHeaders(), Void.class);
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
             logger.info("Notification sent successfully.");
             return true;
@@ -83,9 +84,9 @@ public class OAuthNotificationServiceProvider extends AbstractNotificationServic
                 subscriptionsAuthentication.getParamsOauth2ClientCredentials().getClientId(),
                 subscriptionsAuthentication.getParamsOauth2ClientCredentials().getClientPassword());
 
-        final HttpRestServiceProvider httpRestServiceProvider = getHttpRestServiceProvider(httpHeadersProvider);
-        final ResponseEntity<OAuthTokenResponse> responseEntity =
-                httpRestServiceProvider.postHttpRequest(null, tokenEndpoint, OAuthTokenResponse.class);
+        final HttpRestServiceProvider httpRestServiceProvider = getHttpRestServiceProvider();
+        final ResponseEntity<OAuthTokenResponse> responseEntity = httpRestServiceProvider.postHttpRequest(null,
+                tokenEndpoint, httpHeadersProvider.getHttpHeaders(), OAuthTokenResponse.class);
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
             if (responseEntity.getBody() != null) {
                 logger.info("Returning Access Token.");
