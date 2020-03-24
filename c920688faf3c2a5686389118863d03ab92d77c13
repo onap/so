@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "50fe0504_2204e341",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/process/PNFSoftwareUpgrade.bpmn",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5006
+      },
+      "writtenOn": "2020-03-24T14:27:46Z",
+      "side": 1,
+      "message": "update preparation workflow(PNFSWUPDownload.bpmn) too with this fix.",
+      "revId": "c920688faf3c2a5686389118863d03ab92d77c13",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
