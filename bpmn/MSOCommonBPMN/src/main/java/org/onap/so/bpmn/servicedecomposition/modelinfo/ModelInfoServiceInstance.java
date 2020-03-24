@@ -35,6 +35,8 @@ public class ModelInfoServiceInstance extends ModelInfoMetadata implements Seria
     private String serviceType;
     @JsonProperty("service-role")
     private String serviceRole;
+    @JsonProperty("service-function")
+    private String serviceFunction;
     @JsonProperty("environment-context")
     private String environmentContext;
     @JsonProperty("workload-context")
@@ -75,6 +77,14 @@ public class ModelInfoServiceInstance extends ModelInfoMetadata implements Seria
 
     public void setServiceRole(String serviceRole) {
         this.serviceRole = serviceRole;
+    }
+
+    public String getServiceFunction() {
+        return serviceFunction;
+    }
+
+    public void setServiceFunction(String serviceFunction) {
+        this.serviceFunction = serviceFunction;
     }
 
     public String getEnvironmentContext() {

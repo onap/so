@@ -138,6 +138,7 @@ public class AAIObjectMapperTest {
         ModelInfoServiceInstance modelInfoServiceInstance = new ModelInfoServiceInstance();
         modelInfoServiceInstance.setServiceType("SITYPE");
         modelInfoServiceInstance.setServiceRole("SIROLE");
+        modelInfoServiceInstance.setServiceFunction("SIFUNCTION");
         modelInfoServiceInstance.setModelInvariantUuid("MIUUID");
         modelInfoServiceInstance.setModelUuid("MUUID");
         modelInfoServiceInstance.setEnvironmentContext("EC");
@@ -163,6 +164,8 @@ public class AAIObjectMapperTest {
                 serviceInstance.getModelInfoServiceInstance().getEnvironmentContext());
         assertEquals(AAIServiceInstance.getWorkloadContext(),
                 serviceInstance.getModelInfoServiceInstance().getWorkloadContext());
+        assertEquals(AAIServiceInstance.getServiceFunction(),
+                serviceInstance.getModelInfoServiceInstance().getServiceFunction());
     }
 
     @Test

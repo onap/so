@@ -79,6 +79,9 @@ public class Service implements Serializable {
     @Column(name = "SERVICE_ROLE")
     private String serviceRole;
 
+    @Column(name = "SERVICE_FUNCTION")
+    private String serviceFunction;
+
     @Column(name = "ENVIRONMENT_CONTEXT")
     private String environmentContext;
 
@@ -470,4 +473,13 @@ public class Service implements Serializable {
     public void setControllerActor(String controllerActor) {
         this.controllerActor = controllerActor;
     }
+
+    public String getServiceFunction() {
+        return serviceFunction;
+    }
+
+    public void setServiceFunction(String serviceFunction) {
+        this.serviceFunction = serviceFunction;
+    }
+
 }
