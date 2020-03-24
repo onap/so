@@ -89,7 +89,7 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
             }
             infraRequest.setLastModifiedBy("BPMN")
             infraRequest.setStatusMessage(statusMessage)
-            infraRequest.setRequestStatus("COMPLETED")
+            infraRequest.setRequestStatus("COMPLETE")
             infraRequest.setProgress(100)
 
             if(utils.nodeExists(xml, "vnfId")){
