@@ -94,7 +94,7 @@ public class QueryServiceMacroHolder extends CatalogQuery {
         subitem = new QueryAllottedResourceCustomization(service.getAllottedCustomizations()).JSON2(true, true);
         valueMap.put("_SERVICEALLOTTEDRESOURCES_", subitem.replaceAll(LINE_BEGINNING, "\t"));
 
-        subitem = new QueryServiceInfo(serviceMacroHolder.getServiceInfo()).JSON2(true, true);
+        subitem = new QueryServiceInfo(service.getServiceInfos()).JSON2(true, true);
         valueMap.put("_SERVICEINFO_", subitem.replaceAll(LINE_BEGINNING, "\t"));
 
         subitem = new QueryServiceProxyCustomization(service.getServiceProxyCustomizations()).JSON2(true, true);

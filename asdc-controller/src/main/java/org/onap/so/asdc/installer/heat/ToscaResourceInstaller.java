@@ -216,9 +216,6 @@ public class ToscaResourceInstaller {
     protected PnfCustomizationRepository pnfCustomizationRepository;
 
     @Autowired
-    protected ServiceInfoRepository serviceInfoRepository;
-
-    @Autowired
     protected WorkflowResource workflowResource;
 
     @Autowired
@@ -393,7 +390,7 @@ public class ToscaResourceInstaller {
             createToscaCsar(toscaResourceStruct);
             createService(toscaResourceStruct, vfResourceStruct);
             Service service = toscaResourceStruct.getCatalogService();
-            ServiceInfo serviceInfo = createServiceInfo(toscaResourceStruct, service);
+            createServiceInfo(toscaResourceStruct, service);
 
             List<IEntityDetails> vfEntityList = getEntityDetails(toscaResourceStruct,
                     EntityQuery.newBuilder(SdcTypes.VF), TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE), false);
@@ -423,9 +420,8 @@ public class ToscaResourceInstaller {
             processServiceProxyAndConfiguration(toscaResourceStruct, service);
 
             logger.info("Saving Service: {} ", service.getModelName());
-            ServiceInfo serviceResult = serviceInfoRepository.save(serviceInfo);
-            Service resultService = serviceResult.getService();
-            correlateConfigCustomResources(resultService);
+            service = serviceRepo.save(service);
+            correlateConfigCustomResources(service);
 
             workflowResource.processWorkflows(vfResourceStructure);
 
@@ -2902,9 +2898,9 @@ public class ToscaResourceInstaller {
         createToscaCsar(toscaResourceStruct);
         createService(toscaResourceStruct, vfResourceStruct);
         Service service = toscaResourceStruct.getCatalogService();
-        ServiceInfo serviceInfo = createServiceInfo(toscaResourceStruct, service);
+        createServiceInfo(toscaResourceStruct, service);
         createServiceArtifact(service, vfResourceStruct, artifactContent);
-        serviceInfoRepository.save(serviceInfo);
+        serviceRepo.save(service);
     }
 
     private void createServiceArtifact(Service service, VfResourceStructure vfResourceStruct, String artifactContent) {
@@ -2927,16 +2923,19 @@ public class ToscaResourceInstaller {
         service.setServiceArtifactList(serviceArtifactList);
     }
 
-    private ServiceInfo createServiceInfo(ToscaResourceStructure toscaResourceStruct, Service service) {
+    private void createServiceInfo(ToscaResourceStructure toscaResourceStruct, Service service) {
+        List<ServiceInfo> serviceInfos = new ArrayList<>();
+
         ServiceInfo serviceInfo = new ServiceInfo();
         String serviceInput = getServiceInput(toscaResourceStruct);
         serviceInfo.setServiceInput(serviceInput);
 
         String serviceProperties = getServiceProperties(toscaResourceStruct);
         serviceInfo.setServiceProperties(serviceProperties);
-
         serviceInfo.setService(service);
-        return serviceInfo;
+        serviceInfos.add(serviceInfo);
+
+        service.setServiceInfos(serviceInfos);
     }
 
     private String getServiceProperties(ToscaResourceStructure toscaResourceStruct) {

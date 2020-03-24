@@ -139,6 +139,9 @@ public class Service implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "service")
     private List<ServiceArtifact> serviceArtifactList;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "service")
+    private List<ServiceInfo> serviceInfos;
+
     @Column(name = "NAMING_POLICY")
     private String namingPolicy;
 
@@ -383,6 +386,17 @@ public class Service implements Serializable {
 
     public void setServiceArtifactList(List<ServiceArtifact> serviceArtifactList) {
         this.serviceArtifactList = serviceArtifactList;
+    }
+
+    public List<ServiceInfo> getServiceInfos() {
+        if (serviceInfos == null) {
+            serviceInfos = new ArrayList<>();
+        }
+        return serviceInfos;
+    }
+
+    public void setServiceInfos(List<ServiceInfo> serviceInfos) {
+        this.serviceInfos = serviceInfos;
     }
 
     public String getWorkloadContext() {

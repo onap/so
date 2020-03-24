@@ -39,7 +39,6 @@ public class ServiceMacroHolder implements Serializable {
     private ArrayList<AllottedResourceCustomization> allottedResourceCustomizations;
     private ArrayList<VnfResourceCustomization> vnfResourceCustomizations;
     private ArrayList<ServiceProxyResourceCustomization> serviceProxyResourceCustomizations;
-    private ServiceInfo serviceInfo;
 
 
     public ServiceMacroHolder() {
@@ -50,7 +49,6 @@ public class ServiceMacroHolder implements Serializable {
         this.allottedResourceCustomizations = new ArrayList<>();
         this.vnfResourceCustomizations = new ArrayList<>();
         this.serviceProxyResourceCustomizations = new ArrayList<>();
-        this.serviceInfo = null;
     }
 
     public ServiceMacroHolder(Service service) {
@@ -64,14 +62,6 @@ public class ServiceMacroHolder implements Serializable {
 
     public void setService(Service service) {
         this.service = service;
-    }
-
-    public ServiceInfo getServiceInfo() {
-        return serviceInfo;
-    }
-
-    public void setServiceInfo(ServiceInfo serviceInfo) {
-        this.serviceInfo = serviceInfo;
     }
 
     public void setVnfResources(ArrayList<VnfResource> vnfResources) {
@@ -164,11 +154,6 @@ public class ServiceMacroHolder implements Serializable {
             sb.append("service: " + this.service.toString());
         } else {
             sb.append("service: null");
-        }
-        if (this.serviceInfo != null) {
-            sb.append("serviceInfo: " + this.serviceInfo.toString());
-        } else {
-            sb.append("serviceInfo: null");
         }
         if (this.vnfResourceCustomizations != null && this.vnfResourceCustomizations.size() > 0) {
             int i = 0;

@@ -24,8 +24,11 @@ import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ServiceInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @XmlRootElement(name = "serviceInfo")
@@ -45,8 +48,10 @@ public class QueryServiceInfo extends CatalogQuery {
         this.serviceInfo = new ServiceInfo();
     }
 
-    public QueryServiceInfo(ServiceInfo serviceInfo) {
-        this.serviceInfo = serviceInfo;
+    public QueryServiceInfo(List<ServiceInfo> serviceInfos) {
+        if (!CollectionUtils.isEmpty(serviceInfos)) {
+            this.serviceInfo = serviceInfos.get(0);
+        }
     }
 
     public ServiceInfo getServiceInfo() {

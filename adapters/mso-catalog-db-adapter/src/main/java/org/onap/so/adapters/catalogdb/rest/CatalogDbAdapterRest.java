@@ -102,9 +102,6 @@ public class CatalogDbAdapterRest {
     @Autowired
     private InstanceGroupRepository instanceGroupRepository;
 
-    @Autowired
-    private ServiceInfoRepository serviceInfoRepository;
-
     private static final String NO_MATCHING_PARAMETERS = "no matching parameters";
 
     public Response respond(String version, int respStatus, boolean isArray, CatalogQuery qryResp) {
@@ -307,8 +304,6 @@ public class CatalogDbAdapterRest {
                 respStatus = HttpStatus.SC_NOT_FOUND;
                 qryResp = new QueryServiceMacroHolder();
             } else {
-                ServiceInfo serviceInfo = serviceInfoRepository.findByService(ret.getService());
-                ret.setServiceInfo(serviceInfo);
                 qryResp = new QueryServiceMacroHolder(ret);
                 logger.debug("serviceMacroHolder qryResp= {}", qryResp);
             }

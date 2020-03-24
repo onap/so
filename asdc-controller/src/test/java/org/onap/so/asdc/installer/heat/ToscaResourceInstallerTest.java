@@ -343,7 +343,6 @@ public class ToscaResourceInstallerTest extends BaseTest {
         doReturn(resourceCustomizationUUID).when(metadata).getValue("vfModuleModelCustomizationUUID");
 
         ServiceRepository serviceRepo = spy(ServiceRepository.class);
-        ServiceInfoRepository serviceInfoRepo = spy(ServiceInfoRepository.class);
 
         VnfResourceRepository vnfRepo = spy(VnfResourceRepository.class);
         doReturn(null).when(vnfRepo).findResourceByModelUUID(uuid);
@@ -354,7 +353,6 @@ public class ToscaResourceInstallerTest extends BaseTest {
         WorkflowResource workflowResource = spy(WorkflowResource.class);
 
         ReflectionTestUtils.setField(toscaInstaller, "serviceRepo", serviceRepo);
-        ReflectionTestUtils.setField(toscaInstaller, "serviceInfoRepository", serviceInfoRepo);
         ReflectionTestUtils.setField(toscaInstaller, "vnfRepo", vnfRepo);
         ReflectionTestUtils.setField(toscaInstaller, "vfModuleRepo", vfModuleRepo);
         ReflectionTestUtils.setField(toscaInstaller, "instanceGroupRepo", instanceGroupRepo);
@@ -425,10 +423,7 @@ public class ToscaResourceInstallerTest extends BaseTest {
         assertNotNull(service);
         service.setModelVersion("1.0");
 
-        ServiceInfo serviceInfo = new ServiceInfo();
-        serviceInfo.setService(service);
         doReturn(service).when(serviceRepo).save(service);
-        doReturn(serviceInfo).when(serviceInfoRepo).save(any(ServiceInfo.class));
 
         WatchdogComponentDistributionStatusRepository watchdogCDStatusRepository =
                 spy(WatchdogComponentDistributionStatusRepository.class);

@@ -45,9 +45,8 @@ public class ServiceInfo implements Serializable {
     @Column(name = "SERVICE_PROPERTIES")
     private String serviceProperties;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinTable(name = "service_to_service_info", joinColumns = @JoinColumn(name = "SERVICE_INFO_ID"),
-            inverseJoinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"))
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "SERVICE_MODEL_UUID")
     private Service service;
 
     public Integer getId() {
