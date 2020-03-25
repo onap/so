@@ -1,13 +1,21 @@
 package org.onap.so.adapters.cloudregion;
 
+import java.util.List;
 import java.util.Optional;
 import org.onap.aai.domain.yang.CloudRegion;
+import org.onap.aai.domain.yang.Complex;
+import org.onap.aai.domain.yang.NetworkTechnologies;
+import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
+import org.onap.so.client.aai.entities.uri.AAIPluralResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.db.catalog.beans.CloudSite;
+import org.onap.so.db.catalog.beans.NetworkTechnologyReference;
 import org.onap.so.db.catalog.client.CatalogDbClient;
+import org.onap.so.db.catalog.data.repository.NetworkTechnologyReferenceRepository;
+import org.onap.so.db.catalog.utils.MavenLikeVersioning;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +29,17 @@ public class CloudRestImpl {
     private AAIResourcesClient aaiClient;
 
     @Autowired
+    private NetworkTechnologyReferenceRepository ctrRepo;
+
+    @Autowired
     private CatalogDbClient catalogDBClient;
 
-    public void createCloudRegion(CloudSite cloudSite, String cloudOwner) throws CloudException {
+    public void createCloudRegion(CloudSite cloudSite) throws CloudException {
         createRegionInCatalogDb(cloudSite);
-        createCloudRegionInAAI(cloudSite, cloudOwner);
+        createCloudRegionInAAI(cloudSite);
     }
 
-    public void updateCloudRegion(CloudSite cloudSite, String cloudOwner) throws CloudException {
+    public void updateCloudRegion(CloudSite cloudSite) throws CloudException {
         updateRegionInCatalogDb(cloudSite);
     }
 
@@ -50,15 +61,46 @@ public class CloudRestImpl {
         }
     }
 
-    protected void createCloudRegionInAAI(CloudSite cloudSite, String cloudOwner) {
+    protected void createCloudRegionInAAI(CloudSite cloudSite) {
         try {
-            CloudRegion cloudRegion = mapCloudRegion(cloudSite, cloudOwner);
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION,
+            CloudRegion cloudRegion = mapCloudRegion(cloudSite);
+            Optional<Complex> complex = retrieveComplex(cloudSite);
+            if (complex.isPresent()) {
+                cloudRegion.setComplexName(complex.get().getComplexName());
+            }
+            AAIResourceUri cloudRegionURI = AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION,
                     cloudRegion.getCloudOwner(), cloudRegion.getCloudRegionId());
-            getAaiClient().createIfNotExists(uri, Optional.of(cloudRegion));
+            getAaiClient().createIfNotExists(cloudRegionURI, Optional.of(cloudRegion));
+            if (complex.isPresent()) {
+                AAIResourceUri complexURI = AAIUriFactory.createResourceUri(AAIObjectType.COMPLEX, cloudSite.getClli());
+                getAaiClient().connect(cloudRegionURI, complexURI);
+            }
+            createCloudRegionNetworkTechnologyRelationship(cloudSite, cloudRegionURI);
         } catch (Exception e) {
             logger.error("Error creating cloud region in AAI", e);
             throw new CloudException("Error creating cloud region in AAI: " + e.getMessage(), e);
+        }
+    }
+
+    protected void createCloudRegionNetworkTechnologyRelationship(CloudSite cloudSite, AAIResourceUri cloudRegionURI) {
+        List<NetworkTechnologyReference> listOfNetworkTech = ctrRepo.findAllByCloudOwner(cloudSite.getCloudOwner());
+        listOfNetworkTech.stream().forEach(tech -> linkCloudAndTechnology(tech.getNetworkTechnology(), cloudRegionURI));
+    }
+
+    protected Optional<Complex> retrieveComplex(CloudSite cloudSite) {
+        AAIResourceUri complexURI = AAIUriFactory.createResourceUri(AAIObjectType.COMPLEX, cloudSite.getClli());
+        return getAaiClient().get(Complex.class, complexURI);
+    }
+
+    protected void linkCloudAndTechnology(String networkTechnologyName, AAIResourceUri cloudRegionURI) {
+        AAIPluralResourceUri technologyPluralUri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_TECHNOLOGY)
+                .queryParam("network-technology-name", networkTechnologyName);
+        Optional<NetworkTechnologies> networkTechnology =
+                getAaiClient().get(NetworkTechnologies.class, technologyPluralUri);
+        if (networkTechnology.isPresent()) {
+            AAIResourceUri networkTechnologyURI = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_TECHNOLOGY,
+                    networkTechnology.get().getNetworkTechnology().get(0).getNetworkTechnologyId());
+            getAaiClient().connect(cloudRegionURI, networkTechnologyURI);
         }
     }
 
@@ -74,16 +116,22 @@ public class CloudRestImpl {
         }
     }
 
-    protected CloudRegion mapCloudRegion(CloudSite cloudSite, String cloudOwner) {
+    protected CloudRegion mapCloudRegion(CloudSite cloudSite) {
         CloudRegion region = new CloudRegion();
-        region.setCloudOwner(cloudOwner);
+        region.setCloudOwner(cloudSite.getCloudOwner());
         region.setCloudRegionId(cloudSite.getRegionId());
         region.setCloudRegionVersion(cloudSite.getCloudVersion());
         region.setOwnerDefinedType("cLCP");
-        region.setOrchestrationDisabled(false);
-        region.setComplexName("NA");
-        region.setInMaint(false);
         region.setCloudType("openstack");
+        MavenLikeVersioning cloudVersion = new MavenLikeVersioning();
+        cloudVersion.setVersion(cloudSite.getCloudVersion());
+        if (cloudVersion.isMoreRecentThan("3.0")) {
+            region.setCloudZone(cloudSite.getRegionId().substring(0, cloudSite.getRegionId().length() - 1));
+        } else {
+            region.setCloudZone(cloudSite.getRegionId());
+        }
+        region.setOrchestrationDisabled(false);
+        region.setInMaint(false);
         return region;
     }
 
