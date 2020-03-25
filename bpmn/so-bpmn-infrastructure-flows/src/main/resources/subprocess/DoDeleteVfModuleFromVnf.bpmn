@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_Wblj8GyfEeWUWLTvug7ZOg" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_Wblj8GyfEeWUWLTvug7ZOg" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="DoDeleteVfModuleFromVnf" name="DoDeleteVfModuleFromVnf" isExecutable="true">
-    <bpmn2:sequenceFlow id="SequenceFlow_4" name="" sourceRef="VNFAdapterPrep" targetRef="InvokeVNFAdapterRestV1" />
+    <bpmn2:sequenceFlow id="SequenceFlow_4" name="" sourceRef="VNFAdapterPrep" targetRef="InvokeVNFAdapter" />
     <bpmn2:callActivity id="callSDNCAdapterTopologyUnassign" name="Call SDNC Adapter Topology Unassign" calledElement="sdncAdapter">
       <bpmn2:extensionElements>
         <camunda:out source="WorkflowException" target="WorkflowException" />
@@ -31,12 +31,11 @@ def ddvmfv = new DoDeleteVfModuleFromVnf()
 ddvmfv.preProcessSDNCUnassignRequest(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_32" name="" sourceRef="SDNCAdapterPrep2" targetRef="callSDNCAdapterTopologyUnassign" />
-    <bpmn2:callActivity id="InvokeVNFAdapterRestV1" name="Invoke&#10;&#10;VNFAdapterRestV1" calledElement="vnfAdapterRestV1">
+    <bpmn2:callActivity id="InvokeVNFAdapter" name="Invoke&#10;&#10;VNFAdapter" calledElement="vnfAdapterTask">
       <bpmn2:extensionElements>
         <camunda:out source="WorkflowException" target="WorkflowException" />
-        <camunda:in source="vnfAdapterRestV1Request" target="vnfAdapterRestV1Request" />
-        <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
-        <camunda:out source="vnfAdapterRestV1Response" target="DDVMFV_doDeleteVfModuleResponse" />
+        <camunda:in source="vnfAdapterTaskRequest" target="vnfAdapterTaskRequest" />
+        <camunda:out source="WorkflowResponse" target="DDVMFV_doDeleteVfModuleResponse" />
         <camunda:in source="mso-request-id" target="mso-request-id" />
         <camunda:in source="mso-service-instance-id" target="mso-service-instance-id" />
       </bpmn2:extensionElements>
@@ -83,7 +82,7 @@ ddvmfv.postProcessVNFAdapterRequest(execution)]]></bpmn2:script>
     </bpmn2:startEvent>
     <bpmn2:sequenceFlow id="SequenceFlow_0y4td40" sourceRef="preProcessSDNCDeactivateRequest" targetRef="callSDNCAdapterTopologyDeactivate" />
     <bpmn2:sequenceFlow id="SequenceFlow_12q2r4i" sourceRef="callSDNCAdapterTopologyDeactivate" targetRef="postProcessSDNCDeactivateRequest" />
-    <bpmn2:sequenceFlow id="SequenceFlow_0hia88a" sourceRef="InvokeVNFAdapterRestV1" targetRef="PostProcessVNFAdapterRequest" />
+    <bpmn2:sequenceFlow id="SequenceFlow_0hia88a" sourceRef="InvokeVNFAdapter" targetRef="PostProcessVNFAdapterRequest" />
     <bpmn2:sequenceFlow id="SequenceFlow_0kx9e3s" sourceRef="postProcessSDNCDeactivateRequest" targetRef="VNFAdapterPrep" />
     <bpmn2:sequenceFlow id="SequenceFlow_0ltm4jt" sourceRef="DeleteNetworkPoliciesFromAAI" targetRef="SDNCAdapterPrep2" />
     <bpmn2:scriptTask id="preProcessSDNCDeactivateRequest" name="PreProcess SDNC Deactivate Request" scriptFormat="groovy">
@@ -187,7 +186,7 @@ ddvmfv.prepDeleteAAIVfModule(execution)]]></bpmn2:script>
       <bpmndi:BPMNShape id="_BPMNShape_ScriptTask_170" bpmnElement="VNFAdapterPrep">
         <dc:Bounds x="125" y="330" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="_BPMNShape_CallActivity_13" bpmnElement="InvokeVNFAdapterRestV1">
+      <bpmndi:BPMNShape id="_BPMNShape_CallActivity_13" bpmnElement="InvokeVNFAdapter">
         <dc:Bounds x="281" y="330" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_BPMNShape_ScriptTask_172" bpmnElement="SDNCAdapterPrep2">

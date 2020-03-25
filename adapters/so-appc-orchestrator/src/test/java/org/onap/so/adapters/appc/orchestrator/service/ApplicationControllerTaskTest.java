@@ -31,9 +31,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.onap.so.externaltasks.logging.AuditMDCSetup;
 import org.onap.so.adapters.appc.orchestrator.client.ApplicationControllerCallback;
 import org.onap.so.appc.orchestrator.service.beans.ApplicationControllerTaskRequest;
+import org.onap.so.logging.tasks.AuditMDCSetup;
 import org.onap.appc.client.lcm.model.Status;
 
 public class ApplicationControllerTaskTest extends ApplicationControllerTask {

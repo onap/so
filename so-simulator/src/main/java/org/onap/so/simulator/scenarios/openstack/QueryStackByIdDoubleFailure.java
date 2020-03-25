@@ -17,10 +17,11 @@ public class QueryStackByIdDoubleFailure extends AbstractSimulatorScenario {
 
     @Override
     public void run(ScenarioDesigner scenario) {
-        // Get to see if stack exists
+        // Create Poll Service
+        scenario.scenarioEndpoint().getEndpointConfiguration().setTimeout(300000L);
         scenario.http().receive().get().extractFromHeader(DynamicEndpointUriResolver.REQUEST_PATH_HEADER_NAME,
                 "correlationId");
-        scenario.echo("${correlationId}");
+        scenario.echo("${correlationId}"); // step 2
         scenario.correlation().start().onHeader(DynamicEndpointUriResolver.REQUEST_PATH_HEADER_NAME,
                 "${correlationId}");
 
@@ -30,19 +31,62 @@ public class QueryStackByIdDoubleFailure extends AbstractSimulatorScenario {
         scenario.variable("tenantId", "872f331350c54e59991a8de2cbffb40c");
         scenario.variable("vServerId", "d29f3151-592d-4011-9356-ad047794e236");
         scenario.variable("stack_failure_message", "The Flavor ID (nd.c6r16d20) could not be found.");
+        scenario.http().send().response(HttpStatus.OK) // step 4
+                .payload(new ClassPathResource("openstack/gr_api/Stack_Failure.json"));
+
+        // Create Poll Retry
+        scenario.http().receive().get(); // step 5
         scenario.http().send().response(HttpStatus.OK)
                 .payload(new ClassPathResource("openstack/gr_api/Stack_Failure.json"));
 
+        // Rollback Delete of the stack
+        scenario.http().receive().delete(); // step 7
+        scenario.action(new DeleteVServers());
+        scenario.http().send().response(HttpStatus.NO_CONTENT);
 
-        // Delete of the stack
+        // Rollback Poll
+        scenario.http().receive().get(); // step 10
+        scenario.http().send().response(HttpStatus.OK)
+                .payload(new ClassPathResource("openstack/gr_api/Stack_Failure.json"));
+
+        // Rollback Poll Retry
+        scenario.http().receive().get();
+        scenario.http().send().response(HttpStatus.OK)
+                .payload(new ClassPathResource("openstack/gr_api/Stack_Failure.json"));
+
+        // Create Poll
+        scenario.http().receive().get(); // step 14
+        scenario.http().send().response(HttpStatus.OK)
+                .payload(new ClassPathResource("openstack/gr_api/Stack_Failure.json"));
+
+        // Create Poll Retry
+        scenario.http().receive().get();
+        scenario.http().send().response(HttpStatus.OK)
+                .payload(new ClassPathResource("openstack/gr_api/Stack_Failure.json"));
+
+        // Rollback Delete
         scenario.http().receive().delete();
         scenario.action(new DeleteVServers());
         scenario.http().send().response(HttpStatus.NO_CONTENT);
 
-        // Poll Deletion of stack for status
+        // Rollback Poll
+        scenario.http().receive().get(); // step 18
+        scenario.http().send().response(HttpStatus.OK)
+                .payload(new ClassPathResource("openstack/gr_api/Stack_Failure.json"));
+
+        // Rollback Poll Retry
         scenario.http().receive().get();
         scenario.http().send().response(HttpStatus.OK)
                 .payload(new ClassPathResource("openstack/gr_api/Stack_Failure.json"));
+
+        // Delete
+        scenario.http().receive().delete();
+        scenario.http().send().response(HttpStatus.NO_CONTENT);
+
+        // Delete Poll
+        scenario.http().receive().get();
+        scenario.http().send().response(HttpStatus.OK)
+                .payload(new ClassPathResource("openstack/gr_api/Stack_Deleted.json"));
 
     }
 

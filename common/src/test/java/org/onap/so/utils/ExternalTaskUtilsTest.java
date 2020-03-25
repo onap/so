@@ -1,16 +1,21 @@
 package org.onap.so.utils;
 
 import static org.junit.Assert.assertEquals;
+import org.camunda.bpm.client.task.ExternalTask;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.core.env.Environment;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExternalTaskUtilsTest {
+
+    @Mock
+    private ExternalTask externalTask;
 
     @Mock
     private Environment mockenv;

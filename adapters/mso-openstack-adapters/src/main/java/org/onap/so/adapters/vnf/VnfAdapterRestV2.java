@@ -39,7 +39,6 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.ws.Holder;
-import org.onap.so.logger.LoggingAnchor;
 import org.apache.http.HttpStatus;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
@@ -56,6 +55,7 @@ import org.onap.so.adapters.vnfrest.VfModuleExceptionResponse;
 import org.onap.so.adapters.vnfrest.VfModuleRollback;
 import org.onap.so.entity.MsoRequest;
 import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.openstack.beans.VnfRollback;
 import org.onap.so.openstack.beans.VnfStatus;
@@ -78,6 +78,7 @@ import io.swagger.annotations.ApiResponses;
  *
  * V2 incorporates run-time selection of sub-orchestrator implementation (Heat or Cloudify) based on the target cloud.
  */
+@Deprecated
 @Path("/v2/vnfs")
 @Api(value = "/v2/vnfs", description = "root of vnf adapters restful web service v2")
 @Component
@@ -189,10 +190,7 @@ public class VnfAdapterRestV2 {
                 }
                 String cloudsite = req.getCloudSiteId();
                 Holder<Map<String, String>> outputs = new Holder<>();
-                if (cloudsite != null && !cloudsite.equals(TESTING_KEYWORD)) {
-                    // vnfAdapter.deleteVnf (req.getCloudSiteId(), req.getTenantId(), req.getVfModuleStackId(),
-                    // req.getMsoRequest());
-                    // Support different Adapter Implementations
+                if (cloudsite != null) {
                     MsoVnfAdapter adapter = vnfAdapterRestUtils.getVnfAdapterImpl(mode, cloudsite);
                     adapter.deleteVfModule(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
                             req.getVfModuleStackId(), req.getVnfId(), req.getVfModuleId(),

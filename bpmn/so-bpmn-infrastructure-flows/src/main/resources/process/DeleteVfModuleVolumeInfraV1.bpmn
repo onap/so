@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="DeleteVfModuleVolumeInfraV1" name="DeleteVfModuleVolumeInfraV1" isExecutable="true">
     <bpmn2:scriptTask id="preProcessRequest_ScriptTask" name="PreProcess Incoming Request" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
@@ -51,13 +51,12 @@ deleteVfMod.executeMethod('prepareVnfAdapterDeleteRequest', execution, isDebugLo
       <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{execution.getVariable("DELVfModVol_tenantId") == execution.getVariable("DELVfModVol_volumeGroupTenantId")}]]></bpmn2:conditionExpression>
     </bpmn2:sequenceFlow>
     <bpmn2:sequenceFlow id="SequenceFlow_21" name="" sourceRef="ExclusiveGateway_3" targetRef="ScriptTask_2" />
-    <bpmn2:callActivity id="callVnfAdapterDeleteSubflow_CallActivity" name="Call Vnf Adapter Delete subflow" calledElement="vnfAdapterRestV1">
+    <bpmn2:callActivity id="callVnfAdapterDeleteSubflow_CallActivity" name="Call Vnf Adapter Delete subflow" calledElement="vnfAdapterTask">
       <bpmn2:extensionElements>
-        <camunda:in source="DELVfModVol_deleteVnfARequest" target="vnfAdapterRestV1Request" />
-        <camunda:out source="vnfAdapterRestV1Response" target="DELVfModVol_deleteVnfAResponse" />
+        <camunda:in source="DELVfModVol_deleteVnfARequest" target="vnfAdapterTaskRequest" />
+        <camunda:out source="WorkflowResponse" target="DELVfModVol_deleteVnfAResponse" />
         <camunda:in source="mso-request-id" target="mso-request-id" />
         <camunda:in source="mso-service-instance-id" target="mso-service-instance-id" />
-        <camunda:in variables="all" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:out source="VNFREST_SuccessIndicator" target="VNFREST_SuccessIndicator" />
       </bpmn2:extensionElements>

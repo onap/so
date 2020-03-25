@@ -9,10 +9,10 @@ import org.springframework.stereotype.Component;
 @Component
 public abstract class ExternalTaskUtils {
 
+    private static final Logger logger = LoggerFactory.getLogger(ExternalTaskUtils.class);
+
     @Autowired
     Environment env;
-
-    private static final Logger logger = LoggerFactory.getLogger(ExternalTaskUtils.class);
 
     private final RetrySequenceLevel retrySequenceLevel;
 
@@ -49,7 +49,7 @@ public abstract class ExternalTaskUtils {
                 return seqInter;
             case LONG:
                 String[] seqLong = {"1", "1", "2", "3", "5", "8", "13", "20"};
-                if (env.getProperty("mso.workflow.topics.retrySequence") != null) {
+                if (env.getProperty("mso.workflow.topics.retrySequence.long") != null) {
                     seqLong = env.getProperty("mso.workflow.topics.retrySequence", String[].class);
                 }
                 return seqLong;
