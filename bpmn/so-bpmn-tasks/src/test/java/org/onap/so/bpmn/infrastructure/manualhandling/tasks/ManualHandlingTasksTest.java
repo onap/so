@@ -100,7 +100,7 @@ public class ManualHandlingTasksTest extends BaseTaskTest {
         when(mockExecution.getProcessEngineServices()).thenReturn(processEngineServices);
         when(processEngineServices.getTaskService()).thenReturn(taskService);
         manualHandlingTasks.setFalloutTaskVariables(task);
-        verify(taskService, times(1)).setVariables(any(String.class), any(Map.class));
+        verify(taskService, times(1)).setVariablesLocal(any(String.class), any(Map.class));
     }
 
     @Test
@@ -110,7 +110,7 @@ public class ManualHandlingTasksTest extends BaseTaskTest {
         when(mockExecution.getProcessEngineServices()).thenReturn(processEngineServices);
         when(processEngineServices.getTaskService()).thenReturn(taskService);
         manualHandlingTasks.setPauseTaskVariables(task);
-        verify(taskService, times(1)).setVariables(any(String.class), any(Map.class));
+        verify(taskService, times(1)).setVariablesLocal(any(String.class), any(Map.class));
     }
 
     @Test

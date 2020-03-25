@@ -173,7 +173,7 @@ public class ManualHandlingTasks {
             taskVariables.put(TASK_VARIABLE_DESCRIPTION, description);
             TaskService taskService = execution.getProcessEngineServices().getTaskService();
 
-            taskService.setVariables(taskId, taskVariables);
+            taskService.setVariablesLocal(taskId, taskVariables);
             logger.debug("successfully created fallout task: " + taskId);
         } catch (BpmnError e) {
             logger.debug(BPMN_EXCEPTION + e.getMessage());
@@ -223,7 +223,7 @@ public class ManualHandlingTasks {
             taskVariables.put(TASK_VARIABLE_VALID_RESPONSES, validResponses);
             TaskService taskService = execution.getProcessEngineServices().getTaskService();
 
-            taskService.setVariables(taskId, taskVariables);
+            taskService.setVariablesLocal(taskId, taskVariables);
             logger.debug("successfully created pause task: " + taskId);
         } catch (BpmnError e) {
             logger.debug(BPMN_EXCEPTION + e.getMessage());
