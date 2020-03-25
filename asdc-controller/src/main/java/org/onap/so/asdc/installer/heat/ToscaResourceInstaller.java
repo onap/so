@@ -1377,6 +1377,7 @@ public class ToscaResourceInstaller {
 
             service.setServiceType(serviceMetadata.getValue("serviceType"));
             service.setServiceRole(serviceMetadata.getValue("serviceRole"));
+            service.setServiceFunction(serviceMetadata.getValue("serviceFunction"));
             service.setCategory(serviceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_CATEGORY));
 
             service.setDescription(serviceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION));

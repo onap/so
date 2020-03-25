@@ -22,18 +22,33 @@
 
 package org.onap.so.client.aai.mapper;
 
-import org.modelmapper.ModelMapper;
-import org.modelmapper.PropertyMap;
-import org.onap.aai.domain.yang.RouteTargets;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.*;
-import org.springframework.stereotype.Component;
 import java.util.List;
 import org.modelmapper.Converter;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.modelmapper.spi.MappingContext;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.HostRoute;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.SegmentationAssignment;
+import org.onap.aai.domain.yang.RouteTargets;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CtagAssignment;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.HostRoute;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.NetworkPolicy;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.OwningEntity;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Project;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.RouteTarget;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.SegmentationAssignment;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceSubscription;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.VpnBinding;
+import org.springframework.stereotype.Component;
 
 @Component
 public class AAIObjectMapper {
@@ -46,6 +61,7 @@ public class AAIObjectMapper {
                 protected void configure() {
                     map().setServiceType(source.getModelInfoServiceInstance().getServiceType());
                     map().setServiceRole(source.getModelInfoServiceInstance().getServiceRole());
+                    map().setServiceFunction(source.getModelInfoServiceInstance().getServiceFunction());
                     map().setModelInvariantId(source.getModelInfoServiceInstance().getModelInvariantUuid());
                     map().setModelVersionId(source.getModelInfoServiceInstance().getModelUuid());
                     map().setEnvironmentContext(source.getModelInfoServiceInstance().getEnvironmentContext());
@@ -178,6 +194,7 @@ public class AAIObjectMapper {
 
     private Converter<List<Subnet>, org.onap.aai.domain.yang.Subnets> convertSubnets =
             new Converter<List<Subnet>, org.onap.aai.domain.yang.Subnets>() {
+                @Override
                 public org.onap.aai.domain.yang.Subnets convert(
                         MappingContext<List<Subnet>, org.onap.aai.domain.yang.Subnets> context) {
                     return mapToAAISubNets(context.getSource());
@@ -186,6 +203,7 @@ public class AAIObjectMapper {
 
     private Converter<List<CtagAssignment>, org.onap.aai.domain.yang.CtagAssignments> convertCtagAssignments =
             new Converter<List<CtagAssignment>, org.onap.aai.domain.yang.CtagAssignments>() {
+                @Override
                 public org.onap.aai.domain.yang.CtagAssignments convert(
                         MappingContext<List<CtagAssignment>, org.onap.aai.domain.yang.CtagAssignments> context) {
                     return mapToAAICtagAssignmentList(context.getSource());
@@ -194,6 +212,7 @@ public class AAIObjectMapper {
 
     private Converter<List<SegmentationAssignment>, org.onap.aai.domain.yang.SegmentationAssignments> convertSegmentationAssignments =
             new Converter<List<SegmentationAssignment>, org.onap.aai.domain.yang.SegmentationAssignments>() {
+                @Override
                 public org.onap.aai.domain.yang.SegmentationAssignments convert(
                         MappingContext<List<SegmentationAssignment>, org.onap.aai.domain.yang.SegmentationAssignments> context) {
                     return mapToAAISegmentationAssignmentList(context.getSource());
