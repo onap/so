@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -264,9 +264,9 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
 
         heatUtils.handleUnknownCreateStackFailure(stack, 120, cloudSiteId, tenantId);
         Mockito.verify(heatUtils, times(1)).executeAndRecordOpenstackRequest(mockDeleteStack);
-        Mockito.verify(heatUtils, times(1)).pollStackForStatus(120, stack, "DELETE_IN_PROGRESS", cloudSiteId, tenantId,
+        Mockito.verify(heatUtils, times(0)).pollStackForStatus(120, stack, "DELETE_IN_PROGRESS", cloudSiteId, tenantId,
                 true);
-        Mockito.verify(heatUtils, times(1)).postProcessStackDelete(deletedStack);
+        Mockito.verify(heatUtils, times(0)).postProcessStackDelete(deletedStack);
     }
 
 
@@ -324,8 +324,6 @@ public class MsoHeatUtilsTest extends MsoHeatUtils {
         CreateStackParam createStackParam = new CreateStackParam();
         createStackParam.setStackName("stackName");
 
-        // doReturn(mockResources).when(heatUtils).queryStackResources(cloudSiteId, tenantId, "stackName", 2);
-        // doNothing().when(novaClient).deleteKeyPair(cloudSiteId, tenantId, "KeypairName");
         doReturn(null).when(heatUtils).handleUnknownCreateStackFailure(stack, 120, cloudSiteId, tenantId);
         doReturn(createdStack).when(heatUtils).createStack(createStackParam, cloudSiteId, tenantId);
         doReturn(createdStack).when(heatUtils).processCreateStack(cloudSiteId, tenantId, 120, true, createdStack,

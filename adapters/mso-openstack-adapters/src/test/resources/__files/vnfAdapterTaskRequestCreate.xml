@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<createVfModuleRequest>
+	<messageId>7f4557c8-c3b9-4743-8b88-9539f9ed7bea</messageId>
+	<notificationUrl>http://mso-bpmn-infra-svc:9200/mso/WorkflowMessage/VNFAResponse/7f4557c8-c3b9-4743-8b88-9539f9ed7bea
+	</notificationUrl>
+	<skipAAI>true</skipAAI>
+	<cloudSiteId>regionOne</cloudSiteId>
+	<cloudOwner>CloudOwner</cloudOwner>
+	<tenantId>0422ffb57ba042c0800a29dc85ca70f8</tenantId>
+	<vnfId>6640feba-55f6-4946-9694-4d9558c8870a</vnfId>
+	<vnfType>Vf zrdm5bpxmc02092017-Service/Vf zrdm5bpxmc02092017-VF 0</vnfType>
+	<vnfVersion>1.0</vnfVersion>
+	<vfModuleId>985a468b-328b-4c2b-ad0e-b8f1e19501c4</vfModuleId>
+	<vfModuleName>dummy_id</vfModuleName>
+	<vfModuleType>VfZrdm5bpxmc02092017Vf..pxmc_base..module-0</vfModuleType>
+	<baseVfModuleId>985a468b-328b-4c2b-ad0e-b8f1e19501c4</baseVfModuleId>
+	<modelCustomizationUuid>074c64d0-7e13-4bcc-8bdb-ea922331102d</modelCustomizationUuid>
+	<failIfExists>false</failIfExists>
+	<backout>true</backout>
+	<vfModuleParams>
+		<entry>
+			<key>vf_module_id</key>
+			<value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:string">985a468b-328b-4c2b-ad0e-b8f1e19501c4</value>
+		</entry>
+		<entry>
+			<key>vnf_id</key>
+			<value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:string">6640feba-55f6-4946-9694-4d9558c8870a</value>
+		</entry>
+		<entry>
+			<key>vnf_name</key>
+			<value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:string">Robot_VNF_For_Volume_Group</value>
+		</entry>
+		<entry>
+			<key>availability_zone_0</key>
+			<value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:string">AZ-MN02</value>
+		</entry>
+		<entry>
+			<key>environment_context</key>
+			<value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:string">General_Revenue-Bearing</value>
+		</entry>
+		<entry>
+			<key>user_directives</key>
+			<value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:string">{}</value>
+		</entry>
+		<entry>
+			<key>workload_context</key>
+			<value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:string"/>
+		</entry>
+		<entry>
+			<key>vf_module_name</key>
+			<value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:string">dummy_id</value>
+		</entry>
+		<entry>
+			<key>vf_module_index</key>
+			<value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:string">0</value>
+		</entry>
+		<entry>
+			<key>sdnc_directives</key>
+			<value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:string">{ "attributes": [ {"attribute_name": "availability_zone_0", "attribute_value": "AZ-MN02"}] }</value>
+		</entry>
+	</vfModuleParams>
+	<msoRequest>
+		<requestId>049abdd8-0e19-48b8-bd87-b18f8d49048c</requestId>
+		<serviceInstanceId>7dc4c4eb-b1d7-4aef-94d1-24e925d1210c</serviceInstanceId>
+	</msoRequest>
+</createVfModuleRequest>

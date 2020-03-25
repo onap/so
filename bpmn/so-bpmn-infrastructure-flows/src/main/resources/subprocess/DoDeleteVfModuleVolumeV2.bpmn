@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
   <bpmn:process id="DoDeleteVfModuleVolumeV2" name="DoDeleteVfModuleVolumeV2" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1" name="Start">
       <bpmn:outgoing>SequenceFlow_1gvfdp4</bpmn:outgoing>
@@ -25,21 +25,20 @@ deleteVfMod.executeMethod('callRESTQueryAAIForVolumeGroup', execution, isDebugLo
 def deleteVfMod = new DoDeleteVfModuleVolumeV2()
 deleteVfMod.executeMethod('prepareVnfAdapterDeleteRequest', execution, isDebugLogEnabled)]]></bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:callActivity id="Task_14fsstq" name="Call REST VNF Adapter Delete" calledElement="vnfAdapterRestV1">
+    <bpmn:callActivity id="Task_14fsstq" name="Call REST VNF Adapter Delete" calledElement="vnfAdapterTask">
       <bpmn:extensionElements>
-        <camunda:in source="DDVMV_deleteVnfARequest" target="vnfAdapterRestV1Request" />
+        <camunda:in source="DDVMV_deleteVnfARequest" target="vnfAdapterTaskRequest" />
         <camunda:in source="mso-request-id" target="mso-request-id" />
         <camunda:in source="mso-service-instance-id" target="mso-service-instance-id" />
-        <camunda:in variables="all" />
-        <camunda:out source="vnfAdapterRestV1Response" target="DDVMV_deleteVnfAResponse" />
+        <camunda:out source="WorkflowResponse" target="DDVMV_deleteVnfAResponse" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:out source="VNFREST_SuccessIndicator" target="VNFREST_SuccessIndicator" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1tgngf7</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1x3luyj</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_04zsr0f</bpmn:outgoing>
     </bpmn:callActivity>
     <bpmn:scriptTask id="Task_17q1roq" name="Call REST AAI Delete Volume Group" scriptFormat="groovy">
-      <bpmn:incoming>SequenceFlow_0cy0y9t</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_04zsr0f</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_13c3cv2</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
 def deleteVfMod = new DoDeleteVfModuleVolumeV2()
@@ -61,20 +60,6 @@ deleteVfMod.executeMethod('preProcessRequest', execution, isDebugLogEnabled)
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_1gvfdp4" sourceRef="StartEvent_1" targetRef="Task_1i432ud" />
     <bpmn:sequenceFlow id="SequenceFlow_1vy2ojp" sourceRef="Task_1i432ud" targetRef="Task_06u1lr0" />
-    <bpmn:exclusiveGateway id="ExclusiveGateway_0o3lxtf" name="VNF Adapter REST call success?">
-      <bpmn:incoming>SequenceFlow_1x3luyj</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0cy0y9t</bpmn:outgoing>
-      <bpmn:outgoing>SequenceFlow_1rgd8dg</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="SequenceFlow_1x3luyj" sourceRef="Task_14fsstq" targetRef="ExclusiveGateway_0o3lxtf" />
-    <bpmn:sequenceFlow id="SequenceFlow_0cy0y9t" name="Yes" sourceRef="ExclusiveGateway_0o3lxtf" targetRef="Task_17q1roq">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{VNFREST_SuccessIndicator == true}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:endEvent id="EndEvent_00cohim" name="throw MSOException">
-      <bpmn:incoming>SequenceFlow_1rgd8dg</bpmn:incoming>
-      <bpmn:errorEventDefinition errorRef="Error_0fa7ks7" />
-    </bpmn:endEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_1rgd8dg" sourceRef="ExclusiveGateway_0o3lxtf" targetRef="EndEvent_00cohim" />
     <bpmn:scriptTask id="Task_018w43g" name="Post Process" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_13c3cv2</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1sgtwr2</bpmn:outgoing>
@@ -84,6 +69,7 @@ deleteVfMod.executeMethod('postProcess', execution, isDebugLogEnabled)]]></bpmn:
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_13c3cv2" sourceRef="Task_17q1roq" targetRef="Task_018w43g" />
     <bpmn:sequenceFlow id="SequenceFlow_1sgtwr2" sourceRef="Task_018w43g" targetRef="EndEvent_0fw1gkf" />
+    <bpmn:sequenceFlow id="SequenceFlow_04zsr0f" sourceRef="Task_14fsstq" targetRef="Task_17q1roq" />
   </bpmn:process>
   <bpmn:error id="Error_0fa7ks7" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -153,39 +139,6 @@ deleteVfMod.executeMethod('postProcess', execution, isDebugLogEnabled)]]></bpmn:
           <dc:Bounds x="377" y="95" width="0" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ExclusiveGateway_0o3lxtf_di" bpmnElement="ExclusiveGateway_0o3lxtf" isMarkerVisible="true">
-        <dc:Bounds x="1028" y="95" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1020" y="145" width="66" height="36" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1x3luyj_di" bpmnElement="SequenceFlow_1x3luyj">
-        <di:waypoint xsi:type="dc:Point" x="965" y="120" />
-        <di:waypoint xsi:type="dc:Point" x="1028" y="120" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="997" y="95" width="0" height="0" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0cy0y9t_di" bpmnElement="SequenceFlow_0cy0y9t">
-        <di:waypoint xsi:type="dc:Point" x="1078" y="120" />
-        <di:waypoint xsi:type="dc:Point" x="1151" y="120" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1106" y="95" width="18" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="EndEvent_0zln0ww_di" bpmnElement="EndEvent_00cohim">
-        <dc:Bounds x="1035" y="274" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1016" y="310" width="73" height="24" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1rgd8dg_di" bpmnElement="SequenceFlow_1rgd8dg">
-        <di:waypoint xsi:type="dc:Point" x="1053" y="145" />
-        <di:waypoint xsi:type="dc:Point" x="1053" y="274" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1068" y="199.5" width="0" height="0" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_1ilduoy_di" bpmnElement="Task_018w43g">
         <dc:Bounds x="1298" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -201,6 +154,13 @@ deleteVfMod.executeMethod('postProcess', execution, isDebugLogEnabled)]]></bpmn:
         <di:waypoint xsi:type="dc:Point" x="1463" y="120" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1431" y="95" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_04zsr0f_di" bpmnElement="SequenceFlow_04zsr0f">
+        <di:waypoint xsi:type="dc:Point" x="965" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="1151" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1058" y="99" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

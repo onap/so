@@ -19,7 +19,7 @@
       "allocationPools": [{
 		"start": "107.244.64.2",
 		"end": "107.244.64.16"
-		}]      
+		}]
     }
   ],
   "providerVlanNetwork": {

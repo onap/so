@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
   <bpmn:process id="DoCreateVfModuleVolumeRollback" name="DoCreateVfModuleVolumeRollback" isExecutable="true">
     <bpmn:subProcess id="SubProcess_1p4663w" name="Sub-process for UnexpectedErrors" triggeredByEvent="true">
       <bpmn:scriptTask id="ScriptTask_0by1uwk" name="Log / Print Unexpected Error" scriptFormat="groovy">
@@ -33,10 +33,9 @@ doCreateVfModuleVolumeRollback.processJavaException(execution)]]></bpmn:script>
       <bpmn:outgoing>SequenceFlow_0h7k68j</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_10dawse</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:callActivity id="CallActivity_03pmk7v" name="Call VNF Adapter Rollback" calledElement="vnfAdapterRestV1">
+    <bpmn:callActivity id="CallActivity_03pmk7v" name="Call VNF Adapter Rollback" calledElement="vnfAdapterTask">
       <bpmn:extensionElements>
-        <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
-        <camunda:in source="DCVFMODVOLRBK_rollbackVnfARequest" target="vnfAdapterRestV1Request" />
+        <camunda:in source="DCVFMODVOLRBK_rollbackVnfARequest" target="vnfAdapterTaskRequest" />
         <camunda:out source="workflowException" target="workflowException" />
         <camunda:in source="mso-request-id" target="mso-request-id" />
         <camunda:in source="mso-service-instance-id" target="mso-service-instance-id" />

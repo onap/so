@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_Wblj8GyfEeWUWLTvug7ZOg" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_Wblj8GyfEeWUWLTvug7ZOg" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="DoUpdateVfModule" name="DoUpdateVfModule" isExecutable="true">
     <bpmn2:documentation><![CDATA[This flow expects its incoming request to be in the variable 'DoUpdateVfModuleRequest'.  This flow produces no output.]]></bpmn2:documentation>
     <bpmn2:scriptTask id="PrepareUpdateAAIVfModule_prep" name="Prepare Update AAI Vf Module (prep)" scriptFormat="groovy">
@@ -121,8 +121,7 @@ duvm.prepUpdateAAIGenericVnf(execution)]]></bpmn2:script>
       <bpmn2:outgoing>SequenceFlow_9</bpmn2:outgoing>
     </bpmn2:callActivity>
     <bpmn2:sequenceFlow id="SequenceFlow_9" name="" sourceRef="CallActivity_1" targetRef="ScriptTask_10" />
-    <bpmn2:exclusiveGateway id="ExclusiveGateway_1" name="Skip Update
-&#10;Generic Vnf?" default="SequenceFlow_14">
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_1" name="Skip Update&#10;&#10;Generic Vnf?" default="SequenceFlow_14">
       <bpmn2:incoming>SequenceFlow_13</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_14</bpmn2:outgoing>
       <bpmn2:outgoing>SequenceFlow_18</bpmn2:outgoing>
@@ -157,14 +156,13 @@ duvm.prepSDNCTopologyChg(execution)]]></bpmn2:script>
       <bpmn2:incoming>SequenceFlow_12</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_3</bpmn2:outgoing>
     </bpmn2:callActivity>
-    <bpmn2:callActivity id="ScriptTask_9" name="VnfAdapterRest" calledElement="vnfAdapterRestV1">
+    <bpmn2:callActivity id="ScriptTask_9" name="VnfAdapterRest" calledElement="vnfAdapterTask">
       <bpmn2:extensionElements>
-        <camunda:in source="DOUPVfMod_vnfAdapterRestRequest" target="vnfAdapterRestV1Request" />
+        <camunda:in source="DOUPVfMod_vnfAdapterRestRequest" target="vnfAdapterTaskRequest" />
         <camunda:in source="mso-request-id" target="mso-request-id" />
         <camunda:in source="mso-service-instance-id" target="mso-service-instance-id" />
-        <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
-        <camunda:out source="vnfAdapterRestV1Response" target="DOUPVfMod_vnfAdapterRestResponse" />
+        <camunda:out source="WorkflowResponse" target="DOUPVfMod_vnfAdapterRestResponse" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_21</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_24</bpmn2:outgoing>
@@ -248,8 +246,7 @@ def duvm = new DoUpdateVfModule()
 duvm.prepConfirmVolumeGroupTenant(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_11" name="" sourceRef="ScriptTask_2" targetRef="ScriptTask_3" />
-    <bpmn2:exclusiveGateway id="ExclusiveGateway_2" name="VolumeGroupId 
-&#10;present?" default="SequenceFlow_16">
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_2" name="VolumeGroupId &#10;&#10;present?" default="SequenceFlow_16">
       <bpmn2:incoming>SequenceFlow_29</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_10</bpmn2:outgoing>
       <bpmn2:outgoing>SequenceFlow_16</bpmn2:outgoing>

@@ -9,6 +9,10 @@ import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
 import com.consol.citrus.simulator.scenario.Scenario;
 import com.consol.citrus.simulator.scenario.ScenarioDesigner;
 
+/**
+ * This scenario is used by the following test cases: Resume Service Instance Macro 3 Modules 1 To Complete
+ *
+ */
 @Scenario("Openstack-QueryStackByID-Macro2")
 @RequestMapping(value = "/sim/mockPublicUrl/stacks/macro_module_2/*", method = RequestMethod.GET)
 public class QueryStackByIdMacro2 extends AbstractSimulatorScenario {
@@ -16,6 +20,9 @@ public class QueryStackByIdMacro2 extends AbstractSimulatorScenario {
 
     @Override
     public void run(ScenarioDesigner scenario) {
+        scenario.scenarioEndpoint().getEndpointConfiguration().setTimeout(300000L);
+
+        // Poll
         scenario.http().receive().get().extractFromHeader(DynamicEndpointUriResolver.REQUEST_PATH_HEADER_NAME,
                 "correlationId");
         scenario.echo("${correlationId}");
@@ -27,11 +34,19 @@ public class QueryStackByIdMacro2 extends AbstractSimulatorScenario {
         scenario.http().send().response(HttpStatus.OK)
                 .payload(new ClassPathResource("openstack/gr_api/Stack_Created.json"));
 
+        // Delete
         scenario.http().receive().get();
+        scenario.http().send().response(HttpStatus.OK)
+                .payload(new ClassPathResource("openstack/gr_api/Stack_Created.json"));
 
+        scenario.http().receive().get();
         scenario.http().send().response(HttpStatus.OK)
                 .payload(new ClassPathResource("openstack/gr_api/Stack_Deleted.json"));
 
+        // Poll
+        scenario.http().receive().get();
+        scenario.http().send().response(HttpStatus.OK)
+                .payload(new ClassPathResource("openstack/gr_api/Stack_Deleted.json"));
     }
 
 }

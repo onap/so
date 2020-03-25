@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_Wblj8GyfEeWUWLTvug7ZOg" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_Wblj8GyfEeWUWLTvug7ZOg" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="DoDeleteVfModule" name="DoDeleteVfModule" isExecutable="true">
     <bpmn2:scriptTask id="UpdateAAIVfModulePrep" name="UpdateAAIVfModule&#10;Prep" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_0fp1wqz</bpmn2:incoming>
@@ -30,7 +30,7 @@ dvm.prepUpdateAAIVfModule(execution)]]></bpmn2:script>
       <bpmn2:incoming>SequenceFlow_029ioyr</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_14xn858</bpmn2:outgoing>
     </bpmn2:callActivity>
-    <bpmn2:sequenceFlow id="SequenceFlow_4" name="" sourceRef="VNFAdapterPrep" targetRef="InvokeVNFAdapterRestV1" />
+    <bpmn2:sequenceFlow id="SequenceFlow_4" name="" sourceRef="VNFAdapterPrep" targetRef="InvokeVNFAdapterTask" />
     <bpmn2:callActivity id="InvokeSDNCAdapterV1_2" name="Invoke&#10;SDNCAdapterV1" calledElement="sdncAdapter">
       <bpmn2:extensionElements>
         <camunda:out source="WorkflowException" target="WorkflowException" />
@@ -60,12 +60,11 @@ def dvm = new DoDeleteVfModule()
 dvm.prepSDNCAdapterRequest(execution, "delete")]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_32" name="" sourceRef="SDNCAdapterPrep2" targetRef="InvokeSDNCAdapterV1_2" />
-    <bpmn2:callActivity id="InvokeVNFAdapterRestV1" name="Invoke&#10;VNFAdapterRestV1" calledElement="vnfAdapterRestV1">
+    <bpmn2:callActivity id="InvokeVNFAdapterTask" name="Invoke&#10;VNFAdapterTask" calledElement="vnfAdapterTask">
       <bpmn2:extensionElements>
         <camunda:out source="WorkflowException" target="WorkflowException" />
-        <camunda:in source="vnfAdapterRestV1Request" target="vnfAdapterRestV1Request" />
-        <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
-        <camunda:out source="vnfAdapterRestV1Response" target="DoDVfMod_doDeleteVfModuleResponse" />
+        <camunda:in source="vnfAdapterTaskRequest" target="vnfAdapterTaskRequest" />
+        <camunda:out source="WorkflowResponse" target="DoDVfMod_doDeleteVfModuleResponse" />
         <camunda:in source="mso-request-id" target="mso-request-id" />
         <camunda:in source="mso-service-instance-id" target="mso-service-instance-id" />
       </bpmn2:extensionElements>
@@ -182,7 +181,7 @@ doDeleteVfModule.prepUpdateAAIGenericVnf(execution)]]></bpmn2:script>
 def dvm = new DoDeleteVfModule()
 dvm.queryAAIVfModuleForStatus(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
-    <bpmn2:sequenceFlow id="SequenceFlow_1xruki1" sourceRef="InvokeVNFAdapterRestV1" targetRef="PostProcessVNFAdapterRequest" />
+    <bpmn2:sequenceFlow id="SequenceFlow_1xruki1" sourceRef="InvokeVNFAdapterTask" targetRef="PostProcessVNFAdapterRequest" />
     <bpmn2:sequenceFlow id="SequenceFlow_14xn858" sourceRef="InvokePrepareUpdateAAIVfModule" targetRef="VNFAdapterPrep" />
   </bpmn2:process>
   <bpmn2:error id="Error_1" name="MSO Workflow Exception" errorCode="MSOWorkflowException" />
@@ -221,7 +220,7 @@ dvm.queryAAIVfModuleForStatus(execution)]]></bpmn2:script>
       <bpmndi:BPMNShape id="_BPMNShape_ScriptTask_170" bpmnElement="VNFAdapterPrep">
         <dc:Bounds x="193" y="206" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="_BPMNShape_CallActivity_13" bpmnElement="InvokeVNFAdapterRestV1">
+      <bpmndi:BPMNShape id="_BPMNShape_CallActivity_13" bpmnElement="InvokeVNFAdapterTask">
         <dc:Bounds x="404" y="206" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_BPMNShape_ScriptTask_171" bpmnElement="UpdateAAIVfModulePrep">
