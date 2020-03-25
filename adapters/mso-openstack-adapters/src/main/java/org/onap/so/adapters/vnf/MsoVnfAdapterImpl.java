@@ -104,8 +104,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     private static final String DELETE_VNF = "DeleteVNF";
     private static final String QUERY_STACK = "QueryStack";
     private static final String CREATE_VFM_MODULE = "CreateVFModule";
-    private static final String CREATE_VF_STACK = "Create VF: Stack";
-    private static final String STACK = "Stack";
     private static final String USER_ERROR = "USER ERROR";
     private static final String VERSION_MIN = "VersionMin";
     private static final String VERSION_MAX = "VersionMax";
@@ -113,7 +111,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             "The vf module was found to already exist, thus no new vf module was created in the cloud via this request";
     private static final String VF_CREATED_STATUS_MESSAGE = "The new vf module was successfully created in the cloud";
     private static final String VF_NOT_EXIST_STATUS_MESSAGE =
-            "The vf module was not, thus no vf module was deleted in the cloud via this request";
+            "The vf module was not found, thus no vf module was deleted in the cloud via this request";
     private static final String VF_DELETED_STATUS_MESSAGE = "The vf module was successfully deleted in the cloud";
 
     @Autowired
@@ -1054,7 +1052,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                             nestedTemplatesChecked, heatFilesObjects, backout.booleanValue(), failIfExists);
 
                     msoHeatUtils.updateResourceStatus(msoRequest.getRequestId(),
-                            heatStack.isOperationPerformed() ? VF_EXIST_STATUS_MESSAGE : VF_CREATED_STATUS_MESSAGE);
+                            heatStack.isOperationPerformed() ? VF_CREATED_STATUS_MESSAGE : VF_EXIST_STATUS_MESSAGE);
                 } else {
                     throw new MsoHeatNotFoundException();
                 }
