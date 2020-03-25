@@ -1,5 +1,7 @@
 package org.onap.so.adapters.appc.orchestrator.service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,6 +52,10 @@ public class ApplicationControllerTaskImplTest {
         request.setNewSoftwareVersion("2.0");
         request.setExistingSoftwareVersion("1.0");
         request.setOperationsTimeout("30");
+        Map<String, String> reqConfigParams = new HashMap<>();
+        reqConfigParams.put("name1", "value1");
+        reqConfigParams.put("name2", "value2");
+        request.setConfigParams(reqConfigParams);
         ApplicationControllerVnf applicationControllerVnf = new ApplicationControllerVnf();
         applicationControllerVnf.setVnfHostIpAddress("100.100");
         applicationControllerVnf.setVnfId("testVnfId");
@@ -214,6 +220,33 @@ public class ApplicationControllerTaskImplTest {
         Parameters parameters = new Parameters();
         parameters.setExistingSoftwareVersion(request.getExistingSoftwareVersion());
         parameters.setNewSoftwareVersion(request.getNewSoftwareVersion());
+        Optional<String> payload = Optional.of((mapper.getMapper().writeValueAsString(parameters)));
+
+        Mockito.when(applicationControllerClient.vnfCommand(request.getAction(), "testRequestId",
+                request.getApplicationControllerVnf().getVnfId(), Optional.empty(), payload, "testControllerType",
+                listener)).thenReturn(new Status());
+
+        Status status = applicationControllerTaskImpl.execute("testRequestId", request, listener);
+
+        Mockito.verify(applicationControllerClient).vnfCommand(request.getAction(), "testRequestId",
+                request.getApplicationControllerVnf().getVnfId(), Optional.empty(), payload, "testControllerType",
+                listener);
+    }
+
+    @Test
+    public void testExcute_configModify() throws JsonProcessingException, ApplicationControllerOrchestratorException {
+        request.setAction(Action.ConfigModify);
+
+        Parameters parameters = new Parameters();
+        RequestParameters requestParams = new RequestParameters();
+        requestParams.setHostIpAddress(request.getApplicationControllerVnf().getVnfHostIpAddress());
+        parameters.setRequestParameters(requestParams);
+        ConfigurationParameters configParams = new ConfigurationParameters();
+        Map<String, String> configParamMap = new HashMap<>();
+        configParamMap.put("name1", "value1");
+        configParamMap.put("name2", "value2");
+        configParams.setAdditionalProperties(configParamMap);
+        parameters.setConfigurationParameters(configParams);
         Optional<String> payload = Optional.of((mapper.getMapper().writeValueAsString(parameters)));
 
         Mockito.when(applicationControllerClient.vnfCommand(request.getAction(), "testRequestId",

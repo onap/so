@@ -30,7 +30,8 @@ INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, I
 ('NetworkCollection-Macro-Create', 'createInstance', 'NetworkCollection', false,true, '7','7', 'DEFAULT', '*'),
 ('NetworkCollection-Macro-Delete', 'deleteInstance', 'NetworkCollection', false,true, '7','7', 'DEFAULT', '*'),
 ('VFModule-ScaleOut', 'scaleOut', 'VfModule', true, true, '7','7', 'DEFAULT', '*'),
-('VNF-InPlaceUpdate', 'inPlaceSoftwareUpdate', 'Vnf', true, true, '7','7', 'DEFAULT', '*');
+('VNF-InPlaceUpdate', 'inPlaceSoftwareUpdate', 'Vnf', true, true, '7','7', 'DEFAULT', '*'),
+('VNF-Config-Update', 'applyUpdatedConfig', 'Vnf', true, true, '7','7', 'DEFAULT', '*');
 
 
 INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FLOW_VERSION, NB_REQ_REF_LOOKUP_ID) VALUES
@@ -198,9 +199,16 @@ INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FL
 ('VNF-InPlaceUpdate', '15', 'VNFResumeTrafficActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-InPlaceUpdate' and CLOUD_OWNER = 'DEFAULT')),
 ('VNF-InPlaceUpdate', '16', 'VNFUnlockActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-InPlaceUpdate' and CLOUD_OWNER = 'DEFAULT')),
 ('VNF-InPlaceUpdate', '17', 'VNFUnsetInMaintFlagActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-InPlaceUpdate' and CLOUD_OWNER = 'DEFAULT')),
-('VNF-InPlaceUpdate', '18', 'VNFUnsetClosedLoopDisabledFlagActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-InPlaceUpdate' and CLOUD_OWNER = 'DEFAULT'));
-
-
+('VNF-InPlaceUpdate', '18', 'VNFUnsetClosedLoopDisabledFlagActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-InPlaceUpdate' and CLOUD_OWNER = 'DEFAULT')),
+('VNF-Config-Update', '1', 'VNFCheckPserversLockedFlagActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Config-Update' and CLOUD_OWNER = 'DEFAULT')),
+('VNF-Config-Update', '2', 'VNFCheckInMaintFlagActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Config-Update' and CLOUD_OWNER = 'DEFAULT')),
+('VNF-Config-Update', '3', 'VNFSetInMaintFlagActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Config-Update' and CLOUD_OWNER = 'DEFAULT')),
+('VNF-Config-Update', '4', 'VNFSetClosedLoopDisabledFlagActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Config-Update' and CLOUD_OWNER = 'DEFAULT')),
+('VNF-Config-Update', '5', 'VNFHealthCheckActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Config-Update' and CLOUD_OWNER = 'DEFAULT')),
+('VNF-Config-Update', '6', 'VNFConfigModifyActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Config-Update' and CLOUD_OWNER = 'DEFAULT')),
+('VNF-Config-Update', '7', 'VNFHealthCheckActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Config-Update' and CLOUD_OWNER = 'DEFAULT')),
+('VNF-Config-Update', '8', 'VNFUnsetInMaintFlagActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Config-Update' and CLOUD_OWNER = 'DEFAULT')),
+('VNF-Config-Update', '9', 'VNFUnsetClosedLoopDisabledFlagActivity', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'VNF-Config-Update' and CLOUD_OWNER = 'DEFAULT'));
 
 INSERT INTO rainy_day_handler_macro (FLOW_NAME, SERVICE_TYPE, VNF_TYPE, ERROR_CODE, WORK_STEP, POLICY)
 VALUES
@@ -860,7 +868,8 @@ VALUES
 ('VNFUpgradePostCheckActivity', 'NO_VALIDATE', 'CUSTOM'),
 ('VNFUpgradePreCheckActivity', 'NO_VALIDATE', 'CUSTOM'),
 ('VNFUpgradeSoftwareActivity', 'NO_VALIDATE', 'CUSTOM'),
-('VnfInPlaceSoftwareUpdate', 'NO_VALIDATE', 'CUSTOM');
+('VnfInPlaceSoftwareUpdate', 'NO_VALIDATE', 'CUSTOM'),
+('VNFConfigModifyActivity', 'NO_VALIDATE', 'CUSTOM');
 
 UPDATE northbound_request_ref_lookup SET SERVICE_TYPE = '*' WHERE SERVICE_TYPE IS NULL;
 
@@ -880,6 +889,10 @@ VALUES
 UPDATE vnf_recipe
 SET ORCHESTRATION_URI = '/mso/async/services/WorkflowActionBB'
 WHERE NF_ROLE = 'GR-API-DEFAULT' AND ACTION = 'inPlaceSoftwareUpdate';
+
+UPDATE vnf_recipe
+SET ORCHESTRATION_URI = '/mso/async/services/WorkflowActionBB'
+WHERE NF_ROLE = 'GR-API-DEFAULT' AND ACTION = 'applyUpdatedConfig';
 
 INSERT INTO rainy_day_handler_macro (FLOW_NAME, SERVICE_TYPE, VNF_TYPE, ERROR_CODE, WORK_STEP, POLICY, SECONDARY_POLICY, REG_EX_ERROR_MESSAGE, SERVICE_ROLE)
 VALUES 
