@@ -104,7 +104,8 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
                 infraRequest.setVfModuleId(utils.getNodeText(xml, "vfModuleId"))
             }else if(utils.nodeExists(xml, "volumeGroupId")){
                 infraRequest.setVolumeGroupId(utils.getNodeText(xml, "volumeGroupId"))
-
+            }else if(utils.nodeExists(xml, "pnfName")){
+                infraRequest.setPnfName(utils.getNodeText(xml, "pnfName"))
             }
 
             dbClient.updateInfraActiveRequests(infraRequest, UrnPropertiesReader.getVariable("mso.adapters.requestDb.auth"), UrnPropertiesReader.getVariable("mso.adapters.requestDb.endpoint"))

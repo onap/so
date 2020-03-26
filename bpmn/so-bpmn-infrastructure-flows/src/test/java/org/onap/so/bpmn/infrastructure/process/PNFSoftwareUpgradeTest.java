@@ -1,6 +1,7 @@
 /*-
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2020 Nordix Foundation.
+ *  Modifications Copyright (C) 2020 Huawei Technologies Co., Ltd.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,6 +61,7 @@ public class PNFSoftwareUpgradeTest extends BaseBPMNTest {
     private static final String TEST_PROCESSINSTANCE_KEY = "PNFSoftwareUpgrade";
     private static final AAIVersion VERSION = AAIVersion.LATEST;
     private static final Map<String, Object> executionVariables = new HashMap();
+    private static final String REQUEST_ID = "50ae41ad-049c-4fe2-9950-539f111120f5";
     private final String[] actionNames = new String[4];
     private String requestObject;
     private String responseObject;
@@ -80,6 +82,7 @@ public class PNFSoftwareUpgradeTest extends BaseBPMNTest {
         responseObject = FileUtil.readResourceFile("response/" + getClass().getSimpleName() + ".json");
 
         executionVariables.put("bpmnRequest", requestObject);
+        executionVariables.put("requestId", REQUEST_ID);
 
         /**
          * This variable indicates that the flow was invoked asynchronously. It's injected by {@link WorkflowProcessor}.
@@ -99,6 +102,7 @@ public class PNFSoftwareUpgradeTest extends BaseBPMNTest {
     public void workflow_validInput_expectedOutput() throws InterruptedException {
 
         mockCatalogDb();
+        mockRequestDb();
         mockAai();
 
         final String msoRequestId = UUID.randomUUID().toString();
@@ -118,9 +122,9 @@ public class PNFSoftwareUpgradeTest extends BaseBPMNTest {
 
         // Layout is to reflect the bpmn visual layout
         assertThat(pi).isEnded().hasPassedInOrder("softwareUpgrade_startEvent", "ServiceTask_042uz7n",
-                "ServiceTask_0slpahe", "ExclusiveGateway_0x6h0ni", "ServiceTask_0x5cje8", "ExclusiveGateway_0v3l3wv",
-                "ServiceTask_02lxf48", "ExclusiveGateway_0ch3fef", "ServiceTask_0y2uysu", "ExclusiveGateway_1ny9b1z",
-                "softwareUpgrade_endEvent");
+                "ScriptTask_10klpg8", "ServiceTask_0slpahe", "ExclusiveGateway_0x6h0ni", "ServiceTask_0x5cje8",
+                "ExclusiveGateway_0v3l3wv", "ServiceTask_02lxf48", "ExclusiveGateway_0ch3fef", "ServiceTask_0y2uysu",
+                "ExclusiveGateway_1ny9b1z", "ScriptTask_1igtc83", "CallActivity_0o1mi8u", "softwareUpgrade_endEvent");
 
         List<ExecutionServiceInput> detailedMessages = grpcNettyServer.getDetailedMessages();
         assertThat(detailedMessages.size() == 4);
@@ -200,6 +204,14 @@ public class PNFSoftwareUpgradeTest extends BaseBPMNTest {
          * Post the pnf to AAI
          */
         wireMockServer.stubFor(post(urlEqualTo("/aai/" + VERSION + "/network/pnfs/pnf/PNFDemo")));
+    }
+
+    private void mockRequestDb() {
+        /**
+         * Update Request DB
+         */
+        wireMockServer.stubFor(put(urlEqualTo("/infraActiveRequests/" + REQUEST_ID)));
+
     }
 
     /**
