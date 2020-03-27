@@ -1,0 +1,13 @@
+{
+  "ApplicationControllerTaskRequest": {
+    "controllerType": "APPC",
+    "action": "ConfigModify",
+    "identityUrl": "IDENTITY-URL-TEST",
+    "applicationControllerVnf": {
+      "vnfId": "TEST-VNF-ID",
+      "vnfName": "TEST-VNF-NAME",
+      "vnfHostIpAddress": "127.0.0.1"
+  },
+        "configParams": {"name1":"value1", "name2":"value2"}
+}
+}

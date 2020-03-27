@@ -1,7 +1,9 @@
 package org.onap.so.bpmn.infrastructure.appc.tasks;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.appc.client.lcm.model.Action;
@@ -29,6 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class AppcOrchestratorPreProcessor {
@@ -84,8 +88,16 @@ public class AppcOrchestratorPreProcessor {
                 appcTaskRequest.setNewSoftwareVersion(newSoftwareVersion);
                 String operationsTimeout = JsonUtils.getJsonValue(payload, "operations_timeout");
                 appcTaskRequest.setOperationsTimeout(operationsTimeout);
-            }
 
+                Map<String, String> configMap = new HashMap<>();
+                ObjectMapper objectMapper = new ObjectMapper();
+                String configParamsStr = JsonUtils.getJsonValue(payload, "configuration_parameters");
+                if (configParamsStr != null) {
+                    configMap =
+                            objectMapper.readValue(configParamsStr, new TypeReference<HashMap<String, String>>() {});
+                }
+                appcTaskRequest.setConfigParams(configMap);
+            }
             ControllerSelectionReference controllerSelectionReference = catalogDbClient
                     .getControllerSelectionReferenceByVnfTypeAndActionCategory(vnfType, action.toString());
             String controllerType = null;
@@ -229,8 +241,13 @@ public class AppcOrchestratorPreProcessor {
                                     .isEmpty()) {
                         errorMessage = "APPC action Snapshot is missing vserverId parameter. ";
                     }
-                    break;
                 }
+                break;
+            case ConfigModify:
+                if (appcTaskRequest.getConfigParams().isEmpty() || appcTaskRequest.getConfigParams() == null) {
+                    errorMessage = "APPC action ConfigModify is missing Configuration parameters. ";
+                }
+                break;
             default:
                 break;
         }

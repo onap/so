@@ -1,5 +1,10 @@
 package org.onap.so.adapters.appc.orchestrator.client.beans;
 
+import java.util.HashMap;
+import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -14,6 +19,8 @@ public class ConfigurationParameters {
     private String nodeList;
     @JsonProperty("file_parameter_content")
     private String fileParameterContent;
+    @JsonIgnore
+    private Map<String, String> additionalProperties = new HashMap<>();
 
 
     @JsonProperty("vnf_name")
@@ -48,6 +55,20 @@ public class ConfigurationParameters {
 
     public void setFileParameterContent(String fileParameterContent) {
         this.fileParameterContent = fileParameterContent;
+    }
+
+    @JsonAnyGetter
+    public Map<String, String> getAdditionalProperties() {
+        return this.additionalProperties;
+    }
+
+    @JsonAnySetter
+    public void setAdditionalProperty(String name, String value) {
+        this.additionalProperties.put(name, value);
+    }
+
+    public void setAdditionalProperties(Map<String, String> map) {
+        this.additionalProperties = map;
     }
 
 }

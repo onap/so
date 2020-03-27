@@ -45,6 +45,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
+import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestParameters;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.policy.JettisonStyleMapperProvider;
@@ -163,4 +164,46 @@ public class AppcOrchestratorPreProcessorTest extends BaseTaskTest {
         genericVnf.setIpv4OamAddress("127.0.0.1");
         return genericVnf;
     }
+
+    @Test
+    public void buildAppcTaskRequestConfigModifyTest() throws Exception {
+        final String expectedRequestJson =
+                new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "appcTaskRequestConfigModify.json")));
+        ApplicationControllerTaskRequest expectedTaskRequest =
+                mapper.readValue(expectedRequestJson, ApplicationControllerTaskRequest.class);
+        execution.getLookupMap().put(ResourceKey.GENERIC_VNF_ID, "-TEST");
+        fillRequiredAppcExecutionFieldsConfigModify();
+        GenericVnf genericVnf = getTestGenericVnf();
+        when(extractPojosForBB.extractByKey(eq(execution), eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(genericVnf);
+        mockReferenceResponseForConfigModify();
+        execution.getLookupMap().put(ResourceKey.VF_MODULE_ID, "VF-MODULE-ID-TEST");
+        VfModule vfModule = new VfModule();
+        vfModule.setVfModuleId("VF-MODULE-ID");
+        when(extractPojosForBB.extractByKey(eq(execution), eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
+        appcOrchestratorPreProcessor.buildAppcTaskRequest(execution, "ConfigModify");
+        ApplicationControllerTaskRequest actualTaskRequest = execution.getVariable("appcOrchestratorRequest");
+        assertThat(actualTaskRequest, sameBeanAs(expectedTaskRequest));
+    }
+
+    private void fillRequiredAppcExecutionFieldsConfigModify() {
+        RequestContext context = new RequestContext();
+        RequestParameters requestParameters = new RequestParameters();
+        requestParameters.setPayload(
+                "{\"request_parameters\":{\"host_ip_address\":\"10.10.10.10\"},\"configuration_parameters\":{\"name1\":\"value1\",\"name2\":\"value2\"}}");
+        context.setRequestParameters(requestParameters);
+        context.setMsoRequestId("TEST-MSO-ID");
+        execution.setVariable("aicIdentity", "AIC-TEST");
+        execution.setVariable("vmIdList", "VM-ID-LIST-TEST");
+        execution.setVariable("vserverIdList", "VSERVER-ID-LIST");
+        execution.setVariable("identityUrl", "IDENTITY-URL-TEST");
+        execution.getGeneralBuildingBlock().setRequestContext(context);
+    }
+
+    private void mockReferenceResponseForConfigModify() {
+        ControllerSelectionReference reference = new ControllerSelectionReference();
+        reference.setControllerName("APPC");
+        when(catalogDbClient.getControllerSelectionReferenceByVnfTypeAndActionCategory(eq("TEST-VNF-TYPE"),
+                eq(Action.ConfigModify.toString()))).thenReturn(reference);
+    }
+
 }

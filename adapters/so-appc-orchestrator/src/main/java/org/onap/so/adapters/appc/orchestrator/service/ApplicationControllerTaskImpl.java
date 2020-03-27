@@ -32,10 +32,10 @@ public class ApplicationControllerTaskImpl {
         Optional<String> vserverId = Optional.empty();
         Parameters parameters = new Parameters();
         ConfigurationParameters configParams = new ConfigurationParameters();
+        RequestParameters requestParams = new RequestParameters();
 
         switch (request.getAction()) {
             case HealthCheck:
-                RequestParameters requestParams = new RequestParameters();
                 requestParams.setHostIpAddress(request.getApplicationControllerVnf().getVnfHostIpAddress());
                 parameters.setRequestParameters(requestParams);
                 payload = Optional.of((mapper.getMapper().writeValueAsString(parameters)));
@@ -75,6 +75,12 @@ public class ApplicationControllerTaskImpl {
                 payload = Optional.of((mapper.getMapper().writeValueAsString(parameters)));
                 break;
             case ConfigModify:
+                requestParams.setHostIpAddress(request.getApplicationControllerVnf().getVnfHostIpAddress());
+                configParams.setAdditionalProperties(request.getConfigParams());
+                parameters.setRequestParameters(requestParams);
+                parameters.setConfigurationParameters(configParams);
+                payload = Optional.of((mapper.getMapper().writeValueAsString(parameters)));
+                break;
             case ConfigScaleOut:
                 break;
             case UpgradePreCheck:
@@ -97,6 +103,7 @@ public class ApplicationControllerTaskImpl {
                     vserverId = Optional
                             .of(request.getApplicationControllerVnf().getApplicationControllerVm().getVserverId());
                 }
+                break;
             default:
                 // errorMessage = "Unable to idenify Action request for AppCClient";
                 break;
