@@ -915,7 +915,7 @@ public class CatalogDbClient {
                 findVnfResourceCustomizationInList(vnfCustomizationUUID, service.getVnfCustomizations());
         VfModuleCustomization vfModuleCust =
                 findVfModuleCustomizationInList(vfModuleCustomizationUUID, vnfResourceCust.getVfModuleCustomizations());
-        return vfModuleCust.getCvnfcCustomization().stream().collect(Collectors.toList());
+        return vfModuleCust.getCvnfcCustomization();
     }
 
     public VnfResourceCustomization findVnfResourceCustomizationInList(String vnfCustomizationUUID,
@@ -971,10 +971,9 @@ public class CatalogDbClient {
         List<CvnfcCustomization> cvnfcCustomization =
                 getCvnfcCustomization(serviceModelUUID, vnfCustomizationUuid, vfModuleCustomizationUuid);
         CvnfcCustomization cvnfc = findCvnfcCustomizationInAList(cvnfcCustomizationUuid, cvnfcCustomization);
-        List<CvnfcConfigurationCustomization> fabricConfigs = cvnfc
-                .getCvnfcConfigurationCustomization().stream().filter(cvnfcCustom -> cvnfcCustom
-                        .getConfigurationResource().getToscaNodeType().contains("FabricConfiguration"))
-                .collect(Collectors.toList());
+        List<CvnfcConfigurationCustomization> fabricConfigs = cvnfc.getCvnfcConfigurationCustomization();
+        fabricConfigs.stream().filter(cvnfcCustom -> cvnfcCustom.getConfigurationResource().getToscaNodeType()
+                .contains("FabricConfiguration")).collect(Collectors.toList());
         if (fabricConfigs != null && !fabricConfigs.isEmpty() && fabricConfigs.size() == 1) {
             logger.debug("Found Fabric Configuration: {}", fabricConfigs.get(0));
             return fabricConfigs.get(0);

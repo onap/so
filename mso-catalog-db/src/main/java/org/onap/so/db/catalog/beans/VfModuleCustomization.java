@@ -21,10 +21,9 @@
 package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -41,7 +40,6 @@ import javax.persistence.TemporalType;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.openpojo.business.annotation.BusinessKey;
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
@@ -98,7 +96,7 @@ public class VfModuleCustomization implements Serializable {
     private VnfResourceCustomization vnfCustomization;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "vfModuleCustomization")
-    private Set<CvnfcCustomization> cvnfcCustomization;
+    private List<CvnfcCustomization> cvnfcCustomization;
 
     @Column(name = "SKIP_POST_INSTANTIATION_CONFIGURATION")
     private Boolean skipPostInstConf;
@@ -233,13 +231,13 @@ public class VfModuleCustomization implements Serializable {
     }
 
     @LinkedResource
-    public Set<CvnfcCustomization> getCvnfcCustomization() {
+    public List<CvnfcCustomization> getCvnfcCustomization() {
         if (cvnfcCustomization == null)
-            cvnfcCustomization = new HashSet<>();
+            cvnfcCustomization = new ArrayList<>();
         return cvnfcCustomization;
     }
 
-    public void setCvnfcCustomization(Set<CvnfcCustomization> cvnfcCustomization) {
+    public void setCvnfcCustomization(List<CvnfcCustomization> cvnfcCustomization) {
         this.cvnfcCustomization = cvnfcCustomization;
     }
 

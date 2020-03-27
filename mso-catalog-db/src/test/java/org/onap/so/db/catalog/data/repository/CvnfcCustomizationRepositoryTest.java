@@ -23,14 +23,10 @@ package org.onap.so.db.catalog.data.repository;
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import org.junit.Assert;
 import org.junit.Test;
 import org.onap.so.db.catalog.BaseTest;
-import org.onap.so.db.catalog.beans.ConfigurationResource;
-import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.CvnfcCustomization;
 import org.onap.so.db.catalog.beans.VfModule;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
@@ -44,6 +40,7 @@ import org.springframework.util.CollectionUtils;
 public class CvnfcCustomizationRepositoryTest extends BaseTest {
     @Autowired
     private CvnfcCustomizationRepository cvnfcCustomizationRepository;
+
 
     @Test
     public void findAllTest() throws Exception {
@@ -125,13 +122,11 @@ public class CvnfcCustomizationRepositoryTest extends BaseTest {
         vnfResourceCustomization.setVnfResources(vnfResource);
 
 
-
         VnfcCustomization vnfcCustomization = setUpVnfcCustomization();
         vnfcCustomization.setModelCustomizationUUID("d95d704a-9ff2-11e8-98d0-529269fb1459");
 
-
-
         cvnfcCustomizationRepository.save(cvnfcCustomization);
+
 
         List<CvnfcCustomization> cvnfcCustomizationList =
                 cvnfcCustomizationRepository.findByModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
@@ -173,7 +168,7 @@ public class CvnfcCustomizationRepositoryTest extends BaseTest {
         vnfResourceCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
         vnfResourceCustomization.setModelInstanceName("testModelInstanceName");
 
-        List<VnfResourceCustomization> vnfResourceCustomizations = new ArrayList();
+        List<VnfResourceCustomization> vnfResourceCustomizations = new ArrayList<>();
         vnfResourceCustomizations.add(vnfResourceCustomization);
         vnfResourceCustomization.setVnfResources(vnfResource);
 

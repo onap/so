@@ -2036,7 +2036,7 @@ public class ToscaResourceInstaller {
         // ******************************************************************************************************************
 
         List<CvnfcConfigurationCustomization> cvnfcConfigurationCustomizations = new ArrayList<>();
-        Set<CvnfcCustomization> cvnfcCustomizations = new HashSet<>();
+        List<CvnfcCustomization> cvnfcCustomizations = new ArrayList<>();
         Set<VnfcCustomization> vnfcCustomizations = new HashSet<>();
 
         // Only set the CVNFC if this vfModule group is a member of it.
