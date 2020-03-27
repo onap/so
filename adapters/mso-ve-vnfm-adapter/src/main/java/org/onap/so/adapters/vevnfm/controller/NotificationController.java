@@ -20,11 +20,14 @@
 
 package org.onap.so.adapters.vevnfm.controller;
 
+import org.onap.so.adapters.vevnfm.constant.VnfNotificationFilterType;
 import org.onap.so.adapters.vevnfm.service.DmaapService;
+import org.onap.so.adapters.vevnfm.service.VnfAaiChecker;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.VnfLcmOperationOccurrenceNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,13 +38,27 @@ public class NotificationController {
 
     private static final Logger logger = LoggerFactory.getLogger(NotificationController.class);
 
+    @Value("${vnf.filter-type}")
+    private VnfNotificationFilterType vnfFilterType;
+
+    private final VnfAaiChecker vnfAaiChecker;
+
+    private final DmaapService dmaapService;
+
     @Autowired
-    private DmaapService dmaapService;
+    public NotificationController(final VnfAaiChecker vnfAaiChecker, final DmaapService dmaapService) {
+        this.vnfAaiChecker = vnfAaiChecker;
+        this.dmaapService = dmaapService;
+    }
 
     @PostMapping("${vnfm.notification}")
     public ResponseEntity receiveNotification(@RequestBody final VnfLcmOperationOccurrenceNotification notification) {
         logger.info("Notification received {}", notification);
-        dmaapService.send(notification);
+
+        if (vnfAaiChecker.vnfCheck(vnfFilterType, notification.getVnfInstanceId())) {
+            dmaapService.send(notification);
+        }
+
         return ResponseEntity.ok().build();
     }
 }
