@@ -20,11 +20,14 @@
 
 package org.onap.so.adapters.vevnfm.controller;
 
+import org.onap.so.adapters.vevnfm.constant.VnfNotificationFilterType;
 import org.onap.so.adapters.vevnfm.service.DmaapService;
+import org.onap.so.adapters.vevnfm.service.VnfAaiChecker;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.VnfLcmOperationOccurrenceNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,13 +38,32 @@ public class NotificationController {
 
     private static final Logger logger = LoggerFactory.getLogger(NotificationController.class);
 
+    private final VnfNotificationFilterType vnfFilterType;
+    private final VnfAaiChecker vnfAaiChecker;
+    private final DmaapService dmaapService;
+
     @Autowired
-    private DmaapService dmaapService;
+    public NotificationController(
+            @Value("${notification.vnf-filter-type}") final VnfNotificationFilterType vnfFilterType,
+            final VnfAaiChecker vnfAaiChecker, final DmaapService dmaapService) {
+        this.vnfFilterType = vnfFilterType;
+        this.vnfAaiChecker = vnfAaiChecker;
+        this.dmaapService = dmaapService;
+    }
 
     @PostMapping("${vnfm.notification}")
     public ResponseEntity receiveNotification(@RequestBody final VnfLcmOperationOccurrenceNotification notification) {
         logger.info("Notification received {}", notification);
-        dmaapService.send(notification);
+
+        final String vnfInstanceId = notification.getVnfInstanceId();
+
+        if (vnfAaiChecker.vnfCheck(vnfFilterType, vnfInstanceId)) {
+            logger.info("The info with the VNF id '{}' is sent to DMaaP", vnfInstanceId);
+            dmaapService.send(notification);
+        } else {
+            logger.info("This VNF id '{}' is not supported", vnfInstanceId);
+        }
+
         return ResponseEntity.ok().build();
     }
 }

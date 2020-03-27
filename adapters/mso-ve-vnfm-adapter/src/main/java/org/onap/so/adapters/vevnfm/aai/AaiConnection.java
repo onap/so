@@ -26,8 +26,10 @@ import java.util.List;
 import java.util.Optional;
 import org.apache.logging.log4j.util.Strings;
 import org.onap.aai.domain.yang.EsrSystemInfo;
+import org.onap.aai.domain.yang.EsrSystemInfoList;
 import org.onap.aai.domain.yang.EsrVnfm;
 import org.onap.aai.domain.yang.EsrVnfmList;
+import org.onap.aai.domain.yang.v18.GenericVnf;
 import org.onap.so.adapters.vevnfm.exception.VeVnfmException;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
@@ -72,7 +74,7 @@ public class AaiConnection {
 
         if (response.isPresent()) {
             final EsrVnfmList esrVnfmList = response.get();
-            logger.info("The VNFM replied with: {}", esrVnfmList);
+            logger.info("The AAI ESR replied with: {}", esrVnfmList);
             final List<EsrVnfm> esrVnfm = esrVnfmList.getEsrVnfm();
 
             final List<EsrSystemInfo> infos = new LinkedList<>();
@@ -94,10 +96,28 @@ public class AaiConnection {
 
         if (response.isPresent()) {
             final EsrVnfm esrVnfm = response.get();
-            logger.info("The VNFM replied with: {}", esrVnfm);
-            return esrVnfm.getEsrSystemInfoList().getEsrSystemInfo();
+            logger.info("The AAI ESR replied with: {}", esrVnfm);
+            final EsrSystemInfoList esrSystemInfoList = esrVnfm.getEsrSystemInfoList();
+
+            if (esrSystemInfoList != null) {
+                return esrSystemInfoList.getEsrSystemInfo();
+            }
         }
 
         return Collections.emptyList();
+    }
+
+    public boolean checkGenericVnfId(final String vnfId) {
+        final AAIResourcesClient resourcesClient = new AAIResourcesClient();
+        final AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId);
+        final Optional<GenericVnf> response = resourcesClient.get(GenericVnf.class, resourceUri);
+
+        if (response.isPresent()) {
+            final GenericVnf vnf = response.get();
+            logger.info("The AAI replied with: {}", vnf);
+            return vnfId.equals(vnf.getVnfId());
+        }
+
+        return false;
     }
 }
