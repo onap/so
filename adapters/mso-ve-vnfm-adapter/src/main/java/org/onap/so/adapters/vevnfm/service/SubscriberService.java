@@ -20,6 +20,7 @@
 
 package org.onap.so.adapters.vevnfm.service;
 
+import com.google.gson.Gson;
 import com.squareup.okhttp.Credentials;
 import java.util.Collections;
 import org.apache.logging.log4j.util.Strings;
@@ -29,12 +30,16 @@ import org.onap.so.adapters.vevnfm.provider.AuthorizationHeadersProvider;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRequest;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsAuthentication;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsAuthenticationParamsBasic;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SubscriberService {
+
+    @Value("${vevnfmadapter.vnf-filter-json}")
+    private String vnfFilter;
 
     @Value("${vevnfmadapter.endpoint}")
     private String endpoint;
@@ -91,6 +96,7 @@ public class SubscriberService {
 
     private LccnSubscriptionRequest createRequest() {
         final LccnSubscriptionRequest request = new LccnSubscriptionRequest();
+        request.filter(getFilter());
         request.callbackUri(getCallbackUri());
         final SubscriptionsAuthenticationParamsBasic paramsBasic = new SubscriptionsAuthenticationParamsBasic();
         final SubscriptionsAuthentication authentication = new SubscriptionsAuthentication();
@@ -101,6 +107,11 @@ public class SubscriberService {
         request.authentication(authentication);
 
         return request;
+    }
+
+    private SubscriptionsFilter getFilter() {
+        final Gson gson = new Gson();
+        return gson.fromJson(vnfFilter, SubscriptionsFilter.class);
     }
 
     private String getCallbackUri() {
