@@ -97,7 +97,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     private static final String NETWORK_CREATED_STATUS_MESSAGE =
             "The new network was successfully created in the cloud";
     private static final String NETWORK_NOT_EXIST_STATUS_MESSAGE =
-            "The network as not found, thus no network was deleted in the cloud via this request";
+            "The network was not found, thus no network was deleted in the cloud via this request";
     private static final String NETWORK_DELETED_STATUS_MESSAGE = "The network was successfully deleted in the cloud";
 
     private static final Logger logger = LoggerFactory.getLogger(MsoNetworkAdapterImpl.class);
