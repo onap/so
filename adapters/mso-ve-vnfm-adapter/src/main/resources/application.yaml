@@ -32,6 +32,9 @@ vnfm:
   subscription: /vnflcm/v1/subscriptions
   notification: /lcm/v1/vnf/instances/notifications
 
+vnf:
+  filter-type: ALL
+
 dmaap:
   endpoint: http://message-router.onap:30227
   topic: /events/unauthenticated.DCAE_CL_OUTPUT
