@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import org.apache.logging.log4j.util.Strings;
 import org.onap.aai.domain.yang.EsrSystemInfo;
+import org.onap.aai.domain.yang.EsrSystemInfoList;
 import org.onap.aai.domain.yang.EsrVnfm;
 import org.onap.aai.domain.yang.EsrVnfmList;
 import org.onap.so.adapters.vevnfm.exception.VeVnfmException;
@@ -95,7 +96,11 @@ public class AaiConnection {
         if (response.isPresent()) {
             final EsrVnfm esrVnfm = response.get();
             logger.info("The VNFM replied with: {}", esrVnfm);
-            return esrVnfm.getEsrSystemInfoList().getEsrSystemInfo();
+            final EsrSystemInfoList esrSystemInfoList = esrVnfm.getEsrSystemInfoList();
+
+            if (esrSystemInfoList != null) {
+                return esrSystemInfoList.getEsrSystemInfo();
+            }
         }
 
         return Collections.emptyList();
