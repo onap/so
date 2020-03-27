@@ -18,6 +18,7 @@ server:
   port: 9098
 
 vevnfmadapter:
+  vnf-filter-json: '{notificationTypes:[VnfLcmOperationOccurrenceNotification],operationStates:[COMPLETED]}'
   endpoint: http://so-ve-vnfm-adapter.onap:9098
 
 mso:
@@ -31,6 +32,9 @@ vnfm:
   default-endpoint: https://so-vnfm-simulator.onap:9093
   subscription: /vnflcm/v1/subscriptions
   notification: /lcm/v1/vnf/instances/notifications
+
+vnf:
+  filter-type: NONE
 
 dmaap:
   endpoint: http://message-router.onap:30227
