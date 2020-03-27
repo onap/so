@@ -34,7 +34,7 @@ vnfm:
   notification: /lcm/v1/vnf/instances/notifications
 
 vnf:
-  filter-type: NONE
+  filter-type: ALL
 
 dmaap:
   endpoint: http://message-router.onap:30227
