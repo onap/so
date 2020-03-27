@@ -21,7 +21,6 @@
 package org.onap.so.adapters.vevnfm.controller;
 
 import static org.junit.Assert.assertEquals;
-import static org.springframework.test.web.client.ExpectedCount.once;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.anything;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 import org.junit.Before;
@@ -77,7 +76,7 @@ public class NotificationControllerTest {
         final MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(notification)
                 .contentType(MediaType.APPLICATION_JSON).content(MINIMAL_JSON_CONTENT);
 
-        mockRestServer.expect(once(), anything()).andRespond(withSuccess());
+        mockRestServer.expect(anything()).andRespond(withSuccess());
 
         // when
         final MvcResult mvcResult = mvc.perform(request).andReturn();
