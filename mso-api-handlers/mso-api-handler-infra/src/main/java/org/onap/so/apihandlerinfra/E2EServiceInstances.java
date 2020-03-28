@@ -34,6 +34,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import org.onap.so.apihandlerinfra.e2eserviceinstancebeans.*;
 import org.onap.aai.domain.yang.v16.ServiceInstance;
 import org.onap.so.client.aai.AAIObjectType;
@@ -377,6 +378,8 @@ public class E2EServiceInstances {
         E2ESliceServiceActivateRequest e2eActReq;
 
         ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
         try {
             e2eActReq = mapper.readValue(requestJSON, E2ESliceServiceActivateRequest.class);
 
@@ -487,6 +490,7 @@ public class E2EServiceInstances {
         E2EServiceInstanceDeleteRequest e2eDelReq;
 
         ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         try {
             e2eDelReq = mapper.readValue(requestJSON, E2EServiceInstanceDeleteRequest.class);
 
