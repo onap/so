@@ -83,7 +83,6 @@ import org.onap.so.serviceinstancebeans.Networks;
 import org.onap.so.serviceinstancebeans.Pnfs;
 import org.onap.so.serviceinstancebeans.RelatedInstance;
 import org.onap.so.serviceinstancebeans.RequestDetails;
-import org.onap.so.serviceinstancebeans.RequestInfo;
 import org.onap.so.serviceinstancebeans.Service;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 import org.onap.so.serviceinstancebeans.VfModules;
@@ -169,18 +168,6 @@ public class WorkflowAction {
     }
 
     public void selectExecutionList(DelegateExecution execution) throws Exception {
-        final String apiVersion = (String) execution.getVariable(BBConstants.G_APIVERSION);
-        final String vnfType = (String) execution.getVariable(VNF_TYPE);
-        String serviceInstanceId = (String) execution.getVariable("serviceInstanceId");
-        final String createInstanceAction = "createInstance";
-        final String serviceType =
-                Optional.ofNullable((String) execution.getVariable(BBConstants.G_SERVICE_TYPE)).orElse("");
-
-        List<OrchestrationFlow> orchFlows =
-                (List<OrchestrationFlow>) execution.getVariable(BBConstants.G_ORCHESTRATION_FLOW);
-        WorkflowResourceIds workflowResourceIds = populateResourceIdsFromApiHandler(execution);
-        List<Pair<WorkflowType, String>> aaiResourceIds = new ArrayList<>();
-        List<Resource> resourceList = new ArrayList<>();
         execution.setVariable("sentSyncResponse", false);
         execution.setVariable("homing", false);
         execution.setVariable("calledHoming", false);
@@ -205,8 +192,9 @@ public class WorkflowAction {
             WorkflowType resourceType = resource.getResourceType();
             execution.setVariable("resourceName", resourceType.toString());
             String resourceId = "";
-            final String requestAction = (String) execution.getVariable(BBConstants.G_ACTION);
-            if (resource.isGenerated() && requestAction.equalsIgnoreCase(createInstanceAction)
+            String requestAction = (String) execution.getVariable(BBConstants.G_ACTION);
+            WorkflowResourceIds workflowResourceIds = populateResourceIdsFromApiHandler(execution);
+            if (resource.isGenerated() && requestAction.equalsIgnoreCase("createInstance")
                     && sIRequest.getRequestDetails().getRequestInfo().getInstanceName() != null) {
                 resourceId = validateResourceIdInAAI(resource.getResourceId(), resourceType,
                         sIRequest.getRequestDetails().getRequestInfo().getInstanceName(), sIRequest.getRequestDetails(),
@@ -214,6 +202,7 @@ public class WorkflowAction {
             } else {
                 resourceId = resource.getResourceId();
             }
+            String serviceInstanceId = (String) execution.getVariable("serviceInstanceId");
             if ((serviceInstanceId == null || serviceInstanceId.isEmpty()) && resourceType == WorkflowType.SERVICE) {
                 serviceInstanceId = resourceId;
             }
@@ -232,10 +221,16 @@ public class WorkflowAction {
                             "Could not resume request with request Id: " + requestId + ". No flowsToExecute was found");
                 }
             } else {
+                String vnfType = (String) execution.getVariable(VNF_TYPE);
                 String cloudOwner = getCloudOwner(requestDetails.getCloudConfiguration());
+                List<OrchestrationFlow> orchFlows =
+                        (List<OrchestrationFlow>) execution.getVariable(BBConstants.G_ORCHESTRATION_FLOW);
+                final String apiVersion = (String) execution.getVariable(BBConstants.G_APIVERSION);
+                final String serviceType =
+                        Optional.ofNullable((String) execution.getVariable(BBConstants.G_SERVICE_TYPE)).orElse("");
                 if (aLaCarte) {
                     if (orchFlows == null || orchFlows.isEmpty()) {
-                        orchFlows = queryNorthBoundRequestCatalogDb(execution, requestAction, resourceType, aLaCarte,
+                        orchFlows = queryNorthBoundRequestCatalogDb(execution, requestAction, resourceType, true,
                                 cloudOwner, serviceType);
                     }
                     String key = "";
@@ -248,12 +243,12 @@ public class WorkflowAction {
                         }
                     }
                     boolean isConfiguration = isConfiguration(orchFlows);
-                    Resource resourceKey = new Resource(resourceType, key, aLaCarte);
+                    Resource resourceKey = new Resource(resourceType, key, true);
                     if (isConfiguration && !requestAction.equalsIgnoreCase(CREATEINSTANCE)) {
                         List<ExecuteBuildingBlock> configBuildingBlocks = getConfigBuildingBlocks(
                                 new ConfigBuildingBlocksDataObject().setsIRequest(sIRequest).setOrchFlows(orchFlows)
                                         .setRequestId(requestId).setResourceKey(resourceKey).setApiVersion(apiVersion)
-                                        .setResourceId(resourceId).setRequestAction(requestAction).setaLaCarte(aLaCarte)
+                                        .setResourceId(resourceId).setRequestAction(requestAction).setaLaCarte(true)
                                         .setVnfType(vnfType).setWorkflowResourceIds(workflowResourceIds)
                                         .setRequestDetails(requestDetails).setExecution(execution));
 
@@ -269,19 +264,21 @@ public class WorkflowAction {
                         orchFlows = getVfModuleReplaceBuildingBlocks(
                                 new ConfigBuildingBlocksDataObject().setsIRequest(sIRequest).setOrchFlows(orchFlows)
                                         .setRequestId(requestId).setResourceKey(resourceKey).setApiVersion(apiVersion)
-                                        .setResourceId(resourceId).setRequestAction(requestAction).setaLaCarte(aLaCarte)
+                                        .setResourceId(resourceId).setRequestAction(requestAction).setaLaCarte(true)
                                         .setVnfType(vnfType).setWorkflowResourceIds(workflowResourceIds)
                                         .setRequestDetails(requestDetails).setExecution(execution));
                     }
                     for (OrchestrationFlow orchFlow : orchFlows) {
                         ExecuteBuildingBlock ebb = buildExecuteBuildingBlock(orchFlow, requestId, resourceKey,
-                                apiVersion, resourceId, requestAction, aLaCarte, vnfType, workflowResourceIds,
+                                apiVersion, resourceId, requestAction, true, vnfType, workflowResourceIds,
                                 requestDetails, false, null, null, false);
                         flowsToExecute.add(ebb);
                     }
                 } else {
                     boolean foundRelated = false;
                     boolean containsService = false;
+                    List<Resource> resourceList = new ArrayList<>();
+                    List<Pair<WorkflowType, String>> aaiResourceIds = new ArrayList<>();
                     if (resourceType == WorkflowType.SERVICE && requestAction.equalsIgnoreCase(ASSIGNINSTANCE)) {
                         // SERVICE-MACRO-ASSIGN will always get user params with a
                         // service.
@@ -438,13 +435,6 @@ public class WorkflowAction {
         }
         logger.warn("cloud owner value not found in request details, it will be set as default");
         return environment.getProperty(defaultCloudOwner);
-    }
-
-    private boolean isSuppressRollback(RequestInfo requestInfo) {
-        if (requestInfo != null) {
-            return requestInfo.getSuppressRollback();
-        }
-        return false;
     }
 
     protected <T> List<T> getRelatedResourcesInVfModule(String vnfId, String vfModuleId, Class<T> resultClass,
