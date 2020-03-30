@@ -28,6 +28,7 @@ import org.onap.so.adapters.vnfmadapter.converters.etsicatalog.sol003.PkgOnboard
 import org.onap.so.adapters.vnfmadapter.converters.etsicatalog.sol003.VnfPkgInfoConverter;
 import org.onap.so.adapters.vnfmadapter.converters.sol003.etsicatalog.PkgmSubscriptionRequestConverter;
 import org.onap.so.adapters.vnfmadapter.oauth.OAuth2AccessTokenAdapter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,10 +44,17 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
 @Configuration
 public class MessageConverterConfiguration {
 
+    private final VnfmAdapterUrlProvider vnfmAdapterUrlProvider;
+
+    @Autowired
+    public MessageConverterConfiguration(final VnfmAdapterUrlProvider vnfmAdapterUrlProvider) {
+        this.vnfmAdapterUrlProvider = vnfmAdapterUrlProvider;
+    }
+
     @Bean
     public ConversionService conversionService() {
         final DefaultConversionService service = new DefaultConversionService();
-        service.addConverter(new VnfPkgInfoConverter());
+        service.addConverter(new VnfPkgInfoConverter(vnfmAdapterUrlProvider));
         service.addConverter(new PkgmSubscriptionRequestConverter());
         service.addConverter(new PkgChangeNotificationConverter());
         service.addConverter(new PkgOnboardingNotificationConverter());
