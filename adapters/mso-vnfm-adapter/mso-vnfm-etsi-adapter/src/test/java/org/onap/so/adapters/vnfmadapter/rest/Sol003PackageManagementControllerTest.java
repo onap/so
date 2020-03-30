@@ -45,6 +45,7 @@ import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VnfPackageA
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VnfPackageSoftwareImageInfo;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VnfPkgInfo;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.InlineResponse2001;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.VnfPackagesLinks;
 import org.onap.so.configuration.rest.BasicHttpHeadersProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -94,7 +95,11 @@ public class Sol003PackageManagementControllerTest {
     private static final String VNFD_VERSION = "vnfdVersion";
     private static final String ALGORITHM = "algorithm";
     private static final String HASH = "hash";
-    private static final String URI_HREF = "uriHref";
+    private static final String EXPECTED_BASE_URL =
+            "https://so-vnfm-adapter.onap:30406/so/vnfm-adapter/v1/vnfpkgm/v1/vnf_packages/";
+    private static final String EXPECTED_SELF_HREF = EXPECTED_BASE_URL + VNF_PACKAGE_ID;
+    private static final String EXPECTED_VNFD_HREF = EXPECTED_BASE_URL + VNF_PACKAGE_ID + "/vnfd";
+    private static final String EXPECTED_PACKAGE_CONTENT_HREF = EXPECTED_BASE_URL + VNF_PACKAGE_ID + "/package_content";
 
     private MockRestServiceServer mockRestServer;
     private BasicHttpHeadersProvider basicHttpHeadersProvider;
@@ -346,7 +351,11 @@ public class Sol003PackageManagementControllerTest {
         assertEquals(ARTIFACT_PATH, inlineResponse2001.getAdditionalArtifacts().get(0).getArtifactPath());
         assertEquals(ALGORITHM, inlineResponse2001.getAdditionalArtifacts().get(0).getChecksum().getAlgorithm());
         assertEquals(HASH, inlineResponse2001.getAdditionalArtifacts().get(0).getChecksum().getHash());
-        assertEquals(URI_HREF, inlineResponse2001.getLinks().getSelf().getHref());
+        final VnfPackagesLinks links = inlineResponse2001.getLinks();
+        assertNotNull(links);
+        assertEquals(EXPECTED_SELF_HREF, links.getSelf().getHref());
+        assertEquals(EXPECTED_VNFD_HREF, links.getVnfd().getHref());
+        assertEquals(EXPECTED_PACKAGE_CONTENT_HREF, links.getPackageContent().getHref());
     }
 
     @Test
@@ -426,7 +435,12 @@ public class Sol003PackageManagementControllerTest {
         assertEquals(ARTIFACT_PATH, inlineResponse2001.getAdditionalArtifacts().get(0).getArtifactPath());
         assertEquals(ALGORITHM, inlineResponse2001.getAdditionalArtifacts().get(0).getChecksum().getAlgorithm());
         assertEquals(HASH, inlineResponse2001.getAdditionalArtifacts().get(0).getChecksum().getHash());
-        assertEquals(URI_HREF, inlineResponse2001.getLinks().getSelf().getHref());
+        final VnfPackagesLinks links = inlineResponse2001.getLinks();
+        assertNotNull(links);
+        assertEquals(EXPECTED_SELF_HREF, links.getSelf().getHref());
+        assertEquals(EXPECTED_VNFD_HREF, links.getVnfd().getHref());
+        assertEquals(EXPECTED_PACKAGE_CONTENT_HREF, links.getPackageContent().getHref());
+
     }
 
     @Test
@@ -648,9 +662,10 @@ public class Sol003PackageManagementControllerTest {
     }
 
     private VNFPKGMLinkSerializer createVNFPKGMLinkSerializerLinks() {
-        final UriLink uriLink = new UriLink().href(URI_HREF);
-        final VNFPKGMLinkSerializer vnfpkgmLinkSerializer = new VNFPKGMLinkSerializer().self(uriLink);
-        return vnfpkgmLinkSerializer;
+        final String baseUrl = "http://msb-iag:443/api/vnfpkgm/v1/vnf_packages";
+        return new VNFPKGMLinkSerializer().self(new UriLink().href(baseUrl + "/myVnfPackageId"))
+                .vnfd(new UriLink().href(baseUrl + "/myVnfPackageId/vnfd"))
+                .packageContent(new UriLink().href(baseUrl + "/myVnfPackageId/package_content"));
     }
 
 }
