@@ -170,8 +170,6 @@ public class Sol003PackageManagementController {
                 + " Sol003PackageManagementController from the EtsiCatalogManager using the\n GET \"vnf_packages\" by vnfPkgId: \""
                 + vnfPkgId + "\" for artifactPath: \"" + artifactPath + "\"\n" + "endpoint.";
         logger.error(errorMessage);
-        // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new
-        // ProblemDetails().detail(errorMessage));
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ProblemDetails().detail(errorMessage));
     }
 

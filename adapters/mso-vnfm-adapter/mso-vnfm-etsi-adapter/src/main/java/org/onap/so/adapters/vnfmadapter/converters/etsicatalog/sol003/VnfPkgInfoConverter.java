@@ -22,22 +22,22 @@ package org.onap.so.adapters.vnfmadapter.converters.etsicatalog.sol003;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.onap.so.adapters.vnfmadapter.VnfmAdapterUrlProvider;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.Checksum;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VNFPKGMLinkSerializer;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VnfPackageArtifactInfo;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VnfPackageSoftwareImageInfo;
+import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VnfPkgInfo;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.InlineResponse2001;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.VnfPackagesAdditionalArtifacts;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.VnfPackagesChecksum;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.VnfPackagesLinks;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.VnfPackagesLinksSelf;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.VnfPackagesSoftwareImages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Service;
-import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VnfPkgInfo;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.InlineResponse2001;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.VnfPackagesChecksum;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.VnfPackagesSoftwareImages;
-import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VnfPackageSoftwareImageInfo;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.VnfPackagesAdditionalArtifacts;
-import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VnfPackageArtifactInfo;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.VnfPackagesLinks;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.packagemanagement.model.VnfPackagesLinksSelf;
-import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.VNFPKGMLinkSerializer;
-import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.Checksum;
-import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.UriLink;
 
 /**
  * Converter to convert from an Etsi Catalog Manager {@link VnfPkgInfo} Object to its equivalent SOL003 Object
@@ -48,6 +48,11 @@ import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.UriLink;
 @Service
 public class VnfPkgInfoConverter implements Converter<VnfPkgInfo, InlineResponse2001> {
     private static final Logger logger = LoggerFactory.getLogger(VnfPkgInfoConverter.class);
+    private final VnfmAdapterUrlProvider vnfmAdapterUrlProvider;
+
+    public VnfPkgInfoConverter(final VnfmAdapterUrlProvider vnfmAdapterUrlProvider) {
+        this.vnfmAdapterUrlProvider = vnfmAdapterUrlProvider;
+    }
 
     /**
      * Convert a {@link VnfPkgInfo} Object to an {@link InlineResponse2001} Object
@@ -58,7 +63,7 @@ public class VnfPkgInfoConverter implements Converter<VnfPkgInfo, InlineResponse
     @Override
     public InlineResponse2001 convert(final VnfPkgInfo vnfPkgInfo) {
         if (vnfPkgInfo == null) {
-            logger.info("No VnfPkgInfo Object Provided for Conversion. (Null object received, returning Null)");
+            logger.error("No VnfPkgInfo Object Provided for Conversion. (Null object received, returning Null)");
             return null;
         }
         final InlineResponse2001 response = new InlineResponse2001();
@@ -87,7 +92,7 @@ public class VnfPkgInfoConverter implements Converter<VnfPkgInfo, InlineResponse
         response.setUserDefinedData((vnfPkgInfo.getUserDefinedData()));
 
         if (vnfPkgInfo.getLinks() != null) {
-            response.setLinks(convertVNFPKGMLinkSerializerToVnfPackagesLinks(vnfPkgInfo.getLinks()));
+            response.setLinks(getVnfPackagesLinks(vnfPkgInfo.getLinks(), vnfPkgInfo.getId()));
         }
 
         return response;
@@ -167,22 +172,27 @@ public class VnfPkgInfoConverter implements Converter<VnfPkgInfo, InlineResponse
         return vnfPackagesAdditionalArtifacts;
     }
 
-    private VnfPackagesLinks convertVNFPKGMLinkSerializerToVnfPackagesLinks(
-            final VNFPKGMLinkSerializer vnfpkgmLinkSerializer) {
+    private VnfPackagesLinks getVnfPackagesLinks(final VNFPKGMLinkSerializer links, final String vnfPkgId) {
         final VnfPackagesLinks vnfPackagesLinks = new VnfPackagesLinks();
-        vnfPackagesLinks.setSelf(convertUriLinkToVnfPackagesLinksSelf(vnfpkgmLinkSerializer.getSelf()));
-        vnfPackagesLinks.setVnfd(convertUriLinkToVnfPackagesLinksSelf(vnfpkgmLinkSerializer.getVnfd()));
-        vnfPackagesLinks
-                .setPackageContent(convertUriLinkToVnfPackagesLinksSelf(vnfpkgmLinkSerializer.getPackageContent()));
+
+        if (links.getSelf() != null) {
+            vnfPackagesLinks.setSelf(getVnfPackagesLinksSelf(vnfmAdapterUrlProvider.getVnfPackageUrl(vnfPkgId)));
+        }
+
+        if (links.getVnfd() != null) {
+            vnfPackagesLinks.setVnfd(getVnfPackagesLinksSelf(vnfmAdapterUrlProvider.getVnfPackageVnfdUrl(vnfPkgId)));
+        }
+
+        if (links.getPackageContent() != null) {
+            vnfPackagesLinks.setPackageContent(
+                    getVnfPackagesLinksSelf(vnfmAdapterUrlProvider.getVnfPackageContentUrl(vnfPkgId)));
+        }
+
         return vnfPackagesLinks;
     }
 
-    private VnfPackagesLinksSelf convertUriLinkToVnfPackagesLinksSelf(final UriLink uriLink) {
-        final VnfPackagesLinksSelf vnfPackagesLinksSelf = new VnfPackagesLinksSelf();
-        if (uriLink != null) {
-            vnfPackagesLinksSelf.setHref(uriLink.getHref());
-        }
-        return vnfPackagesLinksSelf;
+    private VnfPackagesLinksSelf getVnfPackagesLinksSelf(final String href) {
+        return new VnfPackagesLinksSelf().href(href);
     }
 
 }

@@ -29,7 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import org.onap.so.adapters.vnfmadapter.Constants;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.onap.so.adapters.vnfmadapter.VnfmAdapterUrlProvider;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.EtsiCatalogServiceProvider;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.BasicAuth;
 import org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.NsdmSubscription;
@@ -42,10 +43,8 @@ import org.onap.so.adapters.vnfmadapter.packagemanagement.subscriptionmanagement
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.ConversionFailedException;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.InternalServerErrorException;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.SubscriptionNotFoundException;
-import org.onap.so.utils.CryptoUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
@@ -62,22 +61,16 @@ public class SubscriptionManager {
     private final PackageManagementCacheServiceProvider packageManagementCacheServiceProvider;
     private final ConversionService conversionService;
     private final EtsiCatalogServiceProvider etsiCatalogServiceProvider;
-    private final String vnfmAdapterEndpoint;
-    private final String msoKeyString;
-    private final String vnfmAdapterAuth;
+    private final VnfmAdapterUrlProvider vnfmAdapterUrlProvider;
 
     @Autowired
     public SubscriptionManager(final PackageManagementCacheServiceProvider packageManagementCacheServiceProvider,
             final ConversionService conversionService, final EtsiCatalogServiceProvider etsiCatalogServiceProvider,
-            @Value("${vnfmadapter.endpoint}") final String vnfmAdapterEndpoint,
-            @Value("${mso.key}") final String msoKeyString,
-            @Value("${vnfmadapter.auth:BF29BA36F0CFE1C05507781F6B97EFBCA7EFAC9F595954D465FC43F646883EF585C20A58CBB02528A6FAAC}") final String vnfmAdapterAuth) {
+            final VnfmAdapterUrlProvider vnfmAdapterUrlProvider) {
         this.packageManagementCacheServiceProvider = packageManagementCacheServiceProvider;
         this.conversionService = conversionService;
         this.etsiCatalogServiceProvider = etsiCatalogServiceProvider;
-        this.vnfmAdapterEndpoint = vnfmAdapterEndpoint;
-        this.vnfmAdapterAuth = vnfmAdapterAuth;
-        this.msoKeyString = msoKeyString;
+        this.vnfmAdapterUrlProvider = vnfmAdapterUrlProvider;
     }
 
     public Optional<InlineResponse201> createSubscription(final PkgmSubscriptionRequest pkgmSubscriptionRequest)
@@ -100,7 +93,7 @@ public class SubscriptionManager {
             final InlineResponse201 response = new InlineResponse201();
             response.setId(subscriptionId);
             response.setFilter(pkgmSubscriptionRequest.getFilter());
-            response.setCallbackUri(getSubscriptionUri(subscriptionId).toString());
+            response.setCallbackUri(vnfmAdapterUrlProvider.getSubscriptionUriString(subscriptionId));
             response.setLinks(new SubscriptionsLinks()
                     .self(new VnfPackagesLinksSelf().href(getSubscriptionUri(subscriptionId).toString())));
 
@@ -167,8 +160,7 @@ public class SubscriptionManager {
     }
 
     public URI getSubscriptionUri(final String subscriptionId) {
-        return URI.create(
-                vnfmAdapterEndpoint + Constants.PACKAGE_MANAGEMENT_BASE_URL + "/subscriptions/" + subscriptionId);
+        return vnfmAdapterUrlProvider.getSubscriptionUri(subscriptionId);
     }
 
     public Optional<PkgmSubscriptionRequest> getSubscriptionRequest(final String subscriptionId) {
@@ -199,25 +191,19 @@ public class SubscriptionManager {
 
         if (etsiCatalogManagerSubscriptionRequest != null) {
             etsiCatalogManagerSubscriptionRequest
-                    .setCallbackUri(vnfmAdapterEndpoint + Constants.ETSI_SUBSCRIPTION_NOTIFICATION_BASE_URL);
+                    .setCallbackUri(vnfmAdapterUrlProvider.getEtsiSubscriptionNotificationBaseUrl());
 
-            final String[] auth = decryptAuth();
-            final String username = auth[0];
-            final String password = auth[1];
-
-            etsiCatalogManagerSubscriptionRequest.setAuthentication(
-                    new org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.SubscriptionAuthentication()
-                            .addAuthTypeItem(BASIC).paramsBasic(new BasicAuth().userName(username).password(password)));
+            final ImmutablePair<String, String> immutablePair = vnfmAdapterUrlProvider.getDecryptAuth();
+            if (!immutablePair.equals(ImmutablePair.nullPair())) {
+                etsiCatalogManagerSubscriptionRequest.setAuthentication(
+                        new org.onap.so.adapters.vnfmadapter.extclients.etsicatalog.model.SubscriptionAuthentication()
+                                .addAuthTypeItem(BASIC).paramsBasic(new BasicAuth().userName(immutablePair.getLeft())
+                                        .password(immutablePair.getRight())));
+            }
             return etsiCatalogManagerSubscriptionRequest;
         }
         throw new ConversionFailedException(
                 "Failed to convert Sol003 PkgmSubscriptionRequest to ETSI-Catalog Manager PkgmSubscriptionRequest");
-    }
-
-    private String[] decryptAuth() throws GeneralSecurityException {
-        final String decryptedAuth = CryptoUtils.decrypt(vnfmAdapterAuth, msoKeyString);
-        final String[] auth = decryptedAuth.split(":");
-        return auth;
     }
 
 }

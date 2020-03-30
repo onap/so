@@ -28,7 +28,6 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,10 +39,8 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.aai.domain.yang.EsrVnfm;
-import org.onap.logging.filter.spring.SpringClientPayloadFilter;
 import org.onap.so.adapters.vnfmadapter.extclients.AbstractServiceProviderConfiguration;
 import org.onap.so.configuration.rest.BasicHttpHeadersProvider;
-import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
 import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.onap.so.rest.service.HttpRestServiceProviderImpl;
 import org.slf4j.Logger;
@@ -54,7 +51,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
@@ -102,7 +98,7 @@ public class VnfmServiceProviderConfiguration extends AbstractServiceProviderCon
         if (trustStore != null) {
             setTrustStore(restTemplate);
         }
-        return new HttpRestServiceProviderImpl(restTemplate, new BasicHttpHeadersProvider());
+        return new HttpRestServiceProviderImpl(restTemplate, new BasicHttpHeadersProvider().getHttpHeaders());
     }
 
     private RestTemplate createRestTemplate(final EsrVnfm vnfm) {
@@ -152,16 +148,6 @@ public class VnfmServiceProviderConfiguration extends AbstractServiceProviderCon
         } catch (KeyManagementException | NoSuchAlgorithmException | KeyStoreException | CertificateException
                 | IOException | UnrecoverableKeyException exception) {
             logger.error("Error reading truststore, TLS connection to VNFM will fail.", exception);
-        }
-    }
-
-    private void removeSpringClientFilter(final RestTemplate restTemplate) {
-        ListIterator<ClientHttpRequestInterceptor> interceptorIterator = restTemplate.getInterceptors().listIterator();
-        while (interceptorIterator.hasNext()) {
-            ClientHttpRequestInterceptor interceptor = interceptorIterator.next();
-            if (interceptor instanceof SOSpringClientFilter || interceptor instanceof SpringClientPayloadFilter) {
-                interceptorIterator.remove();
-            }
         }
     }
 
