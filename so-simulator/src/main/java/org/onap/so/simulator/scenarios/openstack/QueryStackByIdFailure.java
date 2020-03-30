@@ -3,8 +3,6 @@ package org.onap.so.simulator.scenarios.openstack;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.onap.so.simulator.actions.aai.DeleteVServers;
 import com.consol.citrus.endpoint.resolver.DynamicEndpointUriResolver;
 import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
 import com.consol.citrus.simulator.scenario.Scenario;
@@ -17,7 +15,9 @@ public class QueryStackByIdFailure extends AbstractSimulatorScenario {
 
     @Override
     public void run(ScenarioDesigner scenario) {
-        // Get to see if stack exists
+        scenario.scenarioEndpoint().getEndpointConfiguration().setTimeout(300000L);
+
+        // Create Poll
         scenario.http().receive().get().extractFromHeader(DynamicEndpointUriResolver.REQUEST_PATH_HEADER_NAME,
                 "correlationId");
         scenario.echo("${correlationId}");
@@ -33,13 +33,13 @@ public class QueryStackByIdFailure extends AbstractSimulatorScenario {
         scenario.http().send().response(HttpStatus.OK)
                 .payload(new ClassPathResource("openstack/gr_api/Stack_Failure.json"));
 
+        // Create Poll Retry
+        scenario.http().receive().get();
+        scenario.http().send().response(HttpStatus.OK)
+                .payload(new ClassPathResource("openstack/gr_api/Stack_Failure.json"));
 
-        // Delete of the stack
-        scenario.http().receive().delete();
-        scenario.action(new DeleteVServers());
-        scenario.http().send().response(HttpStatus.NO_CONTENT);
 
-        // Poll Deletion of stack for status
+        // Rollback Poll
         scenario.http().receive().get();
         scenario.http().send().response(HttpStatus.OK)
                 .payload(new ClassPathResource("openstack/gr_api/Stack_Deleted.json"));

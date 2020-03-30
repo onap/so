@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_ZBLUcCkQEeaY6ZhIaNLwzg" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_ZBLUcCkQEeaY6ZhIaNLwzg" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="UpdateVfModuleVolumeInfraV1" name="UpdateVfModuleVolumeInfraV1" isExecutable="true">
     <bpmn2:endEvent id="EndEvent_4" name="TheEnd">
       <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
@@ -56,14 +56,13 @@ def uvmv = new UpdateVfModuleVolumeInfraV1()
 uvmv.executeMethod('prepCompletionHandlerRequest', execution, UPDVfModVol_requestId, 'UPDATE', UPDVfModVol_source, isDebugLogEnabled)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_13" name="" sourceRef="ScriptTask_prepCompletionHandlerRequest" targetRef="CallActivity_completionHandler" />
-    <bpmn2:callActivity id="CallActivity_callVNFAdapterRest" name="VNFAdapterRest" calledElement="vnfAdapterRestV1">
+    <bpmn2:callActivity id="CallActivity_callVNFAdapterRest" name="VNFAdapterRest" calledElement="vnfAdapterTask">
       <bpmn2:extensionElements>
-        <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
         <camunda:in source="mso-request-id" target="mso-request-id" />
-        <camunda:out source="vnfAdapterRestV1Response" target="UPDVfModVol_vnfAdapterRestResponse" />
+        <camunda:out source="WorkflowResponse" target="UPDVfModVol_vnfAdapterRestResponse" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:in source="mso-service-instance-id" target="mso-service-instance-id" />
-        <camunda:in source="UPDVfModVol_vnfAdapterRestRequest" target="vnfAdapterRestV1Request" />
+        <camunda:in source="UPDVfModVol_vnfAdapterRestRequest" target="vnfAdapterTaskRequest" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_21</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_19</bpmn2:outgoing>

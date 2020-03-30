@@ -44,15 +44,15 @@ public class VfModuleRollback {
 
     public VfModuleRollback(VnfRollback vrb, String vfModuleId, String vfModuleStackId, String messageId) {
         this.vnfId = vrb.getVnfId();
-        this.vfModuleId = vfModuleId;
-        this.vfModuleStackId = vfModuleStackId;
         this.vfModuleCreated = vrb.getVnfCreated();
         this.tenantId = vrb.getTenantId();
         this.cloudOwner = vrb.getCloudOwner();
         this.cloudSiteId = vrb.getCloudSiteId();
         this.msoRequest = vrb.getMsoRequest();
-        this.messageId = messageId;
         this.mode = vrb.getMode();
+        this.vfModuleId = vfModuleId;
+        this.vfModuleStackId = vfModuleStackId;
+        this.messageId = messageId;
     }
 
     public VfModuleRollback(String vnfId, String vfModuleId, String vfModuleStackId, boolean vfModuleCreated,

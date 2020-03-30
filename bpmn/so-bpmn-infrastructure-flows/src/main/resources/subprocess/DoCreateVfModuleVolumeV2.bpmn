@@ -63,15 +63,14 @@ def doCreateVfModuleVolumeV2 = new DoCreateVfModuleVolumeV2()
 doCreateVfModuleVolumeV2.executeMethod('callRESTCreateAAIVolGrpName', execution, isDebugLogEnabled)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_9" name="" sourceRef="ScriptTask_callRestAaiCreateVolumeGrp" targetRef="ScriptTask_prepareVnfAdapterCreate" />
-    <bpmn2:callActivity id="CallActivity_callVnfAdapterCreate" name="Call VNF Adapter Create" calledElement="vnfAdapterRestV1">
+    <bpmn2:callActivity id="CallActivity_callVnfAdapterCreate" name="Call VNF Adapter Create" calledElement="vnfAdapterTask">
       <bpmn2:extensionElements>
-        <camunda:in source="DCVFMODVOLV2_createVnfARequest" target="vnfAdapterRestV1Request" />
+        <camunda:in source="DCVFMODVOLV2_createVnfARequest" target="vnfAdapterTaskRequest" />
         <camunda:in source="msoRequestId" target="mso-request-id" />
         <camunda:in source="serviceInstanceId" target="mso-service-instance-id" />
-        <camunda:out source="vnfAdapterRestV1Response" target="DCVFMODVOLV2_createVnfAResponse" />
+        <camunda:out source="WorkflowResponse" target="DCVFMODVOLV2_createVnfAResponse" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:out source="VNFREST_vnfAdapterStatusCode" target="DCVFMODVOLV2_createVnfAReturnCode" />
-        <camunda:in source="isDebugLogEnabled" target="isDebugLogEnabled" />
         <camunda:out source="VNFREST_SuccessIndicator" target="VNFREST_SuccessIndicator" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_10</bpmn2:incoming>

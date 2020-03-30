@@ -321,6 +321,42 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     }
 
     /**
+     * This is the "Delete VNF" web service implementation. It will delete a VNF by name or ID in the specified cloud
+     * and tenant.
+     *
+     * The method has no outputs.
+     *
+     * @param cloudSiteId CLLI code of the cloud site in which to delete
+     * @param cloudOwner cloud owner of the cloud region in which to delete
+     * @param tenantId Openstack tenant identifier
+     * @param vnfName VNF Name or Openstack ID
+     * @param msoRequest Request tracking information for logs
+     */
+    public void deleteVnf(String cloudSiteId, String cloudOwner, String tenantId, String vnfName, MsoRequest msoRequest,
+            boolean pollStackStatus) throws VnfException {
+
+        logger.debug("Deleting VNF {} in {}", vnfName, cloudSiteId + "/" + tenantId);
+
+        try {
+            msoHeatUtils.deleteStack(tenantId, cloudOwner, cloudSiteId, vnfName, pollStackStatus, 118);
+        } catch (MsoException me) {
+            me.addContext(DELETE_VNF);
+            // Failed to query the Stack due to an openstack exception.
+            // Convert to a generic VnfException
+            String error =
+                    "Delete VNF: " + vnfName + " in " + cloudOwner + "/" + cloudSiteId + "/" + tenantId + ": " + me;
+            logger.error(LoggingAnchor.NINE, MessageEnum.RA_DELETE_VNF_ERR.toString(), vnfName, cloudOwner, cloudSiteId,
+                    tenantId, OPENSTACK, DELETE_VNF, ErrorCode.DataError.getValue(), "Exception - " + DELETE_VNF, me);
+            logger.debug(error);
+            throw new VnfException(me);
+        }
+
+        // On success, nothing is returned.
+        return;
+    }
+
+
+    /**
      * This web service endpoint will rollback a previous Create VNF operation. A rollback object is returned to the
      * client in a successful creation response. The client can pass that object as-is back to the rollbackVnf operation
      * to undo the creation.
@@ -534,6 +570,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             Map<String, Object> inputs, Boolean failIfExists, Boolean backout, Boolean enableBridge,
             MsoRequest msoRequest, Holder<String> vnfId, Holder<Map<String, String>> outputs,
             Holder<VnfRollback> rollback) throws VnfException {
+        boolean pollForCompletion = false;
         String vfModuleName = vnfName;
         String vfModuleType = vnfType;
         String vfVersion = vnfVersion;
@@ -1048,8 +1085,9 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 }
                 if (msoHeatUtils != null) {
                     heatStack = msoHeatUtils.createStack(cloudSiteId, cloudOwner, tenantId, vfModuleName, null,
-                            template, goldenInputs, true, heatTemplate.getTimeoutMinutes(), newEnvironmentString,
-                            nestedTemplatesChecked, heatFilesObjects, backout.booleanValue(), failIfExists);
+                            template, goldenInputs, pollForCompletion, heatTemplate.getTimeoutMinutes(),
+                            newEnvironmentString, nestedTemplatesChecked, heatFilesObjects, backout.booleanValue(),
+                            failIfExists);
                     if (msoRequest.getRequestId() != null) {
                         msoHeatUtils.updateResourceStatus(msoRequest.getRequestId(),
                                 heatStack.isOperationPerformed() ? VF_CREATED_STATUS_MESSAGE : VF_EXIST_STATUS_MESSAGE);
@@ -1133,10 +1171,15 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         }
 
         try {
-            StackInfo stackInfo =
-                    msoHeatUtils.deleteStack(tenantId, cloudOwner, cloudSiteId, vnfName, true, timeoutMinutes);
+            StackInfo currentStack =
+                    msoHeatUtils.deleteStack(tenantId, cloudOwner, cloudSiteId, vnfName, false, timeoutMinutes);
+            if (currentStack != null && outputs != null && outputs.value != null) {
+                logger.debug("Adding canonical stack id to outputs " + currentStack.getCanonicalName());
+                outputs.value.put("canonicalStackId", currentStack.getCanonicalName());
+            }
             msoHeatUtils.updateResourceStatus(msoRequest.getRequestId(),
-                    stackInfo.isOperationPerformed() ? VF_DELETED_STATUS_MESSAGE : VF_NOT_EXIST_STATUS_MESSAGE);
+                    currentStack.isOperationPerformed() ? VF_DELETED_STATUS_MESSAGE : VF_NOT_EXIST_STATUS_MESSAGE);
+
         } catch (MsoException me) {
             me.addContext(DELETE_VNF);
             // Failed to query the Stack due to an openstack exception.

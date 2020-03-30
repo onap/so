@@ -174,33 +174,26 @@ public class VolumeAdapterRestV2 {
                 logger.debug("in createVfModuleVolumes - completeVnfVfModuleType={}", completeVnfVfModuleType);
 
                 String cloudsiteId = req.getCloudSiteId();
-                if (cloudsiteId != null && cloudsiteId.equals(TESTING_KEYWORD)) {
-                    String tenant = req.getTenantId();
-                    if (tenant != null && tenant.equals(TESTING_KEYWORD)) {
-                        throw new VnfException("testing.");
-                    }
-                    stackId.value = "479D3D8B-6360-47BC-AB75-21CC91981484";
-                    outputs.value = testMap();
-                } else {
-                    // Support different Adapter Implementations
-                    MsoVnfAdapter vnfAdapter = vnfAdapterRestUtils.getVnfAdapterImpl(mode, cloudsiteId);
-                    vnfAdapter.createVfModule(req.getCloudSiteId(), // cloudSiteId,
-                            req.getCloudOwner(), // cloudOwner,
-                            req.getTenantId(), // tenantId,
-                            completeVnfVfModuleType, // vnfType,
-                            req.getVnfVersion(), // vnfVersion,
-                            "", // genericVnfId
-                            req.getVolumeGroupName(), // vnfName,
-                            "", // vfModuleId
-                            "VOLUME", // requestType,
-                            null, // volumeGroupHeatStackId,
-                            null, // baseVfHeatStackId,
-                            req.getModelCustomizationUuid(), req.getVolumeGroupParams(), // inputs,
-                            req.getFailIfExists(), // failIfExists,
-                            req.getSuppressBackout(), // backout,
-                            req.getEnableBridge(), req.getMsoRequest(), // msoRequest,
-                            stackId, outputs, vnfRollback);
-                }
+
+                // Support different Adapter Implementations
+                MsoVnfAdapter vnfAdapter = vnfAdapterRestUtils.getVnfAdapterImpl(mode, cloudsiteId);
+                vnfAdapter.createVfModule(req.getCloudSiteId(), // cloudSiteId,
+                        req.getCloudOwner(), // cloudOwner,
+                        req.getTenantId(), // tenantId,
+                        completeVnfVfModuleType, // vnfType,
+                        req.getVnfVersion(), // vnfVersion,
+                        "", // genericVnfId
+                        req.getVolumeGroupName(), // vnfName,
+                        "", // vfModuleId
+                        "VOLUME", // requestType,
+                        null, // volumeGroupHeatStackId,
+                        null, // baseVfHeatStackId,
+                        req.getModelCustomizationUuid(), req.getVolumeGroupParams(), // inputs,
+                        req.getFailIfExists(), // failIfExists,
+                        req.getSuppressBackout(), // backout,
+                        req.getEnableBridge(), req.getMsoRequest(), // msoRequest,
+                        stackId, outputs, vnfRollback);
+
 
                 VolumeGroupRollback rb = new VolumeGroupRollback(req.getVolumeGroupId(), stackId.value,
                         vnfRollback.value.getVnfCreated(), req.getTenantId(), req.getCloudOwner(), req.getCloudSiteId(),

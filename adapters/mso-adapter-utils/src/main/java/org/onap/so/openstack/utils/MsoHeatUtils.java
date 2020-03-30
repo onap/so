@@ -132,7 +132,6 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
 
-
     /**
      * Create a new Stack in the specified cloud location and tenant. The Heat template and parameter map are passed in
      * as arguments, along with the cloud access credentials. It is expected that parameters have been validated and
@@ -190,7 +189,10 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
             } else if (CREATE_FAILED.equals(currentStack.getStackStatus())
                     || DELETE_FAILED.equals(currentStack.getStackStatus())) {
                 try {
-                    processCreateStack(cloudSiteId, tenantId, timeoutMinutes, backout, currentStack, createStack, true);
+                    if (pollForCompletion) {
+                        processCreateStack(cloudSiteId, tenantId, timeoutMinutes, backout, currentStack, createStack,
+                                true);
+                    }
                 } catch (MsoException e) {
                     if (e instanceof StackCreationException) {
                         logger.warn("Error during Stack will attempt to recreate stack");
@@ -199,9 +201,6 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
                         if (pollForCompletion) {
                             currentStack = processCreateStack(cloudSiteId, tenantId, timeoutMinutes, backout,
                                     currentStack, createStack, true);
-                        } else {
-                            currentStack = queryHeatStack(currentStack.getStackName() + "/" + currentStack.getId(),
-                                    cloudSiteId, tenantId);
                         }
                     } else {
                         throw e;
@@ -214,9 +213,6 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
             if (pollForCompletion) {
                 currentStack = processCreateStack(cloudSiteId, tenantId, timeoutMinutes, backout, currentStack,
                         createStack, true);
-            } else {
-                currentStack =
-                        queryHeatStack(currentStack.getStackName() + "/" + currentStack.getId(), cloudSiteId, tenantId);
             }
             operationPerformed = true;
         }
@@ -266,6 +262,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
             Stack heatStack, CreateStackParam stackCreate, boolean keyPairCleanUp) throws MsoException {
         Stack latestStack = null;
         try {
+
             latestStack =
                     pollStackForStatus(timeoutMinutes, heatStack, CREATE_IN_PROGRESS, cloudSiteId, tenantId, false);
         } catch (MsoException me) {
@@ -275,7 +272,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
                 stackCreate);
     }
 
-    protected Stack postProcessStackCreate(Stack stack, boolean backout, int timeoutMinutes, boolean cleanUpKeyPair,
+    public Stack postProcessStackCreate(Stack stack, boolean backout, int timeoutMinutes, boolean cleanUpKeyPair,
             String cloudSiteId, String tenantId, CreateStackParam stackCreate) throws MsoException {
         boolean stackCreationFailed = false;
         boolean stackRollbackFailed = false;
@@ -325,7 +322,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
         }
     }
 
-    protected Stack pollStackForStatus(int timeoutMinutes, Stack stack, String stackStatus, String cloudSiteId,
+    public Stack pollStackForStatus(int timeoutMinutes, Stack stack, String stackStatus, String cloudSiteId,
             String tenantId, boolean notFoundIsSuccess) throws MsoException {
         int pollingFrequency =
                 Integer.parseInt(this.environment.getProperty(createPollIntervalProp, CREATE_POLL_INTERVAL_DEFAULT));
@@ -334,7 +331,11 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
         int numberOfPollingAttempts = Math.floorDiv((timeoutMinutes * pollingMultiplier), pollingFrequency);
         Heat heatClient = getHeatClient(cloudSiteId, tenantId);
         while (true) {
-            Stack latestStack = queryHeatStack(heatClient, stack.getStackName() + "/" + stack.getId());
+            String stackName = stack.getStackName() + "/" + stack.getId();
+            if (stack.getId() == null) {
+                stackName = stack.getStackName();
+            }
+            Stack latestStack = queryHeatStack(heatClient, stackName);
             if (latestStack == null && notFoundIsSuccess) {
                 return null;
             } else if (latestStack != null) {
@@ -385,27 +386,33 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
     protected Stack handleUnknownCreateStackFailure(Stack stack, int timeoutMinutes, String cloudSiteId,
             String tenantId) throws MsoException {
         if (stack != null && !Strings.isNullOrEmpty(stack.getStackName()) && !Strings.isNullOrEmpty(stack.getId())) {
-            return deleteStack(stack, timeoutMinutes, cloudSiteId, tenantId);
+            return deleteStack(stack, timeoutMinutes, cloudSiteId, tenantId, false);
         } else {
             throw new StackCreationException("Cannot Find Stack Name or Id");
         }
     }
 
-    private Stack deleteStack(Stack stack, int timeoutMinutes, String cloudSiteId, String tenantId)
-            throws MsoException {
+    private Stack deleteStack(Stack stack, int timeoutMinutes, String cloudSiteId, String tenantId,
+            boolean pollForCompletion) throws MsoException {
         OpenStackRequest<Void> request = getHeatClient(cloudSiteId, tenantId).getStacks()
                 .deleteByName(stack.getStackName() + "/" + stack.getId());
         executeAndRecordOpenstackRequest(request);
-        Stack currentStack = pollStackForStatus(timeoutMinutes, stack, DELETE_IN_PROGRESS, cloudSiteId, tenantId, true);
-        if (currentStack == null) {
+        logger.debug("Completed Executing executeAndRecordOpenstackRequest");
+        if (pollForCompletion == true) {
+            Stack currentStack =
+                    pollStackForStatus(timeoutMinutes, stack, DELETE_IN_PROGRESS, cloudSiteId, tenantId, true);
+            if (currentStack == null) {
+                return currentStack;
+            }
+            postProcessStackDelete(currentStack);
             return currentStack;
         } else {
-            postProcessStackDelete(currentStack);
+            logger.debug("Returning the stack");
+            return stack;
         }
-        return currentStack;
     }
 
-    protected void postProcessStackDelete(Stack stack) throws MsoException {
+    public void postProcessStackDelete(Stack stack) throws MsoException {
         logger.info("Performing post processing on delete stack {}", stack);
         if (stack != null && !Strings.isNullOrEmpty(stack.getStackStatus())) {
             if (!DELETE_COMPLETE.equals(stack.getStackStatus()))
@@ -503,10 +510,13 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
             stackInfo = new StackInfo(stackName, HeatStatus.NOTFOUND);
             stackInfo.setOperationPerformed(false);
         } else {
-            currentStack = deleteStack(currentStack, timeoutMinutes, cloudSiteId, tenantId);
+            currentStack = deleteStack(currentStack, timeoutMinutes, cloudSiteId, tenantId, pollForCompletion);
             stackInfo = new StackInfoMapper(currentStack).map();
             stackInfo.setName(stackName);
             stackInfo.setOperationPerformed(true);
+            if (currentStack != null) {
+                stackInfo.setCanonicalName(currentStack.getStackName() + "/" + currentStack.getId());
+            }
         }
         return stackInfo;
     }
@@ -632,7 +642,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
         return queryHeatStack(getHeatClient(cloudSiteId, tenantId), stackName);
     }
 
-
+    // TODO enhancement - just have this return the stack then we dont have to query again in deleteStack
     public Map<String, Object> queryStackForOutputs(String cloudSiteId, String cloudOwner, String tenantId,
             String stackName) throws MsoException {
         logger.debug("MsoHeatUtils.queryStackForOutputs)");

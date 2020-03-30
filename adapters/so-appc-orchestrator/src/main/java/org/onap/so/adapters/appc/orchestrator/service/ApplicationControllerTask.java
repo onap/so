@@ -6,7 +6,7 @@ import org.onap.so.adapters.appc.orchestrator.client.ApplicationControllerCallba
 import org.onap.so.adapters.appc.orchestrator.client.ApplicationControllerSupport;
 import org.onap.so.adapters.appc.orchestrator.client.StatusCategory;
 import org.onap.so.appc.orchestrator.service.beans.ApplicationControllerTaskRequest;
-import org.onap.so.externaltasks.logging.AuditMDCSetup;
+import org.onap.so.logging.tasks.AuditMDCSetup;
 import org.onap.so.utils.ExternalTaskUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

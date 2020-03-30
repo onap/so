@@ -14,13 +14,13 @@
 	"backout": false,
 	"failIfExists": false,
     "enableBridge": true,
-	"msoRequest": 
+	"msoRequest":
 	{
 		"requestId": "requestId",
 		"serviceInstanceId": "serviceInstanceId"
 	},
 
-	"vfModuleParams": 
+	"vfModuleParams":
 	{
 		"vnf_id": "vnfId",
 		"vnf_name": "vnfName",

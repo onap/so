@@ -78,6 +78,7 @@ import io.swagger.annotations.ApiResponses;
  * can be produced/consumed. Set Accept: and Content-Type: headers appropriately. XML is the default. For testing, call
  * with cloudSiteId = ___TESTING___ To test exceptions, also set tenantId = ___TESTING___
  */
+@Deprecated
 @Path("/v1/vnfs")
 @Api(value = "/v1/vnfs", description = "root of vnf adapters restful web service")
 @Transactional

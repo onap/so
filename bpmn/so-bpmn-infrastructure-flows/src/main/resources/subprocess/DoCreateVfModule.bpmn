@@ -224,10 +224,10 @@ doCreateVfModule.prepareCreateAAIVfModuleVolumeGroupRequest(execution)]]></bpmn2
 def doCreateVfModule = new DoCreateVfModule()
 doCreateVfModule.preProcessVNFAdapterRequest(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
-    <bpmn2:callActivity id="CallVNFAdapterVFModuleCreate" name="Call VNF Adapter to create VF Module" calledElement="vnfAdapterRestV1">
+    <bpmn2:callActivity id="CallVNFAdapterVFModuleCreate" name="Call VNF Adapter to create VF Module" calledElement="vnfAdapterTask">
       <bpmn2:extensionElements>
-        <camunda:in source="DCVFM_createVnfARequest" target="vnfAdapterRestV1Request" />
-        <camunda:out source="vnfAdapterRestV1Response" target="DCVFM_createVnfAResponse" />
+        <camunda:in source="DCVFM_createVnfARequest" target="vnfAdapterTaskRequest" />
+        <camunda:out source="WorkflowResponse" target="DCVFM_createVnfAResponse" />
         <camunda:in source="mso-request-id" target="mso-request-id" />
         <camunda:in source="mso-service-instance-id" target="mso-service-instance-id" />
         <camunda:in variables="all" />

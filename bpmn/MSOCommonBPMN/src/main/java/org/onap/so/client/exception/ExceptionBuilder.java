@@ -45,6 +45,7 @@ import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.objects.audit.AAIObjectAudit;
 import org.onap.so.objects.audit.AAIObjectAuditList;
+import org.onap.so.utils.Components;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -207,26 +208,26 @@ public class ExceptionBuilder {
     }
 
     public void buildAndThrowWorkflowException(DelegateExecution execution, int errorCode, String errorMessage) {
+
+        buildWorkflowException(execution, errorCode, errorMessage);
+        logger.info("Throwing MSOWorkflowException");
+        throw new BpmnError("MSOWorkflowException");
+    }
+
+    public void buildWorkflowException(DelegateExecution execution, int errorCode, String errorMessage) {
         String processKey = getProcessKey(execution);
-        logger.info("Building a WorkflowException for Subflow");
+        logger.info("Building a WorkflowException");
 
         WorkflowException exception = new WorkflowException(processKey, errorCode, errorMessage);
         execution.setVariable("WorkflowException", exception);
         execution.setVariable("WorkflowExceptionErrorMessage", errorMessage);
         logger.info("Outgoing WorkflowException is {}", exception);
-        logger.info("Throwing MSOWorkflowException");
-        throw new BpmnError("MSOWorkflowException");
     }
 
     public void buildAndThrowWorkflowException(DelegateExecution execution, int errorCode, String errorMessage,
             ONAPComponentsList extSystemErrorSource) {
-        String processKey = getProcessKey(execution);
-        logger.info("Building a WorkflowException for Subflow");
 
-        WorkflowException exception = new WorkflowException(processKey, errorCode, errorMessage, extSystemErrorSource);
-        execution.setVariable("WorkflowException", exception);
-        execution.setVariable("WorkflowExceptionErrorMessage", errorMessage);
-        logger.info("Outgoing WorkflowException is {}", exception);
+        buildWorkflowException(execution, errorCode, errorMessage, extSystemErrorSource);
         logger.info("Throwing MSOWorkflowException");
         throw new BpmnError("MSOWorkflowException");
     }
@@ -313,7 +314,7 @@ public class ExceptionBuilder {
                 execution.setVariable("WorkflowException", exception);
                 execution.setVariable("WorkflowExceptionErrorMessage", errorMessage.toString());
                 logger.info("Outgoing WorkflowException is {}", exception);
-                logger.info("Throwing MSOWorkflowException");
+                logger.info("Throwing AAIInventoryFailure");
                 throw new BpmnError("AAIInventoryFailure");
             }
 
@@ -323,9 +324,42 @@ public class ExceptionBuilder {
             execution.setVariable("WorkflowException", exception);
             execution.setVariable("WorkflowExceptionErrorMessage", errorMessage);
             logger.info("Outgoing WorkflowException is {}", exception);
-            logger.info("Throwing MSOWorkflowException");
+            logger.info("Throwing AAIInventoryFailure");
             throw new BpmnError("AAIInventoryFailure");
         }
+    }
+
+    public void processVnfAdapterException(DelegateExecution execution) {
+        StringBuilder workflowExceptionMessage = new StringBuilder();
+        logger.debug("Processing Vnf Adapter Exception");
+        try {
+            String errorMessage = (String) execution.getVariable("openstackAdapterErrorMessage");
+            boolean openstackRollbackPollSuccess = (boolean) execution.getVariable("OpenstackPollSuccess");
+            boolean rollbackPerformed = (boolean) execution.getVariable("rollbackPerformed");
+            boolean openstackRollbackSuccess = (boolean) execution.getVariable("OpenstackRollbackSuccess");
+            boolean pollRollbackStatus = (boolean) execution.getVariable("PollRollbackStatus");
+
+            workflowExceptionMessage.append("Exception occured during vnf adapter: " + errorMessage + ".");
+
+            boolean rollbackCompleted = false;
+            if (rollbackPerformed) {
+                if (openstackRollbackSuccess && !pollRollbackStatus) {
+                    rollbackCompleted = true;
+                } else if (openstackRollbackSuccess && pollRollbackStatus) {
+                    if (openstackRollbackPollSuccess) {
+                        rollbackCompleted = true;
+                    }
+                }
+                workflowExceptionMessage
+                        .append(" The resource was rollbacked in openstack: " + rollbackCompleted + ".");
+            }
+        } catch (Exception e) {
+            logger.debug("Error while Processing Vnf Adapter Exception", e);
+        }
+        buildWorkflowException(execution, 500, workflowExceptionMessage.toString(), Components.OPENSTACK);
+        throw new BpmnError("MSOWorkflowException");
+
+
     }
 
 }
