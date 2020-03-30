@@ -30,13 +30,13 @@ import java.util.List;
 import javax.transaction.Transactional;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.onap.so.adapters.catalogdb.CatalogDBApplication;
 import org.onap.so.adapters.catalogdb.CatalogDbAdapterBaseTest;
 import org.onap.so.db.catalog.beans.BuildingBlockDetail;
 import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
+import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
+import org.onap.so.db.catalog.beans.CvnfcCustomization;
 import org.onap.so.db.catalog.beans.InstanceGroup;
 import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
 import org.onap.so.db.catalog.client.CatalogDbClientPortChanger;
@@ -44,9 +44,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 
 public class NetworkCollectionCatalogDbQueryTest extends CatalogDbAdapterBaseTest {
 
@@ -149,4 +146,16 @@ public class NetworkCollectionCatalogDbQueryTest extends CatalogDbAdapterBaseTes
         assertNotNull(collectionNetworkCust);
         logger.debug(collectionNetworkCust.getModelCustomizationUUID());
     }
+
+    @Test
+    public void getCvnfcCustomization() {
+        client.getServiceByID(serviceUUID);
+        String vfId = "cb82ffd8-252a-11e7-93ae-92361f002671";
+        String vnfId = "68dc9a92-214c-11e7-93ae-92361f002671";
+
+        CvnfcConfigurationCustomization fabricConfig =
+                client.getCvnfcCustomization(serviceUUID, vnfId, vfId, "dadc2c8c-2bab-11e9-b210-d663bd873d95");
+        assertEquals("386c9aa7-9318-48ee-a6d1-1bf0f85de385", fabricConfig.getModelCustomizationUUID());
+    }
+
 }

@@ -92,11 +92,11 @@ public class CvnfcCustomization implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "VF_MODULE_CUSTOMIZATION_ID")
     private VfModuleCustomization vfModuleCustomization;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "VNFC_CUST_MODEL_CUSTOMIZATION_UUID")
     private VnfcCustomization vnfcCustomization;
 

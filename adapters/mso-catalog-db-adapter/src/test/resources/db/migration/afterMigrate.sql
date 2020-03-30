@@ -213,8 +213,30 @@ VALUES      ( '1',
               'testNfcFunction',
               'testNfcNamingCode',
               '2018-07-17 14:05:08',
+              '9bcce658-9b37-11e8-98d0-529269fb1459',1),
+              ( '2',
+              'dadc2c8c-2bab-11e9-b210-d663bd873d95',
+              'testModelInstanceName',
+              'b25735fe-9b37-11e8-98d0-529269fb1459',
+              'ba7e6ef0-9b37-11e8-98d0-529269fb1459',
+              'testModelVersion',
+              'testModelName',
+              'testToscaNodeType',
+              'testCvnfcCustomzationDescription',
+              'testNfcFunction',
+              'testNfcNamingCode',
+              '2018-07-17 14:05:08',
               '9bcce658-9b37-11e8-98d0-529269fb1459',1);
+              
+              
+INSERT IGNORE INTO `configuration` (`MODEL_UUID`, `MODEL_INVARIANT_UUID`, `MODEL_VERSION`, `MODEL_NAME`, `TOSCA_NODE_TYPE`, `DESCRIPTION`, `CREATION_TIMESTAMP`) VALUES
+	('d2195b0e-307a-4d30-b82f-9c82001d965e', '2f0a4b7a-dfdb-4f82-a2ab-b65d1ddd5e8e', '13.0', 'Fabric Configuration', 'org.openecomp.nodes.FabricConfiguration', 'A fabric Configuration object', '2019-06-04 20:12:20');
+	
+INSERT IGNORE INTO `cvnfc_configuration_customization` (`MODEL_CUSTOMIZATION_UUID`, `MODEL_INSTANCE_NAME`, `CONFIGURATION_TYPE`, `CONFIGURATION_ROLE`, `CONFIGURATION_FUNCTION`, `POLICY_NAME`, `CREATION_TIMESTAMP`, `CONFIGURATION_MODEL_UUID`, `CVNFC_CUSTOMIZATION_ID`) VALUES
+	('386c9aa7-9318-48ee-a6d1-1bf0f85de385', 'Fabric Configuration 0', '5G', 'Fabric Config', 'Network Cloud', 'Config_MS_fabric_configuration_FRWL.1.xml', '2019-06-04 20:12:20', 'd2195b0e-307a-4d30-b82f-9c82001d965e', '2');
 
+
+	
 insert into service(model_uuid, model_name, model_invariant_uuid, model_version, description, creation_timestamp, tosca_csar_artifact_uuid, service_type, service_role, environment_context, workload_context) values
 ('5df8b6de-2083-11e7-93ae-92361f002676', 'PNF_routing_service', '9647dfc4-2083-11e7-93ae-92361f002676', '1.0', 'PNF service', '2019-03-08 12:00:29', null, 'NA', 'NA', 'Luna', 'Oxygen');
 
