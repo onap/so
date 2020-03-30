@@ -22,6 +22,7 @@ package org.onap.so.apihandlerinfra.infra.rest.validators;
 
 import java.util.Map;
 import java.util.Optional;
+import org.onap.so.apihandlerinfra.Actions;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 
 public interface RequestValidator {
@@ -32,7 +33,7 @@ public interface RequestValidator {
      * 
      * @return
      */
-    public boolean shouldRunFor(String uri, ServiceInstancesRequest request);
+    public boolean shouldRunFor(String uri, ServiceInstancesRequest request, Actions action);
 
 
     public Optional<String> validate(Map<String, String> instanceIdMap, ServiceInstancesRequest request,

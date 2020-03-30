@@ -40,6 +40,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.apihandler.common.CommonConstants;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandler.common.RequestClientParameter;
@@ -56,7 +57,6 @@ import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.exceptions.ValidationException;
-import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.ModelInfo;
@@ -823,7 +823,7 @@ public class ServiceInstances extends AbstractRestHandler {
 
         sir = requestHandlerUtils.convertJsonToServiceInstanceRequest(requestJSON, action, requestId, requestUri);
         action = handleReplaceInstance(action, sir);
-        requestValidatorListenerRunner.runValidations(requestUri, instanceIdMap, sir, queryParams);
+        requestValidatorListenerRunner.runValidations(requestUri, instanceIdMap, sir, queryParams, action);
 
         String requestScope = requestHandlerUtils.deriveRequestScope(action, sir, requestUri);
         InfraActiveRequests currentActiveReq =

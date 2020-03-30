@@ -28,6 +28,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import org.javatuples.Pair;
+import org.onap.so.apihandlerinfra.Actions;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.listener.ListenerRunner;
@@ -50,10 +51,10 @@ public class RequestValidatorListenerRunner extends ListenerRunner {
     }
 
     public boolean runValidations(String requestURI, Map<String, String> instanceIdMap, ServiceInstancesRequest request,
-            Map<String, String> queryParams) throws ApiException {
+            Map<String, String> queryParams, Actions action) throws ApiException {
         logger.info("Running local validations");
         List<Pair<String, Optional<String>>> results =
-                runValidations(requestValidators, instanceIdMap, request, queryParams, requestURI);
+                runValidations(requestValidators, instanceIdMap, request, queryParams, requestURI, action);
         if (!results.isEmpty()) {
             throw new ValidateException("Failed Validations:\n"
                     + results.stream().map(item -> String.format("%s: %s", item.getValue0(), item.getValue1().get()))
@@ -66,10 +67,10 @@ public class RequestValidatorListenerRunner extends ListenerRunner {
 
     protected List<Pair<String, Optional<String>>> runValidations(List<? extends RequestValidator> validators,
             Map<String, String> instanceIdMap, ServiceInstancesRequest request, Map<String, String> queryParams,
-            String requestURI) {
+            String requestURI, Actions action) {
 
         List<? extends RequestValidator> filtered =
-                filterListeners(validators, (item -> item.shouldRunFor(requestURI, request)));
+                filterListeners(validators, (item -> item.shouldRunFor(requestURI, request, action)));
 
         List<Pair<String, Optional<String>>> results = new ArrayList<>();
         filtered.forEach(item -> results

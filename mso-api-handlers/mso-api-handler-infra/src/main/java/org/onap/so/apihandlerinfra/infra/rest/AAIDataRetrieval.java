@@ -9,6 +9,7 @@ import org.onap.aai.domain.yang.Tenant;
 import org.onap.aai.domain.yang.VfModule;
 import org.onap.aai.domain.yang.VolumeGroup;
 import org.onap.so.apihandlerinfra.infra.rest.exception.AAIEntityNotFound;
+import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
@@ -74,6 +75,40 @@ public class AAIDataRetrieval {
                     logger.debug("No Network found in A&AI NetworkId: {}", networkId);
                     return null;
                 });
+    }
+
+
+    public boolean isVolumeGroupRelatedToVFModule(String volumeGroupId) {
+        return this.getAaiResourcesClient().exists(AAIUriFactory
+                .createResourceUri(AAIObjectType.VOLUME_GROUP, volumeGroupId).relatedTo(AAIObjectPlurals.VF_MODULE));
+    }
+
+    public boolean isVnfRelatedToVolumes(String vnfId) {
+        return this.getAaiResourcesClient().exists(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
+                .relatedTo(AAIObjectPlurals.VOLUME_GROUP));
+    }
+
+    public boolean isNetworkRelatedToModules(String networkId) {
+        return this.getAaiResourcesClient().exists(AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId)
+                .relatedTo(AAIObjectPlurals.VF_MODULE));
+    }
+
+    public boolean isServiceRelatedToNetworks(String serviceInstanceId) {
+        return this.getAaiResourcesClient()
+                .exists(AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
+                        .relatedTo(AAIObjectPlurals.L3_NETWORK));
+    }
+
+    public boolean isServiceRelatedToGenericVnf(String serviceInstanceId) {
+        return this.getAaiResourcesClient()
+                .exists(AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
+                        .relatedTo(AAIObjectPlurals.GENERIC_VNF));
+    }
+
+    public boolean isServiceRelatedToConfiguration(String serviceInstanceId) {
+        return this.getAaiResourcesClient()
+                .exists(AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstanceId)
+                        .relatedTo(AAIObjectPlurals.CONFIGURATION));
     }
 
     public Service getService(String serviceId) {
