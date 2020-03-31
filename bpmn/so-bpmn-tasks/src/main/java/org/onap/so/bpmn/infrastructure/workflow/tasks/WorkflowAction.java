@@ -168,46 +168,22 @@ public class WorkflowAction {
     }
 
     public void selectExecutionList(DelegateExecution execution) throws Exception {
-        execution.setVariable("sentSyncResponse", false);
-        execution.setVariable("homing", false);
-        execution.setVariable("calledHoming", false);
-        execution.setVariable(BBConstants.G_ISTOPLEVELFLOW, true);
-
         try {
             final String bpmnRequest = (String) execution.getVariable(BBConstants.G_BPMN_REQUEST);
             ServiceInstancesRequest sIRequest =
                     new ObjectMapper().readValue(bpmnRequest, ServiceInstancesRequest.class);
             RequestDetails requestDetails = sIRequest.getRequestDetails();
-            execution.setVariable("suppressRollback", requestDetails.getRequestInfo().getSuppressRollback());
             String uri = (String) execution.getVariable(BBConstants.G_URI);
             final String requestId = (String) execution.getVariable(BBConstants.G_REQUEST_ID);
             final boolean aLaCarte = (boolean) execution.getVariable(BBConstants.G_ALACARTE);
             boolean isResume = isUriResume(uri);
-            if (!aLaCarte && isResume) {
-                logger.debug("replacing URI {}", uri);
-                uri = bbInputSetupUtils.loadOriginalInfraActiveRequestById(requestId).getRequestUrl();
-                logger.debug("for RESUME with original value {}", uri);
-            }
-            Resource resource = extractResourceIdAndTypeFromUri(uri);
-            WorkflowType resourceType = resource.getResourceType();
-            execution.setVariable("resourceName", resourceType.toString());
-            String resourceId = "";
             String requestAction = (String) execution.getVariable(BBConstants.G_ACTION);
             WorkflowResourceIds workflowResourceIds = populateResourceIdsFromApiHandler(execution);
-            if (resource.isGenerated() && requestAction.equalsIgnoreCase("createInstance")
-                    && sIRequest.getRequestDetails().getRequestInfo().getInstanceName() != null) {
-                resourceId = validateResourceIdInAAI(resource.getResourceId(), resourceType,
-                        sIRequest.getRequestDetails().getRequestInfo().getInstanceName(), sIRequest.getRequestDetails(),
-                        workflowResourceIds);
-            } else {
-                resourceId = resource.getResourceId();
-            }
-            String serviceInstanceId = (String) execution.getVariable("serviceInstanceId");
-            if ((serviceInstanceId == null || serviceInstanceId.isEmpty()) && resourceType == WorkflowType.SERVICE) {
-                serviceInstanceId = resourceId;
-            }
-            execution.setVariable("resourceId", resourceId);
-            execution.setVariable("resourceType", resourceType);
+            Resource resource = getResource(bbInputSetupUtils, isResume, aLaCarte, uri, requestId);
+            String resourceId = getResourceId(resource, requestAction, requestDetails, workflowResourceIds);
+            WorkflowType resourceType = resource.getResourceType();
+            String serviceInstanceId = getServiceInstanceId(execution, resourceId, resourceType);
+            fillExecution(execution, requestDetails.getRequestInfo().getSuppressRollback(), resourceId, resourceType);
             List<ExecuteBuildingBlock> flowsToExecute = new ArrayList<>();
             if (isRequestMacroServiceResume(aLaCarte, resourceType, requestAction, serviceInstanceId)) {
                 flowsToExecute = bbInputSetupUtils.loadOriginalFlowExecutionPath(requestId);
@@ -1681,4 +1657,46 @@ public class WorkflowAction {
         }
         return generatedResourceId;
     }
+
+    private void fillExecution(DelegateExecution execution, boolean suppressRollback, String resourceId,
+            WorkflowType resourceType) {
+        execution.setVariable("sentSyncResponse", false);
+        execution.setVariable("homing", false);
+        execution.setVariable("calledHoming", false);
+        execution.setVariable(BBConstants.G_ISTOPLEVELFLOW, true);
+        execution.setVariable("suppressRollback", suppressRollback);
+        execution.setVariable("resourceId", resourceId);
+        execution.setVariable("resourceType", resourceType);
+        execution.setVariable("resourceName", resourceType.toString());
+    }
+
+    private Resource getResource(BBInputSetupUtils bbInputSetupUtils, boolean isResume, boolean alaCarte, String uri,
+            String requestId) {
+        if (!alaCarte && isResume) {
+            logger.debug("replacing URI {}", uri);
+            uri = bbInputSetupUtils.loadOriginalInfraActiveRequestById(requestId).getRequestUrl();
+            logger.debug("for RESUME with original value {}", uri);
+        }
+        return extractResourceIdAndTypeFromUri(uri);
+    }
+
+    private String getResourceId(Resource resource, String requestAction, RequestDetails requestDetails,
+            WorkflowResourceIds workflowResourceIds) throws Exception {
+        if (resource.isGenerated() && requestAction.equalsIgnoreCase("createInstance")
+                && requestDetails.getRequestInfo().getInstanceName() != null) {
+            return validateResourceIdInAAI(resource.getResourceId(), resource.getResourceType(),
+                    requestDetails.getRequestInfo().getInstanceName(), requestDetails, workflowResourceIds);
+        } else {
+            return resource.getResourceId();
+        }
+    }
+
+    private String getServiceInstanceId(DelegateExecution execution, String resourceId, WorkflowType resourceType) {
+        String serviceInstanceId = (String) execution.getVariable("serviceInstanceId");
+        if ((serviceInstanceId == null || serviceInstanceId.isEmpty()) && WorkflowType.SERVICE.equals(resourceType)) {
+            serviceInstanceId = resourceId;
+        }
+        return serviceInstanceId;
+    }
+
 }
