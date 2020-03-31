@@ -158,7 +158,7 @@ public class CatalogDbClient {
     protected static final String HOMING_INSTANCE = "/homingInstance";
     protected static final String ARTIFACT_UUID = "artifactUUID";
     protected static final String SOURCE = "source";
-    protected static final String RESOURCE_TARGET = "resource_target";
+    protected static final String RESOURCE_TARGET = "resourceTarget";
 
     private static final String TARGET_ENTITY = "SO:CatalogDB";
     private static final String ASTERISK = "*";
