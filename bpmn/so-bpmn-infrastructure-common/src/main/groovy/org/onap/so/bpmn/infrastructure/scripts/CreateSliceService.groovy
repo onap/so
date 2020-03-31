@@ -155,9 +155,14 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
             Map<String, Object> parameterObject = (Map<String, Object>) serviceObject.get("parameters")
             Map<String, Object> requestInputs = (Map<String, Object>) parameterObject.get("requestInputs")
 
+            def serviceProfile = [:]
+            for(entry in requestInputs) {
+                serviceProfile[entry.key] = entry.value
+            }
+
             execution.setVariable("serviceInputParams", inputMap)
             execution.setVariable("uuiRequest", uuiRequest)
-            execution.setVariable("serviceProfile", requestInputs)
+            execution.setVariable("serviceProfile", serviceProfile)
 
             //TODO
             //execution.setVariable("serviceInputParams", jsonUtil.getJsonValue(siRequest, "requestDetails.requestParameters.userParams"))
