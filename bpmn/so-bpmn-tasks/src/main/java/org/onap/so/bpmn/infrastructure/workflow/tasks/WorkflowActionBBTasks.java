@@ -70,8 +70,7 @@ public class WorkflowActionBBTasks {
     private static final String G_ACTION = "requestAction";
     private static final String RETRY_COUNT = "retryCount";
     private static final String FABRIC_CONFIGURATION = "FabricConfiguration";
-    private static final String ASSIGN_FABRIC_CONFIGURATION_BB = "AssignFabricConfigurationBB";
-    private static final String ACTIVATE_FABRIC_CONFIGURATION_BB = "ActivateFabricConfigurationBB";
+    private static final String ADD_FABRIC_CONFIGURATION_BB = "AddFabricConfigurationBB";
     private static final String COMPLETED = "completed";
     private static final String HANDLINGCODE = "handlingCode";
     private static final String ROLLBACKTOCREATED = "RollbackToCreated";
@@ -304,6 +303,8 @@ public class WorkflowActionBBTasks {
                         flowName = flowName.replaceFirst("Create", "Delete");
                     } else if (flowName.startsWith("Activate")) {
                         flowName = flowName.replaceFirst("Activate", "Deactivate");
+                    } else if (flowName.startsWith("Add")) {
+                        flowName = flowName.replaceFirst("Add", "Delete");
                     } else {
                         continue;
                     }
@@ -415,12 +416,9 @@ public class WorkflowActionBBTasks {
                     configurationResourceKeys.setVfModuleCustomizationUUID(vfModuleCustomizationUUID);
                     configurationResourceKeys.setVnfResourceCustomizationUUID(vnfCustomizationUUID);
                     configurationResourceKeys.setVnfcName(vnfc.getVnfcName());
-                    ExecuteBuildingBlock assignConfigBB = getExecuteBBForConfig(ASSIGN_FABRIC_CONFIGURATION_BB, ebb,
+                    ExecuteBuildingBlock addConfigBB = getExecuteBBForConfig(ADD_FABRIC_CONFIGURATION_BB, ebb,
                             configurationId, configurationResourceKeys);
-                    ExecuteBuildingBlock activateConfigBB = getExecuteBBForConfig(ACTIVATE_FABRIC_CONFIGURATION_BB, ebb,
-                            configurationId, configurationResourceKeys);
-                    flowsToExecute.add(assignConfigBB);
-                    flowsToExecute.add(activateConfigBB);
+                    flowsToExecute.add(addConfigBB);
                     flowsToExecute.stream()
                             .forEach(executeBB -> logger.info("Flows to Execute After Post Processing: {}",
                                     executeBB.getBuildingBlock().getBpmnFlowName()));

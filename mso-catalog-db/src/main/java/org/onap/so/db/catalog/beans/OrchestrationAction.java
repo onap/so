@@ -30,6 +30,7 @@ public enum OrchestrationAction {
     CREATE("Create"),
     DELETE("Delete"),
     UPDATE("Update"),
+    ADD("Add"),
     ADD_MEMBERS("AddMembers"),
     REMOVE_MEMBERS("RemoveMembers"),
     CUSTOM("Custom");

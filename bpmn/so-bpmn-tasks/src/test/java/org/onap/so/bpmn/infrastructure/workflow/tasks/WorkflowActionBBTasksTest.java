@@ -328,25 +328,20 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock3);
         flowsToExecute.add(ebb3);
 
-        BuildingBlock buildingBlock4 = new BuildingBlock().setBpmnFlowName("AssignFabricConfigurationBB");
+        BuildingBlock buildingBlock4 = new BuildingBlock().setBpmnFlowName("AddFabricConfigurationBB");
         ExecuteBuildingBlock ebb4 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock4);
         flowsToExecute.add(ebb4);
 
-        BuildingBlock buildingBlock5 = new BuildingBlock().setBpmnFlowName("ActivateFabricConfigurationBB");
-        ExecuteBuildingBlock ebb5 = new ExecuteBuildingBlock().setBuildingBlock(buildingBlock5);
-        flowsToExecute.add(ebb5);
-
         execution.setVariable("flowsToExecute", flowsToExecute);
-        execution.setVariable("gCurrentSequence", 5);
+        execution.setVariable("gCurrentSequence", 4);
 
         workflowActionBBTasks.rollbackExecutionPath(execution);
         List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
         assertEquals(0, execution.getVariable("gCurrentSequence"));
-        assertEquals(4, ebbs.size());
-        assertEquals("DeactivateFabricConfigurationBB", ebbs.get(0).getBuildingBlock().getBpmnFlowName());
-        assertEquals("UnassignFabricConfigurationBB", ebbs.get(1).getBuildingBlock().getBpmnFlowName());
-        assertEquals("DeactivateVfModuleBB", ebbs.get(2).getBuildingBlock().getBpmnFlowName());
-        assertEquals("DeleteVfModuleBB", ebbs.get(3).getBuildingBlock().getBpmnFlowName());
+        assertEquals(3, ebbs.size());
+        assertEquals("DeleteFabricConfigurationBB", ebbs.get(0).getBuildingBlock().getBpmnFlowName());
+        assertEquals("DeactivateVfModuleBB", ebbs.get(1).getBuildingBlock().getBpmnFlowName());
+        assertEquals("DeleteVfModuleBB", ebbs.get(2).getBuildingBlock().getBpmnFlowName());
 
     }
 
