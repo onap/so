@@ -20,44 +20,104 @@
 
 package org.onap.so.adapters.tasks.inventory;
 
-import java.util.Optional;
-import java.util.stream.Stream;
-import org.onap.so.client.aai.AAIObjectType;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.commons.collections.CollectionUtils;
 import org.onap.so.client.aai.AAIResourcesClient;
-import org.onap.so.client.aai.entities.uri.AAIUriFactory;
-import org.onap.so.objects.audit.AAIObjectAudit;
-import org.onap.so.objects.audit.AAIObjectAuditList;
+import org.onap.so.cloud.CloudConfig;
+import org.onap.so.cloud.resource.beans.CloudInformation;
+import org.onap.so.db.catalog.beans.CloudIdentity;
+import org.onap.so.db.catalog.beans.CloudSite;
+import org.onap.so.heatbridge.HeatBridgeApi;
+import org.onap.so.heatbridge.HeatBridgeImpl;
+import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
+import org.openstack4j.model.compute.Flavor;
+import org.openstack4j.model.compute.Image;
+import org.openstack4j.model.compute.Server;
+import org.openstack4j.model.heat.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CreateAAIInventory {
 
+    private static final Logger logger = LoggerFactory.getLogger(CreateAAIInventory.class);
+
     private AAIResourcesClient aaiClient;
 
-    public void createInventory(AAIObjectAuditList auditList) throws InventoryException {
-        if (didAuditFailVserverLInterfaces(auditList)) {
-            throw new InventoryException("Audit failed for VServer or LInterface cannot write Sub-Interfaces");
+    @Autowired
+    protected CloudConfig cloudConfig;
+
+    @Autowired
+    protected Environment env;
+
+    public void heatbridge(CloudInformation cloudInformation) {
+        try {
+            CloudSite cloudSite = cloudConfig.getCloudSite(cloudInformation.getRegionId())
+                    .orElseThrow(() -> new MsoCloudSiteNotFound(cloudInformation.getRegionId()));
+            CloudIdentity cloudIdentity = cloudSite.getIdentityService();
+            String heatStackId = cloudInformation.getTemplateInstanceId().split("/")[1];
+
+            List<String> oobMgtNetNames = new ArrayList<>();
+
+            HeatBridgeApi heatBridgeClient =
+                    new HeatBridgeImpl(new AAIResourcesClient(), cloudIdentity, cloudInformation.getOwner(),
+                            cloudInformation.getRegionId(), cloudSite.getRegionId(), cloudInformation.getTenantId());
+
+            heatBridgeClient.authenticate();
+
+            List<Resource> stackResources =
+                    heatBridgeClient.queryNestedHeatStackResources(cloudInformation.getTemplateInstanceId());
+
+            List<Server> osServers = heatBridgeClient.getAllOpenstackServers(stackResources);
+
+            heatBridgeClient.createPserversAndPinterfacesIfNotPresentInAai(stackResources);
+
+            List<Image> osImages = heatBridgeClient.extractOpenstackImagesFromServers(osServers);
+
+            List<Flavor> osFlavors = heatBridgeClient.extractOpenstackFlavorsFromServers(osServers);
+
+            logger.debug("Successfully queried heat stack{} for resources.", heatStackId);
+            // os images
+            if (osImages != null && !osImages.isEmpty()) {
+                heatBridgeClient.buildAddImagesToAaiAction(osImages);
+                logger.debug("Successfully built AAI actions to add images.");
+            } else {
+                logger.debug("No images to update to AAI.");
+            }
+            // flavors
+            if (osFlavors != null && !osFlavors.isEmpty()) {
+                heatBridgeClient.buildAddFlavorsToAaiAction(osFlavors);
+                logger.debug("Successfully built AAI actions to add flavors.");
+            } else {
+                logger.debug("No flavors to update to AAI.");
+            }
+
+            // compute resources
+            heatBridgeClient.buildAddVserversToAaiAction(cloudInformation.getVnfId(), cloudInformation.getVfModuleId(),
+                    osServers);
+            logger.debug("Successfully queried compute resources and built AAI vserver actions.");
+
+            // neutron resources
+            List<String> oobMgtNetIds = new ArrayList<>();
+
+            // if no network-id list is provided, however network-name list is
+            if (!CollectionUtils.isEmpty(oobMgtNetNames)) {
+                oobMgtNetIds = heatBridgeClient.extractNetworkIds(oobMgtNetNames);
+            }
+            heatBridgeClient.buildAddVserverLInterfacesToAaiAction(stackResources, oobMgtNetIds);
+            logger.debug(
+                    "Successfully queried neutron resources and built AAI actions to add l-interfaces to vservers.");
+
+            // Update AAI
+            logger.debug("Current Dry Run Value: {}", env.getProperty("heatBridgeDryrun", Boolean.class, true));
+            heatBridgeClient.submitToAai(env.getProperty("heatBridgeDryrun", Boolean.class, true));
+        } catch (Exception ex) {
+            logger.debug("Heatbrige failed for stackId: " + cloudInformation.getTemplateInstanceId(), ex);
         }
-        auditList.getAuditList().parallelStream()
-                .filter(auditObject -> !auditObject.isDoesObjectExist()
-                        && AAIObjectType.SUB_L_INTERFACE.typeName().equals(auditObject.getAaiObjectType()))
-                .forEach(auditObject -> getAaiClient().createIfNotExists(AAIUriFactory.createResourceFromExistingURI(
-                        AAIObjectType.fromTypeName(auditObject.getAaiObjectType()), auditObject.getResourceURI()),
-                        Optional.of(auditObject.getAaiObject())));
-    }
-
-
-    /**
-     * @param auditHeatStackFailed
-     * @param auditList
-     * @return
-     */
-    protected boolean didAuditFailVserverLInterfaces(AAIObjectAuditList auditList) {
-        Stream<AAIObjectAudit> issue = auditList.getAuditList().stream()
-                .filter(auditObject -> auditObject.getAaiObjectType().equals(AAIObjectType.VSERVER.typeName())
-                        || auditObject.getAaiObjectType().equals(AAIObjectType.L_INTERFACE.typeName()));
-
-        return issue.filter(auditObject -> !auditObject.isDoesObjectExist()).findFirst().map(v -> true).orElse(false);
     }
 
     protected AAIResourcesClient getAaiClient() {

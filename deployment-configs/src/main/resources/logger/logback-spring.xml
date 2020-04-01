@@ -206,7 +206,7 @@
 	<logger name="com.woorea.openstack.connector" level="${LOG_LEVEL:-DEBUG}" />
 	
 	<!-- AAF Logs go here-->
-	<logger name="org.apache.catalina.core.ContainerBase" level="INFO" additivity="false">
+	<logger name="org.apache.catalina.core.ContainerBase" level="WARN" additivity="false">
 		<appender-ref ref="asyncCadi" />
 	</logger>
 

@@ -25,15 +25,15 @@ package org.onap.so.adapters.tasks.inventory;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
-import org.onap.so.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
+import org.onap.so.cloud.resource.beans.CloudInformation;
 import org.onap.so.logging.tasks.AuditMDCSetup;
-import org.onap.so.objects.audit.AAIObjectAuditList;
 import org.onap.so.utils.ExternalTaskUtils;
 import org.onap.so.utils.RetrySequenceLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 
 @Component
 public class CreateInventoryTask extends ExternalTaskUtils {
@@ -57,29 +57,16 @@ public class CreateInventoryTask extends ExternalTaskUtils {
 
     public void executeExternalTask(ExternalTask externalTask, ExternalTaskService externalTaskService) {
         mdcSetup.setupMDC(externalTask);
-        boolean success = true;
         boolean inventoryException = false;
-        String auditInventoryString = externalTask.getVariable("auditInventoryResult");
-        AAIObjectAuditList auditInventory = null;
         String externalTaskId = externalTask.getId();
-        try {
-            GraphInventoryCommonObjectMapperProvider objectMapper = new GraphInventoryCommonObjectMapperProvider();
-            auditInventory = objectMapper.getMapper().readValue(auditInventoryString, AAIObjectAuditList.class);
-        } catch (Exception e) {
-            mdcSetup.setResponseCode(ONAPLogConstants.ResponseStatus.ERROR.toString());
-            logger.error("Error Parsing Audit Results", e);
-        }
-        mdcSetup.setElapsedTime();
-        if (auditInventory != null) {
+        CloudInformation cloudInformation = externalTask.getVariable("cloudInformation");
+        boolean success = true;
+        if (cloudInformation != null) {
             Integer retryCount = externalTask.getRetries();
             try {
-                logger.info("Executing External Task Create Inventory, Retry Number: {} \n {}", auditInventory,
+                logger.info("Executing External Task Create Inventory, Retry Number: {} \n {}", cloudInformation,
                         retryCount);
-                createInventory.createInventory(auditInventory);
-            } catch (InventoryException e) {
-                logger.error("Error during inventory of stack", e);
-                success = false;
-                inventoryException = true;
+                createInventory.heatbridge(cloudInformation);
             } catch (Exception e) {
                 logger.error("Error during inventory of stack", e);
                 success = false;
@@ -91,31 +78,27 @@ public class CreateInventoryTask extends ExternalTaskUtils {
                 logger.debug("The External Task Id: {}  Successful", externalTaskId);
                 logger.info(ONAPLogConstants.Markers.EXIT, "Exiting");
                 mdcSetup.clearClientMDCs();
-            } else if (inventoryException) {
-                mdcSetup.setResponseCode(ONAPLogConstants.ResponseStatus.ERROR.toString());
-                logger.debug("The External Task Id: {}  Failed, Retry not needed", externalTaskId);
-                externalTaskService.handleBpmnError(externalTask, AAI_INVENTORY_FAILURE);
             } else {
                 if (retryCount == null) {
-                    logger.debug("The External Task Id: {}  Failed, Setting Retries to Default Start Value: {}",
+                    logger.error("The External Task Id: {}  Failed, Setting Retries to Default Start Value: {}",
                             externalTaskId, getRetrySequence().length);
                     externalTaskService.handleFailure(externalTask, UNABLE_TO_WRITE_ALL_INVENTORY_TO_A_AI,
                             UNABLE_TO_WRITE_ALL_INVENTORY_TO_A_AI, getRetrySequence().length, 10000);
                 } else if (retryCount != null && retryCount - 1 == 0) {
                     externalTaskService.handleBpmnError(externalTask, AAI_INVENTORY_FAILURE);
                     mdcSetup.setResponseCode(ONAPLogConstants.ResponseStatus.ERROR.toString());
-                    logger.debug("The External Task Id: {}  Failed, All Retries Exhausted", externalTaskId);
+                    logger.error("The External Task Id: {}  Failed, All Retries Exhausted", externalTaskId);
                     logger.info(ONAPLogConstants.Markers.EXIT, "Exiting");
                 } else {
-                    logger.debug("The External Task Id: {}  Failed, Decrementing Retries: {} , Retry Delay: ",
+                    logger.error("The External Task Id: {}  Failed, Decrementing Retries: {} , Retry Delay: ",
                             externalTaskId, retryCount - 1, calculateRetryDelay(retryCount));
                     externalTaskService.handleFailure(externalTask, UNABLE_TO_WRITE_ALL_INVENTORY_TO_A_AI,
                             UNABLE_TO_WRITE_ALL_INVENTORY_TO_A_AI, retryCount - 1, calculateRetryDelay(retryCount));
                 }
-                logger.debug("The External Task Id: {} Failed", externalTaskId);
+                logger.error("The External Task Id: {} Failed", externalTaskId);
             }
         } else {
-            logger.debug("The External Task Id: {}  Failed, No Audit Results Written", externalTaskId);
+            logger.error("The External Task Id: {}  Failed, No Cloud Information Provided", externalTaskId);
             externalTaskService.handleBpmnError(externalTask, AAI_INVENTORY_FAILURE);
         }
     }

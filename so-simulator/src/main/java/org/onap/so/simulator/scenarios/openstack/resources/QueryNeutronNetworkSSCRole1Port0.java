@@ -9,8 +9,7 @@ import com.consol.citrus.simulator.scenario.Scenario;
 import com.consol.citrus.simulator.scenario.ScenarioDesigner;
 
 @Scenario("QueryNeutronNetworkSSCRole1Port0")
-@RequestMapping(value = "/sim/mockPublicUrl/v2.0/ports/0594a2f2-7ea4-42eb-abc2-48ea49677fca",
-        method = RequestMethod.GET)
+@RequestMapping(value = "/sim/v1/tenantOne/v2.0/ports/0594a2f2-7ea4-42eb-abc2-48ea49677fca", method = RequestMethod.GET)
 public class QueryNeutronNetworkSSCRole1Port0 extends AbstractSimulatorScenario {
 
 

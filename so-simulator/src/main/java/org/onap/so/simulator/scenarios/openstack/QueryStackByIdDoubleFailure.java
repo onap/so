@@ -1,17 +1,16 @@
 package org.onap.so.simulator.scenarios.openstack;
 
+import org.onap.so.simulator.actions.aai.DeleteVServers;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.onap.so.simulator.actions.aai.DeleteVServers;
 import com.consol.citrus.endpoint.resolver.DynamicEndpointUriResolver;
 import com.consol.citrus.simulator.scenario.AbstractSimulatorScenario;
 import com.consol.citrus.simulator.scenario.Scenario;
 import com.consol.citrus.simulator.scenario.ScenarioDesigner;
 
 @Scenario("Double-Failure-Stack-Endpoint")
-@RequestMapping(value = "/sim/mockPublicUrl/stacks/double_failure_id/stackId")
+@RequestMapping(value = "/sim/v1/tenantOne/stacks/double_failure_id/stackId")
 public class QueryStackByIdDoubleFailure extends AbstractSimulatorScenario {
 
 

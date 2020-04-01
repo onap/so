@@ -1,0 +1,22 @@
+{
+  "flavor" : {
+    "links" : [ {
+      "rel" : "self",
+      "href" : "http://some.test.host.com:8774/v2/f340218174564e59898c2e38c67d80b0/flavors/053ea2e2-533f-46c3-a902-1bc76e93e5c1"
+    }, {
+      "rel" : "bookmark",
+      "href" : "http://some.test.host.com:8774/f340218174564e59898c2e38c67d80b0/flavors/053ea2e2-533f-46c3-a902-1bc76e93e5c1"
+    } ],
+    "public" : true,
+    "id" : "053ea2e2-533f-46c3-a902-1bc76e93e5c1",
+    "name" : "gv.c8r16d60e200",
+    "vcpus" : 8,
+    "ram" : 16384,
+    "disk" : 60,
+    "OS-FLV-EXT-DATA:ephemeral" : 200,
+    "swap" : "",
+    "rxtx_factor" : 1.0,
+    "OS-FLV-DISABLED:disabled" : false,
+    "os-flavor-access:is_public" : true
+  }
+}

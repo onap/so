@@ -9,7 +9,7 @@ import com.consol.citrus.simulator.scenario.Scenario;
 import com.consol.citrus.simulator.scenario.ScenarioDesigner;
 
 @Scenario("Openstack-CreateStack")
-@RequestMapping(value = "/sim/mockPublicUrl/stacks", method = RequestMethod.POST)
+@RequestMapping(value = "/sim/v1/tenantOne/stacks", method = RequestMethod.POST)
 public class CreateStack extends AbstractSimulatorScenario {
 
     @Override

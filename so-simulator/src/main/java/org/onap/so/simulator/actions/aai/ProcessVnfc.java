@@ -29,7 +29,7 @@ public class ProcessVnfc extends AbstractTestAction {
             AAIResourcesClient aaiResourceClient = new AAIResourcesClient();
 
             if (context.getVariable("requestAction").equals("CreateVfModuleInstance")
-                    && context.getVariable("serviceAction").equals("activate")) {
+                    && context.getVariable("serviceAction").equals("assign")) {
 
                 AAIResourceUri vnfcURI = AAIUriFactory.createResourceUri(AAIObjectType.VNFC, "zauk51bfrwl09oam001");
                 Vnfc vnfc = new Vnfc();

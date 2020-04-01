@@ -72,6 +72,8 @@ public class HeatBridgeConstants {
     public static final String AAI_SRIOV_PF = "sriov-pf";
     public static final String AAI_P_INTERFACE_NAME = "p-interface.interface-name";
     public static final String AAI_SRIOV_PF_PCI_ID = "sriov-pf.pf-pci-id";
+    public static final String AAI_VNFC = "vnfc";
+    public static final String AAI_VNFC_ID = "vnfc.vnfc-name";
 
     /**
      * Keys for internal usage
