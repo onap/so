@@ -38,6 +38,7 @@ import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.graphinventory.GraphInventoryPatchConverter;
 import org.onap.so.client.graphinventory.GraphInventoryTransactionClient;
 import org.onap.so.client.graphinventory.exceptions.BulkProcessFailed;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
 
@@ -85,6 +86,22 @@ public class AAISingleTransactionClient extends
         }
     }
 
+    @Override
+    public void execute(boolean dryRun) throws BulkProcessFailed {
+        final ObjectMapper mapper = new ObjectMapper();
+        if (dryRun) {
+            try {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Would execute: {}", mapper.writeValueAsString(this.request));
+                }
+            } catch (JsonProcessingException e) {
+                logger.debug("Could not format request to JSON", e);
+            }
+        } else {
+            this.execute();
+        }
+    }
+
     protected Optional<String> locateErrorMessages(SingleTransactionResponse response) {
         final List<String> errorMessages = new ArrayList<>();
         final ObjectMapper mapper = new ObjectMapper();
@@ -110,7 +127,6 @@ public class AAISingleTransactionClient extends
             return Optional.empty();
         }
     }
-
 
     protected SingleTransactionRequest getRequest() {
         return this.request;

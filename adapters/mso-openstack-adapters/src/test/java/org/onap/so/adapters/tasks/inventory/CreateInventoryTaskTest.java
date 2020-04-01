@@ -76,7 +76,6 @@ public class CreateInventoryTaskTest {
         object.getAuditList().add(e);
         GraphInventoryCommonObjectMapperProvider objectMapper = new GraphInventoryCommonObjectMapperProvider();
         doReturn(objectMapper.getMapper().writeValueAsString(e)).when(externalTask).getVariable("auditInventoryResult");
-        Mockito.doThrow(InventoryException.class).when(createAAIInventory).createInventory(Mockito.any());
         inventoryTask.executeExternalTask(externalTask, externalTaskService);
         Mockito.verify(externalTaskService, times(1)).handleBpmnError(externalTask, "AAIInventoryFailure");
     }
