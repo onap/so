@@ -9,7 +9,7 @@ import com.consol.citrus.simulator.scenario.Scenario;
 import com.consol.citrus.simulator.scenario.ScenarioDesigner;
 
 @Scenario("Openstack-Query-Base-Stack-Resources")
-@RequestMapping(value = "/sim/mockPublicUrl/stacks/base_module_id/resources", method = RequestMethod.GET)
+@RequestMapping(value = "/sim/v1/tenantOne/stacks/base_module_id/resources", method = RequestMethod.GET)
 public class QueryResourcesByBaseStackName extends AbstractSimulatorScenario {
 
 

@@ -14,7 +14,7 @@ import com.consol.citrus.simulator.scenario.ScenarioDesigner;
  *
  */
 @Scenario("Openstack-QueryStackByID-Macro1")
-@RequestMapping(value = "/sim/mockPublicUrl/stacks/macro_module_1/*", method = RequestMethod.GET)
+@RequestMapping(value = "/sim/v1/tenantOne/stacks/macro_module_1/*", method = RequestMethod.GET)
 public class QueryStackByIdMacro1 extends AbstractSimulatorScenario {
 
 

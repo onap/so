@@ -224,6 +224,14 @@ public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInv
      */
     public abstract void execute() throws BulkProcessFailed;
 
+
+    /**
+     * Executes all created transactions in A&AI, with optional dry run flag
+     * 
+     * @throws BulkProcessFailed
+     */
+    public abstract void execute(boolean dryrun) throws BulkProcessFailed;
+
     private Relationship buildRelationship(SingleUri uri) {
         return buildRelationship(uri, Optional.empty());
     }

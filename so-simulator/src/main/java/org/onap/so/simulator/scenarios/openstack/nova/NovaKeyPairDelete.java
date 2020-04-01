@@ -8,7 +8,7 @@ import com.consol.citrus.simulator.scenario.Scenario;
 import com.consol.citrus.simulator.scenario.ScenarioDesigner;
 
 @Scenario("Nova-Keypair-Delete")
-@RequestMapping(value = "/sim/mockPublicUrl/os-keypairs/*", method = RequestMethod.DELETE)
+@RequestMapping(value = "/sim/v1/tenantOne/os-keypairs/*", method = RequestMethod.DELETE)
 public class NovaKeyPairDelete extends AbstractSimulatorScenario {
 
     @Override

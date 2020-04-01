@@ -10,7 +10,7 @@ import com.consol.citrus.simulator.scenario.Scenario;
 import com.consol.citrus.simulator.scenario.ScenarioDesigner;
 
 @Scenario("Openstack-NetworkCreateDeleteCloud")
-@RequestMapping(value = "/sim/mockPublicUrl/stacks/network_dummy_id/stackId")
+@RequestMapping(value = "/sim/v1/tenantOne/stacks/network_dummy_id/stackId")
 public class NetworkCreateDeleteCloud extends AbstractSimulatorScenario {
 
 

@@ -9,7 +9,7 @@ import com.consol.citrus.simulator.scenario.Scenario;
 import com.consol.citrus.simulator.scenario.ScenarioDesigner;
 
 @Scenario("Query-Failure-ID-Name-Resources")
-@RequestMapping(value = "/sim/mockPublicUrl/stacks/failure_id/resources", method = RequestMethod.GET)
+@RequestMapping(value = "/sim/v1/tenantOne/stacks/failure_id/resources", method = RequestMethod.GET)
 public class QueryResourcesByStackNameFailureId extends AbstractSimulatorScenario {
 
     @Override
