@@ -21,11 +21,16 @@
 package org.onap.so.apihandlerinfra.e2eserviceinstancebeans;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class E2EServiceInstanceDeleteRequest {
 
     private String globalSubscriberId;
 
     private String serviceType;
+
+    @JsonIgnore
+    private String scriptName;
 
     public String getGlobalSubscriberId() {
         return globalSubscriberId;
@@ -43,4 +48,11 @@ public class E2EServiceInstanceDeleteRequest {
         this.serviceType = serviceType;
     }
 
+    public String getScriptName() {
+        return scriptName;
+    }
+
+    public void setScriptName(String scriptName) {
+        this.scriptName = scriptName;
+    }
 }

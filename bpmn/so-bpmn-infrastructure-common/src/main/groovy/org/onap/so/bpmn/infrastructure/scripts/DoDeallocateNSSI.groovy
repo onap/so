@@ -138,12 +138,14 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor
         String profileId = currentNSSI['profileId']
         String nssiId = currentNSSI['nssiServiceInstanceId']
         String nsiId = currentNSSI['nsiServiceInstanceId']
+        String scriptName = execution.getVariable("scriptName")
 
         DeAllocateNssi deAllocateNssi = new DeAllocateNssi()
         deAllocateNssi.setNsiId(nsiId)
         deAllocateNssi.setNssiId(nssiId)
         deAllocateNssi.setTerminateNssiOption(0)
         deAllocateNssi.setSnssaiList(Arrays.asList(snssai))
+        deAllocateNssi.setScriptName(scriptName)
 
         NssiDeAllocateRequest deAllocateRequest = new NssiDeAllocateRequest()
         deAllocateRequest.setDeAllocateNssi(deAllocateNssi)
