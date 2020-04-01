@@ -25,11 +25,10 @@ logging:
 
 spring:
   datasource:
+    jdbc-url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/requestdb
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.mariadb.jdbc.Driver
-    jdbcUrl: jdbc:mariadb://192.168.235.44:30444/requestdb
-    username: root
-    password: secretpassword
-
   jpa:
     show-sql: false
     hibernate:
@@ -37,6 +36,14 @@ spring:
       ddl-auto: validate
       naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
       enable-lazy-load-no-trans: true
+  security:
+    usercredentials:
+      - username: bpel
+        password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
+        role: BPEL-Client
+      - username: mso_admin
+        password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
+        role: ACTUATOR
 server:
   port: 8080
   tomcat:
@@ -46,8 +53,6 @@ mso:
   key: 07a7159d3bf51a0e53be7a8f89699be7
   site-name: localSite
   logPath: ./logs/nssmf
-  msb-ip: msb-iag.{{ include "common.namespace" . }}
-  msb-port: 80
   adapters:
     requestDb:
       endpoint: https://so-request-db-adapter.{{ include "common.namespace" . }}:8083
