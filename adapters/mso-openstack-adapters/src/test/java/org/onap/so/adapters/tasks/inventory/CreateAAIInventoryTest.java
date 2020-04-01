@@ -20,30 +20,17 @@
 
 package org.onap.so.adapters.tasks.inventory;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import org.camunda.bpm.client.task.ExternalTask;
-import org.hamcrest.Matchers;
 import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.onap.so.adapters.tasks.inventory.CreateAAIInventory;
 import org.onap.so.audit.beans.AuditInventory;
-import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
-import org.onap.so.client.aai.entities.uri.AAIResourceUri;
-import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.objects.audit.AAIObjectAuditList;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -86,38 +73,4 @@ public class CreateAAIInventoryTest extends CreateAAIInventory {
         doReturn(auditInventory).when(mockExternalTask).getVariable("auditInventory");
     }
 
-    @Test
-    public void determineAuditResult_Test() throws Exception {
-        boolean actual = createAAIInventory.didAuditFailVserverLInterfaces(auditListSuccess);
-        assertEquals(false, actual);
-    }
-
-    @Test
-    public void determineAuditResult_Failure_Test() throws Exception {
-        boolean actual = createAAIInventory.didAuditFailVserverLInterfaces(auditListFailure);
-        assertEquals(true, actual);
-    }
-
-    @Test
-    public void missing_Sub_Interfaces_Test() throws Exception {
-        AAIResourceUri aaiURI2 = AAIUriFactory.createResourceUri(AAIObjectType.SUB_L_INTERFACE, "cloudOwner",
-                "regionOne", "0422ffb57ba042c0800a29dc85ca70f8", "92272b67-d23f-42ca-87fa-7b06a9ec81f3",
-                "tsbc0005v_tsbc0005vm002_svc1_port_0", "tsbc0005v_tsbc0005vm002_subint_untrusted_svc1_81");
-        AAIResourceUri aaiURI1 = AAIUriFactory.createResourceUri(AAIObjectType.SUB_L_INTERFACE, "cloudOwner",
-                "regionOne", "0422ffb57ba042c0800a29dc85ca70f8", "92272b67-d23f-42ca-87fa-7b06a9ec81f3",
-                "tsbc0005v_tsbc0005vm002_svc2_port_0", "tsbc0005v_tsbc0005vm002_subint_untrusted_svc2_103");
-        ArgumentCaptor<Optional> captor = ArgumentCaptor.forClass(Optional.class);
-        ArgumentCaptor<AAIResourceUri> uriCaptor = ArgumentCaptor.forClass(AAIResourceUri.class);
-
-        createAAIInventory.setAaiClient(mockClient);
-        createAAIInventory.createInventory(missingSubInterfaces);
-        Mockito.verify(mockClient, times(2)).createIfNotExists(uriCaptor.capture(), captor.capture());
-
-        List<AAIResourceUri> capturedURI = uriCaptor.getAllValues();
-        assertTrue(capturedURI.stream().anyMatch(item -> aaiURI1.build().toString().equals(item.build().toString())));
-        assertTrue(capturedURI.stream().anyMatch(item -> aaiURI2.build().toString().equals(item.build().toString())));
-
-
-
-    }
 }

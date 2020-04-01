@@ -55,10 +55,11 @@ import org.onap.aai.domain.yang.SriovPf;
 import org.onap.aai.domain.yang.SriovPfs;
 import org.onap.aai.domain.yang.SriovVf;
 import org.onap.aai.domain.yang.SriovVfs;
+import org.onap.aai.domain.yang.VfModule;
 import org.onap.aai.domain.yang.Vlan;
 import org.onap.aai.domain.yang.Vlans;
 import org.onap.aai.domain.yang.Vserver;
-import org.onap.aai.domain.yang.VfModule;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.AAISingleTransactionClient;
@@ -68,15 +69,14 @@ import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.graphinventory.entities.uri.Depth;
 import org.onap.so.client.graphinventory.exceptions.BulkProcessFailed;
-import org.onap.so.client.PreconditionFailedException;
 import org.onap.so.db.catalog.beans.CloudIdentity;
+import org.onap.so.db.catalog.beans.ServerType;
 import org.onap.so.heatbridge.constants.HeatBridgeConstants;
 import org.onap.so.heatbridge.factory.MsoCloudClientFactoryImpl;
 import org.onap.so.heatbridge.helpers.AaiHelper;
 import org.onap.so.heatbridge.openstack.api.OpenstackClient;
 import org.onap.so.heatbridge.openstack.factory.OpenstackClientFactoryImpl;
 import org.onap.so.heatbridge.utils.HeatBridgeUtils;
-import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.openstack4j.model.compute.Server;
@@ -134,10 +134,19 @@ public class HeatBridgeImpl implements HeatBridgeApi {
 
     @Override
     public OpenstackClient authenticate() throws HeatBridgeException {
+        String keystoneVersion = "";
+        if (ServerType.KEYSTONE.equals(cloudIdentity.getIdentityServerType()))
+            keystoneVersion = "v2.0";
+        else if (ServerType.KEYSTONE_V3.equals(cloudIdentity.getIdentityServerType())) {
+            keystoneVersion = "v3";
+        } else {
+            keystoneVersion = "UNKNOWN";
+        }
+        logger.trace("Keystone Version: {} ", keystoneVersion);
         this.osClient = new MsoCloudClientFactoryImpl(new OpenstackClientFactoryImpl()).getOpenstackClient(
                 cloudIdentity.getIdentityUrl(), cloudIdentity.getMsoId(), cloudIdentity.getMsoPass(), regionId,
-                tenantId);
-        logger.debug("Successfully authenticated with keystone for tenant: " + tenantId + " and region: " + regionId);
+                tenantId, keystoneVersion);
+        logger.trace("Successfully authenticated with keystone for tenant: {} and region: {}", tenantId, regionId);
         return osClient;
     }
 
@@ -171,7 +180,6 @@ public class HeatBridgeImpl implements HeatBridgeApi {
     @Override
     public List<Server> getAllOpenstackServers(final List<Resource> stackResources) {
         Objects.requireNonNull(osClient, ERR_MSG_NULL_OS_CLIENT);
-
         // Filter Openstack Compute resources
         List<String> serverIds =
                 extractStackResourceIdsByResourceType(stackResources, HeatBridgeConstants.OS_SERVER_RESOURCE_TYPE);
@@ -260,12 +268,15 @@ public class HeatBridgeImpl implements HeatBridgeApi {
             lIf.setInterfaceId(port.getId());
             lIf.setInterfaceName(port.getName());
             lIf.setMacaddr(port.getMacAddress());
+            lIf.setNetworkName((String) port.getProfile().get("physical_network"));
+            lIf.setIsPortMirrored(false);
+            lIf.setIsIpUnnumbered(false);
+            lIf.setInMaint(false);
             if (oobMgtNetIds != null && oobMgtNetIds.contains(port.getNetworkId())) {
                 lIf.setInterfaceRole(OOB_MGT_NETWORK_IDENTIFIER);
             } else {
                 lIf.setInterfaceRole(port.getvNicType());
             }
-
             updateLInterfaceIps(port, lIf);
             updateLInterfaceVlan(port, lIf);
 
@@ -316,9 +327,14 @@ public class HeatBridgeImpl implements HeatBridgeApi {
     private void updateLInterfaceVlan(final Port port, final LInterface lIf) {
         Vlan vlan = new Vlan();
         Network network = osClient.getNetworkById(port.getNetworkId());
-        lIf.setNetworkName(network.getName());
         if (network.getNetworkType().equals(NetworkType.VLAN)) {
-            vlan.setVlanInterface(network.getProviderSegID());
+            vlan.setVlanInterface(network.getName() + network.getProviderSegID());
+
+            vlan.setVlanIdOuter(Long.parseLong(network.getProviderSegID()));
+            vlan.setVlanIdInner(0L);
+            vlan.setInMaint(false);
+            vlan.setIsIpUnnumbered(false);
+            vlan.setIsPrivate(false);
             Vlans vlans = new Vlans();
             List<Vlan> vlanList = vlans.getVlan();
             vlanList.add(vlan);
@@ -336,6 +352,8 @@ public class HeatBridgeImpl implements HeatBridgeApi {
             if (port.getVifDetails() != null) {
                 sriovVf.setVfVlanFilter((String) port.getVifDetails().get(HeatBridgeConstants.OS_VLAN_NETWORK_KEY));
             }
+            sriovVf.setVfVlanAntiSpoofCheck(false);
+            sriovVf.setVfMacAntiSpoofCheck(false);
             sriovVfList.add(sriovVf);
 
             lIf.setSriovVfs(sriovVfs);
@@ -417,9 +435,9 @@ public class HeatBridgeImpl implements HeatBridgeApi {
     }
 
     @Override
-    public void submitToAai() throws HeatBridgeException {
+    public void submitToAai(boolean dryrun) throws HeatBridgeException {
         try {
-            transaction.execute();
+            transaction.execute(dryrun);
         } catch (BulkProcessFailed e) {
             String msg = "Failed to commit transaction";
             logger.debug(msg + " with error: " + e);

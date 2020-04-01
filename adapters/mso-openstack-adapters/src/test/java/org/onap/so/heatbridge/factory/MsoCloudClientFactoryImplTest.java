@@ -52,19 +52,20 @@ public class MsoCloudClientFactoryImplTest {
 
     @Test
     public void getOpenstackClientWithVersion2() throws Exception {
-        testedObject.getOpenstackClient(URL_V2, MSO_ID, ENCRYPTED_PASSWORD, REGION_ID, TENANT_ID);
+        testedObject.getOpenstackClient(URL_V2, MSO_ID, ENCRYPTED_PASSWORD, REGION_ID, TENANT_ID, "v2.0");
         verify(openstackClientFactoryMock).createOpenstackV2Client(any(OpenstackAccess.class));
     }
 
     @Test
     public void getOpenstackClientWithVersion3() throws Exception {
-        testedObject.getOpenstackClient(URL_V3, MSO_ID, ENCRYPTED_PASSWORD, REGION_ID, TENANT_ID);
+        testedObject.getOpenstackClient(URL_V3, MSO_ID, ENCRYPTED_PASSWORD, REGION_ID, TENANT_ID, "v3");
         verify(openstackClientFactoryMock).createOpenstackV3Client(any(OpenstackAccess.class));
     }
 
     @Test(expected = HeatBridgeException.class)
     public void getOpenstackClient_unsupportedVersion() throws Exception {
-        testedObject.getOpenstackClient(URL_WITH_UNSUPPORTED_VERSION, MSO_ID, ENCRYPTED_PASSWORD, REGION_ID, TENANT_ID);
+        testedObject.getOpenstackClient(URL_WITH_UNSUPPORTED_VERSION, MSO_ID, ENCRYPTED_PASSWORD, REGION_ID, TENANT_ID,
+                "UNKNOWN");
     }
 
 }

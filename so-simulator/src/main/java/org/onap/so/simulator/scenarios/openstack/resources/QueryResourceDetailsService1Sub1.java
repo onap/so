@@ -10,7 +10,7 @@ import com.consol.citrus.simulator.scenario.ScenarioDesigner;
 
 @Scenario("Query-Resource-Details-service1-Sub1")
 @RequestMapping(
-        value = "/sim/mockPublicUrl/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz-0-yghihziaf36m/b7019dd0-2ee9-4447-bdef-ac25676b205a/resources",
+        value = "/sim/v1/tenantOne/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz-0-yghihziaf36m/b7019dd0-2ee9-4447-bdef-ac25676b205a/resources",
         method = RequestMethod.GET)
 public class QueryResourceDetailsService1Sub1 extends AbstractSimulatorScenario {
 
