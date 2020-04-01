@@ -37,6 +37,16 @@ spring:
       ddl-auto: validate
       naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
       enable-lazy-load-no-trans: true
+  security:
+    usercredentials:
+      -
+        username: bpel
+        password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
+        role: BPEL-Client
+      -
+        username: mso_admin
+        password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
+        role: ACTUATOR
 server:
   port: 8080
   tomcat:
