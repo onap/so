@@ -33,12 +33,8 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import com.google.gson.Gson;
 import org.hibernate.exception.LockAcquisitionException;
 import org.junit.Before;
 import org.junit.Rule;
@@ -742,6 +738,54 @@ public class ToscaResourceInstallerTest extends BaseTest {
             }
         }
 
+    }
+
+    @Test
+    public void installTheNsstServiceTest() {
+        String artifactInfoImpl = "{\n" + "\t\"artifactUUID\": \"5284fb56-a9c5-4e53-bb42-f44f8ef281ad\",\n"
+                + "\t\"artifactType\": \"OTHER\",\n" + "\t\"artifactName\": \"eMBB.zip\",\n"
+                + "\t\"artifactVersion\": \"1\",\n" + "\t\"artifactDescription\":\"embbCn\",\n"
+                + "\t\"artifactChecksum\":\"ZWRkMGM3NzNjMmE3NzliYTFiZGNmZjVlMDE4OWEzMTA=\"\n" + "}";
+        ToscaCsarRepository toscaCsarRepo = spy(ToscaCsarRepository.class);
+        ReflectionTestUtils.setField(toscaInstaller, "toscaCsarRepo", toscaCsarRepo);
+        ServiceRepository serviceRepo = spy(ServiceRepository.class);
+        ReflectionTestUtils.setField(toscaInstaller, "serviceRepo", serviceRepo);
+
+        Input input = mock(Input.class);
+        doReturn("useInterval").when(input).getName();
+        doReturn("string").when(input).getType();
+        doReturn("").when(input).getDefault();
+        doReturn(false).when(input).isRequired();
+        NodeTemplate template = mock(NodeTemplate.class);
+        LinkedHashMap<String, Object> values = new LinkedHashMap<>();
+        values.put("default", 300);
+        values.put("type", "integer");
+        values.put("description", "areaTrafficCapDL");
+        values.put("required", false);
+        LinkedHashMap<String, Object> property = new LinkedHashMap<>();
+        property.put("areaTrafficCapDL", values);
+        LinkedHashMap<String, Object> properties = new LinkedHashMap<>();
+        properties.put("properties", property);
+        LinkedHashMap<String, Object> customDef = new LinkedHashMap<>();
+        customDef.put("org.openecomp.service.Embbnst", properties);
+        doReturn(customDef).when(template).getCustomDef();
+
+        Gson gson = new Gson();
+        doReturn(sdcCsarHelper).when(toscaResourceStructure).getSdcCsarHelper();
+        doReturn(Collections.singletonList(input)).when(sdcCsarHelper).getServiceInputs();
+        doReturn(Collections.singletonList(template)).when(sdcCsarHelper).getServiceNodeTemplates();
+        doReturn("org.openecomp.service.Embbnst").when(sdcCsarHelper).getServiceSubstitutionMappingsTypeName();
+        ArtifactInfoImpl artifactInfo = gson.fromJson(artifactInfoImpl, ArtifactInfoImpl.class);
+        ToscaCsar toscaCsar = gson.fromJson(artifactInfoImpl, ToscaCsar.class);
+        notificationData.setServiceArtifacts(Collections.singletonList(artifactInfo));
+        doReturn(notificationData).when(vfResourceStruct).getNotification();
+        doReturn(artifactInfo).when(toscaResourceStructure).getToscaArtifact();
+        doReturn(Optional.of(toscaCsar)).when(toscaCsarRepo).findById(any(String.class));
+        Metadata serviceMetadata = new Metadata(new HashMap<>());
+        doReturn(serviceMetadata).when(toscaResourceStructure).getServiceMetadata();
+        doReturn(service).when(toscaResourceStructure).getCatalogService();
+        doReturn(service).when(serviceRepo).save(any(Service.class));
+        toscaInstaller.installTheNsstService(toscaResourceStructure, vfResourceStruct, null);
     }
 
 
