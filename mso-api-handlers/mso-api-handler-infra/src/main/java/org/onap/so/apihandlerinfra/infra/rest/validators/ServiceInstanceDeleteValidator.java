@@ -6,11 +6,10 @@ import java.util.regex.Pattern;
 import org.onap.so.apihandlerinfra.Action;
 import org.onap.so.apihandlerinfra.Actions;
 import org.onap.so.apihandlerinfra.infra.rest.AAIDataRetrieval;
-import org.onap.so.listener.Skip;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Skip
+
 public class ServiceInstanceDeleteValidator implements RequestValidator {
 
     @Autowired

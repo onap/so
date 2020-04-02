@@ -1,19 +1,29 @@
 package org.onap.so.apihandlerinfra.infra.rest;
 
+import java.util.List;
 import java.util.Optional;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.L3Network;
+import org.onap.aai.domain.yang.LInterface;
 import org.onap.aai.domain.yang.Service;
 import org.onap.aai.domain.yang.ServiceInstance;
 import org.onap.aai.domain.yang.Tenant;
 import org.onap.aai.domain.yang.VfModule;
 import org.onap.aai.domain.yang.VolumeGroup;
 import org.onap.so.apihandlerinfra.infra.rest.exception.AAIEntityNotFound;
+import org.onap.so.client.aai.AAIDSLQueryClient;
 import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
+import org.onap.so.client.graphinventory.entities.DSLQuery;
+import org.onap.so.client.graphinventory.entities.DSLQueryBuilder;
+import org.onap.so.client.graphinventory.entities.DSLStartNode;
+import org.onap.so.client.graphinventory.entities.Node;
+import org.onap.so.client.graphinventory.entities.Start;
+import org.onap.so.client.graphinventory.entities.TraversalBuilder;
+import org.onap.so.client.graphinventory.entities.__;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -24,6 +34,8 @@ public class AAIDataRetrieval {
     private static final String VF_MODULE_NOT_FOUND_IN_INVENTORY_VNF_ID = "VF Module Not Found In Inventory, VnfId: ";
 
     private AAIResourcesClient aaiResourcesClient;
+
+    private AAIDSLQueryClient aaiDslQueryClient;
 
     private static final Logger logger = LoggerFactory.getLogger(AAIDataRetrieval.class);
 
@@ -127,6 +139,22 @@ public class AAIDataRetrieval {
                     logger.debug("No Tenant found in A&AI TenantId: {}", tenantId);
                     return null;
                 });
+    }
+
+    public List<LInterface> getLinterfacesOfVnf(String vnfId) {
+        DSLStartNode startNode = new DSLStartNode(AAIObjectType.GENERIC_VNF, __.key("generic-vnf-id", vnfId));
+        DSLQueryBuilder<Start, Node> builder = TraversalBuilder.fragment(startNode)
+                .to(__.node(AAIObjectType.VSERVER).to(__.node(AAIObjectType.L_INTERFACE).output()));
+        List<LInterface> linterfaces =
+                getAAIDSLQueryClient().querySingleResource(new DSLQuery(builder.build()), LInterface.class);
+        return linterfaces;
+    }
+
+    private AAIDSLQueryClient getAAIDSLQueryClient() {
+        if (aaiDslQueryClient == null) {
+            aaiDslQueryClient = new AAIDSLQueryClient();
+        }
+        return aaiDslQueryClient;
     }
 
     protected AAIResourcesClient getAaiResourcesClient() {
