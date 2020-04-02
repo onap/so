@@ -69,10 +69,10 @@ public class InfraActiveRequests extends InfraRequests {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("requestId", getRequestId()).append("requestStatus", getRequestStatus())
-                .append("statusMessage", getStatusMessage()).append("progress", getProgress())
-                .append("startTime", getStartTime()).append("endTime", getEndTime()).append("source", getSource())
-                .append("vnfId", getVnfId()).append("vnfName", getVnfName()).append("vnfType", getVnfType())
-                .append("pnfName", getPnfName()).append("serviceType", getServiceType())
+                .append("statusMessage", getStatusMessage()).append("resourceStatusMessage", getResourceStatusMessage())
+                .append("progress", getProgress()).append("startTime", getStartTime()).append("endTime", getEndTime())
+                .append("source", getSource()).append("vnfId", getVnfId()).append("vnfName", getVnfName())
+                .append("vnfType", getVnfType()).append("pnfName", getPnfName()).append("serviceType", getServiceType())
                 .append("tenantId", getTenantId()).append("vnfParams", getVnfParams())
                 .append("vnfOutputs", getVnfOutputs()).append("requestBody", getRequestBody())
                 .append("responseBody", getResponseBody()).append("lastModifiedBy", getLastModifiedBy())
