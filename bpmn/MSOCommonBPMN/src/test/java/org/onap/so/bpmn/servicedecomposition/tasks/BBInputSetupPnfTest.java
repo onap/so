@@ -29,7 +29,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
-import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.Pnfs;
 import static org.mockito.Mockito.doReturn;
 
@@ -39,22 +38,11 @@ public class BBInputSetupPnfTest {
     @Mock
     private Pnfs pnfs;
 
-    @Mock
-    private ModelInfo modelInfo;
-
     @Test
     public void populatePnfShouldSetRequiredFields() {
         final String pnfId = "PNF_id1";
         final String pnfName = "PNF_name1";
-        final String modelCustomizationId = "8421fe03-fd1b-4bf7-845a-c3fe91edb031";
-        final String modelInvariantId = "3360a2a5-22ff-44c7-8935-08c8e5ecbd06";
-        final String modelVersionId = "b80c3a52-abd4-436c-a22e-9c5da768781a";
-
-        doReturn(modelCustomizationId).when(modelInfo).getModelCustomizationId();
-        doReturn(modelInvariantId).when(modelInfo).getModelInvariantId();
-        doReturn(modelVersionId).when(modelInfo).getModelVersionId();
         doReturn(pnfName).when(pnfs).getInstanceName();
-        doReturn(modelInfo).when(pnfs).getModelInfo();
 
         ServiceInstance serviceInstance = new ServiceInstance();
         BBInputSetupPnf.populatePnfToServiceInstance(pnfs, pnfId, serviceInstance);
@@ -65,9 +53,6 @@ public class BBInputSetupPnfTest {
 
         assertEquals(pnfId, pnf.getPnfId());
         assertEquals(pnfName, pnf.getPnfName());
-        assertEquals(modelCustomizationId, pnf.getModelInfoPnf().getModelCustomizationUuid());
-        assertEquals(modelInvariantId, pnf.getModelInfoPnf().getModelInvariantUuid());
-        assertEquals(modelVersionId, pnf.getModelInfoPnf().getModelUuid());
         assertEquals(OrchestrationStatus.PRECREATED, pnf.getOrchestrationStatus());
     }
 }

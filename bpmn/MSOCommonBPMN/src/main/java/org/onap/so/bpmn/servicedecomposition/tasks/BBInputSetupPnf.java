@@ -37,10 +37,6 @@ final class BBInputSetupPnf {
         Pnf pnf = new Pnf();
         pnf.setPnfId(pnfId);
         pnf.setPnfName(pnfs.getInstanceName());
-        pnf.setModelInfoPnf(new ModelInfoPnf());
-        pnf.getModelInfoPnf().setModelCustomizationUuid(pnfs.getModelInfo().getModelCustomizationId());
-        pnf.getModelInfoPnf().setModelInvariantUuid(pnfs.getModelInfo().getModelInvariantId());
-        pnf.getModelInfoPnf().setModelUuid(pnfs.getModelInfo().getModelVersionId());
         pnf.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
 
         serviceInstance.getPnfs().add(pnf);
