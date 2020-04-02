@@ -24,6 +24,8 @@
 
 package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
+import java.util.EnumSet;
+import java.util.Set;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
@@ -34,11 +36,15 @@ import org.onap.so.db.catalog.beans.BuildingBlockDetail;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.db.catalog.beans.OrchestrationStatusStateTransitionDirective;
 import org.onap.so.db.catalog.beans.OrchestrationStatusValidationDirective;
+import org.onap.so.db.catalog.beans.ResourceType;
 import org.onap.so.db.catalog.client.CatalogDbClient;
+import org.onap.so.db.request.beans.InfraActiveRequests;
+import org.onap.so.db.request.client.RequestsDbClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 
 @Component
 public class OrchestrationStatusValidator {
@@ -52,6 +58,14 @@ public class OrchestrationStatusValidator {
             "Orchestration Status Validation failed. ResourceType=(%s), TargetAction=(%s), OrchestrationStatus=(%s)";
     private static final String ORCHESTRATION_STATUS_VALIDATION_RESULT = "orchestrationStatusValidationResult";
     private static final String ALACARTE = "aLaCarte";
+    private static final String MULTI_STAGE_DESIGN_OFF = "false";
+    private static final String MULTI_STAGE_DESIGN_ON = "true";
+    private static final String RESOURCE_EXIST_STATUS_MESSAGE =
+            "The %s was found to already exist, thus no new %s was created in the cloud via this request";
+    private static final String RESOURCE_NOT_EXIST_STATUS_MESSAGE =
+            "The %s was not found, thus no %s was deleted in the cloud via this request";
+    private static final Set<ResourceType> cloudResources =
+            EnumSet.of(ResourceType.VF_MODULE, ResourceType.VOLUME_GROUP, ResourceType.NETWORK);
 
     @Autowired
     private ExtractPojosForBB extractPojosForBB;
@@ -59,6 +73,8 @@ public class OrchestrationStatusValidator {
     private ExceptionBuilder exceptionBuilder;
     @Autowired
     private CatalogDbClient catalogDbClient;
+    @Autowired
+    RequestsDbClient requestDBClient;
 
 
     /**
@@ -160,6 +176,13 @@ public class OrchestrationStatusValidator {
 
             execution.setVariable(ORCHESTRATION_STATUS_VALIDATION_RESULT,
                     orchestrationStatusStateTransitionDirective.getFlowDirective());
+
+            if (buildingBlockFlowName.matches("Create(.*)|Delete(.*)") && orchestrationStatusStateTransitionDirective
+                    .getFlowDirective() == OrchestrationStatusValidationDirective.SILENT_SUCCESS) {
+
+                updatedResourceStatus(execution, buildingBlockDetail);
+            }
+
         } catch (BBObjectNotFoundException ex) {
             logger.error(
                     "Error occurred for bb object notfound in OrchestrationStatusValidator validateOrchestrationStatus ",
@@ -173,6 +196,35 @@ public class OrchestrationStatusValidator {
         } catch (Exception e) {
             logger.error("Exception occurred", e);
             exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, e);
+        }
+    }
+
+    private void updatedResourceStatus(BuildingBlockExecution execution, BuildingBlockDetail buildingBlockDetail) {
+
+        if (cloudResources.contains(buildingBlockDetail.getResourceType())) {
+            String resource = buildingBlockDetail.getResourceType().toString();
+
+            String resourceId = execution.getLookupMap()
+                    .get(ResourceKey.valueOf(buildingBlockDetail.getResourceType().getResourceKey()));
+
+            String resourceStatusMessage = RESOURCE_NOT_EXIST_STATUS_MESSAGE;
+            if (execution.getFlowToBeCalled().matches("Create(.*)")) {
+                resourceStatusMessage = RESOURCE_EXIST_STATUS_MESSAGE;
+            }
+
+            updateRequestsDb(resourceId, String.format(resourceStatusMessage, resource, resource));
+        }
+
+    }
+
+    private void updateRequestsDb(String requestId, String resourceStatusMessage) {
+        InfraActiveRequests request = new InfraActiveRequests();
+        request.setRequestId(requestId);
+        request.setResourceStatusMessage(resourceStatusMessage);
+        try {
+            requestDBClient.patchInfraActiveRequests(request);
+        } catch (HttpClientErrorException e) {
+            logger.warn("Unable to update active request resource status");
         }
     }
 }
