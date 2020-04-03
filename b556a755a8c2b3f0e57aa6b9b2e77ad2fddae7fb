@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "c8c1ff52_96129e66",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/aai/AaiConnection.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-04-03T11:21:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0781d88f_b66cc2cf",
+      "range": {
+        "startLine": 110,
+        "startChar": 18,
+        "endLine": 110,
+        "endChar": 31
+      },
+      "revId": "b556a755a8c2b3f0e57aa6b9b2e77ad2fddae7fb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5194f9d8_c37ebdab",
         "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/aai/AaiConnection.java",
         "patchSetId": 4
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "9f237f07_b28ecc0d",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/aai/AaiConnection.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-04-03T11:21:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5194f9d8_c37ebdab",
+      "range": {
+        "startLine": 121,
+        "startChar": 15,
+        "endLine": 121,
+        "endChar": 19
+      },
+      "revId": "b556a755a8c2b3f0e57aa6b9b2e77ad2fddae7fb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "752cac58_03cd4c68",
         "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/constant/VnfNotificationFilterType.java",
         "patchSetId": 4
@@ -68,6 +116,30 @@
       "revId": "b556a755a8c2b3f0e57aa6b9b2e77ad2fddae7fb",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "362a83d0_36e78de2",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/constant/VnfNotificationFilterType.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-04-03T11:21:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "752cac58_03cd4c68",
+      "range": {
+        "startLine": 24,
+        "startChar": 4,
+        "endLine": 24,
+        "endChar": 27
+      },
+      "revId": "b556a755a8c2b3f0e57aa6b9b2e77ad2fddae7fb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -141,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "8042e732_d6be357c",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/controller/NotificationController.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-04-03T11:21:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c6a8c8b3_98cdd19e",
+      "range": {
+        "startLine": 51,
+        "startChar": 26,
+        "endLine": 51,
+        "endChar": 45
+      },
+      "revId": "b556a755a8c2b3f0e57aa6b9b2e77ad2fddae7fb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d6958415_8dfa1858",
         "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/service/VnfAaiChecker.java",
         "patchSetId": 4
@@ -164,6 +260,30 @@
     },
     {
       "key": {
+        "uuid": "298e7d56_5910a9db",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/service/VnfAaiChecker.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-04-03T11:21:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d6958415_8dfa1858",
+      "range": {
+        "startLine": 41,
+        "startChar": 12,
+        "endLine": 41,
+        "endChar": 19
+      },
+      "revId": "b556a755a8c2b3f0e57aa6b9b2e77ad2fddae7fb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2be0344e_64ba89c9",
         "filename": "adapters/mso-ve-vnfm-adapter/src/main/resources/application.yaml",
         "patchSetId": 4
@@ -184,6 +304,30 @@
       "revId": "b556a755a8c2b3f0e57aa6b9b2e77ad2fddae7fb",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d2872a77_822d0f7d",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/resources/application.yaml",
+        "patchSetId": 4
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-04-03T11:21:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2be0344e_64ba89c9",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 3
+      },
+      "revId": "b556a755a8c2b3f0e57aa6b9b2e77ad2fddae7fb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
