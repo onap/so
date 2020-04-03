@@ -545,7 +545,7 @@ class OofUtils {
                         "    \"sourceId\": \"so\",\n" +
                         "    \"timeout\": 600\n" +
                         "    },\n")
-        response.append(",\n \"serviceInfo\": \n")
+        response.append(" \"serviceInfo\": \n")
         response.append(json);
         response.append("\n  }\n")
         return response.toString()
