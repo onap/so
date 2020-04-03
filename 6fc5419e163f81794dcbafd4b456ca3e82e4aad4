@@ -83,6 +83,30 @@
     },
     {
       "key": {
+        "uuid": "f38ebfc0_33d078c6",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/service/SubscriberService.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-04-03T13:55:17Z",
+      "side": 1,
+      "message": "All 7 of them?",
+      "parentUuid": "15d5ac40_6978d7a6",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 29
+      },
+      "revId": "6fc5419e163f81794dcbafd4b456ca3e82e4aad4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "09e1a849_2f2d8826",
         "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/service/VnfAaiChecker.java",
         "patchSetId": 11
