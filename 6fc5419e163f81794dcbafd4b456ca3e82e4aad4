@@ -42,6 +42,24 @@
     },
     {
       "key": {
+        "uuid": "1f24faa7_73811bce",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/controller/NotificationController.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-04-03T13:46:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "58964094_ed9e1a0e",
+      "revId": "6fc5419e163f81794dcbafd4b456ca3e82e4aad4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "15d5ac40_6978d7a6",
         "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/service/SubscriberService.java",
         "patchSetId": 11
