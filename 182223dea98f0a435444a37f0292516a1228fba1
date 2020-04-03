@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "d2c0de33_942b30c5",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/aai/AaiConnection.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-04-03T14:56:51Z",
+      "side": 1,
+      "message": "How could I make such a stupid mistake?!\nDone",
+      "parentUuid": "1808c213_3c50e844",
+      "range": {
+        "startLine": 118,
+        "startChar": 19,
+        "endLine": 118,
+        "endChar": 43
+      },
+      "revId": "182223dea98f0a435444a37f0292516a1228fba1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "75e3db7a_fe6b02da",
         "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/service/SubscriberService.java",
         "patchSetId": 12
@@ -68,6 +92,30 @@
       "revId": "182223dea98f0a435444a37f0292516a1228fba1",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3127d5fe_b944cc88",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/service/SubscriberService.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-04-03T14:56:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "75e3db7a_fe6b02da",
+      "range": {
+        "startLine": 113,
+        "startChar": 7,
+        "endLine": 114,
+        "endChar": 67
+      },
+      "revId": "182223dea98f0a435444a37f0292516a1228fba1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
