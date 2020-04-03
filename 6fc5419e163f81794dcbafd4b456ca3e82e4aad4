@@ -139,6 +139,24 @@
       "revId": "6fc5419e163f81794dcbafd4b456ca3e82e4aad4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f1f44e5e_b67c6938",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/service/VnfAaiChecker.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-04-03T14:01:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "05549b80_542cedd1",
+      "revId": "6fc5419e163f81794dcbafd4b456ca3e82e4aad4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
