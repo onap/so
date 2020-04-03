@@ -1,0 +1,84 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6c5c624a_7e2eb21c",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/aai/AaiConnection.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 6077
+      },
+      "writtenOn": "2020-04-03T13:42:00Z",
+      "side": 1,
+      "message": "in my humble opinion this is not required but if you want to have it then you can leave it.",
+      "range": {
+        "startLine": 118,
+        "startChar": 12,
+        "endLine": 118,
+        "endChar": 43
+      },
+      "revId": "6fc5419e163f81794dcbafd4b456ca3e82e4aad4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "58964094_ed9e1a0e",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/controller/NotificationController.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 6077
+      },
+      "writtenOn": "2020-04-03T13:42:00Z",
+      "side": 1,
+      "message": "Should be passed via constructor. Rationale is the same as for @Autowired",
+      "revId": "6fc5419e163f81794dcbafd4b456ca3e82e4aad4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "15d5ac40_6978d7a6",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/service/SubscriberService.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 6077
+      },
+      "writtenOn": "2020-04-03T13:42:00Z",
+      "side": 1,
+      "message": "please pass it via constructor. Rationale is the same as for @Autowired.",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 29
+      },
+      "revId": "6fc5419e163f81794dcbafd4b456ca3e82e4aad4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "09e1a849_2f2d8826",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/service/VnfAaiChecker.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 6077
+      },
+      "writtenOn": "2020-04-03T13:42:00Z",
+      "side": 1,
+      "message": "should be passed via constructor.",
+      "revId": "6fc5419e163f81794dcbafd4b456ca3e82e4aad4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
