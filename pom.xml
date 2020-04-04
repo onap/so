@@ -49,7 +49,7 @@
     <sonar.cpd.exclusions>**/*</sonar.cpd.exclusions>
     <jacoco.version>0.8.5</jacoco.version>
     <org.apache.maven.user-settings />
-    <openstack.version>1.5.2-SNAPSHOT</openstack.version>
+    <openstack.version>1.6.1-SNAPSHOT</openstack.version>
     <maven.build.timestamp.format>yyyyMMdd'T'HHmm</maven.build.timestamp.format>
     <originalClassifier>original</originalClassifier>
     <docker.skip>true</docker.skip>
