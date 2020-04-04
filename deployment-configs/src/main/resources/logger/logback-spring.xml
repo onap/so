@@ -157,6 +157,7 @@
 			<pattern>${debugPattern}</pattern>
 		</encoder>
 	</appender>
+	
 
 	<appender name="asyncDebug" class="ch.qos.logback.classic.AsyncAppender">
 		<queueSize>256</queueSize>
@@ -190,28 +191,29 @@
 	<logger name="org.springframework" level="WARN" />
 	<logger
 		name="org.springframework.security.authentication.dao.DaoAuthenticationProvider"
-		level="DEBUG" />
+		level="${LOG_LEVEL:-DEBUG}" />
 
 	<!-- Camunda related loggers -->
-	<logger name="org.camunda.bpm.engine.jobexecutor.level" level="DEBUG" />
+	<logger name="org.camunda.bpm.engine.jobexecutor.level" level="${LOG_LEVEL:-DEBUG}" />
 	<logger
 		name="org.camunda.bpm.engine.impl.persistence.entity.JobEntity.level"
-		level="DEBUG" />
+		level="${LOG_LEVEL:-DEBUG}" />
 
-	<logger name="org.flywaydb" level="DEBUG"/>
-	<logger name="org.apache.wire" level="DEBUG" />
-	<logger name="org.onap" level="DEBUG" />
-	<logger name="org.apache.cxf.interceptor" level="DEBUG" />
-	<logger name="com.woorea.openstack.connector" level="DEBUG" />
+	<logger name="org.flywaydb" level="${LOG_LEVEL:-DEBUG}"/>
+	<logger name="org.apache.wire" level="${LOG_LEVEL:-DEBUG}" />
+	<logger name="org.onap" level="${LOG_LEVEL:-DEBUG}" />
+	<logger name="org.apache.cxf.interceptor" level="${LOG_LEVEL:-DEBUG}" />
+	<logger name="com.woorea.openstack.connector" level="${LOG_LEVEL:-DEBUG}" />
 	
 	<!-- AAF Logs go here-->
 	<logger name="org.apache.catalina.core.ContainerBase" level="INFO" additivity="false">
 		<appender-ref ref="asyncCadi" />
 	</logger>
-	
-	<logger name="org.reflections.Reflections" level="ERROR" additivity="false">
-		<appender-ref ref="asyncCadi" />
-	</logger>
+
+    <!-- Jersey Openstack Connector Logs Go Here for Openstack4J -->
+    <logger name="os" level="${LOG_LEVEL:-DEBUG}" />
+    
+	<logger name="org.reflections" level="ERROR" additivity="false" />
 
 	<logger name="AUDIT" level="INFO" additivity="false">
 		<appender-ref ref="asyncAudit" />
