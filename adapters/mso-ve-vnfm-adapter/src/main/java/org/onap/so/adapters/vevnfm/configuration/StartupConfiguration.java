@@ -36,14 +36,17 @@ public class StartupConfiguration {
 
     public static final String TEST_PROFILE = "test";
 
-    @Autowired
-    private Environment environment;
+    private final Environment environment;
+    private final StartupService startupService;
+    private final SubscriptionScheduler subscriptionScheduler;
 
     @Autowired
-    private StartupService startupService;
-
-    @Autowired
-    private SubscriptionScheduler subscriptionScheduler;
+    public StartupConfiguration(final Environment environment, final StartupService startupService,
+            final SubscriptionScheduler subscriptionScheduler) {
+        this.environment = environment;
+        this.startupService = startupService;
+        this.subscriptionScheduler = subscriptionScheduler;
+    }
 
     @EventListener(ApplicationReadyEvent.class)
     public void onApplicationReadyEvent() throws Exception {
