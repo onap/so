@@ -29,6 +29,8 @@ import org.springframework.context.ApplicationContext;
 
 public class AaiPropertiesExt implements AAIProperties {
 
+    private static final String MSO = "MSO";
+
     private final String endpoint;
     private final String encryptedBasicAuth;
     private final String encryptionKey;
@@ -47,7 +49,7 @@ public class AaiPropertiesExt implements AAIProperties {
 
     @Override
     public String getSystemName() {
-        return "MSO";
+        return MSO;
     }
 
     @Override

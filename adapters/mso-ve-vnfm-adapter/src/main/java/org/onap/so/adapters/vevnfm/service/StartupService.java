@@ -24,11 +24,11 @@ import java.util.Collections;
 import java.util.List;
 import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.so.adapters.vevnfm.aai.AaiConnection;
+import org.onap.so.adapters.vevnfm.configuration.ConfigProperties;
 import org.onap.so.adapters.vevnfm.exception.VeVnfmException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.retry.annotation.Recover;
@@ -41,11 +41,14 @@ public class StartupService {
 
     private static final Logger logger = LoggerFactory.getLogger(StartupService.class);
 
-    @Value("${vnfm.default-endpoint}")
-    private String vnfmDefaultEndpoint;
+    private final String vnfmDefaultEndpoint;
+    private final AaiConnection aaiConnection;
 
     @Autowired
-    private AaiConnection aaiConnection;
+    public StartupService(final ConfigProperties configProperties, final AaiConnection aaiConnection) {
+        this.vnfmDefaultEndpoint = configProperties.getVnfmDefaultEndpoint();
+        this.aaiConnection = aaiConnection;
+    }
 
     @Retryable(value = {Exception.class}, maxAttempts = 5, backoff = @Backoff(delay = 5000, multiplier = 2))
     public List<EsrSystemInfo> receiveVnfm() throws VeVnfmException {
