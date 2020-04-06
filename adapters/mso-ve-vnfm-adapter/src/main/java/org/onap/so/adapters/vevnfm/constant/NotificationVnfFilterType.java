@@ -21,9 +21,9 @@
 package org.onap.so.adapters.vevnfm.constant;
 
 /**
- * Which incoming Notification with particular VNF id is supported
+ * Select which incoming Notification with particular VNF id should be supported
  */
-public enum VnfNotificationFilterType {
+public enum NotificationVnfFilterType {
     /**
      * None
      */

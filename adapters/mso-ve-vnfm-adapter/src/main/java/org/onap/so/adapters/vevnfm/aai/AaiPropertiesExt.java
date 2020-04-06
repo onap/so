@@ -22,6 +22,7 @@ package org.onap.so.adapters.vevnfm.aai;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import org.onap.so.adapters.vevnfm.configuration.ConfigProperties;
 import org.onap.so.client.aai.AAIProperties;
 import org.onap.so.client.aai.AAIVersion;
 import org.onap.so.spring.SpringContextHelper;
@@ -29,15 +30,18 @@ import org.springframework.context.ApplicationContext;
 
 public class AaiPropertiesExt implements AAIProperties {
 
+    private static final String MSO = "MSO";
+
     private final String endpoint;
     private final String encryptedBasicAuth;
     private final String encryptionKey;
 
     public AaiPropertiesExt() {
         final ApplicationContext context = SpringContextHelper.getAppContext();
-        this.endpoint = context.getEnvironment().getProperty("aai.endpoint");
-        this.encryptedBasicAuth = context.getEnvironment().getProperty("aai.auth");
-        this.encryptionKey = context.getEnvironment().getProperty("mso.key");
+        final ConfigProperties configProperties = context.getBean(ConfigProperties.class);
+        this.endpoint = configProperties.getAaiEndpoint();
+        this.encryptedBasicAuth = configProperties.getAaiAuth();
+        this.encryptionKey = configProperties.getMsoKey();
     }
 
     @Override
@@ -47,7 +51,7 @@ public class AaiPropertiesExt implements AAIProperties {
 
     @Override
     public String getSystemName() {
-        return "MSO";
+        return MSO;
     }
 
     @Override
