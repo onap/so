@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,8 +21,13 @@
 package org.onap.so.bpmn.infrastructure.workflow.serviceTask.client;
 
 import java.util.Base64;
+import org.onap.so.bpmn.infrastructure.workflow.serviceTask.SdncUnderlayVpnOperationClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HeaderUtil {
+
+    private static Logger logger = LoggerFactory.getLogger(HeaderUtil.class);
 
     public static final String USER = "admin";
     public static final String PASS = "Kp8bJ4SXszM0WXlhak3eHlcse2gAw84vaoGGmJvUy2U";
@@ -38,6 +43,7 @@ public class HeaderUtil {
         try {
             base64 = Base64.getEncoder().encodeToString(str.getBytes("utf-8"));
         } catch (Exception ex) {
+            logger.error("Exception in base64Encode", ex);
         }
         return base64;
     }

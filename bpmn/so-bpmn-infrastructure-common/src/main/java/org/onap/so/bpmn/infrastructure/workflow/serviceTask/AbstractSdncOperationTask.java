@@ -109,7 +109,7 @@ public abstract class AbstractSdncOperationTask implements JavaDelegate {
             objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
             postBody = objectMapper.writeValueAsString(inputEntity);
         } catch (JsonProcessingException e) {
-            logger.error(Arrays.toString(e.getStackTrace()));
+            logger.error("JsonProcessingException in getPostbody", e);
         }
         return postBody;
     }
