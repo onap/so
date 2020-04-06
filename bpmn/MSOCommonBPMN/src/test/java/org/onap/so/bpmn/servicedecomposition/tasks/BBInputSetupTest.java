@@ -2947,6 +2947,32 @@ public class BBInputSetupTest {
     }
 
     @Test
+    public void testMapCatalogVfModuleIfNoVnf() {
+        String vnfModelCustomizationUUID = "vnfResourceCustUUID";
+        String vfModuleCustomizationUUID = "vfModelCustomizationUUID";
+        VfModule vfModule = new VfModule();
+        ModelInfo modelInfo = new ModelInfo();
+        modelInfo.setModelCustomizationUuid(vfModuleCustomizationUUID);
+        Service service = new Service();
+        VnfResourceCustomization vnfResourceCust = new VnfResourceCustomization();
+        vnfResourceCust.setModelCustomizationUUID(vnfModelCustomizationUUID);
+        VfModuleCustomization vfModuleCust = new VfModuleCustomization();
+        vfModuleCust.setModelCustomizationUUID(vfModuleCustomizationUUID);
+        vnfResourceCust.getVfModuleCustomizations().add(vfModuleCust);
+        ModelInfoVfModule modelInfoVfModule = new ModelInfoVfModule();
+        doReturn(vfModuleCust).when(SPY_bbInputSetupUtils)
+                .getVfModuleCustomizationByModelCuztomizationUUID(vfModuleCustomizationUUID);
+        doReturn(modelInfoVfModule).when(bbInputSetupMapperLayer).mapCatalogVfModuleToVfModule(vfModuleCust);
+
+        SPY_bbInputSetup.mapCatalogVfModule(vfModule, modelInfo, service, vnfModelCustomizationUUID);
+
+        assertThat(vfModule.getModelInfoVfModule(), sameBeanAs(modelInfoVfModule));
+
+        verify(SPY_bbInputSetupUtils, times(1))
+                .getVfModuleCustomizationByModelCuztomizationUUID(modelInfo.getModelCustomizationId());
+    }
+
+    @Test
     public void testPopulateVfModule() throws Exception {
         String vnfId = "vnfId";
         String vfModuleId = "vfModuleId";

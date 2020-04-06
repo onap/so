@@ -631,18 +631,21 @@ public class BBInputSetup implements JavaDelegate {
                 break;
             }
         }
+        VfModuleCustomization vfResourceCustomization = null;
         if (vnfResourceCustomization != null) {
-            VfModuleCustomization vfResourceCustomization = vnfResourceCustomization.getVfModuleCustomizations()
-                    .stream() // Convert to steam
+            vfResourceCustomization = vnfResourceCustomization.getVfModuleCustomizations().stream() // Convert to steam
                     .filter(x -> modelInfo.getModelCustomizationId().equalsIgnoreCase(x.getModelCustomizationUUID()))// find
                     // what
                     // we
                     // want
                     .findAny() // If 'findAny' then return found
                     .orElse(null);
-            if (vfResourceCustomization != null) {
-                vfModule.setModelInfoVfModule(this.mapperLayer.mapCatalogVfModuleToVfModule(vfResourceCustomization));
-            }
+        } else {
+            vfResourceCustomization = bbInputSetupUtils
+                    .getVfModuleCustomizationByModelCuztomizationUUID(modelInfo.getModelCustomizationId());
+        }
+        if (vfResourceCustomization != null) {
+            vfModule.setModelInfoVfModule(this.mapperLayer.mapCatalogVfModuleToVfModule(vfResourceCustomization));
         }
     }
 
