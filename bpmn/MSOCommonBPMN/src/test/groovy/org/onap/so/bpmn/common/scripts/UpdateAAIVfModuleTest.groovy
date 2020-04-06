@@ -25,7 +25,7 @@ import org.junit.rules.ExpectedException
 import static org.mockito.Mockito.*
 
 import javax.ws.rs.NotFoundException
-
+import org.camunda.bpm.engine.ProcessEngineServices
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.junit.Before
@@ -57,6 +57,7 @@ class UpdateAAIVfModuleTest  extends MsoGroovyTest {
     void init() throws IOException {
         super.init("UpdateAAIVfModule")
         when(updateAAIVfModule.getAAIClient()).thenReturn(client)
+        mockExecution = setupMock("UpdateAAIVfModule")
     }
 
     @Test
@@ -110,7 +111,7 @@ class UpdateAAIVfModuleTest  extends MsoGroovyTest {
         when(mockExecution.getVariable(prefix + "getVfModuleResponse")).thenReturn(vfModule)
         doNothing().when(client).update(isA(AAIResourceUri.class) as AAIResourceUri, anyObject())
         updateAAIVfModule.updateVfModule(mockExecution)
-		verify(mockExecution).setVariable("UAAIVfMod_updateVfModuleResponseCode", 200)
+        verify(mockExecution).setVariable("UAAIVfMod_updateVfModuleResponseCode", 200)
     }
 
     @Test
@@ -126,7 +127,7 @@ class UpdateAAIVfModuleTest  extends MsoGroovyTest {
         doThrow(new NotFoundException("Vf Module not found")).when(client).update(isA(AAIResourceUri.class) as AAIResourceUri, anyObject())
         thrown.expect(BpmnError.class)
         updateAAIVfModule.updateVfModule(mockExecution)
-		verify(mockExecution).setVariable("UAAIVfMod_updateVfModuleResponseCode", 404)
+        verify(mockExecution).setVariable("UAAIVfMod_updateVfModuleResponseCode", 404)
     }
 
 
@@ -143,7 +144,6 @@ class UpdateAAIVfModuleTest  extends MsoGroovyTest {
         doThrow(new IllegalStateException("Error in AAI client")).when(client).update(isA(AAIResourceUri.class) as AAIResourceUri, anyObject())
         thrown.expect(BpmnError.class)
         updateAAIVfModule.updateVfModule(mockExecution)
-		verify(mockExecution).setVariable("UAAIVfMod_updateVfModuleResponseCode", 500)
-
+        verify(mockExecution).setVariable("UAAIVfMod_updateVfModuleResponseCode", 500)
     }
 }

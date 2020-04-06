@@ -57,9 +57,10 @@ abstract class MsoGroovyTest {
     protected static final String CLOUD_OWNER = Defaults.CLOUD_OWNER.toString();
 
     protected void init(String procName){
-        mockExecution = setupMock(procName)
-        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
+        //    mockExecution = setupMock(procName)
+        //   when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
         client = mock(AAIResourcesClient.class)
+        mockExecution = mock(ExecutionEntity.class)
     }
 
     protected ExecutionEntity setupMock(String procName) {
