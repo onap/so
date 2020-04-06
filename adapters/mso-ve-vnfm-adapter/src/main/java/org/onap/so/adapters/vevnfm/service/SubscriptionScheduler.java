@@ -38,10 +38,13 @@ public class SubscriptionScheduler {
 
     private static final Logger logger = LoggerFactory.getLogger(SubscriptionScheduler.class);
 
-    @Autowired
-    private SubscriberService subscriberService;
-
+    private final SubscriberService subscriberService;
     private List<EsrId> esrIds;
+
+    @Autowired
+    public SubscriptionScheduler(final SubscriberService subscriberService) {
+        this.subscriberService = subscriberService;
+    }
 
     public void setInfos(final List<EsrSystemInfo> infos) {
         esrIds = new LinkedList<>();

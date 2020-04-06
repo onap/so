@@ -20,13 +20,13 @@
 
 package org.onap.so.adapters.vevnfm.service;
 
+import org.onap.so.adapters.vevnfm.configuration.ConfigProperties;
 import org.onap.so.adapters.vevnfm.event.DmaapEvent;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.VnfLcmOperationOccurrenceNotification;
 import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -36,20 +36,20 @@ public class DmaapService {
 
     private static final Logger logger = LoggerFactory.getLogger(DmaapService.class);
 
-    @Value("${dmaap.endpoint}")
-    private String endpoint;
-
-    @Value("${dmaap.topic}")
-    private String topic;
-
-    @Value("${dmaap.closed-loop.control.name}")
-    private String closedLoopControlName;
-
-    @Value("${dmaap.version}")
-    private String version;
+    private final String endpoint;
+    private final String topic;
+    private final String closedLoopControlName;
+    private final String version;
+    private final HttpRestServiceProvider restProvider;
 
     @Autowired
-    private HttpRestServiceProvider restProvider;
+    public DmaapService(final ConfigProperties configProperties, final HttpRestServiceProvider restProvider) {
+        this.endpoint = configProperties.getDmaapEndpoint();
+        this.topic = configProperties.getDmaapTopic();
+        this.closedLoopControlName = configProperties.getDmaapClosedLoopControlName();
+        this.version = configProperties.getDmaapVersion();
+        this.restProvider = restProvider;
+    }
 
     public void send(final VnfLcmOperationOccurrenceNotification notification) {
         try {

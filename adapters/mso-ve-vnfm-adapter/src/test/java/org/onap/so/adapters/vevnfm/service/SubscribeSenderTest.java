@@ -33,11 +33,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.aai.domain.yang.EsrSystemInfo;
+import org.onap.so.adapters.vevnfm.configuration.ConfigProperties;
 import org.onap.so.adapters.vevnfm.configuration.StartupConfiguration;
 import org.onap.so.adapters.vevnfm.exception.VeVnfmException;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -64,8 +64,8 @@ public class SubscribeSenderTest {
         GSON = builder.create();
     }
 
-    @Value("${vnfm.subscription}")
-    private String vnfmSubscription;
+    @Autowired
+    private ConfigProperties configProperties;
 
     @Autowired
     private SubscribeSender sender;
@@ -73,10 +73,12 @@ public class SubscribeSenderTest {
     @Autowired
     private RestTemplate restTemplate;
 
+    private String vnfmSubscription;
     private MockRestServiceServer mockRestServer;
 
     @Before
     public void init() {
+        vnfmSubscription = configProperties.getVnfmSubscription();
         mockRestServer = MockRestServiceServer.bindTo(restTemplate).build();
     }
 
