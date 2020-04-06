@@ -34,8 +34,10 @@ import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
+import org.mockito.Mockito;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
@@ -49,13 +51,19 @@ import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.db.catalog.beans.OrchestrationStatusStateTransitionDirective;
 import org.onap.so.db.catalog.beans.OrchestrationStatusValidationDirective;
 import org.onap.so.db.catalog.beans.ResourceType;
+import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class OrchestrationStatusValidatorTest extends BaseTaskTest {
+
+    private static final String vfModuleExistExpectedMessage =
+            "The VfModule was found to already exist, thus no new VfModule was created in the cloud via this request";
+
+    private static final String vfModuleNotExistExpectedMessage =
+            "The VfModule was not found, thus no VfModule was deleted in the cloud via this request";
+
     @InjectMocks
     protected OrchestrationStatusValidator orchestrationStatusValidator = new OrchestrationStatusValidator();
-
-
 
     @Test
     public void test_validateOrchestrationStatus() throws Exception {
@@ -95,6 +103,8 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
 
         assertEquals(OrchestrationStatusValidationDirective.CONTINUE,
                 execution.getVariable("orchestrationStatusValidationResult"));
+
+        Mockito.verifyZeroInteractions(requestsDbClient);
     }
 
     @Test
@@ -146,6 +156,8 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
 
         assertEquals(OrchestrationStatusValidationDirective.SILENT_SUCCESS,
                 execution.getVariable("orchestrationStatusValidationResult"));
+
+        Mockito.verifyZeroInteractions(requestsDbClient);
     }
 
     @Ignore
@@ -192,6 +204,8 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
                         OrchestrationAction.ASSIGN);
 
         orchestrationStatusValidator.validateOrchestrationStatus(execution);
+
+        Mockito.verifyZeroInteractions(requestsDbClient);
     }
 
     @Ignore
@@ -224,6 +238,8 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
                         OrchestrationAction.ASSIGN);
 
         orchestrationStatusValidator.validateOrchestrationStatus(execution);
+
+        Mockito.verifyZeroInteractions(requestsDbClient);
     }
 
     @Test
@@ -293,6 +309,8 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
 
         assertEquals(OrchestrationStatusValidationDirective.CONTINUE,
                 execution.getVariable("orchestrationStatusValidationResult"));
+
+        Mockito.verifyZeroInteractions(requestsDbClient);
     }
 
 
@@ -337,10 +355,21 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
                 .getOrchestrationStatusStateTransitionDirective(ResourceType.VF_MODULE,
                         OrchestrationStatus.PENDING_ACTIVATION, OrchestrationAction.CREATE);
 
+        InfraActiveRequests request = new InfraActiveRequests();
+        request.setRequestId("testVfModuleId1");
+        request.setResourceStatusMessage(vfModuleExistExpectedMessage);
+
+        Mockito.doNothing().when(requestsDbClient).patchInfraActiveRequests(request);
+
         orchestrationStatusValidator.validateOrchestrationStatus(execution);
 
         assertEquals(OrchestrationStatusValidationDirective.SILENT_SUCCESS,
                 execution.getVariable("orchestrationStatusValidationResult"));
+
+        ArgumentCaptor<InfraActiveRequests> argument = ArgumentCaptor.forClass(InfraActiveRequests.class);
+        Mockito.verify(requestsDbClient).patchInfraActiveRequests(argument.capture());
+
+        assertEquals(vfModuleExistExpectedMessage, argument.getValue().getResourceStatusMessage());
     }
 
     @Test
@@ -385,10 +414,21 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
                 .getOrchestrationStatusStateTransitionDirective(ResourceType.VF_MODULE,
                         OrchestrationStatus.PENDING_ACTIVATION, OrchestrationAction.CREATE);
 
+        InfraActiveRequests request = new InfraActiveRequests();
+        request.setRequestId("testVfModuleId1");
+        request.setResourceStatusMessage(vfModuleExistExpectedMessage);
+
+        Mockito.doNothing().when(requestsDbClient).patchInfraActiveRequests(request);
+
         orchestrationStatusValidator.validateOrchestrationStatus(execution);
 
         assertEquals(OrchestrationStatusValidationDirective.SILENT_SUCCESS,
                 execution.getVariable("orchestrationStatusValidationResult"));
+
+        ArgumentCaptor<InfraActiveRequests> argument = ArgumentCaptor.forClass(InfraActiveRequests.class);
+        Mockito.verify(requestsDbClient).patchInfraActiveRequests(argument.capture());
+
+        assertEquals(vfModuleExistExpectedMessage, argument.getValue().getResourceStatusMessage());
     }
 
     @Test
@@ -433,10 +473,21 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
                 .getOrchestrationStatusStateTransitionDirective(ResourceType.VF_MODULE, OrchestrationStatus.ASSIGNED,
                         OrchestrationAction.CREATE);
 
+        InfraActiveRequests request = new InfraActiveRequests();
+        request.setRequestId("testVfModuleId1");
+        request.setResourceStatusMessage(vfModuleExistExpectedMessage);
+
+        Mockito.doNothing().when(requestsDbClient).patchInfraActiveRequests(request);
+
         orchestrationStatusValidator.validateOrchestrationStatus(execution);
 
         assertEquals(OrchestrationStatusValidationDirective.SILENT_SUCCESS,
                 execution.getVariable("orchestrationStatusValidationResult"));
+
+        ArgumentCaptor<InfraActiveRequests> argument = ArgumentCaptor.forClass(InfraActiveRequests.class);
+        Mockito.verify(requestsDbClient).patchInfraActiveRequests(argument.capture());
+
+        assertEquals(vfModuleExistExpectedMessage, argument.getValue().getResourceStatusMessage());
     }
 
     @Test
@@ -481,10 +532,21 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
                 .getOrchestrationStatusStateTransitionDirective(ResourceType.VF_MODULE,
                         OrchestrationStatus.PENDING_ACTIVATION, OrchestrationAction.ACTIVATE);
 
+        InfraActiveRequests request = new InfraActiveRequests();
+        request.setRequestId("testVfModuleId1");
+        request.setResourceStatusMessage(vfModuleExistExpectedMessage);
+
+        Mockito.doNothing().when(requestsDbClient).patchInfraActiveRequests(request);
+
         orchestrationStatusValidator.validateOrchestrationStatus(execution);
 
         assertEquals(OrchestrationStatusValidationDirective.SILENT_SUCCESS,
                 execution.getVariable("orchestrationStatusValidationResult"));
+
+        ArgumentCaptor<InfraActiveRequests> argument = ArgumentCaptor.forClass(InfraActiveRequests.class);
+        Mockito.verify(requestsDbClient).patchInfraActiveRequests(argument.capture());
+
+        assertEquals(vfModuleExistExpectedMessage, argument.getValue().getResourceStatusMessage());
     }
 
     @Test
@@ -529,10 +591,21 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
                 .getOrchestrationStatusStateTransitionDirective(ResourceType.VF_MODULE,
                         OrchestrationStatus.PENDING_ACTIVATION, OrchestrationAction.CREATE);
 
+        InfraActiveRequests request = new InfraActiveRequests();
+        request.setRequestId("testVfModuleId1");
+        request.setResourceStatusMessage(vfModuleExistExpectedMessage);
+
+        Mockito.doNothing().when(requestsDbClient).patchInfraActiveRequests(request);
+
         orchestrationStatusValidator.validateOrchestrationStatus(execution);
 
         assertEquals(OrchestrationStatusValidationDirective.SILENT_SUCCESS,
                 execution.getVariable("orchestrationStatusValidationResult"));
+
+        ArgumentCaptor<InfraActiveRequests> argument = ArgumentCaptor.forClass(InfraActiveRequests.class);
+        Mockito.verify(requestsDbClient).patchInfraActiveRequests(argument.capture());
+
+        assertEquals(vfModuleExistExpectedMessage, argument.getValue().getResourceStatusMessage());
     }
 
     @Test
@@ -568,5 +641,66 @@ public class OrchestrationStatusValidatorTest extends BaseTaskTest {
 
         assertEquals(OrchestrationStatusValidationDirective.CONTINUE,
                 execution.getVariable("orchestrationStatusValidationResult"));
+
+        Mockito.verifyZeroInteractions(requestsDbClient);
+    }
+
+    @Test
+    public void test_validateOrchestrationStatusDeleteVfModuleSilentSuccess() throws Exception {
+        String flowToBeCalled = "DeleteVfModuleBB";
+
+        execution.setVariable("orchestrationStatusValidationResult",
+                OrchestrationStatusValidationDirective.SILENT_SUCCESS);
+        execution.setVariable("aLaCarte", true);
+        execution.setVariable("flowToBeCalled", flowToBeCalled);
+
+        GenericVnf genericVnf = buildGenericVnf();
+        ModelInfoGenericVnf modelInfoGenericVnf = genericVnf.getModelInfoGenericVnf();
+        modelInfoGenericVnf.setMultiStageDesign("true");
+        setGenericVnf().setModelInfoGenericVnf(modelInfoGenericVnf);
+        setVfModule().setOrchestrationStatus(OrchestrationStatus.PENDING_ACTIVATION);
+
+        org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule =
+                new org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule();
+        vfModule.setVfModuleId("vfModuleId");
+        vfModule.setOrchestrationStatus(OrchestrationStatus.PENDING_ACTIVATION);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
+
+        BuildingBlockDetail buildingBlockDetail = new BuildingBlockDetail();
+        buildingBlockDetail.setBuildingBlockName("DeleteVfModuleBB");
+        buildingBlockDetail.setId(1);
+        buildingBlockDetail.setResourceType(ResourceType.VF_MODULE);
+        buildingBlockDetail.setTargetAction(OrchestrationAction.CREATE);
+
+        doReturn(buildingBlockDetail).when(catalogDbClient).getBuildingBlockDetail(flowToBeCalled);
+
+        OrchestrationStatusStateTransitionDirective orchestrationStatusStateTransitionDirective =
+                new OrchestrationStatusStateTransitionDirective();
+        orchestrationStatusStateTransitionDirective
+                .setFlowDirective(OrchestrationStatusValidationDirective.SILENT_SUCCESS);
+        orchestrationStatusStateTransitionDirective.setId(1);
+        orchestrationStatusStateTransitionDirective.setOrchestrationStatus(OrchestrationStatus.PENDING_ACTIVATION);
+        orchestrationStatusStateTransitionDirective.setResourceType(ResourceType.VF_MODULE);
+        orchestrationStatusStateTransitionDirective.setTargetAction(OrchestrationAction.CREATE);
+
+        doReturn(orchestrationStatusStateTransitionDirective).when(catalogDbClient)
+                .getOrchestrationStatusStateTransitionDirective(ResourceType.VF_MODULE,
+                        OrchestrationStatus.PENDING_ACTIVATION, OrchestrationAction.CREATE);
+
+        InfraActiveRequests request = new InfraActiveRequests();
+        request.setRequestId("testVfModuleId1");
+        request.setResourceStatusMessage(vfModuleNotExistExpectedMessage);
+
+        Mockito.doNothing().when(requestsDbClient).patchInfraActiveRequests(request);
+
+        orchestrationStatusValidator.validateOrchestrationStatus(execution);
+
+        assertEquals(OrchestrationStatusValidationDirective.SILENT_SUCCESS,
+                execution.getVariable("orchestrationStatusValidationResult"));
+
+        ArgumentCaptor<InfraActiveRequests> argument = ArgumentCaptor.forClass(InfraActiveRequests.class);
+        Mockito.verify(requestsDbClient).patchInfraActiveRequests(argument.capture());
+
+        assertEquals(vfModuleNotExistExpectedMessage, argument.getValue().getResourceStatusMessage());
     }
 }
