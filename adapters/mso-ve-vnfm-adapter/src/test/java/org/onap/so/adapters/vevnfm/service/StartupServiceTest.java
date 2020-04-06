@@ -34,14 +34,19 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.so.adapters.vevnfm.aai.AaiConnection;
+import org.onap.so.adapters.vevnfm.configuration.ConfigProperties;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StartupServiceTest {
 
     private static final String URL = "rt";
+    private static final String ENDPOINT = "localhost";
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
+
+    @Mock
+    private ConfigProperties configProperties;
 
     @Mock
     private AaiConnection aaiConnection;
