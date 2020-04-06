@@ -22,13 +22,13 @@ package org.onap.so.adapters.vevnfm.service;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.onap.aai.domain.yang.EsrSystemInfo;
+import org.onap.so.adapters.vevnfm.configuration.ConfigProperties;
 import org.onap.so.adapters.vevnfm.exception.VeVnfmException;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRequest;
 import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -41,11 +41,14 @@ public class SubscribeSender {
 
     private static final Logger logger = LoggerFactory.getLogger(SubscribeSender.class);
 
-    @Value("${vnfm.subscription}")
-    private String vnfmSubscription;
+    private final String vnfmSubscription;
+    private final HttpRestServiceProvider restProvider;
 
     @Autowired
-    private HttpRestServiceProvider restProvider;
+    public SubscribeSender(final ConfigProperties configProperties, final HttpRestServiceProvider restProvider) {
+        this.vnfmSubscription = configProperties.getVnfmSubscription();
+        this.restProvider = restProvider;
+    }
 
     public String send(final EsrSystemInfo info, final LccnSubscriptionRequest request) throws VeVnfmException {
         final ResponseEntity<SubscribeToManoResponse> response =

@@ -30,7 +30,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.adapters.vevnfm.aai.AaiConnection;
-import org.onap.so.adapters.vevnfm.constant.VnfNotificationFilterType;
+import org.onap.so.adapters.vevnfm.constant.NotificationVnfFilterType;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VnfAaiCheckerTest {
@@ -46,7 +46,7 @@ public class VnfAaiCheckerTest {
     @Test
     public void testAll() {
         // when
-        final boolean response = checker.vnfCheck(VnfNotificationFilterType.ALL, VNF_ID);
+        final boolean response = checker.vnfCheck(NotificationVnfFilterType.ALL, VNF_ID);
 
         // then
         assertTrue(response);
@@ -58,7 +58,7 @@ public class VnfAaiCheckerTest {
         when(aaiConnection.checkGenericVnfId(eq(VNF_ID))).thenReturn(true);
 
         // when
-        final boolean response = checker.vnfCheck(VnfNotificationFilterType.AAI_CHECKED, VNF_ID);
+        final boolean response = checker.vnfCheck(NotificationVnfFilterType.AAI_CHECKED, VNF_ID);
 
         // then
         assertTrue(response);
@@ -70,7 +70,7 @@ public class VnfAaiCheckerTest {
         when(aaiConnection.checkGenericVnfId(eq(VNF_ID))).thenReturn(false);
 
         // when
-        final boolean response = checker.vnfCheck(VnfNotificationFilterType.AAI_CHECKED, VNF_ID);
+        final boolean response = checker.vnfCheck(NotificationVnfFilterType.AAI_CHECKED, VNF_ID);
 
         // then
         assertFalse(response);
@@ -79,7 +79,7 @@ public class VnfAaiCheckerTest {
     @Test
     public void testNone() {
         // when
-        final boolean response = checker.vnfCheck(VnfNotificationFilterType.NONE, VNF_ID);
+        final boolean response = checker.vnfCheck(NotificationVnfFilterType.NONE, VNF_ID);
 
         // then
         assertFalse(response);
