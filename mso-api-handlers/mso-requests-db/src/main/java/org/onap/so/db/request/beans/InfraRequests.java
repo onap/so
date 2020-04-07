@@ -155,6 +155,10 @@ public abstract class InfraRequests implements java.io.Serializable {
     private String tenantName;
     @Column(name = "PRODUCT_FAMILY_NAME", length = 80)
     private String productFamilyName;
+    @Column(name = "WORKFLOW_NAME", length = 200)
+    private String workflowName;
+    @Column(name = "OPERATION_NAME", length = 200)
+    private String operationName;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "SO_REQUEST_ID", referencedColumnName = "REQUEST_ID", updatable = false)
@@ -580,6 +584,22 @@ public abstract class InfraRequests implements java.io.Serializable {
         this.productFamilyName = productFamilyName;
     }
 
+    public String getWorkflowName() {
+        return workflowName;
+    }
+
+    public void setWorkflowName(String workflowName) {
+        this.workflowName = workflowName;
+    }
+
+    public String getOperationName() {
+        return operationName;
+    }
+
+    public void setOperationName(String operationName) {
+        this.operationName = operationName;
+    }
+
     @PrePersist
     protected void onCreate() {
         if (requestScope == null)
@@ -641,6 +661,7 @@ public abstract class InfraRequests implements java.io.Serializable {
                 .append("instanceGroupName", getInstanceGroupName()).append("requestUrl", getRequestUrl())
                 .append("originalRequestId", originalRequestId).append("extSystemErrorSource", extSystemErrorSource)
                 .append("rollbackExtSystemErrorSource", rollbackExtSystemErrorSource).append("tenantName", tenantName)
-                .append("productFamilyName", productFamilyName).toString();
+                .append("productFamilyName", productFamilyName).append("workflowName", workflowName)
+                .append("operationName", operationName).toString();
     }
 }
