@@ -44,6 +44,7 @@ spring:
       - username: mso_admin
         password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
         role: ACTUATOR
+
 server:
   port: 8080
   tomcat:
@@ -60,7 +61,14 @@ mso:
 
 #Actuator
 management:
-  security:
-    enabled: false
-    basic:
-      enabled: false
+  endpoints:
+    web:
+      base-path: /manage
+      exposure:
+        include: "*"
+  metrics:
+    se-global-registry: false
+    export:
+      prometheus:
+        enabled: true # Whether exporting of metrics to Prometheus is enabled.
+        step: 1m # Step size (i.e. reporting frequency) to use.
