@@ -1,0 +1,35 @@
+{
+  "distributionID": "ece2fb37-6e4e-4989-b54e-9b0e00afb7cc",
+  "serviceName": "EmbbNst",
+  "serviceVersion": "1.0",
+  "serviceUUID": "e3958a85-65e0-4a77-8981-a51755aa9d39",
+  "serviceDescription": "Embb Nst Template",
+  "serviceInvariantUUID": "1899e5c1-df4e-43a8-a889-48c157dad7bc",
+  "resources": [
+    {
+      "resourceInstanceName": "embbcn_proxy 0",
+      "resourceCustomizationUUID": "dd6f6ce9-1a23-4303-9466-22abf2a889dc",
+      "resourceName": "serviceProxy",
+      "resourceVersion": "1.0",
+      "resoucreType": "Service Proxy",
+      "resourceUUID": "4e8212a4-2a7a-4e76-9e0f-54411bc1c17d",
+      "resourceInvariantUUID": "b1fc926c-8cc3-4bda-8e50-27ba3536c47f",
+      "category": "Generic",
+      "subcategory": "Abstract",
+      "artifacts": []
+    }
+  ],
+  "serviceArtifacts": [
+    {
+      "artifactName": "service-Embbnst-csar.csar",
+      "artifactType": "TOSCA_CSAR",
+      "artifactURL": "/service-Embbnst-csar.csar",
+      "artifactChecksum": "YmEzMGFlOGY1MDBhMTg4MmFlYjkwODU1YjYzOTA5NDU\u003d",
+      "artifactDescription": "TOSCA definition package of the asset",
+      "artifactTimeout": 0,
+      "artifactVersion": "1",
+      "artifactUUID": "2a690bd3-4529-4437-9e9f-805eaaa25b4a"
+    }
+  ],
+  "workloadContext": "Production"
+}

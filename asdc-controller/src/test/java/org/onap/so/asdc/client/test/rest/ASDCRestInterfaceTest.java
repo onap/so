@@ -343,6 +343,43 @@ public class ASDCRestInterfaceTest extends BaseTest {
     }
 
     @Test
+    public void test_E2ESlicing_Distribution() throws Exception {
+        wireMockServer.stubFor(post(urlPathMatching("/aai/.*"))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")));
+
+        wireMockServer.stubFor(post(urlPathMatching("/v1.0/activity-spec"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withStatus(org.springframework.http.HttpStatus.ACCEPTED.value())));
+        String resourceLocation = "src/test/resources/resource-examples/e2eSlicing/";
+        ObjectMapper mapper = new ObjectMapper();
+
+        NotificationDataImpl request;
+        HttpEntity<NotificationDataImpl> entity;
+        ResponseEntity<String> response;
+        headers.add("resource-location", resourceLocation);
+
+        request = mapper.readValue(new File(resourceLocation + "nsst-notification.json"), NotificationDataImpl.class);
+        entity = new HttpEntity<NotificationDataImpl>(request, headers);
+        response = restTemplate.exchange(createURLWithPort("test/treatNotification/v1"), HttpMethod.POST, entity,
+                String.class);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+
+        request = mapper.readValue(new File(resourceLocation + "nst-notification.json"), NotificationDataImpl.class);
+        entity = new HttpEntity<NotificationDataImpl>(request, headers);
+        response = restTemplate.exchange(createURLWithPort("test/treatNotification/v1"), HttpMethod.POST, entity,
+                String.class);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+
+        Optional<Service> service = serviceRepo.findById("7981375e-5e0a-4bf5-93fa-f3e3c02f2b11");
+        assertTrue(service.isPresent());
+        assertEquals("EmbbNst", service.get().getModelName());
+
+        service = serviceRepo.findById("637e9b93-208b-4b06-80f2-a2021c228174");
+        assertTrue(service.isPresent());
+        assertEquals("EmbbCn", service.get().getModelName());
+    }
+
+    @Test
     public void test_PublicNS_Distribution() throws Exception {
         wireMockServer.stubFor(post(urlPathMatching("/aai/.*"))
                 .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")));
