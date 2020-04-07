@@ -90,6 +90,7 @@ public class InfraActiveRequests extends InfraRequests {
                 .append("originalRequestId", getOriginalRequestId())
                 .append("extSystemErrorSource", getExtSystemErrorSource())
                 .append("rollbackExtSystemErrorSource", getRollbackExtSystemErrorSource())
-                .append("tenantName", getTenantName()).append("productFamilyName", getProductFamilyName()).toString();
+                .append("tenantName", getTenantName()).append("productFamilyName", getProductFamilyName())
+                .append("workflowName", getWorkflowName()).append("operationName", getOperationName()).toString();
     }
 }

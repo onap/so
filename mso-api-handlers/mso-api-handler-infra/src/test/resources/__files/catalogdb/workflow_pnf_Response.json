@@ -1,5 +1,6 @@
 {
   "artifactUUID": "81526781-e55c-4cb7-adb3-97e09d9c76bf",
   "artifactName": "testingPNFWorkflow.bpmn",
-  "name": "testingPNFWorkflow" 
+  "name": "testingPNFWorkflow",
+  "operationName": "testPnfOperation" 
 }
