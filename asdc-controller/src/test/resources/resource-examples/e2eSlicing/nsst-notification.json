@@ -1,0 +1,32 @@
+{
+  "distributionID": "28ffbae6-f44a-408c-9ec1-e329c4a48e77",
+  "serviceName": "EmbbCn",
+  "serviceVersion": "1.0",
+  "serviceUUID": "2763777c-27bd-4df7-93b8-c690e23f4d3f",
+  "serviceDescription": "EmbbCn",
+  "serviceInvariantUUID": "0402fb4c-4a0c-4ff2-ad2b-29218ea1d629",
+  "resources": [],
+  "serviceArtifacts": [
+    {
+      "artifactName": "eMBB.zip",
+      "artifactType": "OTHER",
+      "artifactURL": "/eMBB.zip",
+      "artifactChecksum": "ZWRkMGM3NzNjMmE3NzliYTFiZGNmZjVlMDE4OWEzMTA\u003d",
+      "artifactDescription": "EmbbCn",
+      "artifactTimeout": 0,
+      "artifactVersion": "1",
+      "artifactUUID": "3f669cc1-dbe7-48ea-b606-42f497b2ac46"
+    },
+    {
+      "artifactName": "service-Embbcn-csar.csar",
+      "artifactType": "TOSCA_CSAR",
+      "artifactURL": "/service-Embbcn-csar.csar",
+      "artifactChecksum": "NTk5MDZhNzJkOWIwZDQ0YTNlNWM0Y2MyODI5Mzk0ZWU\u003d",
+      "artifactDescription": "TOSCA definition package of the asset",
+      "artifactTimeout": 0,
+      "artifactVersion": "1",
+      "artifactUUID": "dc0f2a41-4f71-452f-91c7-0444e4d8c33b"
+    }
+  ],
+  "workloadContext": "Production"
+}
