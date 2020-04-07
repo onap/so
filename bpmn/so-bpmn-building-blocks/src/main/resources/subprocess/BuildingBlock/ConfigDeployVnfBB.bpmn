@@ -19,6 +19,7 @@
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:in source="executionObject" target="executionObject" />
         <camunda:out source="ControllerStatus" target="ControllerStatus" />
+        <camunda:in source="gBuildingBlockExecution" target="gBuildingBlockExecution" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0kruy8t</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_03xbj4e</bpmn:outgoing>

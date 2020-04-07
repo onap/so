@@ -10,11 +10,11 @@
     <bpmn:endEvent id="EndEvent_1h3epjc">
       <bpmn:incoming>SequenceFlow_161g9uz</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:serviceTask id="Task_06n9c9v" name="Get Required data to call CDS Client" camunda:expression="${AbstractCDSProcessingBBUtils.constructExecutionServiceInputObject(execution)}">
+    <bpmn:serviceTask id="Task_06n9c9v" name="Get Required data to call CDS Client" camunda:expression="${AbstractCDSProcessingBBUtils.constructExecutionServiceInputObject(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_02v5z4h</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0gksy4i</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_0kjfr5o" name="CDS&#10;(Call SelfServiceAPI)&#10;" camunda:expression="${AbstractCDSProcessingBBUtils.sendRequestToCDSClient(execution)}">
+    <bpmn:serviceTask id="Task_0kjfr5o" name="CDS&#10;(Call SelfServiceAPI)&#10;" camunda:expression="${AbstractCDSProcessingBBUtils.sendRequestToCDSClient(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_0gksy4i</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_161g9uz</bpmn:outgoing>
     </bpmn:serviceTask>
