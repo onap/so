@@ -311,6 +311,19 @@ public class OrchestrationRequests {
             request.setOriginalRequestId(originalRequestId);
         }
 
+        if (!version.matches("v[1-7]")) {
+            String workflowName = iar.getWorkflowName();
+            if (workflowName == null) {
+                workflowName = iar.getRequestAction();
+            }
+            request.setWorkflowName(workflowName);
+
+            String operationName = iar.getOperationName();
+            if (operationName != null) {
+                request.setOperationName(operationName);
+            }
+        }
+
         InstanceReferences ir = new InstanceReferences();
         if (iar.getNetworkId() != null)
             ir.setNetworkInstanceId(iar.getNetworkId());

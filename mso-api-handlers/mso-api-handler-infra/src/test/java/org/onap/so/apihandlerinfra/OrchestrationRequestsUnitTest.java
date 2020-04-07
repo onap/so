@@ -85,6 +85,9 @@ public class OrchestrationRequestsUnitTest {
     private static final String RETRY_STATUS_MESSAGE = "RetryStatusMessage";
     private static final String ROLLBACK_STATUS_MESSAGE = "RollbackStatusMessage";
     private static final String TASK_INFORMATION = " TASK INFORMATION: Last task executed: Call SDNC";
+    private static final String WORKFLOW_NAME = "testWorkflowName";
+    private static final String OPERATION_NAME = "testOperationName";
+    private static final String REQUEST_ACTION = "createInstance";
     private InfraActiveRequests iar;
     boolean includeCloudRequest = false;
     private static final String ROLLBACK_EXT_SYSTEM_ERROR_SOURCE = "SDNC";
@@ -152,8 +155,76 @@ public class OrchestrationRequestsUnitTest {
         expected.setRequestScope(SERVICE);
         expected.setStartTime(new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(startTime) + " GMT");
 
+        iar.setWorkflowName(WORKFLOW_NAME);
+        iar.setOperationName(OPERATION_NAME);
+
         Request result = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
                 OrchestrationRequestFormat.DETAIL.toString(), "v7");
+        assertThat(result, sameBeanAs(expected));
+    }
+
+    @Test
+    public void mapInfraActiveRequestToRequestWithWorkflowNameAndOperationNameTest() throws ApiException {
+        doReturn("Last task executed: Call SDNC").when(camundaRequestHandler).getTaskName(REQUEST_ID);
+        InstanceReferences instanceReferences = new InstanceReferences();
+        instanceReferences.setServiceInstanceId(SERVICE_INSTANCE_ID);
+        RequestStatus requestStatus = new RequestStatus();
+        requestStatus.setRequestState(iar.getRequestStatus());
+        requestStatus.setStatusMessage(
+                String.format("FLOW STATUS: %s RETRY STATUS: %s ROLLBACK STATUS: %s RESOURCE STATUS: %s",
+                        FLOW_STATUS + TASK_INFORMATION, RETRY_STATUS_MESSAGE, ROLLBACK_STATUS_MESSAGE,
+                        "The vf module already exist"));
+
+        Request expected = new Request();
+        expected.setRequestId(REQUEST_ID);
+        expected.setOriginalRequestId(ORIGINAL_REQUEST_ID);
+        expected.setInstanceReferences(instanceReferences);
+        expected.setRequestStatus(requestStatus);
+        expected.setRequestScope(SERVICE);
+        expected.setStartTime(new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(startTime) + " GMT");
+        expected.setWorkflowName(WORKFLOW_NAME);
+        expected.setOperationName(OPERATION_NAME);
+
+        iar.setOriginalRequestId(ORIGINAL_REQUEST_ID);
+        iar.setWorkflowName(WORKFLOW_NAME);
+        iar.setOperationName(OPERATION_NAME);
+
+        Request result = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
+                OrchestrationRequestFormat.DETAIL.toString(), "v8");
+        assertThat(result, sameBeanAs(expected));
+    }
+
+    @Test
+    public void mapInfraActiveRequestToRequestWithNoWorkflowNameAndNoOperationNameTest() throws ApiException {
+        doReturn("Last task executed: Call SDNC").when(camundaRequestHandler).getTaskName(REQUEST_ID);
+        InstanceReferences instanceReferences = new InstanceReferences();
+        instanceReferences.setServiceInstanceId(SERVICE_INSTANCE_ID);
+        RequestStatus requestStatus = new RequestStatus();
+        requestStatus.setRequestState(iar.getRequestStatus());
+        requestStatus.setStatusMessage(
+                String.format("FLOW STATUS: %s RETRY STATUS: %s ROLLBACK STATUS: %s RESOURCE STATUS: %s",
+                        FLOW_STATUS + TASK_INFORMATION, RETRY_STATUS_MESSAGE, ROLLBACK_STATUS_MESSAGE,
+                        "The vf module already exist"));
+
+        Request expected = new Request();
+        expected.setRequestId(REQUEST_ID);
+        expected.setOriginalRequestId(ORIGINAL_REQUEST_ID);
+        expected.setInstanceReferences(instanceReferences);
+        expected.setRequestStatus(requestStatus);
+        expected.setRequestScope(SERVICE);
+        expected.setStartTime(new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(startTime) + " GMT");
+
+
+        expected.setWorkflowName(REQUEST_ACTION);
+        expected.setRequestType(REQUEST_ACTION);
+
+        iar.setOriginalRequestId(ORIGINAL_REQUEST_ID);
+        iar.setRequestAction(REQUEST_ACTION);
+        iar.setWorkflowName(null);
+        iar.setOperationName(null);
+
+        Request result = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
+                OrchestrationRequestFormat.DETAIL.toString(), "v8");
         assertThat(result, sameBeanAs(expected));
     }
 
