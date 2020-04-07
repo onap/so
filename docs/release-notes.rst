@@ -1,6 +1,7 @@
 .. This work is licensed under a Creative Commons Attribution 4.0 International License.
 .. http://creativecommons.org/licenses/by/4.0
 .. Copyright 2018 Huawei Intellectual Property.  All rights reserved.
+.. _release_notes:
 
 
 Service Orchestrator Release Notes
@@ -369,7 +370,7 @@ The main goal of the Dublin release was to:
 -  [`SO-1206 <https://jira.onap.org/browse/SO-1206>`__\ ] - Added groupInstanceId and groupInstanceName columns
 -  [`SO-1205 <https://jira.onap.org/browse/SO-1205>`__\ ] - separate error status from progression status in req db
 -  [`SO-806 <https://jira.onap.org/browse/SO-806>`__\ ] - SO PNF PnP workflow shall not set "in-maint" AAI flag
--  [`SO-798 <https://jira.onap.org/browse/SO-798>`__\ ] - Externalize the PNF PnP workflow 鈥?as a Service Instance Deployment workflow 鈥?adding the Controller
+-  [`SO-798 <https://jira.onap.org/browse/SO-798>`__\ ] - Externalize the PNF PnP workflow? as a Service Instance Deployment workflow? adding the Controller
 -  [`SO-747 <https://jira.onap.org/browse/SO-747>`__\ ] - POC - Enable SO use of Multicloud Generic VNF Instantiation API
 -  [`SO-700 <https://jira.onap.org/browse/SO-700>`__\ ] - SO should be able to support CCVPN service assurance
 -  [`SO-588 <https://jira.onap.org/browse/SO-588>`__\ ] - Automate robot heatbridge manual step to add VF Module stack resources in AAI
