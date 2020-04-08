@@ -2947,7 +2947,7 @@ public class BBInputSetupTest {
     }
 
     @Test
-    public void testMapCatalogVfModuleIfNoVnf() {
+    public void testMapCatalogVfModuleIfNoVfUnderVnf() {
         String vnfModelCustomizationUUID = "vnfResourceCustUUID";
         String vfModuleCustomizationUUID = "vfModelCustomizationUUID";
         VfModule vfModule = new VfModule();
@@ -2958,7 +2958,6 @@ public class BBInputSetupTest {
         vnfResourceCust.setModelCustomizationUUID(vnfModelCustomizationUUID);
         VfModuleCustomization vfModuleCust = new VfModuleCustomization();
         vfModuleCust.setModelCustomizationUUID(vfModuleCustomizationUUID);
-        vnfResourceCust.getVfModuleCustomizations().add(vfModuleCust);
         ModelInfoVfModule modelInfoVfModule = new ModelInfoVfModule();
         doReturn(vfModuleCust).when(SPY_bbInputSetupUtils)
                 .getVfModuleCustomizationByModelCuztomizationUUID(vfModuleCustomizationUUID);

@@ -640,7 +640,8 @@ public class BBInputSetup implements JavaDelegate {
                     // want
                     .findAny() // If 'findAny' then return found
                     .orElse(null);
-        } else {
+        }
+        if (vfResourceCustomization == null) {
             vfResourceCustomization = bbInputSetupUtils
                     .getVfModuleCustomizationByModelCuztomizationUUID(modelInfo.getModelCustomizationId());
         }
