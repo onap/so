@@ -95,7 +95,7 @@
                     <dependencySets>
                       <dependencySet>
                         <includes>
-                          <include>org.onap.so.adapters:mso-vnfm-etsi-adapter</include>
+                          <include>org.onap.so.adapters:etsi-sol003-adapter-application</include>
                         </includes>
                         <outputFileNameMapping>app.jar</outputFileNameMapping>
                       </dependencySet>
@@ -249,29 +249,29 @@
               </build>
             </image>
             <image>
-             <name>${docker.image.prefix}/nssmf-adapter</name>
+              <name>${docker.image.prefix}/nssmf-adapter</name>
               <build>
-               <cleanup>try</cleanup>
-               <dockerFile>docker-files/Dockerfile.so-app</dockerFile>
-               <tags>
-                <tag>${project.version}</tag>
-                <tag>${project.version}-${maven.build.timestamp}</tag>
-                <tag>${project.docker.latesttag.version}</tag>
-               </tags>
-               <assembly>
-                <inline>
-                 <dependencySets>
-                  <dependencySet>
-                   <includes>
-                    <include>org.onap.so.adapters:mso-nssmf-adapter</include>
-                   </includes>
-                   <outputFileNameMapping>app.jar</outputFileNameMapping>
-                 </dependencySet>
-                </dependencySets>
-               </inline>
-              </assembly>
-             </build>
-           </image>
+                <cleanup>try</cleanup>
+                <dockerFile>docker-files/Dockerfile.so-app</dockerFile>
+                <tags>
+                  <tag>${project.version}</tag>
+                  <tag>${project.version}-${maven.build.timestamp}</tag>
+                  <tag>${project.docker.latesttag.version}</tag>
+                </tags>
+                <assembly>
+                  <inline>
+                    <dependencySets>
+                      <dependencySet>
+                        <includes>
+                          <include>org.onap.so.adapters:mso-nssmf-adapter</include>
+                        </includes>
+                        <outputFileNameMapping>app.jar</outputFileNameMapping>
+                      </dependencySet>
+                    </dependencySets>
+                  </inline>
+                </assembly>
+              </build>
+            </image>
             <image>
               <name>${docker.image.prefix}/so-appc-orchestrator</name>
               <build>
@@ -467,7 +467,7 @@
   <dependencies>
     <dependency>
       <groupId>org.onap.so.adapters</groupId>
-      <artifactId>mso-vnfm-etsi-adapter</artifactId>
+      <artifactId>etsi-sol003-adapter-application</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

@@ -560,7 +560,7 @@
             <images>
               <image>
                 <alias>service</alias>
-                <name>${artifactId}:${project.version}</name>
+                <name>${project.artifactId}:${project.version}</name>
                 <build>
                   <dockerFileDir>${project.build.directory}</dockerFileDir>
                 </build>

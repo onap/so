@@ -35,7 +35,12 @@
     </dependency>
     <dependency>
       <groupId>org.onap.so.adapters</groupId>
-      <artifactId>mso-vnfm-adapter-ext-clients</artifactId>
+      <artifactId>etsi-sol003-lcm-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.so.adapters</groupId>
+      <artifactId>etsi-sol003-lcm-ext-clients</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

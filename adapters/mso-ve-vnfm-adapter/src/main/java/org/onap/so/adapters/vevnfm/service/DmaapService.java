@@ -22,7 +22,7 @@ package org.onap.so.adapters.vevnfm.service;
 
 import org.onap.so.adapters.vevnfm.configuration.ConfigProperties;
 import org.onap.so.adapters.vevnfm.event.DmaapEvent;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.VnfLcmOperationOccurrenceNotification;
+import org.onap.so.adapters.vnfmadapter.lcn.model.VnfLcmOperationOccurrenceNotification;
 import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
