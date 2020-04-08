@@ -21,7 +21,7 @@
     <module>mso-catalog-db-adapter</module>
     <module>mso-vfc-adapter</module>
     <module>mso-openstack-adapters</module>
-    <module>mso-vnfm-adapter</module>
+    <module>etsi-sol003-adapter</module>
     <module>mso-ve-vnfm-adapter</module>
     <module>mso-nssmf-adapter</module>
     <module>so-appc-orchestrator</module>

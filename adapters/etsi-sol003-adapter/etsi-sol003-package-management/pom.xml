@@ -1,0 +1,17 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.onap.so.adapters</groupId>
+    <artifactId>etsi-sol003-adapter</artifactId>
+    <version>1.6.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>etsi-sol003-package-management</artifactId>
+  <name>ETSI SOL003 VNF Package Management</name>
+  <packaging>pom</packaging>
+  <modules>
+    <module>etsi-sol003-package-management-api</module>
+    <module>etsi-sol003-package-management-ext-clients</module>
+    <module>etsi-sol003-package-management-adapter</module>
+  </modules>
+</project>
