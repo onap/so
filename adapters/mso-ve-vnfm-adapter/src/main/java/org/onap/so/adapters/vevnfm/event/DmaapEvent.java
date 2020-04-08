@@ -24,7 +24,7 @@ import static java.time.temporal.ChronoField.INSTANT_SECONDS;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.Instant;
 import java.util.UUID;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.VnfLcmOperationOccurrenceNotification;
+import org.onap.so.adapters.vnfmadapter.lcn.model.VnfLcmOperationOccurrenceNotification;
 
 public class DmaapEvent {
 
