@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1556kf5" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.2.4">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1556kf5" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.0.1">
   <bpmn:process id="ConfigDeployVnfBB" name="ConfigDeployVnfBB" isExecutable="true">
     <bpmn:startEvent id="Start" name="Start">
       <bpmn:outgoing>SequenceFlow_0pd4jka</bpmn:outgoing>
@@ -19,6 +19,7 @@
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:in source="executionObject" target="executionObject" />
         <camunda:out source="ControllerStatus" target="ControllerStatus" />
+        <camunda:in source="gBuildingBlockExecution" target="gBuildingBlockExecution" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0kruy8t</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_03xbj4e</bpmn:outgoing>
