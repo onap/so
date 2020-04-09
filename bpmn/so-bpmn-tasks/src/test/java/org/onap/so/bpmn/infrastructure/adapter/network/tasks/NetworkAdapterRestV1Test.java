@@ -41,6 +41,7 @@ import org.onap.so.adapters.nwrest.CreateNetworkRequest;
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
 import org.onap.so.adapters.nwrest.DeleteNetworkRequest;
 import org.onap.so.adapters.nwrest.DeleteNetworkResponse;
+import org.onap.so.adapters.nwrest.NetworkRequestCommon;
 import org.onap.so.adapters.nwrest.UpdateNetworkError;
 import org.onap.so.adapters.nwrest.UpdateNetworkRequest;
 import org.onap.so.adapters.nwrest.UpdateNetworkResponse;
@@ -224,13 +225,54 @@ public class NetworkAdapterRestV1Test {
         deleteNetworkRequest.setMessageId(messageId);
         delegateExecution.setVariable("networkAdapterRequest", deleteNetworkRequest);
         Status status = Status.OK;
-        String responseEntity = "createNetworkResponse";
+        String responseEntity = "deleteNetworkResponse";
         Optional<Response> response = Optional.of(createResponse(status, responseEntity));
         when(networkAdapterResources.deleteNetworkAsync(deleteNetworkRequest)).thenReturn(response);
         // when
         networkAdapterRestV1Tasks.callNetworkAdapter(delegateExecution);
         // then
         verifyExecutionContent(status, responseEntity, messageId);
+    }
+
+    @Test
+    public void callNetworkAdapter_UpdateNetworkRequestSuccess() throws Exception {
+        // given
+        String messageId = "UpdateNetReqMessageId";
+        UpdateNetworkRequest updateNetworkRequest = new UpdateNetworkRequest();
+        updateNetworkRequest.setMessageId(messageId);
+        delegateExecution.setVariable("networkAdapterRequest", updateNetworkRequest);
+        Status status = Status.OK;
+        String responseEntity = "updateNetworkResponse";
+        Optional<Response> response = Optional.of(createResponse(status, responseEntity));
+        when(networkAdapterResources.updateNetworkAsync(updateNetworkRequest)).thenReturn(response);
+        // when
+        networkAdapterRestV1Tasks.callNetworkAdapter(delegateExecution);
+        // then
+        verifyExecutionContent(status, responseEntity, messageId);
+    }
+
+    @Test
+    public void callNetworkAdapterError_networkAdapterRequestIsNull() {
+        // when
+        networkAdapterRestV1Tasks.callNetworkAdapter(delegateExecution);
+        // then
+        verify(exceptionBuilder, times(1)).buildAndThrowWorkflowException(any(DelegateExecution.class), eq(7000),
+                any(Exception.class), eq(ONAPComponents.SO));
+    }
+
+    @Test
+    public void callNetworkAdapterError_noResponse() throws Exception {
+        // given
+        String messageId = "UpdateNetReqMessageId";
+        UpdateNetworkRequest updateNetworkRequest = new UpdateNetworkRequest();
+        updateNetworkRequest.setMessageId(messageId);
+        delegateExecution.setVariable("networkAdapterRequest", updateNetworkRequest);
+        when(networkAdapterResources.updateNetworkAsync(updateNetworkRequest)).thenReturn(Optional.empty());
+        // when
+        networkAdapterRestV1Tasks.callNetworkAdapter(delegateExecution);
+        // then
+        verify(exceptionBuilder, times(1)).buildAndThrowWorkflowException(any(DelegateExecution.class), eq(7000),
+                any(Exception.class), eq(ONAPComponents.SO));
     }
 
     private void verifyExecutionContent(Status status, String responseEntity, String messageId) {
