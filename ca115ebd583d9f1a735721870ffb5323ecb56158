@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ac7d903_dd41593b",
+        "filename": "adapters/etsi-sol003-adapter/etsi-sol003-lcm/etsi-sol003-lcm-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/NvfmAdapterUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6077
+      },
+      "writtenOn": "2020-04-09T14:48:41Z",
+      "side": 1,
+      "message": "VnfmAdapterUtils instead of NvfmAdapterUtils ?",
+      "revId": "ca115ebd583d9f1a735721870ffb5323ecb56158",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
