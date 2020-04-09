@@ -1,0 +1,9 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Byung-Woo Jun <byung-woo.jun@est.tech>
+Code-Review+2: Steve Smokowski <ss835w@att.com>
+Code-Review+1: Miroslaw Medrek <m.medrek@samsung.com>
+Submitted-by: Steve Smokowski <ss835w@att.com>
+Submitted-at: Thu, 09 Apr 2020 12:28:30 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/so/+/105354
+Project: so
+Branch: refs/heads/master
