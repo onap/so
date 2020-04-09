@@ -26,9 +26,9 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onap.so.adapters.vevnfm.configuration.ConfigProperties;
 import org.onap.so.adapters.vevnfm.configuration.StartupConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -52,8 +52,8 @@ public class NotificationControllerTest {
     private static final String MINIMAL_JSON_CONTENT = "{}";
     private static final int ZERO = 0;
 
-    @Value("${vnfm.notification}")
-    private String notification;
+    @Autowired
+    private ConfigProperties configProperties;
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -61,11 +61,13 @@ public class NotificationControllerTest {
     @Autowired
     private RestTemplate restTemplate;
 
+    private String notification;
     private MockMvc mvc;
     private MockRestServiceServer mockRestServer;
 
     @Before
     public void init() {
+        notification = configProperties.getVnfmNotification();
         mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         mockRestServer = MockRestServiceServer.bindTo(restTemplate).build();
     }
