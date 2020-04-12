@@ -23,7 +23,6 @@ package org.onap.so.bpmn.servicedecomposition.homingobjects;
 import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
-import org.onap.so.bpmn.servicedecomposition.ShallowCopy;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 
 @JsonRootName("solution")
