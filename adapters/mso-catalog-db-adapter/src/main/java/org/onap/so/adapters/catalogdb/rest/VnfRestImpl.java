@@ -34,7 +34,6 @@ import javax.ws.rs.core.Response;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.data.repository.ServiceRepository;
 import org.onap.so.db.catalog.data.repository.VnfCustomizationRepository;
-import org.onap.so.rest.catalog.beans.Service;
 import org.onap.so.rest.catalog.beans.Vnf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

@@ -28,7 +28,6 @@ import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.util.Base64;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.ws.rs.core.UriBuilder;
 import org.onap.so.logger.LoggingAnchor;

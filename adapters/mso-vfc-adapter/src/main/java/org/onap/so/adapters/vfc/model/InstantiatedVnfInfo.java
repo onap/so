@@ -13,7 +13,6 @@ package org.onap.so.adapters.vfc.model;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Map;
 
 public class InstantiatedVnfInfo {
     @NotNull

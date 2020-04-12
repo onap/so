@@ -23,7 +23,6 @@
 package org.onap.so.adapters.catalogdb.catalogrest;
 /* should be called QueryVnfResource.java */
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +32,6 @@ import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @XmlRootElement(name = "serviceVnfs")
 public class QueryServiceVnfs extends CatalogQuery {
