@@ -49,7 +49,6 @@ import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandler.common.ResponseBuilder;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
-import org.onap.so.apihandlerinfra.exceptions.ContactCamundaException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
 import org.onap.so.constants.OrchestrationRequestFormat;
