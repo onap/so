@@ -2,7 +2,6 @@ package org.onap.so.logging.jaxrs.filter;
 
 import javax.annotation.Priority;
 import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.PreMatching;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.logger.HttpHeadersConstants;
