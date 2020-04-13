@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wio50w" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.1.2">
-  <bpmn:process id="Process_0r5eb97" isExecutable="true">
+  <bpmn:process id="CreateSliceService" name="CreateSliceService" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1nbljfd" name="Create Slice Service Creation Flow">
       <bpmn:outgoing>SequenceFlow_03s744c</bpmn:outgoing>
     </bpmn:startEvent>
@@ -457,7 +457,7 @@ css.updateAAIOrchStatus(execution)</bpmn:script>
   <bpmn:error id="Error_03akl5v" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmn:error id="Error_0p2naox" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0r5eb97">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="CreateSliceService">
       <bpmndi:BPMNShape id="StartEvent_1nbljfd_di" bpmnElement="StartEvent_1nbljfd">
         <dc:Bounds x="178" y="103" width="36" height="36" />
         <bpmndi:BPMNLabel>
