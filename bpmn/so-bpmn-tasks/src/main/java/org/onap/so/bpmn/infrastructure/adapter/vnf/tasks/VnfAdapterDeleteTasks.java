@@ -35,8 +35,6 @@ import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.VnfAdapterVfModuleResources;
 import org.onap.so.client.orchestration.VnfAdapterVolumeGroupResources;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
