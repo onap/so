@@ -18,7 +18,6 @@
  */
 package org.onap.so.bpmn.infrastructure.decisionpoint.api;
 
-import java.util.Map;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 
 /**

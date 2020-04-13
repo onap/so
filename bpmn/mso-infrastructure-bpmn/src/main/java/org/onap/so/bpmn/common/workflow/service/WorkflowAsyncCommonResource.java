@@ -20,9 +20,6 @@
 
 package org.onap.so.bpmn.common.workflow.service;
 
-import org.camunda.bpm.engine.ProcessEngineServices;
-import org.camunda.bpm.engine.ProcessEngines;
-
 
 public class WorkflowAsyncCommonResource extends WorkflowAsyncResource {
 

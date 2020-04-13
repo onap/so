@@ -26,7 +26,6 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import org.springframework.stereotype.Component;
 import org.onap.appc.client.lcm.api.LifeCycleManagerStateful;
 import org.onap.appc.client.lcm.api.ResponseHandler;
 import org.onap.appc.client.lcm.model.Status;
@@ -36,7 +35,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import org.springframework.stereotype.Service;
 
 public class ApplicationControllerSupport {
 

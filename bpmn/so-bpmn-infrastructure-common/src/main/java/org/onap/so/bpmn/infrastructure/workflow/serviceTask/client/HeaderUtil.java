@@ -21,7 +21,6 @@
 package org.onap.so.bpmn.infrastructure.workflow.serviceTask.client;
 
 import java.util.Base64;
-import org.onap.so.bpmn.infrastructure.workflow.serviceTask.SdncUnderlayVpnOperationClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
