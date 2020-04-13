@@ -7,7 +7,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -21,7 +21,6 @@
 package org.onap.so.client.dmaap;
 
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.Base64;
 import java.util.Map;
 import java.util.Optional;
@@ -31,7 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.onap.so.utils.CryptoUtils;
 
 public abstract class DmaapClient {
 

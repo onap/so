@@ -13,7 +13,6 @@ import org.json.JSONObject;
 import org.onap.logging.filter.spring.SpringClientPayloadFilter;
 import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
 import org.onap.so.utils.CryptoUtils;
-import org.onap.so.apihandlerinfra.exceptions.ContactCamundaException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
