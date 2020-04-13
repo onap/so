@@ -148,10 +148,16 @@ public class AaiHelper {
     public Pserver buildPserver(final Server server) {
         Pserver pserver = new Pserver();
         pserver.setInMaint(false);
-        pserver.setPserverId(server.getId());
         pserver.setHostname(server.getHypervisorHostname());
-        pserver.setPserverName2(server.getHost());
-        pserver.setProvStatus(server.getStatus().value());
+        if (server.getId() != null) {
+            pserver.setPserverId(server.getId());
+        }
+        if (server.getHost() != null) {
+            pserver.setPserverName2(server.getHost());
+        }
+        if (server.getStatus() != null && server.getStatus().value() != null) {
+            pserver.setProvStatus(server.getStatus().value());
+        }
         return pserver;
     }
 
