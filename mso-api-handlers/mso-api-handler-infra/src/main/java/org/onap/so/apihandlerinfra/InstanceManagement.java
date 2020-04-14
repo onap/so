@@ -197,6 +197,7 @@ public class InstanceManagement {
             vnfId = sir.getVnfInstanceId();
         }
 
+        currentActiveReq = setWorkflowNameAndOperationName(currentActiveReq, workflowUuid);
         saveCurrentActiveRequest(currentActiveReq);
 
         RequestClientParameter requestClientParameter;
@@ -293,6 +294,7 @@ public class InstanceManagement {
 
         RecipeLookupResult recipeLookupResult = getInstanceManagementWorkflowRecipe(currentActiveReq, workflowUuid);
 
+        currentActiveReq = setWorkflowNameAndOperationName(currentActiveReq, workflowUuid);
         saveCurrentActiveRequest(currentActiveReq);
 
         RequestClientParameter requestClientParameter;
@@ -356,5 +358,15 @@ public class InstanceManagement {
             return new RecipeLookupResult(recipeUri, 180);
         }
         return null;
+    }
+
+    protected InfraActiveRequests setWorkflowNameAndOperationName(InfraActiveRequests currentActiveReq,
+            String workflowUuid) {
+        Workflow workflow = catalogDbClient.findWorkflowByArtifactUUID(workflowUuid);
+        if (workflow != null) {
+            currentActiveReq.setWorkflowName(workflow.getName());
+            currentActiveReq.setOperationName(workflow.getOperationName());
+        }
+        return currentActiveReq;
     }
 }

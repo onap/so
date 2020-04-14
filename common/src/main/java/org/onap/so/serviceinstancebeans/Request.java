@@ -35,6 +35,8 @@ public class Request {
     protected String finishTime;
     protected String requestScope;
     protected String requestType;
+    protected String workflowName;
+    protected String operationName;
     protected String originalRequestId;
     protected RequestDetails requestDetails;
     protected InstanceReferences instanceReferences;
@@ -81,6 +83,22 @@ public class Request {
 
     public void setRequestType(String requestType) {
         this.requestType = requestType;
+    }
+
+    public String getWorkflowName() {
+        return workflowName;
+    }
+
+    public void setWorkflowName(String workflowName) {
+        this.workflowName = workflowName;
+    }
+
+    public String getOperationName() {
+        return operationName;
+    }
+
+    public void setOperationName(String operationName) {
+        this.operationName = operationName;
     }
 
     public RequestStatus getRequestStatus() {
@@ -136,9 +154,9 @@ public class Request {
     public String toString() {
         return new ToStringBuilder(this).append("requestId", requestId).append("startTime", startTime)
                 .append("finishTime", finishTime).append("requestScope", requestScope)
-                .append("requestType", requestType).append("requestDetails", requestDetails)
-                .append("instanceReferences", instanceReferences).append("requestStatus", requestStatus)
-                .append("requestProcessingData", requestProcessingData).append("cloudRequestData", cloudRequestData)
-                .append("originalRequestId", originalRequestId).toString();
+                .append("requestType", requestType).append("workflowName", workflowName)
+                .append("requestDetails", requestDetails).append("instanceReferences", instanceReferences)
+                .append("requestStatus", requestStatus).append("requestProcessingData", requestProcessingData)
+                .append("cloudRequestData", cloudRequestData).append("originalRequestId", originalRequestId).toString();
     }
 }

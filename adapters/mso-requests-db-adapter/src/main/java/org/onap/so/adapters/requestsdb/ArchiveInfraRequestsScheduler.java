@@ -143,6 +143,8 @@ public class ArchiveInfraRequestsScheduler {
                 archivedInfra.setProductFamilyName(iar.getProductFamilyName());
                 archivedInfra.setTenantName(iar.getTenantName());
                 archivedInfra.setResourceStatusMessage(iar.getResourceStatusMessage());
+                archivedInfra.setWorkflowName(iar.getWorkflowName());
+                archivedInfra.setOperationName(iar.getOperationName());
 
                 newArchivedReqs.add(archivedInfra);
                 oldInfraReqs.add(iar);

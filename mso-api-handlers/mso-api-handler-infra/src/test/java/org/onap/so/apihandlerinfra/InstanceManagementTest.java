@@ -45,9 +45,11 @@ import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
+import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.logger.HttpHeadersConstants;
 import org.onap.so.serviceinstancebeans.RequestReferences;
 import org.onap.so.serviceinstancebeans.ServiceInstancesResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -62,6 +64,9 @@ public class InstanceManagementTest extends BaseTest {
 
     private final ObjectMapper mapper = new ObjectMapper();
     private ObjectMapper errorMapper = new ObjectMapper();
+
+    @Autowired
+    InstanceManagement instanceManagement;
 
     @Value("${wiremock.server.port}")
     private String wiremockPort;
@@ -200,5 +205,19 @@ public class InstanceManagementTest extends BaseTest {
 
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+    }
+
+    @Test
+    public void workflowAndOperationNameTest() {
+        wireMockServer.stubFor(get(urlMatching(
+                ".*/workflow/search/findByArtifactUUID[?]artifactUUID=71526781-e55c-4cb7-adb3-97e09d9c76be"))
+                        .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                                .withBody(getWiremockResponseForCatalogdb("workflow_Response.json"))
+                                .withStatus(org.apache.http.HttpStatus.SC_OK)));
+        InfraActiveRequests activeReq = new InfraActiveRequests();
+        activeReq =
+                instanceManagement.setWorkflowNameAndOperationName(activeReq, "71526781-e55c-4cb7-adb3-97e09d9c76be");
+        assertEquals(activeReq.getWorkflowName(), "testingWorkflow");
+        assertEquals(activeReq.getOperationName(), "testOperation");
     }
 }
