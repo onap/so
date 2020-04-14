@@ -24,7 +24,7 @@ import org.onap.so.adapters.vevnfm.configuration.ConfigProperties;
 import org.onap.so.adapters.vevnfm.constant.NotificationVnfFilterType;
 import org.onap.so.adapters.vevnfm.service.DmaapService;
 import org.onap.so.adapters.vevnfm.service.VnfAaiChecker;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.VnfLcmOperationOccurrenceNotification;
+import org.onap.so.adapters.vnfmadapter.lcn.model.VnfLcmOperationOccurrenceNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
