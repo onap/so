@@ -26,9 +26,16 @@ import org.apache.logging.log4j.util.Strings;
 import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.so.adapters.vevnfm.exception.VeVnfmException;
 import org.onap.so.adapters.vevnfm.provider.AuthorizationHeadersProvider;
+<<<<<<< HEAD   (8fe8b7 Merge "Correcting ControllerExecutionBB Id" into frankfurt)
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRequest;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsAuthentication;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsAuthenticationParamsBasic;
+=======
+import org.onap.so.adapters.etsi.sol003.adapter.lcm.extclients.vnfm.model.LccnSubscriptionRequest;
+import org.onap.so.adapters.etsi.sol003.adapter.lcm.extclients.vnfm.model.SubscriptionsAuthentication;
+import org.onap.so.adapters.etsi.sol003.adapter.lcm.extclients.vnfm.model.SubscriptionsAuthenticationParamsBasic;
+import org.onap.so.adapters.etsi.sol003.adapter.lcm.extclients.vnfm.model.SubscriptionsFilter;
+>>>>>>> CHANGE (028879 Refactor SOL003 Adapter to organize its modules)
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

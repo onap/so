@@ -21,7 +21,12 @@
 package org.onap.so.adapters.vevnfm.controller;
 
 import org.onap.so.adapters.vevnfm.service.DmaapService;
+<<<<<<< HEAD   (8fe8b7 Merge "Correcting ControllerExecutionBB Id" into frankfurt)
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.VnfLcmOperationOccurrenceNotification;
+=======
+import org.onap.so.adapters.vevnfm.service.VnfAaiChecker;
+import org.onap.so.adapters.etsi.sol003.adapter.lcm.lcn.model.VnfLcmOperationOccurrenceNotification;
+>>>>>>> CHANGE (028879 Refactor SOL003 Adapter to organize its modules)
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

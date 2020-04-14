@@ -23,7 +23,7 @@ package org.onap.so.adapters.vevnfm.service;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.so.adapters.vevnfm.exception.VeVnfmException;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRequest;
+import org.onap.so.adapters.etsi.sol003.adapter.lcm.extclients.vnfm.model.LccnSubscriptionRequest;
 import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

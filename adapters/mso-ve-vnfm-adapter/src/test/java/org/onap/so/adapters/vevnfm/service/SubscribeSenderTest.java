@@ -35,7 +35,7 @@ import org.junit.runner.RunWith;
 import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.so.adapters.vevnfm.configuration.StartupConfiguration;
 import org.onap.so.adapters.vevnfm.exception.VeVnfmException;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRequest;
+import org.onap.so.adapters.etsi.sol003.adapter.lcm.extclients.vnfm.model.LccnSubscriptionRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;

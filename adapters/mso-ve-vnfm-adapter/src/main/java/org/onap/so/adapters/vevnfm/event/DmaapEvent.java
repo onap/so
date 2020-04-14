@@ -24,7 +24,11 @@ import static java.time.temporal.ChronoField.INSTANT_SECONDS;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.Instant;
 import java.util.UUID;
+<<<<<<< HEAD   (8fe8b7 Merge "Correcting ControllerExecutionBB Id" into frankfurt)
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.VnfLcmOperationOccurrenceNotification;
+=======
+import org.onap.so.adapters.etsi.sol003.adapter.lcm.lcn.model.VnfLcmOperationOccurrenceNotification;
+>>>>>>> CHANGE (028879 Refactor SOL003 Adapter to organize its modules)
 
 public class DmaapEvent {
 

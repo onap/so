@@ -1,0 +1,4 @@
+<<<<<<< HEAD   (8fe8b7 Merge "Correcting ControllerExecutionBB Id" into frankfurt)
+=======
+org.onap.so.adapters.etsi.sol003.adapter.lcm.extclients.aai.AaiPropertiesImpl
+>>>>>>> CHANGE (028879 Refactor SOL003 Adapter to organize its modules)
