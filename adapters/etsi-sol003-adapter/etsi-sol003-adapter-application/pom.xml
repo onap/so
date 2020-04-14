@@ -15,7 +15,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
-          <mainClass>org.onap.so.adapters.vnfmadapter.VnfmAdapterApplication</mainClass>
+          <mainClass>org.onap.so.adapters.etsi.sol003.adapter.VnfmAdapterApplication</mainClass>
         </configuration>
         <executions>
           <execution>
