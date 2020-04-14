@@ -25,8 +25,8 @@
               <language>java</language>
               <library>okhttp-gson</library>
               <output>${project.build.directory}/generated-sources/etsicatalog/notification</output>
-              <apiPackage>org.onap.so.adapters.vnfmadapter.etsicatalog.notification.api</apiPackage>
-              <modelPackage>org.onap.so.adapters.vnfmadapter.etsicatalog.notification.model</modelPackage>
+              <apiPackage>org.onap.so.adapters.etsi.sol003.adapter.etsicatalog.notification.api</apiPackage>
+              <modelPackage>org.onap.so.adapters.etsi.sol003.adapter.etsicatalog.notification.model</modelPackage>
               <generateApiTests>false</generateApiTests>
               <generateModelTests>false</generateModelTests>
               <configOptions>
@@ -47,8 +47,8 @@
               <language>java</language>
               <library>okhttp-gson</library>
               <output>${project.build.directory}/generated-sources/sol003-vnf-packagemanagement</output>
-              <apiPackage>org.onap.so.adapters.vnfmadapter.packagemanagement.api</apiPackage>
-              <modelPackage>org.onap.so.adapters.vnfmadapter.packagemanagement.model</modelPackage>
+              <apiPackage>org.onap.so.adapters.etsi.sol003.adapter.packagemanagement.api</apiPackage>
+              <modelPackage>org.onap.so.adapters.etsi.sol003.adapter.packagemanagement.model</modelPackage>
               <generateApiTests>false</generateApiTests>
               <generateModelTests>false</generateModelTests>
               <configOptions>
