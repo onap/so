@@ -16,6 +16,8 @@ SO Deployment View
 
 .. image:: ../images/SO_Architecture_Internal.png
 
+.. image:: ../images/so-architecture.png
+
 SO Sub-Components
 ------------------
 
