@@ -21,7 +21,6 @@
 package org.onap.so.db.request.beans;
 
 
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;

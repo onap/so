@@ -20,7 +20,6 @@
 
 package org.onap.so.db.request.data.repository;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.onap.so.db.request.beans.InfraActiveRequests;

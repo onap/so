@@ -24,11 +24,8 @@ import java.util.List;
 import org.onap.so.db.request.beans.OperationalEnvServiceModelStatus;
 import org.onap.so.db.request.beans.OperationalEnvServiceModelStatusId;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
-import org.springframework.transaction.annotation.Transactional;
 
 @RepositoryRestResource(collectionResourceRel = "operationalEnvServiceModelStatus",
         path = "operationalEnvServiceModelStatus")
