@@ -2484,6 +2484,109 @@ public class BBInputSetupTest {
     }
 
     @Test
+    public void test_getGBBMacroNoUserParamsExistingService_forControllerExecutionBB() throws Exception {
+        // given
+        String requestAction = "unassignInstance";
+        GeneralBuildingBlock gBB = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
+                GeneralBuildingBlock.class);
+        L3Network network = new L3Network();
+        network.setNetworkId("networkId");
+        gBB.getServiceInstance().getNetworks().add(network);
+        ServiceInstance serviceInstance = gBB.getServiceInstance();
+        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
+                ExecuteBuildingBlock.class);
+        RequestDetails requestDetails = mapper
+                .readValue(new File(RESOURCE_PATH + "RequestDetailsInput_serviceMacro.json"), RequestDetails.class);
+        requestDetails.getRequestParameters().setUserParams(null);
+        Map<ResourceKey, String> lookupKeyMap = prepareLookupKeyMap();
+        Service service = Mockito.mock(Service.class);
+        CloudConfiguration cloudConfiguration = new CloudConfiguration();
+        cloudConfiguration.setLcpCloudRegionId("cloudRegionId");
+        org.onap.aai.domain.yang.ServiceInstance aaiServiceInstance = new org.onap.aai.domain.yang.ServiceInstance();
+        org.onap.aai.domain.yang.L3Network aaiNetwork = new org.onap.aai.domain.yang.L3Network();
+        aaiNetwork.setModelCustomizationId("modelCustId");
+        GenericVnf vnf = new GenericVnf();
+        vnf.setVnfId("vnfId");
+        gBB.getServiceInstance().getVnfs().add(vnf);
+        org.onap.aai.domain.yang.GenericVnf aaiVnf = new org.onap.aai.domain.yang.GenericVnf();
+        aaiVnf.setModelCustomizationId("modelCustId");
+
+        ConfigurationResourceKeys configResourceKeys = prepareConfigurationResourceKeys();
+        executeBB.setConfigurationResourceKeys(configResourceKeys).setRequestDetails(requestDetails);
+        BuildingBlock buildingBlock = executeBB.getBuildingBlock();
+        buildingBlock.setBpmnFlowName("ControllerExecutionBB").setKey("ab153b6e-c364-44c0-bef6-1f2982117f04");
+        buildingBlock.setBpmnScope("VNF");
+
+        aaiServiceInstance.setModelVersionId("modelVersionId");
+        doReturn(service).when(SPY_bbInputSetupUtils)
+                .getCatalogServiceByModelUUID(aaiServiceInstance.getModelVersionId());
+        doReturn(aaiServiceInstance).when(SPY_bbInputSetupUtils)
+                .getAAIServiceInstanceById(lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID));
+        doReturn(serviceInstance).when(SPY_bbInputSetup).getExistingServiceInstance(aaiServiceInstance);
+        doReturn(gBB).when(SPY_bbInputSetup).populateGBBWithSIAndAdditionalInfo(any(BBInputSetupParameter.class));
+        doReturn(aaiVnf).when(SPY_bbInputSetupUtils).getAAIGenericVnf(vnf.getVnfId());
+        doNothing().when(SPY_bbInputSetup).mapCatalogVnf(any(GenericVnf.class), any(ModelInfo.class),
+                any(Service.class));
+        // when
+        SPY_bbInputSetup.getGBBMacroExistingService(executeBB, lookupKeyMap,
+                executeBB.getBuildingBlock().getBpmnFlowName(), requestAction, cloudConfiguration);
+        // then
+        verify(SPY_bbInputSetup, times(1)).mapCatalogVnf(any(GenericVnf.class), any(ModelInfo.class),
+                any(Service.class));
+    }
+
+    @Test
+    public void test_getGBBMacroNoUserParamsExistingService_forControllerExecutionBB_noScope() throws Exception {
+        // given
+        String requestAction = "unassignInstance";
+        GeneralBuildingBlock gBB = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
+                GeneralBuildingBlock.class);
+        L3Network network = new L3Network();
+        network.setNetworkId("networkId");
+        gBB.getServiceInstance().getNetworks().add(network);
+        ServiceInstance serviceInstance = gBB.getServiceInstance();
+        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
+                ExecuteBuildingBlock.class);
+        RequestDetails requestDetails = mapper
+                .readValue(new File(RESOURCE_PATH + "RequestDetailsInput_serviceMacro.json"), RequestDetails.class);
+        requestDetails.getRequestParameters().setUserParams(null);
+        Map<ResourceKey, String> lookupKeyMap = prepareLookupKeyMap();
+        Service service = Mockito.mock(Service.class);
+        CloudConfiguration cloudConfiguration = new CloudConfiguration();
+        cloudConfiguration.setLcpCloudRegionId("cloudRegionId");
+        org.onap.aai.domain.yang.ServiceInstance aaiServiceInstance = new org.onap.aai.domain.yang.ServiceInstance();
+        org.onap.aai.domain.yang.L3Network aaiNetwork = new org.onap.aai.domain.yang.L3Network();
+        aaiNetwork.setModelCustomizationId("modelCustId");
+        GenericVnf vnf = new GenericVnf();
+        vnf.setVnfId("vnfId");
+        gBB.getServiceInstance().getVnfs().add(vnf);
+        org.onap.aai.domain.yang.GenericVnf aaiVnf = new org.onap.aai.domain.yang.GenericVnf();
+        aaiVnf.setModelCustomizationId("modelCustId");
+
+        ConfigurationResourceKeys configResourceKeys = prepareConfigurationResourceKeys();
+        executeBB.setConfigurationResourceKeys(configResourceKeys).setRequestDetails(requestDetails);
+        BuildingBlock buildingBlock = executeBB.getBuildingBlock();
+        buildingBlock.setBpmnFlowName("ControllerExecutionBB").setKey("ab153b6e-c364-44c0-bef6-1f2982117f04");
+
+        aaiServiceInstance.setModelVersionId("modelVersionId");
+        doReturn(service).when(SPY_bbInputSetupUtils)
+                .getCatalogServiceByModelUUID(aaiServiceInstance.getModelVersionId());
+        doReturn(aaiServiceInstance).when(SPY_bbInputSetupUtils)
+                .getAAIServiceInstanceById(lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID));
+        doReturn(serviceInstance).when(SPY_bbInputSetup).getExistingServiceInstance(aaiServiceInstance);
+        doReturn(gBB).when(SPY_bbInputSetup).populateGBBWithSIAndAdditionalInfo(any(BBInputSetupParameter.class));
+        doReturn(aaiVnf).when(SPY_bbInputSetupUtils).getAAIGenericVnf(vnf.getVnfId());
+        doNothing().when(SPY_bbInputSetup).mapCatalogVnf(any(GenericVnf.class), any(ModelInfo.class),
+                any(Service.class));
+        // when
+        SPY_bbInputSetup.getGBBMacroExistingService(executeBB, lookupKeyMap,
+                executeBB.getBuildingBlock().getBpmnFlowName(), requestAction, cloudConfiguration);
+        // then
+        verify(SPY_bbInputSetup, times(1)).mapCatalogVnf(any(GenericVnf.class), any(ModelInfo.class),
+                any(Service.class));
+    }
+
+    @Test
     public void test_getGBBMacroNoUserParamsExistingService_forActivateVnfBB() throws Exception {
         // given
         String requestAction = "unassignInstance";
@@ -2532,6 +2635,126 @@ public class BBInputSetupTest {
         // then
         verify(SPY_bbInputSetup, times(1)).mapCatalogVnf(any(GenericVnf.class), any(ModelInfo.class),
                 any(Service.class));
+    }
+
+    @Test
+    public void test_getGBBMacroNoUserParamsExistingService_forControllerExecutionBB_VFModule() throws Exception {
+        // given
+        String requestAction = "unassignInstance";
+        GeneralBuildingBlock gBB = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
+                GeneralBuildingBlock.class);
+        L3Network network = new L3Network();
+        network.setNetworkId("networkId");
+        gBB.getServiceInstance().getNetworks().add(network);
+        ServiceInstance serviceInstance = gBB.getServiceInstance();
+        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
+                ExecuteBuildingBlock.class);
+        RequestDetails requestDetails = mapper
+                .readValue(new File(RESOURCE_PATH + "RequestDetailsInput_serviceMacro.json"), RequestDetails.class);
+        requestDetails.getRequestParameters().setUserParams(null);
+        Map<ResourceKey, String> lookupKeyMap = prepareLookupKeyMap();
+        Service service = Mockito.mock(Service.class);
+        CloudConfiguration cloudConfiguration = new CloudConfiguration();
+        cloudConfiguration.setLcpCloudRegionId("cloudRegionId");
+        org.onap.aai.domain.yang.ServiceInstance aaiServiceInstance = new org.onap.aai.domain.yang.ServiceInstance();
+        org.onap.aai.domain.yang.L3Network aaiNetwork = new org.onap.aai.domain.yang.L3Network();
+        aaiNetwork.setModelCustomizationId("modelCustId");
+        GenericVnf vnf = new GenericVnf();
+        vnf.setVnfId("vnfId");
+        gBB.getServiceInstance().getVnfs().add(vnf);
+        org.onap.aai.domain.yang.GenericVnf aaiVnf = new org.onap.aai.domain.yang.GenericVnf();
+        aaiVnf.setModelCustomizationId("modelCustId");
+        VfModule vfModule = new VfModule();
+        vfModule.setVfModuleId("vfModuleId");
+        gBB.getServiceInstance().getVnfs().get(0).getVfModules().add(vfModule);
+        org.onap.aai.domain.yang.VfModule aaiVfModule = new org.onap.aai.domain.yang.VfModule();
+        aaiVfModule.setModelCustomizationId("modelCustId");
+
+        ConfigurationResourceKeys configResourceKeys = prepareConfigurationResourceKeys();
+        executeBB.setConfigurationResourceKeys(configResourceKeys).setRequestDetails(requestDetails);
+        BuildingBlock buildingBlock = executeBB.getBuildingBlock();
+        buildingBlock.setBpmnFlowName("ControllerExecutionBB").setKey("a25e8e8c-58b8-4eec-810c-97dcc1f5cb7f");
+        buildingBlock.setBpmnScope("VfModule");
+
+        aaiServiceInstance.setModelVersionId("modelVersionId");
+        doReturn(service).when(SPY_bbInputSetupUtils)
+                .getCatalogServiceByModelUUID(aaiServiceInstance.getModelVersionId());
+        doReturn(aaiServiceInstance).when(SPY_bbInputSetupUtils)
+                .getAAIServiceInstanceById(lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID));
+        doReturn(serviceInstance).when(SPY_bbInputSetup).getExistingServiceInstance(aaiServiceInstance);
+        doReturn(gBB).when(SPY_bbInputSetup).populateGBBWithSIAndAdditionalInfo(any(BBInputSetupParameter.class));
+        doReturn(aaiVnf).when(SPY_bbInputSetupUtils).getAAIGenericVnf(vnf.getVnfId());
+        doNothing().when(SPY_bbInputSetup).mapCatalogVnf(any(GenericVnf.class), any(ModelInfo.class),
+                any(Service.class));
+        doReturn(aaiVfModule).when(SPY_bbInputSetupUtils).getAAIVfModule(vnf.getVnfId(), vfModule.getVfModuleId());
+        // when
+        SPY_bbInputSetup.getGBBMacroExistingService(executeBB, lookupKeyMap,
+                executeBB.getBuildingBlock().getBpmnFlowName(), requestAction, cloudConfiguration);
+        // then
+        verify(SPY_bbInputSetup, times(1)).mapCatalogVnf(any(GenericVnf.class), any(ModelInfo.class),
+                any(Service.class));
+        verify(SPY_bbInputSetup, times(1)).mapCatalogVfModule(any(VfModule.class), any(ModelInfo.class),
+                any(Service.class), any(String.class));
+    }
+
+    @Test
+    public void test_getGBBMacroNoUserParamsExistingService_forControllerExecutionBB_VFModule_NoScope()
+            throws Exception {
+        // given
+        String requestAction = "unassignInstance";
+        GeneralBuildingBlock gBB = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
+                GeneralBuildingBlock.class);
+        L3Network network = new L3Network();
+        network.setNetworkId("networkId");
+        gBB.getServiceInstance().getNetworks().add(network);
+        ServiceInstance serviceInstance = gBB.getServiceInstance();
+        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
+                ExecuteBuildingBlock.class);
+        RequestDetails requestDetails = mapper
+                .readValue(new File(RESOURCE_PATH + "RequestDetailsInput_serviceMacro.json"), RequestDetails.class);
+        requestDetails.getRequestParameters().setUserParams(null);
+        Map<ResourceKey, String> lookupKeyMap = prepareLookupKeyMap();
+        Service service = Mockito.mock(Service.class);
+        CloudConfiguration cloudConfiguration = new CloudConfiguration();
+        cloudConfiguration.setLcpCloudRegionId("cloudRegionId");
+        org.onap.aai.domain.yang.ServiceInstance aaiServiceInstance = new org.onap.aai.domain.yang.ServiceInstance();
+        org.onap.aai.domain.yang.L3Network aaiNetwork = new org.onap.aai.domain.yang.L3Network();
+        aaiNetwork.setModelCustomizationId("modelCustId");
+        GenericVnf vnf = new GenericVnf();
+        vnf.setVnfId("vnfId");
+        gBB.getServiceInstance().getVnfs().add(vnf);
+        org.onap.aai.domain.yang.GenericVnf aaiVnf = new org.onap.aai.domain.yang.GenericVnf();
+        aaiVnf.setModelCustomizationId("modelCustId");
+        VfModule vfModule = new VfModule();
+        vfModule.setVfModuleId("vfModuleId");
+        gBB.getServiceInstance().getVnfs().get(0).getVfModules().add(vfModule);
+        org.onap.aai.domain.yang.VfModule aaiVfModule = new org.onap.aai.domain.yang.VfModule();
+        aaiVfModule.setModelCustomizationId("modelCustId");
+
+        ConfigurationResourceKeys configResourceKeys = prepareConfigurationResourceKeys();
+        executeBB.setConfigurationResourceKeys(configResourceKeys).setRequestDetails(requestDetails);
+        BuildingBlock buildingBlock = executeBB.getBuildingBlock();
+        buildingBlock.setBpmnFlowName("ControllerExecutionBB").setKey("a25e8e8c-58b8-4eec-810c-97dcc1f5cb7f");
+
+        aaiServiceInstance.setModelVersionId("modelVersionId");
+        doReturn(service).when(SPY_bbInputSetupUtils)
+                .getCatalogServiceByModelUUID(aaiServiceInstance.getModelVersionId());
+        doReturn(aaiServiceInstance).when(SPY_bbInputSetupUtils)
+                .getAAIServiceInstanceById(lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID));
+        doReturn(serviceInstance).when(SPY_bbInputSetup).getExistingServiceInstance(aaiServiceInstance);
+        doReturn(gBB).when(SPY_bbInputSetup).populateGBBWithSIAndAdditionalInfo(any(BBInputSetupParameter.class));
+        doReturn(aaiVnf).when(SPY_bbInputSetupUtils).getAAIGenericVnf(vnf.getVnfId());
+        doNothing().when(SPY_bbInputSetup).mapCatalogVnf(any(GenericVnf.class), any(ModelInfo.class),
+                any(Service.class));
+        doReturn(aaiVfModule).when(SPY_bbInputSetupUtils).getAAIVfModule(vnf.getVnfId(), vfModule.getVfModuleId());
+        // when
+        SPY_bbInputSetup.getGBBMacroExistingService(executeBB, lookupKeyMap,
+                executeBB.getBuildingBlock().getBpmnFlowName(), requestAction, cloudConfiguration);
+        // then
+        verify(SPY_bbInputSetup, times(1)).mapCatalogVnf(any(GenericVnf.class), any(ModelInfo.class),
+                any(Service.class));
+        verify(SPY_bbInputSetup, times(1)).mapCatalogVfModule(any(VfModule.class), any(ModelInfo.class),
+                any(Service.class), any(String.class));
     }
 
     @Test
