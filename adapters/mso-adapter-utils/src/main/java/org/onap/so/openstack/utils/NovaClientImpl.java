@@ -20,6 +20,7 @@
 
 package org.onap.so.openstack.utils;
 
+import java.io.IOException;
 import org.onap.so.cloud.authentication.KeystoneAuthHolder;
 import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
 import org.onap.so.openstack.exceptions.MsoException;
@@ -224,20 +225,15 @@ public class NovaClientImpl extends MsoCommonUtils {
     }
 
     public void postActionToServer(String cloudSiteId, String tenantId, String id, String request)
-            throws NovaClientException {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode actualObj = mapper.readTree(request);
-            Entity<JsonNode> openstackEntity = new Entity<>(actualObj, "application/json");
-            CharSequence actionPath = "/servers/" + id + "/action";
-            Nova novaClient = getNovaClient(cloudSiteId, tenantId);
-            OpenStackRequest<Void> OSRequest =
-                    new OpenStackRequest<>(novaClient, HttpMethod.POST, actionPath, openstackEntity, Void.class);
-            executeAndRecordOpenstackRequest(OSRequest, false);
-        } catch (Exception e) {
-            logger.error("Error building Nova Client", e);
-            throw new NovaClientException("Error building Nova Client", e);
-        }
+            throws IOException, MsoException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode actualObj = mapper.readTree(request);
+        Entity<JsonNode> openstackEntity = new Entity<>(actualObj, "application/json");
+        CharSequence actionPath = "/servers/" + id + "/action";
+        Nova novaClient = getNovaClient(cloudSiteId, tenantId);
+        OpenStackRequest<Void> OSRequest =
+                new OpenStackRequest<>(novaClient, HttpMethod.POST, actionPath, openstackEntity, Void.class);
+        executeAndRecordOpenstackRequest(OSRequest, false);
     }
 
     public void attachVolume(String cloudSiteId, String tenantId, String serverId, VolumeAttachment volumeAttachment)
