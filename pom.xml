@@ -71,6 +71,7 @@
     <format.skipValidate>false</format.skipValidate>
     <format.skipExecute>true</format.skipExecute>
     <io.fabric8.version>4.1.0</io.fabric8.version>
+    <appc.client.version>1.7.1</appc.client.version>
   </properties>
   <distributionManagement>
     <repository>
