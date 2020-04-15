@@ -25,8 +25,8 @@
               <language>java</language>
               <library>retrofit2</library>
               <output>${project.build.directory}/generated-sources/vnfmadapter</output>
-              <apiPackage>org.onap.vnfmadapter.v1.api</apiPackage>
-              <modelPackage>org.onap.vnfmadapter.v1.model</modelPackage>
+              <apiPackage>org.onap.etsi.sol003.adapter.lcm.v1.api</apiPackage>
+              <modelPackage>org.onap.etsi.sol003.adapter.lcm.v1.model</modelPackage>
               <generateApiTests>false</generateApiTests>
               <generateModelTests>false</generateModelTests>
               <configOptions>
@@ -48,8 +48,8 @@
               <language>java</language>
               <library>okhttp-gson</library>
               <output>${project.build.directory}/generated-sources/sol003-vnf-lcn</output>
-              <apiPackage>org.onap.so.adapters.vnfmadapter.lcn.api</apiPackage>
-              <modelPackage>org.onap.so.adapters.vnfmadapter.lcn.model</modelPackage>
+              <apiPackage>org.onap.so.adapters.etsi.sol003.adapter.lcm.lcn.api</apiPackage>
+              <modelPackage>org.onap.so.adapters.etsi.sol003.adapter.lcm.lcn.model</modelPackage>
               <generateApiTests>false</generateApiTests>
               <generateModelTests>false</generateModelTests>
               <configOptions>
@@ -70,8 +70,8 @@
               <language>java</language>
               <library>okhttp-gson</library>
               <output>${project.build.directory}/generated-sources/sol003-vnf-grant</output>
-              <apiPackage>org.onap.so.adapters.vnfmadapter.grant.api</apiPackage>
-              <modelPackage>org.onap.so.adapters.vnfmadapter.grant.model</modelPackage>
+              <apiPackage>org.onap.so.adapters.etsi.sol003.adapter.lcm.grant.api</apiPackage>
+              <modelPackage>org.onap.so.adapters.etsi.sol003.adapter.lcm.grant.model</modelPackage>
               <generateApiTests>false</generateApiTests>
               <generateModelTests>false</generateModelTests>
               <configOptions>
