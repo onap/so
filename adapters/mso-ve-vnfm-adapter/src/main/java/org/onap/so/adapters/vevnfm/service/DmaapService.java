@@ -20,9 +20,9 @@
 
 package org.onap.so.adapters.vevnfm.service;
 
+import org.onap.so.adapters.etsi.sol003.adapter.lcm.lcn.model.VnfLcmOperationOccurrenceNotification;
 import org.onap.so.adapters.vevnfm.configuration.ConfigProperties;
 import org.onap.so.adapters.vevnfm.event.DmaapEvent;
-import org.onap.so.adapters.etsi.sol003.adapter.lcm.lcn.model.VnfLcmOperationOccurrenceNotification;
 import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,9 +51,9 @@ public class DmaapService {
         this.restProvider = restProvider;
     }
 
-    public void send(final VnfLcmOperationOccurrenceNotification notification) {
+    public void send(final VnfLcmOperationOccurrenceNotification notification, final String genericId) {
         try {
-            final DmaapEvent event = new DmaapEvent(closedLoopControlName, version, notification);
+            final DmaapEvent event = new DmaapEvent(closedLoopControlName, version, notification, genericId);
             final ResponseEntity<String> response = restProvider.postHttpRequest(event, getUrl(), String.class);
             final HttpStatus statusCode = response.getStatusCode();
             final String body = response.getBody();

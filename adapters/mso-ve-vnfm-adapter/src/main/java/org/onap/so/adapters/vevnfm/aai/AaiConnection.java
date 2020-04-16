@@ -20,10 +20,6 @@
 
 package org.onap.so.adapters.vevnfm.aai;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
 import org.apache.logging.log4j.util.Strings;
 import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.aai.domain.yang.EsrSystemInfoList;
@@ -31,6 +27,7 @@ import org.onap.aai.domain.yang.EsrVnfm;
 import org.onap.aai.domain.yang.EsrVnfmList;
 import org.onap.aai.domain.yang.v18.GenericVnf;
 import org.onap.so.adapters.vevnfm.exception.VeVnfmException;
+import org.onap.so.adapters.vevnfm.util.NullOptional;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
@@ -39,6 +36,10 @@ import org.onap.so.client.graphinventory.entities.uri.Depth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AaiConnection {
@@ -47,10 +48,20 @@ public class AaiConnection {
 
     private static final int FIRST_INDEX = 0;
 
+    private AAIResourcesClient resourcesClient = null;
+
     private static void isValid(final List<EsrSystemInfo> infos) throws VeVnfmException {
         if (infos == null || infos.isEmpty() || Strings.isBlank(infos.get(FIRST_INDEX).getServiceUrl())) {
             throw new VeVnfmException("No 'url' field in VNFM info");
         }
+    }
+
+    private AAIResourcesClient getResourcesClient() {
+        if (resourcesClient == null) {
+            resourcesClient = new AAIResourcesClient();
+        }
+
+        return resourcesClient;
     }
 
     public List<EsrSystemInfo> receiveVnfm() throws VeVnfmException {
@@ -68,9 +79,8 @@ public class AaiConnection {
     }
 
     private List<EsrSystemInfo> receiveVnfmInternal() {
-        final AAIResourcesClient resourcesClient = new AAIResourcesClient();
         final AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.VNFM_LIST);
-        final Optional<EsrVnfmList> response = resourcesClient.get(EsrVnfmList.class, resourceUri);
+        final Optional<EsrVnfmList> response = getResourcesClient().get(EsrVnfmList.class, resourceUri);
 
         if (response.isPresent()) {
             final EsrVnfmList esrVnfmList = response.get();
@@ -81,7 +91,7 @@ public class AaiConnection {
 
             for (final EsrVnfm vnfm : esrVnfm) {
                 final String vnfmId = vnfm.getVnfmId();
-                infos.addAll(receiveVnfmServiceUrl(resourcesClient, vnfmId));
+                infos.addAll(receiveVnfmServiceUrl(vnfmId));
             }
 
             return infos;
@@ -90,8 +100,8 @@ public class AaiConnection {
         return null;
     }
 
-    private List<EsrSystemInfo> receiveVnfmServiceUrl(final AAIResourcesClient resourcesClient, final String vnfmId) {
-        final Optional<EsrVnfm> response = resourcesClient.get(EsrVnfm.class,
+    private List<EsrSystemInfo> receiveVnfmServiceUrl(final String vnfmId) {
+        final Optional<EsrVnfm> response = getResourcesClient().get(EsrVnfm.class,
                 AAIUriFactory.createResourceUri(AAIObjectType.VNFM, vnfmId).depth(Depth.ONE));
 
         if (response.isPresent()) {
@@ -107,17 +117,16 @@ public class AaiConnection {
         return Collections.emptyList();
     }
 
-    public boolean checkGenericVnfId(final String vnfId) {
-        final AAIResourcesClient resourcesClient = new AAIResourcesClient();
+    public NullOptional<String> checkGenericVnfId(final String vnfId) {
         final AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId);
-        final Optional<GenericVnf> response = resourcesClient.get(GenericVnf.class, resourceUri);
+        final Optional<GenericVnf> response = getResourcesClient().get(GenericVnf.class, resourceUri);
 
         if (response.isPresent()) {
             final GenericVnf vnf = response.get();
             logger.info("The AAI replied with: {}", vnf);
-            return vnfId.equals(vnf.getVnfId());
+            return NullOptional.of(vnf.getVnfInstanceId());
         }
 
-        return false;
+        return NullOptional.empty();
     }
 }
