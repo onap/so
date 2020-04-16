@@ -20,11 +20,12 @@
 
 package org.onap.so.adapters.vevnfm.controller;
 
+import org.onap.so.adapters.etsi.sol003.adapter.lcm.lcn.model.VnfLcmOperationOccurrenceNotification;
 import org.onap.so.adapters.vevnfm.configuration.ConfigProperties;
 import org.onap.so.adapters.vevnfm.constant.NotificationVnfFilterType;
 import org.onap.so.adapters.vevnfm.service.DmaapService;
 import org.onap.so.adapters.vevnfm.service.VnfAaiChecker;
-import org.onap.so.adapters.etsi.sol003.adapter.lcm.lcn.model.VnfLcmOperationOccurrenceNotification;
+import org.onap.so.adapters.vevnfm.util.StringUsage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,12 +56,13 @@ public class NotificationController {
         logger.info("Notification received {}", notification);
 
         final String vnfInstanceId = notification.getVnfInstanceId();
+        final StringUsage genericId = vnfAaiChecker.vnfCheck(notificationVnfFilterType, vnfInstanceId);
 
-        if (vnfAaiChecker.vnfCheck(notificationVnfFilterType, vnfInstanceId)) {
+        if (genericId.isPresent()) {
             logger.info("The info with the VNF id '{}' is sent to DMaaP", vnfInstanceId);
-            dmaapService.send(notification);
+            dmaapService.send(notification, genericId.get());
         } else {
-            logger.info("This VNF id '{}' is not supported", vnfInstanceId);
+            logger.info("This VNF id '{}' is not sent to DMaaP", vnfInstanceId);
         }
 
         return ResponseEntity.ok().build();
