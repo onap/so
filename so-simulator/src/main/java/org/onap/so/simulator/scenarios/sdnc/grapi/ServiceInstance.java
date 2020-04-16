@@ -1,6 +1,5 @@
 package org.onap.so.simulator.scenarios.sdnc.grapi;
 
-import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
