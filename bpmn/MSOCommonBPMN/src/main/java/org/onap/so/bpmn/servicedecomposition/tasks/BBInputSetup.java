@@ -107,6 +107,7 @@ public class BBInputSetup implements JavaDelegate {
     private static final String NETWORK_COLLECTION = "NetworkCollection";
     private static final String PREPROV = "PREPROV";
     private static final String CREATEVOLUME = "CreateVolume";
+    private static final String CONTROLLER = "Controller";
 
     @Autowired
     private BBInputSetupUtils bbInputSetupUtils;
@@ -1386,7 +1387,8 @@ public class BBInputSetup implements JavaDelegate {
             cloudRegion = mapperLayer.mapCloudRegion(cloudConfiguration, aaiCloudRegion);
         }
         gBB.setCloudRegion(cloudRegion);
-        if (bbName.contains(VNF)) {
+        if (bbName.contains(VNF) || (bbName.contains(CONTROLLER)
+                && (VNF).equalsIgnoreCase(executeBB.getBuildingBlock().getBpmnScope()))) {
             for (GenericVnf genericVnf : serviceInstance.getVnfs()) {
                 if (lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID) != null
                         && genericVnf.getVnfId().equalsIgnoreCase(lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID))) {
@@ -1398,7 +1400,8 @@ public class BBInputSetup implements JavaDelegate {
                     this.mapCatalogVnf(genericVnf, modelInfo, service);
                 }
             }
-        } else if (bbName.contains(VF_MODULE)) {
+        } else if (bbName.contains(VF_MODULE) || (bbName.contains(CONTROLLER)
+                && (VF_MODULE).equalsIgnoreCase(executeBB.getBuildingBlock().getBpmnScope()))) {
             for (GenericVnf vnf : serviceInstance.getVnfs()) {
                 for (VfModule vfModule : vnf.getVfModules()) {
                     if (lookupKeyMap.get(ResourceKey.VF_MODULE_ID) != null
@@ -1502,7 +1505,8 @@ public class BBInputSetup implements JavaDelegate {
         BBInputSetupParameter parameter =
                 new BBInputSetupParameter.Builder().setRequestId(executeBB.getRequestId()).setService(service)
                         .setBbName(bbName).setServiceInstance(serviceInstance).setLookupKeyMap(lookupKeyMap).build();
-        if (bbName.contains(VNF)) {
+        if (bbName.contains(VNF) || (bbName.contains(CONTROLLER)
+                && (VNF).equalsIgnoreCase(executeBB.getBuildingBlock().getBpmnScope()))) {
             vnfs = findVnfsByKey(key, resources, vnfs);
             String vnfId = lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID);
             // This stores the vnf id in request db to be retrieved later when
@@ -1530,7 +1534,8 @@ public class BBInputSetup implements JavaDelegate {
             resources.getPnfs().stream()
                     .filter(pnfs -> Objects.equals(key, pnfs.getModelInfo().getModelCustomizationId())).findFirst()
                     .ifPresent(pnfs -> BBInputSetupPnf.populatePnfToServiceInstance(pnfs, pnfId, serviceInstance));
-        } else if (bbName.contains(VF_MODULE) || bbName.contains(VOLUME_GROUP)) {
+        } else if (bbName.contains(VF_MODULE) || bbName.contains(VOLUME_GROUP) || (bbName.contains(CONTROLLER)
+                && (VF_MODULE).equalsIgnoreCase(executeBB.getBuildingBlock().getBpmnScope()))) {
             Pair<Vnfs, VfModules> vnfsAndVfModules = getVfModulesAndItsVnfsByKey(key, resources);
             if (vnfsAndVfModules != null) {
                 vfModules = vnfsAndVfModules.getValue1();
