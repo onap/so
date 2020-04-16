@@ -20,7 +20,6 @@
 
 package org.onap.so.serviceinstancebeans;
 
-import java.util.List;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 

@@ -22,14 +22,9 @@
 
 package org.onap.so.apihandlerinfra.exceptions;
 
-import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
@@ -41,10 +36,7 @@ import org.onap.so.serviceinstancebeans.RequestError;
 import org.onap.so.serviceinstancebeans.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 @Provider
 public class ApiExceptionMapper implements ExceptionMapper<ApiException> {
