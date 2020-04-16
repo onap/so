@@ -20,11 +20,11 @@
 
 package org.onap.so.adapters.vevnfm.event;
 
-import static java.time.temporal.ChronoField.INSTANT_SECONDS;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.onap.so.adapters.etsi.sol003.adapter.lcm.lcn.model.VnfLcmOperationOccurrenceNotification;
 import java.time.Instant;
 import java.util.UUID;
-import org.onap.so.adapters.etsi.sol003.adapter.lcm.lcn.model.VnfLcmOperationOccurrenceNotification;
+import static java.time.temporal.ChronoField.INSTANT_SECONDS;
 
 public class DmaapEvent {
 
@@ -47,7 +47,7 @@ public class DmaapEvent {
     private final VnfLcmOperationOccurrenceNotification etsiLcmEvent;
 
     public DmaapEvent(final String closedLoopControlName, final String version,
-            final VnfLcmOperationOccurrenceNotification etsiLcmEvent) {
+            final VnfLcmOperationOccurrenceNotification etsiLcmEvent, final String genericId) {
         this.closedLoopControlName = closedLoopControlName;
         this.closedLoopAlarmStart = Instant.now().getLong(INSTANT_SECONDS);
         this.closedLoopEventClient = MSERVICE;
@@ -55,7 +55,7 @@ public class DmaapEvent {
         this.requestId = UUID.randomUUID().toString();
         this.targetType = VNF;
         this.target = VNFID;
-        this.aaiEvent = new AaiEvent(false, etsiLcmEvent.getId());
+        this.aaiEvent = new AaiEvent(false, genericId);
         this.from = ETSI;
         this.version = version;
         this.etsiLcmEvent = etsiLcmEvent;
