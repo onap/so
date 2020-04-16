@@ -21,7 +21,6 @@
 package org.onap.so.bpmn.servicedecomposition.modelinfo;
 
 import java.io.Serializable;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ModelInfoVolumeGroup extends ModelInfoVfModule implements Serializable {
 

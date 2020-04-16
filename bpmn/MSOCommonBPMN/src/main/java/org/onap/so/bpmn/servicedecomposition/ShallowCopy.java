@@ -20,10 +20,8 @@
 
 package org.onap.so.bpmn.servicedecomposition;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.persistence.Id;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public interface ShallowCopy<T> {

@@ -23,7 +23,6 @@ package org.onap.so.bpmn.servicedecomposition.tasks;
 
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Pnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
-import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoPnf;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.serviceinstancebeans.Pnfs;
 

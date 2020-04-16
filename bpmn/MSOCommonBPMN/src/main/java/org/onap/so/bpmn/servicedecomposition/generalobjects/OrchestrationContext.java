@@ -23,7 +23,6 @@ package org.onap.so.bpmn.servicedecomposition.generalobjects;
 import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
-import org.onap.so.bpmn.servicedecomposition.ShallowCopy;
 
 @JsonRootName("orchestration-context")
 public class OrchestrationContext implements Serializable {
