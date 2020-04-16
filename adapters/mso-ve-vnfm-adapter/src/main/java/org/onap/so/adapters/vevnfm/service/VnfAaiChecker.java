@@ -22,6 +22,7 @@ package org.onap.so.adapters.vevnfm.service;
 
 import org.onap.so.adapters.vevnfm.aai.AaiConnection;
 import org.onap.so.adapters.vevnfm.constant.NotificationVnfFilterType;
+import org.onap.so.adapters.vevnfm.util.StringUsage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,14 +36,14 @@ public class VnfAaiChecker {
         this.aaiConnection = aaiConnection;
     }
 
-    public boolean vnfCheck(final NotificationVnfFilterType filterType, final String vnfId) {
+    public StringUsage vnfCheck(final NotificationVnfFilterType filterType, final String vnfId) {
         switch (filterType) {
             case ALL:
-                return true;
+                return StringUsage.of(aaiConnection.checkGenericVnfId(vnfId).get());
             case AAI_CHECKED:
                 return aaiConnection.checkGenericVnfId(vnfId);
             case NONE:
-                return false;
+                return StringUsage.empty();
             default:
                 throw new IllegalArgumentException(
                         "The value of VnfNotificationFilterType is not supported: " + filterType);

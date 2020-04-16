@@ -20,10 +20,6 @@
 
 package org.onap.so.adapters.vevnfm.service;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -31,11 +27,16 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.adapters.vevnfm.aai.AaiConnection;
 import org.onap.so.adapters.vevnfm.constant.NotificationVnfFilterType;
+import org.onap.so.adapters.vevnfm.util.StringUsage;
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VnfAaiCheckerTest {
 
     private static final String VNF_ID = "t5h78w";
+    private static final String GEN_ID = "ZZ8473UV";
 
     @Mock
     private AaiConnection aaiConnection;
@@ -44,44 +45,64 @@ public class VnfAaiCheckerTest {
     private VnfAaiChecker checker;
 
     @Test
-    public void testAll() {
+    public void testAllNull() {
+        // given
+        when(aaiConnection.checkGenericVnfId(eq(VNF_ID))).thenReturn(StringUsage.empty());
+
         // when
-        final boolean response = checker.vnfCheck(NotificationVnfFilterType.ALL, VNF_ID);
+        final StringUsage response = checker.vnfCheck(NotificationVnfFilterType.ALL, VNF_ID);
 
         // then
-        assertTrue(response);
+        assertTrue(response.isPresent());
+        assertNull(response.get());
     }
 
     @Test
-    public void testAaiCheckedPresent() {
+    public void testAllNotNull() {
         // given
-        when(aaiConnection.checkGenericVnfId(eq(VNF_ID))).thenReturn(true);
+        when(aaiConnection.checkGenericVnfId(eq(VNF_ID))).thenReturn(StringUsage.of(GEN_ID));
 
         // when
-        final boolean response = checker.vnfCheck(NotificationVnfFilterType.AAI_CHECKED, VNF_ID);
+        final StringUsage response = checker.vnfCheck(NotificationVnfFilterType.ALL, VNF_ID);
 
         // then
-        assertTrue(response);
+        assertTrue(response.isPresent());
+        assertEquals(GEN_ID, response.get());
     }
 
     @Test
-    public void testAaiCheckedAbsent() {
+    public void testAaiCheckedNull() {
         // given
-        when(aaiConnection.checkGenericVnfId(eq(VNF_ID))).thenReturn(false);
+        when(aaiConnection.checkGenericVnfId(eq(VNF_ID))).thenReturn(StringUsage.empty());
 
         // when
-        final boolean response = checker.vnfCheck(NotificationVnfFilterType.AAI_CHECKED, VNF_ID);
+        final StringUsage response = checker.vnfCheck(NotificationVnfFilterType.AAI_CHECKED, VNF_ID);
 
         // then
-        assertFalse(response);
+        assertFalse(response.isPresent());
+        assertNull(response.get());
+    }
+
+    @Test
+    public void testAaiCheckedNotNull() {
+        // given
+        when(aaiConnection.checkGenericVnfId(eq(VNF_ID))).thenReturn(StringUsage.of(GEN_ID));
+
+        // when
+        final StringUsage response = checker.vnfCheck(NotificationVnfFilterType.AAI_CHECKED, VNF_ID);
+
+        // then
+        assertTrue(response.isPresent());
+        assertEquals(GEN_ID, response.get());
     }
 
     @Test
     public void testNone() {
         // when
-        final boolean response = checker.vnfCheck(NotificationVnfFilterType.NONE, VNF_ID);
+        final StringUsage response = checker.vnfCheck(NotificationVnfFilterType.NONE, VNF_ID);
 
         // then
-        assertFalse(response);
+        assertFalse(response.isPresent());
+        assertNull(response.get());
     }
 }
