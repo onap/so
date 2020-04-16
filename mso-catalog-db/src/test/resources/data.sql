@@ -963,3 +963,7 @@ VALUES
 ('APPC', 'vfModule', 'healthCheck','GenericVnfHealthCheckBB'),
 ('APPC', 'vfModule', 'configScaleOut','ConfigurationScaleOutBB'),
 ('APPC', 'vnf', 'healthCheck','GenericVnfHealthCheckBB');
+
+INSERT INTO processing_flags (FLAG,VALUE,ENDPOINT,DESCRIPTION)
+VALUES
+('TESTFLAG', 'NO', 'TESTENDPOINT', 'TEST FLAG');

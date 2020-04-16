@@ -43,6 +43,7 @@ import org.onap.so.db.catalog.beans.InstanceGroup;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.PnfResource;
 import org.onap.so.db.catalog.beans.PnfResourceCustomization;
+import org.onap.so.db.catalog.beans.ProcessingFlags;
 import org.onap.so.db.catalog.beans.ServerType;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ServiceRecipe;
@@ -769,6 +770,13 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
                 client.getBBNameSelectionReference("ABC", "vfModule", "healthCheck");
         assertNull(bbNameSelectionReference);
 
+    }
+
+    @Test
+    public void testGetProcessingFlagsFromFlag() {
+        ProcessingFlags processingFlags = client.findProcessingFlagsByFlag("TESTFLAG");
+        assertNotNull(processingFlags);
+        assertEquals(processingFlags.getEndpoint(), "TESTENDPOINT");
     }
 
 

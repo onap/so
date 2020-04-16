@@ -254,3 +254,7 @@ insert into workflow(artifact_uuid, artifact_name, name, operation_name, version
 
 insert into vnf_resource_to_workflow(vnf_resource_model_uuid, workflow_id) values
 ('ff2ae348-214a-11e7-93ae-92361f002671', '1');
+
+insert into processing_flags (flag,value,endpoint,description) values
+('TESTFLAG', 'NO', 'TESTENDPOINT', 'TEST FLAG');
+

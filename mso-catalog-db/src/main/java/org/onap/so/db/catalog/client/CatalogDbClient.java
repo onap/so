@@ -52,6 +52,7 @@ import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.db.catalog.beans.OrchestrationStatusStateTransitionDirective;
 import org.onap.so.db.catalog.beans.PnfResource;
 import org.onap.so.db.catalog.beans.PnfResourceCustomization;
+import org.onap.so.db.catalog.beans.ProcessingFlags;
 import org.onap.so.db.catalog.beans.ResourceType;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ServiceRecipe;
@@ -121,6 +122,7 @@ public class CatalogDbClient {
     private static final String PNF_RESOURCE_CUSTOMIZATION = "/pnfResourceCustomization";
     private static final String WORKFLOW = "/workflow";
     private static final String BB_NAME_SELECTION_REFERENCE = "/bbNameSelectionReference";
+    private static final String PROCESSING_FLAGS = "/processingFlags";
 
 
     private static final String SEARCH = "/search";
@@ -159,6 +161,7 @@ public class CatalogDbClient {
     protected static final String ARTIFACT_UUID = "artifactUUID";
     protected static final String SOURCE = "source";
     protected static final String RESOURCE_TARGET = "resourceTarget";
+    protected static final String FLAG = "flag";
 
     private static final String TARGET_ENTITY = "SO:CatalogDB";
     private static final String ASTERISK = "*";
@@ -211,6 +214,7 @@ public class CatalogDbClient {
     private String findBBNameSelectionReferenceByControllerActorAndScopeAndAction =
             "/findBBNameSelectionReferenceByControllerActorAndScopeAndAction";
     private String findWorkflowByResourceTarget = "/findByResourceTarget";
+    private String findProcessingFlagsByFlag = "/findByFlag";
 
     private String serviceURI;
     private String vfModuleURI;
@@ -285,6 +289,8 @@ public class CatalogDbClient {
 
     private final Client<BBNameSelectionReference> bbNameSelectionReferenceClient;
 
+    private final Client<ProcessingFlags> processingFlagsClient;
+
     @Value("${mso.catalog.db.spring.endpoint:#{null}}")
     private String endpoint;
 
@@ -358,6 +364,8 @@ public class CatalogDbClient {
         findBBNameSelectionReferenceByControllerActorAndScopeAndAction = endpoint + BB_NAME_SELECTION_REFERENCE + SEARCH
                 + findBBNameSelectionReferenceByControllerActorAndScopeAndAction;
 
+        findProcessingFlagsByFlag = endpoint + PROCESSING_FLAGS + SEARCH + findProcessingFlagsByFlag;
+
         serviceURI = endpoint + SERVICE + URI_SEPARATOR;
         vfModuleURI = endpoint + VFMODULE + URI_SEPARATOR;
         vnfResourceURI = endpoint + VNF_RESOURCE + URI_SEPARATOR;
@@ -425,6 +433,7 @@ public class CatalogDbClient {
         pnfResourceCustomizationClient = clientFactory.create(PnfResourceCustomization.class);
         workflowClient = clientFactory.create(Workflow.class);
         bbNameSelectionReferenceClient = clientFactory.create(BBNameSelectionReference.class);
+        processingFlagsClient = clientFactory.create(ProcessingFlags.class);
 
     }
 
@@ -477,6 +486,7 @@ public class CatalogDbClient {
         pnfResourceCustomizationClient = clientFactory.create(PnfResourceCustomization.class);
         workflowClient = clientFactory.create(Workflow.class);
         bbNameSelectionReferenceClient = clientFactory.create(BBNameSelectionReference.class);
+        processingFlagsClient = clientFactory.create(ProcessingFlags.class);
     }
 
     public NetworkCollectionResourceCustomization getNetworkCollectionResourceCustomizationByID(
@@ -1089,6 +1099,11 @@ public class CatalogDbClient {
     public List<Workflow> findWorkflowByResourceTarget(String resourceTarget) {
         return this.getMultipleResources(workflowClient, getUri(UriBuilder.fromUri(findWorkflowByResourceTarget)
                 .queryParam(RESOURCE_TARGET, resourceTarget).build().toString()));
+    }
+
+    public ProcessingFlags findProcessingFlagsByFlag(String flag) {
+        return this.getSingleResource(processingFlagsClient,
+                getUri(UriBuilder.fromUri(findProcessingFlagsByFlag).queryParam(FLAG, flag).build().toString()));
     }
 
     public String getEndpoint() {

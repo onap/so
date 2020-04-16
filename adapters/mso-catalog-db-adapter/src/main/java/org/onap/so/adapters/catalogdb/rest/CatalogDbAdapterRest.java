@@ -27,6 +27,7 @@ package org.onap.so.adapters.catalogdb.rest;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -46,8 +47,34 @@ import org.onap.so.adapters.catalogdb.catalogrest.QueryServiceMacroHolder;
 import org.onap.so.adapters.catalogdb.catalogrest.QueryServiceNetworks;
 import org.onap.so.adapters.catalogdb.catalogrest.QueryServiceVnfs;
 import org.onap.so.adapters.catalogdb.catalogrest.QueryVfModule;
-import org.onap.so.db.catalog.beans.*;
-import org.onap.so.db.catalog.data.repository.*;
+import org.onap.so.db.catalog.beans.AllottedResource;
+import org.onap.so.db.catalog.beans.AllottedResourceCustomization;
+import org.onap.so.db.catalog.beans.InstanceGroup;
+import org.onap.so.db.catalog.beans.NetworkResource;
+import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
+import org.onap.so.db.catalog.beans.ProcessingFlags;
+import org.onap.so.db.catalog.beans.Recipe;
+import org.onap.so.db.catalog.beans.Service;
+import org.onap.so.db.catalog.beans.ToscaCsar;
+import org.onap.so.db.catalog.beans.VfModule;
+import org.onap.so.db.catalog.beans.VfModuleCustomization;
+import org.onap.so.db.catalog.beans.VnfRecipe;
+import org.onap.so.db.catalog.beans.VnfResource;
+import org.onap.so.db.catalog.beans.VnfResourceCustomization;
+import org.onap.so.db.catalog.data.repository.AllottedResourceCustomizationRepository;
+import org.onap.so.db.catalog.data.repository.AllottedResourceRepository;
+import org.onap.so.db.catalog.data.repository.ArRecipeRepository;
+import org.onap.so.db.catalog.data.repository.InstanceGroupRepository;
+import org.onap.so.db.catalog.data.repository.NetworkRecipeRepository;
+import org.onap.so.db.catalog.data.repository.NetworkResourceCustomizationRepository;
+import org.onap.so.db.catalog.data.repository.NetworkResourceRepository;
+import org.onap.so.db.catalog.data.repository.ProcessingFlagsRepository;
+import org.onap.so.db.catalog.data.repository.ServiceRepository;
+import org.onap.so.db.catalog.data.repository.ToscaCsarRepository;
+import org.onap.so.db.catalog.data.repository.VFModuleRepository;
+import org.onap.so.db.catalog.data.repository.VnfCustomizationRepository;
+import org.onap.so.db.catalog.data.repository.VnfRecipeRepository;
+import org.onap.so.db.catalog.data.repository.VnfResourceRepository;
 import org.onap.so.db.catalog.rest.beans.ServiceMacroHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,6 +128,9 @@ public class CatalogDbAdapterRest {
 
     @Autowired
     private InstanceGroupRepository instanceGroupRepository;
+
+    @Autowired
+    private ProcessingFlagsRepository processingFlagsRepo;
 
     private static final String NO_MATCHING_PARAMETERS = "no matching parameters";
 
@@ -546,5 +576,83 @@ public class CatalogDbAdapterRest {
             return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
                     .entity(new GenericEntity<CatalogQueryException>(excResp) {}).build();
         }
+    }
+
+    @GET
+    @Path("processingFlags/{flag}")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Transactional(readOnly = true)
+    public Response getProcessingFlags(@PathParam("flag") String flag) {
+        return getProcessingFlagsImpl(flag);
+    }
+
+    public Response getProcessingFlagsImpl(String flag) {
+        ProcessingFlags processingFlags = null;
+        logger.debug("Flag is: " + flag);
+        int respStatus = HttpStatus.SC_OK;
+        try {
+            processingFlags = processingFlagsRepo.findByFlag(flag);
+            if (processingFlags == null) {
+                logger.debug("ProcessingFlag not found");
+                respStatus = HttpStatus.SC_NOT_FOUND;
+
+            } else {
+
+                logger.debug("ProcessingFlags processingFlags = {}", processingFlags.toString());
+            }
+            return Response.status(respStatus).entity(processingFlags)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).build();
+        } catch (Exception e) {
+            logger.error("Exception - queryProcesssingFlags", e);
+            CatalogQueryException excResp = new CatalogQueryException(e.getMessage(),
+                    CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
+            return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
+                    .entity(new GenericEntity<CatalogQueryException>(excResp) {}).build();
+        }
+    }
+
+    @PUT
+    @Path("processingFlags/{flag}")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Transactional
+    public Response updateProcessingFlagsValue(@PathParam("flag") String flag, ProcessingFlags updatedProcessingFlag) {
+        return updateProcessingFlagsValueImpl(flag, updatedProcessingFlag);
+    }
+
+    public Response updateProcessingFlagsValueImpl(String flag, ProcessingFlags updatedProcessingFlag) {
+        ProcessingFlags processingFlags = null;
+        logger.debug("Flag is: " + flag);
+        int respStatus = HttpStatus.SC_OK;
+        try {
+            if (updatedProcessingFlag == null) {
+                logger.debug("No valid updatedProcessingFlag is provided");
+                throw new RuntimeException("No valid updatedProcessingFlag is provided");
+            }
+            String value = updatedProcessingFlag.getValue();
+            if (value == null || (!value.equalsIgnoreCase("YES") && !value.equalsIgnoreCase("NO"))) {
+                logger.debug("Value " + value + " is invalid, only yes/no are allowed");
+                throw new RuntimeException("Invalid value specified");
+            }
+            processingFlags = processingFlagsRepo.findByFlag(flag);
+            if (processingFlags == null) {
+                logger.debug("ProcessingFlag not found");
+                respStatus = HttpStatus.SC_NOT_FOUND;
+            } else {
+                logger.debug("ProcessingFlags processingFlags = {}", processingFlags.toString());
+                processingFlags.setValue(value);
+                processingFlagsRepo.saveAndFlush(processingFlags);
+                return Response.status(respStatus).entity(null)
+                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).build();
+            }
+        } catch (Exception e) {
+            logger.error("Exception - queryProcesssingFlags", e);
+            CatalogQueryException excResp = new CatalogQueryException(e.getMessage(),
+                    CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
+            return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
+                    .entity(new GenericEntity<CatalogQueryException>(excResp) {}).build();
+        }
+
+        return Response.status(HttpStatus.SC_NOT_FOUND).header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                .build();
     }
 }
