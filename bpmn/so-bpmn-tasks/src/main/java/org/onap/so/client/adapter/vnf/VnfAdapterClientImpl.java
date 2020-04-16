@@ -33,7 +33,6 @@ import org.onap.so.adapters.vnfrest.RollbackVfModuleResponse;
 import org.onap.so.adapters.vnfrest.UpdateVfModuleRequest;
 import org.onap.so.adapters.vnfrest.UpdateVfModuleResponse;
 import org.onap.so.client.adapter.rest.AdapterRestClient;
-import org.onap.so.client.adapter.vnf.mapper.VnfAdapterVfModuleObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

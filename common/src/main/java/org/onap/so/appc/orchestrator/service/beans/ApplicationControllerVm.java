@@ -1,7 +1,6 @@
 package org.onap.so.appc.orchestrator.service.beans;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class ApplicationControllerVm implements Serializable {
 

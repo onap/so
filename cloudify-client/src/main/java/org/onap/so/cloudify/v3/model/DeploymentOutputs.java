@@ -23,7 +23,6 @@ package org.onap.so.cloudify.v3.model;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
