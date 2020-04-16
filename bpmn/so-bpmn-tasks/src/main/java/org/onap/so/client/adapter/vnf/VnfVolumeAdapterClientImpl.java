@@ -27,7 +27,6 @@ import org.onap.so.adapters.vnfrest.CreateVolumeGroupRequest;
 import org.onap.so.adapters.vnfrest.CreateVolumeGroupResponse;
 import org.onap.so.adapters.vnfrest.DeleteVolumeGroupRequest;
 import org.onap.so.adapters.vnfrest.DeleteVolumeGroupResponse;
-import org.onap.so.adapters.vnfrest.QueryVolumeGroupResponse;
 import org.onap.so.adapters.vnfrest.RollbackVolumeGroupRequest;
 import org.onap.so.adapters.vnfrest.RollbackVolumeGroupResponse;
 import org.onap.so.adapters.vnfrest.UpdateVolumeGroupRequest;
@@ -89,20 +88,6 @@ public class VnfVolumeAdapterClientImpl implements VnfVolumeAdapterClient {
             return this.getAdapterRestClient("/" + aaiVolumeGroupId).put(req, UpdateVolumeGroupResponse.class);
         } catch (InternalServerErrorException e) {
             logger.error("InternalServerErrorException in updateVNFVolumes", e);
-            throw new VnfAdapterClientException(e.getMessage());
-        }
-    }
-
-    @Override
-    public QueryVolumeGroupResponse queryVNFVolumes(String aaiVolumeGroupId, String cloudSiteId, String tenantId,
-            String volumeGroupStackId, Boolean skipAAI, String requestId, String serviceInstanceId)
-            throws VnfAdapterClientException {
-        try {
-            String path = buildQueryPath(aaiVolumeGroupId, cloudSiteId, tenantId, volumeGroupStackId, skipAAI,
-                    requestId, serviceInstanceId);
-            return this.getAdapterRestClient(path).get(QueryVolumeGroupResponse.class).get();
-        } catch (InternalServerErrorException e) {
-            logger.error("InternalServerErrorException in queryVNFVolumes", e);
             throw new VnfAdapterClientException(e.getMessage());
         }
     }

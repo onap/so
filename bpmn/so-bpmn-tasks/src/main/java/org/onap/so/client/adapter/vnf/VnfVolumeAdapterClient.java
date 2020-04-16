@@ -24,7 +24,6 @@ import org.onap.so.adapters.vnfrest.CreateVolumeGroupRequest;
 import org.onap.so.adapters.vnfrest.CreateVolumeGroupResponse;
 import org.onap.so.adapters.vnfrest.DeleteVolumeGroupRequest;
 import org.onap.so.adapters.vnfrest.DeleteVolumeGroupResponse;
-import org.onap.so.adapters.vnfrest.QueryVolumeGroupResponse;
 import org.onap.so.adapters.vnfrest.RollbackVolumeGroupRequest;
 import org.onap.so.adapters.vnfrest.RollbackVolumeGroupResponse;
 import org.onap.so.adapters.vnfrest.UpdateVolumeGroupRequest;
@@ -40,9 +39,5 @@ public interface VnfVolumeAdapterClient {
             throws VnfAdapterClientException;
 
     UpdateVolumeGroupResponse updateVNFVolumes(String aaiVolumeGroupId, UpdateVolumeGroupRequest req)
-            throws VnfAdapterClientException;
-
-    QueryVolumeGroupResponse queryVNFVolumes(String aaiVolumeGroupId, String cloudSiteId, String tenantId,
-            String volumeGroupStackId, Boolean skipAAI, String requestId, String serviceInstanceId)
             throws VnfAdapterClientException;
 }

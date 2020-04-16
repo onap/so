@@ -38,8 +38,6 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 import javax.xml.ws.handler.MessageContext;
 import org.onap.so.adapters.vnf.async.client.CreateVnfNotification;
-import org.onap.so.adapters.vnf.async.client.QueryVnfNotification;
-import org.onap.so.adapters.vnf.async.client.UpdateVnfNotification;
 import org.onap.so.adapters.vnf.async.client.VnfAdapterNotify;
 import org.onap.so.adapters.vnf.async.client.VnfAdapterNotify_Service;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
@@ -48,7 +46,6 @@ import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.openstack.beans.VnfRollback;
-import org.onap.so.openstack.beans.VnfStatus;
 import org.onap.so.utils.CryptoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,9 +61,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
     private static final Logger logger = LoggerFactory.getLogger(MsoVnfAdapterAsyncImpl.class);
 
     private static final String BPEL_AUTH_PROP = "org.onap.so.adapters.vnf.bpelauth";
-    private static final String ENCRYPTION_KEY_PROP = "org.onap.so.adapters.network.encryptionKey";
-    private static final String UPDATE_VNFA = "{} UpdateVnfA";
-    private static final String EXCEPTION_UPDATEVNF_NOTIFICATION = "{} {} Exception sending updateVnf notification ";
+    private static final String ENCRYPTION_KEY_PROP = "mso.msoKey";
 
     @Autowired
     private Environment environment;
@@ -122,15 +117,13 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
             String notificationUrl) {
 
         logger.info("{} createVnfA", MessageEnum.RA_ASYNC_CREATE_VNF);
-        // Use the synchronous method to perform the actual Create
-        MsoVnfAdapter vnfAdapter = vnfImpl;
         // Synchronous Web Service Outputs
         Holder<String> vnfId = new Holder<>();
         Holder<Map<String, String>> outputs = new Holder<>();
         Holder<VnfRollback> vnfRollback = new Holder<>();
 
         try {
-            vnfAdapter.createVnf(cloudSiteId, cloudOwner, tenantId, vnfType, vnfVersion, vnfName, requestType,
+            vnfImpl.createVnf(cloudSiteId, cloudOwner, tenantId, vnfType, vnfVersion, vnfName, requestType,
                     volumeGroupHeatStackId, inputs, failIfExists, backout, enableBridge, msoRequest, vnfId, outputs,
                     vnfRollback);
         } catch (VnfException e) {
@@ -171,140 +164,6 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
         return;
     }
 
-    @Override
-    public void updateVnfA(String cloudSiteId, String cloudOwner, String tenantId, String vnfType, String vnfVersion,
-            String vnfName, String requestType, String volumeGroupHeatStackId, Map<String, Object> inputs,
-            String messageId, MsoRequest msoRequest, String notificationUrl) {
-
-        logger.info(UPDATE_VNFA, MessageEnum.RA_ASYNC_UPDATE_VNF);
-
-        // Use the synchronous method to perform the actual Create
-        MsoVnfAdapter vnfAdapter = vnfImpl;
-
-        // Synchronous Web Service Outputs
-        Holder<String> vnfId = new Holder<>();
-        Holder<Map<String, String>> outputs = new Holder<>();
-        Holder<VnfRollback> vnfRollback = new Holder<>();
-
-        try {
-            vnfAdapter.updateVnf(cloudSiteId, cloudOwner, tenantId, vnfType, vnfVersion, vnfName, requestType,
-                    volumeGroupHeatStackId, inputs, msoRequest, outputs, vnfRollback);
-        } catch (VnfException e) {
-            logger.error(EXCEPTION_UPDATEVNF_NOTIFICATION, MessageEnum.RA_UPDATE_VNF_ERR,
-                    ErrorCode.BusinessProcessError.getValue(), e);
-            org.onap.so.adapters.vnf.async.client.MsoExceptionCategory exCat = null;
-            String eMsg = null;
-            try {
-                eMsg = e.getFaultInfo().getMessage();
-                exCat = org.onap.so.adapters.vnf.async.client.MsoExceptionCategory
-                        .fromValue(e.getFaultInfo().getCategory().name());
-            } catch (Exception e1) {
-                logger.error("{} {} Exception - fault info ", MessageEnum.RA_FAULT_INFO_EXC,
-                        ErrorCode.BusinessProcessError.getValue(), e1);
-            }
-            // Build and send Asynchronous error response
-            try {
-                VnfAdapterNotify notifyPort = getNotifyEP(notificationUrl);
-                notifyPort.updateVnfNotification(messageId, false, exCat, eMsg, null, null);
-            } catch (Exception e1) {
-                logger.error(EXCEPTION_UPDATEVNF_NOTIFICATION, MessageEnum.RA_SEND_VNF_NOTIF_ERR,
-                        ErrorCode.BusinessProcessError.getValue(), e1);
-            }
-            logger.info(UPDATE_VNFA, MessageEnum.RA_ASYNC_UPDATE_VNF_COMPLETE);
-            return;
-        }
-        logger.debug("Async Update VNF: {} VnfId:{}", vnfName, vnfId.value);
-        // Build and send Asynchronous response
-        try {
-            VnfAdapterNotify notifyPort = getNotifyEP(notificationUrl);
-            notifyPort.updateVnfNotification(messageId, true, null, null, copyUpdateOutputs(outputs),
-                    copyVrb(vnfRollback));
-        } catch (Exception e) {
-            logger.error(EXCEPTION_UPDATEVNF_NOTIFICATION, MessageEnum.RA_SEND_VNF_NOTIF_ERR,
-                    ErrorCode.BusinessProcessError.getValue(), e);
-        }
-        logger.info(UPDATE_VNFA, MessageEnum.RA_ASYNC_UPDATE_VNF_COMPLETE);
-        return;
-    }
-
-    /**
-     * This is the "Query VNF" web service implementation. It will look up a VNF by name or ID in the specified cloud
-     * and tenant.
-     *
-     * The method returns an indicator that the VNF exists, its Openstack internal ID, its status, and the set of
-     * outputs (from when the stack was created).
-     *
-     * @param cloudSiteId CLLI code of the cloud site in which to query
-     * @param cloudOwner cloud owner of cloud site in which to query
-     * @param tenantId Openstack tenant identifier
-     * @param vnfName VNF Name or Openstack ID
-     * @param msoRequest Request tracking information for logs
-     * @param notificationURL the target URL for asynchronous response
-     */
-    @Override
-    public void queryVnfA(String cloudSiteId, String cloudOwner, String tenantId, String vnfName, String messageId,
-            MsoRequest msoRequest, String notificationUrl) {
-
-        logger.info(LoggingAnchor.ONE, MessageEnum.RA_ASYNC_QUERY_VNF);
-
-        // Use the synchronous method to perform the actual query
-        MsoVnfAdapter vnfAdapter = vnfImpl;
-
-        // Synchronous Web Service Outputs
-        Holder<Boolean> vnfExists = new Holder<>();
-        Holder<String> vnfId = new Holder<>();
-        Holder<VnfStatus> status = new Holder<>();
-        Holder<Map<String, String>> outputs = new Holder<>();
-
-        try {
-            vnfAdapter.queryVnf(cloudSiteId, cloudOwner, tenantId, vnfName, msoRequest, vnfExists, vnfId, status,
-                    outputs);
-        } catch (VnfException e) {
-            logger.error("{} {} Exception sending queryVnfA notification ", MessageEnum.RA_QUERY_VNF_ERR,
-                    ErrorCode.BusinessProcessError.getValue(), e);
-            org.onap.so.adapters.vnf.async.client.MsoExceptionCategory exCat = null;
-            String eMsg = null;
-            try {
-                eMsg = e.getFaultInfo().getMessage();
-                exCat = org.onap.so.adapters.vnf.async.client.MsoExceptionCategory
-                        .fromValue(e.getFaultInfo().getCategory().name());
-            } catch (Exception e1) {
-                logger.error("{} {} Exception - fault info ", MessageEnum.RA_FAULT_INFO_EXC,
-                        ErrorCode.BusinessProcessError.getValue(), e1);
-            }
-            // Build and send Asynchronous error response
-            try {
-                VnfAdapterNotify notifyPort = getNotifyEP(notificationUrl);
-                notifyPort.queryVnfNotification(messageId, false, exCat, eMsg, null, null, null, null);
-            } catch (Exception e1) {
-                logger.error("{} {} Exception sending queryVnf notification ", MessageEnum.RA_SEND_VNF_NOTIF_ERR,
-                        ErrorCode.BusinessProcessError.getValue(), e1);
-            }
-            logger.info("{} queryVnfA", MessageEnum.RA_ASYNC_QUERY_VNF_COMPLETE);
-            return;
-        }
-
-        if (!vnfExists.value) {
-            logger.debug("Async Query, VNF not found");
-        } else {
-            logger.debug("Async Query, VNF={}, status={}", vnfId.value, status.value);
-        }
-        // Build and send Asynchronous response
-        try {
-            VnfAdapterNotify notifyPort = getNotifyEP(notificationUrl);
-            org.onap.so.adapters.vnf.async.client.VnfStatus vnfS =
-                    org.onap.so.adapters.vnf.async.client.VnfStatus.fromValue(status.value.name());
-            notifyPort.queryVnfNotification(messageId, true, null, null, vnfExists.value, vnfId.value, vnfS,
-                    copyQueryOutputs(outputs));
-        } catch (Exception e) {
-            logger.error("{} {} Exception sending queryVnf notification ", MessageEnum.RA_SEND_VNF_NOTIF_ERR,
-                    ErrorCode.BusinessProcessError.getValue(), e);
-        }
-
-        logger.info("{} queryVnfA", MessageEnum.RA_ASYNC_QUERY_VNF_COMPLETE);
-        return;
-    }
-
     /**
      * This is the Asynchronous "Delete VNF" web service implementation. It will delete a VNF by name or ID in the
      * specified cloud and tenant.
@@ -324,11 +183,8 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
 
         logger.info(LoggingAnchor.ONE, MessageEnum.RA_ASYNC_DELETE_VNF);
 
-        // Use the synchronous method to perform the actual delete
-        MsoVnfAdapter vnfAdapter = vnfImpl;
-
         try {
-            vnfAdapter.deleteVnf(cloudSiteId, cloudOwner, tenantId, vnfName, msoRequest);
+            vnfImpl.deleteVnf(cloudSiteId, cloudOwner, tenantId, vnfName, msoRequest);
         } catch (VnfException e) {
             logger.error("{} {} Exception sending deleteVnfA notification ", MessageEnum.RA_DELETE_VNF_ERR,
                     ErrorCode.BusinessProcessError.getValue(), e);
@@ -369,65 +225,6 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
         return;
     }
 
-    /**
-     * This web service endpoint will rollback a previous Create VNF operation. A rollback object is returned to the
-     * client in a successful creation response. The client can pass that object as-is back to the rollbackVnf operation
-     * to undo the creation.
-     */
-    @Override
-    public void rollbackVnfA(VnfRollback rollback, String messageId, String notificationUrl) {
-        // rollback may be null (e.g. if stack already existed when Create was called)
-        if (rollback == null) {
-            logger.info("{} rollbackVnfA: Empty Rollback: No action to perform", MessageEnum.RA_ROLLBACK_NULL);
-            return;
-        }
-
-        logger.info("{} rollbackVnfA", MessageEnum.RA_ASYNC_ROLLBACK_VNF);
-
-        // Use the synchronous method to perform the actual rollback
-        MsoVnfAdapter vnfAdapter = vnfImpl;
-
-        try {
-            vnfAdapter.rollbackVnf(rollback);
-        } catch (VnfException e) {
-            logger.error("{} {} Exception sending rollbackVnfA notification ", MessageEnum.RA_ROLLBACK_VNF_ERR,
-                    ErrorCode.BusinessProcessError.getValue(), e);
-            org.onap.so.adapters.vnf.async.client.MsoExceptionCategory exCat = null;
-            String eMsg = null;
-            try {
-                eMsg = e.getFaultInfo().getMessage();
-                exCat = org.onap.so.adapters.vnf.async.client.MsoExceptionCategory
-                        .fromValue(e.getFaultInfo().getCategory().name());
-            } catch (Exception e1) {
-                logger.error("{} {} Exception - fault info ", MessageEnum.RA_FAULT_INFO_EXC,
-                        ErrorCode.BusinessProcessError.getValue(), e1);
-            }
-            // Build and send Asynchronous error response
-            try {
-                VnfAdapterNotify notifyPort = getNotifyEP(notificationUrl);
-                notifyPort.rollbackVnfNotification(messageId, false, exCat, eMsg);
-            } catch (Exception e1) {
-                logger.error("{} {} Exception sending rollbackVnfA notification ", MessageEnum.RA_SEND_VNF_NOTIF_ERR,
-                        ErrorCode.BusinessProcessError.getValue(), e1);
-            }
-            logger.info("{} rollbackVnfA", MessageEnum.RA_ASYNC_ROLLBACK_VNF_COMPLETE);
-            return;
-        }
-
-        logger.debug("Async Rollback VNF:" + rollback.getVnfId());
-        // Build and send Asynchronous response
-        try {
-            VnfAdapterNotify notifyPort = getNotifyEP(notificationUrl);
-            notifyPort.rollbackVnfNotification(messageId, true, null, null);
-        } catch (Exception e) {
-            logger.error("{} {} Exception sending rollbackVnfA notification ", MessageEnum.RA_SEND_VNF_NOTIF_ERR,
-                    ErrorCode.BusinessProcessError.getValue(), e);
-        }
-
-        logger.info("{} rollbackVnfA", MessageEnum.RA_ASYNC_ROLLBACK_VNF_COMPLETE);
-        return;
-    }
-
     private org.onap.so.adapters.vnf.async.client.VnfRollback copyVrb(Holder<VnfRollback> hVrb) {
         org.onap.so.adapters.vnf.async.client.VnfRollback cvrb =
                 new org.onap.so.adapters.vnf.async.client.VnfRollback();
@@ -465,47 +262,6 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
             for (String key : sMap.keySet()) {
                 entry.setKey(key);
                 entry.setValue(sMap.get(key));
-                outputs.getEntry().add(entry);
-            }
-        }
-        return outputs;
-    }
-
-    private UpdateVnfNotification.Outputs copyUpdateOutputs(Holder<Map<String, String>> hMap) {
-
-        UpdateVnfNotification.Outputs outputs = new UpdateVnfNotification.Outputs();
-
-        if (hMap != null && hMap.value != null) {
-            Map<String, String> sMap;
-            sMap = hMap.value;
-            UpdateVnfNotification.Outputs.Entry entry = new UpdateVnfNotification.Outputs.Entry();
-
-            for (Map.Entry<String, String> mapEntry : sMap.entrySet()) {
-                String key = mapEntry.getKey();
-                String value = mapEntry.getValue();
-                entry.setKey(key);
-                entry.setValue(value);
-                outputs.getEntry().add(entry);
-            }
-        }
-        return outputs;
-    }
-
-    private QueryVnfNotification.Outputs copyQueryOutputs(Holder<Map<String, String>> hMap) {
-
-        QueryVnfNotification.Outputs outputs = new QueryVnfNotification.Outputs();
-
-        if (hMap != null && hMap.value != null) {
-            Map<String, String> sMap;
-            sMap = hMap.value;
-
-            QueryVnfNotification.Outputs.Entry entry = new QueryVnfNotification.Outputs.Entry();
-
-            for (Map.Entry<String, String> mapEntry : sMap.entrySet()) {
-                String key = mapEntry.getKey();
-                String value = mapEntry.getValue();
-                entry.setKey(key);
-                entry.setValue(value);
                 outputs.getEntry().add(entry);
             }
         }
