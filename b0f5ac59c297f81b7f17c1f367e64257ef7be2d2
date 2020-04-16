@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "79b555fc_60954aed",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/test/resources/application.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 3957
+      },
+      "writtenOn": "2020-04-16T15:11:20Z",
+      "side": 0,
+      "message": "is this file removal related change?",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 1
+      },
+      "revId": "b0f5ac59c297f81b7f17c1f367e64257ef7be2d2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
