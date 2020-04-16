@@ -40,7 +40,6 @@ import org.onap.so.adapters.vevnfm.configuration.ConfigProperties;
 public class StartupServiceTest {
 
     private static final String URL = "rt";
-    private static final String ENDPOINT = "localhost";
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
