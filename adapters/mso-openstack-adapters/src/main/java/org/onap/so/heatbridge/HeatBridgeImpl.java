@@ -278,6 +278,9 @@ public class HeatBridgeImpl implements HeatBridgeApi {
     @Override
     public void createPserversAndPinterfacesIfNotPresentInAai(final List<Resource> stackResources)
             throws HeatBridgeException {
+        if (stackResources == null) {
+            return;
+        }
         Map<String, Pserver> serverHostnames = getPserverMapping(stackResources);
         createPServerIfNotExists(serverHostnames);
         List<String> portIds =
@@ -294,8 +297,13 @@ public class HeatBridgeImpl implements HeatBridgeApi {
     private Map<String, Pserver> getPserverMapping(final List<Resource> stackResources) {
         List<Server> osServers = getAllOpenstackServers(stackResources);
         Map<String, Pserver> pserverMap = new HashMap<>();
-        for (Server server : osServers) {
-            pserverMap.put(server.getHost(), aaiHelper.buildPserver(server));
+        if (osServers != null) {
+            for (Server server : osServers) {
+                Pserver pserver = aaiHelper.buildPserver(server);
+                if (pserver != null) {
+                    pserverMap.put(server.getHost(), pserver);
+                }
+            }
         }
         return pserverMap;
     }
