@@ -20,9 +20,6 @@
 
 package org.onap.so.adapters.vevnfm.controller;
 
-import static org.junit.Assert.assertEquals;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.anything;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,14 +32,13 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
+import static org.junit.Assert.assertEquals;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -58,18 +54,13 @@ public class NotificationControllerTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
 
-    @Autowired
-    private RestTemplate restTemplate;
-
     private String notification;
     private MockMvc mvc;
-    private MockRestServiceServer mockRestServer;
 
     @Before
     public void init() {
         notification = configProperties.getVnfmNotification();
         mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-        mockRestServer = MockRestServiceServer.bindTo(restTemplate).build();
     }
 
     @Test
@@ -78,8 +69,6 @@ public class NotificationControllerTest {
         final MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(notification)
                 .contentType(MediaType.APPLICATION_JSON).content(MINIMAL_JSON_CONTENT);
 
-        mockRestServer.expect(anything()).andRespond(withSuccess());
-
         // when
         final MvcResult mvcResult = mvc.perform(request).andReturn();
 
@@ -87,6 +76,5 @@ public class NotificationControllerTest {
         final MockHttpServletResponse response = mvcResult.getResponse();
         assertEquals(HttpStatus.OK.value(), response.getStatus());
         assertEquals(ZERO, response.getContentLength());
-        mockRestServer.verify();
     }
 }
