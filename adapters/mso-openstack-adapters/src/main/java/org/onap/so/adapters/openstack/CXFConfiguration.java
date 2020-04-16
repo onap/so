@@ -33,9 +33,7 @@ import org.apache.cxf.jaxrs.swagger.Swagger2Feature;
 import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.cxf.transport.servlet.CXFServlet;
 import org.onap.so.adapters.cloudregion.CloudRegionRestV1;
-import org.onap.so.adapters.network.MsoNetworkAdapterAsyncImpl;
 import org.onap.so.adapters.network.MsoNetworkAdapterImpl;
-import org.onap.so.adapters.network.NetworkAdapterRest;
 import org.onap.so.adapters.tenant.MsoTenantAdapterImpl;
 import org.onap.so.adapters.tenant.TenantAdapterRest;
 import org.onap.so.adapters.vnf.MsoVnfAdapterAsyncImpl;
@@ -55,13 +53,9 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 @Configuration
 public class CXFConfiguration {
     @Autowired
-    private NetworkAdapterRest networkAdapterRest;
-    @Autowired
     private TenantAdapterRest tenantAdapterRest;
     @Autowired
     private MsoNetworkAdapterImpl networkAdapterImpl;
-    @Autowired
-    private MsoNetworkAdapterAsyncImpl networkAdapterAsyncImpl;
     @Autowired
     private MsoTenantAdapterImpl tenantAdapterImpl;
     @Autowired
@@ -98,17 +92,6 @@ public class CXFConfiguration {
         EndpointImpl endpoint = new EndpointImpl(springBus(), networkAdapterImpl);
         endpoint.publish("/NetworkAdapter");
         endpoint.setWsdlLocation("NetworkAdapter.wsdl");
-        endpoint.getInInterceptors().add(new SOAPLoggingInInterceptor());
-        endpoint.getOutInterceptors().add(new SOAPLoggingOutInterceptor());
-        endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
-        return endpoint;
-    }
-
-    @Bean
-    public Endpoint networkAdapterAsyncEndpoint() {
-        EndpointImpl endpoint = new EndpointImpl(springBus(), networkAdapterAsyncImpl);
-        endpoint.publish("/NetworkAdapterAsync");
-        endpoint.setWsdlLocation("NetworkAdapterAsync.wsdl");
         endpoint.getInInterceptors().add(new SOAPLoggingInInterceptor());
         endpoint.getOutInterceptors().add(new SOAPLoggingOutInterceptor());
         endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
@@ -159,7 +142,7 @@ public class CXFConfiguration {
     public Server rsServer() {
         JAXRSServerFactoryBean endpoint = new JAXRSServerFactoryBean();
         endpoint.setBus(springBus());
-        endpoint.setServiceBeans(Arrays.<Object>asList(networkAdapterRest, tenantAdapterRest));
+        endpoint.setServiceBeans(Arrays.<Object>asList(tenantAdapterRest));
         endpoint.setAddress("/rest");
         endpoint.setFeatures(Arrays.asList(createSwaggerFeature(), new LoggingFeature()));
         endpoint.setProviders(Arrays.asList(new JacksonJsonProvider(jettisonStyleObjectMapper.getMapper()),

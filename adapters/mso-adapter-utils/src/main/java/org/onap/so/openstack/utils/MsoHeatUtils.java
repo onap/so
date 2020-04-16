@@ -184,6 +184,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
             if (CREATE_COMPLETE.equals(currentStack.getStackStatus())) {
                 new StackInfoMapper(currentStack).map();
             } else if (CREATE_IN_PROGRESS.equals(currentStack.getStackStatus())) {
+                // TODO should check poll for completion right here
                 currentStack = processCreateStack(cloudSiteId, tenantId, timeoutMinutes, backout, currentStack,
                         createStack, true);
             } else if (CREATE_FAILED.equals(currentStack.getStackStatus())
@@ -319,6 +320,27 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
             } else {
                 return stack;
             }
+        }
+    }
+
+    public Stack postProcessStackUpdate(Stack updateStack) throws MsoOpenstackException {
+        if (!"UPDATE_COMPLETE".equals(updateStack.getStackStatus())) {
+            logger.error("{} Stack status: {} Stack status reason: {} {} Update Stack error",
+                    MessageEnum.RA_UPDATE_STACK_ERR, updateStack.getStackStatus(), updateStack.getStackStatusReason(),
+                    ErrorCode.DataError.getValue());
+
+            MsoOpenstackException me = null;
+            if ("UPDATE_IN_PROGRESS".equals(updateStack.getStackStatus())) {
+                me = new MsoOpenstackException(0, "", "Stack Update Timeout");
+            } else {
+                String error =
+                        "Stack error (" + updateStack.getStackStatus() + "): " + updateStack.getStackStatusReason();
+                me = new MsoOpenstackException(0, "", error);
+            }
+            me.addContext("UpdateStack");
+            throw me;
+        } else {
+            return updateStack;
         }
     }
 

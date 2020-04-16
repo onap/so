@@ -65,7 +65,7 @@ public class RollbackServiceTest {
 
         Stack stack = new Stack();
         stack.setId("heatId");
-        Mockito.when(mockExternalTask.getVariable("vnfAdapterTaskRequest")).thenReturn(payload);
+        Mockito.when(mockExternalTask.getVariable("openstackAdapterTaskRequest")).thenReturn(payload);
         Mockito.doNothing().when(vnfAdapterImpl).deleteVfModule(Mockito.any(), Mockito.any(), Mockito.any(),
                 Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
         Mockito.doNothing().when(mockExternalTaskService).complete(Mockito.any(), Mockito.any());

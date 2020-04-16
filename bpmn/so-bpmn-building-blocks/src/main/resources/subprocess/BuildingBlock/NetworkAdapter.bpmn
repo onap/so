@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0gecuy2" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.7.0">
+  <bpmn:process id="NetworkAdapter" name="NetworkAdapter" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_1te2q0o</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1te2q0o" sourceRef="StartEvent_1" targetRef="Activity_045o7mr" />
+    <bpmn:sequenceFlow id="Flow_16y1hyp" sourceRef="Activity_045o7mr" targetRef="Activity_1ml9k96" />
+    <bpmn:sequenceFlow id="Flow_03mucze" sourceRef="Activity_1ml9k96" targetRef="Activity_124f192" />
+    <bpmn:endEvent id="Event_0mfsd2x">
+      <bpmn:incoming>Flow_0dcm3bq</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0dcm3bq" sourceRef="Activity_124f192" targetRef="Event_0mfsd2x" />
+    <bpmn:serviceTask id="Activity_045o7mr" name="Pre Process Request" camunda:expression="${NetworkAdapterImpl.preProcessNetworkAdapter(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>Flow_1te2q0o</bpmn:incoming>
+      <bpmn:outgoing>Flow_16y1hyp</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_124f192" name="Post Process Response" camunda:expression="${NetworkAdapterImpl.postProcessNetworkAdapter(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>Flow_03mucze</bpmn:incoming>
+      <bpmn:outgoing>Flow_0dcm3bq</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:callActivity id="Activity_1ml9k96" name="Openstack&#10;Adapter" calledElement="openstackAdapterTask">
+      <bpmn:extensionElements>
+        <camunda:in source="networkAdapterRequest" target="openstackAdapterTaskRequest" />
+        <camunda:in source="mso-request-id" target="mso-request-id" />
+        <camunda:in source="mso-service-instance-id" target="mso-service-instance-id" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:out source="WorkflowResponse" target="WorkflowResponse" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_16y1hyp</bpmn:incoming>
+      <bpmn:outgoing>Flow_03mucze</bpmn:outgoing>
+    </bpmn:callActivity>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="NetworkAdapter">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="82" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1te2q0o_di" bpmnElement="Flow_1te2q0o">
+        <di:waypoint x="215" y="100" />
+        <di:waypoint x="300" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16y1hyp_di" bpmnElement="Flow_16y1hyp">
+        <di:waypoint x="400" y="100" />
+        <di:waypoint x="490" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03mucze_di" bpmnElement="Flow_03mucze">
+        <di:waypoint x="590" y="100" />
+        <di:waypoint x="680" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0mfsd2x_di" bpmnElement="Event_0mfsd2x">
+        <dc:Bounds x="872" y="82" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0dcm3bq_di" bpmnElement="Flow_0dcm3bq">
+        <di:waypoint x="780" y="100" />
+        <di:waypoint x="872" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_1gfh44k_di" bpmnElement="Activity_045o7mr">
+        <dc:Bounds x="300" y="60" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1m5d1dj_di" bpmnElement="Activity_124f192">
+        <dc:Bounds x="680" y="60" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_037d53l_di" bpmnElement="Activity_1ml9k96">
+        <dc:Bounds x="490" y="60" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -329,7 +329,7 @@ public class ExceptionBuilder {
         }
     }
 
-    public void processVnfAdapterException(DelegateExecution execution) {
+    public void processOpenstackAdapterException(DelegateExecution execution) {
         StringBuilder workflowExceptionMessage = new StringBuilder();
         logger.debug("Processing Vnf Adapter Exception");
         try {

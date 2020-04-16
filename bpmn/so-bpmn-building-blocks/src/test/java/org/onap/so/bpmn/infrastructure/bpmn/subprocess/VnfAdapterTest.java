@@ -32,12 +32,12 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 public class VnfAdapterTest extends BaseBPMNTest {
     @Test
     public void vnfAdapterCreatedTest() {
-        mockSubprocess("vnfAdapterTask", "Mocked vnfAdapterTask", "GenericStub");
+        mockSubprocess("openstackAdapterTask", "Mocked openstackAdapterTask", "GenericStub");
 
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("VnfAdapter", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("VnfAdapter_Start", "PreProcessRequest", "Call_vnfAdapterTask",
-                "PostProcessResponse", "VnfAdapter_End");
+        assertThat(pi).isStarted().hasPassedInOrder("VnfAdapter_Start", "PreProcessRequest",
+                "Call_openstackAdapterTask", "PostProcessResponse", "VnfAdapter_End");
         assertThat(pi).isEnded();
     }
 

@@ -25,6 +25,7 @@ package org.onap.so.adapters.tasks.orchestration;
 import java.io.ByteArrayInputStream;
 import java.io.StringReader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javax.xml.bind.JAXB;
@@ -34,6 +35,18 @@ import javax.xml.ws.Holder;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
+import org.onap.so.adapters.network.MsoNetworkAdapterImpl;
+import org.onap.so.adapters.network.exceptions.NetworkException;
+import org.onap.so.adapters.nwrest.ContrailNetwork;
+import org.onap.so.adapters.nwrest.CreateNetworkRequest;
+import org.onap.so.adapters.nwrest.CreateNetworkResponse;
+import org.onap.so.adapters.nwrest.DeleteNetworkRequest;
+import org.onap.so.adapters.nwrest.DeleteNetworkResponse;
+import org.onap.so.adapters.nwrest.ProviderVlanNetwork;
+import org.onap.so.adapters.nwrest.RollbackNetworkRequest;
+import org.onap.so.adapters.nwrest.RollbackNetworkResponse;
+import org.onap.so.adapters.nwrest.UpdateNetworkRequest;
+import org.onap.so.adapters.nwrest.UpdateNetworkResponse;
 import org.onap.so.adapters.vnf.MsoVnfAdapterImpl;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
 import org.onap.so.adapters.vnfrest.CreateVfModuleRequest;
@@ -47,6 +60,8 @@ import org.onap.so.adapters.vnfrest.DeleteVolumeGroupResponse;
 import org.onap.so.adapters.vnfrest.VfModuleRollback;
 import org.onap.so.adapters.vnfrest.VolumeGroupRollback;
 import org.onap.so.logging.tasks.AuditMDCSetup;
+import org.onap.so.openstack.beans.NetworkRollback;
+import org.onap.so.openstack.beans.RouteTarget;
 import org.onap.so.openstack.beans.VnfRollback;
 import org.onap.so.utils.ExternalTaskUtils;
 import org.slf4j.Logger;
@@ -63,12 +78,19 @@ public class StackService extends ExternalTaskUtils {
     private MsoVnfAdapterImpl vnfAdapterImpl;
 
     @Autowired
+    private MsoNetworkAdapterImpl networkAdapterImpl;
+
+    @Autowired
     private AuditMDCSetup mdcSetup;
 
+    private static final String SHARED = "shared";
+    private static final String EXTERNAL = "external";
+
+    // TODO set backout earlier in case of exception??
     public void executeExternalTask(ExternalTask externalTask, ExternalTaskService externalTaskService) {
         Map<String, Object> variables = new HashMap<>();
         mdcSetup.setupMDC(externalTask);
-        String xmlRequest = externalTask.getVariable("vnfAdapterTaskRequest");
+        String xmlRequest = externalTask.getVariable("openstackAdapterTaskRequest");
         logger.debug("Executing External Task Stack Service. {}", xmlRequest);
         MutableBoolean success = new MutableBoolean();
         MutableBoolean backout = new MutableBoolean();
@@ -80,6 +102,11 @@ public class StackService extends ExternalTaskUtils {
                 Holder<Map<String, String>> outputs = new Holder<>();
                 Holder<VnfRollback> vnfRollback = new Holder<>();
                 Optional<String> requestType = findRequestType(xmlRequest);
+                Holder<String> networkId = new Holder<>();
+                Holder<String> neutronNetworkId = new Holder<>();
+                Holder<String> networkFqdn = new Holder<>();
+                Holder<Map<String, String>> subnetIdMap = new Holder<>();
+                Holder<NetworkRollback> networkRollback = new Holder<>();
                 if ("createVolumeGroupRequest".equals(requestType.get())) {
                     logger.debug("Executing External Task Stack Service For Create Volume Group");
                     response = createVolumeGroup(xmlRequest, outputs, vnfRollback, canonicalStackId, backout, success);
@@ -92,6 +119,16 @@ public class StackService extends ExternalTaskUtils {
                 } else if ("deleteVolumeGroupRequest".equals(requestType.get())) {
                     logger.debug("Executing External Task Stack Service For Delete Volume Group");
                     response = deleteVolumeGroup(xmlRequest, outputs, vnfRollback, canonicalStackId, backout, success);
+                } else if ("createNetworkRequest".equals(requestType.get())) {
+                    response = createNetwork(xmlRequest, networkId, neutronNetworkId, networkFqdn, subnetIdMap,
+                            networkRollback, canonicalStackId, backout, success);
+                } else if ("deleteNetworkRequest".equals(requestType.get())) {
+                    response = deleteNetwork(xmlRequest, canonicalStackId, backout, success);
+                } else if ("updateNetworkRequest".equals(requestType.get())) {
+                    response =
+                            updateNetwork(xmlRequest, subnetIdMap, networkRollback, canonicalStackId, backout, success);
+                } else if ("rollbackNetworkRequest".equals(requestType.get())) {
+                    response = rollbackNetwork(xmlRequest, canonicalStackId, backout, success);
                 }
             }
         } catch (Exception e) {
@@ -191,6 +228,156 @@ public class StackService extends ExternalTaskUtils {
         DeleteVolumeGroupResponse deleteResponse = new DeleteVolumeGroupResponse(true, req.getMessageId());
         return deleteResponse.toXmlString();
     }
+
+    private String createNetwork(String xmlRequest, Holder<String> networkId, Holder<String> neutronNetworkId,
+            Holder<String> networkFqdn, Holder<Map<String, String>> subnetIdMap,
+            Holder<NetworkRollback> networkRollback, Holder<String> canonicalStackId, MutableBoolean backout,
+            MutableBoolean success) throws NetworkException {
+        CreateNetworkRequest req = JAXB.unmarshal(new StringReader(xmlRequest), CreateNetworkRequest.class);
+        HashMap<String, String> params = (HashMap<String, String>) req.getNetworkParams();
+        if (params == null) {
+            params = new HashMap<>();
+        }
+        String shared = null;
+        String external = null;
+        String physicalNetworkName = null;
+        List<Integer> vlans = null;
+        List<RouteTarget> routeTargets = null;
+        List<String> fqdns = null;
+        List<String> routeTable = null;
+        if (params.containsKey(SHARED))
+            shared = params.get(SHARED);
+        if (params.containsKey(EXTERNAL))
+            external = params.get(EXTERNAL);
+        if (req.isContrailRequest()) {
+            ContrailNetwork ctn = req.getContrailNetwork();
+            if (ctn == null) {
+                ctn = new ContrailNetwork();
+                req.setContrailNetwork(ctn);
+            }
+            if (shared == null && ctn.getShared() != null) {
+                shared = ctn.getShared();
+            }
+            if (shared == null && ctn.getExternal() != null) {
+                external = ctn.getExternal();
+            }
+            routeTargets = req.getContrailNetwork().getRouteTargets();
+            fqdns = req.getContrailNetwork().getPolicyFqdns();
+            routeTable = req.getContrailNetwork().getRouteTableFqdns();
+        } else {
+            ProviderVlanNetwork pvn = req.getProviderVlanNetwork();
+            if (pvn == null) {
+                pvn = new ProviderVlanNetwork();
+                req.setProviderVlanNetwork(pvn);
+            }
+            physicalNetworkName = req.getProviderVlanNetwork().getPhysicalNetworkName();
+            vlans = req.getProviderVlanNetwork().getVlans();
+        }
+        networkAdapterImpl.createNetwork(req.getCloudSiteId(), req.getTenantId(), req.getNetworkType(),
+                req.getModelCustomizationUuid(), req.getNetworkName(), physicalNetworkName, vlans, routeTargets, shared,
+                external, req.getFailIfExists(), false, req.getSubnets(), fqdns, routeTable, req.getMsoRequest(),
+                networkId, neutronNetworkId, networkFqdn, subnetIdMap, networkRollback, false);
+        success.setTrue();
+        backout.setValue(req.getBackout());
+        canonicalStackId.value = networkRollback.value.getNetworkStackId();
+
+        CreateNetworkResponse response = new CreateNetworkResponse(req.getNetworkId(), neutronNetworkId.value,
+                networkRollback.value.getNetworkStackId(), networkFqdn.value, networkRollback.value.getNetworkCreated(),
+                subnetIdMap.value, networkRollback.value, req.getMessageId());
+        return response.toXmlString();
+    }
+
+    private String deleteNetwork(String xmlRequest, Holder<String> canonicalStackId, MutableBoolean backout,
+            MutableBoolean success) throws NetworkException {
+        backout.setFalse();
+        DeleteNetworkRequest req = JAXB.unmarshal(new StringReader(xmlRequest), DeleteNetworkRequest.class);
+        Holder<Boolean> networkDeleted = new Holder<>();
+
+        networkAdapterImpl.deleteNetwork(req.getCloudSiteId(), req.getTenantId(), req.getNetworkType(),
+                req.getModelCustomizationUuid(), req.getNetworkStackId(), req.getMsoRequest(), networkDeleted, false);
+
+        canonicalStackId.value = req.getNetworkStackId();
+        success.setTrue();
+
+        DeleteNetworkResponse response =
+                new DeleteNetworkResponse(req.getNetworkId(), networkDeleted.value, req.getMessageId());
+        return response.toXmlString();
+    }
+
+    private String rollbackNetwork(String xmlRequest, Holder<String> canonicalStackId, MutableBoolean backout,
+            MutableBoolean success) throws NetworkException {
+        backout.setFalse();
+        RollbackNetworkRequest req = JAXB.unmarshal(new StringReader(xmlRequest), RollbackNetworkRequest.class);
+
+        NetworkRollback rollback = req.getNetworkRollback();
+        networkAdapterImpl.rollbackNetwork(rollback, false);
+
+        canonicalStackId.value = rollback.getNetworkStackId();
+        success.setTrue();
+
+        RollbackNetworkResponse response = new RollbackNetworkResponse(true, req.getMessageId());
+        return response.toXmlString();
+    }
+
+    private String updateNetwork(String xmlRequest, Holder<Map<String, String>> subnetIdMap,
+            Holder<NetworkRollback> networkRollback, Holder<String> canonicalStackId, MutableBoolean backout,
+            MutableBoolean success) throws NetworkException {
+        backout.setFalse();
+        UpdateNetworkRequest req = JAXB.unmarshal(new StringReader(xmlRequest), UpdateNetworkRequest.class);
+        HashMap<String, String> params = (HashMap<String, String>) req.getNetworkParams();
+        if (params == null) {
+            params = new HashMap<>();
+        }
+        String shared = null;
+        String external = null;
+        String physicalNetworkName = null;
+        List<Integer> vlans = null;
+        List<RouteTarget> routeTargets = null;
+        List<String> fqdns = null;
+        List<String> routeTable = null;
+        if (params.containsKey(SHARED))
+            shared = params.get(SHARED);
+        if (params.containsKey(EXTERNAL))
+            external = params.get(EXTERNAL);
+        if (req.isContrailRequest()) {
+            ContrailNetwork ctn = req.getContrailNetwork();
+            if (ctn == null) {
+                ctn = new ContrailNetwork();
+                req.setContrailNetwork(ctn);
+            }
+            if (shared == null && ctn.getShared() != null) {
+                shared = ctn.getShared();
+            }
+            if (shared == null && ctn.getExternal() != null) {
+                external = ctn.getExternal();
+            }
+            routeTargets = req.getContrailNetwork().getRouteTargets();
+            fqdns = req.getContrailNetwork().getPolicyFqdns();
+            routeTable = req.getContrailNetwork().getRouteTableFqdns();
+        } else {
+            ProviderVlanNetwork pvn = req.getProviderVlanNetwork();
+            if (pvn == null) {
+                pvn = new ProviderVlanNetwork();
+                req.setProviderVlanNetwork(pvn);
+            }
+            physicalNetworkName = req.getProviderVlanNetwork().getPhysicalNetworkName();
+            vlans = req.getProviderVlanNetwork().getVlans();
+        }
+
+        networkAdapterImpl.updateNetwork(req.getCloudSiteId(), req.getTenantId(), req.getNetworkType(),
+                req.getModelCustomizationUuid(), req.getNetworkStackId(), req.getNetworkName(), physicalNetworkName,
+                vlans, routeTargets, shared, external, req.getSubnets(), fqdns, routeTable, req.getMsoRequest(),
+                subnetIdMap, networkRollback);
+
+        success.setTrue();
+        canonicalStackId.value = req.getNetworkStackId();
+
+        UpdateNetworkResponse response =
+                new UpdateNetworkResponse(req.getNetworkId(), null, subnetIdMap.value, req.getMessageId());
+        return response.toXmlString();
+    }
+
+
 
     protected Optional<String> findRequestType(String xmlString) {
         try {

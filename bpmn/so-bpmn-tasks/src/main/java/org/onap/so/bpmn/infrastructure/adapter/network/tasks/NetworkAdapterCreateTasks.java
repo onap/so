@@ -63,7 +63,7 @@ public class NetworkAdapterCreateTasks {
                     gBBInput.getRequestContext(), gBBInput.getCloudRegion(), gBBInput.getOrchContext(), serviceInstance,
                     l3Network, userInput, cloudRegionPo, gBBInput.getCustomer());
 
-            execution.setVariable("networkAdapterRequest", createNetworkRequest);
+            execution.setVariable("networkAdapterRequest", createNetworkRequest.toXmlString());
         } catch (Exception ex) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
@@ -81,13 +81,14 @@ public class NetworkAdapterCreateTasks {
                     execution.setVariable("networkAdapterCreateRollback", true);
                 }
             } else {
-                throw new Exception("No response was sent back from NetworkAdapterRestV1 subflow.");
+                throw new Exception("No response was sent back from NetworkAdapter subflow.");
             }
         } catch (Exception ex) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
     }
 
+    // TODO is this even used anywhere?
     public void rollbackCreateNetwork(BuildingBlockExecution execution) {
         try {
             GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();

@@ -191,13 +191,16 @@ public interface MsoNetworkAdapter {
             @WebParam(name = "modelCustomizationUuid") String modelCustomizationUuid,
             @WebParam(name = "networkId") @XmlElement(required = true) String networkId,
             @WebParam(name = "request") MsoRequest msoRequest,
-            @WebParam(name = "networkDeleted", mode = Mode.OUT) Holder<Boolean> networkDeleted) throws NetworkException;
+            @WebParam(name = "networkDeleted", mode = Mode.OUT) Holder<Boolean> networkDeleted,
+            @WebParam(name = "pollForCompletion") @XmlElement(required = false) Boolean pollForCompletion)
+            throws NetworkException;
 
     /**
      * This is the "Rollback Network" Web Service endpoint definition.
      */
     @WebMethod
-    public void rollbackNetwork(@WebParam(name = "rollback") @XmlElement(required = true) NetworkRollback rollback)
+    public void rollbackNetwork(@WebParam(name = "rollback") @XmlElement(required = true) NetworkRollback rollback,
+            @WebParam(name = "pollForCompletion") @XmlElement(required = false) Boolean pollForCompletion)
             throws NetworkException;
 
     @WebMethod

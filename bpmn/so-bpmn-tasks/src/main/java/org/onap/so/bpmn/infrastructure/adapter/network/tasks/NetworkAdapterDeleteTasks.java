@@ -53,7 +53,7 @@ public class NetworkAdapterDeleteTasks {
             DeleteNetworkRequest deleteNetworkRequest = networkAdapterObjectMapper.deleteNetworkRequestMapper(
                     gBBInput.getRequestContext(), gBBInput.getCloudRegion(), serviceInstance, l3Network);
 
-            execution.setVariable("networkAdapterRequest", deleteNetworkRequest);
+            execution.setVariable("networkAdapterRequest", deleteNetworkRequest.toXmlString());
         } catch (Exception ex) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }

@@ -49,7 +49,6 @@ public class BeansTest {
 
     @Test
     public void pojoStructure() {
-        test("org.onap.so.adapters.network.async.client");
         test("org.onap.so.adapters.vnf.async.client");
         test("org.onap.so.adapters.network");
         test("org.onap.so.adapters.vnf");

@@ -33,10 +33,13 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
+import org.onap.so.adapters.nwrest.CreateNetworkRequest;
 import org.onap.so.adapters.vnfrest.CreateVfModuleRequest;
 import org.onap.so.adapters.vnfrest.CreateVolumeGroupRequest;
 import org.onap.so.adapters.vnfrest.DeleteVfModuleRequest;
 import org.onap.so.adapters.vnfrest.DeleteVolumeGroupRequest;
+import org.onap.so.adapters.nwrest.DeleteNetworkRequest;
+import org.onap.so.adapters.nwrest.UpdateNetworkRequest;
 import org.onap.so.logging.tasks.AuditMDCSetup;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.utils.MsoHeatUtils;
@@ -70,7 +73,7 @@ public class PollService extends ExternalTaskUtils {
         MutableBoolean success = new MutableBoolean();
         String errorMessage = null;
         try {
-            String xmlRequest = externalTask.getVariable("vnfAdapterTaskRequest");
+            String xmlRequest = externalTask.getVariable("openstackAdapterTaskRequest");
             if (xmlRequest != null) {
                 Optional<String> requestType = findRequestType(xmlRequest);
                 if ("createVolumeGroupRequest".equals(requestType.get())) {
@@ -87,6 +90,15 @@ public class PollService extends ExternalTaskUtils {
                     DeleteVolumeGroupRequest req =
                             JAXB.unmarshal(new StringReader(xmlRequest), DeleteVolumeGroupRequest.class);
                     pollDeleteResource(req.getCloudSiteId(), req.getTenantId(), externalTask, success);
+                } else if ("createNetworkRequest".equals(requestType.get())) {
+                    determineCreateNetworkStatus(xmlRequest, externalTask, success);
+                } else if ("deleteNetworkRequest".equals(requestType.get())) {
+                    logger.debug("Executing External Task Poll Service for Delete Network");
+                    DeleteNetworkRequest req = JAXB.unmarshal(new StringReader(xmlRequest), DeleteNetworkRequest.class);
+                    pollDeleteResource(req.getCloudSiteId(), req.getTenantId(), externalTask, success);
+                } else if ("updateNetworkRequest".equals(requestType.get())) {
+                    UpdateNetworkRequest req = JAXB.unmarshal(new StringReader(xmlRequest), UpdateNetworkRequest.class);
+                    pollUpdateResource(req.getCloudSiteId(), req.getTenantId(), externalTask, success);
                 }
             }
         } catch (Exception e) {
@@ -143,6 +155,19 @@ public class PollService extends ExternalTaskUtils {
         }
     }
 
+    private void determineCreateNetworkStatus(String xmlRequest, ExternalTask externalTask, MutableBoolean success)
+            throws MsoException {
+        CreateNetworkRequest req = JAXB.unmarshal(new StringReader(xmlRequest), CreateNetworkRequest.class);
+        boolean pollRollbackStatus = externalTask.getVariable("PollRollbackStatus");
+        if (pollRollbackStatus) {
+            logger.debug("Executing External Task Poll Service for Rollback Create Network");
+            pollDeleteResource(req.getCloudSiteId(), req.getTenantId(), externalTask, success);
+        } else {
+            logger.debug("Executing External Task Poll Service for Create Network");
+            pollCreateResource(req.getCloudSiteId(), req.getTenantId(), externalTask, success);
+        }
+    }
+
     private void pollCreateResource(String cloudSiteId, String tenantId, ExternalTask externalTask,
             MutableBoolean success) throws MsoException {
         Stack currentStack = createCurrentStack(externalTask.getVariable("stackId"));
@@ -160,6 +185,15 @@ public class PollService extends ExternalTaskUtils {
         if (stack != null) { // if stack is null it was not found and no need to do post process
             msoHeatUtils.postProcessStackDelete(stack);
         }
+        success.setTrue();
+    }
+
+    private void pollUpdateResource(String cloudSiteId, String tenantId, ExternalTask externalTask,
+            MutableBoolean success) throws MsoException {
+        Stack currentStack = createCurrentStack(externalTask.getVariable("stackId"));
+        Stack stack =
+                msoHeatUtils.pollStackForStatus(1, currentStack, "UPDATE_IN_PROGRESS", cloudSiteId, tenantId, false);
+        msoHeatUtils.postProcessStackUpdate(stack);
         success.setTrue();
     }
 

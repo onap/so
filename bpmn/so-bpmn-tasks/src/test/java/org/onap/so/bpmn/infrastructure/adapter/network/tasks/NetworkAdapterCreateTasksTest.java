@@ -89,7 +89,7 @@ public class NetworkAdapterCreateTasksTest extends BaseTaskTest {
         networkAdapterCreateTasks.createNetwork(execution);
         verify(networkAdapterObjectMapper, times(1)).createNetworkRequestMapper(requestContext, cloudRegion,
                 orchestrationContext, serviceInstance, l3Network, userInput, cloudRegionPo, customer);
-        assertEquals(createNetworkRequest, execution.getVariable("networkAdapterRequest"));
+        assertEquals(createNetworkRequest.toXmlString(), execution.getVariable("networkAdapterRequest"));
     }
 
     @Test

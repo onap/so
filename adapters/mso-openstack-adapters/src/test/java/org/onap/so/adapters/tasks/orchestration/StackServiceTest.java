@@ -64,7 +64,7 @@ public class StackServiceTest {
 
         Stack stack = new Stack();
         stack.setId("heatId");
-        Mockito.when(mockExternalTask.getVariable("vnfAdapterTaskRequest")).thenReturn(payload);
+        Mockito.when(mockExternalTask.getVariable("openstackAdapterTaskRequest")).thenReturn(payload);
         Mockito.doNothing().when(vnfAdapterImpl).createVfModule(Mockito.any(), Mockito.any(), Mockito.any(),
                 Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
                 Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),

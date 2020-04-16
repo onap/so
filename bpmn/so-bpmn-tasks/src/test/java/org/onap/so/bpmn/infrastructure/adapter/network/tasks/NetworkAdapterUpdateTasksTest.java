@@ -95,7 +95,7 @@ public class NetworkAdapterUpdateTasksTest extends BaseTaskTest {
         networkAdapterUpdateTasks.updateNetwork(execution);
         verify(networkAdapterObjectMapper, times(1)).createNetworkUpdateRequestMapper(requestContext, cloudRegion,
                 orchestrationContext, serviceInstance, network, userInput, customer);
-        assertEquals(updateNetworkRequest, execution.getVariable("networkAdapterRequest"));
+        assertEquals(updateNetworkRequest.toXmlString(), execution.getVariable("networkAdapterRequest"));
     }
 
 

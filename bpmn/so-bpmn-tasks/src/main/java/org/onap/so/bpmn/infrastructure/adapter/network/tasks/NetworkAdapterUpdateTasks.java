@@ -55,7 +55,7 @@ public class NetworkAdapterUpdateTasks {
             UpdateNetworkRequest updateNetworkRequest = networkAdapterObjectMapper.createNetworkUpdateRequestMapper(
                     gBBInput.getRequestContext(), gBBInput.getCloudRegion(), gBBInput.getOrchContext(), serviceInstance,
                     l3Network, gBBInput.getUserInput(), gBBInput.getCustomer());
-            execution.setVariable("networkAdapterRequest", updateNetworkRequest);
+            execution.setVariable("networkAdapterRequest", updateNetworkRequest.toXmlString());
 
         } catch (Exception ex) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);

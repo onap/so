@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_ZBLUcCkQEeaY6ZhIaNLwzg" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_ZBLUcCkQEeaY6ZhIaNLwzg" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="3.7.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="UpdateVfModuleVolumeInfraV1" name="UpdateVfModuleVolumeInfraV1" isExecutable="true">
     <bpmn2:endEvent id="EndEvent_4" name="TheEnd">
       <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
@@ -21,7 +21,7 @@
       <bpmn2:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
-            <camunda:inputParameter name="url"><![CDATA[${UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)}]]></camunda:inputParameter>
+            <camunda:inputParameter name="url">${UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)}</camunda:inputParameter>
             <camunda:inputParameter name="payload">${UPDVfModVol_updateInfraRequest}</camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>
@@ -43,26 +43,26 @@
     <bpmn2:scriptTask id="ScriptTask_prepVnfRest" name="Prepare VNF Adapter Rest Request" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_22</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_21</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
+      <bpmn2:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def uvmv = new UpdateVfModuleVolumeInfraV1()
-uvmv.executeMethod('prepVnfAdapterRest', execution, isDebugLogEnabled)]]></bpmn2:script>
+uvmv.executeMethod('prepVnfAdapterRest', execution, isDebugLogEnabled)</bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_21" name="" sourceRef="ScriptTask_prepVnfRest" targetRef="CallActivity_callVNFAdapterRest" />
     <bpmn2:scriptTask id="ScriptTask_prepCompletionHandlerRequest" name="Prep Completion Handler Request" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_12</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_13</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
+      <bpmn2:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def uvmv = new UpdateVfModuleVolumeInfraV1()
-uvmv.executeMethod('prepCompletionHandlerRequest', execution, UPDVfModVol_requestId, 'UPDATE', UPDVfModVol_source, isDebugLogEnabled)]]></bpmn2:script>
+uvmv.executeMethod('prepCompletionHandlerRequest', execution, UPDVfModVol_requestId, 'UPDATE', UPDVfModVol_source, isDebugLogEnabled)</bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_13" name="" sourceRef="ScriptTask_prepCompletionHandlerRequest" targetRef="CallActivity_completionHandler" />
-    <bpmn2:callActivity id="CallActivity_callVNFAdapterRest" name="VNFAdapterRest" calledElement="vnfAdapterTask">
+    <bpmn2:callActivity id="CallActivity_callVNFAdapterRest" name="VNFAdapterRest" calledElement="openstackAdapterTask">
       <bpmn2:extensionElements>
         <camunda:in source="mso-request-id" target="mso-request-id" />
         <camunda:out source="WorkflowResponse" target="UPDVfModVol_vnfAdapterRestResponse" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:in source="mso-service-instance-id" target="mso-service-instance-id" />
-        <camunda:in source="UPDVfModVol_vnfAdapterRestRequest" target="vnfAdapterTaskRequest" />
+        <camunda:in source="UPDVfModVol_vnfAdapterRestRequest" target="openstackAdapterTaskRequest" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_21</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_19</bpmn2:outgoing>
@@ -71,16 +71,16 @@ uvmv.executeMethod('prepCompletionHandlerRequest', execution, UPDVfModVol_reques
     <bpmn2:scriptTask id="ScriptTask_prepDbInfraRequest" name="Prep DB Infra Request" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_19</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_11</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
+      <bpmn2:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def uvmv = new UpdateVfModuleVolumeInfraV1()
-uvmv.executeMethod('prepDbInfraDbRequest', execution, isDebugLogEnabled)]]></bpmn2:script>
+uvmv.executeMethod('prepDbInfraDbRequest', execution, isDebugLogEnabled)</bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_11" name="" sourceRef="ScriptTask_prepDbInfraRequest" targetRef="ServiceTask_callUpdateInfraDb" />
     <bpmn2:scriptTask id="ScriptTask_postProcessTemp" name="Set Success" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_14</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[// The following variable is checked by the unit test
-execution.setVariable("UpdateVfModuleVolumeSuccessIndicator", true)]]></bpmn2:script>
+      <bpmn2:script>// The following variable is checked by the unit test
+execution.setVariable("UpdateVfModuleVolumeSuccessIndicator", true)</bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_1" name="" sourceRef="ScriptTask_postProcessTemp" targetRef="EndEvent_4" />
     <bpmn2:exclusiveGateway id="ExclusiveGateway_2">
@@ -101,9 +101,9 @@ execution.setVariable("UpdateVfModuleVolumeSuccessIndicator", true)]]></bpmn2:sc
       <bpmn2:scriptTask id="ScriptTask_preFalloutHandler" name="Fallout Handler (prep)" scriptFormat="groovy">
         <bpmn2:incoming>SequenceFlow_7</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_4</bpmn2:outgoing>
-        <bpmn2:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
+        <bpmn2:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def uvmv = new UpdateVfModuleVolumeInfraV1()
-uvmv.executeMethod('prepFalloutHandler', execution, isDebugLogEnabled)]]></bpmn2:script>
+uvmv.executeMethod('prepFalloutHandler', execution, isDebugLogEnabled)</bpmn2:script>
       </bpmn2:scriptTask>
       <bpmn2:sequenceFlow id="SequenceFlow_4" name="" sourceRef="ScriptTask_preFalloutHandler" targetRef="CallActivity_falloutHandler" />
       <bpmn2:callActivity id="CallActivity_falloutHandler" name="Fallout Handler" calledElement="FalloutHandler">
@@ -134,17 +134,17 @@ uvmv.executeMethod('prepFalloutHandler', execution, isDebugLogEnabled)]]></bpmn2
     <bpmn2:scriptTask id="ScriptTask_queryAaiForVfModule" name="Query AAI for VF Module" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_YesVfModuleRelation</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_8</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
+      <bpmn2:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def uvmv = new UpdateVfModuleVolumeInfraV1()
-uvmv.executeMethod('queryAAIForVfModule', execution, isDebugLogEnabled)]]></bpmn2:script>
+uvmv.executeMethod('queryAAIForVfModule', execution, isDebugLogEnabled)</bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_8" name="" sourceRef="ScriptTask_queryAaiForVfModule" targetRef="ExclusiveGateway_personaModelIdMatch" />
     <bpmn2:scriptTask id="ScriptTask_handlePersonaModelIdMismatch" name="Handle Persona Model ID Mismatch" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_personaModelidMatchNo</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_18</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
+      <bpmn2:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def uvmv = new UpdateVfModuleVolumeInfraV1()
-uvmv.executeMethod('handlePersonaModelIdMismatch', execution, isDebugLogEnabled)]]></bpmn2:script>
+uvmv.executeMethod('handlePersonaModelIdMismatch', execution, isDebugLogEnabled)</bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_18" name="" sourceRef="ScriptTask_handlePersonaModelIdMismatch" targetRef="EndEvent_personaModelIdMismatch" />
     <bpmn2:endEvent id="EndEvent_personaModelIdMismatch">
@@ -154,9 +154,9 @@ uvmv.executeMethod('handlePersonaModelIdMismatch', execution, isDebugLogEnabled)
     <bpmn2:scriptTask id="ScriptTask_preProcessRequest" name="Pre-process Request" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_3</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_2</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
+      <bpmn2:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def uvmv = new UpdateVfModuleVolumeInfraV1()
-uvmv.executeMethod('preProcessRequest', execution, isDebugLogEnabled)]]></bpmn2:script>
+uvmv.executeMethod('preProcessRequest', execution, isDebugLogEnabled)</bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_2" name="" sourceRef="ScriptTask_preProcessRequest" targetRef="ScriptTask_sendSynchResponse" />
     <bpmn2:startEvent id="StartEvent_1" name="Start">
@@ -166,9 +166,9 @@ uvmv.executeMethod('preProcessRequest', execution, isDebugLogEnabled)]]></bpmn2:
     <bpmn2:scriptTask id="ScriptTask_sendSynchResponse" name="Send Synch Response" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_2</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_20</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
+      <bpmn2:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def uvmv = new UpdateVfModuleVolumeInfraV1()
-uvmv.executeMethod('sendSynchResponse', execution, isDebugLogEnabled)]]></bpmn2:script>
+uvmv.executeMethod('sendSynchResponse', execution, isDebugLogEnabled)</bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_20" name="" sourceRef="ScriptTask_sendSynchResponse" targetRef="ScriptTask_queryAaiGenricVnf" />
     <bpmn2:exclusiveGateway id="ExclusiveGateway_1" name="VF-MODULE relation?" default="SequenceFlow_noVfModuleRelation">
@@ -177,7 +177,7 @@ uvmv.executeMethod('sendSynchResponse', execution, isDebugLogEnabled)]]></bpmn2:
       <bpmn2:outgoing>SequenceFlow_noVfModuleRelation</bpmn2:outgoing>
     </bpmn2:exclusiveGateway>
     <bpmn2:sequenceFlow id="SequenceFlow_YesVfModuleRelation" name="Yes" sourceRef="ExclusiveGateway_1" targetRef="ScriptTask_queryAaiForVfModule">
-      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[#{UPDVfModVol_relatedVfModuleLink != ''}]]></bpmn2:conditionExpression>
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression">#{UPDVfModVol_relatedVfModuleLink != ''}</bpmn2:conditionExpression>
     </bpmn2:sequenceFlow>
     <bpmn2:sequenceFlow id="SequenceFlow_noVfModuleRelation" name="No" sourceRef="ExclusiveGateway_1" targetRef="ExclusiveGateway_2" />
     <bpmn2:exclusiveGateway id="ExclusiveGateway_isTenantMatch" name="TenantId Match?" default="SequenceFlow_NoTenantMatch">
@@ -192,9 +192,9 @@ uvmv.executeMethod('sendSynchResponse', execution, isDebugLogEnabled)]]></bpmn2:
     <bpmn2:scriptTask id="ScriptTask_tenantIdMismatch" name="Handle TenantId Mismatch" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_NoTenantMatch</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_17</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
+      <bpmn2:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def uvmv = new UpdateVfModuleVolumeInfraV1()
-uvmv.executeMethod('handleTenantIdMismatch', execution, isDebugLogEnabled)]]></bpmn2:script>
+uvmv.executeMethod('handleTenantIdMismatch', execution, isDebugLogEnabled)</bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_17" name="" sourceRef="ScriptTask_tenantIdMismatch" targetRef="EndEvent_2" />
     <bpmn2:endEvent id="EndEvent_2">
@@ -204,17 +204,17 @@ uvmv.executeMethod('handleTenantIdMismatch', execution, isDebugLogEnabled)]]></b
     <bpmn2:scriptTask id="ScriptTask_queryAAI" name="Query AAI for Volume Group Info" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_5</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_15</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
+      <bpmn2:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def uvmv = new UpdateVfModuleVolumeInfraV1()
-uvmv.executeMethod('queryAAIForVolumeGroup', execution, isDebugLogEnabled)]]></bpmn2:script>
+uvmv.executeMethod('queryAAIForVolumeGroup', execution, isDebugLogEnabled)</bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_15" name="" sourceRef="ScriptTask_queryAAI" targetRef="ExclusiveGateway_isTenantMatch" />
     <bpmn2:scriptTask id="ScriptTask_queryAaiGenricVnf" name="Query AAI for Generic VNF" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_20</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_5</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
+      <bpmn2:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def uvmv = new UpdateVfModuleVolumeInfraV1()
-uvmv.executeMethod('queryAAIForGenericVnf', execution, isDebugLogEnabled)]]></bpmn2:script>
+uvmv.executeMethod('queryAAIForGenericVnf', execution, isDebugLogEnabled)</bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_5" name="" sourceRef="ScriptTask_queryAaiGenricVnf" targetRef="ScriptTask_queryAAI" />
   </bpmn2:process>
@@ -228,10 +228,10 @@ uvmv.executeMethod('queryAAIForGenericVnf', execution, isDebugLogEnabled)]]></bp
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_3" bpmnElement="SequenceFlow_3" sourceElement="_BPMNShape_StartEvent_62" targetElement="_BPMNShape_ScriptTask_231">
-        <di:waypoint xsi:type="dc:Point" x="227" y="149" />
-        <di:waypoint xsi:type="dc:Point" x="268" y="149" />
-        <di:waypoint xsi:type="dc:Point" x="268" y="150" />
-        <di:waypoint xsi:type="dc:Point" x="295" y="150" />
+        <di:waypoint x="227" y="149" />
+        <di:waypoint x="268" y="149" />
+        <di:waypoint x="268" y="150" />
+        <di:waypoint x="295" y="150" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="248" y="149" width="6" height="6" />
         </bpmndi:BPMNLabel>
@@ -249,8 +249,8 @@ uvmv.executeMethod('queryAAIForGenericVnf', execution, isDebugLogEnabled)]]></bp
         <dc:Bounds x="454" y="112" width="109" height="76" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_2" bpmnElement="SequenceFlow_2" sourceElement="_BPMNShape_ScriptTask_231" targetElement="_BPMNShape_ScriptTask_232">
-        <di:waypoint xsi:type="dc:Point" x="403" y="150" />
-        <di:waypoint xsi:type="dc:Point" x="454" y="150" />
+        <di:waypoint x="403" y="150" />
+        <di:waypoint x="454" y="150" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="418" y="150" width="6" height="6" />
         </bpmndi:BPMNLabel>
@@ -262,15 +262,15 @@ uvmv.executeMethod('queryAAIForGenericVnf', execution, isDebugLogEnabled)]]></bp
         <dc:Bounds x="868" y="420" width="109" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_11" bpmnElement="SequenceFlow_11" sourceElement="_BPMNShape_ScriptTask_233" targetElement="_BPMNShape_ServiceTask_101">
-        <di:waypoint xsi:type="dc:Point" x="838" y="460" />
-        <di:waypoint xsi:type="dc:Point" x="868" y="460" />
+        <di:waypoint x="838" y="460" />
+        <di:waypoint x="868" y="460" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="853" y="491" width="6" height="6" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_12" bpmnElement="SequenceFlow_12" sourceElement="_BPMNShape_ServiceTask_101" targetElement="_BPMNShape_ScriptTask_234">
-        <di:waypoint xsi:type="dc:Point" x="976" y="460" />
-        <di:waypoint xsi:type="dc:Point" x="1014" y="460" />
+        <di:waypoint x="976" y="460" />
+        <di:waypoint x="1014" y="460" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="959" y="497" width="6" height="6" />
         </bpmndi:BPMNLabel>
@@ -282,15 +282,15 @@ uvmv.executeMethod('queryAAIForGenericVnf', execution, isDebugLogEnabled)]]></bp
         <dc:Bounds x="1162" y="429" width="109" height="61" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_13" bpmnElement="SequenceFlow_13" sourceElement="_BPMNShape_ScriptTask_234" targetElement="_BPMNShape_CallActivity_43">
-        <di:waypoint xsi:type="dc:Point" x="1122" y="460" />
-        <di:waypoint xsi:type="dc:Point" x="1162" y="459" />
+        <di:waypoint x="1122" y="460" />
+        <di:waypoint x="1162" y="459" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1134" y="477" width="6" height="6" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_14" bpmnElement="SequenceFlow_14" sourceElement="_BPMNShape_CallActivity_43" targetElement="_BPMNShape_ScriptTask_230">
-        <di:waypoint xsi:type="dc:Point" x="1270" y="459" />
-        <di:waypoint xsi:type="dc:Point" x="1318" y="460" />
+        <di:waypoint x="1270" y="459" />
+        <di:waypoint x="1318" y="460" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1216" y="521" width="6" height="6" />
         </bpmndi:BPMNLabel>
@@ -308,15 +308,15 @@ uvmv.executeMethod('queryAAIForGenericVnf', execution, isDebugLogEnabled)]]></bp
         <dc:Bounds x="1064" y="112" width="97" height="75" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_15" bpmnElement="SequenceFlow_15" sourceElement="_BPMNShape_ScriptTask_235" targetElement="_BPMNShape_ExclusiveGateway_126">
-        <di:waypoint xsi:type="dc:Point" x="850" y="149" />
-        <di:waypoint xsi:type="dc:Point" x="931" y="149" />
+        <di:waypoint x="850" y="149" />
+        <di:waypoint x="931" y="149" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="877" y="149" width="6" height="6" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_16" bpmnElement="SequenceFlow_NoTenantMatch" sourceElement="_BPMNShape_ExclusiveGateway_126" targetElement="_BPMNShape_ScriptTask_236">
-        <di:waypoint xsi:type="dc:Point" x="965" y="149" />
-        <di:waypoint xsi:type="dc:Point" x="1064" y="149" />
+        <di:waypoint x="965" y="149" />
+        <di:waypoint x="1064" y="149" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="986" y="149" width="22" height="22" />
         </bpmndi:BPMNLabel>
@@ -328,31 +328,31 @@ uvmv.executeMethod('queryAAIForGenericVnf', execution, isDebugLogEnabled)]]></bp
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_17" bpmnElement="SequenceFlow_17" sourceElement="_BPMNShape_ScriptTask_236" targetElement="_BPMNShape_EndEvent_169">
-        <di:waypoint xsi:type="dc:Point" x="1160" y="149" />
-        <di:waypoint xsi:type="dc:Point" x="1225" y="149" />
+        <di:waypoint x="1160" y="149" />
+        <di:waypoint x="1225" y="149" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1179" y="149" width="6" height="6" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_18" bpmnElement="SequenceFlow_tenantIsMatch" sourceElement="_BPMNShape_ExclusiveGateway_126" targetElement="_BPMNShape_ExclusiveGateway_254">
-        <di:waypoint xsi:type="dc:Point" x="948" y="166" />
-        <di:waypoint xsi:type="dc:Point" x="948" y="244" />
+        <di:waypoint x="948" y="166" />
+        <di:waypoint x="948" y="244" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="915" y="173" width="29" height="22" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_19" bpmnElement="SequenceFlow_19" sourceElement="_BPMNShape_CallActivity_42" targetElement="_BPMNShape_ScriptTask_233">
-        <di:waypoint xsi:type="dc:Point" x="691" y="460" />
-        <di:waypoint xsi:type="dc:Point" x="730" y="460" />
+        <di:waypoint x="691" y="460" />
+        <di:waypoint x="730" y="460" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="712" y="531" width="6" height="6" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_20" bpmnElement="SequenceFlow_20" sourceElement="_BPMNShape_ScriptTask_232" targetElement="_BPMNShape_ScriptTask_318">
-        <di:waypoint xsi:type="dc:Point" x="562" y="150" />
-        <di:waypoint xsi:type="dc:Point" x="581" y="150" />
-        <di:waypoint xsi:type="dc:Point" x="581" y="149" />
-        <di:waypoint xsi:type="dc:Point" x="612" y="149" />
+        <di:waypoint x="562" y="150" />
+        <di:waypoint x="581" y="150" />
+        <di:waypoint x="581" y="149" />
+        <di:waypoint x="612" y="149" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="578" y="150" width="6" height="6" />
         </bpmndi:BPMNLabel>
@@ -361,8 +361,8 @@ uvmv.executeMethod('queryAAIForGenericVnf', execution, isDebugLogEnabled)]]></bp
         <dc:Bounds x="454" y="420" width="109" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_21" bpmnElement="SequenceFlow_21" sourceElement="_BPMNShape_ScriptTask_237" targetElement="_BPMNShape_CallActivity_42">
-        <di:waypoint xsi:type="dc:Point" x="562" y="460" />
-        <di:waypoint xsi:type="dc:Point" x="591" y="460" />
+        <di:waypoint x="562" y="460" />
+        <di:waypoint x="591" y="460" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="446" y="460" width="6" height="6" />
         </bpmndi:BPMNLabel>
@@ -383,8 +383,8 @@ uvmv.executeMethod('queryAAIForGenericVnf', execution, isDebugLogEnabled)]]></bp
         <dc:Bounds x="639" y="832" width="109" height="61" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_4" bpmnElement="SequenceFlow_4" sourceElement="_BPMNShape_ScriptTask_238" targetElement="_BPMNShape_CallActivity_44">
-        <di:waypoint xsi:type="dc:Point" x="553" y="862" />
-        <di:waypoint xsi:type="dc:Point" x="639" y="862" />
+        <di:waypoint x="553" y="862" />
+        <di:waypoint x="639" y="862" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="573" y="946" width="6" height="6" />
         </bpmndi:BPMNLabel>
@@ -396,8 +396,8 @@ uvmv.executeMethod('queryAAIForGenericVnf', execution, isDebugLogEnabled)]]></bp
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_6" bpmnElement="SequenceFlow_6" sourceElement="_BPMNShape_CallActivity_44" targetElement="_BPMNShape_EndEvent_170">
-        <di:waypoint xsi:type="dc:Point" x="747" y="862" />
-        <di:waypoint xsi:type="dc:Point" x="862" y="862" />
+        <di:waypoint x="747" y="862" />
+        <di:waypoint x="862" y="862" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="765" y="1030" width="6" height="6" />
         </bpmndi:BPMNLabel>
@@ -409,15 +409,15 @@ uvmv.executeMethod('queryAAIForGenericVnf', execution, isDebugLogEnabled)]]></bp
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_1" bpmnElement="SequenceFlow_1" sourceElement="_BPMNShape_ScriptTask_230" targetElement="_BPMNShape_EndEvent_171">
-        <di:waypoint xsi:type="dc:Point" x="1426" y="460" />
-        <di:waypoint xsi:type="dc:Point" x="1461" y="459" />
+        <di:waypoint x="1426" y="460" />
+        <di:waypoint x="1461" y="459" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1442" y="467" width="6" height="6" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_7" bpmnElement="SequenceFlow_7" sourceElement="_BPMNShape_StartEvent_63" targetElement="_BPMNShape_ScriptTask_238">
-        <di:waypoint xsi:type="dc:Point" x="337" y="862" />
-        <di:waypoint xsi:type="dc:Point" x="445" y="862" />
+        <di:waypoint x="337" y="862" />
+        <di:waypoint x="445" y="862" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="385" y="1030" width="6" height="6" />
         </bpmndi:BPMNLabel>
@@ -429,10 +429,10 @@ uvmv.executeMethod('queryAAIForGenericVnf', execution, isDebugLogEnabled)]]></bp
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_5" bpmnElement="SequenceFlow_YesVfModuleRelation" sourceElement="_BPMNShape_ExclusiveGateway_254" targetElement="_BPMNShape_ScriptTask_313">
-        <di:waypoint xsi:type="dc:Point" x="931" y="261" />
-        <di:waypoint xsi:type="dc:Point" x="634" y="261" />
-        <di:waypoint xsi:type="dc:Point" x="634" y="262" />
-        <di:waypoint xsi:type="dc:Point" x="405" y="262" />
+        <di:waypoint x="931" y="261" />
+        <di:waypoint x="634" y="261" />
+        <di:waypoint x="634" y="262" />
+        <di:waypoint x="405" y="262" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="729" y="261" width="29" height="22" />
         </bpmndi:BPMNLabel>
@@ -447,16 +447,16 @@ uvmv.executeMethod('queryAAIForGenericVnf', execution, isDebugLogEnabled)]]></bp
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_8" bpmnElement="SequenceFlow_8" sourceElement="_BPMNShape_ScriptTask_313" targetElement="_BPMNShape_ExclusiveGateway_255">
-        <di:waypoint xsi:type="dc:Point" x="350" y="302" />
-        <di:waypoint xsi:type="dc:Point" x="350" y="329" />
-        <di:waypoint xsi:type="dc:Point" x="350" y="346" />
+        <di:waypoint x="350" y="302" />
+        <di:waypoint x="350" y="329" />
+        <di:waypoint x="350" y="346" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="347" y="318" width="6" height="6" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_9" bpmnElement="SequenceFlow_personaModelIdMatchYes" sourceElement="_BPMNShape_ExclusiveGateway_255" targetElement="_BPMNShape_ExclusiveGateway_256">
-        <di:waypoint xsi:type="dc:Point" x="367" y="363" />
-        <di:waypoint xsi:type="dc:Point" x="491" y="363" />
+        <di:waypoint x="367" y="363" />
+        <di:waypoint x="491" y="363" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="398" y="363" width="29" height="22" />
         </bpmndi:BPMNLabel>
@@ -468,18 +468,18 @@ uvmv.executeMethod('queryAAIForGenericVnf', execution, isDebugLogEnabled)]]></bp
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_10" bpmnElement="SequenceFlow_noVfModuleRelation" sourceElement="_BPMNShape_ExclusiveGateway_254" targetElement="_BPMNShape_ExclusiveGateway_256">
-        <di:waypoint xsi:type="dc:Point" x="948" y="278" />
-        <di:waypoint xsi:type="dc:Point" x="948" y="363" />
-        <di:waypoint xsi:type="dc:Point" x="701" y="363" />
-        <di:waypoint xsi:type="dc:Point" x="525" y="363" />
+        <di:waypoint x="948" y="278" />
+        <di:waypoint x="948" y="363" />
+        <di:waypoint x="701" y="363" />
+        <di:waypoint x="525" y="363" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="795" y="363" width="22" height="22" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_22" bpmnElement="SequenceFlow_personaModelidMatchNo" sourceElement="_BPMNShape_ExclusiveGateway_255" targetElement="_BPMNShape_ScriptTask_315">
-        <di:waypoint xsi:type="dc:Point" x="350" y="380" />
-        <di:waypoint xsi:type="dc:Point" x="350" y="401" />
-        <di:waypoint xsi:type="dc:Point" x="351" y="460" />
+        <di:waypoint x="350" y="380" />
+        <di:waypoint x="350" y="401" />
+        <di:waypoint x="351" y="460" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="350" y="409" width="22" height="22" />
         </bpmndi:BPMNLabel>
@@ -494,22 +494,22 @@ uvmv.executeMethod('queryAAIForGenericVnf', execution, isDebugLogEnabled)]]></bp
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_24" bpmnElement="SequenceFlow_18" sourceElement="_BPMNShape_ScriptTask_315" targetElement="_BPMNShape_EndEvent_172">
-        <di:waypoint xsi:type="dc:Point" x="351" y="540" />
-        <di:waypoint xsi:type="dc:Point" x="351" y="600" />
+        <di:waypoint x="351" y="540" />
+        <di:waypoint x="351" y="600" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="348" y="560" width="6" height="6" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_25" bpmnElement="SequenceFlow_22" sourceElement="_BPMNShape_ExclusiveGateway_256" targetElement="_BPMNShape_ScriptTask_237">
-        <di:waypoint xsi:type="dc:Point" x="508" y="380" />
-        <di:waypoint xsi:type="dc:Point" x="508" y="420" />
+        <di:waypoint x="508" y="380" />
+        <di:waypoint x="508" y="420" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_ScriptTask_318" bpmnElement="ScriptTask_queryAaiGenricVnf">
         <dc:Bounds x="612" y="112" width="97" height="75" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_23" bpmnElement="SequenceFlow_5" sourceElement="_BPMNShape_ScriptTask_318" targetElement="_BPMNShape_ScriptTask_235">
-        <di:waypoint xsi:type="dc:Point" x="708" y="149" />
-        <di:waypoint xsi:type="dc:Point" x="742" y="149" />
+        <di:waypoint x="708" y="149" />
+        <di:waypoint x="742" y="149" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

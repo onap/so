@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.7.0">
   <bpmn:process id="VnfAdapter" name="Vnf Adapter" isExecutable="true">
     <bpmn:startEvent id="VnfAdapter_Start">
       <bpmn:outgoing>SequenceFlow_1xr6chl</bpmn:outgoing>
@@ -27,10 +27,10 @@
       <bpmn:outgoing>SequenceFlow_1ivhukd</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_1ivhukd" sourceRef="PostProcessResponse" targetRef="VnfAdapter_End" />
-    <bpmn:callActivity id="Call_vnfAdapterTask" name="&#10;Cloud&#10;Create&#10;(vnf)&#10;" calledElement="vnfAdapterTask">
+    <bpmn:callActivity id="Call_openstackAdapterTask" name="Openstack&#10;Adapter" calledElement="openstackAdapterTask">
       <bpmn:extensionElements>
         <camunda:out source="WorkflowException" target="WorkflowException" />
-        <camunda:in source="VNFREST_Request" target="vnfAdapterTaskRequest" />
+        <camunda:in source="VNFREST_Request" target="openstackAdapterTaskRequest" />
         <camunda:out source="WorkflowResponse" target="WorkflowResponse" />
         <camunda:in source="mso-request-id" target="mso-request-id" />
         <camunda:in source="mso-service-instance-id" target="mso-service-instance-id" />
@@ -38,8 +38,8 @@
       <bpmn:incoming>SequenceFlow_0qaaf5k</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0j1zvis</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:sequenceFlow id="SequenceFlow_0qaaf5k" sourceRef="PreProcessRequest" targetRef="Call_vnfAdapterTask" />
-    <bpmn:sequenceFlow id="SequenceFlow_0j1zvis" sourceRef="Call_vnfAdapterTask" targetRef="PostProcessResponse" />
+    <bpmn:sequenceFlow id="SequenceFlow_0qaaf5k" sourceRef="PreProcessRequest" targetRef="Call_openstackAdapterTask" />
+    <bpmn:sequenceFlow id="SequenceFlow_0j1zvis" sourceRef="Call_openstackAdapterTask" targetRef="PostProcessResponse" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="VnfAdapter">
@@ -53,8 +53,8 @@
         <dc:Bounds x="396" y="275" width="233" height="135" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1xr6chl_di" bpmnElement="SequenceFlow_1xr6chl">
-        <di:waypoint xsi:type="dc:Point" x="192" y="121" />
-        <di:waypoint xsi:type="dc:Point" x="272" y="121" />
+        <di:waypoint x="192" y="121" />
+        <di:waypoint x="272" y="121" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="244" y="360" width="90" height="0" />
         </bpmndi:BPMNLabel>
@@ -72,10 +72,10 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1abat8l_di" bpmnElement="SequenceFlow_1abat8l">
-        <di:waypoint xsi:type="dc:Point" x="470" y="337" />
-        <di:waypoint xsi:type="dc:Point" x="509" y="337" />
-        <di:waypoint xsi:type="dc:Point" x="509" y="337" />
-        <di:waypoint xsi:type="dc:Point" x="549" y="337" />
+        <di:waypoint x="470" y="337" />
+        <di:waypoint x="509" y="337" />
+        <di:waypoint x="509" y="337" />
+        <di:waypoint x="549" y="337" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="536" y="591" width="90" height="0" />
         </bpmndi:BPMNLabel>
@@ -93,25 +93,25 @@
         <dc:Bounds x="657" y="81" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1ivhukd_di" bpmnElement="SequenceFlow_1ivhukd">
-        <di:waypoint xsi:type="dc:Point" x="757" y="121" />
-        <di:waypoint xsi:type="dc:Point" x="837" y="121" />
+        <di:waypoint x="757" y="121" />
+        <di:waypoint x="837" y="121" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="809" y="354" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="CallActivity_0n6wnin_di" bpmnElement="Call_vnfAdapterTask">
+      <bpmndi:BPMNShape id="CallActivity_0n6wnin_di" bpmnElement="Call_openstackAdapterTask">
         <dc:Bounds x="463" y="81" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0qaaf5k_di" bpmnElement="SequenceFlow_0qaaf5k">
-        <di:waypoint xsi:type="dc:Point" x="372" y="121" />
-        <di:waypoint xsi:type="dc:Point" x="463" y="121" />
+        <di:waypoint x="372" y="121" />
+        <di:waypoint x="463" y="121" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="429.5" y="354" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0j1zvis_di" bpmnElement="SequenceFlow_0j1zvis">
-        <di:waypoint xsi:type="dc:Point" x="563" y="121" />
-        <di:waypoint xsi:type="dc:Point" x="657" y="121" />
+        <di:waypoint x="563" y="121" />
+        <di:waypoint x="657" y="121" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="622" y="354" width="90" height="12" />
         </bpmndi:BPMNLabel>

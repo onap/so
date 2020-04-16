@@ -11,6 +11,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.ws.Holder;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
+import org.onap.so.adapters.network.MsoNetworkAdapterImpl;
+import org.onap.so.adapters.nwrest.CreateNetworkRequest;
 import org.onap.so.adapters.vnf.MsoVnfAdapterImpl;
 import org.onap.so.adapters.vnfrest.CreateVfModuleRequest;
 import org.onap.so.adapters.vnfrest.CreateVolumeGroupRequest;
@@ -30,6 +32,9 @@ public class RollbackService extends ExternalTaskUtils {
     private MsoVnfAdapterImpl vnfAdapterImpl;
 
     @Autowired
+    private MsoNetworkAdapterImpl networkAdapterImpl;
+
+    @Autowired
     private AuditMDCSetup mdcSetup;
 
     public void executeExternalTask(ExternalTask externalTask, ExternalTaskService externalTaskService) {
@@ -39,7 +44,7 @@ public class RollbackService extends ExternalTaskUtils {
         boolean success = false;
         boolean pollRollbackStatus = false;
         try {
-            String xmlRequest = externalTask.getVariable("vnfAdapterTaskRequest");
+            String xmlRequest = externalTask.getVariable("openstackAdapterTaskRequest");
             if (xmlRequest != null) {
                 Optional<String> requestType = findRequestType(xmlRequest);
                 if ("createVolumeGroupRequest".equals(requestType.get())) {
@@ -57,6 +62,15 @@ public class RollbackService extends ExternalTaskUtils {
                     vnfAdapterImpl.deleteVfModule(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
                             req.getVfModuleName(), req.getVnfId(), req.getVfModuleId(), req.getModelCustomizationUuid(),
                             req.getMsoRequest(), new Holder<>());
+                    pollRollbackStatus = true;
+                    success = true;
+                } else if ("createNetworkRequest".equals(requestType.get())) {
+                    logger.debug("Executing External Task Rollback Service for Create Network");
+                    Holder<Boolean> networkDeleted = new Holder<>();
+                    CreateNetworkRequest req = JAXB.unmarshal(new StringReader(xmlRequest), CreateNetworkRequest.class);
+                    networkAdapterImpl.deleteNetwork(req.getCloudSiteId(), req.getTenantId(), req.getNetworkType(),
+                            req.getModelCustomizationUuid(), req.getNetworkName(), req.getMsoRequest(), networkDeleted,
+                            false);
                     pollRollbackStatus = true;
                     success = true;
                 }

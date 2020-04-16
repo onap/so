@@ -44,7 +44,7 @@ public class PollServiceTest {
         String xmlString =
                 new String(Files.readAllBytes(Paths.get(RESOURCE_PATH + "/vnfAdapterTaskRequestCreate.xml")));
 
-        Mockito.when(mockExternalTask.getVariable("vnfAdapterTaskRequest")).thenReturn(xmlString);
+        Mockito.when(mockExternalTask.getVariable("openstackAdapterTaskRequest")).thenReturn(xmlString);
         Mockito.when(mockExternalTask.getVariable("PollRollbackStatus")).thenReturn(false);
         Mockito.when(mockExternalTask.getVariable("stackId")).thenReturn("stackId/stack123");
         Mockito.when(msoHeatUtils.pollStackForStatus(eq(1), any(Stack.class), eq("CREATE_IN_PROGRESS"), eq("regionOne"),
@@ -64,7 +64,7 @@ public class PollServiceTest {
         String xmlString =
                 new String(Files.readAllBytes(Paths.get(RESOURCE_PATH + "/vnfAdapterTaskRequestCreate.xml")));
 
-        Mockito.when(mockExternalTask.getVariable("vnfAdapterTaskRequest")).thenReturn(xmlString);
+        Mockito.when(mockExternalTask.getVariable("openstackAdapterTaskRequest")).thenReturn(xmlString);
         Mockito.when(mockExternalTask.getVariable("PollRollbackStatus")).thenReturn(true);
         Mockito.when(mockExternalTask.getVariable("stackId")).thenReturn("stackId/stack123");
         Mockito.when(msoHeatUtils.pollStackForStatus(eq(1), any(), eq("DELETE_IN_PROGRESS"), eq("regionOne"),
