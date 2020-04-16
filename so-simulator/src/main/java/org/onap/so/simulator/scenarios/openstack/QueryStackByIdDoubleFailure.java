@@ -39,23 +39,18 @@ public class QueryStackByIdDoubleFailure extends AbstractSimulatorScenario {
         scenario.http().send().response(HttpStatus.OK)
                 .payload(new ClassPathResource("openstack/gr_api/Stack_Failure.json"));
 
-        // Rollback Delete of the stack
-        scenario.http().receive().delete(); // step 7
-        scenario.action(new DeleteVServers());
-        scenario.http().send().response(HttpStatus.NO_CONTENT);
-
         // Rollback Poll
-        scenario.http().receive().get(); // step 10
+        scenario.http().receive().get(); // step 7
         scenario.http().send().response(HttpStatus.OK)
                 .payload(new ClassPathResource("openstack/gr_api/Stack_Failure.json"));
 
         // Rollback Poll Retry
-        scenario.http().receive().get();
+        scenario.http().receive().get(); // step 9
         scenario.http().send().response(HttpStatus.OK)
                 .payload(new ClassPathResource("openstack/gr_api/Stack_Failure.json"));
 
         // Create Poll
-        scenario.http().receive().get(); // step 14
+        scenario.http().receive().get(); // step 11
         scenario.http().send().response(HttpStatus.OK)
                 .payload(new ClassPathResource("openstack/gr_api/Stack_Failure.json"));
 
@@ -64,29 +59,15 @@ public class QueryStackByIdDoubleFailure extends AbstractSimulatorScenario {
         scenario.http().send().response(HttpStatus.OK)
                 .payload(new ClassPathResource("openstack/gr_api/Stack_Failure.json"));
 
-        // Rollback Delete
-        scenario.http().receive().delete();
-        scenario.action(new DeleteVServers());
-        scenario.http().send().response(HttpStatus.NO_CONTENT);
-
         // Rollback Poll
-        scenario.http().receive().get(); // step 18
+        scenario.http().receive().get(); // step 15
         scenario.http().send().response(HttpStatus.OK)
                 .payload(new ClassPathResource("openstack/gr_api/Stack_Failure.json"));
 
         // Rollback Poll Retry
-        scenario.http().receive().get();
+        scenario.http().receive().get(); // step 17
         scenario.http().send().response(HttpStatus.OK)
                 .payload(new ClassPathResource("openstack/gr_api/Stack_Failure.json"));
-
-        // Delete
-        scenario.http().receive().delete();
-        scenario.http().send().response(HttpStatus.NO_CONTENT);
-
-        // Delete Poll
-        scenario.http().receive().get();
-        scenario.http().send().response(HttpStatus.OK)
-                .payload(new ClassPathResource("openstack/gr_api/Stack_Deleted.json"));
 
     }
 
