@@ -68,7 +68,6 @@ import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.graphinventory.entities.uri.Depth;
 import org.onap.so.client.graphinventory.exceptions.BulkProcessFailed;
-import org.onap.so.client.PreconditionFailedException;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.heatbridge.constants.HeatBridgeConstants;
 import org.onap.so.heatbridge.factory.MsoCloudClientFactoryImpl;

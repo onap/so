@@ -23,8 +23,6 @@ import org.onap.sdc.api.notification.INotificationData;
 import org.onap.sdc.api.notification.IResourceInstance;
 import org.onap.sdc.api.results.IDistributionClientDownloadResult;
 import org.onap.so.asdc.client.exceptions.ArtifactInstallerException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Abstract class to represent the resource structure.

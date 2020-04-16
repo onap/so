@@ -21,7 +21,6 @@
 package org.onap.so.bpmn.appc.payload;
 
 import java.util.Optional;
-import org.onap.so.bpmn.appc.payload.beans.ConfigurationParametersHealthCheck;
 import org.onap.so.bpmn.appc.payload.beans.ConfigurationParametersQuiesce;
 import org.onap.so.bpmn.appc.payload.beans.ConfigurationParametersResumeTraffic;
 import org.onap.so.bpmn.appc.payload.beans.ConfigurationParametersDistributeTraffic;

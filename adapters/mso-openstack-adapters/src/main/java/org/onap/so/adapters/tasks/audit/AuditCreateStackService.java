@@ -32,7 +32,6 @@ import org.onap.so.audit.beans.AuditInventory;
 import org.onap.so.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
 import org.onap.so.logging.tasks.AuditMDCSetup;
 import org.onap.so.objects.audit.AAIObjectAuditList;
-import org.onap.so.utils.RetrySequenceLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
