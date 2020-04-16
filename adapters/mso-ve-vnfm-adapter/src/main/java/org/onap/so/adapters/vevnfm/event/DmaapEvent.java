@@ -47,7 +47,7 @@ public class DmaapEvent {
     private final VnfLcmOperationOccurrenceNotification etsiLcmEvent;
 
     public DmaapEvent(final String closedLoopControlName, final String version,
-            final VnfLcmOperationOccurrenceNotification etsiLcmEvent) {
+            final VnfLcmOperationOccurrenceNotification etsiLcmEvent, final String genericId) {
         this.closedLoopControlName = closedLoopControlName;
         this.closedLoopAlarmStart = Instant.now().getLong(INSTANT_SECONDS);
         this.closedLoopEventClient = MSERVICE;
@@ -55,7 +55,7 @@ public class DmaapEvent {
         this.requestId = UUID.randomUUID().toString();
         this.targetType = VNF;
         this.target = VNFID;
-        this.aaiEvent = new AaiEvent(false, etsiLcmEvent.getId());
+        this.aaiEvent = (genericId == null) ? null : new AaiEvent(false, genericId);
         this.from = ETSI;
         this.version = version;
         this.etsiLcmEvent = etsiLcmEvent;
