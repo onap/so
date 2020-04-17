@@ -284,9 +284,13 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                 extractStackResourceIdsByResourceType(stackResources, HeatBridgeConstants.OS_PORT_RESOURCE_TYPE);
         for (String portId : portIds) {
             Port port = osClient.getPortById(portId);
-            if (port.getvNicType().equalsIgnoreCase(HeatBridgeConstants.OS_SRIOV_PORT_TYPE)) {
-                createPServerPInterfaceIfNotExists(serverHostnames.get(port.getHostId()).getHostname(),
-                        aaiHelper.buildPInterface(port));
+            if (port != null && port.getvNicType() != null
+                    && port.getvNicType().equalsIgnoreCase(HeatBridgeConstants.OS_SRIOV_PORT_TYPE)) {
+                PInterface pInterface = aaiHelper.buildPInterface(port);
+                if (pInterface != null && port.getHostId() != null && serverHostnames.get(port.getHostId()) != null
+                        && serverHostnames.get(port.getHostId()).getHostname() != null) {
+                    createPServerPInterfaceIfNotExists(serverHostnames.get(port.getHostId()).getHostname(), pInterface);
+                }
             }
         }
     }
@@ -294,8 +298,18 @@ public class HeatBridgeImpl implements HeatBridgeApi {
     private Map<String, Pserver> getPserverMapping(final List<Resource> stackResources) {
         List<Server> osServers = getAllOpenstackServers(stackResources);
         Map<String, Pserver> pserverMap = new HashMap<>();
+<<<<<<< HEAD   (d39330 Small improvements to Notification and Subscription filters)
         for (Server server : osServers) {
             pserverMap.put(server.getHost(), aaiHelper.buildPserver(server));
+=======
+        if (osServers != null) {
+            for (Server server : osServers) {
+                Pserver pserver = aaiHelper.buildPserver(server);
+                if (pserver != null && server != null && server.getHost() != null) {
+                    pserverMap.put(server.getHost(), pserver);
+                }
+            }
+>>>>>>> CHANGE (2e2e5a Add null checks for pinterface coming from openstack)
         }
         return pserverMap;
     }

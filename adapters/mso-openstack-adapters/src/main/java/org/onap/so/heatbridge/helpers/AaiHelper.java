@@ -168,7 +168,13 @@ public class AaiHelper {
      * @return AAI PInterface object
      */
     public PInterface buildPInterface(Port port) {
+        if (port.getProfile() == null && port.getProfile().size() == 0) {
+            return null;
+        }
         Map<String, Object> portProfile = port.getProfile();
+        if (portProfile.get(HeatBridgeConstants.OS_PHYSICAL_NETWORK_KEY) == null) {
+            return null;
+        }
         PInterface pInterface = new PInterface();
         pInterface.setInterfaceName(portProfile.get(HeatBridgeConstants.OS_PHYSICAL_NETWORK_KEY).toString());
         pInterface.setInMaint(false);
