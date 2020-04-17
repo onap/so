@@ -45,6 +45,30 @@
       "revId": "799bb14b0c011cbf229496acd8b88d5a80bf48a1",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "66bc7dd6_26426fed",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/util/NullOptional.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-04-17T05:32:28Z",
+      "side": 1,
+      "message": "The NullOptional\u0027s behaviour is different from the one in Optional. When the value is null, the isPresent() method can still return true - this is the behaviour that I need. I could not find it in any of the existing Java classes.",
+      "parentUuid": "853a870f_9fa6c079",
+      "range": {
+        "startLine": 23,
+        "startChar": 19,
+        "endLine": 23,
+        "endChar": 31
+      },
+      "revId": "799bb14b0c011cbf229496acd8b88d5a80bf48a1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
