@@ -22,6 +22,30 @@
       "revId": "b0f5ac59c297f81b7f17c1f367e64257ef7be2d2",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b113dc6d_9e741e14",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/test/resources/application.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-04-17T05:40:27Z",
+      "side": 0,
+      "message": "This file was removed. We don\u0027t need it any more, it identical to the one in src/main.",
+      "parentUuid": "79b555fc_60954aed",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 1
+      },
+      "revId": "b0f5ac59c297f81b7f17c1f367e64257ef7be2d2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }

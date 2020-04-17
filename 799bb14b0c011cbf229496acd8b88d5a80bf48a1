@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "62882eee_effbfa4a",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/aai/AaiConnection.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-04-17T05:40:27Z",
+      "side": 1,
+      "message": "And in line 127 it returns the value of just found vnfInstanceId - and it can be different than ETSI vnfId - This is the conversion 😊",
+      "parentUuid": "612de53f_f0c7528e",
+      "range": {
+        "startLine": 120,
+        "startChar": 2,
+        "endLine": 130,
+        "endChar": 36
+      },
+      "revId": "799bb14b0c011cbf229496acd8b88d5a80bf48a1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "853a870f_9fa6c079",
         "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/util/NullOptional.java",
         "patchSetId": 2
