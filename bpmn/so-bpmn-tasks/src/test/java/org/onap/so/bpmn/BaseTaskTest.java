@@ -26,7 +26,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.common.data.TestDataSetup;
-import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.bpmn.infrastructure.flowspecific.tasks.AssignNetworkBBUtils;
 import org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionExtractResourcesAAI;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetup;

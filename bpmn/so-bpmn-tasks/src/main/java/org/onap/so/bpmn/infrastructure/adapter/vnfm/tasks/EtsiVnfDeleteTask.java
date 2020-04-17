@@ -21,11 +21,11 @@
 package org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks;
 
 import static org.onap.so.bpmn.servicedecomposition.entities.ResourceKey.GENERIC_VNF_ID;
+import org.onap.etsi.sol003.adapter.lcm.v1.model.DeleteVnfResponse;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.exception.ExceptionBuilder;
-import org.onap.vnfmadapter.v1.model.DeleteVnfResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

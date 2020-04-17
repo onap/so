@@ -22,9 +22,9 @@
 
 package org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks;
 
+import org.onap.etsi.sol003.adapter.lcm.v1.model.OperationStateEnum;
+import org.onap.etsi.sol003.adapter.lcm.v1.model.OperationStatusRetrievalStatusEnum;
 import com.google.common.collect.ImmutableSet;
-import org.onap.vnfmadapter.v1.model.OperationStateEnum;
-import org.onap.vnfmadapter.v1.model.OperationStatusRetrievalStatusEnum;
 
 /**
  * @author waqas.ikram@est.tech

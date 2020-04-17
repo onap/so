@@ -20,21 +20,21 @@
 
 package org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks;
 
-import com.google.common.base.Optional;
-import org.onap.so.rest.exceptions.InvalidRestRequestException;
+import org.onap.etsi.sol003.adapter.lcm.v1.model.CreateVnfRequest;
+import org.onap.etsi.sol003.adapter.lcm.v1.model.CreateVnfResponse;
+import org.onap.etsi.sol003.adapter.lcm.v1.model.DeleteVnfResponse;
+import org.onap.etsi.sol003.adapter.lcm.v1.model.QueryJobResponse;
 import org.onap.so.rest.exceptions.HttpResouceNotFoundException;
+import org.onap.so.rest.exceptions.InvalidRestRequestException;
 import org.onap.so.rest.exceptions.RestProcessingException;
 import org.onap.so.rest.service.HttpRestServiceProvider;
-import org.onap.vnfmadapter.v1.model.CreateVnfRequest;
-import org.onap.vnfmadapter.v1.model.CreateVnfResponse;
-import org.onap.vnfmadapter.v1.model.DeleteVnfResponse;
-import org.onap.vnfmadapter.v1.model.QueryJobResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import com.google.common.base.Optional;
 
 /**
  * @author waqas.ikram@est.tech

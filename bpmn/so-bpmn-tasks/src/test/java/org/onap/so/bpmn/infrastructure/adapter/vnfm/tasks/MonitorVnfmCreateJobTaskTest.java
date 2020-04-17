@@ -34,12 +34,12 @@ import java.util.UUID;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.onap.etsi.sol003.adapter.lcm.v1.model.CreateVnfResponse;
+import org.onap.etsi.sol003.adapter.lcm.v1.model.OperationStateEnum;
+import org.onap.etsi.sol003.adapter.lcm.v1.model.OperationStatusRetrievalStatusEnum;
+import org.onap.etsi.sol003.adapter.lcm.v1.model.QueryJobResponse;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
-import org.onap.vnfmadapter.v1.model.CreateVnfResponse;
-import org.onap.vnfmadapter.v1.model.OperationStateEnum;
-import org.onap.vnfmadapter.v1.model.OperationStatusRetrievalStatusEnum;
-import org.onap.vnfmadapter.v1.model.QueryJobResponse;
 import com.google.common.base.Optional;
 
 /**

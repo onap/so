@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.junit.Test;
-import org.onap.vnfmadapter.v1.model.ExternalVirtualLink;
+import org.onap.etsi.sol003.adapter.lcm.v1.model.ExternalVirtualLink;
 
 /**
  * @author Waqas Ikram (waqas.ikram@ericsson.com)

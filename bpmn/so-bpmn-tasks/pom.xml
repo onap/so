@@ -200,7 +200,7 @@
     </dependency>
     <dependency>
       <groupId>org.onap.so.adapters</groupId>
-      <artifactId>mso-vnfm-adapter-api</artifactId>
+      <artifactId>etsi-sol003-lcm-api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

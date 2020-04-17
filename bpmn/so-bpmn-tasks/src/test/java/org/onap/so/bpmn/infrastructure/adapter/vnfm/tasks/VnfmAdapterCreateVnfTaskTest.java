@@ -34,15 +34,15 @@ import java.util.Collections;
 import java.util.UUID;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.onap.etsi.sol003.adapter.lcm.v1.model.CreateVnfRequest;
+import org.onap.etsi.sol003.adapter.lcm.v1.model.CreateVnfResponse;
+import org.onap.etsi.sol003.adapter.lcm.v1.model.Tenant;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.utils.InputParameter;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoGenericVnf;
-import org.onap.vnfmadapter.v1.model.CreateVnfRequest;
-import org.onap.vnfmadapter.v1.model.CreateVnfResponse;
-import org.onap.vnfmadapter.v1.model.Tenant;
 import com.google.common.base.Optional;
 
 

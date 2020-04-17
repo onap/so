@@ -36,7 +36,7 @@ import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoGenericVnf;
-import org.onap.vnfmadapter.v1.model.DeleteVnfResponse;
+import org.onap.etsi.sol003.adapter.lcm.v1.model.DeleteVnfResponse;
 import com.google.common.base.Optional;
 
 /**

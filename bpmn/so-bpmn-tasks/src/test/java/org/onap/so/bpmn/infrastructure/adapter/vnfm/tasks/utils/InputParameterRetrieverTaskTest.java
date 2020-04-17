@@ -40,6 +40,9 @@ import java.util.UUID;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.onap.etsi.sol003.adapter.lcm.v1.model.ExternalVirtualLink;
+import org.onap.etsi.sol003.adapter.lcm.v1.model.ExternalVirtualLinkCpConfig;
+import org.onap.etsi.sol003.adapter.lcm.v1.model.ExternalVirtualLinkExtCps;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.common.exceptions.RequiredExecutionVariableExeception;
@@ -52,9 +55,6 @@ import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestParameters;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.client.sdnc.SDNCClient;
-import org.onap.vnfmadapter.v1.model.ExternalVirtualLink;
-import org.onap.vnfmadapter.v1.model.ExternalVirtualLinkCpConfig;
-import org.onap.vnfmadapter.v1.model.ExternalVirtualLinkExtCps;
 
 /**
  * @author waqas.ikram@est.tech
