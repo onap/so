@@ -26,6 +26,7 @@ import org.onap.so.openstack.exceptions.MsoException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriUtils;
 import com.woorea.openstack.base.client.OpenStackRequest;
 import com.woorea.openstack.quantum.Quantum;
 import com.woorea.openstack.quantum.model.Networks;
@@ -73,9 +74,13 @@ public class NeutronClientImpl extends MsoCommonUtils {
     public Networks queryNetworks(String cloudSiteId, String tenantId, int limit, String marker, String name, String id)
             throws MsoCloudSiteNotFound, NeutronClientException {
         try {
+            String encodedName = null;
+            if (name != null) {
+                encodedName = UriUtils.encodeQueryParam(name, "UTF-8");
+            }
             Quantum neutronClient = getNeutronClient(cloudSiteId, tenantId);
             OpenStackRequest<Networks> request = neutronClient.networks().list().queryParam("id", id)
-                    .queryParam("limit", limit).queryParam("marker", marker).queryParam("name", name);
+                    .queryParam("limit", limit).queryParam("marker", marker).queryParam("name", encodedName);
             return executeAndRecordOpenstackRequest(request, false);
         } catch (MsoException e) {
             logger.error("Error building Neutron Client", e);

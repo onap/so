@@ -26,10 +26,10 @@ import org.onap.so.openstack.exceptions.MsoException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriUtils;
 import com.woorea.openstack.base.client.OpenStackRequest;
 import com.woorea.openstack.glance.Glance;
 import com.woorea.openstack.glance.model.Images;
-
 
 @Component
 public class GlanceClientImpl extends MsoCommonUtils {
@@ -70,10 +70,14 @@ public class GlanceClientImpl extends MsoCommonUtils {
     public Images queryImages(String cloudSiteId, String tenantId, int limit, String visibility, String marker,
             String name) throws MsoCloudSiteNotFound, GlanceClientException {
         try {
+            String encodedName = null;
+            if (name != null) {
+                encodedName = UriUtils.encodeQueryParam(name, "UTF-8");
+            }
             Glance glanceClient = getGlanceClient(cloudSiteId, tenantId);
             // list is set to false, otherwise an invalid URL is appended
             OpenStackRequest<Images> request = glanceClient.images().list(false).queryParam("visibility", visibility)
-                    .queryParam("limit", limit).queryParam("marker", marker).queryParam("name", name);
+                    .queryParam("limit", limit).queryParam("marker", marker).queryParam("name", encodedName);
             return executeAndRecordOpenstackRequest(request, false);
         } catch (MsoException e) {
             logger.error("Error building Glance Client", e);
