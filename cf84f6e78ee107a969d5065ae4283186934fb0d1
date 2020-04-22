@@ -46,6 +46,30 @@
       "revId": "cf84f6e78ee107a969d5065ae4283186934fb0d1",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a481fe36_1683fb98",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/util/StringUsage.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-04-22T09:34:46Z",
+      "side": 1,
+      "message": "You use this class in checkGenericVnfId method as return type, and:\nisPresent \u003d false - means that no vnf is found\nisPresent \u003d true - means that vnf is found, but vnfInstanceId can be null. \n\nDon\u0027t you think that this is a little overcomplicated?\n\nLet\u0027s go forward, in method receiveNotification, you check genericId.isPresent, but anyway you send this genericId to dmaap, even if it is null value. I think this is wrong.\n\nThe question is, why do you consider that null value in StringUsage can be useful for you?",
+      "parentUuid": "db733c40_7f77a2d1",
+      "range": {
+        "startLine": 23,
+        "startChar": 19,
+        "endLine": 23,
+        "endChar": 30
+      },
+      "revId": "cf84f6e78ee107a969d5065ae4283186934fb0d1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
