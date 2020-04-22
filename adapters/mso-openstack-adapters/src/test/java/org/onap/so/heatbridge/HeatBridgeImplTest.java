@@ -308,13 +308,7 @@ public class HeatBridgeImplTest {
         heatbridge.buildAddFlavorsToAaiAction(flavors);
 
         // Assert #1
-        verify(transaction, times(2)).create(any(AAIResourceUri.class), any(org.onap.aai.domain.yang.Flavor.class));
-
-        // Act #2
-        heatbridge.buildAddFlavorsToAaiAction(flavors);
-
-        // Assert #2
-        verify(transaction, times(4)).create(any(AAIResourceUri.class), any(org.onap.aai.domain.yang.Flavor.class));
+        verify(transaction, times(2)).createIfNotExists(any(AAIResourceUri.class), any(Optional.class));
     }
 
     @Ignore

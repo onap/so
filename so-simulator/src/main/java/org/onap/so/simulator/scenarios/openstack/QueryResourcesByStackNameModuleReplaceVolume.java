@@ -9,7 +9,7 @@ import com.consol.citrus.simulator.scenario.Scenario;
 import com.consol.citrus.simulator.scenario.ScenarioDesigner;
 
 @Scenario("Query-Replace-Volume-ID-Name-Resources")
-@RequestMapping(value = "/sim/mockPublicUrl/stacks/replace_module_volume_id/resources", method = RequestMethod.GET)
+@RequestMapping(value = "/sim/v1/tenantOne/stacks/replace_module_volume_id/resources", method = RequestMethod.GET)
 public class QueryResourcesByStackNameModuleReplaceVolume extends AbstractSimulatorScenario {
 
     @Override

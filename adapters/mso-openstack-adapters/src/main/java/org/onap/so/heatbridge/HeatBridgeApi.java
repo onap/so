@@ -146,10 +146,11 @@ public interface HeatBridgeApi {
 
     /**
      * Execute AAI restful API to update the Openstack resources
-     *
+     * 
+     * @param dryrun - this will simply log the aai transaction to log if enabled and not write any data
      * @throws HeatBridgeException when failing to add openstack resource PoJos to AAI
      */
-    void submitToAai() throws HeatBridgeException;
+    void submitToAai(boolean dryrun) throws HeatBridgeException;
 
     /**
      * Delete heatbridge data for a given vf-module
