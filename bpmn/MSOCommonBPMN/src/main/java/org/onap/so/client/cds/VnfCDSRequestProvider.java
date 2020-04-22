@@ -79,8 +79,8 @@ public class VnfCDSRequestProvider implements CDSRequestProvider {
             final String modelCustomizationUuid = genericVnf.getModelInfoGenericVnf().getModelCustomizationUuid();
 
             resolutionKey = genericVnf.getVnfName();
-            blueprintName = genericVnf.getBlueprintName();
-            blueprintVersion = genericVnf.getBlueprintVersion();
+            blueprintName = genericVnf.getModelInfoGenericVnf().getBlueprintName();
+            blueprintVersion = genericVnf.getModelInfoGenericVnf().getBlueprintVersion();
 
             vnfObject.addProperty("service-instance-id", serviceInstance.getServiceInstanceId());
             vnfObject.addProperty("service-model-uuid", serviceInstance.getModelInfoServiceInstance().getModelUuid());

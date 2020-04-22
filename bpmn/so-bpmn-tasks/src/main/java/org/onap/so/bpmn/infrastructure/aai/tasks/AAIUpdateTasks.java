@@ -569,6 +569,21 @@ public class AAIUpdateTasks {
         updateOrchestrationStatusForVnf(execution, OrchestrationStatus.CONFIGURED);
     }
 
+    /**
+     * BPMN access method to update status of Vnf/vfmodule to configAssigned/ConfigDeployed in AAI
+     */
+    public void updateOrchestrationStatus(BuildingBlockExecution execution, String scope, String action) {
+        if (scope.equalsIgnoreCase("vnf") && action.equalsIgnoreCase("config-assign")) {
+            updateOrchestrationStatusForVnf(execution, OrchestrationStatus.CONFIGASSIGNED);
+        } else if (scope.equalsIgnoreCase("vnf") && action.equalsIgnoreCase("config-deploy")) {
+            updateOrchestrationStatusForVnf(execution, OrchestrationStatus.CONFIGDEPLOYED);
+        } else if (scope.equalsIgnoreCase("vfModule") && action.equalsIgnoreCase("config-assign")) {
+            updateOrchestrationStatusForVfModule(execution, OrchestrationStatus.CONFIGASSIGNED);
+        } else if (scope.equalsIgnoreCase("vfModule") && action.equalsIgnoreCase("config-deploy")) {
+            updateOrchestrationStatusForVfModule(execution, OrchestrationStatus.CONFIGDEPLOYED);
+        }
+    }
+
     private void updateOrchestrationStatusForService(BuildingBlockExecution execution, OrchestrationStatus status) {
         try {
             ServiceInstance serviceInstance =

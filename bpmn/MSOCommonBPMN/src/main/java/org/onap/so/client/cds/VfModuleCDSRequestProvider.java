@@ -81,8 +81,8 @@ public class VfModuleCDSRequestProvider implements CDSRequestProvider {
 
             final String modelCustomizationUuidForVnf = genericVnf.getModelInfoGenericVnf().getModelCustomizationUuid();
 
-            blueprintName = genericVnf.getBlueprintName();
-            blueprintVersion = genericVnf.getBlueprintVersion();
+            blueprintName = genericVnf.getModelInfoGenericVnf().getBlueprintName();
+            blueprintVersion = genericVnf.getModelInfoGenericVnf().getBlueprintVersion();
 
             VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
             vfModuleName = vfModule.getVfModuleName();

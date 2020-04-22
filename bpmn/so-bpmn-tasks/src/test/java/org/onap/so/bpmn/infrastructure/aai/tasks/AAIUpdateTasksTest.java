@@ -753,4 +753,40 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
         when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.PNF))).thenReturn(pnf);
         return pnf;
     }
+
+    @Test
+    public void updateOrchestrationStatusVnfConfigAssignedTest() throws Exception {
+        doNothing().when(aaiVnfResources).updateOrchestrationStatusVnf(genericVnf, OrchestrationStatus.CONFIGASSIGNED);
+
+        aaiUpdateTasks.updateOrchestrationStatus(execution, "vnf", "config-assign");
+
+        verify(aaiVnfResources, times(1)).updateOrchestrationStatusVnf(genericVnf, OrchestrationStatus.CONFIGASSIGNED);
+    }
+
+    @Test
+    public void updateOrchestrationStatusVnfConfigDeployedTest() throws Exception {
+        doNothing().when(aaiVnfResources).updateOrchestrationStatusVnf(genericVnf, OrchestrationStatus.CONFIGDEPLOYED);
+
+        aaiUpdateTasks.updateOrchestrationStatus(execution, "vnf", "config-deploy");
+
+        verify(aaiVnfResources, times(1)).updateOrchestrationStatusVnf(genericVnf, OrchestrationStatus.CONFIGDEPLOYED);
+    }
+
+    @Test
+    public void updateOrchestrationStatusVfModuleConfigDeployedTest() throws Exception {
+        doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
+                OrchestrationStatus.CONFIGDEPLOYED);
+        aaiUpdateTasks.updateOrchestrationStatus(execution, "vfmodule", "config-deploy");
+        verify(aaiVfModuleResources, times(1)).updateOrchestrationStatusVfModule(vfModule, genericVnf,
+                OrchestrationStatus.CONFIGDEPLOYED);
+    }
+
+    @Test
+    public void updateOrchestrationStatusVfModuleConfigAssignedTest() throws Exception {
+        doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
+                OrchestrationStatus.CONFIGASSIGNED);
+        aaiUpdateTasks.updateOrchestrationStatus(execution, "vfmodule", "config-assign");
+        verify(aaiVfModuleResources, times(1)).updateOrchestrationStatusVfModule(vfModule, genericVnf,
+                OrchestrationStatus.CONFIGASSIGNED);
+    }
 }

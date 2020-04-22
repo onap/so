@@ -35,7 +35,8 @@ public enum OrchestrationStatus {
     CONFIGURE("Configure", "configure"),
     CONFIGURED("Configured", "configured"),
     REGISTER("Register", "register"),
-    REGISTERED("Registered", "registered");
+    REGISTERED("Registered", "registered"),
+    CONFIGDEPLOYED("ConfigDeployed", "config.?deployed");
 
     private final String name;
     private final String fuzzyMatcher;
