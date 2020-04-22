@@ -189,6 +189,30 @@
       "revId": "799bb14b0c011cbf229496acd8b88d5a80bf48a1",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5d8796fe_01292238",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/util/NullOptional.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-04-22T07:52:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "df3f5c39_5a83a5ad",
+      "range": {
+        "startLine": 23,
+        "startChar": 19,
+        "endLine": 23,
+        "endChar": 31
+      },
+      "revId": "799bb14b0c011cbf229496acd8b88d5a80bf48a1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
