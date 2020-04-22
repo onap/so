@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bf87ca5e_6593d33f",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/HeatBridgeImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 306,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-04-22T09:07:29Z",
+      "side": 1,
+      "message": "Why do you check server? Do you consider that osServers list can have null elements?",
+      "range": {
+        "startLine": 306,
+        "startChar": 39,
+        "endLine": 306,
+        "endChar": 53
+      },
+      "revId": "2e2e5a4b8ed46105ff860dbfaa281197890667c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "499d8b69_da89f964",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/heatbridge/helpers/AaiHelper.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-04-22T09:07:29Z",
+      "side": 1,
+      "message": "null pointer, you check size of \"null\" here",
+      "range": {
+        "startLine": 174,
+        "startChar": 41,
+        "endLine": 174,
+        "endChar": 65
+      },
+      "revId": "2e2e5a4b8ed46105ff860dbfaa281197890667c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
