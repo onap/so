@@ -146,6 +146,9 @@ public class AaiHelper {
      * @return AAI Pserver object
      */
     public Pserver buildPserver(final Server server) {
+        if (server == null || server.getHypervisorHostname() == null) {
+            return null;
+        }
         Pserver pserver = new Pserver();
         pserver.setInMaint(false);
         pserver.setHostname(server.getHypervisorHostname());
