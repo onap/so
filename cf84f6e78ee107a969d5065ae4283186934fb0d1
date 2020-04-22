@@ -70,6 +70,30 @@
       "revId": "cf84f6e78ee107a969d5065ae4283186934fb0d1",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4b00b859_7b495d3f",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/util/StringUsage.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-04-22T09:58:11Z",
+      "side": 1,
+      "message": "This is because even when we don\u0027t find the VnfId in the AAI we still (sometimes - when the filtering is set to ALL) want to send the message to DMaaP with this extra VnfId taken from AAI set to null.\nBut maybe we should never sent the message to DMaaP, even in such a case? \nYour question is valid. I will talk about it in my team. Thank you :-)",
+      "parentUuid": "a481fe36_1683fb98",
+      "range": {
+        "startLine": 23,
+        "startChar": 19,
+        "endLine": 23,
+        "endChar": 30
+      },
+      "revId": "cf84f6e78ee107a969d5065ae4283186934fb0d1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
