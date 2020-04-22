@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e61faa3f_069d503a",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/util/StringUsage.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-04-22T06:42:28Z",
+      "side": 1,
+      "message": "Why this class is provided, instead of using \"Optional\"?",
+      "range": {
+        "startLine": 23,
+        "startChar": 19,
+        "endLine": 23,
+        "endChar": 30
+      },
+      "revId": "cf84f6e78ee107a969d5065ae4283186934fb0d1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
