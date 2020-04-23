@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b3c0d246_fee785f2",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/R__MacroData.sql",
+        "patchSetId": 2
+      },
+      "lineNbr": 908,
+      "author": {
+        "id": 5597
+      },
+      "writtenOn": "2020-04-23T07:23:56Z",
+      "side": 1,
+      "message": "What about adding this DB entry within an existing INSERT INTO Building_Block_Detail SQL block?\n\nIt would help to understand what are the contents of the DB tables without actually executing the sql file, with multiple inserts to the same DB table.",
+      "range": {
+        "startLine": 906,
+        "startChar": 0,
+        "endLine": 908,
+        "endChar": 51
+      },
+      "revId": "d23473e9e043d78fbe425214aa0fe3870137ae0a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "30673b38_f6d873d7",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/R__MacroData.sql",
+        "patchSetId": 2
+      },
+      "lineNbr": 912,
+      "author": {
+        "id": 5597
+      },
+      "writtenOn": "2020-04-23T07:23:56Z",
+      "side": 1,
+      "message": "Same as before, would it be possible to add this line to an existing SQL command within this file?",
+      "range": {
+        "startLine": 910,
+        "startChar": 0,
+        "endLine": 912,
+        "endChar": 47
+      },
+      "revId": "d23473e9e043d78fbe425214aa0fe3870137ae0a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
