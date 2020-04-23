@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2019 Bell Canada
  * ================================================================================
+ * Modifications Copyright (c) 2020 Tech Mahindra
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,7 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * For Vnf/Vf-Module/Service BuildingBlockExecution is being used.
+ * For Vnf/VfModule/Service BuildingBlockExecution is being used.
  *
  * @param - BuildingBlockExecution
  */
@@ -44,7 +46,7 @@ public class GenericCDSProcessingBB implements ControllerRunnable<BuildingBlockE
     private static final String EXECUTION_OBJECT = "executionObject";
     public static final String CDS_ACTOR = "cds";
     public static final String VNF_SCOPE = "vnf";
-    public static final String VF_MODULE_SCOPE = "vf-module";
+    public static final String VF_MODULE_SCOPE = "vfmodule";
 
     @Autowired
     private ExceptionBuilder exceptionBuilder;

@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2020 Tech Mahindra
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +37,8 @@ public enum OrchestrationStatus {
     CONFIGURE("Configure", "configure"),
     CONFIGURED("Configured", "configured"),
     REGISTER("Register", "register"),
-    REGISTERED("Registered", "registered");
+    REGISTERED("Registered", "registered"),
+    CONFIGDEPLOYED("ConfigDeployed", "config.?deployed");
 
     private final String name;
     private final String fuzzyMatcher;

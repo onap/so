@@ -39,7 +39,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ControllerExecution {
     private static final Logger logger = LoggerFactory.getLogger(ControllerExecution.class);
-    private static final String CONTROLLER_ACTOR = "controllerActor";
+    private static final String CONTROLLER_ACTOR = "actor";
     private static final String BUILDING_BLOCK = "buildingBlock";
     private static final String SCOPE = "scope";
     private static final String ACTION = "action";
@@ -59,9 +59,9 @@ public class ControllerExecution {
     public void setControllerActorScopeAction(BuildingBlockExecution execution) {
         try {
             GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
-            String modleUuid = genericVnf.getModelInfoGenericVnf().getModelCustomizationUuid();
+            String modelUuid = genericVnf.getModelInfoGenericVnf().getModelCustomizationUuid();
             VnfResourceCustomization vnfResourceCustomization =
-                    catalogDbClient.getVnfResourceCustomizationByModelCustomizationUUID(modleUuid);
+                    catalogDbClient.getVnfResourceCustomizationByModelCustomizationUUID(modelUuid);
 
             // Fetching Controller Actor at VNF level if null then Controller Actor is set as "APPC"
             String controllerActor = Optional.ofNullable(vnfResourceCustomization.getControllerActor()).orElse("APPC");

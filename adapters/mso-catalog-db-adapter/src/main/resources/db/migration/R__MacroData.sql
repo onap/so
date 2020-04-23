@@ -902,3 +902,11 @@ VALUES
 ('SDNOVnfHealthCheckBB','*','*','*','*','Manual','Abort','*', '*'),
 ('VNFUnsetInMaintFlagActivity','*','*','*','*','Manual','Abort','*', '*'),
 ('VNFUnsetClosedLoopDisabledActivity','*','*','*','*','Manual','Abort','*', '*');
+
+INSERT INTO building_block_detail(BUILDING_BLOCK_NAME, RESOURCE_TYPE, TARGET_ACTION)
+VALUES
+('ControllerExecutionBB', 'NO_VALIDATE', 'CUSTOM');
+
+INSERT INTO orchestration_status_state_transition_directive(RESOURCE_TYPE, ORCHESTRATION_STATUS, TARGET_ACTION, FLOW_DIRECTIVE)
+VALUES
+('VNF','CONFIGDEPLOYED','ACTIVATE','CONTINUE');
