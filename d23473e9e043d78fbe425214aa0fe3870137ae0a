@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "91090fbd_6afc4a2e",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/R__MacroData.sql",
+        "patchSetId": 2
+      },
+      "lineNbr": 908,
+      "author": {
+        "id": 5732
+      },
+      "writtenOn": "2020-04-23T13:24:31Z",
+      "side": 1,
+      "message": "i had the same feedback, no reason to have different insert all around the file for the same table.",
+      "parentUuid": "b3c0d246_fee785f2",
+      "range": {
+        "startLine": 906,
+        "startChar": 0,
+        "endLine": 908,
+        "endChar": 51
+      },
+      "revId": "d23473e9e043d78fbe425214aa0fe3870137ae0a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "30673b38_f6d873d7",
         "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/R__MacroData.sql",
         "patchSetId": 2
