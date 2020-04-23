@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1bfe1c05_aa1e07a2",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/aai/AaiConnection.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-04-23T11:31:03Z",
+      "side": 1,
+      "message": "I would change the method name according to what it does. Check means validate for me. \nMaybe the better name would be getGenericVnfId?",
+      "range": {
+        "startLine": 119,
+        "startChar": 18,
+        "endLine": 119,
+        "endChar": 35
+      },
+      "revId": "0b5b9f20444402e55737cee8357e0ae3eaa2c022",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "38e577ae_8ff63e85",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/service/DmaapConditionalSender.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2020-04-23T11:31:03Z",
+      "side": 1,
+      "message": "In this case, we can send generic vnf id which is null. Is this proper behavior?",
+      "range": {
+        "startLine": 54,
+        "startChar": 16,
+        "endLine": 54,
+        "endChar": 96
+      },
+      "revId": "0b5b9f20444402e55737cee8357e0ae3eaa2c022",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
