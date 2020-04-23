@@ -799,7 +799,8 @@ VALUES
 ('CONFIGURATION', 'PENDING CREATE', 'DEACTIVATE', 'FAIL'),
 ('CONFIGURATION', 'PENDING DELETE', 'DEACTIVATE', 'FAIL'),
 ('CONFIGURATION', 'PENDING ACTIVATION', 'DEACTIVATE', 'FAIL'),
-('CONFIGURATION', 'PENDING', 'DEACTIVATE', 'FAIL');
+('CONFIGURATION', 'PENDING', 'DEACTIVATE', 'FAIL'),
+('VNF','CONFIGDEPLOYED','ACTIVATE','CONTINUE');
 
 UPDATE orchestration_flow_reference
 SET SEQ_NO = SEQ_NO + 2 WHERE COMPOSITE_ACTION = 'Service-Macro-Create' AND SEQ_NO > 12;
@@ -867,7 +868,8 @@ UPDATE northbound_request_ref_lookup SET SERVICE_TYPE = '*' WHERE SERVICE_TYPE I
 INSERT INTO building_block_detail(BUILDING_BLOCK_NAME, RESOURCE_TYPE, TARGET_ACTION)
 VALUES
 ('ConfigAssignVnfBB', 'NO_VALIDATE', 'CUSTOM'),
-('ConfigDeployVnfBB', 'NO_VALIDATE', 'CUSTOM');
+('ConfigDeployVnfBB', 'NO_VALIDATE', 'CUSTOM'),
+('ControllerExecutionBB', 'NO_VALIDATE', 'CUSTOM');
 
 UPDATE rainy_day_handler_macro SET reg_ex_error_message = '*' WHERE reg_ex_error_message IS null;
 
@@ -902,3 +904,4 @@ VALUES
 ('SDNOVnfHealthCheckBB','*','*','*','*','Manual','Abort','*', '*'),
 ('VNFUnsetInMaintFlagActivity','*','*','*','*','Manual','Abort','*', '*'),
 ('VNFUnsetClosedLoopDisabledActivity','*','*','*','*','Manual','Abort','*', '*');
+
