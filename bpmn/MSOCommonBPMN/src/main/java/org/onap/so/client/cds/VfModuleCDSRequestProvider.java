@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2019 Bell Canada
  * ================================================================================
+ * Modifications Copyright (c) 2020 Tech Mahindra
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -81,8 +83,8 @@ public class VfModuleCDSRequestProvider implements CDSRequestProvider {
 
             final String modelCustomizationUuidForVnf = genericVnf.getModelInfoGenericVnf().getModelCustomizationUuid();
 
-            blueprintName = genericVnf.getBlueprintName();
-            blueprintVersion = genericVnf.getBlueprintVersion();
+            blueprintName = genericVnf.getModelInfoGenericVnf().getBlueprintName();
+            blueprintVersion = genericVnf.getModelInfoGenericVnf().getBlueprintVersion();
 
             VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
             vfModuleName = vfModule.getVfModuleName();
