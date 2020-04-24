@@ -51,7 +51,7 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
             execution.setVariable("CMSO_mso-bpel-name",msoBpelName)
 
             if (utils.nodeExists(xml, "request-information")) {
-                throw new BpmnError("500", "FalloutHandler subflow does not support this request type.")
+                throw new BpmnError("500", "CompleteMsoProcess subflow does not support this request type.")
             }
 
             def request_id = ""
@@ -60,7 +60,7 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
             }
 
         } catch (BpmnError e) {
-            throw e;
+            exceptionUtil.buildAndThrowWorkflowException(execution, 500, e.getMessage())
         } catch (Exception e) {
             logger.debug("Exception Occured During PreProcessRequest: " + e);
             exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Internal Error - Occured in preprocess")
