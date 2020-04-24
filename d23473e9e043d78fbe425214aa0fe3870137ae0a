@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "932a9363_d78e4485",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/R__MacroData.sql",
+        "patchSetId": 2
+      },
+      "lineNbr": 908,
+      "author": {
+        "id": 4695
+      },
+      "writtenOn": "2020-04-24T08:39:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "91090fbd_6afc4a2e",
+      "range": {
+        "startLine": 906,
+        "startChar": 0,
+        "endLine": 908,
+        "endChar": 51
+      },
+      "revId": "d23473e9e043d78fbe425214aa0fe3870137ae0a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "30673b38_f6d873d7",
         "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/R__MacroData.sql",
         "patchSetId": 2
@@ -96,6 +120,30 @@
     },
     {
       "key": {
+        "uuid": "8e83f33b_ffca877f",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/R__MacroData.sql",
+        "patchSetId": 2
+      },
+      "lineNbr": 912,
+      "author": {
+        "id": 4695
+      },
+      "writtenOn": "2020-04-24T08:39:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b01a52fa_bf2bb7f1",
+      "range": {
+        "startLine": 910,
+        "startChar": 0,
+        "endLine": 912,
+        "endChar": 47
+      },
+      "revId": "d23473e9e043d78fbe425214aa0fe3870137ae0a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "026a85cc_a571266b",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericCDSProcessingBB.java",
         "patchSetId": 2
@@ -116,6 +164,30 @@
       "revId": "d23473e9e043d78fbe425214aa0fe3870137ae0a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "edc266ac_a2867848",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericCDSProcessingBB.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 4695
+      },
+      "writtenOn": "2020-04-24T08:39:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "026a85cc_a571266b",
+      "range": {
+        "startLine": 39,
+        "startChar": 2,
+        "endLine": 39,
+        "endChar": 65
+      },
+      "revId": "d23473e9e043d78fbe425214aa0fe3870137ae0a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -142,6 +214,30 @@
     },
     {
       "key": {
+        "uuid": "b7498550_4ed348ac",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericCDSProcessingBB.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 4695
+      },
+      "writtenOn": "2020-04-24T08:39:59Z",
+      "side": 1,
+      "message": "Actually this class is not only for processing vnf, its for vfmodule and service processing also.. so i would like to keep the name as is.",
+      "parentUuid": "15ec599b_f08a4eb1",
+      "range": {
+        "startLine": 44,
+        "startChar": 13,
+        "endLine": 44,
+        "endChar": 35
+      },
+      "revId": "d23473e9e043d78fbe425214aa0fe3870137ae0a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dcf4f90c_2531e2a7",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericCDSProcessingBB.java",
         "patchSetId": 2
@@ -165,6 +261,30 @@
     },
     {
       "key": {
+        "uuid": "9dc0acab_b2c9f85b",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/GenericCDSProcessingBB.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 4695
+      },
+      "writtenOn": "2020-04-24T08:39:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dcf4f90c_2531e2a7",
+      "range": {
+        "startLine": 54,
+        "startChar": 3,
+        "endLine": 55,
+        "endChar": 48
+      },
+      "revId": "d23473e9e043d78fbe425214aa0fe3870137ae0a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f512fbd7_28f9591b",
         "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/beans/OrchestrationStatus.java",
         "patchSetId": 2
@@ -185,6 +305,30 @@
       "revId": "d23473e9e043d78fbe425214aa0fe3870137ae0a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "54fd6f6a_accde3bc",
+        "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/beans/OrchestrationStatus.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 4695
+      },
+      "writtenOn": "2020-04-24T08:39:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f512fbd7_28f9591b",
+      "range": {
+        "startLine": 41,
+        "startChar": 4,
+        "endLine": 41,
+        "endChar": 57
+      },
+      "revId": "d23473e9e043d78fbe425214aa0fe3870137ae0a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
