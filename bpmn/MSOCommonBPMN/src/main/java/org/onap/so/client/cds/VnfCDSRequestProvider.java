@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2019 Bell Canada
  * ================================================================================
+ * Modifications Copyright (c) 2020 Tech Mahindra
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -79,8 +81,8 @@ public class VnfCDSRequestProvider implements CDSRequestProvider {
             final String modelCustomizationUuid = genericVnf.getModelInfoGenericVnf().getModelCustomizationUuid();
 
             resolutionKey = genericVnf.getVnfName();
-            blueprintName = genericVnf.getBlueprintName();
-            blueprintVersion = genericVnf.getBlueprintVersion();
+            blueprintName = genericVnf.getModelInfoGenericVnf().getBlueprintName();
+            blueprintVersion = genericVnf.getModelInfoGenericVnf().getBlueprintVersion();
 
             vnfObject.addProperty("service-instance-id", serviceInstance.getServiceInstanceId());
             vnfObject.addProperty("service-model-uuid", serviceInstance.getModelInfoServiceInstance().getModelUuid());

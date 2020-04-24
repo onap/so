@@ -6,6 +6,8 @@
  * ================================================================================
  * Modifications Copyright (C) 2020 Nordix
  * ================================================================================
+ * Modifications Copyright (c) 2020 Tech Mahindra
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -36,7 +38,7 @@ public final class PayloadConstants {
     public static final String SEPARATOR = "-";
     public static final String PNF_SCOPE = "pnf";
     public static final String VNF_SCOPE = "vnf";
-    public static final String VF_MODULE_SCOPE = "vfModule";
+    public static final String VF_MODULE_SCOPE = "vfmodule";
     public static final String SERVICE_SCOPE = "service";
     public static final String RESOLUTION_KEY = "resolution-key";
     public static final String CDS_ACTOR = "cds";
