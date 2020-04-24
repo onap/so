@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d4b484fb_bfccd1ec",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/service/DmaapConditionalSender.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2020-04-24T10:07:05Z",
+      "side": 1,
+      "message": "missing @Autowired annotation no???",
+      "range": {
+        "startLine": 41,
+        "startChar": 11,
+        "endLine": 41,
+        "endChar": 33
+      },
+      "revId": "a48338bce16dc0fd12c84dc0658bc7d72038b47d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "92bc9f71_d7b0a5c9",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/service/DmaapConditionalSender.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2020-04-24T10:07:05Z",
+      "side": 1,
+      "message": "You should mark it \"sent\" only based on HttpStatus code received from dmaap. DmaapService does not check whether post was successful or not",
+      "range": {
+        "startLine": 55,
+        "startChar": 16,
+        "endLine": 55,
+        "endChar": 28
+      },
+      "revId": "a48338bce16dc0fd12c84dc0658bc7d72038b47d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
