@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "80f1cc33_ec9ba014",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/service/DmaapConditionalSender.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-04-24T11:00:35Z",
+      "side": 1,
+      "message": "In a @Service class (or @Component etc) when there is only one constructor the constructor is always @Autwired by default (according to Spring documentation).",
+      "parentUuid": "d4b484fb_bfccd1ec",
+      "range": {
+        "startLine": 41,
+        "startChar": 11,
+        "endLine": 41,
+        "endChar": 33
+      },
+      "revId": "a48338bce16dc0fd12c84dc0658bc7d72038b47d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "92bc9f71_d7b0a5c9",
         "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/service/DmaapConditionalSender.java",
         "patchSetId": 12
@@ -45,6 +69,30 @@
       "revId": "a48338bce16dc0fd12c84dc0658bc7d72038b47d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b89704d7_adf7ec56",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/service/DmaapConditionalSender.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-04-24T11:00:35Z",
+      "side": 1,
+      "message": "I\u0027m using this \u0027sent\u0027 ONLY for logging purposes. I didn\u0027t want to repeat the logger.info(...) twice.",
+      "parentUuid": "92bc9f71_d7b0a5c9",
+      "range": {
+        "startLine": 55,
+        "startChar": 16,
+        "endLine": 55,
+        "endChar": 28
+      },
+      "revId": "a48338bce16dc0fd12c84dc0658bc7d72038b47d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
