@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2019 Bell Canada.
  * ================================================================================
+ * Modifications Copyright (c) 2020 Tech Mahindra
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -52,7 +54,7 @@ public class GeneratePayloadForCdsTest {
     private static final String VNF_SCOPE = "vnf";
     private static final String SERVICE_SCOPE = "service";
     private static final String SERVICE_ACTION = "create";
-    private static final String VF_SCOPE = "vfModule";
+    private static final String VF_SCOPE = "vfmodule";
     private static final String ASSIGN_ACTION = "configAssign";
     private static final String DEPLOY_ACTION = "configDeploy";
     private static final String DOWNLOAD_ACTION = "downloadNESw";
