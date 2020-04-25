@@ -8,6 +8,8 @@
  * ================================================================================
  * Modifications Copyright (c) 2020 Nokia
  * ================================================================================
+ * Modifications Copyright (c) 2020 Tech Mahindra
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -139,6 +141,7 @@ public class WorkflowAction {
     private static final String ACTIVATENETWORKBB = "ActivateNetworkBB";
     private static final String VOLUMEGROUP_DELETE_PATTERN = "(Un|De)(.*)Volume(.*)";
     private static final String VOLUMEGROUP_CREATE_PATTERN = "(A|C)(.*)Volume(.*)";
+    private static final String CONTROLLER = "Controller";
 
     @Autowired
     protected BBInputSetup bbInputSetup;
@@ -664,8 +667,10 @@ public class WorkflowAction {
             resourceId = UUID.randomUUID().toString();
         }
         for (ExecuteBuildingBlock ebb : flowsToExecute) {
-            if (key != null && key.equalsIgnoreCase(ebb.getBuildingBlock().getKey())
-                    && ebb.getBuildingBlock().getBpmnFlowName().contains(resourceType.toString())) {
+            if (key != null && key.equalsIgnoreCase(ebb.getBuildingBlock().getKey()) && (ebb.getBuildingBlock()
+                    .getBpmnFlowName().contains(resourceType.toString())
+                    || (ebb.getBuildingBlock().getBpmnFlowName().contains(CONTROLLER)
+                            && ebb.getBuildingBlock().getBpmnScope().equalsIgnoreCase(resourceType.toString())))) {
                 WorkflowResourceIds workflowResourceIds = new WorkflowResourceIds();
                 workflowResourceIds.setServiceInstanceId(serviceInstanceId);
                 WorkflowResourceIdsUtils.setResourceIdByWorkflowType(workflowResourceIds, resourceType, resourceId);
@@ -1332,7 +1337,8 @@ public class WorkflowAction {
                 addBuildingBlockToExecuteBBList(flowsToExecute, resourceList, WorkflowType.SERVICE, orchFlow, requestId,
                         apiVersion, resourceId, requestAction, vnfType, workflowResourceIds, requestDetails, false,
                         false);
-            } else if (orchFlow.getFlowName().contains(VNF)) {
+            } else if (orchFlow.getFlowName().contains(VNF) || (orchFlow.getFlowName().contains(CONTROLLER)
+                    && (VNF).equalsIgnoreCase(orchFlow.getBpmnScope()))) {
                 addBuildingBlockToExecuteBBList(flowsToExecute, resourceList, WorkflowType.VNF, orchFlow, requestId,
                         apiVersion, resourceId, requestAction, vnfType, workflowResourceIds, requestDetails, false,
                         false);
@@ -1348,7 +1354,8 @@ public class WorkflowAction {
                 addBuildingBlockToExecuteBBList(flowsToExecute, resourceList, WorkflowType.VIRTUAL_LINK, orchFlow,
                         requestId, apiVersion, resourceId, requestAction, vnfType, workflowResourceIds, requestDetails,
                         true, false);
-            } else if (orchFlow.getFlowName().contains(VFMODULE)) {
+            } else if (orchFlow.getFlowName().contains(VFMODULE) || (orchFlow.getFlowName().contains(CONTROLLER)
+                    && (VFMODULE).equalsIgnoreCase(orchFlow.getBpmnScope()))) {
                 List<Resource> vfModuleResourcesSorted = null;
                 if (requestAction.equals(CREATEINSTANCE) || requestAction.equals(ASSIGNINSTANCE)
                         || requestAction.equals("activateInstance")) {

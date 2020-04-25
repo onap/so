@@ -99,7 +99,7 @@ public class ControllerExecutionTest extends BaseTaskTest {
         controllerExecution.setControllerActorScopeAction(execution);
         assertEquals(TEST_SCOPE, execution.getVariable("scope"));
         assertEquals(TEST_ACTION, execution.getVariable("action"));
-        assertEquals(TEST_CONTROLLER_ACTOR, execution.getVariable("controllerActor"));
+        assertEquals(TEST_CONTROLLER_ACTOR, execution.getVariable("actor"));
 
     }
 
@@ -114,7 +114,7 @@ public class ControllerExecutionTest extends BaseTaskTest {
         bbNameSelectionReference.setScope(TEST_SCOPE);
         doReturn(bbNameSelectionReference).when(catalogDbClient).getBBNameSelectionReference(TEST_CONTROLLER_ACTOR,
                 TEST_SCOPE, TEST_ACTION);
-        execution.setVariable("controllerActor", TEST_CONTROLLER_ACTOR);
+        execution.setVariable("actor", TEST_CONTROLLER_ACTOR);
         execution.setVariable("scope", TEST_SCOPE);
         execution.setVariable("action", TEST_ACTION);
 
