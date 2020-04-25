@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a900af72_b8042579",
+        "filename": "bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/BuildingBlock/ControllerExecutionBB.bpmn",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 5597
+      },
+      "writtenOn": "2020-04-25T16:16:45Z",
+      "side": 1,
+      "message": "It looks like the previous version of the file has been exported with a newer version of the exporter. \"exporterVersion 1.14.0\" in old file, \"exporterVersion 1.10.0\" in a new file.\nAny possibility to update to camunda modeller are export the file again?\n\nNot sure, if this will cause issues in the future, but we can see already, that teh xml firmat is a little bit different with exporter 1.10.0",
+      "range": {
+        "startLine": 2,
+        "startChar": 433,
+        "endLine": 2,
+        "endChar": 458
+      },
+      "revId": "63f581402bd57c73a36b6927643d052a1ab80393",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
