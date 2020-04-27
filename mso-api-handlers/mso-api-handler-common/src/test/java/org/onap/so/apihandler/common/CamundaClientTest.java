@@ -24,109 +24,61 @@
 package org.onap.so.apihandler.common;
 
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.ProtocolVersion;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.message.BasicHttpResponse;
-import org.apache.http.message.BasicStatusLine;
-import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
+import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.so.apihandlerinfra.exceptions.ApiException;
+import org.onap.so.apihandlerinfra.exceptions.BPMNFailureException;
+import org.onap.so.apihandlerinfra.exceptions.ClientConnectionException;
 import org.skyscreamer.jsonassert.JSONAssert;
-import org.springframework.mock.env.MockEnvironment;
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestTemplate;
 
-/**
- * This class implements test methods of Camunda Beans.
- *
- *
- */
+@RunWith(MockitoJUnitRunner.class)
 public class CamundaClientTest {
 
-
+    @Mock
+    private RestTemplate restTemplate;
 
     @Mock
-    private HttpClient mockHttpClient;
-    private static final String AUTHORIZATION_HEADER_NAME = "Authorization";
+    private Environment env;
+
+    @Spy
+    private ResponseHandler responseHandler;
+
+    @Spy
+    @InjectMocks
+    private CamundaClient client;
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-    }
-
-    @Test
-    public void tesCamundaPost() throws JsonGenerationException, JsonMappingException, IOException {
-
-
-        String responseBody =
-                "{\"links\":[{\"method\":\"GET\",\"href\":\"http://localhost:9080/engine-rest/process-instance/2047c658-37ae-11e5-9505-7a1020524153\",\"rel\":\"self\"}],\"id\":\"2047c658-37ae-11e5-9505-7a1020524153\",\"definitionId\":\"dummy:10:73298961-37ad-11e5-9505-7a1020524153\",\"businessKey\":null,\"caseInstanceId\":null,\"ended\":true,\"suspended\":false}";
-
-        HttpResponse mockResponse = createResponse(200, responseBody);
-        mockHttpClient = Mockito.mock(HttpClient.class);
-        ArgumentCaptor<HttpPost> httpPostCaptor = ArgumentCaptor.forClass(HttpPost.class);
-        Mockito.when(mockHttpClient.execute(Mockito.any(HttpPost.class))).thenReturn(mockResponse);
-
-        String reqXML = "<xml>test</xml>";
-        String orchestrationURI = "/engine-rest/process-definition/key/dummy/start";
-        MockEnvironment environment = new MockEnvironment();
-
-        environment.setProperty("mso.camundaUR", "yourValue1");
-        environment.setProperty("mso.camundaAuth",
-                "E8E19DD16CC90D2E458E8FF9A884CC0452F8F3EB8E321F96038DE38D5C1B0B02DFAE00B88E2CF6E2A4101AB2C011FC161212EE");
-        environment.setProperty("org.onap.so.adapters.network.encryptionKey", "aa3871669d893c7fb8abbcda31b88b4f");
-
-
-        RequestClientFactory reqClientFactory = new RequestClientFactory();
-        reqClientFactory.setEnv(environment);
-        RequestClient requestClient = reqClientFactory.getRequestClient(orchestrationURI);
-
-        requestClient.setClient(mockHttpClient);
-        HttpResponse response = requestClient.post(reqXML, "reqId", "timeout", "version", null, null);
-
-
-        int statusCode = response.getStatusLine().getStatusCode();
-        assertEquals(requestClient.getType(), CommonConstants.CAMUNDA);
-        assertEquals(statusCode, HttpStatus.SC_OK);
-
-
-        requestClient = reqClientFactory.getRequestClient(orchestrationURI);
-        requestClient.setClient(mockHttpClient);
-        response = requestClient.post(null, "reqId", null, null, null, null);
-        assertEquals(requestClient.getType(), CommonConstants.CAMUNDA);
-        assertEquals(statusCode, HttpStatus.SC_OK);
-        verify(mockHttpClient, times(2)).execute(httpPostCaptor.capture());
-        assertThat(httpPostCaptor.getValue().getHeaders(AUTHORIZATION_HEADER_NAME)).isNotEmpty();
-        Assert.assertEquals("Basic YXBpaEJwbW46Y2FtdW5kYS1SMTUxMiE=",
-                httpPostCaptor.getValue().getHeaders(AUTHORIZATION_HEADER_NAME)[0].getValue());
-    }
-
-    private HttpResponse createResponse(int respStatus, String respBody) {
-        HttpResponse response =
-                new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), respStatus, ""));
-        response.setStatusCode(respStatus);
-        try {
-            response.setEntity(new StringEntity(respBody));
-            response.setHeader("Content-Type", "application/json");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return response;
+    public void setup() {
+        when(env.getRequiredProperty("mso.camundaAuth"))
+                .thenReturn("015E7ACF706C6BBF85F2079378BDD2896E226E09D13DC2784BA309E27D59AB9FAD3A5E039DF0BB8408");
+        when(env.getRequiredProperty("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7");
+        when(env.getRequiredProperty("mso.camundaURL")).thenReturn("http://localhost:8080");
     }
 
     public String inputStream(String JsonInput) throws IOException {
@@ -136,10 +88,37 @@ public class CamundaClientTest {
     }
 
     @Test
-    public void wrapVIDRequestTest() throws IOException {
-        CamundaClient testClient = new CamundaClient();
-        testClient.setUrl("/mso/async/services/CreateGenericALaCarteServiceInstance");
+    public void createBPMNFailureExceptionNoResponseBodyTest() {
+        HttpServerErrorException e = new HttpServerErrorException(HttpStatus.NOT_FOUND);
+        BPMNFailureException ex = client.createBPMNFailureException(e);
+        assertEquals(HttpStatus.NOT_IMPLEMENTED.value(), ex.getHttpResponseCode());
+        assertEquals("Request Failed due to BPEL error with HTTP Status = 404 NOT_FOUND", ex.getMessage());
+    }
 
+    @Test
+    public void createBPMNFailureExceptionWithCamundaResponseTest() throws IOException {
+        HttpClientErrorException e = new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, null,
+                inputStream("/CamundaFailure.json").getBytes(), null);
+        BPMNFailureException ex = client.createBPMNFailureException(e);
+        assertEquals(HttpStatus.BAD_GATEWAY.value(), ex.getHttpResponseCode());
+        assertEquals(
+                "Request Failed due to BPEL error with HTTP Status = 500 INTERNAL_SERVER_ERROR <aetgt:WorkflowException xmlns:aetgt=\"http://org.onap/so/workflow/schema/v1\"><aetgt:ErrorMessage>Exception in create execution list 500 </aetgt:ErrorMessage><aetgt:ErrorCode>7000</aetgt:ErrorCode></aetgt:WorkflowException>",
+                ex.getMessage());
+    }
+
+    @Test
+    public void createBPMNFailureExceptionTest() throws IOException {
+        String response = "Request failed";
+        HttpClientErrorException e =
+                new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, null, response.getBytes(), null);
+        BPMNFailureException ex = client.createBPMNFailureException(e);
+        assertEquals(HttpStatus.BAD_GATEWAY.value(), ex.getHttpResponseCode());
+        assertEquals("Request Failed due to BPEL error with HTTP Status = 500 INTERNAL_SERVER_ERROR Request failed",
+                ex.getMessage());
+    }
+
+    @Test
+    public void wrapVIDRequestTest() throws IOException {
         String requestId = "f7ce78bb-423b-11e7-93f8-0050569a796";
         boolean isBaseVfModule = true;
         int recipeTimeout = 10000;
@@ -161,7 +140,7 @@ public class CamundaClientTest {
         String requestUri = "v7/serviceInstances/assign";
         String instanceGroupId = "ff305d54-75b4-431b-adb2-eb6b9e5ff000";
 
-        String testResult = testClient.wrapVIDRequest(requestId, isBaseVfModule, recipeTimeout, requestAction,
+        String testResult = client.wrapVIDRequest(requestId, isBaseVfModule, recipeTimeout, requestAction,
                 serviceInstanceId, pnfCorrelationId, vnfId, vfModuleId, volumeGroupId, networkId, configurationId,
                 serviceType, vnfType, vfModuleType, networkType, requestDetails, apiVersion, aLaCarte, requestUri, "",
                 instanceGroupId, false);
@@ -171,39 +150,43 @@ public class CamundaClientTest {
     }
 
     @Test
-    public void testPost() throws Exception {
-        CamundaClient testClient = new CamundaClient();
-        String orchestrationURI = "/engine-rest/process-definition/key/dummy/start";
-        MockEnvironment environment = new MockEnvironment();
-
-        environment.setProperty("mso.camundaUR", "yourValue1");
-        testClient.setProps(environment);
-        testClient.setClient(mockHttpClient);
-
-        testClient.setUrl(orchestrationURI);
-
-        String responseBody =
-                "{\"links\":[{\"method\":\"GET\",\"href\":\"http://localhost:9080/engine-rest/process-instance/2047c658-37ae-11e5-9505-7a1020524153\",\"rel\":\"self\"}],\"id\":\"2047c658-37ae-11e5-9505-7a1020524153\",\"definitionId\":\"dummy:10:73298961-37ad-11e5-9505-7a1020524153\",\"businessKey\":null,\"caseInstanceId\":null,\"ended\":true,\"suspended\":false}";
-        assertNull(testClient.post(responseBody));
-
+    public void getClientConnectionExceptionTest() throws ApiException {
+        doThrow(ResourceAccessException.class).when(restTemplate).exchange(eq("http://localhost:8080/path"),
+                eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class));
+        thrown.expect(ClientConnectionException.class);
+        thrown.expectMessage("Client from http://localhost:8080/path failed to connect or respond");
+        client.get("/path");
     }
 
     @Test
-    public void testPostWithRequestClientParameter() throws Exception {
-        CamundaClient testClient = new CamundaClient();
-        String orchestrationURI = "/engine-rest/process-definition/key/dummy/start";
-        HttpResponse mockResponse = createResponse(200, "{}");
-        mockHttpClient = Mockito.mock(HttpClient.class);
-        Mockito.when(mockHttpClient.execute(Mockito.any(HttpPost.class))).thenReturn(mockResponse);
-
-        testClient.setClient(mockHttpClient);
-        testClient.setUrl(orchestrationURI);
-
-        HttpResponse response = testClient.post(new RequestClientParameter.Builder().build());
-
-        assertEquals(HttpStatus.SC_OK, response.getStatusLine().getStatusCode());
-
+    public void postClientConnectionExceptionTest() throws ApiException, IOException {
+        String jsonReq = inputStream("/WrappedVIDRequest.json");
+        doThrow(ResourceAccessException.class).when(restTemplate).postForEntity(eq("http://localhost:8080/path"),
+                any(HttpEntity.class), eq(String.class));
+        thrown.expect(ClientConnectionException.class);
+        thrown.expectMessage("Client from http://localhost:8080/path failed to connect or respond");
+        client.post(jsonReq, "/path");
     }
 
+    @Test
+    public void getHttpStatusCodeExceptionTest() throws ApiException {
+        HttpServerErrorException e = new HttpServerErrorException(HttpStatus.NOT_FOUND);
+        doThrow(e).when(restTemplate).exchange(eq("http://localhost:8080/path"), eq(HttpMethod.GET),
+                any(HttpEntity.class), eq(String.class));
+        thrown.expect(BPMNFailureException.class);
+        thrown.expectMessage("Request Failed due to BPEL error with HTTP Status = 404 NOT_FOUND");
+        client.get("/path");
+    }
+
+    @Test
+    public void postHttpStatusCodeExceptionTest() throws ApiException, IOException {
+        HttpServerErrorException e = new HttpServerErrorException(HttpStatus.NOT_FOUND);
+        String jsonReq = inputStream("/WrappedVIDRequest.json");
+        doThrow(e).when(restTemplate).postForEntity(eq("http://localhost:8080/path"), any(HttpEntity.class),
+                eq(String.class));
+        thrown.expect(BPMNFailureException.class);
+        thrown.expectMessage("Request Failed due to BPEL error with HTTP Status = 404 NOT_FOUND");
+        client.post(jsonReq, "/path");
+    }
 
 }

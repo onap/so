@@ -20,6 +20,8 @@
 
 package org.onap.so.apihandlerinfra.exceptions;
 
+import org.springframework.http.HttpStatus;
+
 public class BPMNFailureException extends ApiException {
 
     private static final String bpmnFailMessage = "Request Failed due to BPEL error with HTTP Status = $HTTPSTATUS";
@@ -34,6 +36,12 @@ public class BPMNFailureException extends ApiException {
         public Builder(String message, int httpResponseCode, String messageID) {
             super(bpmnFailMessage.replaceAll("\\$HTTPSTATUS", message), httpResponseCode, messageID);
         }
+
+        public Builder(String message, int httpResponseCode, String messageID, HttpStatus originalHttpResponseCode) {
+            super(bpmnFailMessage.replaceAll("\\$HTTPSTATUS", message), httpResponseCode, messageID,
+                    originalHttpResponseCode);
+        }
+
 
         public BPMNFailureException build() {
             return new BPMNFailureException(this);

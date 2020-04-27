@@ -103,7 +103,7 @@ public class E2EServiceInstancesTest extends BaseTest {
         String uri = e2eServInstancesUri + "v3";
         ResponseEntity<String> response = sendRequest(inputStream("/Request.json"), uri, HttpMethod.POST);
 
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
     }
 
     @Test
@@ -143,7 +143,7 @@ public class E2EServiceInstancesTest extends BaseTest {
         String uri = e2eServInstancesUri + "v5/9b9f02c0-298b-458a-bc9c-be3692e4f35e";
         ResponseEntity<String> response = sendRequest(inputStream("/DeleteRequest.json"), uri, HttpMethod.DELETE);
 
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
     }
 
     @Test
@@ -183,14 +183,14 @@ public class E2EServiceInstancesTest extends BaseTest {
         String uri = e2eServInstancesUri + "v5/9b9f02c0-298b-458a-bc9c-be3692e4f35e/scale";
         ResponseEntity<String> response = sendRequest(inputStream("/ScaleRequest.json"), uri, HttpMethod.POST);
 
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
     }
 
     @Test
     public void updateE2EServiceInstance() throws IOException {
         String uri = e2eServInstancesUri + "v3/9b9f02c0-298b-458a-bc9c-be3692e4f35e";
         ResponseEntity<String> response = sendRequest(inputStream("/Request.json"), uri, HttpMethod.PUT);
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
     }
 
     @Test
@@ -240,8 +240,8 @@ public class E2EServiceInstancesTest extends BaseTest {
         RequestError expectedResponse = new RequestError();
         ServiceException exception = new ServiceException();
         exception.setMessageId("SVC1000");
-        exception.setText(
-                "Failed calling bpmn localhost:" + env.getProperty("wiremock.server.port") + " failed to respond");
+        exception.setText("Failed calling bpmn Client from http://localhost:" + env.getProperty("wiremock.server.port")
+                + "/mso/async/services/CompareModelofE2EServiceInstance failed to connect or respond");
         expectedResponse.setServiceException(exception);
 
         String uri = e2eServInstancesUri + "v5/9b9f02c0-298b-458a-bc9c-be3692e4f35e/modeldifferences";

@@ -25,84 +25,63 @@ package org.onap.so.apihandler.common;
 
 
 import java.io.IOException;
-import java.util.UUID;
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.DatatypeConverter;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.onap.logging.ref.slf4j.ONAPLogConstants;
+import org.apache.http.HttpStatus;
 import org.onap.so.apihandler.camundabeans.CamundaBooleanInput;
 import org.onap.so.apihandler.camundabeans.CamundaInput;
 import org.onap.so.apihandler.camundabeans.CamundaIntegerInput;
 import org.onap.so.apihandler.camundabeans.CamundaRequest;
+import org.onap.so.apihandler.camundabeans.CamundaResponse;
 import org.onap.so.apihandler.camundabeans.CamundaVIDRequest;
+import org.onap.so.apihandlerinfra.exceptions.ApiException;
+import org.onap.so.apihandlerinfra.exceptions.BPMNFailureException;
+import org.onap.so.apihandlerinfra.exceptions.ClientConnectionException;
+import org.onap.so.utils.CryptoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-public class CamundaClient extends RequestClient {
+@Component
+public class CamundaClient {
     private static Logger logger = LoggerFactory.getLogger(CamundaClient.class);
-    private static final String CAMUNDA_URL_MESAGE = "Camunda url is: ";
-    private static final String CAMUNDA_RESPONSE = "Response is: {}";
-    private static final String AUTHORIZATION = "Authorization";
     private static final String BASIC = "Basic ";
 
-    public CamundaClient() {
-        super(CommonConstants.CAMUNDA);
-    }
+    @Autowired
+    private RestTemplate restTemplate;
 
+    @Autowired
+    private Environment env;
 
-    @Override
-    public HttpResponse post(String camundaReqXML, String requestId, String requestTimeout, String schemaVersion,
-            String serviceInstanceId, String action) throws IOException {
-        HttpPost post = new HttpPost(url);
-        logger.debug(CAMUNDA_URL_MESAGE + url);
-        String jsonReq = wrapRequest(camundaReqXML, requestId, serviceInstanceId, requestTimeout, schemaVersion);
+    @Autowired
+    private ResponseHandler responseHandler;
 
-        StringEntity input = new StringEntity(jsonReq);
-        input.setContentType(CommonConstants.CONTENT_TYPE_JSON);
+    public ResponseEntity<String> post(String camundaReqXML, String requestId, String requestTimeout,
+            String schemaVersion, String serviceInstanceId, String action, String orchestrationURI)
+            throws ApiException {
+        String jsonReq = wrapRequest(camundaReqXML, requestId, serviceInstanceId, requestTimeout, schemaVersion,
+                orchestrationURI);
         logger.info("Camunda Request Content: {}", jsonReq);
 
-
-        post.setEntity(input);
-        setupHeaders(post);
-
-        HttpResponse response = client.execute(post);
-        logger.debug(CAMUNDA_RESPONSE, response);
-
-        return response;
+        return post(jsonReq, orchestrationURI);
     }
 
-
-    private void setupHeaders(HttpPost post) {
-        post.addHeader(ONAPLogConstants.Headers.REQUEST_ID, MDC.get(ONAPLogConstants.MDCs.REQUEST_ID));
-        post.addHeader(ONAPLogConstants.Headers.INVOCATION_ID, UUID.randomUUID().toString());
-        addAuthorizationHeader(post);
-    }
-
-    @Override
-    public HttpResponse post(String jsonReq) throws IOException {
-        HttpPost post = new HttpPost(url);
-        logger.debug(CAMUNDA_URL_MESAGE + url);
-
-        StringEntity input = new StringEntity(jsonReq);
-        input.setContentType(CommonConstants.CONTENT_TYPE_JSON);
-        setupHeaders(post);
-        addAuthorizationHeader(post);
-        post.setEntity(input);
-        HttpResponse response = client.execute(post);
-        logger.debug(CAMUNDA_RESPONSE, response);
-
-        return response;
-    }
-
-    @Override
-    public HttpResponse post(RequestClientParameter parameterObject) throws IOException {
-        HttpPost post = new HttpPost(url);
-        logger.debug(CAMUNDA_URL_MESAGE + url);
+    public ResponseEntity<String> post(RequestClientParameter parameterObject, String orchestrationURI)
+            throws ApiException {
         String jsonReq = wrapVIDRequest(parameterObject.getRequestId(), parameterObject.isBaseVfModule(),
                 parameterObject.getRecipeTimeout(), parameterObject.getRequestAction(),
                 parameterObject.getServiceInstanceId(), parameterObject.getPnfCorrelationId(),
@@ -113,26 +92,44 @@ public class CamundaClient extends RequestClient {
                 parameterObject.getRequestUri(), parameterObject.getRecipeParamXsd(),
                 parameterObject.getInstanceGroupId(), parameterObject.isGenerateIdsOnly());
 
-        StringEntity input = new StringEntity(jsonReq);
-        input.setContentType(CommonConstants.CONTENT_TYPE_JSON);
-        setupHeaders(post);
-        addAuthorizationHeader(post);
-        post.setEntity(input);
-        HttpResponse response = client.execute(post);
-        logger.debug(CAMUNDA_RESPONSE, response);
-
-        return response;
+        return post(jsonReq, orchestrationURI);
     }
 
-    @Override
-    public HttpResponse get() {
-        return null;
+    public ResponseEntity<String> get(String url) throws ApiException {
+        url = env.getRequiredProperty(CommonConstants.CAMUNDA_URL) + url;
+        HttpEntity<?> requestEntity = new HttpEntity<>(setHeaders());
+        try {
+            return restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class);
+        } catch (HttpStatusCodeException e) {
+            logger.error("Error returned from sending GET request to BPMN", e);
+            throw createBPMNFailureException(e);
+        } catch (ResourceAccessException e) {
+            logger.error("Error sending GET to BPMN", e);
+            ClientConnectionException clientException = new ClientConnectionException.Builder(url,
+                    HttpStatus.SC_BAD_GATEWAY, ErrorNumbers.SVC_NO_SERVER_RESOURCES).build();
+            throw clientException;
+        }
+    }
+
+    public ResponseEntity<String> post(String jsonReq, String url) throws ApiException {
+        url = env.getRequiredProperty(CommonConstants.CAMUNDA_URL) + url;
+        HttpEntity<String> request = new HttpEntity<String>(jsonReq, setHeaders());
+        try {
+            return restTemplate.postForEntity(url, request, String.class);
+        } catch (HttpStatusCodeException e) {
+            logger.error("Error returned after sending POST request to BPMN", e);
+            throw createBPMNFailureException(e);
+        } catch (ResourceAccessException e) {
+            logger.error("Error sending POST to BPMN", e);
+            ClientConnectionException clientException = new ClientConnectionException.Builder(url,
+                    HttpStatus.SC_BAD_GATEWAY, ErrorNumbers.SVC_NO_SERVER_RESOURCES).build();
+            throw clientException;
+        }
     }
 
     protected String wrapRequest(String reqXML, String requestId, String serviceInstanceId, String requestTimeout,
-            String schemaVersion) {
+            String schemaVersion, String url) {
         String jsonReq = null;
-
         try {
             CamundaRequest camundaRequest = new CamundaRequest();
             CamundaInput camundaInput = new CamundaInput();
@@ -142,7 +139,7 @@ public class CamundaClient extends RequestClient {
             CamundaInput svcid = new CamundaInput();
             CamundaInput timeout = new CamundaInput();
             camundaInput.setValue(StringUtils.defaultString(reqXML));
-            host.setValue(parseURL());
+            host.setValue(CommonConstants.CAMUNDA_URL);
             schema.setValue(StringUtils.defaultString(schemaVersion));
             reqid.setValue(requestId);
             svcid.setValue(serviceInstanceId);
@@ -160,7 +157,7 @@ public class CamundaClient extends RequestClient {
             jsonReq = mapper.writeValueAsString(camundaRequest);
             logger.trace("request body is {}", jsonReq);
         } catch (Exception e) {
-            logger.error("Error in APIH Warp request", e);
+            logger.error("Error in APIH Wrap request", e);
         }
         return jsonReq;
     }
@@ -254,35 +251,53 @@ public class CamundaClient extends RequestClient {
             jsonReq = mapper.writeValueAsString(camundaRequest);
             logger.trace("request body is {}", jsonReq);
         } catch (Exception e) {
-            logger.error("Error in APIH Warp request", e);
+            logger.error("Error in wrapVIDRequest", e);
         }
         return jsonReq;
     }
 
-    private String parseURL() {
-        String[] parts = url.split(":");
-        String host = "";
-        if (parts.length >= 2) {
-            host = parts[1];
-            if (host.length() > 2) {
-                host = host.substring(2);
-            }
-        }
-        return host;
+    protected HttpHeaders setHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        List<org.springframework.http.MediaType> acceptableMediaTypes = new ArrayList<>();
+        acceptableMediaTypes.add(org.springframework.http.MediaType.APPLICATION_JSON);
+        headers.setAccept(acceptableMediaTypes);
+        headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
+        headers.add(HttpHeaders.AUTHORIZATION, addAuthorizationHeader(env.getRequiredProperty("mso.camundaAuth"),
+                env.getRequiredProperty("mso.msoKey")));
+        return headers;
     }
 
-    private void addAuthorizationHeader(HttpPost post) {
-        String encryptedCredentials;
-        if (props != null) {
-            encryptedCredentials = props.getProperty(CommonConstants.CAMUNDA_AUTH);
-            if (encryptedCredentials != null) {
-                String userCredentials = getEncryptedPropValue(encryptedCredentials, CommonConstants.DEFAULT_BPEL_AUTH,
-                        props.getProperty(CommonConstants.ENCRYPTION_KEY_PROP));
-                if (userCredentials != null) {
-                    post.addHeader(AUTHORIZATION,
-                            BASIC + new String(DatatypeConverter.printBase64Binary(userCredentials.getBytes())));
-                }
+    protected String addAuthorizationHeader(String auth, String msoKey) {
+        String basicAuth = null;
+        try {
+            String userCredentials = CryptoUtils.decrypt(auth, msoKey);
+            if (userCredentials != null) {
+                basicAuth = BASIC + DatatypeConverter.printBase64Binary(userCredentials.getBytes());
             }
+        } catch (GeneralSecurityException e) {
+            logger.error("Security exception", e);
         }
+        return basicAuth;
     }
+
+    protected BPMNFailureException createBPMNFailureException(HttpStatusCodeException e) {
+        ObjectMapper mapper = new ObjectMapper();
+        String responseText = null;
+        String message = null;
+        try {
+            CamundaResponse response = mapper.readValue(e.getResponseBodyAsString(), CamundaResponse.class);
+            responseText = response.getResponse();
+        } catch (IOException ex) {
+            responseText = e.getResponseBodyAsString();
+        }
+        message = String.valueOf(e.getStatusCode());
+        if (responseText != null && !responseText.isEmpty()) {
+            message = message + " " + responseText;
+        }
+        BPMNFailureException bpmnException =
+                new BPMNFailureException.Builder(message, responseHandler.setStatus(e.getStatusCode().value()),
+                        ErrorNumbers.SVC_DETAILED_SERVICE_ERROR, e.getStatusCode()).build();
+        return bpmnException;
+    }
+
 }
