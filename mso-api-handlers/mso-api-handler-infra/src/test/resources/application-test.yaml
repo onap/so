@@ -55,8 +55,8 @@ mso:
       versions:
         apiMinorVersion: 0
         apiPatchVersion: 0
-  camundaURL: http://localhost:${wiremock.server.port}/
-  camundaAuth: E8E19DD16CC90D2E458E8FF9A884CC0452F8F3EB8E321F96038DE38D5C1B0B02DFAE00B88E2CF6E2A4101AB2C011FC161212EE
+  camundaURL: http://localhost:${wiremock.server.port}
+  camundaAuth: 015E7ACF706C6BBF85F2079378BDD2896E226E09D13DC2784BA309E27D59AB9FAD3A5E039DF0BB8408
   async:
     core-pool-size: 50
     max-pool-size: 50

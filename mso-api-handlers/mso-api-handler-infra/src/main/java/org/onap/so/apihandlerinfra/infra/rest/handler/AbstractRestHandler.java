@@ -20,16 +20,15 @@
 
 package org.onap.so.apihandlerinfra.infra.rest.handler;
 
-import java.io.IOException;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.util.Map;
 import java.util.Optional;
 import javax.ws.rs.container.ContainerRequestContext;
 import org.apache.http.HttpStatus;
+import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.apihandler.common.CamundaClient;
 import org.onap.so.apihandler.common.ErrorNumbers;
-import org.onap.so.apihandler.common.RequestClient;
-import org.onap.so.apihandler.common.RequestClientFactory;
 import org.onap.so.apihandler.common.RequestClientParameter;
 import org.onap.so.apihandlerinfra.Action;
 import org.onap.so.apihandlerinfra.Actions;
@@ -45,7 +44,6 @@ import org.onap.so.constants.Status;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
-import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.LogConstants;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.serviceinstancebeans.ModelType;
@@ -74,7 +72,7 @@ public abstract class AbstractRestHandler {
     protected RequestsDbClient infraActiveRequestsClient;
 
     @Autowired
-    protected RequestClientFactory reqClientFactory;
+    private CamundaClient camundaClient;
 
     public String getRequestUri(ContainerRequestContext context) {
         String requestUri = context.getUriInfo().getPath();
@@ -151,10 +149,9 @@ public abstract class AbstractRestHandler {
 
     public void callWorkflowEngine(RequestClientParameter requestClientParameter, String orchestrationUri)
             throws WorkflowEngineConnectionException {
-        RequestClient requestClient = reqClientFactory.getRequestClient(orchestrationUri);
         try {
-            requestClient.post(requestClientParameter);
-        } catch (IOException e) {
+            camundaClient.post(requestClientParameter, orchestrationUri);
+        } catch (ApiException e) {
             logger.error("Error Calling Workflow Engine", e);
             throw new WorkflowEngineConnectionException("Error Calling Workflow Engine", e);
         }

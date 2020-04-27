@@ -26,7 +26,7 @@ public class ClientConnectionException extends ApiException {
     * 
     */
     private static final long serialVersionUID = 1L;
-    private static final String clientFailMessage = "Client from $URL failed to connect";
+    private static final String clientFailMessage = "Client from $URL failed to connect or respond";
 
     private ClientConnectionException(Builder builder) {
         super(builder);

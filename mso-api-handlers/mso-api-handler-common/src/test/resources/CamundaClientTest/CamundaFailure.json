@@ -1,0 +1,7 @@
+{
+	"response":"<aetgt:WorkflowException xmlns:aetgt=\"http://org.onap/so/workflow/schema/v1\"><aetgt:ErrorMessage>Exception in create execution list 500 </aetgt:ErrorMessage><aetgt:ErrorCode>7000</aetgt:ErrorCode></aetgt:WorkflowException>",
+	"message":"Fail",
+	"processInstanceID":"4b33ca85-5860-11e8-ae53-0a580ae94342",
+	"variables":null,
+	"messageCode":500
+}

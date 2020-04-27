@@ -38,21 +38,19 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.camunda.bpm.engine.impl.persistence.entity.HistoricProcessInstanceEntity;
+import org.onap.logging.filter.base.ErrorCode;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.apihandler.camundabeans.CamundaResponse;
+import org.onap.so.apihandler.common.CamundaClient;
 import org.onap.so.apihandler.common.CommonConstants;
 import org.onap.so.apihandler.common.ErrorNumbers;
-import org.onap.so.apihandler.common.RequestClient;
-import org.onap.so.apihandler.common.RequestClientFactory;
 import org.onap.so.apihandler.common.RequestClientParameter;
 import org.onap.so.apihandler.common.ResponseBuilder;
 import org.onap.so.apihandler.common.ResponseHandler;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.BPMNFailureException;
-import org.onap.so.apihandlerinfra.exceptions.ClientConnectionException;
 import org.onap.so.apihandlerinfra.exceptions.ContactCamundaException;
 import org.onap.so.apihandlerinfra.exceptions.DuplicateRequestException;
 import org.onap.so.apihandlerinfra.exceptions.RecipeNotFoundException;
@@ -74,7 +72,6 @@ import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.exceptions.ValidationException;
-import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.LogConstants;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
@@ -115,9 +112,6 @@ public class RequestHandlerUtils extends AbstractRestHandler {
     private Environment env;
 
     @Autowired
-    private RequestClientFactory reqClientFactory;
-
-    @Autowired
     private ResponseBuilder builder;
 
     @Autowired
@@ -129,121 +123,61 @@ public class RequestHandlerUtils extends AbstractRestHandler {
     @Autowired
     private CatalogDbClient catalogDbClient;
 
-    public Response postBPELRequest(InfraActiveRequests currentActiveReq, RequestClientParameter requestClientParameter,
-            String orchestrationUri, String requestScope) throws ApiException {
-        HttpResponse response = null;
-        RequestClient requestClient = null;
+    @Autowired
+    private CamundaClient camundaClient;
 
+    @Autowired
+    private ResponseHandler responseHandler;
+
+    protected ResponseEntity<String> postRequest(InfraActiveRequests currentActiveReq,
+            RequestClientParameter requestClientParameter, String orchestrationUri) throws ApiException {
         try {
-            requestClient = reqClientFactory.getRequestClient(orchestrationUri);
-            response = requestClient.post(requestClientParameter);
-        } catch (Exception e) {
-            logger.error("Error posting request to BPMN", e);
-            ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, ErrorCode.AvailabilityError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
-            String url = requestClient != null ? requestClient.getUrl() : "";
-            ClientConnectionException clientException =
-                    new ClientConnectionException.Builder(url, HttpStatus.SC_BAD_GATEWAY,
-                            ErrorNumbers.SVC_NO_SERVER_RESOURCES).cause(e).errorInfo(errorLoggerInfo).build();
-            updateStatus(currentActiveReq, Status.FAILED, clientException.getMessage());
-            throw clientException;
-        }
-
-        if (response == null) {
-
-            ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, ErrorCode.BusinessProcessError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
-            ClientConnectionException clientException = new ClientConnectionException.Builder(requestClient.getUrl(),
-                    HttpStatus.SC_BAD_GATEWAY, ErrorNumbers.SVC_NO_SERVER_RESOURCES).errorInfo(errorLoggerInfo).build();
-            updateStatus(currentActiveReq, Status.FAILED, clientException.getMessage());
-            throw clientException;
-        }
-
-        ResponseHandler respHandler = null;
-        int bpelStatus = 500;
-        try {
-            respHandler = new ResponseHandler(response, requestClient.getType());
-            bpelStatus = respHandler.getStatus();
+            return camundaClient.post(requestClientParameter, orchestrationUri);
         } catch (ApiException e) {
-            logger.error("Exception occurred", e);
-            ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.SchemaError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
-            ValidateException validateException =
-                    new ValidateException.Builder("Exception caught mapping Camunda JSON response to object",
-                            HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
-                                    .errorInfo(errorLoggerInfo).build();
-            updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
-            throw validateException;
-        }
-
-        // BPEL accepted the request, the request is in progress
-        if (bpelStatus == HttpStatus.SC_ACCEPTED) {
-            ServiceInstancesResponse jsonResponse;
-            CamundaResponse camundaResp = respHandler.getResponse();
-
-            if ("Success".equalsIgnoreCase(camundaResp.getMessage())) {
-                try {
-                    ObjectMapper mapper = new ObjectMapper();
-                    jsonResponse = mapper.readValue(camundaResp.getResponse(), ServiceInstancesResponse.class);
-                    jsonResponse.getRequestReferences().setRequestId(requestClientParameter.getRequestId());
-                    Optional<URL> selfLinkUrl =
-                            buildSelfLinkUrl(currentActiveReq.getRequestUrl(), requestClientParameter.getRequestId());
-                    if (selfLinkUrl.isPresent()) {
-                        jsonResponse.getRequestReferences().setRequestSelfLink(selfLinkUrl.get());
-                    } else {
-                        jsonResponse.getRequestReferences().setRequestSelfLink(null);
-                    }
-                } catch (IOException e) {
-                    logger.error("Exception occurred", e);
-                    ErrorLoggerInfo errorLoggerInfo =
-                            new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.SchemaError)
-                                    .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
-                    ValidateException validateException =
-                            new ValidateException.Builder("Exception caught mapping Camunda JSON response to object",
-                                    HttpStatus.SC_NOT_ACCEPTABLE, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
-                                            .errorInfo(errorLoggerInfo).build();
-                    updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
-                    throw validateException;
-                }
-                return builder.buildResponse(HttpStatus.SC_ACCEPTED, requestClientParameter.getRequestId(),
-                        jsonResponse, requestClientParameter.getApiVersion());
-            }
-        }
-
-        List<String> variables = new ArrayList<>();
-        variables.add(bpelStatus + "");
-        String camundaJSONResponseBody = respHandler.getResponseBody();
-        if (camundaJSONResponseBody != null && !camundaJSONResponseBody.isEmpty()) {
-
-            ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.BusinessProcessError)
-                            .errorSource(requestClient.getUrl()).build();
-            BPMNFailureException bpmnException =
-                    new BPMNFailureException.Builder(String.valueOf(bpelStatus) + camundaJSONResponseBody, bpelStatus,
-                            ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
-
-            updateStatus(currentActiveReq, Status.FAILED, bpmnException.getMessage());
-
-            throw bpmnException;
-        } else {
-
-            ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.BusinessProcessError)
-                            .errorSource(requestClient.getUrl()).build();
-
-
-            BPMNFailureException servException = new BPMNFailureException.Builder(String.valueOf(bpelStatus),
-                    bpelStatus, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
-            updateStatus(currentActiveReq, Status.FAILED, servException.getMessage());
-
-            throw servException;
+            updateStatus(currentActiveReq, Status.FAILED, e.getMessage());
+            throw e;
         }
     }
 
-
+    public Response postBPELRequest(InfraActiveRequests currentActiveReq, RequestClientParameter requestClientParameter,
+            String orchestrationUri, String requestScope) throws ApiException {
+        ObjectMapper mapper = new ObjectMapper();
+        ResponseEntity<String> response = postRequest(currentActiveReq, requestClientParameter, orchestrationUri);
+        ServiceInstancesResponse jsonResponse = null;
+        int bpelStatus = responseHandler.setStatus(response.getStatusCodeValue());
+        try {
+            responseHandler.acceptedResponse(response);
+            CamundaResponse camundaResponse = responseHandler.getCamundaResponse(response);
+            String responseBody = camundaResponse.getResponse();
+            if ("Success".equalsIgnoreCase(camundaResponse.getMessage())) {
+                jsonResponse = mapper.readValue(responseBody, ServiceInstancesResponse.class);
+                jsonResponse.getRequestReferences().setRequestId(requestClientParameter.getRequestId());
+                Optional<URL> selfLinkUrl =
+                        buildSelfLinkUrl(currentActiveReq.getRequestUrl(), requestClientParameter.getRequestId());
+                if (selfLinkUrl.isPresent()) {
+                    jsonResponse.getRequestReferences().setRequestSelfLink(selfLinkUrl.get());
+                } else {
+                    jsonResponse.getRequestReferences().setRequestSelfLink(null);
+                }
+            } else {
+                BPMNFailureException bpmnException =
+                        new BPMNFailureException.Builder(String.valueOf(bpelStatus) + responseBody, bpelStatus,
+                                ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).build();
+                updateStatus(currentActiveReq, Status.FAILED, bpmnException.getMessage());
+                throw bpmnException;
+            }
+        } catch (ApiException e) {
+            updateStatus(currentActiveReq, Status.FAILED, e.getMessage());
+            throw e;
+        } catch (IOException e) {
+            logger.error("Exception caught mapping Camunda JSON response to object: ", e);
+            updateStatus(currentActiveReq, Status.FAILED, e.getMessage());
+            throw new ValidateException.Builder("Exception caught mapping Camunda JSON response to object",
+                    HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_BAD_PARAMETER).cause(e).build();
+        }
+        return builder.buildResponse(HttpStatus.SC_ACCEPTED, requestClientParameter.getRequestId(), jsonResponse,
+                requestClientParameter.getApiVersion());
+    }
 
     @Override
     public void updateStatus(InfraActiveRequests aq, Status status, String errorMessage)
