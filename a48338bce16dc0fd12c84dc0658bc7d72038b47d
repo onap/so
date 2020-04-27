@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "c07f42c4_8be1475b",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/service/DmaapConditionalSender.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2020-04-27T09:06:28Z",
+      "side": 1,
+      "message": "Okay didn\u0027t know that 😊",
+      "parentUuid": "80f1cc33_ec9ba014",
+      "range": {
+        "startLine": 41,
+        "startChar": 11,
+        "endLine": 41,
+        "endChar": 33
+      },
+      "revId": "a48338bce16dc0fd12c84dc0658bc7d72038b47d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "92bc9f71_d7b0a5c9",
         "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/service/DmaapConditionalSender.java",
         "patchSetId": 12
@@ -84,6 +108,30 @@
       "side": 1,
       "message": "I\u0027m using this \u0027sent\u0027 ONLY for logging purposes. I didn\u0027t want to repeat the logger.info(...) twice.",
       "parentUuid": "92bc9f71_d7b0a5c9",
+      "range": {
+        "startLine": 55,
+        "startChar": 16,
+        "endLine": 55,
+        "endChar": 28
+      },
+      "revId": "a48338bce16dc0fd12c84dc0658bc7d72038b47d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "793ebc17_02f7853d",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/service/DmaapConditionalSender.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2020-04-27T09:06:28Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "b89704d7_adf7ec56",
       "range": {
         "startLine": 55,
         "startChar": 16,
