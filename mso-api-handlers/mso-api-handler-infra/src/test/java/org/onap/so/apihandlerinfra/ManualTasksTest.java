@@ -182,7 +182,8 @@ public class ManualTasksTest extends BaseTest {
         RequestError expectedResponse = new RequestError();
         ServiceException se = new ServiceException();
         se.setMessageId("SVC1000");
-        se.setText("Request Failed due to BPEL error with HTTP Status = 502");
+        se.setText("Client from http://localhost:" + env.getProperty("wiremock.server.port")
+                + "/sobpmnengine/task/55/complete failed to connect or respond");
         expectedResponse.setServiceException(se);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);

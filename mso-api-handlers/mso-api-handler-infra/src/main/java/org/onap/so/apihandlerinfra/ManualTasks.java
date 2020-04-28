@@ -34,11 +34,10 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.apihandler.common.CamundaClient;
 import org.onap.so.apihandler.common.ErrorNumbers;
-import org.onap.so.apihandler.common.RequestClient;
-import org.onap.so.apihandler.common.RequestClientFactory;
 import org.onap.so.apihandler.common.ResponseBuilder;
 import org.onap.so.apihandler.common.ResponseHandler;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
@@ -50,12 +49,12 @@ import org.onap.so.apihandlerinfra.tasksbeans.TasksRequest;
 import org.onap.so.apihandlerinfra.tasksbeans.Value;
 import org.onap.so.apihandlerinfra.tasksbeans.Variables;
 import org.onap.so.exceptions.ValidationException;
-import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -76,13 +75,13 @@ public class ManualTasks {
     private String taskUri;
 
     @Autowired
-    private RequestClientFactory reqClientFactory;
-
-    @Autowired
-    private MsoRequest msoRequest;
-
-    @Autowired
     private ResponseBuilder builder;
+
+    @Autowired
+    private CamundaClient camundaClient;
+
+    @Autowired
+    private ResponseHandler responseHandler;
 
     @POST
     @Path("/{version:[vV]1}/{taskId}/complete")
@@ -161,100 +160,37 @@ public class ManualTasks {
             mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
             camundaJsonReq = mapper.writeValueAsString(variablesForComplete);
         } catch (JsonProcessingException e) {
-
-            ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.UnknownError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
-
-
+            logger.error("Mapping of JSON object to Camunda request failed");
             ValidateException validateException =
                     new ValidateException.Builder("Mapping of JSON object to Camunda request failed",
-                            HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_GENERAL_SERVICE_ERROR)
-                                    .errorInfo(errorLoggerInfo).build();
+                            HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_GENERAL_SERVICE_ERROR).build();
             throw validateException;
         }
 
-        RequestClient requestClient;
-        HttpResponse response;
         String requestUrl = taskUri + "/" + taskId + "/complete";
+        ResponseEntity<String> response = camundaClient.post(camundaJsonReq, requestUrl);
+
+        int bpelStatus = responseHandler.setStatus(response.getStatusCodeValue());
+
+        responseHandler.acceptedOrNoContentResponse(response);
+        logger.debug("Received good response from Camunda");
+        TaskRequestReference trr = new TaskRequestReference();
+        trr.setTaskId(taskId);
+        String completeResp = null;
         try {
-            requestClient = reqClientFactory.getRequestClient(requestUrl);
-            // Capture audit event
-
-            response = requestClient.post(camundaJsonReq);
-
-        } catch (Exception e) {
-
-            ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, ErrorCode.AvailabilityError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
-
-
-
-            BPMNFailureException bpmnFailureException =
-                    new BPMNFailureException.Builder(String.valueOf(HttpStatus.SC_BAD_GATEWAY),
-                            HttpStatus.SC_BAD_GATEWAY, ErrorNumbers.SVC_NO_SERVER_RESOURCES).errorInfo(errorLoggerInfo)
-                                    .build();
-
-            throw bpmnFailureException;
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
+            completeResp = mapper.writeValueAsString(trr);
+        } catch (JsonProcessingException e) {
+            logger.error("Unable to map response from Camunda");
+            ValidateException validateException =
+                    new ValidateException.Builder("Request Failed due to bad response format", bpelStatus,
+                            ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).build();
+            throw validateException;
         }
-
-        if (response == null) {
-            ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, ErrorCode.BusinessProcessError)
-                            .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
-
-
-            BPMNFailureException bpmnFailureException =
-                    new BPMNFailureException.Builder(String.valueOf(HttpStatus.SC_BAD_GATEWAY),
-                            HttpStatus.SC_BAD_GATEWAY, ErrorNumbers.SVC_NO_SERVER_RESOURCES).errorInfo(errorLoggerInfo)
-                                    .build();
-
-            throw bpmnFailureException;
-
-        }
-
-        ResponseHandler respHandler = new ResponseHandler(response, requestClient.getType());
-        int bpelStatus = respHandler.getStatus();
-
-        // BPEL accepted the request, the request is in progress
-        if (bpelStatus == HttpStatus.SC_NO_CONTENT || bpelStatus == HttpStatus.SC_ACCEPTED) {
-            logger.debug("Received good response from Camunda");
-            TaskRequestReference trr = new TaskRequestReference();
-            trr.setTaskId(taskId);
-            String completeResp = null;
-            try {
-                ObjectMapper mapper = new ObjectMapper();
-                mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
-                completeResp = mapper.writeValueAsString(trr);
-            } catch (JsonProcessingException e) {
-
-                ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR,
-                        ErrorCode.BusinessProcessError).build();
-
-
-                ValidateException validateException =
-                        new ValidateException.Builder("Request Failed due to bad response format", bpelStatus,
-                                ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
-
-                throw validateException;
-            }
-            logger.debug("Response to the caller: {}", completeResp);
-            logger.debug("End of the transaction, the final response is: {}", completeResp);
-            return builder.buildResponse(HttpStatus.SC_ACCEPTED, requestId, completeResp, apiVersion);
-        } else {
-            ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.BusinessProcessError)
-                            .build();
-
-
-            BPMNFailureException bpmnFailureException = new BPMNFailureException.Builder(String.valueOf(bpelStatus),
-                    bpelStatus, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
-
-            throw bpmnFailureException;
-
-        }
-
+        logger.debug("Response to the caller: {}", completeResp);
+        logger.debug("End of the transaction, the final response is: {}", completeResp);
+        return builder.buildResponse(HttpStatus.SC_ACCEPTED, requestId, completeResp, apiVersion);
     }
 
     private static boolean empty(String s) {

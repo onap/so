@@ -2214,7 +2214,6 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/UnauthorizedResponse.json")
                         .withStatus(org.apache.http.HttpStatus.SC_UNAUTHORIZED)));
 
         wireMockServer.stubFor(get(urlMatching(".*/service/.*"))
@@ -2231,7 +2230,7 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
         RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
-        assertEquals("Exception caught mapping Camunda JSON response to object",
+        assertEquals("Request Failed due to BPEL error with HTTP Status = 401 UNAUTHORIZED",
                 realResponse.getServiceException().getText());
     }
 
@@ -2430,7 +2429,7 @@ public class ServiceInstancesTest extends BaseTest {
         ResponseEntity<String> response =
                 sendRequest(inputStream("/ServiceInstanceDefault.json"), uri, HttpMethod.POST, headers);
 
-        assertEquals(Response.Status.NOT_ACCEPTABLE.getStatusCode(), response.getStatusCode().value());
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
         RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
         assertEquals("Exception caught mapping Camunda JSON response to object",
                 realResponse.getServiceException().getText());

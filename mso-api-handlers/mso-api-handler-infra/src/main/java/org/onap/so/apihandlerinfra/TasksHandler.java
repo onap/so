@@ -22,7 +22,6 @@
 
 package org.onap.so.apihandlerinfra;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,13 +32,12 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.apihandler.common.CamundaClient;
 import org.onap.so.apihandler.common.ErrorNumbers;
-import org.onap.so.apihandler.common.RequestClient;
-import org.onap.so.apihandler.common.RequestClientFactory;
 import org.onap.so.apihandler.common.ResponseBuilder;
 import org.onap.so.apihandler.common.ResponseHandler;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
@@ -50,12 +48,12 @@ import org.onap.so.apihandlerinfra.tasksbeans.TaskList;
 import org.onap.so.apihandlerinfra.tasksbeans.TaskVariableValue;
 import org.onap.so.apihandlerinfra.tasksbeans.TaskVariables;
 import org.onap.so.apihandlerinfra.tasksbeans.TasksGetResponse;
-import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -79,10 +77,13 @@ public class TasksHandler {
     private String requestUrl;
 
     @Autowired
-    private RequestClientFactory reqClientFactory;
+    private ResponseBuilder builder;
 
     @Autowired
-    private ResponseBuilder builder;
+    private CamundaClient camundaClient;
+
+    @Autowired
+    private ResponseHandler responseHandler;
 
     @Path("/{version:[vV]1}")
     @GET
@@ -148,18 +149,12 @@ public class TasksHandler {
         }
 
         tv.setTaskVariables(tvvList);
-
-        RequestClient requestClient = null;
-
-        HttpResponse response = null;
+        ResponseEntity<String> response = null;
+        String camundaJsonReq = null;
 
         try {
-            requestClient = reqClientFactory.getRequestClient(requestUrl);
-            // Capture audit event
             ObjectMapper mapper = new ObjectMapper();
-            String camundaJsonReq = mapper.writeValueAsString(tv);
-            response = requestClient.post(camundaJsonReq);
-
+            camundaJsonReq = mapper.writeValueAsString(tv);
         } catch (JsonProcessingException e) {
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError)
@@ -167,21 +162,16 @@ public class TasksHandler {
             throw new ValidateException.Builder("Mapping of request to JSON object failed : " + e.getMessage(),
                     HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo)
                             .build();
-
-        } catch (IOException e) {
-            ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, ErrorCode.AvailabilityError)
-                            .build();
-            throw new BPMNFailureException.Builder(String.valueOf(HttpStatus.SC_BAD_GATEWAY), HttpStatus.SC_BAD_GATEWAY,
-                    ErrorNumbers.SVC_NO_SERVER_RESOURCES).cause(e).errorInfo(errorLoggerInfo).build();
         }
+
+        response = camundaClient.post(camundaJsonReq, requestUrl);
         TasksGetResponse trr = new TasksGetResponse();
         List<TaskList> taskList = new ArrayList<>();
 
-        ResponseHandler respHandler = new ResponseHandler(response, requestClient.getType());
-        int bpelStatus = respHandler.getStatus();
-        String respBody = respHandler.getResponseBody();
-        if ((bpelStatus == HttpStatus.SC_NO_CONTENT || bpelStatus == HttpStatus.SC_ACCEPTED) && (null != respBody)) {
+        int bpelStatus = responseHandler.setStatus(response.getStatusCodeValue());
+        String respBody = response.getBody();
+        responseHandler.acceptedOrNoContentResponse(response);
+        if (null != respBody) {
 
             JSONArray data = new JSONArray(respBody);
 
@@ -230,45 +220,22 @@ public class TasksHandler {
     private TaskList getTaskInfo(String taskId) throws ApiException {
         TaskList taskList;
         String getRequestUrl = UriBuilder.fromUri(requestUrl).path(taskId).path("variables").build().toString();
-        HttpResponse getResponse;
+        ResponseEntity<String> getResponse;
 
-        RequestClient requestClient = reqClientFactory.getRequestClient(getRequestUrl);
-        // Capture audit event
-        try {
-            getResponse = requestClient.get();
-        } catch (IOException e) {
-            ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, ErrorCode.AvailabilityError)
-                            .build();
-            throw new BPMNFailureException.Builder(String.valueOf(HttpStatus.SC_BAD_GATEWAY), HttpStatus.SC_BAD_GATEWAY,
-                    ErrorNumbers.SVC_NO_SERVER_RESOURCES).cause(e).errorInfo(errorLoggerInfo).build();
-        }
-        ResponseHandler respHandler = new ResponseHandler(getResponse, requestClient.getType());
-        int bpelStatus = respHandler.getStatus();
-        if (bpelStatus == HttpStatus.SC_ACCEPTED) {
-            String respBody = respHandler.getResponseBody();
-            if (respBody != null) {
-                taskList = buildTaskList(taskId, respBody);
-            } else {
-                ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR,
-                        ErrorCode.AvailabilityError).build();
-                throw new BPMNFailureException.Builder(String.valueOf(HttpStatus.SC_BAD_GATEWAY),
-                        HttpStatus.SC_BAD_GATEWAY, ErrorNumbers.SVC_NO_SERVER_RESOURCES).errorInfo(errorLoggerInfo)
-                                .build();
+        getResponse = camundaClient.get(getRequestUrl);
 
-            }
-
+        responseHandler.acceptedResponse(getResponse);
+        String respBody = getResponse.getBody();
+        if (respBody != null) {
+            taskList = buildTaskList(taskId, respBody);
         } else {
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, ErrorCode.AvailabilityError)
                             .build();
-
-            throw new BPMNFailureException.Builder(String.valueOf(bpelStatus), bpelStatus,
+            throw new BPMNFailureException.Builder(String.valueOf(HttpStatus.SC_BAD_GATEWAY), HttpStatus.SC_BAD_GATEWAY,
                     ErrorNumbers.SVC_NO_SERVER_RESOURCES).errorInfo(errorLoggerInfo).build();
         }
-
         return taskList;
-
     }
 
     private TaskList buildTaskList(String taskId, String respBody) {
