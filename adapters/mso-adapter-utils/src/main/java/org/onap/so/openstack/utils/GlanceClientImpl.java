@@ -20,13 +20,14 @@
 
 package org.onap.so.openstack.utils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import org.onap.so.cloud.authentication.KeystoneAuthHolder;
 import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriUtils;
 import com.woorea.openstack.base.client.OpenStackRequest;
 import com.woorea.openstack.glance.Glance;
 import com.woorea.openstack.glance.model.Images;
@@ -72,7 +73,11 @@ public class GlanceClientImpl extends MsoCommonUtils {
         try {
             String encodedName = null;
             if (name != null) {
-                encodedName = UriUtils.encodeQueryParam(name, "UTF-8");
+                try {
+                    encodedName = URLEncoder.encode(name, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    logger.error("error encoding query parameter: {}", encodedName);
+                }
             }
             Glance glanceClient = getGlanceClient(cloudSiteId, tenantId);
             // list is set to false, otherwise an invalid URL is appended
