@@ -205,7 +205,15 @@ spring:
       naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
       enable-lazy-load-no-trans: true
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
-
+sdno:
+  health-check:
+    dmaap:
+      password: password
+      publisher:
+        topic: sdno.test-health-diagnostic-v02
+      subscriber:
+        topic: sdno.test-health-diagnostic-v02
+      username: username
 mariaDB4j:
   dataDir:
   port: 3307

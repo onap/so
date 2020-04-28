@@ -285,5 +285,10 @@
       <groupId>javax.interceptor</groupId>
       <artifactId>javax.interceptor-api</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.onap.so</groupId>
+      <artifactId>aai-client</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 </project>

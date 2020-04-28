@@ -27,8 +27,6 @@ import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.cds.CDSProcessingClient;
 import org.onap.so.client.cds.CDSProcessingListener;
 import org.onap.so.client.policy.PolicyClientImpl;
-import org.onap.so.client.sdno.SDNOValidator;
-import org.onap.so.client.sdno.SDNOValidatorImpl;
 import org.springframework.stereotype.Component;
 
 /*
@@ -49,10 +47,6 @@ public class InjectionHelper {
 
     public AAIQueryClient getAaiQueryClient() {
         return new AAIQueryClient();
-    }
-
-    public SDNOValidator getSdnoValidator() {
-        return new SDNOValidatorImpl();
     }
 
     public AAICommonObjectMapperProvider getAaiCommonObjectMapperProvider() {
