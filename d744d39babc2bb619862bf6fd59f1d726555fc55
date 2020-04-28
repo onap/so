@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c50087ae_a2ba1c98",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/aai/AaiConnection.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 6077
+      },
+      "writtenOn": "2020-04-28T07:44:46Z",
+      "side": 1,
+      "message": "We want to have an opposite mapping. We have the ETSI VnfInstance.id and we want to find AAI GenericVnf. So we have to find GenericVnf which has ETSI VnfInstance.id set at the last part of the selfLink attribute",
+      "range": {
+        "startLine": 125,
+        "startChar": 0,
+        "endLine": 137,
+        "endChar": 1
+      },
+      "revId": "d744d39babc2bb619862bf6fd59f1d726555fc55",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
