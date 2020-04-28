@@ -1,0 +1,9 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+2: Steve Smokowski <ss835w@att.com>
+Code-Review+1: Damian Nowak <damian.nowak@nokia.com>
+Code-Review+1: Sebastien Premont-Tendland <sebastien.premont@bell.ca>
+Submitted-by: Steve Smokowski <ss835w@att.com>
+Submitted-at: Tue, 28 Apr 2020 16:37:49 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/so/+/106637
+Project: so
+Branch: refs/heads/master
