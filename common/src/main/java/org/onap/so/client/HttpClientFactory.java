@@ -21,19 +21,19 @@ package org.onap.so.client;
 
 import java.net.URL;
 import javax.ws.rs.core.MediaType;
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.logging.filter.base.ONAPComponentsList;
 
 public class HttpClientFactory {
 
-    public HttpClient newJsonClient(URL host, ONAPComponents targetEntity) {
+    public HttpClient newJsonClient(URL host, ONAPComponentsList targetEntity) {
         return new HttpClient(host, MediaType.APPLICATION_JSON, targetEntity);
     }
 
-    public HttpClient newXmlClient(URL host, ONAPComponents targetEntity) {
+    public HttpClient newXmlClient(URL host, ONAPComponentsList targetEntity) {
         return new HttpClient(host, MediaType.APPLICATION_XML, targetEntity);
     }
 
-    public HttpClient newTextXmlClient(URL host, ONAPComponents targetEntity) {
-        return new HttpClient(host, MediaType.TEXT_XML, targetEntity);
+    public HttpClient newTextXmlClient(URL host, ONAPComponentsList targetEntity) {
+        return new HttpClient(host, MediaType.TEXT_XML, MediaType.TEXT_XML, targetEntity);
     }
 }

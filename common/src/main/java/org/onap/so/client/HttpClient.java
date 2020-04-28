@@ -24,7 +24,7 @@ import java.net.URL;
 import java.util.Map;
 import java.util.Optional;
 import static org.apache.commons.lang3.StringUtils.*;
-import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.logging.filter.base.ONAPComponentsList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,13 +33,18 @@ public class HttpClient extends RestClient {
     protected final Logger log = LoggerFactory.getLogger(HttpClient.class);
     private ONAPComponents targetEntity;
 
-    HttpClient(URL host, String contentType, ONAPComponents targetEntity) {
+    HttpClient(URL host, String contentType, ONAPComponentsList targetEntity) {
         super(host, contentType);
         this.targetEntity = targetEntity;
     }
 
+    HttpClient(URL host, String acceptType, String contentType, ONAPComponentsList targetEntity) {
+        super(host, acceptType, contentType);
+        this.targetEntity = targetEntity;
+    }
+
     @Override
-    public ONAPComponents getTargetEntity() {
+    public ONAPComponentsList getTargetEntity() {
         return targetEntity;
     }
 
