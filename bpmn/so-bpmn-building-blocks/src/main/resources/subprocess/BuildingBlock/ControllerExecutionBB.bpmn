@@ -10,30 +10,20 @@
       <bpmn:incoming>SequenceFlow_0no1qag</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_1mkhog2" sourceRef="Task_1hs1mn0" targetRef="EndEvent_0lgvk82" />
-    <bpmn:callActivity id="CallActivity_1gfzi2g" name="Abstract CDS&#10;(CDS Call)&#10;" calledElement="AbstractCDSProcessingBB">
-      <bpmn:extensionElements>
-        <camunda:out source="WorkflowException" target="WorkflowException" />
-        <camunda:out source="ControllerStatus" target="ControllerStatus" />
-        <camunda:in source="executionObject" target="executionObject" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_05qembo</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0cvsnuu</bpmn:outgoing>
-    </bpmn:callActivity>
-    <bpmn:serviceTask id="Task_1hs1mn0" name="Update AAI" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatus(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)),InjectExecution.execute(execution, execution.getVariable(&#34;scope&#34;)),InjectExecution.execute(execution, execution.getVariable(&#34;action&#34;)))}">
+    <bpmn:serviceTask id="Task_1hs1mn0" name="Update AAI" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatus(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)), execution.getVariable(&#34;scope&#34;), execution.getVariable(&#34;action&#34;))}">
       <bpmn:incoming>SequenceFlow_07tqu82</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1mkhog2</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="SequenceFlow_05qembo" sourceRef="Task_0bhf6tp" targetRef="CallActivity_1gfzi2g" />
-    <bpmn:serviceTask id="Task_0bhf6tp" name="PreProcess Abstract CDS Processing" camunda:expression="${GenericCDSProcessing.buildPayloadBasedOnScopeAndAction(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+    <bpmn:sequenceFlow id="SequenceFlow_05qembo" sourceRef="Task_0bhf6tp" targetRef="ExclusiveGateway_13q340y" />
+    <bpmn:serviceTask id="Task_0bhf6tp" name="Call ControllerExecutionBB" camunda:expression="${ControllerExecutionBB.execute(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn:incoming>SequenceFlow_0vzx2yr</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_05qembo</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:exclusiveGateway id="ExclusiveGateway_13q340y" default="SequenceFlow_15gxql1">
-      <bpmn:incoming>SequenceFlow_0cvsnuu</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_05qembo</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_07tqu82</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_15gxql1</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="SequenceFlow_0cvsnuu" sourceRef="CallActivity_1gfzi2g" targetRef="ExclusiveGateway_13q340y" />
     <bpmn:sequenceFlow id="SequenceFlow_07tqu82" name="success" sourceRef="ExclusiveGateway_13q340y" targetRef="Task_1hs1mn0">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("ControllerStatus").equals("Success")}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
@@ -81,7 +71,7 @@
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_0op5irz" sourceRef="BBToExecute" targetRef="EndEvent_1lxwuh2" />
     <bpmn:sequenceFlow id="SequenceFlow_0vzx2yr" name="Actor= CDS" sourceRef="ExclusiveGateway_0plxwkg" targetRef="Task_0bhf6tp">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${execution.getVariable("controller_actor") == "CDS"}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${execution.getVariable("actor") == "CDS"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
   </bpmn:process>
   <bpmn:error id="Error_0aovtfv" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
@@ -114,17 +104,14 @@
           <dc:Bounds x="918" y="357" width="90" height="20" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="CallActivity_1gfzi2g_di" bpmnElement="CallActivity_1gfzi2g">
-        <dc:Bounds x="725" y="422" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_0404s6a_di" bpmnElement="Task_1hs1mn0">
         <dc:Bounds x="979" y="422" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_05qembo_di" bpmnElement="SequenceFlow_05qembo">
         <di:waypoint x="672" y="462" />
-        <di:waypoint x="725" y="462" />
+        <di:waypoint x="868" y="462" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="503.5" y="357" width="90" height="20" />
+          <dc:Bounds x="725" y="437" width="90" height="20" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_01mv1si_di" bpmnElement="Task_0bhf6tp">
@@ -136,13 +123,6 @@
           <dc:Bounds x="698" y="327" width="90" height="20" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0cvsnuu_di" bpmnElement="SequenceFlow_0cvsnuu">
-        <di:waypoint x="825" y="462" />
-        <di:waypoint x="868" y="462" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="651.5" y="357" width="90" height="20" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_07tqu82_di" bpmnElement="SequenceFlow_07tqu82">
         <di:waypoint x="918" y="462" />
         <di:waypoint x="979" y="462" />
