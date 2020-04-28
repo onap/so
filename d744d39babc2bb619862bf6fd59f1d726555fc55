@@ -22,6 +22,30 @@
       "revId": "d744d39babc2bb619862bf6fd59f1d726555fc55",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c43404bd_48ea889f",
+        "filename": "adapters/mso-ve-vnfm-adapter/src/main/java/org/onap/so/adapters/vevnfm/aai/AaiConnection.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2020-04-28T15:47:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c50087ae_a2ba1c98",
+      "range": {
+        "startLine": 125,
+        "startChar": 0,
+        "endLine": 137,
+        "endChar": 1
+      },
+      "revId": "d744d39babc2bb619862bf6fd59f1d726555fc55",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
