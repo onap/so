@@ -21,9 +21,8 @@
 package org.onap.so.client.orchestration;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import java.util.UUID;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,9 +31,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.bpmn.common.data.TestDataSetup;
-import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
+import org.onap.so.client.helper.TasksInjectionHelper;
 import org.onap.so.client.sdno.SDNOValidator;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
@@ -49,7 +48,7 @@ public class SDNOHealthCheckResourcesTest extends TestDataSetup {
     protected SDNOValidator MOCK_sdnoValidator;
 
     @Mock
-    protected InjectionHelper MOCK_injectionHelper;
+    protected TasksInjectionHelper MOCK_injectionHelper;
 
     @Before
     public void before() {

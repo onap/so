@@ -20,6 +20,7 @@
 
 package org.onap.so.client.sdno;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -30,7 +31,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.UUID;
-import org.hamcrest.core.StringContains;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -38,8 +38,8 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
 import org.onap.aai.domain.yang.GenericVnf;
+import org.onap.so.BaseIntegrationTest;
 import org.onap.so.client.dmaap.Consumer;
 import org.onap.so.client.dmaap.exceptions.DMaaPConsumerFailure;
 import org.onap.so.client.exceptions.SDNOException;
@@ -48,12 +48,12 @@ import org.onap.so.client.sdno.dmaap.SDNOHealthCheckDmaapConsumer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
-public class SDNOValidatorTest {
+
+public class SDNOValidatorIT extends BaseIntegrationTest {
 
 
     @Mock
     private Consumer mrConsumer;
-    @Spy
     private SDNOHealthCheckDmaapConsumer dmaapConsumer;
     private final String fileLocation = "src/test/resources/org/onap/so/client/sdno/";
     private final String uuid = "xyz123";
@@ -63,10 +63,12 @@ public class SDNOValidatorTest {
     @Before
     public void setUpTests() {
         MockitoAnnotations.initMocks(this);
+
     }
 
     @Test
     public void success() throws IOException, Exception {
+        dmaapConsumer = spy(new SDNOHealthCheckDmaapConsumer());
         when(dmaapConsumer.getConsumer()).thenReturn(mrConsumer);
         when(mrConsumer.fetch())
                 .thenReturn(Arrays.asList(new String[] {getJson("response.json"), getJson("output-success.json")}));
@@ -81,6 +83,8 @@ public class SDNOValidatorTest {
 
     @Test
     public void failure() throws IOException, Exception {
+        dmaapConsumer = spy(new SDNOHealthCheckDmaapConsumer());
+
         when(dmaapConsumer.getConsumer()).thenReturn(mrConsumer);
         when(mrConsumer.fetch())
                 .thenReturn(Arrays.asList(new String[] {getJson("response.json"), getJson("output-failure.json")}));
@@ -90,7 +94,7 @@ public class SDNOValidatorTest {
         when(dmaapConsumer.getRequestId()).thenReturn("xyz123");
         doReturn(dmaapConsumer).when(spy).getConsumer(any(String.class));
         thrown.expect(SDNOException.class);
-        thrown.expectMessage(new StringContains("my error message"));
+        thrown.expectMessage(containsString("my error message"));
         boolean result = spy.pollForResponse("xyz123");
 
     }

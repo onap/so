@@ -52,7 +52,7 @@
     </dependency>
     <dependency>
       <groupId>org.onap.so</groupId>
-      <artifactId>common</artifactId>
+      <artifactId>aai-client</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

@@ -24,6 +24,7 @@
   <modules>
     <module>deployment-configs</module>
     <module>common</module>
+    <module>graph-inventory</module>
     <module>mso-catalog-db</module>
     <module>mso-api-handlers</module>
     <module>adapters</module>

@@ -41,5 +41,10 @@
       <artifactId>spring-cloud-contract-wiremock</artifactId>
       <version>1.2.4.RELEASE</version>
     </dependency>
+    <dependency>
+      <groupId>org.onap.so</groupId>
+      <artifactId>aai-client</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 </project>
