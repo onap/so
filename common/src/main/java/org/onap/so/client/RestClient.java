@@ -104,6 +104,15 @@ public abstract class RestClient {
         this.props = new DefaultProperties(host);
     }
 
+    protected RestClient(URL host, String acceptType, String contentType) {
+        headerMap = new HashMap<>();
+        this.path = Optional.empty();
+        this.host = host;
+        this.accept = acceptType;
+        this.contentType = contentType;
+        this.props = new DefaultProperties(host);
+    }
+
     /**
      * Override method to return false to disable logging.
      *
