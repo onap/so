@@ -27,7 +27,7 @@
 	<property name="currentTimeStamp" value="%d{&quot;yyyy-MM-dd'T'HH:mm:ss.SSSXXX&quot;,UTC}"/>
 
 	<property name="errorPattern"
-		value="%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{RequestID}|%thread|%X{ServiceName:-Unknown}|%X{PartnerName}|%X{TargetEntity}|%X{TargetServiceName}|%.-5level|%X{ErrorCode:-900}|%X{ErrorDesc:-UnknownError}|%msg%nopex%n" />
+		value="%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{RequestID}|%thread|%X{ServiceName:-Unknown}|%X{PartnerName}|%X{TargetEntity}|%X{TargetServiceName}|%.-5level|%X{ErrorCode:-900}|%X{ErrorDesc:-UnknownError}|%replace(%msg){'\n',' '}%nopex%n" />
 
 	<property name="debugPattern"
 		value="%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{RequestID}|%logger{50} - %msg%n" />
