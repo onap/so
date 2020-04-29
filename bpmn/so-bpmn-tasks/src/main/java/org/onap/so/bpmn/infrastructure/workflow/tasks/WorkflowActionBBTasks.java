@@ -305,6 +305,18 @@ public class WorkflowActionBBTasks {
                         flowName = flowName.replaceFirst("Activate", "Deactivate");
                     } else if (flowName.startsWith("Add")) {
                         flowName = flowName.replaceFirst("Add", "Delete");
+                    } else if (flowName.startsWith("VNF")) {
+                        if (flowName.startsWith("VNFSet")) {
+                            flowName = flowName.replaceFirst("VNFSet", "VNFUnset");
+                        } else if (flowName.startsWith("VNFLock")) {
+                            flowName = flowName.replaceFirst("VNFLock", "VNFUnlock");
+                        } else if (flowName.startsWith("VNFStop")) {
+                            flowName = flowName.replaceFirst("VNFStop", "VNFStart");
+                        } else if (flowName.startsWith("VNFQuiesce")) {
+                            flowName = flowName.replaceFirst("VNFQuiesce", "VNFResume");
+                        } else {
+                            continue;
+                        }
                     } else {
                         continue;
                     }
