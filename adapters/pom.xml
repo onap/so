@@ -22,7 +22,7 @@
     <module>mso-vfc-adapter</module>
     <module>mso-openstack-adapters</module>
     <module>etsi-sol003-adapter</module>
-    <module>mso-ve-vnfm-adapter</module>
+    <module>etsi-sol002-adapter</module>
     <module>mso-nssmf-adapter</module>
     <module>so-appc-orchestrator</module>
   </modules>

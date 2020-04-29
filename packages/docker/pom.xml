@@ -119,7 +119,7 @@
                     <dependencySets>
                       <dependencySet>
                         <includes>
-                          <include>org.onap.so.adapters:mso-ve-vnfm-adapter</include>
+                          <include>org.onap.so.adapters:etsi-sol002-adapter</include>
                         </includes>
                         <outputFileNameMapping>app.jar</outputFileNameMapping>
                       </dependencySet>
@@ -472,7 +472,7 @@
     </dependency>
     <dependency>
       <groupId>org.onap.so.adapters</groupId>
-      <artifactId>mso-ve-vnfm-adapter</artifactId>
+      <artifactId>etsi-sol002-adapter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

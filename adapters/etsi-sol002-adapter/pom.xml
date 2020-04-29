@@ -12,11 +12,10 @@
   </parent>
 
   <groupId>org.onap.so.adapters</groupId>
-  <artifactId>mso-ve-vnfm-adapter</artifactId>
+  <artifactId>etsi-sol002-adapter</artifactId>
   <packaging>jar</packaging>
 
-  <name>mso-ve-vnfm-adapter</name>
-  <description>Ve-Vnfm (SOL002) Adapter</description>
+  <name>ETSI SOL002 Application Jar</name>
 
   <properties>
     <java.version>1.8</java.version>
