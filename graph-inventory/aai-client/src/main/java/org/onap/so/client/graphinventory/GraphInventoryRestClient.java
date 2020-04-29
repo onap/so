@@ -24,12 +24,11 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Optional;
 import javax.ws.rs.core.Response;
+import org.onap.logging.filter.base.ONAPComponentsList;
 import org.onap.so.client.ResponseExceptionMapper;
 import org.onap.so.client.RestClientSSL;
 import org.onap.so.client.RestProperties;
 import org.onap.so.client.policy.CommonObjectMapperProvider;
-import org.onap.logging.filter.base.ONAPComponents;
-import org.onap.logging.filter.base.ONAPComponentsList;
 
 public abstract class GraphInventoryRestClient extends RestClientSSL {
 

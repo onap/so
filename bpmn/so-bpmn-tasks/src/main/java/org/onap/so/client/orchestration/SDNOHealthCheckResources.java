@@ -21,16 +21,16 @@
 package org.onap.so.client.orchestration;
 
 import java.util.UUID;
-import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
+import org.onap.so.client.helper.TasksInjectionHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class SDNOHealthCheckResources {
     @Autowired
-    private InjectionHelper injectionHelper;
+    private TasksInjectionHelper injectionHelper;
 
     /**
      * SDNO Call to Check Health Status
