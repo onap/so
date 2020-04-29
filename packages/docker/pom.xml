@@ -252,7 +252,7 @@
               <name>${docker.image.prefix}/nssmf-adapter</name>
               <build>
                 <cleanup>try</cleanup>
-                <dockerFile>docker-files/Dockerfile.so-app</dockerFile>
+                <dockerFile>docker-files/Dockerfile.so-nssmf-adapter</dockerFile>
                 <tags>
                   <tag>${project.version}</tag>
                   <tag>${project.version}-${maven.build.timestamp}</tag>
