@@ -45,6 +45,7 @@ public class OAuthNotificationServiceProvider extends AbstractNotificationServic
     public boolean send(final Object notification, final SubscriptionsAuthentication subscriptionsAuthentication,
             final String callbackUri) {
         logger.info("Sending notification to uri: {}", callbackUri);
+        logger.info("Object: {}", notification);
         final String token = getAccessToken(subscriptionsAuthentication);
 
         if (token == null) {
