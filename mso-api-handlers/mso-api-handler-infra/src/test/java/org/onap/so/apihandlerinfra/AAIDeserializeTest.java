@@ -31,7 +31,7 @@ import javax.ws.rs.core.MediaType;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.aai.domain.yang.Tenant;
-import org.onap.so.client.aai.AAIVersion;
+import org.onap.aaiclient.client.aai.AAIVersion;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

@@ -32,9 +32,9 @@ import org.onap.so.bpmn.core.domain.ModelInfo
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.client.aai.AAIRestClientImpl
-import org.onap.so.client.aai.AAIUpdatorImpl
-import org.onap.so.client.aai.AAIValidatorImpl
+import org.onap.aaiclient.client.aai.AAIRestClientImpl
+import org.onap.aaiclient.client.aai.AAIUpdatorImpl
+import org.onap.aaiclient.client.aai.AAIValidatorImpl
 import org.onap.logging.filter.base.ErrorCode
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger

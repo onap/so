@@ -20,8 +20,8 @@
 
 package org.onap.so.adapters.etsi.sol003.adapter.lcm.extclients.aai;
 
-import org.onap.so.client.aai.AAIProperties;
-import org.onap.so.client.aai.AAIVersion;
+import org.onap.aaiclient.client.aai.AAIProperties;
+import org.onap.aaiclient.client.aai.AAIVersion;
 import org.onap.so.spring.SpringContextHelper;
 import org.springframework.context.ApplicationContext;
 import java.net.MalformedURLException;

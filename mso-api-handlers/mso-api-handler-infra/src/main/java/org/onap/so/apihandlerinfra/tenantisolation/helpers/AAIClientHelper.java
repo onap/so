@@ -28,12 +28,12 @@ import java.util.Map;
 import javax.ws.rs.NotFoundException;
 import org.onap.aai.domain.yang.OperationalEnvironment;
 import org.onap.so.apihandlerinfra.tenantisolation.exceptions.AAIClientCallFailed;
-import org.onap.so.client.aai.AAIObjectType;
-import org.onap.so.client.aai.AAIResourcesClient;
-import org.onap.so.client.aai.entities.AAIResultWrapper;
-import org.onap.so.client.aai.entities.uri.AAIResourceUri;
-import org.onap.so.client.aai.entities.uri.AAIUriFactory;
-import org.onap.so.client.graphinventory.entities.uri.Depth;
+import org.onap.aaiclient.client.aai.AAIObjectType;
+import org.onap.aaiclient.client.aai.AAIResourcesClient;
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.graphinventory.entities.uri.Depth;
 import org.springframework.stereotype.Component;
 
 

@@ -22,10 +22,10 @@ package org.onap.so.simulator;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.onap.so.client.aai.AAIVersion;
+import org.onap.aaiclient.client.aai.AAIVersion;
 
 
-public class AAIPropertiesImpl implements org.onap.so.client.aai.AAIProperties {
+public class AAIPropertiesImpl implements org.onap.aaiclient.client.aai.AAIProperties {
 
     public static final String AAI_ENDPOINT = "aai.endpoint";
 

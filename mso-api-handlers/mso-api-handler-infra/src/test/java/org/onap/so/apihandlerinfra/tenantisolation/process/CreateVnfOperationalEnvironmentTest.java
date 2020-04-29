@@ -41,7 +41,7 @@ import org.onap.aai.domain.yang.OperationalEnvironment;
 import org.onap.so.apihandlerinfra.BaseTest;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.tenantisolation.CloudOrchestrationRequest;
-import org.onap.so.client.aai.AAIVersion;
+import org.onap.aaiclient.client.aai.AAIVersion;
 import org.onap.so.client.grm.beans.Property;
 import org.onap.so.client.grm.beans.ServiceEndPointList;
 import org.onap.so.db.request.beans.InfraActiveRequests;

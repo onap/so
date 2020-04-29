@@ -22,11 +22,11 @@ package org.onap.so.bpmn.infrastructure.pnf.management;
 
 import java.util.Optional;
 import org.onap.aai.domain.yang.Pnf;
-import org.onap.so.client.aai.AAIObjectType;
-import org.onap.so.client.aai.AAIResourcesClient;
-import org.onap.so.client.aai.AAIRestClientImpl;
-import org.onap.so.client.aai.entities.uri.AAIResourceUri;
-import org.onap.so.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.aai.AAIObjectType;
+import org.onap.aaiclient.client.aai.AAIResourcesClient;
+import org.onap.aaiclient.client.aai.AAIRestClientImpl;
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.springframework.stereotype.Component;
 
 @Component

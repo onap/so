@@ -1,10 +1,10 @@
 package org.onap.so.simulator.actions.aai;
 
 import org.onap.aai.domain.yang.L3Network;
-import org.onap.so.client.aai.AAIObjectType;
-import org.onap.so.client.aai.AAIResourcesClient;
-import org.onap.so.client.aai.entities.uri.AAIResourceUri;
-import org.onap.so.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.aai.AAIObjectType;
+import org.onap.aaiclient.client.aai.AAIResourcesClient;
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.consol.citrus.actions.AbstractTestAction;

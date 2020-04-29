@@ -44,7 +44,7 @@ import org.onap.so.apihandlerinfra.tenantisolationbeans.OperationalEnvironment;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.RequestDetails;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.RequestInfo;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.RequestParameters;
-import org.onap.so.client.aai.AAIVersion;
+import org.onap.aaiclient.client.aai.AAIVersion;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;

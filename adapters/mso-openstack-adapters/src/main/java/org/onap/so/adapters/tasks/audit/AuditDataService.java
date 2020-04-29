@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import org.onap.so.audit.beans.AuditInventory;
-import org.onap.so.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
+import org.onap.aaiclient.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
 import org.onap.so.db.request.beans.RequestProcessingData;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.objects.audit.AAIObjectAuditList;

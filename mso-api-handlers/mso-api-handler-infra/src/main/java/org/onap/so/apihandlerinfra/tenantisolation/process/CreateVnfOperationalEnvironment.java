@@ -37,7 +37,7 @@ import org.onap.so.apihandlerinfra.tenantisolation.exceptions.TenantIsolationExc
 import org.onap.so.apihandlerinfra.tenantisolation.helpers.AAIClientHelper;
 import org.onap.so.apihandlerinfra.tenantisolation.helpers.AAIClientObjectBuilder;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.RelatedInstanceList;
-import org.onap.so.client.aai.entities.AAIResultWrapper;
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.grm.GRMClient;
 import org.onap.so.client.grm.beans.OperationalInfo;
 import org.onap.so.client.grm.beans.Property;

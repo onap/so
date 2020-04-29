@@ -24,9 +24,9 @@ package org.onap.so.bpmn.infrastructure.scripts
 
 import org.onap.so.logger.LoggingAnchor
 import org.onap.so.client.HttpClientFactory
-import org.onap.so.client.aai.AAIObjectType
-import org.onap.so.client.aai.entities.uri.AAIResourceUri
-import org.onap.so.client.aai.entities.uri.AAIUriFactory;
+import org.onap.aaiclient.client.aai.AAIObjectType
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor

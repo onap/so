@@ -30,7 +30,7 @@ import org.mockito.Mockito
 import org.onap.aai.domain.yang.CommunicationServiceProfile
 import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
-import org.onap.so.client.aai.AAIResourcesClient
+import org.onap.aaiclient.client.aai.AAIResourcesClient
 
 import static com.shazam.shazamcrest.MatcherAssert.assertThat
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs

@@ -34,10 +34,10 @@ import org.onap.aai.domain.yang.VolumeGroup
 import org.onap.so.bpmn.common.scripts.ConfirmVolumeGroupName
 import org.onap.so.bpmn.common.scripts.ConfirmVolumeGroupNameFactory
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
-import org.onap.so.client.aai.AAIObjectType
-import org.onap.so.client.aai.AAIResourcesClient
-import org.onap.so.client.aai.entities.uri.AAIResourceUri
-import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.aai.AAIObjectType
+import org.onap.aaiclient.client.aai.AAIResourcesClient
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.constants.Defaults
 import org.springframework.http.HttpStatus
 

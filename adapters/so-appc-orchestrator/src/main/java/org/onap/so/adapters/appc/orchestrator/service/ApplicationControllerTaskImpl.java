@@ -11,7 +11,7 @@ import org.onap.so.adapters.appc.orchestrator.client.beans.Parameters;
 import org.onap.so.adapters.appc.orchestrator.client.beans.RequestParameters;
 import org.onap.so.appc.orchestrator.service.beans.ApplicationControllerTaskRequest;
 import org.onap.so.appc.orchestrator.service.beans.ApplicationControllerVm;
-import org.onap.so.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
+import org.onap.aaiclient.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;

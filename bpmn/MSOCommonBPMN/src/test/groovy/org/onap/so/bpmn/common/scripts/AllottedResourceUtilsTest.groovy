@@ -27,10 +27,10 @@ import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.internal.stubbing.answers.DoesNothing
 import org.onap.aai.domain.yang.AllottedResource
-import org.onap.so.client.aai.AAIObjectType
-import org.onap.so.client.aai.entities.AAIResultWrapper
-import org.onap.so.client.aai.entities.uri.AAIResourceUri
-import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.aai.AAIObjectType
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import javax.ws.rs.core.UriBuilder
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertTrue

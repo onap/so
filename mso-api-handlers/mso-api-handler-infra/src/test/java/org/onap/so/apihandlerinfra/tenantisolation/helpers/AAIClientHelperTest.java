@@ -40,8 +40,8 @@ import org.apache.http.HttpStatus;
 import org.junit.Test;
 import org.onap.aai.domain.yang.OperationalEnvironment;
 import org.onap.so.apihandlerinfra.BaseTest;
-import org.onap.so.client.aai.AAIVersion;
-import org.onap.so.client.aai.entities.AAIResultWrapper;
+import org.onap.aaiclient.client.aai.AAIVersion;
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 

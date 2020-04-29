@@ -37,8 +37,8 @@ import org.onap.aai.domain.yang.VpnBindings;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VpnBinding;
-import org.onap.so.client.aai.entities.uri.AAIPluralResourceUri;
-import org.onap.so.client.aai.entities.uri.AAIResourceUri;
+import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri;
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 
 
 public class AAIVpnBindingResourcesTest extends BaseTaskTest {

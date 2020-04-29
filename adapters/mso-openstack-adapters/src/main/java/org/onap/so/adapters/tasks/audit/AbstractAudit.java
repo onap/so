@@ -20,7 +20,7 @@
 
 package org.onap.so.adapters.tasks.audit;
 
-import org.onap.so.client.aai.AAIResourcesClient;
+import org.onap.aaiclient.client.aai.AAIResourcesClient;
 
 public class AbstractAudit {
 

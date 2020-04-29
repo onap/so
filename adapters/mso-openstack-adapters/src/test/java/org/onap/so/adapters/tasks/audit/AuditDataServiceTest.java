@@ -15,7 +15,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.so.adapters.tasks.audit.AuditDataService;
 import org.onap.so.audit.beans.AuditInventory;
-import org.onap.so.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
+import org.onap.aaiclient.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
 import org.onap.so.db.request.beans.RequestProcessingData;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.objects.audit.AAIObjectAudit;

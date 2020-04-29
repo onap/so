@@ -39,7 +39,7 @@ import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.mock.FileUtil
-import org.onap.so.client.aai.entities.AAIResultWrapper
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.springframework.mock.env.MockEnvironment
 
 import static org.mockito.ArgumentMatchers.eq

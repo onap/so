@@ -20,7 +20,7 @@
 
 package org.onap.so.adapters.etsi.sol003.adapter.lcm.extclients.aai;
 
-import org.onap.so.client.aai.AAIResourcesClient;
+import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

@@ -30,7 +30,7 @@ import org.onap.ccsdk.cds.controllerblueprints.processing.api.ExecutionServiceIn
 import org.onap.so.BaseBPMNTest;
 import org.onap.so.GrpcNettyServer;
 import org.onap.so.bpmn.mock.FileUtil;
-import org.onap.so.client.aai.AAIVersion;
+import org.onap.aaiclient.client.aai.AAIVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

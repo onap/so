@@ -42,7 +42,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoInstanceGroup;
-import org.onap.so.client.aai.entities.AAIEdgeLabel;
+import org.onap.aaiclient.client.aai.entities.AAIEdgeLabel;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 
 public class AssignVnfTest extends BaseTaskTest {

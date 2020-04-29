@@ -27,7 +27,7 @@ import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.audit.beans.AuditInventory;
-import org.onap.so.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
+import org.onap.aaiclient.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
 import org.onap.so.logging.tasks.AuditMDCSetup;
 import org.onap.so.objects.audit.AAIObjectAuditList;
 import org.slf4j.Logger;

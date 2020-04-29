@@ -20,7 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.aai;
 
-import org.onap.so.client.aai.AAIResourcesClient;
+import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.springframework.stereotype.Component;
 
 @Component

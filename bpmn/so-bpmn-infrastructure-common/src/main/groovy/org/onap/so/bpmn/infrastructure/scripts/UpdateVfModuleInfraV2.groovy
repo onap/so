@@ -29,7 +29,7 @@ import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
-import org.onap.so.client.aai.AAIValidatorImpl
+import org.onap.aaiclient.client.aai.AAIValidatorImpl
 import org.onap.so.client.appc.ApplicationControllerClient
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

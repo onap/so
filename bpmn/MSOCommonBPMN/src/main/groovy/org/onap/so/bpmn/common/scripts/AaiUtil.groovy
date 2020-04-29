@@ -38,8 +38,8 @@ import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.GenericVnf
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.client.HttpClient
-import org.onap.so.client.aai.AAIVersion
-import org.onap.so.client.aai.entities.uri.AAIUri
+import org.onap.aaiclient.client.aai.AAIVersion
+import org.onap.aaiclient.client.aai.entities.uri.AAIUri
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

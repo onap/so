@@ -33,7 +33,7 @@ import org.mockito.junit.MockitoJUnitRunner
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.AllottedResourceUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
-import org.onap.so.client.aai.AAIResourcesClient
+import org.onap.aaiclient.client.aai.AAIResourcesClient
 
 import static org.mockito.ArgumentMatchers.any
 import static org.mockito.Mockito.*
