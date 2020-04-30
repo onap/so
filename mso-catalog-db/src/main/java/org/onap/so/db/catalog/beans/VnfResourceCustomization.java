@@ -156,7 +156,7 @@ public class VnfResourceCustomization implements Serializable {
                 .append("vfModuleCustomizations", vfModuleCustomizations)
                 .append("vnfcInstanceGroupOrder", vnfcInstanceGroupOrder)
                 .append("vnfcInstanceGroupCustomizations", vnfcInstanceGroupCustomizations)
-                .append("controllerActor", controllerActor).toString();
+                .append("controllerActor", controllerActor).append("resourceInput", resourceInput).toString();
     }
 
     @PrePersist
