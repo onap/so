@@ -20,6 +20,7 @@
 
 package org.onap.so.adapters.etsi.sol003.adapter.packagemanagement.converters.etsicatalog.sol003;
 
+import org.onap.so.adapters.etsi.sol003.adapter.common.VnfmAdapterUrlProvider;
 import org.onap.so.adapters.etsi.sol003.adapter.etsicatalog.notification.model.PkgmLinks;
 import org.onap.so.adapters.etsi.sol003.adapter.packagemanagement.extclients.vnfm.notification.model.URIisprovidedbytheclientwhencreatingthesubscriptionVnfPackageOnboardingNotificationLinks;
 import org.onap.so.adapters.etsi.sol003.adapter.packagemanagement.extclients.vnfm.notification.model.URIisprovidedbytheclientwhencreatingthesubscriptionVnfPackageOnboardingNotificationLinksVnfPackage;
@@ -32,18 +33,24 @@ import org.onap.so.adapters.etsi.sol003.adapter.packagemanagement.extclients.vnf
  */
 abstract public class AbstractPkgNotificationConverter {
 
+    private final VnfmAdapterUrlProvider vnfmAdapterUrlProvider;
+
+    public AbstractPkgNotificationConverter(final VnfmAdapterUrlProvider vnfmAdapterUrlProvider) {
+        this.vnfmAdapterUrlProvider = vnfmAdapterUrlProvider;
+    }
+
     protected URIisprovidedbytheclientwhencreatingthesubscriptionVnfPackageOnboardingNotificationLinks convert(
-            final PkgmLinks pkgmLinks) {
+            final PkgmLinks pkgmLinks, final String vnfPkgId, final String subscriptionId) {
         final URIisprovidedbytheclientwhencreatingthesubscriptionVnfPackageOnboardingNotificationLinksVnfPackage linksVnfPackage =
                 new URIisprovidedbytheclientwhencreatingthesubscriptionVnfPackageOnboardingNotificationLinksVnfPackage();
         if (pkgmLinks.getVnfPackage() != null) {
-            linksVnfPackage.setHref(pkgmLinks.getVnfPackage().getHref());
+            linksVnfPackage.setHref(vnfmAdapterUrlProvider.getVnfPackageUrl(vnfPkgId));
         }
 
         final URIisprovidedbytheclientwhencreatingthesubscriptionVnfPackageOnboardingNotificationLinksVnfPackage linksSubscription =
                 new URIisprovidedbytheclientwhencreatingthesubscriptionVnfPackageOnboardingNotificationLinksVnfPackage();
         if (pkgmLinks.getSubscription() != null) {
-            linksSubscription.setHref(pkgmLinks.getSubscription().getHref());
+            linksSubscription.setHref(vnfmAdapterUrlProvider.getSubscriptionUriString(subscriptionId));
         }
 
         final URIisprovidedbytheclientwhencreatingthesubscriptionVnfPackageOnboardingNotificationLinks links =

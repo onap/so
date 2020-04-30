@@ -20,8 +20,22 @@
 
 package org.onap.so.adapters.etsi.sol003.adapter.packagemanagement.rest;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.onap.so.adapters.etsi.sol003.adapter.common.CommonConstants.ETSI_SUBSCRIPTION_NOTIFICATION_CONTROLLER_BASE_URL;
+import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_CLASS;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import java.net.URI;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,22 +73,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
-import java.net.URI;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.onap.so.adapters.etsi.sol003.adapter.common.CommonConstants.ETSI_SUBSCRIPTION_NOTIFICATION_CONTROLLER_BASE_URL;
-import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_CLASS;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import com.google.gson.Gson;
 
 /**
  * @author Andrew Lamb (andrew.a.lamb@est.tech)
@@ -106,10 +105,13 @@ public class EtsiSubscriptionNotificationControllerTest {
     private static final java.time.LocalDateTime TIMESTAMP = java.time.LocalDateTime.of(2020, 1, 1, 1, 1, 1, 1);
     private static final String VNFPKG_ID = UUID.randomUUID().toString();
     private static final String VNFD_ID = UUID.randomUUID().toString();
+    private static final String EXPECTED_VNF_PACKAGE_HREF =
+            "https://so-vnfm-adapter.onap:30406/so/vnfm-adapter/v1/vnfpkgm/v1/vnf_packages/" + VNFPKG_ID;
+    private static final String EXPECTED_SUBSCRIPTION_HREF =
+            "https://so-vnfm-adapter.onap:30406/so/vnfm-adapter/v1/vnfpkgm/v1/subscriptions/" + SUBSCRIPTION_ID;
+
 
     private BasicHttpHeadersProvider basicHttpHeadersProvider;
-    private final Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class,
-            new EtsiSubscriptionNotificationController.LocalDateTimeTypeAdapter()).create();
 
     @Autowired
     @Qualifier(CONFIGURABLE_REST_TEMPLATE)
@@ -163,7 +165,8 @@ public class EtsiSubscriptionNotificationControllerTest {
                 .andExpect(jsonPath("$.subscriptionId").value(SUBSCRIPTION_ID))
                 .andExpect(jsonPath("$.timeStamp").value(TIME_STAMP_STRING_EXPECTED_FROM_ETSI_CATALOG))
                 .andExpect(jsonPath("$.vnfPkgId").value(VNFPKG_ID)).andExpect(jsonPath("$.vnfdId").value(VNFD_ID))
-                .andExpect(jsonPath("$._links").value(buildPkgmLinks()))
+                .andExpect(jsonPath("$._links")
+                        .value(buildPkgmLinks(EXPECTED_VNF_PACKAGE_HREF, EXPECTED_SUBSCRIPTION_HREF)))
                 .andExpect(header("Authorization", EXPECTED_BASIC_AUTHORIZATION)).andRespond(withSuccess());
 
         final ResponseEntity<?> response = sendHttpPost(notification);
@@ -292,7 +295,8 @@ public class EtsiSubscriptionNotificationControllerTest {
                         jsonPath("$.changeType").value(PkgChangeNotification.ChangeTypeEnum.OP_STATE_CHANGE.toString()))
                 .andExpect(jsonPath("$.operationalState")
                         .value(PkgChangeNotification.OperationalStateEnum.ENABLED.toString()))
-                .andExpect(jsonPath("$._links").value(buildPkgmLinks()))
+                .andExpect(jsonPath("$._links")
+                        .value(buildPkgmLinks(EXPECTED_VNF_PACKAGE_HREF, EXPECTED_SUBSCRIPTION_HREF)))
                 .andExpect(header("Authorization", EXPECTED_BASIC_AUTHORIZATION)).andRespond(withSuccess());
 
         final ResponseEntity<?> response = sendHttpPost(notification);
@@ -397,7 +401,8 @@ public class EtsiSubscriptionNotificationControllerTest {
                 .andExpect(jsonPath("$.subscriptionId").value(SUBSCRIPTION_ID))
                 .andExpect(jsonPath("$.timeStamp").value(TIME_STAMP_STRING_EXPECTED_FROM_ETSI_CATALOG))
                 .andExpect(jsonPath("$.vnfPkgId").value(VNFPKG_ID)).andExpect(jsonPath("$.vnfdId").value(VNFD_ID))
-                .andExpect(jsonPath("$._links").value(buildPkgmLinks()))
+                .andExpect(jsonPath("$._links")
+                        .value(buildPkgmLinks(EXPECTED_VNF_PACKAGE_HREF, EXPECTED_SUBSCRIPTION_HREF)))
                 .andExpect(header("Authorization", EXPECTED_BASIC_AUTHORIZATION)).andRespond(withSuccess());
 
         final ResponseEntity<?> response = sendHttpPost(notification);
@@ -451,7 +456,9 @@ public class EtsiSubscriptionNotificationControllerTest {
                         jsonPath("$.changeType").value(PkgChangeNotification.ChangeTypeEnum.OP_STATE_CHANGE.toString()))
                 .andExpect(jsonPath("$.operationalState")
                         .value(PkgChangeNotification.OperationalStateEnum.ENABLED.toString()))
-                .andExpect(jsonPath("$._links").value(buildPkgmLinks())).andRespond(withSuccess());
+                .andExpect(jsonPath("$._links")
+                        .value(buildPkgmLinks(EXPECTED_VNF_PACKAGE_HREF, EXPECTED_SUBSCRIPTION_HREF)))
+                .andRespond(withSuccess());
 
         final ResponseEntity<?> response = sendHttpPost(notification);
 
@@ -526,17 +533,12 @@ public class EtsiSubscriptionNotificationControllerTest {
     }
 
     private PkgmLinks buildPkgmLinks() {
-        final PkgmLinks pkgmLinks = new PkgmLinks();
+        return buildPkgmLinks("vnf_package_href", "subscription_href");
+    }
 
-        final NOTIFICATIONLINKSERIALIZER subscriptionLinkSerializer = new NOTIFICATIONLINKSERIALIZER();
-        subscriptionLinkSerializer.setHref("subscription_href");
-        pkgmLinks.setSubscription(subscriptionLinkSerializer);
-
-        final NOTIFICATIONLINKSERIALIZER vnfPackageLinkSerializer = new NOTIFICATIONLINKSERIALIZER();
-        vnfPackageLinkSerializer.setHref("vnf_package_href");
-        pkgmLinks.setVnfPackage(vnfPackageLinkSerializer);
-
-        return pkgmLinks;
+    private PkgmLinks buildPkgmLinks(final String vnfPkgHref, final String subscriptionHref) {
+        return new PkgmLinks().vnfPackage(new NOTIFICATIONLINKSERIALIZER().href(vnfPkgHref))
+                .subscription(new NOTIFICATIONLINKSERIALIZER().href(subscriptionHref));
     }
 
     private PkgmSubscriptionRequest buildPkgmSubscriptionRequest(
