@@ -33,7 +33,7 @@ import org.onap.so.bpmn.common.workflow.context.WorkflowContextHolder
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.client.HttpClientFactory
-import org.onap.so.client.aai.AAIResourcesClient
+import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.springframework.web.util.UriUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

@@ -20,7 +20,7 @@
 
 package org.onap.so.adapters.inventory.delete;
 
-import org.onap.so.client.aai.AAIResourcesClient;
+import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.so.cloud.CloudConfig;
 import org.onap.so.cloud.resource.beans.CloudInformation;
 import org.onap.so.db.catalog.beans.CloudIdentity;

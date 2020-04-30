@@ -23,7 +23,7 @@ package org.onap.so.adapters.tasks.inventory;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
-import org.onap.so.client.aai.AAIResourcesClient;
+import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.so.cloud.CloudConfig;
 import org.onap.so.cloud.resource.beans.CloudInformation;
 import org.onap.so.db.catalog.beans.CloudIdentity;

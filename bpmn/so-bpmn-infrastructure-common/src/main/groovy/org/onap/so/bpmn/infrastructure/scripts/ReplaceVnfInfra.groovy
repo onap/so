@@ -32,7 +32,7 @@ import org.onap.so.bpmn.core.domain.ModelInfo
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.client.aai.*
+import org.onap.aaiclient.client.aai.*
 import org.onap.so.client.appc.ApplicationControllerOrchestrator
 import org.onap.so.client.appc.ApplicationControllerSupport
 import org.onap.logging.filter.base.ErrorCode

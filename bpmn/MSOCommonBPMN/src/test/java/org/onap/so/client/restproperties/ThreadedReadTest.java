@@ -35,7 +35,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 import org.onap.so.client.RestPropertiesLoader;
-import org.onap.so.client.aai.AAIProperties;
+import org.onap.aaiclient.client.aai.AAIProperties;
 import org.onap.so.BaseTest;
 
 public class ThreadedReadTest {

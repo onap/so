@@ -38,10 +38,10 @@ import org.springframework.web.util.UriUtils
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.client.HttpClient
-import org.onap.so.client.aai.AAIObjectType
-import org.onap.so.client.aai.entities.uri.AAIResourceUri
-import org.onap.so.client.aai.entities.uri.AAIUriFactory
-import org.onap.so.client.graphinventory.entities.uri.Depth
+import org.onap.aaiclient.client.aai.AAIObjectType
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.graphinventory.entities.uri.Depth
 import org.onap.logging.filter.base.ONAPComponents;
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger

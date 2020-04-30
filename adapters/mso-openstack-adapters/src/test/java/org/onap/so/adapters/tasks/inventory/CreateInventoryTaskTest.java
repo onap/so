@@ -33,7 +33,7 @@ import org.mockito.MockitoAnnotations;
 import org.onap.so.adapters.tasks.inventory.CreateAAIInventory;
 import org.onap.so.adapters.tasks.inventory.CreateInventoryTask;
 import org.onap.so.adapters.tasks.inventory.InventoryException;
-import org.onap.so.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
+import org.onap.aaiclient.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
 import org.onap.so.logging.tasks.AuditMDCSetup;
 import org.onap.so.objects.audit.AAIObjectAudit;
 import org.onap.so.objects.audit.AAIObjectAuditList;

@@ -32,8 +32,8 @@ import org.onap.aai.domain.yang.VolumeGroup;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.apihandlerinfra.infra.rest.exception.AAIEntityNotFound;
 import org.onap.so.apihandlerinfra.infra.rest.exception.CloudConfigurationNotFoundException;
-import org.onap.so.client.aai.AAIObjectType;
-import org.onap.so.client.aai.entities.AAIResultWrapper;
+import org.onap.aaiclient.client.aai.AAIObjectType;
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.so.constants.Status;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
@@ -277,7 +277,7 @@ public class BpmnRequestBuilder {
     public CloudConfiguration mapCloudConfiguration(GenericVnf vnf, String vfModuleId) {
         CloudConfiguration cloudConfig = new CloudConfiguration();
         AAIResultWrapper wrapper = new AAIResultWrapper(vnf);
-        Optional<org.onap.so.client.aai.entities.Relationships> relationshipsOpt = wrapper.getRelationships();
+        Optional<org.onap.aaiclient.client.aai.entities.Relationships> relationshipsOpt = wrapper.getRelationships();
         String tenantId = null;
         String cloudOwner = null;
         String lcpRegionId = null;
@@ -319,7 +319,7 @@ public class BpmnRequestBuilder {
     public CloudConfiguration mapCloudConfigurationVolume(GenericVnf vnf, VolumeGroup volumeGroup) {
         CloudConfiguration cloudConfig = new CloudConfiguration();
         AAIResultWrapper wrapper = new AAIResultWrapper(vnf);
-        Optional<org.onap.so.client.aai.entities.Relationships> relationshipsOpt = wrapper.getRelationships();
+        Optional<org.onap.aaiclient.client.aai.entities.Relationships> relationshipsOpt = wrapper.getRelationships();
         String tenantId = null;
         String cloudOwner = null;
         String lcpRegionId = null;

@@ -22,8 +22,8 @@ package org.onap.so.asdc.tenantIsolation;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.onap.so.client.aai.AAIProperties;
-import org.onap.so.client.aai.AAIVersion;
+import org.onap.aaiclient.client.aai.AAIProperties;
+import org.onap.aaiclient.client.aai.AAIVersion;
 import org.onap.so.spring.SpringContextHelper;
 import org.springframework.context.ApplicationContext;
 

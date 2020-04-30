@@ -39,7 +39,7 @@ import org.mockito.Mockito
 import org.mockito.Spy
 import org.onap.aai.domain.yang.GenericVnf
 import org.onap.so.bpmn.core.WorkflowException
-import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 
 class DeleteAAIVfModuleTest extends  MsoGroovyTest{
 

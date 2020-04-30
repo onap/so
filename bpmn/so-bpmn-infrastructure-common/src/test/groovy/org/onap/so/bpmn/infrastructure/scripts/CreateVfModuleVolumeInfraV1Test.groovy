@@ -34,10 +34,10 @@ import org.mockito.runners.MockitoJUnitRunner
 import org.onap.aai.domain.yang.ResultData
 import org.onap.aai.domain.yang.SearchResults
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
-import org.onap.so.client.aai.AAIObjectType
-import org.onap.so.client.aai.entities.AAIResultWrapper
-import org.onap.so.client.aai.entities.uri.AAIResourceUri
-import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.aai.AAIObjectType
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 
 import static org.junit.Assert.assertEquals
 import static org.mockito.Mockito.*

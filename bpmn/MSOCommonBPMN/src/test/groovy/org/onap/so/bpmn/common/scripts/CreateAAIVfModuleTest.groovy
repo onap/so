@@ -41,7 +41,7 @@ import org.onap.aai.domain.yang.GenericVnf
 import org.onap.aai.domain.yang.VfModule
 import org.onap.aai.domain.yang.VfModules
 import org.onap.so.bpmn.core.UrnPropertiesReader
-import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.springframework.core.env.Environment
 
 class CreateAAIVfModuleTest extends MsoGroovyTest{

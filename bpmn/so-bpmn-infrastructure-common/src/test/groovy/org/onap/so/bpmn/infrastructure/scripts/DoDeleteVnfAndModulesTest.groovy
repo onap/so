@@ -39,11 +39,11 @@ import org.mockito.runners.MockitoJUnitRunner
 import org.onap.aai.domain.yang.GenericVnf
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
 import org.onap.so.bpmn.core.WorkflowException
-import org.onap.so.client.aai.AAIObjectType
-import org.onap.so.client.aai.entities.uri.AAIResourceUri
-import org.onap.so.client.aai.entities.uri.AAIUriFactory
-import org.onap.so.client.graphinventory.entities.uri.Depth
-import org.onap.so.client.graphinventory.exceptions.GraphInventoryUriComputationException
+import org.onap.aaiclient.client.aai.AAIObjectType
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.graphinventory.entities.uri.Depth
+import org.onap.aaiclient.client.graphinventory.exceptions.GraphInventoryUriComputationException
 import static com.github.tomakehurst.wiremock.client.WireMock.*
 import static org.mockito.Mockito.*
 

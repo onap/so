@@ -23,8 +23,8 @@ package org.onap.so.client.restproperties;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
-import org.onap.so.client.aai.AAIProperties;
-import org.onap.so.client.aai.AAIVersion;
+import org.onap.aaiclient.client.aai.AAIProperties;
+import org.onap.aaiclient.client.aai.AAIVersion;
 import org.springframework.stereotype.Component;
 
 @Component

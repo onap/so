@@ -40,7 +40,7 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
-import org.onap.so.client.aai.entities.AAIResultWrapper;
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 
 public class UnassignNetworkBBTest extends BaseTaskTest {
 

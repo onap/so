@@ -33,7 +33,7 @@ import org.onap.so.bpmn.core.domain.ModelInfo
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.domain.ServiceInstance
 import org.onap.so.bpmn.mock.StubResponseAAI
-import org.onap.so.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 
 import static org.mockito.Mockito.*
 

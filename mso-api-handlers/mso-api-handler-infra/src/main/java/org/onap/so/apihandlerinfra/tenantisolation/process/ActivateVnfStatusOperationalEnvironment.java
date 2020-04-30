@@ -40,7 +40,7 @@ import org.onap.so.apihandlerinfra.tenantisolation.helpers.ActivateVnfDBHelper;
 import org.onap.so.apihandlerinfra.tenantisolation.helpers.SDCClientHelper;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.Distribution;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.DistributionStatus;
-import org.onap.so.client.aai.entities.AAIResultWrapper;
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.so.db.request.beans.OperationalEnvDistributionStatus;
 import org.onap.so.db.request.beans.OperationalEnvServiceModelStatus;
 import org.onap.logging.filter.base.ErrorCode;

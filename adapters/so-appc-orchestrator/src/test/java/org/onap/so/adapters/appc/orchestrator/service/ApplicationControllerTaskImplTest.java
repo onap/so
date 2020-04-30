@@ -22,7 +22,7 @@ import org.onap.so.adapters.appc.orchestrator.client.beans.RequestParameters;
 import org.onap.so.adapters.appc.orchestrator.service.ApplicationControllerTaskImpl;
 import org.onap.so.appc.orchestrator.service.beans.ApplicationControllerTaskRequest;
 import org.onap.so.appc.orchestrator.service.beans.ApplicationControllerVnf;
-import org.onap.so.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
+import org.onap.aaiclient.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.onap.appc.client.lcm.model.Action;
 
